@@ -75,3 +75,6 @@ Notice, without a closed source license, your code automatically becomes Open So
 and/or application(s) that are consuming your Magic web API. With a closed source license, you can create closed source code, and you don't have to provide a link
 to neither me, nor your own source code.
 
+You might also probably find me slightly more helpful and friendly in case you [require help or support](https://github.com/polterguy/magic/issues),
+if you can show me somehow that you have purchased a closed source license.
+
