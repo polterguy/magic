@@ -14,7 +14,8 @@ video
 Out of the box Magic is a simple HTTP REST TODO web api, but this is only there to serve as an example. Remove the existing TODO projects,
 and replace it with your own code, and you'll literally _hit the ground running_. All parts of your application can easily be modified, extended,
 or changed, by simply overriding that which you need to override. In such a way Magic provides you with a consistent API, allowing you to
-extend and modify that which you need to modify, and having the rest done automagically for you through the powers of Magic.
+extend and modify that which you need to modify, and having the rest done automagically for you through the powers of Magic. And, everything even
+becomes automagically documented for you!
 
 ## Features
 
