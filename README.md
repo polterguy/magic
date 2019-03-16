@@ -79,3 +79,6 @@ You might also probably find me slightly more helpful and friendly in case you [
 if you can show me somehow that you have purchased a closed source license - In addition to that you get that warm and fuzzy feeling of having contributed to
 my Champagne budget.
 
+> Send more Champagne
+
+Quote from Karl Marx
