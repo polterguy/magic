@@ -65,7 +65,23 @@ namespace magic.backend.init
                 {
                     m.FluentMappings.AddFromAssembly(idxAsm);
                 }
+#if DEBUG
+#warning Your database schema will be automatically modified
             }).ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).BuildSessionFactory();
+#else
+        }).BuildSessionFactory();
+#endif
+
+            // WARNING: The above line of code will automatically generate your database schema. This is probably NOT something you want in a production environment!
+
+            /*
+             * The above "ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true))" code will automatically create your database schema.
+             * In a production environment, you would probably not want your code to automatically do this, since it modifies your database schema,
+             * and might have dangerous side-effects if not done correctly.
+             * 
+             * NOTICE!
+             * If you build the project in "Release" configuration, the database schema will NOT be automatically modified!
+             */
         }
     }
 }
