@@ -51,6 +51,7 @@ code for you, making you 10x as productive when creating database wrapper web AP
 5. Create your view model in the _"web/model"_ folder. See the `magic.web.model.todo` project for an example.
 6. Create your controller in the _"web/controller"_ folder, and inherit it from the `CrudController` class. See the `magic.web.controller.todo` project for an example.
 7. Add a reference to your controller into the `magic.backend` project and add the name of your assembly into the `plugins` section of the _"appsettings.json"_ file.
+8. Make sure you create a mapping between your service interface and yur service implementation in some IInitialize implementation class
 
 ## Overriding Magic with your own custom functionality
 
