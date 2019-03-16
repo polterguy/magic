@@ -12,7 +12,7 @@ you have correctly declared these types, Magic simply takes care of the rest for
 video
 
 Out of the box Magic is a simple HTTP REST TODO web api, but this is only there to serve as an example. Remove the existing TODO projects,
-and replace them with your own domain types, and you'll hit the ground running. All parts of your application can easily be modified, extended
+and replace it with your own code, and you'll literally _hit the ground running_. All parts of your application can easily be modified, extended,
 or changed, by simply overriding that which you need to override. In such a way Magic provides you with a consistent API, allowing you to
 extend and modify that which you need to modify, and having the rest done automagically for you through the powers of Magic.
 
@@ -43,6 +43,16 @@ If you want to modify some service, you can easily override whatever method you 
 You can also add new service methods, by adding a method to your service interface. In addition, you can also override your web controller methods,
 and for instance add the `[Authorize]` attribute, or change other parts of its behavior somehow. In general, all parts of Magic are overridable, while still
 providing _"sane defaults"_ for you out of the box.
+
+## Changing database provider
+
+To change database provider is easy. Open up _"appsettings.config"_ in your _"magic.backend"_ project, and change the `database` section to whatever
+database provider you want to use, and the connection string to your database. Notice, in debug builds Magic will automatically create the database
+schema itself accoding to your `ClassMap` definition(s), but in release builds it will not do this. Supported database drivers are as follows.
+
+* `MySQL` - Make sure you use a connection string to an existing MySQL database instance
+* `MSSQL` - Microsoft SQL Server
+* `SQLIte` - SQLIte database (this is the default, and probably _not_ something you'd like to use in a real app)
 
 ## License, buy me a bottle of Champagne
 
