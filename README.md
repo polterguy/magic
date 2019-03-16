@@ -10,7 +10,11 @@ is to create a service, a contract (service interface), a controller, and declar
 you have correctly declared these types, Magic simply takes care of the rest for you automagically. You don't even need to create your
 database. Even creating your database will be automagically done by Magic.
 
-video
+<p align="center">
+<a href="https://www.youtube.com/watch?v=M3uKdPAvS1I">
+<img alt="A 10 minutes demonstration of Magic" title="A 10 minutes demonstration of Magic" src="https://phosphorusfive.files.wordpress.com/2019/03/magic-youtube-screenshot.png" />
+</a>
+</p>
 
 Out of the box Magic is a simple HTTP REST TODO web api, but this is only there to serve as an example. Remove the existing TODO projects,
 and replace it with your own code, and you'll literally _hit the ground running_. All parts of your application can easily be modified, extended,
