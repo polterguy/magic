@@ -329,3 +329,4 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 magic.backend/data.db
+web/controllers/magic.web.controller.common/magic.web.controller.common.xml
