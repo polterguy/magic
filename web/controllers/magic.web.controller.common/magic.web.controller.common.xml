@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>magic.web.controller.common</name>
+    </assembly>
+    <members>
+        <member name="T:magic.web.controller.common.CrudController`2">
+            <summary>
+            CRUD generic controller for Creating, Reading, Updating and Deleting items in your database
+            </summary>
+            <typeparam name="WebModel">Type for your HTTP REST web requests</typeparam>
+            <typeparam name="DbModel">Type that is actually stored in your database</typeparam>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.#ctor(Mapster.IAdapter,magic.contracts.common.ICrudService{`1})">
+            <summary>
+            Creates a new CRUD controller
+            </summary>
+            <param name="adapter">Mapster adapter to use for adapting from your view model to your database model</param>
+            <param name="service">The underlaying service implementing the CRUD operations for your domain type</param>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.Create(`0)">
+            <summary>
+            Creates a new instance of your database model type.
+            </summary>
+            <param name="input">Data for your instance</param>
+            <returns></returns>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.Get(System.Guid)">
+            <summary>
+            Returns the instance with the specified id
+            </summary>
+            <param name="id">The id of the instance you want to retrieve</param>
+            <returns></returns>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.List(System.Int32,System.Int32)">
+            <summary>
+            Returns a list of items, optionally allowing you to page
+            </summary>
+            <param name="offset">Offset of where to start retrieveing items</param>
+            <param name="limit">Maximum number of items to retrieve</param>
+            <returns></returns>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.Update(`0)">
+            <summary>
+            Updates the specified item
+            </summary>
+            <param name="account">Item to update</param>
+            <returns></returns>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.Delete(System.Guid)">
+            <summary>
+            Deletes the item with the specified id
+            </summary>
+            <param name="id">Id of item to delete</param>
+            <returns></returns>
+        </member>
+        <member name="M:magic.web.controller.common.CrudController`2.Count">
+            <summary>
+            Returns the total number of items in your database
+            </summary>
+            <returns>The number of items in your database</returns>
+        </member>
+    </members>
+</doc>
