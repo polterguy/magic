@@ -71,7 +71,7 @@ namespace magic.backend
                 {
                     Title = "Magic",
                     Version = "v1",
-                    Description = "An Affero Licensed starter kit for ASP.NET Core",
+                    Description = "An Affero GPL Licensed starter kit for ASP.NET Core",
                     TermsOfService = "Affero GPL",
                     Contact = new Contact() { Name = "Thomas Hansen", Email = "thomas@gaiasoul.com", Url = "gaiasoul.com" }
                 });
