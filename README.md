@@ -72,9 +72,10 @@ have to purchase one license for each web API project you want to create.
 * [Purchase closed source license for $50](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W5AG4JZE2TL98)
 
 Notice, without a closed source license, your code automatically becomes Open Source, and you'll have to provide a link to your own source code from any website(s),
-and/or application(s) that are consuming your Magic web API. With a closed source license, you can create closed source code, and you don't have to provide a link
-to neither me, nor your own source code.
+and/or application(s) from where you are consuming your Magic web API. With a closed source license, you can create closed source code, and you don't have to provide
+a link to neither me, nor your own source code.
 
 You might also probably find me slightly more helpful and friendly in case you [require help or support](https://github.com/polterguy/magic/issues),
-if you can show me somehow that you have purchased a closed source license.
+if you can show me somehow that you have purchased a closed source license - In addition to that you get that warm and fuzzy feeling of having contributed to
+my Champagne budget.
 
