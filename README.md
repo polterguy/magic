@@ -21,7 +21,7 @@ becomes automagically documented for you!
 ## Getting started
 
 * [Download Magic](https://github.com/polterguy/magic/releases)
-* Unzip and open Magic.sln
+* Unzip and open _"magic.sln"_ in Visual Studio
 * Click F5
 
 ## Features
@@ -68,6 +68,9 @@ schema itself accoding to your `ClassMap` definition(s), but in release builds i
 * `MySQL` - Make sure you use a connection string to an existing MySQL database instance
 * `MSSQL` - Microsoft SQL Server
 * `SQLIte` - SQLIte database (this is the default, and probably _not_ something you'd like to use in a real app)
+
+Ohh yeah, and of course Magic is as portable as it is possible to be. Most projects are .Net Standard 2.0, and you can
+deploy it on any server you wish, ranging from Linux and Windows, to your Mom's toaster if it runs some Linux web server.
 
 ## Licensing, buy me a bottle of Champagne
 
