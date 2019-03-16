@@ -28,6 +28,13 @@ of code. This is possible due to the usage of Fluent nHibernate. Magic relies up
 * Swashbuckle Swagger UI
 * log4net
 
+You will probably benefit from understanding these projects as you proceed to create your own projects. However, Magic itself, can easily be
+completely understood in 20 minutes for an experienced C# developer. The whole idea with Magic, is to use existing best practices, coupled
+with intelligent OOP constructs, based arguably upon C# generic _"trickery"_, to completely eliminate the need for coding, through the powers of DRY Magic -
+Yet still have perfect control over your end solution(s). Creating similar constructs in your client layer, using e.g. Angular or React, is also easily
+done, since your HTTP REST CRUD endpoints all ends up having the exact same API. In such a way, Magic completely eliminates the need to create any CRUD
+code for you, making you 10x as productive when creating database wrapper web API apps.
+
 ## HOWTO wrap a database table
 
 1. Create your database model class(es) in the _"model"_ folder. See `magic.model.todo` for an example.
