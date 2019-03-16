@@ -7,7 +7,8 @@ start out with 80% of your job done. The project is hence in such a way a templa
 running"_ as you start out your next project. Magic is best suited for database applications, where you need to wrap your database tables,
 and present these to some client, using an HTTP REST API. Basically, for all your CRUD needs, all you need to do to create your Magic wrapper,
 is to create a service, a contract (service interface), a controller, and declare your models (view model and database model). After
-you have correctly declared these types, Magic simply takes care of the rest for you automagically.
+you have correctly declared these types, Magic simply takes care of the rest for you automagically. You don't even need to create your
+database. Even creating your database will be automagically done by Magic.
 
 video
 
@@ -16,6 +17,12 @@ and replace it with your own code, and you'll literally _hit the ground running_
 or changed, by simply overriding that which you need to override. In such a way Magic provides you with a consistent API, allowing you to
 extend and modify that which you need to modify, and having the rest done automagically for you through the powers of Magic. And, everything even
 becomes automagically documented for you!
+
+## Getting started
+
+* [Download Magic](https://github.com/polterguy/magic/releases)
+* Unzip and open Magic.sln
+* Click F5
 
 ## Features
 
@@ -62,7 +69,7 @@ schema itself accoding to your `ClassMap` definition(s), but in release builds i
 * `MSSQL` - Microsoft SQL Server
 * `SQLIte` - SQLIte database (this is the default, and probably _not_ something you'd like to use in a real app)
 
-## License, buy me a bottle of Champagne
+## Licensing, buy me a bottle of Champagne
 
 Magic is licensed as Affero GPL, which implies that you can only use it to create Open Source software - However, a proprietary
 enabling license can be obtained for $50 by following [this PayPal link](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W5AG4JZE2TL98) and
@@ -81,4 +88,4 @@ my Champagne budget.
 
 > Send more Champagne
 
-Quote from Karl Marx
+Quote by Karl Marx
