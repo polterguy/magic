@@ -17,28 +17,7 @@ namespace magic.tests.common
 {
     public abstract class CrudTest<Controller, WebModel, DbModel> 
         where Controller : CrudController<WebModel, DbModel>
-        where WebModel : class, new()
     {
-        readonly Func<Connection, Controller> _createController;
-        readonly Func<int, WebModel> _createModel;
-        readonly Action<int, WebModel> _assert;
-        readonly Action<WebModel> _assertAfterModified;
-        readonly Action<WebModel> _modifyModel;
-
-        public CrudTest(
-            Func<Connection, Controller> createController, 
-            Func<int, WebModel> createModel,
-            Action<int, WebModel> assert,
-            Action<WebModel> assertAfterModified,
-            Action<WebModel> modifyModel)
-        {
-            _createController = createController ?? throw new ArgumentNullException(nameof(createController));
-            _createModel = createModel ?? throw new ArgumentNullException(nameof(createModel));
-            _assert = assert ?? throw new ArgumentNullException(nameof(assert));
-            _modifyModel = modifyModel ?? throw new ArgumentNullException(nameof(modifyModel));
-            _assertAfterModified = assertAfterModified ?? throw new ArgumentNullException(nameof(assertAfterModified));
-        }
-
         #region [ -- Generic unit tests -- ]
 
         [Fact]
@@ -46,12 +25,12 @@ namespace magic.tests.common
         {
             using (var connection = new Connection(GetAssemblies().ToArray()))
             {
-                var controller = _createController(connection);
-                var createResult = Single(controller.Create(_createModel(0)));
+                var controller = CreateController(connection);
+                var createResult = Single(controller.Create(CreateModel(0)));
                 Assert.True(createResult.Id.HasValue);
                 Assert.False(createResult.Id.Equals(Guid.Empty));
                 var afterCreate = Single(controller.Get(createResult.Id.Value));
-                _assert(0, afterCreate);
+                AssertModel(0, afterCreate);
             }
         }
 
@@ -60,12 +39,12 @@ namespace magic.tests.common
         {
             using (var connection = new Connection(GetAssemblies().ToArray()))
             {
-                var controller = _createController(connection);
-                var createResult_01 = Single(controller.Create(_createModel(0)));
-                var createResult_02 = Single(controller.Create(_createModel(1)));
+                var controller = CreateController(connection);
+                var createResult_01 = Single(controller.Create(CreateModel(0)));
+                var createResult_02 = Single(controller.Create(CreateModel(1)));
                 var afterCreate = List(controller.List());
-                _assert(0, afterCreate.First());
-                _assert(1, afterCreate.Last());
+                AssertModel(0, afterCreate.First());
+                AssertModel(1, afterCreate.Last());
             }
         }
 
@@ -74,11 +53,11 @@ namespace magic.tests.common
         {
             using (var connection = new Connection(GetAssemblies().ToArray()))
             {
-                var controller = _createController(connection);
-                var createResult = Single(controller.Create(_createModel(0)));
+                var controller = CreateController(connection);
+                var createResult = Single(controller.Create(CreateModel(0)));
                 var afterCreate = Single(controller.Get(createResult.Id.Value));
-                _modifyModel(afterCreate);
-                _assertAfterModified(afterCreate);
+                ModifyModel(afterCreate);
+                AssertModelAfterModified(afterCreate);
             }
         }
 
@@ -87,15 +66,15 @@ namespace magic.tests.common
         {
             using (var connection = new Connection(GetAssemblies().ToArray()))
             {
-                var controller = _createController(connection);
-                var createResult_01 = Single(controller.Create(_createModel(0)));
-                var createResult_02 = Single(controller.Create(_createModel(1)));
+                var controller = CreateController(connection);
+                var createResult_01 = Single(controller.Create(CreateModel(0)));
+                var createResult_02 = Single(controller.Create(CreateModel(1)));
                 var afterCreate = List(controller.List());
                 controller.Delete(createResult_01.Id.Value);
                 var count = Single(controller.Count());
                 Assert.Equal(1, count);
                 var remaining = Single(controller.Get(createResult_02.Id.Value));
-                _assert(1, remaining);
+                AssertModel(1, remaining);
             }
         }
 
@@ -104,13 +83,27 @@ namespace magic.tests.common
         {
             using (var connection = new Connection(GetAssemblies().ToArray()))
             {
-                var controller = _createController(connection);
-                var createResult_01 = Single(controller.Create(_createModel(0)));
-                var createResult_02 = Single(controller.Create(_createModel(1)));
+                var controller = CreateController(connection);
+                var createResult_01 = Single(controller.Create(CreateModel(0)));
+                var createResult_02 = Single(controller.Create(CreateModel(1)));
                 var count = Single(controller.Count());
                 Assert.Equal(2, count);
             }
         }
+
+        #endregion
+
+        #region [ -- Abstract methods -- ]
+
+        abstract protected Controller CreateController(Connection connection);
+
+        abstract protected WebModel CreateModel(int no);
+
+        abstract protected void AssertModel(int no, WebModel model);
+
+        abstract protected void ModifyModel(WebModel model);
+
+        abstract protected void AssertModelAfterModified(WebModel todo);
 
         #endregion
 
