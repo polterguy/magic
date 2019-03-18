@@ -39,10 +39,12 @@ namespace magic.tests.common
             _assertAfterModified = assertAfterModified ?? throw new ArgumentNullException(nameof(assertAfterModified));
         }
 
+        #region [ -- Generic unit tests -- ]
+
         [Fact]
-        public void Create()
+        public virtual void Create()
         {
-            using (var connection = new Connection(GetAssemblies()))
+            using (var connection = new Connection(GetAssemblies().ToArray()))
             {
                 var controller = _createController(connection);
                 var createResult = Single(controller.Create(_createModel(0)));
@@ -54,9 +56,9 @@ namespace magic.tests.common
         }
 
         [Fact]
-        public void Read()
+        public virtual void Read()
         {
-            using (var connection = new Connection(GetAssemblies()))
+            using (var connection = new Connection(GetAssemblies().ToArray()))
             {
                 var controller = _createController(connection);
                 var createResult_01 = Single(controller.Create(_createModel(0)));
@@ -68,9 +70,9 @@ namespace magic.tests.common
         }
 
         [Fact]
-        public void Update()
+        public virtual void Update()
         {
-            using (var connection = new Connection(GetAssemblies()))
+            using (var connection = new Connection(GetAssemblies().ToArray()))
             {
                 var controller = _createController(connection);
                 var createResult = Single(controller.Create(_createModel(0)));
@@ -81,9 +83,9 @@ namespace magic.tests.common
         }
 
         [Fact]
-        public void Delete()
+        public virtual void Delete()
         {
-            using (var connection = new Connection(GetAssemblies()))
+            using (var connection = new Connection(GetAssemblies().ToArray()))
             {
                 var controller = _createController(connection);
                 var createResult_01 = Single(controller.Create(_createModel(0)));
@@ -92,13 +94,15 @@ namespace magic.tests.common
                 controller.Delete(createResult_01.Id.Value);
                 var count = Single(controller.Count());
                 Assert.Equal(1, count);
+                var remaining = Single(controller.Get(createResult_02.Id.Value));
+                _assert(1, remaining);
             }
         }
 
         [Fact]
-        public void Count()
+        public virtual void Count()
         {
-            using (var connection = new Connection(GetAssemblies()))
+            using (var connection = new Connection(GetAssemblies().ToArray()))
             {
                 var controller = _createController(connection);
                 var createResult_01 = Single(controller.Create(_createModel(0)));
@@ -107,6 +111,8 @@ namespace magic.tests.common
                 Assert.Equal(2, count);
             }
         }
+
+        #endregion
 
         #region [ -- Private helper methods -- ]
 
@@ -128,12 +134,13 @@ namespace magic.tests.common
             return Assert.IsAssignableFrom<IEnumerable<T>>(((OkObjectResult)input.Result).Value);
         }
 
-        Assembly[] GetAssemblies()
+        IEnumerable<Assembly> GetAssemblies()
         {
             var type = typeof(IMappingProvider);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(asm => asm.GetTypes().Any(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.FullName.StartsWith("FluentNHibernate")));
-            return assemblies.ToArray();
+                .Where(asm => asm.GetTypes()
+                .Any(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.FullName.StartsWith("FluentNHibernate")));
+            return assemblies;
         }
 
         #endregion
