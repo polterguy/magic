@@ -19,17 +19,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.controller.todo",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.contracts.common", "contracts\magic.contracts.common\magic.contracts.common.csproj", "{80D4A60E-E303-4AA3-ABAF-5C7AEB3572C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.contracts.todo", "contracts\magic.contracts.todo\magic.contracts.todo.csproj", "{CC931DBA-A453-416B-A56E-E841F14CA21C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.contracts.todo", "contracts\magic.contracts.todo\magic.contracts.todo.csproj", "{CC931DBA-A453-416B-A56E-E841F14CA21C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.model.todo", "model\magic.model.todo\magic.model.todo.csproj", "{6CF1C15B-071C-4535-B2FE-224091AC3695}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.model.todo", "model\magic.model.todo\magic.model.todo.csproj", "{6CF1C15B-071C-4535-B2FE-224091AC3695}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.model.common", "model\magic.model.common\magic.model.common.csproj", "{BB323EC3-9582-48F6-98BF-232B3284662B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.model.common", "model\magic.model.common\magic.model.common.csproj", "{BB323EC3-9582-48F6-98BF-232B3284662B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.web.controller.common", "web\controllers\magic.web.controller.common\magic.web.controller.common.csproj", "{DEA15BFE-D4C5-4F88-870B-DDC6F9EA6AB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.controller.common", "web\controllers\magic.web.controller.common\magic.web.controller.common.csproj", "{DEA15BFE-D4C5-4F88-870B-DDC6F9EA6AB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.services.common", "services\magic.services.common\magic.services.common.csproj", "{331F9687-AB42-4807-A8D3-98720F7548D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.services.common", "services\magic.services.common\magic.services.common.csproj", "{331F9687-AB42-4807-A8D3-98720F7548D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.services.todo", "services\magic.services.todo\magic.services.todo.csproj", "{C55413AD-C17F-428F-AD57-3A62E7711C04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.services.todo", "services\magic.services.todo\magic.services.todo.csproj", "{C55413AD-C17F-428F-AD57-3A62E7711C04}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.model.common", "web\model\magic.web.model.common\magic.web.model.common.csproj", "{28C409CC-6485-4462-83E7-FE8CE3C1B9A6}"
 EndProject
@@ -41,6 +41,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7E36B972-6C09-44A6-9A86-B6730C0BC775}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.tests.todo", "tests\magic.tests.todo\magic.tests.todo.csproj", "{8A2E81B5-03E5-49A2-9A11-AED1594541ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.tests.common", "tests\magic.tests.common\magic.tests.common.csproj", "{18827BE0-B751-4AAC-AD24-6BBC46D014CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +98,14 @@ Global
 		{78BCDBA1-ECF4-4A7E-A4EA-A29C54670999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78BCDBA1-ECF4-4A7E-A4EA-A29C54670999}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78BCDBA1-ECF4-4A7E-A4EA-A29C54670999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A2E81B5-03E5-49A2-9A11-AED1594541ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A2E81B5-03E5-49A2-9A11-AED1594541ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A2E81B5-03E5-49A2-9A11-AED1594541ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A2E81B5-03E5-49A2-9A11-AED1594541ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18827BE0-B751-4AAC-AD24-6BBC46D014CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18827BE0-B751-4AAC-AD24-6BBC46D014CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18827BE0-B751-4AAC-AD24-6BBC46D014CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18827BE0-B751-4AAC-AD24-6BBC46D014CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +123,8 @@ Global
 		{C55413AD-C17F-428F-AD57-3A62E7711C04} = {43B0490F-D6C5-4817-A62E-4C726A13A1D9}
 		{28C409CC-6485-4462-83E7-FE8CE3C1B9A6} = {D20C1D7E-0945-4CE0-B832-ABC3AFDF42D3}
 		{58DDB6D8-9BF7-4925-BE8A-9BF70B963CD5} = {D20C1D7E-0945-4CE0-B832-ABC3AFDF42D3}
+		{8A2E81B5-03E5-49A2-9A11-AED1594541ED} = {7E36B972-6C09-44A6-9A86-B6730C0BC775}
+		{18827BE0-B751-4AAC-AD24-6BBC46D014CE} = {7E36B972-6C09-44A6-9A86-B6730C0BC775}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}
