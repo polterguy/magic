@@ -69,11 +69,16 @@ namespace magic.backend
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Title = "Magic",
+                    Title = "TITLE",
                     Version = "v1",
-                    Description = "An Affero GPL Licensed starter kit for ASP.NET Core",
-                    TermsOfService = "Affero GPL",
-                    Contact = new Contact() { Name = "Thomas Hansen", Email = "thomas@gaiasoul.com", Url = "gaiasoul.com" }
+                    Description = "DESC",
+                    TermsOfService = "LICENCE",
+                    Contact = new Contact()
+                    {
+                        Name = "MAIN_CONTACT",
+                        Email = "MAIN_EMAIL",
+                        Url = "MAIN_URL"
+                    }
                 });
                 foreach (var idxFile in Directory.GetFiles(AppContext.BaseDirectory, "*.xml"))
                 {
@@ -89,9 +94,13 @@ namespace magic.backend
             InitializeServices.Initialize(Kernel);
 
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+            {
                 app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
             app.UseCors("DefaultCors");
@@ -100,7 +109,7 @@ namespace magic.backend
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE");
             });
         }
 
