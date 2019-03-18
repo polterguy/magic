@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 using FluentNHibernate;
@@ -19,14 +20,23 @@ namespace magic.tests.common
         where WebModel : class, new()
     {
         readonly Func<Connection, Controller> _createController;
-        readonly Func<WebModel> _createModel;
-        readonly Action<WebModel> _assert;
+        readonly Func<int, WebModel> _createModel;
+        readonly Action<int, WebModel> _assert;
+        readonly Action<WebModel> _assertAfterModified;
+        readonly Action<WebModel> _modifyModel;
 
-        public CrudTest(Func<Connection, Controller> createController, Func<WebModel> createModel, Action<WebModel> assert)
+        public CrudTest(
+            Func<Connection, Controller> createController, 
+            Func<int, WebModel> createModel,
+            Action<int, WebModel> assert,
+            Action<WebModel> assertAfterModified,
+            Action<WebModel> modifyModel)
         {
             _createController = createController ?? throw new ArgumentNullException(nameof(createController));
             _createModel = createModel ?? throw new ArgumentNullException(nameof(createModel));
             _assert = assert ?? throw new ArgumentNullException(nameof(assert));
+            _modifyModel = modifyModel ?? throw new ArgumentNullException(nameof(modifyModel));
+            _assertAfterModified = assertAfterModified ?? throw new ArgumentNullException(nameof(assertAfterModified));
         }
 
         [Fact]
@@ -35,42 +45,87 @@ namespace magic.tests.common
             using (var connection = new Connection(GetAssemblies()))
             {
                 var controller = _createController(connection);
-                var createResult = Single(controller.Create(_createModel()));
+                var createResult = Single(controller.Create(_createModel(0)));
                 Assert.True(createResult.Id.HasValue);
                 Assert.False(createResult.Id.Equals(Guid.Empty));
                 var afterCreate = Single(controller.Get(createResult.Id.Value));
-                _assert(afterCreate);
+                _assert(0, afterCreate);
             }
         }
 
         [Fact]
         public void Read()
         {
-
+            using (var connection = new Connection(GetAssemblies()))
+            {
+                var controller = _createController(connection);
+                var createResult_01 = Single(controller.Create(_createModel(0)));
+                var createResult_02 = Single(controller.Create(_createModel(1)));
+                var afterCreate = List(controller.List());
+                _assert(0, afterCreate.First());
+                _assert(1, afterCreate.Last());
+            }
         }
+
         [Fact]
         public void Update()
         {
-
+            using (var connection = new Connection(GetAssemblies()))
+            {
+                var controller = _createController(connection);
+                var createResult = Single(controller.Create(_createModel(0)));
+                var afterCreate = Single(controller.Get(createResult.Id.Value));
+                _modifyModel(afterCreate);
+                _assertAfterModified(afterCreate);
+            }
         }
+
         [Fact]
         public void Delete()
         {
+            using (var connection = new Connection(GetAssemblies()))
+            {
+                var controller = _createController(connection);
+                var createResult_01 = Single(controller.Create(_createModel(0)));
+                var createResult_02 = Single(controller.Create(_createModel(1)));
+                var afterCreate = List(controller.List());
+                controller.Delete(createResult_01.Id.Value);
+                var count = Single(controller.Count());
+                Assert.Equal(1, count);
+            }
+        }
 
+        [Fact]
+        public void Count()
+        {
+            using (var connection = new Connection(GetAssemblies()))
+            {
+                var controller = _createController(connection);
+                var createResult_01 = Single(controller.Create(_createModel(0)));
+                var createResult_02 = Single(controller.Create(_createModel(1)));
+                var count = Single(controller.Count());
+                Assert.Equal(2, count);
+            }
         }
 
         #region [ -- Private helper methods -- ]
 
-        T Single<T>(ActionResult<T> input) where T : class
+        T Single<T>(ActionResult<T> input)
         {
             Assert.IsType<OkObjectResult>(input.Result);
             return Assert.IsAssignableFrom<T>(((OkObjectResult)input.Result).Value);
         }
 
-        T SingleFault<T>(ActionResult<T> input) where T : class
+        T SingleFault<T>(ActionResult<T> input)
         {
             Assert.IsType<BadRequestObjectResult>(input.Result);
             return Assert.IsAssignableFrom<T>(((BadRequestObjectResult)input.Result).Value);
+        }
+
+        IEnumerable<T> List<T>(ActionResult<IEnumerable<T>> input)
+        {
+            Assert.IsType<OkObjectResult>(input.Result);
+            return Assert.IsAssignableFrom<IEnumerable<T>>(((OkObjectResult)input.Result).Value);
         }
 
         Assembly[] GetAssemblies()
