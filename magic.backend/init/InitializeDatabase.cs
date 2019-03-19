@@ -65,13 +65,7 @@ namespace magic.backend.init
                 {
                     m.FluentMappings.AddFromAssembly(idxAsm);
                 }
-#if DEBUG
-#warning Your database schema will be automatically modified
             }).ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true)).BuildSessionFactory();
-#else
-        }).BuildSessionFactory();
-#endif
-
             // WARNING: The above line of code will automatically generate your database schema. This is probably NOT something you want in a production environment!
 
             /*
