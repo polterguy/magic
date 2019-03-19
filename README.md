@@ -1,5 +1,5 @@
 
-# Magic, create your next ASP.NET Core web API in 5 minutes
+# Super DRY Magic for ASP.NET Core
 
 Magic is a starter kit for your ASP.NET Core web APIs, that brings the ideas of DRY (_"Don't Repeat Yourself"_) to an extreme level.
 If you follow a small recipe as you create your controller endpoints, services, view models, and database models, you will literally
@@ -16,11 +16,104 @@ database. Even creating your database will be automagically done by Magic.
 </a>
 </p>
 
-Out of the box Magic is a simple HTTP REST TODO web api, but this is only there to serve as an example. Remove the existing TODO projects,
+## No code, no bugs, no problems!
+
+The whole idea is that Magic allows you to create all CRUD operations on your web APIs, without having to code. This is possible due
+to that HTTP and SQL are basically just fundamentally CRUD operations. Hence, your controller endpoints will end up looking like the following.
+
+```csharp
+[ApiController]
+[EnableCors("DefaultCors")]
+[Route("api/todo")]
+public class TodoController : CrudController<www.Todo, db.Todo>
+{
+    public TodoController(IAdapter adapter, ITodoService service)
+        : base(adapter, service)
+    { }
+}
+```
+
+While your service implementation will resemble the following.
+
+```csharp
+public sealed class TodoService : CrudService<Todo>, ITodoService
+{
+    public TodoService(ISession session)
+        : base(session, LogManager.GetLogger(typeof(TodoService)))
+    { }
+}
+```
+
+Even your service interface ends up empty.
+
+```csharp
+public interface ITodoService : ICrudService<Todo>
+{ }
+```
+
+At which point all you need to do, is to model your database model, such as the following illustrates.
+
+```csharp
+public class Todo : Model
+{
+    public virtual string Header { get; set; }
+    public virtual string Description { get; set; }
+    public virtual bool Done { get; set; }
+}
+```
+
+And map it to your database using something resembling the following.
+
+```csharp
+public class TodoMap : ClassMap<Todo>
+{
+    public TodoMap()
+    {
+        Table("todos");
+        Id(x => x.Id);
+        Map(x => x.Header).Not.Nullable().Length(256);
+        Map(x => x.Description).Not.Nullable().Length(4096);
+        Map(x => x.Done).Not.Nullable();
+    }
+}
+```
+
+For then to create a view model looking like the following.
+
+```csharp
+public class Todo
+{
+    public Guid? Id { get; set; }
+    public string Header { get; set; }
+    public string Description { get; set; }
+    public bool Done { get; set; }
+}
+```
+
+And then make sure Ninject is using your service implementation, by creating something resembling the following.
+
+```csharp
+public class Initializer : IInitialize
+{
+    public void Initialize(IKernel kernel)
+    {
+        kernel.Bind<ITodoService>().To<TodoService>();
+    }
+}
+```
+
+Notice, without adding more than one line of actual _"code"_, we were still able to create all CRUD HTTP REST endpoints for our domain type,
+arguably _"magically"_, without actually adding any code per se. This is possible due to intelligent use of polymorphism and C# generics, which
+allows our code to become _"Magically DRY"_.
+
+Out of the box Magic is a simple HTTP REST TODO web api, but this is only there to serve as an example. Remove the existing TODO code,
 and replace it with your own code, and you'll literally _hit the ground running_. All parts of your application can easily be modified, extended,
 or changed, by simply overriding that which you need to override. In such a way Magic provides you with a consistent API, allowing you to
 extend and modify that which you need to modify, and having the rest done automagically for you through the powers of Magic. And, everything even
-becomes automagically documented for you!
+becomes automagically documented for you.
+
+In addition, since each HTTP REST endpoint ends up having the exact same API from the client's perspective, adding similar constructs in your
+service layer in for instance Angular becomes easy.
 
 ## Getting started
 
