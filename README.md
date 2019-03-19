@@ -16,7 +16,7 @@ database. Even creating your database will be automagically done by Magic.
 </a>
 </p>
 
-## No code, no bugs, no problems!
+## No code, no bugs, no problems
 
 The whole idea is that Magic allows you to create all CRUD operations on your web APIs, without having to code. This is possible due
 to that HTTP and SQL are basically just fundamentally CRUD operations. Hence, your controller endpoints will end up looking like the following.
