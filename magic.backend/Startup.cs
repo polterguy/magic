@@ -67,7 +67,7 @@ namespace magic.backend
                     Version = "v1",
                     Description = "DESC",
                     TermsOfService = "LICENCE",
-                    Contact = new Contact()
+                    Contact = new Contact
                     {
                         Name = "MAIN_CONTACT",
                         Email = "MAIN_EMAIL",
