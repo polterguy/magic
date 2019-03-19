@@ -217,11 +217,11 @@ c.SwaggerDoc("v1", new Info
 Magic supports MySQL, MSSQL and SQLIte out of the box, but adding support for your own relational database type, can be done with three lines
 of code. This is possible due to the usage of Fluent nHibernate. Magic relies upon the following projects.
 
-* Fluent nHibernate
-* Mapster
-* Ninject
-* Swashbuckle Swagger UI
-* log4net
+* [Fluent nHibernate](https://github.com/FluentNHibernate/fluent-nhibernate)
+* [Ninject](http://www.ninject.org/)
+* [Mapster](https://github.com/MapsterMapper/Mapster)
+* [Swagger UI](https://swagger.io/tools/swagger-ui/)
+* [log4net](https://logging.apache.org/log4net/)
 
 You will probably benefit from understanding these projects as you proceed to create your own projects. However, Magic itself, can easily be
 completely understood in 20 minutes for an experienced C# developer. The whole idea with Magic, is to use existing best practices, coupled
