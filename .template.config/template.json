@@ -1,0 +1,69 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "generatorVersions": "[1.0.0.0-*)",
+    "author": "Thomas Hansen",
+    "classifications": ["Web"],
+    "name": "Super DRY Magic",
+    "identity": "gaiasoul.super.dry.magic",
+    "shortName": "dry-magic",
+    "precedence": "100",
+    "tags": {
+        "language": "C#"
+    },
+    "sourceName": "magic",
+    "preferNameDirectory": true,
+    "sources": [
+      {
+        "source": "./",
+        "target": "./",
+        "exclude": [
+          ".template-config/**",
+          ".git/**"
+        ]
+      }
+    ],
+    "symbols": {
+        "app-title": {
+          "type": "parameter",
+          "datatype": "string",
+          "description": "The title of the application (shown in Swagger)",
+          "replaces": "TITLE",
+          "defaultValue": "Magic"
+        },
+        "app-desc": {
+            "type": "parameter",
+            "datatype": "string",
+            "description": "A description of the application (shown in Swagger)",
+            "replaces": "DESC",
+            "defaultValue": "An Affero GPL Licensed starter kit for ASP.NET Core"
+        },
+        "app-contact-name": {
+            "type": "parameter",
+            "datatype": "string",
+            "description": "The name of the main developer contact (shown in Swagger)",
+            "replaces": "MAIN_CONTACT",
+            "defaultValue": "Thomas Hansen"
+        },
+        "app-contact-email": {
+            "type": "parameter",
+            "datatype": "string",
+            "description": "The email address of the main developer contact (shown in Swagger)",
+            "replaces": "MAIN_EMAIL",
+            "defaultValue": "thomas@gaiasoul.com"
+        },
+        "app-contact-url": {
+            "type": "parameter",
+            "datatype": "string",
+            "description": "The url of the main developer contact (shown in Swagger)",
+            "replaces": "MAIN_URL",
+            "defaultValue": "gaiasoul.com"
+        },
+        "licence-name": {
+            "type": "parameter",
+            "datatype": "string",
+            "description": "The name of the licence for this applicattion (shown in Swagger)",
+            "replaces": "LICENCE",
+            "defaultValue": "Affero GPL"
+        }
+    }
+  }
