@@ -101,10 +101,7 @@ namespace magic.backend
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE");
-            });
+            app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE"));
         }
 
         object Resolve(Type type) => Kernel.Get(type);
