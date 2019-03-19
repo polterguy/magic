@@ -11,7 +11,7 @@ using magic.services.common;
 
 namespace magic.services.todo
 {
-    public sealed class TodoService : CrudService<Todo>, ITodoService
+    public class TodoService : CrudService<Todo>, ITodoService
     {
         public TodoService(ISession session)
             : base(session, LogManager.GetLogger(typeof(TodoService)))
