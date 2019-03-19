@@ -36,7 +36,7 @@ public class TodoController : CrudController<www.Todo, db.Todo>
 While your service implementation will resemble the following.
 
 ```csharp
-public sealed class TodoService : CrudService<Todo>, ITodoService
+public class TodoService : CrudService<Todo>, ITodoService
 {
     public TodoService(ISession session)
         : base(session, LogManager.GetLogger(typeof(TodoService)))
