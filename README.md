@@ -212,7 +212,7 @@ becomes automagically documented for you.
 In addition, since each HTTP REST endpoint ends up having the exact same API from the client's perspective, adding similar constructs in your
 service layer in for instance Angular becomes easy.
 
-## Features
+## Technology
 
 Magic supports MySQL, MSSQL and SQLIte out of the box, but adding support for your own relational database type, can be done with three lines
 of code. This is possible due to the usage of Fluent nHibernate. Magic relies upon the following projects.
