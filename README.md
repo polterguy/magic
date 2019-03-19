@@ -265,7 +265,7 @@ deploy it on any server you wish, ranging from Linux and Windows, to your Mom's 
 
 Thanks to the following contributors.
 
-* [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core.
+* [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core who contributed the CLI template.
 
 ## Licensing, buy me a bottle of Champagne
 
