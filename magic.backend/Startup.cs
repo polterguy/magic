@@ -58,12 +58,6 @@ namespace magic.backend
             services.AddCustomControllerActivation(Resolve);
             services.AddCustomViewComponentActivation(Resolve);
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-            services.AddCors(o => o.AddPolicy("DefaultCors", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
 
             services.AddSwaggerGen(c =>
             {
@@ -103,7 +97,7 @@ namespace magic.backend
             }
 
             app.UseHttpsRedirection();
-            app.UseCors("DefaultCors");
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
             app.UseMvc();
 
             app.UseSwagger();

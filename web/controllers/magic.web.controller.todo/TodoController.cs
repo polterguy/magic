@@ -14,7 +14,6 @@ using www = magic.web.model.todo;
 namespace magic.web.controller.email
 {
     [ApiController]
-    [EnableCors("DefaultCors")]
     [Route("api/todo")]
     public class TodoController : CrudController<www.Todo, db.Todo>
     {
