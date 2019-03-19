@@ -268,6 +268,7 @@ deploy it on any server you wish, ranging from Linux and Windows, to your Mom's 
 Thanks to the following contributors.
 
 * [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core who contributed the CLI template.
+* [Ayende Rahien](https://ayende.com/blog/3983/nhibernate-unit-testing) for giving me tips about how to use SQLite for creating unit tests using the SQLite in memory based database
 
 ## Licensing, buy me a bottle of Champagne
 
