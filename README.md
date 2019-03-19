@@ -261,6 +261,12 @@ schema itself accoding to your `ClassMap` definition(s), but in release builds i
 Ohh yeah, and of course Magic is as portable as it is possible to be. Most projects are .Net Standard 2.0, and you can
 deploy it on any server you wish, ranging from Linux and Windows, to your Mom's toaster if it runs some Linux web server.
 
+## Credits
+
+Thanks to the following contributors.
+
+* [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core.
+
 ## Licensing, buy me a bottle of Champagne
 
 Magic is licensed as Affero GPL, which implies that you can only use it to create Open Source software - However, a proprietary
