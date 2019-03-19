@@ -8,7 +8,7 @@ using magic.services.todo;
 using magic.contracts.todo;
 using magic.contracts.common;
 
-namespace poetry.services.email
+namespace magic.web.controller.todo
 {
     public class Initializer : IInitialize
     {
