@@ -39,7 +39,7 @@ namespace magic.web.controller.common
         /// </summary>
         /// <param name="input">Data for your instance</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         public virtual ActionResult<www.OperationResult> Create([FromBody] WebModel input)
         {
             var id = _service.Create(_adapter.Adapt<DbModel>(input));
@@ -80,7 +80,7 @@ namespace magic.web.controller.common
         /// </summary>
         /// <param name="account">Item to update</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPut]
         public virtual ActionResult<www.OperationResult> Update([FromBody] WebModel account)
         {
             _service.Update(_adapter.Adapt<DbModel>(account));
