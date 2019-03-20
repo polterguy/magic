@@ -119,9 +119,9 @@ extend and modify that which you need to modify, and having the rest done automa
 becomes automagically documented for you.
 
 In addition, since each HTTP REST endpoint ends up having the exact same API from the client's perspective, adding similar constructs in your
-service layer in for instance Angular becomes easy. And in fact, out of the box similar construct are be applied to your unit tests, allowing you
-to create unit tests generically, by inheriting from intelligent base classes, giving all your controllers unit tests _"magically out of the box"_
-for your CRUD operations, almost without having to create code.
+service layer in for instance Angular becomes easy. Out of the box similar construct are also applied to your unit tests, allowing you
+to create unit tests generically, by inheriting from intelligent base classes, giving all your controllers unit tests _"magically out of the box"_,
+almost without having to create code.
 
 ## .NET Core CLI Template
 
