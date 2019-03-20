@@ -22,31 +22,6 @@ database. Even creating your database will be automagically done by Magic.
 * Unzip and open _"magic.sln"_ in Visual Studio
 * Click F5
 
-### .NET Core CLI Template
-
-This repository also includes a .NET Core CLI template which can be installed by:
-
-* Download and unzip the latest version
-* Open a terminal in the parent folder of the repo
-  * i.e. one level above the root of the repo
-  * if you unzipped to `~/code/magic`, then open the terminal at `~/code/`
-* Run the following command: `dotnet new --install magic`
-
-This will install the contents of this repo as a template, which you can use alongside the .NET Core CLI in the following manner:
-
-`dotnet new magic --help`
-
-This will show the list of command line switches which are available, along with descriptions and their default values.
-Creating a new instance of the magic code base is as simple as issuing the following command:
-
-`dotnet new magic --name foo`
-
-After the scaffolding process completes, you will find a copy of the code base in 
-the `./foo/` folder. The `--name` switch will take care of full namespace replacement, and the optional switches will have their
-default values supplied. As an example of how to override them, here is the same command but with some of the optional switches provided:
-
-`dotnet new magic --name PodCast -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
-
 ## No code, no bugs, no problems
 
 The whole idea is that Magic allows you to create all CRUD operations on your web APIs, without having to code. This is possible due
@@ -148,6 +123,31 @@ service layer in for instance Angular becomes easy. And in fact, out of the box 
 to create unit tests generically, by inheriting from intelligent base classes, giving all your controllers unit tests _"magically out of the box"_
 for your CRUD operations, almost without having to create code.
 
+## .NET Core CLI Template
+
+This repository also includes a .NET Core CLI template which can be installed by:
+
+* Download and unzip the latest version
+* Open a terminal in the parent folder of the repo
+  * i.e. one level above the root of the repo
+  * if you unzipped to `~/code/magic`, then open the terminal at `~/code/`
+* Run the following command: `dotnet new --install magic`
+
+This will install the contents of this repo as a template, which you can use alongside the .NET Core CLI in the following manner:
+
+`dotnet new magic --help`
+
+This will show the list of command line switches which are available, along with descriptions and their default values.
+Creating a new instance of the magic code base is as simple as issuing the following command:
+
+`dotnet new magic --name foo`
+
+After the scaffolding process completes, you will find a copy of the code base in 
+the `./foo/` folder. The `--name` switch will take care of full namespace replacement, and the optional switches will have their
+default values supplied. As an example of how to override them, here is the same command but with some of the optional switches provided:
+
+`dotnet new magic --name PodCast -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
+
 ## Technology
 
 Magic supports MySQL, MSSQL and SQLIte out of the box, but adding support for your own relational database type, can be done with three lines
@@ -202,7 +202,6 @@ deploy it on any server you wish, ranging from Linux and Windows, to your Mom's 
 Thanks to the following contributors.
 
 * [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core who contributed the CLI template.
-* [Ayende Rahien](https://ayende.com/blog/3983/nhibernate-unit-testing) for giving me tips about how to use SQLite for creating unit tests using the SQLite in memory based database
 
 ## Licensing, buy me a bottle of Champagne
 
