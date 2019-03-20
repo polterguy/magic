@@ -26,10 +26,10 @@ database. Even creating your database will be automagically done by Magic.
 
 This repository also includes a .NET Core CLI template which can be installed by:
 
-* Clone the repo
-* Open a terminal in the parent of the repo
+* Download and unzip the latest version
+* Open a terminal in the parent folder of the repo
   * i.e. one level above the root of the repo
-  * if you cloned to `~/code/magic`, then open the terminal at `~/code/`
+  * if you unzipped to `~/code/magic`, then open the terminal at `~/code/`
 * Run the following command: `dotnet new --install magic`
 
 This will install the contents of this repo as a template, which you can use alongside the .NET Core CLI in the following manner:
@@ -37,81 +37,15 @@ This will install the contents of this repo as a template, which you can use alo
 `dotnet new magic --help`
 
 This will show the list of command line switches which are available, along with descriptions and their default values.
-
-```
-Super DRY Magic (C#)
-Author: Thomas Hansen
-Options:                                                                                      
-  -at|--app-title           The title of the application (shown in Swagger)                   
-                            string - Optional                                                 
-                            Default: Magic                                                    
-
-  -ad|--app-desc            A description of the application (shown in Swagger)               
-                            string - Optional                                                 
-                            Default: An Affero GPL Licensed starter kit for ASP.NET Core      
-
-  -acn|--app-contact-name   The name of the main developer contact (shown in Swagger)         
-                            string - Optional                                                 
-                            Default: Thomas Hansen                                            
-
-  -ace|--app-contact-email  The email address of the main developer contact (shown in Swagger)
-                            string - Optional                                                 
-                            Default: thomas@gaiasoul.com                                      
-
-  -acu|--app-contact-url    The url of the main developer contact (shown in Swagger)          
-                            string - Optional                                                 
-                            Default: gaiasoul.com                                             
-
-  -ln|--licence-name        The name of the licence for this applicattion (shown in Swagger)  
-                            string - Optional                                                 
-                            Default: Affero GPL
-```
-
 Creating a new instance of the magic code base is as simple as issuing the following command:
 
-`dotnet new magic --name super.dry.magic.application`
+`dotnet new magic --name foo`
 
-After the scaffolding process completes, you will find a copy of the code base in the `./super.dry.magic.application/` directory. The `--name` switch will take care of full namespace replacement, and the optional switches (shown above) will have their default values supplied.
+After the scaffolding process completes, you will find a copy of the code base in 
+the `./foo/` folder. The `--name` switch will take care of full namespace replacement, and the optional switches will have their
+default values supplied. As an example of how to override them, here is the same command but with some of the optional switches provided:
 
-As an example of how to override them, here is the same command but with some of the optional switches provided:
-
-`dotnet new magic --name super.dry.magic.application -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
-
-This is replace the contents of the following lines in the startup.cs class:
-
-``` csharp
-c.SwaggerDoc("v1", new Info
-    {
-        Title = "TITLE",
-        Version = "v1",
-        Description = "DESC",
-        TermsOfService = "LICENCE",
-        Contact = new Contact()
-        {
-            Name = "MAIN_CONTACT",
-            Email = "MAIN_EMAIL",
-            Url = "MAIN_URL"
-        }
-    });
-```
-
-With the following:
-
-``` csharp
-c.SwaggerDoc("v1", new Info
-    {
-        Title = "Magic",
-        Version = "v1",
-        Description = "Some test magic",
-        TermsOfService = "Affero GPL",
-        Contact = new Contact()
-        {
-            Name = "Jamie Taylor",
-            Email = "jamie@gaprogman.com",
-            Url = "https://dotnetcore.show"
-        }
-    });
-```
+`dotnet new magic --name PodCast -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
 
 ## No code, no bugs, no problems
 
