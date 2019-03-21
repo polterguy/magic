@@ -24,9 +24,6 @@ namespace magic.backend.init
             {
                 kernel.Bind(ctrlType).ToSelf().InScope(requestScope);
             }
-            kernel.Bind<IConfiguration>().ToConstant(configuration);
-            kernel.Bind<IAdapter>().To<Adapter>();
-            kernel.Bind<ILog>().ToMethod((ctx) => LogManager.GetLogger(typeof(IKernel)));
             return kernel;
         }
     }

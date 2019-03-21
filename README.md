@@ -33,8 +33,8 @@ to that HTTP and SQL are basically just fundamentally CRUD operations. Hence, yo
 [Route("api/todo")]
 public class TodoController : CrudController<www.Todo, db.Todo>
 {
-    public TodoController(IAdapter adapter, ITodoService service)
-        : base(adapter, service)
+    public TodoController(ITodoService service)
+        : base(service)
     { }
 }
 ```
