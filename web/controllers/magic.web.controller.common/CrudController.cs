@@ -20,17 +20,14 @@ namespace magic.web.controller.common
     /// <typeparam name="DbModel">Database model type that is actually persisted into your database</typeparam>
     public abstract class CrudController<WebModel, DbModel> : ControllerBase
     {
-        readonly IAdapter _adapter;
         readonly ICrudService<DbModel> _service;
 
         /// <summary>
         /// Creates a new CRUD controller
         /// </summary>
-        /// <param name="adapter">Mapster adapter to use for adapting from your view model to your database model</param>
         /// <param name="service">The underlaying service implementing the CRUD operations for your domain type</param>
-        public CrudController(IAdapter adapter, ICrudService<DbModel> service)
+        public CrudController(ICrudService<DbModel> service)
         {
-            _adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
@@ -42,7 +39,7 @@ namespace magic.web.controller.common
         [HttpPost]
         public virtual ActionResult<www.OperationResult> Create([FromBody] WebModel input)
         {
-            var id = _service.Create(_adapter.Adapt<DbModel>(input));
+            var id = _service.Create(input.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
                 Message = $"{typeof(DbModel).Name} with the id of '{id}' was successfully created",
@@ -59,7 +56,7 @@ namespace magic.web.controller.common
         [Route("{id:Guid}")]
         public virtual ActionResult<WebModel> Get(Guid id)
         {
-            return Ok(_adapter.Adapt<WebModel>(_service.Get(id)));
+            return Ok(_service.Get(id).Adapt<WebModel>());
         }
 
         /// <summary>
@@ -72,7 +69,7 @@ namespace magic.web.controller.common
         public virtual ActionResult<IEnumerable<WebModel>> List(int offset = 0, int limit = 50)
         {
             var accounts = _service.List(offset, limit);
-            return Ok(accounts.Select(x => _adapter.Adapt<WebModel>(x)));
+            return Ok(accounts.Select(x => x.Adapt<WebModel>()));
         }
 
         /// <summary>
@@ -83,7 +80,7 @@ namespace magic.web.controller.common
         [HttpPut]
         public virtual ActionResult<www.OperationResult> Update([FromBody] WebModel account)
         {
-            _service.Update(_adapter.Adapt<DbModel>(account));
+            _service.Update(account.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
                 Message = $"{typeof(DbModel).Name} was successfully updated",

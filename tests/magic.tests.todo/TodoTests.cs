@@ -20,7 +20,7 @@ namespace magic.tests.todo
 
         protected override TodoController CreateController(Connection connection)
         {
-            return new TodoController(new Adapter(), new TodoService(connection.Session));
+            return new TodoController(new TodoService(connection.Session));
         }
 
         protected override www.Todo CreateModel(int no)
