@@ -16,17 +16,23 @@ namespace magic.backend.init
     {
         public static void Initialize(IKernel kernel)
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-            var loadedPaths = loadedAssemblies.Where(x => !x.IsDynamic).Select(a => a.Location).ToArray();
-            var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
-            var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
-            toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+            // Forcing all assemblies in base directory of web app into AppDomain
+            var assemblyPaths = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.IsDynamic)
+                .Select(x => x.Location);
+            var loadedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            var unloadedAssemblies = loadedPaths
+                .Where(r => !assemblyPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase));
+            foreach (var idx in unloadedAssemblies)
+            {
+                AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(idx));
+            }
 
+            // Instantiating and invoking IInitialize.Initialize on all types that requires such
             var type = typeof(IInitialize);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface);
-
+                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
             foreach (var idx in types)
             {
                 var initializer = Activator.CreateInstance(idx) as IInitialize;
