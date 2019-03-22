@@ -24,6 +24,7 @@ namespace magic.backend.init
             {
                 kernel.Bind(ctrlType).ToSelf().InScope(requestScope);
             }
+            kernel.Bind<IConfiguration>().ToConstant(configuration);
             return kernel;
         }
     }

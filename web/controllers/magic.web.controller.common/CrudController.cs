@@ -20,7 +20,7 @@ namespace magic.web.controller.common
     /// <typeparam name="DbModel">Database model type that is actually persisted into your database</typeparam>
     public abstract class CrudController<WebModel, DbModel> : ControllerBase
     {
-        readonly ICrudService<DbModel> _service;
+        protected readonly ICrudService<DbModel> Service;
 
         /// <summary>
         /// Creates a new CRUD controller
@@ -28,7 +28,7 @@ namespace magic.web.controller.common
         /// <param name="service">The underlaying service implementing the CRUD operations for your domain type</param>
         public CrudController(ICrudService<DbModel> service)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
+            Service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace magic.web.controller.common
         [HttpPost]
         public virtual ActionResult<www.OperationResult> Create([FromBody] WebModel input)
         {
-            var id = _service.Create(input.Adapt<DbModel>());
+            var id = Service.Create(input.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
                 Message = $"{typeof(DbModel).Name} with the id of '{id}' was successfully created",
@@ -56,7 +56,7 @@ namespace magic.web.controller.common
         [Route("{id:Guid}")]
         public virtual ActionResult<WebModel> Get(Guid id)
         {
-            return Ok(_service.Get(id).Adapt<WebModel>());
+            return Ok(Service.Get(id).Adapt<WebModel>());
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace magic.web.controller.common
         [HttpGet]
         public virtual ActionResult<IEnumerable<WebModel>> List(int offset = 0, int limit = 50)
         {
-            var accounts = _service.List(offset, limit);
+            var accounts = Service.List(offset, limit);
             return Ok(accounts.Select(x => x.Adapt<WebModel>()));
         }
 
@@ -80,7 +80,7 @@ namespace magic.web.controller.common
         [HttpPut]
         public virtual ActionResult<www.OperationResult> Update([FromBody] WebModel account)
         {
-            _service.Update(account.Adapt<DbModel>());
+            Service.Update(account.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
                 Message = $"{typeof(DbModel).Name} was successfully updated",
@@ -96,7 +96,7 @@ namespace magic.web.controller.common
         [Route("{id:Guid}")]
         public virtual ActionResult<www.OperationResult> Delete(Guid id)
         {
-            _service.Delete(id);
+            Service.Delete(id);
             return Ok(new www.OperationResult
             {
                 Message = $"{typeof(DbModel).Name} with the id of '{id}' was successfully deleted",
@@ -112,7 +112,7 @@ namespace magic.web.controller.common
         [Route("count")]
         public virtual ActionResult<long> Count()
         {
-            var count = _service.Count();
+            var count = Service.Count();
             return Ok(count);
         }
     }
