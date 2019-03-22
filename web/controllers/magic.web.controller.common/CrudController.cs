@@ -20,6 +20,9 @@ namespace magic.web.controller.common
     /// <typeparam name="DbModel">Database model type that is actually persisted into your database</typeparam>
     public abstract class CrudController<WebModel, DbModel> : ControllerBase
     {
+        /// <summary>
+        /// Service implementing business logic for controller endpoints
+        /// </summary>
         protected readonly ICrudService<DbModel> Service;
 
         /// <summary>
