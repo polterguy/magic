@@ -3,14 +3,13 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using Mapster;
+using Xunit;
 using magic.tests.common;
 using magic.services.todo;
 using magic.web.controller.email;
 using magic.tests.common.utilities;
 using db = magic.model.todo;
 using www = magic.web.model.todo;
-using Xunit;
 
 namespace magic.tests.todo
 {

@@ -4,16 +4,14 @@
  */
 
 using System;
-using System.Data.Common;
-using Ninject;
 using System.Reflection;
+using Mapster;
+using Ninject;
 using NHibernate;
-using NHibernate.Connection;
 using NHibernate.Tool.hbm2ddl;
-using cnf = NHibernate.Cfg;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using Mapster;
+using cnf = NHibernate.Cfg;
 
 namespace magic.tests.common.utilities
 {
