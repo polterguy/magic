@@ -3,17 +3,8 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System;
 using System.Data.Common;
-using Ninject;
-using System.Reflection;
-using NHibernate;
 using NHibernate.Connection;
-using NHibernate.Tool.hbm2ddl;
-using cnf = NHibernate.Cfg;
-using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
-using Mapster;
 
 namespace magic.tests.common.utilities
 {
