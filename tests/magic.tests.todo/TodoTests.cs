@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using System.Linq;
 using Xunit;
 using FluentNHibernate.Testing;
@@ -23,10 +24,10 @@ namespace magic.tests.todo
             using (var connection = new Connection(GetAssemblies().ToArray()))
             {
                 new PersistenceSpecification<db.Todo>(connection.Session)
-                    .CheckProperty(x => x.Id, 1)
                     .CheckProperty(x => x.Description, "Foo bar description")
                     .CheckProperty(x => x.Done, false)
-                    .CheckProperty(x => x.Header, "Some header");
+                    .CheckProperty(x => x.Header, "Some header")
+                    .VerifyTheMappings();
             }
         }
 
