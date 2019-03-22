@@ -4,8 +4,6 @@
  */
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
-using Mapster;
 using magic.contracts.todo;
 using magic.web.controller.common;
 using db = magic.model.todo;
