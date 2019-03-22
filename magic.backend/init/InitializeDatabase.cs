@@ -48,13 +48,28 @@ namespace magic.backend.init
             switch (database.Type)
             {
                 case "MSSQL":
-                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2012.ConnectionString(database.Connection).ShowSql());
+                    // Notice, version 2012
+                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2012.ConnectionString(database.Connection));
                     break;
                 case "MySQL":
                     db = Fluently.Configure().Database(MySQLConfiguration.Standard.ConnectionString(database.Connection));
                     break;
                 case "SQLIte":
                     db = Fluently.Configure().Database(SQLiteConfiguration.Standard.ConnectionString(database.Connection));
+                    break;
+
+                // Specific versions of MS SQL
+                case "MsSql7":
+                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql7.ConnectionString(database.Connection));
+                    break;
+                case "MsSql2008":
+                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2008.ConnectionString(database.Connection));
+                    break;
+                case "MsSql2005":
+                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2005.ConnectionString(database.Connection));
+                    break;
+                case "MsSql2000":
+                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2000.ConnectionString(database.Connection));
                     break;
                 default:
                     throw new ConfigurationErrorsException($"The database type of '{database.Type}' is unsupported. Please edit your configuration file.");
