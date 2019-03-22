@@ -330,3 +330,7 @@ ASALocalRun/
 .mfractor/
 magic.backend/data.db
 web/controllers/magic.web.controller.common/magic.web.controller.common.xml
+
+# Excluding all sub modules
+modules/*
+!modules/README.md
