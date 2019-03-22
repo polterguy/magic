@@ -9,6 +9,6 @@ namespace magic.model.common
 {
     public class Model
     {
-        public virtual Guid Id { get; set; }
+        public virtual Guid Id { get; protected set; }
     }
 }
