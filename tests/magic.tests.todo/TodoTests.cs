@@ -3,7 +3,9 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System.Linq;
 using Xunit;
+using FluentNHibernate.Testing;
 using magic.tests.common;
 using magic.services.todo;
 using magic.web.controller.email;
@@ -15,6 +17,19 @@ namespace magic.tests.todo
 {
     public class TodoTests : CrudTest<TodoController, www.Todo, db.Todo>
     {
+        [Fact]
+        public void CanCorrectlyMap()
+        {
+            using (var connection = new Connection(GetAssemblies().ToArray()))
+            {
+                new PersistenceSpecification<db.Todo>(connection.Session)
+                    .CheckProperty(x => x.Id, 1)
+                    .CheckProperty(x => x.Description, "Foo bar description")
+                    .CheckProperty(x => x.Done, false)
+                    .CheckProperty(x => x.Header, "Some header");
+            }
+        }
+
         #region [ -- Abstract implementations -- ]
 
         protected override TodoController CreateController(Connection connection)

@@ -127,7 +127,7 @@ namespace magic.tests.common
             return Assert.IsAssignableFrom<IEnumerable<T>>(((OkObjectResult)input.Result).Value);
         }
 
-        IEnumerable<Assembly> GetAssemblies()
+        protected IEnumerable<Assembly> GetAssemblies()
         {
             var type = typeof(IMappingProvider);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
