@@ -206,11 +206,11 @@ Thanks to the following contributors.
 ## Licensing, buy me a bottle of Champagne
 
 Magic is licensed as Affero GPL, which implies that you can only use it to create Open Source software - However, a proprietary
-enabling license can be obtained for $50 by following [this PayPal link](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W5AG4JZE2TL98) and
-pay me $50 dollars - At which point you are free to create _one_ closed source web app. If you want to create multiple closed source web APIs using Magic, you'll
+enabling license can be obtained for €50 by following [this PayPal link](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MD8B9E2X638QS) and
+pay me €50 - At which point you are free to create _one_ closed source web app. If you want to create multiple closed source web APIs using Magic, you'll
 have to purchase one license for each web API project you want to create.
 
-* [Purchase closed source license for $50](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W5AG4JZE2TL98)
+* [Purchase closed source license for €50](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MD8B9E2X638QS)
 
 Notice, without a closed source license, your code automatically becomes Open Source, and you'll have to provide a link to your own source code from any website(s),
 and/or application(s) from where you are consuming your Magic web API. With a closed source license, you can create closed source code, and you don't have to provide
