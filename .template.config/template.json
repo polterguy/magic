@@ -1,10 +1,10 @@
 {
     "$schema": "http://json.schemastore.org/template",
     "author": "Thomas Hansen",
-    "classifications": ["Web"],
+    "classifications": ["Web","WebAPI"],
     "name": "Super DRY Magic",
     "identity": "gaiasoul.super.dry.magic",
-    "shortName": "dry-magic",
+    "shortName": "magic",
     "precedence": "100",
     "tags": {
         "language": "C#"
