@@ -131,22 +131,22 @@ This repository also includes a .NET Core CLI template which can be installed by
 * Open a terminal in the parent folder of the repo
   * i.e. one level above the root of the repo
   * if you unzipped to `~/code/magic`, then open the terminal at `~/code/`
-* Run the following command: `dotnet new --install magic`
+* Run the following command: `dotnet new --install ./magic`
 
 This will install the contents of this repo as a template, which you can use alongside the .NET Core CLI in the following manner:
 
-`dotnet new magic --help`
+`dotnet new dry-magic --help`
 
 This will show the list of command line switches which are available, along with descriptions and their default values.
 Creating a new instance of the magic code base is as simple as issuing the following command:
 
-`dotnet new magic --name foo`
+`dotnet new dry-magic --name foo`
 
 After the scaffolding process completes, you will find a copy of the code base in 
 the `./foo/` folder. The `--name` switch will take care of full namespace replacement, and the optional switches will have their
 default values supplied. As an example of how to override them, here is the same command but with some of the optional switches provided:
 
-`dotnet new magic --name PodCast -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
+`dotnet new dry-magic --name PodCast -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
 
 ## Technology
 
