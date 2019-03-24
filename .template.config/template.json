@@ -4,12 +4,12 @@
     "classifications": ["Web","WebAPI"],
     "name": "Super DRY Magic",
     "identity": "gaiasoul.super.dry.magic",
-    "shortName": "dry-magic",
+    "shortName": "magic",
     "precedence": "100",
     "tags": {
         "language": "C#"
     },
-    "sourceName": "dry-magic",
+    "sourceName": "magic",
     "preferNameDirectory": true,
     "sources": [
       {
