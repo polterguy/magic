@@ -334,3 +334,7 @@ web/controllers/magic.web.controller.common/magic.web.controller.common.xml
 # Excluding all sub modules
 modules/*
 !modules/README.md
+
+# Excluding all uploaded files
+magic.backend/files/*
+!magic.backend/files/README.md
