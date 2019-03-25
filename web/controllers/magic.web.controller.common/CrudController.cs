@@ -78,12 +78,12 @@ namespace magic.web.controller.common
         /// <summary>
         /// Updates the specified item
         /// </summary>
-        /// <param name="account">Item to update</param>
+        /// <param name="model">Item to update</param>
         /// <returns></returns>
         [HttpPut]
-        public virtual ActionResult<www.OperationResult> Update([FromBody] WebModel account)
+        public virtual ActionResult<www.OperationResult> Update([FromBody] WebModel model)
         {
-            Service.Update(account.Adapt<DbModel>());
+            Service.Update(model.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
                 Message = $"{typeof(DbModel).Name} was successfully updated",
