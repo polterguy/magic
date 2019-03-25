@@ -71,8 +71,8 @@ namespace magic.web.controller.common
         [HttpGet]
         public virtual ActionResult<IEnumerable<WebModel>> List(int offset = 0, int limit = 50)
         {
-            var accounts = Service.List(offset, limit);
-            return Ok(accounts.Select(x => x.Adapt<WebModel>()));
+            var list = Service.List(offset, limit);
+            return Ok(list.Select(x => x.Adapt<WebModel>()));
         }
 
         /// <summary>
