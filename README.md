@@ -197,6 +197,14 @@ schema itself accoding to your `ClassMap` definition(s), but in release builds i
 Ohh yeah, and of course Magic is as portable as it is possible to be. Most projects are .Net Standard 2.0, and you can
 deploy it on any server you wish, ranging from Linux and Windows, to your Mom's toaster if it runs some Linux web server.
 
+## Modules
+
+I will be creating additional modules for Magic every now and then, as I see the need. I'll try to link these in
+here as I wrap them up.
+
+* [Email module](https://github.com/polterguy/magic.email) giving you a webmail backend for retrieving emails from
+POP3 accounts and sending emails over SMTP.
+
 ## Credits
 
 Thanks to the following contributors.
