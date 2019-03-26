@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Reflection;
 using System.Collections.Generic;
@@ -43,6 +44,19 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Forcing all assemblies in base directory of web app into AppDomain
+            var assemblyPaths = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.IsDynamic)
+                .Select(x => x.Location);
+            var loadedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            var unloadedAssemblies = loadedPaths
+                .Where(r => !assemblyPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase));
+            foreach (var idx in unloadedAssemblies)
+            {
+                AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(idx));
+            }
+
+            // Loading all controllers referenced in "plugins" section from appsettings.json.
             var mvcBuilder = services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -53,12 +67,17 @@ namespace magic.backend
                 mvcBuilder.AddApplicationPart(Assembly.Load(new AssemblyName(idxPlugin.Name)));
             }
 
+            // Making sure all dynamically loaded assemblies are able to configure the service collection.
+            ServicesConfigurator.Configure(services);
+
+            // Making sure we're able to use Ninject as DI library.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddRequestScopingMiddleware(() => scopeProvider.Value = new Scope());
             services.AddCustomControllerActivation(Resolve);
             services.AddCustomViewComponentActivation(Resolve);
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
+            // Adding Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -83,6 +102,7 @@ namespace magic.backend
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Initializing Ninject and making sure all assemblies that requires initialization of Ninject to do just that.
             Kernel = InitializeNinject.Initialize(app, Configuration, RequestScope);
             InitializeDatabase.Initialize(Kernel, Configuration, RequestScope);
             InitializeServices.Initialize(Kernel);
