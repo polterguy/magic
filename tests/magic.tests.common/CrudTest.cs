@@ -57,7 +57,9 @@ namespace magic.tests.common
                 var createResult = Single(controller.Create(CreateModel(0)));
                 var afterCreate = Single(controller.Get(createResult.Id.Value));
                 ModifyModel(afterCreate);
-                AssertModelAfterModified(afterCreate);
+                controller.Update(afterCreate);
+                var afterUpdate = Single(controller.Get(createResult.Id.Value));
+                AssertModelAfterModified(afterUpdate);
             }
         }
 
