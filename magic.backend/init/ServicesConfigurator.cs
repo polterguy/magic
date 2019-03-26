@@ -4,18 +4,16 @@
  */
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Ninject;
 using magic.contracts.common;
 
 namespace magic.backend.init
 {
     public class ServicesConfigurator
     {
-        public static void Configure(IServiceCollection services)
+        public static void Configure(IServiceCollection services, IConfiguration configuration)
         {
             // Instantiating and invoking IConfigureServices.Configure on all types that requires such
             var type = typeof(IConfigureServices);
@@ -25,7 +23,7 @@ namespace magic.backend.init
             foreach (var idx in types)
             {
                 var initializer = Activator.CreateInstance(idx) as IConfigureServices;
-                initializer.Configure(services);
+                initializer.Configure(services, configuration);
             }
         }
     }

@@ -3,12 +3,13 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace magic.contracts.common
 {
     public interface IConfigureServices
     {
-        void Configure(IServiceCollection services);
+        void Configure(IServiceCollection services, IConfiguration configuration);
     }
 }
