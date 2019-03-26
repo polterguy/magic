@@ -15,25 +15,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "model", "model", "{D20C1D7E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "controllers", "controllers", "{FFC3D45E-5FD7-4548-8824-549DD13E60B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.controller.todo", "web\controllers\magic.web.controller.todo\magic.web.controller.todo.csproj", "{0992D8CF-9A82-4726-AF23-F8FA52FD7A35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.web.controller", "web\controllers\magic.todo.web.controller\magic.todo.web.controller.csproj", "{0992D8CF-9A82-4726-AF23-F8FA52FD7A35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.contracts.common", "contracts\magic.contracts.common\magic.contracts.common.csproj", "{80D4A60E-E303-4AA3-ABAF-5C7AEB3572C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.contracts.common", "contracts\magic.common.contracts\magic.common.contracts.csproj", "{80D4A60E-E303-4AA3-ABAF-5C7AEB3572C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.contracts.todo", "contracts\magic.contracts.todo\magic.contracts.todo.csproj", "{CC931DBA-A453-416B-A56E-E841F14CA21C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.contracts.todo", "contracts\magic.todo.contracts\magic.todo.contracts.csproj", "{CC931DBA-A453-416B-A56E-E841F14CA21C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.model.todo", "model\magic.model.todo\magic.model.todo.csproj", "{6CF1C15B-071C-4535-B2FE-224091AC3695}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.model.todo", "model\magic.todo.model\magic.todo.model.csproj", "{6CF1C15B-071C-4535-B2FE-224091AC3695}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.model.common", "model\magic.model.common\magic.model.common.csproj", "{BB323EC3-9582-48F6-98BF-232B3284662B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.model.common", "model\magic.common.model\magic.common.model.csproj", "{BB323EC3-9582-48F6-98BF-232B3284662B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.controller.common", "web\controllers\magic.web.controller.common\magic.web.controller.common.csproj", "{DEA15BFE-D4C5-4F88-870B-DDC6F9EA6AB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.web.controller", "web\controllers\magic.common.web.controller\magic.common.web.controller.csproj", "{DEA15BFE-D4C5-4F88-870B-DDC6F9EA6AB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.services.common", "services\magic.services.common\magic.services.common.csproj", "{331F9687-AB42-4807-A8D3-98720F7548D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.services", "services\magic.common.services\magic.common.services.csproj", "{331F9687-AB42-4807-A8D3-98720F7548D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.services.todo", "services\magic.services.todo\magic.services.todo.csproj", "{C55413AD-C17F-428F-AD57-3A62E7711C04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.services", "services\magic.todo.services\magic.todo.services.csproj", "{C55413AD-C17F-428F-AD57-3A62E7711C04}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.model.common", "web\model\magic.web.model.common\magic.web.model.common.csproj", "{28C409CC-6485-4462-83E7-FE8CE3C1B9A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.web.model", "web\model\magic.common.web.model\magic.common.web.model.csproj", "{28C409CC-6485-4462-83E7-FE8CE3C1B9A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.web.model.todo", "web\model\magic.web.model.todo\magic.web.model.todo.csproj", "{58DDB6D8-9BF7-4925-BE8A-9BF70B963CD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.web.model", "web\model\magic.todo.web.model\magic.todo.web.model.csproj", "{58DDB6D8-9BF7-4925-BE8A-9BF70B963CD5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.backend", "magic.backend\magic.backend.csproj", "{78BCDBA1-ECF4-4A7E-A4EA-A29C54670999}"
 EndProject
@@ -44,9 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7E36B972-6C09-44A6-9A86-B6730C0BC775}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests.todo", "tests\magic.tests.todo\magic.tests.todo.csproj", "{8A2E81B5-03E5-49A2-9A11-AED1594541ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.tests", "tests\magic.todo.tests\magic.todo.tests.csproj", "{8A2E81B5-03E5-49A2-9A11-AED1594541ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests.common", "tests\magic.tests.common\magic.tests.common.csproj", "{18827BE0-B751-4AAC-AD24-6BBC46D014CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.tests", "tests\magic.common.tests\magic.common.tests.csproj", "{18827BE0-B751-4AAC-AD24-6BBC46D014CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{B3DD2370-4EDD-4D06-A682-F37B3BC2F1CD}"
 	ProjectSection(SolutionItems) = preProject
