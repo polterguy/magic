@@ -4,11 +4,9 @@
  */
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Ninject;
-using magic.contracts.common;
+using magic.common.contracts;
 
 namespace magic.backend.init
 {
