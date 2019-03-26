@@ -7,24 +7,25 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject;
 using magic.contracts.common;
 
 namespace magic.backend.init
 {
-    public class InitializeServices
+    public class ServicesConfigurator
     {
-        public static void Initialize(IKernel kernel)
+        public static void Configure(IServiceCollection services)
         {
-            // Instantiating and invoking IInitialize.Initialize on all types that requires such
-            var type = typeof(IInitialize);
+            // Instantiating and invoking IConfigureServices.Configure on all types that requires such
+            var type = typeof(IConfigureServices);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
             foreach (var idx in types)
             {
-                var initializer = Activator.CreateInstance(idx) as IInitialize;
-                initializer.Initialize(kernel);
+                var initializer = Activator.CreateInstance(idx) as IConfigureServices;
+                initializer.Configure(services);
             }
         }
     }
