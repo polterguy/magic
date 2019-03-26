@@ -68,7 +68,7 @@ namespace magic.backend
             }
 
             // Making sure all dynamically loaded assemblies are able to configure the service collection.
-            ServicesConfigurator.Configure(services);
+            ServicesConfigurator.Configure(services, Configuration);
 
             // Making sure we're able to use Ninject as DI library.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
