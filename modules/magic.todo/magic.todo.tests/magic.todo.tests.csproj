@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\web\controllers\magic.todo.web.controller\magic.todo.web.controller.csproj" />
-    <ProjectReference Include="..\magic.common.tests\magic.common.tests.csproj" />
+    <ProjectReference Include="..\..\magic.common\magic.common.tests\magic.common.tests.csproj" />
+    <ProjectReference Include="..\magic.todo.web.controller\magic.todo.web.controller.csproj" />
   </ItemGroup>
 
 </Project>

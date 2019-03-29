@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\magic.common.model\magic.common.model.csproj" />
+    <ProjectReference Include="..\..\magic.common\magic.common.model\magic.common.model.csproj" />
   </ItemGroup>
 
 </Project>

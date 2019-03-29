@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\model\magic.todo.model\magic.todo.model.csproj" />
+    <PackageReference Include="FluentNHibernate" Version="2.1.2" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\magic.common.contracts\magic.common.contracts.csproj" />
+    <ProjectReference Include="..\magic.common.model\magic.common.model.csproj" />
   </ItemGroup>
 
 </Project>
