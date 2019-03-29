@@ -44,29 +44,8 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Forcing all assemblies in base directory of web app into AppDomain
-            var assemblyPaths = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => !x.IsDynamic)
-                .Select(x => x.Location);
-            var loadedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
-            var unloadedAssemblies = loadedPaths
-                .Where(r => !assemblyPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase));
-            foreach (var idx in unloadedAssemblies)
-            {
-                AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(idx));
-            }
-
             // Loading all controllers referenced in "plugins" section from appsettings.json.
-            var mvcBuilder = services
-                .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            var plugins = new List<Plugin>();
-            Configuration.GetSection("plugins").Bind(plugins);
-            foreach (var idxPlugin in plugins)
-            {
-                if (File.Exists(idxPlugin.Name))
-                    mvcBuilder.AddApplicationPart(Assembly.Load(new AssemblyName(idxPlugin.Name)));
-            }
+            var mvcBuilder = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Making sure all dynamically loaded assemblies are able to configure the service collection.
             ServicesConfigurator.Configure(services, Configuration);
