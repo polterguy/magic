@@ -16,6 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{B3DD
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.common", "magic.common", "{89EC3559-B3D5-45A6-A630-555D55303992}"
+	ProjectSection(SolutionItems) = preProject
+		modules\magic.common\README.md = modules\magic.common\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.contracts", "modules\magic.common\magic.common.contracts\magic.common.contracts.csproj", "{7B4EC199-BF63-4B2B-B55D-B559B8B89757}"
 EndProject
