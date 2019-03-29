@@ -28,7 +28,6 @@ namespace magic.common.services
         {
             Logger.Info($"Creating {typeof(DbModel).Name}");
             Session.Save(model);
-            Session.Flush();
             return model.Id;
         }
 
@@ -38,7 +37,6 @@ namespace magic.common.services
             var query = Session.CreateQuery($"delete from {typeof(DbModel).Name} where Id = :id");
             query.SetParameter("id", id);
             var result = query.ExecuteUpdate();
-            Session.Flush();
             if (result != 1)
                 throw new ArgumentOutOfRangeException($"{typeof(DbModel).Name} with the id of '{id}' was not found");
         }
@@ -63,7 +61,6 @@ namespace magic.common.services
         {
             Logger.Info($"Updating {typeof(DbModel)} with id of '{model.Id}'");
             Session.Merge(model);
-            Session.Flush();
         }
 
         public virtual long Count()

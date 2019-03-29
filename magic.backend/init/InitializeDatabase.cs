@@ -34,10 +34,7 @@ namespace magic.backend.init
                 .Where(asm => asm.GetTypes().Any(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.FullName.StartsWith("FluentNHibernate")));
 
             var factory = CreateSessionFactory(configuration, assemblies);
-            kernel.Bind<ISession>().ToMethod((ctx) =>
-            {
-                return factory.OpenSession();
-            }).InScope(scopeRequest);
+            kernel.Bind<ISession>().ToMethod((ctx) => factory.OpenSession()).InScope(scopeRequest).OnDeactivation(x => x.Flush());
         }
 
         static ISessionFactory CreateSessionFactory(IConfiguration configuration, IEnumerable<Assembly> assemblies)
