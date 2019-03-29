@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\magic.common\magic.common.contracts\magic.common.contracts.csproj" />
+    <ProjectReference Include="..\magic.todo.model\magic.todo.model.csproj" />
+  </ItemGroup>
+
+</Project>

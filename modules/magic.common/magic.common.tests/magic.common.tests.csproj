@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\web\controllers\magic.common.web.controller\magic.common.web.controller.csproj" />
+    <ProjectReference Include="..\magic.common.web.controller\magic.common.web.controller.csproj" />
   </ItemGroup>
 
 </Project>

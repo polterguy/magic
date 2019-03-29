@@ -334,6 +334,8 @@ web/controllers/magic.web.controller.common/magic.web.controller.common.xml
 # Excluding all sub modules
 modules/*
 !modules/README.md
+!modules/magic.common
+!modules/magic.todo
 
 # Excluding all uploaded files
 magic.backend/files/*
