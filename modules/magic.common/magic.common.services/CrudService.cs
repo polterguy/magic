@@ -28,6 +28,7 @@ namespace magic.common.services
         {
             Logger.Info($"Creating {typeof(DbModel).Name}");
             Session.Save(model);
+            Session.Flush();
             return model.Id;
         }
 
@@ -61,6 +62,7 @@ namespace magic.common.services
         {
             Logger.Info($"Updating {typeof(DbModel)} with id of '{model.Id}'");
             Session.Merge(model);
+            Session.Flush();
         }
 
         public virtual long Count()
