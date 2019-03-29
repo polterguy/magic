@@ -13,7 +13,8 @@ namespace magic.backend.init
 {
     public class InitializeNinject
     {
-        public static IKernel Initialize(IApplicationBuilder app,
+        public static IKernel Initialize(
+            IApplicationBuilder app,
             IConfiguration configuration,
             Func<IContext, object> requestScope)
         {
