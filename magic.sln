@@ -30,6 +30,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.web.model", "modules\magic.common\magic.common.web.model\magic.common.web.model.csproj", "{99FAA4AA-46C0-425D-8C4E-8294077EFDAB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.todo", "magic.todo", "{1B3886AE-FB9D-42AC-A347-11CBF6EE5FD5}"
+	ProjectSection(SolutionItems) = preProject
+		modules\magic.todo\README.md = modules\magic.todo\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.contracts", "modules\magic.todo\magic.todo.contracts\magic.todo.contracts.csproj", "{E76738F7-2B6B-4926-8084-ED848D9488D5}"
 EndProject
