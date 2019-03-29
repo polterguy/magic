@@ -18,6 +18,8 @@ using Ninject.Activation;
 using Ninject.Infrastructure.Disposal;
 using Swashbuckle.AspNetCore.Swagger;
 using magic.backend.init;
+using magic.common.contracts;
+using System.Linq;
 
 namespace magic.backend
 {
@@ -95,6 +97,18 @@ namespace magic.backend
 
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
+
+            // Instantiating and invoking IConfigureApplication.Configure on all types that requires such
+            var type = typeof(IConfigureApplication);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
+            foreach (var idx in types)
+            {
+                var initializer = Activator.CreateInstance(idx) as IConfigureApplication;
+                initializer.Configure(app);
+            }
+
             app.UseMvc();
 
             app.UseSwagger();
