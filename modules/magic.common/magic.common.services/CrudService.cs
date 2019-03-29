@@ -60,6 +60,8 @@ namespace magic.common.services
 
         public virtual void Update(DbModel model)
         {
+            if (model.Id == Guid.Empty)
+                throw new ArgumentException("Model doesn't exist in database, and hence cannot be updated");
             Logger.Info($"Updating {typeof(DbModel)} with id of '{model.Id}'");
             Session.Merge(model);
             Session.Flush();
