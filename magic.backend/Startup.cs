@@ -64,7 +64,8 @@ namespace magic.backend
             Configuration.GetSection("plugins").Bind(plugins);
             foreach (var idxPlugin in plugins)
             {
-                mvcBuilder.AddApplicationPart(Assembly.Load(new AssemblyName(idxPlugin.Name)));
+                if (File.Exists(idxPlugin.Name))
+                    mvcBuilder.AddApplicationPart(Assembly.Load(new AssemblyName(idxPlugin.Name)));
             }
 
             // Making sure all dynamically loaded assemblies are able to configure the service collection.
