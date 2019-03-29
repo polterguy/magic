@@ -1,4 +1,4 @@
 
 # Magic Modules
 
-This is where you should put your additional Magic modules.
+Contains all your modules, which are dynamically injected plugins to your `magic.backend` main ASP.NET Core web API project.
