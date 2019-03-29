@@ -47,7 +47,7 @@ namespace magic.backend
             var mvcBuilder = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Making sure all dynamically loaded assemblies are able to configure the service collection.
-            ServicesConfigurator.Configure(services, Configuration);
+            ServicesConfigurator.ConfigureServicesCollection(services, Configuration);
 
             // Making sure we're able to use Ninject as DI library.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -87,30 +87,17 @@ namespace magic.backend
             InitializeServices.Initialize(Kernel);
 
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 app.UseHsts();
-            }
 
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
 
-            // Instantiating and invoking IConfigureApplication.Configure on all types that requires such
-            var type = typeof(IConfigureApplication);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
-            foreach (var idx in types)
-            {
-                var initializer = Activator.CreateInstance(idx) as IConfigureApplication;
-                initializer.Configure(app);
-            }
+            // Making sure all dynamically loaded assemblies are able to configure the application builder.
+            ServicesConfigurator.ConfigureApplicationBuilder(app);
 
             app.UseMvc();
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE"));
         }
