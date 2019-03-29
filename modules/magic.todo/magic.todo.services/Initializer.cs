@@ -8,7 +8,7 @@ using magic.todo.services;
 using magic.todo.contracts;
 using magic.common.contracts;
 
-namespace magic.todo.web.controller
+namespace magic.todo.services
 {
     public class Initializer : IInitialize
     {
