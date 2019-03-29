@@ -6,8 +6,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using log4net;
-using Mapster;
 using Ninject;
 using Ninject.Activation;
 
