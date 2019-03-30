@@ -13,9 +13,15 @@ namespace magic.todo.model.mapping
         {
             Table("todos");
             Id(x => x.Id);
-            Map(x => x.Header).Not.Nullable().Length(256);
-            Map(x => x.Description).Not.Nullable().Length(4096);
-            Map(x => x.Done).Not.Nullable();
+
+            Map(x => x.Header)
+                .Not.Nullable()
+                .Length(256);
+            Map(x => x.Description)
+                .Not.Nullable()
+                .Length(4096);
+            Map(x => x.Done)
+                .Not.Nullable();
         }
     }
 }
