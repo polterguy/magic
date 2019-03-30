@@ -1,4 +1,5 @@
-﻿/*
+﻿using System.Net;
+/*
  * Magic, Copyright(c) Thomas Hansen 2019 - thomas@gaiasoul.com
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
@@ -49,9 +50,9 @@ namespace magic.backend
             services.AddCustomViewComponentActivation(Resolve);
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(swag =>
             {
-                c.SwaggerDoc("v1", new Info
+                swag.SwaggerDoc("v1", new Info
                 {
                     Title = "TITLE",
                     Version = "v1",
@@ -66,7 +67,7 @@ namespace magic.backend
                 });
                 foreach (var idxFile in Directory.GetFiles(AppContext.BaseDirectory, "*.xml"))
                 {
-                    c.IncludeXmlComments(idxFile);
+                    swag.IncludeXmlComments(idxFile);
                 }
             });
         }

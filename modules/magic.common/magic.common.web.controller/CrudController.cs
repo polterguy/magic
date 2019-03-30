@@ -18,6 +18,8 @@ namespace magic.common.web.controller
     /// </summary>
     /// <typeparam name="WebModel">View model type for your HTTP REST web requests</typeparam>
     /// <typeparam name="DbModel">Database model type that is actually persisted into your database</typeparam>
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public abstract class CrudController<WebModel, DbModel> : ControllerBase
     {
         /// <summary>
