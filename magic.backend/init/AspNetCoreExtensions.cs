@@ -13,7 +13,9 @@ namespace magic.backend.init
 {
     public static class AspNetCoreExtensions
     {
-        public static void AddRequestScopingMiddleware(this IServiceCollection services, Func<IDisposable> requestScopeProvider)
+        public static void AddRequestScopingMiddleware(
+            this IServiceCollection services,
+            Func<IDisposable> requestScopeProvider)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -23,7 +25,9 @@ namespace magic.backend.init
             services.AddSingleton<IStartupFilter>(new RequestScopingStartupFilter(requestScopeProvider));
         }
 
-        public static void AddCustomControllerActivation(this IServiceCollection services, Func<Type, object> activator)
+        public static void AddCustomControllerActivation(
+            this IServiceCollection services,
+            Func<Type, object> activator)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -34,7 +38,9 @@ namespace magic.backend.init
                 new DelegatingControllerActivator(context => activator(context.ActionDescriptor.ControllerTypeInfo.AsType())));
         }
 
-        public static void AddCustomViewComponentActivation(this IServiceCollection services, Func<Type, object> activator)
+        public static void AddCustomViewComponentActivation(
+            this IServiceCollection services,
+            Func<Type, object> activator)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
