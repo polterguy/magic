@@ -4,11 +4,12 @@
  */
 
 using Microsoft.AspNetCore.Builder;
+using Ninject;
 
 namespace magic.common.contracts
 {
     public interface IConfigureApplication
     {
-        void Configure(IApplicationBuilder app);
+        void Configure(IApplicationBuilder app, IKernel kernel);
     }
 }

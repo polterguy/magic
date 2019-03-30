@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -19,17 +20,11 @@ using Ninject.Infrastructure.Disposal;
 using Swashbuckle.AspNetCore.Swagger;
 using magic.backend.init;
 using magic.common.contracts;
-using System.Linq;
 
 namespace magic.backend
 {
     public class Startup
     {
-        private class Plugin
-        {
-            public string Name { get; set; }
-        }
-
         readonly AsyncLocal<Scope> scopeProvider = new AsyncLocal<Scope>();
 
         public Startup(IConfiguration configuration)
@@ -43,20 +38,17 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Loading all controllers referenced in "plugins" section from appsettings.json.
-            var mvcBuilder = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            var mvcBuilder = services.AddMvc().
+                SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // Making sure all dynamically loaded assemblies are able to configure the service collection.
-            ServicesConfigurator.ConfigureServicesCollection(services, Configuration);
+            InitializeServices.ConfigureServices(services, Configuration);
 
-            // Making sure we're able to use Ninject as DI library.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddRequestScopingMiddleware(() => scopeProvider.Value = new Scope());
             services.AddCustomControllerActivation(Resolve);
             services.AddCustomViewComponentActivation(Resolve);
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
-            // Adding Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -81,10 +73,8 @@ namespace magic.backend
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // Initializing Ninject and making sure all assemblies that requires initialization of Ninject to do just that.
             Kernel = InitializeNinject.Initialize(app, Configuration, RequestScope);
             InitializeDatabase.Initialize(Kernel, Configuration, RequestScope);
-            InitializeServices.Initialize(Kernel);
 
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
@@ -94,8 +84,7 @@ namespace magic.backend
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
 
-            // Making sure all dynamically loaded assemblies are able to configure the application builder.
-            ServicesConfigurator.ConfigureApplicationBuilder(app);
+            InitializeServices.ConfigureApplication(app, Kernel);
 
             app.UseMvc();
             app.UseSwagger();
