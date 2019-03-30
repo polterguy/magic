@@ -26,29 +26,33 @@ namespace magic.common.services
 
         public virtual Guid Create(DbModel model)
         {
-            Logger.Info($"Creating {typeof(DbModel).Name}");
             Session.Save(model);
             Session.Flush();
+
+            Logger.Info($"Created {typeof(DbModel).Name} with id of '{model.Id}'");
+
             return model.Id;
         }
 
         public virtual void Delete(Guid id)
         {
-            Logger.Info($"Deleting {typeof(DbModel)} with id of '{id}'");
             var query = Session.CreateQuery($"delete from {typeof(DbModel).Name} where Id = :id");
             query.SetParameter("id", id);
             var result = query.ExecuteUpdate();
+
             if (result != 1)
-                throw new ArgumentOutOfRangeException($"{typeof(DbModel).Name} with the id of '{id}' was not found");
+                throw new ArgumentNullException($"{typeof(DbModel).Name} with the id of '{id}' was not found");
+
+            Logger.Info($"Deleted {typeof(DbModel)} with id of '{id}'");
         }
 
         public virtual DbModel Get(Guid id)
         {
-            var model = Session.Query<DbModel>()
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var model = Session.Load<DbModel>(id);
+
             if (model == null)
                 throw new ArgumentOutOfRangeException($"{typeof(DbModel).Name} with the id of '{id}' was not found");
+
             return model;
         }
 
@@ -64,9 +68,11 @@ namespace magic.common.services
         {
             if (model.Id == Guid.Empty)
                 throw new ArgumentException("Model doesn't exist in database, and hence cannot be updated");
-            Logger.Info($"Updating {typeof(DbModel)} with id of '{model.Id}'");
+
             Session.Merge(model);
             Session.Flush();
+
+            Logger.Info($"Updated {typeof(DbModel)} with id of '{model.Id}'");
         }
 
         public virtual long Count()
