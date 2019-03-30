@@ -103,7 +103,7 @@ public class Initializer : IInitialize
 }
 ```
 
-See the _"/modules/magic.todo"_ folder for more details about how to create your own CRUD modules.
+See the _"/modules/magic.todo/"_ folder for more details about how to create your own CRUD modules.
 
 Notice, without adding more than one line of actual _"code"_, we were still able to create all CRUD HTTP REST endpoints for our domain type,
 arguably _"magically"_, without actually adding any code per se. This is possible due to intelligent use of polymorphism and C# generics, which
@@ -164,7 +164,7 @@ schema itself accoding to your `ClassMap` definition(s). Supported database driv
 
 * [Email module](https://github.com/polterguy/magic.email) giving you a webmail backend for retrieving emails from
 POP3 accounts and sending emails over SMTP.
-* [Email auth](https://github.com/polterguy/magic.auth) add authentication and authorization features to your app.
+* [Auth module](https://github.com/polterguy/magic.auth) add authentication and authorization features to your app.
 
 ## Credits
 
