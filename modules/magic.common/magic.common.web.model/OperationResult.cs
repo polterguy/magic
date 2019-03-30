@@ -10,6 +10,7 @@ namespace magic.common.web.model
     public class OperationResult
     {
         public string Message { get; set; }
+
         public Guid? Id { get; set; }
     }
 }

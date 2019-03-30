@@ -78,6 +78,7 @@ namespace magic.backend
             {
                 Kernel.Bind(ctrlType).ToSelf().InScope(RequestScope);
             }
+
             Kernel.Bind<IConfiguration>().ToConstant(Configuration);
             InitializeDatabase.Initialize(Kernel, Configuration, RequestScope);
             Configurator.ConfigureNinject(Kernel, Configuration);
@@ -95,6 +96,8 @@ namespace magic.backend
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE"));
+
+            Configurator.ExecuteStartups(Kernel, Configuration);
         }
 
         object Resolve(Type type) => Kernel.Get(type);

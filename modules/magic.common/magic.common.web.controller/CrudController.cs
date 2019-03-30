@@ -47,7 +47,7 @@ namespace magic.common.web.controller
             var id = Service.Create(input.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
-                Message = $"{typeof(DbModel).Name} with the id of '{id}' was successfully created",
+                Message = $"{typeof(DbModel).Name} successfully created",
                 Id = id,
             });
         }
@@ -104,7 +104,7 @@ namespace magic.common.web.controller
             Service.Delete(id);
             return Ok(new www.OperationResult
             {
-                Message = $"{typeof(DbModel).Name} with the id of '{id}' was successfully deleted",
+                Message = $"{typeof(DbModel).Name} was successfully deleted",
                 Id = id,
             });
         }

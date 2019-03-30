@@ -50,6 +50,16 @@ namespace magic.backend.init
             }
         }
 
+        public static void ExecuteStartups(
+            IKernel kernel,
+            IConfiguration configuration)
+        {
+            foreach (var idx in InstantiateAllTypes<IStartup>())
+            {
+                idx.Configure(kernel, configuration);
+            }
+        }
+
         #region [ -- Private methods -- ]
 
         static IEnumerable<T> InstantiateAllTypes<T>() where T : class
