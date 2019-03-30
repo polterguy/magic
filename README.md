@@ -139,42 +139,30 @@ You will probably benefit from understanding these projects as you proceed to cr
 
 ## HOWTO wrap a database table
 
-1. Create your database model class(es) in the _"model"_ folder. See `magic.model.todo` for an example.
-2. Make sure you create a `ClassMap` for your model, mapping your type to your database.
-3. Create your contract (service interface) in the _"contracts"_ folder. Make sure it inherits from `ICrudService`. See the `magic.contracts.todo` for an example.
-4. Create your service implementation in the _"services"_ folder, and inherit your service from `CrudService`. See `magic.services.todo` for an example.
-5. Create your view model in the _"web/model"_ folder. See the `magic.web.model.todo` project for an example.
-6. Create your controller in the _"web/controller"_ folder, and inherit it from the `CrudController` class. See the `magic.web.controller.todo` project for an example.
-7. Add a reference to your controller into the `magic.backend` project and add the name of your assembly into the `plugins` section of the _"appsettings.json"_ file.
-8. Make sure you create a mapping between your service interface and yur service implementation in some IInitialize implementation class
-
-## Overriding Magic with your own custom functionality
-
-If you want to modify some service, you can easily override whatever method you want to override in your service implementation.
-You can also add new service methods, by adding a method to your service interface. In addition, you can also override your web controller methods,
-and for instance add the `[Authorize]` attribute, or change other parts of its behavior somehow. In general, all parts of Magic are overridable, while still
-providing _"sane defaults"_ for you out of the box.
+1. Create a folder in _"modules"_ to contain your module's components
+2. Create your database model class(es). See `magic.todo.model` for an example.
+3. Create your contract (service interface). See the `magic.todo.contracts` for an example.
+4. Create your service implementation. See `magic.todo.services` for an example.
+5. Create your view model. See the `magic.todo.web.model` project for an example.
+6. Create your controller. See the `magic.todo.web.controller` project for an example.
+7. Add a reference to your controller into the `magic.backend`.
+8. Make sure you somehow configure Ninject to use your service implementation
 
 ## Changing database provider
 
 To change database provider is easy. Open up _"appsettings.config"_ in your _"magic.backend"_ project, and change the `database` section to whatever
-database provider you want to use, and the connection string to your database. Notice, in debug builds Magic will automatically create the database
-schema itself accoding to your `ClassMap` definition(s), but in release builds it will not do this. Supported database drivers are as follows.
+database provider you want to use, and the connection string to your database. Notice, Magic will automatically create the database
+schema itself accoding to your `ClassMap` definition(s). Supported database drivers are as follows.
 
 * `MySQL` - Make sure you use a connection string to an existing MySQL database instance
 * `MSSQL` - Microsoft SQL Server
-* `SQLIte` - SQLIte database (this is the default, and probably _not_ something you'd like to use in a real app)
+* `SQLIte` - SQLIte database (this is the default)
 
-Ohh yeah, and of course Magic is as portable as it is possible to be. Most projects are .Net Standard 2.0, and you can
-deploy it on any server you wish, ranging from Linux and Windows, to your Mom's toaster if it runs some Linux web server.
-
-## Modules
-
-I will be creating additional modules for Magic every now and then, as I see the need. I'll try to link these in
-here as I wrap them up.
+## Additional modules
 
 * [Email module](https://github.com/polterguy/magic.email) giving you a webmail backend for retrieving emails from
 POP3 accounts and sending emails over SMTP.
+* [Email auth](https://github.com/polterguy/magic.auth) add authentication and authorization features to your app.
 
 ## Credits
 
@@ -182,7 +170,7 @@ Thanks to the following contributors.
 
 * [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core who contributed the CLI template.
 
-## Licensing, buy me a bottle of Champagne
+## Licensing
 
 Magic is licensed as Affero GPL, which implies that you can only use it to create Open Source software - However, a proprietary
 enabling license can be obtained for €50 by following [this PayPal link](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MD8B9E2X638QS) and
@@ -194,10 +182,6 @@ have to purchase one license for each web API project you want to create.
 Notice, without a closed source license, your code automatically becomes Open Source, and you'll have to provide a link to your own source code from any website(s),
 and/or application(s) from where you are consuming your Magic web API. With a closed source license, you can create closed source code, and you don't have to provide
 a link to neither me, nor your own source code.
-
-You might also probably find me slightly more helpful and friendly in case you [require help or support](https://github.com/polterguy/magic/issues),
-if you can show me somehow that you have purchased a closed source license - In addition to that you get that warm and fuzzy feeling of having contributed to
-my Champagne budget.
 
 > Send more Champagne
 
