@@ -3,7 +3,6 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System;
 using System.Linq;
 using Xunit;
 using FluentNHibernate.Testing;
