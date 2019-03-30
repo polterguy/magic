@@ -44,7 +44,9 @@ namespace magic.common.services
 
         public virtual DbModel Get(Guid id)
         {
-            var model = Session.Query<DbModel>().Where(x => x.Id == id).FirstOrDefault();
+            var model = Session.Query<DbModel>()
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
             if (model == null)
                 throw new ArgumentOutOfRangeException($"{typeof(DbModel).Name} with the id of '{id}' was not found");
             return model;
@@ -69,7 +71,8 @@ namespace magic.common.services
 
         public virtual long Count()
         {
-            return Session.Query<DbModel>().LongCount();
+            return Session.Query<DbModel>()
+                .LongCount();
         }
     }
 }
