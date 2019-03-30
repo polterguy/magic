@@ -11,7 +11,6 @@ using www = magic.todo.web.model;
 
 namespace magic.email.web.controller
 {
-    [ApiController]
     [Route("api/todo")]
     public class TodoController : CrudController<www.Todo, db.Todo>
     {

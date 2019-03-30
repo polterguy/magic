@@ -16,8 +16,8 @@ running"_. Magic is best suited for database applications.
 ## Getting started
 
 * [Download Magic](https://github.com/polterguy/magic/releases)
-* Unzip and open _"magic.sln"_ in Visual Studio
-* Click F5
+* Unzip and open _"magic.sln"_
+* Start your debugger
 
 ## No code, no bugs, no problems
 
@@ -25,8 +25,6 @@ The whole idea is that Magic allows you to create all CRUD operations on your we
 to that HTTP and SQL are basically just fundamentally CRUD operations. Hence, your controller endpoints will end up looking like the following.
 
 ```csharp
-[ApiController]
-[EnableCors("DefaultCors")]
 [Route("api/todo")]
 public class TodoController : CrudController<www.Todo, db.Todo>
 {
