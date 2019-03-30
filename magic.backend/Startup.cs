@@ -30,6 +30,7 @@ namespace magic.backend
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Kernel = new StandardKernel();
         }
 
         IKernel Kernel { get; set; }
@@ -38,10 +39,9 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var mvcBuilder = services.AddMvc().
-                SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            InitializeServices.ConfigureServices(services, Configuration);
+            Configurator.ConfigureServices(services, Configuration);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddRequestScopingMiddleware(() => scopeProvider.Value = new Scope());
@@ -73,8 +73,13 @@ namespace magic.backend
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            Kernel = InitializeNinject.Initialize(app, Configuration, RequestScope);
+            foreach (var ctrlType in app.GetControllerTypes())
+            {
+                Kernel.Bind(ctrlType).ToSelf().InScope(RequestScope);
+            }
+            Kernel.Bind<IConfiguration>().ToConstant(Configuration);
             InitializeDatabase.Initialize(Kernel, Configuration, RequestScope);
+            Configurator.ConfigureNinject(Kernel, Configuration);
 
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
@@ -84,7 +89,7 @@ namespace magic.backend
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
 
-            InitializeServices.ConfigureApplication(app, Kernel);
+            Configurator.ConfigureApplication(app, Configuration);
 
             app.UseMvc();
             app.UseSwagger();

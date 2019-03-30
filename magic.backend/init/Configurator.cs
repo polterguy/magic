@@ -12,46 +12,61 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject;
 using magic.common.contracts;
+using System.Collections.Generic;
 
 namespace magic.backend.init
 {
-    public class InitializeServices
+    public class Configurator
     {
         static bool _hasLoaded = false;
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureServices(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            foreach (var idx in InstantiateAllTypes<IConfigureServices>())
+            {
+                idx.Configure(services, configuration);
+            }
+        }
+
+        public static void ConfigureNinject(
+            IKernel kernel,
+            IConfiguration configuration)
+        {
+            foreach (var idx in InstantiateAllTypes<IConfigureNinject>())
+            {
+                idx.Configure(kernel, configuration);
+            }
+        }
+
+        public static void ConfigureApplication(
+            IApplicationBuilder app,
+            IConfiguration configuration)
+        {
+            foreach (var idx in InstantiateAllTypes<IConfigureApplication>())
+            {
+                idx.Configure(app, configuration);
+            }
+        }
+
+        #region [ -- Private methods -- ]
+
+        static IEnumerable<T> InstantiateAllTypes<T>() where T : class
         {
             LoadAssemblies();
 
-            var type = typeof(IConfigureServices);
+            var type = typeof(T);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
 
             foreach (var idx in types)
             {
-                var initializer = Activator.CreateInstance(idx) as IConfigureServices;
-                initializer.Configure(services, configuration);
+                var instance = Activator.CreateInstance(idx) as T;
+                yield return instance;
             }
         }
-
-        public static void ConfigureApplication(IApplicationBuilder app, IKernel kernel)
-        {
-            LoadAssemblies();
-
-            var initializeType = typeof(IConfigureApplication);
-            var initializeTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => initializeType.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
-
-            foreach (var idx in initializeTypes)
-            {
-                var instance = Activator.CreateInstance(idx) as IConfigureApplication;
-                instance.Configure(app, kernel);
-            }
-        }
-
-        #region [ -- Private methods -- ]
 
         static void LoadAssemblies()
         {

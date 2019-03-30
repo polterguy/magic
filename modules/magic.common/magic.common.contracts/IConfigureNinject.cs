@@ -5,11 +5,12 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Ninject;
 
 namespace magic.common.contracts
 {
-    public interface IConfigureApplication
+    public interface IConfigureNinject
     {
-        void Configure(IApplicationBuilder app, IConfiguration configuration);
+        void Configure(IKernel kernel, IConfiguration configuration);
     }
 }

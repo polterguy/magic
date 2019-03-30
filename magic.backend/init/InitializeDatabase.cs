@@ -24,6 +24,7 @@ namespace magic.backend.init
         private class Database
         {
             public string Type { get; set; }
+
             public string Connection { get; set; }
         }
 
@@ -31,13 +32,19 @@ namespace magic.backend.init
         {
             var type = typeof(IMappingProvider);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(asm => asm.GetTypes().Any(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.FullName.StartsWith("FluentNHibernate")));
+                .Where(asm => asm.GetTypes()
+                    .Any(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.FullName.StartsWith("FluentNHibernate")));
 
             var factory = CreateSessionFactory(configuration, assemblies);
-            kernel.Bind<ISession>().ToMethod((ctx) => factory.OpenSession()).InScope(scopeRequest).OnDeactivation(x => x.Flush());
+            kernel.Bind<ISession>()
+                .ToMethod((ctx) => factory.OpenSession())
+                .InScope(scopeRequest)
+                .OnDeactivation(x => x.Flush());
         }
 
-        static ISessionFactory CreateSessionFactory(IConfiguration configuration, IEnumerable<Assembly> assemblies)
+        static ISessionFactory CreateSessionFactory(
+            IConfiguration configuration, 
+            IEnumerable<Assembly> assemblies)
         {
             var database = new Database();
             configuration.GetSection("database").Bind(database);
@@ -46,30 +53,37 @@ namespace magic.backend.init
             {
                 case "MSSQL":
                     // Notice, version 2012
-                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2012.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(MsSqlConfiguration.MsSql2012.ConnectionString(database.Connection));
                     break;
                 case "MySQL":
-                    db = Fluently.Configure().Database(MySQLConfiguration.Standard.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(MySQLConfiguration.Standard.ConnectionString(database.Connection));
                     break;
                 case "SQLIte":
-                    db = Fluently.Configure().Database(SQLiteConfiguration.Standard.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(SQLiteConfiguration.Standard.ConnectionString(database.Connection));
                     break;
 
                 // Specific versions of MS SQL
                 case "MsSql7":
-                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql7.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(MsSqlConfiguration.MsSql7.ConnectionString(database.Connection));
                     break;
                 case "MsSql2008":
-                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2008.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(MsSqlConfiguration.MsSql2008.ConnectionString(database.Connection));
                     break;
                 case "MsSql2005":
-                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2005.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(MsSqlConfiguration.MsSql2005.ConnectionString(database.Connection));
                     break;
                 case "MsSql2000":
-                    db = Fluently.Configure().Database(MsSqlConfiguration.MsSql2000.ConnectionString(database.Connection));
+                    db = Fluently.Configure()
+                        .Database(MsSqlConfiguration.MsSql2000.ConnectionString(database.Connection));
                     break;
                 default:
-                    throw new ConfigurationErrorsException($"The database type of '{database.Type}' is unsupported. Please edit your configuration file.");
+                    throw new ConfigurationErrorsException($"The database type of '{database.Type}' is unsupported.");
             }
             return db.Mappings((m) =>
             {

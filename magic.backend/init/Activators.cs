@@ -13,10 +13,12 @@ namespace magic.backend.init
     public sealed class DelegatingControllerActivator : IControllerActivator
     {
         readonly Func<ControllerContext, object> _controllerCreator;
+
         readonly Action<ControllerContext, object> _controllerReleaser;
 
-        public DelegatingControllerActivator(Func<ControllerContext, object> controllerCreator,
-                                             Action<ControllerContext, object> controllerReleaser = null)
+        public DelegatingControllerActivator(
+            Func<ControllerContext, object> controllerCreator,
+            Action<ControllerContext, object> controllerReleaser = null)
         {
             _controllerCreator = controllerCreator ?? throw new ArgumentNullException(nameof(controllerCreator));
             _controllerReleaser = controllerReleaser ?? ((x1, x2) => { });
@@ -32,8 +34,9 @@ namespace magic.backend.init
         readonly Func<Type, object> _viewComponentCreator;
         readonly Action<object> _viewComponentReleaser;
 
-        public DelegatingViewComponentActivator(Func<Type, object> viewComponentCreator,
-                                                Action<object> viewComponentReleaser = null)
+        public DelegatingViewComponentActivator(
+            Func<Type, object> viewComponentCreator,
+            Action<object> viewComponentReleaser = null)
         {
             _viewComponentCreator = viewComponentCreator ?? throw new ArgumentNullException(nameof(viewComponentCreator));
             _viewComponentReleaser = viewComponentReleaser ?? (_ => { });
