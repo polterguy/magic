@@ -3,7 +3,6 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Ninject;
 
