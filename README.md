@@ -122,15 +122,12 @@ This will install the contents of this repo as a template, which you can use alo
 `dotnet new magic --name foo`
 
 After the scaffolding process completes, you will find a copy of the code base in 
-the `./foo/` folder. The `--name` switch will take care of full namespace replacement, and the optional switches will have their
-default values supplied. As an example of how to override them, here is the same command but with some of the optional switches provided:
-
-`dotnet new magic --name PodCast -acn "Jamie Taylor" -ace "jamie@gaprogman.com" -acu "https://dotnetcore.show"`
+the `./foo/` folder. The `--name` switch will take care of full namespace replacement.
 
 ## Technology
 
 Magic supports MySQL, MSSQL and SQLIte out of the box, but adding support for your own relational database type, can be done with three lines
-of code. This is possible due to the usage of Fluent nHibernate. Magic relies upon the following projects.
+of code. This is possible due to the usage of Fluent nHibernate. Magic is built upon the following open source projects.
 
 * [Fluent nHibernate](https://github.com/FluentNHibernate/fluent-nhibernate)
 * [Ninject](http://www.ninject.org/)
@@ -138,12 +135,7 @@ of code. This is possible due to the usage of Fluent nHibernate. Magic relies up
 * [Swagger UI](https://swagger.io/tools/swagger-ui/)
 * [log4net](https://logging.apache.org/log4net/)
 
-You will probably benefit from understanding these projects as you proceed to create your own projects. However, Magic itself, can easily be
-completely understood in 20 minutes for an experienced C# developer. The whole idea with Magic, is to use existing best practices, coupled
-with intelligent OOP constructs, based arguably upon C# generic _"trickery"_, to completely eliminate the need for coding, through the powers of DRY Magic -
-Yet still have perfect control over your end solution(s). Creating similar constructs in your client layer, using e.g. Angular or React, is also easily
-done, since your HTTP REST CRUD endpoints all ends up having the exact same API. In such a way, Magic completely eliminates the need to create any CRUD
-code for you, making you 10x as productive when creating database wrapper web API apps.
+You will probably benefit from understanding these projects as you proceed to create your own projects.
 
 ## HOWTO wrap a database table
 
