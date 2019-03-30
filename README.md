@@ -3,14 +3,9 @@
 
 Magic is a Super DYR starter kit for your ASP.NET Core web APIs, that brings the ideas of DRY (_"Don't Repeat Yourself"_) to a new level.
 If you follow a small recipe as you create your controller endpoints, services, view models, and database models, you will literally
-start out with 80% of your job done, and you can wrap CRUD operations in HTTP REST endpoints extremely rapidly.
-The project is hence in such a way a template for your own projects, allowing you to _"hit the ground
-running"_ as you start out your next project. Magic is best suited for database applications, where you need to wrap your database tables,
-and present these to some client, using an HTTP REST API. Basically, for all your CRUD needs, all you need to do to create your Magic wrapper,
-is to create a service, a contract (service interface), a controller, and declare your models (view model and database model). After
-you have correctly declared these types, Magic simply takes care of the rest for you automagically. You don't even need to create your
-database. Even creating your database will be automagically done by Magic if you map your objects correctly
-using nHibernate.
+start out with 80% of your job done, and you can wrap any CRUD operations into your HTTP REST endpoints extremely rapidly.
+The project's purpose is to be a starter kit for your own projects, allowing you to _"hit the ground
+running"_. Magic is best suited for database applications.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=M3uKdPAvS1I">
