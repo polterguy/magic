@@ -162,9 +162,9 @@ schema itself accoding to your `ClassMap` definition(s). Supported database driv
 
 ## Additional modules
 
-* [Email module](https://github.com/polterguy/magic.email) giving you a webmail backend for retrieving emails from
+* [Email module](https://github.com/polterguy/magic.email) - Giving you a webmail backend for retrieving emails from
 POP3 accounts and sending emails over SMTP.
-* [Auth module](https://github.com/polterguy/magic.auth) add authentication and authorization features to your app.
+* [Auth module](https://github.com/polterguy/magic.auth) - Add authentication and authorization features to your app.
 
 ## Credits
 
