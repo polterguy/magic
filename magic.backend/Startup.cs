@@ -54,16 +54,20 @@ namespace magic.backend
             {
                 swag.SwaggerDoc("v1", new Info
                 {
-                    Title = "TITLE",
+                    Title = "Super DRY Magic",
                     Version = "v1",
-                    Description = "DESC",
-                    TermsOfService = "LICENCE",
+                    Description = "An ASP.NET Core web API Starter Kit",
+                    License = new License
+                    {
+                        Name = "Affero GPL + Proprietary commercial (Closed Source)",
+                        Url = "https://github.com/polterguy/magic",
+                    },
                     Contact = new Contact
                     {
-                        Name = "MAIN_CONTACT",
-                        Email = "MAIN_EMAIL",
-                        Url = "MAIN_URL"
-                    }
+                        Name = "Thomas Hansen",
+                        Email = "thomas@gaiasoul.com",
+                        Url = "https://github.com/polterguy/magic",
+                    },
                 });
                 foreach (var idxFile in Directory.GetFiles(AppContext.BaseDirectory, "*.xml"))
                 {
