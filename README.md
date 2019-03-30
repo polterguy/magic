@@ -103,6 +103,8 @@ public class Initializer : IInitialize
 }
 ```
 
+See the _"/modules/magic.todo"_ folder for more details about how to create your own CRUD modules.
+
 Notice, without adding more than one line of actual _"code"_, we were still able to create all CRUD HTTP REST endpoints for our domain type,
 arguably _"magically"_, without actually adding any code per se. This is possible due to intelligent use of polymorphism and C# generics, which
 allows our code to become _"Super DRY"_.
