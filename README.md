@@ -105,18 +105,7 @@ public class Initializer : IInitialize
 
 Notice, without adding more than one line of actual _"code"_, we were still able to create all CRUD HTTP REST endpoints for our domain type,
 arguably _"magically"_, without actually adding any code per se. This is possible due to intelligent use of polymorphism and C# generics, which
-allows our code to become _"Magically DRY"_.
-
-Out of the box Magic is a simple HTTP REST TODO web api, but this is only there to serve as an example. Remove the existing TODO code,
-and replace it with your own code, and you'll literally _hit the ground running_. All parts of your application can easily be modified, extended,
-or changed, by simply overriding that which you need to override. In such a way Magic provides you with a consistent API, allowing you to
-extend and modify that which you need to modify, and having the rest done automagically for you through the powers of Magic. And, everything even
-becomes automagically documented for you.
-
-In addition, since each HTTP REST endpoint ends up having the exact same API from the client's perspective, adding similar constructs in your
-service layer in for instance Angular becomes easy. Out of the box similar construct are also applied to your unit tests, allowing you
-to create unit tests generically, by inheriting from intelligent base classes, giving all your controllers unit tests _"magically out of the box"_,
-almost without having to create code.
+allows our code to become _"Super DRY"_.
 
 ## .NET Core CLI Template
 
@@ -129,11 +118,6 @@ This repository also includes a .NET Core CLI template which can be installed by
 * Run the following command: `dotnet new --install ./magic`
 
 This will install the contents of this repo as a template, which you can use alongside the .NET Core CLI in the following manner:
-
-`dotnet new magic --help`
-
-This will show the list of command line switches which are available, along with descriptions and their default values.
-Creating a new instance of the magic code base is as simple as issuing the following command:
 
 `dotnet new magic --name foo`
 
