@@ -4,7 +4,6 @@
  */
 
 using Ninject;
-using magic.todo.services;
 using magic.todo.contracts;
 using magic.common.contracts;
 using Microsoft.Extensions.Configuration;
