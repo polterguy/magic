@@ -10,13 +10,11 @@ namespace magic.common.contracts
 {
     public interface ICrudService<DbModel>
     {
-        Guid Create(DbModel model);
+        Guid Save(DbModel model);
 
         DbModel Get(Guid id);
 
         IEnumerable<DbModel> List(int offset, int limit);
-
-        void Update(DbModel model);
 
         void Delete(Guid id);
 

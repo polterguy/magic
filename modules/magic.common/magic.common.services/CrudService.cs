@@ -24,12 +24,22 @@ namespace magic.common.services
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual Guid Create(DbModel model)
+        public virtual Guid Save(DbModel model)
         {
-            Session.Save(model);
+            if (model.Id == Guid.Empty)
+            {
+                Session.Save(model);
+            }
+            else
+            {
+                var existing = Session.Load<DbModel>(model.Id);
+                if (existing == null)
+                    throw new ArgumentException($"{nameof(DbModel)} with id of '{model.Id}' doesn't exist");
+                Session.Merge(model);
+            }
             Session.Flush();
 
-            Logger.Info($"Created {typeof(DbModel).Name} with id of '{model.Id}'");
+            Logger.Info($"Saved {typeof(DbModel).Name} with id of '{model.Id}'");
 
             return model.Id;
         }
@@ -62,17 +72,6 @@ namespace magic.common.services
                 .Skip(offset)
                 .Take(limit)
                 .ToList();
-        }
-
-        public virtual void Update(DbModel model)
-        {
-            if (model.Id == Guid.Empty)
-                throw new ArgumentException("Model doesn't exist in database, and hence cannot be updated");
-
-            Session.Merge(model);
-            Session.Flush();
-
-            Logger.Info($"Updated {typeof(DbModel)} with id of '{model.Id}'");
         }
 
         public virtual long Count()

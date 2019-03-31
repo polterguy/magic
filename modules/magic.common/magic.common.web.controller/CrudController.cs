@@ -37,17 +37,17 @@ namespace magic.common.web.controller
         }
 
         /// <summary>
-        /// Creates a new instance of your database model type.
+        /// Saves or updates an instance of your database model type.
         /// </summary>
         /// <param name="input">Data for your instance</param>
         /// <returns></returns>
         [HttpPost]
-        public virtual ActionResult<www.OperationResult> Create([FromBody] WebModel input)
+        public virtual ActionResult<www.OperationResult> Save([FromBody] WebModel input)
         {
-            var id = Service.Create(input.Adapt<DbModel>());
+            var id = Service.Save(input.Adapt<DbModel>());
             return Ok(new www.OperationResult
             {
-                Message = $"{typeof(DbModel).Name} successfully created",
+                Message = $"{typeof(DbModel).Name} successfully saved",
                 Id = id,
             });
         }
@@ -75,21 +75,6 @@ namespace magic.common.web.controller
         {
             var list = Service.List(offset, limit);
             return Ok(list.Select(x => x.Adapt<WebModel>()));
-        }
-
-        /// <summary>
-        /// Updates the specified item
-        /// </summary>
-        /// <param name="model">Item to update</param>
-        /// <returns></returns>
-        [HttpPut]
-        public virtual ActionResult<www.OperationResult> Update([FromBody] WebModel model)
-        {
-            Service.Update(model.Adapt<DbModel>());
-            return Ok(new www.OperationResult
-            {
-                Message = $"{typeof(DbModel).Name} was successfully updated",
-            });
         }
 
         /// <summary>
