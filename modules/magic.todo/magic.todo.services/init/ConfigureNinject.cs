@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace magic.todo.services
 {
-    public class Initializer : IConfigureNinject
+    public class ConfigureNinject : IConfigureNinject
     {
         public void Configure(IKernel kernel, IConfiguration configuration)
         {
