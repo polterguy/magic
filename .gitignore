@@ -340,3 +340,6 @@ modules/*
 # Excluding all uploaded files
 magic.backend/files/*
 !magic.backend/files/README.md
+
+# Excluding XML documentation files
+modules/magic.common/magic.common.web.controller/magic.common.web.controller.xml
