@@ -73,6 +73,7 @@ namespace magic.backend
                 {
                     swag.IncludeXmlComments(idxFile);
                 }
+                swag.OperationFilter<FileUploadOperation>();
             });
         }
 
