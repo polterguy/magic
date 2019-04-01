@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using Mapster;
 using magic.common.contracts;
 using www = magic.common.web.model;
@@ -42,7 +43,7 @@ namespace magic.common.web.controller
         /// <param name="input">Data for your instance</param>
         /// <returns></returns>
         [HttpPost]
-        public virtual ActionResult<www.OperationResult> Save([FromBody] WebModel input)
+        public virtual ActionResult<www.OperationResult> Save([Required] [FromBody] WebModel input)
         {
             var id = Service.Save(input.Adapt<DbModel>());
             return Ok(new www.OperationResult

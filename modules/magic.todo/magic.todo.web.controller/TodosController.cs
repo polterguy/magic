@@ -11,10 +11,10 @@ using www = magic.todo.web.model;
 
 namespace magic.email.web.controller
 {
-    [Route("api/todo")]
-    public class TodoController : CrudController<www.Todo, db.Todo>
+    [Route("api/todos")]
+    public class TodosController : CrudController<www.Todo, db.Todo>
     {
-        public TodoController(ITodoService service)
+        public TodosController(ITodoService service)
             : base(service)
         { }
     }
