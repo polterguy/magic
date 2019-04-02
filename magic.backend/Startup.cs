@@ -80,9 +80,8 @@ namespace magic.backend
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddLog4Net();
             foreach (var ctrlType in app.GetControllerTypes())
             {
                 Kernel.Bind(ctrlType).ToSelf().InScope(RequestScope);
