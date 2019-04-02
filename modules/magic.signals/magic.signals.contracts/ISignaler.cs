@@ -5,7 +5,7 @@
 
 using Newtonsoft.Json.Linq;
 
-namespace magic.common.contracts
+namespace magic.signals.contracts
 {
     public interface ISignaler
     {

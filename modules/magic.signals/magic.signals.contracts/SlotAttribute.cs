@@ -3,12 +3,12 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using Newtonsoft.Json.Linq;
+using System;
 
-namespace magic.common.contracts
+namespace magic.signals.contracts
 {
-    public interface ISlot
+    public class SlotAttribute : Attribute
     {
-        void Signal(JObject input);
+        public string Name { get; set; }
     }
 }

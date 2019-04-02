@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using Ninject;
 using Newtonsoft.Json.Linq;
-using magic.common.contracts;
+using magic.signals.contracts;
 
-namespace magic.common.services
+namespace magic.signals.services
 {
     public class Signaler : ISignaler
     {
