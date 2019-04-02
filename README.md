@@ -156,7 +156,9 @@ public class FooBar
 Once you invoke the `ISignaler.Signal` method, the `FooBarSlot.Signal` method will be invoked, because its `Slot.Name` happens to be the name
 of the _"signal"_ we raise inside of `DoFooBar`. No dependencies are required between the two different modules, and this works for all practical
 concerns as an event mechanism across modules, while still keeping a loosely coupled implementation, without dependencies between the two different
-modules. Sometimes _"Magic Strings"_ are simply superior. This is one of those cases ...
+modules. This allows any module of yours to communicate with any other module in your app, without having to bring in dependencies between the two,
+as long as they communicate exclusively using signals and slots, only passing data in through their `JObject` input. Data as in strings, date objects,
+integers, etc ...
 
 You can see this implemented in the _"magic.auth"_ module, which raises the _"user.deleted"_ signal, which other modules can attach themselves to.
 The _"magic.email"_ module has a slot for this particular signal.
