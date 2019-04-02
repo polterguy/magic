@@ -116,7 +116,7 @@ another module, without bringing in dependencies between your two different modu
 
 ```csharp
 using System;
-using magic.common.contracts;
+using magic.signals.contracts;
 
 [Slot(Name = "foo.bar")]
 public class FooBarSlot : ISlot
@@ -132,7 +132,8 @@ public class FooBarSlot : ISlot
 Then somewhere else in your application, in a completely different module, you can do the following.
 
 ```csharp
-using magic.common.contracts;
+using System;
+using magic.signals.contracts;
 
 public class FooBarSignaler
 {
