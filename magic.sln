@@ -46,10 +46,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.web.model", "modules\magic.todo\magic.todo.web.model\magic.todo.web.model.csproj", "{A41C7A26-5967-49D9-A71A-12FC8983D22B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.signals", "magic.signals", "{E7313D41-1D33-40B3-AA1C-708FB84963D2}"
+	ProjectSection(SolutionItems) = preProject
+		modules\magic.signals\README.md = modules\magic.signals\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.services", "modules\magic.signals\magic.signals.services\magic.signals.services.csproj", "{5270C5C6-AA55-413D-8DC2-A2BC10F75612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.signals.contracts", "modules\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj", "{85544EEC-EED5-4989-85E8-3C47E6BA030C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.contracts", "modules\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj", "{85544EEC-EED5-4989-85E8-3C47E6BA030C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
