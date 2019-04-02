@@ -153,7 +153,7 @@ public class FooBar
 }
 ```
 
-Once you invoke the `_signaler.Signal` method, the `FooBarSlot.Signal` method will be invoked, because its `Slot.Name` happens to be the name
+Once you invoke the `ISignaler.Signal` method, the `FooBarSlot.Signal` method will be invoked, because its `Slot.Name` happens to be the name
 of the _"signal"_ we raise inside of `DoFooBar`. No dependencies are required between the two different modules, and this works for all practical
 concerns as an event mechanism across modules, while still keeping a loosely coupled implementation, without dependencies between the two different
 modules. Sometimes _"Magic Strings"_ are simply superior. This is one of those cases ...
