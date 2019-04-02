@@ -134,16 +134,16 @@ Then somewhere else in your application, in a completely different module, you c
 ```csharp
 using magic.common.contracts;
 
-public class FooBar
+public class FooBarSignaler
 {
     readonly ISignaler _signaler;
 
-    public FooBar(ISignaler signaler)
+    public FooBarSignaler(ISignaler signaler)
     {
         _signaler = signaler;
     }
 
-    public  void DoFooBar(Guid foo)
+    public void DoFooBar(Guid foo)
     {
         _signaler.Signal("foo.bar", new JObject
         {
