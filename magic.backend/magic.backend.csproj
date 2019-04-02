@@ -23,4 +23,10 @@
     <ProjectReference Include="..\modules\magic.todo\magic.todo.services\magic.todo.services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
