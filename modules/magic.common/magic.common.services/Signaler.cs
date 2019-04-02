@@ -31,12 +31,15 @@ namespace magic.common.services
                         name = slotAtr.Name;
                     }
                 }
+
                 if (string.IsNullOrEmpty(name))
                     throw new ArgumentNullException($"No name specified for type '{idxType}'");
+
                 if (!_slots.ContainsKey(name))
                     _slots[name] = new List<Type>();
+
                 _slots[name].Add(idxType);
-                _kernel.Bind(idxType);
+                _kernel.Bind(idxType).ToSelf();
             }
         }
 
