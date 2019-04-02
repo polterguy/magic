@@ -123,7 +123,7 @@ public class FooBarSlot : ISlot
 {
     public void Signal(JObject input)
     {
-	    var foo = input["foo"].Value<Guid>();
+        var foo = input["foo"].Value<Guid>();
         /* ... do stuff with foo here ... /*
     }
 }
