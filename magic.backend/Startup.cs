@@ -6,21 +6,24 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using log4net;
 using Ninject;
 using Ninject.Activation;
 using Ninject.Infrastructure.Disposal;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Swagger;
 using magic.backend.init;
-using magic.common.contracts;
 
 namespace magic.backend
 {
@@ -77,8 +80,9 @@ namespace magic.backend
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddLog4Net();
             foreach (var ctrlType in app.GetControllerTypes())
             {
                 Kernel.Bind(ctrlType).ToSelf().InScope(RequestScope);
@@ -88,10 +92,21 @@ namespace magic.backend
             InitializeDatabase.Initialize(Kernel, Configuration, RequestScope);
             Configurator.ConfigureNinject(Kernel, Configuration);
 
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-            else
-                app.UseHsts();
+            app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
+            {
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+                var ex = context.Features.Get<IExceptionHandlerPathFeature>();
+                var logger = LogManager.GetLogger(ex?.Error.GetType() ?? typeof(Startup));
+                var msg = ex?.Error.Message ?? "Unhandled exception";
+                logger.Error("At path: " + ex?.Path);
+                logger.Error(msg, ex?.Error);
+                var response = new JObject
+                {
+                    ["message"] = msg,
+                };
+                await context.Response.WriteAsync(response.ToString(Formatting.Indented));
+            }));
 
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
