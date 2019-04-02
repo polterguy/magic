@@ -129,7 +129,7 @@ public class FooBarSlot : ISlot
 }
 ```
 
-Then somewhere else in your application you can do the following.
+Then somewhere else in your application, in a completely different module, you can do the following.
 
 ```csharp
 using magic.common.contracts;
