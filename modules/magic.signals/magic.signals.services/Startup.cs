@@ -8,8 +8,9 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Ninject;
 using magic.common.contracts;
+using magic.signals.contracts;
 
-namespace magic.common.services
+namespace magic.signals.services
 {
     public class Startup : IStartup
     {

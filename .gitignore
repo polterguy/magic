@@ -336,6 +336,7 @@ modules/*
 !modules/README.md
 !modules/magic.common
 !modules/magic.todo
+!modules/magic.signals
 
 # Excluding all uploaded files
 magic.backend/files/*
