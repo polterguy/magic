@@ -3,7 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System;
+using System.Linq;
 using Xunit;
 using Ninject;
 using FluentNHibernate.Testing;
@@ -53,6 +53,75 @@ namespace magic.todo.tests
                 Assert.Equal("Some description", loadResult.Description);
                 Assert.False(loadResult.Done);
                 Assert.Equal(loadResult.Id, saveResult.Id);
+            }
+        }
+
+        [Fact]
+        public void SaveList()
+        {
+            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            {
+                var controller = CreateController(connection);
+
+                var saveResult1 = AssertHelper.Single(controller.Save(new www.Todo
+                {
+                    Header = "Some header xx",
+                    Description = "Some description xx",
+                    Done = true
+                }));
+
+                var saveResult2 = AssertHelper.Single(controller.Save(new www.Todo
+                {
+                    Header = "Some header xx2",
+                    Description = "Some description xx2",
+                    Done = false
+                }));
+
+                var loadResult = AssertHelper.List(controller.List());
+                Assert.Equal(2, loadResult.Count());
+
+                Assert.Equal("Some header xx", loadResult.First().Header);
+                Assert.Equal("Some description xx", loadResult.First().Description);
+                Assert.True(loadResult.First().Done);
+                Assert.Equal(loadResult.First().Id, saveResult1.Id);
+
+                Assert.Equal("Some header xx2", loadResult.Last().Header);
+                Assert.Equal("Some description xx2", loadResult.Last().Description);
+                Assert.False(loadResult.Last().Done);
+                Assert.Equal(loadResult.Last().Id, saveResult2.Id);
+            }
+        }
+
+        [Fact]
+        public void SaveDeleteList()
+        {
+            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            {
+                var controller = CreateController(connection);
+
+                var saveResult1 = AssertHelper.Single(controller.Save(new www.Todo
+                {
+                    Header = "Some header xx",
+                    Description = "Some description xx",
+                    Done = true
+                }));
+
+                var saveResult2 = AssertHelper.Single(controller.Save(new www.Todo
+                {
+                    Header = "Some header xx2",
+                    Description = "Some description xx2",
+                    Done = false
+                }));
+
+                AssertHelper.Single(controller.Delete(saveResult1.Id.Value));
+
+                var loadResult = AssertHelper.List(controller.List());
+                Assert.Single(loadResult);
+
+                Assert.Equal("Some header xx2", loadResult.First().Header);
+                Assert.Equal("Some description xx2", loadResult.First().Description);
+                Assert.False(loadResult.First().Done);
+                Assert.Equal(loadResult.First().Id, saveResult2.Id);
             }
         }
 
