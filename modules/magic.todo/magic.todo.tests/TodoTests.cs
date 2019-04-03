@@ -34,7 +34,7 @@ namespace magic.todo.tests
         }
 
         [Fact]
-        public void CreateRead()
+        public void SaveGet()
         {
             using (var connection = new DbConnection(typeof(Todo).Assembly))
             {
