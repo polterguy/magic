@@ -3,20 +3,36 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using Xunit;
 using Ninject;
+using FluentNHibernate.Testing;
 using magic.tests;
 using magic.todo.model;
 using magic.todo.services;
 using magic.todo.contracts;
 using magic.email.web.controller;
 using www = magic.todo.web.model;
-using System;
 
 namespace magic.todo.tests
 {
     public class TodoTests
     {
+        #region [ -- Unit tests -- ]
+
+        [Fact]
+        public void VerifyTheMappings()
+        {
+            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            {
+                new PersistenceSpecification<Todo>(connection.Session)
+                    .CheckProperty(c => c.Header, "Header")
+                    .CheckProperty(c => c.Description, "Description")
+                    .CheckProperty(c => c.Done, false)
+                    .VerifyTheMappings();
+            }
+        }
+
         [Fact]
         public void CreateRead()
         {
@@ -40,6 +56,8 @@ namespace magic.todo.tests
                 Assert.Equal(loadResult.Id, saveResult.Id);
             }
         }
+
+        #endregion
 
         #region [ -- Private helper methods -- ]
 
