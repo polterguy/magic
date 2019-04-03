@@ -39,17 +39,16 @@ namespace magic.todo.tests
             using (var connection = new DbConnection(typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
-                var saveOutput = controller.Save(new www.Todo
+
+                var saveResult = AssertHelper.Single(controller.Save(new www.Todo
                 {
                     Header = "Some header",
                     Description = "Some description",
                     Done = false
-                });
-                var saveResult = AssertHelper.Single(saveOutput);
+                }));
                 Assert.True(saveResult.Id.HasValue);
 
-                var loadOutput = controller.Get(saveResult.Id.Value);
-                var loadResult = AssertHelper.Single(loadOutput);
+                var loadResult = AssertHelper.Single(controller.Get(saveResult.Id.Value));
                 Assert.Equal("Some header", loadResult.Header);
                 Assert.Equal("Some description", loadResult.Description);
                 Assert.False(loadResult.Done);
