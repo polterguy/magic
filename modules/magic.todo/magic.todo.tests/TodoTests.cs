@@ -18,19 +18,26 @@ namespace magic.todo.tests
     public class TodoTests
     {
         [Fact]
-        public void Create()
+        public void CreateRead()
         {
             using (var connection = new DbConnection(typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
-                var output = controller.Save(new www.Todo
+                var saveOutput = controller.Save(new www.Todo
                 {
                     Header = "Some header",
                     Description = "Some description",
                     Done = false
                 });
-                var result = AssertHelper.Single(output);
-                Assert.True(result.Id.HasValue);
+                var saveResult = AssertHelper.Single(saveOutput);
+                Assert.True(saveResult.Id.HasValue);
+
+                var loadOutput = controller.Get(saveResult.Id.Value);
+                var loadResult = AssertHelper.Single(loadOutput);
+                Assert.Equal("Some header", loadResult.Header);
+                Assert.Equal("Some description", loadResult.Description);
+                Assert.False(loadResult.Done);
+                Assert.Equal(loadResult.Id, saveResult.Id);
             }
         }
 
