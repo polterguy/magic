@@ -337,6 +337,7 @@ modules/*
 !modules/magic.common
 !modules/magic.todo
 !modules/magic.signals
+!modules/magic.tests
 
 # Excluding all uploaded files
 magic.backend/files/*
