@@ -6,6 +6,7 @@
 using System.Linq;
 using Xunit;
 using Ninject;
+using NHibernate;
 using FluentNHibernate.Testing;
 using magic.tests;
 using magic.todo.model;
@@ -53,6 +54,42 @@ namespace magic.todo.tests
                 Assert.Equal("Some description", loadResult.Description);
                 Assert.False(loadResult.Done);
                 Assert.Equal(loadResult.Id, saveResult.Id);
+            }
+        }
+
+        [Fact]
+        public void SaveFail_01()
+        {
+            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            {
+                var controller = CreateController(connection);
+
+                Assert.Throws<PropertyValueException>(() =>
+                {
+                    AssertHelper.Single(controller.Save(new www.Todo
+                    {
+                        Description = "Some description",
+                        Done = false
+                    }));
+                });
+            }
+        }
+
+        [Fact]
+        public void SaveFail_02()
+        {
+            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            {
+                var controller = CreateController(connection);
+
+                Assert.Throws<PropertyValueException>(() =>
+                {
+                    AssertHelper.Single(controller.Save(new www.Todo
+                    {
+                        Header = "Some description",
+                        Done = true
+                    }));
+                });
             }
         }
 
@@ -122,6 +159,36 @@ namespace magic.todo.tests
                 Assert.Equal("Some description xx2", loadResult.First().Description);
                 Assert.False(loadResult.First().Done);
                 Assert.Equal(loadResult.First().Id, saveResult2.Id);
+            }
+        }
+
+        [Fact]
+        public void SaveUpdateGet()
+        {
+            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            {
+                var controller = CreateController(connection);
+
+                var saveResult = AssertHelper.Single(controller.Save(new www.Todo
+                {
+                    Header = "Some header",
+                    Description = "Some description",
+                    Done = false
+                }));
+
+                var updateResult = AssertHelper.Single(controller.Save(new www.Todo
+                {
+                    Id = saveResult.Id.Value,
+                    Header = "Some other header",
+                    Description = "Some other description",
+                    Done = true,
+                }));
+
+                var loadResult = AssertHelper.Single(controller.Get(updateResult.Id.Value));
+                Assert.Equal("Some other header", loadResult.Header);
+                Assert.Equal("Some other description", loadResult.Description);
+                Assert.True(loadResult.Done);
+                Assert.Equal(loadResult.Id, saveResult.Id);
             }
         }
 
