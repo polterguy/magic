@@ -202,7 +202,7 @@ You will probably benefit from understanding these projects as you proceed to cr
 4. Create your service implementation. See `magic.todo.services` for an example.
 5. Create your view model. See the `magic.todo.web.model` project for an example.
 6. Create your controller. See the `magic.todo.web.controller` project for an example.
-7. Add a reference to your controller into the `magic.backend`.
+7. Add a reference to your controller and service into the `magic.backend`.
 8. Make sure you somehow configure Ninject to use your service implementation
 
 ## Changing database provider
