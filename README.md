@@ -222,7 +222,7 @@ schema itself accoding to your `ClassMap` definition(s). Supported database driv
 * [Email module](https://github.com/polterguy/magic.email) - Giving you a webmail backend for retrieving emails from POP3 accounts and sending emails over SMTP
 * [Affiliate cookie module](https://github.com/polterguy/magic.cookie) - Gives you the ability to easily create affiliate tracking cookies
 
-The above modules comes in addition to the example TODO module, and the common module, allowing you to easily create any CRUD modules.
+The above modules comes in addition to the example TODO module, and the common modules, allowing you to easily create any CRUD modules, and create signals and slots across module boundaries.
 
 ## Credits
 
