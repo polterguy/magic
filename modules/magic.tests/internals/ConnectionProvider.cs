@@ -3,16 +3,16 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System.Data.Common;
+using data = System.Data.Common;
 using NHibernate.Connection;
 
-namespace magic.tests
+namespace magic.tests.internals
 {
     internal class ConnectionProvider : DriverConnectionProvider
     {
-        public DbConnection Connection = null;
+        public data.DbConnection Connection = null;
 
-        public override DbConnection GetConnection()
+        public override data.DbConnection GetConnection()
         {
             if (Connection == null)
                 Connection = base.GetConnection();
@@ -20,7 +20,7 @@ namespace magic.tests
             return Connection;
         }
 
-        public override void CloseConnection(DbConnection conn)
+        public override void CloseConnection(System.Data.Common.DbConnection conn)
         {
             /*
              * Notice, do nothing to avoid ISession.Flush from closing connection and 

@@ -11,15 +11,16 @@ using NHibernate.Tool.hbm2ddl;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using cnf = NHibernate.Cfg;
+using magic.tests.internals;
 
 namespace magic.tests
 {
-    public class Connection : IDisposable
+    public class DbConnection : IDisposable
     {
         readonly public ISession Session;
         readonly public IKernel Kernel;
 
-        public Connection(params Assembly[] assemblyContainingMapping)
+        public DbConnection(params Assembly[] mappings)
         {
             Kernel = new StandardKernel();
             Kernel.Bind<IKernel>().ToConstant(Kernel);
@@ -29,7 +30,7 @@ namespace magic.tests
                 .Database(SQLiteConfiguration.Standard.ConnectionString("Data Source=:memory:;Version=3;New=True;").Provider<ConnectionProvider>())
                 .Mappings((m) =>
                 {
-                    foreach (var idxAssembly in assemblyContainingMapping)
+                    foreach (var idxAssembly in mappings)
                     {
                         m.FluentMappings.AddFromAssembly(idxAssembly);
                     }
@@ -44,9 +45,13 @@ namespace magic.tests
             Kernel.Bind<ISession>().ToConstant(Session);
         }
 
+        #region [ -- Interface implementations -- ]
+
         public void Dispose()
         {
             Session.Connection.Close();
         }
+
+        #endregion
     }
 }
