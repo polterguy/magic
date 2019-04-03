@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.tests", "magic.tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "modules\magic.tests\magic.tests.csproj", "{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.todo.tests", "modules\magic.todo\magic.todo.tests\magic.todo.tests.csproj", "{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,6 +122,10 @@ Global
 		{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +148,7 @@ Global
 		{85544EEC-EED5-4989-85E8-3C47E6BA030C} = {E7313D41-1D33-40B3-AA1C-708FB84963D2}
 		{512D1662-66FB-4655-ABD3-F01186170DFC} = {B3DD2370-4EDD-4D06-A682-F37B3BC2F1CD}
 		{9433D400-1885-45B7-B5D1-6E3FB6D21D8E} = {512D1662-66FB-4655-ABD3-F01186170DFC}
+		{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050} = {1B3886AE-FB9D-42AC-A347-11CBF6EE5FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}
