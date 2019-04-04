@@ -6,8 +6,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using magic.common.contracts;
 using www = magic.common.web.model;
