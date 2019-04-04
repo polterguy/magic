@@ -17,6 +17,11 @@ namespace magic.tests
             return Assert.IsAssignableFrom<T>(((OkObjectResult)input.Result).Value);
         }
 
+        public static void Single(ActionResult input)
+        {
+            Assert.IsType<OkResult>(input);
+        }
+
         public static T Fault<T>(ActionResult<T> input)
         {
             Assert.IsType<BadRequestObjectResult>(input.Result);
