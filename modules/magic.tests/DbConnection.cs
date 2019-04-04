@@ -55,3 +55,4 @@ namespace magic.tests
         #endregion
     }
 }
+
