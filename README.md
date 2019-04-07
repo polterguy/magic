@@ -222,7 +222,15 @@ schema itself accoding to your `ClassMap` definition(s). Supported database driv
 * [Email module](https://github.com/polterguy/magic.email) - Giving you a webmail backend for retrieving emails from POP3 accounts and sending emails over SMTP
 * [Affiliate cookie module](https://github.com/polterguy/magic.cookie) - Gives you the ability to easily create affiliate tracking cookies
 
-The above modules comes in addition to the example TODO module, and the common modules, allowing you to easily create any CRUD modules, and create signals and slots across module boundaries.
+The above modules comes in addition to the example TODO module, and the common modules, allowing you to easily create any CRUD modules, and create signals and slots across module boundaries. Below is an example of how to use Magic to create a file
+upload/download HTTP REST web API, that securely gives you access to most of the important functionality from
+within `System.IO`.
+
+<p align="center">
+<a href="https://www.youtube.com/watch?v=Xn459G1WaXc">
+<img alt="Creating an HTTP REST web API upload/download controller in 7 seconds" title="Creating an HTTP REST web API upload/download controller in 7 seconds" src="https://phosphorusfive.files.wordpress.com/2019/04/magic-io-screenshot.png" />
+</a>
+</p>
 
 ## Credits
 
