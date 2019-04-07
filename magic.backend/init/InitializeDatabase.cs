@@ -39,6 +39,13 @@ namespace magic.backend.init
             kernel.Bind<ISession>()
                 .ToMethod((ctx) => factory.OpenSession())
                 .InScope(scopeRequest)
+                .Named("default")
+                .OnDeactivation(x => x.Flush());
+
+            // Threads might need a session that's not bound to the HTTP request.
+            kernel.Bind<ISession>()
+                .ToMethod((ctx) => factory.OpenSession())
+                .Named("thread")
                 .OnDeactivation(x => x.Flush());
         }
 

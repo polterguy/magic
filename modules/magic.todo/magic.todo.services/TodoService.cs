@@ -4,6 +4,7 @@
  */
 
 using log4net;
+using Ninject;
 using NHibernate;
 using magic.todo.model;
 using magic.todo.contracts;
@@ -13,7 +14,7 @@ namespace magic.todo.services
 {
     public class TodoService : CrudService<Todo>, ITodoService
     {
-        public TodoService(ISession session)
+        public TodoService([Named("default")] ISession session)
             : base(session, LogManager.GetLogger(typeof(TodoService)))
         { }
     }
