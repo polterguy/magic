@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using log4net;
+using Ninject;
 using NHibernate;
 using magic.common.model;
 using magic.common.contracts;
@@ -18,7 +19,7 @@ namespace magic.common.services
         readonly protected ISession Session;
         readonly protected ILog Logger;
 
-        public CrudService(ISession session, ILog logger)
+        public CrudService([Named("default")] ISession session, ILog logger)
         {
             Session = session ?? throw new ArgumentNullException(nameof(session));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
