@@ -18,6 +18,7 @@ namespace magic.tests
     public class DbConnection : IDisposable
     {
         readonly public ISession Session;
+        readonly public ISession TreadSession;
         readonly public IKernel Kernel;
 
         public DbConnection(params Assembly[] mappings)
@@ -40,9 +41,11 @@ namespace magic.tests
 
             nConfig.Properties["connection.release_mode"] = "on_close";
             Session = factory.OpenSession();
+            TreadSession = factory.OpenSession();
 
             new SchemaExport(nConfig).Execute(true, true, false, Session.Connection, null);
-            Kernel.Bind<ISession>().ToConstant(Session);
+            Kernel.Bind<ISession>().ToConstant(Session).Named("default");
+            Kernel.Bind<ISession>().ToConstant(TreadSession).Named("tread");
         }
 
         #region [ -- Interface implementations -- ]
