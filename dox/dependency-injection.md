@@ -109,12 +109,12 @@ would end up looking like the following.
 // One binding
 kernel.Bind<ISession>()
     .ToMethods((ctx) => /* some method that creates a session */)
-	.Named("some-unique-name"); // This is the important parts!
+    .Named("some-unique-name"); // This is the important parts!
 
 // Another binding
 kernel.Bind<ISession>()
     .ToMethods((ctx) => /* ... */)
-	.Named("some-OTHER-unique-name");
+    .Named("some-OTHER-unique-name");
 ```
 
 I now have to distinctly different bindings, that could also return two completely different implementations, and I could use
