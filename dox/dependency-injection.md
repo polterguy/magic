@@ -12,7 +12,7 @@ use some sort of YALOA (Yet Another Layer Of Abstraction) to create objects impl
 public class Samurai
 {
     public Samurai(IWeapon weapon)
-	{}
+    {}
 }
 ```
 
