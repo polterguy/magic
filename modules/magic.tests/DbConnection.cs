@@ -24,7 +24,6 @@ namespace magic.tests
         public DbConnection(params Assembly[] mappings)
         {
             Kernel = new StandardKernel();
-            Kernel.Bind<IKernel>().ToConstant(Kernel);
 
             var nConfig = new cnf.Configuration();
             var factory = Fluently.Configure()
@@ -45,7 +44,7 @@ namespace magic.tests
 
             new SchemaExport(nConfig).Execute(true, true, false, Session.Connection, null);
             Kernel.Bind<ISession>().ToConstant(Session).Named("default");
-            Kernel.Bind<ISession>().ToConstant(TreadSession).Named("tread");
+            Kernel.Bind<ISession>().ToConstant(TreadSession).Named("thread");
         }
 
         #region [ -- Interface implementations -- ]
