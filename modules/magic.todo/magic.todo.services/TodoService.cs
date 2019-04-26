@@ -15,7 +15,7 @@ namespace magic.todo.services
     public class TodoService : CrudService<Todo>, ITodoService
     {
         public TodoService([Named("default")] ISession session)
-            : base(session, LogManager.GetLogger(typeof(TodoService)))
+            : base(session)
         { }
     }
 }
