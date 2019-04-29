@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Xml;
 using System.Reflection;
+using System;
 
 namespace magic.backend
 {
@@ -18,18 +19,27 @@ namespace magic.backend
 
         public static void Main(string[] args)
         {
-            var log4netConfig = new XmlDocument();
-            log4netConfig.Load(File.OpenRead("log4net.config"));
+            try
+            {
+                var log4netConfig = new XmlDocument();
+                log4netConfig.Load(File.OpenRead(string.Concat(AppDomain.CurrentDomain.BaseDirectory, "log4net.config")));
 
-            var repo = log4net.LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
+                var repo = log4net.LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
 
-            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+                log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
 
-            _logger.Info("Starting application");
+                _logger.Info("Starting application");
 
-            CreateWebHostBuilder(args)
-                .Build()
-                .Run();
+                CreateWebHostBuilder(args)
+                    .Build()
+                    .Run();
+            }
+            catch (System.Exception e)
+            {
+
+                throw;
+            }
+           
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
