@@ -69,8 +69,7 @@ namespace magic.common.web.controller
         [HttpGet]
         public virtual IEnumerable<WebModel> List(int offset = 0, int limit = 50)
         {
-            var list = Service.List(offset, limit);
-            return list.Select(x => x.Adapt<WebModel>());
+            return Service.List(offset, limit).Select(x => x.Adapt<WebModel>());
         }
 
         /// <summary>
