@@ -107,7 +107,7 @@ namespace magic.backend
             }));
 
             app.UseHttpsRedirection();
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader());
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
             Configurator.ConfigureApplication(app, Configuration);
 

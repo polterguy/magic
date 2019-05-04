@@ -43,14 +43,9 @@ namespace magic.common.web.controller
         /// <param name="input">Data for your instance</param>
         /// <returns></returns>
         [HttpPost]
-        public virtual ActionResult<www.OperationResult> Save([Required] [FromBody] WebModel input)
+        public virtual Guid Save([Required] [FromBody] WebModel input)
         {
-            var id = Service.Save(input.Adapt<DbModel>());
-            return Ok(new www.OperationResult
-            {
-                Message = $"{typeof(DbModel).Name} successfully saved",
-                Id = id,
-            });
+            return Service.Save(input.Adapt<DbModel>());
         }
 
         /// <summary>
@@ -60,9 +55,9 @@ namespace magic.common.web.controller
         /// <returns></returns>
         [HttpGet]
         [Route("{id:Guid}")]
-        public virtual ActionResult<WebModel> Get(Guid id)
+        public virtual WebModel Get(Guid id)
         {
-            return Ok(Service.Get(id).Adapt<WebModel>());
+            return Service.Get(id).Adapt<WebModel>();
         }
 
         /// <summary>
@@ -72,10 +67,10 @@ namespace magic.common.web.controller
         /// <param name="limit">Maximum number of items to retrieve</param>
         /// <returns></returns>
         [HttpGet]
-        public virtual ActionResult<IEnumerable<WebModel>> List(int offset = 0, int limit = 50)
+        public virtual IEnumerable<WebModel> List(int offset = 0, int limit = 50)
         {
             var list = Service.List(offset, limit);
-            return Ok(list.Select(x => x.Adapt<WebModel>()));
+            return list.Select(x => x.Adapt<WebModel>());
         }
 
         /// <summary>
@@ -85,14 +80,9 @@ namespace magic.common.web.controller
         /// <returns></returns>
         [HttpDelete]
         [Route("{id:Guid}")]
-        public virtual ActionResult<www.OperationResult> Delete(Guid id)
+        public virtual void Delete(Guid id)
         {
             Service.Delete(id);
-            return Ok(new www.OperationResult
-            {
-                Message = $"{typeof(DbModel).Name} was successfully deleted",
-                Id = id,
-            });
         }
 
         /// <summary>
@@ -101,10 +91,9 @@ namespace magic.common.web.controller
         /// <returns>The number of items in your database</returns>
         [HttpGet]
         [Route("count")]
-        public virtual ActionResult<long> Count()
+        public virtual long Count()
         {
-            var count = Service.Count();
-            return Ok(count);
+            return Service.Count();
         }
     }
 }
