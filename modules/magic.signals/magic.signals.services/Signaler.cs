@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Ninject;
 using Newtonsoft.Json.Linq;
 using magic.signals.contracts;
+using System.Linq;
 
 namespace magic.signals.services
 {
@@ -22,23 +23,18 @@ namespace magic.signals.services
             _slots = new Dictionary<string, List<Type>>();
             foreach (var idxType in types)
             {
-                var atrs = idxType.GetCustomAttributes(true);
-                string name = null;
-                foreach (var idxAtr in atrs)
-                {
-                    if (idxAtr is SlotAttribute slotAtr)
-                    {
-                        name = slotAtr.Name;
-                    }
-                }
+                var name = idxType.GetCustomAttributes(true).OfType<SlotAttribute>().FirstOrDefault()?.Name;
 
                 if (string.IsNullOrEmpty(name))
                     throw new ArgumentNullException($"No name specified for type '{idxType}'");
 
-                if (!_slots.ContainsKey(name))
-                    _slots[name] = new List<Type>();
+                if (!_slots.TryGetValue(name, out var slot))
+                {
+                    slot = new List<Type>();
+                    _slots[name] = slot;
+                }
 
-                _slots[name].Add(idxType);
+                slot.Add(idxType);
                 _kernel.Bind(idxType).ToSelf();
             }
         }
