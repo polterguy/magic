@@ -41,19 +41,18 @@ namespace magic.todo.tests
             {
                 var controller = CreateController(connection);
 
-                var saveResult = AssertHelper.Single(controller.Save(new www.Todo
+                var saveResult = controller.Save(new www.Todo
                 {
                     Header = "Some header",
                     Description = "Some description",
                     Done = false
-                }));
-                Assert.True(saveResult.Id.HasValue);
+                });
 
-                var loadResult = AssertHelper.Single(controller.Get(saveResult.Id.Value));
+                var loadResult = controller.Get(saveResult);
                 Assert.Equal("Some header", loadResult.Header);
                 Assert.Equal("Some description", loadResult.Description);
                 Assert.False(loadResult.Done);
-                Assert.Equal(loadResult.Id, saveResult.Id);
+                Assert.Equal(loadResult.Id, saveResult);
             }
         }
 
@@ -66,11 +65,11 @@ namespace magic.todo.tests
 
                 Assert.Throws<PropertyValueException>(() =>
                 {
-                    AssertHelper.Single(controller.Save(new www.Todo
+                    controller.Save(new www.Todo
                     {
                         Description = "Some description",
                         Done = false
-                    }));
+                    });
                 });
             }
         }
@@ -84,11 +83,11 @@ namespace magic.todo.tests
 
                 Assert.Throws<PropertyValueException>(() =>
                 {
-                    AssertHelper.Single(controller.Save(new www.Todo
+                    controller.Save(new www.Todo
                     {
                         Header = "Some description",
                         Done = true
-                    }));
+                    });
                 });
             }
         }
@@ -100,32 +99,32 @@ namespace magic.todo.tests
             {
                 var controller = CreateController(connection);
 
-                var saveResult1 = AssertHelper.Single(controller.Save(new www.Todo
+                var saveResult1 = controller.Save(new www.Todo
                 {
                     Header = "Some header xx",
                     Description = "Some description xx",
                     Done = true
-                }));
+                });
 
-                var saveResult2 = AssertHelper.Single(controller.Save(new www.Todo
+                var saveResult2 = controller.Save(new www.Todo
                 {
                     Header = "Some header xx2",
                     Description = "Some description xx2",
                     Done = false
-                }));
+                });
 
-                var loadResult = AssertHelper.List(controller.List());
+                var loadResult = controller.List();
                 Assert.Equal(2, loadResult.Count());
 
                 Assert.Equal("Some header xx", loadResult.First().Header);
                 Assert.Equal("Some description xx", loadResult.First().Description);
                 Assert.True(loadResult.First().Done);
-                Assert.Equal(loadResult.First().Id, saveResult1.Id);
+                Assert.Equal(loadResult.First().Id, saveResult1);
 
                 Assert.Equal("Some header xx2", loadResult.Last().Header);
                 Assert.Equal("Some description xx2", loadResult.Last().Description);
                 Assert.False(loadResult.Last().Done);
-                Assert.Equal(loadResult.Last().Id, saveResult2.Id);
+                Assert.Equal(loadResult.Last().Id, saveResult2);
             }
         }
 
@@ -136,29 +135,29 @@ namespace magic.todo.tests
             {
                 var controller = CreateController(connection);
 
-                var saveResult1 = AssertHelper.Single(controller.Save(new www.Todo
+                var saveResult1 = controller.Save(new www.Todo
                 {
                     Header = "Some header xx",
                     Description = "Some description xx",
                     Done = true
-                }));
+                });
 
-                var saveResult2 = AssertHelper.Single(controller.Save(new www.Todo
+                var saveResult2 = controller.Save(new www.Todo
                 {
                     Header = "Some header xx2",
                     Description = "Some description xx2",
                     Done = false
-                }));
+                });
 
-                AssertHelper.Single(controller.Delete(saveResult1.Id.Value));
+                controller.Delete(saveResult1);
 
-                var loadResult = AssertHelper.List(controller.List());
+                var loadResult = controller.List();
                 Assert.Single(loadResult);
 
                 Assert.Equal("Some header xx2", loadResult.First().Header);
                 Assert.Equal("Some description xx2", loadResult.First().Description);
                 Assert.False(loadResult.First().Done);
-                Assert.Equal(loadResult.First().Id, saveResult2.Id);
+                Assert.Equal(loadResult.First().Id, saveResult2);
             }
         }
 
@@ -169,26 +168,26 @@ namespace magic.todo.tests
             {
                 var controller = CreateController(connection);
 
-                var saveResult = AssertHelper.Single(controller.Save(new www.Todo
+                var saveResult = controller.Save(new www.Todo
                 {
                     Header = "Some header",
                     Description = "Some description",
                     Done = false
-                }));
+                });
 
-                var updateResult = AssertHelper.Single(controller.Save(new www.Todo
+                var updateResult = controller.Save(new www.Todo
                 {
-                    Id = saveResult.Id.Value,
+                    Id = saveResult,
                     Header = "Some other header",
                     Description = "Some other description",
                     Done = true,
-                }));
+                });
 
-                var loadResult = AssertHelper.Single(controller.Get(updateResult.Id.Value));
+                var loadResult = controller.Get(updateResult);
                 Assert.Equal("Some other header", loadResult.Header);
                 Assert.Equal("Some other description", loadResult.Description);
                 Assert.True(loadResult.Done);
-                Assert.Equal(loadResult.Id, saveResult.Id);
+                Assert.Equal(loadResult.Id, saveResult);
             }
         }
 
