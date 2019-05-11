@@ -6,7 +6,7 @@
 using magic.signals.contracts;
 using Newtonsoft.Json.Linq;
 
-namespace magic.auth.tests.utilities
+namespace magic.signals.tests.utilities
 {
     [Slot(Name = "foo.bar")]
     public class SignalHandler : ISlot

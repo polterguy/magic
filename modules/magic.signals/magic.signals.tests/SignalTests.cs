@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 using magic.common.contracts;
 using magic.signals.contracts;
 
-namespace magic.auth.tests
+namespace magic.signals.tests
 {
     public class SignalTests
     {

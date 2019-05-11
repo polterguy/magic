@@ -109,6 +109,40 @@ Notice, without adding more than one line of actual _"code"_, we were still able
 arguably _"magically"_, without actually adding any code per se. This is possible due to intelligent use of polymorphism and C# generics, which
 allows our code to become _"Super DRY"_.
 
+## Invoking HTTP REST methods
+
+In addition to making it very easy to create CRUD HTTP REST endpoints, Magic also contains an HTTP client wrapper, that
+allows you to create HTTP REST requests with a single line of code. This class uses some intelligent generics constructs,
+to automatically transform from any DTO type you have to JSON, and vice versa. You can consume this service as an
+`IHttpClient` instance. Below is some example code to illustrate usage.
+
+```csharp
+// Your input type
+class RequestDTO
+{
+    public string Foo { get; set; }
+}
+
+// Your output type
+class ResponseDTO
+{
+    public string Bar { get; set; }
+}
+
+// Your input
+var input = new RequestDTO
+{
+    Foo = "some string"
+};
+
+// Client is an instance of an IHttpClient, and can be retrieved using dependency injection
+var result = await client.PostAsync<ResponseDTO>("https://somewhere.com/api", input);
+
+// "result" is now of type "ResponseDTO".
+```
+
+You can also optionally pass in a JWT token to all your HTTP REST methods.
+
 ## Signal over spaghetti
 
 Magic contains a basic _"signal"_ implementation, that allows you to create a _"signal"_ from one module, that you can subscribe to using a _"slot"_ in
