@@ -111,7 +111,7 @@ allows our code to become _"Super DRY"_.
 
 ## Invoking HTTP REST methods
 
-In addition to making it very easy to create CRUD HTTP REST endpoints, Magic also contains an HTTP client wrapper, that
+Magic also contains an HTTP client wrapper, that
 allows you to create HTTP REST requests with a single line of code. This class uses some intelligent generics constructs,
 to automatically transform from any DTO type you have to JSON, and vice versa. You can consume this service as an
 `IHttpClient` instance. Below is some example code to illustrate usage.
