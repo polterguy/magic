@@ -58,18 +58,6 @@ namespace magic.http.tests
             Assert.Equal(3, result.Count());
         }
 
-        class User
-        {
-            public string Name { get; set; }
-        }
-
-        class UserWithId
-        {
-            public int Id { get; set; }
-
-            public string Name { get; set; }
-        }
-
         [Fact]
         public async void PostObject()
         {
@@ -95,6 +83,18 @@ namespace magic.http.tests
             public int Id { get; set; }
 
             public string Title { get; set; }
+        }
+
+        class User
+        {
+            public string Name { get; set; }
+        }
+
+        class UserWithId
+        {
+            public int Id { get; set; }
+
+            public string Name { get; set; }
         }
 
         IKernel Initialize()
