@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using net = System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
@@ -19,7 +20,6 @@ namespace magic.http.services
         static HttpClient()
         {
             _client = new net.HttpClient();
-            _client.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         #region [ -- Interface implementation -- ]
@@ -56,9 +56,9 @@ namespace magic.http.services
 
         #endregion
 
-        #region [ -- Private helper methods -- ]
+        #region [ -- Protected virtual methods -- ]
 
-        async Task<Response> CreateRequest<Response>(
+        virtual protected async Task<Response> CreateRequest<Response>(
             string url,
             net.HttpMethod method,
             string token)
@@ -69,7 +69,7 @@ namespace magic.http.services
             });
         }
 
-        async Task<Response> CreateRequest<Response>(
+        virtual protected async Task<Response> CreateRequest<Response>(
             string url,
             net.HttpMethod method,
             object input,
@@ -77,16 +77,28 @@ namespace magic.http.services
         {
             return await CreateRequestMessage(url, method, token, async (msg) =>
             {
-                using (var content = new net.StringContent(JObject.FromObject(input).ToString()))
+                if (input is Stream stream)
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    msg.Content = content;
-                    return await GetResult<Response>(msg);
+                    using (var content = new net.StreamContent(stream))
+                    {
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        msg.Content = content;
+                        return await GetResult<Response>(msg);
+                    }
+                }
+                else
+                {
+                    using (var content = new net.StringContent(JObject.FromObject(input).ToString()))
+                    {
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        msg.Content = content;
+                        return await GetResult<Response>(msg);
+                    }
                 }
             });
         }
 
-        async Task<Response> CreateRequestMessage<Response>(
+        virtual protected async Task<Response> CreateRequestMessage<Response>(
             string url,
             net.HttpMethod method,
             string token,
@@ -96,6 +108,8 @@ namespace magic.http.services
             {
                 msg.RequestUri = new Uri(url);
                 msg.Method = method;
+                msg.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                msg.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
 
                 if (token != null)
                     msg.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -104,7 +118,7 @@ namespace magic.http.services
             }
         }
 
-        async Task<Response> GetResult<Response>(net.HttpRequestMessage msg)
+        virtual protected async Task<Response> GetResult<Response>(net.HttpRequestMessage msg)
         {
             using (var response = await _client.SendAsync(msg))
             {

@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
@@ -72,6 +73,31 @@ namespace magic.http.tests
                 user);
             Assert.Equal("John Doe", result.Name);
             Assert.True(result.Id > 0);
+        }
+
+        [Fact]
+        public async void PostStream()
+        {
+            var kernel = Initialize();
+            var client = kernel.Get<IHttpClient>();
+            using (var stream = new MemoryStream())
+            {
+                var jObject = JObject.FromObject(new User
+                {
+                    Name = "John Doe"
+                });
+                using (var writer = new StreamWriter(stream))
+                {
+                    writer.Write (jObject.ToString());
+                    writer.Flush();
+                    stream.Position = 0;
+                    var result = await client.PostAsync<Stream, UserWithId>(
+                        "https://my-json-server.typicode.com/typicode/demo/posts",
+                        stream);
+                    Assert.Equal("John Doe", result.Name);
+                    Assert.True(result.Id > 0);
+                }
+            }
         }
 
         #endregion
