@@ -142,7 +142,7 @@ var result = await client.PostAsync<RequestDTO, ResponseDTO>("https://somewhere.
 // "result" is now of type "ResponseDTO".
 ```
 
-You can also optionally pass in a JWT token to all your HTTP REST methods.
+You can also optionally pass in a _"Bearer"_ Authorize token when invoking methods on this service.
 
 ## Signal over spaghetti
 
