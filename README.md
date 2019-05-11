@@ -129,14 +129,14 @@ class ResponseDTO
     public string Bar { get; set; }
 }
 
-// Your input
+// Your input object
 var input = new RequestDTO
 {
     Foo = "some string"
 };
 
 // Client is an instance of an IHttpClient, and can be retrieved using dependency injection
-var result = await client.PostAsync<ResponseDTO>("https://somewhere.com/api", input);
+var result = await client.PostAsync<RequestDTO, ResponseDTO>("https://somewhere.com/api", input);
 
 // "result" is now of type "ResponseDTO".
 ```
