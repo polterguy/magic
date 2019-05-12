@@ -12,9 +12,9 @@ namespace magic.todo.services.init
 {
     public class ConfigureServices : IConfigureServices
     {
-        public void Configure(IServiceCollection kernel, IConfiguration configuration)
+        public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            kernel.AddTransient<ITodoService, TodoService>();
+            services.AddTransient<ITodoService, TodoService>();
         }
     }
 }

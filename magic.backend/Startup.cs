@@ -110,7 +110,7 @@ namespace magic.backend
             Configurator.ConfigureApplication(app, Configuration);
 
             // Giving each module a chance to run startup logic.
-            Configurator.ExecuteStartups(app.ApplicationServices, Configuration);
+            Configurator.InitializeStartups(app.ApplicationServices, Configuration);
         }
     }
 }

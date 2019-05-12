@@ -16,7 +16,7 @@ namespace magic.signals.services.init
     {
         #region [ -- Interface implementations -- ]
 
-        public void Configure(IServiceCollection kernel, IConfiguration configuration)
+        public void Configure(IServiceCollection services, IConfiguration configuration)
         {
             var type = typeof(ISlot);
             var slots = AppDomain.CurrentDomain.GetAssemblies()
@@ -24,9 +24,9 @@ namespace magic.signals.services.init
                 .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract && p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
             foreach (var idx in slots)
             {
-                kernel.AddTransient(idx);
+                services.AddTransient(idx);
             }
-            kernel.AddSingleton<ISignaler>((svc) => new Signaler(svc, slots));
+            services.AddSingleton<ISignaler>((svc) => new Signaler(svc, slots));
         }
 
         #endregion

@@ -15,6 +15,6 @@ namespace magic.common.contracts
      */
     public interface IStartup
     {
-        void Configure(IServiceProvider kernel, IConfiguration configuration);
+        void Initialize(IServiceProvider kernel, IConfiguration configuration);
     }
 }

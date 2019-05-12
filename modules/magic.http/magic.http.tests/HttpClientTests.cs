@@ -157,7 +157,7 @@ namespace magic.http.tests
             var provider = kernel.BuildServiceProvider();
             foreach (var idx in InstantiateAllTypes<IStartup>())
             {
-                idx.Configure(provider, configuration);
+                idx.Initialize(provider, configuration);
             }
             return provider;
         }
