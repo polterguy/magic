@@ -6,7 +6,7 @@
 
 using System;
 using System.IO;
-using System.Threading;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
@@ -15,10 +15,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using log4net;
-using Ninject;
-using Ninject.Activation;
-using Ninject.Infrastructure.Disposal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Swagger;
@@ -28,30 +26,33 @@ namespace magic.backend
 {
     public class Startup
     {
-        readonly AsyncLocal<Scope> scopeProvider = new AsyncLocal<Scope>();
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Kernel = new StandardKernel();
         }
 
-        IKernel Kernel { get; set; }
-
-        public IConfiguration Configuration { get; }
+        IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            // Giving every module a chance to initialize itself.
             Configurator.ConfigureServices(services, Configuration);
 
+            // Dynamically loading up all controllers.
+            var assembly = typeof(Startup).GetTypeInfo().Assembly;
+            var part = new AssemblyPart(assembly);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
+
+            // Adding some basic configurations.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddRequestScopingMiddleware(() => scopeProvider.Value = new Scope());
-            services.AddCustomControllerActivation(Resolve);
-            services.AddCustomViewComponentActivation(Resolve);
+            services.AddSingleton<IConfiguration>(Configuration);
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
+            // Initializing database.
+            InitializeDatabase.Initialize(services, Configuration);
+
+            // Configuring swagger.
             services.AddSwaggerGen(swag =>
             {
                 swag.SwaggerDoc("v1", new Info
@@ -81,15 +82,6 @@ namespace magic.backend
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            foreach (var ctrlType in app.GetControllerTypes())
-            {
-                Kernel.Bind(ctrlType).ToSelf().InScope(RequestScope);
-            }
-
-            Kernel.Bind<IConfiguration>().ToConstant(Configuration);
-            InitializeDatabase.Initialize(Kernel, Configuration, RequestScope);
-            Configurator.ConfigureNinject(Kernel, Configuration);
-
             app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
             {
                 context.Response.StatusCode = 500;
@@ -109,19 +101,14 @@ namespace magic.backend
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
-            Configurator.ConfigureApplication(app, Configuration);
-
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE"));
 
-            Configurator.ExecuteStartups(Kernel, Configuration);
+            Configurator.ConfigureApplication(app, Configuration);
+
+            // Giving each module a chance to run startup logic.
+            Configurator.ExecuteStartups(app.ApplicationServices, Configuration);
         }
-
-        object Resolve(Type type) => Kernel.Get(type);
-
-        object RequestScope(IContext context) => scopeProvider.Value;
-
-        sealed class Scope : DisposableObject { }
     }
 }

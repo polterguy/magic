@@ -8,7 +8,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Xunit;
-using Ninject;
 using Newtonsoft.Json.Linq;
 using magic.common.contracts;
 using magic.signals.contracts;
@@ -36,15 +35,17 @@ namespace magic.signals.tests
 
         #region [ -- Private helper methods -- ]
 
-        IKernel Initialize()
+        IServiceProvider Initialize()
         {
             var configuration = new ConfigurationBuilder().Build();
-            var kernel = new StandardKernel();
+            var kernel = new ServiceCollection();
+            kernel.AddTransient<IConfiguration>((svc) => configuration);
+            var provider = kernel.BuildServiceProvider();
             foreach (var idx in InstantiateAllTypes<IStartup>())
             {
-                idx.Configure(kernel, configuration);
+                idx.Configure(provider, configuration);
             }
-            return kernel;
+            return provider;
         }
 
         static IEnumerable<T> InstantiateAllTypes<T>() where T : class

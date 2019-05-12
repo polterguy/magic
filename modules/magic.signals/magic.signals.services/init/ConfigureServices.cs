@@ -6,23 +6,27 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using Ninject;
 using magic.common.contracts;
 using magic.signals.contracts;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace magic.signals.services
+namespace magic.signals.services.init
 {
-    public class Startup : IStartup
+    public class ConfigureServices : IConfigureServices
     {
         #region [ -- Interface implementations -- ]
 
-        public void Configure(IKernel kernel, IConfiguration configuration)
+        public void Configure(IServiceCollection kernel, IConfiguration configuration)
         {
             var type = typeof(ISlot);
             var slots = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract && p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
-            kernel.Bind<ISignaler>().ToConstant(new Signaler(slots, kernel));
+            foreach (var idx in slots)
+            {
+                kernel.AddTransient(idx);
+            }
+            kernel.AddSingleton<ISignaler, Signaler>();
         }
 
         #endregion

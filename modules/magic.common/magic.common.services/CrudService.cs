@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using log4net;
-using Ninject;
 using NHibernate;
 using magic.common.model;
 using magic.common.contracts;

@@ -4,19 +4,19 @@
  */
 
 using Microsoft.Extensions.Configuration;
-using Ninject;
 using magic.common.contracts;
 using magic.http.contracts;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace magic.http.services
+namespace magic.http.services.init
 {
-    public class Startup : IStartup
+    public class ConfigureServices : IConfigureServices
     {
         #region [ -- Interface implementations -- ]
 
-        public void Configure(IKernel kernel, IConfiguration configuration)
+        public void Configure(IServiceCollection kernel, IConfiguration configuration)
         {
-            kernel.Bind<IHttpClient>().To<HttpClient>();
+            kernel.AddTransient<IHttpClient, HttpClient>();
         }
 
         #endregion

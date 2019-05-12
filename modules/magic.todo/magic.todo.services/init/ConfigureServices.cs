@@ -3,18 +3,18 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using Ninject;
 using magic.todo.contracts;
 using magic.common.contracts;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace magic.todo.services
+namespace magic.todo.services.init
 {
-    public class ConfigureNinject : IConfigureNinject
+    public class ConfigureServices : IConfigureServices
     {
-        public void Configure(IKernel kernel, IConfiguration configuration)
+        public void Configure(IServiceCollection kernel, IConfiguration configuration)
         {
-            kernel.Bind<ITodoService>().To<TodoService>();
+            kernel.AddTransient<ITodoService, TodoService>();
         }
     }
 }

@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
 

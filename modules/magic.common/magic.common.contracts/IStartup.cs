@@ -3,13 +3,13 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using Microsoft.Extensions.Configuration;
-using Ninject;
 
 namespace magic.common.contracts
 {
     public interface IStartup
     {
-        void Configure(IKernel kernel, IConfiguration configuration);
+        void Configure(IServiceProvider kernel, IConfiguration configuration);
     }
 }

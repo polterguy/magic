@@ -5,7 +5,7 @@
 
 using System;
 using System.Reflection;
-using Ninject;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using FluentNHibernate.Cfg;
@@ -18,11 +18,11 @@ namespace magic.tests
     public class DbConnection : IDisposable
     {
         readonly public ISession Session;
-        readonly public IKernel Kernel;
+        readonly public IServiceProvider Kernel;
 
-        public DbConnection(params Assembly[] mappings)
+        public DbConnection(Action<ServiceCollection> functor, params Assembly[] mappings)
         {
-            Kernel = new StandardKernel();
+            var services = new ServiceCollection();
 
             var nConfig = new cnf.Configuration();
             var factory = Fluently.Configure()
@@ -42,9 +42,12 @@ namespace magic.tests
             nConfig.Properties["connection.release_mode"] = "on_close";
             Session = factory.OpenSession();
 
-            new SchemaExport(nConfig).Execute(true, true, false, Session.Connection, null);
-            Kernel.Bind<ISession>().ToConstant(Session);
-            Kernel.Bind<ISessionFactory>().ToConstant(factory);
+            new SchemaExport(nConfig).Execute(false, true, false, Session.Connection, null);
+            services.AddSingleton<ISession>(Session);
+            services.AddSingleton<ISessionFactory>(factory);
+            if (functor != null)
+                functor(services);
+            Kernel = services.BuildServiceProvider();
         }
 
         #region [ -- Interface implementations -- ]
