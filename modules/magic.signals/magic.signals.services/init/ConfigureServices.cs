@@ -26,7 +26,7 @@ namespace magic.signals.services.init
             {
                 kernel.AddTransient(idx);
             }
-            kernel.AddSingleton<ISignaler, Signaler>();
+            kernel.AddSingleton<ISignaler>((svc) => new Signaler(svc, slots));
         }
 
         #endregion

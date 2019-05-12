@@ -40,12 +40,12 @@ namespace magic.backend.init
         }
 
         public static void ExecuteStartups(
-            IServiceProvider kernel,
+            IServiceProvider provider,
             IConfiguration configuration)
         {
             foreach (var idx in InstantiateAllTypes<IStartup>())
             {
-                idx.Configure(kernel, configuration);
+                idx.Configure(provider, configuration);
             }
         }
 

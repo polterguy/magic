@@ -4,21 +4,21 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using magic.signals.contracts;
-using System.Linq;
 
 namespace magic.signals.services
 {
     public class Signaler : ISignaler
     {
         readonly Dictionary<string, List<Type>> _slots;
-        readonly IServiceProvider _kernel;
+        readonly IServiceProvider _provider;
 
-        public Signaler(IEnumerable<Type> types, IServiceProvider kernel)
+        internal Signaler(IServiceProvider provider, IEnumerable<Type> types)
         {
-            _kernel = kernel;
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
             _slots = new Dictionary<string, List<Type>>();
             foreach (var idxType in types)
             {
@@ -46,7 +46,7 @@ namespace magic.signals.services
 
             foreach (var idxType in _slots[name])
             {
-                var instance = _kernel.GetService(idxType) as ISlot;
+                var instance = _provider.GetService(idxType) as ISlot;
                 instance.Signal(input);
             }
         }

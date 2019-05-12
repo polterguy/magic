@@ -68,6 +68,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.http.services", "modu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.http.tests", "modules\magic.http\magic.http.tests\magic.http.tests.csproj", "{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.signals.tests", "modules\magic.signals\magic.signals.tests\magic.signals.tests.csproj", "{84705C54-E3BE-49ED-8808-596E34B1C354}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -146,6 +148,10 @@ Global
 		{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84705C54-E3BE-49ED-8808-596E34B1C354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84705C54-E3BE-49ED-8808-596E34B1C354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84705C54-E3BE-49ED-8808-596E34B1C354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84705C54-E3BE-49ED-8808-596E34B1C354}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -173,6 +179,7 @@ Global
 		{E8AD3E67-0832-4BE6-8B71-3B60341CD82E} = {68A2FF07-7AAC-4E91-8427-6F7BED1027E2}
 		{F6168A46-E8F5-4EC0-9BA4-44E7D5FBABB6} = {68A2FF07-7AAC-4E91-8427-6F7BED1027E2}
 		{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17} = {68A2FF07-7AAC-4E91-8427-6F7BED1027E2}
+		{84705C54-E3BE-49ED-8808-596E34B1C354} = {E7313D41-1D33-40B3-AA1C-708FB84963D2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}

@@ -35,7 +35,7 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Giving every module a chance to initialize itself.
+            // Giving every module a chance to configure its services.
             Configurator.ConfigureServices(services, Configuration);
 
             // Dynamically loading up all controllers.
@@ -82,13 +82,14 @@ namespace magic.backend
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Making sure we add some default exception handling.
             app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
             {
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
                 var ex = context.Features.Get<IExceptionHandlerPathFeature>();
                 var logger = LogManager.GetLogger(ex?.Error.GetType() ?? typeof(Startup));
-                var msg = ex?.Error.Message ?? "Unhandled exception";
+                var msg = ex?.Error.Message ?? "Unknown error";
                 logger.Error("At path: " + ex?.Path);
                 logger.Error(msg, ex?.Error);
                 var response = new JObject
@@ -105,6 +106,7 @@ namespace magic.backend
             app.UseSwagger();
             app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE"));
 
+            // Giving each module a chance to configure the application.
             Configurator.ConfigureApplication(app, Configuration);
 
             // Giving each module a chance to run startup logic.
