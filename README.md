@@ -3,9 +3,9 @@
 
 Magic is a Super DYR starter kit for your ASP.NET Core web APIs, that brings the ideas of DRY (_"Don't Repeat Yourself"_) to a new level.
 If you follow a small recipe as you create your controller endpoints, services, view models, and database models, you will literally
-start out with 80% of your job done, and you can wrap any CRUD operations into your HTTP REST endpoints extremely rapidly.
+start out with 80% of your job done, and you can wrap any CRUD operations into your HTTP REST endpoints almost without coding.
 The project's purpose is to be a starter kit for your own projects, allowing you to _"hit the ground
-running"_. Magic is best suited for database applications.
+running"_.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=M3uKdPAvS1I">
@@ -199,9 +199,6 @@ modules. This allows any module of yours to communicate with any other module in
 as long as they communicate exclusively using signals and slots, only passing data in through their `JObject` input. Data as in strings, date objects,
 integers, etc ...
 
-You can see this implemented in the _"magic.auth"_ module, which raises the _"user.deleted"_ signal, which other modules can attach themselves to.
-The _"magic.email"_ module has a slot for this particular signal.
-
 ## .NET Core CLI Template
 
 This repository also includes a .NET Core CLI template which can be installed by:
@@ -240,17 +237,19 @@ You will probably benefit from understanding these projects as you proceed to cr
 5. Create your view model. See the `magic.todo.web.model` project for an example.
 6. Create your controller. See the `magic.todo.web.controller` project for an example.
 7. Add a reference to your controller and service into the `magic.backend`.
-8. Make sure you somehow configure Ninject to use your service implementation
+8. Configure your `IServiceCollection` in for instance a class implementing `IConfigureServices`.
 
 ## Changing database provider
 
 To change database provider is easy. Open up _"appsettings.config"_ in your _"magic.backend"_ project, and change the `database` section to whatever
 database provider you want to use, and the connection string to your database. Notice, Magic will automatically create the database
-schema itself accoding to your `ClassMap` definition(s). Supported database drivers are as follows.
+schema itself according to your `ClassMap` definition(s). Supported database drivers are as follows.
 
 * `MySQL` - Make sure you use a connection string to an existing MySQL database instance
 * `MSSQL` - Microsoft SQL Server
 * `SQLIte` - SQLIte database (this is the default)
+
+In addition, most different dialects of MS SQL is supported.
 
 ## Additional modules
 
