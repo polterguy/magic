@@ -91,14 +91,14 @@ public class Todo
 }
 ```
 
-And then make sure Ninject is using your service implementation, by creating something resembling the following.
+And then make sure you resolve your service implementation to your service interface.
 
 ```csharp
 public class Initializer : IInitialize
 {
-    public void Initialize(IKernel kernel)
+    public void Initialize(IServiceCollection services)
     {
-        kernel.Bind<ITodoService>().To<TodoService>();
+        services.AddTransient<ITodoService, TodoService>();
     }
 }
 ```
@@ -225,7 +225,6 @@ Magic supports MySQL, MSSQL and SQLIte out of the box, but adding support for yo
 of code. This is possible due to the usage of Fluent nHibernate. Magic is built upon the following open source projects.
 
 * [Fluent nHibernate](https://github.com/FluentNHibernate/fluent-nhibernate)
-* [Ninject](http://www.ninject.org/)
 * [Mapster](https://github.com/MapsterMapper/Mapster)
 * [Swagger UI](https://swagger.io/tools/swagger-ui/)
 * [log4net](https://logging.apache.org/log4net/)
