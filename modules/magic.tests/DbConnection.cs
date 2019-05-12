@@ -18,7 +18,6 @@ namespace magic.tests
     public class DbConnection : IDisposable
     {
         readonly public ISession Session;
-        readonly public ISession TreadSession;
         readonly public IKernel Kernel;
 
         public DbConnection(params Assembly[] mappings)
@@ -27,7 +26,9 @@ namespace magic.tests
 
             var nConfig = new cnf.Configuration();
             var factory = Fluently.Configure()
-                .Database(SQLiteConfiguration.Standard.ConnectionString("Data Source=:memory:;Version=3;New=True;").Provider<ConnectionProvider>())
+                .Database(
+                    SQLiteConfiguration.Standard.ConnectionString("Data Source=:memory:;Version=3;New=True;")
+                        .Provider<ConnectionProvider>())
                 .Mappings((m) =>
                 {
                     foreach (var idxAssembly in mappings)
@@ -40,11 +41,10 @@ namespace magic.tests
 
             nConfig.Properties["connection.release_mode"] = "on_close";
             Session = factory.OpenSession();
-            TreadSession = factory.OpenSession();
 
             new SchemaExport(nConfig).Execute(true, true, false, Session.Connection, null);
-            Kernel.Bind<ISession>().ToConstant(Session).Named("default");
-            Kernel.Bind<ISession>().ToConstant(TreadSession).Named("thread");
+            Kernel.Bind<ISession>().ToConstant(Session);
+            Kernel.Bind<ISessionFactory>().ToConstant(factory);
         }
 
         #region [ -- Interface implementations -- ]

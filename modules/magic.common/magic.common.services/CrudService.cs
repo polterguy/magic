@@ -19,7 +19,7 @@ namespace magic.common.services
         readonly protected ISession Session;
         readonly protected ILog Logger;
 
-        public CrudService([Named("default")] ISession session)
+        public CrudService(ISession session)
         {
             Session = session ?? throw new ArgumentNullException(nameof(session));
             Logger = LogManager.GetLogger(this.GetType());
