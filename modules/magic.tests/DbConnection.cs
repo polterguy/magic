@@ -18,9 +18,9 @@ namespace magic.tests
     public class DbConnection : IDisposable
     {
         readonly public ISession Session;
-        readonly public IServiceProvider Kernel;
+        readonly public IServiceProvider Provider;
 
-        public DbConnection(Action<ServiceCollection> functor, params Assembly[] mappings)
+        public DbConnection(Action<ServiceCollection> injectServices, params Assembly[] mappings)
         {
             var services = new ServiceCollection();
 
@@ -45,9 +45,9 @@ namespace magic.tests
             new SchemaExport(nConfig).Execute(false, true, false, Session.Connection, null);
             services.AddSingleton<ISession>(Session);
             services.AddSingleton<ISessionFactory>(factory);
-            if (functor != null)
-                functor(services);
-            Kernel = services.BuildServiceProvider();
+            if (injectServices != null)
+                injectServices(services);
+            Provider = services.BuildServiceProvider();
         }
 
         #region [ -- Interface implementations -- ]

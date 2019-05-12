@@ -39,13 +39,13 @@ namespace magic.backend.init
             }
         }
 
-        public static void ExecuteStartups(
+        public static void InitializeStartups(
             IServiceProvider provider,
             IConfiguration configuration)
         {
             foreach (var idx in InstantiateAllTypes<IStartup>())
             {
-                idx.Configure(provider, configuration);
+                idx.Initialize(provider, configuration);
             }
         }
 

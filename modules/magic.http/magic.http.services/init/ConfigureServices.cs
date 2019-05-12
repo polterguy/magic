@@ -14,9 +14,9 @@ namespace magic.http.services.init
     {
         #region [ -- Interface implementations -- ]
 
-        public void Configure(IServiceCollection kernel, IConfiguration configuration)
+        public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            kernel.AddTransient<IHttpClient, HttpClient>();
+            services.AddTransient<IHttpClient, HttpClient>();
         }
 
         #endregion

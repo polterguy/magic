@@ -215,7 +215,7 @@ namespace magic.todo.tests
 
         TodosController CreateController(DbConnection connection)
         {
-            return connection.Kernel.GetService(typeof(TodosController)) as TodosController;
+            return connection.Provider.GetService(typeof(TodosController)) as TodosController;
         }
 
         void InjectDependencies(ServiceCollection services)
