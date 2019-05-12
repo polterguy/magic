@@ -142,7 +142,10 @@ var result = await client.PostAsync<RequestDTO, ResponseDTO>("https://somewhere.
 // "result" is now of type "ResponseDTO".
 ```
 
-You can also optionally pass in a _"Bearer"_ Authorize token when invoking methods on this service.
+You can also optionally pass in a _"Bearer"_ Authorize token when invoking methods on this service, and
+you can also GET files as streams, or PUT and POST Streams, at which point the implementation will not
+load the entire contents of the stream into memory. This allows you to download large files, and/or
+submit large files, without exhausting the memory of your client.
 
 ## Signal over spaghetti
 
