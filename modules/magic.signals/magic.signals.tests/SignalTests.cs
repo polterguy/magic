@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Newtonsoft.Json.Linq;
 using magic.common.contracts;
@@ -22,7 +23,7 @@ namespace magic.signals.tests
         public void Signal ()
         {
             var kernel = Initialize();
-            var signaler = kernel.Get<ISignaler>();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
             var input = new JObject
             {
                 ["bar"] = "Jo!",
@@ -40,11 +41,11 @@ namespace magic.signals.tests
             var configuration = new ConfigurationBuilder().Build();
             var kernel = new ServiceCollection();
             kernel.AddTransient<IConfiguration>((svc) => configuration);
-            var provider = kernel.BuildServiceProvider();
-            foreach (var idx in InstantiateAllTypes<IStartup>())
+            foreach (var idx in InstantiateAllTypes<IConfigureServices>())
             {
-                idx.Configure(provider, configuration);
+                idx.Configure(kernel, configuration);
             }
+            var provider = kernel.BuildServiceProvider();
             return provider;
         }
 
