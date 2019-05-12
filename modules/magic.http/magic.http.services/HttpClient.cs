@@ -8,6 +8,7 @@ using System.IO;
 using net = System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
+using log4net;
 using Newtonsoft.Json.Linq;
 using magic.http.contracts;
 
@@ -17,9 +18,16 @@ namespace magic.http.services
     {
         static readonly net.HttpClient _client;
 
+        private readonly ILog _logger;
+
         static HttpClient()
         {
             _client = new net.HttpClient();
+        }
+
+        public HttpClient()
+        {
+            _logger = LogManager.GetLogger(this.GetType());
         }
 
         #region [ -- Interface implementation -- ]
@@ -29,6 +37,7 @@ namespace magic.http.services
             Request input,
             string token = null)
         {
+            _logger.Info($"Invoking HTTP POST towards '{url}' with input '{input}'");
             return await CreateRequest<Response>(url, net.HttpMethod.Post, input, token);
         }
 
@@ -37,6 +46,7 @@ namespace magic.http.services
             Request input,
             string token = null)
         {
+            _logger.Info($"Invoking HTTP PUT towards '{url}' with input '{input}'");
             return await CreateRequest<Response>(url, net.HttpMethod.Put, input, token);
         }
 
@@ -44,6 +54,7 @@ namespace magic.http.services
             string url,
             string token = null)
         {
+            _logger.Info($"Invoking HTTP GET towards '{url}'");
             return await CreateRequest<Response>(url, net.HttpMethod.Get, token);
         }
 
@@ -53,6 +64,7 @@ namespace magic.http.services
             string accept = null,
             string token = null)
         {
+            _logger.Info($"Invoking HTTP GET towards '{url}'");
             await CreateRequest(url, net.HttpMethod.Get, functor, accept, token);
         }
 
@@ -60,6 +72,7 @@ namespace magic.http.services
             string url,
             string token = null)
         {
+            _logger.Info($"Invoking HTTP DELETE towards '{url}'");
             return await CreateRequest<Response>(url, net.HttpMethod.Delete, token);
         }
 
