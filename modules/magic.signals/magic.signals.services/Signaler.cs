@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using Ninject;
 using Newtonsoft.Json.Linq;
 using magic.signals.contracts;
 using System.Linq;
@@ -15,9 +14,9 @@ namespace magic.signals.services
     public class Signaler : ISignaler
     {
         readonly Dictionary<string, List<Type>> _slots;
-        readonly IKernel _kernel;
+        readonly IServiceProvider _kernel;
 
-        public Signaler(IEnumerable<Type> types, IKernel kernel)
+        public Signaler(IEnumerable<Type> types, IServiceProvider kernel)
         {
             _kernel = kernel;
             _slots = new Dictionary<string, List<Type>>();
@@ -35,7 +34,6 @@ namespace magic.signals.services
                 }
 
                 slot.Add(idxType);
-                _kernel.Bind(idxType).ToSelf();
             }
         }
 
@@ -48,7 +46,7 @@ namespace magic.signals.services
 
             foreach (var idxType in _slots[name])
             {
-                var instance = _kernel.Get(idxType) as ISlot;
+                var instance = _kernel.GetService(idxType) as ISlot;
                 instance.Signal(input);
             }
         }

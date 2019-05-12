@@ -10,7 +10,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Ninject;
 using magic.common.contracts;
 using System.Collections.Generic;
 
@@ -30,16 +29,6 @@ namespace magic.backend.init
             }
         }
 
-        public static void ConfigureNinject(
-            IKernel kernel,
-            IConfiguration configuration)
-        {
-            foreach (var idx in InstantiateAllTypes<IConfigureNinject>())
-            {
-                idx.Configure(kernel, configuration);
-            }
-        }
-
         public static void ConfigureApplication(
             IApplicationBuilder app,
             IConfiguration configuration)
@@ -51,7 +40,7 @@ namespace magic.backend.init
         }
 
         public static void ExecuteStartups(
-            IKernel kernel,
+            IServiceProvider kernel,
             IConfiguration configuration)
         {
             foreach (var idx in InstantiateAllTypes<IStartup>())

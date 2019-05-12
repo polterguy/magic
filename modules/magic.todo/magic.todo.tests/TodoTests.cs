@@ -4,8 +4,8 @@
  */
 
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Ninject;
 using NHibernate;
 using FluentNHibernate.Testing;
 using magic.tests;
@@ -24,7 +24,7 @@ namespace magic.todo.tests
         [Fact]
         public void VerifyTheMappings()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection(null, typeof(Todo).Assembly))
             {
                 new PersistenceSpecification<Todo>(connection.Session)
                     .CheckProperty(c => c.Header, "Header")
@@ -37,7 +37,10 @@ namespace magic.todo.tests
         [Fact]
         public void SaveGet()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection((svc) =>
+            {
+                InjectDependencies(svc);
+            }, typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
 
@@ -59,7 +62,10 @@ namespace magic.todo.tests
         [Fact]
         public void SaveFail_01()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection((svc) =>
+            {
+                InjectDependencies(svc);
+            }, typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
 
@@ -77,7 +83,10 @@ namespace magic.todo.tests
         [Fact]
         public void SaveFail_02()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection((svc) =>
+            {
+                InjectDependencies(svc);
+            }, typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
 
@@ -95,7 +104,10 @@ namespace magic.todo.tests
         [Fact]
         public void SaveList()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection((svc) =>
+            {
+                InjectDependencies(svc);
+            }, typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
 
@@ -131,7 +143,10 @@ namespace magic.todo.tests
         [Fact]
         public void SaveDeleteList()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection((svc) =>
+            {
+                InjectDependencies(svc);
+            }, typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
 
@@ -164,7 +179,10 @@ namespace magic.todo.tests
         [Fact]
         public void SaveUpdateGet()
         {
-            using (var connection = new DbConnection(typeof(Todo).Assembly))
+            using (var connection = new DbConnection((svc) =>
+            {
+                InjectDependencies(svc);
+            }, typeof(Todo).Assembly))
             {
                 var controller = CreateController(connection);
 
@@ -197,9 +215,13 @@ namespace magic.todo.tests
 
         TodosController CreateController(DbConnection connection)
         {
-            connection.Kernel.Bind<ITodoService>().To<TodoService>();
-            connection.Kernel.Bind<TodosController>().ToSelf();
-            return connection.Kernel.Get<TodosController>();
+            return connection.Kernel.GetService(typeof(TodosController)) as TodosController;
+        }
+
+        void InjectDependencies(ServiceCollection services)
+        {
+            services.AddTransient<ITodoService, TodoService>();
+            services.AddTransient<TodosController>();
         }
 
         #endregion

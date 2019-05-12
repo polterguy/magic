@@ -8,11 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Ninject;
 using Newtonsoft.Json.Linq;
-using magic.common.contracts;
+using magic.http.services;
 using magic.http.contracts;
+using magic.common.contracts;
 
 namespace magic.http.tests
 {
@@ -24,7 +25,7 @@ namespace magic.http.tests
         public async void GetString()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             var result = await client.GetAsync<string>("https://my-json-server.typicode.com/typicode/demo/posts");
             Assert.NotNull(result);
         }
@@ -33,7 +34,7 @@ namespace magic.http.tests
         public async void GetJArray()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             var result = await client.GetAsync<JArray>("https://my-json-server.typicode.com/typicode/demo/posts");
             Assert.NotNull(result);
             Assert.Equal(3, result.Count);
@@ -43,7 +44,7 @@ namespace magic.http.tests
         public async void GetObject()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             var result = await client.GetAsync<Blog[]>("https://my-json-server.typicode.com/typicode/demo/posts");
             Assert.NotNull(result);
             Assert.Equal(3, result.Length);
@@ -53,7 +54,7 @@ namespace magic.http.tests
         public async void GetEnumerable()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             var result = await client.GetAsync<IEnumerable<Blog>>("https://my-json-server.typicode.com/typicode/demo/posts");
             Assert.NotNull(result);
             Assert.Equal(3, result.Count());
@@ -63,7 +64,7 @@ namespace magic.http.tests
         public async void PostObject()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             var user = new User
             {
                 Name = "John Doe"
@@ -79,7 +80,7 @@ namespace magic.http.tests
         public async void PostStream()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             Blog[] blogs = null;
             await client.GetAsync(
                 "https://my-json-server.typicode.com/typicode/demo/posts",
@@ -103,7 +104,7 @@ namespace magic.http.tests
         public async void GetStream()
         {
             var kernel = Initialize();
-            var client = kernel.Get<IHttpClient>();
+            var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
             using (var stream = new MemoryStream())
             {
                 var jObject = JObject.FromObject(new User
@@ -147,15 +148,18 @@ namespace magic.http.tests
             public string Name { get; set; }
         }
 
-        IKernel Initialize()
+        IServiceProvider Initialize()
         {
             var configuration = new ConfigurationBuilder().Build();
-            var kernel = new StandardKernel();
+            var kernel = new ServiceCollection();
+            kernel.AddTransient<IConfiguration>((svc) => configuration);
+            kernel.AddTransient<IHttpClient, HttpClient>();
+            var provider = kernel.BuildServiceProvider();
             foreach (var idx in InstantiateAllTypes<IStartup>())
             {
-                idx.Configure(kernel, configuration);
+                idx.Configure(provider, configuration);
             }
-            return kernel;
+            return provider;
         }
 
         static IEnumerable<T> InstantiateAllTypes<T>() where T : class

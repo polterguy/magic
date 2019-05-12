@@ -14,8 +14,7 @@ using NHibernate.Tool.hbm2ddl;
 using FluentNHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using Ninject;
-using Ninject.Activation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace magic.backend.init
 {
@@ -28,7 +27,7 @@ namespace magic.backend.init
             public string Connection { get; set; }
         }
 
-        public static void Initialize(IKernel kernel, IConfiguration configuration, Func<IContext, object> scopeRequest)
+        public static void Initialize(IServiceCollection kernel, IConfiguration configuration)
         {
             var type = typeof(IMappingProvider);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -36,13 +35,11 @@ namespace magic.backend.init
                     .Any(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.FullName.StartsWith("FluentNHibernate")));
 
             var factory = CreateSessionFactory(configuration, assemblies);
-            kernel.Bind<ISession>()
-                .ToMethod((ctx) => factory.OpenSession())
-                .InScope(scopeRequest)
-                .OnDeactivation(x => x.Flush());
 
-            // Threads might need a session that's not bound to the HTTP request.
-            kernel.Bind<ISessionFactory>().ToConstant(factory);
+            kernel.AddScoped<ISession>((svc) => factory.OpenSession());
+
+            // Threads might need a session that's not bound to the scope.
+            kernel.AddSingleton<ISessionFactory>(factory);
         }
 
         static ISessionFactory CreateSessionFactory(
