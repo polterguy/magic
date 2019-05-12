@@ -64,7 +64,7 @@ namespace magic.http.services
             string accept = null,
             string token = null)
         {
-            _logger.Info($"Invoking HTTP GET towards '{url}'");
+            _logger.Info($"Invoking HTTP GET towards '{url}' with stream callback");
             await CreateRequest(url, net.HttpMethod.Get, functor, accept, token);
         }
 
