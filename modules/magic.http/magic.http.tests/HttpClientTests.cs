@@ -80,6 +80,30 @@ namespace magic.http.tests
         {
             var kernel = Initialize();
             var client = kernel.Get<IHttpClient>();
+            Blog[] blogs = null;
+            await client.GetAsync(
+                "https://my-json-server.typicode.com/typicode/demo/posts",
+                (stream) =>
+                {
+                    using (var memory = new MemoryStream())
+                    {
+                        stream.CopyTo(memory);
+                        memory.Position = 0;
+                        using (var reader = new StreamReader(memory))
+                        {
+                            var stringContent = reader.ReadToEnd();
+                            blogs = JArray.Parse(stringContent).ToObject<Blog[]>();
+                        }
+                    }
+                });
+            Assert.Equal(3, blogs.Length);
+        }
+
+        [Fact]
+        public async void GetStream()
+        {
+            var kernel = Initialize();
+            var client = kernel.Get<IHttpClient>();
             using (var stream = new MemoryStream())
             {
                 var jObject = JObject.FromObject(new User

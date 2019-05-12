@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace magic.http.contracts
@@ -15,6 +16,8 @@ namespace magic.http.contracts
         Task<Response> PutAsync<Request, Response>(string url, Request request, string token = null);
 
         Task<Response> GetAsync<Response>(string url, string token = null);
+
+        Task GetAsync(string url, Action<Stream> functor, string accept = null, string token = null);
 
         Task<Response> DeleteAsync<Response>(string url, string token = null);
     }

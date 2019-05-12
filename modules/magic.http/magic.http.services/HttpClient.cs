@@ -47,6 +47,15 @@ namespace magic.http.services
             return await CreateRequest<Response>(url, net.HttpMethod.Get, token);
         }
 
+        public async Task GetAsync(
+            string url,
+            Action<Stream> functor,
+            string accept = null,
+            string token = null)
+        {
+            await CreateRequest(url, net.HttpMethod.Get, functor, accept, token);
+        }
+
         public async Task<Response> DeleteAsync<Response>(
             string url,
             string token = null)
@@ -96,6 +105,37 @@ namespace magic.http.services
                     }
                 }
             });
+        }
+
+        virtual protected async Task CreateRequest(
+            string url,
+            net.HttpMethod method,
+            Action<Stream> functor,
+            string accept,
+            string token)
+        {
+            using(var msg = new net.HttpRequestMessage())
+            {
+                msg.RequestUri = new Uri(url);
+                msg.Method = method;
+
+                if (accept != null)
+                    msg.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+
+                if (token != null)
+                    msg.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                using (var response = await _client.SendAsync(msg))
+                {
+                    using (var content = response.Content)
+                    {
+                        if (!response.IsSuccessStatusCode)
+                            throw new Exception(await content.ReadAsStringAsync());
+
+                        functor(await content.ReadAsStreamAsync());
+                    }
+                }
+            }
         }
 
         virtual protected async Task<Response> CreateRequestMessage<Response>(
