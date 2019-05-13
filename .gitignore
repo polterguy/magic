@@ -339,6 +339,7 @@ modules/*
 !modules/magic.signals
 !modules/magic.http
 !modules/magic.tests
+!modules/add-all-modules.bat
 
 # Excluding all uploaded files
 magic.backend/files/*
