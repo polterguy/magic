@@ -9,12 +9,12 @@ using System.Reflection;
 using System.Configuration;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using FluentNHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace magic.backend.init
 {

@@ -3,13 +3,13 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using log4net;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using System;
 using System.IO;
 using System.Xml;
 using System.Reflection;
-using System;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using log4net;
 
 namespace magic.backend
 {

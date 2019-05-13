@@ -7,11 +7,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.common.contracts;
-using System.Collections.Generic;
 
 namespace magic.backend.init
 {

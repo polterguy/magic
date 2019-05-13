@@ -3,8 +3,8 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using magic.signals.contracts;
 using Newtonsoft.Json.Linq;
+using magic.signals.contracts;
 
 namespace magic.signals.tests.utilities
 {

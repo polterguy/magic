@@ -4,9 +4,9 @@
  */
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using magic.common.contracts;
 using magic.http.contracts;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace magic.http.services.init
 {
