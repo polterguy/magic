@@ -5,9 +5,9 @@
 
 using System;
 using System.IO;
-using net = System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
+using net = System.Net.Http;
 using log4net;
 using Newtonsoft.Json.Linq;
 using magic.http.contracts;

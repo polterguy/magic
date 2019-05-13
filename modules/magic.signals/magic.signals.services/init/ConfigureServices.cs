@@ -6,9 +6,9 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using magic.common.contracts;
 using magic.signals.contracts;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace magic.signals.services.init
 {
