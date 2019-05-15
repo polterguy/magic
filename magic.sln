@@ -56,12 +56,18 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.contracts", "modules\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj", "{85544EEC-EED5-4989-85E8-3C47E6BA030C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.tests", "magic.tests", "{512D1662-66FB-4655-ABD3-F01186170DFC}"
+	ProjectSection(SolutionItems) = preProject
+		modules\magic.tests\README.md = modules\magic.tests\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "modules\magic.tests\magic.tests.csproj", "{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.tests", "modules\magic.todo\magic.todo.tests\magic.todo.tests.csproj", "{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.http", "magic.http", "{68A2FF07-7AAC-4E91-8427-6F7BED1027E2}"
+	ProjectSection(SolutionItems) = preProject
+		modules\magic.http\README.md = modules\magic.http\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.contracts", "modules\magic.http\magic.http.contracts\magic.http.contracts.csproj", "{E8AD3E67-0832-4BE6-8B71-3B60341CD82E}"
 EndProject
