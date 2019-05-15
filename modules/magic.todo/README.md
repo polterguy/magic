@@ -14,5 +14,5 @@ one additional unit test project, and these are as follows.
 The services is the most important part of your solution, and should ideally contain all your business logic.
 Everything you do through your services, should be done through a contract/interface, using dependency injection,
 by configuring `IServiceCollection` in some class implementing the `IInitialize` interface. See the `magic.todo.services`
-project for an example.
+project for an example, inside of the _"init"_ folder, in its _"ConfigureServices.cs"_ file.
 
