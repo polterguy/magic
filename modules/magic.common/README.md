@@ -8,3 +8,88 @@ and services from these generic classes.
 Notice, not all database tables, and/or operations, lends themselves to this approach. However, for those that do, inheriting
 from the base classes found in this module, seriously reduces your efforts when creating API endpoints wrapping your database
 for CRUD operations, and results in what I refer to as _"Super DRY code"_ - DRY again implying _"Don't Repeat Yourself"_.
+
+Below is some example code illustrating usage.
+
+```csharp
+[Route("api/todo")]
+public class TodoController : CrudController<www.Todo, db.Todo>
+{
+    public TodoController(ITodoService service)
+        : base(service)
+    { }
+}
+```
+
+While your service implementation will resemble the following.
+
+```csharp
+public class TodoService : CrudService<Todo>, ITodoService
+{
+    public TodoService(ISession session)
+        : base(session)
+    { }
+}
+```
+
+Even your service interface ends up empty.
+
+```csharp
+public interface ITodoService : ICrudService<Todo>
+{ }
+```
+
+At which point all you need to do, is to model your database model, such as the following illustrates.
+
+```csharp
+public class Todo : Model
+{
+    public virtual string Header { get; set; }
+    public virtual string Description { get; set; }
+    public virtual bool Done { get; set; }
+}
+```
+
+And map it to your database using something resembling the following.
+
+```csharp
+public class TodoMap : ClassMap<Todo>
+{
+    public TodoMap()
+    {
+        Table("todos");
+        Id(x => x.Id);
+        Map(x => x.Header).Not.Nullable().Length(256);
+        Map(x => x.Description).Not.Nullable().Length(4096);
+        Map(x => x.Done).Not.Nullable();
+    }
+}
+```
+
+For then to create a view model looking like the following.
+
+```csharp
+public class Todo
+{
+    public Guid? Id { get; set; }
+    public string Header { get; set; }
+    public string Description { get; set; }
+    public bool Done { get; set; }
+}
+```
+
+And then make sure you resolve your service implementation to your service interface.
+
+```csharp
+public class Initializer : IInitialize
+{
+    public void Initialize(IServiceCollection services)
+    {
+        services.AddTransient<ITodoService, TodoService>();
+    }
+}
+```
+
+See the _"/modules/magic.todo/"_ folder for more details about how to create your own CRUD modules.
+
+
