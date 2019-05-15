@@ -273,6 +273,7 @@ within `System.IO`.
 Thanks to the following contributors.
 
 * [Jamie Taylor](https://github.com/GaProgMan), who also have an [awesome podcast](https://dotnetcore.show/author/jamie/) and [blog](https://dotnetcore.gaprogman.com/) about .Net Core who contributed the CLI template.
+* Aleksei Ohotnik for code reviewing _"magic.email"_ and its `IHostedService` for fetching emails from a POP3 server, and helping improving it.
 
 ## Licensing
 
