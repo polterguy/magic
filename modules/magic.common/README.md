@@ -11,6 +11,8 @@ for CRUD operations, and results in what I refer to as _"Super DRY code"_ - DRY 
 
 Below is some example code illustrating usage.
 
+**Controller**
+
 ```csharp
 [Route("api/todo")]
 public class TodoController : CrudController<www.Todo, db.Todo>
@@ -21,7 +23,7 @@ public class TodoController : CrudController<www.Todo, db.Todo>
 }
 ```
 
-While your service implementation will resemble the following.
+**Service implementation**
 
 ```csharp
 public class TodoService : CrudService<Todo>, ITodoService
@@ -32,14 +34,14 @@ public class TodoService : CrudService<Todo>, ITodoService
 }
 ```
 
-Even your service interface ends up empty.
+**Service contract/interface**
 
 ```csharp
 public interface ITodoService : ICrudService<Todo>
 { }
 ```
 
-At which point all you need to do, is to model your database model, such as the following illustrates.
+**Model**
 
 ```csharp
 public class Todo : Model
@@ -50,7 +52,7 @@ public class Todo : Model
 }
 ```
 
-And map it to your database using something resembling the following.
+**Database mapping class**
 
 ```csharp
 public class TodoMap : ClassMap<Todo>
@@ -66,7 +68,7 @@ public class TodoMap : ClassMap<Todo>
 }
 ```
 
-For then to create a view model looking like the following.
+**View model/DTO**
 
 ```csharp
 public class Todo
@@ -78,7 +80,7 @@ public class Todo
 }
 ```
 
-And then make sure you resolve your service implementation to your service interface.
+**Initializing logic**
 
 ```csharp
 public class Initializer : IInitialize
@@ -90,6 +92,6 @@ public class Initializer : IInitialize
 }
 ```
 
-See the _"/modules/magic.todo/"_ folder for more details about how to create your own CRUD modules.
+See the _"/modules/magic.todo/"_ folder for more details about how to create your own modules using _"magic.common"_.
 
 
