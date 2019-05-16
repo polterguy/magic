@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\magic.http\magic.http.contracts\magic.http.contracts.csproj" />
     <ProjectReference Include="..\magic.crud.contracts\magic.crud.contracts.csproj" />
     <ProjectReference Include="..\magic.crud.model\magic.crud.model.csproj" />
   </ItemGroup>
