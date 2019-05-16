@@ -13,7 +13,7 @@ you to intercept the initialization of your app, without actually modifying it, 
 of the app, in whatever ways is necessary for you and your domain problem.
 
 All assemblies are dynamically loaded, and then the backend will automatically wire up all controller
-endpoints in your assembly, for then to invoke any initialization logic you implement using any pf
+endpoints in your assembly, for then to invoke any initialization logic you implement using any of
 the following interfaces.
 
 * __IConfigureApplication__ ==> Gives you an opportunity to customize your `IApplicationBuilder`
