@@ -6,19 +6,13 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using log4net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Swagger;
 using magic.backend.init;
 
@@ -35,19 +29,17 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Giving every module a chance to configure its services.
-            Configurator.ConfigureServices(services, Configuration);
-
-            // Dynamically loading up all controllers.
-            var assembly = typeof(Startup).GetTypeInfo().Assembly;
-            var part = new AssemblyPart(assembly);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Adding some basic configurations.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton(Configuration);
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+
+            #region [ -- Magic parts -- ]
+
+            // Giving every module a chance to configure its services.
+            Configurator.ConfigureServices(services, Configuration);
 
             // Initializing database.
             InitializeDatabase.Initialize(services, Configuration);
@@ -78,31 +70,19 @@ namespace magic.backend
                 }
                 swag.OperationFilter<FileUploadOperation>();
             });
+
+            #endregion
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // Making sure we add some default exception handling.
-            app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
-            {
-                context.Response.StatusCode = 500;
-                context.Response.ContentType = "application/json";
-                var ex = context.Features.Get<IExceptionHandlerPathFeature>();
-                var logger = LogManager.GetLogger(ex?.Error.GetType() ?? typeof(Startup));
-                var msg = ex?.Error.Message ?? "Unknown error";
-                logger.Error("At path: " + ex?.Path);
-                logger.Error(msg, ex?.Error);
-                var response = new JObject
-                {
-                    ["message"] = msg,
-                };
-                await context.Response.WriteAsync(response.ToString(Formatting.Indented));
-            }));
-
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
             app.UseMvc();
+
+            #region [ -- Magic parts -- ]
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "TITLE"));
 
@@ -111,6 +91,8 @@ namespace magic.backend
 
             // Giving each module a chance to run startup logic.
             Configurator.InitializeStartups(app.ApplicationServices, Configuration);
+
+            #endregion
         }
     }
 }
