@@ -8,9 +8,9 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
+using cnf = NHibernate.Cfg;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using cnf = NHibernate.Cfg;
 using magic.tests.internals;
 
 namespace magic.tests

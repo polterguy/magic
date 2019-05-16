@@ -3,11 +3,10 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using log4net;
 using NHibernate;
 using magic.todo.model;
-using magic.todo.contracts;
 using magic.crud.services;
+using magic.todo.contracts;
 
 namespace magic.todo.services
 {
