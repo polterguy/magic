@@ -10,7 +10,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using magic.crud.contracts;
-using www = magic.crud.web.model;
 
 namespace magic.crud.web.controller
 {
