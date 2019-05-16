@@ -4,7 +4,7 @@
  */
 
 using magic.todo.model;
-using magic.common.contracts;
+using magic.crud.contracts;
 
 namespace magic.todo.contracts
 {

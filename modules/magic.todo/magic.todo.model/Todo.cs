@@ -3,7 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using magic.common.model;
+using magic.crud.model;
 
 namespace magic.todo.model
 {

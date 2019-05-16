@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
-using magic.common.contracts;
-using www = magic.common.web.model;
+using magic.crud.contracts;
+using www = magic.crud.web.model;
 
-namespace magic.common.web.controller
+namespace magic.crud.web.controller
 {
     /// <summary>
     /// Generic CRUD controller for Creating, Reading, Updating and Deleting items

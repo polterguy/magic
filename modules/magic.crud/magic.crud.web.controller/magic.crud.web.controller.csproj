@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\magic.common.contracts\magic.common.contracts.csproj" />
-    <ProjectReference Include="..\magic.common.web.model\magic.common.web.model.csproj" />
+    <ProjectReference Include="..\magic.crud.contracts\magic.crud.contracts.csproj" />
+    <ProjectReference Include="..\magic.crud.model\magic.crud.model.csproj" />
+    <ProjectReference Include="..\magic.crud.web.model\magic.crud.web.model.csproj" />
   </ItemGroup>
 
 </Project>

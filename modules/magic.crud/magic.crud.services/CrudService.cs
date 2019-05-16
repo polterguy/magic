@@ -8,10 +8,10 @@ using System.Linq;
 using System.Collections.Generic;
 using log4net;
 using NHibernate;
-using magic.common.model;
-using magic.common.contracts;
+using magic.crud.model;
+using magic.crud.contracts;
 
-namespace magic.common.services
+namespace magic.crud.services
 {
     public abstract class CrudService<DbModel> : ICrudService<DbModel> where DbModel : Model
     {

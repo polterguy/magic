@@ -5,7 +5,7 @@
 
 using System;
 
-namespace magic.common.model
+namespace magic.crud.model
 {
     public class Model
     {

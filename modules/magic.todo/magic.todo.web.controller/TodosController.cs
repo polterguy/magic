@@ -5,7 +5,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using magic.todo.contracts;
-using magic.common.web.controller;
+using magic.crud.web.controller;
 using db = magic.todo.model;
 using www = magic.todo.web.model;
 
