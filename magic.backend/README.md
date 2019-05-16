@@ -16,9 +16,9 @@ All assemblies are dynamically loaded, and then the backend will automatically w
 endpoints in your assembly, for then to invoke any initialization logic you implement using any of
 the following interfaces.
 
-* __IConfigureApplication__ ==> Gives you an opportunity to customize your `IApplicationBuilder`
-* __IConfigureServices__ ==> Gives you an opportunity to create your own DI resolvings on your `IServiceCollection`
-* __IStartup__ ==> Gives you an opportunity to execute startup logic, and gives you access to your `IServiceProvider`
+* `IConfigureApplication` ==> Gives you an opportunity to customize your `IApplicationBuilder`
+* `IConfigureServices` ==> Gives you an opportunity to create your own DI resolvings on your `IServiceCollection`
+* `IStartup` ==> Gives you an opportunity to execute startup logic, and gives you access to your `IServiceProvider`
 
 All of these interfaces are also given your `IConfiguration` instance, such that they can read
 configuration settings, etc. These interfaces can be found in the _"magic.common.contracts"_ project.
