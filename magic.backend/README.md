@@ -12,7 +12,7 @@ that you can implement on your own classes, combined with dynamic loading of ass
 you to intercept the initialization of your app, without actually modifying it, to change the state
 of the app, in whatever ways is necessary for you and your domain problem.
 
-All assemblies are dynamically loaded, then the backend will automatically wire up all controller
+All assemblies are dynamically loaded, and then the backend will automatically wire up all controller
 endpoints in your assembly, for then to invoke any initialization logic you implement using any pf
 the following interfaces.
 
