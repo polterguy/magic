@@ -36,11 +36,11 @@ namespace magic.backend.init
 
             var factory = CreateSessionFactory(configuration, assemblies);
 
-            services.AddScoped<ISession>((svc) => factory.OpenSession());
+            services.AddScoped((svc) => factory.OpenSession());
 
             // Threads might need a session that's not bound to the scope,
             // hence we also expose the Session Factory.
-            services.AddSingleton<ISessionFactory>(factory);
+            services.AddSingleton(factory);
         }
 
         static ISessionFactory CreateSessionFactory(
