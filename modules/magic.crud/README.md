@@ -1,5 +1,5 @@
 
-# Magic common
+# Magic CRUD
 
 This is the CRUD API helper module, that allows you to rapidly create CRUD APIs, arguably without having to create more than
 a single line of C# code. It features some intelligent generic constructs, and relies upon you inheriting your API controllers
