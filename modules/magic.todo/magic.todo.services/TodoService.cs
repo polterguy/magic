@@ -7,7 +7,7 @@ using log4net;
 using NHibernate;
 using magic.todo.model;
 using magic.todo.contracts;
-using magic.common.services;
+using magic.crud.services;
 
 namespace magic.todo.services
 {

@@ -5,7 +5,7 @@
 
 using System;
 
-namespace magic.common.web.model
+namespace magic.crud.web.model
 {
     public class OperationResult
     {

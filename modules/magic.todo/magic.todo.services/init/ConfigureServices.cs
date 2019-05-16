@@ -3,10 +3,10 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using magic.todo.contracts;
-using magic.common.contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using magic.todo.contracts;
+using magic.common.contracts;
 
 namespace magic.todo.services.init
 {

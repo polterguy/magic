@@ -21,7 +21,7 @@ the following interfaces.
 * `IStartup` ==> Gives you an opportunity to execute startup logic, and gives you access to your `IServiceProvider`
 
 All of these interfaces are also given your `IConfiguration` instance, such that they can read
-configuration settings, etc. These interfaces can be found in the _"magic.common.contracts"_ project.
+configuration settings, etc. These interfaces can be found in the _"magic.crud.contracts"_ project.
 
 These three interfaces combined, and the dynamic loading of assemblies in the backend, gives you
 the ability to initialize your application, and configure it as you see fit, without even having

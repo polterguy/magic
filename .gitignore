@@ -334,7 +334,7 @@ web/controllers/magic.web.controller.common/magic.web.controller.common.xml
 # Excluding all sub modules
 modules/*
 !modules/README.md
-!modules/magic.common
+!modules/magic.crud
 !modules/magic.todo
 !modules/magic.signals
 !modules/magic.http
@@ -346,7 +346,7 @@ magic.backend/files/*
 !magic.backend/files/README.md
 
 # Excluding XML documentation files
-modules/magic.common/magic.common.web.controller/magic.common.web.controller.xml
+modules/magic.crud/magic.crud.web.controller/magic.crud.web.controller.xml
 
 # Excluding all Mac folder files
 **/.DS_Store

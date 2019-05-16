@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace magic.common.contracts
+namespace magic.crud.contracts
 {
     public interface ICrudService<DbModel>
     {
