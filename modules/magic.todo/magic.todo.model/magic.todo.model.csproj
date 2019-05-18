@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\magic.crud\magic.crud.model\magic.crud.model.csproj" />
+    <ProjectReference Include="..\..\..\lib\magic.crud\magic.crud.model\magic.crud.model.csproj" />
   </ItemGroup>
 
 </Project>
