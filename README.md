@@ -268,6 +268,10 @@ within `System.IO`.
 </a>
 </p>
 
+To use these modules, make sure you put them directly into your _"/modules/"_ folder, at which point you can simply execute
+the cross operating system shell file called _"add-all-modules.bat"_ in your _"modules"_ folder to add up the references
+correctly, and reference the projects in your solution file.
+
 ## Credits
 
 Thanks to the following contributors.
