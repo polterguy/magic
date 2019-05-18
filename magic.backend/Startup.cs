@@ -1,5 +1,4 @@
-﻿using System.Net;
-/*
+﻿/*
  * Magic, Copyright(c) Thomas Hansen 2019 - thomas@gaiasoul.com
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
@@ -15,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using magic.backend.init;
+using magic.backend.init.internals;
 
 namespace magic.backend
 {
@@ -29,7 +29,8 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc((x) => x.OutputFormatters.Add(new ContentFormatters()))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Adding some basic configurations.
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
