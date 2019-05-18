@@ -33,54 +33,54 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.web.model", "mod
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.signals", "magic.signals", "{E7313D41-1D33-40B3-AA1C-708FB84963D2}"
 	ProjectSection(SolutionItems) = preProject
-		modules\magic.signals\README.md = modules\magic.signals\README.md
+		lib\magic.signals\README.md = lib\magic.signals\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.services", "modules\magic.signals\magic.signals.services\magic.signals.services.csproj", "{5270C5C6-AA55-413D-8DC2-A2BC10F75612}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.services", "lib\magic.signals\magic.signals.services\magic.signals.services.csproj", "{5270C5C6-AA55-413D-8DC2-A2BC10F75612}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.contracts", "modules\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj", "{85544EEC-EED5-4989-85E8-3C47E6BA030C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.contracts", "lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj", "{85544EEC-EED5-4989-85E8-3C47E6BA030C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.tests", "magic.tests", "{512D1662-66FB-4655-ABD3-F01186170DFC}"
 	ProjectSection(SolutionItems) = preProject
-		modules\magic.tests\README.md = modules\magic.tests\README.md
+		lib\magic.tests\README.md = lib\magic.tests\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "modules\magic.tests\magic.tests.csproj", "{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "lib\magic.tests\magic.tests.csproj", "{9433D400-1885-45B7-B5D1-6E3FB6D21D8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.todo.tests", "modules\magic.todo\magic.todo.tests\magic.todo.tests.csproj", "{E3E431A6-9C2A-421A-86B4-AAAE7C6D7050}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.http", "magic.http", "{68A2FF07-7AAC-4E91-8427-6F7BED1027E2}"
 	ProjectSection(SolutionItems) = preProject
-		modules\magic.http\README.md = modules\magic.http\README.md
+		lib\magic.http\README.md = lib\magic.http\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.contracts", "modules\magic.http\magic.http.contracts\magic.http.contracts.csproj", "{E8AD3E67-0832-4BE6-8B71-3B60341CD82E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.contracts", "lib\magic.http\magic.http.contracts\magic.http.contracts.csproj", "{E8AD3E67-0832-4BE6-8B71-3B60341CD82E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.services", "modules\magic.http\magic.http.services\magic.http.services.csproj", "{F6168A46-E8F5-4EC0-9BA4-44E7D5FBABB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.services", "lib\magic.http\magic.http.services\magic.http.services.csproj", "{F6168A46-E8F5-4EC0-9BA4-44E7D5FBABB6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.tests", "modules\magic.http\magic.http.tests\magic.http.tests.csproj", "{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.http.tests", "lib\magic.http\magic.http.tests\magic.http.tests.csproj", "{21301FD5-5F66-4ED1-B121-2EF7E4A7EE17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.tests", "modules\magic.signals\magic.signals.tests\magic.signals.tests.csproj", "{84705C54-E3BE-49ED-8808-596E34B1C354}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.signals.tests", "lib\magic.signals\magic.signals.tests\magic.signals.tests.csproj", "{84705C54-E3BE-49ED-8808-596E34B1C354}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.crud", "magic.crud", "{EE912F9B-49A9-442D-A7BE-07569DD677FD}"
 	ProjectSection(SolutionItems) = preProject
-		modules\magic.crud\README.md = modules\magic.crud\README.md
+		lib\magic.crud\README.md = lib\magic.crud\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.contracts", "modules\magic.crud\magic.crud.contracts\magic.crud.contracts.csproj", "{722535B2-2564-4179-A0D6-A6D46CDEE450}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.contracts", "lib\magic.crud\magic.crud.contracts\magic.crud.contracts.csproj", "{722535B2-2564-4179-A0D6-A6D46CDEE450}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.model", "modules\magic.crud\magic.crud.model\magic.crud.model.csproj", "{4C9F9D5F-1A45-422D-B6B4-2D1D37CE8D34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.model", "lib\magic.crud\magic.crud.model\magic.crud.model.csproj", "{4C9F9D5F-1A45-422D-B6B4-2D1D37CE8D34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.services", "modules\magic.crud\magic.crud.services\magic.crud.services.csproj", "{649B0DB2-1920-4410-A83E-3751E1FCD5D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.services", "lib\magic.crud\magic.crud.services\magic.crud.services.csproj", "{649B0DB2-1920-4410-A83E-3751E1FCD5D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.web.controller", "modules\magic.crud\magic.crud.web.controller\magic.crud.web.controller.csproj", "{3B1B3DC5-EFAA-4706-B94B-96DCBEF1EFF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.crud.web.controller", "lib\magic.crud\magic.crud.web.controller\magic.crud.web.controller.csproj", "{3B1B3DC5-EFAA-4706-B94B-96DCBEF1EFF6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.common", "magic.common", "{0E60EB65-3C13-4FB9-90E8-D8A0CED1AC62}"
 	ProjectSection(SolutionItems) = preProject
-		modules\magic.common\README.md = modules\magic.common\README.md
+		lib\magic.common\README.md = lib\magic.common\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.contracts", "modules\magic.common\magic.common.contracts\magic.common.contracts.csproj", "{8B0C8F88-99A4-421E-987D-BEC17B9CAB5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.common.contracts", "lib\magic.common\magic.common.contracts\magic.common.contracts.csproj", "{8B0C8F88-99A4-421E-987D-BEC17B9CAB5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
