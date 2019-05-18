@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\magic.crud\magic.crud.web.controller\magic.crud.web.controller.csproj" />
+    <ProjectReference Include="..\..\..\lib\magic.crud\magic.crud.web.controller\magic.crud.web.controller.csproj" />
     <ProjectReference Include="..\magic.todo.contracts\magic.todo.contracts.csproj" />
     <ProjectReference Include="..\magic.todo.web.model\magic.todo.web.model.csproj" />
   </ItemGroup>
