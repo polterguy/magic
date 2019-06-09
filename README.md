@@ -1,7 +1,7 @@
 
 # Super DRY Magic for ASP.NET Core
 
-Magic is a Super DYR starter kit for your ASP.NET Core web APIs, that brings the ideas of DRY (_"Don't Repeat Yourself"_) to a new level.
+Magic is a Super DRY starter kit for your ASP.NET Core web APIs, that brings the ideas of DRY (_"Don't Repeat Yourself"_) to a new level.
 If you follow a small recipe as you create your controller endpoints, services, view models, and database models, you will literally
 start out with 80% of your job done, and you can wrap any CRUD operations into your HTTP REST endpoints almost without coding.
 The project's purpose is to be a starter kit for your own projects, allowing you to _"hit the ground
@@ -22,7 +22,7 @@ running"_.
 ## No code, no bugs, no problems
 
 The whole idea is that Magic allows you to create all CRUD operations on your web APIs, without having to code. This is possible due
-to that HTTP and SQL are basically just fundamentally CRUD operations. Hence, your controller endpoints will end up looking like the following.
+to that HTTP and SQL are fundamentally just CRUD operations. Hence, your controller endpoints will end up looking like the following.
 
 ```csharp
 [Route("api/todo")]
