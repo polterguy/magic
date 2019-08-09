@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\lib\magic.common.contracts\magic.common.contracts.csproj" />
     <ProjectReference Include="..\modules\magic.todo\magic.todo.web.controller\magic.todo.web.controller.csproj" />
     <ProjectReference Include="..\modules\magic.todo\magic.todo.services\magic.todo.services.csproj" />
   </ItemGroup>
