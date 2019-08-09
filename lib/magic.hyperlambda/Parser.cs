@@ -6,7 +6,9 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Globalization;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using magic.node;
 
 namespace magic.hyperlambda
@@ -41,24 +43,53 @@ namespace magic.hyperlambda
 
         Node GetNode(StreamReader reader)
         {
+            Node retVal = null;
+
             var name = GetToken(reader, out bool colonName);
             if (name == null)
                 return null;
 
             var value = GetToken(reader, out bool colonValue);
             if (!colonName && value == "")
-                value = null;
-
-            if (colonValue)
+            {
+                retVal = new Node(name, null);
+            }
+            else if (colonValue)
             {
                 // Current value is actually a type.
-                var type = value;
-                // TODO: Read value!
-                return new Node(name.ToString(), value);
+                var actualValue = GetToken(reader, out colonValue);
+                var convertedValue = ConvertValue(actualValue, value);
+                retVal = new Node(name.ToString(), convertedValue);
             }
             else
             {
-                return new Node(name.ToString(), value);
+                retVal = new Node(name, value);
+            }
+
+            // TODO: Check for child nodes here.
+            return retVal;
+        }
+
+        object ConvertValue(string value, string type)
+        {
+            switch (type)
+            {
+                case "int":
+                    return Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                case "decimal":
+                    return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+                case "double":
+                    return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                case "bool":
+                    return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+                case "date":
+                    return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+                case "guid":
+                    return new Guid(value);
+                case "regex":
+                    return new Regex(value);
+                default:
+                    throw new ApplicationException($"Unknown type declaration found in Hyperlambda '{type}'");
             }
         }
 
