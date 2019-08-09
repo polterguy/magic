@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\magic.hyperlambda\magic.hyperlambda.csproj" />
     <ProjectReference Include="..\magic.node\magic.node.csproj" />
   </ItemGroup>
 
