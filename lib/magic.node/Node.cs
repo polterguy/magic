@@ -11,21 +11,13 @@ namespace magic.node
 {
     public class Node
     {
+        readonly List<Node> _children = new List<Node>();
+        Node _parent = null;
         string _name;
-
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value ?? throw new ArgumentNullException(nameof(value)); }
-        }
-
-        public object Value { get; set; }
-
-        public List<Node> Children { get; } = new List<Node>();
 
         public Node()
         {
-            Name = string.Empty;
+            _name = "";
         }
 
         public Node(string name)
@@ -39,9 +31,28 @@ namespace magic.node
             Value = value;
         }
 
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value ?? throw new ArgumentNullException(nameof(value)); }
+        }
+
+        public object Value { get; set; }
+
+        public IEnumerable<Node> Children
+        {
+            get { return _children; }
+        }
+
         public T Get<T>()
         {
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
+        }
+
+        public void Add(Node value)
+        {
+            value._parent = this;
+            _children.Add(value);
         }
     }
 }
