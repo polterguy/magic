@@ -16,10 +16,7 @@ namespace magic.node
         public string Name
         {
             get { return _name; }
-            set
-            {
-                _name = value ?? throw new ArgumentNullException(nameof(value));
-            }
+            set { _name = value ?? throw new ArgumentNullException(nameof(value)); }
         }
 
         public object Value { get; set; }
