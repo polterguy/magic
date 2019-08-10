@@ -12,7 +12,6 @@ namespace magic.node
     public class Node
     {
         readonly List<Node> _children;
-        Node _parent;
         string _name;
 
         public Node()
@@ -41,7 +40,7 @@ namespace magic.node
             _children = new List<Node>(children);
             foreach (var idx in _children)
             {
-                idx._parent = this;
+                idx.Parent = this;
             }
         }
 
@@ -58,19 +57,16 @@ namespace magic.node
             get { return _children; }
         }
 
+        public Node Parent { get; private set; }
+
         public T Get<T>()
         {
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
-        public Node Parent
-        {
-            get { return _parent; }
-        }
-
         public void Add(Node value)
         {
-            value._parent = this;
+            value.Parent = this;
             _children.Add(value);
         }
     }
