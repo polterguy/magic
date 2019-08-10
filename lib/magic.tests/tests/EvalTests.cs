@@ -38,6 +38,21 @@ namespace magic.tests.tests
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 
+        [Fact]
+        public void AddSingleSource()
+        {
+            var services = Initialize();
+            var hl = ".dest\nadd:x:../*/.dest\n  src1\n    foo1:bar1\n    foo2:bar2";
+            var lambda = new Parser(hl).Lambda();
+            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            signaler.Signal("eval", lambda);
+            Assert.Equal(2, lambda.Children.First().Children.Count());
+            Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+            Assert.Equal("foo2", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal("bar2", lambda.Children.First().Children.Skip(1).First().Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         IServiceProvider Initialize()
