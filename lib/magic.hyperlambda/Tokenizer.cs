@@ -65,41 +65,44 @@ namespace magic.hyperlambda
                     case '/':
                         if (builder.Length > 0)
                         {
-                            yield return builder.ToString();
-                            builder.Clear();
-                        }
-                        _reader.Read(); // Discarding current '/'.
-                        if (_reader.Peek() == '/')
-                        {
-                            // Eating the rest of the line.
-                            while (!_reader.EndOfStream && (char)_reader.Peek() != '\n')
-                            {
-                                _reader.Read();
-                            }
-                        }
-                        else if (_reader.Peek() == '*')
-                        {
-                            // Eating until "*/".
-                            var seenEndOfComment = false;
-                            while (!_reader.EndOfStream && !seenEndOfComment)
-                            {
-                                var idxComment = _reader.Read();
-                                if (idxComment == '*')
-                                {
-                                    // Checking if we're at end of comment.
-                                    if (_reader.Peek() == '/')
-                                    {
-                                        _reader.Read();
-                                        seenEndOfComment = true;
-                                    }
-                                }
-                            }
-                            if (!seenEndOfComment && _reader.EndOfStream)
-                                throw new ApplicationException("Syntax error in comment close to end of Hyperlambda");
+                            _reader.Read(); // Discarding '/' character.
+                            builder.Append('/');
                         }
                         else
                         {
-                            builder.Append(current); // Only a part of the current token.
+                            _reader.Read(); // Discarding current '/'.
+                            if (_reader.Peek() == '/')
+                            {
+                                // Eating the rest of the line.
+                                while (!_reader.EndOfStream && (char)_reader.Peek() != '\n')
+                                {
+                                    _reader.Read();
+                                }
+                            }
+                            else if (_reader.Peek() == '*')
+                            {
+                                // Eating until "*/".
+                                var seenEndOfComment = false;
+                                while (!_reader.EndOfStream && !seenEndOfComment)
+                                {
+                                    var idxComment = _reader.Read();
+                                    if (idxComment == '*')
+                                    {
+                                        // Checking if we're at end of comment.
+                                        if (_reader.Peek() == '/')
+                                        {
+                                            _reader.Read();
+                                            seenEndOfComment = true;
+                                        }
+                                    }
+                                }
+                                if (!seenEndOfComment && _reader.EndOfStream)
+                                    throw new ApplicationException("Syntax error in comment close to end of Hyperlambda");
+                            }
+                            else
+                            {
+                                builder.Append(current); // Only a part of the current token.
+                            }
                         }
                         break;
 

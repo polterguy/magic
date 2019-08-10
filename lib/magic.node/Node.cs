@@ -61,6 +61,8 @@ namespace magic.node
 
         public T Get<T>()
         {
+            if (Value != null && typeof(T) == Value.GetType())
+                return (T)Value;
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
@@ -68,6 +70,16 @@ namespace magic.node
         {
             value.Parent = this;
             _children.Add(value);
+        }
+
+        public Node Clone()
+        {
+            var result = new Node(Name, Value);
+            foreach(var idx in Children)
+            {
+                result.Add(idx.Clone());
+            }
+            return result;
         }
     }
 }
