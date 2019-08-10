@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
@@ -24,6 +25,8 @@ namespace magic.lambda
             var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             foreach (var idx in input.Children)
             {
+                if (idx.Name.FirstOrDefault() == '.')
+                    continue;
                 signaler.Signal(idx.Name, idx);
             }
         }
