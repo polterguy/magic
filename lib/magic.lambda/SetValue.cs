@@ -4,17 +4,18 @@
  */
 
 using System;
+using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda
 {
-    [Slot(Name = "add")]
-    public class Add : ISlot
+    [Slot(Name = "set-value")]
+    public class SetValue : ISlot
     {
         IServiceProvider _services;
 
-        public Add(IServiceProvider services)
+        public SetValue(IServiceProvider services)
         {
             _services = services ?? throw new ArgumentNullException(nameof(services));
         }
@@ -24,15 +25,12 @@ namespace magic.lambda
             var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
             signaler.Signal("eval", input);
-            foreach (var idxSource in input.Children)
+            if (input.Children.Count() > 1)
+                throw new ApplicationException("Too many sources for [set-name]");
+            var source = input.Children.FirstOrDefault()?.Get<string>();
+            foreach (var idx in dest)
             {
-                foreach(var idxDest in dest)
-                {
-                    foreach (var idxSourceUnwrapped in idxSource.Children)
-                    {
-                        idxDest.Add(idxSourceUnwrapped);
-                    }
-                }
+                idx.Value = source;
             }
         }
     }
