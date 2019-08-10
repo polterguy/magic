@@ -4,8 +4,8 @@
  */
 
 using System;
-using System.Linq;
 using magic.node;
+using magic.lambda.utilities;
 using magic.signals.contracts;
 
 namespace magic.lambda
@@ -24,12 +24,7 @@ namespace magic.lambda
         {
             var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            signaler.Signal("eval", input);
-            if (input.Children.Count() > 1)
-                throw new ApplicationException("Too many sources for [set]");
-            if (input.Children.FirstOrDefault()?.Children.Count() > 1)
-                throw new ApplicationException("Too many sources for [set]");
-            var source = input.Children.FirstOrDefault()?.Children.FirstOrDefault();
+            var source = XUtil.Single(signaler, input);
             foreach (var idx in dest)
             {
                 idx.Name = source?.Name ?? "";
