@@ -3,12 +3,9 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using magic.node;
-
-namespace magic.signals.contracts
+namespace magic.lambda
 {
-    public interface ISlot
+    public class Eval
     {
-        void Signal(Node input);
     }
 }
