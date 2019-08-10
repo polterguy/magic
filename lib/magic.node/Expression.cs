@@ -14,14 +14,15 @@ namespace magic.node
     {
         public class Iterator
         {
-            Func<IEnumerable<Node>, IEnumerable<Node>> _evaluate;
-            public string Value { get; private set; }
+            readonly Func<IEnumerable<Node>, IEnumerable<Node>> _evaluate;
 
             public Iterator(string value)
             {
                 Value = value;
                 _evaluate = CreateEvaluator(Value);
             }
+
+            public string Value { get; private set; }
 
             public IEnumerable<Node> Evaluate(IEnumerable<Node> input)
             {
@@ -36,10 +37,13 @@ namespace magic.node
                 {
                     case "*":
                         return (input) => input.SelectMany((x) => x.Children);
+
                     case "$":
                         return (input) => input.Distinct();
+
                     case ".":
                         return (input) => input.Select((x) => x.Parent);
+
                     case "..":
                         return (input) =>
                         {
@@ -48,6 +52,7 @@ namespace magic.node
                                 first = first.Parent;
                             return new Node[] { first };
                         };
+
                     default:
                         if (value.StartsWith("=", StringComparison.InvariantCulture))
                         {
@@ -86,14 +91,15 @@ namespace magic.node
 
         IEnumerable<Iterator> Parse(string expression)
         {
-            var en = expression.GetEnumerator();
             StringBuilder builder = new StringBuilder();
-            while(en.MoveNext())
+
+            var en = expression.GetEnumerator();
+            while (en.MoveNext())
             {
                 var idx = en.Current;
                 if (idx == '/')
                 {
-                    yield return CreateIterator(builder.ToString());
+                    yield return new Iterator(builder.ToString());
                     builder.Clear();
                 }
                 else
@@ -102,12 +108,7 @@ namespace magic.node
                 }
             }
             if (builder != null)
-                yield return CreateIterator(builder.ToString());
-        }
-
-        Iterator CreateIterator(string value)
-        {
-            return new Iterator(value);
+                yield return new Iterator(builder.ToString());
         }
 
         #endregion
