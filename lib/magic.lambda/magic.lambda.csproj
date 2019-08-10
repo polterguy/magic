@@ -7,4 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="utilities\" />
+  </ItemGroup>
 </Project>
