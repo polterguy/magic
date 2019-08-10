@@ -6,12 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\magic.common.contracts\magic.common.contracts.csproj" />
     <ProjectReference Include="..\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\magic.node\magic.node.csproj" />
   </ItemGroup>
 
 </Project>

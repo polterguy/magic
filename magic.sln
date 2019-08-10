@@ -81,6 +81,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "lib\magic.te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.hyperlambda", "lib\magic.hyperlambda\magic.hyperlambda.csproj", "{1AB8055C-06CE-4B0A-9219-B12906031876}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda", "lib\magic.lambda\magic.lambda.csproj", "{7C7BE248-EE60-4BBB-993C-37DE9324582B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,10 @@ Global
 		{1AB8055C-06CE-4B0A-9219-B12906031876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AB8055C-06CE-4B0A-9219-B12906031876}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AB8055C-06CE-4B0A-9219-B12906031876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C7BE248-EE60-4BBB-993C-37DE9324582B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C7BE248-EE60-4BBB-993C-37DE9324582B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C7BE248-EE60-4BBB-993C-37DE9324582B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C7BE248-EE60-4BBB-993C-37DE9324582B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -200,6 +206,7 @@ Global
 		{BDB3E24F-29B6-4E29-B529-35B4E06FA53C} = {078C2490-F214-489D-BF3E-A14471B13244}
 		{230BE5AE-95F2-4EFB-9EDF-EF439CD53346} = {078C2490-F214-489D-BF3E-A14471B13244}
 		{1AB8055C-06CE-4B0A-9219-B12906031876} = {078C2490-F214-489D-BF3E-A14471B13244}
+		{7C7BE248-EE60-4BBB-993C-37DE9324582B} = {078C2490-F214-489D-BF3E-A14471B13244}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}

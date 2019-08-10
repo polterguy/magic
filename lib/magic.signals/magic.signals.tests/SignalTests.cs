@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Newtonsoft.Json.Linq;
+using magic.node;
 using magic.common.contracts;
 using magic.signals.contracts;
 
@@ -20,16 +20,14 @@ namespace magic.signals.tests
         #region [ -- Unit tests -- ]
 
         [Fact]
-        public void Signal ()
+        public void Signal()
         {
             var kernel = Initialize();
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
-            var input = new JObject
-            {
-                ["bar"] = "Jo!",
-            };
+            var input = new Node();
+            input.Add(new Node("bar", "Jo!"));
             signaler.Signal("foo.bar", input);
-            Assert.Equal("Jo!Yup!", input["bar"].Value<string>());
+            Assert.Equal("Jo!Yup!", input.Children.First().Get<string>());
         }
 
         #endregion

@@ -3,12 +3,12 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using Newtonsoft.Json.Linq;
+using magic.node;
 
 namespace magic.signals.contracts
 {
     public interface ISignaler
     {
-        void Signal(string name, JObject input);
+        void Signal(string name, Node input);
     }
 }

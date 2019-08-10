@@ -6,7 +6,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using magic.node;
 using magic.signals.contracts;
 
 namespace magic.signals.services
@@ -39,7 +39,7 @@ namespace magic.signals.services
 
         #region [ -- Interface implementations -- ]
 
-        public void Signal(string name, JObject input)
+        public void Signal(string name, Node input)
         {
             if (!_slots.ContainsKey(name))
                 return;
