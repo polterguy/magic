@@ -13,18 +13,17 @@ namespace magic.lambda
     [Slot(Name = "set-value")]
     public class SetValue : ISlot
     {
-        IServiceProvider _services;
+        readonly ISignaler _signaler;
 
         public SetValue(IServiceProvider services)
         {
-            _services = services ?? throw new ArgumentNullException(nameof(services));
+            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
 
         public void Signal(Node input)
         {
-            var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            var source = XUtil.Single(signaler, input, true);
+            var source = XUtil.Single(_signaler, input, true);
             foreach (var idx in dest)
             {
                 idx.Value = source?.Value;

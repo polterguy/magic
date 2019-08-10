@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using magic.node;
 using magic.hyperlambda;
 using magic.common.contracts;
 using magic.signals.contracts;
-using magic.node;
 
 namespace magic.tests.tests
 {
@@ -81,9 +81,8 @@ namespace magic.tests.tests
         [Fact]
         public void SetWithNull()
         {
-            var lambda = Evaluate(".foo1\nset:x:../*/.foo1");
-            Assert.Equal("", lambda.Children.First().Name);
-            Assert.Null(lambda.Children.First().Value);
+            var lambda = Evaluate(".foo1\n  foo2\nset:x:../*/.foo1/*");
+            Assert.Empty(lambda.Children.First().Children);
         }
 
         [Fact]

@@ -12,18 +12,17 @@ namespace magic.lambda
     [Slot(Name = "add")]
     public class Add : ISlot
     {
-        IServiceProvider _services;
+        readonly ISignaler _signaler;
 
         public Add(IServiceProvider services)
         {
-            _services = services ?? throw new ArgumentNullException(nameof(services));
+            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
 
         public void Signal(Node input)
         {
-            var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            signaler.Signal("eval", input);
+            _signaler.Signal("eval", input);
             foreach (var idxSource in input.Children)
             {
                 foreach(var idxDest in dest)

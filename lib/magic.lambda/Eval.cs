@@ -13,21 +13,20 @@ namespace magic.lambda
     [Slot(Name = "eval")]
     public class Eval : ISlot
     {
-        IServiceProvider _services;
+        readonly ISignaler _signaler;
 
         public Eval(IServiceProvider services)
         {
-            _services = services ?? throw new ArgumentNullException(nameof(services));
+            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
 
         public void Signal(Node input)
         {
-            var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             foreach (var idx in input.Children)
             {
                 if (idx.Name.FirstOrDefault() == '.')
                     continue;
-                signaler.Signal(idx.Name, idx);
+                _signaler.Signal(idx.Name, idx);
             }
         }
     }

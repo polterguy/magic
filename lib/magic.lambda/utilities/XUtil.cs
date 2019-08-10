@@ -17,11 +17,15 @@ namespace magic.lambda.utilities
             signaler.Signal("eval", input);
             if (input.Children.Count() > 1)
                 throw new ApplicationException("Too many sources for slot expecting single event");
-            if (input.Children.FirstOrDefault()?.Children.Count() > 1)
-                throw new ApplicationException("Too many sources for slot expecting single event");
+
+            var levelOne = input.Children.FirstOrDefault();
             if (firstLevel)
-                return input.Children.FirstOrDefault();
-            return input.Children.FirstOrDefault()?.Children.FirstOrDefault();
+                return levelOne;
+
+            if (levelOne?.Children.Count() > 1)
+                throw new ApplicationException("Too many sources for slot expecting single event");
+
+            return levelOne?.Children.FirstOrDefault();
         }
     }
 }
