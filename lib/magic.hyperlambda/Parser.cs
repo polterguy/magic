@@ -68,7 +68,7 @@ namespace magic.hyperlambda
                         // Checking if token is a scope declaration.
                         if (idxNode == null &&
                             token.StartsWith(" ", StringComparison.CurrentCulture) &&
-                            token.Distinct().Count() == 1)
+                            !token.Any((x) => x != ' '))
                         {
                             // We have a scope declaration.
                             int newLevel = token.Length / 2;
@@ -86,28 +86,35 @@ namespace magic.hyperlambda
                             else
                             {
                                 // Propagating upwards in ancestor hierarchy.
-                                while (level-- > newLevel)
+                                while (level > newLevel)
                                 {
                                     currentParent = currentParent.Parent;
+                                    --level;
                                 }
                             }
                         }
                         else
                         {
                             if (previous == "\n")
-                                currentParent = _root; // Special case for no spaces, and previous was CR.
+                            {
+                                // Special case for no spaces, and previous was CR.
+                                currentParent = _root;
+                                level = 0;
+                            }
 
                             if (idxNode == null)
                             {
-                                idxNode = new Node();
+                                idxNode = new Node(token);
                                 currentParent.Add(idxNode);
                             }
-                            if (idxNode.Name == "")
-                                idxNode.Name = token;
                             else if (idxNode.Value == null || "".Equals(idxNode.Value))
+                            {
                                 idxNode.Value = token;
+                            }
                             else
+                            {
                                 idxNode.Value = ConvertValue(token, idxNode.Get<string>());
+                            }
                         }
                         previous = token;
                         break;
@@ -131,6 +138,8 @@ namespace magic.hyperlambda
                     return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
                 case "guid":
                     return new Guid(value);
+                case "x":
+                    return new Expression(value);
                 default:
                     throw new ApplicationException($"Unknown type declaration found in Hyperlambda '{type}'");
             }

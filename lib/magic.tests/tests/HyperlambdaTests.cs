@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using System.Linq;
 using Xunit;
 using magic.hyperlambda;
@@ -12,14 +13,14 @@ namespace magic.tests.tests
     public class HyperlambdaTests
     {
         [Fact]
-        public void ParseString_01()
+        public void Empty()
         {
             var result = new Parser("").Lambda().Children.ToList();
             Assert.Empty(result);
         }
 
         [Fact]
-        public void ParseString_02()
+        public void SingleNode()
         {
             var result = new Parser("foo").Lambda().Children.ToList();
             Assert.Single(result);
@@ -29,7 +30,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_03()
+        public void NodeWithEmptyValue()
         {
             var result = new Parser("foo:").Lambda().Children.ToList();
             Assert.Single(result);
@@ -39,7 +40,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_04()
+        public void NodeWithValue()
         {
             var result = new Parser("foo:bar").Lambda().Children.ToList();
             Assert.Single(result);
@@ -49,7 +50,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_05()
+        public void NodeWithTypedValue()
         {
             var result = new Parser("foo:int:5").Lambda().Children.ToList();
             Assert.Single(result);
@@ -59,7 +60,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_06()
+        public void TwoRootNodes()
         {
             var result = new Parser("foo1:bar1\r\nfoo2:bar2").Lambda().Children.ToList();
             Assert.Equal(2, result.Count());
@@ -72,7 +73,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_07()
+        public void NodeWithChildren()
         {
             var result = new Parser("foo\r\n  bar").Lambda().Children.ToList();
             Assert.Single(result);
@@ -84,7 +85,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_08()
+        public void TwoRootNodesWithChildren()
         {
             var result = new Parser("foo1\r\n  bar\r\nfoo2").Lambda().Children.ToList();
             Assert.Equal(2, result.Count);
@@ -99,10 +100,10 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ParseString_09()
+        public void ComplexHierarchy()
         {
             var result = new Parser("foo1\r\n  bar1\r\n    bar2\r\n  bar3").Lambda().Children.ToList();
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             Assert.Equal("foo1", result.First().Name);
             Assert.Null(result.First().Value);
             Assert.Equal(2, result.First().Children.Count());
@@ -111,6 +112,12 @@ namespace magic.tests.tests
             Assert.Equal("bar2", result.First().Children.First().Children.First().Name);
             Assert.Null(result.First().Children.First().Children.First().Value);
             Assert.Equal("bar3", result.First().Children.Skip(1).First().Name);
+        }
+
+        [Fact]
+        public void SpacingError_Throws()
+        {
+            Assert.Throws<ApplicationException>(() => new Parser("foo1\r\n bar1"));
         }
     }
 }

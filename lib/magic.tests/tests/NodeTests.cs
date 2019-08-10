@@ -35,7 +35,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void ChangeName_Throws()
+        public void ChangeNameToNull_Throws()
         {
             var node = new Node("foo");
             Assert.Throws<ArgumentNullException>(() =>
