@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Linq;
 using magic.node;
 using magic.lambda.utilities;
 using magic.signals.contracts;
@@ -13,25 +14,32 @@ namespace magic.lambda
     [Slot(Name = "set")]
     public class Set : ISlot
     {
-        IServiceProvider _services;
+        readonly ISignaler _signaler;
 
         public Set(IServiceProvider services)
         {
-            _services = services ?? throw new ArgumentNullException(nameof(services));
+            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
 
         public void Signal(Node input)
         {
-            var signaler = _services.GetService(typeof(ISignaler)) as ISignaler;
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            var source = XUtil.Single(signaler, input);
-            foreach (var idx in dest)
+            var source = XUtil.Single(_signaler, input);
+            if (source == null)
             {
-                idx.Name = source?.Name ?? "";
-                idx.Value = source?.Value;
-                idx.Clear();
-                if (source != null)
+                // To avoid modifying collection during enumeration removal process.
+                foreach (var idx in dest.ToList())
                 {
+                    idx.Parent.Remove(idx);
+                }
+            }
+            else
+            {
+                foreach (var idx in dest)
+                {
+                    idx.Name = source.Name;
+                    idx.Value = source.Value;
+                    idx.Clear();
                     foreach (var idxSrcChild in source.Children)
                     {
                         idx.Add(idxSrcChild.Clone());

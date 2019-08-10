@@ -72,6 +72,11 @@ namespace magic.node
             _children.Add(value);
         }
 
+        public void Remove(Node value)
+        {
+            _children.Remove(value);
+        }
+
         public void Clear()
         {
             _children.Clear();
