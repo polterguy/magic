@@ -30,22 +30,14 @@ namespace magic.tests.tests
         [Fact]
         public void InvokeLocalSignal()
         {
-            var services = Initialize();
-            var hl = @"foo";
-            var lambda = new Parser(hl).Lambda();
-            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
-            signaler.Signal("eval", lambda);
+            var lambda = Evaluate(@"foo");
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 
         [Fact]
         public void AddChildrenSrc()
         {
-            var services = Initialize();
-            var hl = ".dest\nadd:x:../*/.dest\n  .\n    foo1:bar1\n    foo2:bar2";
-            var lambda = new Parser(hl).Lambda();
-            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
-            signaler.Signal("eval", lambda);
+            var lambda = Evaluate(".dest\nadd:x:../*/.dest\n  .\n    foo1:bar1\n    foo2:bar2");
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -56,11 +48,7 @@ namespace magic.tests.tests
         [Fact]
         public void AddExpressionSrc()
         {
-            var services = Initialize();
-            var hl = ".dest\n.src\n  foo1:bar1\n  foo2:bar2\nadd:x:../*/.dest\n  src:x:../*/.src/*";
-            var lambda = new Parser(hl).Lambda();
-            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
-            signaler.Signal("eval", lambda);
+            var lambda = Evaluate(".dest\n.src\n  foo1:bar1\n  foo2:bar2\nadd:x:../*/.dest\n  src:x:../*/.src/*");
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -71,26 +59,79 @@ namespace magic.tests.tests
         [Fact]
         public void Value()
         {
-            var services = Initialize();
-            var hl = ".src:foo1\nvalue:x:../*/.src";
-            var lambda = new Parser(hl).Lambda();
-            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
-            signaler.Signal("eval", lambda);
+            var lambda = Evaluate(".src:foo1\nvalue:x:../*/.src");
             Assert.Equal("foo1", lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
         public void Name()
         {
-            var services = Initialize();
-            var hl = ".foo1\nname:x:../*/.foo1";
-            var lambda = new Parser(hl).Lambda();
-            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
-            signaler.Signal("eval", lambda);
+            var lambda = Evaluate(".foo1\nname:x:../*/.foo1");
             Assert.Equal(".foo1", lambda.Children.Skip(1).First().Value);
         }
 
+        [Fact]
+        public void SetWithChild()
+        {
+            var lambda = Evaluate(".foo1\nset:x:../*/.foo1\n  .src\n    foo2:bar2");
+            Assert.Equal("foo2", lambda.Children.First().Name);
+            Assert.Equal("bar2", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void SetWithNull()
+        {
+            var lambda = Evaluate(".foo1\nset:x:../*/.foo1");
+            Assert.Equal("", lambda.Children.First().Name);
+            Assert.Null(lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void SetExpressionSource()
+        {
+            var lambda = Evaluate(".foo1\n.foo2:bar2\nset:x:../*/.foo1\n  src:x:../*/.foo2");
+            Assert.Equal(".foo2", lambda.Children.First().Name);
+            Assert.Equal("bar2", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void SetNameWithStatic()
+        {
+            var lambda = Evaluate(".foo1\nset-name:x:../*/.foo1\n  .:.foo2");
+            Assert.Equal(".foo2", lambda.Children.First().Name);
+        }
+
+        [Fact]
+        public void SetNameWithExpression()
+        {
+            var lambda = Evaluate(".foo1:.bar1\nset-name:x:../*/.foo1\n  value:x:../*/.foo1");
+            Assert.Equal(".bar1", lambda.Children.First().Name);
+        }
+
+        [Fact]
+        public void SetValueWithStatic()
+        {
+            var lambda = Evaluate(".foo1\nset-value:x:../*/.foo1\n  .:OK");
+            Assert.Equal("OK", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void SetValueWithExpression()
+        {
+            var lambda = Evaluate(".foo1:.bar1\nset-value:x:../*/.foo1\n  name:x:../*/.foo1");
+            Assert.Equal(".foo1", lambda.Children.First().Value);
+        }
+
         #region [ -- Private helper methods -- ]
+
+        Node Evaluate(string hl)
+        {
+            var services = Initialize();
+            var lambda = new Parser(hl).Lambda();
+            var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            signaler.Signal("eval", lambda);
+            return lambda;
+        }
 
         IServiceProvider Initialize()
         {

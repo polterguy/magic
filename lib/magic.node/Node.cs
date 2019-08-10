@@ -72,6 +72,11 @@ namespace magic.node
             _children.Add(value);
         }
 
+        public void Clear()
+        {
+            _children.Clear();
+        }
+
         public Node Clone()
         {
             var result = new Node(Name, Value);
