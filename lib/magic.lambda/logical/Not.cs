@@ -8,7 +8,7 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.equality
+namespace magic.lambda.logical
 {
     [Slot(Name = "not")]
     public class Not : ISlot
