@@ -73,6 +73,20 @@ namespace magic.node
             }
         }
 
+        public Node Next
+        {
+            get
+            {
+                if (Parent == null)
+                    return null;
+
+                var indexOfThis = Parent._children.IndexOf(this);
+                if (indexOfThis == Parent._children.Count - 1)
+                    return null;
+                return Parent._children[indexOfThis + 1];
+            }
+        }
+
         public T Get<T>()
         {
             if (Value != null && typeof(T) == Value.GetType())
