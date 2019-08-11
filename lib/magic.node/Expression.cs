@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
@@ -165,24 +166,40 @@ namespace magic.node
 
         IEnumerable<Iterator> Parse(string expression)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
-            var en = expression.GetEnumerator();
-            while (en.MoveNext())
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(expression)))
             {
-                var idx = en.Current;
-                if (idx == '/')
+                using (var reader = new StreamReader(stream))
                 {
-                    yield return new Iterator(builder.ToString());
-                    builder.Clear();
-                }
-                else
-                {
-                    builder.Append(idx);
+                    while (!reader.EndOfStream)
+                    {
+                        var idx = (char)reader.Read();
+                        if (idx == -1)
+                            break;
+
+                        if (idx == '/')
+                        {
+                            yield return new Iterator(builder.ToString());
+                            builder.Clear();
+                        }
+                        else if (idx == '"' && builder.Length == 0)
+                        {
+                            // String literal iterator.
+                            yield return new Iterator(StringLiteralParser.ReadQuotedString(reader));
+                        }
+                        else
+                        {
+                            builder.Append(idx);
+                        }
+                    }
                 }
             }
-            if (builder != null)
-                yield return new Iterator(builder.ToString());
+
+            if (builder.Length == 0)
+                throw new ApplicationException("Syntax error at end of expression");
+
+            yield return new Iterator(builder.ToString());
         }
 
         #endregion
