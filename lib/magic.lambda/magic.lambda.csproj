@@ -15,5 +15,6 @@
     <Folder Include="source\" />
     <Folder Include="branching\" />
     <Folder Include="loops\" />
+    <Folder Include="slots\" />
   </ItemGroup>
 </Project>
