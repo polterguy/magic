@@ -10,5 +10,6 @@
   <ItemGroup>
     <Folder Include="utilities\" />
     <Folder Include="equality\" />
+    <Folder Include="logical\" />
   </ItemGroup>
 </Project>

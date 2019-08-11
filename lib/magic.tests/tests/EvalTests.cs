@@ -230,6 +230,20 @@ namespace magic.tests.tests
             Assert.Equal(true, lambda.Children.Skip(1).First().Value);
         }
 
+        [Fact]
+        public void And_01()
+        {
+            var lambda = Evaluate(".foo1:bool:true\nand\n   value:x:../*/.foo1\n   .:bool:true");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void And_02()
+        {
+            var lambda = Evaluate(".foo1:bool:true\nand\n   value:x:../*/.foo1\n   .:bool:true\n   .:bool:false");
+            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         Node Evaluate(string hl)
