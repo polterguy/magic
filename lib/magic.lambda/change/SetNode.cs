@@ -24,7 +24,7 @@ namespace magic.lambda.change
         public void Signal(Node input)
         {
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            var source = XUtil.Single(_signaler, input);
+            var source = XUtil.Single(_signaler, input, false);
             if (source == null)
             {
                 // To avoid modifying collection during enumeration removal process.
