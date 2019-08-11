@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="utilities\" />
+    <Folder Include="equality\" />
   </ItemGroup>
 </Project>
