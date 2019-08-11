@@ -59,6 +59,10 @@ namespace magic.node
                             var lookup = value.Substring(1);
                             return (input) => input.Where((x) => x.Get<string>() == lookup);
                         }
+                        else if (int.TryParse(value, out int number))
+                        {
+                            return (input) => input.SelectMany((x) => x.Children.Skip(number).Take(1));
+                        }
                         else
                         {
                             return (input) => input.Where((x) => x.Name == value);

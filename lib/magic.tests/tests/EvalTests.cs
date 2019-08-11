@@ -330,6 +330,24 @@ else-if
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 
+        [Fact]
+        public void While_01()
+        {
+            var lambda = Evaluate(@".src
+   bar1
+   bar2
+.dest
+while
+   mt
+      count:x:../*/.src/*
+      .:int:0
+   .lambda
+      add:x:../*/.dest
+         nodes:x:../*/.src/0
+      set-node:x:../*/.src/0");
+            Assert.Equal(2, lambda.Children.Skip(1).First().Children.Count());
+        }
+
         #region [ -- Private helper methods -- ]
 
         Node Evaluate(string hl)
