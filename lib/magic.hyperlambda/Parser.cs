@@ -138,6 +138,10 @@ namespace magic.hyperlambda
                     return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
                 case "guid":
                     return new Guid(value);
+                case "char":
+                    return Convert.ToChar(value, CultureInfo.InvariantCulture);
+                case "byte":
+                    return Convert.ToByte(value, CultureInfo.InvariantCulture);
                 case "x":
                     return new Expression(value);
                 default:
