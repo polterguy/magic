@@ -6,13 +6,16 @@
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.source
 {
     [Slot(Name = "src")]
     public class Src : ISlot
     {
         public void Signal(Node input)
         {
+            if (input.Value == null)
+                return;
+
             var src = input.Get<Expression>().Evaluate(new Node[] { input });
             foreach (var idx in src)
             {
