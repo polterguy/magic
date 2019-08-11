@@ -75,7 +75,7 @@ namespace magic.tests.tests
         [Fact]
         public void NodeWithChildren()
         {
-            var result = new Parser("foo\r\n  bar").Lambda().Children.ToList();
+            var result = new Parser("foo\r\n   bar").Lambda().Children.ToList();
             Assert.Single(result);
             Assert.Equal("foo", result.First().Name);
             Assert.Null(result.First().Value);
@@ -87,7 +87,7 @@ namespace magic.tests.tests
         [Fact]
         public void TwoRootNodesWithChildren()
         {
-            var result = new Parser("foo1\r\n  bar\r\nfoo2").Lambda().Children.ToList();
+            var result = new Parser("foo1\r\n   bar\r\nfoo2").Lambda().Children.ToList();
             Assert.Equal(2, result.Count);
             Assert.Equal("foo1", result.First().Name);
             Assert.Null(result.First().Value);
@@ -102,7 +102,7 @@ namespace magic.tests.tests
         [Fact]
         public void ComplexHierarchy()
         {
-            var result = new Parser("foo1\r\n  bar1\r\n    bar2\r\n  bar3").Lambda().Children.ToList();
+            var result = new Parser("foo1\r\n   bar1\r\n      bar2\r\n   bar3").Lambda().Children.ToList();
             Assert.Single(result);
             Assert.Equal("foo1", result.First().Name);
             Assert.Null(result.First().Value);

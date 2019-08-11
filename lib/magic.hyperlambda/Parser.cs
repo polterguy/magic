@@ -71,7 +71,7 @@ namespace magic.hyperlambda
                             !token.Any((x) => x != ' '))
                         {
                             // We have a scope declaration.
-                            int newLevel = token.Length / 2;
+                            int newLevel = token.Length / 3;
                             if (newLevel > level + 1)
                             {
                                 // Syntax error in Hyperlambda, too many consecutive SP characters.
