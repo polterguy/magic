@@ -8,8 +8,8 @@ using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
-    [Slot(Name = "src")]
-    public class Src : ISlot
+    [Slot(Name = "nodes")]
+    public class Nodes : ISlot
     {
         public void Signal(Node input)
         {

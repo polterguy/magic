@@ -8,7 +8,7 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.loops
 {
     [Slot(Name = "for-each")]
     public class ForEach : ISlot

@@ -11,12 +11,12 @@ using magic.signals.contracts;
 
 namespace magic.lambda.change
 {
-    [Slot(Name = "set")]
-    public class Set : ISlot
+    [Slot(Name = "set-node")]
+    public class SetNode : ISlot
     {
         readonly ISignaler _signaler;
 
-        public Set(IServiceProvider services)
+        public SetNode(IServiceProvider services)
         {
             _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
