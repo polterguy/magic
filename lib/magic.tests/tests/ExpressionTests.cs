@@ -113,6 +113,29 @@ namespace magic.tests.tests
         }
 
         [Fact]
+        public void Evaluate_09()
+        {
+            var x = new Expression("foo/*/bar1/=xxx");
+            var hl = "foo\n   bar1:xxx\n   bar1:yyy";
+            var lambda = new Parser(hl).Lambda().Children;
+            var result = x.Evaluate(lambda).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar1", result.First().Name);
+            Assert.Equal("xxx", result.First().Value);
+        }
+
+        [Fact]
+        public void Evaluate_10()
+        {
+            var x = new Expression("foo/*/bar1/=5");
+            var hl = "foo\n   bar1:int:5\n   bar1:yyy";
+            var lambda = new Parser(hl).Lambda().Children;
+            var result = x.Evaluate(lambda).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar1", result.First().Name);
+        }
+
+        [Fact]
         public void EmptySequence_01()
         {
             var x = new Expression("foo/1/@foo/*/..");

@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace magic.node
 {
@@ -82,10 +83,27 @@ namespace magic.node
                         };
 
                     default:
+
+                        if (value.StartsWith("\\", StringComparison.InvariantCulture))
+                        {
+                            var lookup = value.Substring(1);
+                            return (input) => input.Where((x) => x.Name == value);
+                        }
+
                         if (value.StartsWith("=", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);
-                            return (input) => input.Where((x) => x.Get<string>() == lookup);
+                            return (input) => input.Where((x) =>
+                            {
+                                var val = x.Value;
+                                if (val == null)
+                                    return lookup.Length == 0; // In case we're looking for null values
+
+                                if (val is string)
+                                    return lookup.Equals(val);
+
+                                return lookup.Equals(Convert.ToString(val, CultureInfo.InvariantCulture));
+                            });
                         }
 
                         if (value.StartsWith("@", StringComparison.InvariantCulture))
