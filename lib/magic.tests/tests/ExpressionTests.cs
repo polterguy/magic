@@ -47,9 +47,9 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_03()
+        public void ParentIterator()
         {
-            var x = new Expression("foo/*/bar/./$");
+            var x = new Expression("foo/*/bar/.");
             var hl = "foo\n   bar\n   bar";
             var lambda = new Parser(hl).Lambda().Children;
             var result = x.Evaluate(lambda).ToList();
@@ -58,7 +58,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_04()
+        public void VariableIterator()
         {
             var x = new Expression("foo/1/@foo");
             var hl = "foo\n   bar\n   bar";
@@ -69,7 +69,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_05()
+        public void NextIterator()
         {
             var x = new Expression("foo/*/bar1/+");
             var hl = "foo\n   bar1\n   bar2";
@@ -80,7 +80,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_06()
+        public void PreviousIterator()
         {
             var x = new Expression("foo/*/bar2/-");
             var hl = "foo\n   bar1\n   bar2";
@@ -91,7 +91,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_07()
+        public void PreviousIteratorRoundtrip()
         {
             var x = new Expression("foo/*/bar1/-");
             var hl = "foo\n   bar1\n   bar2";
@@ -102,7 +102,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_08()
+        public void NextIteratorRoundtrip()
         {
             var x = new Expression("foo/*/bar2/+");
             var hl = "foo\n   bar1\n   bar2";
@@ -113,7 +113,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_09()
+        public void EqualIterator_01()
         {
             var x = new Expression("foo/*/bar1/=xxx");
             var hl = "foo\n   bar1:xxx\n   bar1:yyy";
@@ -125,7 +125,7 @@ namespace magic.tests.tests
         }
 
         [Fact]
-        public void Evaluate_10()
+        public void EqualIterator_02()
         {
             var x = new Expression("foo/*/bar1/=5");
             var hl = "foo\n   bar1:int:5\n   bar1:yyy";

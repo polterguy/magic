@@ -65,11 +65,8 @@ namespace magic.node
                     case "+":
                         return (input) => input.Select((x) => x.Next ?? x.Parent.Children.First());
 
-                    case "$":
-                        return (input) => input.Distinct();
-
                     case ".":
-                        return (input) => input.Select((x) => x.Parent);
+                        return (input) => input.Select((x) => x.Parent).Distinct();
 
                     case "..":
                         return (input) =>
