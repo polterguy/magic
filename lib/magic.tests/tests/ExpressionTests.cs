@@ -25,7 +25,7 @@ namespace magic.tests.tests
         public void Evaluate_01()
         {
             var x = new Expression("foo/*/bar");
-            var hl = "foo\n  bar\n  xxx\n  bar";
+            var hl = "foo\n   bar\n   xxx\n   bar";
             var lambda = new Parser(hl).Lambda().Children;
             var result = x.Evaluate(lambda).ToList();
             Assert.Equal(2, result.Count());
@@ -37,7 +37,7 @@ namespace magic.tests.tests
         public void Evaluate_02()
         {
             var x = new Expression("foo/*");
-            var hl = "foo\n  bar1\n  bar2\nfoo\n  bar3";
+            var hl = "foo\n   bar1\n   bar2\nfoo\n   bar3";
             var lambda = new Parser(hl).Lambda().Children;
             var result = x.Evaluate(lambda).ToList();
             Assert.Equal(3, result.Count());
@@ -50,7 +50,7 @@ namespace magic.tests.tests
         public void Evaluate_03()
         {
             var x = new Expression("foo/*/bar/./$");
-            var hl = "foo\n  bar\n  bar";
+            var hl = "foo\n   bar\n   bar";
             var lambda = new Parser(hl).Lambda().Children;
             var result = x.Evaluate(lambda).ToList();
             Assert.Single(result);

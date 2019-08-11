@@ -158,7 +158,7 @@ namespace magic.hyperlambda
                                 _reader.Read();
                                 builder.Append(' ');
                             }
-                            if (!_reader.EndOfStream && builder.Length % 2 != 0)
+                            if (!_reader.EndOfStream && builder.Length % 3 != 0)
                                 throw new ApplicationException("Odd number of spaces found in Hyperlambda file");
                             yield return builder.ToString();
                             builder.Clear();

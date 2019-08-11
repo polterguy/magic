@@ -48,7 +48,7 @@ namespace magic.tests.tests
         [Fact]
         public void AddChildrenSrc()
         {
-            var lambda = Evaluate(".dest\nadd:x:../*/.dest\n  .\n    foo1:bar1\n    foo2:bar2");
+            var lambda = Evaluate(".dest\nadd:x:../*/.dest\n   .\n      foo1:bar1\n      foo2:bar2");
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -59,7 +59,7 @@ namespace magic.tests.tests
         [Fact]
         public void AddExpressionSrc()
         {
-            var lambda = Evaluate(".dest\n.src\n  foo1:bar1\n  foo2:bar2\nadd:x:../*/.dest\n  src:x:../*/.src/*");
+            var lambda = Evaluate(".dest\n.src\n   foo1:bar1\n   foo2:bar2\nadd:x:../*/.dest\n   src:x:../*/.src/*");
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -84,7 +84,7 @@ namespace magic.tests.tests
         [Fact]
         public void SetWithChild()
         {
-            var lambda = Evaluate(".foo1\nset:x:../*/.foo1\n  .src\n    foo2:bar2");
+            var lambda = Evaluate(".foo1\nset:x:../*/.foo1\n   .src\n      foo2:bar2");
             Assert.Equal("foo2", lambda.Children.First().Name);
             Assert.Equal("bar2", lambda.Children.First().Value);
         }
@@ -92,14 +92,14 @@ namespace magic.tests.tests
         [Fact]
         public void SetWithNull()
         {
-            var lambda = Evaluate(".foo1\n  foo2\nset:x:../*/.foo1/*");
+            var lambda = Evaluate(".foo1\n   foo2\nset:x:../*/.foo1/*");
             Assert.Empty(lambda.Children.First().Children);
         }
 
         [Fact]
         public void SetExpressionSource()
         {
-            var lambda = Evaluate(".foo1\n.foo2:bar2\nset:x:../*/.foo1\n  src:x:../*/.foo2");
+            var lambda = Evaluate(".foo1\n.foo2:bar2\nset:x:../*/.foo1\n   src:x:../*/.foo2");
             Assert.Equal(".foo2", lambda.Children.First().Name);
             Assert.Equal("bar2", lambda.Children.First().Value);
         }
@@ -107,35 +107,35 @@ namespace magic.tests.tests
         [Fact]
         public void SetNameWithStatic()
         {
-            var lambda = Evaluate(".foo1\nset-name:x:../*/.foo1\n  .:.foo2");
+            var lambda = Evaluate(".foo1\nset-name:x:../*/.foo1\n   .:.foo2");
             Assert.Equal(".foo2", lambda.Children.First().Name);
         }
 
         [Fact]
         public void SetNameWithExpression()
         {
-            var lambda = Evaluate(".foo1:.bar1\nset-name:x:../*/.foo1\n  value:x:../*/.foo1");
+            var lambda = Evaluate(".foo1:.bar1\nset-name:x:../*/.foo1\n   value:x:../*/.foo1");
             Assert.Equal(".bar1", lambda.Children.First().Name);
         }
 
         [Fact]
         public void SetValueWithStatic()
         {
-            var lambda = Evaluate(".foo1\nset-value:x:../*/.foo1\n  .:OK");
+            var lambda = Evaluate(".foo1\nset-value:x:../*/.foo1\n   .:OK");
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 
         [Fact]
         public void SetValueWithExpression()
         {
-            var lambda = Evaluate(".foo1:.bar1\nset-value:x:../*/.foo1\n  name:x:../*/.foo1");
+            var lambda = Evaluate(".foo1:.bar1\nset-value:x:../*/.foo1\n   name:x:../*/.foo1");
             Assert.Equal(".foo1", lambda.Children.First().Value);
         }
 
         [Fact]
         public void ForEach_01()
         {
-            Evaluate(".foo1\n  bar1\n  bar2\nfor-each:x:../*/.foo1/*\n  foo2");
+            Evaluate(".foo1\n   bar1\n   bar2\nfor-each:x:../*/.foo1/*\n   foo2");
             Assert.Equal(2, Foo2Slot.ExecutionCount);
         }
 
