@@ -59,7 +59,7 @@ namespace magic.tests.tests
         [Fact]
         public void AddExpressionSrc()
         {
-            var lambda = Evaluate(".dest\n.src\n   foo1:bar1\n   foo2:bar2\nadd:x:../*/.dest\n   src:x:../*/.src/*");
+            var lambda = Evaluate(".dest\n.src\n   foo1:bar1\n   foo2:bar2\nadd:x:../*/.dest\n   nodes:x:../*/.src/*");
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -82,9 +82,16 @@ namespace magic.tests.tests
         }
 
         [Fact]
+        public void Count_01()
+        {
+            var lambda = Evaluate(".foo1\n   bar1\n   bar2\ncount:x:../*/.foo1/*");
+            Assert.Equal(2, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
         public void SetWithChild()
         {
-            var lambda = Evaluate(".foo1\nset:x:../*/.foo1\n   .src\n      foo2:bar2");
+            var lambda = Evaluate(".foo1\nset-node:x:../*/.foo1\n   .src\n      foo2:bar2");
             Assert.Equal("foo2", lambda.Children.First().Name);
             Assert.Equal("bar2", lambda.Children.First().Value);
         }
@@ -92,14 +99,14 @@ namespace magic.tests.tests
         [Fact]
         public void SetWithNull()
         {
-            var lambda = Evaluate(".foo1\n   foo2\nset:x:../*/.foo1/*");
+            var lambda = Evaluate(".foo1\n   foo2\nset-node:x:../*/.foo1/*");
             Assert.Empty(lambda.Children.First().Children);
         }
 
         [Fact]
         public void SetExpressionSource()
         {
-            var lambda = Evaluate(".foo1\n.foo2:bar2\nset:x:../*/.foo1\n   src:x:../*/.foo2");
+            var lambda = Evaluate(".foo1\n.foo2:bar2\nset-node:x:../*/.foo1\n   nodes:x:../*/.foo2");
             Assert.Equal(".foo2", lambda.Children.First().Name);
             Assert.Equal("bar2", lambda.Children.First().Value);
         }

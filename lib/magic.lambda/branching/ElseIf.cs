@@ -8,7 +8,7 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.branching
 {
     [Slot(Name = "else-if")]
     public class ElseIf : ISlot
