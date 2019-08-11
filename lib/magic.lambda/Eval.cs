@@ -22,11 +22,31 @@ namespace magic.lambda
 
         public void Signal(Node input)
         {
-            foreach (var idx in input.Children)
+            if (input.Name == "eval" && input.Value != null && input.Children.Any())
+                throw new ApplicationException("[eval] cannot handle both expression values and children at the same time");
+
+            // Children have precedence, in case invocation is from a non [eval] keyword.
+            if (input.Children.Any())
             {
-                if (idx.Name.FirstOrDefault() == '.')
-                    continue;
-                _signaler.Signal(idx.Name, idx);
+                foreach (var idx in input.Children)
+                {
+                    if (idx.Name.FirstOrDefault() == '.')
+                        continue;
+                    _signaler.Signal(idx.Name, idx);
+                }
+            }
+            else
+            {
+                var nodes = input.Get<Expression>().Evaluate(new Node[] { input });
+                foreach (var idxOuter in nodes)
+                {
+                    foreach (var idx in idxOuter.Children)
+                    {
+                        if (idx.Name.FirstOrDefault() == '.')
+                            continue;
+                        _signaler.Signal(idx.Name, idx);
+                    }
+                }
             }
         }
     }

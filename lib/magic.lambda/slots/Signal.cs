@@ -27,8 +27,25 @@ namespace magic.lambda.slots
 
             var slotName = input.Get<string>();
             var slot = Slot.GetSlot(slotName).Clone();
-            var lambda = slot.Children.FirstOrDefault((x) => x.Name == ".lambda");
+            var lambda = slot.Children.First((x) => x.Name == ".lambda");
             lambda.UnTie();
+            var slotArgs = slot.Children.FirstOrDefault((x) => x.Name == ".arguments");
+            if (slotArgs == null || slotArgs.Children.Count() == 0)
+            {
+                if (input.Children.Any())
+                    throw new ApplicationException($"Slot named [{slotName}] does not take arguments at all.");
+            }
+            else
+            {
+                foreach (var idxInputArg in input.Children)
+                {
+                    if (!slotArgs.Children.Any((x) => x.Name == idxInputArg.Name))
+                        throw new ApplicationException($"Slot [{slotName}] does not know how to handle argument [{idxInputArg.Name}]");
+                }
+            }
+            var args = new Node(".arguments");
+            args.AddRange(input.Children);
+            lambda.Insert(0, args);
             _signaler.Signal("eval", lambda);
         }
     }
