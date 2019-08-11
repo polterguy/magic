@@ -8,7 +8,7 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.equality
+namespace magic.lambda.logical
 {
     [Slot(Name = "or")]
     public class Or : ISlot
