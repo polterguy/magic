@@ -244,6 +244,27 @@ namespace magic.tests.tests
             Assert.Equal(false, lambda.Children.Skip(1).First().Value);
         }
 
+        [Fact]
+        public void Or_01()
+        {
+            var lambda = Evaluate(".foo1:bool:true\nor\n   value:x:../*/.foo1\n   .:bool:false");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Or_02()
+        {
+            var lambda = Evaluate(".foo1:bool:false\nor\n   value:x:../*/.foo1\n   .:bool:true\n   .:bool:false");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Or_03()
+        {
+            var lambda = Evaluate(".foo1:bool:false\nor\n   value:x:../*/.foo1\n   .:bool:false\n   .:bool:false");
+            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         Node Evaluate(string hl)

@@ -10,12 +10,12 @@ using magic.signals.contracts;
 
 namespace magic.lambda.equality
 {
-    [Slot(Name = "and")]
-    public class And : ISlot
+    [Slot(Name = "or")]
+    public class Or : ISlot
     {
         readonly ISignaler _signaler;
 
-        public And(IServiceProvider services)
+        public Or(IServiceProvider services)
         {
             _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
@@ -23,18 +23,19 @@ namespace magic.lambda.equality
         public void Signal(Node input)
         {
             if (!input.Children.Any())
-                throw new ApplicationException("Operator [and] requires at least one child node");
+                throw new ApplicationException("Operator [or] requires at least one child node");
 
-            _signaler.Signal("eval", input);
             foreach (var idx in input.Children)
             {
-                if (!idx.Get<bool>())
+                if (idx.Name.FirstOrDefault() != '.')
+                    _signaler.Signal(idx.Name, idx);
+                if (idx.Get<bool>())
                 {
-                    input.Value = false;
+                    input.Value = true;
                     return;
                 }
             }
-            input.Value = true;
+            input.Value = false;
         }
     }
 }
