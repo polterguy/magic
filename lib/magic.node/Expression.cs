@@ -29,14 +29,39 @@ namespace magic.node
                 return _evaluate(input);
             }
 
+            #region [ -- Overrides -- ]
+
+            public override string ToString()
+            {
+                return Value;
+            }
+
+            public override int GetHashCode()
+            {
+                return Value.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                return Value.Equals(obj);
+            }
+
+            #endregion
+
             #region [ -- Private helper methods -- ]
 
             Func<IEnumerable<Node>, IEnumerable<Node>> CreateEvaluator(string value)
             {
-                switch(value)
+                switch (value)
                 {
                     case "*":
                         return (input) => input.SelectMany((x) => x.Children);
+
+                    case "-":
+                        return (input) => input.Select((x) => x.Previous ?? x.Parent.Children.Last());
+
+                    case "+":
+                        return (input) => input.Select((x) => x.Next ?? x.Parent.Children.First());
 
                     case "$":
                         return (input) => input.Distinct();
@@ -47,10 +72,12 @@ namespace magic.node
                     case "..":
                         return (input) =>
                         {
-                            var first = input.First();
-                            while (first.Parent != null)
-                                first = first.Parent;
-                            return new Node[] { first };
+                            var idx = input.FirstOrDefault();
+                            while (idx != null && idx.Parent != null)
+                                idx = idx.Parent;
+                            if (idx == null)
+                                return new Node[] { };
+                            return new Node[] { idx };
                         };
 
                     default:
@@ -59,14 +86,33 @@ namespace magic.node
                             var lookup = value.Substring(1);
                             return (input) => input.Where((x) => x.Get<string>() == lookup);
                         }
-                        else if (int.TryParse(value, out int number))
+
+                        if (value.StartsWith("@", StringComparison.InvariantCulture))
                         {
+                            var lookup = value.Substring(1);
+                            return (input) =>
+                            {
+                                var cur = input.FirstOrDefault()?.Previous;
+                                while (cur != null && cur.Name != lookup)
+                                {
+                                    var previous = cur.Previous;
+                                    if (previous == null)
+                                        cur = cur.Parent;
+                                    else
+                                        cur = previous;
+                                }
+
+                                if (cur == null)
+                                    return new Node[] { };
+
+                                return new Node[] { cur };
+                            };
+                        }
+
+                        if (int.TryParse(value, out int number))
                             return (input) => input.SelectMany((x) => x.Children.Skip(number).Take(1));
-                        }
-                        else
-                        {
-                            return (input) => input.Where((x) => x.Name == value);
-                        }
+
+                        return (input) => input.Where((x) => x.Name == value);
                 }
             }
 
@@ -77,8 +123,11 @@ namespace magic.node
 
         public Expression(string expression)
         {
+            Value = expression;
             _iterators = new List<Iterator>(Parse(expression));
         }
+
+        public string Value { get; private set; }
 
         public IEnumerable<Iterator> Iterators { get { return _iterators; } }
 
@@ -87,11 +136,32 @@ namespace magic.node
             foreach (var idx in _iterators)
             {
                 input = idx.Evaluate(input);
+                if (!input.Any())
+                    return new Node[] { }; // Short circuiting to slightly optimize invocation.
             }
             return input;
         }
 
-        #region [ -- Internal helper methods -- ]
+        #region [ -- Overrides -- ]
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Value.Equals(obj);
+        }
+
+        #endregion
+
+        #region [ -- Private helper methods -- ]
 
         IEnumerable<Iterator> Parse(string expression)
         {

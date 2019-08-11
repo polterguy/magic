@@ -56,5 +56,68 @@ namespace magic.tests.tests
             Assert.Single(result);
             Assert.Equal("foo", result.First().Name);
         }
+
+        [Fact]
+        public void Evaluate_04()
+        {
+            var x = new Expression("foo/1/@foo");
+            var hl = "foo\n   bar\n   bar";
+            var lambda = new Parser(hl).Lambda();
+            var result = x.Evaluate(lambda.Children).ToList();
+            Assert.Single(result);
+            Assert.Equal("foo", result.First().Name);
+        }
+
+        [Fact]
+        public void Evaluate_05()
+        {
+            var x = new Expression("foo/*/bar1/+");
+            var hl = "foo\n   bar1\n   bar2";
+            var lambda = new Parser(hl).Lambda().Children;
+            var result = x.Evaluate(lambda).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar2", result.First().Name);
+        }
+
+        [Fact]
+        public void Evaluate_06()
+        {
+            var x = new Expression("foo/*/bar2/-");
+            var hl = "foo\n   bar1\n   bar2";
+            var lambda = new Parser(hl).Lambda().Children;
+            var result = x.Evaluate(lambda).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar1", result.First().Name);
+        }
+
+        [Fact]
+        public void Evaluate_07()
+        {
+            var x = new Expression("foo/*/bar1/-");
+            var hl = "foo\n   bar1\n   bar2";
+            var lambda = new Parser(hl).Lambda().Children;
+            var result = x.Evaluate(lambda).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar2", result.First().Name);
+        }
+
+        [Fact]
+        public void Evaluate_08()
+        {
+            var x = new Expression("foo/*/bar2/+");
+            var hl = "foo\n   bar1\n   bar2";
+            var lambda = new Parser(hl).Lambda().Children;
+            var result = x.Evaluate(lambda).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar1", result.First().Name);
+        }
+
+        [Fact]
+        public void EmptySequence_01()
+        {
+            var x = new Expression("foo/1/@foo/*/..");
+            var result = x.Evaluate(new Node[] { }).ToList();
+            Assert.Empty(result);
+        }
     }
 }
