@@ -12,18 +12,18 @@ namespace magic.lambda.utilities
 {
     public static class XUtil
     {
-        public static Node Single(ISignaler signaler, Node input, bool firstLevel = false)
+        public static Node Single(ISignaler signaler, Node input, bool firstLevel)
         {
             signaler.Signal("eval", input);
             if (input.Children.Count() > 1)
-                throw new ApplicationException("Too many sources for slot expecting single event");
+                throw new ApplicationException("Too many sources for slot expecting single node");
 
             var levelOne = input.Children.FirstOrDefault();
             if (firstLevel)
                 return levelOne;
 
             if (levelOne?.Children.Count() > 1)
-                throw new ApplicationException("Too many sources for slot expecting single event");
+                throw new ApplicationException("Too many sources for slot expecting single node");
 
             return levelOne?.Children.FirstOrDefault();
         }
