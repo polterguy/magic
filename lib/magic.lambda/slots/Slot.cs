@@ -25,10 +25,10 @@ namespace magic.lambda.slots
         public void Signal(Node input)
         {
             if (!input.Children.Any((x) => x.Name == ".lambda"))
-                throw new ApplicationException("Keyword [slot] requires a [.lambda] object at the very least");
+                throw new ApplicationException("Keyword [slot] requires at least a [.lambda] children node");
 
             if (input.Children.Any((x => x.Name != ".lambda" && x.Name != ".arguments")))
-                throw new ApplicationException("Keyword [slot] can only handle [.lambda] and [.arguments]");
+                throw new ApplicationException("Keyword [slot] can only handle [.lambda] and [.arguments] children nodes");
 
             var slotNode = new Node(input.Name);
             slotNode.AddRange(input.Children);
