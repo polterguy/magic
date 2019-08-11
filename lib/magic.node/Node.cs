@@ -72,6 +72,14 @@ namespace magic.node
             _children.Add(value);
         }
 
+        public void AddRange(IEnumerable<Node> values)
+        {
+            foreach (var idx in values)
+            {
+                Add(idx);
+            }
+        }
+
         public void Remove(Node value)
         {
             _children.Remove(value);
