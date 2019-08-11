@@ -127,5 +127,10 @@ namespace magic.node
             }
             return result;
         }
+
+        public void UnTie()
+        {
+            Parent = null;
+        }
     }
 }
