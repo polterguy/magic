@@ -5,16 +5,17 @@
 
 using System;
 using magic.node;
+using magic.lambda.utilities;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.change
 {
-    [Slot(Name = "add")]
-    public class Add : ISlot
+    [Slot(Name = "set-name")]
+    public class SetName : ISlot
     {
         readonly ISignaler _signaler;
 
-        public Add(IServiceProvider services)
+        public SetName(IServiceProvider services)
         {
             _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
@@ -22,16 +23,10 @@ namespace magic.lambda
         public void Signal(Node input)
         {
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            _signaler.Signal("eval", input);
-            foreach (var idxSource in input.Children)
+            var source = XUtil.Single(_signaler, input, true);
+            foreach (var idx in dest)
             {
-                foreach(var idxDest in dest)
-                {
-                    foreach (var idxSourceUnwrapped in idxSource.Children)
-                    {
-                        idxDest.Add(idxSourceUnwrapped);
-                    }
-                }
+                idx.Name = source?.Get<string>() ?? "";
             }
         }
     }

@@ -8,7 +8,7 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.source
 {
     [Slot(Name = "name")]
     public class Name : ISlot

@@ -11,5 +11,7 @@
     <Folder Include="utilities\" />
     <Folder Include="equality\" />
     <Folder Include="logical\" />
+    <Folder Include="change\" />
+    <Folder Include="source\" />
   </ItemGroup>
 </Project>
