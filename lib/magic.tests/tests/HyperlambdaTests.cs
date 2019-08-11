@@ -115,6 +115,33 @@ namespace magic.tests.tests
         }
 
         [Fact]
+        public void DoubleQuotedString()
+        {
+            var result = new Parser(@"foo1:"" howdy world """).Lambda().Children.ToList();
+            Assert.Single(result);
+            Assert.Equal("foo1", result.First().Name);
+            Assert.Equal(" howdy world ", result.First().Value);
+        }
+
+        [Fact]
+        public void SingleQuotedString()
+        {
+            var result = new Parser("foo1:' howdy world '").Lambda().Children.ToList();
+            Assert.Single(result);
+            Assert.Equal("foo1", result.First().Name);
+            Assert.Equal(" howdy world ", result.First().Value);
+        }
+
+        [Fact]
+        public void MultilineString()
+        {
+            var result = new Parser("foo1:@\" howdy\nworld \"").Lambda().Children.ToList();
+            Assert.Single(result);
+            Assert.Equal("foo1", result.First().Name);
+            Assert.Equal(" howdy\nworld ", result.First().Value);
+        }
+
+        [Fact]
         public void SpacingError_Throws()
         {
             Assert.Throws<ApplicationException>(() => new Parser("foo1\r\n bar1"));
