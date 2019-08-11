@@ -10,28 +10,28 @@ using magic.signals.contracts;
 
 namespace magic.lambda
 {
-    [Slot(Name = "else")]
-    public class Else : ISlot
+    [Slot(Name = "else-if")]
+    public class ElseIf : ISlot
     {
         readonly ISignaler _signaler;
 
-        public Else(IServiceProvider services)
+        public ElseIf(IServiceProvider services)
         {
             _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
         }
 
         public void Signal(Node input)
         {
-            if (input.Children.Count() != 1)
-                throw new ApplicationException("Keyword [else] requires exactly one child node");
+            if (input.Children.Count() != 2)
+                throw new ApplicationException("Keyword [else-if] requires exactly two children nodes");
 
-            var lambda = input.Children.First();
+            var lambda = input.Children.Skip(1).First();
             if (lambda.Name != ".lambda")
-                throw new ApplicationException("Keyword [else] requires its only child node to be [.lambda]");
+                throw new ApplicationException("Keyword [else-if] requires its second child node to be [.lambda]");
 
             var previous = input.Previous;
             if (previous == null || (previous.Name != "if" && previous.Name != "else-if"))
-                throw new ApplicationException("[else] must have an [if] or [else-if] before it");
+                throw new ApplicationException("[else-if] must have an [if] or [else-if] before it");
 
             var evaluate = true;
             while (previous != null && (previous.Name == "if" || previous.Name == "else-if"))
@@ -44,7 +44,14 @@ namespace magic.lambda
                 previous = previous.Previous;
             }
             if (evaluate)
-                _signaler.Signal("eval", lambda);
+            {
+                var condition = input.Children.First();
+                if (condition.Name.FirstOrDefault() != '.')
+                    _signaler.Signal(condition.Name, condition);
+
+                if (condition.Get<bool>())
+                    _signaler.Signal("eval", lambda);
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ namespace magic.signals.services
         public void Signal(string name, Node input)
         {
             if (!_slots.ContainsKey(name))
-                return;
+                throw new ApplicationException($"No slot exists for [{name}]");
 
             foreach (var idxType in _slots[name])
             {

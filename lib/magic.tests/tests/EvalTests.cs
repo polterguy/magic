@@ -303,6 +303,26 @@ else
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 
+        [Fact]
+        public void ElseIf_01()
+        {
+            var lambda = Evaluate(@"
+.result
+if
+   .:bool:false
+   .lambda
+      set-value:x:../*/.result
+         .:failure
+else-if
+   eq
+      name:x:../*/.result
+      .:.result
+   .lambda
+      set-value:x:../*/.result
+         .:OK");
+            Assert.Equal("OK", lambda.Children.First().Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         Node Evaluate(string hl)
