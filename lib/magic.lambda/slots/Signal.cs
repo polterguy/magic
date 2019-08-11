@@ -25,10 +25,13 @@ namespace magic.lambda.slots
             if (input.Value == null)
                 throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
 
+            // Retrieving slot's lambda.
             var slotName = input.Get<string>();
             var slot = Slot.GetSlot(slotName).Clone();
             var lambda = slot.Children.First((x) => x.Name == ".lambda");
             lambda.UnTie();
+
+            // Sanity checking arguments.
             var slotArgs = slot.Children.FirstOrDefault((x) => x.Name == ".arguments");
             if (slotArgs == null || slotArgs.Children.Count() == 0)
             {
@@ -43,6 +46,8 @@ namespace magic.lambda.slots
                         throw new ApplicationException($"Slot [{slotName}] does not know how to handle argument [{idxInputArg.Name}]");
                 }
             }
+
+            // Preparing our actual lambda invocation node.
             var args = new Node(".arguments");
             args.AddRange(input.Children);
             lambda.Insert(0, args);
