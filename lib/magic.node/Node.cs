@@ -59,6 +59,20 @@ namespace magic.node
 
         public Node Parent { get; private set; }
 
+        public Node Previous
+        {
+            get
+            {
+                if (Parent == null)
+                    return null;
+
+                var indexOfThis = Parent._children.IndexOf(this);
+                if (indexOfThis == 0)
+                    return null;
+                return Parent._children[indexOfThis - 1];
+            }
+        }
+
         public T Get<T>()
         {
             if (Value != null && typeof(T) == Value.GetType())

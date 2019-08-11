@@ -286,6 +286,23 @@ namespace magic.tests.tests
             Assert.Null(lambda.Children.First().Value);
         }
 
+        [Fact]
+        public void Else_01()
+        {
+            var lambda = Evaluate(@"
+.result
+if
+   .:bool:false
+   .lambda
+      set-value:x:../*/.result
+         .:failure
+else
+   .lambda
+      set-value:x:../*/.result
+         .:OK");
+            Assert.Equal("OK", lambda.Children.First().Value);
+        }
+
         #region [ -- Private helper methods -- ]
 
         Node Evaluate(string hl)
