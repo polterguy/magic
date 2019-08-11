@@ -27,6 +27,17 @@ namespace magic.tests.tests
             }
         }
 
+        [Slot(Name = "foo2")]
+        public class Foo2Slot : ISlot
+        {
+            public static int ExecutionCount;
+
+            public void Signal(Node input)
+            {
+                ++ExecutionCount;
+            }
+        }
+
         [Fact]
         public void InvokeLocalSignal()
         {
@@ -119,6 +130,13 @@ namespace magic.tests.tests
         {
             var lambda = Evaluate(".foo1:.bar1\nset-value:x:../*/.foo1\n  name:x:../*/.foo1");
             Assert.Equal(".foo1", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void ForEach_01()
+        {
+            Evaluate(".foo1\n  bar1\n  bar2\nfor-each:x:../*/.foo1/*\n  foo2");
+            Assert.Equal(2, Foo2Slot.ExecutionCount);
         }
 
         #region [ -- Private helper methods -- ]
