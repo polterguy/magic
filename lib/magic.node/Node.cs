@@ -100,6 +100,12 @@ namespace magic.node
             _children.Add(value);
         }
 
+        public void Insert(int index, Node value)
+        {
+            value.Parent = this;
+            _children.Insert(index, value);
+        }
+
         public void AddRange(IEnumerable<Node> values)
         {
             foreach (var idx in values)

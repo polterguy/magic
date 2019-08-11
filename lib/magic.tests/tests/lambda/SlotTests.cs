@@ -23,6 +23,17 @@ namespace magic.tests.tests.lambda
             }
         }
 
+        [Slot(Name = "foo4")]
+        public class Foo4Slot : ISlot
+        {
+            public static int ExecutionCount;
+
+            public void Signal(Node input)
+            {
+                ++ExecutionCount;
+            }
+        }
+
         [Fact]
         public void CreateSlot()
         {
@@ -54,6 +65,20 @@ namespace magic.tests.tests.lambda
             Assert.Equal(1, Foo3Slot.ExecutionCount);
             Common.Evaluate("signal:custom.slot_4");
             Assert.Equal(2, Foo3Slot.ExecutionCount);
+        }
+
+        [Fact]
+        public void PassInArgs()
+        {
+            Common.Evaluate(@"slot:custom.slot_5
+   .arguments
+      foo4
+   .lambda
+      eval:x:../*/.arguments");
+            Assert.Equal(0, Foo4Slot.ExecutionCount);
+            Common.Evaluate(@"signal:custom.slot_5
+   foo4");
+            Assert.Equal(1, Foo4Slot.ExecutionCount);
         }
     }
 }
