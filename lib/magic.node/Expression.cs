@@ -71,11 +71,15 @@ namespace magic.node
                     case "..":
                         return (input) =>
                         {
+                            // Notice, input might be a "no sequence enumerable", so we'll have to accommodate for "null returns".
                             var idx = input.FirstOrDefault();
-                            while (idx != null && idx.Parent != null)
-                                idx = idx.Parent;
+
                             if (idx == null)
                                 return new Node[] { };
+
+                            while (idx.Parent != null)
+                                idx = idx.Parent;
+
                             return new Node[] { idx };
                         };
 
