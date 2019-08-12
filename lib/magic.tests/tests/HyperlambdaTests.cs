@@ -159,5 +159,51 @@ namespace magic.tests.tests
             Assert.Equal("bar", node.Children.First().Children.First().Name);
             Assert.Null(node.Value);
         }
+
+        [Fact]
+        public void Lambda2String()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("");
+            node.Add(new Node("foo"));
+            node.Children.First().Add(new Node("bar"));
+            signaler.Signal("hyper", node);
+            Assert.Equal("foo\n   bar\n", node.Value);
+        }
+
+        [Fact]
+        public void String2LambdaToString_01()
+        {
+            var hl = @"foo
+   bar:int:57
+      howdy:decimal:57
+   barx
+jo:dude
+".Replace("\r\n", "\n");
+            var signaler = Common.GetSignaler();
+            var node = new Node("", hl);
+            signaler.Signal("lambda", node);
+            Assert.Null(node.Value);
+            signaler.Signal("hyper", node);
+            Assert.Equal(hl, node.Value);
+        }
+
+        [Fact]
+        public void String2LambdaToString_02()
+        {
+            var hl = @"foo
+   bar:"" howdy\"" world ""
+      howdy:@""
+XXX""
+   barx
+jo:dude
+".Replace("\r\n", "\n");
+            var signaler = Common.GetSignaler();
+            var node = new Node("", hl);
+            signaler.Signal("lambda", node);
+            Assert.Null(node.Value);
+            signaler.Signal("hyper", node);
+            Assert.Equal(hl, node.Value);
+        }
     }
 }
