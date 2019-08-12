@@ -17,11 +17,23 @@ namespace magic.tests.tests.lambda
         {
             var lambda = Common.Evaluate(@"try
    throw:foo
-catch
+.catch
    unwrap-value:x:+/*
    return
       .message:x:@.arguments/*/message");
             Assert.Equal("foo", lambda.Get<List<Node>>().First().Value);
+        }
+
+        [Fact]
+        public void TryNoThrow()
+        {
+            var lambda = Common.Evaluate(@"try
+   .no-throw
+.catch
+   unwrap-value:x:+/*
+   return
+      .message:x:@.arguments/*/message");
+            Assert.Null(lambda.Value);
         }
 
         [Fact]
@@ -30,10 +42,10 @@ catch
             var lambda = Common.Evaluate(@"try
    try
       throw:foo
-   finally
+   .finally
       return
          .message:foo
-catch
+.catch
    set-value:x:@try
       .:OK");
             Assert.Equal("foo", lambda.Get<List<Node>>().First().Value);
@@ -45,7 +57,7 @@ catch
         {
             var lambda = Common.Evaluate(@"try
    .no-throw
-finally
+.finally
    return
       .message:foo");
             Assert.Equal("foo", lambda.Get<List<Node>>().First().Value);
