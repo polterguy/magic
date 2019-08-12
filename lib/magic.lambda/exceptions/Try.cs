@@ -39,20 +39,33 @@ namespace magic.lambda.logical
                     args.Add(new Node("type", err.GetType().FullName));
                     next.Insert(0, args);
                     _signaler.Signal("eval", next);
+                    return;
                 }
-                else
+
+                // To ensure finally is executed, we have to do it this way.
+                // TODO: Refactor to keep code DRY.
+                if (nextNodeName == ".finally")
                 {
-                    throw;
+                    var final = input.Next;
+                    if (final.Name != ".finally")
+                        final = final.Next;
+                    if (final != null)
+                        _signaler.Signal("eval", final);
                 }
+                else if (input.Next?.Next?.Name == ".finally")
+                {
+                    var final = input.Next.Next;
+                    if (final.Name != ".finally")
+                        final = final.Next;
+                    if (final != null)
+                        _signaler.Signal("eval", final);
+                }
+                throw;
             }
-            finally
-            {
-                var final = input.Next;
-                if (final.Name != ".finally")
-                    final = final.Next;
-                if (final != null)
-                    _signaler.Signal("eval", final);
-            }
+
+            var ensure = input.Next?.Name == ".finally" ? input.Next : input.Next?.Next;
+            if (ensure != null)
+                _signaler.Signal("eval", ensure);
         }
     }
 }
