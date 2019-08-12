@@ -205,5 +205,43 @@ jo:dude
             signaler.Signal("hyper", node);
             Assert.Equal(hl, node.Value);
         }
+
+        [Fact]
+        public void String2LambdaToString_03()
+        {
+            var hl = @"foo
+   bar:""foo:bar""
+      howdy:@""
+XXX""
+   barx
+jo:dude
+".Replace("\r\n", "\n");
+            var signaler = Common.GetSignaler();
+            var node = new Node("", hl);
+            signaler.Signal("lambda", node);
+            Assert.Null(node.Value);
+            signaler.Signal("hyper", node);
+            Assert.Equal(hl, node.Value);
+        }
+
+        [Fact]
+        public void String2LambdaToString_04()
+        {
+            var hl = @"foo
+   bar:@""foo:bar
+      """"jo:dude""""
+""
+      howdy:@""
+XXX""
+   barx
+jo:dude
+".Replace("\r\n", "\n");
+            var signaler = Common.GetSignaler();
+            var node = new Node("", hl);
+            signaler.Signal("lambda", node);
+            Assert.Null(node.Value);
+            signaler.Signal("hyper", node);
+            Assert.Equal(hl, node.Value);
+        }
     }
 }

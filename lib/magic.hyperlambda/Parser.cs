@@ -144,6 +144,8 @@ namespace magic.hyperlambda
                     return Convert.ToByte(value, CultureInfo.InvariantCulture);
                 case "x":
                     return new Expression(value);
+                case "node":
+                    return new Parser(value).Lambda();
                 default:
                     throw new ApplicationException($"Unknown type declaration found in Hyperlambda '{type}'");
             }
