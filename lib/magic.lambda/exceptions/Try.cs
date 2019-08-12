@@ -31,6 +31,9 @@ namespace magic.lambda.logical
             }
             catch (Exception err)
             {
+                // TODO: Refactor to keep code DRY.
+                // TODO: Also make sure we can only have on [.catch] and [.finally] block
+                var reThrow = true;
                 if (nextNodeName == ".catch")
                 {
                     var next = input.Next;
@@ -39,20 +42,18 @@ namespace magic.lambda.logical
                     args.Add(new Node("type", err.GetType().FullName));
                     next.Insert(0, args);
                     _signaler.Signal("eval", next);
-                    return;
+                    reThrow = false;
                 }
-
-                // To ensure finally is executed, we have to do it this way.
-                // TODO: Refactor to keep code DRY.
                 if (nextNodeName == ".finally")
                 {
+                    // To ensure finally is executed, we have to do it this way.
                     var final = input.Next;
                     if (final.Name != ".finally")
                         final = final.Next;
                     if (final != null)
                         _signaler.Signal("eval", final);
                 }
-                else if (input.Next?.Next?.Name == ".finally")
+                if (input.Next?.Next?.Name == ".finally")
                 {
                     var final = input.Next.Next;
                     if (final.Name != ".finally")
@@ -60,7 +61,8 @@ namespace magic.lambda.logical
                     if (final != null)
                         _signaler.Signal("eval", final);
                 }
-                throw;
+                if (reThrow)
+                    throw;
             }
 
             var ensure = input.Next?.Name == ".finally" ? input.Next : input.Next?.Next;
