@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
@@ -34,18 +35,32 @@ namespace magic.lambda
                     if (idx.Name.FirstOrDefault() == '.')
                         continue;
                     _signaler.Signal(idx.Name, idx);
+
+                    // Checking if execution for some reasons was terminated.
+                    var root = idx.Parent;
+                    while (root.Parent != null)
+                        root = root.Parent;
+                    if (root.Value is List<Node>)
+                        return;
                 }
             }
             else
             {
                 var nodes = input.Get<Expression>().Evaluate(new Node[] { input });
-                foreach (var idxOuter in nodes)
+                foreach (var idxOuter in nodes.Select((x) => x.Clone())) // Notice, cloning here!
                 {
                     foreach (var idx in idxOuter.Children)
                     {
                         if (idx.Name.FirstOrDefault() == '.')
                             continue;
                         _signaler.Signal(idx.Name, idx);
+
+                        // Checking if execution for some reasons was terminated.
+                        var root = idx.Parent;
+                        while (root.Parent != null)
+                            root = root.Parent;
+                        if (root.Value is List<Node>)
+                            return;
                     }
                 }
             }
