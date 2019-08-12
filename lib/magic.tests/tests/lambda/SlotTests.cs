@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Linq;
 using Xunit;
 using magic.node;
 using magic.signals.contracts;
@@ -79,6 +80,19 @@ namespace magic.tests.tests.lambda
             Common.Evaluate(@"signal:custom.slot_5
    foo4");
             Assert.Equal(1, Foo4Slot.ExecutionCount);
+        }
+
+        [Fact]
+        public void ReturnNodeFromSlot()
+        {
+            Common.Evaluate(@"slot:custom.slot_6
+   .lambda
+      return
+         foo:bar");
+            var lambda = Common.Evaluate("signal:custom.slot_6");
+            Assert.Single(lambda.Children.First().Children);
+            Assert.Equal("foo", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar", lambda.Children.First().Children.First().Value);
         }
     }
 }
