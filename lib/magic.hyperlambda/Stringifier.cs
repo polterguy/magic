@@ -33,7 +33,7 @@ namespace magic.hyperlambda
                 var name = idx.Name;
                 if (name.Contains("\n"))
                     name = "@\"" + name.Replace("\"", "\"\"") + "\"";
-                else if (name.Contains("\""))
+                else if (name.Contains("\"") || name.Contains(":"))
                     name = "\"" + name.Replace("\"", "\\\"") + "\"";
                 builder.Append(name);
 
@@ -48,7 +48,7 @@ namespace magic.hyperlambda
                             value = idx.Get<string>();
                             if (value.Contains("\n"))
                                 value = "@\"" + value.Replace("\"", "\"\"") + "\"";
-                            else if (value.Contains("\""))
+                            else if (value.Contains("\"") || value.Contains(":"))
                                 value = "\"" + value.Replace("\"", "\\\"") + "\"";
                             break;
 
@@ -96,6 +96,11 @@ namespace magic.hyperlambda
                         case "magic.node.Expression":
                             type = "x";
                             value = idx.Get<Expression>().Value;
+                            break;
+
+                        case "magic.node.Node":
+                            type = "node";
+                            value = "@\"" + GetHyper(idx.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
                             break;
                     }
                     builder.Append(":");
