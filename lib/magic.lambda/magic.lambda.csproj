@@ -12,7 +12,6 @@
     <Folder Include="comparison\" />
     <Folder Include="logical\" />
     <Folder Include="source\" />
-    <Folder Include="branching\" />
     <Folder Include="loops\" />
   </ItemGroup>
 </Project>

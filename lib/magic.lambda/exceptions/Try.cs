@@ -22,8 +22,8 @@ namespace magic.lambda.logical
         public void Signal(Node input)
         {
             var nextNodeName = input.Next?.Name;
-            if (nextNodeName != "catch" && nextNodeName != "finally")
-                throw new ApplicationException("You cannot have a [try] without following it with either a [catch] or a [finally]");
+            if (nextNodeName != ".catch" && nextNodeName != ".finally")
+                throw new ApplicationException("You cannot have a [try] without following it with either a [.catch] or a [.finally]");
 
             try
             {
@@ -31,7 +31,7 @@ namespace magic.lambda.logical
             }
             catch (Exception err)
             {
-                if (nextNodeName == "catch")
+                if (nextNodeName == ".catch")
                 {
                     var next = input.Next;
                     var args = new Node(".arguments");
@@ -48,7 +48,7 @@ namespace magic.lambda.logical
             finally
             {
                 var final = input.Next;
-                if (final.Name != "finally")
+                if (final.Name != ".finally")
                     final = final.Next;
                 if (final != null)
                     _signaler.Signal("eval", final);
