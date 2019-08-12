@@ -51,6 +51,14 @@ namespace magic.signals.services
             }
         }
 
+        public IEnumerable<string> Slots
+        {
+            get
+            {
+                return _slots.Keys;
+            }
+        }
+
         #endregion
     }
 }

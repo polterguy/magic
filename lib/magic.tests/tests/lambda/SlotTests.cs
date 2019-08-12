@@ -36,6 +36,16 @@ namespace magic.tests.tests.lambda
         }
 
         [Fact]
+        public void Vocabulary()
+        {
+            var lambda = Common.Evaluate("vocabulary");
+            Assert.True(lambda.Children.First().Children.Count() > 20);
+            var voc = lambda.Children.First().Children.First(x => x.Name == "vocabulary");
+            Assert.NotNull(voc);
+            Assert.Null(voc.Value);
+        }
+
+        [Fact]
         public void CreateSlot()
         {
             Common.Evaluate(@"slot:custom.slot_1

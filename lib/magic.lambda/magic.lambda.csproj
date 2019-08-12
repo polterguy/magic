@@ -11,10 +11,8 @@
     <Folder Include="utilities\" />
     <Folder Include="comparison\" />
     <Folder Include="logical\" />
-    <Folder Include="change\" />
     <Folder Include="source\" />
     <Folder Include="branching\" />
     <Folder Include="loops\" />
-    <Folder Include="slots\" />
   </ItemGroup>
 </Project>
