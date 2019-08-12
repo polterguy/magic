@@ -4,11 +4,14 @@
  */
 
 using magic.node;
+using System.Collections.Generic;
 
 namespace magic.signals.contracts
 {
     public interface ISignaler
     {
         void Signal(string name, Node input);
+
+        IEnumerable<string> Slots { get; }
     }
 }
