@@ -5,12 +5,12 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.slots
 {
-    // TODO: Create support for returning arguments from slots.
     [Slot(Name = "signal")]
     public class Signalize : ISlot
     {
@@ -49,11 +49,16 @@ namespace magic.lambda.slots
                 }
             }
 
-            // Preparing our actual lambda invocation node.
+            // Preparing and invoking our actual lambda invocation node.
             var args = new Node(".arguments");
             args.AddRange(input.Children);
             lambda.Insert(0, args);
             _signaler.Signal("eval", lambda);
+
+            // Returning any returned nodes.
+            input.Clear();
+            if (lambda.Value != null)
+                input.AddRange(lambda.Get<List<Node>>());
         }
     }
 }
