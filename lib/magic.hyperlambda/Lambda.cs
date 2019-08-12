@@ -15,7 +15,7 @@ namespace magic.hyperlambda
         {
             var parser = new Parser(input.Get<string>());
             input.AddRange(parser.Lambda().Children);
-            input.Value = "";
+            input.Value = null;
         }
     }
 }
