@@ -112,7 +112,7 @@ namespace magic.node
                             var lookup = value.Substring(1);
                             return (input) =>
                             {
-                                var cur = input.FirstOrDefault()?.Previous;
+                                var cur = input.FirstOrDefault()?.Previous ?? input.FirstOrDefault()?.Parent;
                                 while (cur != null && cur.Name != lookup)
                                 {
                                     var previous = cur.Previous;
