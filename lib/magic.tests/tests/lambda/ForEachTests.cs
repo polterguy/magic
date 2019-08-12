@@ -25,8 +25,13 @@ namespace magic.tests.tests.lambda
         [Fact]
         public void ForEach_01()
         {
-            Common.Evaluate(".foo1\n   bar1\n   bar2\nfor-each:x:../*/.foo1/*\n   foo2");
-            Assert.Equal(2, Foo2Slot.ExecutionCount);
+            Common.Evaluate(@".foo1
+   bar1
+   bar2
+   bar3
+for-each:x:../*/.foo1/*
+   foo2");
+            Assert.Equal(3, Foo2Slot.ExecutionCount);
         }
     }
 }

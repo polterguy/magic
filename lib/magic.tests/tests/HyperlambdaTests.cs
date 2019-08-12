@@ -6,7 +6,9 @@
 using System;
 using System.Linq;
 using Xunit;
+using magic.node;
 using magic.hyperlambda;
+using magic.tests.tests.lambda;
 
 namespace magic.tests.tests
 {
@@ -145,6 +147,17 @@ namespace magic.tests.tests
         public void SpacingError_Throws()
         {
             Assert.Throws<ApplicationException>(() => new Parser("foo1\r\n bar1"));
+        }
+
+        [Fact]
+        public void String2Lambda()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", "foo\n   bar");
+            signaler.Signal("lambda", node);
+            Assert.Equal("foo", node.Children.First().Name);
+            Assert.Equal("bar", node.Children.First().Children.First().Name);
+            Assert.Null(node.Value);
         }
     }
 }

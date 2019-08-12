@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\magic.node\magic.node.csproj" />
+    <ProjectReference Include="..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
 
 </Project>
