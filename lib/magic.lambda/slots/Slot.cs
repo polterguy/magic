@@ -7,19 +7,19 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using magic.node;
+using magic.lambda.utilities;
 using magic.signals.contracts;
 
 namespace magic.lambda.slots
 {
-    // TODO: Implement "Synchronizer" to make sure we synchronize access to the shared Dictionary resource.
     [Slot(Name = "slot")]
     public class Slot : ISlot
     {
-        readonly static Dictionary<string, Node> _slots = new Dictionary<string, Node>();
+        readonly static Synchronizer<Dictionary<string, Node>> _slots = new Synchronizer<Dictionary<string, Node>>(new Dictionary<string, Node>());
 
         public static Node GetSlot(string name)
         {
-            return _slots[name];
+            return _slots.Read((slots) => slots[name].Clone());
         }
 
         public void Signal(Node input)
@@ -32,7 +32,7 @@ namespace magic.lambda.slots
 
             var slotNode = new Node(input.Name);
             slotNode.AddRange(input.Children);
-            _slots[input.Get<string>()] = slotNode;
+            _slots.Write((slots) => slots[input.Get<string>()] = slotNode);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace magic.lambda
 
         public void Signal(Node input)
         {
+            // Sanity checking invocation. Notice non [eval] keywords might have expressions.
             if (input.Name == "eval" && input.Value != null && input.Children.Any())
                 throw new ApplicationException("[eval] cannot handle both expression values and children at the same time");
 

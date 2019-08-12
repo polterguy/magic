@@ -10,6 +10,7 @@ using magic.signals.contracts;
 
 namespace magic.lambda.slots
 {
+    // TODO: Create support for returning arguments from slots.
     [Slot(Name = "signal")]
     public class Signalize : ISlot
     {
@@ -22,12 +23,13 @@ namespace magic.lambda.slots
 
         public void Signal(Node input)
         {
+            // Sanity checking invocation.
             if (input.Value == null)
                 throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
 
             // Retrieving slot's lambda.
             var slotName = input.Get<string>();
-            var slot = Slot.GetSlot(slotName).Clone();
+            var slot = Slot.GetSlot(slotName);
             var lambda = slot.Children.First((x) => x.Name == ".lambda");
             lambda.UnTie();
 
