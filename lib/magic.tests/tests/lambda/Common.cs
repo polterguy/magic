@@ -26,17 +26,6 @@ namespace magic.tests.tests.lambda
             }
         }
 
-        [Slot(Name = "foo2")]
-        public class Foo2Slot : ISlot
-        {
-            public static int ExecutionCount;
-
-            public void Signal(Node input)
-            {
-                ++ExecutionCount;
-            }
-        }
-
         static public Node Evaluate(string hl)
         {
             var services = Initialize();
@@ -44,6 +33,12 @@ namespace magic.tests.tests.lambda
             var signaler = services.GetService(typeof(ISignaler)) as ISignaler;
             signaler.Signal("eval", lambda);
             return lambda;
+        }
+
+        static public ISignaler GetSignaler()
+        {
+            var services = Initialize();
+            return services.GetService(typeof(ISignaler)) as ISignaler;
         }
 
         #region [ -- Private helper methods -- ]
