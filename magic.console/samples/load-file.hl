@@ -1,0 +1,6 @@
+
+/*
+ * Loads a file and writes its content to the console.
+ */
+load-file:samples/sample-text.txt
+write:x:-
