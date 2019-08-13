@@ -63,7 +63,7 @@ namespace magic.lambda.slots
 
         public IEnumerable<Node> GetArguments()
         {
-            yield break;
+            yield return new Node(":", "string");
         }
     }
 }

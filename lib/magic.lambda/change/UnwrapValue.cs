@@ -29,7 +29,7 @@ namespace magic.lambda.change
 
         public IEnumerable<Node> GetArguments()
         {
-            yield break;
+            yield return new Node(":", "x");
         }
     }
 }

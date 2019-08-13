@@ -39,6 +39,7 @@ namespace magic.lambda.change
         public IEnumerable<Node> GetArguments()
         {
             yield return new Node("*", "*");
+            yield return new Node(":", "x");
         }
     }
 }
