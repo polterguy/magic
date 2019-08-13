@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.logical
 {
     [Slot(Name = "or")]
-    public class Or : ISlot
+    public class Or : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -36,6 +37,11 @@ namespace magic.lambda.logical
                 }
             }
             input.Value = false;
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

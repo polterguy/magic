@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.branching
 {
     [Slot(Name = "switch")]
-    public class Switch : ISlot
+    public class Switch : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -46,6 +47,11 @@ namespace magic.lambda.branching
                 if (defaultNode != null)
                     _signaler.Signal("default", defaultNode);
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

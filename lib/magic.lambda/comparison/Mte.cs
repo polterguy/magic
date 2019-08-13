@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.equality
 {
     [Slot(Name = "mte")]
-    public class Mte : ISlot
+    public class Mte : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -38,6 +39,11 @@ namespace magic.lambda.equality
                 input.Value = false;
             else
                 input.Value = ((IComparable)lhs).CompareTo(rhs) >= 0;
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", 2);
         }
     }
 }

@@ -51,13 +51,7 @@ namespace magic.signals.services
             }
         }
 
-        public IEnumerable<string> Slots
-        {
-            get
-            {
-                return _slots.Keys;
-            }
-        }
+        public IEnumerable<string> Slots => _slots.Keys;
 
         public IEnumerable<Node> GetArguments(string name)
         {
@@ -66,8 +60,7 @@ namespace magic.signals.services
 
             foreach (var idxType in _slots[name])
             {
-                var instance = _provider.GetService(idxType) as IArguments;
-                if (instance == null)
+                if (!(_provider.GetService(idxType) is IMeta instance))
                     continue;
 
                 foreach (var idxArg in instance.GetArguments())

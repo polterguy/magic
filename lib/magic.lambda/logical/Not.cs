@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.logical
 {
     [Slot(Name = "not")]
-    public class Not : ISlot
+    public class Not : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -28,6 +29,11 @@ namespace magic.lambda.logical
             _signaler.Signal("eval", input);
 
             input.Value = !input.Children.First().Get<bool>();
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", 1);
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace magic.signals.contracts
 {
-    public interface IArguments
+    public interface IMeta
     {
         IEnumerable<Node> GetArguments();
     }

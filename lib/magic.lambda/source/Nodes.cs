@@ -3,13 +3,14 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
     [Slot(Name = "nodes")]
-    public class Nodes : ISlot
+    public class Nodes : ISlot, IMeta
     {
         public void Signal(Node input)
         {
@@ -21,6 +22,11 @@ namespace magic.lambda.source
             {
                 input.Add(idx.Clone());
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield break;
         }
     }
 }

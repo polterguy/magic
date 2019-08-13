@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda
 {
     [Slot(Name = "eval")]
-    public class Eval : ISlot
+    public class Eval : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -64,6 +64,11 @@ namespace magic.lambda
                     }
                 }
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

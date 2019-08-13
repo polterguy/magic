@@ -4,14 +4,14 @@
  */
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.branching
 {
     [Slot(Name = "case")]
-    public class Case : ISlot
+    public class Case : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -26,6 +26,11 @@ namespace magic.lambda.branching
                 throw new ApplicationException("[case] must be a child of [switch]");
 
             _signaler.Signal("eval", input);
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }
