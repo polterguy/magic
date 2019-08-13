@@ -50,7 +50,8 @@ namespace magic.lambda.loops
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node("*", "*");
+            yield return new Node("*", 1);
+            yield return new Node(".lambda", 1);
         }
     }
 }

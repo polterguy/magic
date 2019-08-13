@@ -52,6 +52,7 @@ namespace magic.lambda.branching
         public IEnumerable<Node> GetArguments()
         {
             yield return new Node("*", "*");
+            yield return new Node(":", "*");
         }
     }
 }

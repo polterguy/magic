@@ -24,7 +24,7 @@ namespace magic.lambda.logical
 
         public IEnumerable<Node> GetArguments()
         {
-            yield break;
+            yield return new Node(":", "*");
         }
     }
 }

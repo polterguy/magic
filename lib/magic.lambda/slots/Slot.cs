@@ -37,6 +37,7 @@ namespace magic.lambda.slots
 
         public IEnumerable<Node> GetArguments()
         {
+            yield return new Node(":", "string");
             yield return new Node(".lambda", 1);
             yield return new Node(".arguments", 0);
         }
