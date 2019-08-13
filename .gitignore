@@ -326,27 +326,9 @@ ASALocalRun/
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
 
-# MFractors (Xamarin productivity tool) working folder 
-.mfractor/
-magic.backend/data.db
-web/controllers/magic.web.controller.common/magic.web.controller.common.xml
-
-# Excluding all sub modules
-modules/*
-!modules/README.md
-!modules/magic.crud
-!modules/magic.todo
-!modules/magic.signals
-!modules/magic.http
-!modules/magic.tests
-!modules/add-all-modules.bat
-
 # Excluding all uploaded files
 magic.backend/files/*
 !magic.backend/files/README.md
-
-# Excluding XML documentation files
-modules/magic.crud/magic.crud.web.controller/magic.crud.web.controller.xml
 
 # Excluding all Mac folder files
 **/.DS_Store

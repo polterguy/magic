@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>magic.io.web.controller</name>
+    </assembly>
+    <members>
+        <member name="T:magic.io.web.controller.FilesController">
+            <summary>
+            IO controller for manipulating files and folders on your server
+            </summary>
+        </member>
+        <member name="M:magic.io.web.controller.FilesController.#ctor(magic.io.contracts.IFileService)">
+            <summary>
+            Creates a new instance of your files controller
+            </summary>
+            <param name="service">Service containing business logic</param>
+        </member>
+        <member name="M:magic.io.web.controller.FilesController.Upload(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            Uploads a file to your server and stores it at the specified path
+            </summary>
+            <param name="file">The actual file</param>
+            <param name="folder">The folder on your server where you want to store your file</param>
+            <returns>200 if file was successfully saved</returns>
+        </member>
+        <member name="M:magic.io.web.controller.FilesController.Download(System.String)">
+            <summary>
+            Returns the specified file to caller
+            </summary>
+            <param name="file">File to return</param>
+            <returns>The specified file</returns>
+        </member>
+        <member name="M:magic.io.web.controller.FilesController.Delete(System.String)">
+            <summary>
+            Deletes the specified file
+            </summary>
+            <param name="file">File to delete</param>
+        </member>
+        <member name="M:magic.io.web.controller.FilesController.Copy(magic.io.web.model.CopyMoveModel)">
+            <summary>
+            Copies the specified source file to its given destination
+            </summary>
+            <param name="input">Source and destination file</param>
+        </member>
+        <member name="M:magic.io.web.controller.FilesController.Move(magic.io.web.model.CopyMoveModel)">
+            <summary>
+            Moves the specified source file to its given destination
+            </summary>
+            <param name="input">Source and destination file</param>
+        </member>
+        <member name="T:magic.io.web.controller.FoldersController">
+            <summary>
+            IO controller for manipulating files and folders on your server
+            </summary>
+        </member>
+        <member name="M:magic.io.web.controller.FoldersController.#ctor(magic.io.contracts.IFolderService)">
+            <summary>
+            Creates a new instance of your folders controller
+            </summary>
+            <param name="service">Service containing business logic</param>
+        </member>
+        <member name="M:magic.io.web.controller.FoldersController.ListFolders(System.String)">
+            <summary>
+            Returns all folders inside of the specified folder
+            </summary>
+            <param name="folder">Folder to return folders from within</param>
+            <returns>List all folders inside of the specified folder</returns>
+        </member>
+        <member name="M:magic.io.web.controller.FoldersController.ListFiles(System.String)">
+            <summary>
+            Returns all files inside of the specified folder
+            </summary>
+            <param name="folder">Folder to return files from within</param>
+            <returns>List all files inside of the specified folder</returns>
+        </member>
+        <member name="M:magic.io.web.controller.FoldersController.Delete(System.String)">
+            <summary>
+            Deletes the specified folder
+            </summary>
+            <param name="folder">Folder to delete</param>
+        </member>
+        <member name="M:magic.io.web.controller.FoldersController.Create(System.String)">
+            <summary>
+            Creates the specified folder
+            </summary>
+            <param name="folder">Folder to create</param>
+        </member>
+        <member name="M:magic.io.web.controller.FoldersController.Move(magic.io.web.model.CopyMoveModel)">
+            <summary>
+            Moves the specified source folder to its given destination
+            </summary>
+            <param name="input">Source and destination folder</param>
+        </member>
+    </members>
+</doc>
