@@ -8,12 +8,8 @@ using System.Collections.Generic;
 
 namespace magic.signals.contracts
 {
-    public interface ISignaler
+    public interface IArguments
     {
-        void Signal(string name, Node input);
-
-        IEnumerable<string> Slots { get; }
-
-        IEnumerable<Node> GetArguments(string name);
+        IEnumerable<Node> GetArguments();
     }
 }
