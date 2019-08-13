@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="utilities\" />
+    <Folder Include="comparison\" />
+    <Folder Include="logical\" />
+    <Folder Include="source\" />
+    <Folder Include="loops\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+  </ItemGroup>
+</Project>
