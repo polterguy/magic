@@ -1,1 +1,5 @@
+
+/*
+ * The simplest possible 'Hello World' application in Hyperlambda.
+ */
 write-line:Howdy world!
