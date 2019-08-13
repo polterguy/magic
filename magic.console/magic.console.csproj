@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <None Remove="hello-world.hl" />
+    <None Remove="samples\get-name.hl" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="samples\get-name.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="samples\hello-world.hl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

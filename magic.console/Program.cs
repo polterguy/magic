@@ -31,8 +31,7 @@ namespace magic.console
                 else
                     RunFolder(signaler, idx);
             }
-            Console.WriteLine();
-            Console.WriteLine();
+            Console.WriteLine("*****************************************************");
             Console.Write("Press enter to exit application");
             Console.ReadLine();
         }
@@ -49,11 +48,9 @@ namespace magic.console
 
         private static void RunFile(ISignaler signaler, string filename)
         {
-            Console.WriteLine();
             Console.WriteLine("*****************************************************");
-            Console.WriteLine($" Executing file '{filename}'");
+            Console.WriteLine($"*** Executing file '{filename}'");
             Console.WriteLine("*****************************************************");
-            Console.WriteLine();
             using (var file = File.OpenText(filename))
             {
                 var hl = file.ReadToEnd();
@@ -61,8 +58,6 @@ namespace magic.console
                 signaler.Signal("lambda", node);
                 signaler.Signal("eval", node);
             }
-            Console.WriteLine("*****************************************************");
-            Console.WriteLine();
         }
 
         static IServiceProvider Initialize()
