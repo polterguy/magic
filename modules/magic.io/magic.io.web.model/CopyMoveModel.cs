@@ -3,11 +3,12 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using magic.todo.model;
-using magic.crud.contracts;
-
-namespace magic.todo.contracts
+namespace magic.io.web.model
 {
-    public interface ITodoService : ICrudService<Todo>
-    { }
+    public class CopyMoveModel
+    {
+        public string Source { get; set; }
+
+        public string Destination { get; set; }
+    }
 }
