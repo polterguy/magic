@@ -59,6 +59,24 @@ namespace magic.signals.services
             }
         }
 
+        public IEnumerable<Node> GetArguments(string name)
+        {
+            if (!_slots.ContainsKey(name))
+                throw new ApplicationException($"No slot exists for [{name}]");
+
+            foreach (var idxType in _slots[name])
+            {
+                var instance = _provider.GetService(idxType) as IArguments;
+                if (instance == null)
+                    continue;
+
+                foreach (var idxArg in instance.GetArguments())
+                {
+                    yield return idxArg;
+                }
+            }
+        }
+
         #endregion
     }
 }
