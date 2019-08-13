@@ -8,8 +8,4 @@
     <PackageReference Include="FluentNHibernate" Version="2.1.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\magic.crud\magic.crud.model\magic.crud.model.csproj" />
-  </ItemGroup>
-
 </Project>
