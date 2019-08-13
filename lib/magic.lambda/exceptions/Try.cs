@@ -21,53 +21,55 @@ namespace magic.lambda.logical
 
         public void Signal(Node input)
         {
-            var nextNodeName = input.Next?.Name;
-            if (nextNodeName != ".catch" && nextNodeName != ".finally")
-                throw new ApplicationException("You cannot have a [try] without following it with either a [.catch] or a [.finally]");
-
             try
             {
                 _signaler.Signal("eval", input);
             }
             catch (Exception err)
             {
-                // TODO: Refactor to keep code DRY.
-                // TODO: Also make sure we can only have on [.catch] and [.finally] block
-                var reThrow = true;
-                if (nextNodeName == ".catch")
+                if (ExecuteCatch(input, err))
                 {
-                    var next = input.Next;
-                    var args = new Node(".arguments");
-                    args.Add(new Node("message", err.Message));
-                    args.Add(new Node("type", err.GetType().FullName));
-                    next.Insert(0, args);
-                    _signaler.Signal("eval", next);
-                    reThrow = false;
+                    ExecuteFinally(input);
+                    return; // ExecuteCatch found a [.catch], hence not rethrowing.
                 }
-                if (nextNodeName == ".finally")
-                {
-                    // To ensure finally is executed, we have to do it this way.
-                    var final = input.Next;
-                    if (final.Name != ".finally")
-                        final = final.Next;
-                    if (final != null)
-                        _signaler.Signal("eval", final);
-                }
-                if (input.Next?.Next?.Name == ".finally")
-                {
-                    var final = input.Next.Next;
-                    if (final.Name != ".finally")
-                        final = final.Next;
-                    if (final != null)
-                        _signaler.Signal("eval", final);
-                }
-                if (reThrow)
-                    throw;
+                ExecuteFinally(input);
+                throw; // Rethrow since ExecuteCatch didn't find any [.catch].
             }
 
-            var ensure = input.Next?.Name == ".finally" ? input.Next : input.Next?.Next;
-            if (ensure != null)
-                _signaler.Signal("eval", ensure);
+            ExecuteFinally(input);
         }
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Executes [.catch] if existing, and returns true if [.catch] was found
+         */
+        bool ExecuteCatch(Node input, Exception err)
+        {
+            if (input.Next?.Name == ".catch")
+            {
+                var next = input.Next;
+                var args = new Node(".arguments");
+                args.Add(new Node("message", err.Message));
+                args.Add(new Node("type", err.GetType().FullName));
+                next.Insert(0, args);
+                _signaler.Signal("eval", next);
+                return true;
+            }
+            return false;
+        }
+
+        /*
+         * Executes [.finally] if it exists.
+         */
+        void ExecuteFinally(Node input)
+        {
+            if (input.Next?.Name == ".finally")
+                _signaler.Signal("eval", input.Next);
+            else if (input.Next?.Next?.Name == ".finally")
+                _signaler.Signal("eval", input.Next.Next);
+        }
+
+        #endregion
     }
 }
