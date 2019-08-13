@@ -40,7 +40,7 @@ namespace magic.console
 
         private static void RunFolder(ISignaler signaler, string folder)
         {
-            foreach (var idxFile in Directory.GetFiles(folder))
+            foreach (var idxFile in Directory.GetFiles(folder, "*.hl"))
             {
                 RunFile(signaler, idxFile);
             }
