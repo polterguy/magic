@@ -4,13 +4,14 @@
  */
 
 using System;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.change
 {
     [Slot(Name = "add")]
-    public class Add : ISlot
+    public class Add : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -33,6 +34,11 @@ namespace magic.lambda.change
                     }
                 }
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

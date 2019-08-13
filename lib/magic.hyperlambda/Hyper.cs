@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.hyperlambda
 {
     [Slot(Name = "hyper")]
-    public class Hyper : ISlot
+    public class Hyper : ISlot, IMeta
     {
         public void Signal(Node input)
         {
@@ -22,6 +23,11 @@ namespace magic.hyperlambda
                 input.Value = Stringifier.GetHyper(input.Children);
             else
                 input.Value = Stringifier.GetHyper(input.Get<Expression>().Evaluate(new Node[] { input }));
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

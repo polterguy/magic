@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
     [Slot(Name = "name")]
-    public class Name : ISlot
+    public class Name : ISlot, IMeta
     {
         public void Signal(Node input)
         {
@@ -19,6 +20,11 @@ namespace magic.lambda.source
             if (src.Count() > 1)
                 throw new ApplicationException("Too many nodes returned from [name] expression");
             input.Value = src.FirstOrDefault()?.Name ?? null;
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield break;
         }
     }
 }

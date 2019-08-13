@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.loops
 {
     [Slot(Name = "while")]
-    public class While : ISlot
+    public class While : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -45,6 +46,11 @@ namespace magic.lambda.loops
                 input.Clear();
                 input.AddRange(old);
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

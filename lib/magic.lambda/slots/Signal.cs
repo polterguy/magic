@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.slots
 {
     [Slot(Name = "signal")]
-    public class Signalize : ISlot
+    public class Signalize : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -59,6 +59,11 @@ namespace magic.lambda.slots
             input.Clear();
             if (lambda.Value != null)
                 input.AddRange(lambda.Get<List<Node>>());
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield break;
         }
     }
 }

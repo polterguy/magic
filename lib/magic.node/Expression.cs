@@ -7,8 +7,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
-using System.Collections.Generic;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace magic.node
 {
@@ -58,6 +58,9 @@ namespace magic.node
                 {
                     case "*":
                         return (input) => input.SelectMany((x) => x.Children);
+
+                    case "#":
+                        return (input) => input.Select((x) => x.Get<Node>());
 
                     case "-":
                         return (input) => input.Select((x) => x.Previous ?? x.Parent.Children.Last());

@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.logical
 {
     [Slot(Name = "and")]
-    public class And : ISlot
+    public class And : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -35,6 +36,11 @@ namespace magic.lambda.logical
                 }
             }
             input.Value = true;
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
     }
 }

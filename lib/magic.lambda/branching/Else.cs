@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using magic.node;
 using magic.signals.contracts;
@@ -11,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.branching
 {
     [Slot(Name = "else")]
-    public class Else : ISlot
+    public class Else : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -45,6 +46,11 @@ namespace magic.lambda.branching
             }
             if (evaluate)
                 _signaler.Signal("eval", lambda);
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node(".lambda", 1);
         }
     }
 }

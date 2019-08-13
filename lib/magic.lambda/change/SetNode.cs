@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.lambda.utilities;
 using magic.signals.contracts;
@@ -12,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.change
 {
     [Slot(Name = "set-node")]
-    public class SetNode : ISlot
+    public class SetNode : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -46,6 +47,11 @@ namespace magic.lambda.change
                     }
                 }
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", 1);
         }
     }
 }

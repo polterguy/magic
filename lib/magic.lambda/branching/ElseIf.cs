@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using magic.node;
 using magic.signals.contracts;
@@ -11,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.branching
 {
     [Slot(Name = "else-if")]
-    public class ElseIf : ISlot
+    public class ElseIf : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -43,6 +44,7 @@ namespace magic.lambda.branching
                 }
                 previous = previous.Previous;
             }
+
             if (evaluate)
             {
                 var condition = input.Children.First();
@@ -52,6 +54,12 @@ namespace magic.lambda.branching
                 if (condition.Get<bool>())
                     _signaler.Signal("eval", lambda);
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", 1);
+            yield return new Node(".lambda", 1);
         }
     }
 }

@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.slots
 {
     [Slot(Name = "slot")]
-    public class Slot : ISlot
+    public class Slot : ISlot, IMeta
     {
         readonly static Synchronizer<Dictionary<string, Node>> _slots = new Synchronizer<Dictionary<string, Node>>(new Dictionary<string, Node>());
 
@@ -33,6 +33,12 @@ namespace magic.lambda.slots
             var slotNode = new Node(input.Name);
             slotNode.AddRange(input.Children);
             _slots.Write((slots) => slots[input.Get<string>()] = slotNode);
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node(".lambda", 1);
+            yield return new Node(".arguments", 0);
         }
     }
 }

@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.change
 {
     [Slot(Name = "unwrap-value")]
-    public class UnwrapValue : ISlot
+    public class UnwrapValue : ISlot, IMeta
     {
         public void Signal(Node input)
         {
@@ -24,6 +25,11 @@ namespace magic.lambda.change
 
                 idx.Value = exp.FirstOrDefault()?.Value;
             }
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield break;
         }
     }
 }

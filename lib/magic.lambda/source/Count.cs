@@ -5,13 +5,14 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
     [Slot(Name = "count")]
-    public class Count : ISlot
+    public class Count : ISlot, IMeta
     {
         public void Signal(Node input)
         {
@@ -20,6 +21,11 @@ namespace magic.lambda.source
 
             var src = input.Get<Expression>().Evaluate(new Node[] { input });
             input.Value = src.Count();
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield break;
         }
     }
 }

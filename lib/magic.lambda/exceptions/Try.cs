@@ -4,13 +4,14 @@
  */
 
 using System;
+using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
 namespace magic.lambda.logical
 {
     [Slot(Name = "try")]
-    public class Try : ISlot
+    public class Try : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
@@ -30,13 +31,22 @@ namespace magic.lambda.logical
                 if (ExecuteCatch(input, err))
                 {
                     ExecuteFinally(input);
-                    return; // ExecuteCatch found a [.catch], hence not rethrowing.
+
+                    // ExecuteCatch found a [.catch], hence not rethrowing.
+                    return;
                 }
                 ExecuteFinally(input);
-                throw; // Rethrow since ExecuteCatch didn't find any [.catch].
+
+                // Rethrow since ExecuteCatch didn't find any [.catch].
+                throw;
             }
 
             ExecuteFinally(input);
+        }
+
+        public IEnumerable<Node> GetArguments()
+        {
+            yield return new Node("*", "*");
         }
 
         #region [ -- Private helper methods -- ]
