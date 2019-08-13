@@ -1,1 +1,1 @@
-This is some content in a text file dynamically loaded through Hyperlambda!
+Text from a txt file!
