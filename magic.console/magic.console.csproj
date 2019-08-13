@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="hello-world.hl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="samples\hello-world.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+    <ProjectReference Include="..\lib\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\lib\plugins\magic.lambda\magic.lambda.csproj" />
+  </ItemGroup>
+
+</Project>
