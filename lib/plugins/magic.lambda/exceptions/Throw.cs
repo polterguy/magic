@@ -4,7 +4,6 @@
  */
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
@@ -16,10 +15,7 @@ namespace magic.lambda.logical
     {
         public void Signal(Node input)
         {
-            if (input.Value is string strVal)
-                throw new ApplicationException(strVal);
-            else if (input.Value is Expression expVal)
-                throw new ApplicationException(expVal.Evaluate(new Node[] { input }).FirstOrDefault()?.Get<string>() ?? "[no-message]");
+            throw new ApplicationException(input.Get<string>() ?? "[no-message]");
         }
 
         public IEnumerable<Node> GetArguments()

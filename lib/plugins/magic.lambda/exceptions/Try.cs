@@ -28,19 +28,13 @@ namespace magic.lambda.logical
             }
             catch (Exception err)
             {
-                if (ExecuteCatch(input, err))
-                {
-                    ExecuteFinally(input);
-
-                    // ExecuteCatch found a [.catch], hence not rethrowing.
-                    return;
-                }
+                var foundCatch = ExecuteCatch(input, err);
                 ExecuteFinally(input);
-
-                // Rethrow since ExecuteCatch didn't find any [.catch].
-                throw;
+                if (foundCatch)
+                    return;
+                else
+                    throw;
             }
-
             ExecuteFinally(input);
         }
 

@@ -28,23 +28,29 @@ namespace magic.lambda.loops
 
             while(true)
             {
+                // Making sure we can reset back to original nodes after every single iteration.
                 var old = input.Children.Select((x) => x.Clone()).ToList();
 
+                // This will evaluate the condition.
+                _signaler.Signal("eval", input);
+
+                // Verifying we're supposed to proceed into body of [while].
+                if (!input.Children.First().Get<bool>())
+                    break;
+
+                // Retrieving [.lambda] node and doing basic sanity check.
                 var lambda = input.Children.Skip(1).First();
                 if (lambda.Name != ".lambda")
                     throw new ApplicationException("Keyword [while] requires its second child to be [.lambda]");
 
-                var condition = input.Children.First();
-                if (condition.Name.FirstOrDefault() != '.')
-                    _signaler.Signal(condition.Name, condition);
-
-                if (!condition.Get<bool>())
-                    break;
-
+                // Evaluating "body" lambda of [while].
                 _signaler.Signal("eval", lambda);
 
+                // Resetting back to original nodes.
                 input.Clear();
-                input.AddRange(old);
+
+                // Notice, cloning in case we've got another iteration, to avoid changing original nodes' values.
+                input.AddRange(old.Select((x) => x.Clone()));
             }
         }
 

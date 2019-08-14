@@ -30,16 +30,16 @@ namespace magic.lambda.slots
             if (input.Children.Any((x => x.Name != ".lambda" && x.Name != ".arguments")))
                 throw new ApplicationException("Keyword [slot] can only handle [.lambda] and [.arguments] children nodes");
 
-            var slotNode = new Node(input.Name);
+            var slotNode = new Node();
             slotNode.AddRange(input.Children.Select((x) => x.Clone()));
             _slots.Write((slots) => slots[input.Get<string>()] = slotNode);
         }
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node(":", "string");
+            yield return new Node(":", "*");
             yield return new Node(".lambda", 1);
-            yield return new Node(".arguments", 0);
+            yield return new Node(".arguments", 1);
         }
     }
 }
