@@ -31,7 +31,7 @@ namespace magic.lambda.slots
                 throw new ApplicationException("Keyword [slot] can only handle [.lambda] and [.arguments] children nodes");
 
             var slotNode = new Node(input.Name);
-            slotNode.AddRange(input.Children);
+            slotNode.AddRange(input.Children.Select((x) => x.Clone()));
             _slots.Write((slots) => slots[input.Get<string>()] = slotNode);
         }
 

@@ -4,9 +4,9 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using magic.node;
-using magic.lambda.utilities;
 using magic.signals.contracts;
 
 namespace magic.lambda.change
@@ -23,18 +23,23 @@ namespace magic.lambda.change
 
         public void Signal(Node input)
         {
-            var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            var source = XUtil.Single(_signaler, input, true);
-            foreach (var idx in dest)
+            if (input.Children.Count() > 1)
+                throw new ApplicationException("[set-name] can only have maximum one child node");
+
+            var destinations = input.Get<Expression>().Evaluate(new Node[] { input });
+            _signaler.Signal("eval", input);
+            var source = input.Children.FirstOrDefault()?.Get<string>() ?? "";
+
+            foreach (var idx in destinations)
             {
-                idx.Name = source?.Get<string>() ?? "";
+                idx.Name = source;
             }
         }
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node("*", 1);
             yield return new Node(":", "x");
+            yield return new Node("*", 1);
         }
     }
 }

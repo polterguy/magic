@@ -24,25 +24,37 @@ namespace magic.lambda.change
 
         public void Signal(Node input)
         {
-            var dest = input.Get<Expression>().Evaluate(new Node[] { input });
-            var source = XUtil.Single(_signaler, input, false);
+            if (input.Children.Count() > 1)
+                throw new ApplicationException("[set-node] can only have maximum one child node");
+
+            var destinations = input.Get<Expression>().Evaluate(new Node[] { input });
+
+            var sourceNode = input.Children.FirstOrDefault();
+            if (sourceNode?.Children.Count() > 1)
+                throw new ApplicationException("[set-node] can only handle one source node");
+
+            _signaler.Signal("eval", input);
+
+            var source = sourceNode?.Children.FirstOrDefault();
+
             if (source == null)
             {
-                // To avoid modifying collection during enumeration removal process.
-                foreach (var idx in dest.ToList())
+                // To avoid modifying collection during enumeration removal process we invoke ToList.
+                foreach (var idx in destinations.ToList())
                 {
                     idx.Parent.Remove(idx);
                 }
             }
             else
             {
-                foreach (var idx in dest)
+                foreach (var idx in destinations)
                 {
                     idx.Name = source.Name;
                     idx.Value = source.Value;
                     idx.Clear();
-                    foreach (var idxSrcChild in source.Children)
+                    foreach (var idxSrcChild in source.Children.ToList())
                     {
+                        // Cloning to avoid removing original node from its original collection.
                         idx.Add(idxSrcChild.Clone());
                     }
                 }

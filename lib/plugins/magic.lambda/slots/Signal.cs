@@ -51,14 +51,14 @@ namespace magic.lambda.slots
 
             // Preparing and invoking our actual lambda invocation node.
             var args = new Node(".arguments");
-            args.AddRange(input.Children);
+            args.AddRange(input.Children.Select((x) => x.Clone()));
             lambda.Insert(0, args);
             _signaler.Signal("eval", lambda);
 
             // Returning any returned nodes.
             input.Clear();
             if (lambda.Value != null)
-                input.AddRange(lambda.GetList<Node>());
+                input.AddRange(lambda.GetList<Node>().ToList());
         }
 
         public IEnumerable<Node> GetArguments()
