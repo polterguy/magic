@@ -38,8 +38,9 @@ namespace magic.lambda.branching
             var result = input.Get();
 
             var executionNode = input.Children
-                .Where((x) => x.Name == "case" && x.Value.Equals(result))
-                .FirstOrDefault() ?? input.Children.Where((x) => x.Name == "default").FirstOrDefault();
+                .FirstOrDefault((x) => x.Name == "case" && x.Value.Equals(result)) ??
+                input.Children
+                    .FirstOrDefault((x) => x.Name == "default");
 
             if (executionNode != null)
                 _signaler.Signal(executionNode.Name, executionNode);

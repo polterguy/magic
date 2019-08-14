@@ -5,9 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="utilities\" />
-    <Folder Include="comparison\" />
     <Folder Include="logical\" />
-    <Folder Include="source\" />
     <Folder Include="loops\" />
   </ItemGroup>
   <ItemGroup>

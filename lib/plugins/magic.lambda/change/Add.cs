@@ -23,11 +23,10 @@ namespace magic.lambda.change
 
         public void Signal(Node input)
         {
-            var dest = input.Evaluate();
             _signaler.Signal("eval", input);
 
             // Looping through each destination.
-            foreach (var idxDest in dest)
+            foreach (var idxDest in input.Evaluate())
             {
                 // Looping through each source node and adding its children to currently iterated destination.
                 foreach (var idxSource in input.Children.SelectMany((x) => x.Children))

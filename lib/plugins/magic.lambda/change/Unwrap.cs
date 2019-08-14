@@ -11,17 +11,16 @@ using magic.signals.contracts;
 
 namespace magic.lambda.change
 {
-    [Slot(Name = "unwrap-value")]
-    public class UnwrapValue : ISlot, IMeta
+    [Slot(Name = "unwrap")]
+    public class Unwrap : ISlot, IMeta
     {
         public void Signal(Node input)
         {
-            var dest = input.Get<Expression>().Evaluate(new Node[] { input }).ToList();
-            foreach (var idx in dest)
+            foreach (var idx in input.Evaluate())
             {
-                var exp = idx.Evaluate().ToList();
+                var exp = idx.Evaluate();
                 if (exp.Count() > 1)
-                    throw new ApplicationException("Multiple sources found for [unwrap-value]");
+                    throw new ApplicationException("Multiple sources found for [unwrap]");
 
                 idx.Value = exp.FirstOrDefault()?.Value;
             }

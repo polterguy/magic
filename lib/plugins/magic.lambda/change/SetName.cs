@@ -24,13 +24,12 @@ namespace magic.lambda.change
         public void Signal(Node input)
         {
             if (input.Children.Count() > 1)
-                throw new ApplicationException("[set-name] can only have maximum one child node");
+                throw new ApplicationException("[set-name] can have maximum one child node");
 
-            var destinations = input.Evaluate();
             _signaler.Signal("eval", input);
-            var source = input.Children.FirstOrDefault()?.Get<string>() ?? "";
 
-            foreach (var idx in destinations)
+            var source = input.Children.FirstOrDefault()?.Get<string>() ?? "";
+            foreach (var idx in input.Evaluate())
             {
                 idx.Name = source;
             }

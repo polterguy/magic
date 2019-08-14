@@ -24,7 +24,7 @@ namespace magic.lambda.branching
         public void Signal(Node input)
         {
             if (input.Children.Count() != 2)
-                throw new ApplicationException("Keyword [if] requires exactly two child nodes");
+                throw new ApplicationException("Keyword [if] requires exactly two child nodes, one comparer node and one [.lambda] node, in that sequence");
 
             var lambda = input.Children.Skip(1).First();
             if (lambda.Name != ".lambda")

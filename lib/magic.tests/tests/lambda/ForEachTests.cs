@@ -46,8 +46,8 @@ for-each:x:../*/.foo1/*
 for-each:x:../*/.foo1/*
    set-value:x:@.dest
       +
-         value:x:@.dest
-         value:x:@.dp/#");
+         get-value:x:@.dest
+         get-value:x:@.dp/#");
             Assert.Equal(12, lambda.Children.Skip(1).First().Value);
         }
     }

@@ -207,6 +207,7 @@ namespace magic.node
 
         public void Remove(Node value)
         {
+            value.Parent = null;
             _children.Remove(value);
         }
 

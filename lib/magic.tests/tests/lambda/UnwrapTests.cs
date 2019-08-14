@@ -19,27 +19,11 @@ namespace magic.tests.tests.lambda
 .dest
    dest1:x:../*/.src/0
    dest2:x:../*/.src/1
-unwrap-value:x:../*/.dest/*");
+unwrap:x:../*/.dest/*");
             Assert.Equal("dest1", lambda.Children.Skip(1).First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.Skip(1).First().Children.First().Value);
             Assert.Equal("dest2", lambda.Children.Skip(1).First().Children.Skip(1).First().Name);
             Assert.Equal("bar2", lambda.Children.Skip(1).First().Children.Skip(1).First().Value);
-        }
-
-        [Fact]
-        public void UnwrapName()
-        {
-            var lambda = Common.Evaluate(@".src
-   foo1:bar1
-   foo2:bar2
-.dest
-   dest1:x:../*/.src/0
-   dest2:x:../*/.src/1
-unwrap-name:x:../*/.dest/*");
-            Assert.Equal("dest1", lambda.Children.Skip(1).First().Children.First().Name);
-            Assert.Equal("foo1", lambda.Children.Skip(1).First().Children.First().Value);
-            Assert.Equal("dest2", lambda.Children.Skip(1).First().Children.Skip(1).First().Name);
-            Assert.Equal("foo2", lambda.Children.Skip(1).First().Children.Skip(1).First().Value);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace magic.tests.tests.lambda
         [Fact]
         public void AddExpressionSrc()
         {
-            var lambda = Common.Evaluate(".dest\n.src\n   foo1:bar1\n   foo2:bar2\nadd:x:../*/.dest\n   nodes:x:../*/.src/*");
+            var lambda = Common.Evaluate(".dest\n.src\n   foo1:bar1\n   foo2:bar2\nadd:x:../*/.dest\n   get-nodes:x:../*/.src/*");
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("foo1", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
