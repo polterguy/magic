@@ -26,7 +26,7 @@ namespace magic.lambda.change
             if (input.Children.Count() > 1)
                 throw new ApplicationException("[set-name] can only have maximum one child node");
 
-            var destinations = input.Get<Expression>().Evaluate(new Node[] { input });
+            var destinations = input.Evaluate();
             _signaler.Signal("eval", input);
             var source = input.Children.FirstOrDefault()?.Get<string>() ?? "";
 

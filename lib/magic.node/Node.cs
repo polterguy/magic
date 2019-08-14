@@ -106,6 +106,14 @@ namespace magic.node
             return Value;
         }
 
+        public IEnumerable<Node> Evaluate()
+        {
+            if (!(Value is Expression ex))
+                throw new ApplicationException($"'{Value}' is not a valid Expression");
+
+            return ex.Evaluate(new Node[] { this });
+        }
+
         public T Get<T>()
         {
             if (typeof(T) != typeof(string) && typeof(IEnumerable).IsAssignableFrom(typeof(T)))

@@ -23,7 +23,7 @@ namespace magic.lambda.change
 
         public void Signal(Node input)
         {
-            var dest = input.Get<Expression>().Evaluate(new Node[] { input });
+            var dest = input.Evaluate();
             _signaler.Signal("eval", input);
 
             // Looping through each destination.

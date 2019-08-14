@@ -19,7 +19,7 @@ namespace magic.lambda.change
             var dest = input.Get<Expression>().Evaluate(new Node[] { input }).ToList();
             foreach (var idx in dest)
             {
-                var exp = idx.Get<Expression>().Evaluate(new Node[] { idx }).ToList();
+                var exp = idx.Evaluate().ToList();
                 if (exp.Count() > 1)
                     throw new ApplicationException("Multiple sources found for [unwrap-value]");
 

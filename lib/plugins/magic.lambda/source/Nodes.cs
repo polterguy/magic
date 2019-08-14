@@ -17,7 +17,7 @@ namespace magic.lambda.source
             if (input.Value == null)
                 return;
 
-            var src = input.Get<Expression>().Evaluate(new Node[] { input });
+            var src = input.Evaluate();
             foreach (var idx in src)
             {
                 input.Add(idx.Clone());

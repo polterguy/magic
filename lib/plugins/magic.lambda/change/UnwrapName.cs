@@ -16,10 +16,10 @@ namespace magic.lambda.change
     {
         public void Signal(Node input)
         {
-            var dest = input.Get<Expression>().Evaluate(new Node[] { input });
+            var dest = input.Evaluate();
             foreach (var idx in dest)
             {
-                var exp = idx.Get<Expression>().Evaluate(new Node[] { idx });
+                var exp = idx.Evaluate();
                 if (exp.Count() > 1)
                     throw new ApplicationException("Multiple sources found for [unwrap-value]");
 

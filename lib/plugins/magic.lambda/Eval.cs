@@ -46,7 +46,7 @@ namespace magic.lambda
             }
             else
             {
-                var nodes = input.Get<Expression>().Evaluate(new Node[] { input });
+                var nodes = input.Evaluate();
                 foreach (var idxOuter in nodes.Select((x) => x.Clone())) // Notice, cloning here!
                 {
                     foreach (var idx in idxOuter.Children)

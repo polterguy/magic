@@ -20,7 +20,7 @@ namespace magic.lambda.common
             }
             else
             {
-                var nodes = input.Get<Expression>().Evaluate(new Node[] { input });
+                var nodes = input.Evaluate();
                 if (nodes.Count() != 1)
                     throw new ApplicationException("Expression for [load-file] yielded less or more than one result");
                 filename = nodes.First().Get<string>();
