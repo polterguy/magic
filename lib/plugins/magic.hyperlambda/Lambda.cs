@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
@@ -15,7 +16,7 @@ namespace magic.hyperlambda
         public void Signal(Node input)
         {
             var parser = new Parser(input.Get<string>());
-            input.AddRange(parser.Lambda().Children);
+            input.AddRange(parser.Lambda().Children.ToList());
             input.Value = null;
         }
 

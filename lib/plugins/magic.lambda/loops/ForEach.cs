@@ -31,8 +31,7 @@ namespace magic.lambda.loops
                 input.Insert(0, dp);
                 _signaler.Signal("eval", input);
                 input.Clear();
-                input.AddRange(old);
-                input.Remove(dp);
+                input.AddRange(old.Select((x) => x.Clone()));
             }
         }
 

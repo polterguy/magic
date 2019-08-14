@@ -13,7 +13,10 @@ namespace magic.tests.tests.lambda
         [Fact]
         public void SetWithChild()
         {
-            var lambda = Common.Evaluate(".foo1\nset-node:x:../*/.foo1\n   .src\n      foo2:bar2");
+            var lambda = Common.Evaluate(@".foo1
+set-node:x:../*/.foo1
+   .src
+      foo2:bar2");
             Assert.Equal("foo2", lambda.Children.First().Name);
             Assert.Equal("bar2", lambda.Children.First().Value);
         }

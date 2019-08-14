@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System.Linq;
 using Xunit;
 using magic.node;
 using magic.signals.contracts;
@@ -32,6 +33,22 @@ namespace magic.tests.tests.lambda
 for-each:x:../*/.foo1/*
    foo2");
             Assert.Equal(3, Foo2Slot.ExecutionCount);
+        }
+
+        [Fact]
+        public void ForEach_02()
+        {
+            var lambda = Common.Evaluate(@".foo1
+   bar1:int:2
+   bar2:int:3
+   bar3:int:7
+.dest:int:0
+for-each:x:../*/.foo1/*
+   set-value:x:@.dest
+      +
+         value:x:@.dest
+         value:x:@.dp/#");
+            Assert.Equal(12, lambda.Children.Skip(1).First().Value);
         }
     }
 }

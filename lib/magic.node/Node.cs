@@ -173,12 +173,18 @@ namespace magic.node
 
         public void Add(Node value)
         {
+            if (value.Parent != null && value.Parent != this)
+                value.Parent.Remove(value); // Removing from its original parent.
+
             value.Parent = this;
             _children.Add(value);
         }
 
         public void Insert(int index, Node value)
         {
+            if (value.Parent != null && value.Parent != this)
+                value.Parent.Remove(value); // Removing from its original parent.
+
             value.Parent = this;
             _children.Insert(index, value);
         }
