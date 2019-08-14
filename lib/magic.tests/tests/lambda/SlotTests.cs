@@ -114,5 +114,20 @@ namespace magic.tests.tests.lambda
             Assert.Equal("foo", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar", lambda.Children.First().Children.First().Value);
         }
+
+        [Fact]
+        public void PassInWrongArgs_Throws()
+        {
+            Common.Evaluate(@"slot:custom.slot_7
+   .arguments
+      foo4
+   .lambda
+      eval:x:../*/.arguments");
+            Assert.Throws<ApplicationException>(() =>
+            {
+                Common.Evaluate(@"signal:custom.slot_7
+   foo4_XX");
+            });
+        }
     }
 }

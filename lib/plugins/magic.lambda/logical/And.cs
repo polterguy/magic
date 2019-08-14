@@ -23,10 +23,11 @@ namespace magic.lambda.logical
 
         public void Signal(Node input)
         {
-            if (!input.Children.Any())
-                throw new ApplicationException("Operator [and] requires at least one child node");
+            if (input.Children.Count() < 2)
+                throw new ApplicationException("Operator [and] requires at least two children nodes");
 
             _signaler.Signal("eval", input);
+
             foreach (var idx in input.Children)
             {
                 if (!idx.Get<bool>())

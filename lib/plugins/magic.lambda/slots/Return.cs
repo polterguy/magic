@@ -15,6 +15,8 @@ namespace magic.lambda.slots
         public void Signal(Node input)
         {
             var root = input;
+
+            // Notice, we store the return value as the value (by reference) of the root node of whatever lambda object we're currently within.
             while (root.Parent != null)
                 root = root.Parent;
             root.Value = input.Children;

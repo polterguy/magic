@@ -23,14 +23,21 @@ namespace magic.lambda.loops
 
         public void Signal(Node input)
         {
-            var dest = input.Evaluate();
+            // Making sure we can reset back to original nodes after every single iteration.
             var old = input.Children.Select((x) => x.Clone()).ToList();
-            foreach (var idx in dest)
+
+            foreach (var idx in input.Evaluate())
             {
-                var dp = new Node(".dp", idx);
-                input.Insert(0, dp);
+                // Inserting "data pointer".
+                input.Insert(0, new Node(".dp", idx));
+
+                // Evaluating "body" lambda of [for-each]
                 _signaler.Signal("eval", input);
+
+                // Resetting back to original nodes.
                 input.Clear();
+
+                // Notice, cloning in case we've got another iteration, to avoid changing original nodes' values.
                 input.AddRange(old.Select((x) => x.Clone()));
             }
         }

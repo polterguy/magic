@@ -27,5 +27,17 @@ while
       remove-node:x:../*/.src/0");
             Assert.Equal(2, lambda.Children.Skip(1).First().Children.Count());
         }
+
+        [Fact]
+        public void While_02()
+        {
+            var lambda = Common.Evaluate(@".src
+while
+   .:bool:false
+   .lambda
+      set-value:x:@.srs
+         .:FAILURE");
+            Assert.NotEqual("FAILURE", lambda.Children.First().Name);
+        }
     }
 }

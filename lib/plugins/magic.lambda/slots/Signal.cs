@@ -23,22 +23,19 @@ namespace magic.lambda.slots
 
         public void Signal(Node input)
         {
-            // Sanity checking invocation.
-            if (input.Value == null)
-                throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
-
             // Retrieving slot's lambda.
-            var slotName = input.Get<string>();
-            var slot = Slot.GetSlot(slotName);
-            var lambda = slot.Children.First((x) => x.Name == ".lambda");
+            var slotName = input.Get<string>() ?? throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
+            var slotNode = Slot.GetSlot(slotName);
+            var lambda = slotNode.Children.First((x) => x.Name == ".lambda");
+
+            // Making sure lambda becomes its own root node.
             lambda.UnTie();
 
             // Sanity checking arguments.
-            var slotArgs = slot.Children.FirstOrDefault((x) => x.Name == ".arguments");
-            if (slotArgs == null || slotArgs.Children.Count() == 0)
+            var slotArgs = slotNode.Children.FirstOrDefault((x) => x.Name == ".arguments");
+            if (input.Children.Any() && (slotArgs == null || slotArgs.Children.Count() == 0))
             {
-                if (input.Children.Any())
-                    throw new ApplicationException($"Slot named [{slotName}] does not take arguments at all.");
+                throw new ApplicationException($"Slot named [{slotName}] does not take arguments at all.");
             }
             else
             {
@@ -49,13 +46,15 @@ namespace magic.lambda.slots
                 }
             }
 
-            // Preparing and invoking our actual lambda invocation node.
+            // Preparing arguments, making sure we clon ethem to avoid that enumeration process is aborted.
             var args = new Node(".arguments");
             args.AddRange(input.Children.Select((x) => x.Clone()));
             lambda.Insert(0, args);
+
+            // Evaluating lambda of slot.
             _signaler.Signal("eval", lambda);
 
-            // Returning any returned nodes.
+            // Returning any returned nodes from lambda.
             input.Clear();
             if (lambda.Value != null)
                 input.AddRange(lambda.GetList<Node>().ToList());
@@ -63,7 +62,8 @@ namespace magic.lambda.slots
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node(":", "string");
+            yield return new Node(":", "*");
+            yield return new Node("*", "*");
         }
     }
 }
