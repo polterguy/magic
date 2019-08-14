@@ -58,7 +58,7 @@ namespace magic.lambda.slots
             // Returning any returned nodes.
             input.Clear();
             if (lambda.Value != null)
-                input.AddRange(lambda.Get<List<Node>>());
+                input.AddRange(lambda.GetList<Node>());
         }
 
         public IEnumerable<Node> GetArguments()

@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
 
@@ -90,6 +91,9 @@ namespace magic.node
 
         public T Get<T>()
         {
+            if (typeof(T) != typeof(string) && typeof(IEnumerable).IsAssignableFrom(typeof(T)))
+                throw new ApplicationException($"Use {nameof(GetList)} to retrieve enumerables.");
+
             if (Value == null)
                 return default(T);
 
@@ -98,13 +102,56 @@ namespace magic.node
 
             if (typeof(T) != typeof(Expression) && Value.GetType() == typeof(Expression))
             {
+                // Unrolling Expression for caller, assuming a single Node as our result, returning its value.
                 var nodes = (Value as Expression).Evaluate(new Node[] { this });
+
                 if (nodes.Count() > 1)
-                    throw new ApplicationException("Support for retrieving enumerables automatically is not yet implemented");
-                return nodes.First().Get<T>();
+                    throw new ApplicationException("Expression yields multiple results, when only one result was expected");
+                else if (nodes.Count() == 1)
+                    return nodes.First().Get<T>();
+
+                return default(T);
             }
 
+            // Converting, the simple version.
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
+        }
+
+        public IEnumerable<T> GetList<T>()
+        {
+            // Verifying we've got anything at all here, returning an empty enumerator if not.
+            if (Value == null)
+                yield break;
+
+            if (Value is Expression ex)
+            {
+                foreach (var idx in ex.Evaluate(new Node[] { this }))
+                {
+                    if (idx.Value is Expression exInner)
+                    {
+                        foreach (var idxInner in idx.GetList<T>())
+                        {
+                            yield return idxInner;
+                        }
+                    }
+                    else
+                    {
+                        yield return idx.Get<T>();
+                    }
+                }
+            }
+            else
+            {
+                foreach (var idx in Value as IEnumerable)
+                {
+                    if (idx == null)
+                        yield return default(T);
+                    else if (typeof(T) == idx.GetType())
+                        yield return (T)idx;
+                    else
+                        yield return (T)Convert.ChangeType(idx, typeof(T), CultureInfo.InvariantCulture);
+                }
+            }
         }
 
         public void Add(Node value)
