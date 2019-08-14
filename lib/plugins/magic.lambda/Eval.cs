@@ -32,7 +32,7 @@ namespace magic.lambda
             {
                 foreach (var idx in input.Children)
                 {
-                    if (idx.Name.FirstOrDefault() == '.')
+                    if (idx.Name == "" || idx.Name.FirstOrDefault() == '.')
                         continue;
                     _signaler.Signal(idx.Name, idx);
 

@@ -2,11 +2,12 @@
 /*
  * Asks you for your name, then greets you.
  */
-write-line:What's your name stranger?
+write:"What's your name stranger? "
 
 // Retrieves name from console input
 read-line
 
 // Writes out a greeting
 write:"Hello there "
-write-line:x:@read-line
+write:x:@read-line
+write-line:". My name is Magic."

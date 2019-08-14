@@ -1,0 +1,10 @@
+/*
+ * Does a basic addition and yields results to console
+ */
+*
+   :int:5
+   :int:5
+   :int:3
+
+write:"Sum of multiplication is "
+write-line:x:-/-

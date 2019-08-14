@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 
@@ -89,8 +90,20 @@ namespace magic.node
 
         public T Get<T>()
         {
-            if (Value != null && typeof(T) == Value.GetType())
+            if (Value == null)
+                return default(T);
+
+            if (typeof(T) == Value.GetType())
                 return (T)Value;
+
+            if (typeof(T) != typeof(Expression) && Value.GetType() == typeof(Expression))
+            {
+                var nodes = (Value as Expression).Evaluate(new Node[] { this });
+                if (nodes.Count() > 1)
+                    throw new ApplicationException("Support for retrieving enumerables automatically is not yet implemented");
+                return nodes.First().Get<T>();
+            }
+
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
         }
 

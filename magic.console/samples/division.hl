@@ -1,0 +1,10 @@
+/*
+ * Does a basic addition and yields results to console
+ */
+/
+   :int:75
+   :int:3
+   :int:5
+
+write:"Sum of division is "
+write-line:x:-/-
