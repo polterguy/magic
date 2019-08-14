@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
@@ -24,22 +25,22 @@ namespace magic.lambda.change
         {
             var dest = input.Get<Expression>().Evaluate(new Node[] { input });
             _signaler.Signal("eval", input);
-            foreach (var idxSource in input.Children)
+
+            // Looping through each destination.
+            foreach (var idxDest in dest)
             {
-                foreach(var idxDest in dest)
+                // Looping through each source node and adding its children to currently iterated destination.
+                foreach (var idxSource in input.Children.SelectMany((x) => x.Children))
                 {
-                    foreach (var idxSourceUnwrapped in idxSource.Children)
-                    {
-                        idxDest.Add(idxSourceUnwrapped);
-                    }
+                    idxDest.Add(idxSource.Clone()); // Cloning in case of multiple destinations.
                 }
             }
         }
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node("*", "*");
             yield return new Node(":", "x");
+            yield return new Node("*", "*");
         }
     }
 }

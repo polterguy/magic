@@ -89,6 +89,23 @@ namespace magic.node
             }
         }
 
+        public object Get()
+        {
+            if (Value is Expression ex)
+            {
+                var nodes = ex.Evaluate(new Node[] { this });
+
+                if (nodes.Count() > 1)
+                    throw new ApplicationException("Multiple values returned from Expression in Get");
+
+                if (nodes.Any())
+                    return nodes.First().Get();
+
+                return null;
+            }
+            return Value;
+        }
+
         public T Get<T>()
         {
             if (typeof(T) != typeof(string) && typeof(IEnumerable).IsAssignableFrom(typeof(T)))
