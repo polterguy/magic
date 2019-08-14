@@ -23,22 +23,17 @@ namespace magic.lambda.equality
 
         public void Signal(Node input)
         {
-            if (input.Children.Count() != 2)
-                throw new ApplicationException("Operator [lt] requires exactly two values to compare to each other");
-
-            _signaler.Signal("eval", input);
-
-            var lhs = input.Children.First().Value;
-            var rhs = input.Children.Skip(1).First().Value;
-
-            if (lhs == null && rhs == null)
-                input.Value = false;
-            else if (lhs != null && rhs == null)
-                input.Value = false;
-            else if (lhs == null && rhs != null)
-                input.Value = true;
-            else
-                input.Value = ((IComparable)lhs).CompareTo(rhs) == -1;
+            Common.Compare(_signaler, input, (lhs, rhs) =>
+            {
+                if (lhs == null && rhs == null)
+                    return false;
+                else if (lhs != null && rhs == null)
+                    return false;
+                else if (lhs == null && rhs != null)
+                    return true;
+                else
+                    return ((IComparable)lhs).CompareTo(rhs) == -1;
+            });
         }
 
         public IEnumerable<Node> GetArguments()

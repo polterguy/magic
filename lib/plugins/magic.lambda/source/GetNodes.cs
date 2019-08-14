@@ -9,8 +9,8 @@ using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
-    [Slot(Name = "nodes")]
-    public class Nodes : ISlot, IMeta
+    [Slot(Name = "get-nodes")]
+    public class GetNodes : ISlot, IMeta
     {
         public void Signal(Node input)
         {

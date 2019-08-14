@@ -19,12 +19,12 @@ namespace magic.tests.tests.lambda
 .dest
 while
    mt
-      count:x:../*/.src/*
+      get-count:x:../*/.src/*
       .:int:0
    .lambda
       add:x:../*/.dest
-         nodes:x:../*/.src/0
-      set-node:x:../*/.src/0");
+         get-nodes:x:../*/.src/0
+      remove-node:x:../*/.src/0");
             Assert.Equal(2, lambda.Children.Skip(1).First().Children.Count());
         }
     }

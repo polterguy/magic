@@ -59,7 +59,7 @@ if
          .:failure
 else-if
    eq
-      name:x:../*/.result
+      get-name:x:../*/.result
       .:.result
    .lambda
       set-value:x:../*/.result

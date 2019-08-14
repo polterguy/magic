@@ -9,22 +9,30 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.source
+namespace magic.lambda.change
 {
-    [Slot(Name = "name")]
-    public class Name : ISlot, IMeta
+    [Slot(Name = "remove-node")]
+    public class RemoveNode : ISlot, IMeta
     {
+        readonly ISignaler _signaler;
+
+        public RemoveNode(IServiceProvider services)
+        {
+            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+        }
+
         public void Signal(Node input)
         {
-            var src = input.Evaluate();
-            if (src.Count() > 1)
-                throw new ApplicationException("Too many nodes returned from [name] expression");
-            input.Value = src.FirstOrDefault()?.Name ?? null;
+            foreach (var idx in input.Evaluate().ToList())
+            {
+                idx.Parent.Remove(idx);
+            }
         }
 
         public IEnumerable<Node> GetArguments()
         {
             yield return new Node(":", "x");
+            yield return new Node("*", 1);
         }
     }
 }

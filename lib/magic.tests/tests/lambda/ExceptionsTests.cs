@@ -18,7 +18,7 @@ namespace magic.tests.tests.lambda
             var lambda = Common.Evaluate(@"try
    throw:foo
 .catch
-   unwrap-value:x:+/*
+   unwrap:x:+/*
    return
       .message:x:@.arguments/*/message");
             Assert.Equal("foo", lambda.GetList<Node>().First().Value);
@@ -30,7 +30,7 @@ namespace magic.tests.tests.lambda
             var lambda = Common.Evaluate(@"try
    .no-throw
 .catch
-   unwrap-value:x:+/*
+   unwrap:x:+/*
    return
       .message:x:@.arguments/*/message");
             Assert.Null(lambda.Value);

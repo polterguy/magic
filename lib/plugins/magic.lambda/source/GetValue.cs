@@ -11,8 +11,8 @@ using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
-    [Slot(Name = "value")]
-    public class Value : ISlot, IMeta
+    [Slot(Name = "get-value")]
+    public class GetValue : ISlot, IMeta
     {
         public void Signal(Node input)
         {

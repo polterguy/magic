@@ -11,16 +11,15 @@ using magic.signals.contracts;
 
 namespace magic.lambda.source
 {
-    [Slot(Name = "count")]
-    public class Count : ISlot, IMeta
+    [Slot(Name = "get-name")]
+    public class GetName : ISlot, IMeta
     {
         public void Signal(Node input)
         {
-            if (input.Value == null)
-                throw new ApplicationException("No expression source provided for [count]");
-
             var src = input.Evaluate();
-            input.Value = src.Count();
+            if (src.Count() > 1)
+                throw new ApplicationException("Too many nodes returned from [name] expression");
+            input.Value = src.FirstOrDefault()?.Name ?? null;
         }
 
         public IEnumerable<Node> GetArguments()
