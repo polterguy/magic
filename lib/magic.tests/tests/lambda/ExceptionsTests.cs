@@ -21,7 +21,7 @@ namespace magic.tests.tests.lambda
    unwrap-value:x:+/*
    return
       .message:x:@.arguments/*/message");
-            Assert.Equal("foo", lambda.Get<List<Node>>().First().Value);
+            Assert.Equal("foo", lambda.GetList<Node>().First().Value);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace magic.tests.tests.lambda
 .catch
    set-value:x:@try
       .:OK");
-            Assert.Equal("foo", lambda.Get<List<Node>>().First().Value);
+            Assert.Equal("foo", lambda.GetList<Node>().First().Value);
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 
@@ -60,7 +60,7 @@ namespace magic.tests.tests.lambda
 .finally
    return
       .message:foo");
-            Assert.Equal("foo", lambda.Get<List<Node>>().First().Value);
+            Assert.Equal("foo", lambda.GetList<Node>().First().Value);
         }
     }
 }
