@@ -23,13 +23,6 @@ namespace magic.lambda.branching
 
         public void Signal(Node input)
         {
-            if (input.Children.Count() != 1)
-                throw new ApplicationException("Keyword [else] requires exactly one child node");
-
-            var lambda = input.Children.First();
-            if (lambda.Name != ".lambda")
-                throw new ApplicationException("Keyword [else] requires its only child node to be [.lambda]");
-
             var previous = input.Previous;
             if (previous == null || (previous.Name != "if" && previous.Name != "else-if"))
                 throw new ApplicationException("[else] must have an [if] or [else-if] before it");
@@ -45,12 +38,12 @@ namespace magic.lambda.branching
                 previous = previous.Previous;
             }
             if (evaluate)
-                _signaler.Signal("eval", lambda);
+                _signaler.Signal("eval", input);
         }
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node(".lambda", 1);
+            yield return new Node("*", "*");
         }
     }
 }

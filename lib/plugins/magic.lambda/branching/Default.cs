@@ -23,7 +23,7 @@ namespace magic.lambda.branching
         public void Signal(Node input)
         {
             if (input.Parent?.Name != "switch")
-                throw new ApplicationException("[case] must be a child of [switch]");
+                throw new ApplicationException("[default] must be a child of [switch]");
 
             _signaler.Signal("eval", input);
         }

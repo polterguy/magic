@@ -42,9 +42,8 @@ if
       set-value:x:../*/.result
          .:failure
 else
-   .lambda
-      set-value:x:../*/.result
-         .:OK");
+   set-value:x:../*/.result
+      .:OK");
             Assert.Equal("OK", lambda.Children.First().Value);
         }
 

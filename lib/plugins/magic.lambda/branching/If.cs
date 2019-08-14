@@ -30,11 +30,9 @@ namespace magic.lambda.branching
             if (lambda.Name != ".lambda")
                 throw new ApplicationException("Keyword [if] requires its second child to be [.lambda]");
 
-            var condition = input.Children.First();
-            if (condition.Name.FirstOrDefault() != '.')
-                _signaler.Signal(condition.Name, condition);
+            _signaler.Signal("eval", input);
 
-            if (condition.Get<bool>())
+            if (input.Children.First().Get<bool>())
                 _signaler.Signal("eval", lambda);
         }
 
