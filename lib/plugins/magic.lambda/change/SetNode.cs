@@ -27,7 +27,7 @@ namespace magic.lambda.change
             if (input.Children.Count() > 1)
                 throw new ApplicationException("[set-node] can only have maximum one child node");
 
-            var destinations = input.Get<Expression>().Evaluate(new Node[] { input });
+            var destinations = input.Evaluate();
 
             var sourceNode = input.Children.FirstOrDefault();
             if (sourceNode?.Children.Count() > 1)

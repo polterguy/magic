@@ -19,7 +19,7 @@ namespace magic.lambda.source
             if (input.Value == null)
                 throw new ApplicationException("No expression source provided for [count]");
 
-            var src = input.Get<Expression>().Evaluate(new Node[] { input });
+            var src = input.Evaluate();
             input.Value = src.Count();
         }
 

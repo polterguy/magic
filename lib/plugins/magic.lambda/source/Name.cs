@@ -16,7 +16,7 @@ namespace magic.lambda.source
     {
         public void Signal(Node input)
         {
-            var src = input.Get<Expression>().Evaluate(new Node[] { input });
+            var src = input.Evaluate();
             if (src.Count() > 1)
                 throw new ApplicationException("Too many nodes returned from [name] expression");
             input.Value = src.FirstOrDefault()?.Name ?? null;

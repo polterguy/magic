@@ -23,7 +23,7 @@ namespace magic.lambda.loops
 
         public void Signal(Node input)
         {
-            var dest = input.Get<Expression>().Evaluate(new Node[] { input });
+            var dest = input.Evaluate();
             var old = input.Children.Select((x) => x.Clone()).ToList();
             foreach (var idx in dest)
             {

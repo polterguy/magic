@@ -22,7 +22,7 @@ namespace magic.hyperlambda
             if (input.Children.Any())
                 input.Value = Stringifier.GetHyper(input.Children);
             else
-                input.Value = Stringifier.GetHyper(input.Get<Expression>().Evaluate(new Node[] { input }));
+                input.Value = Stringifier.GetHyper(input.Evaluate());
         }
 
         public IEnumerable<Node> GetArguments()
