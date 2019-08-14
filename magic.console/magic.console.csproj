@@ -7,12 +7,32 @@
 
   <ItemGroup>
     <None Remove="hello-world.hl" />
+    <None Remove="samples\addition.hl" />
+    <None Remove="samples\division.hl" />
     <None Remove="samples\get-name.hl" />
     <None Remove="samples\load-file.hl" />
+    <None Remove="samples\multiply.hl" />
     <None Remove="samples\sample-text.txt" />
+    <None Remove="samples\save-file.hl" />
+    <None Remove="samples\subtraction.hl" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="samples\division.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="samples\multiply.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="samples\subtraction.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="samples\addition.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="samples\save-file.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="samples\load-file.hl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -32,6 +52,7 @@
     <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
     <ProjectReference Include="..\lib\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
     <ProjectReference Include="..\lib\plugins\magic.lambda\magic.lambda.csproj" />
+    <ProjectReference Include="..\lib\plugins\magic.math\magic.math.csproj" />
     <ProjectReference Include="..\magic.lambda.io\magic.lambda.io.csproj" />
   </ItemGroup>
 

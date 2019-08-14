@@ -65,7 +65,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.io.web.model", "modul
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.console", "magic.console\magic.console.csproj", "{ADC55DF0-0011-4A4F-BF66-568870E46CFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.io", "magic.lambda.io\magic.lambda.io.csproj", "{E8FBA309-76C9-4BD3-989B-F26FCEC710CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.io", "magic.lambda.io\magic.lambda.io.csproj", "{E8FBA309-76C9-4BD3-989B-F26FCEC710CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.math", "lib\plugins\magic.math\magic.math.csproj", "{02BC4526-3EB2-47CB-AA10-260FED588BD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +151,10 @@ Global
 		{E8FBA309-76C9-4BD3-989B-F26FCEC710CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8FBA309-76C9-4BD3-989B-F26FCEC710CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8FBA309-76C9-4BD3-989B-F26FCEC710CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02BC4526-3EB2-47CB-AA10-260FED588BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02BC4526-3EB2-47CB-AA10-260FED588BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02BC4526-3EB2-47CB-AA10-260FED588BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02BC4526-3EB2-47CB-AA10-260FED588BD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -175,6 +181,7 @@ Global
 		{CDB9FB39-128E-4689-9A26-8D7F0DED126A} = {70218BBD-ECD0-4D28-A396-835A03B2D806}
 		{8A8E4DFC-56BD-4746-A356-3DB30FA52F3D} = {70218BBD-ECD0-4D28-A396-835A03B2D806}
 		{E8FBA309-76C9-4BD3-989B-F26FCEC710CC} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
+		{02BC4526-3EB2-47CB-AA10-260FED588BD3} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}

@@ -48,6 +48,7 @@ namespace magic.console
 
         private static void RunFile(ISignaler signaler, string filename)
         {
+            Console.WriteLine();
             Console.WriteLine("*****************************************************");
             Console.WriteLine($"*** Executing file '{filename}'");
             Console.WriteLine("*****************************************************");

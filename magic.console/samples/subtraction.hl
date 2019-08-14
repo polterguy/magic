@@ -1,0 +1,9 @@
+/*
+ * Does a basic addition and yields results to console
+ */
+-
+   :int:77
+   :int:20
+
+write:"Sum of subtraction is "
+write-line:x:-/-
