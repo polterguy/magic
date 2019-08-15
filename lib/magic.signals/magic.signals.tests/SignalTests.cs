@@ -30,6 +30,14 @@ namespace magic.signals.tests
             Assert.Equal("Jo!Yup!", input.Children.First().Get<string>());
         }
 
+        [Fact]
+        public void SignalNoExisting_Throws()
+        {
+            var kernel = Initialize();
+            var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
+            Assert.Throws<ApplicationException>(() => signaler.Signal("foo.bar-XXX", new Node()));
+        }
+
         #endregion
 
         #region [ -- Private helper methods -- ]
