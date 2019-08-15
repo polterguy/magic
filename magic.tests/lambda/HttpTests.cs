@@ -18,5 +18,15 @@ http.get.json:""https://jsonplaceholder.typicode.com/users""
 ");
             Assert.True(lambda.Children.First().Get<string>().Length > 0);
         }
+
+        [Fact]
+        public void PostJson()
+        {
+            var lambda = Common.Evaluate(@"
+http.post.json:""https://jsonplaceholder.typicode.com/posts""
+   payload:@""{""""userId"""":1, """"id"""":1}""
+");
+            Assert.True(lambda.Children.First().Get<string>().Length > 0);
+        }
     }
 }

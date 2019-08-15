@@ -15,9 +15,9 @@ namespace magic.lambda.comparison
     {
         readonly ISignaler _signaler;
 
-        public Mt(IServiceProvider services)
+        public Mt(ISignaler signaler)
         {
-            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)

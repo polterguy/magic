@@ -16,9 +16,9 @@ namespace magic.lambda.logical
     {
         readonly ISignaler _signaler;
 
-        public Or(IServiceProvider services)
+        public Or(ISignaler signaler)
         {
-            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)

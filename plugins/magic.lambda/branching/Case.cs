@@ -15,9 +15,9 @@ namespace magic.lambda.branching
     {
         readonly ISignaler _signaler;
 
-        public Case(IServiceProvider services)
+        public Case(ISignaler signaler)
         {
-            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)

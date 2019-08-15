@@ -16,9 +16,9 @@ namespace magic.lambda.slots
     {
         readonly ISignaler _signaler;
 
-        public Signalize(IServiceProvider services)
+        public Signalize(ISignaler signaler)
         {
-            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)
