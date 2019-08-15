@@ -6,7 +6,7 @@
 using System.Linq;
 using Xunit;
 
-namespace magic.tests.tests.lambda
+namespace magic.tests.lambda
 {
     public class SwitchTests
     {

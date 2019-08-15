@@ -3,11 +3,11 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using Xunit;
 using magic.node;
-using System;
 
-namespace magic.tests.tests
+namespace magic.tests
 {
     public class NodeTests
     {

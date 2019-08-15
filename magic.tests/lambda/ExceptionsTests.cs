@@ -4,11 +4,10 @@
  */
 
 using System.Linq;
-using System.Collections.Generic;
 using Xunit;
 using magic.node;
 
-namespace magic.tests.tests.lambda
+namespace magic.tests.lambda
 {
     public class ExceptionsTests
     {
