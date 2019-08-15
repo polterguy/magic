@@ -8,7 +8,7 @@ using Xunit;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.tests.tests.lambda
+namespace magic.tests.lambda
 {
     public class ForEachTests
     {

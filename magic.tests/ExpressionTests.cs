@@ -8,7 +8,7 @@ using Xunit;
 using magic.node;
 using magic.hyperlambda.utils;
 
-namespace magic.tests.tests
+namespace magic.tests
 {
     public class ExpressionTests
     {
