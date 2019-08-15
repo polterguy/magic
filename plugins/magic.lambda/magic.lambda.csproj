@@ -9,6 +9,6 @@
     <Folder Include="loops\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
 </Project>

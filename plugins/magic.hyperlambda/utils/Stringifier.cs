@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using magic.node;
 
-namespace magic.hyperlambda
+namespace magic.hyperlambda.utils
 {
     public sealed class Stringifier
     {

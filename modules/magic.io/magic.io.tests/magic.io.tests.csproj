@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\magic.tests\magic.tests.csproj" />
+    <ProjectReference Include="..\..\..\magic.tests\magic.tests.csproj" />
     <ProjectReference Include="..\magic.io.services\magic.io.services.csproj" />
     <ProjectReference Include="..\magic.io.web.controller\magic.io.web.controller.csproj" />
   </ItemGroup>
