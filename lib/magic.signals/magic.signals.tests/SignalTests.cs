@@ -45,13 +45,13 @@ namespace magic.signals.tests
         IServiceProvider Initialize()
         {
             var configuration = new ConfigurationBuilder().Build();
-            var kernel = new ServiceCollection();
-            kernel.AddTransient<IConfiguration>((svc) => configuration);
+            var services = new ServiceCollection();
+            services.AddTransient<IConfiguration>((svc) => configuration);
             foreach (var idx in InstantiateAllTypes<IConfigureServices>())
             {
-                idx.Configure(kernel, configuration);
+                idx.Configure(services, configuration);
             }
-            var provider = kernel.BuildServiceProvider();
+            var provider = services.BuildServiceProvider();
             return provider;
         }
 
@@ -64,8 +64,7 @@ namespace magic.signals.tests
 
             foreach (var idx in types)
             {
-                var instance = Activator.CreateInstance(idx) as T;
-                yield return instance;
+                yield return Activator.CreateInstance(idx) as T;
             }
         }
 
