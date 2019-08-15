@@ -8,10 +8,10 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.console.lambda
 {
-    [Slot(Name = "write")]
-    public class Write : ISlot
+    [Slot(Name = "write-line")]
+    public class WriteLine : ISlot
     {
         public void Signal(Node input)
         {
@@ -27,7 +27,7 @@ namespace magic.lambda
             if (val == null)
                 throw new ApplicationException("Cannot write 'null' to the console");
 
-            Console.Write(val);
+            Console.WriteLine(val);
         }
     }
 }
