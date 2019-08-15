@@ -185,7 +185,11 @@ namespace magic.http.services
                     if (typeof(IConvertible).IsAssignableFrom(typeof(Response)))
                         return (Response)Convert.ChangeType(responseContent, typeof(Response));
 
-                    return JToken.Parse(responseContent).ToObject<Response>();
+                    var objResult = JToken.Parse(responseContent);
+                    if (typeof(Response) == typeof(object))
+                        return (Response)(object)objResult;
+
+                    return objResult.ToObject<Response>();
                 }
             }
         }
