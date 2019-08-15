@@ -5,13 +5,12 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using magic.node;
-using magic.lambda.common;
-using magic.lambda.utilities;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.io
 {
     [Slot(Name = "save-file")]
     public class SaveFile : ISlot, IMeta
@@ -25,9 +24,13 @@ namespace magic.lambda
 
         public void Signal(Node input)
         {
-            var filename = Common.GetFilename(input);
-            var source = XUtil.Single(_signaler, input, true);
-            File.WriteAllText(filename, source.Get<string>());
+            if (input.Children.Count() != 1)
+                throw new ApplicationException("[save-file] requires exactly one child node");
+
+            _signaler.Signal("eval", input);
+
+            var filename = input.Get<string>();
+            File.WriteAllText(filename, input.Children.First().Get<string>());
         }
 
         public IEnumerable<Node> GetArguments()

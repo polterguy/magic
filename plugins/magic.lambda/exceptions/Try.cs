@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.logical
+namespace magic.lambda.exceptions
 {
     [Slot(Name = "try")]
     public class Try : ISlot, IMeta

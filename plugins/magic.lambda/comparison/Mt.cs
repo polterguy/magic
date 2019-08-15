@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.equality
+namespace magic.lambda.comparison
 {
     [Slot(Name = "mt")]
     public class Mt : ISlot, IMeta

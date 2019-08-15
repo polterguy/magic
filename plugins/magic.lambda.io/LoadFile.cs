@@ -7,16 +7,15 @@ using System.IO;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.common;
 
-namespace magic.lambda
+namespace magic.lambda.io
 {
     [Slot(Name = "load-file")]
     public class LoadFile : ISlot, IMeta
     {
         public void Signal(Node input)
         {
-            input.Value = File.ReadAllText(Common.GetFilename(input));
+            input.Value = File.ReadAllText(input.Get<string>());
         }
 
         public IEnumerable<Node> GetArguments()
