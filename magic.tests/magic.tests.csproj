@@ -23,6 +23,8 @@
     <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
+    <ProjectReference Include="..\lib\magic.http\magic.http.services\magic.http.services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

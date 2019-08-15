@@ -182,11 +182,14 @@ namespace magic.http.services
                     if (!response.IsSuccessStatusCode)
                         throw new Exception(responseContent);
 
+                    if (typeof(Response) == typeof(string))
+                        return (Response)(object)responseContent;
+
                     if (typeof(IConvertible).IsAssignableFrom(typeof(Response)))
                         return (Response)Convert.ChangeType(responseContent, typeof(Response));
 
                     var objResult = JToken.Parse(responseContent);
-                    if (typeof(Response) == typeof(object))
+                    if (typeof(Response) == typeof(JToken))
                         return (Response)(object)objResult;
 
                     return objResult.ToObject<Response>();
