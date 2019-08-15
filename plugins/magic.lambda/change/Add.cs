@@ -16,9 +16,9 @@ namespace magic.lambda.change
     {
         readonly ISignaler _signaler;
 
-        public Add(IServiceProvider services)
+        public Add(ISignaler signaler)
         {
-            _signaler = services.GetService(typeof(ISignaler)) as ISignaler;
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)

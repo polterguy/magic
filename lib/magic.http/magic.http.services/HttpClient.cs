@@ -110,7 +110,8 @@ namespace magic.http.services
                 }
                 else
                 {
-                    using (var content = new net.StringContent(JObject.FromObject(input).ToString()))
+                    var stringContent = input is string ? (string)input : JObject.FromObject(input).ToString();
+                    using (var content = new net.StringContent(stringContent))
                     {
                         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         msg.Content = content;
