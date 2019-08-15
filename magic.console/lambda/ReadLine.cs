@@ -4,11 +4,10 @@
  */
 
 using System;
-using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.console.lambda
 {
     [Slot(Name = "read-line")]
     public class ReadLine : ISlot
