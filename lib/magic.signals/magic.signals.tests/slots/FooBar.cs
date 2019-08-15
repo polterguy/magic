@@ -7,10 +7,10 @@ using System.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.signals.tests.utilities
+namespace magic.signals.tests.slots
 {
     [Slot(Name = "foo.bar")]
-    public class SignalHandler : ISlot
+    public class FooBar : ISlot
     {
         public void Signal(Node input)
         {
