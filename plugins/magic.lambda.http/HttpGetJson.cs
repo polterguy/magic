@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.http.contracts;
 using magic.signals.contracts;
@@ -29,13 +30,9 @@ namespace magic.lambda.http
             if (input.Children.Count() > 1 || input.Children.Any((x) => x.Name != "token"))
                 throw new ApplicationException("[http.get.json] can only handle one [token] child node");
 
-            _signaler.Signal("eval", input);
             var url = input.Get<string>();
             var token = input.Children.FirstOrDefault((x) => x.Name == "token")?.Get<string>();
-            var result = _httpClient.GetAsync<object>(
-                url,
-                token).Result;
-            input.Value = result.ToString();
+            input.Value = _httpClient.GetAsync<JToken>(url, token).Result.ToString();
         }
 
         public IEnumerable<Node> GetArguments()
