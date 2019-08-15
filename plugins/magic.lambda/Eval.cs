@@ -44,7 +44,7 @@ namespace magic.lambda
                         return;
                 }
             }
-            else
+            else if (input.Name == "eval" && input.Value != null)
             {
                 var nodes = input.Evaluate();
                 foreach (var idxOuter in nodes.Select((x) => x.Clone())) // Notice, cloning here!

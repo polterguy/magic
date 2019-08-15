@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="hello-world.hl" />
+    <None Remove="samples\hello-world.hl" />
+    <None Remove="samples\http-get.hl" />
     <None Remove="samples\addition.hl" />
     <None Remove="samples\division.hl" />
     <None Remove="samples\get-name.hl" />
@@ -45,15 +46,20 @@
     <Content Include="samples\hello-world.hl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="samples\http-get.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+    <ProjectReference Include="..\lib\magic.http\magic.http.services\magic.http.services.csproj" />
     <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
   </ItemGroup>
 
   <ItemGroup>

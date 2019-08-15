@@ -69,6 +69,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.http.tests", "lib\mag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.tests", "magic.tests\magic.tests.csproj", "{6F38B51E-9AB1-4FB7-9E89-973DCD48577A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.http", "plugins\magic.lambda.http\magic.lambda.http.csproj", "{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +157,10 @@ Global
 		{6F38B51E-9AB1-4FB7-9E89-973DCD48577A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F38B51E-9AB1-4FB7-9E89-973DCD48577A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F38B51E-9AB1-4FB7-9E89-973DCD48577A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +186,7 @@ Global
 		{E8FBA309-76C9-4BD3-989B-F26FCEC710CC} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{02BC4526-3EB2-47CB-AA10-260FED588BD3} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{1B9E0771-C222-4E82-B4DC-47848D2D01D4} = {68A2FF07-7AAC-4E91-8427-6F7BED1027E2}
+		{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}
