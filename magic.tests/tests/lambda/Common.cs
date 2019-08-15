@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.node;
-using magic.hyperlambda;
 using magic.common.contracts;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.tests.tests.lambda
 {

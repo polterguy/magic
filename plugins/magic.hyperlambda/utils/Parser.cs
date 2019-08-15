@@ -10,7 +10,7 @@ using System.Linq;
 using System.Globalization;
 using magic.node;
 
-namespace magic.hyperlambda
+namespace magic.hyperlambda.utils
 {
     public sealed class Parser
     {

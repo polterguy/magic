@@ -16,17 +16,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\magic.node\magic.node.csproj" />
-    <ProjectReference Include="..\magic.common.contracts\magic.common.contracts.csproj" />
-    <ProjectReference Include="..\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+    <ProjectReference Include="..\lib\magic.common.contracts\magic.common.contracts.csproj" />
+    <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+    <ProjectReference Include="..\lib\magic.node\magic.node.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
     <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
-    <ProjectReference Include="..\plugins\magic.math\magic.math.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Configuration">
-      <HintPath>..\..\..\..\..\..\..\usr\local\share\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

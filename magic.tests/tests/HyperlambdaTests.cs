@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 using magic.node;
-using magic.hyperlambda;
+using magic.hyperlambda.utils;
 using magic.tests.tests.lambda;
 
 namespace magic.tests.tests

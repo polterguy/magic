@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
+    <ProjectReference Include="..\magic.lambda\magic.lambda.csproj" />
+  </ItemGroup>
+</Project>
