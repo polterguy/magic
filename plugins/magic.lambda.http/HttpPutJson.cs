@@ -35,7 +35,7 @@ namespace magic.lambda.http
             var payload = input.Children.FirstOrDefault((x) => x.Name == "payload")?.Get<string>();
 
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
-            input.Value = _httpClient.PutAsync<string, JToken>(url, payload, token).Result.ToString();
+            input.Value = _httpClient.PutAsync<string, string>(url, payload, token).Result;
         }
 
         public IEnumerable<Node> GetArguments()

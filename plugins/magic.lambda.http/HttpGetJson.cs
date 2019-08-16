@@ -34,7 +34,7 @@ namespace magic.lambda.http
             var token = input.Children.FirstOrDefault((x) => x.Name == "token")?.Get<string>();
 
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
-            input.Value = _httpClient.GetAsync<JToken>(url, token).Result.ToString();
+            input.Value = _httpClient.GetAsync<string>(url, token).Result;
         }
 
         public IEnumerable<Node> GetArguments()
