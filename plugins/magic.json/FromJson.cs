@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.hyperlambda
+namespace magic.json
 {
     // TODO: Sanity check. Not entirely sure it actually works for all possible permutations.
     [Slot(Name = "from-json")]
