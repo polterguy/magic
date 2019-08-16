@@ -13,7 +13,7 @@ namespace magic.tests
     public class JsonTests
     {
         [Fact]
-        public void SimpleObject()
+        public void FromJsonSimpleObject()
         {
             var signaler = Common.GetSignaler();
             var node = new Node("", @"{""foo"":5}");
@@ -23,7 +23,7 @@ namespace magic.tests
         }
 
         [Fact]
-        public void MultipleProperties()
+        public void FromJsonMultipleProperties()
         {
             var signaler = Common.GetSignaler();
             var node = new Node("", @"{""foo"":5, ""bar"": ""howdy""}");
@@ -35,7 +35,7 @@ namespace magic.tests
         }
 
         [Fact]
-        public void ArrayOfIntegers()
+        public void FromJsonArrayOfIntegers()
         {
             var signaler = Common.GetSignaler();
             var node = new Node("", @"[5, 6, 7]");
@@ -49,7 +49,7 @@ namespace magic.tests
         }
 
         [Fact]
-        public void ArrayOfObjects()
+        public void FromJsonArrayOfObjects()
         {
             var signaler = Common.GetSignaler();
             var node = new Node("", @"[{""foo1"": ""bar1""}, {""foo2"": ""bar2""}]");
@@ -61,7 +61,7 @@ namespace magic.tests
         }
 
         [Fact]
-        public void ArrayOfComplexObjects()
+        public void FromJsonArrayOfComplexObjects()
         {
             var signaler = Common.GetSignaler();
             var node = new Node("", @"[{""foo1"": {""name"": ""thomas""}}, {""foo2"": {""name"": ""hansen""}}]");
@@ -81,7 +81,7 @@ foo2
         }
 
         [Fact]
-        public void ComplexObjectWithArray()
+        public void FromJsonComplexObjectWithArray()
         {
             var signaler = Common.GetSignaler();
             var node = new Node("", @"{""foo"":[{""foo1"":5}, {""foo2"":{""bar1"":7, ""boolean"":true}}], ""jo"":""dude""}");
@@ -94,6 +94,77 @@ foo2
       boolean:bool:true
 jo:dude
 ".Replace("\r\n", "\n"), node.Value);
+        }
+
+        [Fact]
+        public void ToJsonSimpleObject()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", @"
+foo1
+foo2:bar2
+");
+            signaler.Signal("lambda", node);
+            signaler.Signal("to-json", node);
+            Assert.Equal(@"{""foo1"":null,""foo2"":""bar2""}", node.Value);
+        }
+
+        [Fact]
+        public void ToJsonSimpleArray_01()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", @"
+:int:5
+:int:7
+");
+            signaler.Signal("lambda", node);
+            signaler.Signal("to-json", node);
+            Assert.Equal(@"[5,7]", node.Value);
+        }
+
+        [Fact]
+        public void ToJsonSimpleArray_02()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", @"
+.:int:5
+.:int:7
+");
+            signaler.Signal("lambda", node);
+            signaler.Signal("to-json", node);
+            Assert.Equal(@"[5,7]", node.Value);
+        }
+
+        [Fact]
+        public void ToJsonComplexArray_01()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", @"
+.
+   foo1:bar1
+.
+   foo2:bar2
+");
+            signaler.Signal("lambda", node);
+            signaler.Signal("to-json", node);
+            Assert.Equal(@"[{""foo1"":""bar1""},{""foo2"":""bar2""}]", node.Value);
+        }
+
+        [Fact]
+        public void ToJsonComplexArray_02()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", @"
+.
+   foo1
+      foo11:bar11
+.
+   foo2
+      foo22:bar22
+");
+            signaler.Signal("lambda", node);
+            signaler.Signal("to-json", node);
+            Assert.Equal(@"[{""foo1"":{""foo11"":""bar11""}},{""foo2"":{""foo22"":""bar22""}}]", node.Value);
         }
     }
 }
