@@ -19,5 +19,15 @@ convert:x:-
    type:int");
             Assert.Equal(5, lambda.Children.Skip(1).First().Value);
         }
+
+        [Fact]
+        public void ConvertToString()
+        {
+            var lambda = Common.Evaluate(@"
+.src:int:5
+convert:x:-
+   type:string");
+            Assert.Equal("5", lambda.Children.Skip(1).First().Value);
+        }
     }
 }
