@@ -44,18 +44,15 @@ namespace magic.lambda
             else if (input.Name == "eval" && input.Value != null)
             {
                 var nodes = input.Evaluate();
-                foreach (var idxOuter in nodes) // Notice, cloning here!
+                foreach (var idx in nodes.SelectMany((x) => x.Children))
                 {
-                    foreach (var idx in idxOuter.Children)
-                    {
-                        if (idx.Name.FirstOrDefault() == '.')
-                            continue;
-                        _signaler.Signal(idx.Name, idx);
+                    if (idx.Name.FirstOrDefault() == '.')
+                        continue;
+                    _signaler.Signal(idx.Name, idx);
 
-                        // Checking if execution for some reasons was terminated.
-                        if (Terminate(idx))
-                            return;
-                    }
+                    // Checking if execution for some reasons was terminated.
+                    if (Terminate(idx))
+                        return;
                 }
             }
         }
