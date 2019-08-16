@@ -23,7 +23,7 @@ namespace magic.lambda
 
         public void Signal(Node input)
         {
-            // Sanity checking invocation. Notice non [eval] keywords might have expressions.
+            // Sanity checking invocation. Notice non [eval] keywords might have expressions and children.
             if (input.Name == "eval" && input.Value != null && input.Children.Any())
                 throw new ApplicationException("[eval] cannot handle both expression values and children at the same time");
 
@@ -37,17 +37,14 @@ namespace magic.lambda
                     _signaler.Signal(idx.Name, idx);
 
                     // Checking if execution for some reasons was terminated.
-                    var root = idx.Parent;
-                    while (root.Parent != null)
-                        root = root.Parent;
-                    if (root.Value is List<Node>)
+                    if (Terminate(idx))
                         return;
                 }
             }
             else if (input.Name == "eval" && input.Value != null)
             {
                 var nodes = input.Evaluate();
-                foreach (var idxOuter in nodes.Select((x) => x.Clone())) // Notice, cloning here!
+                foreach (var idxOuter in nodes) // Notice, cloning here!
                 {
                     foreach (var idx in idxOuter.Children)
                     {
@@ -56,10 +53,7 @@ namespace magic.lambda
                         _signaler.Signal(idx.Name, idx);
 
                         // Checking if execution for some reasons was terminated.
-                        var root = idx.Parent;
-                        while (root.Parent != null)
-                            root = root.Parent;
-                        if (root.Value is List<Node>)
+                        if (Terminate(idx))
                             return;
                     }
                 }
@@ -71,5 +65,19 @@ namespace magic.lambda
             yield return new Node(":", "*x");
             yield return new Node("*", "*");
         }
+
+        #region [ -- Private helper methods -- ]
+
+        bool Terminate(Node idx)
+        {
+            var root = idx.Parent;
+            while (root.Parent != null)
+                root = root.Parent;
+            if (root.Value is List<Node>)
+                return true;
+            return false;
+        }
+
+        #endregion
     }
 }
