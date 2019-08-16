@@ -57,20 +57,29 @@ namespace magic.hyperlambda.utils
                             value = idx.Get<int>().ToString(CultureInfo.InvariantCulture);
                             break;
 
+                        case "System.Int64":
+                            type = "long";
+                            value = idx.Get<long>().ToString(CultureInfo.InvariantCulture);
+                            break;
+
                         case "System.Decimal":
                             type = "decimal";
                             value = idx.Get<decimal>().ToString(CultureInfo.InvariantCulture);
                             break;
 
                         case "System.Double":
-                        case "System.Float":
                             type = "double";
                             value = idx.Get<double>().ToString(CultureInfo.InvariantCulture);
                             break;
 
+                        case "System.Single":
+                            type = "float";
+                            value = idx.Get<float>().ToString(CultureInfo.InvariantCulture);
+                            break;
+
                         case "System.Boolean":
                             type = "bool";
-                            value = idx.Get<bool>().ToString(CultureInfo.InvariantCulture);
+                            value = idx.Get<bool>().ToString(CultureInfo.InvariantCulture).ToLower();
                             break;
 
                         case "System.DateTime":
