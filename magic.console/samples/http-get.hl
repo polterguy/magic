@@ -1,5 +1,5 @@
 /*
  * Retrieves an HTTP document and writes it out on the console.
  */
-http.get.json:"https://jsonplaceholder.typicode.com/users"
+http.get.json:"https://jsonplaceholder.typicode.com/users/1"
 write:x:-
