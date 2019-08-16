@@ -36,6 +36,7 @@ namespace magic.lambda.http
 
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
             input.Value = _httpClient.PutAsync<string, string>(url, payload, token).Result;
+            input.Clear();
         }
 
         public IEnumerable<Node> GetArguments()
