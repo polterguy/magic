@@ -1,0 +1,18 @@
+/*
+ * Selects top 10 records from an MS SQL database
+ */
+try
+   mssql.connect:"Data Source=xxx\\MSSQLSERVER;Initial Catalog=xxx;User Id=xxx;Password=xxx;"
+      mssql.select:"select top 10 x1, x2, x3 from xxx where x1=@x1"
+         @x1:int:10
+      for-each:x:-/*
+         for-each:x:@.dp/#/*
+            get-name:x:@.dp/#
+            get-value:x:@.dp/#
+            write:x:@get-name
+            write:" "
+            write:x:@get-value
+            write:", "
+         write-line:
+.catch
+   write-line:x:@.arguments/*/message

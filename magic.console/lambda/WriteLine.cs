@@ -20,7 +20,7 @@ namespace magic.console.lambda
             {
                 var node = ex.Evaluate(new Node[] { input }).ToList();
                 if (node.Count() != 1)
-                    throw new ApplicationException("too many source found for [write-line]");
+                    throw new ApplicationException("Too few or too many source found for [write-line]");
 
                 val = node.First().Value;
             }
