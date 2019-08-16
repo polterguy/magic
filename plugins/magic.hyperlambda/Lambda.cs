@@ -23,7 +23,7 @@ namespace magic.hyperlambda
 
         public IEnumerable<Node> GetArguments()
         {
-            yield break;
+            yield return new Node(":", "*");
         }
     }
 }

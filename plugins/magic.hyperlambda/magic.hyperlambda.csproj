@@ -7,6 +7,10 @@
   <ItemGroup>
     <Folder Include="utils\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
