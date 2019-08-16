@@ -3,7 +3,6 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using magic.node;
@@ -11,6 +10,7 @@ using magic.signals.contracts;
 
 namespace magic.hyperlambda
 {
+    // TODO: Sanity check. Not entirely sure it actually works for all possible permutations.
     [Slot(Name = "from-json")]
     public class FromJson : ISlot, IMeta
     {
