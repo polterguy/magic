@@ -69,6 +69,9 @@ namespace magic.lambda.change
                 case "x":
                     input.Value = new Expression(value.ToString());
                     break;
+                case "string":
+                    input.Value = value.ToString();
+                    break;
                 case "node":
                     input.Value = new Parser(value.ToString()).Lambda();
                     break;
