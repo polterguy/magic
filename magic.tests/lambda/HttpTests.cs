@@ -14,7 +14,7 @@ namespace magic.tests.lambda
         public void GetJson()
         {
             var lambda = Common.Evaluate(@"
-http.get.json:""https://jsonplaceholder.typicode.com/users""
+http.get.json:""https://jsonplaceholder.typicode.com/users/1""
 ");
             Assert.True(lambda.Children.First().Get<string>().Length > 0);
         }
@@ -25,6 +25,25 @@ http.get.json:""https://jsonplaceholder.typicode.com/users""
             var lambda = Common.Evaluate(@"
 http.post.json:""https://jsonplaceholder.typicode.com/posts""
    payload:@""{""""userId"""":1, """"id"""":1}""
+");
+            Assert.True(lambda.Children.First().Get<string>().Length > 0);
+        }
+
+        [Fact]
+        public void PutJson()
+        {
+            var lambda = Common.Evaluate(@"
+http.put.json:""https://jsonplaceholder.typicode.com/posts/1""
+   payload:@""{""""userId"""":1, """"id"""":1}""
+");
+            Assert.True(lambda.Children.First().Get<string>().Length > 0);
+        }
+
+        [Fact]
+        public void DeleteJson()
+        {
+            var lambda = Common.Evaluate(@"
+http.delete.json:""https://jsonplaceholder.typicode.com/posts/1""
 ");
             Assert.True(lambda.Children.First().Get<string>().Length > 0);
         }
