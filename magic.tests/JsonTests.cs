@@ -84,7 +84,7 @@ foo2
         public void ComplexObjectWithArray()
         {
             var signaler = Common.GetSignaler();
-            var node = new Node("", @"{""foo"":[{""foo1"":5}, {""foo2"":{""bar1"":7, ""boolean"":true}}]}");
+            var node = new Node("", @"{""foo"":[{""foo1"":5}, {""foo2"":{""bar1"":7, ""boolean"":true}}], ""jo"":""dude""}");
             signaler.Signal("from-json", node);
             signaler.Signal("hyper", node);
             Assert.Equal(@"foo
@@ -92,6 +92,7 @@ foo2
    foo2
       bar1:long:7
       boolean:bool:true
+jo:dude
 ".Replace("\r\n", "\n"), node.Value);
         }
     }

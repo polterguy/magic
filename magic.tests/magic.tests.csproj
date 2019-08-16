@@ -31,7 +31,4 @@
     <Reference Include="Microsoft.Extensions.Configuration">
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="lambda\" />
-  </ItemGroup>
 </Project>
