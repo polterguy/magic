@@ -79,5 +79,20 @@ foo2
    name:hansen
 ".Replace("\r\n", "\n"), node.Value);
         }
+
+        [Fact]
+        public void ComplexObjectWithArray()
+        {
+            var signaler = Common.GetSignaler();
+            var node = new Node("", @"{""foo"":[{""foo1"":5}, {""foo2"":{""bar1"":7, ""boolean"":true}}]}");
+            signaler.Signal("from-json", node);
+            signaler.Signal("hyper", node);
+            Assert.Equal(@"foo
+   foo1:long:5
+   foo2
+      bar1:long:7
+      boolean:bool:true
+".Replace("\r\n", "\n"), node.Value);
+        }
     }
 }

@@ -128,12 +128,16 @@ namespace magic.hyperlambda.utils
             {
                 case "int":
                     return Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                case "long":
+                    return Convert.ToInt64(value, CultureInfo.InvariantCulture);
                 case "decimal":
                     return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 case "double":
                     return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                case "single":
+                    return Convert.ToSingle(value, CultureInfo.InvariantCulture);
                 case "bool":
-                    return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+                    return value.Equals("true");
                 case "date":
                     return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
                 case "guid":
