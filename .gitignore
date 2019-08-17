@@ -329,8 +329,8 @@ ASALocalRun/
 # Excluding all uploaded files
 magic.backend/files/*
 !magic.backend/files/README.md
-!magic.backend/files/modules/todo
-!magic.backend/files/modules/common
+!magic.backend/files/modules/todo/
+!magic.backend/files/modules/common/
 !magic.backend/files/modules/README.md
 
 # Excluding all Mac folder files
