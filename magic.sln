@@ -74,6 +74,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.json", "plugins\magic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.mssql", "plugins\magic.mssql\magic.mssql.csproj", "{01BCD3FF-4226-4B1A-855C-E025B0F76638}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.mysql", "plugins\magic.lambda.mysql\magic.lambda.mysql.csproj", "{A21386AD-5003-499A-B1AC-F6DCD50D9069}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -172,6 +174,10 @@ Global
 		{01BCD3FF-4226-4B1A-855C-E025B0F76638}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01BCD3FF-4226-4B1A-855C-E025B0F76638}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01BCD3FF-4226-4B1A-855C-E025B0F76638}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A21386AD-5003-499A-B1AC-F6DCD50D9069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A21386AD-5003-499A-B1AC-F6DCD50D9069}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A21386AD-5003-499A-B1AC-F6DCD50D9069}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A21386AD-5003-499A-B1AC-F6DCD50D9069}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -200,6 +206,7 @@ Global
 		{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{0CF55AFC-0F47-4F0F-8CB0-3E0810F7E846} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{01BCD3FF-4226-4B1A-855C-E025B0F76638} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
+		{A21386AD-5003-499A-B1AC-F6DCD50D9069} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}
