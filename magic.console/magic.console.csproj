@@ -12,7 +12,8 @@
     <None Remove="samples\division.hl" />
     <None Remove="samples\get-name.hl" />
     <None Remove="samples\load-file.hl" />
-    <None Remove="samples\ms-sql.hl" />
+    <None Remove="samples\mssql.hl" />
+    <None Remove="samples\mysql.hl" />
     <None Remove="samples\multiply.hl" />
     <None Remove="samples\sample-text.txt" />
     <None Remove="samples\save-file.hl" />
@@ -20,7 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="samples\ms-sql.hl">
+    <Content Include="samples\mssql.hl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="samples\mysql.hl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="samples\division.hl">
