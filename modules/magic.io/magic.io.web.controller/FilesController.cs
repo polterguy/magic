@@ -10,7 +10,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using magic.io.contracts;
-using www = magic.io.web.model;
 
 namespace magic.io.web.controller
 {
@@ -84,7 +83,7 @@ namespace magic.io.web.controller
         /// <param name="input">Source and destination file</param>
         [HttpPost]
         [Route("copy")]
-        public void Copy([Required] www.CopyMoveModel input)
+        public void Copy([Required] CopyMoveModel input)
         {
             _service.Copy(
                 input.Source,
@@ -99,7 +98,7 @@ namespace magic.io.web.controller
         /// <param name="input">Source and destination file</param>
         [HttpPost]
         [Route("move")]
-        public void Move([Required] www.CopyMoveModel input)
+        public void Move([Required] CopyMoveModel input)
         {
             _service.Move(
                 input.Source,

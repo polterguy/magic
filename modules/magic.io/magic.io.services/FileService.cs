@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using System.Security;
-using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
