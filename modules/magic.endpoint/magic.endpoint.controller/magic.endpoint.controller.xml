@@ -24,12 +24,12 @@
             Executes a dynamically registered Hyperlambda HTTP DELETE endpoint.
             </summary>
         </member>
-        <member name="M:magic.endpoint.controller.EndpointController.Post(System.String,Newtonsoft.Json.Linq.JContainer)">
+        <member name="M:magic.endpoint.controller.EndpointController.Post(System.String,System.Object)">
             <summary>
             Executes a dynamically registered Hyperlambda HTTP POST endpoint.
             </summary>
         </member>
-        <member name="M:magic.endpoint.controller.EndpointController.Put(System.String,Newtonsoft.Json.Linq.JContainer)">
+        <member name="M:magic.endpoint.controller.EndpointController.Put(System.String,System.Object)">
             <summary>
             Executes a dynamically registered Hyperlambda HTTP PUT endpoint.
             </summary>

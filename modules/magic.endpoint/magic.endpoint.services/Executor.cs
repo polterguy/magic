@@ -5,8 +5,10 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using magic.node;
@@ -26,35 +28,40 @@ namespace magic.endpoint.services
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
-        public object ExecuteGet(string url, Dictionary<string, string> args)
+        public ActionResult ExecuteGet(string url, Dictionary<string, string> args)
         {
             return ExecuteUrl(url, "get", args);
         }
 
-        public object ExecuteDelete(string url, Dictionary<string, string> args)
+        public ActionResult ExecuteDelete(string url, Dictionary<string, string> args)
         {
             return ExecuteUrl(url, "delete", args);
         }
 
-        public object ExecutePost(string url, JContainer payload)
+        public ActionResult ExecutePost(string url, JContainer payload)
         {
             return ExecuteUrl(url, "post", payload);
         }
 
-        public object ExecutePut(string url, JContainer payload)
+        public ActionResult ExecutePut(string url, JContainer payload)
         {
             return ExecuteUrl(url, "put", payload);
         }
 
         #region [ -- Private helper methods -- ]
 
-        object ExecuteUrl(
+        ActionResult ExecuteUrl(
             string url,
             string verb,
             Dictionary<string, string> arguments)
         {
-            SanityCheckUrl(url);
-            using (var stream = File.OpenRead(ConfigureServices.Root + url + $".{verb}.hl"))
+            // Sanity checking URL
+            url = SanityCheckUrl(url);
+            var path = ConfigureServices.Root + url + $".{verb}.hl";
+            if (!File.Exists(path))
+                return new NotFoundResult();
+
+            using (var stream = File.OpenRead(path))
             {
                 var lambda = new Parser(stream).Lambda();
 
@@ -63,17 +70,27 @@ namespace magic.endpoint.services
                 lambda.Insert(0, argsNode);
 
                 _signaler.Signal("eval", lambda);
-                return null;
+
+                var result = GetReturnValue(lambda);
+                if (result != null)
+                    return new OkObjectResult(result);
+
+                return new OkResult();
             }
         }
 
-        object ExecuteUrl(
+        ActionResult ExecuteUrl(
             string url,
             string verb,
             JContainer arguments)
         {
-            SanityCheckUrl(url);
-            using (var stream = File.OpenRead(ConfigureServices.Root + url + $".{verb}.hl"))
+            // Sanity checking URL
+            url = SanityCheckUrl(url);
+            var path = ConfigureServices.Root + url + $".{verb}.hl";
+            if (!File.Exists(path))
+                return new NotFoundResult();
+
+            using (var stream = File.OpenRead(path))
             {
                 var lambda = new Parser(stream).Lambda();
 
@@ -81,12 +98,18 @@ namespace magic.endpoint.services
                 lambda.Insert(0, argsNode);
 
                 _signaler.Signal("eval", lambda);
-                return null;
+
+                var result = GetReturnValue(lambda);
+                if (result != null)
+                    return new OkObjectResult(result);
+
+                return new OkResult();
             }
         }
 
-        void SanityCheckUrl(string url)
+        string SanityCheckUrl(string url)
         {
+            url = WebUtility.UrlDecode(url);
             foreach (var idx in url)
             {
                 switch(idx)
@@ -100,6 +123,23 @@ namespace magic.endpoint.services
                         break;
                 }
             }
+            return url;
+        }
+
+        object GetReturnValue(Node lambda)
+        {
+            if (lambda.Value != null)
+            {
+                if (lambda.Value is IEnumerable<Node> list)
+                {
+                    var convert = new Node();
+                    convert.AddRange(list.ToList());
+                    _signaler.Signal("to-json", convert);
+                    return convert.Get<string>();
+                }
+                return lambda.Get<string>();
+            }
+            return null;
         }
 
         #endregion

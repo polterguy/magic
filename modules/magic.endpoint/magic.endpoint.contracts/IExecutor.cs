@@ -4,18 +4,19 @@
  */
 
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
 namespace magic.endpoint.contracts
 {
 	public interface IExecutor
 	{
-        object ExecuteGet(string url, Dictionary<string, string> args);
+        ActionResult ExecuteGet(string url, Dictionary<string, string> args);
 
-        object ExecuteDelete(string url, Dictionary<string, string> args);
+        ActionResult ExecuteDelete(string url, Dictionary<string, string> args);
 
-        object ExecutePost(string url, JContainer payload);
+        ActionResult ExecutePost(string url, JContainer payload);
 
-        object ExecutePut(string url, JContainer payload);
+        ActionResult ExecutePut(string url, JContainer payload);
     }
 }
