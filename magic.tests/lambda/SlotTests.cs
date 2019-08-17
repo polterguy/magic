@@ -107,7 +107,7 @@ namespace magic.tests.lambda
         {
             Common.Evaluate(@"slot:custom.slot_6
    .lambda
-      return
+      return-nodes
          foo:bar");
             var lambda = Common.Evaluate("signal:custom.slot_6");
             Assert.Single(lambda.Children.First().Children);
@@ -128,6 +128,17 @@ namespace magic.tests.lambda
                 Common.Evaluate(@"signal:custom.slot_7
    foo4_XX");
             });
+        }
+
+        [Fact]
+        public void ReturnValueFromSlot()
+        {
+            Common.Evaluate(@"slot:custom.slot_8
+   .lambda
+      return-value:foo
+      throw:foo");
+            var lambda = Common.Evaluate("signal:custom.slot_8");
+            Assert.Equal("foo", lambda.Children.First().Value);
         }
     }
 }

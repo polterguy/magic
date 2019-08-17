@@ -56,8 +56,11 @@ namespace magic.lambda.slots
 
             // Returning any returned nodes from lambda.
             input.Clear();
-            if (lambda.Value != null)
-                input.AddRange(lambda.GetList<Node>().ToList());
+            input.Value = null;
+            if (lambda.Value is IEnumerable<Node> nodes)
+                input.AddRange(nodes.ToList());
+            else
+                input.Value = lambda.Value;
         }
 
         public IEnumerable<Node> GetArguments()

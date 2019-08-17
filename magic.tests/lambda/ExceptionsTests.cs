@@ -18,7 +18,7 @@ namespace magic.tests.lambda
    throw:foo
 .catch
    unwrap:x:+/*
-   return
+   return-nodes
       .message:x:@.arguments/*/message");
             Assert.Equal("foo", lambda.GetList<Node>().First().Value);
         }
@@ -42,7 +42,7 @@ namespace magic.tests.lambda
    try
       throw:foo
    .finally
-      return
+      return-nodes
          .message:foo
 .catch
    set-value:x:@try
@@ -57,7 +57,7 @@ namespace magic.tests.lambda
             var lambda = Common.Evaluate(@"try
    .no-throw
 .finally
-   return
+   return-nodes
       .message:foo");
             Assert.Equal("foo", lambda.GetList<Node>().First().Value);
         }
