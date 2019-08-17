@@ -20,6 +20,18 @@
     <ProjectReference Include="..\modules\magic.io\magic.io.controller\magic.io.controller.csproj" />
     <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj" />
     <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj" />
+    <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+    <ProjectReference Include="..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.json\magic.lambda.json.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
+    <ProjectReference Include="..\lib\magic.node\magic.node.csproj" />
   </ItemGroup>
 
   <ItemGroup>

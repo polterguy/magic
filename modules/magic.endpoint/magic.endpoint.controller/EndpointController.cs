@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using magic.endpoint.contracts;
 
-namespace magic.endpoint.web.controller
+namespace magic.endpoint.controller
 {
     /// <summary>
     /// IO controller for manipulating files and folders on your server
@@ -36,7 +36,7 @@ namespace magic.endpoint.web.controller
         [Route("{*url}")]
         public ActionResult Get(string url)
         {
-            return Execute(((args) => _executor.ExecuteDelete(url, args)));
+            return Execute(((args) => _executor.ExecuteGet(url, args)));
         }
 
         /// <summary>
