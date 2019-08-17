@@ -86,6 +86,9 @@ namespace magic.endpoint.web.controller
             var args = new Dictionary<string, string>();
             foreach (var idx in Request.Query)
             {
+                if (args.ContainsKey(idx.Key))
+                    throw new ApplicationException($"Found same argument '{idx.Key}' twice in URL of request.");
+
                 args[idx.Key] = idx.Value;
             }
             var result = functor(args);

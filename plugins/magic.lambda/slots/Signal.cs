@@ -33,12 +33,13 @@ namespace magic.lambda.slots
 
             // Sanity checking arguments.
             var slotArgs = slotNode.Children.FirstOrDefault((x) => x.Name == ".arguments");
-            if (input.Children.Any() && (slotArgs == null || slotArgs.Children.Count() == 0))
+            if (slotArgs?.Children.Any((x) => x.Name == "*") == false)
             {
-                throw new ApplicationException($"Slot named [{slotName}] does not take arguments at all.");
-            }
-            else
-            {
+                // No "accept all arguments" declaration.
+                if (input.Children.Any() && (slotArgs == null || slotArgs.Children.Count() == 0))
+                {
+                    throw new ApplicationException($"Slot named [{slotName}] does not take arguments at all.");
+                }
                 foreach (var idxInputArg in input.Children)
                 {
                     if (!slotArgs.Children.Any((x) => x.Name == idxInputArg.Name))

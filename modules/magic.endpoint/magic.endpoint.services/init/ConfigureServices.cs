@@ -4,6 +4,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.endpoint.contracts;
@@ -15,7 +16,13 @@ namespace magic.endpoint.services.init
     {
         public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IExecutor, Executor>();
+            services.AddSingleton<IExecutor, Executor>();
+
+            Root = (configuration["io:root-folder"] ?? "~/files")
+                .Replace("~", Directory.GetCurrentDirectory())
+                .TrimEnd('/') + "/";
         }
+
+        public static string Root { get; private set; }
     }
 }

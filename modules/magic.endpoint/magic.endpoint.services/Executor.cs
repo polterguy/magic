@@ -4,32 +4,104 @@
  */
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using magic.node;
+using magic.signals.contracts;
+using magic.hyperlambda.utils;
 using magic.endpoint.contracts;
+using magic.endpoint.services.init;
 
 namespace magic.endpoint.services
 {
     public class Executor : IExecutor
     {
+        readonly ISignaler _signaler;
+
+        public Executor(ISignaler signaler)
+        {
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+        }
+
         public object ExecuteGet(string url, Dictionary<string, string> args)
         {
-            throw new NotImplementedException();
+            return ExecuteUrl(url, "get", args);
         }
 
         public object ExecuteDelete(string url, Dictionary<string, string> args)
         {
-            throw new NotImplementedException();
+            return ExecuteUrl(url, "delete", args);
         }
 
         public object ExecutePost(string url, JContainer payload)
         {
-            throw new NotImplementedException();
+            return ExecuteUrl(url, "post", payload);
         }
 
         public object ExecutePut(string url, JContainer payload)
         {
-            throw new NotImplementedException();
+            return ExecuteUrl(url, "put", payload);
         }
+
+        #region [ -- Private helper methods -- ]
+
+        object ExecuteUrl(
+            string url,
+            string verb,
+            Dictionary<string, string> arguments)
+        {
+            SanityCheckUrl(url);
+            using (var stream = File.OpenRead(ConfigureServices.Root + url + $".{verb}.hl"))
+            {
+                var lambda = new Parser(stream).Lambda();
+
+                var argsNode = new Node(".arguments");
+                argsNode.AddRange(arguments.Select((x) => new Node(x.Key, x.Value)));
+                lambda.Insert(0, argsNode);
+
+                _signaler.Signal("eval", lambda);
+                return null;
+            }
+        }
+
+        object ExecuteUrl(
+            string url,
+            string verb,
+            JContainer arguments)
+        {
+            SanityCheckUrl(url);
+            using (var stream = File.OpenRead(ConfigureServices.Root + url + $".{verb}.hl"))
+            {
+                var lambda = new Parser(stream).Lambda();
+
+                var argsNode = new Node(".arguments", arguments.ToString(Formatting.None));
+                lambda.Insert(0, argsNode);
+
+                _signaler.Signal("eval", lambda);
+                return null;
+            }
+        }
+
+        void SanityCheckUrl(string url)
+        {
+            foreach (var idx in url)
+            {
+                switch(idx)
+                {
+                    case '-':
+                    case '/':
+                        break;
+                    default:
+                        if ((idx < 'a' || idx > 'z') && (idx < '0' || idx > '9'))
+                            throw new ApplicationException($"Illegal URL '{url}' specified");
+                        break;
+                }
+            }
+        }
+
+        #endregion
     }
 }

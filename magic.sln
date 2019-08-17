@@ -68,7 +68,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "magic.tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.http", "plugins\magic.lambda.http\magic.lambda.http.csproj", "{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.json", "plugins\magic.json\magic.json.csproj", "{0CF55AFC-0F47-4F0F-8CB0-3E0810F7E846}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.json", "plugins\magic.lambda.json\magic.lambda.json.csproj", "{0CF55AFC-0F47-4F0F-8CB0-3E0810F7E846}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.mssql", "plugins\magic.lambda.mssql\magic.lambda.mssql.csproj", "{01BCD3FF-4226-4B1A-855C-E025B0F76638}"
 EndProject

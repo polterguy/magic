@@ -4,6 +4,7 @@
  */
 
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
@@ -15,7 +16,7 @@ namespace magic.lambda.io
     {
         public void Signal(Node input)
         {
-            input.Value = File.ReadAllText(input.Get<string>());
+            input.Value = File.ReadAllText(input.Get<string>(), Encoding.UTF8);
         }
 
         public IEnumerable<Node> GetArguments()
