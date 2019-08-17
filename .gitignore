@@ -332,5 +332,4 @@ magic.backend/files/*
 
 # Excluding all Mac folder files
 **/.DS_Store
-modules/magic.endpoint/magic.endpoint.controller/magic.endpoint.controller.xml
-modules/magic.io/magic.io.controller/magic.io.controller.xml
+modules/**/*.controller.xml
