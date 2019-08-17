@@ -4,6 +4,21 @@
         <name>magic.io.web.controller</name>
     </assembly>
     <members>
+        <member name="T:magic.io.web.controller.CopyMoveModel">
+            <summary>
+            View model for copying and moving files and folders
+            </summary>
+        </member>
+        <member name="P:magic.io.web.controller.CopyMoveModel.Source">
+            <summary>
+            Source path of file or folder to move or copy
+            </summary>
+        </member>
+        <member name="P:magic.io.web.controller.CopyMoveModel.Destination">
+            <summary>
+            Destination path of file or folder to move or copy
+            </summary>
+        </member>
         <member name="T:magic.io.web.controller.FilesController">
             <summary>
             IO controller for manipulating files and folders on your server
@@ -36,13 +51,13 @@
             </summary>
             <param name="file">File to delete</param>
         </member>
-        <member name="M:magic.io.web.controller.FilesController.Copy(magic.io.web.model.CopyMoveModel)">
+        <member name="M:magic.io.web.controller.FilesController.Copy(magic.io.web.controller.CopyMoveModel)">
             <summary>
             Copies the specified source file to its given destination
             </summary>
             <param name="input">Source and destination file</param>
         </member>
-        <member name="M:magic.io.web.controller.FilesController.Move(magic.io.web.model.CopyMoveModel)">
+        <member name="M:magic.io.web.controller.FilesController.Move(magic.io.web.controller.CopyMoveModel)">
             <summary>
             Moves the specified source file to its given destination
             </summary>
@@ -85,7 +100,7 @@
             </summary>
             <param name="folder">Folder to create</param>
         </member>
-        <member name="M:magic.io.web.controller.FoldersController.Move(magic.io.web.model.CopyMoveModel)">
+        <member name="M:magic.io.web.controller.FoldersController.Move(magic.io.web.controller.CopyMoveModel)">
             <summary>
             Moves the specified source folder to its given destination
             </summary>

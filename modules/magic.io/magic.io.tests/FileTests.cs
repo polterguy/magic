@@ -3,7 +3,6 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System;
 using System.IO;
 using System.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
-using magic.tests;
 using magic.io.services;
-using magic.io.web.model;
 using magic.io.contracts;
 using magic.io.web.controller;
 
