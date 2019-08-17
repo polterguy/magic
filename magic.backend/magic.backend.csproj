@@ -17,7 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\lib\magic.common.contracts\magic.common.contracts.csproj" />
     <ProjectReference Include="..\modules\magic.io\magic.io.services\magic.io.services.csproj" />
-    <ProjectReference Include="..\modules\magic.io\magic.io.web.controller\magic.io.web.controller.csproj" />
+    <ProjectReference Include="..\modules\magic.io\magic.io.controller\magic.io.controller.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using magic.io.contracts;
 
-namespace magic.io.web.controller
+namespace magic.io.controller
 {
     /// <summary>
     /// IO controller for manipulating files and folders on your server

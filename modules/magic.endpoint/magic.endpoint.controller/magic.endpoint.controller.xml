@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>magic.endpoint.controller</name>
+    </assembly>
+    <members>
+        <member name="T:magic.endpoint.web.controller.EndpointController">
+            <summary>
+            IO controller for manipulating files and folders on your server
+            </summary>
+        </member>
+        <member name="M:magic.endpoint.web.controller.EndpointController.Foo">
+            <summary>
+            Moves the specified source file to its given destination
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -13,7 +13,7 @@ using Moq;
 using Xunit;
 using magic.io.services;
 using magic.io.contracts;
-using magic.io.web.controller;
+using magic.io.controller;
 
 namespace magic.io.tests
 {

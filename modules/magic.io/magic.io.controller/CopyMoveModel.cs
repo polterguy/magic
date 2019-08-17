@@ -3,7 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-namespace magic.io.web.controller
+namespace magic.io.controller
 {
     /// <summary>
     /// View model for copying and moving files and folders
