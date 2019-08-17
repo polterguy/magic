@@ -4,7 +4,9 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using magic.endpoint.contracts;
 
 namespace magic.endpoint.web.controller
@@ -32,14 +34,68 @@ namespace magic.endpoint.web.controller
         /// </summary>
         [HttpGet]
         [Route("{*url}")]
-        public IActionResult Get(string url)
+        public ActionResult Get(string url)
         {
-            var result = _executor.Execute();
+            return Execute(((args) => _executor.ExecuteDelete(url, args)));
+        }
+
+        /// <summary>
+        /// Executes a dynamically registered Hyperlambda HTTP DELETE endpoint.
+        /// </summary>
+        [HttpDelete]
+        [Route("{*url}")]
+        public ActionResult Delete(string url)
+        {
+            return Execute(((args) => _executor.ExecuteDelete(url, args)));
+        }
+
+        /// <summary>
+        /// Executes a dynamically registered Hyperlambda HTTP POST endpoint.
+        /// </summary>
+        [HttpPost]
+        [Route("{*url}")]
+        public ActionResult Post(string url, JContainer payload)
+        {
+            var result = _executor.ExecutePost(url, payload);
 
             if (result == null)
                 return Ok();
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Executes a dynamically registered Hyperlambda HTTP PUT endpoint.
+        /// </summary>
+        [HttpPut]
+        [Route("{*url}")]
+        public ActionResult Put(string url, JContainer payload)
+        {
+            var result = _executor.ExecutePut(url, payload);
+
+            if (result == null)
+                return Ok();
+
+            return Ok(result);
+        }
+
+        #region [ -- Private helper methods -- ]
+
+        ActionResult Execute(Func<Dictionary<string, string>, object> functor)
+        {
+            var args = new Dictionary<string, string>();
+            foreach (var idx in Request.Query)
+            {
+                args[idx.Key] = idx.Value;
+            }
+            var result = functor(args);
+
+            if (result == null)
+                return Ok();
+
+            return Ok(result);
+        }
+
+        #endregion
     }
 }
