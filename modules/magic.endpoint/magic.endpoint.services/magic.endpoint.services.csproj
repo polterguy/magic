@@ -4,15 +4,16 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>magic.endpoint.controller.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\magic.endpoint.contracts\magic.endpoint.contracts.csproj" />
+    <ProjectReference Include="..\..\..\lib\magic.common.contracts\magic.common.contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="init\" />
   </ItemGroup>
 </Project>

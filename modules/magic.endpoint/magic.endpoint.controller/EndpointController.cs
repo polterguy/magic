@@ -3,7 +3,9 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using Microsoft.AspNetCore.Mvc;
+using magic.endpoint.contracts;
 
 namespace magic.endpoint.web.controller
 {
@@ -15,13 +17,29 @@ namespace magic.endpoint.web.controller
     [Produces("application/json")]
     public class EndpointController : ControllerBase
     {
+        readonly IExecutor _executor;
+
         /// <summary>
-        /// Moves the specified source file to its given destination
+        /// Creates a new Hyperlambda endpoint controller.
         /// </summary>
-        [HttpPost]
-        [Route("foo")]
-        public void Foo()
+        public EndpointController(IExecutor executor)
         {
+            _executor = executor ?? throw new ArgumentNullException(nameof(executor));
+        }
+
+        /// <summary>
+        /// Executes a dynamically registered Hyperlambda HTTP GET endpoint.
+        /// </summary>
+        [HttpGet]
+        [Route("{*url}")]
+        public IActionResult Get(string url)
+        {
+            var result = _executor.Execute();
+
+            if (result == null)
+                return Ok();
+
+            return Ok(result);
         }
     }
 }
