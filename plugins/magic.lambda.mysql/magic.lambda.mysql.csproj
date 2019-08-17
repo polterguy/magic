@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\magic.common.contracts\magic.common.contracts.csproj" />
+    <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
+    <ProjectReference Include="..\magic.lambda\magic.lambda.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.17" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="init\" />
+  </ItemGroup>
+</Project>
