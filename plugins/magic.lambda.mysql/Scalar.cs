@@ -13,12 +13,10 @@ namespace magic.lambda.mysql
     [Slot(Name = "mysql.scalar")]
     public class Scalar : ISlot, IMeta
     {
-        readonly ISignaler _signaler;
         readonly ConnectionStack _connections;
 
-        public Scalar(ISignaler signaler, ConnectionStack connections)
+        public Scalar(ConnectionStack connections)
         {
-            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
 

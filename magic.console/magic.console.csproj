@@ -65,7 +65,8 @@
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
-    <ProjectReference Include="..\plugins\magic.mssql\magic.mssql.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

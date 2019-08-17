@@ -8,14 +8,14 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.mysql
+namespace magic.lambda.mssql
 {
-    [Slot(Name = "mysql.execute")]
-    public class Execute : ISlot, IMeta
+    [Slot(Name = "mysql.scalar")]
+    public class Scalar : ISlot, IMeta
     {
         readonly ConnectionStack _connections;
 
-        public Execute(ConnectionStack connections)
+        public Scalar(ConnectionStack connections)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
@@ -24,7 +24,7 @@ namespace magic.lambda.mysql
         {
             Executor.Execute(input, _connections, (cmd) =>
             {
-                input.Value = cmd.ExecuteNonQuery();
+                input.Value = cmd.ExecuteScalar();
             });
         }
 

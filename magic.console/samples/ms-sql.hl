@@ -1,6 +1,13 @@
 /*
- * Selects top 10 records from an MS SQL database
+ * Selects top 10 records from an MS SQL database.
+ *
+ * Notice!
+ * If you wish to execute this example, please modify the connection string and its SQL command
+ * to something you can actually access. Then remove the [return] keyword that short circuits the
+ * entire file.
  */
+write-line:Modify this file to test the MSSQL slots
+return
 try
    mssql.connect:"Data Source=xxx\\MSSQLSERVER;Initial Catalog=xxx;User Id=xxx;Password=xxx;"
       mssql.select:"select top 10 x1, x2, x3 from xxx where x1=@x1"

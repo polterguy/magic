@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.mysql
+namespace magic.lambda.mssql
 {
-    [Slot(Name = "mysql.execute")]
+    [Slot(Name = "mssql.execute")]
     public class Execute : ISlot, IMeta
     {
         readonly ConnectionStack _connections;

@@ -13,12 +13,10 @@ namespace magic.lambda.mysql
     [Slot(Name = "mysql.select")]
     public class Select : ISlot, IMeta
     {
-        readonly ISignaler _signaler;
         readonly ConnectionStack _connections;
 
-        public Select(ISignaler signaler, ConnectionStack connections)
+        public Select(ConnectionStack connections)
         {
-            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
 
