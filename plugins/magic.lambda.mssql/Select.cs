@@ -4,40 +4,29 @@
  */
 
 using System;
-using System.Data.SqlClient;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda
+namespace magic.lambda.mssql
 {
     [Slot(Name = "mssql.select")]
     public class Select : ISlot, IMeta
     {
-        readonly ISignaler _signaler;
+        readonly ConnectionStack _connections;
 
-        public Select(ISignaler signaler)
+        public Select(ConnectionStack connections)
         {
-            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+            _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
 
         public void Signal(Node input)
         {
-            // Retrieving connection.
-            var connectionNode = input.Parent;
-            while (connectionNode.Name != "mssql.connect")
-                connectionNode = connectionNode.Parent;
-
-            var connection = connectionNode.Value as SqlConnection;
-            using (var cmd = new SqlCommand(input.Get<string>(), connection))
+            Executor.Execute(input, _connections, (cmd) =>
             {
-                foreach (var idxPar in input.Children)
-                {
-                    cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
-                }
                 using (var reader = cmd.ExecuteReader())
                 {
-                    while(reader.Read())
+                    while (reader.Read())
                     {
                         var rowNode = new Node();
                         for (var idxCol = 0; idxCol < reader.FieldCount; idxCol++)
@@ -48,14 +37,12 @@ namespace magic.lambda
                         input.Add(rowNode);
                     }
                 }
-            }
-            input.Value = null;
+            });
         }
 
         public IEnumerable<Node> GetArguments()
         {
             yield return new Node(":", "*");
-            yield return new Node("*", "*");
         }
     }
 }
