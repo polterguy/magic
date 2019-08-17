@@ -15,6 +15,7 @@ namespace magic.lambda
     public class Eval : ISlot, IMeta
     {
         readonly ISignaler _signaler;
+        Node _root;
 
         public Eval(ISignaler signaler)
         {
@@ -67,10 +68,13 @@ namespace magic.lambda
 
         bool Terminate(Node idx)
         {
-            var root = idx.Parent;
-            while (root.Parent != null)
-                root = root.Parent;
-            if (root.Value != null)
+            if (_root == null)
+            {
+                _root = idx.Parent;
+                while (_root.Parent != null)
+                    _root = _root.Parent;
+            }
+            if (_root.Value != null)
                 return true;
             return false;
         }
