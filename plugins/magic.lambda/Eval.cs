@@ -70,7 +70,7 @@ namespace magic.lambda
             var root = idx.Parent;
             while (root.Parent != null)
                 root = root.Parent;
-            if (root.Value is List<Node>)
+            if (root.Value != null)
                 return true;
             return false;
         }
