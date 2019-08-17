@@ -140,5 +140,18 @@ namespace magic.tests.lambda
             var lambda = Common.Evaluate("signal:custom.slot_8");
             Assert.Equal("foo", lambda.Children.First().Value);
         }
+
+        [Fact]
+        public void AcceptAllArgumentsSlot()
+        {
+            Common.Evaluate(@"slot:custom.slot_9
+   .arguments
+      *
+   .lambda
+      return-value:foo");
+            var lambda = Common.Evaluate(@"signal:custom.slot_9
+   not-declared:bar");
+            Assert.Equal("foo", lambda.Children.First().Value);
+        }
     }
 }

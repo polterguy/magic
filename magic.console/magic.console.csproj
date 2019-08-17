@@ -64,11 +64,11 @@
     <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
     <ProjectReference Include="..\lib\magic.http\magic.http.services\magic.http.services.csproj" />
     <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
-    <ProjectReference Include="..\plugins\magic.json\magic.json.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.json\magic.lambda.json.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
   </ItemGroup>

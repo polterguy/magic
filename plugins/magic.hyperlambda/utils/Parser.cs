@@ -16,9 +16,17 @@ namespace magic.hyperlambda.utils
     {
         Node _root = new Node();
 
-        public Parser(string hyperlambda, Encoding encoding = null)
+        public Parser(string hyperlambda)
         {
-            using (var reader = new StreamReader(new MemoryStream((encoding ?? Encoding.UTF8).GetBytes(hyperlambda))))
+            using (var reader = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(hyperlambda))))
+            {
+                Parse(reader);
+            }
+        }
+
+        public Parser(Stream stream)
+        {
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 Parse(reader);
             }
