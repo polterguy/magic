@@ -78,6 +78,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.endpoint", "magic.end
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.controller", "modules\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj", "{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.contracts", "modules\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj", "{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.services", "modules\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj", "{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -180,6 +184,14 @@ Global
 		{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -210,6 +222,8 @@ Global
 		{A21386AD-5003-499A-B1AC-F6DCD50D9069} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{9ECCEEEC-2F4D-4BC4-A108-875443561EE6} = {66C3273B-4DF4-4F94-8B6C-C76783DA96B3}
 		{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8} = {9ECCEEEC-2F4D-4BC4-A108-875443561EE6}
+		{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B} = {9ECCEEEC-2F4D-4BC4-A108-875443561EE6}
+		{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181} = {9ECCEEEC-2F4D-4BC4-A108-875443561EE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}
