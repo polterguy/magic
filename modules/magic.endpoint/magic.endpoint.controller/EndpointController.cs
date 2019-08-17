@@ -54,14 +54,9 @@ namespace magic.endpoint.controller
         /// </summary>
         [HttpPost]
         [Route("{*url}")]
-        public ActionResult Post(string url, JContainer payload)
+        public ActionResult Post(string url, [FromBody] dynamic payload)
         {
-            var result = _executor.ExecutePost(url, payload);
-
-            if (result == null)
-                return Ok();
-
-            return Ok(result);
+            return _executor.ExecutePost(url, payload);
         }
 
         /// <summary>
@@ -69,19 +64,14 @@ namespace magic.endpoint.controller
         /// </summary>
         [HttpPut]
         [Route("{*url}")]
-        public ActionResult Put(string url, JContainer payload)
+        public ActionResult Put(string url, [FromBody] dynamic payload)
         {
-            var result = _executor.ExecutePut(url, payload);
-
-            if (result == null)
-                return Ok();
-
-            return Ok(result);
+            return _executor.ExecutePut(url, payload);
         }
 
         #region [ -- Private helper methods -- ]
 
-        ActionResult Execute(Func<Dictionary<string, string>, object> functor)
+        ActionResult Execute(Func<Dictionary<string, string>, ActionResult> functor)
         {
             var args = new Dictionary<string, string>();
             foreach (var idx in Request.Query)
@@ -91,12 +81,7 @@ namespace magic.endpoint.controller
 
                 args[idx.Key] = idx.Value;
             }
-            var result = functor(args);
-
-            if (result == null)
-                return Ok();
-
-            return Ok(result);
+            return functor(args);
         }
 
         #endregion

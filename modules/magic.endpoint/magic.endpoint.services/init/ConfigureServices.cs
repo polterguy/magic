@@ -20,7 +20,7 @@ namespace magic.endpoint.services.init
 
             Root = (configuration["io:root-folder"] ?? "~/files")
                 .Replace("~", Directory.GetCurrentDirectory())
-                .TrimEnd('/') + "/";
+                .TrimEnd('/') + "/modules/";
         }
 
         public static string Root { get; private set; }
