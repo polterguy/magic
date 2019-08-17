@@ -52,6 +52,11 @@ namespace magic.hyperlambda.utils
                             idxNode = new Node();
                             currentParent.Add(idxNode);
                         }
+                        else if (previous == ":")
+                        {
+                            idxNode.Value = ":";
+                            break;
+                        }
 
                         if (idxNode.Value == null)
                             idxNode.Value = "";

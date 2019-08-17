@@ -52,6 +52,16 @@ namespace magic.tests
         }
 
         [Fact]
+        public void NodeWithColonValue()
+        {
+            var result = new Parser(@"foo:"":""").Lambda().Children.ToList();
+            Assert.Single(result);
+            Assert.Equal("foo", result.First().Name);
+            Assert.Equal(":", result.First().Value);
+            Assert.Empty(result.First().Children);
+        }
+
+        [Fact]
         public void NodeWithTypedValue()
         {
             var result = new Parser("foo:int:5").Lambda().Children.ToList();
