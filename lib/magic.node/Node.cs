@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace magic.node
 {
-    public class Node
+    public class Node : ICloneable
     {
         readonly List<Node> _children;
         string _name;
@@ -218,7 +218,11 @@ namespace magic.node
 
         public Node Clone()
         {
-            var result = new Node(Name, Value);
+            var value = Value;
+            if (value is ICloneable cloner)
+                value = cloner.Clone();
+
+            var result = new Node(Name, value);
             foreach(var idx in Children)
             {
                 result.Add(idx.Clone());
@@ -230,5 +234,14 @@ namespace magic.node
         {
             Parent = null;
         }
+
+        #region [ -- Interface implementations -- ]
+
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
+
+        #endregion
     }
 }

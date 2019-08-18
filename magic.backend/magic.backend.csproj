@@ -32,6 +32,7 @@
     <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
     <ProjectReference Include="..\lib\magic.node\magic.node.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.config\magic.lambda.config.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,5 +44,7 @@
   <ItemGroup>
     <Folder Include="files\modules\" />
     <Folder Include="files\modules\todo\" />
+    <Folder Include="files\modules\magic.common\" />
+    <Folder Include="files\modules\magic.common\magic.startup\" />
   </ItemGroup>
 </Project>

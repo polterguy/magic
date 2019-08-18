@@ -2,5 +2,10 @@
 /*
  * List all TODO items from your MySQL database
  */
-return-nodes:Implement this bugger ...
-
+add:x:+/*/.arguments/*/query
+signal:magic.mysql.read
+   .arguments
+      database:Todo
+      table:Items
+      query
+return-nodes:x:-/*

@@ -21,7 +21,6 @@ namespace magic.lambda.mssql
 		{
 			_signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
-
         }
 
 		public void Signal(Node input)
@@ -37,7 +36,6 @@ namespace magic.lambda.mssql
                 finally
                 {
                     _connections.RemoveTopConnection();
-                    connection.Close();
                 }
 				input.Value = null;
 			}

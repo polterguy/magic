@@ -77,7 +77,7 @@ namespace magic.tests
    name:thomas
 foo2
    name:hansen
-".Replace("\r\n", "\n"), node.Value);
+".Replace("\r", "").Replace("\n", "\r\n"), node.Value);
         }
 
         [Fact]
@@ -93,7 +93,7 @@ foo2
       bar1:long:7
       boolean:bool:true
 jo:dude
-".Replace("\r\n", "\n"), node.Value);
+".Replace("\r", "").Replace("\n", "\r\n"), node.Value);
         }
 
         [Fact]
