@@ -1,0 +1,24 @@
+﻿
+/*
+ * Deletes the specified Id TODO item.
+ * TODO: When creating table names, we'll need to check for SQL injection!
+ */
+
+
+/*
+ * Invoking [magic.mysql.delete], passing in [id] specified by caller.
+ */
+convert:x:@.arguments/*/id
+   type:long
+unwrap:x:+/*/query/*
+signal:magic.mysql.delete
+   connection:signal:@"config:""Databases:MySQLConnection"""
+   table:Items
+   query
+      Id:x:@convert
+
+
+/*
+ * Returning results to caller.
+ */
+return-nodes:x:@signal/*
