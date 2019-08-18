@@ -13,13 +13,13 @@ namespace magic.signals.services
 {
     public class Signaler : ISignaler
     {
-        readonly Dictionary<string, List<Type>> _slots;
+        readonly Dictionary<string, Type> _slots;
         readonly IServiceProvider _provider;
 
         internal Signaler(IServiceProvider provider, IEnumerable<Type> types)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _slots = new Dictionary<string, List<Type>>();
+            _slots = new Dictionary<string, Type>();
             foreach (var idxType in types)
             {
                 var name = idxType.GetCustomAttributes(true).OfType<SlotAttribute>().FirstOrDefault()?.Name;
@@ -27,13 +27,9 @@ namespace magic.signals.services
                 if (string.IsNullOrEmpty(name))
                     throw new ArgumentNullException($"No name specified for type '{idxType}'");
 
-                if (!_slots.TryGetValue(name, out var slot))
-                {
-                    slot = new List<Type>();
-                    _slots[name] = slot;
-                }
-
-                slot.Add(idxType);
+                if (_slots.ContainsKey(name))
+                    throw new ApplicationException($"Slot [{name}] already taken by another type");
+                _slots[name] = idxType;
             }
         }
 
@@ -44,11 +40,8 @@ namespace magic.signals.services
             if (!_slots.ContainsKey(name))
                 throw new ApplicationException($"No slot exists for [{name}]");
 
-            foreach (var idxType in _slots[name])
-            {
-                var instance = _provider.GetService(idxType) as ISlot;
-                instance.Signal(input);
-            }
+            var instance = _provider.GetService(_slots[name]) as ISlot;
+            instance.Signal(input);
         }
 
         public IEnumerable<string> Slots => _slots.Keys;
@@ -58,11 +51,8 @@ namespace magic.signals.services
             if (!_slots.ContainsKey(name))
                 throw new ApplicationException($"No slot exists for [{name}]");
 
-            foreach (var idxType in _slots[name])
+            if (_provider.GetService(_slots[name]) is IMeta instance)
             {
-                if (!(_provider.GetService(idxType) is IMeta instance))
-                    continue;
-
                 foreach (var idxArg in instance.GetArguments())
                 {
                     yield return idxArg;
