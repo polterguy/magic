@@ -19,15 +19,14 @@ namespace magic.lambda.mysql.utilities
         {
             using (var cmd = new MySqlCommand(input.Get<string>(), connections.Peek()))
             {
-                input.Value = null;
                 foreach (var idxPar in input.Children)
                 {
                     cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
                 }
+                input.Value = null;
                 input.Clear();
                 functor(cmd);
             }
-            input.Value = null;
         }
     }
 }

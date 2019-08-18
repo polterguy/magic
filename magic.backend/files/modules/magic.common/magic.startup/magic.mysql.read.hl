@@ -101,7 +101,9 @@ slot:magic.mysql.read
       set-value:x:@.query
          concat
             get-value:x:@.query
+            .:"`"
             get-value:x:@.arguments/*/table
+            .:"`"
 
 
       /*
@@ -165,19 +167,14 @@ slot:magic.mysql.read
                set-value:x:@.query
                   concat
                      get-value:x:@.query
-                     .:" "
+                     .:" `"
                      get-name:x:@.dp/#
-                     .:" = @"
+                     .:"` = @"
                      get-value:x:@.idx
                set-name:x:+/+/*/*
                   concat
                      .:"@"
                      get-value:x:@.idx
-
-
-               /*
-                * Adding the argument to the [mysql.select] children collection.
-                */
                set-value:x:+/*/*
                   get-value:x:@.dp/#
                add:x:@.query

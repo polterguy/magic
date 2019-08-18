@@ -13,7 +13,7 @@ using magic.lambda.mssql.utilities;
 
 namespace magic.lambda.mssql
 {
-    [Slot(Name = "mysql.scalar")]
+    [Slot(Name = "mssql.scalar")]
     public class Scalar : ISlot, IMeta
     {
         readonly ut.Stack<SqlConnection> _connections;

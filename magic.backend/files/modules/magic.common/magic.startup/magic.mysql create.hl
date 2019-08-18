@@ -1,0 +1,199 @@
+﻿
+/*
+ * Creates the [magic.mysql.create] slot.
+ * Allows you to create items in a MySQL database table.
+ *
+ * This slot will guard against SQL injection by parametrizing your
+ * SQL command according to its given [values] argument collection.
+ *
+ * Arguments
+ *
+ * - [connection] - Which connection string to use
+ * - [table] - Which table to insert an item into
+ * - [values] - Collection of values that will map to the columns in your table.
+ */
+slot:magic.mysql.create
+
+
+   .arguments
+      connection:string
+      table:string
+      values
+
+
+   .lambda
+
+
+      /*
+       * Making sure we use [connection] argument.
+       */
+      set-value:x:./*/mysql.connect
+         get-value:x:@.arguments/*/connection
+
+
+      /*
+       * Building our insert SQL command, and storing it as we proceed in the
+       * [.query] node below.
+       *
+       * Notice, the SQL command will be parametrized by adding arguments to
+       * [mysql.insert] from children collection of [.query].
+       * First we start out by setting the table for our SQL command.
+       */
+      .query:"insert into "
+      set-value:x:@.query
+         concat
+            get-value:x:@.query
+            .:"`"
+            get-value:x:@.arguments/*/table
+            .:"`"
+            .:" ("
+
+
+      /*
+       * Looping through each [values] arguments to dynamically create our
+       * column declarations.
+       */
+      .idx:int:0
+      for-each:x:@.arguments/*/values/*
+
+
+         /*
+          * Checking if this is our first additional [query] argument, and
+          * if not, we append "," to the command before we append the
+          * currently iterated column name.
+          */
+         if
+            not
+               eq
+                  get-value:x:@.idx
+                  .:int:0
+            .lambda
+
+               set-value:x:@.query
+                  concat
+                     get-value:x:@.query
+                     .:", "
+
+
+         /*
+          * Appending actual column name to [.query].
+          */
+         set-value:x:@.query
+            concat
+               get-value:x:@.query
+               .:"`"
+               get-name:x:@.dp/#
+               .:"`"
+
+
+         /*
+          * Incrementing [.idx].
+          */
+         set-value:x:@.idx
+            +
+               get-value:x:@.idx
+               .:int:1
+
+
+      /*
+       * Adding actual values as parameters.
+       */
+      set-value:x:@.query
+         concat
+            get-value:x:@.query
+            .:") values ("
+
+
+      /*
+       * Looping through each [values] arguments to dynamically add our SQL
+       * parameters.
+       */
+      .idx:int:0
+      for-each:x:@.arguments/*/values/*
+
+
+         /*
+          * Checking if this is our first additional [query] argument, and
+          * if not, we append "," to the command before we append the
+          * currently iterated column name.
+          */
+         if
+            not
+               eq
+                  get-value:x:@.idx
+                  .:int:0
+            .lambda
+
+               set-value:x:@.query
+                  concat
+                     get-value:x:@.query
+                     .:", "
+
+
+         /*
+          * Adding the argument to the SQL command text.
+          */
+         set-value:x:@.query
+            concat
+               get-value:x:@.query
+               .:"@"
+               get-value:x:@.idx
+         set-name:x:+/+/*/*
+            concat
+               .:"@"
+               get-value:x:@.idx
+         set-value:x:+/*/*
+            get-value:x:@.dp/#
+         add:x:@.query
+            .
+               foo:bar
+
+
+         /*
+          * Incrementing [.idx].
+          */
+         set-value:x:@.idx
+            +
+               get-value:x:@.idx
+               .:int:1
+
+
+      /*
+       * Closing SQL, making sure we return the ID of the newly created
+       * record back to caller.
+       */
+      set-value:x:@.query
+         concat
+            get-value:x:@.query
+            .:");select last_insert_id();"
+
+
+      /*
+       * Connecting to specified [connection] database, and executing SQL
+       * command from [.query] that is now dynamically built, according to
+       * the specified arguments.
+       * Then we return the results of execution back to caller to return
+       * the ID of the item we just created.
+       */
+      mysql.connect
+
+
+         /*
+          * Adding parameters to SQL command.
+          */
+         add:x:+
+            get-nodes:x:@.query/*
+
+
+         /*
+          * Executing SQL command with parameters.
+          */
+         mysql.scalar:x:@.query
+
+
+         /*
+          * Returning the the ID of the newly created record back to caller.
+          */
+         unwrap:x:+/*
+         return-nodes
+            id:x:@mysql.scalar
