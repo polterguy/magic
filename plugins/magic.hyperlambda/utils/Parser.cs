@@ -71,7 +71,7 @@ namespace magic.hyperlambda.utils
                         previous = token;
                         break;
 
-                    case "\n":
+                    case "\r\n":
                         idxNode = null; // Making sure we create a new node on next iteration.
                         previous = token;
                         break;
@@ -108,7 +108,7 @@ namespace magic.hyperlambda.utils
                         }
                         else
                         {
-                            if (previous == "\n")
+                            if (previous == "\r\n")
                             {
                                 // Special case for no spaces, and previous was CR.
                                 currentParent = _root;
@@ -161,6 +161,8 @@ namespace magic.hyperlambda.utils
                     return Convert.ToByte(value, CultureInfo.InvariantCulture);
                 case "x":
                     return new Expression(value);
+                case "signal":
+                    return new Signal(value);
                 case "node":
                     return new Parser(value).Lambda();
                 default:

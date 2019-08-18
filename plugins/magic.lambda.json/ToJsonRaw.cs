@@ -12,8 +12,8 @@ using magic.signals.contracts;
 namespace magic.json
 {
     // TODO: Sanity check. Not entirely sure it actually works for all possible permutations.
-    [Slot(Name = "to-json")]
-    public class ToJson : ISlot, IMeta
+    [Slot(Name = ".to-json-raw")]
+    public class ToJsonRaw : ISlot, IMeta
     {
         public void Signal(Node input)
         {
@@ -22,7 +22,7 @@ namespace magic.json
 
             var token = Handle(input);
             input.Clear();
-            input.Value = token.ToString(Newtonsoft.Json.Formatting.None);
+            input.Value = token;
         }
 
         public IEnumerable<Node> GetArguments()

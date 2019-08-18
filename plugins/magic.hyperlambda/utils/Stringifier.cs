@@ -31,7 +31,7 @@ namespace magic.hyperlambda.utils
                     builder.Append("   ");
 
                 var name = idx.Name;
-                if (name.Contains("\n"))
+                if (name.Contains("\r\n"))
                     name = "@\"" + name.Replace("\"", "\"\"") + "\"";
                 else if (name.Contains("\"") || name.Contains(":"))
                     name = "\"" + name.Replace("\"", "\\\"") + "\"";
@@ -46,7 +46,7 @@ namespace magic.hyperlambda.utils
                     {
                         case "System.String":
                             value = idx.Get<string>();
-                            if (value.Contains("\n"))
+                            if (value.Contains("\r\n"))
                                 value = "@\"" + value.Replace("\"", "\"\"") + "\"";
                             else if (value.Contains("\"") || value.Contains(":"))
                                 value = "\"" + value.Replace("\"", "\\\"") + "\"";
@@ -111,13 +111,18 @@ namespace magic.hyperlambda.utils
                             type = "node";
                             value = "@\"" + GetHyper(idx.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
                             break;
+
+                        case "magic.hyperlambda.Signal":
+                            type = "signal";
+                            value = "@\"" + GetHyper(new Node[] { idx.Get<Signal>().Content.Clone() }).Replace("\"", "\"\"") + "\"";
+                            break;
                     }
                     builder.Append(":");
                     if (type != null)
                         builder.Append(type + ":");
                     builder.Append(value);
                 }
-                builder.Append("\n");
+                builder.Append("\r\n");
                 GetHyper(builder, idx.Children, level + 1);
             }
         }

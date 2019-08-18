@@ -1,0 +1,10 @@
+﻿
+
+/*
+ * Creates the [magic.mysql.read] slot.
+ */
+slot:magic.mysql.read
+   .lambda
+      mysql.connect:signal:@"config:""Databases:MySQLConnection"""
+         mysql.select:"select * from Items"
+         return-nodes:x:-/*

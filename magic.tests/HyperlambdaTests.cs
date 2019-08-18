@@ -147,10 +147,10 @@ namespace magic.tests
         [Fact]
         public void MultilineString()
         {
-            var result = new Parser("foo1:@\" howdy\nworld \"").Lambda().Children.ToList();
+            var result = new Parser("foo1:@\" howdy\r\nworld \"").Lambda().Children.ToList();
             Assert.Single(result);
             Assert.Equal("foo1", result.First().Name);
-            Assert.Equal(" howdy\nworld ", result.First().Value);
+            Assert.Equal(" howdy\r\nworld ", result.First().Value);
         }
 
         [Fact]
@@ -178,7 +178,7 @@ namespace magic.tests
             node.Add(new Node("foo"));
             node.Children.First().Add(new Node("bar"));
             signaler.Signal("hyper", node);
-            Assert.Equal("foo\n   bar\n", node.Value);
+            Assert.Equal("foo\r\n   bar\r\n", node.Value);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace magic.tests
       howdy:decimal:57
    barx
 jo:dude
-".Replace("\r\n", "\n");
+".Replace("\r", "").Replace("\n", "\r\n");
             var signaler = Common.GetSignaler();
             var node = new Node("", hl);
             signaler.Signal("lambda", node);
@@ -207,7 +207,7 @@ jo:dude
 XXX""
    barx
 jo:dude
-".Replace("\r\n", "\n");
+".Replace("\r", "").Replace("\n", "\r\n");
             var signaler = Common.GetSignaler();
             var node = new Node("", hl);
             signaler.Signal("lambda", node);
@@ -225,7 +225,7 @@ jo:dude
 XXX""
    barx
 jo:dude
-".Replace("\r\n", "\n");
+".Replace("\r", "").Replace("\n", "\r\n");
             var signaler = Common.GetSignaler();
             var node = new Node("", hl);
             signaler.Signal("lambda", node);
@@ -245,7 +245,7 @@ jo:dude
 XXX""
    barx
 jo:dude
-".Replace("\r\n", "\n");
+".Replace("\r", "").Replace("\n", "\r\n");
             var signaler = Common.GetSignaler();
             var node = new Node("", hl);
             signaler.Signal("lambda", node);

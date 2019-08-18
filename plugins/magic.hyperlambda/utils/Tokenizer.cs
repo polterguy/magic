@@ -87,7 +87,7 @@ namespace magic.hyperlambda.utils
                         var lf = (char)_reader.Read();
                         if (lf != '\n')
                             throw new ApplicationException("CR/LF error in Hyperlambda");
-                        yield return "\n";
+                        yield return "\r\n";
                         break;
 
                     case '\n':
@@ -97,7 +97,7 @@ namespace magic.hyperlambda.utils
                             builder.Clear();
                         }
                         _reader.Read(); // Discarding '\n'.
-                        yield return "\n";
+                        yield return "\r\n";
                         break;
 
                     case '/':

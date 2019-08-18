@@ -65,9 +65,12 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
-                var argsNode = new Node(".arguments");
-                argsNode.AddRange(arguments.Select((x) => new Node(x.Key, x.Value)));
-                lambda.Insert(0, argsNode);
+                if (arguments.Count > 0)
+                {
+                    var argsNode = new Node(".arguments");
+                    argsNode.AddRange(arguments.Select((x) => new Node(x.Key, x.Value)));
+                    lambda.Insert(0, argsNode);
+                }
 
                 _signaler.Signal("eval", lambda);
 
@@ -134,10 +137,10 @@ namespace magic.endpoint.services
                 {
                     var convert = new Node();
                     convert.AddRange(list.ToList());
-                    _signaler.Signal("to-json", convert);
-                    return convert.Get<string>();
+                    _signaler.Signal(".to-json-raw", convert);
+                    return convert.Value as JToken;
                 }
-                return lambda.Get<string>();
+                return JToken.Parse(lambda.Get<string>());
             }
             return null;
         }

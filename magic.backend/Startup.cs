@@ -70,6 +70,7 @@ namespace magic.backend
 
             // Giving every module a chance to configure its services.
             Configurator.ConfigureServices(services, Configuration);
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

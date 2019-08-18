@@ -27,13 +27,13 @@ namespace magic.node
                         break;
 
                     case '\n':
-                        builder.Append("\n");
+                        builder.Append("\r\n");
                         break;
 
                     case '\r':
                         if ((char)reader.Read() != '\n')
                             throw new Exception(string.Format("Unexpected CR found without any matching LF near '{0}'", builder));
-                        builder.Append("\n");
+                        builder.Append("\r\n");
                         break;
 
                     default:
