@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.lambda.mssql.utilities;
 
 namespace magic.lambda.mssql
 {
@@ -18,12 +19,12 @@ namespace magic.lambda.mssql
         readonly ConnectionStack _connections;
 
         public Connect(ISignaler signaler, ConnectionStack connections)
-		{
+        {
 			_signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
 
-		public void Signal(Node input)
+        public void Signal(Node input)
 		{
 			using (var connection = new SqlConnection(input.Get<string>()))
 			{

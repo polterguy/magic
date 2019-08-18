@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.lambda.mssql.utilities;
 
 namespace magic.lambda.mssql
 {

@@ -16,13 +16,6 @@ namespace magic.lambda.change
     [Slot(Name = "convert")]
     public class Convert : ISlot, IMeta
     {
-        readonly ISignaler _signaler;
-
-        public Convert(ISignaler signaler)
-        {
-            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
-        }
-
         public void Signal(Node input)
         {
             if (input.Children.Count() != 1 || !input.Children.Any((x) => x.Name == "type"))

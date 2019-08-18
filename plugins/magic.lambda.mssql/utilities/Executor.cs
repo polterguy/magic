@@ -4,27 +4,26 @@
  */
 
 using System;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 using magic.node;
 
-namespace magic.lambda.mysql
+namespace magic.lambda.mssql.utilities
 {
 	public static class Executor
     {
         public static void Execute(
             Node input,
             ConnectionStack connections,
-            Action<MySqlCommand> functor)
+            Action<SqlCommand> functor)
         {
             var connection = connections.GetTopConnection();
-            using (var cmd = new MySqlCommand(input.Get<string>(), connection))
+            using (var cmd = new SqlCommand(input.Get<string>(), connection))
             {
                 input.Value = null;
                 foreach (var idxPar in input.Children)
                 {
                     cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
                 }
-                input.Clear();
                 functor(cmd);
             }
             input.Value = null;
