@@ -75,5 +75,6 @@
 
   <ItemGroup>
     <Folder Include="lambda\" />
+    <Folder Include="init\" />
   </ItemGroup>
 </Project>
