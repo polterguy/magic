@@ -6,6 +6,7 @@
 using System;
 using MySql.Data.MySqlClient;
 using magic.node;
+using magic.lambda.utilities;
 
 namespace magic.lambda.mysql.utilities
 {
@@ -13,11 +14,10 @@ namespace magic.lambda.mysql.utilities
     {
         public static void Execute(
             Node input,
-            ConnectionStack connections,
+            Stack<MySqlConnection> connections,
             Action<MySqlCommand> functor)
         {
-            var connection = connections.GetTopConnection();
-            using (var cmd = new MySqlCommand(input.Get<string>(), connection))
+            using (var cmd = new MySqlCommand(input.Get<string>(), connections.Peek()))
             {
                 input.Value = null;
                 foreach (var idxPar in input.Children)

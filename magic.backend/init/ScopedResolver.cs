@@ -40,6 +40,7 @@ namespace magic.backend.init
 
             /*
              * Creating our T instance, and storing it in the HttpContext.
+             * 
              * Notice, we cannot use the _services to instantiate our T, since
              * that would result in a stack overflow, since the type of T is
              * supposed to be configured such that it is resolved using the

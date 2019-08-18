@@ -6,6 +6,7 @@
 using System;
 using System.Data.SqlClient;
 using magic.node;
+using magic.lambda.utilities;
 
 namespace magic.lambda.mssql.utilities
 {
@@ -13,11 +14,10 @@ namespace magic.lambda.mssql.utilities
     {
         public static void Execute(
             Node input,
-            ConnectionStack connections,
+            Stack<SqlConnection> connections,
             Action<SqlCommand> functor)
         {
-            var connection = connections.GetTopConnection();
-            using (var cmd = new SqlCommand(input.Get<string>(), connection))
+            using (var cmd = new SqlCommand(input.Get<string>(), connections.Peek()))
             {
                 input.Value = null;
                 foreach (var idxPar in input.Children)

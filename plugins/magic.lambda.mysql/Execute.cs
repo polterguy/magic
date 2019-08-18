@@ -5,8 +5,10 @@
 
 using System;
 using System.Collections.Generic;
+using MySql.Data.MySqlClient;
 using magic.node;
 using magic.signals.contracts;
+using ut = magic.lambda.utilities;
 using magic.lambda.mysql.utilities;
 
 namespace magic.lambda.mysql
@@ -14,9 +16,9 @@ namespace magic.lambda.mysql
     [Slot(Name = "mysql.execute")]
     public class Execute : ISlot, IMeta
     {
-        readonly ConnectionStack _connections;
+        readonly ut.Stack<MySqlConnection> _connections;
 
-        public Execute(ConnectionStack connections)
+        public Execute(ut.Stack<MySqlConnection> connections)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }

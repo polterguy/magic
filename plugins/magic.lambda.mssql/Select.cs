@@ -5,8 +5,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using magic.node;
 using magic.signals.contracts;
+using ut = magic.lambda.utilities;
 using magic.lambda.mssql.utilities;
 
 namespace magic.lambda.mssql
@@ -14,9 +16,9 @@ namespace magic.lambda.mssql
     [Slot(Name = "mssql.select")]
     public class Select : ISlot, IMeta
     {
-        readonly ConnectionStack _connections;
+        readonly ut.Stack<SqlConnection> _connections;
 
-        public Select(ConnectionStack connections)
+        public Select(ut.Stack<SqlConnection> connections)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
