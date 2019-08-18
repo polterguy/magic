@@ -1,11 +1,21 @@
 ﻿
-
 /*
  * Creates the [magic.mysql.read] slot.
  * Allows you to read items from a MySQL table dynamically.
  *
  * This slot will guard against SQL injection by parametrizing your
  * SQL command according to its given [query] argument collection.
+ *
+ * Arguments
+ *
+ * - [connection] - Which connection string to use
+ * - [table] - Which table to select items from
+ * - [query] - Collection of criteria that will be "and"'ed together
+ *
+ * Notice, [query]/[limit] and [query][offset] are respectively considered to
+ * be the "limit" of records, and the "offset"of where to start selecting
+ * items from within the table's records. [limit] defaults to 10, and [offset]
+ * defaults to 0.
  */
 slot:magic.mysql.read
 
