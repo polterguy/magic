@@ -97,7 +97,8 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
-                var argsNode = new Node(".arguments", arguments.ToString(Formatting.None));
+                var argsNode = new Node(".arguments", arguments);
+                _signaler.Signal(".from-json-raw", argsNode);
                 lambda.Insert(0, argsNode);
 
                 _signaler.Signal("eval", lambda);

@@ -1,0 +1,26 @@
+﻿
+/*
+ * Creates a new TODO item.
+ */
+
+
+/*
+ * Parametrizing invocation to [magic.mysql.create].
+ */
+add:x:./*/signal/*/values
+   get-nodes:x:@.arguments/*
+
+
+/*
+ * Invoking [magic.mysql.create].
+ */
+signal:magic.mysql.create
+   connection:signal:@"config:""Databases:MySQLConnection"""
+   table:Items
+   values
+
+
+/*
+ * Returning results to caller.
+ */
+return-nodes:x:@signal/*
