@@ -8,6 +8,7 @@
     <Folder Include="utilities\" />
     <Folder Include="logical\" />
     <Folder Include="loops\" />
+    <Folder Include="strings\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />

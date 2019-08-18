@@ -2,10 +2,31 @@
 /*
  * List all TODO items from your MySQL database
  */
-add:x:+/*/.arguments/*/query
+if
+   mt
+      get-count:x:@.arguments/*/limit
+      .:int:0
+   .lambda
+      set-value:x:../*/signal/*/limit
+         get-value:x:@.arguments/*/limit
+      remove-node:x:@.arguments/*/limit
+
+if
+   mt
+      get-count:x:@.arguments/*/offset
+      .:int:0
+   .lambda
+      set-value:x:../*/signal/*/offset
+         get-value:x:@.arguments/*/offset
+      remove-node:x:@.arguments/*/offset
+
+add:x:./*/signal/*/query
+   get-nodes:x:@.arguments/*
+
 signal:magic.mysql.read
-   .arguments
-      database:Todo
-      table:Items
-      query
+   connection:signal:@"config:""Databases:MySQLConnection"""
+   table:Items
+   query
+   limit:int:10
+   offset:int:0
 return-nodes:x:-/*

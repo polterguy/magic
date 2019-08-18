@@ -9,36 +9,31 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.change
+namespace magic.lambda.strings
 {
-    [Slot(Name = "set-value")]
-    public class SetValue : ISlot, IMeta
+    [Slot(Name = "concat")]
+    public class Concat : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
-        public SetValue(ISignaler signaler)
+        public Concat(ISignaler signaler)
         {
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)
         {
-            if (input.Children.Count() > 1)
-                throw new ApplicationException("[set-value] can have maximum one child node");
+            if (!input.Children.Any())
+                throw new ApplicationException("No arguments provided to [concat]");
 
             _signaler.Signal("eval", input);
 
-            var source = input.Children.FirstOrDefault()?.Get();
-            foreach (var idx in input.Evaluate())
-            {
-                idx.Value = source;
-            }
+            input.Value = string.Join("", input.Children.Select((x) => x.Get<string>()));
         }
 
         public IEnumerable<Node> GetArguments()
         {
-            yield return new Node(":", "x");
-            yield return new Node("*", 1);
+            yield return new Node(":", "*");
         }
     }
 }
