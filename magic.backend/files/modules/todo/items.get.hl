@@ -1,6 +1,7 @@
 ﻿
 /*
  * List all TODO items from your MySQL database.
+ *
  * Pass in any arguments you wish. [limit] and [offset] are treated
  * as SQL "limit" and "offset" accordingly. All other arguments are considered
  * a part of the "where" criteria, that are "and"'ed together to create
@@ -16,8 +17,7 @@
 
 
 /*
- * Parametrizing invocation to [magic.mysql.read] with the rest of
- * the arguments.
+ * Parametrizing invocation to [magic.mysql.read].
  */
 add:x:./*/signal/*/query
    get-nodes:x:@.arguments/*
@@ -30,6 +30,10 @@ signal:magic.mysql.read
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:Items
    query
+   columns
+      Id
+      Subject
+      Done
 
 
 /*
