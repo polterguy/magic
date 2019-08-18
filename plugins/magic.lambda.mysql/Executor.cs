@@ -24,6 +24,7 @@ namespace magic.lambda.mysql
                 {
                     cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
                 }
+                input.Clear();
                 functor(cmd);
             }
             input.Value = null;
