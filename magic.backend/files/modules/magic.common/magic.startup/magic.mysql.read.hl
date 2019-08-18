@@ -12,9 +12,10 @@
  * - [table] - Which table to select items from.
  * - [query] - Collection of criteria that will be "and"'ed together.
  * - [order] - Optional column to order items by.
+ * - [column] - Optional list of columns you want to retrieve, defaults to "*".
  *
  * Notice, [query]/[limit] and [query][offset] are respectively considered to
- * be the "limit" of records, and the "offset"of where to start selecting
+ * be the "limit" of records, and the "offset" of where to start selecting
  * items from within the table's records. [limit] defaults to 10, and [offset]
  * defaults to 0.
  *
@@ -33,6 +34,7 @@ slot:magic.mysql.read
          offset:int
          order:string
          direction:string
+      columns
 
 
    .lambda
@@ -114,9 +116,45 @@ slot:magic.mysql.read
        * below.
        * Notice, the SQL command will be parametrized by adding arguments to [mysql.select]
        * from children collection of [.query].
-       * First we start out by setting the table for our SQL command.
+       * First we start out by setting the columns for our SQL command
+       * according to [columns], or if not specified we use "*".
        */
-      .query:"select * from "
+      .columns
+      if
+         mt
+            get-count:x:@.arguments/*/columns/*
+            .:int:0
+         .lambda
+            set-value:x:@.columns
+               .:""
+            for-each:x:@.arguments/*/columns/*
+               if
+                  not
+                     eq
+                        .:""
+                        get-value:x:@.columns
+                  .lambda
+                     set-value:x:@.columns
+                        concat
+                           get-value:x:@.columns
+                           :","
+               set-value:x:@.columns
+                  concat
+                     get-value:x:@.columns
+                     .:"`"
+                     get-name:x:@.dp/#
+                     .:"`"
+
+      else
+         set-value:x:@.columns
+            .:"*"
+
+      .query
+      set-value:x:@.query
+         concat
+            .:"select "
+            get-value:x:@.columns
+            .:" from "
       set-value:x:@.query
          concat
             get-value:x:@.query
