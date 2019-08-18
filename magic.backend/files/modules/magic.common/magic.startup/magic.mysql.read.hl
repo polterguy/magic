@@ -2,19 +2,36 @@
 
 /*
  * Creates the [magic.mysql.read] slot.
+ * Allows you to read items from a MySQL table dynamically.
+ *
+ * This slot will guard against SQL injection by parametrizing your
+ * SQL command according to its given [query] argument collection.
  */
 slot:magic.mysql.read
+
+
    .arguments
       connection:string
       table:string
       query
          limit:int
          offset:int
+
+
    .lambda
 
+
+      /*
+       * Provides pagination information.
+       * Will be replaced by given arguments from caller, if specified.
+       */
       .limit:int:10
       .offset:int:0
 
+
+      /*
+       * Checking if the caller provided a [limit] argument.
+       */
       if
          mt
             get-count:x:@.arguments/*/query/*/limit
@@ -25,6 +42,18 @@ slot:magic.mysql.read
                get-value:x:@.arguments/*/query/*/limit
             remove-node:x:@.arguments/*/query/*/limit
 
+            /*
+             * [convert] will throw an exception if some funny SQL injection 
+             * is attempted
+             */
+            set-value:x:@.limit
+               convert:x:@.limit
+                  type:int
+
+
+      /*
+       * Checking if the caller provided an [offset] argument.
+       */
       if
          mt
             get-count:x:@.arguments/*/query/*/offset
@@ -35,29 +64,78 @@ slot:magic.mysql.read
                get-value:x:@.arguments/*/query/*/offset
             remove-node:x:@.arguments/*/query/*/offset
 
+            /*
+             * [convert] will throw an exception if some funny SQL injection 
+             * is attempted
+             */
+            set-value:x:@.offset
+               convert:x:@.offset
+                  type:int
 
+
+      /*
+       * Making sure we use [connection] argument.
+       */
       set-value:x:./*/mysql.connect
          get-value:x:@.arguments/*/connection
 
+
+      /*
+       * Building our query, and storing it as we proceed in the [.query] node
+       * below.
+       * Notice, the SQL command will be parametrized by adding arguments to [mysql.select]
+       * from children collection of [.query].
+       * First we start out by setting the table for our SQL command.
+       */
       .query:"select * from "
       set-value:x:@.query
          concat
             get-value:x:@.query
             get-value:x:@.arguments/*/table
 
+
+      /*
+       * Checking if caller provided any [query] arguments besides [limit]
+       * and [offset].
+       */
       if
          mt
             get-count:x:@.arguments/*/query/*
             .:int:0
          .lambda
 
+
+            /*
+             * [query] filtering arguments were provided by caller.
+             * Adding a "where" clause to our SQL command text.
+             */
             set-value:x:@.query
                concat
                   get-value:x:@.query
                   .query:" where":
+
+
+            /* Used to keep track of the index number of parameter we
+             * are currently looping through.
+             * This is necessary to make sure we're able to append "and"
+             * correctly to our SQL command text, and to name parameters
+             * to SQL command.
+             */
             .idx:int:0
 
+
+            /*
+             * Looping through each remaining [query] arguments besides [limit]
+             * and [offset] and parametrizing our SQL command accordingly.
+             */
             for-each:x:@.arguments/*/query/*
+
+
+               /*
+                * Checking if this is our first additional [query] argument, and
+                * if not, we append "and" to the command before we append the
+                * currently iterated filter criteria.
+                */
                if
                   not
                      eq
@@ -70,6 +148,10 @@ slot:magic.mysql.read
                            get-value:x:@.query
                            .:" and"
 
+
+               /*
+                * Adding the argument to the SQL command text.
+                */
                set-value:x:@.query
                   concat
                      get-value:x:@.query
@@ -77,12 +159,15 @@ slot:magic.mysql.read
                      get-name:x:@.dp/#
                      .:" = @"
                      get-value:x:@.idx
-
                set-name:x:+/+/*/*
                   concat
                      .:"@"
                      get-value:x:@.idx
 
+
+               /*
+                * Adding the argument to the [mysql.select] children collection.
+                */
                set-value:x:+/*/*
                   get-value:x:@.dp/#
                add:x:@.query
@@ -93,20 +178,69 @@ slot:magic.mysql.read
                      get-value:x:@.idx
                      .:int:1
 
+
+      /*
+       * Making sure we append the [.limit].
+       */
       set-value:x:@.query
          concat
             get-value:x:@.query
             .:" limit "
             get-value:x:@.limit
 
+
+
+      /*
+       * Making sure we append the [.offset].
+       */
       set-value:x:@.query
          concat
             get-value:x:@.query
             .:" offset "
             get-value:x:@.offset
 
+
+      /*
+       * Connecting to specified [connection] database, and executing SQL
+       * command from [.query] that is now dynamically built, according to
+       * the specified arguments.
+       * Then we return the results of execution back to caller as a lambda
+       * collection.
+       */
       mysql.connect
+
+
+         /*
+          * Adding parameters to SQL command.
+          */
          add:x:+
             get-nodes:x:@.query/*
+
+
+         /*
+          * Executing SQL command with parameters.
+          */
          mysql.select:x:@.query
-         return-nodes:x:-/*
+
+
+         /*
+          * Checking if caller provided a [limit] that was "1", and if so,
+          * we only return a single object.
+          */
+         if
+            eq
+               .:int:1
+               get-value:x:@.limit
+            .lambda
+
+
+               /*
+                * Caller requested a single object.
+                */
+               return-nodes:x:@mysql.select/*/*
+
+
+         /*
+          * Caller did not request a single object, hence we return an array.
+          */
+         return-nodes:x:@mysql.select/*
