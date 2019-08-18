@@ -10,6 +10,6 @@ namespace magic.common.contracts
      */
     public interface IScopedResolver
     {
-        T GetScopedInstance<T>() where T : new();
+        T GetScopedInstance<T>() where T : class, new();
     }
 }

@@ -25,7 +25,7 @@ namespace magic.backend.init
 
         #region [ -- Interface implementations -- ]
 
-        public T GetScopedInstance<T>() where T : new()
+        public T GetScopedInstance<T>() where T : class, new()
         {
             // Getting HttpContext.
             var key = typeof(T).FullName;

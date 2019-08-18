@@ -6,24 +6,32 @@
 using System;
 using System.Collections.Generic;
 using magic.common.contracts;
+using magic.lambda.utilities;
 
 namespace magic.console.init
 {
     public class ScopedResolver : IScopedResolver
     {
-        readonly Dictionary<Type, object> _items = new Dictionary<Type, object>();
+        readonly Synchronizer<Dictionary<Type, object>> _items = new Synchronizer<Dictionary<Type, object>>(new Dictionary<Type, object>());
 
         #region [ -- Interface implementations -- ]
 
-        // TODO: Implement thread safety.
-        // Use e.g. Synchronizer or something.
-        public T GetScopedInstance<T>() where T : new()
+        public T GetScopedInstance<T>() where T : class, new()
         {
-            if (_items.ContainsKey(typeof(T)))
-                return (T)_items[typeof(T)];
+            // Checking if we have already created an instance of type.
+            var item = _items.Read((dict) =>
+            {
+                if (dict.TryGetValue(typeof(T), out object i))
+                    return (T)i;
+                return default;
+            });
 
-            var item = new T();
-            _items[typeof(T)] = item;
+            if (item != null)
+                return item;
+
+            // Creating a new instance and storing it in dictionary.
+            item = new T();
+            _items.Write((dict) => dict[typeof(T)] = item);
             return item;
         }
 
