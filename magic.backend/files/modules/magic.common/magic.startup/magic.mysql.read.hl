@@ -5,29 +5,58 @@
  */
 slot:magic.mysql.read
    .arguments
-      connection:*
-      table:*
-      query:*
-      limit:*
-      offset:*
+      connection:string
+      table:string
+      query
+         limit:int
+         offset:int
    .lambda
+
+      .limit:int:10
+      .offset:int:0
+
+      if
+         mt
+            get-count:x:@.arguments/*/query/*/limit
+            .:int:0
+
+         .lambda
+            set-value:x:@.limit
+               get-value:x:@.arguments/*/query/*/limit
+            remove-node:x:@.arguments/*/query/*/limit
+
+      if
+         mt
+            get-count:x:@.arguments/*/query/*/offset
+            .:int:0
+
+         .lambda
+            set-value:x:@.offset
+               get-value:x:@.arguments/*/query/*/offset
+            remove-node:x:@.arguments/*/query/*/offset
+
+
       set-value:x:./*/mysql.connect
          get-value:x:@.arguments/*/connection
+
       .query:"select * from "
       set-value:x:@.query
          concat
             get-value:x:@.query
             get-value:x:@.arguments/*/table
+
       if
          mt
             get-count:x:@.arguments/*/query/*
             .:int:0
          .lambda
+
             set-value:x:@.query
                concat
                   get-value:x:@.query
                   .query:" where":
             .idx:int:0
+
             for-each:x:@.arguments/*/query/*
                if
                   not
@@ -35,10 +64,12 @@ slot:magic.mysql.read
                         get-value:x:@.idx
                         .:int:0
                   .lambda
+
                      set-value:x:@.query
                         concat
                            get-value:x:@.query
                            .:" and"
+
                set-value:x:@.query
                   concat
                      get-value:x:@.query
@@ -46,10 +77,12 @@ slot:magic.mysql.read
                      get-name:x:@.dp/#
                      .:" = @"
                      get-value:x:@.idx
+
                set-name:x:+/+/*/*
                   concat
                      .:"@"
                      get-value:x:@.idx
+
                set-value:x:+/*/*
                   get-value:x:@.dp/#
                add:x:@.query
@@ -60,27 +93,17 @@ slot:magic.mysql.read
                      get-value:x:@.idx
                      .:int:1
 
-      if
-         mt
-            get-count:x:@.arguments/*/limit
-            .:int:0
-         .lambda
-            set-value:x:@.query
-               concat
-                  get-value:x:@.query
-                  .:" limit "
-                  get-value:x:@.arguments/*/limit
+      set-value:x:@.query
+         concat
+            get-value:x:@.query
+            .:" limit "
+            get-value:x:@.limit
 
-      if
-         mt
-            get-count:x:@.arguments/*/offset
-            .:int:0
-         .lambda
-            set-value:x:@.query
-               concat
-                  get-value:x:@.query
-                  .:" offset "
-                  get-value:x:@.arguments/*/offset
+      set-value:x:@.query
+         concat
+            get-value:x:@.query
+            .:" offset "
+            get-value:x:@.offset
 
       mysql.connect
          add:x:+
