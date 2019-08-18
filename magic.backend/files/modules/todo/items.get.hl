@@ -8,11 +8,16 @@
  *
  * If [limit] is 1, only one object will be returned - Otherwise an array of
  * objects will be returned, even if the array only contains a single object.
+ *
+ * Optionally you can supply also [order] which is the name of a column you
+ * want to order your results by, in addition to optionally also [direction]
+ * being "desc" if you wish to sort descending instead of (default) ascending.
  */
 
 
 /*
- * Parametrizing invocation to [magic.mysql.read].
+ * Parametrizing invocation to [magic.mysql.read] with the rest of
+ * the arguments.
  */
 add:x:./*/signal/*/query
    get-nodes:x:@.arguments/*
