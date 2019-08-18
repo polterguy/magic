@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.common.contracts;
 
-namespace magic.backend.init
+namespace magic.console.init
 {
     public class ConfigureServices : IConfigureServices
     {
