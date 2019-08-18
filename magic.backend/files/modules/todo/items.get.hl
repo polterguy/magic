@@ -1,6 +1,12 @@
 ﻿
 /*
- * List all TODO items from your MySQL database
+ * List all TODO items from your MySQL database.
+ * Pass in any arguments you wish. [limit] and [offset] are treated
+ * as SQL "limit" and "offset" accordingly. All other arguments as considered
+ * where criteria, that are "and"'ed together to create the "where" clause.
+ *
+ * If [limit] is 1, only one object will be returned - Otherwise an array of
+ * objects will be returned.
  */
 add:x:./*/signal/*/query
    get-nodes:x:@.arguments/*
