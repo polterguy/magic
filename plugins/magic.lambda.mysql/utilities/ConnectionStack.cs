@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using magic.lambda.utilities;
 
-namespace magic.lambda.mysql
+namespace magic.lambda.mysql.utilities
 {
 	public class ConnectionStack
 	{

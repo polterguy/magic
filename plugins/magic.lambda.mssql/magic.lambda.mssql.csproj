@@ -15,4 +15,7 @@
     <ProjectReference Include="..\magic.lambda\magic.lambda.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="utilities\" />
+  </ItemGroup>
 </Project>

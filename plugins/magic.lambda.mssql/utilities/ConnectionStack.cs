@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using magic.lambda.utilities;
 
-namespace magic.lambda.mssql
+namespace magic.lambda.mssql.utilities
 {
 	public class ConnectionStack
 	{

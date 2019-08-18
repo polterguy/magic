@@ -5,16 +5,20 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using magic.backend.init;
 using magic.common.contracts;
-using magic.lambda.mssql.utilities;
 
-namespace magic.lambda.mssql.init
+namespace magic.http.services.init
 {
     public class ConfigureServices : IConfigureServices
     {
+        #region [ -- Interface implementations -- ]
+
         public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient((svc) => svc.GetService<IScopedResolver>().GetScopedInstance<ConnectionStack>());
+            services.AddSingleton<IScopedResolver, ScopedResolver>();
         }
+
+        #endregion
     }
 }
