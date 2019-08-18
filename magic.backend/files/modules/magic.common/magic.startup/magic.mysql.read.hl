@@ -8,14 +8,19 @@
  *
  * Arguments
  *
- * - [connection] - Which connection string to use
- * - [table] - Which table to select items from
- * - [query] - Collection of criteria that will be "and"'ed together
+ * - [connection] - Which connection string to use.
+ * - [table] - Which table to select items from.
+ * - [query] - Collection of criteria that will be "and"'ed together.
+ * - [order] - Optional column to order items by.
  *
  * Notice, [query]/[limit] and [query][offset] are respectively considered to
  * be the "limit" of records, and the "offset"of where to start selecting
  * items from within the table's records. [limit] defaults to 10, and [offset]
  * defaults to 0.
+ *
+ * If any of your [query] values contains a "%", the comparison used will be
+ * a "like" comparison, otherwise it will be an "=" comparison in the
+ * resulting SQL.
  */
 slot:magic.mysql.read
 
@@ -26,6 +31,8 @@ slot:magic.mysql.read
       query
          limit:int
          offset:int
+         order:string
+         direction:string
 
 
    .lambda
@@ -37,6 +44,18 @@ slot:magic.mysql.read
        */
       .limit:int:10
       .offset:int:0
+
+
+      /*
+       * Removing [order] and [direction] out of main [query] collection to
+       * simplify logic further down.
+       */
+      add:x:@.arguments
+         get-nodes:x:@.arguments/*/query/*/order
+      remove-node:x:@.arguments/*/query/*/order
+      add:x:@.arguments
+         get-nodes:x:@.arguments/*/query/*/direction
+      remove-node:x:@.arguments/*/query/*/direction
 
 
       /*
@@ -162,14 +181,26 @@ slot:magic.mysql.read
 
 
                /*
-                * Adding the argument to the SQL command text.
+                * Adding the argument to the SQL command text, checking if we
+                * should do a like comparison or an equal comparison first.
                 */
+               .operator:"="
+               if
+                  contains:x:@.dp/#
+                     .:"%"
+                  .lambda
+
+                     set-value:x:@.operator
+                        .:like
+
                set-value:x:@.query
                   concat
                      get-value:x:@.query
                      .:" `"
                      get-name:x:@.dp/#
-                     .:"` = @"
+                     .:"` "
+                     get-value:x:@.operator
+                     .:" @"
                      get-value:x:@.idx
                set-name:x:+/+/*/*
                   concat
@@ -184,6 +215,38 @@ slot:magic.mysql.read
                   +
                      get-value:x:@.idx
                      .:int:1
+
+
+      /*
+       * Making sure we append the [order].
+       */
+      if
+         mt
+            get-count:x:@.arguments/*/order
+            :int:0
+         .lambda
+
+            set-value:x:@.query
+               concat
+                  get-value:x:@.query
+                  .:" order by `"
+                  get-value:x:@.arguments/*/order
+                  .:"` "
+
+
+            /*
+             * Checking if we should order descendingly.
+             */
+            if
+               eq
+                  get-value:x:@.arguments/*/direction
+                  .:desc
+               .lambda
+
+                  set-value:x:@.query
+                     concat
+                        get-value:x:@.query
+                        .:" desc"
 
 
       /*
