@@ -5,8 +5,9 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data.SqlClient;
 using magic.common.contracts;
-using magic.lambda.mssql.utilities;
+using magic.lambda.utilities;
 
 namespace magic.lambda.mssql.init
 {
@@ -14,7 +15,7 @@ namespace magic.lambda.mssql.init
     {
         public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient((svc) => svc.GetService<IScopedResolver>().GetScopedInstance<ConnectionStack>());
+            services.AddTransient((svc) => svc.GetService<IScopedResolver>().GetScopedInstance<Stack<SqlConnection>>());
         }
     }
 }

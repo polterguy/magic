@@ -5,8 +5,9 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MySql.Data.MySqlClient;
+using magic.lambda.utilities;
 using magic.common.contracts;
-using magic.lambda.mysql.utilities;
 
 namespace magic.lambda.mysql.init
 {
@@ -14,7 +15,7 @@ namespace magic.lambda.mysql.init
     {
         public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient((svc) => svc.GetService<IScopedResolver>().GetScopedInstance<ConnectionStack>());
+            services.AddTransient((svc) => svc.GetService<IScopedResolver>().GetScopedInstance<Stack<MySqlConnection>>());
         }
     }
 }
