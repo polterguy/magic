@@ -2,8 +2,8 @@
 /*
  * Creates the [magic.mysql.delete] slot.
  *
- * Assumes one column with one value, which it will use as its criteria
- * parameter when deleting your item from your database.
+ * Assumes one column with one value in [query], which it will use as
+ * its criteria parameter when deleting your item from your database.
  */
 slot:magic.mysql.delete
 
