@@ -12,7 +12,7 @@ using magic.signals.contracts;
 using ut = magic.lambda.utilities;
 using magic.lambda.mysql.utilities;
 
-namespace magic.lambda.mysql
+namespace magic.lambda.mysql.crud
 {
     [Slot(Name = "mysql.delete")]
     public class Delete : ISlot, IMeta
