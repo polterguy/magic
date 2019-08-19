@@ -17,15 +17,16 @@ namespace magic.lambda.mysql
     public class Scalar : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
+        readonly ISignaler _signaler;
 
-        public Scalar(ut.Stack<MySqlConnection> connections)
+        public Scalar(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
 
         public void Signal(Node input)
         {
-            Executor.Execute(input, _connections, (cmd) =>
+            Executor.Execute(input, _connections, _signaler, (cmd) =>
             {
                 input.Value = cmd.ExecuteScalar();
             });

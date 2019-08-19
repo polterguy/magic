@@ -9,13 +9,20 @@ using System.Collections.Generic;
 using magic.node;
 using magic.lambda.utilities;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.slots
 {
     [Slot(Name = "slot")]
     public class Slot : ISlot, IMeta
     {
+        readonly ISignaler _signaler;
         readonly static Synchronizer<Dictionary<string, Node>> _slots = new Synchronizer<Dictionary<string, Node>>(new Dictionary<string, Node>());
+
+        public Slot(ISignaler signaler)
+        {
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+        }
 
         public static Node GetSlot(string name)
         {
@@ -32,7 +39,7 @@ namespace magic.lambda.slots
 
             var slotNode = new Node();
             slotNode.AddRange(input.Children.Select((x) => x.Clone()));
-            _slots.Write((slots) => slots[input.Get<string>()] = slotNode);
+            _slots.Write((slots) => slots[input.GetEx<string>(_signaler)] = slotNode);
         }
 
         public IEnumerable<Node> GetArguments()

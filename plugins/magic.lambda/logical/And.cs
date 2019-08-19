@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.logical
 {
@@ -30,7 +31,7 @@ namespace magic.lambda.logical
 
             foreach (var idx in input.Children)
             {
-                if (!idx.Get<bool>())
+                if (!idx.GetEx<bool>(_signaler))
                 {
                     input.Value = false;
                     return;

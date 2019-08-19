@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.loops
 {
@@ -35,7 +36,7 @@ namespace magic.lambda.loops
                 _signaler.Signal("eval", input);
 
                 // Verifying we're supposed to proceed into body of [while].
-                if (!input.Children.First().Get<bool>())
+                if (!input.Children.First().GetEx<bool>(_signaler))
                     break;
 
                 // Retrieving [.lambda] node and doing basic sanity check.

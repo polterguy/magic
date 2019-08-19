@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.strings
 {
@@ -28,7 +29,7 @@ namespace magic.lambda.strings
 
             _signaler.Signal("eval", input);
 
-            input.Value = input.Get<string>().Contains(input.Children.First().Get<string>());
+            input.Value = input.GetEx<string>(_signaler).Contains(input.Children.First().GetEx<string>(_signaler));
         }
 
         public IEnumerable<Node> GetArguments()

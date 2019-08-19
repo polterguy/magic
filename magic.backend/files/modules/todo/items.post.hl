@@ -6,7 +6,6 @@
 
 add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
-unwrap:x:+/*/connection
 signal:magic.db.create
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items

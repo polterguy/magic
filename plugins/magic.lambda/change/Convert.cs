@@ -16,6 +16,13 @@ namespace magic.lambda.change
     [Slot(Name = "convert")]
     public class Convert : ISlot, IMeta
     {
+        readonly ISignaler _signaler;
+
+        public Convert(ISignaler signaler)
+        {
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+        }
+
         public void Signal(Node input)
         {
             if (input.Children.Count() != 1 || !input.Children.Any((x) => x.Name == "type"))
@@ -23,7 +30,7 @@ namespace magic.lambda.change
 
             var type = input.Children.First().Get<string>();
 
-            var value = input.Get();
+            var value = input.GetEx(_signaler);
             if (value == null)
                 throw new ApplicationException($"Cannot convert null to '{type}'");
 

@@ -8,6 +8,8 @@ using System.Linq;
 using MySql.Data.MySqlClient;
 using magic.node;
 using magic.lambda.utilities;
+using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.mysql.utilities
 {
@@ -16,9 +18,10 @@ namespace magic.lambda.mysql.utilities
         public static void Execute(
             Node input,
             Stack<MySqlConnection> connections,
+            ISignaler signaler,
             Action<MySqlCommand> functor)
         {
-            using (var cmd = new MySqlCommand(input.Get<string>(), connections.Peek()))
+            using (var cmd = new MySqlCommand(input.GetEx<string>(signaler), connections.Peek()))
             {
                 foreach (var idxPar in input.Children)
                 {
@@ -30,7 +33,7 @@ namespace magic.lambda.mysql.utilities
             }
         }
 
-        public static Node CreateSelect(Node root)
+        public static Node CreateSelect(Node root, ISignaler signaler)
         {
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
@@ -53,7 +56,7 @@ namespace magic.lambda.mysql.utilities
                 sql += "*";
             }
 
-            sql += " from " + "`" + root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``") + "`";
+            sql += " from " + "`" + root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``") + "`";
 
             var where = root.Children.FirstOrDefault((x) => x.Name == "where");
             if (where != null && where.Children.Any())
@@ -61,19 +64,19 @@ namespace magic.lambda.mysql.utilities
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
-                sql += " where " + CreateWhereSql(where, result);
+                sql += " where " + CreateWhereSql(where, result, signaler);
             }
 
             var order = root.Children.FirstOrDefault((x) => x.Name == "order");
             if (order != null)
             {
-                sql += " order by `" + order.Get<string>().Replace("`", "``") + "`";
+                sql += " order by `" + order.GetEx<string>(signaler).Replace("`", "``") + "`";
                 if (order.Children.Count() > 1)
                     throw new ArgumentException("Wrong number of arguments given to [order]");
                 var direction = order.Children.FirstOrDefault((x) => x.Name == "direction");
                 if (direction != null)
                 {
-                    var dir = direction.Get<string>();
+                    var dir = direction.GetEx<string>(signaler);
                     if (dir != "asc" && dir != "desc")
                         throw new ArgumentException($"I don't know how to sort '{dir}' [direction]");
                     sql += " " + dir;
@@ -82,24 +85,24 @@ namespace magic.lambda.mysql.utilities
 
             var limit = root.Children.FirstOrDefault((x) => x.Name == "limit");
             if (limit != null)
-                sql += " limit " + limit.Get<long>();
+                sql += " limit " + limit.GetEx<long>(signaler);
 
             var offset = root.Children.FirstOrDefault((x) => x.Name == "offset");
             if (offset != null)
-                sql += " offset " + offset.Get<long>();
+                sql += " offset " + offset.GetEx<long>(signaler);
 
             result.Value = sql;
             return result;
         }
 
-        public static Node CreateInsert(Node root)
+        public static Node CreateInsert(Node root, ISignaler signaler)
         {
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
             var sql =
                 "insert into " +
                 "`" +
-                root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``")
+                root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``")
                 + "`";
             sql += " (";
             var first = true;
@@ -118,7 +121,7 @@ namespace magic.lambda.mysql.utilities
                 if (idxNo > 0)
                     sql += ", ";
                 sql += "@" + idxNo;
-                result.Add(new Node("@" + idxNo, idx.Get()));
+                result.Add(new Node("@" + idxNo, idx.GetEx(signaler)));
                 ++idxNo;
             }
             sql += "); select last_insert_id();";
@@ -127,14 +130,14 @@ namespace magic.lambda.mysql.utilities
             return result;
         }
 
-        public static Node CreateDelete(Node root)
+        public static Node CreateDelete(Node root, ISignaler signaler)
         {
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
             var sql = 
                 "delete from " + 
                 "`" + 
-                root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``") 
+                root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``") 
                 + "`";
 
             var where = root.Children.FirstOrDefault((x) => x.Name == "where");
@@ -143,21 +146,21 @@ namespace magic.lambda.mysql.utilities
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
-                sql += " where " + CreateWhereSql(where, result);
+                sql += " where " + CreateWhereSql(where, result, signaler);
             }
 
             result.Value = sql;
             return result;
         }
 
-        public static Node CreateUpdate(Node root)
+        public static Node CreateUpdate(Node root, ISignaler signaler)
         {
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
             var sql =
                 "update " +
                 "`" +
-                root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``")
+                root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``")
                 + "` set ";
 
             var idxNo = 0;
@@ -167,7 +170,7 @@ namespace magic.lambda.mysql.utilities
                     sql += ", ";
                 sql += "`" + idxCol.Name.Replace("`", "``") + "`";
                 sql += " = @v" + idxNo;
-                result.Add(new Node("@v" + idxNo, idxCol.Get()));
+                result.Add(new Node("@v" + idxNo, idxCol.GetEx(signaler)));
                 ++idxNo;
             }
 
@@ -177,7 +180,7 @@ namespace magic.lambda.mysql.utilities
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
-                sql += " where " + CreateWhereSql(where, result);
+                sql += " where " + CreateWhereSql(where, result, signaler);
             }
 
             result.Value = sql;
@@ -186,7 +189,7 @@ namespace magic.lambda.mysql.utilities
 
         #region [ -- Private helper methods -- ]
 
-        static string CreateWhereSql(Node where, Node root)
+        static string CreateWhereSql(Node where, Node root, ISignaler signaler)
         {
             var result = "";
             int levelNo = 0;
@@ -197,13 +200,13 @@ namespace magic.lambda.mysql.utilities
                     case "and":
                         if (result != "")
                             result += " and ";
-                        result += BuildWhereLevel(idx, "and", root, ref levelNo);
+                        result += BuildWhereLevel(idx, "and", root, ref levelNo, signaler);
                         break;
 
                     case "or":
                         if (result != "")
                             result += " or ";
-                        result += BuildWhereLevel(idx, "or", root, ref levelNo);
+                        result += BuildWhereLevel(idx, "or", root, ref levelNo, signaler);
                         break;
 
                     default:
@@ -218,7 +221,7 @@ namespace magic.lambda.mysql.utilities
             return result;
         }
 
-        static string BuildWhereLevel(Node level, string oper, Node root, ref int levelNo)
+        static string BuildWhereLevel(Node level, string oper, Node root, ref int levelNo, ISignaler signaler)
         {
             var result = "(";
             bool first = true;
@@ -232,14 +235,14 @@ namespace magic.lambda.mysql.utilities
                 switch (idxCol.Name)
                 {
                     case "and":
-                        result += BuildWhereLevel(idxCol, "and", root, ref levelNo);
+                        result += BuildWhereLevel(idxCol, "and", root, ref levelNo, signaler);
                         break;
                     case "or":
-                        result += BuildWhereLevel(idxCol, "or", root, ref levelNo);
+                        result += BuildWhereLevel(idxCol, "or", root, ref levelNo, signaler);
                         break;
                     default:
                         var comparisonOper = "=";
-                        var unwrapped = idxCol.Get();
+                        var unwrapped = idxCol.GetEx(signaler);
                         if (unwrapped is string strVal)
                             if (strVal.Contains("%"))
                                 comparisonOper = "like";

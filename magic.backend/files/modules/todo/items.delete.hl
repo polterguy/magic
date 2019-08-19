@@ -5,7 +5,6 @@
 
 
 unwrap:x:./*/signal/*/id
-unwrap:x:./*/signal/*/connection
 signal:magic.db.delete
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items

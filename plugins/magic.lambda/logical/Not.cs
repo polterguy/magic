@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.logical
 {
@@ -28,7 +29,7 @@ namespace magic.lambda.logical
 
             _signaler.Signal("eval", input);
 
-            input.Value = !input.Children.First().Get<bool>();
+            input.Value = !input.Children.First().GetEx<bool>(_signaler);
         }
 
         public IEnumerable<Node> GetArguments()

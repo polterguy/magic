@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda
 {
@@ -27,7 +28,7 @@ namespace magic.lambda
             dynamic sum = input.Children.First().Value;
             foreach (var idx in input.Children.Skip(1))
             {
-                sum *= idx.Get<dynamic>();
+                sum *= idx.GetEx<dynamic>(_signaler);
             }
             input.Value = sum;
         }

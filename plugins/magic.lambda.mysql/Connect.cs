@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 using ut = magic.lambda.utilities;
 
 namespace magic.lambda.mysql
@@ -26,7 +27,7 @@ namespace magic.lambda.mysql
 
 		public void Signal(Node input)
 		{
-			using (var connection = new MySqlConnection(input.Get<string>()))
+			using (var connection = new MySqlConnection(input.GetEx<string>(_signaler)))
 			{
 				connection.Open();
                 _connections.Push(connection);

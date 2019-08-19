@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.change
 {
@@ -32,7 +33,7 @@ namespace magic.lambda.change
 
             _signaler.Signal("eval", input);
 
-            var source = input.Children.FirstOrDefault()?.Get();
+            var source = input.Children.FirstOrDefault()?.GetEx(_signaler);
             foreach (var idx in destinations)
             {
                 idx.Value = source;

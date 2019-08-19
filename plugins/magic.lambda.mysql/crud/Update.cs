@@ -18,8 +18,9 @@ namespace magic.lambda.mysql.crud
     public class Update : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
+        readonly ISignaler _signaler;
 
-        public Update(ut.Stack<MySqlConnection> connections)
+        public Update(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
@@ -36,7 +37,7 @@ namespace magic.lambda.mysql.crud
                 throw new ArgumentException($"Illegal argument given to [mysql.update]");
 
             // Creating parametrized SQL node.
-            var execute = Executor.CreateUpdate(input);
+            var execute = Executor.CreateUpdate(input, _signaler);
 
             // Checking if caller is only interested in SQL text.
             var onlySql = !input.Children.Any((x) => x.Name == "connection");
@@ -49,7 +50,7 @@ namespace magic.lambda.mysql.crud
                 return;
 
             // Executing SQL.
-            Executor.Execute(input, _connections, (cmd) =>
+            Executor.Execute(input, _connections, _signaler, (cmd) =>
             {
                 input.Value = cmd.ExecuteNonQuery();
                 input.Clear();

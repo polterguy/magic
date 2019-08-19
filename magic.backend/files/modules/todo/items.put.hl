@@ -10,7 +10,6 @@ set-value:x:./*/signal/*/where/*/id
 remove-node:x:@.arguments/*/id
 add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
-unwrap:x:+/*/connection
 signal:magic.db.update
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items

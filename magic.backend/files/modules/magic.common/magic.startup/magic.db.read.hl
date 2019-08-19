@@ -29,6 +29,15 @@ slot:magic.db.read
 
 
          /*
+          * Adding [limit] and [offset]
+          */
+         add:x:./*/mysql.select
+            get-nodes:x:@.arguments/*/limit
+         add:x:./*/mysql.select
+            get-nodes:x:@.arguments/*/offset
+
+
+         /*
           * Invoking [mysql.select].
           */
          mysql.select
