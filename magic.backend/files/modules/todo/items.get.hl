@@ -4,16 +4,25 @@
  */
 
 
+// Adding [limit]
 add:x:./*/signal
    get-nodes:x:@.arguments/*/limit
 remove-node:x:@.arguments/*/limit
+
+// Adding [offset]
 add:x:./*/signal
    get-nodes:x:@.arguments/*/offset
 remove-node:x:@.arguments/*/offset
+
+// Adding all other arguments as a part of the [where] clause.
 add:x:./*/signal/*/where
    get-nodes:x:@.arguments/*
+
+// Invoking [magic.db.read] that does the heavy lifting.
 signal:magic.db.read
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    where
+
+// Returning results to caller.
 return-nodes:x:-/*
