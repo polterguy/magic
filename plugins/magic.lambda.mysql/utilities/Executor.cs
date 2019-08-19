@@ -56,12 +56,28 @@ namespace magic.lambda.mysql.utilities
             sql += " from " + "`" + root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``") + "`";
 
             var where = root.Children.FirstOrDefault((x) => x.Name == "where");
-            if (where != null)
+            if (where != null && where.Children.Any())
             {
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
                 sql += " where " + CreateWhereSql(where, result);
+            }
+
+            var order = root.Children.FirstOrDefault((x) => x.Name == "order");
+            if (order != null)
+            {
+                sql += " order by `" + order.Get<string>().Replace("`", "``") + "`";
+                if (order.Children.Count() > 1)
+                    throw new ArgumentException("Wrong number of arguments given to [order]");
+                var direction = order.Children.FirstOrDefault((x) => x.Name == "direction");
+                if (direction != null)
+                {
+                    var dir = direction.Get<string>();
+                    if (dir != "asc" && dir != "desc")
+                        throw new ArgumentException($"I don't know how to sort '{dir}' [direction]");
+                    sql += " " + dir;
+                }
             }
 
             var limit = root.Children.FirstOrDefault((x) => x.Name == "limit");
@@ -130,8 +146,12 @@ namespace magic.lambda.mysql.utilities
                         result += BuildWhereLevel(idxCol, "or", root, ref levelNo);
                         break;
                     default:
+                        var comparisonOper = "=";
+                        if (idxCol.Value is string strVal)
+                            if (strVal.Contains("%"))
+                                comparisonOper = "like";
                         var argName = "@" + levelNo;
-                        result += "`" + idxCol.Name.Replace("`", "``") + "` = " + argName;
+                        result += "`" + idxCol.Name.Replace("`", "``") + "` " + comparisonOper + " " + argName;
                         root.Add(new Node(argName, idxCol.Value));
                         ++levelNo;
                         break;

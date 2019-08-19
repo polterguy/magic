@@ -26,11 +26,23 @@ namespace magic.lambda.mysql
 
         public void Signal(Node input)
         {
+            if (input.Children.Any((x) =>
+            {
+                return x.Name != "connection" &&
+                    x.Name != "table" &&
+                    x.Name != "columns" &&
+                    x.Name != "where" &&
+                    x.Name != "limit" &&
+                    x.Name != "offset" &&
+                    x.Name != "order";
+            }))
+                throw new ArgumentException($"Illegal argument given to [mysql.select]");
+
             // Creating parametrized SQL node.
             var execute = Executor.CreateSelect(input);
 
             // Checking if caller is only interested in SQL text.
-            var onlySql = input.Children.FirstOrDefault((x) => x.Name == "only-sql")?.Get<bool>() == true;
+            var onlySql = !input.Children.Any((x) => x.Name == "connection");
 
             // Massaging node to get parameters correctly.
             input.Value = execute.Value;
@@ -40,7 +52,7 @@ namespace magic.lambda.mysql
                 return;
 
             // Executing SQL.
-            Executor.Execute(execute, _connections, (cmd) =>
+            Executor.Execute(input, _connections, (cmd) =>
             {
                 using (var reader = cmd.ExecuteReader())
                 {
