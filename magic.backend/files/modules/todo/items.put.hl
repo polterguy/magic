@@ -1,33 +1,45 @@
 ﻿
 /*
- * Updates an existing TODO item
+ * Updates an existing TODO item.
  */
 
 
 /*
- * Parametrizing invocation to [magic.mysql.update].
+ * Parametrizing invocation to [mysql.update].
  */
-add:x:./*/signal/*/values
+add:x:../*/mysql.connect/*/mysql.update/*/values
    get-nodes:x:@.arguments/*
 remove-node:x:./*/signal/*/values/*/id
 
 
 /*
- * Invoking [magic.mysql.update], passing in [id] specified by caller, and
- * [values].
+ * Making sure we validate [id]
  */
 convert:x:@.arguments/*/id
    type:long
-unwrap:x:+/*/query/*
-signal:magic.mysql.update
-   connection:signal:@"config:""Databases:MySQLConnection"""
-   table:Items
-   query
-      Id:x:@convert
-   values
 
 
 /*
- * Returning results to caller.
+ * Opening up a connection.
  */
-return-nodes:x:@signal/*
+mysql.connect:signal:@"config:""Databases:MySQLConnection"""
+
+
+   /*
+    * Invoking [magic.mysql.insert].
+    */
+   mysql.update
+      connection:signal:@"config:""Databases:MySQLConnection"""
+      table:Items
+      where
+         and
+            Id:x:@convert
+      values
+
+
+   /*
+    * Returning results to caller.
+    */
+   unwrap:x:+/*
+   return-nodes
+      updated-records:x:@mysql.update
