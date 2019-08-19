@@ -19,24 +19,59 @@
 /*
  * Parametrizing invocation to [magic.mysql.read].
  */
-add:x:./*/signal/*/query
-   get-nodes:x:@.arguments/*
+add:x:./*/mysql.select
+   get-nodes:x:@.arguments/*/order
+
+add:x:./*/mysql.select/*/order
+   get-nodes:x:@.arguments/*/direction
+
+add:x:./*/mysql.select
+   get-nodes:x:@.arguments/*/limit
+
+add:x:./*/mysql.select
+   get-nodes:x:@.arguments/*/offset
+
+remove-node:x:@.arguments/*/order
+remove-node:x:@.arguments/*/direction
+remove-node:x:@.arguments/*/limit
+remove-node:x:@.arguments/*/offset
+
+// Converting ID to long
+set-value:x:@.arguments/*/Id
+   convert:x:@.arguments/*/Id
+      type:long
+if
+   mt
+      get-count:x:@.arguments/*
+      :int:0
+   .lambda
+      add:x:+/*/*/*
+         get-nodes:x:@.arguments/*
+      add:x:../*/mysql.connect/*/mysql.select
+         .
+            where
+               and
 
 
 /*
- * Invoking [magic.mysql.read].
+ * Opening up a connection.
  */
-signal:magic.mysql.read
-   connection:signal:@"config:""Databases:MySQLConnection"""
-   table:Items
-   query
-   columns
-      Id
-      Subject
-      Done
+mysql.connect:signal:@"config:""Databases:MySQLConnection"""
 
 
-/*
- * Returning results to caller.
- */
-return-nodes:x:@signal/*
+   /*
+    * Invoking [magic.mysql.read].
+    */
+   mysql.select
+      connection:signal:@"config:""Databases:MySQLConnection"""
+      table:Items
+      columns
+         Id
+         Subject
+         Done
+
+
+   /*
+    * Returning results to caller.
+    */
+   return-nodes:x:@mysql.select/*

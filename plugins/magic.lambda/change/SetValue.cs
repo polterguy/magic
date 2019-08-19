@@ -26,10 +26,14 @@ namespace magic.lambda.change
             if (input.Children.Count() > 1)
                 throw new ApplicationException("[set-value] can have maximum one child node");
 
+            var destinations = input.Evaluate().ToList();
+            if (destinations.Count == 0)
+                return;
+
             _signaler.Signal("eval", input);
 
             var source = input.Children.FirstOrDefault()?.Get();
-            foreach (var idx in input.Evaluate())
+            foreach (var idx in destinations)
             {
                 idx.Value = source;
             }
