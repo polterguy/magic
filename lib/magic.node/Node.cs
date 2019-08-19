@@ -116,27 +116,9 @@ namespace magic.node
 
         public T Get<T>()
         {
-            if (typeof(T) != typeof(string) && typeof(IEnumerable).IsAssignableFrom(typeof(T)))
-                throw new ApplicationException($"Use {nameof(GetList)} to retrieve enumerables.");
-
-            if (Value == null)
-                return default(T);
-
-            if (typeof(T) == Value.GetType())
-                return (T)Value;
-
-            if (typeof(T) != typeof(Expression) && Value.GetType() == typeof(Expression))
-            {
-                // Unrolling Expression for caller, assuming a single Node as our result, returning its value.
-                var nodes = (Value as Expression).Evaluate(new Node[] { this });
-
-                if (nodes.Count() > 1)
-                    throw new ApplicationException("Expression yields multiple results, when only one result was expected");
-                else if (nodes.Count() == 1)
-                    return nodes.First().Get<T>();
-
-                return default(T);
-            }
+            var value = Get();
+            if (value is T result)
+                return result;
 
             // Converting, the simple version.
             return (T)Convert.ChangeType(Value, typeof(T), CultureInfo.InvariantCulture);
