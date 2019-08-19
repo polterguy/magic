@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.comparison
 {
@@ -19,8 +20,8 @@ namespace magic.lambda.comparison
 
             signaler.Signal("eval", input);
 
-            var lhs = input.Children.First().Get();
-            var rhs = input.Children.Skip(1).First().Get();
+            var lhs = input.Children.First().GetEx(signaler);
+            var rhs = input.Children.Skip(1).First().GetEx(signaler);
             input.Value = functor(lhs, rhs);
         }
     }

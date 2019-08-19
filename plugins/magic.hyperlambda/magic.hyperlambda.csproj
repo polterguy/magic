@@ -3,10 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="utils\" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />

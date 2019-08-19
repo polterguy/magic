@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.branching
 {
@@ -35,7 +36,7 @@ namespace magic.lambda.branching
             if (input.Children.Any(x => x.Name == "default" && x.Value != null))
                 throw new ApplicationException("[default] with non-null value found");
 
-            var result = input.Get();
+            var result = input.GetEx(_signaler);
 
             var executionNode = input.Children
                 .FirstOrDefault((x) => x.Name == "case" && x.Value.Equals(result)) ??

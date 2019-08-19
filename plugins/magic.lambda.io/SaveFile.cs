@@ -9,6 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.io
 {
@@ -29,8 +30,8 @@ namespace magic.lambda.io
 
             _signaler.Signal("eval", input);
 
-            var filename = input.Get<string>();
-            File.WriteAllText(filename, input.Children.First().Get<string>());
+            var filename = input.GetEx<string>(_signaler);
+            File.WriteAllText(filename, input.Children.First().GetEx<string>(_signaler));
         }
 
         public IEnumerable<Node> GetArguments()

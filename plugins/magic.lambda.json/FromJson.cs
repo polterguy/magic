@@ -3,10 +3,12 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.json
 {
@@ -14,9 +16,16 @@ namespace magic.json
     [Slot(Name = "from-json")]
     public class FromJson : ISlot, IMeta
     {
+        readonly ISignaler _signaler;
+
+        public FromJson(ISignaler signaler)
+        {
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+        }
+
         public void Signal(Node input)
         {
-            HandleToken(input, JToken.Parse(input.Get<string>()));
+            HandleToken(input, JToken.Parse(input.GetEx<string>(_signaler)));
             input.Value = null;
         }
 

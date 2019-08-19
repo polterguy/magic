@@ -6,10 +6,10 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.http.contracts;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.http
 {
@@ -30,9 +30,9 @@ namespace magic.lambda.http
             if (input.Children.Count() > 2 || input.Children.Any((x) => x.Name != "token" && x.Name != "payload"))
                 throw new ApplicationException("[http.post.json] can only handle one [token] and one [payload] child node");
 
-            var url = input.Get<string>();
-            var token = input.Children.FirstOrDefault((x) => x.Name == "token")?.Get<string>();
-            var payload = input.Children.FirstOrDefault((x) => x.Name == "payload")?.Get<string>();
+            var url = input.GetEx<string>(_signaler);
+            var token = input.Children.FirstOrDefault((x) => x.Name == "token")?.GetEx<string>(_signaler);
+            var payload = input.Children.FirstOrDefault((x) => x.Name == "payload")?.GetEx<string>(_signaler);
 
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
             input.Value = _httpClient.PostAsync<string, string>(url, payload, token).Result;

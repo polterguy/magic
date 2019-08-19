@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
+    <ProjectReference Include="..\magic.hyperlambda\magic.hyperlambda.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions">

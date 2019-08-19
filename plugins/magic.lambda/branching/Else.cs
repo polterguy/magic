@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using magic.node;
+using magic.hyperlambda.utils;
 using magic.signals.contracts;
 
 namespace magic.lambda.branching
@@ -30,7 +31,7 @@ namespace magic.lambda.branching
             var evaluate = true;
             while (previous != null && (previous.Name == "if" || previous.Name == "else-if"))
             {
-                if (previous.Children.First().Get<bool>())
+                if (previous.Children.First().GetEx<bool>(_signaler))
                 {
                     evaluate = false;
                     break;

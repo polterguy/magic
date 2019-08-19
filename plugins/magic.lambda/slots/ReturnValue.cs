@@ -8,12 +8,20 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.slots
 {
     [Slot(Name = "return-value")]
     public class ReturnValue : ISlot, IMeta
     {
+        readonly ISignaler _signaler;
+
+        public ReturnValue(ISignaler signaler)
+        {
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+        }
+
         public void Signal(Node input)
         {
             if (input.Children.Any())
@@ -24,7 +32,7 @@ namespace magic.lambda.slots
             // Notice, we store the return value as the value (by reference) of the root node of whatever lambda object we're currently within.
             while (root.Parent != null)
                 root = root.Parent;
-            root.Value = input.Get();
+            root.Value = input.GetEx(_signaler);
         }
 
         public IEnumerable<Node> GetArguments()

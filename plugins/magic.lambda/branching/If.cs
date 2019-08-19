@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.branching
 {
@@ -32,7 +33,7 @@ namespace magic.lambda.branching
 
             _signaler.Signal("eval", input);
 
-            if (input.Children.First().Get<bool>())
+            if (input.Children.First().GetEx<bool>(_signaler))
                 _signaler.Signal("eval", lambda);
         }
 

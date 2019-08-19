@@ -18,8 +18,9 @@ namespace magic.lambda.mysql.crud
     public class Select : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
+        readonly ISignaler _signaler;
 
-        public Select(ut.Stack<MySqlConnection> connections)
+        public Select(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
@@ -39,7 +40,7 @@ namespace magic.lambda.mysql.crud
                 throw new ArgumentException($"Illegal argument given to [mysql.select]");
 
             // Creating parametrized SQL node.
-            var execute = Executor.CreateSelect(input);
+            var execute = Executor.CreateSelect(input, _signaler);
 
             // Checking if caller is only interested in SQL text.
             var onlySql = !input.Children.Any((x) => x.Name == "connection");
@@ -52,7 +53,7 @@ namespace magic.lambda.mysql.crud
                 return;
 
             // Executing SQL.
-            Executor.Execute(input, _connections, (cmd) =>
+            Executor.Execute(input, _connections, _signaler, (cmd) =>
             {
                 using (var reader = cmd.ExecuteReader())
                 {

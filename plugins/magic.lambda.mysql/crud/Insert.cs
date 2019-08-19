@@ -18,8 +18,9 @@ namespace magic.lambda.mysql.crud
     public class Insert : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
+        readonly ISignaler _signaler;
 
-        public Insert(ut.Stack<MySqlConnection> connections)
+        public Insert(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
@@ -35,7 +36,7 @@ namespace magic.lambda.mysql.crud
                 throw new ArgumentException($"Illegal argument given to [mysql.insert]");
 
             // Creating parametrized SQL node.
-            var execute = Executor.CreateInsert(input);
+            var execute = Executor.CreateInsert(input, _signaler);
 
             // Checking if caller is only interested in SQL text.
             var onlySql = !input.Children.Any((x) => x.Name == "connection");
@@ -48,7 +49,7 @@ namespace magic.lambda.mysql.crud
                 return;
 
             // Executing SQL.
-            Executor.Execute(input, _connections, (cmd) =>
+            Executor.Execute(input, _connections, _signaler, (cmd) =>
             {
                 input.Value = cmd.ExecuteScalar();
                 input.Clear();

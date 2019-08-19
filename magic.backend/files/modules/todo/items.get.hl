@@ -4,9 +4,14 @@
  */
 
 
+add:x:./*/signal
+   get-nodes:x:@.arguments/*/limit
+remove-node:x:@.arguments/*/limit
+add:x:./*/signal
+   get-nodes:x:@.arguments/*/offset
+remove-node:x:@.arguments/*/offset
 add:x:./*/signal/*/where
    get-nodes:x:@.arguments/*
-unwrap:x:+/*/connection
 signal:magic.db.read
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items

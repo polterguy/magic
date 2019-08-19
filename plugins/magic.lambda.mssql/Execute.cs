@@ -17,15 +17,17 @@ namespace magic.lambda.mssql
     public class Execute : ISlot, IMeta
     {
         readonly ut.Stack<SqlConnection> _connections;
+        readonly ISignaler _signaler;
 
-        public Execute(ut.Stack<SqlConnection> connections)
+        public Execute(ut.Stack<SqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)
         {
-            Executor.Execute(input, _connections, (cmd) =>
+            Executor.Execute(input, _connections, _signaler, (cmd) =>
             {
                 input.Value = cmd.ExecuteNonQuery();
             });

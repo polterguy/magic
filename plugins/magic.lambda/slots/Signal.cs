@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.slots
 {
@@ -24,7 +25,7 @@ namespace magic.lambda.slots
         public void Signal(Node input)
         {
             // Retrieving slot's lambda.
-            var slotName = input.Get<string>() ?? throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
+            var slotName = input.GetEx<string>(_signaler) ?? throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
             var slotNode = Slot.GetSlot(slotName);
             var lambda = slotNode.Children.First((x) => x.Name == ".lambda");
 

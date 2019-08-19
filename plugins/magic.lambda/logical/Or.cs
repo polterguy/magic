@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
+using magic.hyperlambda.utils;
 
 namespace magic.lambda.logical
 {
@@ -32,7 +33,7 @@ namespace magic.lambda.logical
                 if (idx.Name.FirstOrDefault() != '.')
                     _signaler.Signal(idx.Name, idx);
 
-                if (idx.Get<bool>())
+                if (idx.GetEx<bool>(_signaler))
                 {
                     input.Value = true;
                     return;
