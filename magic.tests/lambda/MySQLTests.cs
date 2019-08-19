@@ -123,5 +123,31 @@ namespace magic.tests.lambda
             Assert.Equal("select * from `SomeTable` order by `foo` asc", lambda.Children.First().Value);
             Assert.Empty(lambda.Children.First().Children);
         }
+
+        [Fact]
+        public void DeleteSQL_01()
+        {
+            var lambda = Common.Evaluate(@"mysql.delete
+   table:SomeTable");
+            Assert.Empty(lambda.Children.First().Children);
+            Assert.Equal("delete from `SomeTable`", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void DeleteSQL_02()
+        {
+            var lambda = Common.Evaluate(@"mysql.delete
+   table:SomeTable
+   where
+      and
+         jo-dude:int:5
+         foo-bar:howdy%");
+            Assert.Equal("delete from `SomeTable` where `jo-dude` = @0 and `foo-bar` like @1", lambda.Children.First().Value);
+            Assert.Equal(2, lambda.Children.First().Children.Count());
+            Assert.Equal("@0", lambda.Children.First().Children.First().Name);
+            Assert.Equal(5, lambda.Children.First().Children.First().Value);
+            Assert.Equal("@1", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal("howdy%", lambda.Children.First().Children.Skip(1).First().Value);
+        }
     }
 }
