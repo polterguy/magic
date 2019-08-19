@@ -1,50 +1,13 @@
 ﻿
 /*
- * Deletes the specified Id TODO item.
+ * Deletes the specified [id] TODO item.
  */
 
 
-/*
- * Parametrizing invocation to [magic.mysql.read].
- */
-
-
-/*
- * Converting ID to long.
- */
-set-value:x:@.arguments/*/Id
-   convert:x:@.arguments/*/Id
-      type:long
-if
-   mt
-      get-count:x:@.arguments/*
-      :int:0
-   .lambda
-      add:x:+/*/*/*
-         get-nodes:x:@.arguments/*
-      add:x:../*/mysql.connect/*/mysql.delete
-         .
-            where
-               and
-
-
-/*
- * Opening up a connection.
- */
-mysql.connect:signal:@"config:""Databases:MySQLConnection"""
-
-
-   /*
-    * Invoking [magic.mysql.read].
-    */
-   mysql.delete
-      connection:signal:@"config:""Databases:MySQLConnection"""
-      table:Items
-
-
-   /*
-    * Returning results to caller.
-    */
-   unwrap:x:+/*
-   return-nodes
-      deleted-records:x:@mysql.delete
+unwrap:x:./*/signal/*/id
+unwrap:x:./*/signal/*/connection
+signal:magic.db.delete
+   connection:signal:@"config:""Databases:MySQLConnection"""
+   table:items
+   id:x:@.arguments/*/id
+return-nodes:x:-/*

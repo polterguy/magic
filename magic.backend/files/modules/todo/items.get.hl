@@ -1,77 +1,14 @@
 ﻿
 /*
- * List all TODO items from your MySQL database.
- *
- * Pass in any arguments you wish. [limit] and [offset] are treated
- * as SQL "limit" and "offset" accordingly. All other arguments are considered
- * a part of the "where" criteria, that are "and"'ed together to create
- * the combined "where" SQL clause.
- *
- * If [limit] is 1, only one object will be returned - Otherwise an array of
- * objects will be returned, even if the array only contains a single object.
- *
- * Optionally you can supply also [order] which is the name of a column you
- * want to order your results by, in addition to optionally also [direction]
- * being "desc" if you wish to sort descending instead of (default) ascending.
+ * Returns items from your TODO table.
  */
 
 
-/*
- * Parametrizing invocation to [magic.mysql.read].
- */
-add:x:./*/mysql.select
-   get-nodes:x:@.arguments/*/order
-
-add:x:./*/mysql.select/*/order
-   get-nodes:x:@.arguments/*/direction
-
-add:x:./*/mysql.select
-   get-nodes:x:@.arguments/*/limit
-
-add:x:./*/mysql.select
-   get-nodes:x:@.arguments/*/offset
-
-remove-node:x:@.arguments/*/order
-remove-node:x:@.arguments/*/direction
-remove-node:x:@.arguments/*/limit
-remove-node:x:@.arguments/*/offset
-
-// Converting ID to long
-set-value:x:@.arguments/*/Id
-   convert:x:@.arguments/*/Id
-      type:long
-if
-   mt
-      get-count:x:@.arguments/*
-      :int:0
-   .lambda
-      add:x:+/*/*/*
-         get-nodes:x:@.arguments/*
-      add:x:../*/mysql.connect/*/mysql.select
-         .
-            where
-               and
-
-
-/*
- * Opening up a connection.
- */
-mysql.connect:signal:@"config:""Databases:MySQLConnection"""
-
-
-   /*
-    * Invoking [magic.mysql.read].
-    */
-   mysql.select
-      connection:signal:@"config:""Databases:MySQLConnection"""
-      table:Items
-      columns
-         Id
-         Subject
-         Done
-
-
-   /*
-    * Returning results to caller.
-    */
-   return-nodes:x:@mysql.select/*
+add:x:./*/signal/*/where
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/connection
+signal:magic.db.read
+   connection:signal:@"config:""Databases:MySQLConnection"""
+   table:items
+   where
+return-nodes:x:-/*

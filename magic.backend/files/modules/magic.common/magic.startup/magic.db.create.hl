@@ -1,0 +1,36 @@
+﻿
+/*
+ * Creates a new item in your [connection]/[table].
+ */
+slot:magic.db.create
+   .lambda
+
+
+      /*
+       * Parametrizing invocation to [mysql.insert].
+       */
+      add:x:./*/mysql.connect/*/mysql.insert/*/values
+         get-nodes:x:@.arguments/*/values/*
+
+
+      /*
+       * Opening up a connection.
+       */
+      mysql.connect:x:@.arguments/*/connection
+
+
+         /*
+          * Invoking [mysql.insert].
+          */
+         mysql.insert
+            connection:x:@.arguments/*/connection
+            table:x:@.arguments/*/table
+            values
+
+
+         /*
+          * Returning results to caller.
+          */
+         unwrap:x:+/*
+         return-nodes
+            id:x:@mysql.insert
