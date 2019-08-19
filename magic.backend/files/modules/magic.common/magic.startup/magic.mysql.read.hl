@@ -114,7 +114,7 @@ slot:magic.mysql.read
       /*
        * Building our query, and storing it as we proceed in the [.query] node
        * below.
-       * Notice, the SQL command will be parametrized by adding arguments to [mysql.select]
+       * Notice, the SQL command will be parametrized by adding arguments to [mysql.read]
        * from children collection of [.query].
        * First we start out by setting the columns for our SQL command
        * according to [columns], or if not specified we use "*".
@@ -328,7 +328,7 @@ slot:magic.mysql.read
          /*
           * Executing SQL command with parameters.
           */
-         mysql.select:x:@.query
+         mysql.read:x:@.query
 
 
          /*
@@ -345,10 +345,10 @@ slot:magic.mysql.read
                /*
                 * Caller requested a single object.
                 */
-               return-nodes:x:@mysql.select/*/*
+               return-nodes:x:@mysql.read/*/*
 
 
          /*
           * Caller did not request a single object, hence we return an array.
           */
-         return-nodes:x:@mysql.select/*
+         return-nodes:x:@mysql.read/*

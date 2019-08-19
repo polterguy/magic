@@ -10,7 +10,7 @@ write-line:Modify this file to test the MySQL slots
 return-nodes
 try
    mssql.connect:"Server=xxx;Database=xxx;Uid=xxx;Pwd=xxx;"
-      mssql.select:"select top 10 x1, x2, x3 from xxx where x1=@x1"
+      mssql.read:"select top 10 x1, x2, x3 from xxx where x1=@x1"
          @x1:int:10
       for-each:x:-/*
          for-each:x:@.dp/#/*

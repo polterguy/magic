@@ -13,12 +13,12 @@ using magic.lambda.mysql.utilities;
 
 namespace magic.lambda.mysql
 {
-    [Slot(Name = "mysql.select")]
-    public class Select : ISlot, IMeta
+    [Slot(Name = "mysql.read")]
+    public class Read : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
 
-        public Select(ut.Stack<MySqlConnection> connections)
+        public Read(ut.Stack<MySqlConnection> connections)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
