@@ -7,20 +7,28 @@
 /*
  * Parametrizing invocation to [magic.mysql.create].
  */
-add:x:./*/signal/*/values
+add:x:../*/mysql.connect/*/mysql.insert/*/values
    get-nodes:x:@.arguments/*
 
 
 /*
- * Invoking [magic.mysql.create].
+ * Opening up a connection.
  */
-signal:magic.mysql.create
-   connection:signal:@"config:""Databases:MySQLConnection"""
-   table:Items
-   values
+mysql.connect:signal:@"config:""Databases:MySQLConnection"""
 
 
-/*
- * Returning results to caller.
- */
-return-nodes:x:@signal/*
+   /*
+    * Invoking [magic.mysql.insert].
+    */
+   mysql.insert
+      connection:signal:@"config:""Databases:MySQLConnection"""
+      table:Items
+      values
+
+
+   /*
+    * Returning results to caller.
+    */
+   unwrap:x:+/*
+   return-nodes
+      inserted-records:x:@mysql.insert
