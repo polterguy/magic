@@ -158,12 +158,33 @@ namespace magic.tests.lambda
    values
       foo1:bar1
       foo2:int:5");
-            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, @1)", lambda.Children.First().Value);
+            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, @1); select last_insert_id();", lambda.Children.First().Value);
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
             Assert.Equal("@1", lambda.Children.First().Children.Skip(1).First().Name);
             Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void UpdateSQL_01()
+        {
+            var lambda = Common.Evaluate(@"mysql.update
+   table:SomeTable
+   where
+      and
+         id:int:1
+   values
+      foo1:bar1
+      foo2:int:5");
+            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = @v1 where `id` = @0", lambda.Children.First().Value);
+            Assert.Equal(3, lambda.Children.First().Children.Count());
+            Assert.Equal("@v0", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+            Assert.Equal("@v1", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
+            Assert.Equal("@0", lambda.Children.First().Children.Skip(2).First().Name);
+            Assert.Equal(1, lambda.Children.First().Children.Skip(2).First().Value);
         }
     }
 }

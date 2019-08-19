@@ -12,14 +12,14 @@ using magic.signals.contracts;
 using ut = magic.lambda.utilities;
 using magic.lambda.mysql.utilities;
 
-namespace magic.lambda.mysql
+namespace magic.lambda.mysql.crud
 {
-    [Slot(Name = "mysql.insert")]
-    public class Insert : ISlot, IMeta
+    [Slot(Name = "mysql.select")]
+    public class Select : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
 
-        public Insert(ut.Stack<MySqlConnection> connections)
+        public Select(ut.Stack<MySqlConnection> connections)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
         }
@@ -30,13 +30,16 @@ namespace magic.lambda.mysql
             {
                 return x.Name != "connection" &&
                     x.Name != "table" &&
+                    x.Name != "columns" &&
                     x.Name != "where" &&
-                    x.Name != "values";
+                    x.Name != "limit" &&
+                    x.Name != "offset" &&
+                    x.Name != "order";
             }))
-                throw new ArgumentException($"Illegal argument given to [mysql.insert]");
+                throw new ArgumentException($"Illegal argument given to [mysql.select]");
 
             // Creating parametrized SQL node.
-            var execute = Executor.CreateInsert(input);
+            var execute = Executor.CreateSelect(input);
 
             // Checking if caller is only interested in SQL text.
             var onlySql = !input.Children.Any((x) => x.Name == "connection");
@@ -51,8 +54,19 @@ namespace magic.lambda.mysql
             // Executing SQL.
             Executor.Execute(input, _connections, (cmd) =>
             {
-                input.Value = cmd.ExecuteScalar();
-                input.Clear();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var rowNode = new Node();
+                        for (var idxCol = 0; idxCol < reader.FieldCount; idxCol++)
+                        {
+                            var colNode = new Node(reader.GetName(idxCol), reader[idxCol]);
+                            rowNode.Add(colNode);
+                        }
+                        input.Add(rowNode);
+                    }
+                }
             });
         }
 
