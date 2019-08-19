@@ -22,6 +22,7 @@
     <ProjectReference Include="..\plugins\magic.lambda.json\magic.lambda.json.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
     <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
