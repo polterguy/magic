@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using magic.node;
+using hl = magic.hyperlambda;
 using magic.signals.contracts;
 
 namespace magic.lambda.change
@@ -14,15 +15,30 @@ namespace magic.lambda.change
     [Slot(Name = "unwrap")]
     public class Unwrap : ISlot, IMeta
     {
+        readonly ISignaler _signaler;
+
+        public Unwrap(ISignaler signaler)
+        {
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+        }
+
         public void Signal(Node input)
         {
             foreach (var idx in input.Evaluate())
             {
-                var exp = idx.Evaluate();
-                if (exp.Count() > 1)
-                    throw new ApplicationException("Multiple sources found for [unwrap]");
+                if (idx.Value is hl.Signal signal)
+                {
+                    _signaler.Signal(signal.Content.Name, signal.Content);
+                    idx.Value = signal.Content.Value;
+                }
+                else
+                {
+                    var exp = idx.Evaluate();
+                    if (exp.Count() > 1)
+                        throw new ApplicationException("Multiple sources found for [unwrap]");
 
-                idx.Value = exp.FirstOrDefault()?.Value;
+                    idx.Value = exp.FirstOrDefault()?.Value;
+                }
             }
         }
 

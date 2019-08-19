@@ -1,0 +1,39 @@
+﻿
+/*
+ * Updates the specified [id] item in your [connection]/[table].
+ */
+slot:magic.db.update
+   .lambda
+
+
+      /*
+       * Opening up a connection.
+       */
+      mysql.connect:x:@.arguments/*/connection
+
+
+         /*
+          * Parametrizing invocation to [magic.mysql.create].
+          */
+         add:x:./*/mysql.update/*/values
+            get-nodes:x:@.arguments/*/values/*
+
+
+         /*
+          * Invoking [mysql.update].
+          */
+         mysql.update
+            connection:x:@.arguments/*/connection
+            table:x:@.arguments/*/table
+            values
+            where
+               and
+                  id:x:@.arguments/*/where/*/id
+
+
+         /*
+          * Returning results to caller.
+          */
+         unwrap:x:+/*
+         return-nodes
+            updated-records:x:@mysql.update

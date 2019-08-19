@@ -1,34 +1,14 @@
 ﻿
 /*
- * Creates a new TODO item.
+ * Returns items from your TODO table.
  */
 
 
-/*
- * Parametrizing invocation to [magic.mysql.create].
- */
-add:x:../*/mysql.connect/*/mysql.insert/*/values
+add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
-
-
-/*
- * Opening up a connection.
- */
-mysql.connect:signal:@"config:""Databases:MySQLConnection"""
-
-
-   /*
-    * Invoking [magic.mysql.insert].
-    */
-   mysql.insert
-      connection:signal:@"config:""Databases:MySQLConnection"""
-      table:Items
-      values
-
-
-   /*
-    * Returning results to caller.
-    */
-   unwrap:x:+/*
-   return-nodes
-      inserted-records:x:@mysql.insert
+unwrap:x:+/*/connection
+signal:magic.db.create
+   connection:signal:@"config:""Databases:MySQLConnection"""
+   table:items
+   values
+return-nodes:x:-/*

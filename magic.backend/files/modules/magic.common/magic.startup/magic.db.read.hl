@@ -1,0 +1,42 @@
+﻿
+/*
+ * Read items from your [connection]/[table] according to [values] supplied.
+ */
+slot:magic.db.read
+   .lambda
+
+
+      /*
+       * Opening up a connection.
+       */
+      mysql.connect:x:@.arguments/*/connection
+
+
+         /*
+          * Parametrizing invocation to [mysql.select].
+          */
+         if
+            mt
+               get-count:x:@.arguments/*/where/*
+               .:int:0
+            .lambda
+               add:x:../*/mysql.connect/*/mysql.select
+                  .
+                     where
+                        and
+               add:x:../*/mysql.connect/*/mysql.select/*/where/*/and
+                  get-nodes:x:@.arguments/*/where/*
+
+
+         /*
+          * Invoking [mysql.select].
+          */
+         mysql.select
+            connection:x:@.arguments/*/connection
+            table:x:@.arguments/*/table
+
+
+         /*
+          * Returning results to caller.
+          */
+         return-nodes:x:@mysql.select/*
