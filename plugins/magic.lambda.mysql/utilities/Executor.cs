@@ -92,6 +92,29 @@ namespace magic.lambda.mysql.utilities
             return result;
         }
 
+        public static Node CreateDelete(Node root)
+        {
+            // Dynamically building SQL according to input nodes.
+            var result = new Node("sql");
+            var sql = 
+                "delete from " + 
+                "`" + 
+                root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``") 
+                + "`";
+
+            var where = root.Children.FirstOrDefault((x) => x.Name == "where");
+            if (where != null && where.Children.Any())
+            {
+                if (where.Children.Count() != 1)
+                    throw new ArgumentException("Too many children nodes to SQL [where] parameters");
+
+                sql += " where " + CreateWhereSql(where, result);
+            }
+
+            result.Value = sql;
+            return result;
+        }
+
         #region [ -- Private helper methods -- ]
 
         static string CreateWhereSql(Node where, Node root)
