@@ -149,5 +149,21 @@ namespace magic.tests.lambda
             Assert.Equal("@1", lambda.Children.First().Children.Skip(1).First().Name);
             Assert.Equal("howdy%", lambda.Children.First().Children.Skip(1).First().Value);
         }
+
+        [Fact]
+        public void InsertSQL_01()
+        {
+            var lambda = Common.Evaluate(@"mysql.insert
+   table:SomeTable
+   values
+      foo1:bar1
+      foo2:int:5");
+            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, @1)", lambda.Children.First().Value);
+            Assert.Equal(2, lambda.Children.First().Children.Count());
+            Assert.Equal("@0", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+            Assert.Equal("@1", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
+        }
     }
 }

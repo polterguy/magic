@@ -92,6 +92,41 @@ namespace magic.lambda.mysql.utilities
             return result;
         }
 
+        public static Node CreateInsert(Node root)
+        {
+            // Dynamically building SQL according to input nodes.
+            var result = new Node("sql");
+            var sql =
+                "insert into " +
+                "`" +
+                root.Children.First((x) => x.Name == "table").Get<string>().Replace("`", "``")
+                + "`";
+            sql += " (";
+            var first = true;
+            foreach (var idx in root.Children.First((x) => x.Name == "values").Children)
+            {
+                if (first)
+                    first = false;
+                else
+                    sql += ", ";
+                sql += "`" + idx.Name.Replace("`", "``") + "`";
+            }
+            sql += ") values (";
+            var idxNo = 0;
+            foreach (var idx in root.Children.First((x) => x.Name == "values").Children)
+            {
+                if (idxNo > 0)
+                    sql += ", ";
+                sql += "@" + idxNo;
+                result.Add(new Node("@" + idxNo, idx.Get()));
+                ++idxNo;
+            }
+            sql += "); select last_insert_id();";
+
+            result.Value = sql;
+            return result;
+        }
+
         public static Node CreateDelete(Node root)
         {
             // Dynamically building SQL according to input nodes.
@@ -170,12 +205,13 @@ namespace magic.lambda.mysql.utilities
                         break;
                     default:
                         var comparisonOper = "=";
-                        if (idxCol.Value is string strVal)
+                        var unwrapped = idxCol.Get();
+                        if (unwrapped is string strVal)
                             if (strVal.Contains("%"))
                                 comparisonOper = "like";
                         var argName = "@" + levelNo;
                         result += "`" + idxCol.Name.Replace("`", "``") + "` " + comparisonOper + " " + argName;
-                        root.Add(new Node(argName, idxCol.Value));
+                        root.Add(new Node(argName, unwrapped));
                         ++levelNo;
                         break;
                 }
