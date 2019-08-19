@@ -23,7 +23,7 @@ namespace magic.console.init
             {
                 if (dict.TryGetValue(typeof(T), out object i))
                     return (T)i;
-                return default;
+                return default(T);
             });
 
             if (item != null)
