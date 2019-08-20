@@ -23,6 +23,15 @@ slot:magic.db.read
           */
          add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/limit
+
+         /*
+          * We need to later check if [limit] was given, to check if only a single
+          * value was requested - At which point we'll return a single JSON object,
+          * instead of an array.
+          * Notice, we could have simply checked if [limit] was equal to "1",
+          * but this would not work if caller explicitly invoked slot with an integer,
+          * or a long value,which is semantically more adequate anyway.
+          */
          unwrap:x:+
          .limit:x:@.arguments/*/args/*/limit
          set-value:x:@.limit

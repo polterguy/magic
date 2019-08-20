@@ -8,6 +8,7 @@ slot:magic.db.delete
 
       /*
        * Sanity checking invocation.
+       * Notice, a sane id node from [ids] must not be null, and not "".
        */
       for-each:x:@.arguments/*/ids/*
          if
