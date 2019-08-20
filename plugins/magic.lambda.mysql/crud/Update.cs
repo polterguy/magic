@@ -34,7 +34,7 @@ namespace magic.lambda.mysql.crud
                 (n, s) => Executor.CreateUpdate(n, s),
                 (cmd, n) =>
                 {
-                    n.Value = cmd.ExecuteScalar();
+                    n.Value = cmd.ExecuteNonQuery();
                     n.Clear();
                 });
         }
