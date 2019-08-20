@@ -1,6 +1,8 @@
 ﻿
 /*
  * Returns TODO items.
+ * If [limit] equals 1, it will return only one object - Otherwise it'll return an
+ * array, even if the array only contains one item.
  */
 
 

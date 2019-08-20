@@ -32,7 +32,10 @@ namespace magic.lambda.change
 
             var value = input.GetEx(_signaler);
             if (value == null)
-                throw new ApplicationException($"Cannot convert null to '{type}'");
+            {
+                input.Value = null;
+                return;
+            }
 
             switch (type)
             {
