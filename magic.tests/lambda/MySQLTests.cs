@@ -275,5 +275,24 @@ namespace magic.tests.lambda
       foo3:bar3");
             });
         }
+
+        [Fact]
+        public void UpdateSQL_04()
+        {
+            var lambda = Common.Evaluate(@"mysql.update
+   table:SomeTable
+   where
+      and
+         id:int:1
+   values
+      foo1:bar1
+      foo2");
+            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = null where `id` = @0", lambda.Children.First().Value);
+            Assert.Equal(2, lambda.Children.First().Children.Count());
+            Assert.Equal("@v0", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+            Assert.Equal("@0", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal(1, lambda.Children.First().Children.Skip(1).First().Value);
+        }
     }
 }
