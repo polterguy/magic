@@ -13,32 +13,47 @@ slot:magic.db.read
 
 
          /*
-          * Parametrizing invocation to [mysql.read].
+          * Parametrizing invocation to [mysql.read], first with generic arguments, 
+          * such as [limit], [offset], [order] and [direction].
+          * Making sure we remove the nodes from the [.arguments] collection afterwards,
+          * such that we don't add them into our [where].
+          */
+         add:x:./*/mysql.read
+            get-nodes:x:@.arguments/*/args/*limit
+         remove-node:x:@.arguments/*/args/*limit
+
+         add:x:./*/mysql.read
+            get-nodes:x:@.arguments/*/args/*offset
+         remove-node:x:@.arguments/*/args/*offset
+
+         add:x:./*/mysql.read
+            get-nodes:x:@.arguments/*/args/*order
+         remove-node:x:@.arguments/*/args/*order
+
+         add:x:./*/mysql.read
+            get-nodes:x:@.arguments/*/args/*direction
+         remove-node:x:@.arguments/*/args/*direction
+
+
+         /*
+          * Then any remaining arguments.
           */
          if
             mt
-               get-count:x:@.arguments/*/where/*
+               get-count:x:@.arguments/*/args/*
                .:int:0
             .lambda
+
+
+               /*
+                * Adding [where] to [mysql.read].
+                */
                add:x:../*/mysql.connect/*/mysql.read
                   .
                      where
                         and
                add:x:../*/mysql.connect/*/mysql.read/*/where/*/and
-                  get-nodes:x:@.arguments/*/where/*
-
-
-         /*
-          * Adding [limit], [offset], [order] and [direction]
-          */
-         add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/limit
-         add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/offset
-         add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/order
-         add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/direction
+                  get-nodes:x:@.arguments/*/args/*
 
 
          /*

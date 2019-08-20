@@ -1,13 +1,26 @@
 ﻿
 /*
- * Returns items from your TODO table.
+ * Creates a TODO item.
  */
 
 
+/*
+ * Parametrizing [magic.db.create].
+ */
 add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
+
+
+/*
+ * Invoking [magic.db.create]
+ */
 signal:magic.db.create
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    values
-return-nodes:x:-/*
+
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@signal/*

@@ -1,22 +1,23 @@
 ﻿
 /*
- * Creates a new item in your [connection]/[table].
+ * Creates a new item in your [connection]/[table] with the specified [values]
+ * column values.
  */
 slot:magic.db.create
    .lambda
 
 
       /*
-       * Parametrizing invocation to [mysql.create].
-       */
-      add:x:./*/mysql.connect/*/mysql.create/*/values
-         get-nodes:x:@.arguments/*/values/*
-
-
-      /*
        * Opening up a connection.
        */
       mysql.connect:x:@.arguments/*/connection
+
+
+         /*
+          * Parametrizing invocation to [mysql.create].
+          */
+         add:x:./*/mysql.create/*/values
+            get-nodes:x:@.arguments/*/values/*
 
 
          /*

@@ -1,38 +1,26 @@
 ﻿
 /*
- * Returns items from your TODO table.
+ * Returns TODO items.
  */
 
 
-// Adding [limit]
-add:x:./*/signal
-   get-nodes:x:@.arguments/*/limit
-remove-node:x:@.arguments/*/limit
-
-// Adding [offset]
-add:x:./*/signal
-   get-nodes:x:@.arguments/*/offset
-remove-node:x:@.arguments/*/offset
-
-// Adding [order]
-add:x:./*/signal
-   get-nodes:x:@.arguments/*/order
-remove-node:x:@.arguments/*/order
-
-// Adding [direction]
-add:x:./*/signal
-   get-nodes:x:@.arguments/*/direction
-remove-node:x:@.arguments/*/direction
-
-// Adding all other arguments as a part of the [where] clause.
-add:x:./*/signal/*/where
+/*
+ * Parametrizing [magic.db.read].
+ */
+add:x:./*/signal/*/args
    get-nodes:x:@.arguments/*
 
-// Invoking [magic.db.read] that does the heavy lifting.
+
+/*
+ * Invokes [magic.db.read].
+ */
 signal:magic.db.read
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
-   where
+   args
 
-// Returning results to caller.
-return-nodes:x:-/*
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@signal/*
