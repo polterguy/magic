@@ -31,7 +31,7 @@ namespace magic.lambda.mysql.crud
                 input,
                 _connections,
                 _signaler,
-                (n) => Executor.CreateUpdate(n, _signaler),
+                () => Executor.CreateUpdate(input, _signaler),
                 (cmd) =>
                 {
                     input.Value = cmd.ExecuteNonQuery();
