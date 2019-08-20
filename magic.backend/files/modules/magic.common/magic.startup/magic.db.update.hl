@@ -1,6 +1,8 @@
 ﻿
 /*
- * Updates the specified [id] item in your [connection]/[table].
+ * Updates the specified [ids] item in your [connection]/[table] with the
+ * values from [values]. [ids] can be a collection of values, preferably the IDs of your table,
+ * that defines which item(s) to update. All [ids] are mandatory, and reuiqred to have values.
  */
 slot:magic.db.update
    .lambda
@@ -11,9 +13,13 @@ slot:magic.db.update
        */
       for-each:x:@.arguments/*/ids/*
          if
-            eq
-               get-value:x:@.dp/#
-               .
+            or
+               eq
+                  get-value:x:@.dp/#
+                  .
+               eq
+                  get-value:x:@.dp/#
+                  .:
             .lambda
                throw:[magic.db.update] was not given a valid ID
 
@@ -25,7 +31,8 @@ slot:magic.db.update
 
 
          /*
-          * Parametrizing [mysql.update].
+          * Parametrizing [mysql.update], first with the [where] parts,
+          * extracted form [ids].
           */
          add:x:./*/mysql.update/*/where/*/and
             get-nodes:x:@.arguments/*/ids/*
@@ -34,7 +41,7 @@ slot:magic.db.update
 
 
          /*
-          * Parametrizing invocation to [magic.mysql.create].
+          * Parametrizing invocation to [magic.mysql.create] with the new [values].
           */
          add:x:./*/mysql.update/*/values
             get-nodes:x:@.arguments/*/values/*
