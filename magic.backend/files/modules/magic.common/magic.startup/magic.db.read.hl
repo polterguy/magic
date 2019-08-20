@@ -23,6 +23,11 @@ slot:magic.db.read
           */
          add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/limit
+         unwrap:x:+
+         .limit:x:@.arguments/*/args/*/limit
+         set-value:x:@.limit
+            convert:x:@.limit
+               type:long
          remove-node:x:@.arguments/*/args/*/limit
 
          add:x:./*/mysql.read
@@ -89,5 +94,20 @@ slot:magic.db.read
 
          /*
           * Returning results to caller.
+          */
+         if
+            eq
+               get-value:x:@.limit
+               .:long:1
+            .lambda
+
+
+               /*
+                * Returning a single object.
+                */
+               return-nodes:x:@mysql.read/*/*
+
+         /*
+          * Returning an array of objects.
           */
          return-nodes:x:@mysql.read/*
