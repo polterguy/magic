@@ -13,7 +13,7 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_01()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable");
             Assert.Empty(lambda.Children.First().Children);
             Assert.Equal("select * from `SomeTable`", lambda.Children.First().Value);
@@ -22,7 +22,7 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_02()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    columns
       Foo:bar
@@ -36,7 +36,7 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_03()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    where
       and
@@ -53,7 +53,7 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_04()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    where
       or
@@ -70,7 +70,7 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_05()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    where
       and
@@ -95,7 +95,7 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_06()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    order:foo");
             Assert.Equal("select * from `SomeTable` order by `foo`", lambda.Children.First().Value);
@@ -105,10 +105,10 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_07()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    order:foo
-      direction:desc");
+   direction:desc");
             Assert.Equal("select * from `SomeTable` order by `foo` desc", lambda.Children.First().Value);
             Assert.Empty(lambda.Children.First().Children);
         }
@@ -116,10 +116,10 @@ namespace magic.tests.lambda
         [Fact]
         public void SelectSQL_08()
         {
-            var lambda = Common.Evaluate(@"mysql.select
+            var lambda = Common.Evaluate(@"mysql.read
    table:SomeTable
    order:foo
-      direction:asc");
+   direction:asc");
             Assert.Equal("select * from `SomeTable` order by `foo` asc", lambda.Children.First().Value);
             Assert.Empty(lambda.Children.First().Children);
         }
@@ -153,7 +153,7 @@ namespace magic.tests.lambda
         [Fact]
         public void InsertSQL_01()
         {
-            var lambda = Common.Evaluate(@"mysql.insert
+            var lambda = Common.Evaluate(@"mysql.create
    table:SomeTable
    values
       foo1:bar1

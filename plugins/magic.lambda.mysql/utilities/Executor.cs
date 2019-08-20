@@ -33,6 +33,33 @@ namespace magic.lambda.mysql.utilities
             }
         }
 
+        public static void ExecuteCrud(
+            Node input,
+            Stack<MySqlConnection> connections,
+            ISignaler signaler,
+            Func<Node, ISignaler, Node> createExecuteNode,
+            Action<MySqlCommand, Node> executeCommand)
+        {
+            // Creating parametrized SQL node.
+            var execute = createExecuteNode(input, signaler);
+
+            // Checking if caller is only interested in SQL text.
+            var onlySql = !input.Children.Any((x) => x.Name == "connection");
+
+            // Massaging node to get parameters correctly.
+            input.Value = execute.Value;
+            input.Clear();
+            input.AddRange(execute.Children.ToList());
+            if (onlySql)
+                return;
+
+            // Executing SQL.
+            Execute(input, connections, signaler, (cmd) =>
+            {
+                executeCommand(cmd, input);
+            });
+        }
+
         public static Node CreateSelect(Node root, ISignaler signaler)
         {
             // Dynamically building SQL according to input nodes.
@@ -71,9 +98,7 @@ namespace magic.lambda.mysql.utilities
             if (order != null)
             {
                 sql += " order by `" + order.GetEx<string>(signaler).Replace("`", "``") + "`";
-                if (order.Children.Count() > 1)
-                    throw new ArgumentException("Wrong number of arguments given to [order]");
-                var direction = order.Children.FirstOrDefault((x) => x.Name == "direction");
+                var direction = root.Children.FirstOrDefault((x) => x.Name == "direction");
                 if (direction != null)
                 {
                     var dir = direction.GetEx<string>(signaler);

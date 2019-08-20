@@ -13,34 +13,38 @@ slot:magic.db.read
 
 
          /*
-          * Parametrizing invocation to [mysql.select].
+          * Parametrizing invocation to [mysql.read].
           */
          if
             mt
                get-count:x:@.arguments/*/where/*
                .:int:0
             .lambda
-               add:x:../*/mysql.connect/*/mysql.select
+               add:x:../*/mysql.connect/*/mysql.read
                   .
                      where
                         and
-               add:x:../*/mysql.connect/*/mysql.select/*/where/*/and
+               add:x:../*/mysql.connect/*/mysql.read/*/where/*/and
                   get-nodes:x:@.arguments/*/where/*
 
 
          /*
-          * Adding [limit] and [offset]
+          * Adding [limit], [offset], [order] and [direction]
           */
-         add:x:./*/mysql.select
+         add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/limit
-         add:x:./*/mysql.select
+         add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/offset
+         add:x:./*/mysql.read
+            get-nodes:x:@.arguments/*/order
+         add:x:./*/mysql.read
+            get-nodes:x:@.arguments/*/direction
 
 
          /*
-          * Invoking [mysql.select].
+          * Invoking [mysql.read].
           */
-         mysql.select
+         mysql.read
             connection:x:@.arguments/*/connection
             table:x:@.arguments/*/table
 
@@ -48,4 +52,4 @@ slot:magic.db.read
          /*
           * Returning results to caller.
           */
-         return-nodes:x:@mysql.select/*
+         return-nodes:x:@mysql.read/*

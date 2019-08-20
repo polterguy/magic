@@ -4,7 +4,6 @@
  */
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using magic.node;
@@ -12,7 +11,7 @@ using magic.signals.contracts;
 using ut = magic.lambda.utilities;
 using magic.lambda.mysql.utilities;
 
-namespace magic.lambda.mysql.crud
+namespace magic.lambda.mysql
 {
     [Slot(Name = "mysql.select")]
     public class Select : ISlot, IMeta
@@ -23,36 +22,11 @@ namespace magic.lambda.mysql.crud
         public Select(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
+            _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
 
         public void Signal(Node input)
         {
-            if (input.Children.Any((x) =>
-            {
-                return x.Name != "connection" &&
-                    x.Name != "table" &&
-                    x.Name != "columns" &&
-                    x.Name != "where" &&
-                    x.Name != "limit" &&
-                    x.Name != "offset" &&
-                    x.Name != "order";
-            }))
-                throw new ArgumentException($"Illegal argument given to [mysql.select]");
-
-            // Creating parametrized SQL node.
-            var execute = Executor.CreateSelect(input, _signaler);
-
-            // Checking if caller is only interested in SQL text.
-            var onlySql = !input.Children.Any((x) => x.Name == "connection");
-
-            // Massaging node to get parameters correctly.
-            input.Value = execute.Value;
-            input.Clear();
-            input.AddRange(execute.Children.ToList());
-            if (onlySql)
-                return;
-
-            // Executing SQL.
             Executor.Execute(input, _connections, _signaler, (cmd) =>
             {
                 using (var reader = cmd.ExecuteReader())
