@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using MySql.Data.MySqlClient;
 using magic.node;
 using magic.lambda.utilities;
@@ -27,8 +28,12 @@ namespace magic.lambda.mysql.utilities
                 {
                     cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
                 }
+
+                // Making sure we clean nodes before invoking lambda callback.
                 input.Value = null;
                 input.Clear();
+
+                // Invoking lambda callback supplied by caller.
                 functor(cmd);
             }
         }
@@ -37,11 +42,11 @@ namespace magic.lambda.mysql.utilities
             Node input,
             Stack<MySqlConnection> connections,
             ISignaler signaler,
-            Func<Node, ISignaler, Node> createExecuteNode,
-            Action<MySqlCommand, Node> executeCommand)
+            Func<Node, Node> createExecuteNode,
+            Action<MySqlCommand> executeCommand)
         {
             // Creating parametrized SQL node.
-            var execute = createExecuteNode(input, signaler);
+            var execute = createExecuteNode(input);
 
             // Checking if caller is only interested in SQL text.
             var onlySql = !input.Children.Any((x) => x.Name == "connection");
@@ -50,73 +55,66 @@ namespace magic.lambda.mysql.utilities
             input.Value = execute.Value;
             input.Clear();
             input.AddRange(execute.Children.ToList());
+
+            // Checking if caller is only interested in SQL command, without actually executing it.
+            // Which we assume if no [connection] node is supplied.
             if (onlySql)
                 return;
 
             // Executing SQL.
-            Execute(input, connections, signaler, (cmd) =>
-            {
-                executeCommand(cmd, input);
-            });
+            Execute(input, connections, signaler, (cmd) => executeCommand(cmd));
         }
 
-        public static Node CreateSelect(Node root, ISignaler signaler)
+        public static Node CreateSelect(Node node, ISignaler signaler)
         {
-            // Dynamically building SQL according to input nodes.
+            // Resulting node.
             var result = new Node("sql");
-            var sql = "select ";
-            var columns = root.Children.FirstOrDefault((x) => x.Name == "columns");
-            if (columns != null)
-            {
-                var first = true;
-                foreach (var idxCol in columns.Children)
-                {
-                    if (first)
-                        first = false;
-                    else
-                        sql += ",";
-                    sql += "`" + idxCol.Name.Replace("`", "``") + "`";
-                }
-            }
-            else
-            {
-                sql += "*";
-            }
 
-            sql += " from " + "`" + root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``") + "`";
+            // Temporary buffer used to build our SQL text.
+            var builder = new StringBuilder();
+            builder.Append("select ");
 
-            var where = root.Children.FirstOrDefault((x) => x.Name == "where");
+            // Retrieving columns for SQL text.
+            GetColumns(builder, node);
+
+            // Appending table name.
+            builder.Append(" from ");
+            GetTableName(node, signaler, builder);
+
+            // Appending [where] clause, if any.
+            var where = node.Children.FirstOrDefault((x) => x.Name == "where");
             if (where != null && where.Children.Any())
             {
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
-                sql += " where " + CreateWhereSql(where, result, signaler);
+                builder.Append(" where ");
+                builder.Append(CreateWhereSql(where, result, signaler));
             }
 
-            var order = root.Children.FirstOrDefault((x) => x.Name == "order");
+            var order = node.Children.FirstOrDefault((x) => x.Name == "order");
             if (order != null)
             {
-                sql += " order by `" + order.GetEx<string>(signaler).Replace("`", "``") + "`";
-                var direction = root.Children.FirstOrDefault((x) => x.Name == "direction");
+                builder.Append(" order by `" + order.GetEx<string>(signaler).Replace("`", "``") + "`");
+                var direction = node.Children.FirstOrDefault((x) => x.Name == "direction");
                 if (direction != null)
                 {
                     var dir = direction.GetEx<string>(signaler);
                     if (dir != "asc" && dir != "desc")
                         throw new ArgumentException($"I don't know how to sort '{dir}' [direction]");
-                    sql += " " + dir;
+                    builder.Append(" " + dir);
                 }
             }
 
-            var limit = root.Children.FirstOrDefault((x) => x.Name == "limit");
+            var limit = node.Children.FirstOrDefault((x) => x.Name == "limit");
             if (limit != null)
-                sql += " limit " + limit.GetEx<long>(signaler);
+                builder.Append(" limit " + limit.GetEx<long>(signaler));
 
-            var offset = root.Children.FirstOrDefault((x) => x.Name == "offset");
+            var offset = node.Children.FirstOrDefault((x) => x.Name == "offset");
             if (offset != null)
-                sql += " offset " + offset.GetEx<long>(signaler);
+                builder.Append(" offset " + offset.GetEx<long>(signaler));
 
-            result.Value = sql;
+            result.Value = builder.ToString();
             return result;
         }
 
@@ -133,43 +131,46 @@ namespace magic.lambda.mysql.utilities
                 }
             }
 
-            // Dynamically building SQL according to input nodes.
+            // Resulting node, containing SQL text and command parameters.
             var result = new Node("sql");
-            var sql =
-                "insert into " +
-                "`" +
-                root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``")
-                + "`";
-            sql += " (";
+
+            // Temporary buffer used to build our SQL text.
+            var builder = new StringBuilder();
+            builder.Append("insert into ");
+
+            // Getting table name
+            GetTableName(root, signaler, builder);
+
+            builder.Append(" (");
             var first = true;
             foreach (var idx in root.Children.First((x) => x.Name == "values").Children)
             {
                 if (first)
                     first = false;
                 else
-                    sql += ", ";
-                sql += "`" + idx.Name.Replace("`", "``") + "`";
+                    builder.Append(", ");
+                builder.Append("`" + idx.Name.Replace("`", "``") + "`");
             }
-            sql += ") values (";
+            builder.Append(") values (");
             var idxNo = 0;
             foreach (var idx in root.Children.First((x) => x.Name == "values").Children)
             {
                 if (idxNo > 0)
-                    sql += ", ";
+                    builder.Append(", ");
                 if (idx.Value == null)
                 {
-                    sql += "null";
+                    builder.Append("null");
                 }
                 else
                 {
-                    sql += "@" + idxNo;
+                    builder.Append("@" + idxNo);
                     result.Add(new Node("@" + idxNo, idx.GetEx(signaler)));
                     ++idxNo;
                 }
             }
-            sql += "); select last_insert_id();";
+            builder.Append("); select last_insert_id();");
 
-            result.Value = sql;
+            result.Value = builder.ToString();
             return result;
         }
 
@@ -177,22 +178,25 @@ namespace magic.lambda.mysql.utilities
         {
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
-            var sql = 
-                "delete from " + 
-                "`" + 
-                root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``") 
-                + "`";
 
+            // Temporary buffer used to build our SQL text.
+            var builder = new StringBuilder();
+            builder.Append("delete from ");
+
+            // Getting table name
+            GetTableName(root, signaler, builder);
+
+            // Checking if we have a [where] clause.
             var where = root.Children.FirstOrDefault((x) => x.Name == "where");
             if (where != null && where.Children.Any())
             {
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
-                sql += " where " + CreateWhereSql(where, result, signaler);
+                builder.Append(" where " + CreateWhereSql(where, result, signaler));
             }
 
-            result.Value = sql;
+            result.Value = builder.ToString();
             return result;
         }
 
@@ -209,27 +213,32 @@ namespace magic.lambda.mysql.utilities
                 }
             }
 
+            // Temporary buffer used to build our SQL text.
+            var builder = new StringBuilder();
+            builder.Append("update ");
+
+            // Getting table name
+            GetTableName(root, signaler, builder);
+
+            // Adding set
+            builder.Append(" set ");
+
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
-            var sql =
-                "update " +
-                "`" +
-                root.Children.First((x) => x.Name == "table").GetEx<string>(signaler).Replace("`", "``")
-                + "` set ";
 
             var idxNo = 0;
             foreach (var idxCol in root.Children.First((x) => x.Name == "values").Children)
             {
                 if (idxNo > 0)
-                    sql += ", ";
-                sql += "`" + idxCol.Name.Replace("`", "``") + "`";
+                    builder.Append(", ");
+                builder.Append("`" + idxCol.Name.Replace("`", "``") + "`");
                 if (idxCol.Value == null)
                 {
-                    sql += " = null";
+                    builder.Append(" = null");
                 }
                 else
                 {
-                    sql += " = @v" + idxNo;
+                    builder.Append(" = @v" + idxNo);
                     result.Add(new Node("@v" + idxNo, idxCol.GetEx(signaler)));
                     ++idxNo;
                 }
@@ -241,14 +250,50 @@ namespace magic.lambda.mysql.utilities
                 if (where.Children.Count() != 1)
                     throw new ArgumentException("Too many children nodes to SQL [where] parameters");
 
-                sql += " where " + CreateWhereSql(where, result, signaler);
+                builder.Append(" where " + CreateWhereSql(where, result, signaler));
             }
 
-            result.Value = sql;
+            result.Value = builder.ToString();
             return result;
         }
 
         #region [ -- Private helper methods -- ]
+
+        private static void GetTableName(Node root, ISignaler signaler, StringBuilder builder)
+        {
+            builder.Append("`");
+            var tableName = root.Children.FirstOrDefault((x) => x.Name == "table")?.GetEx<string>(signaler);
+            if (tableName == null)
+                throw new ApplicationException("No table name supplied");
+            builder.Append(tableName.Replace("`", "``"));
+            builder.Append("`");
+        }
+
+        /*
+         * Appends caller's requested columns into builder for generating SQL text.
+         */
+        static void GetColumns(StringBuilder builder, Node root)
+        {
+            // Checking if caller supplied an explicit [columns] declaration.
+            var columns = root.Children.FirstOrDefault((x) => x.Name == "columns");
+            if (columns != null)
+            {
+                var first = true;
+                foreach (var idxCol in columns.Children)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        builder.Append(",");
+                    builder.Append("`" + idxCol.Name.Replace("`", "``") + "`");
+                }
+            }
+            else
+            {
+                // Assuming all columns.
+                builder.Append("*");
+            }
+        }
 
         static string CreateWhereSql(Node where, Node root, ISignaler signaler)
         {
@@ -298,17 +343,35 @@ namespace magic.lambda.mysql.utilities
                     case "and":
                         result += BuildWhereLevel(idxCol, "and", root, ref levelNo, signaler);
                         break;
+
                     case "or":
                         result += BuildWhereLevel(idxCol, "or", root, ref levelNo, signaler);
                         break;
+
                     default:
                         var comparisonOper = "=";
+                        var colName = idxCol.Name;
+                        if (colName.Contains(":"))
+                        {
+                            var entities = colName.Split(':');
+                            colName = entities[0];
+                            comparisonOper = entities[1];
+                            switch (comparisonOper)
+                            {
+                                case ">":
+                                case "<":
+                                case ">=":
+                                case "<=":
+                                case "!=":
+                                case "like":
+                                    break;
+                                default:
+                                    throw new ApplicationException($"Illegal comparison operator found '{comparisonOper}'");
+                            }
+                        }
                         var unwrapped = idxCol.GetEx(signaler);
-                        if (unwrapped is string strVal)
-                            if (strVal.Contains("%"))
-                                comparisonOper = "like";
                         var argName = "@" + levelNo;
-                        result += "`" + idxCol.Name.Replace("`", "``") + "` " + comparisonOper + " " + argName;
+                        result += "`" + colName.Replace("`", "``") + "` " + comparisonOper + " " + argName;
                         root.Add(new Node(argName, unwrapped));
                         ++levelNo;
                         break;
