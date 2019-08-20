@@ -7,9 +7,9 @@ slot:magic.db.create
 
 
       /*
-       * Parametrizing invocation to [mysql.insert].
+       * Parametrizing invocation to [mysql.create].
        */
-      add:x:./*/mysql.connect/*/mysql.insert/*/values
+      add:x:./*/mysql.connect/*/mysql.create/*/values
          get-nodes:x:@.arguments/*/values/*
 
 
@@ -20,9 +20,9 @@ slot:magic.db.create
 
 
          /*
-          * Invoking [mysql.insert].
+          * Invoking [mysql.create].
           */
-         mysql.insert
+         mysql.create
             connection:x:@.arguments/*/connection
             table:x:@.arguments/*/table
             values
@@ -33,4 +33,4 @@ slot:magic.db.create
           */
          unwrap:x:+/*
          return-nodes
-            id:x:@mysql.insert
+            id:x:@mysql.create

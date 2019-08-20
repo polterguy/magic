@@ -13,13 +13,13 @@ using magic.lambda.mysql.utilities;
 
 namespace magic.lambda.mysql.crud
 {
-    [Slot(Name = "mysql.delete")]
-    public class Delete : ISlot, IMeta
+    [Slot(Name = "mysql.read")]
+    public class Read : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
 
-        public Delete(ut.Stack<MySqlConnection> connections, ISignaler signaler)
+        public Read(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
@@ -31,11 +31,22 @@ namespace magic.lambda.mysql.crud
                 input,
                 _connections,
                 _signaler,
-                (n, s) => Executor.CreateDelete(n, s),
+                (n, s) => Executor.CreateSelect(n, s),
                 (cmd, n) =>
                 {
-                    n.Value = cmd.ExecuteNonQuery();
-                    n.Clear();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var rowNode = new Node();
+                            for (var idxCol = 0; idxCol < reader.FieldCount; idxCol++)
+                            {
+                                var colNode = new Node(reader.GetName(idxCol), reader[idxCol]);
+                                rowNode.Add(colNode);
+                            }
+                            input.Add(rowNode);
+                        }
+                    }
                 });
         }
 
@@ -44,7 +55,11 @@ namespace magic.lambda.mysql.crud
             yield return new Node(":", "*");
             yield return new Node("connection", "*");
             yield return new Node("table", "*");
+            yield return new Node("columns");
             yield return new Node("where");
+            yield return new Node("limit", "*");
+            yield return new Node("offset", "*");
+            yield return new Node("order", "*");
         }
     }
 }

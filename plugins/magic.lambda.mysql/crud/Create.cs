@@ -13,13 +13,13 @@ using magic.lambda.mysql.utilities;
 
 namespace magic.lambda.mysql.crud
 {
-    [Slot(Name = "mysql.delete")]
-    public class Delete : ISlot, IMeta
+    [Slot(Name = "mysql.create")]
+    public class Create : ISlot, IMeta
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
 
-        public Delete(ut.Stack<MySqlConnection> connections, ISignaler signaler)
+        public Create(ut.Stack<MySqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
@@ -31,10 +31,10 @@ namespace magic.lambda.mysql.crud
                 input,
                 _connections,
                 _signaler,
-                (n, s) => Executor.CreateDelete(n, s),
+                (n, s) => Executor.CreateInsert(n, s),
                 (cmd, n) =>
                 {
-                    n.Value = cmd.ExecuteNonQuery();
+                    n.Value = cmd.ExecuteScalar();
                     n.Clear();
                 });
         }
@@ -44,7 +44,7 @@ namespace magic.lambda.mysql.crud
             yield return new Node(":", "*");
             yield return new Node("connection", "*");
             yield return new Node("table", "*");
-            yield return new Node("where");
+            yield return new Node("values");
         }
     }
 }
