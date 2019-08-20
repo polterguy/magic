@@ -240,7 +240,7 @@ namespace magic.tests.lambda
    values
       foo1:bar1
       foo2:int:5");
-            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = @v1 where `id` = @0", lambda.Children.First().Value);
+            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = @v1 where (`id` = @0)", lambda.Children.First().Value);
             Assert.Equal(3, lambda.Children.First().Children.Count());
             Assert.Equal("@v0", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -263,7 +263,7 @@ namespace magic.tests.lambda
    values
       foo1:bar1
       foo2:int:5");
-            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = @v1 where `id` = @0", lambda.Children.First().Value);
+            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = @v1 where (`id` = @0)", lambda.Children.First().Value);
             Assert.Equal(3, lambda.Children.First().Children.Count());
             Assert.Equal("@v0", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
@@ -301,7 +301,7 @@ namespace magic.tests.lambda
    values
       foo1:bar1
       foo2");
-            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = null where `id` = @0", lambda.Children.First().Value);
+            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = null where (`id` = @0)", lambda.Children.First().Value);
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("@v0", lambda.Children.First().Children.First().Name);
             Assert.Equal("bar1", lambda.Children.First().Children.First().Value);

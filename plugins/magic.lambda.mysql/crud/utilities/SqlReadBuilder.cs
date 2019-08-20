@@ -27,6 +27,29 @@ namespace magic.lambda.mysql.crud.utilities
             var builder = new StringBuilder();
             builder.Append("select ");
 
+            // Getting columns.
+            GetColumns(builder);
+
+            builder.Append(" from ");
+
+            // Getting table name from base class.
+            GetTableName(builder);
+
+            // Getting [where] clause.
+            BuildWhere(result, builder);
+
+            // Adding tail.
+            GetTail(builder);
+
+            // Returning result to caller.
+            result.Value = builder.ToString();
+            return result;
+        }
+
+        #region [ -- Private helper methods -- ]
+
+        void GetColumns(StringBuilder builder)
+        {
             var columns = Root.Children.Where((x) => x.Name == "columns");
             if (columns.Any() && columns.First().Children.Any())
             {
@@ -44,23 +67,22 @@ namespace magic.lambda.mysql.crud.utilities
             {
                 builder.Append("*");
             }
-            builder.Append(" from ");
+        }
 
-            // Getting table name from base class.
-            BuildTableName(builder);
-
-            // Getting [where] clause.
-            BuildWhere(result, builder);
-
-            // Getting [order]
-            var order = Root.Children.Where((x) => x.Name == "order");
-            if (order.Any())
+        void GetTail(StringBuilder builder)
+        {
+            // Getting [order].
+            var orderNodes = Root.Children.Where((x) => x.Name == "order");
+            if (orderNodes.Any())
             {
                 // Sanity checking.
-                if (order.Count() > 1)
+                if (orderNodes.Count() > 1)
                     throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [order] nodes");
 
-                builder.Append(" order by `" + order.First().GetEx<string>(Signaler).Replace("`", "``") + "`");
+                var orderColumn = orderNodes.First().GetEx<string>(Signaler).Replace("`", "``");
+                builder.Append(" order by `" + orderColumn + "`");
+
+                // Checking if [direction] node exists.
                 var direction = Root.Children.Where((x) => x.Name == "direction");
                 if (direction.Any())
                 {
@@ -76,29 +98,30 @@ namespace magic.lambda.mysql.crud.utilities
                 }
             }
 
-            var limit = Root.Children.Where((x) => x.Name == "limit");
-            if (limit.Any())
+            // Getting [limit].
+            var limitNodes = Root.Children.Where((x) => x.Name == "limit");
+            if (limitNodes.Any())
             {
                 // Sanity checking.
-                if (limit.Count() > 1)
+                if (limitNodes.Count() > 1)
                     throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [limit] nodes");
 
-                builder.Append(" limit " + limit.First().GetEx<long>(Signaler));
+                var limitValue = limitNodes.First().GetEx<long>(Signaler);
+                builder.Append(" limit " + limitValue);
             }
 
-            var offset = Root.Children.Where((x) => x.Name == "offset");
-            if (offset.Any())
+            var offsetNodes = Root.Children.Where((x) => x.Name == "offset");
+            if (offsetNodes.Any())
             {
                 // Sanity checking.
-                if (offset.Count() > 1)
+                if (offsetNodes.Count() > 1)
                     throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [offset] nodes");
 
-                builder.Append(" offset " + offset.First().GetEx<long>(Signaler));
+                var offsetValue = offsetNodes.First().GetEx<long>(Signaler);
+                builder.Append(" offset " + offsetValue);
             }
-
-            // Returning result to caller.
-            result.Value = builder.ToString();
-            return result;
         }
+
+        #endregion
     }
 }

@@ -41,8 +41,10 @@ namespace magic.lambda.mysql.crud
                 return;
             }
 
+            // Executing SQL, now parametrized.
             Executor.Execute(sqlNode, _connections, _signaler, (cmd) =>
             {
+                // Notice, create SQL returns last inserted ID!
                 input.Value = cmd.ExecuteScalar();
                 input.Clear();
             });

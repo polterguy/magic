@@ -19,13 +19,13 @@ namespace magic.lambda.mysql.crud.utilities
         {
             // Return value.
             var result = new Node("sql");
-
-            // Starting build process.
             var builder = new StringBuilder();
+
+            // Building SQL text and parameter collection.
             builder.Append("delete from ");
 
             // Getting table name from base class.
-            BuildTableName(builder);
+            GetTableName(builder);
 
             // Getting [where] clause.
             BuildWhere(result, builder);

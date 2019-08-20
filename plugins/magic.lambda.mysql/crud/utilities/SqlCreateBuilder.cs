@@ -20,27 +20,40 @@ namespace magic.lambda.mysql.crud.utilities
 
         public override Node Build()
         {
-            // Return value.
-            var result = new Node("sql");
-
             // Sanity checking for [exclude] fields.
             CheckExclusionColumns();
 
-            // Starting build process.
+            // Return value.
+            var result = new Node("sql");
             var builder = new StringBuilder();
+
+            // Starting build process.
             builder.Append("insert into ");
 
             // Getting table name from base class.
-            BuildTableName(builder);
+            GetTableName(builder);
 
+            // Building insertion [values].
+            BuildValues(builder, result);
+
+            // Making sure our SQL returns the last inserted column's ID.
+            builder.Append("; select last_insert_id();");
+
+            // Returning result to caller.
+            result.Value = builder.ToString();
+            return result;
+        }
+
+        #region [ -- Private helper methods -- ]
+
+        void BuildValues(StringBuilder builder, Node result)
+        {
             // Appending actual insertion values.
             var values = Root.Children.Where((x) => x.Name == "values");
 
-            // Sanity checking [values], making sure there's only one.
-            if (!values.Any())
-                throw new ApplicationException($"No [values] provided to '{GetType().FullName}'");
-            if (values.Count() > 1)
-                throw new ApplicationException($"Too many [values] provided to '{GetType().FullName}'");
+            // Sanity checking, making sure there's exactly one [values] node.
+            if (values.Count() != 1)
+                throw new ApplicationException($"Exactly one [values] needs to be provided to '{GetType().FullName}'");
 
             // Appending column names.
             builder.Append(" (");
@@ -72,13 +85,9 @@ namespace magic.lambda.mysql.crud.utilities
                     ++idxNo;
                 }
             }
-
-            // Making sure our SQL returns the last inserted column's ID.
-            builder.Append("); select last_insert_id();");
-
-            // Returning result to caller.
-            result.Value = builder.ToString();
-            return result;
+            builder.Append(")");
         }
+
+        #endregion
     }
 }

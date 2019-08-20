@@ -30,7 +30,7 @@ namespace magic.lambda.mysql.crud.utilities
 
         protected ISignaler Signaler { get; private set; }
 
-        protected void BuildTableName(StringBuilder builder)
+        protected void GetTableName(StringBuilder builder)
         {
             builder.Append("`");
 
@@ -48,9 +48,10 @@ namespace magic.lambda.mysql.crud.utilities
             var exclude = Root.Children.FirstOrDefault((x) => x.Name == "exclude");
             if (exclude != null)
             {
+                var valueNodes = Root.Children.First((x) => x.Name == "values");
                 foreach (var idx in exclude.Children)
                 {
-                    if (Root.Children.First((x) => x.Name == "values").Children.Any((x) => x.Name == idx.Name))
+                    if (valueNodes.Children.Any((x) => x.Name == idx.Name))
                         throw new ApplicationException($"Illegal column [{idx.Name}] found in invocation to '{GetType().FullName}'");
                 }
             }
