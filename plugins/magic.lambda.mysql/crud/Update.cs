@@ -31,11 +31,11 @@ namespace magic.lambda.mysql.crud
                 input,
                 _connections,
                 _signaler,
-                (n, s) => Executor.CreateUpdate(n, s),
-                (cmd, n) =>
+                (n) => Executor.CreateUpdate(n, _signaler),
+                (cmd) =>
                 {
-                    n.Value = cmd.ExecuteNonQuery();
-                    n.Clear();
+                    input.Value = cmd.ExecuteNonQuery();
+                    input.Clear();
                 });
         }
 

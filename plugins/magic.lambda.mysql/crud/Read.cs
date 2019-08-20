@@ -31,8 +31,8 @@ namespace magic.lambda.mysql.crud
                 input,
                 _connections,
                 _signaler,
-                (n, s) => Executor.CreateSelect(n, s),
-                (cmd, n) =>
+                (n) => Executor.CreateSelect(n, _signaler),
+                (cmd) =>
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
