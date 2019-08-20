@@ -223,9 +223,16 @@ namespace magic.lambda.mysql.utilities
                 if (idxNo > 0)
                     sql += ", ";
                 sql += "`" + idxCol.Name.Replace("`", "``") + "`";
-                sql += " = @v" + idxNo;
-                result.Add(new Node("@v" + idxNo, idxCol.GetEx(signaler)));
-                ++idxNo;
+                if (idxCol.Value == null)
+                {
+                    sql += " = null";
+                }
+                else
+                {
+                    sql += " = @v" + idxNo;
+                    result.Add(new Node("@v" + idxNo, idxCol.GetEx(signaler)));
+                    ++idxNo;
+                }
             }
 
             var where = root.Children.FirstOrDefault((x) => x.Name == "where");
