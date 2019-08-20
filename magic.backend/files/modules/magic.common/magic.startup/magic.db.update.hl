@@ -7,9 +7,30 @@ slot:magic.db.update
 
 
       /*
+       * Sanity checking invocation.
+       */
+      for-each:x:@.arguments/*/ids/*
+         if
+            eq
+               get-value:x:@.dp/#
+               .
+            .lambda
+               throw:[magic.db.update] was not given a valid ID
+
+
+      /*
        * Opening up a connection.
        */
       mysql.connect:x:@.arguments/*/connection
+
+
+         /*
+          * Parametrizing [mysql.update].
+          */
+         add:x:./*/mysql.update/*/where/*/and
+            get-nodes:x:@.arguments/*/ids/*
+         add:x:./*/mysql.update/*/values
+            get-nodes:x:@.arguments/*/values/*
 
 
          /*
@@ -28,7 +49,6 @@ slot:magic.db.update
             values
             where
                and
-                  id:x:@.arguments/*/where/*/id
 
 
          /*

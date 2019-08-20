@@ -1,19 +1,35 @@
 ﻿
 /*
- * Returns items from your TODO table.
+ * Updates the specified [id] TODO item.
  */
 
 
-set-value:x:./*/signal/*/where/*/id
-   convert:x:@.arguments/*/id
-      type:long
+/*
+ * Parametrizing [magic.db.update], first its [ids].
+ */
+unwrap:x:./*/signal/*/ids/*
 remove-node:x:@.arguments/*/id
+
+
+/*
+ * Adding the rest of our parameters into [values].
+ */
 add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
+
+
+/*
+ * Invoking [magic.db.update]
+ */
 signal:magic.db.update
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    values
-   where
-      id
-return-nodes:x:-/*
+   ids
+      id:x:@.arguments/*/id
+
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@signal/*

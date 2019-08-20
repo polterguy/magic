@@ -7,9 +7,28 @@ slot:magic.db.delete
 
 
       /*
+       * Sanity checking invocation.
+       */
+      for-each:x:@.arguments/*/ids/*
+         if
+            eq
+               get-value:x:@.dp/#
+               .
+            .lambda
+               throw:[magic.db.delete] was not given a valid ID
+
+
+      /*
        * Opening up a connection.
        */
       mysql.connect:x:@.arguments/*/connection
+
+
+         /*
+          * Parametrizing [mysql.delete].
+          */
+         add:x:./*/mysql.delete/*/where/*/and
+            get-nodes:x:@.arguments/*/ids/*
 
 
          /*
@@ -20,7 +39,6 @@ slot:magic.db.delete
             table:x:@.arguments/*/table
             where
                and
-                  id:x:@.arguments/*/id
 
 
          /*

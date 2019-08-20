@@ -4,9 +4,18 @@
  */
 
 
-unwrap:x:./*/signal/*/id
+/*
+ * Invoking [magic.db.delete], making sure we unwrap the [id].
+ */
+unwrap:x:./*/signal/*/ids/*
 signal:magic.db.delete
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
-   id:x:@.arguments/*/id
-return-nodes:x:-/*
+   ids
+      id:x:@.arguments/*/id
+
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@signal/*
