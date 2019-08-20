@@ -122,6 +122,17 @@ namespace magic.lambda.mysql.utilities
 
         public static Node CreateInsert(Node root, ISignaler signaler)
         {
+            // Sanity checking invocation.
+            var exclude = root.Children.FirstOrDefault((x) => x.Name == "exclude");
+            if (exclude != null)
+            {
+                foreach (var idx in exclude.Children)
+                {
+                    if (root.Children.First((x) => x.Name == "values").Children.Any((x) => x.Name == idx.Name))
+                        throw new ApplicationException($"Illegal column [{idx.Name}] found in invocation to [mysql.create]");
+                }
+            }
+
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
             var sql =
@@ -180,6 +191,17 @@ namespace magic.lambda.mysql.utilities
 
         public static Node CreateUpdate(Node root, ISignaler signaler)
         {
+            // Sanity checking invocation.
+            var exclude = root.Children.FirstOrDefault((x) => x.Name == "exclude");
+            if (exclude != null)
+            {
+                foreach (var idx in exclude.Children)
+                {
+                    if (root.Children.First((x) => x.Name == "values").Children.Any((x) => x.Name == idx.Name))
+                        throw new ApplicationException($"Illegal column [{idx.Name}] found in invocation to [mysql.update]");
+                }
+            }
+
             // Dynamically building SQL according to input nodes.
             var result = new Node("sql");
             var sql =

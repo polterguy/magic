@@ -18,6 +18,9 @@ signal:magic.db.create
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    values
+   exclude
+      Id
+      Done
 
 
 /*

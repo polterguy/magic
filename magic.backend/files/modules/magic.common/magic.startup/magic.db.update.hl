@@ -41,7 +41,27 @@ slot:magic.db.update
 
 
          /*
-          * Parametrizing invocation to [magic.mysql.create] with the new [values].
+          * Then adding [exclude] if given.
+          */
+         if
+            mt
+               get-count:x:@.arguments/*/exclude/*
+               .:int:0
+            .lambda
+
+
+               /*
+                * Adding [exclude] to [mysql.update].
+                */
+               add:x:../*/mysql.connect/*/mysql.update
+                  .
+                     exclude
+               add:x:../*/mysql.connect/*/mysql.update/*/exclude
+                  get-nodes:x:@.arguments/*/exclude/*
+
+
+         /*
+          * Parametrizing invocation to [mysql.update] with the new [values].
           */
          add:x:./*/mysql.update/*/values
             get-nodes:x:@.arguments/*/values/*

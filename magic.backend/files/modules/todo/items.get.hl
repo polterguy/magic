@@ -18,6 +18,10 @@ signal:magic.db.read
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    args
+   columns
+      Subject
+      Id
+      Done
 
 
 /*
