@@ -20,7 +20,6 @@ signal:magic.db.create
    values
    exclude
       Id
-      Done
 
 
 /*
