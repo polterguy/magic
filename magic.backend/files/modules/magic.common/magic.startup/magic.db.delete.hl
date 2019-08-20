@@ -11,9 +11,13 @@ slot:magic.db.delete
        */
       for-each:x:@.arguments/*/ids/*
          if
-            eq
-               get-value:x:@.dp/#
-               .
+            or
+               eq
+                  get-value:x:@.dp/#
+                  .
+               eq
+                  get-value:x:@.dp/#
+                  .:
             .lambda
                throw:[magic.db.delete] was not given a valid ID
 
