@@ -42,11 +42,11 @@ namespace magic.lambda.mysql.utilities
             Node input,
             Stack<MySqlConnection> connections,
             ISignaler signaler,
-            Func<Node, Node> createExecuteNode,
+            Func<Node> createExecuteNode,
             Action<MySqlCommand> executeCommand)
         {
             // Creating parametrized SQL node.
-            var execute = createExecuteNode(input);
+            var execute = createExecuteNode();
 
             // Checking if caller is only interested in SQL text.
             var onlySql = !input.Children.Any((x) => x.Name == "connection");

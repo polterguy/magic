@@ -4,12 +4,14 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using magic.node;
 using magic.signals.contracts;
 using ut = magic.lambda.utilities;
 using magic.lambda.mysql.utilities;
+using magic.lambda.mysql.crud.utilities;
 
 namespace magic.lambda.mysql.crud
 {
@@ -27,16 +29,23 @@ namespace magic.lambda.mysql.crud
 
         public void Signal(Node input)
         {
-            Executor.ExecuteCrud(
-                input,
-                _connections,
-                _signaler,
-                (n) => Executor.CreateInsert(n, _signaler),
-                (cmd) =>
-                {
-                    input.Value = cmd.ExecuteScalar();
-                    input.Clear();
-                });
+            var builder = new SqlCreateBuilder(input, _signaler);
+            var sqlNode = builder.Build();
+
+            // Checking if this is a "build only" invocation.
+            if (builder.IsGenerateOnly)
+            {
+                input.Value = sqlNode.Value;
+                input.Clear();
+                input.AddRange(sqlNode.Children.ToList());
+                return;
+            }
+
+            Executor.Execute(sqlNode, _connections, _signaler, (cmd) =>
+            {
+                input.Value = cmd.ExecuteScalar();
+                input.Clear();
+            });
         }
 
         public IEnumerable<Node> GetArguments()
