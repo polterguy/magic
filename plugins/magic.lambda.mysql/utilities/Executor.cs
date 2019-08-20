@@ -156,9 +156,16 @@ namespace magic.lambda.mysql.utilities
             {
                 if (idxNo > 0)
                     sql += ", ";
-                sql += "@" + idxNo;
-                result.Add(new Node("@" + idxNo, idx.GetEx(signaler)));
-                ++idxNo;
+                if (idx.Value == null)
+                {
+                    sql += "null";
+                }
+                else
+                {
+                    sql += "@" + idxNo;
+                    result.Add(new Node("@" + idxNo, idx.GetEx(signaler)));
+                    ++idxNo;
+                }
             }
             sql += "); select last_insert_id();";
 

@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using System.Linq;
 using Xunit;
 
@@ -167,6 +168,54 @@ namespace magic.tests.lambda
         }
 
         [Fact]
+        public void InsertSQL_02()
+        {
+            var lambda = Common.Evaluate(@"mysql.create
+   table:SomeTable
+   exclude
+      foo3
+   values
+      foo1:bar1
+      foo2:int:5");
+            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, @1); select last_insert_id();", lambda.Children.First().Value);
+            Assert.Equal(2, lambda.Children.First().Children.Count());
+            Assert.Equal("@0", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+            Assert.Equal("@1", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void InsertSQL_03_Throws()
+        {
+            Assert.Throws<ApplicationException>(() =>
+            {
+                Common.Evaluate(@"mysql.create
+   table:SomeTable
+   exclude
+      foo3
+   values
+      foo1:bar1
+      foo2:int:5
+      foo3:howdy");
+            });
+        }
+
+        [Fact]
+        public void InsertSQL_04()
+        {
+            var lambda = Common.Evaluate(@"mysql.create
+   table:SomeTable
+   values
+      foo1:bar1
+      foo2");
+            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, null); select last_insert_id();", lambda.Children.First().Value);
+            Assert.Single(lambda.Children.First().Children);
+            Assert.Equal("@0", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+        }
+
+        [Fact]
         public void UpdateSQL_01()
         {
             var lambda = Common.Evaluate(@"mysql.update
@@ -185,6 +234,46 @@ namespace magic.tests.lambda
             Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
             Assert.Equal("@0", lambda.Children.First().Children.Skip(2).First().Name);
             Assert.Equal(1, lambda.Children.First().Children.Skip(2).First().Value);
+        }
+
+        [Fact]
+        public void UpdateSQL_02()
+        {
+            var lambda = Common.Evaluate(@"mysql.update
+   table:SomeTable
+   exclude
+      foo3
+   where
+      and
+         id:int:1
+   values
+      foo1:bar1
+      foo2:int:5");
+            Assert.Equal("update `SomeTable` set `foo1` = @v0, `foo2` = @v1 where `id` = @0", lambda.Children.First().Value);
+            Assert.Equal(3, lambda.Children.First().Children.Count());
+            Assert.Equal("@v0", lambda.Children.First().Children.First().Name);
+            Assert.Equal("bar1", lambda.Children.First().Children.First().Value);
+            Assert.Equal("@v1", lambda.Children.First().Children.Skip(1).First().Name);
+            Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
+            Assert.Equal("@0", lambda.Children.First().Children.Skip(2).First().Name);
+            Assert.Equal(1, lambda.Children.First().Children.Skip(2).First().Value);
+        }
+
+        [Fact]
+        public void UpdateSQL_03_Throws()
+        {
+            Assert.Throws<ApplicationException>(() =>
+            {
+                Common.Evaluate(@"mysql.update
+   table:SomeTable
+   exclude
+      foo3
+   where
+      and
+         id:int:1
+   values
+      foo3:bar3");
+            });
         }
     }
 }
