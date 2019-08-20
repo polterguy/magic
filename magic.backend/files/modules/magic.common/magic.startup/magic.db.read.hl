@@ -22,20 +22,20 @@ slot:magic.db.read
           * such that we don't add them into our [where].
           */
          add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/args/*limit
-         remove-node:x:@.arguments/*/args/*limit
+            get-nodes:x:@.arguments/*/args/*/limit
+         remove-node:x:@.arguments/*/args/*/limit
 
          add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/args/*offset
-         remove-node:x:@.arguments/*/args/*offset
+            get-nodes:x:@.arguments/*/args/*/offset
+         remove-node:x:@.arguments/*/args/*/offset
 
          add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/args/*order
-         remove-node:x:@.arguments/*/args/*order
+            get-nodes:x:@.arguments/*/args/*/order
+         remove-node:x:@.arguments/*/args/*/order
 
          add:x:./*/mysql.read
-            get-nodes:x:@.arguments/*/args/*direction
-         remove-node:x:@.arguments/*/args/*direction
+            get-nodes:x:@.arguments/*/args/*/direction
+         remove-node:x:@.arguments/*/args/*/direction
 
 
          /*
@@ -57,6 +57,26 @@ slot:magic.db.read
                         and
                add:x:../*/mysql.connect/*/mysql.read/*/where/*/and
                   get-nodes:x:@.arguments/*/args/*
+
+
+         /*
+          * Then adding [columns] if given.
+          */
+         if
+            mt
+               get-count:x:@.arguments/*/columns/*
+               .:int:0
+            .lambda
+
+
+               /*
+                * Adding [columns] to [mysql.read].
+                */
+               add:x:../*/mysql.connect/*/mysql.read
+                  .
+                     columns
+               add:x:../*/mysql.connect/*/mysql.read/*/columns
+                  get-nodes:x:@.arguments/*/columns/*
 
 
          /*

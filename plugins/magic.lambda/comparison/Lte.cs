@@ -30,6 +30,8 @@ namespace magic.lambda.comparison
                     return false;
                 else if (lhs == null && rhs != null)
                     return true;
+                else if (lhs.GetType() != rhs.GetType())
+                    return false;
                 else
                     return ((IComparable)lhs).CompareTo(rhs) <= 0;
             });

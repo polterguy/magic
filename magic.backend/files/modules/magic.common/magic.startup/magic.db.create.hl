@@ -14,10 +14,30 @@ slot:magic.db.create
 
 
          /*
-          * Parametrizing invocation to [mysql.create].
+          * Parametrizing invocation to [mysql.create] with [values].
           */
          add:x:./*/mysql.create/*/values
             get-nodes:x:@.arguments/*/values/*
+
+
+         /*
+          * Then adding [exclude] if given.
+          */
+         if
+            mt
+               get-count:x:@.arguments/*/exclude/*
+               .:int:0
+            .lambda
+
+
+               /*
+                * Adding [exclude] to [mysql.create].
+                */
+               add:x:../*/mysql.connect/*/mysql.create
+                  .
+                     exclude
+               add:x:../*/mysql.connect/*/mysql.create/*/exclude
+                  get-nodes:x:@.arguments/*/exclude/*
 
 
          /*

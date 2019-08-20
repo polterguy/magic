@@ -27,6 +27,8 @@ signal:magic.db.update
    values
    ids
       id:x:@.arguments/*/id
+   exclude
+      Id
 
 
 /*
