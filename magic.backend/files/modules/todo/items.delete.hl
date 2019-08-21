@@ -8,7 +8,7 @@
  * Invoking [magic.db.delete], making sure we unwrap the [id].
  */
 unwrap:x:./*/signal/*/ids/*
-signal:magic.db.delete
+signal:magic.db.mysql.delete
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    ids

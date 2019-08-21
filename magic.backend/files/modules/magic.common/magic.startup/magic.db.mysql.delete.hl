@@ -2,7 +2,7 @@
 /*
  * Deletes the specified [id] record from your [connection]/[table].
  */
-slot:magic.db.delete
+slot:magic.db.mysql.delete
    .lambda
 
 

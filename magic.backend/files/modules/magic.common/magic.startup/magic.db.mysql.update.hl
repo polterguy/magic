@@ -4,7 +4,7 @@
  * values from [values]. [ids] can be a collection of values, preferably the IDs of your table,
  * that defines which item(s) to update. All [ids] are mandatory, and reuiqred to have values.
  */
-slot:magic.db.update
+slot:magic.db.mysql.update
    .lambda
 
 
