@@ -13,13 +13,13 @@ using magic.lambda.mssql.utilities;
 
 namespace magic.lambda.mssql
 {
-    [Slot(Name = "mssql.read")]
-    public class Read : ISlot, IMeta
+    [Slot(Name = "mssql.select")]
+    public class Select : ISlot, IMeta
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
 
-        public Read(ut.Stack<SqlConnection> connections, ISignaler signaler)
+        public Select(ut.Stack<SqlConnection> connections, ISignaler signaler)
         {
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
