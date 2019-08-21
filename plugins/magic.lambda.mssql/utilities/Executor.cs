@@ -22,14 +22,18 @@ namespace magic.lambda.mssql.utilities
         {
             using (var cmd = new SqlCommand(input.GetEx<string>(signaler), connections.Peek()))
             {
-                input.Value = null;
                 foreach (var idxPar in input.Children)
                 {
                     cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
                 }
+
+                // Making sure we clean nodes before invoking lambda callback.
+                input.Value = null;
+                input.Clear();
+
+                // Invoking lambda callback supplied by caller.
                 functor(cmd);
             }
-            input.Value = null;
         }
     }
 }
