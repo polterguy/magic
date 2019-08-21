@@ -140,6 +140,19 @@ namespace magic.tests.lambda
         }
 
         [Fact]
+        public void SelectSQL_10()
+        {
+            var lambda = Common.Evaluate(@"mysql.read
+   table:SomeTable
+   columns
+      Foo:bar
+      Howdy:World
+   offset:100");
+            Assert.Empty(lambda.Children.First().Children);
+            Assert.Equal("select `Foo`,`Howdy` from `SomeTable` offset 100", lambda.Children.First().Value);
+        }
+
+        [Fact]
         public void DeleteSQL_01()
         {
             var lambda = Common.Evaluate(@"mysql.delete
