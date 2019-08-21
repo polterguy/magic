@@ -10,19 +10,22 @@ using magic.node;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
 
-namespace magic.lambda.mssql.crud.utilities
+namespace magic.data.common
 {
     public abstract class SqlBuilder
     {
-        public SqlBuilder(Node node, ISignaler signaler)
+        public SqlBuilder(Node node, ISignaler signaler, string escapeChar)
         {
             Root = node ?? throw new ArgumentNullException(nameof(node));
             Signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
+            EscapeChar = escapeChar ?? throw new ArgumentNullException(nameof(escapeChar));
         }
 
         public abstract Node Build();
 
         public bool IsGenerateOnly => !Root.Children.Any((x) => x.Name == "connection");
+
+        protected string EscapeChar { get; private set; }
 
         #region [ -- Protected helper methods and properties -- ]
 
@@ -32,15 +35,15 @@ namespace magic.lambda.mssql.crud.utilities
 
         protected void GetTableName(StringBuilder builder)
         {
-            builder.Append("\"");
+            builder.Append(EscapeChar);
 
             // Retrieving actual table name from [table] node.
             var tableName = Root.Children.FirstOrDefault((x) => x.Name == "table")?.GetEx<string>(Signaler);
             if (tableName == null)
                 throw new ApplicationException($"No table name supplied to '{GetType().FullName}'");
-            builder.Append(tableName.Replace("\"", "\"\""));
+            builder.Append(tableName.Replace(EscapeChar, EscapeChar + EscapeChar));
 
-            builder.Append("\"");
+            builder.Append(EscapeChar);
         }
 
         protected void CheckExclusionColumns()
@@ -98,9 +101,9 @@ namespace magic.lambda.mssql.crud.utilities
 
         void BuildWhereLevel(
             Node result,
-            StringBuilder builder, 
-            Node level, 
-            string oper, 
+            StringBuilder builder,
+            Node level,
+            string oper,
             ref int levelNo)
         {
             builder.Append("(");
@@ -145,7 +148,7 @@ namespace magic.lambda.mssql.crud.utilities
                         }
                         var unwrapped = idxCol.GetEx(Signaler);
                         var argName = "@" + levelNo;
-                        builder.Append("\"" + colName.Replace("\"", "\"\"") + "\" " + comparisonOper + " " + argName);
+                        builder.Append(EscapeChar + colName.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar + " " + comparisonOper + " " + argName);
                         result.Add(new Node(argName, unwrapped));
                         ++levelNo;
                         break;

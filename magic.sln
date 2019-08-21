@@ -68,21 +68,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.tests", "magic.tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.http", "plugins\magic.lambda.http\magic.lambda.http.csproj", "{FFF7FEDA-B4C6-4831-A206-28D4A0BDCD90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.json", "plugins\magic.lambda.json\magic.lambda.json.csproj", "{0CF55AFC-0F47-4F0F-8CB0-3E0810F7E846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.json", "plugins\magic.lambda.json\magic.lambda.json.csproj", "{0CF55AFC-0F47-4F0F-8CB0-3E0810F7E846}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.mssql", "plugins\magic.lambda.mssql\magic.lambda.mssql.csproj", "{01BCD3FF-4226-4B1A-855C-E025B0F76638}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.mssql", "plugins\magic.lambda.mssql\magic.lambda.mssql.csproj", "{01BCD3FF-4226-4B1A-855C-E025B0F76638}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.mysql", "plugins\magic.lambda.mysql\magic.lambda.mysql.csproj", "{A21386AD-5003-499A-B1AC-F6DCD50D9069}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.mysql", "plugins\magic.lambda.mysql\magic.lambda.mysql.csproj", "{A21386AD-5003-499A-B1AC-F6DCD50D9069}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.endpoint", "magic.endpoint", "{9ECCEEEC-2F4D-4BC4-A108-875443561EE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.controller", "modules\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj", "{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.endpoint.controller", "modules\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj", "{81F3D920-DEDB-4864-A66F-D2B7A1B2A5F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.contracts", "modules\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj", "{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.endpoint.contracts", "modules\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj", "{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.services", "modules\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj", "{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.endpoint.services", "modules\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj", "{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.config", "plugins\magic.lambda.config\magic.lambda.config.csproj", "{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.config", "plugins\magic.lambda.config\magic.lambda.config.csproj", "{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.data.common", "plugins\magic.data.common\magic.data.common.csproj", "{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -198,6 +200,10 @@ Global
 		{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -231,6 +237,7 @@ Global
 		{6C2540D9-ECD5-4986-84F8-0E0A5E9AE25B} = {9ECCEEEC-2F4D-4BC4-A108-875443561EE6}
 		{84CC28E2-B95B-4E8E-B8E8-FD1FE536C181} = {9ECCEEEC-2F4D-4BC4-A108-875443561EE6}
 		{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
+		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}

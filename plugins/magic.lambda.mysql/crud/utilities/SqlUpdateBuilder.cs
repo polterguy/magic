@@ -3,77 +3,16 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
-using System;
-using System.Linq;
-using System.Text;
 using magic.node;
-using magic.hyperlambda.utils;
+using com = magic.data.common;
 using magic.signals.contracts;
 
 namespace magic.lambda.mysql.crud.utilities
 {
-    public class SqlUpdateBuilder : SqlBuilder
+    public class SqlUpdateBuilder : com.SqlUpdateBuilder
     {
         public SqlUpdateBuilder(Node node, ISignaler signaler)
-            : base(node, signaler)
+            : base(node, signaler, "`")
         { }
-
-        public override Node Build()
-        {
-            // Sanity checking for [exclude] fields.
-            CheckExclusionColumns();
-
-            // Return value.
-            var result = new Node("sql");
-            var builder = new StringBuilder();
-
-            // Building SQL text and parameter collection.
-            builder.Append("update ");
-
-            // Getting table name from base class.
-            GetTableName(builder);
-
-            // Adding set
-            builder.Append(" set ");
-
-            // Adding [values].
-            GetValues(builder, result);
-
-            // Getting [where] clause.
-            BuildWhere(result, builder);
-
-            // Returning result to caller.
-            result.Value = builder.ToString();
-            return result;
-        }
-
-        #region [ -- Private helper methods -- ]
-
-        void GetValues(StringBuilder builder, Node result)
-        {
-            var valuesNodes = Root.Children.Where((x) => x.Name == "values");
-            if (!valuesNodes.Any() || !valuesNodes.First().Children.Any())
-                throw new ApplicationException($"Missing [values] node in '{GetType().FullName}'");
-
-            var idxNo = 0;
-            foreach (var idxCol in valuesNodes.First().Children)
-            {
-                if (idxNo > 0)
-                    builder.Append(", ");
-                builder.Append("`" + idxCol.Name.Replace("`", "``") + "`");
-                if (idxCol.Value == null)
-                {
-                    builder.Append(" = null");
-                }
-                else
-                {
-                    builder.Append(" = @v" + idxNo);
-                    result.Add(new Node("@v" + idxNo, idxCol.GetEx(Signaler)));
-                    ++idxNo;
-                }
-            }
-        }
-
-        #endregion
     }
 }

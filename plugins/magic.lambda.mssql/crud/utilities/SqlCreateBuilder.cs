@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Text;
 using magic.node;
+using magic.data.common;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
 
@@ -15,7 +16,7 @@ namespace magic.lambda.mssql.crud.utilities
     public class SqlCreateBuilder : SqlBuilder
     {
         public SqlCreateBuilder(Node node, ISignaler signaler)
-            : base(node, signaler)
+            : base(node, signaler, "\"")
         { }
 
         public override Node Build()
@@ -61,7 +62,7 @@ namespace magic.lambda.mssql.crud.utilities
                     first = false;
                 else
                     builder.Append(", ");
-                builder.Append("\"" + idx.Name.Replace("\"", "\"\"") + "\"");
+                builder.Append(EscapeChar + idx.Name.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar);
             }
 
             // Appending actual values, as parameters.
