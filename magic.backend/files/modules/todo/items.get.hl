@@ -9,6 +9,10 @@
    subject:string
    body:string
    done:int
+   order:string
+   direction:string
+   limit:long
+   offset:long
 
 
 /*
