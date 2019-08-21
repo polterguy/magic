@@ -12,22 +12,11 @@ using magic.hyperlambda.utils;
 
 namespace magic.data.common
 {
-    public class SqlCreateBuilder : SqlBuilder
+    public abstract class SqlCreateBuilder : SqlBuilder
     {
-        readonly Action<StringBuilder> _afterValues;
-        readonly Action<StringBuilder> _betweenValues;
-
-        public SqlCreateBuilder(
-            Node node,
-            ISignaler signaler,
-            string escapeChar,
-            Action<StringBuilder> afterValues,
-            Action<StringBuilder> betweenValues)
+        public SqlCreateBuilder(Node node, ISignaler signaler, string escapeChar)
             : base(node, signaler, escapeChar)
-        {
-            _afterValues = afterValues;
-            _betweenValues = betweenValues;
-        }
+        { }
 
         public override Node Build()
         {
@@ -47,17 +36,17 @@ namespace magic.data.common
             // Building insertion [values].
             BuildValues(builder, result);
 
-            // Invoking callback in case we've got exatr stuff after values declarations.
-            _afterValues?.Invoke(builder);
+            // Retrieving tail, if there is a tail.
+            GetTail(builder);
 
             // Returning result to caller.
             result.Value = builder.ToString();
             return result;
         }
 
-        #region [ -- Private helper methods -- ]
+        #region [ -- Protected helper methods -- ]
 
-        void BuildValues(StringBuilder builder, Node result)
+        protected virtual void BuildValues(StringBuilder builder, Node result)
         {
             // Appending actual insertion values.
             var values = Root.Children.Where((x) => x.Name == "values");
@@ -75,13 +64,14 @@ namespace magic.data.common
                     first = false;
                 else
                     builder.Append(", ");
+
                 builder.Append(EscapeChar + idx.Name.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar);
             }
 
             // Appending actual values, as parameters.
-            builder.Append(") ");
-            _betweenValues?.Invoke(builder);
-            builder.Append("values (");
+            builder.Append(")");
+            GetInBetween(builder);
+            builder.Append(" values (");
             var idxNo = 0;
             foreach (var idx in values.First().Children)
             {
@@ -100,6 +90,12 @@ namespace magic.data.common
             }
             builder.Append(")");
         }
+
+        protected virtual void GetTail(StringBuilder builder)
+        { }
+
+        protected virtual void GetInBetween(StringBuilder builder)
+        { }
 
         #endregion
     }

@@ -61,6 +61,7 @@ namespace magic.data.common
                         first = false;
                     else
                         builder.Append(",");
+
                     builder.Append(EscapeChar + idx.Name.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar);
                 }
             }
