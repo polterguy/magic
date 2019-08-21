@@ -9,7 +9,6 @@ using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.signals.contracts;
