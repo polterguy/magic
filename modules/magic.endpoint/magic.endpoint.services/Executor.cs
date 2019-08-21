@@ -64,6 +64,13 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
+                // TODO: Sanity check arguments here ...
+                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
+                if (fileArgs.Any())
+                {
+                    fileArgs.First().UnTie();
+                }
+
                 if (arguments.Count > 0)
                 {
                     var argsNode = new Node(".arguments");

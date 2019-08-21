@@ -5,6 +5,13 @@
 
 
 /*
+ * Declaring arguments endpoint can handle.
+ */
+.arguments
+   id:string
+
+
+/*
  * Invoking [magic.db.delete], making sure we unwrap the [id].
  */
 unwrap:x:./*/signal/*/ids/*

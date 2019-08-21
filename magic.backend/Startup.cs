@@ -51,7 +51,7 @@ namespace magic.backend
                     Description = "An ASP.NET Core web API Starter Kit",
                     License = new License
                     {
-                        Name = "Affero GPL + Proprietary commercial (Closed Source)",
+                        Name = "Affero GPL + Proprietary commercial (Closed Source) for a fee",
                         Url = "https://github.com/polterguy/magic",
                     },
                     Contact = new Contact
@@ -66,6 +66,7 @@ namespace magic.backend
                     swag.IncludeXmlComments(idxFile);
                 }
                 swag.OperationFilter<FileUploadOperation>();
+                swag.DocumentFilter<DynamicEndpointOperation>();
             });
 
             // Giving every module a chance to configure its services.
