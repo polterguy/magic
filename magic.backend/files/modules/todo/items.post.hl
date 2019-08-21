@@ -2,6 +2,10 @@
 /*
  * Creates a TODO item.
  */
+.arguments
+   subject:string
+   body:string
+   done:int
 
 
 /*
@@ -19,7 +23,7 @@ signal:magic.db.mysql.create
    table:items
    values
    exclude
-      Id
+      id
 
 
 /*

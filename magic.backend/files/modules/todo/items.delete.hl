@@ -2,20 +2,16 @@
 /*
  * Deletes the specified [id] TODO item.
  */
-
-
-/*
- * Declaring arguments endpoint can handle.
- */
 .arguments
-   id:string
+   id:long
+      mandatory:bool:true
 
 
 /*
  * Invoking [magic.db.delete], making sure we unwrap the [id].
  */
 unwrap:x:./*/signal/*/ids/*
-signal:magic.db.yssql.delete
+signal:magic.db.mysql.delete
    connection:signal:@"config:""Databases:MySQLConnection"""
    table:items
    ids

@@ -4,6 +4,11 @@
  * If [limit] equals 1, it will return only one object - Otherwise it'll return an
  * array, even if the array only contains one item.
  */
+.arguments
+   id:long
+   subject:string
+   body:string
+   done:int
 
 
 /*
@@ -21,9 +26,9 @@ signal:magic.db.mysql.read
    table:items
    args
    columns
-      Subject
-      Id
-      Done
+      subject
+      id
+      done
 
 
 /*

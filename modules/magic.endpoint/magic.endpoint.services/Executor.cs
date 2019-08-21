@@ -64,10 +64,20 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
-                // TODO: Sanity check arguments here ...
                 var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
                 if (fileArgs.Any())
                 {
+                    if (fileArgs.Count() > 1)
+                        throw new ApplicationException($"URL '{url}' has an invalid [.arguments] declaration. Multiple [.arguments] nodes found");
+
+                    // Sanity checking arguments given towards [.arguments] declaration in file.
+                    var fileArguments = fileArgs.First();
+                    foreach (var idxInputArg in arguments.Keys)
+                    {
+                        if (!fileArguments.Children.Any((x) => x.Name == idxInputArg))
+                            return new UnprocessableEntityObjectResult($"Sorry, I don't know how to handle '{idxInputArg}' argument");
+                    }
+
                     fileArgs.First().UnTie();
                 }
 

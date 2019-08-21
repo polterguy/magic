@@ -2,6 +2,12 @@
 /*
  * Updates the specified [id] TODO item.
  */
+.arguments
+   id:long
+      mandatory:bool:true
+   subject:string
+   body:string
+   done:int
 
 
 /*
@@ -28,7 +34,7 @@ signal:magic.db.mysql.update
    ids
       id:x:@.arguments/*/id
    exclude
-      Id
+      id
 
 
 /*

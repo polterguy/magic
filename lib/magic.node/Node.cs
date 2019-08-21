@@ -214,6 +214,7 @@ namespace magic.node
 
         public void UnTie()
         {
+            Parent._children.Remove(this);
             Parent = null;
         }
 
