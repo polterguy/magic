@@ -36,7 +36,7 @@ namespace magic.data.common
             // Building insertion [values].
             BuildValues(builder, result);
 
-            // Retrieving tail, if there is a tail.
+            // In case derived class wants to inject something here ...
             GetTail(builder);
 
             // Returning result to caller.
@@ -70,13 +70,17 @@ namespace magic.data.common
 
             // Appending actual values, as parameters.
             builder.Append(")");
+
+            // In case derived class wants to inject something here ...
             GetInBetween(builder);
+
             builder.Append(" values (");
             var idxNo = 0;
             foreach (var idx in values.First().Children)
             {
                 if (idxNo > 0)
                     builder.Append(", ");
+
                 if (idx.Value == null)
                 {
                     builder.Append("null");
