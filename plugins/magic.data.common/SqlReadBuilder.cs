@@ -47,33 +47,40 @@ namespace magic.data.common
             return result;
         }
 
-        #region [ -- Private helper methods -- ]
+        #region [ -- Protected and virtual methods -- ]
 
-        void GetColumns(StringBuilder builder)
+        protected virtual void GetTail(StringBuilder builder)
         {
-            var columns = Root.Children.Where((x) => x.Name == "columns");
-            if (columns.Any() && columns.First().Children.Any())
-            {
-                var first = true;
-                foreach (var idx in columns.First().Children)
-                {
-                    if (first)
-                        first = false;
-                    else
-                        builder.Append(",");
+            // Getting [order].
+            GetOrderBy(builder);
 
-                    builder.Append(EscapeChar + idx.Name.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar);
-                }
-            }
-            else
+            // Getting [limit].
+            var limitNodes = Root.Children.Where((x) => x.Name == "limit");
+            if (limitNodes.Any())
             {
-                builder.Append("*");
+                // Sanity checking.
+                if (limitNodes.Count() > 1)
+                    throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [limit] nodes");
+
+                var limitValue = limitNodes.First().GetEx<long>(Signaler);
+                builder.Append(" limit " + limitValue);
+            }
+
+            var offsetNodes = Root.Children.Where((x) => x.Name == "offset");
+            if (offsetNodes.Any())
+            {
+                // Sanity checking.
+                if (offsetNodes.Count() > 1)
+                    throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [offset] nodes");
+
+                var offsetValue = offsetNodes.First().GetEx<long>(Signaler);
+                builder.Append(" offset " + offsetValue);
             }
         }
 
-        void GetTail(StringBuilder builder)
+
+        protected void GetOrderBy(StringBuilder builder)
         {
-            // Getting [order].
             var orderNodes = Root.Children.Where((x) => x.Name == "order");
             if (orderNodes.Any())
             {
@@ -99,28 +106,31 @@ namespace magic.data.common
                     builder.Append(" " + dir);
                 }
             }
+        }
 
-            // Getting [limit].
-            var limitNodes = Root.Children.Where((x) => x.Name == "limit");
-            if (limitNodes.Any())
+        #endregion
+
+        #region [ -- Private helper methods -- ]
+
+        void GetColumns(StringBuilder builder)
+        {
+            var columns = Root.Children.Where((x) => x.Name == "columns");
+            if (columns.Any() && columns.First().Children.Any())
             {
-                // Sanity checking.
-                if (limitNodes.Count() > 1)
-                    throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [limit] nodes");
+                var first = true;
+                foreach (var idx in columns.First().Children)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        builder.Append(",");
 
-                var limitValue = limitNodes.First().GetEx<long>(Signaler);
-                builder.Append(" limit " + limitValue);
+                    builder.Append(EscapeChar + idx.Name.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar);
+                }
             }
-
-            var offsetNodes = Root.Children.Where((x) => x.Name == "offset");
-            if (offsetNodes.Any())
+            else
             {
-                // Sanity checking.
-                if (offsetNodes.Count() > 1)
-                    throw new ApplicationException($"syntax error in '{GetType().FullName}', too many [offset] nodes");
-
-                var offsetValue = offsetNodes.First().GetEx<long>(Signaler);
-                builder.Append(" offset " + offsetValue);
+                builder.Append("*");
             }
         }
 

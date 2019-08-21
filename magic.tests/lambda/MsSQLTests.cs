@@ -31,7 +31,7 @@ namespace magic.tests.lambda
    limit:10
    offset:100");
             Assert.Empty(lambda.Children.First().Children);
-            Assert.Equal("select \"Foo\",\"Howdy\" from \"SomeTable\" limit 10 offset 100", lambda.Children.First().Value);
+            Assert.Equal("select \"Foo\",\"Howdy\" from \"SomeTable\" offset 100 rows fetch next 10 rows only", lambda.Children.First().Value);
         }
 
         [Fact]
