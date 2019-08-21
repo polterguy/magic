@@ -75,7 +75,7 @@ namespace magic.endpoint.services
         private void AddVerb(SwaggerDocument doc, string verb, string filename, string fullFilename)
         {
             // Figuring out which key to use, and making sure we put an item into dictionary for URL.
-            var key = filename.Substring(0, filename.IndexOf("."));
+            var key = "/api/endpoint" + filename.Substring(0, filename.IndexOf("."));
             if (!doc.Paths.ContainsKey(key))
             {
                 var p = new PathItem();
@@ -86,44 +86,9 @@ namespace magic.endpoint.services
             var item = doc.Paths[key];
 
             // Creating our operation item.
-            var operation = new Operation();
-
-            // Reading arguments from file.
-            var fileContent = File.ReadAllText(fullFilename);
-            var node = new Node("", fileContent);
-            _signaler.Signal("lambda", node);
-
-            var arguments = node.Children.Where((x) => x.Name == ".arguments");
-            if (arguments.Any())
-            {
-                if (arguments.Count() > 1)
-                    throw new ApplicationException($"Too many [.arguments] nodes found in Hyperlambda file '{filename}'");
-
-                operation.Parameters = new List<IParameter>();
-                foreach (var idx in arguments.First().Children)
-                {
-                    IParameter argument;
-                    if (verb == "get" || verb == "delete")
-                    {
-                        argument = new NonBodyParameter
-                        {
-                            Name = idx.Name,
-                        };
-                        var typeDecl = idx.Get<string>();
-                        if (typeDecl == "string")
-                            ((NonBodyParameter)argument).Type = "string";
-                    }
-                    else
-                    {
-                        argument = new BodyParameter
-                        {
-                            Name = idx.Name,
-                        };
-                    }
-                    argument.Required = true;
-                    operation.Parameters.Add(argument);
-                }
-            }
+            var operation = ReadFileArguments(verb, filename, fullFilename);
+            var tag = filename.Substring(0, filename.IndexOf(".")).Trim('/');
+            operation.Tags = new List<string> { tag };
 
             // Figuring out the type of operation this is.
             switch (verb)
@@ -150,6 +115,77 @@ namespace magic.endpoint.services
                     item.Post = operation;
                     break;
             }
+        }
+
+        private Operation ReadFileArguments(string verb, string filename, string fullFilename)
+        {
+            // Returned result value.
+            var result = new Operation();
+
+            // Reading arguments from file.
+            var fileContent = File.ReadAllText(fullFilename);
+            var node = new Node("", fileContent);
+            _signaler.Signal("lambda", node);
+
+            var arguments = node.Children.Where((x) => x.Name == ".arguments");
+            if (arguments.Any())
+            {
+                if (arguments.Count() > 1)
+                    throw new ApplicationException($"Too many [.arguments] nodes found in Hyperlambda file '{filename}'");
+
+                if (verb == "get" || verb == "delete")
+                    result.Parameters = CreateQueryParameters(arguments.First());
+                else
+                    result.Parameters = CreateBodyParameters(arguments.First());
+            }
+            return result;
+        }
+
+        IList<IParameter> CreateBodyParameters(Node arguments)
+        {
+            var result = new List<IParameter>();
+            var argument = new BodyParameter { Name = ".arguments" };
+            foreach (var idx in arguments.Children)
+            {
+            }
+            return result;
+        }
+
+        List<IParameter> CreateQueryParameters(Node arguments)
+        {
+            var result = new List<IParameter>();
+            foreach (var idx in arguments.Children)
+            {
+                var argument = new NonBodyParameter { Name = idx.Name };
+                argument.In = "query";
+                var typeDecl = idx.Get<string>();
+                switch (typeDecl)
+                {
+                    case "string":
+                    case "date":
+                    case "byte":
+                        typeDecl = "string";
+                        break;
+
+                    case "int":
+                    case "long":
+                        typeDecl = "integer";
+                        break;
+
+                    case "float":
+                    case "double":
+                        typeDecl = "number";
+                        break;
+
+                    case "bool":
+                        typeDecl = "boolean";
+                        break;
+                }
+                argument.Type = typeDecl;
+                argument.Required = idx.Children.FirstOrDefault(x => x.Name == "mandatory")?.Get<bool>() == true;
+                result.Add(argument);
+            }
+            return result;
         }
 
         bool IsLegalHttpName(string folder)
