@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
+using ut = magic.lambda.utilities;
 
 namespace magic.lambda.mssql
 {
@@ -16,9 +17,9 @@ namespace magic.lambda.mssql
 	public class Connect : ISlot, IMeta
 	{
 		readonly ISignaler _signaler;
-        readonly Stack<SqlConnection> _connections;
+        readonly ut.Stack<SqlConnection> _connections;
 
-        public Connect(ISignaler signaler, Stack<SqlConnection> connections)
+        public Connect(ISignaler signaler, ut.Stack<SqlConnection> connections)
         {
 			_signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
