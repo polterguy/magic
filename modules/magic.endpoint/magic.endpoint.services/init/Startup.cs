@@ -25,19 +25,32 @@ namespace magic.endpoint.services.init
                 {
                     var folder = new DirectoryInfo(idxModuleFolder);
                     if (folder.Name == "magic.startup")
-                    {
-                        // Startup folder, now executing all Hyperlambda files inside of it.
-                        foreach (var idxFile in Directory.GetFiles(idxModuleFolder, "*.hl"))
-                        {
-                            using (var stream = File.OpenRead(idxFile))
-                            {
-                                var lambda = new Parser(stream).Lambda();
-                                signaler.Signal("eval", lambda);
-                            }
-                        }
-                    }
+                        ExecuteStartupFiles(signaler, idxModuleFolder);
                 }
             }
         }
+
+        #region [ -- Private helper methods -- ]
+
+        void ExecuteStartupFiles(ISignaler signaler, string folder)
+        {
+            // Startup folder, now executing all Hyperlambda files inside of it.
+            foreach (var idxFile in Directory.GetFiles(folder, "*.hl"))
+            {
+                using (var stream = File.OpenRead(idxFile))
+                {
+                    var lambda = new Parser(stream).Lambda();
+                    signaler.Signal("eval", lambda);
+                }
+            }
+
+            // Recursively checking sub folders.
+            foreach (var idxFolder in Directory.GetDirectories(folder))
+            {
+                ExecuteStartupFiles(signaler, idxFolder);
+            }
+        }
+
+        #endregion
     }
 }
