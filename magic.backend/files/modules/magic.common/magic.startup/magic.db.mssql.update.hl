@@ -4,7 +4,7 @@
  * values from [values]. [ids] can be a collection of values, preferably the IDs of your table,
  * that defines which item(s) to update. All [ids] are mandatory, and reuiqred to have values.
  */
-slot:magic.db.mysql.update
+slot:magic.db.mssql.update
    .lambda
 
 
@@ -27,16 +27,16 @@ slot:magic.db.mysql.update
       /*
        * Opening up a connection.
        */
-      mysql.connect:x:@.arguments/*/connection
+      mssql.connect:x:@.arguments/*/connection
 
 
          /*
-          * Parametrizing [mysql.update], first with the [where] parts,
+          * Parametrizing [mssql.update], first with the [where] parts,
           * extracted form [ids].
           */
-         add:x:./*/mysql.update/*/where/*/and
+         add:x:./*/mssql.update/*/where/*/and
             get-nodes:x:@.arguments/*/ids/*
-         add:x:./*/mysql.update/*/values
+         add:x:./*/mssql.update/*/values
             get-nodes:x:@.arguments/*/values/*
 
 
@@ -51,19 +51,19 @@ slot:magic.db.mysql.update
 
 
                /*
-                * Adding [exclude] to [mysql.update].
+                * Adding [exclude] to [mssql.update].
                 */
-               add:x:../*/mysql.connect/*/mysql.update
+               add:x:../*/mssql.connect/*/mssql.update
                   .
                      exclude
-               add:x:../*/mysql.connect/*/mysql.update/*/exclude
+               add:x:../*/mssql.connect/*/mssql.update/*/exclude
                   get-nodes:x:@.arguments/*/exclude/*
 
 
          /*
-          * Invoking [mysql.update].
+          * Invoking [mssql.update].
           */
-         mysql.update
+         mssql.update
             connection:x:@.arguments/*/connection
             table:x:@.arguments/*/table
             values
@@ -76,4 +76,4 @@ slot:magic.db.mysql.update
           */
          unwrap:x:+/*
          return-nodes
-            updated-records:x:@mysql.update
+            updated-records:x:@mssql.update
