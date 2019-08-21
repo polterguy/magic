@@ -3,7 +3,7 @@
  * Creates a new item in your [connection]/[table] with the specified [values]
  * column values.
  */
-slot:magic.db.create
+slot:magic.db.mysql.create
    .lambda
 
 

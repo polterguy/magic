@@ -5,7 +5,7 @@
  * to that all other arguments will be treated as a part of the [where] to the
  * invocation to [mysql.read].
  */
-slot:magic.db.read
+slot:magic.db.mysql.read
    .lambda
 
 
