@@ -9,7 +9,7 @@
 
 
 /*
- * Parametrizing [magic.db.create].
+ * Parametrizing [magic.db.mysql.create].
  */
 add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
