@@ -15,6 +15,7 @@ namespace magic.tests.lambda
         public void SelectSQL_01()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable");
             Assert.Empty(lambda.Children.First().Children);
             Assert.Equal("select * from `SomeTable`", lambda.Children.First().Value);
@@ -24,6 +25,7 @@ namespace magic.tests.lambda
         public void SelectSQL_02()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    columns
       Foo:bar
@@ -38,6 +40,7 @@ namespace magic.tests.lambda
         public void SelectSQL_03()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    where
       and
@@ -55,6 +58,7 @@ namespace magic.tests.lambda
         public void SelectSQL_04()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    where
       or
@@ -72,6 +76,7 @@ namespace magic.tests.lambda
         public void SelectSQL_05()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    where
       and
@@ -97,6 +102,7 @@ namespace magic.tests.lambda
         public void SelectSQL_06()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    order:foo");
             Assert.Equal("select * from `SomeTable` order by `foo`", lambda.Children.First().Value);
@@ -107,6 +113,7 @@ namespace magic.tests.lambda
         public void SelectSQL_07()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    order:foo
    direction:desc");
@@ -118,6 +125,7 @@ namespace magic.tests.lambda
         public void SelectSQL_08()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    order:foo
    direction:asc");
@@ -129,6 +137,7 @@ namespace magic.tests.lambda
         public void SelectSQL_09()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    where
       and
@@ -143,6 +152,7 @@ namespace magic.tests.lambda
         public void SelectSQL_10()
         {
             var lambda = Common.Evaluate(@"mysql.read
+   generate:bool:true
    table:SomeTable
    columns
       Foo:bar
@@ -156,6 +166,7 @@ namespace magic.tests.lambda
         public void DeleteSQL_01()
         {
             var lambda = Common.Evaluate(@"mysql.delete
+   generate:bool:true
    table:SomeTable");
             Assert.Empty(lambda.Children.First().Children);
             Assert.Equal("delete from `SomeTable`", lambda.Children.First().Value);
@@ -165,6 +176,7 @@ namespace magic.tests.lambda
         public void DeleteSQL_02()
         {
             var lambda = Common.Evaluate(@"mysql.delete
+   generate:bool:true
    table:SomeTable
    where
       and
@@ -182,6 +194,7 @@ namespace magic.tests.lambda
         public void InsertSQL_01()
         {
             var lambda = Common.Evaluate(@"mysql.create
+   generate:bool:true
    table:SomeTable
    values
       foo1:bar1
@@ -198,6 +211,7 @@ namespace magic.tests.lambda
         public void InsertSQL_02()
         {
             var lambda = Common.Evaluate(@"mysql.create
+   generate:bool:true
    table:SomeTable
    exclude
       foo3
@@ -218,6 +232,7 @@ namespace magic.tests.lambda
             Assert.Throws<ApplicationException>(() =>
             {
                 Common.Evaluate(@"mysql.create
+   generate:bool:true
    table:SomeTable
    exclude
       foo3
@@ -232,6 +247,7 @@ namespace magic.tests.lambda
         public void InsertSQL_04()
         {
             var lambda = Common.Evaluate(@"mysql.create
+   generate:bool:true
    table:SomeTable
    values
       foo1:bar1
@@ -246,6 +262,7 @@ namespace magic.tests.lambda
         public void UpdateSQL_01()
         {
             var lambda = Common.Evaluate(@"mysql.update
+   generate:bool:true
    table:SomeTable
    where
       and
@@ -267,6 +284,7 @@ namespace magic.tests.lambda
         public void UpdateSQL_02()
         {
             var lambda = Common.Evaluate(@"mysql.update
+   generate:bool:true
    table:SomeTable
    exclude
       foo3
@@ -292,6 +310,7 @@ namespace magic.tests.lambda
             Assert.Throws<ApplicationException>(() =>
             {
                 Common.Evaluate(@"mysql.update
+   generate:bool:true
    table:SomeTable
    exclude
       foo3
@@ -307,6 +326,7 @@ namespace magic.tests.lambda
         public void UpdateSQL_04()
         {
             var lambda = Common.Evaluate(@"mysql.update
+   generate:bool:true
    table:SomeTable
    where
       and

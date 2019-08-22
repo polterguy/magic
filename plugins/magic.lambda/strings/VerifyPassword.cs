@@ -13,12 +13,12 @@ using magic.hyperlambda.utils;
 
 namespace magic.lambda.strings
 {
-    [Slot(Name = "verify-hash")]
-    public class VerifyHash : ISlot, IMeta
+    [Slot(Name = "crypto.password.verify")]
+    public class VerifyPassword : ISlot, IMeta
     {
         readonly ISignaler _signaler;
 
-        public VerifyHash(ISignaler signaler)
+        public VerifyPassword(ISignaler signaler)
         {
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
         }
@@ -27,7 +27,7 @@ namespace magic.lambda.strings
         {
             var hash = input.Children.FirstOrDefault((x) => x.Name == "hash")?.GetEx<string>(_signaler);
             if (hash == null)
-                throw new ApplicationException($"No [hash] value provided to [verify-hash]");
+                throw new ApplicationException($"No [hash] value provided to [crypto.password.verify]");
 
             var value = input.GetEx<string>(_signaler);
 
@@ -37,6 +37,7 @@ namespace magic.lambda.strings
         public IEnumerable<Node> GetArguments()
         {
             yield return new Node(":", "*");
+            yield return new Node("hash", 1);
         }
     }
 }

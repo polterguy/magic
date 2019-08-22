@@ -12,7 +12,7 @@ using magic.hyperlambda.utils;
 
 namespace magic.lambda.strings
 {
-    [Slot(Name = "hash-password")]
+    [Slot(Name = "crypto.password.hash")]
     public class HashPassword : ISlot, IMeta
     {
         readonly ISignaler _signaler;
