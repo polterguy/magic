@@ -1,6 +1,6 @@
 ﻿
 /*
- * Creates a TODO item.
+ * Creates a new TODO item.
  */
 .arguments
    subject:string
@@ -16,7 +16,7 @@ add:x:./*/signal/*/values
 
 
 /*
- * Invoking [magic.db.create]
+ * Invoking [magic.db.mysql.create]
  */
 signal:magic.db.mysql.create
    connection:signal:@"config:""Databases:MySQLConnection"""

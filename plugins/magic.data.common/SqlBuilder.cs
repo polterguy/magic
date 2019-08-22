@@ -54,7 +54,8 @@ namespace magic.data.common
                 var valueNodes = Root.Children.First((x) => x.Name == "values");
                 foreach (var idx in exclude.Children)
                 {
-                    if (valueNodes.Children.Any((x) => x.Name == idx.Name))
+                    var idxName = idx.Name.ToLowerInvariant();
+                    if (valueNodes.Children.Any((x) => x.Name.ToLowerInvariant() == idxName))
                         throw new ApplicationException($"Illegal column [{idx.Name}] found in invocation to '{GetType().FullName}'");
                 }
             }

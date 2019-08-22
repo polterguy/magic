@@ -4,7 +4,6 @@
  */
 .arguments
    id:long
-      mandatory:bool:true
    subject:string
    body:string
    done:int

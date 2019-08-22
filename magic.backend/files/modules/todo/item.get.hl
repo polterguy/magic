@@ -16,7 +16,7 @@
 
 
 /*
- * Parametrizing [magic.db.read].
+ * Parametrizing [magic.db.mysql.read].
  */
 add:x:./*/signal/*/args
    get-nodes:x:@.arguments/*

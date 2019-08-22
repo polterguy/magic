@@ -221,7 +221,7 @@ namespace magic.tests.lambda
    generate:bool:true
    table:SomeTable
    exclude
-      foo3
+      FOO3
    values
       foo1:bar1
       foo2:int:5
