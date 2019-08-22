@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Endpoint } from '../models/endpoint';
 import { EndpointService } from '../services/endpoint-service';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-endpoints',
@@ -11,6 +12,7 @@ import { EndpointService } from '../services/endpoint-service';
 export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'verb'];
   private endpoints: Endpoint[];
+  private selected: Endpoint;
 
   constructor(private service: EndpointService) { }
 
@@ -24,17 +26,13 @@ export class EndpointsComponent implements OnInit {
           verb: splits[1]
         });
       }
-      console.log(this.endpoints);
     });
   }
 
-  getLength() {
-    if (this.endpoints) {
-      return this.endpoints.length;
-    }
-    return 0;
-  }
-
-  onPaged(event: any) {
+  selectEndpoint(el: Endpoint) {
+    this.selected = el;
+    this.service.getEndpointMeta(el.url, el.verb).subscribe((res) => {
+      console.log(res);
+    });
   }
 }

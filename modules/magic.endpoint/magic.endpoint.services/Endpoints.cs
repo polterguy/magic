@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using magic.endpoint.services.init;
 using magic.node;
 using magic.signals.contracts;
-using System;
 
 namespace magic.endpoint.services
 {

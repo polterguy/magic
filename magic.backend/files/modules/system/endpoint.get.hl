@@ -1,0 +1,13 @@
+﻿
+/*
+ * Returns metadata for specified endpoint.
+ */
+.arguments
+   url:string
+   verb:string
+
+
+system.endpoint
+   url:x:@.arguments/*/url
+   verb:x:@.arguments/*/verb
+return-nodes:x:-/*
