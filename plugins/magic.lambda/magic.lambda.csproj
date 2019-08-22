@@ -8,7 +8,10 @@
     <Folder Include="utilities\" />
     <Folder Include="logical\" />
     <Folder Include="loops\" />
-    <Folder Include="strings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
