@@ -1,0 +1,23 @@
+
+
+.endpoint-wrapper {
+    padding:2rem;
+}
+.endpoints {
+    width: 100%;
+    table {
+        width: 100%;
+        tr {
+            td:nth-child(1), th:nth-child(1) {
+                width: 100%;
+            }
+            td:nth-child(2), th:nth-child(2) {
+                width: 20px;
+            }
+        }
+        tr.mat-row:hover {
+            background-color: rgba(0,0,0,.1);
+            cursor: pointer;
+        }
+    }
+}

@@ -42,7 +42,7 @@ namespace magic.endpoint.services
             foreach (var idx in Directory.GetDirectories(currentFolder))
             {
                 var folder = "/" + idx.Substring(ConfigureServices.Root.Length);
-                if (IsLegalHttpName(folder))
+                if (Utilities.IsLegalHttpName(folder))
                     AddAllVerbs(doc, idx);
             }
         }
@@ -52,7 +52,7 @@ namespace magic.endpoint.services
             foreach (var idxFile in Directory.GetFiles(folder, "*.hl"))
             {
                 var filename = "/" + idxFile.Substring(ConfigureServices.Root.Length).Replace("\\", "/");
-                if (IsLegalHttpName(filename))
+                if (Utilities.IsLegalHttpName(filename))
                 {
                     var fileInfo = new FileInfo(filename);
                     var splits = fileInfo.Name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -126,25 +126,6 @@ namespace magic.endpoint.services
                     item.Post = operation;
                     break;
             }
-        }
-
-        bool IsLegalHttpName(string folder)
-        {
-            foreach (var idx in folder)
-            {
-                switch (idx)
-                {
-                    case '-':
-                    case '.':
-                    case '/':
-                        break;
-                    default:
-                        if ((idx < 'a' || idx > 'z') && (idx < '0' || idx > '9'))
-                            return false;
-                        break;
-                }
-            }
-            return true;
         }
 
         #endregion

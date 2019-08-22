@@ -1,26 +1,30 @@
 
-<div class="mat-elevation-z2">
-  <table mat-table [dataSource]="endpoints">
+<div class="endpoint-wrapper">
+  <div class="mat-elevation-z2 endpoints">
+    <table mat-table [dataSource]="endpoints">
 
-    <ng-container matColumnDef="url">
-      <th mat-header-cell *matHeaderCellDef>URL</th>
-    </ng-container>
+      <ng-container matColumnDef="url">
+        <th mat-header-cell *matHeaderCellDef>URL</th>
+        <td mat-cell *matCellDef="let el">{{el.url}}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="verb">
-      <th mat-header-cell *matHeaderCellDef>Verb</th>
-    </ng-container>
+      <ng-container matColumnDef="verb">
+        <th mat-header-cell *matHeaderCellDef>Verb</th>
+        <td mat-cell *matCellDef="let el">{{el.verb}}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-  </table>
+    </table>
 
-  <mat-paginator
-    [pageSize]="10"
-    [pageIndex]="pageIndex"
-    [showFirstLastButtons]="true"
-    [pageSizeOptions]="[5, 10, 25, 100]"
-    [length]="count"
-    (page)="pageEvent = onPaged($event)">
-  </mat-paginator>
+    <mat-paginator
+      [pageSize]="10"
+      [pageIndex]="pageIndex"
+      [showFirstLastButtons]="true"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      [length]="getLength()"
+      (page)="pageEvent = onPaged($event)">
+    </mat-paginator>
+  </div>
 </div>
