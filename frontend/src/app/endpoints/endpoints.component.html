@@ -1,3 +1,26 @@
-<p>
-  endpoints works!
-</p>
+
+<div class="mat-elevation-z2">
+  <table mat-table [dataSource]="endpoints">
+
+    <ng-container matColumnDef="url">
+      <th mat-header-cell *matHeaderCellDef>URL</th>
+    </ng-container>
+
+    <ng-container matColumnDef="verb">
+      <th mat-header-cell *matHeaderCellDef>Verb</th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+  <mat-paginator
+    [pageSize]="10"
+    [pageIndex]="pageIndex"
+    [showFirstLastButtons]="true"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    [length]="count"
+    (page)="pageEvent = onPaged($event)">
+  </mat-paginator>
+</div>

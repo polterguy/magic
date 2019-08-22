@@ -1,4 +1,6 @@
+
 import { Component, OnInit } from '@angular/core';
+import { Endpoint } from '../models/endpoint';
 
 @Component({
   selector: 'app-endpoints',
@@ -6,10 +8,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./endpoints.component.scss']
 })
 export class EndpointsComponent implements OnInit {
+  displayedColumns: string[] = ['url', 'verb'];
+  private endpoints: Endpoint[];
 
   constructor() { }
 
   ngOnInit() {
   }
-
 }
