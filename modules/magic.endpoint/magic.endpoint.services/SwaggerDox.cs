@@ -72,120 +72,60 @@ namespace magic.endpoint.services
             }
         }
 
-        private void AddVerb(SwaggerDocument doc, string verb, string filename, string fullFilename)
+        private void AddVerb(
+            SwaggerDocument doc, 
+            string verb, 
+            string filename, 
+            string fullFilename)
         {
             // Figuring out which key to use, and making sure we put an item into dictionary for URL.
-            var key = "/api/endpoint" + filename.Substring(0, filename.IndexOf("."));
+            var itemType = filename.Substring(0, filename.IndexOf(".")); ;
+            var key = "/api/endpoint" + itemType;
             if (!doc.Paths.ContainsKey(key))
             {
                 var p = new PathItem();
                 doc.Paths[key] = p;
             }
 
-            // Retrieving existing item from paths.
+            // Retrieving existing item from path.
             var item = doc.Paths[key];
 
             // Creating our operation item.
-            var operation = ReadFileArguments(verb, filename, fullFilename);
             var tag = filename.Substring(0, filename.IndexOf(".")).Trim('/');
-            operation.Tags = new List<string> { tag };
+            var operation = new Operation
+            {
+                Tags = new List<string> { tag },
+            };
 
             // Figuring out the type of operation this is.
             switch (verb)
             {
                 case "get":
                     operation.Produces = new List<string> { "application/json" };
+                    operation.Description = $"Returns '{itemType}' from the server";
                     item.Get = operation;
                     break;
 
                 case "delete":
                     operation.Produces = new List<string> { "application/json" };
+                    operation.Description = $"Deletes '{itemType}' from the server";
                     item.Delete = operation;
                     break;
 
                 case "put":
                     operation.Consumes = new List<string> { "application/json" };
                     operation.Produces = new List<string> { "application/json" };
+                    operation.Description = $"Updates an existing '{itemType}' on the server";
                     item.Put = operation;
                     break;
 
                 case "post":
                     operation.Consumes = new List<string> { "application/json" };
                     operation.Produces = new List<string> { "application/json" };
+                    operation.Description = $"Creates a new '{itemType}' on the server";
                     item.Post = operation;
                     break;
             }
-        }
-
-        private Operation ReadFileArguments(string verb, string filename, string fullFilename)
-        {
-            // Returned result value.
-            var result = new Operation();
-
-            // Reading arguments from file.
-            var fileContent = File.ReadAllText(fullFilename);
-            var node = new Node("", fileContent);
-            _signaler.Signal("lambda", node);
-
-            var arguments = node.Children.Where((x) => x.Name == ".arguments");
-            if (arguments.Any())
-            {
-                if (arguments.Count() > 1)
-                    throw new ApplicationException($"Too many [.arguments] nodes found in Hyperlambda file '{filename}'");
-
-                if (verb == "get" || verb == "delete")
-                    result.Parameters = CreateQueryParameters(arguments.First());
-                else
-                    result.Parameters = CreateBodyParameters(arguments.First());
-            }
-            return result;
-        }
-
-        IList<IParameter> CreateBodyParameters(Node arguments)
-        {
-            var result = new List<IParameter>();
-            var argument = new BodyParameter { Name = ".arguments" };
-            foreach (var idx in arguments.Children)
-            {
-            }
-            return result;
-        }
-
-        List<IParameter> CreateQueryParameters(Node arguments)
-        {
-            var result = new List<IParameter>();
-            foreach (var idx in arguments.Children)
-            {
-                var argument = new NonBodyParameter { Name = idx.Name };
-                argument.In = "query";
-                var typeDecl = idx.Get<string>();
-                switch (typeDecl)
-                {
-                    case "string":
-                    case "date":
-                    case "byte":
-                        typeDecl = "string";
-                        break;
-
-                    case "int":
-                    case "long":
-                        typeDecl = "integer";
-                        break;
-
-                    case "float":
-                    case "double":
-                        typeDecl = "number";
-                        break;
-
-                    case "bool":
-                        typeDecl = "boolean";
-                        break;
-                }
-                argument.Type = typeDecl;
-                argument.Required = idx.Children.FirstOrDefault(x => x.Name == "mandatory")?.Get<bool>() == true;
-                result.Add(argument);
-            }
-            return result;
         }
 
         bool IsLegalHttpName(string folder)

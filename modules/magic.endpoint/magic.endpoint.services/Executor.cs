@@ -8,8 +8,8 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Mvc;
 using magic.node;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
@@ -64,23 +64,21 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
+                /*
+                 * Checking file [.arguments], and if given, removing them to make sure invocation of file
+                 * only has a single [.arguments] node.
+                 * Notice, future improvements implies validating arguments.
+                 */
                 var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
                 if (fileArgs.Any())
                 {
                     if (fileArgs.Count() > 1)
-                        throw new ApplicationException($"URL '{url}' has an invalid [.arguments] declaration. Multiple [.arguments] nodes found");
-
-                    // Sanity checking arguments given towards [.arguments] declaration in file.
-                    var fileArguments = fileArgs.First();
-                    foreach (var idxInputArg in arguments.Keys)
-                    {
-                        if (!fileArguments.Children.Any((x) => x.Name == idxInputArg))
-                            return new UnprocessableEntityObjectResult($"Sorry, I don't know how to handle '{idxInputArg}' argument");
-                    }
+                        throw new ApplicationException($"URL '{url}' has an invalid [.arguments] declaration. Multiple [.arguments] nodes found in endpoint's file");
 
                     fileArgs.First().UnTie();
                 }
 
+                // Adding arguments from invocation to evaluated lambda node.
                 if (arguments.Count > 0)
                 {
                     var argsNode = new Node(".arguments");
@@ -91,7 +89,7 @@ namespace magic.endpoint.services
                 _signaler.Signal("eval", lambda);
 
                 var result = GetReturnValue(lambda);
-                if (result != null)
+                if (result == null)
                     return new OkObjectResult(result);
 
                 return new OkResult();
@@ -113,25 +111,21 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
+                /*
+                 * Checking file [.arguments], and if given, removing them to make sure invocation of file
+                 * only has a single [.arguments] node.
+                 * Notice, future improvements implies validating arguments.
+                 */
                 var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
                 if (fileArgs.Any())
                 {
                     if (fileArgs.Count() > 1)
-                        throw new ApplicationException($"URL '{url}' has an invalid [.arguments] declaration. Multiple [.arguments] nodes found");
-
-                    // Sanity checking arguments given towards [.arguments] declaration in file.
-                    var fileArguments = fileArgs.First();
-                    foreach (var idxInputArg in arguments)
-                    {
-                        // TODO: Implement sanity checking arguments ...
-                        //if (!fileArguments.Children.Any((x) => x.Name == idxInputArg.Value<JProperty>().Value<string>()))
-                          //  return new UnprocessableEntityObjectResult($"Sorry, I don't know how to handle '{idxInputArg}' argument");
-                    }
+                        throw new ApplicationException($"URL '{url}' has an invalid [.arguments] declaration. Multiple [.arguments] nodes found in endpoint's file");
 
                     fileArgs.First().UnTie();
                 }
 
-
+                // Adding arguments from invocation to evaluated lambda node.
                 var argsNode = new Node(".arguments", arguments);
                 _signaler.Signal(".from-json-raw", argsNode);
                 lambda.Insert(0, argsNode);
