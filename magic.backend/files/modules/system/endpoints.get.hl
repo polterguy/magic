@@ -1,0 +1,8 @@
+﻿
+/*
+ * Returns all endpoints in installation.
+ */
+
+
+system.endpoints
+return-nodes:x:-/*
