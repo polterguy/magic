@@ -5,12 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="utilities\" />
-    <Folder Include="logical\" />
-    <Folder Include="loops\" />
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
   </ItemGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\magic.hyperlambda\magic.hyperlambda.csproj" />
   </ItemGroup>
+
 </Project>
