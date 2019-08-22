@@ -1,13 +1,5 @@
 
-<h1>Magic Dashboard</h1>
-<mat-card>
-  <form action="foo" autocomplete="off" (ngSubmit)="submit()" novalidate>
-    <mat-form-field class="full-width-field">
-      <input matInput placeholder="Username" type="text">
-    </mat-form-field>
-    <mat-form-field class="full-width-field">
-      <input matInput placeholder="Password" type="password">
-    </mat-form-field>
-  </form>
-</mat-card>
-<router-outlet></router-outlet>
+
+<app-login *ngIf="shouldRenderLogin()"></app-login>
+
+<router-outlet *ngIf="shouldRenderRouterOutlet()"></router-outlet>

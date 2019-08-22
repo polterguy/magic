@@ -1,0 +1,17 @@
+<mat-card class="login">
+  <form autocomplete="off" novalidate>
+
+    <mat-form-field class="full-width-field">
+      <input name="username" matInput placeholder="Username" type="text" [(ngModel)]="username">
+    </mat-form-field>
+
+    <mat-form-field class="full-width-field">
+      <input name="password" matInput placeholder="Password" type="password" [(ngModel)]="password">
+    </mat-form-field>
+
+    <div class="right-aligned-content">
+      <button mat-button (click)="login()">Login</button>
+    </div>
+
+  </form>
+</mat-card>
