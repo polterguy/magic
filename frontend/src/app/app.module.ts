@@ -7,13 +7,17 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { EndpointsComponent } from './endpoints/endpoints.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    EndpointsComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -21,14 +25,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    MatCardModule,
+    MatToolbarModule,
     MatInputModule,
     MatFormFieldModule,
     HttpClientModule,
   ],
   exports: [
     MatButtonModule,
-    MatCardModule,
+    MatToolbarModule,
     MatInputModule,
     MatFormFieldModule,
   ],
