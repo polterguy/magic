@@ -113,6 +113,25 @@ namespace magic.endpoint.services
             {
                 var lambda = new Parser(stream).Lambda();
 
+                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
+                if (fileArgs.Any())
+                {
+                    if (fileArgs.Count() > 1)
+                        throw new ApplicationException($"URL '{url}' has an invalid [.arguments] declaration. Multiple [.arguments] nodes found");
+
+                    // Sanity checking arguments given towards [.arguments] declaration in file.
+                    var fileArguments = fileArgs.First();
+                    foreach (var idxInputArg in arguments)
+                    {
+                        // TODO: Implement sanity checking arguments ...
+                        //if (!fileArguments.Children.Any((x) => x.Name == idxInputArg.Value<JProperty>().Value<string>()))
+                          //  return new UnprocessableEntityObjectResult($"Sorry, I don't know how to handle '{idxInputArg}' argument");
+                    }
+
+                    fileArgs.First().UnTie();
+                }
+
+
                 var argsNode = new Node(".arguments", arguments);
                 _signaler.Signal(".from-json-raw", argsNode);
                 lambda.Insert(0, argsNode);
