@@ -23,7 +23,7 @@ namespace magic.data.common
 
         public abstract Node Build();
 
-        public bool IsGenerateOnly => Root.Children.Any((x) => x.Name == "generate");
+        public bool IsGenerateOnly => Root.Children.FirstOrDefault((x) => x.Name == "generate")?.Get<bool>() ?? false;
 
         protected string EscapeChar { get; private set; }
 
