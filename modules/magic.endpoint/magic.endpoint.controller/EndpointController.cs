@@ -13,7 +13,7 @@ namespace magic.endpoint.controller
     /// <summary>
     /// IO controller for manipulating files and folders on your server
     /// </summary>
-    [Route("api/endpoint")]
+    [Route("api/hl")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public class EndpointController : ControllerBase

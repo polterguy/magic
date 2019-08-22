@@ -27,7 +27,7 @@ namespace magic.endpoint.services
         public void Signal(Node input)
         {
             var doc = input.Value as SwaggerDocument;
-            var toRemove = new List<string>(doc.Paths.Keys.Where((x) => x == "/api/endpoint/{url}"));
+            var toRemove = new List<string>(doc.Paths.Keys.Where((x) => x == "/api/hl/{url}"));
             foreach (var idx in toRemove)
             {
                 doc.Paths.Remove(idx);
@@ -80,7 +80,7 @@ namespace magic.endpoint.services
         {
             // Figuring out which key to use, and making sure we put an item into dictionary for URL.
             var itemType = filename.Substring(0, filename.IndexOf(".")); ;
-            var key = "/api/endpoint" + itemType;
+            var key = "/api/hl" + itemType;
             if (!doc.Paths.ContainsKey(key))
             {
                 var p = new PathItem();
