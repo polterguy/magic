@@ -10,3 +10,7 @@ contains the following columns.
 * _"id"_ - Primary key, auto increment integer field
 * _"subject"_ - Subject for item, text field
 * _"done"_ - If item has been done, integer field
+
+## Notice
+
+This _"TODO"_ app does not use authentication or authorization. These are features that must be explicitly added to it.
