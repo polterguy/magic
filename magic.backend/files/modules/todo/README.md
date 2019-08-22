@@ -7,6 +7,6 @@ _"MySQLConnection"_ connection string in the _"appsettings.json"_ file in the ro
 In addition you'll need a database, with at least one table, named _"items"_, where at least the table
 contains the following columns.
 
-* id - Primary key, auto increment integer field
-* subject - Subject for item, text field
-* done - If item has been done, integer field
+* _"id"_ - Primary key, auto increment integer field
+* _"subject"_ - Subject for item, text field
+* _"done"_ - If item has been done, integer field

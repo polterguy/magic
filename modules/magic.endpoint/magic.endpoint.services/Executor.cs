@@ -89,7 +89,7 @@ namespace magic.endpoint.services
                 _signaler.Signal("eval", lambda);
 
                 var result = GetReturnValue(lambda);
-                if (result == null)
+                if (result != null)
                     return new OkObjectResult(result);
 
                 return new OkResult();
