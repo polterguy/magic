@@ -19,7 +19,7 @@ The article is written by the author of Magic.
 Magic is licensed as Affero GPL. If this is a problem, you can contact at thomas@gaiasoul.com me to negotiate a proprietary license if
 you want to use the framework to build closed source code.
 
-**NOTICE**
+## Notice
 
 After refactoring Magic to use Hyperlambda, the library has not yet been completely stabilized and should be considered BETA software at
 the moment - At least until I manage to create a release of its current codebase.
