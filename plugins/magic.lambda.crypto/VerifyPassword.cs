@@ -11,7 +11,7 @@ using magic.node;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
 
-namespace magic.lambda.strings
+namespace magic.lambda.crypto
 {
     [Slot(Name = "crypto.password.verify")]
     public class VerifyPassword : ISlot, IMeta
