@@ -1,7 +1,7 @@
 
 
 .endpoint-wrapper {
-    padding:2rem;
+    padding:5rem 5rem 2rem 5rem;
 }
 .endpoints {
     width: 100%;
@@ -20,4 +20,8 @@
             cursor: pointer;
         }
     }
+}
+
+.active-wrapper {
+    padding:0 5rem 2rem 5rem;
 }
