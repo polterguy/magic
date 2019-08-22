@@ -21,7 +21,19 @@
 </div>
 
 <div class="active-wrapper" *ngIf="selected != null">
-  <mat-card>
-    <h3>[{{selected.verb}}] - <small>{{selected.url}}</small></h3>
+
+  <mat-card class="view-endpoint-card">
+ 
+    <h3>{{selected.url}}</h3>
+
+    <mat-form-field *ngIf="!isJsonArguments && arguments != null && arguments.length > 0" class="fill-width">
+      <input matInput type="text" [(ngModel)]="arguments">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="isJsonArguments && arguments != null && arguments.length > 0" class="fill-width">
+      <textarea matInput rows="10" [(ngModel)]="arguments"></textarea>
+    </mat-form-field>
+
   </mat-card>
+
 </div>

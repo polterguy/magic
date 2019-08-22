@@ -13,6 +13,8 @@ export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'verb'];
   private endpoints: Endpoint[];
   private selected: Endpoint;
+  private arguments: string;
+  private isJsonArguments: boolean;
 
   constructor(private service: EndpointService) { }
 
@@ -32,7 +34,27 @@ export class EndpointsComponent implements OnInit {
   selectEndpoint(el: Endpoint) {
     this.selected = el;
     this.service.getEndpointMeta(el.url, el.verb).subscribe((res) => {
-      console.log(res);
+      switch (this.selected.verb) {
+        case 'post':
+        case 'put':
+          this.isJsonArguments = true;
+          this.arguments = JSON.stringify(res, null, 2);
+          break;
+        case 'get':
+        case 'delete':
+          this.isJsonArguments = false;
+          let args = '';
+          for (const idx in res) {
+            if (Object.prototype.hasOwnProperty.call(res, idx)) {
+              if (args.length > 0) {
+                args += '&';
+              }
+              args += idx + '=' + res[idx];
+            }
+          }
+          this.arguments = args;
+          break;
+        }
     });
   }
 }
