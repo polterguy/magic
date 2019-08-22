@@ -37,3 +37,9 @@ of _"todo"_. This only serves as an example module, and should be replaced with 
 
 If the filestructure seems confusing, you can use Swagger API documentation giving you hints about which
 URLs your server has after having created some file.
+
+## Creating module startup logic
+
+If you create a folder named _"magic.startup"_ directly inside of your own module's root folder, all files
+inside of this folder will be evaluated as Magic starts the backend, and considered as initialization logic.
+See the _"magic.common"_ folder for an example that creates a whole range of slots for database CRUD operations.
