@@ -26,13 +26,17 @@
  
     <h3>{{selected.url}}</h3>
 
-    <mat-form-field *ngIf="!isJsonArguments && arguments != null && arguments.length > 0" class="fill-width">
+    <mat-form-field *ngIf="!isJsonArguments" class="fill-width">
       <input matInput type="text" [(ngModel)]="arguments">
     </mat-form-field>
 
     <mat-form-field *ngIf="isJsonArguments && arguments != null && arguments.length > 0" class="fill-width">
       <textarea matInput rows="10" [(ngModel)]="arguments"></textarea>
     </mat-form-field>
+
+    <div class="right-aligned">
+      <button mat-button (click)="evaluate()">Evaluate</button>
+    </div>
 
   </mat-card>
 

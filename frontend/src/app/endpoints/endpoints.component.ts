@@ -57,4 +57,8 @@ export class EndpointsComponent implements OnInit {
         }
     });
   }
+
+  evaluate() {
+    return false;
+  }
 }
