@@ -21,7 +21,9 @@ export class EndpointService {
       '&verb=' + encodeURI(verb));
   }
 
-  execute(url: string, verb: string, args: string) {
-
+  executeGet(url: string) {
+    const completeUrl = environment.apiURL + 'hl/' + url;
+    console.log(completeUrl);
+    return this.httpClient.get<any>(completeUrl);
   }
 }

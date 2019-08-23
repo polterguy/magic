@@ -31,7 +31,7 @@ namespace magic.endpoint.services
         {
             foreach (var idxFolder in Directory.GetDirectories(currentFolder))
             {
-                var folder = "/" + idxFolder.Substring(ConfigureServices.Root.Length);
+                var folder = idxFolder.Substring(ConfigureServices.Root.Length);
                 if (Utilities.IsLegalHttpName(folder))
                 {
                     foreach (var idxVerb in GetVerbForFolder(idxFolder, folder))
@@ -47,7 +47,7 @@ namespace magic.endpoint.services
             var folderFiles = Directory.GetFiles(fullFolder, "*.hl").Select(x => x.Replace("\\", "/"));
             foreach (var idxFile in folderFiles)
             {
-                var curRelativeFilepath = "/" + idxFile.Substring(ConfigureServices.Root.Length);
+                var curRelativeFilepath = idxFile.Substring(ConfigureServices.Root.Length);
                 var entities = curRelativeFilepath.Split('.');
                 if (entities.Length == 3)
                 {
