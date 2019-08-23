@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using magic.node;
 using magic.signals.contracts;
 using magic.endpoint.services.init;
-using System;
 
 namespace magic.endpoint.services
 {
@@ -52,7 +52,7 @@ namespace magic.endpoint.services
             foreach (var idxFile in Directory.GetFiles(folder, "*.hl"))
             {
                 var filename = "/" + idxFile.Substring(ConfigureServices.Root.Length).Replace("\\", "/");
-                if (Utilities.IsLegalHttpName(filename))
+                if (Utilities.IsLegalHttpName(filename.Substring(0, filename.IndexOf(".", StringComparison.InvariantCulture))))
                 {
                     var fileInfo = new FileInfo(filename);
                     var splits = fileInfo.Name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);

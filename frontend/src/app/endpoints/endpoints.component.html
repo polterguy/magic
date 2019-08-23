@@ -26,8 +26,14 @@
  
     <h3>{{selected.url}}</h3>
 
+    <div class="active-verb">{{selected.verb}}</div>
+
     <mat-form-field *ngIf="!isJsonArguments" class="fill-width">
-      <input matInput matTooltip="Query parameters to your endpoint" type="text" [(ngModel)]="arguments">
+      <input 
+        matInput 
+        placeholder="Query parameters to your endpoint"
+        type="text" 
+        [(ngModel)]="arguments">
     </mat-form-field>
 
     <ngx-codemirror 
@@ -40,7 +46,10 @@
       }"></ngx-codemirror>
 
     <div class="right-aligned">
-      <button mat-button matTooltip="Evaluates the endpoint with the specified parameters" (click)="evaluate()">Evaluate</button>
+      <button 
+        mat-button 
+        matTooltip="Evaluates the endpoint with the specified parameters/payload" 
+        (click)="evaluate()">Evaluate</button>
     </div>
 
   </mat-card>
