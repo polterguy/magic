@@ -71,18 +71,47 @@ export class EndpointsComponent implements OnInit {
     }
 
     switch (this.selected.verb) {
+
       case 'get':
         this.service.executeGet(this.currentUrl).subscribe((res) => {
           this.endpointResult = JSON.stringify(res, null, 2);
         }, (error) => {
-          console.error(error);
-          this.snackBar.open(error.error.message, 'Close', {
-            duration: 10000,
-            panelClass: ['error-snackbar'],
-          });
+          this.showHttpError(error);
         });
         break;
-    }
+
+      case 'delete':
+        this.service.executeDelete(this.currentUrl).subscribe((res) => {
+          this.endpointResult = JSON.stringify(res, null, 2);
+        }, (error) => {
+          this.showHttpError(error);
+        });
+        break;
+
+      case 'post':
+        this.service.executePost(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
+          this.endpointResult = JSON.stringify(res, null, 2);
+        }, (error) => {
+          this.showHttpError(error);
+        });
+        break;
+
+      case 'put':
+        this.service.executePut(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
+          this.endpointResult = JSON.stringify(res, null, 2);
+        }, (error) => {
+          this.showHttpError(error);
+        });
+        break;
+      }
     return false;
   }
+
+  showHttpError(error: any) {
+    console.error(error);
+    this.snackBar.open(error.error.message, 'Close', {
+      duration: 10000,
+      panelClass: ['error-snackbar'],
+    });
+}
 }

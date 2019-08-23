@@ -22,7 +22,18 @@ export class EndpointService {
   }
 
   executeGet(url: string) {
-    const completeUrl = environment.apiURL + 'hl/' + url;
-    return this.httpClient.get<any>(completeUrl);
+    return this.httpClient.get<any>(environment.apiURL + 'hl/' + url);
+  }
+
+  executeDelete(url: string) {
+    return this.httpClient.delete<any>(environment.apiURL + 'hl/' + url);
+  }
+
+  executePost(url: string, args: any) {
+    return this.httpClient.post<any>(environment.apiURL + 'hl/' + url, args);
+  }
+
+  executePut(url: string, args: any) {
+    return this.httpClient.put<any>(environment.apiURL + 'hl/' + url, args);
   }
 }
