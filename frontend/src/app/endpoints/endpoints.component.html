@@ -30,9 +30,14 @@
       <input matInput matTooltip="Query parameters to your endpoint" type="text" [(ngModel)]="arguments">
     </mat-form-field>
 
-    <mat-form-field *ngIf="isJsonArguments" class="fill-width">
-      <textarea matInput matTooltip="JSON payload to your endpoint" rows="10" [(ngModel)]="arguments"></textarea>
-    </mat-form-field>
+    <ngx-codemirror 
+      *ngIf="isJsonArguments"
+      [(ngModel)]="arguments" 
+      [options]="{
+        lineNumbers: true,
+        theme: 'material',
+        mode: 'application/ld+json'
+      }"></ngx-codemirror>
 
     <div class="right-aligned">
       <button mat-button matTooltip="Evaluates the endpoint with the specified parameters" (click)="evaluate()">Evaluate</button>
@@ -48,9 +53,13 @@
 
     <h3>{{currentUrl}}</h3>
 
-    <mat-form-field class="fill-width">
-      <textarea matInput matTooltip="Results from evaluating your endpoint" rows="10" [(ngModel)]="endpointResult"></textarea>
-    </mat-form-field>
+    <ngx-codemirror 
+      [(ngModel)]="endpointResult" 
+      [options]="{
+        lineNumbers: true,
+        theme: 'material',
+        mode: 'application/ld+json'
+      }"></ngx-codemirror>
 
   </mat-card>
 
