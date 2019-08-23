@@ -25,12 +25,21 @@
 .active-wrapper {
     padding:0 5rem 2rem 5rem;
     .view-endpoint-card {
-        min-height: 250px;
+        position: relative;
         .fill-width {
             width: 100%;
         }
         .right-aligned {
             text-align: right;
+        }
+        .active-verb {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            padding: .5rem 1.5rem .5rem 1.5rem;
+            background-color: rgba(128,255,128,.2);
+            border-radius: .25rem;
+            font-weight: bold;
         }
     }
 }
@@ -50,5 +59,10 @@
 
 ::ng-deep .error-snackbar {
     background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}
+
+::ng-deep .success-snackbar {
+    background:rgb(230,255,230);
     color:rgb(0,0,0);
 }

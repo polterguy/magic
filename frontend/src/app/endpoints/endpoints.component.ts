@@ -75,6 +75,7 @@ export class EndpointsComponent implements OnInit {
       case 'get':
         this.service.executeGet(this.currentUrl).subscribe((res) => {
           this.endpointResult = JSON.stringify(res, null, 2);
+          this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
         });
@@ -83,6 +84,7 @@ export class EndpointsComponent implements OnInit {
       case 'delete':
         this.service.executeDelete(this.currentUrl).subscribe((res) => {
           this.endpointResult = JSON.stringify(res, null, 2);
+          this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
         });
@@ -91,6 +93,7 @@ export class EndpointsComponent implements OnInit {
       case 'post':
         this.service.executePost(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
           this.endpointResult = JSON.stringify(res, null, 2);
+          this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
         });
@@ -99,6 +102,7 @@ export class EndpointsComponent implements OnInit {
       case 'put':
         this.service.executePut(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
           this.endpointResult = JSON.stringify(res, null, 2);
+          this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
         });
@@ -113,5 +117,12 @@ export class EndpointsComponent implements OnInit {
       duration: 10000,
       panelClass: ['error-snackbar'],
     });
-}
+  }
+
+  showHttpSuccess(msg: string) {
+    this.snackBar.open(msg, null, {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
+    });
+  }
 }

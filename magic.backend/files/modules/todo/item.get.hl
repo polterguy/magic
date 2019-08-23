@@ -30,8 +30,8 @@ signal:magic.db.mysql.read
    table:items
    args
    columns
-      subject
       id
+      subject
       done
 
 
