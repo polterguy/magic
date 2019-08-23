@@ -23,7 +23,6 @@ export class EndpointService {
 
   executeGet(url: string) {
     const completeUrl = environment.apiURL + 'hl/' + url;
-    console.log(completeUrl);
     return this.httpClient.get<any>(completeUrl);
   }
 }

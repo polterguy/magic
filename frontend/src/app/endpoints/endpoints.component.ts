@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Endpoint } from '../models/endpoint';
 import { EndpointService } from '../services/endpoint-service';
-import { PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-endpoints',
@@ -18,7 +18,9 @@ export class EndpointsComponent implements OnInit {
   private endpointResult: string;
   private currentUrl: string;
 
-  constructor(private service: EndpointService) { }
+  constructor(
+    private service: EndpointService,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.service.getAllEndpoints().subscribe((res) => {
@@ -63,15 +65,21 @@ export class EndpointsComponent implements OnInit {
   evaluate() {
 
     this.currentUrl = this.selected.url;
-    if (!this.isJsonArguments) {
-      // Query arguments.
+    if (!this.isJsonArguments && this.arguments !== '') {
+      // URL has query arguments.
       this.currentUrl += '?' + this.arguments;
     }
 
     switch (this.selected.verb) {
       case 'get':
         this.service.executeGet(this.currentUrl).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res, null, 2);;
+          this.endpointResult = JSON.stringify(res, null, 2);
+        }, (error) => {
+          console.error(error);
+          this.snackBar.open(error.error.message, 'Close', {
+            duration: 10000,
+            panelClass: ['error-snackbar'],
+          });
         });
         break;
     }
