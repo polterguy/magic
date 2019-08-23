@@ -22,7 +22,7 @@
 
 <div class="active-wrapper" *ngIf="selected != null">
 
-  <mat-card class="view-endpoint-card">
+  <mat-card class="mat-elevation-z4 view-endpoint-card">
  
     <h3>{{selected.url}}</h3>
 
@@ -30,13 +30,27 @@
       <input matInput type="text" [(ngModel)]="arguments">
     </mat-form-field>
 
-    <mat-form-field *ngIf="isJsonArguments && arguments != null && arguments.length > 0" class="fill-width">
+    <mat-form-field *ngIf="isJsonArguments" class="fill-width">
       <textarea matInput rows="10" [(ngModel)]="arguments"></textarea>
     </mat-form-field>
 
     <div class="right-aligned">
       <button mat-button (click)="evaluate()">Evaluate</button>
     </div>
+
+  </mat-card>
+
+</div>
+
+<div class="result-wrapper" *ngIf="endpointResult">
+
+  <mat-card class="mat-elevation-z4 view-result-card">
+
+    <h3>{{currentUrl}}</h3>
+
+    <mat-form-field class="fill-width">
+      <textarea matInput rows="10" [(ngModel)]="endpointResult"></textarea>
+    </mat-form-field>
 
   </mat-card>
 

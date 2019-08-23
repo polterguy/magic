@@ -15,6 +15,8 @@ export class EndpointsComponent implements OnInit {
   private selected: Endpoint;
   private arguments: string;
   private isJsonArguments: boolean;
+  private endpointResult: string;
+  private currentUrl: string;
 
   constructor(private service: EndpointService) { }
 
@@ -59,6 +61,20 @@ export class EndpointsComponent implements OnInit {
   }
 
   evaluate() {
+
+    this.currentUrl = this.selected.url;
+    if (!this.isJsonArguments) {
+      // Query arguments.
+      this.currentUrl += '?' + this.arguments;
+    }
+
+    switch (this.selected.verb) {
+      case 'get':
+        this.service.executeGet(this.currentUrl).subscribe((res) => {
+          this.endpointResult = JSON.stringify(res, null, 2);;
+        });
+        break;
+    }
     return false;
   }
 }
