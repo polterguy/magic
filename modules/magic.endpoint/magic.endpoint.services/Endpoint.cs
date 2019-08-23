@@ -21,7 +21,7 @@ namespace magic.endpoint.services
 
         public Endpoint(ISignaler signaler)
         {
-            ISignaler _signaler = signaler ?? throw new ArgumentNullException();
+            _signaler = signaler ?? throw new ArgumentNullException();
         }
 
         public void Signal(Node input)

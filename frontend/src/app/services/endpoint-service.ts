@@ -20,4 +20,8 @@ export class EndpointService {
       'hl/system/endpoint?url=' + encodeURI(url) +
       '&verb=' + encodeURI(verb));
   }
+
+  execute(url: string, verb: string, args: string) {
+
+  }
 }
