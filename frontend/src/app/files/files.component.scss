@@ -1,6 +1,7 @@
 
 .files-wrapper {
-    padding:2rem 5rem .5rem 5rem;
+    padding:2rem 5rem 2rem 5rem;
+    position: relative;
     table {
         width: 100%;
         tr {
@@ -16,11 +17,30 @@
             cursor: pointer;
         }
     }
-    .right-aligned {
-        text-align: right;
+    .relativized {
+        position: relative;
+        .absolutized {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+        }
     }
 }
 
 .result-wrapper {
     padding: 0 5rem 2rem 5rem;
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}
+
+::ng-deep .success-snackbar {
+    background:rgb(100,255,100);
+    color:rgb(0,0,0);
+}
+
+.right-aligned {
+    text-align: right;
 }

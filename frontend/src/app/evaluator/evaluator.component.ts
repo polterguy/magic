@@ -32,7 +32,6 @@ export class EvaluatorComponent implements OnInit {
   }
 
   showHttpError(error: any) {
-    console.error(error);
     this.snackBar.open(error.error.message, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],

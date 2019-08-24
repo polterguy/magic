@@ -31,4 +31,16 @@ export class FileService {
       'files?file=' + encodeURI(path), 
       requestOptions);
   }
+
+  public saveFile(path: string, content: string) {
+    const folder = path.substr(0, path.lastIndexOf('/') + 1);
+    const formData: FormData = new FormData();
+    const blob = new Blob([content], { type: "text/plain"});
+    formData.append('file', blob, path.substr(path.lastIndexOf('/') + 1));
+    return this.httpClient.post<any>(
+      environment.apiURL + 
+      'files?folder=' + encodeURI(folder),
+      formData
+    );
+  }
 }

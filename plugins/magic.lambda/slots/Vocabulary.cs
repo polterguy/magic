@@ -25,6 +25,7 @@ namespace magic.lambda.slots
         {
             input.Clear();
             input.AddRange(_signaler.Slots.Select((x) => new Node(x)));
+            input.AddRange(Slot.Slots.Select((x) => new Node(x)));
         }
 
         public IEnumerable<Node> GetArguments()

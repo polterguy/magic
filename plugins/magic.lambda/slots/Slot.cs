@@ -29,6 +29,19 @@ namespace magic.lambda.slots
             return _slots.Read((slots) => slots[name].Clone());
         }
 
+        public static IEnumerable<string> Slots
+        {
+            get
+            {
+                var result = new List<string>();
+                _slots.Read((x) =>
+                {
+                    result.AddRange(x.Keys);
+                });
+                return result;
+            }
+        }
+
         public void Signal(Node input)
         {
             if (!input.Children.Any((x) => x.Name == ".lambda"))
