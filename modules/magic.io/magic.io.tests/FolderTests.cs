@@ -23,10 +23,10 @@ namespace magic.io.tests
         public void CreateFolderListFolders()
         {
             var controller = CreateController();
-            controller.Create("foo");
+            controller.Create("/foo");
             var result = controller.ListFolders("/");
-            Assert.True(result.Count() > 0);
-            Assert.Contains("/foo", result);
+            Assert.True(result.Any());
+            Assert.Contains("/foo/", result);
         }
 
         [Fact]
@@ -34,7 +34,6 @@ namespace magic.io.tests
         {
             var controller = CreateController();
             controller.Create("foo");
-            var result = controller.ListFolders("/");
             var file = FileTests.CreateMoqFile("foo content", "foo.txt");
             var filesControllers = CreateFilesController();
             filesControllers.Upload(file.Object, "foo");
@@ -61,16 +60,16 @@ namespace magic.io.tests
         public void CreateFolderMoveFolder()
         {
             var controller = CreateController();
-            controller.Create("foo");
+            controller.Create("/foo");
             controller.Move(new CopyMoveModel
             {
-                Source = "foo",
-                Destination = "bar"
+                Source = "/foo",
+                Destination = "/bar"
             });
             var result = controller.ListFolders("/");
             Assert.True(result.Count() > 0);
-            Assert.Contains("/bar", result);
-            Assert.DoesNotContain("/foo", result);
+            Assert.Contains("/bar/", result);
+            Assert.DoesNotContain("/foo/", result);
         }
 
         [Fact]

@@ -35,6 +35,8 @@ namespace magic.hyperlambda.utils
                     name = "@\"" + name.Replace("\"", "\"\"") + "\"";
                 else if (name.Contains("\"") || name.Contains(":"))
                     name = "\"" + name.Replace("\"", "\\\"") + "\"";
+                else if (idx.Value == null && name == "")
+                    name = @"""""";
                 builder.Append(name);
 
                 if (idx.Value != null)
