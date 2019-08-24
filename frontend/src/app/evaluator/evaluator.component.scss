@@ -1,0 +1,16 @@
+
+.evaluator-wrapper {
+    padding:2rem 2rem .5rem 2rem;
+    .right-aligned {
+        text-align: right;
+    }
+}
+
+.result-wrapper {
+    padding:0 2rem 2rem 2rem;
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}

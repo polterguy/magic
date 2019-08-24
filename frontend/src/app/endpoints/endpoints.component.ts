@@ -1,8 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../models/endpoint';
 import { EndpointService } from '../services/endpoint-service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-endpoints',
