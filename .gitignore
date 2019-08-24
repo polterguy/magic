@@ -330,7 +330,9 @@ ASALocalRun/
 magic.backend/files/*
 !magic.backend/files/README.md
 !magic.backend/files/modules
+!magic.backend/files/public
 
 # Excluding all Mac folder files
 **/.DS_Store
 modules/**/*.controller.xml
+magic.backend/files/public/hyperlambda-auto-complete.js

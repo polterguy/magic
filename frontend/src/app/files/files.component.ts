@@ -66,19 +66,6 @@ export class FilesComponent implements OnInit {
     })
   }
 
-  showInfo(info: string) {
-    this.snackBar.open(info, 'Close', {
-      duration: 2000
-    });
-  }
-
-  showError(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 2000,
-      panelClass: ['error-snackbar'],
-    });
-  }
-
   evaluate() {
     this.evaluateService.evaluate(this.fileContent).subscribe((res) => {
       this.showInfo('File successfully evaluated');
@@ -91,5 +78,18 @@ export class FilesComponent implements OnInit {
       this.showInfo('File successfully saved');
     });
     return false;
+  }
+
+  showInfo(info: string) {
+    this.snackBar.open(info, 'Close', {
+      duration: 2000
+    });
+  }
+
+  showError(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 2000,
+      panelClass: ['error-snackbar'],
+    });
   }
 }
