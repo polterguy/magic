@@ -45,6 +45,8 @@ namespace magic.io.services.utilities
 
         public string GetMimeType(string filename)
         {
+            if (filename.EndsWith(".hl", StringComparison.InvariantCulture))
+                return "text/plain";
             return MimeTypes.GetMimeType(filename);
         }
 

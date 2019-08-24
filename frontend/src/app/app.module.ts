@@ -21,6 +21,7 @@ import './extensions/hyperlambda.js';
 import { EndpointsComponent } from './endpoints/endpoints.component';
 import { HomeComponent } from './home/home.component';
 import { EvaluatorComponent } from './evaluator/evaluator.component';
+import { FilesComponent } from './files/files.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { EvaluatorComponent } from './evaluator/evaluator.component';
     EndpointsComponent,
     HomeComponent,
     EvaluatorComponent,
+    FilesComponent,
   ],
   imports: [
     BrowserModule,
