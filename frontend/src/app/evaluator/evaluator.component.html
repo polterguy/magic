@@ -1,20 +1,23 @@
 
 <div class="evaluator-wrapper">
 
-  <ngx-codemirror 
-    [(ngModel)]="hyperlambda" 
-    [options]="{
-      lineNumbers: true,
-      theme: 'material',
-      mode: 'hyperlambda',
-      tabSize: 3,
-      indentUnit: 3,
-      indentAuto:true,
-      extraKeys:{
-        'Shift-Tab':'indentLess',
-        'Tab':'indentMore'
-      }
-    }"></ngx-codemirror>
+  <div class="mat-elevation-z4">
+
+    <ngx-codemirror 
+      [(ngModel)]="hyperlambda" 
+      [options]="{
+        lineNumbers: true,
+        theme: 'material',
+        mode: 'hyperlambda',
+        tabSize: 3,
+        indentUnit: 3,
+        indentAuto:true,
+        extraKeys:{
+          'Shift-Tab':'indentLess',
+          'Tab':'indentMore'
+        }
+      }"></ngx-codemirror>
+    </div>
 
     <div class="right-aligned">
       <button 
@@ -27,6 +30,7 @@
 
 <div *ngIf="result" class="result-wrapper">
 
+  <div class="mat-elevation-z4">
     <ngx-codemirror 
       [(ngModel)]="result" 
       [options]="{
@@ -42,5 +46,6 @@
           'Tab':'indentMore'
         }
       }"></ngx-codemirror>
-  
   </div>
+  
+</div>

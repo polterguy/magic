@@ -39,7 +39,7 @@ namespace magic.io.services
                 throw new SecurityException("Access denied");
 
             return Directory.GetDirectories(path)
-                .Select(x => _utilities.GetRelativePath(x));
+                .Select((x) => _utilities.GetRelativePath(x) + "/");
         }
 
         public IEnumerable<string> ListFiles(
@@ -55,8 +55,7 @@ namespace magic.io.services
                 AccessType.ReadFolder))
                 throw new SecurityException("Access denied");
 
-            return Directory.GetFiles(path)
-                .Select(x => _utilities.GetRelativePath(x));
+            return Directory.GetFiles(path).Select(_utilities.GetRelativePath);
         }
 
         public void Delete(string path, string username, string[] roles)
