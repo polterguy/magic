@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'verb'];
   private endpoints: Endpoint[];
+  private filter: string = '';
   private selected: Endpoint;
   private arguments: string;
   private isJsonArguments: boolean;
@@ -35,15 +36,28 @@ export class EndpointsComponent implements OnInit {
     });
   }
 
+  getFilteredEndpoints() {
+    if (this.filter == '') {
+      return this.endpoints;
+    } 
+    return this.endpoints.filter((x) => {
+      return x.verb == this.filter || x.url.indexOf(this.filter) > -1;
+    });
+  }
+
   selectEndpoint(el: Endpoint) {
+    this.endpointResult = null;
     this.selected = el;
+
     this.service.getEndpointMeta(el.url, el.verb).subscribe((res) => {
+
       switch (this.selected.verb) {
         case 'post':
         case 'put':
           this.isJsonArguments = true;
           this.arguments = JSON.stringify(res, null, 2);
           break;
+
         case 'get':
         case 'delete':
           this.isJsonArguments = false;
