@@ -49,7 +49,7 @@ namespace magic.lambda.mysql.crud
                     input.Clear();
                     while (reader.Read())
                     {
-                        var rowNode = new Node();
+                        var rowNode = new Node(".");
                         for (var idxCol = 0; idxCol < reader.FieldCount; idxCol++)
                         {
                             var colNode = new Node(reader.GetName(idxCol), reader[idxCol]);
