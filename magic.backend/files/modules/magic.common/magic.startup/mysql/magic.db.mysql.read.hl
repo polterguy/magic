@@ -1,4 +1,4 @@
-﻿
+
 /*
  * Read items from your [connection]/[table] according to [args] supplied.
  * [args] can contain [limit], [offset], [order] and [direction] - In addition

@@ -1,6 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileService } from '../services/file-service';
+import { EvaluatorService } from '../services/evaluator-service';
 
 @Component({
   selector: 'app-files',
@@ -13,18 +15,22 @@ export class FilesComponent implements OnInit {
   private folders: string[] = [];
   private files: string[] = [];
   private fileContent: string;
+  private filePath: string;
 
-  constructor(private service: FileService) { }
+  constructor(
+    private fileService: FileService,
+    private evaluateService: EvaluatorService,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.getPath();
   }
 
   getPath() {
-    this.service.listFiles(this.path).subscribe((res) => {
+    this.fileService.listFiles(this.path).subscribe((res) => {
       this.files = res;
     });
-    this.service.listFolders(this.path).subscribe((res) => {
+    this.fileService.listFolders(this.path).subscribe((res) => {
       this.folders = res;
     });
   }
@@ -38,8 +44,10 @@ export class FilesComponent implements OnInit {
     if (path.endsWith('/')) {
       this.path = path;
       this.getPath();
-    } else {
+    } else if (path.endsWith('.hl')) {
       this.openFile(path);
+    } else {
+      this.showError('No editor registered for file');
     }
   }
 
@@ -52,8 +60,36 @@ export class FilesComponent implements OnInit {
   }
 
   openFile(path: string) {
-    this.service.getFileContent(path).subscribe((res) => {
+    this.fileService.getFileContent(path).subscribe((res) => {
       this.fileContent = res;
+      this.filePath = path;
     })
+  }
+
+  showInfo(info: string) {
+    this.snackBar.open(info, 'Close', {
+      duration: 2000
+    });
+  }
+
+  showError(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 2000,
+      panelClass: ['error-snackbar'],
+    });
+  }
+
+  evaluate() {
+    this.evaluateService.evaluate(this.fileContent).subscribe((res) => {
+      this.showInfo('File successfully evaluated');
+    });
+    return false;
+  }
+
+  save() {
+    this.fileService.saveFile(this.filePath, this.fileContent).subscribe((res) => {
+      this.showInfo('File successfully saved');
+    });
+    return false;
   }
 }

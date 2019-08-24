@@ -116,6 +116,9 @@ namespace magic.node
 
         public T Get<T>()
         {
+            if (typeof(T) == typeof(Expression) && Value is Expression)
+                return (T)Value;
+
             var value = Get();
             if (value is T result)
                 return result;
