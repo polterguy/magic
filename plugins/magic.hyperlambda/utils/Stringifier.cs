@@ -31,7 +31,7 @@ namespace magic.hyperlambda.utils
                     builder.Append("   ");
 
                 var name = idx.Name;
-                if (name.Contains("\r\n"))
+                if (name.Contains("\n"))
                     name = "@\"" + name.Replace("\"", "\"\"") + "\"";
                 else if (name.Contains("\"") || name.Contains(":"))
                     name = "\"" + name.Replace("\"", "\\\"") + "\"";
@@ -46,7 +46,7 @@ namespace magic.hyperlambda.utils
                     {
                         case "System.String":
                             value = idx.Get<string>();
-                            if (value.Contains("\r\n"))
+                            if (value.Contains("\n"))
                                 value = "@\"" + value.Replace("\"", "\"\"") + "\"";
                             else if (value.Contains("\"") || value.Contains(":"))
                                 value = "\"" + value.Replace("\"", "\\\"") + "\"";

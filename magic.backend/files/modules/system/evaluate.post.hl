@@ -1,0 +1,27 @@
+﻿
+/*
+ * Evaluates the given [hyperlambda].
+ */
+.arguments
+   hyperlambda:string
+
+
+/*
+ * Transforms the specified [hyperlambda] to a lambda object.
+ */
+lambda:x:@.arguments/*/hyperlambda
+
+
+/*
+ * Evaluates the transformed [hyperlambda].
+ */
+eval:x:-
+
+
+/*
+ * Returning the results of the evaluation to caller.
+ */
+hyper:x:@lambda/*
+unwrap:x:+/*
+return-nodes
+   result:x:@hyper

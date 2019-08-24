@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
+using magic.lambda.io.utilities;
 
 namespace magic.lambda.io
 {
@@ -25,7 +26,8 @@ namespace magic.lambda.io
 
         public void Signal(Node input)
         {
-            input.Value = File.ReadAllText(input.GetEx<string>(_signaler), Encoding.UTF8);
+            var filename = ConfigureServices.Root + input.GetEx<string>(_signaler);
+            input.Value = File.ReadAllText(filename, Encoding.UTF8);
         }
 
         public IEnumerable<Node> GetArguments()
