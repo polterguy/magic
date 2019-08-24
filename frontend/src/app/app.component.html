@@ -1,9 +1,21 @@
 
 <mat-toolbar>
+
   <span>Magic Dashboard</span>
   <span class="example-fill-remaining-space"></span>
-  <a mat-button routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}">Home</a>
-  <a mat-button routerLink="/endpoints" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}">Endpoints</a>
+
+  <a 
+    mat-button 
+    routerLink="/" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Home</a>
+
+  <a 
+    mat-button 
+    routerLink="/endpoints" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Endpoints</a>
+
 </mat-toolbar>
 
 <router-outlet></router-outlet>
