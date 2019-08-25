@@ -4,9 +4,9 @@
  *
  * Arguments
  *
- * - [id] - Id of item to update
- * - [subject] - New subject for your item
- * - [done] - New done status for your item
+ * - [id] - Id of item to update, mandatory
+ * - [subject] - New subject for your item, optionally
+ * - [done] - New done status for your item, optionally
  */
 .arguments
    id:long

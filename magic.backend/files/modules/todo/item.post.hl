@@ -4,8 +4,8 @@
  *
  * Arguments
  *
- * - [subject] - Subject, text column
- * - [done] - If the item has been done or not, integer field
+ * - [subject] - Subject, text column, mandatory
+ * - [done] - If the item has been done or not, integer field, optionally, defaults to 0
  *
  * Notice, since the [exclude] node beneath have an [id] child, you
  * cannot explicitly supply an [id] argument. This has been chosen explicitly

@@ -1,6 +1,8 @@
-﻿
+
 /*
  * Deletes the specified [id] TODO item.
+ *
+ * [id] is mandatory
  */
 .arguments
    id:long
