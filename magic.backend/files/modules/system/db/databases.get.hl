@@ -7,6 +7,12 @@
  */
 
 
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
 mysql.connect:signal:@"config:""Databases:sys"""
    mysql.select:show databases
    remove-node:x:@mysql.select/*/*/=information_schema/.

@@ -5,5 +5,11 @@
  */
 
 
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
 system.endpoints
 return-nodes:x:-/*
