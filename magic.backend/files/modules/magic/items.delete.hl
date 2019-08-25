@@ -1,6 +1,6 @@
 
 /*
- * Deletes the specified [id] TODO item.
+ * Deletes the specified [id] item.
  *
  * [id] is mandatory
  */
