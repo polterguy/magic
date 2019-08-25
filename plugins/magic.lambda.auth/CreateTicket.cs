@@ -56,11 +56,14 @@ namespace magic.lambda
 
         string CreateJWTToken(string username, IEnumerable<string> roles)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            // Getting data to put into token.
             var secret = _configuration["auth:secret"];
             var validMinutes = int.Parse(_configuration["auth:valid-minutes"]);
             var key = Encoding.ASCII.GetBytes(secret);
             var rolesString = string.Join(",", roles.ToArray());
+
+            // Creating our token.
+            var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
