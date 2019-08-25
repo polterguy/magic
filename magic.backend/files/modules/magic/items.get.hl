@@ -55,7 +55,7 @@ add:x:./*/signal/*/args
  * Invokes [magic.db.mysql.read].
  */
 signal:magic.db.mysql.read
-   connection:signal:@"config:""Databases:MySQLConnection"""
+   connection:signal:@"config:""Databases:magic"""
    table:items
    args
    columns

@@ -32,7 +32,7 @@ add:x:./*/signal/*/values
  * Invoking [magic.db.mysql.create]
  */
 signal:magic.db.mysql.create
-   connection:signal:@"config:""Databases:MySQLConnection"""
+   connection:signal:@"config:""Databases:magic"""
    table:items
    values
    exclude

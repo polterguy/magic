@@ -13,7 +13,7 @@
  */
 unwrap:x:./*/signal/*/ids/*
 signal:magic.db.mysql.delete
-   connection:signal:@"config:""Databases:MySQLConnection"""
+   connection:signal:@"config:""Databases:magic"""
    table:items
    ids
       id:x:@.arguments/*/id

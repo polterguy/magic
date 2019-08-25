@@ -32,7 +32,7 @@ add:x:./*/signal/*/values
  * Invoking [magic.db.mysql.update]
  */
 signal:magic.db.mysql.update
-   connection:signal:@"config:""Databases:MySQLConnection"""
+   connection:signal:@"config:""Databases:magic"""
    table:items
    values
    ids

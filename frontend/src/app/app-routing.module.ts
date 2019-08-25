@@ -6,11 +6,13 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
+import { CrudifyComponent } from './components/crudify/crudify.component';
 
 const routes: Routes = [
   { path: 'files', component: FilesComponent },
-  { path: 'evaluator', component: EvaluatorComponent },
+  { path: 'crudify', component: CrudifyComponent },
   { path: 'endpoints', component: EndpointsComponent },
+  { path: 'evaluator', component: EvaluatorComponent },
   { path: '', component: HomeComponent }
 ];
 

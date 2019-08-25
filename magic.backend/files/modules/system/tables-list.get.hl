@@ -1,0 +1,20 @@
+
+/*
+ * Lists all database in your installation.
+ *
+ * Currently only supports MySQL, and requires a working _"sys"_ connection
+ * string in your _"appsettings.json"_ file.
+ */
+.arguments
+   database:string
+
+
+mysql.connect:signal:@"config:""Databases:sys"""
+   .sql:"use "
+   set-value:x:@.sql
+      concat
+         get-value:x:@.sql
+         get-value:x:@.arguments/*/database
+         .:"; show tables"
+   mysql.select:x:@.sql
+   return-nodes:x:-/*

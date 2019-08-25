@@ -3,7 +3,7 @@
 
 This is a small CRUD example web API created using Magic. The application serves only as
 an example app, wrapping an existing database, and is not intended to be used as is. To
-run it successfully, you'll need to modify your _"MySQLConnection"_ connection string in
+run it successfully, you'll need to modify your _"magic"_ connection string in
 your _"appsettings.json"_ file at the root of your _"magic.backend"_. In addition you'll
 need a database, with at least one table, named _"items"_, where the table contains at
 least the following columns.
