@@ -1,0 +1,58 @@
+
+/*
+ * Authenticates the user with the specified [username] and [password] combination.
+ *
+ * NOTICE!
+ * The default implementation of this slot checks the supplied [username]
+ * and [password] towards the values of "root"/"root" - Obviously this should
+ * be exchanged and go towards your own database structure somehow, at which
+ * point you can use for instance the slots found in the _"magic.lambda.crypto"_
+ * project to make sure you store your passwords securely.
+ *
+ * However, to make sure the core installation of Magic is database agnostic,
+ * I have consciously left this as an exercize for yourself to figure out.
+ */
+slot:magic.authenticate
+   .arguments
+      username:string
+      password:string
+   .lambda
+
+
+      /*
+       * Statically checks the username/password combination towards the values
+       * "root"/"root". Exchange this part of the slot with your own
+       * custom lambda, looking up some username/password combination from
+       * your database to actually secure your installation.
+       */
+      if
+         or
+            not
+               eq
+                  get-value:x:@.arguments/*/username
+                  .:root
+            not
+               eq
+                  get-value:x:@.arguments/*/password
+                  .:root
+         .lambda
+            throw:Oops, wrong credentials!
+
+
+      /*
+       * Creating a JWT token belonging to the username supplied, and the
+       * role of "root".
+       */
+      unwrap:x:+/*/username
+      auth.create-ticket
+         username:x:@.arguments/*/username
+         roles
+            .:root
+
+
+      /*
+       * Returning results back to caller.
+       */
+      unwrap:x:+/*
+      return-nodes
+         ticket:x:@auth.create-ticket

@@ -1,0 +1,23 @@
+
+/*
+ * Authenticates you with a [username]/[password] combination.
+ */
+.arguments
+   username:string
+   password:string
+
+
+/*
+ * Invokes the slot that does the heavy lifting, and creates our JWT token,
+ * making sure we return that token to caller.
+ */
+unwrap:x:+/*
+signal:magic.authenticate
+   username:x:@.arguments/*/username
+   password:x:@.arguments/*/password
+
+
+/*
+ * Returns the authentication JWT ticket created above to caller.
+ */
+return-nodes:x:@signal/*

@@ -88,6 +88,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.data.common", "plugin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.crypto", "plugins\magic.lambda.crypto\magic.lambda.crypto.csproj", "{715115CA-DBAD-41BF-A055-2C880C1D7635}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.auth", "plugins\magic.lambda.auth\magic.lambda.auth.csproj", "{611A46C7-0125-4BE8-99EB-264C293A749A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -210,6 +212,10 @@ Global
 		{715115CA-DBAD-41BF-A055-2C880C1D7635}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{715115CA-DBAD-41BF-A055-2C880C1D7635}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{715115CA-DBAD-41BF-A055-2C880C1D7635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{611A46C7-0125-4BE8-99EB-264C293A749A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{611A46C7-0125-4BE8-99EB-264C293A749A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{611A46C7-0125-4BE8-99EB-264C293A749A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{611A46C7-0125-4BE8-99EB-264C293A749A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -245,6 +251,7 @@ Global
 		{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{715115CA-DBAD-41BF-A055-2C880C1D7635} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
+		{611A46C7-0125-4BE8-99EB-264C293A749A} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}
