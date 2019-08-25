@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material';
 
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
@@ -22,6 +23,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
+import { NewFileDialog } from './components/files/files.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { FilesComponent } from './components/files/files.component';
     HomeComponent,
     EvaluatorComponent,
     FilesComponent,
+    NewFileDialog,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +48,7 @@ import { FilesComponent } from './components/files/files.component';
     MatFormFieldModule,
     MatTooltipModule,
     MatSnackBarModule,
+    MatDialogModule,
     CodemirrorModule,
   ],
   exports: [
@@ -58,6 +62,7 @@ import { FilesComponent } from './components/files/files.component';
     MatSnackBarModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents:[NewFileDialog]
 })
 export class AppModule { }

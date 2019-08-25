@@ -32,6 +32,12 @@ export class FileService {
       requestOptions);
   }
 
+  public deleteFile(path: string) {
+    return this.httpClient.delete<string>(
+      environment.apiURL + 'files?file=' + encodeURI(path)
+    );
+  }
+
   public saveFile(path: string, content: string) {
     const folder = path.substr(0, path.lastIndexOf('/') + 1);
     const formData: FormData = new FormData();
