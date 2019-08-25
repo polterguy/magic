@@ -39,6 +39,12 @@ namespace magic.endpoint.services
                         yield return idxVerb;
                     }
                 }
+
+                // Recursively retrieving inner folder.
+                foreach (var idx in AddCustomEndpoints(idxFolder))
+                {
+                    yield return idx;
+                }
             }
         }
 
