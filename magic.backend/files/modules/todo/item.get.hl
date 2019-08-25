@@ -4,13 +4,13 @@
  *
  * Arguments
  *
- * - [id] - Id of item to retrieve.
- * - [subject] - Subject of items you want to retrieve
- * - [done] - Done status of items you want to retrieve
- * - [order] - Column to order your results by
- * - [direction] - Either asc or desc for ascending and descending ordering
- * - [limit] - Maximum number of items to retrieve
- * - [offset] - Offset of where in your result set you want to start returning items
+ * - [id] - Id of item to retrieve, optionally
+ * - [subject] - Subject of items you want to retrieve, optionally
+ * - [done] - Done status of items you want to retrieve, optionally
+ * - [order] - Column to order your results by, optionally
+ * - [direction] - Either asc or desc for ascending and descending ordering, optionally
+ * - [limit] - Maximum number of items to retrieve, optionally
+ * - [offset] - Offset of where in your result set you want to start returning items, optionally
  *
  * If [limit] equals 1, it will return only one object - Otherwise it'll return an
  * array, even if the array only contains one item.
