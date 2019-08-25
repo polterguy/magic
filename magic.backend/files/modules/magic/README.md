@@ -38,3 +38,8 @@ CREATE TABLE `items` (
 
 The easiest way to test your TODO app, is by using the Angular frontend, and using its
 _"Endpoints"_ component that you can find as you launch your Angular frontend in its menu.
+
+By convention, you should probably make sure your endpoints ends up having a similar
+structure as your database, implying _"database-name/table-name"_. For instance, this
+app consumes a database called _"magic"_, and it uses a table called _"items"_ - Hence,
+it therefor can be found under _"magic/items"_ over HTTP.
