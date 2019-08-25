@@ -7,3 +7,24 @@
     text-decoration: underline;
 }
 
+.login-card {
+    max-width: 500px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5rem;
+    margin-top: 3rem;
+}
+
+.fill-width {
+    width: 100%;
+}
+
+.right-aligned {
+    text-align: right;
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}

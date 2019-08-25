@@ -17,6 +17,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
 
+import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
 
@@ -26,6 +27,11 @@ import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialog } from './components/files/files.component';
 import { CrudifyComponent } from './components/crudify/crudify.component';
+import { environment } from 'src/environments/environment';
+
+export function tokenGetter() {
+  return localStorage.getItem("access_token");
+}
 
 @NgModule({
   declarations: [
@@ -43,6 +49,12 @@ import { CrudifyComponent } from './components/crudify/crudify.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        whitelistedDomains: [environment.apiDomain],
+      }
+    }),
     MatButtonModule,
     MatToolbarModule,
     MatCardModule,

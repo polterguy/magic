@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
+    "@auth0/angular-jwt": "^3.0.0",
     "@ctrl/ngx-codemirror": "^2.1.0",
     "codemirror": "^5.48.4",
     "core-js": "^2.5.4",
