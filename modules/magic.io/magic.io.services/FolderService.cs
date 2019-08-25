@@ -55,7 +55,9 @@ namespace magic.io.services
                 AccessType.ReadFolder))
                 throw new SecurityException("Access denied");
 
-            return Directory.GetFiles(path).Select(_utilities.GetRelativePath);
+            return Directory.GetFiles(path)
+                .Where(x => !x.EndsWith(".DS_Store")) // Removing Mac special files.
+                .Select(_utilities.GetRelativePath);
         }
 
         public void Delete(string path, string username, string[] roles)

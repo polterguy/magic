@@ -8,7 +8,9 @@ then all files inside of that folder will be evaluated as the system starts.
 
 This is useful to for instance create globally accessible slots, such as this folder is
 an example of, since it creates a range of MS SQL and MySQL slots, helping you do CRUD
-operations towards these two database systems respectively.
+operations towards these two database systems respectively. In addition this folder also
+creates the default **[magic.authenticate]** slot, that _should be changed_ in a real
+installation.
 
 This particular folder creates the slots necessary to perform CRUD operations on MySQL
 and MS SQL databases.
