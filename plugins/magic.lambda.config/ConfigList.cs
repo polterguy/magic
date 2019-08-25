@@ -13,13 +13,13 @@ using magic.hyperlambda.utils;
 
 namespace magic.lambda
 {
-    [Slot(Name = "config")]
-    public class Config : ISlot, IMeta
+    [Slot(Name = "config-list")]
+    public class ConfigList : ISlot, IMeta
     {
         readonly ISignaler _signaler;
         readonly IConfiguration _configuration;
 
-        public Config(IConfiguration configuration, ISignaler signaler)
+        public ConfigList(IConfiguration configuration, ISignaler signaler)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
@@ -28,9 +28,12 @@ namespace magic.lambda
         public void Signal(Node input)
         {
             if (input.Children.Any())
-                throw new ApplicationException("[config] cannot handle children nodes");
+                throw new ApplicationException("[config-list] cannot handle children nodes");
 
-            input.Value = _configuration[input.GetEx<string>(_signaler)];
+            var settings = _configuration.GetSection(input.GetEx<string>(_signaler)).Get<Dictionary<string, string>>();
+
+            input.Value = null;
+            input.AddRange(settings.Select((x) => new Node(x.Key, x.Value)));
         }
 
         public IEnumerable<Node> GetArguments()

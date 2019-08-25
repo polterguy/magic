@@ -1,0 +1,16 @@
+
+/*
+ * Lists all database in your installation.
+ *
+ * Currently only supports MySQL, and requires a working _"sys"_ connection
+ * string in your _"appsettings.json"_ file.
+ */
+
+
+mysql.connect:signal:@"config:""Databases:sys"""
+   mysql.select:show databases
+   remove-node:x:@mysql.select/*/*/=information_schema/.
+   remove-node:x:@mysql.select/*/*/=mysql/.
+   remove-node:x:@mysql.select/*/*/=performance_schema/.
+   remove-node:x:@mysql.select/*/*/=sys/.
+   return-nodes:x:@mysql.select/*

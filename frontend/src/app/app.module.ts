@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
 
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
@@ -24,6 +25,7 @@ import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialog } from './components/files/files.component';
+import { CrudifyComponent } from './components/crudify/crudify.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { NewFileDialog } from './components/files/files.component';
     EvaluatorComponent,
     FilesComponent,
     NewFileDialog,
+    CrudifyComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +52,7 @@ import { NewFileDialog } from './components/files/files.component';
     MatTooltipModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatSelectModule,
     CodemirrorModule,
   ],
   exports: [
@@ -60,6 +64,7 @@ import { NewFileDialog } from './components/files/files.component';
     MatFormFieldModule,
     MatTooltipModule,
     MatSnackBarModule,
+    MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
