@@ -18,10 +18,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
 
-import { EndpointsComponent } from './endpoints/endpoints.component';
-import { HomeComponent } from './home/home.component';
-import { EvaluatorComponent } from './evaluator/evaluator.component';
-import { FilesComponent } from './files/files.component';
+import { EndpointsComponent } from './components/endpoints/endpoints.component';
+import { HomeComponent } from './components/endpoints/home/home.component';
+import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { FilesComponent } from './components/files/files.component';
 
 @NgModule({
   declarations: [

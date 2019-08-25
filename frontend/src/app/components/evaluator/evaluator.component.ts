@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EvaluatorService } from '../services/evaluator-service';
+import { EvaluatorService } from '../../services/evaluator-service';
 
 @Component({
   selector: 'app-evaluator',

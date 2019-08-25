@@ -1,8 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FileService } from '../services/file-service';
-import { EvaluatorService } from '../services/evaluator-service';
+import { FileService } from '../../services/file-service';
+import { EvaluatorService } from '../../services/evaluator-service';
 
 @Component({
   selector: 'app-files',
