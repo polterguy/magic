@@ -1,6 +1,7 @@
-﻿
+
 /*
- * Evaluates the given [hyperlambda].
+ * Evaluates the given [hyperlambda], and returns
+ * the results of the evaluation.
  */
 .arguments
    hyperlambda:string

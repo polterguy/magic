@@ -1,6 +1,7 @@
-﻿
+
 /*
  * Returns all endpoints in installation.
+ * Takes no arguments
  */
 
 
