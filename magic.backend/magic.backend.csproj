@@ -33,6 +33,8 @@
     <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
     <ProjectReference Include="..\lib\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.config\magic.lambda.config.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.auth\magic.lambda.auth.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.crypto\magic.lambda.crypto.csproj" />
   </ItemGroup>
 
   <ItemGroup>
