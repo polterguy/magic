@@ -80,6 +80,12 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
+  close() {
+    this.fileContent = null;
+    this.filePath = null;
+    return false;
+  }
+
   showInfo(info: string) {
     this.snackBar.open(info, 'Close', {
       duration: 2000
