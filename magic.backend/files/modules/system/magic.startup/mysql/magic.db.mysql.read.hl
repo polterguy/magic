@@ -1,6 +1,6 @@
 
 /*
- * Read items from your [connection]/[table] according to [args] supplied.
+ * Reads items from your [connection]/[table] according to [args] supplied.
  * [args] can contain [limit], [offset], [order] and [direction] - In addition
  * to that all other arguments will be treated as a part of the [where] to the
  * invocation to [mysql.read].
