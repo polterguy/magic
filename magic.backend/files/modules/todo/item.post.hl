@@ -1,10 +1,23 @@
-﻿
+
 /*
  * Creates a new TODO item.
+ *
+ * Arguments
+ *
+ * - [subject] - Subject, text column
+ * - [done] - If the item has been done or not, integer field
+ *
+ * Notice, since the [exclude] node beneath have an [id] child, you
+ * cannot explicitly supply an [id] argument. This has been chosen explicitly
+ * since the id database field is an auto increment field, and should not be
+ * explcitly supplied during creation of items.
+ *
+ * Since the _"subject"_ column on your database is not null, the [subject]
+ * argument is mandatory when creating an item. [done] however is normally
+ * optional, and will have a default value of _"0"_ if not supplied.
  */
 .arguments
    subject:string
-   body:string
    done:int
 
 

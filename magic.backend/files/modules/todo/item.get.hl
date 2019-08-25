@@ -1,13 +1,42 @@
-﻿
+
 /*
  * Returns TODO items.
+ *
+ * Arguments
+ *
+ * - [id] - Id of item to retrieve.
+ * - [subject] - Subject of items you want to retrieve
+ * - [done] - Done status of items you want to retrieve
+ * - [order] - Column to order your results by
+ * - [direction] - Either asc or desc for ascending and descending ordering
+ * - [limit] - Maximum number of items to retrieve
+ * - [offset] - Offset of where in your result set you want to start returning items
+ *
  * If [limit] equals 1, it will return only one object - Otherwise it'll return an
  * array, even if the array only contains one item.
+ * You can also supply an operator, such as e.g. "?subject:like=%foo%", as your argument,
+ * that will return all items containing the text _"foo"_ in them somewhere. Operators
+ * for columns are the normal SQL operators for comparison.
+ *
+ * The following arguments are special for your database table.
+ *
+ * - [id]
+ * - [subject]
+ * - [done]
+ *
+ * All other arguments are common for all endpoints that retrieves items in a similar
+ * fashion from different tables. Below is a reference of these for your convenience.
+ *
+ * - [order] - Column to order your results by
+ * - [direction] - Either 'asc' or 'desc' for ascending and descending ordering
+ * - [limit] - Maximum number of items to retrieve
+ * - [offset] - Offset of where in your result set you want to start returning items
+ *
+ * All arguments are optional.
  */
 .arguments
    id:long
    subject:string
-   body:string
    done:int
    order:string
    direction:string

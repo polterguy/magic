@@ -1,11 +1,16 @@
-﻿
+
 /*
  * Updates the specified [id] TODO item.
+ *
+ * Arguments
+ *
+ * - [id] - Id of item to update
+ * - [subject] - New subject for your item
+ * - [done] - New done status for your item
  */
 .arguments
    id:long
    subject:string
-   body:string
    done:int
 
 
