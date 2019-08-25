@@ -17,6 +17,7 @@ namespace magic.io.services.init
         {
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IFolderService, FolderService>();
+            services.AddTransient<IAuthorize, AuthorizeService>();
         }
     }
 }

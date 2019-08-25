@@ -12,6 +12,12 @@
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
+/*
  * Transforms the specified [hyperlambda] to a lambda object.
  */
 lambda:x:@.arguments/*/hyperlambda

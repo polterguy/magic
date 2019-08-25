@@ -14,6 +14,12 @@
    verb:string
 
 
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
 system.endpoint
    url:x:@.arguments/*/url
    verb:x:@.arguments/*/verb
