@@ -1,8 +1,13 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileService } from '../../services/file-service';
 import { EvaluatorService } from '../../services/evaluator-service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+export interface DialogData {
+  filename: string;
+}
 
 @Component({
   selector: 'app-files',
@@ -14,13 +19,14 @@ export class FilesComponent implements OnInit {
   private path: string = '/';
   private folders: string[] = [];
   private files: string[] = [];
-  private fileContent: string;
+  private fileContent: string = null;
   private filePath: string;
 
   constructor(
     private fileService: FileService,
     private evaluateService: EvaluatorService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
     this.getPath();
@@ -51,6 +57,37 @@ export class FilesComponent implements OnInit {
       } else{
         this.openFile(path);
       }
+    }
+  }
+
+  create() {
+    const dialogRef = this.dialog.open(NewFileDialog, {
+      width: '500px',
+      data: {filename: ''}
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res !== undefined) {
+        this.createFile(res);
+      }
+    });
+    return false;
+  }
+
+  createFile(filename: string) {
+    if (filename == '') {
+      this.showError('You have to give your filename a name');
+    } else if (filename.indexOf('.') == -1) {
+      this.showError('Your file needs an extension, such as ".hl" or something');
+    } else {
+      this.fileService.saveFile(this.path + filename, '/* Initial content */').subscribe((res) => {
+        this.showInfo('File successfully created');
+        this.getPath();
+        this.filePath = this.path + filename;
+        this.openFile(this.filePath);
+      }, (error) => {
+        this.showError(error.error.message);
+      });
     }
   }
 
@@ -115,6 +152,20 @@ export class FilesComponent implements OnInit {
   save() {
     this.fileService.saveFile(this.filePath, this.fileContent).subscribe((res) => {
       this.showInfo('File successfully saved');
+    }, (error) => {
+      this.showError(error.error.message);
+    });
+    return false;
+  }
+
+  delete() {
+    this.fileService.deleteFile(this.filePath).subscribe((res) => {
+      this.showInfo('File successfully deleted');
+      this.filePath = null;
+      this.fileContent = null;
+      this.getPath();
+    }, (error) => {
+      this.showError(error.error.message);
     });
     return false;
   }
@@ -136,5 +187,20 @@ export class FilesComponent implements OnInit {
       duration: 2000,
       panelClass: ['error-snackbar'],
     });
+  }
+}
+
+@Component({
+  selector: 'new-file-dialog',
+  templateUrl: 'new-file-dialog.html',
+})
+export class NewFileDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<NewFileDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+
+  close(): void {
+    this.dialogRef.close();
   }
 }

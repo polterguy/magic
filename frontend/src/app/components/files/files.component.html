@@ -17,8 +17,13 @@
 
     </table>
 
-    <div *ngIf="path !== '/'" class="absolutized">
+    <div class="absolutized">
+      <button
+        mat-button
+        matTooltip="Create a new file"
+        (click)="create()">New</button>
       <button 
+        *ngIf="path !== '/'"
         mat-button
         matTooltip="Up one level"
         (click)="upOneFolder()">Up</button>
@@ -28,7 +33,7 @@
 
 </div>
 
-<div *ngIf="fileContent" class="result-wrapper">
+<div *ngIf="fileContent !== null" class="result-wrapper">
 
   <h3>{{filePath}}</h3>
   <div class="mat-elevation-z4">
@@ -47,6 +52,10 @@
         mat-button
         (click)="save()"
         matTooltip="Saves your file">Save</button>
+      <button
+        mat-button
+        (click)="delete()"
+        matTooltip="Deletes your file">Delete</button>
       <button
         mat-button
         (click)="close()"
