@@ -1,28 +1,32 @@
 
 .files-wrapper {
+    h3 {
+        margin-bottom: 3rem;
+    }
     padding:2rem 5rem 2rem 5rem;
     position: relative;
-    table {
-        width: 100%;
-        tr {
-            td:nth-child(1), th:nth-child(1) {
-                width: 100%;
-            }
-            td:nth-child(2), th:nth-child(2) {
-                width: 20px;
-            }
-        }
-        tr.mat-row:hover {
-            background-color: rgba(0,0,0,.1);
-            cursor: pointer;
-        }
-    }
     .relativized {
         position: relative;
+        padding: 5rem;
         .absolutized {
             position: absolute;
             top: .5rem;
             right: .5rem;
+        }
+        table {
+            width: 100%;
+            tr {
+                td:nth-child(1), th:nth-child(1) {
+                    width: 100%;
+                }
+                td:nth-child(2), th:nth-child(2) {
+                    width: 20px;
+                }
+            }
+            tr.mat-row:hover {
+                background-color: rgba(0,0,0,.1);
+                cursor: pointer;
+            }
         }
     }
 }
