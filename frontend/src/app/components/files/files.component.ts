@@ -106,6 +106,8 @@ export class FilesComponent implements OnInit {
   evaluate() {
     this.evaluateService.evaluate(this.fileContent).subscribe((res) => {
       this.showInfo('File successfully evaluated');
+    }, (error) => {
+      this.showError(error.error.message);
     });
     return false;
   }
