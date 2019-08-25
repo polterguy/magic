@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
-import { HomeComponent } from './components/endpoints/home/home.component';
+import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 
