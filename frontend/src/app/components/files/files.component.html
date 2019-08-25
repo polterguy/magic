@@ -30,6 +30,7 @@
 
 <div *ngIf="fileContent" class="result-wrapper">
 
+  <h3>{{filePath}}</h3>
   <div class="mat-elevation-z4">
     <ngx-codemirror 
       [(ngModel)]="fileContent" 

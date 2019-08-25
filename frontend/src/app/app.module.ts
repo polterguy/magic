@@ -19,7 +19,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
 
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
-import { HomeComponent } from './components/endpoints/home/home.component';
+import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 
