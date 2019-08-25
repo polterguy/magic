@@ -32,6 +32,7 @@ namespace magic.lambda
         public void Signal(Node input)
 		{
             _httpService.VerifyTicket(_services, input.GetEx<string>(_signaler));
+            input.Value = true;
 		}
 
         public IEnumerable<Node> GetArguments()

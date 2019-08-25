@@ -96,12 +96,12 @@ namespace magic.backend
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
+            // Giving each module a chance to configure the application.
+            Configurator.ConfigureApplication(app, Configuration);
+
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic"));
-
-            // Giving each module a chance to configure the application.
-            Configurator.ConfigureApplication(app, Configuration);
 
             // Giving each module a chance to run startup logic.
             Configurator.InitializeStartups(app.ApplicationServices, Configuration);
