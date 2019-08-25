@@ -9,9 +9,12 @@ import { MatSelectChange } from '@angular/material';
   styleUrls: ['./crudify.component.scss']
 })
 export class CrudifyComponent implements OnInit {
+  private displayedColumns: string[] = ['field', 'type', 'null', 'key', 'default'];
   private databases: any[] = null;
   private selectedDatabase: string = null;
   private tables: any[] = null;
+  private selectedTable: string = null;
+  private columns: any[] = null;
 
   constructor(private service: CrudifyService) { }
 
@@ -23,6 +26,8 @@ export class CrudifyComponent implements OnInit {
 
   databaseChanged(e: MatSelectChange) {
     this.selectedDatabase = e.value;
+    this.selectedTable = null;
+    this.columns = null;
     this.service.getTables(this.selectedDatabase).subscribe((res) => {
       let tables = [];
       for (let idx = 0; idx < res.length; idx++) {
@@ -35,5 +40,13 @@ export class CrudifyComponent implements OnInit {
   }
 
   tableChanged(e: MatSelectChange) {
+    this.selectedTable = e.value;
+    this.service.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
+      this.columns = res;
+    });
+  }
+
+  generate() {
+    console.log('generate');
   }
 }
