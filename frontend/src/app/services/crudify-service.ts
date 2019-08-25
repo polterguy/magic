@@ -19,4 +19,11 @@ export class CrudifyService {
       environment.apiURL + 
       'hl/system/tables-list?database=' + encodeURI(database));
   }
+
+  public getColumns(database: string, table: string) {
+    return this.httpClient.get<any[]>(
+      environment.apiURL + 
+      'hl/system/columns-list?database=' + encodeURI(database) +
+      '&table=' + encodeURI(table));
+  }
 }

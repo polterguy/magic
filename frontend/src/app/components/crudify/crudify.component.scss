@@ -2,3 +2,24 @@
 .crudify-wrapper {
     padding:2rem 5rem 2rem 5rem;
 }
+
+.columns-card {
+    margin-top: 2rem;
+    padding: 4rem 4rem 6rem 4rem;
+    .columns {
+        width: 100%;
+        tr {
+            td, th {
+                width: 20%;
+            }
+        }
+        tr.mat-row:hover {
+            background-color: rgba(0,0,0,.1);
+            cursor: pointer;
+        }
+    }
+}
+
+.right-align {
+    text-align: right;
+}
