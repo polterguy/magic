@@ -33,22 +33,12 @@
   <div class="mat-elevation-z4">
     <ngx-codemirror 
       [(ngModel)]="fileContent" 
-      [options]="{
-        lineNumbers: true,
-        theme: 'material',
-        mode: 'hyperlambda',
-        tabSize: 3,
-        indentUnit: 3,
-        indentAuto:true,
-        extraKeys:{
-          'Shift-Tab':'indentLess',
-          'Tab':'indentMore'
-        }
-      }"></ngx-codemirror>
+      [options]="getOptions()"></ngx-codemirror>
   </div>
 
   <div class="right-aligned">
       <button
+        *ngIf="getMode(this.filePath) == 'hyperlambda'"
         mat-button
         (click)="evaluate()"
         matTooltip="Evaluates your file">Evaluate</button>
