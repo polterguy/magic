@@ -1,0 +1,28 @@
+﻿
+/*
+ * Lists all columns in your [connection]/[database]/[table] MySQL table.
+ * Normally expects a connection string pointing to "sys".
+ */
+slot:magic.db.mysql.columns
+   .arguments
+      connection:string
+      database:string
+      table:string
+   .lambda
+
+
+      /*
+       * Opens up our connection
+       */
+      mysql.connect:x:@.arguments/*/connection
+
+
+         .sql:"use "
+         set-value:x:@.sql
+            concat
+               get-value:x:@.sql
+               get-value:x:@.arguments/*/database
+               .:"; describe "
+               get-value:x:@.arguments/*/table
+         mysql.select:x:@.sql
+         return-nodes:x:-/*

@@ -1,9 +1,6 @@
 
 /*
  * Lists all database in your installation.
- *
- * Currently only supports MySQL, and requires a working _"sys"_ connection
- * string in your _"appsettings.json"_ file.
  */
 .arguments
    database:string
@@ -15,12 +12,13 @@
 auth.verify-ticket:root
 
 
-mysql.connect:signal:@"config:""Databases:sys"""
-   .sql:"use "
-   set-value:x:@.sql
-      concat
-         get-value:x:@.sql
-         get-value:x:@.arguments/*/database
-         .:"; show tables"
-   mysql.select:x:@.sql
-   return-nodes:x:-/*
+/*
+ * Invokes slot responsible for returning our database names,
+ * and returns results to caller.
+ */
+unwrap:x:+/*
+signal:magic.db.mysql.tables
+   connection:signal:@"config:""Databases:sys"""
+   database:x:@.arguments/*/database
+
+return-nodes:x:-/*
