@@ -6,11 +6,33 @@
 .columns-card {
     margin-top: 2rem;
     .wrapper {
-        margin: 2rem 3rem 2rem 3rem;
+        margin: 2rem 3rem 4rem 3rem;
         .columns {
             width: 100%;
             tr {
                 td, th {
+                    width: 20%;
+                }
+            }
+            tr.mat-row:hover {
+                background-color: rgba(0,0,0,.1);
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.endpoints-card {
+    margin-top: 4rem;
+    .wrapper {
+        margin: 2rem 3rem 2rem 3rem;
+        .endpoints {
+            width: 100%;
+            tr {
+                td:nth-child(1), th:nth-child(1) {
+                    width: 80%;
+                }
+                td:nth-child(2), th:nth-child(2) {
                     width: 20%;
                 }
             }
