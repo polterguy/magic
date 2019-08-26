@@ -10,7 +10,7 @@ import { MatSelectChange } from '@angular/material';
 })
 export class CrudifyComponent implements OnInit {
   private displayedColumns: string[] = ['field', 'type', 'null', 'key', 'default'];
-  private displayedColumnsEndpoints: string[] = ['endpoint', 'verb'];
+  private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action'];
   private databases: any[] = null;
   private selectedDatabase: string = null;
   private tables: any[] = null;
@@ -51,11 +51,17 @@ export class CrudifyComponent implements OnInit {
 
   createEndpoints() {
     let endpoints = [];
-    const verbs = ['get', 'post', 'put', 'delete'];
+    const verbs = [
+      {verb: 'post', action: 'create'},
+      {verb: 'get', action: 'read'},
+      {verb: 'put', action: 'update'},
+      {verb: 'delete', action: 'delete'},
+    ];
     for(let idx = 0; idx < verbs.length; idx++) {
       endpoints.push({
         endpoint: this.selectedDatabase + '/' + this.selectedTable,
-        verb: verbs[idx],
+        verb: verbs[idx].verb,
+        action: verbs[idx].action,
       });
     }
     this.endpoints = endpoints;

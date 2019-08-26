@@ -59,15 +59,20 @@
       <table mat-table class="endpoints" [dataSource]="endpoints">
 
         <ng-container matColumnDef="endpoint">
-          <th mat-header-cell *matHeaderCellDef>Endpoints</th>
+          <th mat-header-cell *matHeaderCellDef>Endpoint</th>
           <td mat-cell *matCellDef="let el">{{el.endpoint}}</td>
         </ng-container>
 
         <ng-container matColumnDef="verb">
-          <th mat-header-cell *matHeaderCellDef>Verb</th>
+          <th mat-header-cell *matHeaderCellDef>HTTP verb</th>
           <td mat-cell *matCellDef="let el">{{el.verb}}</td>
         </ng-container>
 
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>Database action</th>
+            <td mat-cell *matCellDef="let el">{{el.action}}</td>
+          </ng-container>
+  
         <tr mat-header-row *matHeaderRowDef="displayedColumnsEndpoints"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumnsEndpoints;"></tr>
 
