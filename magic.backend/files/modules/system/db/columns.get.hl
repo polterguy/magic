@@ -16,13 +16,13 @@
 auth.verify-ticket:root
 
 
-mysql.connect:signal:@"config:""Databases:sys"""
-   .sql:"use "
-   set-value:x:@.sql
-      concat
-         get-value:x:@.sql
-         get-value:x:@.arguments/*/database
-         .:"; describe "
-         get-value:x:@.arguments/*/table
-   mysql.select:x:@.sql
-   return-nodes:x:-/*
+/*
+ * Invokes slot responsible for returning columns.
+ */
+unwrap:x:+/*
+signal:magic.db.mysql.columns
+   connection:signal:@"config:""Databases:sys"""
+   database:x:@.arguments/*/database
+   table:x:@.arguments/*/table
+
+return-nodes:x:-/*
