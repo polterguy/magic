@@ -49,4 +49,10 @@ export class FileService {
       formData
     );
   }
+
+  public folderExists(path: string) {
+    return this.httpClient.get<boolean>(
+      environment.apiURL + 
+      'folders/exists?path=' + encodeURI(path));
+  }
 }
