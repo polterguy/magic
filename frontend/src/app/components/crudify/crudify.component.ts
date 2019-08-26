@@ -18,7 +18,7 @@ export class CrudifyComponent implements OnInit {
   private selectedTable: string = null;
   private columns: any[] = null;
   private endpoints: any[] = null;
-  private additionalEndpointClass: string = '';
+  private folderExists: boolean = false;
 
   constructor(
     private crudService: CrudifyService,
@@ -35,6 +35,7 @@ export class CrudifyComponent implements OnInit {
     this.selectedDatabase = e.value;
     this.selectedTable = null;
     this.columns = null;
+    this.endpoints = null;
     this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
       let tables = [];
       for (let idx = 0; idx < res.length; idx++) {
@@ -53,10 +54,10 @@ export class CrudifyComponent implements OnInit {
       this.createEndpoints();
       this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res) => {
         if (res === true) {
-          this.additionalEndpointClass = ' warning';
+          this.folderExists = true;
           this.showError('Warning, folder already exists!');
         } else {
-          this.additionalEndpointClass = '';
+          this.folderExists = false;
         }
       });
     });
@@ -86,7 +87,6 @@ export class CrudifyComponent implements OnInit {
   }
 
   showError(error: string) {
-    console.error(error);
     this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
