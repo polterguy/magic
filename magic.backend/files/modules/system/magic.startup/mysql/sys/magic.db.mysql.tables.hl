@@ -1,6 +1,7 @@
-﻿
+
 /*
  * Lists all tables in your [connection]/[database] MySQL database.
+ *
  * Normally expects a connection string pointing to "sys".
  */
 slot:magic.db.mysql.tables

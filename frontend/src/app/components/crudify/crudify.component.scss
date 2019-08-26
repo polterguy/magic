@@ -27,14 +27,14 @@
     .wrapper {
         margin: 2rem 3rem 2rem 3rem;
         .endpoints {
+            background: transparent;
             width: 100%;
             tr {
-                td:nth-child(1), th:nth-child(1) {
-                    width: 70%;
-                }
-                td:nth-child(2), th:nth-child(2),
-                td:nth-child(3), th:nth-child(3) {
+                td, th {
                     width: 15%;
+                }
+                td:nth-child(1), th:nth-child(1) {
+                    width: 55%;
                 }
             }
             tr.mat-row:hover {
@@ -47,4 +47,9 @@
 
 .right-align {
     text-align: right;
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
 }

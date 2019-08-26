@@ -1,6 +1,7 @@
-﻿
+
 /*
  * Lists all columns in your [connection]/[database]/[table] MySQL table.
+ *
  * Normally expects a connection string pointing to "sys".
  */
 slot:magic.db.mysql.columns

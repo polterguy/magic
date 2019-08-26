@@ -127,6 +127,15 @@ namespace magic.io.services
             Directory.Move(source, destination);
         }
 
+        public bool FolderExists(string path, string username, string[] roles)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+
+            path = _utilities.GetFullPath(path, true);
+            return Directory.Exists(path);
+        }
+
         #endregion
     }
 }

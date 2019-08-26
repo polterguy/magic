@@ -102,5 +102,19 @@ namespace magic.io.controller
                 User?.Identity.Name,
                 User?.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToArray());
         }
+
+        /// <summary>
+        /// Returns true if the specified folder exists.
+        /// </summary>
+        /// <param name="path">Folder to check for</param>
+        [HttpGet]
+        [Route("exists")]
+        public bool Exists([Required] string path)
+        {
+            return _service.FolderExists(
+                path,
+                User?.Identity.Name,
+                User?.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToArray());
+        }
     }
 }

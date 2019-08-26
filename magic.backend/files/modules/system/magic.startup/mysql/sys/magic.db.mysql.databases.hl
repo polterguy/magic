@@ -1,6 +1,7 @@
-﻿
+
 /*
  * Lists all database in your [connection] MySQL database.
+ *
  * Normally expects a connection string pointing to "sys".
  */
 slot:magic.db.mysql.databases
@@ -22,7 +23,7 @@ slot:magic.db.mysql.databases
 
 
          /*
-          * Removes "sys" databases.
+          * Removes "system" databases.
           */
          remove-node:x:@mysql.select/*/*/=information_schema/.
          remove-node:x:@mysql.select/*/*/=mysql/.

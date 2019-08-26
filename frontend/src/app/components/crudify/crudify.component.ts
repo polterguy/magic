@@ -1,7 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CrudifyService } from 'src/app/services/crudify-service';
-import { MatSelectChange } from '@angular/material';
+import { MatSelectChange, MatSnackBar } from '@angular/material';
+import { FileService } from 'src/app/services/file-service';
 
 @Component({
   selector: 'app-crudify',
@@ -10,18 +11,22 @@ import { MatSelectChange } from '@angular/material';
 })
 export class CrudifyComponent implements OnInit {
   private displayedColumns: string[] = ['field', 'type', 'null', 'key', 'default'];
-  private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action'];
+  private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action', 'auth'];
   private databases: any[] = null;
   private selectedDatabase: string = null;
   private tables: any[] = null;
   private selectedTable: string = null;
   private columns: any[] = null;
   private endpoints: any[] = null;
+  private additionalEndpointClass: string = '';
 
-  constructor(private service: CrudifyService) { }
+  constructor(
+    private crudService: CrudifyService,
+    private fileService: FileService,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.service.getDatabases().subscribe((res) => {
+    this.crudService.getDatabases().subscribe((res) => {
       this.databases = res;
     });
   }
@@ -30,11 +35,11 @@ export class CrudifyComponent implements OnInit {
     this.selectedDatabase = e.value;
     this.selectedTable = null;
     this.columns = null;
-    this.service.getTables(this.selectedDatabase).subscribe((res) => {
+    this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
       let tables = [];
       for (let idx = 0; idx < res.length; idx++) {
         tables.push({
-          Table: res[idx][Object.keys(res[idx])[0]],
+          table: res[idx][Object.keys(res[idx])[0]],
         });
       }
       this.tables = tables;
@@ -43,9 +48,17 @@ export class CrudifyComponent implements OnInit {
 
   tableChanged(e: MatSelectChange) {
     this.selectedTable = e.value;
-    this.service.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
+    this.crudService.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
       this.columns = res;
       this.createEndpoints();
+      this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res) => {
+        if (res === true) {
+          this.additionalEndpointClass = ' warning';
+          this.showError('Warning, folder already exists!');
+        } else {
+          this.additionalEndpointClass = '';
+        }
+      });
     });
   }
 
@@ -62,12 +75,21 @@ export class CrudifyComponent implements OnInit {
         endpoint: this.selectedDatabase + '/' + this.selectedTable,
         verb: verbs[idx].verb,
         action: verbs[idx].action,
+        auth: 'root',
       });
     }
     this.endpoints = endpoints;
   }
 
   generate() {
-    console.log('generate');
+    console.log(this.endpoints);
+  }
+
+  showError(error: string) {
+    console.error(error);
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['error-snackbar'],
+    });
   }
 }
