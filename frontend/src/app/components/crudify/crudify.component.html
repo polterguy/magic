@@ -100,7 +100,8 @@
         *ngIf="selectedTable !== null"
         matTooltip="Generates CRUD endpoints for your table"
         mat-button
-        (click)="generate()">Crudify</button>
+        [color]="folderExists ? 'warn' : ''"
+        (click)="generate()">{{folderExists ? 'Re-Crudify' : 'Crudify'}}</button>
     </div>
 
   </mat-card>
