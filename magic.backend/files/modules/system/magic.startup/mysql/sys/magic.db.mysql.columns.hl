@@ -22,8 +22,12 @@ slot:magic.db.mysql.columns
          set-value:x:@.sql
             concat
                get-value:x:@.sql
+               .:'`'
                get-value:x:@.arguments/*/database
+               .:'`'
                .:"; describe "
+               .:'`'
                get-value:x:@.arguments/*/table
+               .:'`'
          mysql.select:x:@.sql
          return-nodes:x:-/*

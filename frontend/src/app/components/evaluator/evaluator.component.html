@@ -5,18 +5,7 @@
 
     <ngx-codemirror 
       [(ngModel)]="hyperlambda" 
-      [options]="{
-        lineNumbers: true,
-        theme: 'material',
-        mode: 'hyperlambda',
-        tabSize: 3,
-        indentUnit: 3,
-        indentAuto:true,
-        extraKeys:{
-          'Shift-Tab':'indentLess',
-          'Tab':'indentMore'
-        }
-      }"></ngx-codemirror>
+      [options]="getCodeMirrorOptions()"></ngx-codemirror>
     </div>
 
     <div class="right-aligned">
@@ -28,24 +17,12 @@
 
 </div>
 
-<div *ngIf="result" class="result-wrapper">
+<div *ngIf="result !== null" class="result-wrapper">
 
   <div class="mat-elevation-z4">
     <ngx-codemirror 
       [(ngModel)]="result" 
-      [options]="{
-        lineNumbers: true,
-        theme: 'material',
-        mode: 'hyperlambda',
-        tabSize: 3,
-        indentUnit: 3,
-        indentAuto:true,
-        readOnly: true,
-        extraKeys:{
-          'Shift-Tab':'indentLess',
-          'Tab':'indentMore'
-        }
-      }"></ngx-codemirror>
+      [options]="getCodeMirrorOptions()"></ngx-codemirror>
   </div>
   
 </div>

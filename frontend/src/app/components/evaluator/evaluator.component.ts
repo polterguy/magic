@@ -9,11 +9,11 @@ import { EvaluatorService } from '../../services/evaluator-service';
   styleUrls: ['./evaluator.component.scss']
 })
 export class EvaluatorComponent implements OnInit {
-  private hyperlambda: string = `/*
+  private hyperlambda = `/*
  * Type in your Hyperlambda here.
  */
 `;
-  private result: string;
+  private result: string = null;
 
   constructor(
     private service: EvaluatorService,
@@ -29,6 +29,21 @@ export class EvaluatorComponent implements OnInit {
       this.showHttpError(error);
     });
     return false;
+  }
+
+  getCodeMirrorOptions() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'hyperlambda',
+      tabSize: 3,
+      indentUnit: 3,
+      indentAuto: true,
+      extraKeys: {
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore'
+      }
+    };
   }
 
   showHttpError(error: any) {
