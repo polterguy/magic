@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 using magic.io.contracts;
 
@@ -78,12 +79,12 @@ namespace magic.io.controller
         /// <summary>
         /// Creates the specified folder
         /// </summary>
-        /// <param name="folder">Folder to create</param>
+        /// <param name="payload">Payload to create, should contain at least 'folder' property</param>
         [HttpPut]
-        public void Create([Required] string folder)
+        public void Create([Required] [FromBody] JObject payload)
         {
             _service.Create(
-                folder,
+                payload["folder"].Value<string>(),
                 User?.Identity.Name,
                 User?.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToArray());
         }
