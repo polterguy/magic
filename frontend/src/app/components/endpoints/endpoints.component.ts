@@ -33,6 +33,8 @@ export class EndpointsComponent implements OnInit {
           verb: splits[1]
         });
       }
+    }, (err) => {
+      this.showHttpError(err);
     });
   }
 
@@ -73,6 +75,8 @@ export class EndpointsComponent implements OnInit {
           this.arguments = args;
           break;
         }
+    }, (err) => {
+      this.showHttpError(err);
     });
   }
 

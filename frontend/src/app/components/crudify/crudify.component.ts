@@ -28,6 +28,8 @@ export class CrudifyComponent implements OnInit {
   ngOnInit() {
     this.crudService.getDatabases().subscribe((res) => {
       this.databases = res;
+    }, (err) => {
+      this.showError(err.error.message);
     });
   }
 
@@ -44,6 +46,8 @@ export class CrudifyComponent implements OnInit {
         });
       }
       this.tables = tables;
+    }, (err) => {
+      this.showError(err.error.message);
     });
   }
 
@@ -60,6 +64,8 @@ export class CrudifyComponent implements OnInit {
           this.folderExists = false;
         }
       });
+    }, (err) => {
+      this.showError(err.error.message);
     });
   }
 
