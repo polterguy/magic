@@ -59,7 +59,7 @@ export class CrudifyComponent implements OnInit {
       this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res) => {
         if (res === true) {
           this.folderExists = true;
-          this.showError('Warning, folder already exists!');
+          this.showWarning('Warning, folder already exists!');
         } else {
           this.folderExists = false;
         }
@@ -96,6 +96,13 @@ export class CrudifyComponent implements OnInit {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
+    });
+  }
+
+  showWarning(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['warning-snackbar'],
     });
   }
 }
