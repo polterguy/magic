@@ -24,7 +24,9 @@ slot:magic.db.mysql.tables
          set-value:x:@.sql
             concat
                get-value:x:@.sql
+               .:'`'
                get-value:x:@.arguments/*/database
+               .:'`'
                .:"; show tables"
          mysql.select:x:@.sql
          return-nodes:x:-/*

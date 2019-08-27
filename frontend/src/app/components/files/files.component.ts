@@ -142,7 +142,7 @@ export class FilesComponent implements OnInit {
   }
 
   upOneFolder() {
-    let splits = this.path.split('/');
+    const splits = this.path.split('/');
     splits.splice(-2, 1);
     this.path = splits.join('/');
     this.getPath();
@@ -158,17 +158,17 @@ export class FilesComponent implements OnInit {
     })
   }
 
-  getOptions() {
+  getCodeMirrorOptions() {
     return {
       lineNumbers: true,
       theme: 'material',
       mode: this.getMode(this.filePath),
       tabSize: 3,
       indentUnit: 3,
-      indentAuto:true,
-      extraKeys:{
-        'Shift-Tab':'indentLess',
-        'Tab':'indentMore'
+      indentAuto: true,
+      extraKeys: {
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore'
       }
     };
   }
