@@ -53,3 +53,8 @@
     background:rgb(255,100,100);
     color:rgb(0,0,0);
 }
+
+::ng-deep .warning-snackbar {
+    background:orange;
+    color:rgb(0,0,0);
+}
