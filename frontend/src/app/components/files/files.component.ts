@@ -103,6 +103,8 @@ export class FilesComponent implements OnInit {
     this.fileService.getFileContent(path).subscribe((res) => {
       this.fileContent = res;
       this.filePath = path;
+    }, (err) => {
+      this.showError(err.error.message);
     })
   }
 
