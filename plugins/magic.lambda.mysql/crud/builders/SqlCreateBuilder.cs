@@ -8,7 +8,7 @@ using magic.node;
 using com = magic.data.common;
 using magic.signals.contracts;
 
-namespace magic.lambda.mysql.crud.utilities
+namespace magic.lambda.mysql.crud.builders
 {
     public class SqlCreateBuilder : com.SqlCreateBuilder
     {

@@ -1,0 +1,22 @@
+
+/*
+ * Template for deleting items.
+ */
+.arguments:{ids}
+
+
+/*
+ * Invoking [magic.db.mysql.delete], making sure we unwrap the [id].
+ */
+add:x:+/*/ids
+   get-nodes:x:/@.arguments/*
+signal:magic.db.mysql.delete
+   connection:{connection}
+   table:{table}
+   ids
+
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@signal/*

@@ -1,25 +1,9 @@
-
-/*
- * Deletes the specified [id] item.
- *
- * [id] is mandatory
- */
 .arguments
    id:long
-
-
-/*
- * Invoking [magic.db.mysql.delete], making sure we unwrap the [id].
- */
-unwrap:x:./*/signal/*/ids/*
+add:x:+/*/ids
+   get-nodes:x:/@.arguments/*
 signal:magic.db.mysql.delete
-   connection:signal:@"config:""Databases:magic"""
+   connection:database-connection
    table:items
    ids
-      id:x:@.arguments/*/id
-
-
-/*
- * Returning results back to caller.
- */
 return-nodes:x:@signal/*

@@ -1,0 +1,84 @@
+
+/*
+ * Generate an HTTP REST endpoint according to the given
+ * [.arguments].
+ */
+.arguments
+   database-type:string
+   connection:string
+   database:string
+   table:string
+   template:string
+   verb:string
+   arguments
+   ids
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
+/*
+ * Checking type of database vendor to use.
+ *
+ * Notice, only MySQL is supported at the moment.
+ */
+switch:x:@.arguments/*/database-type
+
+   case:mysql
+
+      /*
+       * Creating our endpoint according to arguments given.
+       *
+       * First applying arguments to [apply-file].
+       */
+      unwrap:x:./*/apply-file
+      remove-node:x:@.arguments/*/template
+      add:x:./*/apply-file
+         get-nodes:x:@.arguments/*
+      apply-file:x:@.arguments/*/template
+
+      /*
+       * First creating our folder.
+       *
+       * Notice, [create-folder] doesn't do anything if folder already exists.
+       */
+      .folder:/modules/
+      set-value:x:@.folder
+         concat
+            get-value:x:@.folder
+            get-value:x:@.arguments/*/database
+            .:/
+      create-folder:x:@.folder
+
+      /*
+       * Transforming lambda to hyper, and saving it to the correct file.
+       */
+      hyper:x:@apply-file/*
+      unwrap:x:+
+      .filename:x:@.folder
+      set-value:x:@.filename
+         concat
+            get-value:x:@.filename
+            get-value:x:@.arguments/*/table
+            .:.
+            get-value:x:@.arguments/*/verb
+            .:.hl
+      save-file:x:@.filename
+         get-value:x:@hyper
+
+      /*
+       * Returning success to caller.
+       */
+      return-nodes
+         result:success
+
+
+   /*
+    * Currently only MySQL is supported.
+    */
+   default
+      throw:Unsupported database type
+

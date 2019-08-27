@@ -7,11 +7,11 @@ using magic.node;
 using com = magic.data.common;
 using magic.signals.contracts;
 
-namespace magic.lambda.mysql.crud.utilities
+namespace magic.lambda.mysql.crud.builders
 {
-    public class SqlDeleteBuilder : com.SqlDeleteBuilder
+    public class SqlReadBuilder : com.SqlReadBuilder
     {
-        public SqlDeleteBuilder(Node node, ISignaler signaler)
+        public SqlReadBuilder(Node node, ISignaler signaler)
             : base(node, signaler, "`")
         { }
     }

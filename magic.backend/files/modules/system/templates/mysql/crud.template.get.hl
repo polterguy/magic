@@ -1,0 +1,28 @@
+
+/*
+ * Template for HTTP GET CRUD requests.
+ */
+.arguments
+
+
+/*
+ * Parametrizing [magic.db.mysql.read].
+ */
+add:x:./*/signal/*/args
+   get-nodes:x:@.arguments/*
+
+
+/*
+ * Invokes [magic.db.mysql.read].
+ */
+signal:magic.db.mysql.read
+   connection
+   table
+   args
+   columns
+
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@signal/*

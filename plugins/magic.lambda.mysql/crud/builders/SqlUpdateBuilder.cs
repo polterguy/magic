@@ -7,12 +7,12 @@ using magic.node;
 using com = magic.data.common;
 using magic.signals.contracts;
 
-namespace magic.lambda.mssql.crud.utilities
+namespace magic.lambda.mysql.crud.builders
 {
     public class SqlUpdateBuilder : com.SqlUpdateBuilder
     {
         public SqlUpdateBuilder(Node node, ISignaler signaler)
-            : base(node, signaler, "\"")
+            : base(node, signaler, "`")
         { }
     }
 }

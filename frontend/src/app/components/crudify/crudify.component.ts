@@ -89,7 +89,33 @@ export class CrudifyComponent implements OnInit {
   }
 
   generate() {
-    console.log(this.endpoints);
+    this.createDeleteHttpEndpoint();
+  }
+
+  private createDeleteHttpEndpoint() {
+    console.log(this.columns);
+    let args = [];
+    let ids = [];
+    for(let idx = 0; idx < this.columns.length; idx++) {
+      if (this.columns[idx].Key === 'PRI') {
+        const str = '{"' + this.columns[idx].Field + '": ' + '"long"' + '}';
+        console.log(str);
+        ids.push(JSON.parse(str));
+      }
+    }
+    this.crudService.generateCrudEndpoints(
+      'mysql', 
+      'database-connection', 
+      this.selectedDatabase, 
+      this.selectedTable, 
+      '/modules/system/templates/mysql/crud.template.delete.hl', 
+      'delete', 
+      args, 
+      ids).subscribe((res) => {
+      console.log(res);
+    }, (error) => {
+      this.showError(error.error.message);
+    });
   }
 
   showError(error: string) {
