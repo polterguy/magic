@@ -50,6 +50,14 @@ export class FileService {
     );
   }
 
+  public createFolder(path: string) {
+    return this.httpClient.put<void>(
+      environment.apiURL + 'folders', {
+        folder: path
+      }
+    );
+  }
+
   public folderExists(path: string) {
     return this.httpClient.get<boolean>(
       environment.apiURL + 

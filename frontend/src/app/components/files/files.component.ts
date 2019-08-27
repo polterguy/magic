@@ -60,15 +60,35 @@ export class FilesComponent implements OnInit {
     }
   }
 
-  create() {
+  createNewFile() {
     const dialogRef = this.dialog.open(NewFileDialog, {
       width: '500px',
-      data: {filename: ''}
+      data: {
+        path: '',
+        header: 'New file'
+      }
     });
 
     dialogRef.afterClosed().subscribe((res) => {
       if (res !== undefined) {
         this.createFile(res);
+      }
+    });
+    return false;
+  }
+
+  createNewFolder() {
+    const dialogRef = this.dialog.open(NewFileDialog, {
+      width: '500px',
+      data: {
+        path: '',
+        header: 'New folder'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res !== undefined) {
+        this.createFolder(res);
       }
     });
     return false;
@@ -88,6 +108,24 @@ export class FilesComponent implements OnInit {
       }, (error) => {
         this.showError(error.error.message);
       });
+    }
+  }
+
+  createFolder(foldername: string) {
+    if (foldername == '') {
+      this.showError('You have to give your folder a name');
+    } else {
+      const letters = /^[0-9a-z]+$/;
+      if (!letters.test(foldername)) {
+        this.showError('A Folder can only have the characters [a-z] and [0-1] in its name');
+      } else {
+        this.fileService.createFolder(this.path + foldername).subscribe((res) => {
+          this.showInfo('Folder successfully created');
+          this.getPath();
+        }, (error) => {
+          this.showError(error.error.message);
+        });
+      }
     }
   }
 

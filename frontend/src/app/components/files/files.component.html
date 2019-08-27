@@ -18,15 +18,19 @@
     </table>
 
     <div class="absolutized">
-      <button
-        mat-button
-        matTooltip="Create a new file"
-        (click)="create()">New file</button>
       <button 
         *ngIf="path !== '/'"
         mat-button
         matTooltip="Up one level"
         (click)="upOneFolder()">Up</button>
+      <button
+        mat-button
+        matTooltip="Create a new file"
+        (click)="createNewFile()">New file</button>
+      <button
+        mat-button
+        matTooltip="Create a new folder"
+        (click)="createNewFolder()">New folder</button>
     </div>
   
   </div>
