@@ -58,6 +58,11 @@ export class FileService {
     );
   }
 
+  public deleteFolder(path: string) {
+    return this.httpClient.delete<void>(
+      environment.apiURL + 'folders?folder=' + encodeURI(path));
+  }
+
   public folderExists(path: string) {
     return this.httpClient.get<boolean>(
       environment.apiURL + 

@@ -22,7 +22,12 @@
         *ngIf="path !== '/'"
         mat-button
         matTooltip="Up one level"
-        (click)="upOneFolder()">Up</button>
+        (click)="upOneFolder()">Up one level</button>
+      <button 
+        *ngIf="path !== '/'"
+        mat-button
+        matTooltip="Delete folder"
+        (click)="deleteFolder()">Delete folder</button>
       <button
         mat-button
         matTooltip="Create a new file"
