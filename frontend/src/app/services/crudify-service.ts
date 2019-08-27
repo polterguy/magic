@@ -26,4 +26,27 @@ export class CrudifyService {
       'hl/system/db/columns?database=' + encodeURI(database) +
       '&table=' + encodeURI(table));
   }
+
+  public generateCrudEndpoints(
+    databaseType: string,
+    connection: string,
+    database: string,
+    table: string,
+    template: string,
+    verb: string,
+    args: any,
+    ids: any,
+    ) {
+    return this.httpClient.post<any[]>(
+      environment.apiURL + 'hl/system/db/generate',{
+        'database-type': databaseType,
+        connection,
+        database,
+        table,
+        template,
+        verb,
+        'arguments': args,
+        ids,
+      });
+  }
 }

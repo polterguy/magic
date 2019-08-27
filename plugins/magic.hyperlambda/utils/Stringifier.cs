@@ -116,7 +116,7 @@ namespace magic.hyperlambda.utils
 
                         case "magic.hyperlambda.Signal":
                             type = "signal";
-                            value = "@\"" + GetHyper(new Node[] { idx.Get<Signal>().Content.Clone() }).Replace("\"", "\"\"") + "\"";
+                            value = "@\"" + GetHyper(new Node[] { idx.Get<Signal>().Content.Clone() }).Replace("\"", "\"\"").TrimEnd() + "\"";
                             break;
                     }
                     builder.Append(":");

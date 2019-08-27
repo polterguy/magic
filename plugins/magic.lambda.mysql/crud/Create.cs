@@ -11,7 +11,7 @@ using magic.node;
 using magic.signals.contracts;
 using ut = magic.lambda.utilities;
 using magic.lambda.mysql.utilities;
-using magic.lambda.mysql.crud.utilities;
+using magic.lambda.mysql.crud.builders;
 
 namespace magic.lambda.mysql.crud
 {

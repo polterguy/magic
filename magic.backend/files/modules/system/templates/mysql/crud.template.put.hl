@@ -1,24 +1,14 @@
 
 /*
- * Updates the specified [id] item.
- *
- * Arguments
- *
- * - [id] - Id of item to update, mandatory
- * - [subject] - New subject for your item, optionally
- * - [done] - New done status for your item, optionally
+ * Template for updating an item.
  */
 .arguments
-   id:long
-   subject:string
-   done:int
 
 
 /*
  * Parametrizing [magic.db.mysql.update], first its [ids].
  */
 unwrap:x:./*/signal/*/ids/*
-remove-node:x:@.arguments/*/id
 
 
 /*
@@ -32,13 +22,11 @@ add:x:./*/signal/*/values
  * Invoking [magic.db.mysql.update]
  */
 signal:magic.db.mysql.update
-   connection:signal:@"config:""Databases:magic"""
-   table:items
+   connection
+   table
    values
    ids
-      id:x:@.arguments/*/id
    exclude
-      id
 
 
 /*

@@ -11,7 +11,7 @@ using com = magic.data.common;
 using magic.signals.contracts;
 using magic.hyperlambda.utils;
 
-namespace magic.lambda.mssql.crud.utilities
+namespace magic.lambda.mssql.crud.builders
 {
     public class SqlCreateBuilder : com.SqlCreateBuilder
     {
