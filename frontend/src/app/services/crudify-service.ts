@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { CrudifyModel, CrudifyResult } from '../models/crudify-model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,26 +28,8 @@ export class CrudifyService {
       '&table=' + encodeURI(table));
   }
 
-  public generateCrudEndpoints(
-    databaseType: string,
-    connection: string,
-    database: string,
-    table: string,
-    template: string,
-    verb: string,
-    args: any,
-    ids: any,
-    ) {
-    return this.httpClient.post<any[]>(
-      environment.apiURL + 'hl/system/db/generate',{
-        'database-type': databaseType,
-        connection,
-        database,
-        table,
-        template,
-        verb,
-        'arguments': args,
-        ids,
-      });
+  public generateCrudEndpoints(model: CrudifyModel) {
+    return this.httpClient.post<CrudifyResult>(
+      environment.apiURL + 'hl/system/db/generate', model);
   }
 }
