@@ -21,12 +21,16 @@ namespace magic.signals.services.init
             var type = typeof(ISlot);
             var slots = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract && p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
+                .Where(p => type.IsAssignableFrom(p) &&
+                    !p.IsInterface &&
+                    !p.IsAbstract &&
+                    p.CustomAttributes.Any(x => x.AttributeType == typeof(SlotAttribute)));
             foreach (var idx in slots)
             {
                 services.AddTransient(idx);
             }
-            services.AddSingleton<ISignaler>((svc) => new Signaler(svc, slots));
+            services.AddSingleton<ISignalsProvider>((svc) => new SignalsProvider(slots));
+            services.AddTransient<ISignaler, Signaler>();
         }
 
         #endregion

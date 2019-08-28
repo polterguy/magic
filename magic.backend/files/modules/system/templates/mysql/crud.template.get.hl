@@ -2,7 +2,7 @@
 /*
  * Template for HTTP GET CRUD requests.
  */
-.arguments
+.arguments:{arguments}
 
 
 /*
@@ -16,8 +16,8 @@ add:x:./*/signal/*/args
  * Invokes [magic.db.mysql.read].
  */
 signal:magic.db.mysql.read
-   connection
-   table
+   connection:{connection}
+   table:{table}
    args
    columns
 

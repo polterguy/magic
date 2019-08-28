@@ -99,7 +99,6 @@ export class CrudifyComponent implements OnInit {
     for(let idx = 0; idx < this.columns.length; idx++) {
       if (this.columns[idx].Key === 'PRI') {
         const str = '{"' + this.columns[idx].Field + '": ' + '"long"' + '}';
-        console.log(str);
         ids.push(JSON.parse(str));
       }
     }
