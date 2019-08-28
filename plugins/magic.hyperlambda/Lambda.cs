@@ -6,8 +6,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using magic.node;
-using magic.node.extensions.hyperlambda;
 using magic.signals.contracts;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.hyperlambda
 {
