@@ -56,7 +56,7 @@ namespace magic.endpoint.services
         {
             // Sanity checking URL
             url = SanityCheckUrl(url);
-            var path = ConfigureServices.Root + url + $".{verb}.hl";
+            var path = RootResolver.Root + url + $".{verb}.hl";
             if (!File.Exists(path))
                 return new NotFoundResult();
 
@@ -103,7 +103,7 @@ namespace magic.endpoint.services
         {
             // Sanity checking URL
             url = SanityCheckUrl(url);
-            var path = ConfigureServices.Root + url + $".{verb}.hl";
+            var path = RootResolver.Root + url + $".{verb}.hl";
             if (!File.Exists(path))
                 return new NotFoundResult();
 

@@ -49,7 +49,7 @@ namespace magic.endpoint.services
             input.Value = null;
 
             // Opening file, and trying to find its [.arguments] node.
-            var filename = ConfigureServices.Root + url.TrimStart('/') + "." + verb + ".hl";
+            var filename = RootResolver.Root + url.TrimStart('/') + "." + verb + ".hl";
             if (!File.Exists(filename))
                 throw new ApplicationException($"No endpoint found at '{url}' for verb '{verb}'");
 

@@ -18,11 +18,9 @@ namespace magic.endpoint.services.init
         {
             services.AddSingleton<IExecutor, Executor>();
 
-            Root = (configuration["io:root-folder"] ?? "~/files")
+            RootResolver.Root = (configuration["io:root-folder"] ?? "~/files")
                 .Replace("~", Directory.GetCurrentDirectory())
                 .TrimEnd('/') + "/modules/";
         }
-
-        public static string Root { get; private set; }
     }
 }
