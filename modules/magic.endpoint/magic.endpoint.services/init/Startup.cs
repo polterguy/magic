@@ -19,7 +19,7 @@ namespace magic.endpoint.services.init
         {
             var signaler = kernel.GetService(typeof(ISignaler)) as ISignaler;
 
-            foreach (var idxModules in Directory.GetDirectories(ConfigureServices.Root))
+            foreach (var idxModules in Directory.GetDirectories(RootResolver.Root))
             {
                 foreach (var idxModuleFolder in Directory.GetDirectories(idxModules))
                 {

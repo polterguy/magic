@@ -9,3 +9,7 @@ export class CrudifyModel {
     verb: string;
     args: any[];
 }
+
+export class CrudifyResult {
+    success: string;
+}

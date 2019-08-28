@@ -5,9 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Class1.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\..\lib\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\..\lib\magic.utils\magic.utils.csproj" />

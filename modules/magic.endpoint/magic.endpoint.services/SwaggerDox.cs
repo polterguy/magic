@@ -32,7 +32,7 @@ namespace magic.endpoint.services
             {
                 doc.Paths.Remove(idx);
             }
-            AddCustomEndpoints(doc, ConfigureServices.Root);
+            AddCustomEndpoints(doc, RootResolver.Root);
         }
 
         #region [ -- Private helper methods -- ]
@@ -41,7 +41,7 @@ namespace magic.endpoint.services
         {
             foreach (var idx in Directory.GetDirectories(currentFolder))
             {
-                var folder = "/" + idx.Substring(ConfigureServices.Root.Length);
+                var folder = "/" + idx.Substring(RootResolver.Root.Length);
                 if (Utilities.IsLegalHttpName(folder))
                     AddAllVerbs(doc, idx);
             }
@@ -51,7 +51,7 @@ namespace magic.endpoint.services
         {
             foreach (var idxFile in Directory.GetFiles(folder, "*.hl"))
             {
-                var filename = "/" + idxFile.Substring(ConfigureServices.Root.Length).Replace("\\", "/");
+                var filename = "/" + idxFile.Substring(RootResolver.Root.Length).Replace("\\", "/");
                 if (Utilities.IsLegalHttpName(filename.Substring(0, filename.IndexOf(".", StringComparison.InvariantCulture))))
                 {
                     var fileInfo = new FileInfo(filename);
