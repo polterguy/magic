@@ -5,10 +5,9 @@
 
 using System;
 using System.Linq;
-using magic.node;
-using magic.hyperlambda.utils;
+using magic.node.extensions.hyperlambda;
 
-namespace magic.hyperlambda
+namespace magic.node.extensions
 {
     public class Signal : ICloneable
     {

@@ -6,9 +6,8 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace magic.lambda.utilities
+namespace magic.utils
 {
-    // TODO: Move to "Utility project".
 	public class Stack<T>
 	{
         Synchronizer<List<T>> _connections = new Synchronizer<List<T>>(new List<T>());

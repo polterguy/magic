@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using magic.node;
-using magic.hyperlambda.utils;
+using magic.node.extensions;
 using magic.signals.contracts;
 
 namespace magic.lambda.branching

@@ -5,10 +5,9 @@
 
 using System;
 using System.Linq;
-using magic.node;
 using magic.signals.contracts;
 
-namespace magic.hyperlambda.utils
+namespace magic.node.extensions
 {
     public static class NodeExtensions
     {

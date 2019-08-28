@@ -5,8 +5,8 @@
 
 using System;
 using System.Collections.Generic;
+using magic.utils;
 using magic.common.contracts;
-using magic.lambda.utilities;
 
 namespace magic.tests.init
 {

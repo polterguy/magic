@@ -8,8 +8,8 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.http.contracts;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.lambda.http
 {

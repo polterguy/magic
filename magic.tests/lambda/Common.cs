@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using magic.node;
 using magic.common.contracts;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.tests.lambda
 {

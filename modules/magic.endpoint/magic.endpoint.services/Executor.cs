@@ -12,9 +12,9 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 using magic.node;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 using magic.endpoint.contracts;
 using magic.endpoint.services.init;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.endpoint.services
 {

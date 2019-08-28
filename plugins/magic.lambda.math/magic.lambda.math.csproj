@@ -7,7 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
-    <ProjectReference Include="..\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\..\lib\magic.node.extensions\magic.node.extensions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />

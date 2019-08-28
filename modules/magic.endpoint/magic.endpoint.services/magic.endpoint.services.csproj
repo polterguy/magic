@@ -18,6 +18,6 @@
     <ProjectReference Include="..\..\..\lib\magic.common.contracts\magic.common.contracts.csproj" />
     <ProjectReference Include="..\..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\..\lib\magic.node\magic.node.csproj" />
-    <ProjectReference Include="..\..\..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\..\..\lib\magic.node.extensions\magic.node.extensions.csproj" />
   </ItemGroup>
 </Project>

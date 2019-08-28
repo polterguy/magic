@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.json
 {

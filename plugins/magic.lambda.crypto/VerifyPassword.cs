@@ -8,8 +8,8 @@ using System.Linq;
 using System.Collections.Generic;
 using bc = BCrypt.Net;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.lambda.crypto
 {

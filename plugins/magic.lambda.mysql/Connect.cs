@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using magic.node;
+using ut = magic.utils;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
-using ut = magic.lambda.utilities;
 
 namespace magic.lambda.mysql
 {

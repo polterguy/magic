@@ -6,9 +6,8 @@
 using System;
 using System.Threading;
 
-namespace magic.lambda.utilities
+namespace magic.utils
 {
-    // TODO: Move to "Utility project".
     public class Synchronizer<TImpl, TIRead, TIWrite> where TImpl : TIWrite, TIRead
     {
         readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();

@@ -8,8 +8,8 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
-using ut = magic.lambda.utilities;
+using magic.node.extensions;
+using ut = magic.utils;
 
 namespace magic.lambda.mssql
 {

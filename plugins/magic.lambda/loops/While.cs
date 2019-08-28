@@ -7,8 +7,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.lambda.loops
 {

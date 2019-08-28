@@ -7,9 +7,8 @@ using System;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
-using magic.node;
 
-namespace magic.hyperlambda.utils
+namespace magic.node.extensions.hyperlambda
 {
     public sealed class Stringifier
     {
@@ -109,14 +108,14 @@ namespace magic.hyperlambda.utils
                             value = idx.Get<Expression>().Value;
                             break;
 
-                        case "magic.node.Node":
-                            type = "node";
-                            value = "@\"" + GetHyper(idx.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
-                            break;
-
                         case "magic.hyperlambda.Signal":
                             type = "signal";
                             value = "@\"" + GetHyper(new Node[] { idx.Get<Signal>().Content.Clone() }).Replace("\"", "\"\"").TrimEnd() + "\"";
+                            break;
+
+                        case "magic.node.Node":
+                            type = "node";
+                            value = "@\"" + GetHyper(idx.Get<Node>().Children).Replace("\"", "\"\"") + "\"";
                             break;
                     }
                     builder.Append(":");

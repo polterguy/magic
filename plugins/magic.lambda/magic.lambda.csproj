@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="utilities\" />
     <Folder Include="logical\" />
     <Folder Include="loops\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
-    <ProjectReference Include="..\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\..\lib\magic.utils\magic.utils.csproj" />
+    <ProjectReference Include="..\..\lib\magic.node.extensions\magic.node.extensions.csproj" />
   </ItemGroup>
 </Project>

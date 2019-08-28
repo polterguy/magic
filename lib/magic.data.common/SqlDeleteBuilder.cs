@@ -5,6 +5,7 @@
 
 using System.Text;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 
 namespace magic.data.common
