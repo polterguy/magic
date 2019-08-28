@@ -39,10 +39,10 @@ export class CrudifyComponent implements OnInit {
     this.columns = null;
     this.endpoints = null;
     this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
-      let tables = [];
-      for (let idx = 0; idx < res.length; idx++) {
+      const tables = [];
+      for (const iterator of res) {
         tables.push({
-          table: res[idx][Object.keys(res[idx])[0]],
+          table: iterator[Object.keys(iterator)[0]],
         });
       }
       this.tables = tables;
@@ -70,18 +70,18 @@ export class CrudifyComponent implements OnInit {
   }
 
   createEndpoints() {
-    let endpoints = [];
+    const endpoints = [];
     const verbs = [
       {verb: 'post', action: 'create'},
       {verb: 'get', action: 'read'},
       {verb: 'put', action: 'update'},
       {verb: 'delete', action: 'delete'},
     ];
-    for(let idx = 0; idx < verbs.length; idx++) {
+    for (const iterator of verbs) {
       endpoints.push({
         endpoint: this.selectedDatabase + '/' + this.selectedTable,
-        verb: verbs[idx].verb,
-        action: verbs[idx].action,
+        verb: iterator.verb,
+        action: iterator.action,
         auth: 'root',
       });
     }
@@ -94,23 +94,24 @@ export class CrudifyComponent implements OnInit {
 
   private createDeleteHttpEndpoint() {
     console.log(this.columns);
-    let args = [];
-    let ids = [];
-    for(let idx = 0; idx < this.columns.length; idx++) {
-      if (this.columns[idx].Key === 'PRI') {
-        const str = '{"' + this.columns[idx].Field + '": ' + '"long"' + '}';
+    const args = [];
+    const ids = [];
+    for (const iterator of this.columns) {
+      if (iterator.Key === 'PRI') {
+        const str = '{"' + iterator.Field + '": ' + '"long"' + '}';
+        console.log(str);
         ids.push(JSON.parse(str));
       }
     }
-    this.crudService.generateCrudEndpoints(
-      'mysql', 
-      'database-connection', 
-      this.selectedDatabase, 
-      this.selectedTable, 
-      '/modules/system/templates/mysql/crud.template.delete.hl', 
-      'delete', 
-      args, 
-      ids).subscribe((res) => {
+    this.crudService.generateCrudEndpoints({
+      connection: 'some-connection',
+      databaseType: 'mysql',
+      database: this.selectedDatabase,
+      table: this.selectedTable,
+      template: '/modules/system/templates/mysql/crud.template.delete.hl',
+      verb: 'delete',
+      args: ids,
+    }).subscribe((res) => {
       console.log(res);
     }, (error) => {
       this.showError(error.error.message);
