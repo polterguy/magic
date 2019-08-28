@@ -1,9 +1,0 @@
-.arguments
-   id:long
-add:x:+/*/ids
-   get-nodes:x:/@.arguments/*
-signal:magic.db.mysql.delete
-   connection:database-connection
-   table:items
-   ids
-return-nodes:x:@signal/*
