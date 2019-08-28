@@ -8,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 using magic.lambda.io.utilities;
 
 namespace magic.lambda.io
@@ -31,7 +31,7 @@ namespace magic.lambda.io
 
             _signaler.Signal("eval", input);
 
-            var filename = ConfigureServices.Root + input.GetEx<string>(_signaler);
+            var filename = RootResolver.Root + input.GetEx<string>(_signaler);
             File.WriteAllText(filename, input.Children.First().GetEx<string>(_signaler));
         }
 

@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
-using ut = magic.lambda.utilities;
+using ut = magic.utils;
 using magic.lambda.mssql.utilities;
 using magic.lambda.mssql.crud.builders;
 

@@ -15,11 +15,9 @@ namespace magic.lambda.io.utilities
     {
         public void Configure(IServiceCollection services, IConfiguration configuration)
         {
-            Root = (configuration["io:root-folder"] ?? "~/files")
+            RootResolver.Root = (configuration["io:root-folder"] ?? "~/files")
                 .Replace("~", Directory.GetCurrentDirectory())
                 .TrimEnd('/');
         }
-
-        public static string Root { get; private set; }
     }
 }

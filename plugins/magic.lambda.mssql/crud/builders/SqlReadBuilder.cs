@@ -7,9 +7,9 @@ using System;
 using System.Linq;
 using System.Text;
 using magic.node;
+using magic.node.extensions;
 using com = magic.data.common;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.lambda.mssql.crud.builders
 {

@@ -5,11 +5,10 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 using magic.lambda.io.utilities;
 
 namespace magic.lambda.io
@@ -26,7 +25,7 @@ namespace magic.lambda.io
 
         public void Signal(Node input)
         {
-            var path = ConfigureServices.Root + input.GetEx<string>(_signaler);
+            var path = RootResolver.Root + input.GetEx<string>(_signaler);
             if (Directory.Exists(path))
                 input.Value = false;
 

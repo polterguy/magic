@@ -7,8 +7,8 @@ using System;
 using System.Linq;
 using System.Text;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.data.common
 {

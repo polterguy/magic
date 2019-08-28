@@ -5,11 +5,12 @@
 
 using System;
 using System.Linq;
+using System.Globalization;
 using System.Collections.Generic;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using System.Globalization;
-using magic.hyperlambda.utils;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.lambda.change
 {

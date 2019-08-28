@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using magic.common.contracts;
-using magic.lambda.utilities;
+using magic.utils;
 
 namespace magic.console.init
 {

@@ -7,7 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
-    <ProjectReference Include="..\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\magic.node.extensions\magic.node.extensions.csproj" />
   </ItemGroup>
 
 </Project>

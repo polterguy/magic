@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data.SqlClient;
 using magic.common.contracts;
-using magic.lambda.utilities;
+using magic.utils;
 
 namespace magic.lambda.mssql.init
 {

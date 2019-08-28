@@ -6,7 +6,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
-using magic.lambda.utilities;
+using magic.utils;
 using magic.common.contracts;
 
 namespace magic.lambda.mysql.init

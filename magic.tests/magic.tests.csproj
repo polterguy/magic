@@ -30,6 +30,7 @@
     <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
     <ProjectReference Include="..\lib\magic.http\magic.http.services\magic.http.services.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
+    <ProjectReference Include="..\lib\magic.utils\magic.utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

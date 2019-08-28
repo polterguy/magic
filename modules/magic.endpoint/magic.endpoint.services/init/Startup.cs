@@ -8,8 +8,8 @@ using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using magic.common.contracts;
-using magic.hyperlambda.utils;
 using magic.signals.contracts;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.endpoint.services.init
 {

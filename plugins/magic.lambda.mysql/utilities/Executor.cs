@@ -4,13 +4,11 @@
  */
 
 using System;
-using System.Linq;
-using System.Text;
 using MySql.Data.MySqlClient;
 using magic.node;
-using magic.lambda.utilities;
+using magic.utils;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.lambda.mysql.utilities
 {

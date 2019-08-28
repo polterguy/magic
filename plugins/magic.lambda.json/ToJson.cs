@@ -67,13 +67,9 @@ namespace magic.json
         private JToken HandleArray(Node idx)
         {
             if (idx.Children.Any())
-            {
                 return Handle(idx);
-            }
             else
-            {
                 return new JValue(idx.Value);
-            }
         }
 
         private JProperty HandleProperty(Node idx)

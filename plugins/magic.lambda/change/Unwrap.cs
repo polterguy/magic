@@ -7,8 +7,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using magic.node;
-using hl = magic.hyperlambda;
 using magic.signals.contracts;
+using hl = magic.node.extensions;
 
 namespace magic.lambda.change
 {

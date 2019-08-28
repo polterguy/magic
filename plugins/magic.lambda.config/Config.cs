@@ -8,8 +8,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 
 namespace magic.lambda
 {

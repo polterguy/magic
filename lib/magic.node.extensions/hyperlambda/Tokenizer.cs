@@ -7,9 +7,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using magic.node;
+using magic.utils;
 
-namespace magic.hyperlambda.utils
+namespace magic.node.extensions.hyperlambda
 {
     public sealed class Tokenizer
     {

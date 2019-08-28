@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace magic.node
+namespace magic.utils
 {
     public class StringLiteralParser
     {

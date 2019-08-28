@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using magic.node;
 using magic.signals.contracts;
-using ut = magic.lambda.utilities;
+using ut = magic.utils;
 using magic.lambda.mysql.utilities;
 using magic.lambda.mysql.crud.builders;
 

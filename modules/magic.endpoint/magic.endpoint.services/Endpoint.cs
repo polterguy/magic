@@ -9,8 +9,9 @@ using System.Linq;
 using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
 using magic.endpoint.services.init;
+using magic.node.extensions;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.endpoint.services
 {

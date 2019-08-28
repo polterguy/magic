@@ -84,11 +84,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.endpoint.services", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.config", "plugins\magic.lambda.config\magic.lambda.config.csproj", "{BBD2539A-5DC5-46B6-ABF0-534FBA69F1CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.data.common", "plugins\magic.data.common\magic.data.common.csproj", "{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.crypto", "plugins\magic.lambda.crypto\magic.lambda.crypto.csproj", "{715115CA-DBAD-41BF-A055-2C880C1D7635}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.auth", "plugins\magic.lambda.auth\magic.lambda.auth.csproj", "{611A46C7-0125-4BE8-99EB-264C293A749A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.node.extensions", "lib\magic.node.extensions\magic.node.extensions.csproj", "{3F0D69F9-0E98-428B-B242-D38F63E1E0EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.utils", "lib\magic.utils\magic.utils.csproj", "{55F8D296-6043-4A0F-8DC1-09F95943ED0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.data.common", "lib\magic.data.common\magic.data.common.csproj", "{C5660178-8AA6-4E8B-A76C-EB4B34057D3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -216,6 +220,18 @@ Global
 		{611A46C7-0125-4BE8-99EB-264C293A749A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{611A46C7-0125-4BE8-99EB-264C293A749A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{611A46C7-0125-4BE8-99EB-264C293A749A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0D69F9-0E98-428B-B242-D38F63E1E0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F0D69F9-0E98-428B-B242-D38F63E1E0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F0D69F9-0E98-428B-B242-D38F63E1E0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F0D69F9-0E98-428B-B242-D38F63E1E0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55F8D296-6043-4A0F-8DC1-09F95943ED0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55F8D296-6043-4A0F-8DC1-09F95943ED0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55F8D296-6043-4A0F-8DC1-09F95943ED0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55F8D296-6043-4A0F-8DC1-09F95943ED0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5660178-8AA6-4E8B-A76C-EB4B34057D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5660178-8AA6-4E8B-A76C-EB4B34057D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5660178-8AA6-4E8B-A76C-EB4B34057D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5660178-8AA6-4E8B-A76C-EB4B34057D3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -252,6 +268,9 @@ Global
 		{05E7B3CC-3A6B-40C0-BEEC-A9C92F3AA648} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{715115CA-DBAD-41BF-A055-2C880C1D7635} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
 		{611A46C7-0125-4BE8-99EB-264C293A749A} = {384021B6-EC31-4D12-A0C8-308E7A7186CA}
+		{3F0D69F9-0E98-428B-B242-D38F63E1E0EC} = {078C2490-F214-489D-BF3E-A14471B13244}
+		{55F8D296-6043-4A0F-8DC1-09F95943ED0D} = {078C2490-F214-489D-BF3E-A14471B13244}
+		{C5660178-8AA6-4E8B-A76C-EB4B34057D3C} = {078C2490-F214-489D-BF3E-A14471B13244}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54AAA741-C485-4139-9B05-B0FEA830B6B6}

@@ -8,8 +8,8 @@
     <ProjectReference Include="..\..\lib\magic.common.contracts\magic.common.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
-    <ProjectReference Include="..\magic.data.common\magic.data.common.csproj" />
-    <ProjectReference Include="..\magic.lambda\magic.lambda.csproj" />
+    <ProjectReference Include="..\..\lib\magic.node.extensions\magic.node.extensions.csproj" />
+    <ProjectReference Include="..\..\lib\magic.data.common\magic.data.common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.17" />

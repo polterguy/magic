@@ -8,9 +8,8 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Globalization;
-using magic.node;
 
-namespace magic.hyperlambda.utils
+namespace magic.node.extensions.hyperlambda
 {
     public sealed class Parser
     {

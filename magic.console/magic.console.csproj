@@ -71,6 +71,7 @@
     <ProjectReference Include="..\plugins\magic.lambda.json\magic.lambda.json.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
+    <ProjectReference Include="..\lib\magic.utils\magic.utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

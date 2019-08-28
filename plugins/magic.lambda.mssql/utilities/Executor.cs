@@ -6,9 +6,9 @@
 using System;
 using System.Data.SqlClient;
 using magic.node;
-using magic.lambda.utilities;
+using magic.node.extensions;
 using magic.signals.contracts;
-using magic.hyperlambda.utils;
+using magic.utils;
 
 namespace magic.lambda.mssql.utilities
 {
