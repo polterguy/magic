@@ -32,6 +32,7 @@
     <ProjectReference Include="..\plugins\magic.lambda.config\magic.lambda.config.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.auth\magic.lambda.auth.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.crypto\magic.lambda.crypto.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.slots\magic.lambda.slots.csproj" />
   </ItemGroup>
 
   <ItemGroup>
