@@ -14,8 +14,10 @@ auth.verify-ticket:root
  * Invokes slot responsible for returning our database names,
  * and returns results to caller.
  */
+signal:magic.db.mysql.connection
+   database:sys
 unwrap:x:+/*
 signal:magic.db.mysql.databases
-   connection:signal:@"config:""Databases:mysql:sys"""
+   connection:x:./-/-
 
 return-nodes:x:-/*
