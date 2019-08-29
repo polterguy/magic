@@ -31,7 +31,7 @@ namespace magic.lambda.change
                     _signaler.Signal(signal.Content.Name, signal.Content);
                     idx.Value = signal.Content.Value;
                 }
-                else
+                else if (idx.Value != null)
                 {
                     var exp = idx.Evaluate();
                     if (exp.Count() > 1)

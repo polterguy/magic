@@ -17,13 +17,13 @@ export class CrudifyService {
 
   public getTables(database: string) {
     return this.httpClient.get<any[]>(
-      environment.apiURL + 
+      environment.apiURL +
       'hl/system/db/tables?database=' + encodeURI(database));
   }
 
   public getColumns(database: string, table: string) {
     return this.httpClient.get<any[]>(
-      environment.apiURL + 
+      environment.apiURL +
       'hl/system/db/columns?database=' + encodeURI(database) +
       '&table=' + encodeURI(table));
   }
