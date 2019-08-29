@@ -90,6 +90,7 @@ export class CrudifyComponent implements OnInit {
 
   generate() {
     this.createDeleteHttpEndpoint();
+    this.createGetHttpEndpoint();
   }
 
   private createDeleteHttpEndpoint() {
@@ -108,6 +109,31 @@ export class CrudifyComponent implements OnInit {
       database: this.selectedDatabase,
       table: this.selectedTable,
       template: `/modules/system/templates/${databaseType}/crud.template.delete.hl`,
+      verb: 'delete',
+      templateArgs: ids,
+    }).subscribe((res) => {
+      console.log(res);
+    }, (error) => {
+      this.showError(error.error.message);
+    });
+  }
+
+  private createGetHttpEndpoint() {
+    console.log(this.columns);
+    const ids = [];
+    for (const iterator of this.columns) {
+      if (iterator.Key === 'PRI') {
+        const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
+        ids.push(JSON.parse(str));
+      }
+    }
+
+    // TODO: Differentiate according to database type.
+    const databaseType = 'mysql';
+    this.crudService.generateCrudEndpoints({
+      database: this.selectedDatabase,
+      table: this.selectedTable,
+      template: `/modules/system/templates/${databaseType}/crud.template.get.hl`,
       verb: 'delete',
       templateArgs: ids,
     }).subscribe((res) => {
