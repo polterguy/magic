@@ -27,7 +27,9 @@ namespace magic.lambda.mysql
 
 		public void Signal(Node input)
 		{
-			using (var connection = new MySqlConnection(input.GetEx<string>(_signaler)))
+            var connectionString = input.GetEx<string>(_signaler);
+
+            using (var connection = new MySqlConnection(connectionString))
 			{
 				connection.Open();
                 _connections.Push(connection);
