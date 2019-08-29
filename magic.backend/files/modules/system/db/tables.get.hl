@@ -18,7 +18,7 @@ auth.verify-ticket:root
  */
 unwrap:x:+/*
 signal:magic.db.mysql.tables
-   connection:signal:@"config:""Databases:sys"""
+   connection:signal:@"config:""Databases:mysql:sys"""
    database:x:@.arguments/*/database
 
 return-nodes:x:-/*
