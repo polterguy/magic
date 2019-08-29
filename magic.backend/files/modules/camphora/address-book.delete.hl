@@ -1,0 +1,12 @@
+.arguments
+   id:int
+signal:magic.db.mysql.connection
+   database:camphora
+add:x:+/+/*/ids
+   get-nodes:x:/@.arguments/*
+unwrap:x:+/*/connection
+signal:magic.db.mysql.delete
+   connection:x:./@signal
+   table:address-book
+   ids
+return-nodes:x:@signal/*

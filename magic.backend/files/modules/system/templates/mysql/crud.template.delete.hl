@@ -2,16 +2,19 @@
 /*
  * Template for deleting items.
  */
-.arguments:{ids}
+.arguments:{args}
 
 
 /*
  * Invoking [magic.db.mysql.delete], making sure we unwrap the [id].
  */
-add:x:+/*/ids
+signal:magic.db.mysql.connection
+   database:{database}
+add:x:+/+/*/ids
    get-nodes:x:/@.arguments/*
+unwrap:x:+/*/connection
 signal:magic.db.mysql.delete
-   connection:{connection}
+   connection:x:./@signal
    table:{table}
    ids
 

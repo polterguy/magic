@@ -94,23 +94,22 @@ export class CrudifyComponent implements OnInit {
 
   private createDeleteHttpEndpoint() {
     console.log(this.columns);
-    const args = [];
     const ids = [];
     for (const iterator of this.columns) {
       if (iterator.Key === 'PRI') {
-        const str = '{"' + iterator.Field + '": ' + '"long"' + '}';
-        console.log(str);
+        const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
         ids.push(JSON.parse(str));
       }
     }
+
+    // TODO: Differentiate according to database type.
+    const databaseType = 'mysql';
     this.crudService.generateCrudEndpoints({
-      connection: 'some-connection',
-      databaseType: 'mysql',
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: '/modules/system/templates/mysql/crud.template.delete.hl',
+      template: `/modules/system/templates/${databaseType}/crud.template.delete.hl`,
       verb: 'delete',
-      args: ids,
+      templateArgs: ids,
     }).subscribe((res) => {
       console.log(res);
     }, (error) => {
