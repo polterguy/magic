@@ -2,7 +2,14 @@
 /*
  * Template for HTTP GET CRUD requests.
  */
-.arguments:{arguments}
+.arguments:{args}
+
+
+/*
+ * Retrieving connection string according to database constant.
+ */
+signal:magic.db.mysql.connection
+   database:{database}
 
 
 /*
@@ -13,10 +20,13 @@ add:x:./*/signal/*/args
 
 
 /*
- * Invokes [magic.db.mysql.read].
+ * Invoking [magic.db.mysql.read], making sure we unwrap the [id].
  */
+add:x:+/+/*/ids
+   get-nodes:x:/@.arguments/*
+unwrap:x:+/*/connection
 signal:magic.db.mysql.read
-   connection:{connection}
+   connection:x:./@signal
    table:{table}
    args
    columns
