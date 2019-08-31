@@ -89,9 +89,9 @@ namespace magic.node
             }
         }
 
-        public object Get()
+        public object Get(bool evaluate = true)
         {
-            if (Value is Expression ex)
+            if (evaluate && Value is Expression ex)
             {
                 var nodes = ex.Evaluate(new Node[] { this });
 

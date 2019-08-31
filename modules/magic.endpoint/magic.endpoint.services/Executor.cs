@@ -122,7 +122,7 @@ namespace magic.endpoint.services
                  * only has a single [.arguments] node.
                  * Notice, future improvements implies validating arguments.
                  */
-                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
+                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments").ToList();
                 if (fileArgs.Any())
                 {
                     if (fileArgs.Count() > 1)
@@ -133,9 +133,9 @@ namespace magic.endpoint.services
 
                 // Adding arguments from invocation to evaluated lambda node.
                 var argsNode = new Node(".arguments", arguments);
-                _signaler.Signal(".from-json-raw", argsNode);
 
                 // TODO: Recursively convert JSON argument(s).
+                _signaler.Signal(".from-json-raw", argsNode);
                 lambda.Insert(0, argsNode);
 
                 _signaler.Signal("eval", lambda);

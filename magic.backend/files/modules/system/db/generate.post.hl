@@ -8,7 +8,7 @@
    table:string
    template:string
    verb:string
-   templateArgs
+   args
 
 
 /*
@@ -20,30 +20,106 @@ auth.verify-ticket:root
 /*
  * Making sure we transform template arguments to something we can understand.
  */
-for-each:x:@.arguments/*/templateArgs/*
+for-each:x:@.arguments/*/args/**
    switch:x:@.dp/#
 
 
       /*
-       * Everything transformed into integers.
+       * Everything transformed into integer long values.
        */
       case:int(11)
       case:int(10) unsigned
          set-value:x:@.dp/#
-            .:int
+            .:long
+
+
+      /*
+       * Default implementation.
+       */
+      default
+         if
+            eq
+               get-name:x:@.dp/#
+               .:
+            .lambda
+
+               set-name:x:@.dp/#
+                  get-value:x:@.dp/#
+               set-value:x:@.dp/#
+
+         else-if
+            not
+               eq
+                  get-value:x:@.dp/#
+                  .
+            .lambda
+
+               set-value:x:@.dp/#
+                  .:string
 
 
 /*
  * Creating our endpoint according to arguments given, by using [apply-file]
  * on the [template] file given.
  */
-add:x:./*/apply-file/*/args
-   get-nodes:x:@.arguments/*/templateArgs/*
-unwrap:x:./*/apply-file/*
+unwrap:x:+/*
 apply-file:x:@.arguments/*/template
-   args
    database:x:@.arguments/*/database
    table:x:@.arguments/*/table
+   args
+
+
+/*
+ * Then making sure we do our specialized transformation.
+ */
+switch:x:@.arguments/*/verb
+
+   case:delete
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*
+
+   case:get
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/columns/*
+      for-each:x:@.arguments/*/args/*/*
+         set-value:x:@.dp/#
+      add:x:@apply-file/**/columns
+         get-nodes:x:@.arguments/*/args/*/columns/*
+      add:x:@apply-file/**/columns
+         get-nodes:x:@.arguments/*/args/*/primary/*
+
+   case:post
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/columns/*
+      for-each:x:@.arguments/*/args/*/*
+         set-value:x:@.dp/#
+      add:x:@apply-file/**/exclude
+         get-nodes:x:@.arguments/*/args/*/primary/*
+
+   case:put
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      add:x:@apply-file/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/columns/*
+      for-each:x:@.arguments/*/args/*/*
+         set-value:x:@.dp/#
+      add:x:@apply-file/**/exclude
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      add:x:@apply-file/**/ids
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      for-each:x:@apply-file/**/ids/*
+         .x:@.arguments/*/
+         set-value:x:@.x
+            concat
+               get-value:x:@.x
+               get-name:x:@.dp/#
+         set-x:x:@.dp/#
+            convert:x:@.x
+               type:x
 
 
 /*

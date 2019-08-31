@@ -10,6 +10,12 @@ slot:magic.db.mysql.delete
        * Sanity checking invocation.
        * Notice, a sane id node from [ids] must not be null, and not "".
        */
+      if
+         eq
+            get-count:x:@.arguments/*/ids/*
+            .:int:0
+         .lambda
+            throw:No ID given to [magic.db.delete]
       for-each:x:@.arguments/*/ids/*
          if
             or

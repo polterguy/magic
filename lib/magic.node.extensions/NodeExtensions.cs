@@ -11,14 +11,14 @@ namespace magic.node.extensions
 {
     public static class NodeExtensions
     {
-        public static object GetEx(this Node node, ISignaler signaler)
+        public static object GetEx(this Node node, ISignaler signaler, bool evaluate = true)
         {
             if (node.Value is Signal signal)
             {
                 signaler.Signal(signal.Content.Name, signal.Content);
                 return signal.Content.Value;
             }
-            return node.Get();
+            return node.Get(evaluate);
         }
 
         public static T GetEx<T>(this Node node, ISignaler signaler)

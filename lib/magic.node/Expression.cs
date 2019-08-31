@@ -87,6 +87,12 @@ namespace magic.node
                             return new Node[] { idx };
                         };
 
+                    case "**":
+                        return (input) =>
+                        {
+                            return AllDescendants(input);
+                        };
+
                     default:
 
                         if (value.StartsWith("\\", StringComparison.InvariantCulture))
@@ -146,6 +152,18 @@ namespace magic.node
                             return (input) => input.SelectMany((x) => x.Children.Skip(number).Take(1));
 
                         return (input) => input.Where((x) => x.Name == value);
+                }
+            }
+
+            IEnumerable<Node> AllDescendants(IEnumerable<Node> input)
+            {
+                foreach (var idx in input)
+                {
+                    yield return idx;
+                    foreach (var idxInner in AllDescendants(idx.Children))
+                    {
+                        yield return idxInner;
+                    }
                 }
             }
 
