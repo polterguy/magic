@@ -44,7 +44,16 @@ namespace magic.lambda.branching
                     .FirstOrDefault((x) => x.Name == "default");
 
             if (executionNode != null)
+            {
+                while(executionNode != null && !executionNode.Children.Any() && executionNode.Name != "default")
+                {
+                    executionNode = executionNode.Next;
+                }
+                if (executionNode == null || !executionNode.Children.Any())
+                    throw new ApplicationException("No lambda object found for [case]");
+
                 _signaler.Signal(executionNode.Name, executionNode);
+            }
         }
 
         public IEnumerable<Node> GetArguments()
