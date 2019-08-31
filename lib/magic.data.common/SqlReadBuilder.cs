@@ -64,6 +64,11 @@ namespace magic.data.common
                 var limitValue = limitNodes.First().GetEx<long>(Signaler);
                 builder.Append(" limit " + limitValue);
             }
+            else
+            {
+                // Defaulting to 25 records, unless [limit] was explicitly given.
+                builder.Append(" limit 25");
+            }
 
             var offsetNodes = Root.Children.Where((x) => x.Name == "offset");
             if (offsetNodes.Any())
