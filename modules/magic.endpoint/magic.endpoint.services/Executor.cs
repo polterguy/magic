@@ -55,7 +55,9 @@ namespace magic.endpoint.services
             Dictionary<string, string> arguments)
         {
             // Sanity checking URL
-            url = SanityCheckUrl(url);
+            if (!Utilities.IsLegalHttpName(url))
+                throw new ApplicationException("Illeal URL");
+
             var path = RootResolver.Root + url + $".{verb}.hl";
             if (!File.Exists(path))
                 return new NotFoundResult();
@@ -104,7 +106,9 @@ namespace magic.endpoint.services
             JContainer arguments)
         {
             // Sanity checking URL
-            url = SanityCheckUrl(url);
+            if (!Utilities.IsLegalHttpName(url))
+                throw new ApplicationException("Illeal URL");
+
             var path = RootResolver.Root + url + $".{verb}.hl";
             if (!File.Exists(path))
                 return new NotFoundResult();
@@ -150,25 +154,6 @@ namespace magic.endpoint.services
                 throw new ApplicationException($"I don't know how to handle the '{name}' argument");
 
             return new Node(name, Parser.ConvertValue(value, declaration.Get<string>()));
-        }
-
-        string SanityCheckUrl(string url)
-        {
-            url = WebUtility.UrlDecode(url);
-            foreach (var idx in url)
-            {
-                switch(idx)
-                {
-                    case '-':
-                    case '/':
-                        break;
-                    default:
-                        if ((idx < 'a' || idx > 'z') && (idx < '0' || idx > '9'))
-                            throw new ApplicationException($"Illegal URL '{url}' specified");
-                        break;
-                }
-            }
-            return url;
         }
 
         object GetReturnValue(Node lambda)
