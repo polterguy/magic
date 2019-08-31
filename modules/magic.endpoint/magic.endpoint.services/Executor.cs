@@ -69,7 +69,7 @@ namespace magic.endpoint.services
                  * only has a single [.arguments] node.
                  * Notice, future improvements implies validating arguments.
                  */
-                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments");
+                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments").ToList();
                 if (fileArgs.Any())
                 {
                     if (fileArgs.Count() > 1)
@@ -82,7 +82,9 @@ namespace magic.endpoint.services
                 if (arguments.Count > 0)
                 {
                     var argsNode = new Node(".arguments");
-                    argsNode.AddRange(arguments.Select((x) => new Node(x.Key, x.Value)));
+                    argsNode.AddRange(arguments.Select((x) =>
+                        ConvertArgument(x.Key, x.Value,
+                            fileArgs.First().Children.FirstOrDefault(x2 => x2.Name == x.Key))));
                     lambda.Insert(0, argsNode);
                 }
 
@@ -128,6 +130,8 @@ namespace magic.endpoint.services
                 // Adding arguments from invocation to evaluated lambda node.
                 var argsNode = new Node(".arguments", arguments);
                 _signaler.Signal(".from-json-raw", argsNode);
+
+                // TODO: Recursively convert JSON argument(s).
                 lambda.Insert(0, argsNode);
 
                 _signaler.Signal("eval", lambda);
@@ -138,6 +142,14 @@ namespace magic.endpoint.services
 
                 return new OkResult();
             }
+        }
+
+        Node ConvertArgument(string name, string value, Node declaration)
+        {
+            if (declaration == null)
+                throw new ApplicationException($"I don't know how to handle the '{name}' argument");
+
+            return new Node(name, Parser.ConvertValue(value, declaration.Get<string>()));
         }
 
         string SanityCheckUrl(string url)

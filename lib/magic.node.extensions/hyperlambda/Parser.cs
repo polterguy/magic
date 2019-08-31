@@ -36,6 +36,43 @@ namespace magic.node.extensions.hyperlambda
             return _root;
         }
 
+        public static object ConvertValue(string value, string type)
+        {
+            switch (type)
+            {
+                case "string":
+                    return value;
+                case "int":
+                    return Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                case "long":
+                    return Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                case "decimal":
+                    return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+                case "double":
+                    return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                case "single":
+                    return Convert.ToSingle(value, CultureInfo.InvariantCulture);
+                case "bool":
+                    return value.Equals("true");
+                case "date":
+                    return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+                case "guid":
+                    return new Guid(value);
+                case "char":
+                    return Convert.ToChar(value, CultureInfo.InvariantCulture);
+                case "byte":
+                    return Convert.ToByte(value, CultureInfo.InvariantCulture);
+                case "x":
+                    return new Expression(value);
+                case "signal":
+                    return new Signal(value);
+                case "node":
+                    return new Parser(value).Lambda();
+                default:
+                    throw new ApplicationException($"Unknown type declaration found in Hyperlambda '{type}'");
+            }
+        }
+
         #region [ -- Private helper methods -- ]
 
         void Parse(StreamReader _reader)
@@ -131,41 +168,6 @@ namespace magic.node.extensions.hyperlambda
                         previous = token;
                         break;
                 }
-            }
-        }
-
-        object ConvertValue(string value, string type)
-        {
-            switch (type)
-            {
-                case "int":
-                    return Convert.ToInt32(value, CultureInfo.InvariantCulture);
-                case "long":
-                    return Convert.ToInt64(value, CultureInfo.InvariantCulture);
-                case "decimal":
-                    return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
-                case "double":
-                    return Convert.ToDouble(value, CultureInfo.InvariantCulture);
-                case "single":
-                    return Convert.ToSingle(value, CultureInfo.InvariantCulture);
-                case "bool":
-                    return value.Equals("true");
-                case "date":
-                    return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
-                case "guid":
-                    return new Guid(value);
-                case "char":
-                    return Convert.ToChar(value, CultureInfo.InvariantCulture);
-                case "byte":
-                    return Convert.ToByte(value, CultureInfo.InvariantCulture);
-                case "x":
-                    return new Expression(value);
-                case "signal":
-                    return new Signal(value);
-                case "node":
-                    return new Parser(value).Lambda();
-                default:
-                    throw new ApplicationException($"Unknown type declaration found in Hyperlambda '{type}'");
             }
         }
 
