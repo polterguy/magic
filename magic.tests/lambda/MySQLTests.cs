@@ -45,7 +45,8 @@ namespace magic.tests.lambda
    where
       and
          jo-dude:int:5
-         ""foo-bar:like"":howdy%");
+         like
+            foo-bar:howdy%");
             Assert.Equal("select * from `SomeTable` where (`jo-dude` = @0 and `foo-bar` like @1)", lambda.Children.First().Value);
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
@@ -141,7 +142,8 @@ namespace magic.tests.lambda
    table:SomeTable
    where
       and
-         ""id:>"":int:3");
+         >
+            id:int:3");
             Assert.Equal("select * from `SomeTable` where (`id` > @0)", lambda.Children.First().Value);
             Assert.Single(lambda.Children.First().Children);
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
@@ -181,7 +183,8 @@ namespace magic.tests.lambda
    where
       and
          jo-dude:int:5
-         ""foo-bar:like"":howdy%");
+         like
+            foo-bar:howdy%");
             Assert.Equal("delete from `SomeTable` where (`jo-dude` = @0 and `foo-bar` like @1)", lambda.Children.First().Value);
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
