@@ -104,17 +104,21 @@ namespace magic.data.common
             Node result,
             StringBuilder builder,
             Node level,
-            string oper,
-            ref int levelNo)
+            string logicalOperator,
+            ref int levelNo,
+            string comparisonOperator = "=",
+            bool paranthesis = true)
         {
-            builder.Append("(");
+            if (paranthesis)
+                builder.Append("(");
+
             bool first = true;
             foreach (var idxCol in level.Children)
             {
                 if (first)
                     first = false;
                 else
-                    builder.Append(" " + oper + " ");
+                    builder.Append(" " + logicalOperator + " ");
 
                 switch (idxCol.Name)
                 {
@@ -126,36 +130,32 @@ namespace magic.data.common
                         BuildWhereLevel(result, builder, idxCol, "or", ref levelNo);
                         break;
 
+                    case ">":
+                    case "<":
+                    case ">=":
+                    case "<=":
+                    case "!=":
+                    case "=":
+                    case "like":
+                        BuildWhereLevel(result, builder, idxCol, logicalOperator, ref levelNo, idxCol.Name, false);
+                        break;
+
                     default:
-                        var comparisonOper = "=";
-                        var colName = idxCol.Name;
-                        if (colName.Contains(":"))
-                        {
-                            var entities = colName.Split(':');
-                            colName = entities[0];
-                            comparisonOper = entities[1];
-                            switch (comparisonOper)
-                            {
-                                case ">":
-                                case "<":
-                                case ">=":
-                                case "<=":
-                                case "!=":
-                                case "like":
-                                    break;
-                                default:
-                                    throw new ApplicationException($"Illegal comparison operator found '{comparisonOper}'");
-                            }
-                        }
                         var unwrapped = idxCol.GetEx(Signaler);
                         var argName = "@" + levelNo;
-                        builder.Append(EscapeChar + colName.Replace(EscapeChar, EscapeChar + EscapeChar) + EscapeChar + " " + comparisonOper + " " + argName);
+                        var arg = EscapeChar +
+                            idxCol.Name.Replace(EscapeChar, EscapeChar + EscapeChar) +
+                            EscapeChar + " " + comparisonOperator + " " +
+                            argName;
+                        builder.Append(arg);
                         result.Add(new Node(argName, unwrapped));
                         ++levelNo;
                         break;
                 }
             }
-            builder.Append(")");
+
+            if (paranthesis)
+                builder.Append(")");
         }
 
         #endregion
