@@ -89,55 +89,94 @@ export class CrudifyComponent implements OnInit {
   }
 
   generate() {
-    this.createDeleteHttpEndpoint();
-    this.createGetHttpEndpoint();
-  }
-
-  private createDeleteHttpEndpoint() {
-    console.log(this.columns);
-    const ids = [];
-    for (const iterator of this.columns) {
-      if (iterator.Key === 'PRI') {
-        const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
-        ids.push(JSON.parse(str));
-      }
-    }
-
-    // TODO: Differentiate according to database type.
-    const databaseType = 'mysql';
-    this.crudService.generateCrudEndpoints({
-      database: this.selectedDatabase,
-      table: this.selectedTable,
-      template: `/modules/system/templates/${databaseType}/crud.template.delete.hl`,
-      verb: 'delete',
-      templateArgs: ids,
-    }).subscribe((res) => {
-      console.log(res);
-    }, (error) => {
-      this.showError(error.error.message);
+    this.createHttpGetEndpoint((res: any) => {
+      this.createHttpPutEndpoint((res: any) => {
+        this.createHttpPostEndpoint((res: any) => {
+          this.createHttpDeleteEndpoint((res: any) => {
+            this.showSuccess('All endpoints created successfully');
+          });
+        });
+      });
     });
   }
 
-  private createGetHttpEndpoint() {
-    console.log(this.columns);
+  getAllPrimaryKeyColumns(namesOnly: boolean = false): any[] {
     const ids = [];
     for (const iterator of this.columns) {
       if (iterator.Key === 'PRI') {
+        if (namesOnly) {
+          ids.push(iterator.Field);
+        } else {
+          const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
+          ids.push(JSON.parse(str));
+        }
+      }
+    }
+    return ids;
+  }
+
+  getAllNonPrimaryKeyColumns(): any[] {
+    const ids = [];
+    for (const iterator of this.columns) {
+      if (iterator.Key !== 'PRI') {
         const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
         ids.push(JSON.parse(str));
       }
     }
+    return ids;
+  }
 
-    // TODO: Differentiate according to database type.
+  createHttpGetEndpoint(callback: (res: any) => void) {
+    const primary = this.getAllPrimaryKeyColumns();
+    const columns = this.getAllNonPrimaryKeyColumns();
+    this.createCrudTemplate(
+      'get', {
+        columns,
+        primary,
+      },
+      callback);
+  }
+
+  createHttpPostEndpoint(callback: (res: any) => void) {
+    const primary = this.getAllPrimaryKeyColumns();
+    const columns = this.getAllNonPrimaryKeyColumns();
+    this.createCrudTemplate(
+      'post', {
+        columns,
+        primary,
+      }, callback);
+  }
+
+  createHttpPutEndpoint(callback: (res: any) => void) {
+    const primary = this.getAllPrimaryKeyColumns();
+    const columns = this.getAllNonPrimaryKeyColumns();
+    this.createCrudTemplate(
+      'put', {
+        columns,
+        primary,
+      }, callback);
+  }
+
+  createHttpDeleteEndpoint(callback: (res: any) => void) {
+    const primary = this.getAllPrimaryKeyColumns(false);
+    const columns = this.getAllNonPrimaryKeyColumns();
+    this.createCrudTemplate(
+      'delete', {
+        columns,
+        primary,
+      }, callback);
+  }
+
+  createCrudTemplate(verb: string, args: any, callback: (res: any) => void) {
     const databaseType = 'mysql';
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: `/modules/system/templates/${databaseType}/crud.template.get.hl`,
-      verb: 'delete',
-      templateArgs: ids,
+      template: `/modules/system/templates/${databaseType}/crud.template.${verb}.hl`,
+      verb: verb,
+      args,
     }).subscribe((res) => {
-      console.log(res);
+      callback(res);
     }, (error) => {
       this.showError(error.error.message);
     });
@@ -154,6 +193,13 @@ export class CrudifyComponent implements OnInit {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['warning-snackbar'],
+    });
+  }
+
+  showSuccess(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['success-snackbar'],
     });
   }
 }

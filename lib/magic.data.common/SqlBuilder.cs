@@ -52,11 +52,9 @@ namespace magic.data.common
             if (exclude != null)
             {
                 var valueNodes = Root.Children.First((x) => x.Name == "values");
-                foreach (var idx in exclude.Children)
+                foreach (var idx in valueNodes.Children.Where(x => exclude.Children.Any(x2 => x2.Name == x.Name)).ToList())
                 {
-                    var idxName = idx.Name.ToLowerInvariant();
-                    if (valueNodes.Children.Any((x) => x.Name.ToLowerInvariant() == idxName))
-                        throw new ApplicationException($"Illegal column [{idx.Name}] found in invocation to '{GetType().FullName}'");
+                    idx.UnTie();
                 }
             }
         }

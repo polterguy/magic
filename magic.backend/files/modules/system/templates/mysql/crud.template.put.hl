@@ -6,24 +6,27 @@
 
 
 /*
- * Parametrizing [magic.db.mysql.update], first its [ids].
+ * Retrieving connection string according to database constant.
  */
-unwrap:x:./*/signal/*/ids/*
+signal:magic.db.mysql.connection
+   database:{database}
 
 
 /*
  * Adding the rest of our parameters into [values].
  */
-add:x:./*/signal/*/values
+add:x:./*/signal/[1,1]/*/values
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mysql.update]
  */
+unwrap:x:./*/signal/[1,1]/*/ids/*
+unwrap:x:./*/signal/[1,1]/*/connection
 signal:magic.db.mysql.update
-   connection
-   table
+   connection:x:./@signal
+   table:{table}
    values
    ids
    exclude

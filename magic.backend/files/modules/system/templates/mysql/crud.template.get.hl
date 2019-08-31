@@ -2,7 +2,11 @@
 /*
  * Template for HTTP GET CRUD requests.
  */
-.arguments:{args}
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
 
 
 /*
@@ -15,15 +19,13 @@ signal:magic.db.mysql.connection
 /*
  * Parametrizing [magic.db.mysql.read].
  */
-add:x:./*/signal/*/args
+add:x:./*/signal/[1,1]/*/args
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mysql.read], making sure we unwrap the [id].
  */
-add:x:+/+/*/ids
-   get-nodes:x:/@.arguments/*
 unwrap:x:+/*/connection
 signal:magic.db.mysql.read
    connection:x:./@signal

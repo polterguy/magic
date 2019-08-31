@@ -6,18 +6,26 @@
 
 
 /*
+ * Retrieving connection string according to database constant.
+ */
+signal:magic.db.mysql.connection
+   database:{database}
+
+
+/*
  * Parametrizing [magic.db.mysql.create].
  */
-add:x:./*/signal/*/values
+add:x:./*/signal/[1,1]/*/values
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mysql.create]
  */
+unwrap:x:+/*/connection
 signal:magic.db.mysql.create
-   connection
-   table
+   connection:x:./@signal
+   table:{table}
    values
    exclude
 
