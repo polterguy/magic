@@ -111,6 +111,15 @@ namespace magic.node
                             });
                         }
 
+                        if (value.StartsWith("[", StringComparison.InvariantCulture) &&
+                            value.EndsWith("]", StringComparison.InvariantCulture))
+                        {
+                            var ints = value.Substring(1, value.Length - 2).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                            var start = int.Parse(ints[0]);
+                            var count = int.Parse(ints[1]);
+                            return (input) => input.Skip(start).Take(count);
+                        }
+
                         if (value.StartsWith("@", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);

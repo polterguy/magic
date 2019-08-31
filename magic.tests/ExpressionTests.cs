@@ -69,6 +69,20 @@ namespace magic.tests
         }
 
         [Fact]
+        public void SubscriptIterator()
+        {
+            var x = new Expression("foo/*/[1,1]");
+            var hl = @"foo
+   bar:error
+   bar:success";
+            var lambda = new Parser(hl).Lambda();
+            var result = x.Evaluate(lambda.Children).ToList();
+            Assert.Single(result);
+            Assert.Equal("bar", result.First().Name);
+            Assert.Equal("success", result.First().Value);
+        }
+
+        [Fact]
         public void NextIterator()
         {
             var x = new Expression("foo/*/bar1/+");
