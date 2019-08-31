@@ -52,7 +52,9 @@ namespace magic.data.common
             if (exclude != null)
             {
                 var valueNodes = Root.Children.First((x) => x.Name == "values");
-                foreach (var idx in valueNodes.Children.Where(x => exclude.Children.Any(x2 => x2.Name == x.Name)).ToList())
+                foreach (var idx in valueNodes.Children
+                    .Where(x => exclude.Children
+                        .Any(x2 => x2.Name.ToLowerInvariant() == x.Name.ToLowerInvariant())).ToList())
                 {
                     idx.UnTie();
                 }

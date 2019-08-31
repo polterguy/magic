@@ -18,7 +18,7 @@ namespace magic.tests.lambda
    generate:bool:true
    table:SomeTable");
             Assert.Empty(lambda.Children.First().Children);
-            Assert.Equal("select * from `SomeTable`", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` limit 25", lambda.Children.First().Value);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace magic.tests.lambda
          jo-dude:int:5
          like
             foo-bar:howdy%");
-            Assert.Equal("select * from `SomeTable` where (`jo-dude` = @0 and `foo-bar` like @1)", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` where (`jo-dude` = @0 and `foo-bar` like @1) limit 25", lambda.Children.First().Value);
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
             Assert.Equal(5, lambda.Children.First().Children.First().Value);
@@ -65,7 +65,7 @@ namespace magic.tests.lambda
       or
          jo-dude:int:5
          foo:bar");
-            Assert.Equal("select * from `SomeTable` where (`jo-dude` = @0 or `foo` = @1)", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` where (`jo-dude` = @0 or `foo` = @1) limit 25", lambda.Children.First().Value);
             Assert.Equal(2, lambda.Children.First().Children.Count());
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
             Assert.Equal(5, lambda.Children.First().Children.First().Value);
@@ -87,7 +87,7 @@ namespace magic.tests.lambda
          or
             jo:decimal:5
             ho:bar");
-            Assert.Equal("select * from `SomeTable` where ((`jo-dude` = @0 or `foo` = @1) and (`jo` = @2 or `ho` = @3))", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` where ((`jo-dude` = @0 or `foo` = @1) and (`jo` = @2 or `ho` = @3)) limit 25", lambda.Children.First().Value);
             Assert.Equal(4, lambda.Children.First().Children.Count());
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
             Assert.Equal(5, lambda.Children.First().Children.First().Value);
@@ -106,7 +106,7 @@ namespace magic.tests.lambda
    generate:bool:true
    table:SomeTable
    order:foo");
-            Assert.Equal("select * from `SomeTable` order by `foo`", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` order by `foo` limit 25", lambda.Children.First().Value);
             Assert.Empty(lambda.Children.First().Children);
         }
 
@@ -118,7 +118,7 @@ namespace magic.tests.lambda
    table:SomeTable
    order:foo
    direction:desc");
-            Assert.Equal("select * from `SomeTable` order by `foo` desc", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` order by `foo` desc limit 25", lambda.Children.First().Value);
             Assert.Empty(lambda.Children.First().Children);
         }
 
@@ -130,7 +130,7 @@ namespace magic.tests.lambda
    table:SomeTable
    order:foo
    direction:asc");
-            Assert.Equal("select * from `SomeTable` order by `foo` asc", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` order by `foo` asc limit 25", lambda.Children.First().Value);
             Assert.Empty(lambda.Children.First().Children);
         }
 
@@ -144,7 +144,7 @@ namespace magic.tests.lambda
       and
          >
             id:int:3");
-            Assert.Equal("select * from `SomeTable` where (`id` > @0)", lambda.Children.First().Value);
+            Assert.Equal("select * from `SomeTable` where (`id` > @0) limit 25", lambda.Children.First().Value);
             Assert.Single(lambda.Children.First().Children);
             Assert.Equal("@0", lambda.Children.First().Children.First().Name);
             Assert.Equal(3, lambda.Children.First().Children.First().Value);
@@ -161,7 +161,7 @@ namespace magic.tests.lambda
       Howdy:World
    offset:100");
             Assert.Empty(lambda.Children.First().Children);
-            Assert.Equal("select `Foo`,`Howdy` from `SomeTable` offset 100", lambda.Children.First().Value);
+            Assert.Equal("select `Foo`,`Howdy` from `SomeTable` limit 25 offset 100", lambda.Children.First().Value);
         }
 
         [Fact]
@@ -232,9 +232,7 @@ namespace magic.tests.lambda
         [Fact]
         public void InsertSQL_03_Throws()
         {
-            Assert.Throws<ApplicationException>(() =>
-            {
-                Common.Evaluate(@"mysql.create
+            var lambda = Common.Evaluate(@"mysql.create
    generate:bool:true
    table:SomeTable
    exclude
@@ -243,7 +241,7 @@ namespace magic.tests.lambda
       foo1:bar1
       foo2:int:5
       foo3:howdy");
-            });
+            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, @1); select last_insert_id();", lambda.Children.First().Value);
         }
 
         [Fact]

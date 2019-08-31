@@ -89,10 +89,10 @@ export class CrudifyComponent implements OnInit {
   }
 
   generate() {
-    this.createHttpGetEndpoint((res: any) => {
-      this.createHttpPutEndpoint((res: any) => {
-        this.createHttpPostEndpoint((res: any) => {
-          this.createHttpDeleteEndpoint((res: any) => {
+    this.createHttpEndpoint('get', (res: any) => {
+      this.createHttpEndpoint('put', (res: any) => {
+        this.createHttpEndpoint('post', (res: any) => {
+          this.createHttpEndpoint('delete', (res: any) => {
             this.showSuccess('All endpoints created successfully');
           });
         });
@@ -126,55 +126,19 @@ export class CrudifyComponent implements OnInit {
     return ids;
   }
 
-  createHttpGetEndpoint(callback: (res: any) => void) {
+  createHttpEndpoint(verb: string, callback: (res: any) => void) {
     const primary = this.getAllPrimaryKeyColumns();
     const columns = this.getAllNonPrimaryKeyColumns();
-    this.createCrudTemplate(
-      'get', {
-        columns,
-        primary,
-      },
-      callback);
-  }
-
-  createHttpPostEndpoint(callback: (res: any) => void) {
-    const primary = this.getAllPrimaryKeyColumns();
-    const columns = this.getAllNonPrimaryKeyColumns();
-    this.createCrudTemplate(
-      'post', {
-        columns,
-        primary,
-      }, callback);
-  }
-
-  createHttpPutEndpoint(callback: (res: any) => void) {
-    const primary = this.getAllPrimaryKeyColumns();
-    const columns = this.getAllNonPrimaryKeyColumns();
-    this.createCrudTemplate(
-      'put', {
-        columns,
-        primary,
-      }, callback);
-  }
-
-  createHttpDeleteEndpoint(callback: (res: any) => void) {
-    const primary = this.getAllPrimaryKeyColumns(false);
-    const columns = this.getAllNonPrimaryKeyColumns();
-    this.createCrudTemplate(
-      'delete', {
-        columns,
-        primary,
-      }, callback);
-  }
-
-  createCrudTemplate(verb: string, args: any, callback: (res: any) => void) {
     const databaseType = 'mysql';
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
       template: `/modules/system/templates/${databaseType}/crud.template.${verb}.hl`,
       verb: verb,
-      args,
+      args: {
+        primary,
+        columns,
+      },
     }).subscribe((res) => {
       callback(res);
     }, (error) => {

@@ -47,6 +47,11 @@ namespace magic.lambda.mssql.crud.builders
                 var limitValue = limitNodes.First().GetEx<long>(Signaler);
                 builder.Append(" fetch next " + limitValue + " rows only");
             }
+            else
+            {
+                // Defaulting to 25 records, unless [limit] was explicitly given.
+                builder.Append(" fetch next 25 rows only");
+            }
         }
     }
 }

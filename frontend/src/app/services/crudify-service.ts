@@ -30,6 +30,6 @@ export class CrudifyService {
 
   public generateCrudEndpoints(model: CrudifyModel) {
     return this.httpClient.post<CrudifyResult>(
-      environment.apiURL + 'hl/system/db/generate', model);
+      environment.apiURL + 'hl/system/db/crudify', model);
   }
 }

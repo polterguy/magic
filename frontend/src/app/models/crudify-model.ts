@@ -5,7 +5,7 @@ export class CrudifyModel {
     table: string;
     template: string;
     verb: string;
-    args: any[];
+    args: any;
 }
 
 export class CrudifyResult {
