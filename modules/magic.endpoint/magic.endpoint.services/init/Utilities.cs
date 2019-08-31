@@ -15,10 +15,13 @@ namespace magic.endpoint.services.init
                 switch (idx)
                 {
                     case '-':
+                    case '_':
                     case '/':
                         break;
                     default:
-                        if ((idx < 'a' || idx > 'z') && (idx < '0' || idx > '9'))
+                        if ((idx < 'a' || idx > 'z') &&
+                            (idx < 'A' || idx > 'Z') &&
+                            (idx < '0' || idx > '9'))
                             return false;
                         break;
                 }
