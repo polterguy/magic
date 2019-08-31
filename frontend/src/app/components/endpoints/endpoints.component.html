@@ -1,6 +1,6 @@
 
 <div class="endpoint-wrapper">
-  <mat-form-field *ngIf="!isJsonArguments" class="fill-width">
+  <mat-form-field class="fill-width">
     <input 
       matInput 
       placeholder="Filter your endpoints"
@@ -9,6 +9,12 @@
   </mat-form-field>
 
   <div class="mat-elevation-z4 endpoints">
+
+    <label class="absolutize">
+      <mat-checkbox
+      [(ngModel)]="showSystemEndpoints">Show system endpoints</mat-checkbox>
+    </label>
+  
     <table mat-table [dataSource]="getFilteredEndpoints()">
 
       <ng-container matColumnDef="url">

@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
@@ -65,6 +66,7 @@ export function tokenGetter() {
     MatSnackBarModule,
     MatDialogModule,
     MatSelectModule,
+    MatCheckboxModule,
     CodemirrorModule,
   ],
   exports: [
