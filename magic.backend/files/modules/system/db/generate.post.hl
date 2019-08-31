@@ -23,9 +23,11 @@ auth.verify-ticket:root
 for-each:x:@.arguments/*/templateArgs/*
    switch:x:@.dp/#
 
+
       /*
        * Everything transformed into integers.
        */
+      case:int(11)
       case:int(10) unsigned
          set-value:x:@.dp/#
             .:int
