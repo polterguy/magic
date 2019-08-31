@@ -5,6 +5,12 @@
     .endpoints {
         margin-top: 2rem;
         padding: 5rem;
+        position: relative;
+        .absolutize {
+            position: absolute;
+            top: 3rem;
+            left: 3rem;
+        }
         table {
             width: 100%;
             tr {

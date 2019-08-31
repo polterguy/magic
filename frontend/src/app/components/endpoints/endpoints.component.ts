@@ -11,13 +11,14 @@ import { EndpointService } from '../../services/endpoint-service';
 })
 export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'verb'];
-  private endpoints: Endpoint[];
+  private endpoints: Endpoint[] = [];
   private filter: string = '';
   private selected: Endpoint;
   private arguments: string;
   private isJsonArguments: boolean;
   private endpointResult: string;
   private currentUrl: string;
+  private showSystemEndpoints = false;
 
   constructor(
     private service: EndpointService,
@@ -40,10 +41,19 @@ export class EndpointsComponent implements OnInit {
 
   getFilteredEndpoints() {
     if (this.filter == '') {
-      return this.endpoints;
+      return this.getFilteredSystemEndpoints();
     } 
-    return this.endpoints.filter((x) => {
+    return this.getFilteredSystemEndpoints().filter((x) => {
       return x.verb == this.filter || x.url.indexOf(this.filter) > -1;
+    });
+  }
+
+  getFilteredSystemEndpoints() {
+    if (this.showSystemEndpoints === true) {
+      return this.endpoints;
+    }
+    return this.endpoints.filter((x) => {
+      return x.url.indexOf('system/') !== 0;
     });
   }
 
