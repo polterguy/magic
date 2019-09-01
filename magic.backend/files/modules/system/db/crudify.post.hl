@@ -22,41 +22,97 @@ auth.verify-ticket:root
  * Making sure we transform template arguments to something we can understand.
  */
 for-each:x:@.arguments/*/args/**
-   switch:x:@.dp/#
 
 
-      /*
-       * Everything transformed into integer long values.
-       */
-      case:int(11)
-      case:int(10) unsigned
-         set-value:x:@.dp/#
-            .:long
+   /*
+    * Making sure this is a valid noe (that it has values).
+    */
+   if
+      not
+         eq
+            get-value:x:@.dp/#
+            .
+      .lambda
 
 
-      /*
-       * Default implementation.
-       */
-      default
-         if
-            eq
-               get-name:x:@.dp/#
-               .:
-            .lambda
+         /*
+          * Making sure we get rid of resolution.
+          */
+         regex-replace:x:@.dp/#
+            what:\([0-9,]+\)
+            with:
+         switch:x:@regex-replace
 
-               set-name:x:@.dp/#
-                  get-value:x:@.dp/#
+
+            /*
+             * Everything transformed into date values.
+             */
+            case:date
+            case:datetime
                set-value:x:@.dp/#
+                  .:date
 
-         else-if
-            not
-               eq
-                  get-value:x:@.dp/#
-                  .
-            .lambda
 
+            /*
+             * Everything transformed into decimal values.
+             */
+            case:float
+            case:double
+            case:double precision
+            case:decimal
+            case:dec
+               set-value:x:@.dp/#
+                  .:decimal
+
+
+            /*
+             * Everything transformed into integer long values.
+             */
+            case:bit
+            case:tinyint
+            case:bool
+            case:boolean
+            case:smallint
+            case:mediumint
+            case:integer
+            case:bigint
+            case:int
+            case:int unsigned
+               set-value:x:@.dp/#
+                  .:long
+
+
+            /*
+             * Everything transformed into string values.
+             */
+            case:char
+            case:varchar
+            case:binary
+            case:varbinary
+            case:tinyblob
+            case:tinytext
+            case:text
+            case:blob
+            case:mediumtext
+            case:mediumblob
+            case:longtext
+            case:longblob
+            case:enum
+            case:set
                set-value:x:@.dp/#
                   .:string
+
+
+            /*
+             * These are unsupported column types.
+             */
+            default
+               .ex
+               set-value:x:@.ex
+                  concat
+                     get-value:x:@.dp/#
+                     .:" is currently not supported by the crudifier"
+               throw:x:@.ex
 
 
 /*

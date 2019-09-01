@@ -14,7 +14,7 @@
       <mat-checkbox
       [(ngModel)]="showSystemEndpoints">Show system endpoints</mat-checkbox>
     </label>
-  
+
     <table mat-table [dataSource]="getFilteredEndpoints()">
 
       <ng-container matColumnDef="url">

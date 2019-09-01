@@ -1,0 +1,27 @@
+
+.sql {
+    margin:5rem 4rem .5rem 4rem;
+}
+
+.right-aligned {
+    margin:0 4rem .5rem 4rem;
+    text-align: right;
+}
+
+.result {
+    margin:.5rem 4rem .5rem 4rem;
+    padding: 3rem;
+    table.fill-width {
+        width: 100%;
+        tr {
+            th {
+                text-align: left;
+            }
+        }
+    }
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}

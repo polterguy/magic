@@ -9,3 +9,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .CodeMirror {
     height: auto;
 }
+
+.no-codemirror-auto-height .CodeMirror {
+    height: 350px;
+}

@@ -7,6 +7,7 @@ import { environment } from './environments/environment';
 
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
+import 'codemirror/mode/sql/sql';
 
 if (environment.production) {
   enableProdMode();

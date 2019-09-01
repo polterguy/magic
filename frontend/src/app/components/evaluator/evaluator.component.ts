@@ -19,8 +19,7 @@ export class EvaluatorComponent implements OnInit {
     private service: EvaluatorService,
     private snackBar: MatSnackBar) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   evaluate() {
     this.service.evaluate(this.hyperlambda).subscribe((res) => {
