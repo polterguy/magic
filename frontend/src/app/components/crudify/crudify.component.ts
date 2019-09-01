@@ -93,7 +93,7 @@ export class CrudifyComponent implements OnInit {
       this.createHttpEndpoint('put', (res: any) => {
         this.createHttpEndpoint('post', (res: any) => {
           this.createHttpEndpoint('delete', (res: any) => {
-            this.showSuccess('All endpoints created successfully');
+            this.showSuccess('4 endpoints created successfully');
           });
         });
       });
