@@ -51,6 +51,9 @@ export class EndpointsComponent implements OnInit {
   }
 
   concatenateAuth(auth: string[]) {
+    if (auth === null || auth === undefined) {
+      return '';
+    }
     return auth.join(',');
   }
 
