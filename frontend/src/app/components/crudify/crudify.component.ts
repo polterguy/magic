@@ -35,7 +35,7 @@ export class CrudifyComponent implements OnInit {
 
   databaseChanged(e: MatSelectChange) {
     this.selectedDatabase = e.value;
-    this.selectedTable = null;
+    this.tables = null;
     this.columns = null;
     this.endpoints = null;
     this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
