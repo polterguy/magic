@@ -6,6 +6,7 @@ export class CrudifyModel {
     template: string;
     verb: string;
     args: any;
+    auth: string;
 }
 
 export class CrudifyResult {
