@@ -29,6 +29,8 @@ import { FilesComponent } from './components/files/files.component';
 import { NewFileDialog } from './components/files/files.component';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
+import { SqlComponent } from './components/sql/sql.component';
+import { DynamicPipe } from './pipes/dynamic.pipe';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -43,6 +45,8 @@ export function tokenGetter() {
     FilesComponent,
     NewFileDialog,
     CrudifyComponent,
+    SqlComponent,
+    DynamicPipe,
   ],
   imports: [
     BrowserModule,
