@@ -38,12 +38,17 @@
           <th mat-header-cell *matHeaderCellDef>Key</th>
           <td mat-cell *matCellDef="let el">{{el.Key}}</td>
         </ng-container>
-    
+
         <ng-container matColumnDef="default">
           <th mat-header-cell *matHeaderCellDef>Default</th>
           <td mat-cell *matCellDef="let el">{{el.Default}}</td>
         </ng-container>
 
+        <ng-container matColumnDef="extra">
+            <th mat-header-cell *matHeaderCellDef>Extra</th>
+            <td mat-cell *matCellDef="let el">{{el.Extra}}</td>
+          </ng-container>
+  
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 

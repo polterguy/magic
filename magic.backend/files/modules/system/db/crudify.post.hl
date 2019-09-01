@@ -103,8 +103,6 @@ switch:x:@.arguments/*/verb
 
    case:post
       add:x:@apply-file/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/primary/*
-      add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#

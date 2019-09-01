@@ -149,7 +149,6 @@ export class EndpointsComponent implements OnInit {
   showHttpSuccess(msg: string) {
     this.snackBar.open(msg, null, {
       duration: 2000,
-      panelClass: ['success-snackbar'],
     });
   }
 }
