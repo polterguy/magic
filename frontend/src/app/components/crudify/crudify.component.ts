@@ -10,7 +10,7 @@ import { FileService } from 'src/app/services/file-service';
   styleUrls: ['./crudify.component.scss']
 })
 export class CrudifyComponent implements OnInit {
-  private displayedColumns: string[] = ['field', 'type', 'null', 'key', 'default'];
+  private displayedColumns: string[] = ['field', 'type', 'null', 'key', 'default', 'extra'];
   private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action', 'auth'];
   private databases: any[] = null;
   private selectedDatabase: string = null;
@@ -169,7 +169,6 @@ export class CrudifyComponent implements OnInit {
   showSuccess(error: string) {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
-      panelClass: ['success-snackbar'],
     });
   }
 }
