@@ -18,6 +18,18 @@ signal:magic.db.mysql.connection
    database:sys
 unwrap:x:+/*
 signal:magic.db.mysql.databases
-   connection:x:./-/-
+   connection:x:./@signal
 
-return-nodes:x:-/*
+
+/*
+ * Doing the [to-lowers] thing.
+ */
+for-each:x:@signal/*/*
+   set-value:x:@.dp/#
+      to-lower:x:@.dp/#
+
+
+/*
+ * Returning database to caller.
+ */
+return-nodes:x:@signal/*

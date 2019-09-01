@@ -103,7 +103,7 @@ export class CrudifyComponent implements OnInit {
   getAllPrimaryKeyColumns(namesOnly: boolean = false): any[] {
     const ids = [];
     for (const iterator of this.columns) {
-      if (iterator.Key === 'PRI') {
+      if (iterator.Key === 'pri') {
         if (namesOnly) {
           ids.push(iterator.Field);
         } else {
@@ -118,7 +118,7 @@ export class CrudifyComponent implements OnInit {
   getAllNonPrimaryKeyColumns(): any[] {
     const ids = [];
     for (const iterator of this.columns) {
-      if (iterator.Key !== 'PRI') {
+      if (iterator.Key !== 'pri') {
         const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
         ids.push(JSON.parse(str));
       }

@@ -23,4 +23,16 @@ signal:magic.db.mysql.tables
    connection:x:./-/-
    database:x:@.arguments/*/database
 
-return-nodes:x:-/*
+
+/*
+ * Doing the [to-lowers] thing.
+ */
+for-each:x:@signal/*/*
+   set-value:x:@.dp/#
+      to-lower:x:@.dp/#
+
+
+/*
+ * Returning database to caller.
+ */
+return-nodes:x:@signal/*
