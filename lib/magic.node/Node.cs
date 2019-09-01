@@ -166,16 +166,34 @@ namespace magic.node
 
         public void Add(Node value)
         {
-            if (value.Parent != null && value.Parent != this)
+            if (value.Parent != null)
                 value.Parent.Remove(value); // Removing from its original parent.
 
             value.Parent = this;
             _children.Add(value);
         }
 
+        public void InsertAfter(Node value)
+        {
+            if (Parent == null)
+                throw new ApplicationException("Cannot insert after since current node is a root node");
+
+            var indexOfThis = Parent._children.IndexOf(this);
+            Parent.Insert(indexOfThis + 1, value);
+        }
+
+        public void InsertBefore(Node value)
+        {
+            if (Parent == null)
+                throw new ApplicationException("Cannot insert before since current node is a root node");
+
+            var indexOfThis = Parent._children.IndexOf(this);
+            Parent.Insert(indexOfThis, value);
+        }
+
         public void Insert(int index, Node value)
         {
-            if (value.Parent != null && value.Parent != this)
+            if (value.Parent != null)
                 value.Parent.Remove(value); // Removing from its original parent.
 
             value.Parent = this;

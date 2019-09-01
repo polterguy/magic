@@ -126,10 +126,15 @@ export class CrudifyComponent implements OnInit {
     return ids;
   }
 
+  getVerbAuthorization(verb: string) {
+    return this.endpoints.filter((x) => x.verb == verb)[0].auth;
+  }
+
   createHttpEndpoint(verb: string, callback: (res: any) => void) {
     const primary = this.getAllPrimaryKeyColumns();
     const columns = this.getAllNonPrimaryKeyColumns();
     const databaseType = 'mysql';
+    const auth = this.getVerbAuthorization(verb);
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
@@ -139,6 +144,7 @@ export class CrudifyComponent implements OnInit {
         primary,
         columns,
       },
+      auth,
     }).subscribe((res) => {
       callback(res);
     }, (error) => {

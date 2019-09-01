@@ -20,8 +20,18 @@ namespace magic.lambda.auth.init
 
             var user = context.User;
             if (user == null ||
-                !user.Identity.IsAuthenticated ||
-                !user.IsInRole(role))
+                !user.Identity.IsAuthenticated)
+                throw new ApplicationException("Access denied");
+            var inRole = false;
+            foreach (var idxRole in role.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (user.IsInRole(idxRole))
+                {
+                    inRole = true;
+                    break;
+                }
+            }
+            if (!inRole)
                 throw new ApplicationException("Access denied");
         }
     }

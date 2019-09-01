@@ -9,6 +9,7 @@
    template:string
    verb:string
    args
+   auth:string
 
 
 /*
@@ -67,6 +68,16 @@ apply-file:x:@.arguments/*/template
    database:x:@.arguments/*/database
    table:x:@.arguments/*/table
    args
+
+
+/*
+ * Then ensuring we turn on authorization to our endpoints according
+ * to caller's specifications.
+ */
+unwrap:x:+/*/*
+insert-after:x:@apply-file/*/.arguments
+   .
+      auth.verify-ticket:x:@.arguments/*/auth
 
 
 /*
