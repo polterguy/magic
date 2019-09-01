@@ -3,6 +3,7 @@
  * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
  */
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
@@ -67,13 +68,9 @@ namespace magic.json
         private JToken HandleArray(Node idx)
         {
             if (idx.Children.Any())
-            {
                 return Handle(idx);
-            }
-            else
-            {
-                return new JValue(idx.Value);
-            }
+
+            return new JValue(idx.Value);
         }
 
         private JProperty HandleProperty(Node idx)

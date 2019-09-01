@@ -15,10 +15,13 @@
             width: 100%;
             tr {
                 td:nth-child(1), th:nth-child(1) {
-                    width: 100%;
+                    width: 80%;
                 }
                 td:nth-child(2), th:nth-child(2) {
-                    width: 20px;
+                    width: 20%;
+                }
+                td:nth-child(3), th:nth-child(3) {
+                    width: 40px;
                 }
             }
             tr.mat-row:hover {

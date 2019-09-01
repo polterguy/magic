@@ -1,4 +1,5 @@
 export class Endpoint {
-    url: string;
+    path: string;
     verb: string;
+    auth:string[];
 }

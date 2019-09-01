@@ -10,7 +10,7 @@ import { EndpointService } from '../../services/endpoint-service';
   styleUrls: ['./endpoints.component.scss']
 })
 export class EndpointsComponent implements OnInit {
-  private displayedColumns: string[] = ['url', 'verb'];
+  private displayedColumns: string[] = ['url', 'auth', 'verb'];
   private endpoints: Endpoint[] = [];
   private filter: string = '';
   private selected: Endpoint;
@@ -26,14 +26,7 @@ export class EndpointsComponent implements OnInit {
 
   ngOnInit() {
     this.service.getAllEndpoints().subscribe((res) => {
-      this.endpoints = [];
-      for (const idx of res) {
-        const splits = idx.split('.');
-        this.endpoints.push({
-          url: splits[0],
-          verb: splits[1]
-        });
-      }
+      this.endpoints = res;
     }, (err) => {
       this.showHttpError(err);
     });
@@ -44,7 +37,7 @@ export class EndpointsComponent implements OnInit {
       return this.getFilteredSystemEndpoints();
     } 
     return this.getFilteredSystemEndpoints().filter((x) => {
-      return x.verb == this.filter || x.url.indexOf(this.filter) > -1;
+      return x.verb == this.filter || x.path.indexOf(this.filter) > -1;
     });
   }
 
@@ -53,15 +46,19 @@ export class EndpointsComponent implements OnInit {
       return this.endpoints;
     }
     return this.endpoints.filter((x) => {
-      return x.url.indexOf('system/') !== 0;
+      return x.path.indexOf('system/') !== 0;
     });
+  }
+
+  concatenateAuth(auth: string[]) {
+    return auth.join(',');
   }
 
   selectEndpoint(el: Endpoint) {
     this.endpointResult = null;
     this.selected = el;
 
-    this.service.getEndpointMeta(el.url, el.verb).subscribe((res) => {
+    this.service.getEndpointMeta(el.path, el.verb).subscribe((res) => {
 
       switch (this.selected.verb) {
         case 'post':
@@ -92,9 +89,8 @@ export class EndpointsComponent implements OnInit {
 
   evaluate() {
 
-    this.currentUrl = this.selected.url;
+    this.currentUrl = this.selected.path;
     if (!this.isJsonArguments && this.arguments !== '') {
-      // URL has query arguments.
       this.currentUrl += '?' + this.arguments;
     }
 
