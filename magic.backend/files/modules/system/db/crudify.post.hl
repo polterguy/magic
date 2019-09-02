@@ -41,7 +41,10 @@ for-each:x:@.arguments/*/args/**
          regex-replace:x:@.dp/#
             what:\([0-9,]+\)
             with:
-         switch:x:@regex-replace
+         replace:x:@regex-replace
+            what:" unsigned"
+            with:
+         switch:x:@replace
 
 
             /*
@@ -110,7 +113,7 @@ for-each:x:@.arguments/*/args/**
                .ex
                set-value:x:@.ex
                   concat
-                     get-value:x:@.dp/#
+                     get-value:x:@replace
                      .:" is currently not supported by the crudifier"
                throw:x:@.ex
 
