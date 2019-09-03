@@ -117,5 +117,19 @@ namespace magic.io.controller
                 User?.Identity.Name,
                 User?.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToArray());
         }
+
+        /// <summary>
+        /// Returns true if the specified file exists.
+        /// </summary>
+        /// <param name="path">File to check for</param>
+        [HttpGet]
+        [Route("file-exists")]
+        public bool FileExists([Required] string path)
+        {
+            return _service.FileExists(
+                path,
+                User?.Identity.Name,
+                User?.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToArray());
+        }
     }
 }

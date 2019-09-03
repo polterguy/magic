@@ -20,5 +20,7 @@ namespace magic.io.contracts
         void Move(string source, string destination, string username, string[] roles);
 
         bool FolderExists(string path, string username, string[] roles);
+
+        bool FileExists(string path, string username, string[] roles);
     }
 }

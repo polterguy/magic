@@ -133,7 +133,32 @@ namespace magic.io.services
                 throw new ArgumentNullException(nameof(path));
 
             path = _utilities.GetFullPath(path, true);
+
+            if (!_utilities.HasAccess(
+                path,
+                username,
+                roles,
+                AccessType.ReadFolder))
+                throw new SecurityException("Access denied");
+
             return Directory.Exists(path);
+        }
+
+        public bool FileExists(string path, string username, string[] roles)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+
+            path = _utilities.GetFullPath(path, false);
+
+            if (!_utilities.HasAccess(
+                path,
+                username,
+                roles,
+                AccessType.ReadFile))
+                throw new SecurityException("Access denied");
+
+            return File.Exists(path);
         }
 
         #endregion

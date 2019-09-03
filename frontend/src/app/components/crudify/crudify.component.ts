@@ -129,6 +129,23 @@ arg4:decimal`;
 
   verbChanged(e: MatSelectChange) {
     this.selectedVerb = e.value;
+    this.checkIfCustomSqlEndpointExists();
+  }
+
+  endpointNameChanged() {
+    this.checkIfCustomSqlEndpointExists();
+  }
+
+  checkIfCustomSqlEndpointExists() {
+    if (this.selectedVerb !== '' && this.endpointName !== '') {
+      this.fileService.fileExists(`/modules/${this.selectedDatabase}/${this.endpointName}.${this.selectedVerb}.hl`).subscribe((res) => {
+        if (res === true) {
+          this.showWarning('Endpoint already exists');
+        }
+      }, (error: any) => {
+        this.showError(error.error.message);
+      });
+    }
   }
 
   generateSqlEndpoint() {
