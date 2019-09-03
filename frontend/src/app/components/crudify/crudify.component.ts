@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CrudifyService } from 'src/app/services/crudify-service';
 import { MatSelectChange, MatSnackBar } from '@angular/material';
 import { FileService } from 'src/app/services/file-service';
+import { CrudifyResult } from 'src/app/models/endpoint-result-model';
 
 @Component({
   selector: 'app-crudify',
@@ -19,6 +20,11 @@ export class CrudifyComponent implements OnInit {
   private columns: any[] = null;
   private endpoints: any[] = null;
   private folderExists: boolean = false;
+  private customSql: string;
+  private verbs: string[] = ['get', 'post', 'put', 'delete'];
+  private endpointName = '';
+  private arguments: string;
+  private selectedVerb = '';
 
   constructor(
     private crudService: CrudifyService,
@@ -33,6 +39,29 @@ export class CrudifyComponent implements OnInit {
     });
   }
 
+  getCodeMirrorOptions() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'text/x-mysql',
+    };
+  }
+
+  getCodeMirrorOptionsHyperlambda() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'hyperlambda',
+      tabSize: 3,
+      indentUnit: 3,
+      indentAuto: true,
+      extraKeys: {
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore'
+      }
+    };
+  }
+
   databaseChanged(e: MatSelectChange) {
     this.selectedDatabase = e.value;
     this.tables = null;
@@ -40,6 +69,7 @@ export class CrudifyComponent implements OnInit {
     this.endpoints = null;
     this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
       const tables = [];
+      tables.push({'table': 'Custom SQL'});
       for (const iterator of res) {
         tables.push({
           table: iterator[Object.keys(iterator)[0]],
@@ -52,21 +82,30 @@ export class CrudifyComponent implements OnInit {
   }
 
   tableChanged(e: MatSelectChange) {
-    this.selectedTable = e.value;
-    this.crudService.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
-      this.columns = res;
-      this.createEndpoints();
-      this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res) => {
-        if (res === true) {
-          this.folderExists = true;
-          this.showWarning('Warning, folder already exists!');
-        } else {
-          this.folderExists = false;
-        }
+    if (e.value === 'Custom SQL') {
+      this.selectedTable = e.value;
+      this.customSql = 'select * from something';
+      this.arguments = `arg1:int
+arg2:string
+arg3:date
+arg4:decimal`;
+    } else {
+      this.selectedTable = e.value;
+      this.crudService.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
+        this.columns = res;
+        this.createEndpoints();
+        this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res) => {
+          if (res === true) {
+            this.folderExists = true;
+            this.showWarning('Warning, folder already exists!');
+          } else {
+            this.folderExists = false;
+          }
+        });
+      }, (err) => {
+        this.showError(err.error.message);
       });
-    }, (err) => {
-      this.showError(err.error.message);
-    });
+    }
   }
 
   createEndpoints() {
@@ -86,6 +125,36 @@ export class CrudifyComponent implements OnInit {
       });
     }
     this.endpoints = endpoints;
+  }
+
+  verbChanged(e: MatSelectChange) {
+    this.selectedVerb = e.value;
+  }
+
+  generateSqlEndpoint() {
+    if (this.customSql === '') {
+      this.showError('No SQL provided');
+      return;
+    }
+    if (this.endpointName === '') {
+      this.showError('No endpoint name provided');
+      return;
+    }
+    if (this.selectedVerb === '') {
+      this.showError('No HTTP verb provided');
+      return;
+    }
+    this.crudService.createCustomSqlEndpoint({
+      database: this.selectedDatabase,
+      arguments: this.arguments,
+      verb: this.selectedVerb,
+      endpointName: this.endpointName,
+      sql: this.customSql,
+    }).subscribe((res: CrudifyResult) => {
+      console.log(res);
+    }, (error) => {
+      this.showError(error.error.message);
+    });
   }
 
   generate() {

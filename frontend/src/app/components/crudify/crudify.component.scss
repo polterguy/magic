@@ -22,6 +22,16 @@
     }
 }
 
+.custom-sql-card {
+    margin-top: 2rem;
+    .code-mirror-wrapper {
+        margin: 3rem;
+    }
+    .air {
+        margin-bottom: 2rem;
+    }
+}
+
 .endpoints-card {
     margin-top: 4rem;
     .wrapper {

@@ -2,7 +2,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { CrudifyModel, CrudifyResult } from '../models/crudify-model';
+import { CrudifyModel } from '../models/crudify-model';
+import { CustomSQLModel } from '../models/custom-sql-model';
+import { CrudifyResult } from '../models/endpoint-result-model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +33,10 @@ export class CrudifyService {
   public generateCrudEndpoints(model: CrudifyModel) {
     return this.httpClient.post<CrudifyResult>(
       environment.apiURL + 'hl/system/db/crudify', model);
+  }
+
+  public createCustomSqlEndpoint(model: CustomSQLModel) {
+    return this.httpClient.post<CrudifyResult>(
+      environment.apiURL + 'hl/system/db/custom-sql', model);
   }
 }

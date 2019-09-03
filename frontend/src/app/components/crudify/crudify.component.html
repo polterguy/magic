@@ -14,7 +14,50 @@
   </mat-form-field>
 
   <mat-card 
-    *ngIf="columns !== null"
+    *ngIf="selectedTable === 'Custom SQL'"
+    class="custom-sql-card no-codemirror-auto-height">
+
+    <div class="code-mirror-wrapper">
+
+      <mat-form-field>
+        <mat-select placeholder="Select verb" (selectionChange)="verbChanged($event)">
+          <mat-option *ngFor="let cur of verbs" [value]="cur">{{cur}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field style="margin-left: 2rem;">
+        <input 
+          matInput 
+          placeholder="Endpoint name"
+          type="text" 
+          autocomplete="off"
+          [(ngModel)]="endpointName">
+      </mat-form-field>
+
+      <div class="air">
+        <label>Arguments</label>
+        <ngx-codemirror 
+          [(ngModel)]="arguments" 
+          [options]="getCodeMirrorOptionsHyperlambda()"></ngx-codemirror>
+      </div>
+
+      <label>SQL</label>
+      <ngx-codemirror 
+        [(ngModel)]="customSql" 
+        [options]="getCodeMirrorOptions()"></ngx-codemirror>
+
+      <div class="right-align">
+        <button 
+          matTooltip="Creates your endpoint"
+          mat-button
+          (click)="generateSqlEndpoint()">Create</button>
+      </div>
+    </div>
+
+  </mat-card>
+
+  <mat-card 
+    *ngIf="columns !== null && selectedTable !== 'Custom SQL'"
     class="columns-card">
     <div class="wrapper">
       <table mat-table class="columns" [dataSource]="columns">
@@ -58,7 +101,7 @@
   </mat-card>
 
   <mat-card 
-    *ngIf="endpoints !== null"
+    *ngIf="endpoints !== null && selectedTable !== 'Custom SQL'"
     class="endpoints-card">
 
     <div class="wrapper">
@@ -102,7 +145,7 @@
 
     <div class="right-align">
       <button 
-        *ngIf="selectedTable !== null"
+        *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL'"
         matTooltip="Generates CRUD endpoints for your table"
         mat-button
         [color]="folderExists ? 'warn' : ''"

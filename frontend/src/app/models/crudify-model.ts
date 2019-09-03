@@ -8,7 +8,3 @@ export class CrudifyModel {
     args: any;
     auth: string;
 }
-
-export class CrudifyResult {
-    success: string;
-}
