@@ -68,4 +68,10 @@ export class FileService {
       environment.apiURL + 
       'folders/exists?path=' + encodeURI(path));
   }
+
+  public fileExists(path: string) {
+    return this.httpClient.get<boolean>(
+      environment.apiURL + 
+      'folders/file-exists?path=' + encodeURI(path));
+  }
 }

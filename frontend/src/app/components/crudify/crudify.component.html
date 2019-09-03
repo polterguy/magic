@@ -29,6 +29,7 @@
         <input 
           matInput 
           placeholder="Endpoint name"
+          (change)="endpointNameChanged()"
           type="text" 
           autocomplete="off"
           [(ngModel)]="endpointName">
