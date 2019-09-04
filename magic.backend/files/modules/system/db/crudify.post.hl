@@ -48,6 +48,12 @@ for-each:x:@.arguments/*/args/**
 
 
             /*
+             * Special case for timestamp.
+             */
+            case:timestamp
+
+
+            /*
              * Everything transformed into date values.
              */
             case:date

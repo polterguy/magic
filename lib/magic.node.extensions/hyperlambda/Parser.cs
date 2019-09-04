@@ -55,7 +55,7 @@ namespace magic.node.extensions.hyperlambda
                 case "bool":
                     return value.Equals("true");
                 case "date":
-                    return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+                    return DateTime.Parse(value, null, DateTimeStyles.RoundtripKind);
                 case "guid":
                     return new Guid(value);
                 case "char":
