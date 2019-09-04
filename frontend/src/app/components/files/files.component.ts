@@ -162,7 +162,7 @@ export class FilesComponent implements OnInit {
   }
 
   getCodeMirrorOptions() {
-    return {
+    var result = {
       lineNumbers: true,
       theme: 'material',
       mode: this.getMode(this.filePath),
@@ -172,9 +172,12 @@ export class FilesComponent implements OnInit {
       extraKeys: {
         'Shift-Tab': 'indentLess',
         Tab: 'indentMore',
-        'Ctrl-Space':'autocomplete',
       }
     };
+    if (this.getMode(this.filePath) === 'hyperlambda') {
+      result.extraKeys['Ctrl-Space'] = 'autocomplete';
+    }
+    return result;
   }
 
   getMode(path: string) {
