@@ -29,6 +29,9 @@ export class FilesComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit() {
+    this.evaluateService.vocabulary().subscribe((res) => {
+      localStorage.setItem('vocabulary', JSON.stringify(res));
+    });
     this.getPath();
   }
 
@@ -168,7 +171,8 @@ export class FilesComponent implements OnInit {
       indentAuto: true,
       extraKeys: {
         'Shift-Tab': 'indentLess',
-        Tab: 'indentMore'
+        Tab: 'indentMore',
+        'Ctrl-Space':'autocomplete',
       }
     };
   }
