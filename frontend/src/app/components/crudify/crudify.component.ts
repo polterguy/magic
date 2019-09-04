@@ -201,12 +201,27 @@ arg4:decimal`;
     return ids;
   }
 
-  getAllNonPrimaryKeyColumns(): any[] {
+  getAllNonPrimaryKeyColumns(verb: string): any[] {
     const ids = [];
+    const exclusions = verb === 'post' || verb === 'put' ? this.getSpecialExclusionColumns() : [];
     for (const iterator of this.columns) {
       if (iterator.Key !== 'pri') {
-        const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
-        ids.push(JSON.parse(str));
+        if (exclusions.filter(x => x == iterator.Field).length === 0) {
+          const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
+          ids.push(JSON.parse(str));
+        }
+      }
+    }
+    return ids;
+  }
+
+  getSpecialExclusionColumns(): string[] {
+    const ids = [];
+    for (const iterator of this.columns) {
+      switch (iterator.Extra) {
+        case 'default_generated':
+          ids.push(iterator.Field);
+          break;
       }
     }
     return ids;
@@ -218,7 +233,7 @@ arg4:decimal`;
 
   createHttpEndpoint(verb: string, callback: (res: any) => void) {
     const primary = this.getAllPrimaryKeyColumns();
-    const columns = this.getAllNonPrimaryKeyColumns();
+    let columns = this.getAllNonPrimaryKeyColumns(verb);
     const databaseType = 'mysql';
     const auth = this.getVerbAuthorization(verb);
     this.crudService.generateCrudEndpoints({

@@ -69,7 +69,6 @@ namespace magic.endpoint.services
                 /*
                  * Checking file [.arguments], and if given, removing them to make sure invocation of file
                  * only has a single [.arguments] node.
-                 * Notice, future improvements implies validating arguments.
                  */
                 var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments").ToList();
                 if (fileArgs.Any())
@@ -132,11 +131,17 @@ namespace magic.endpoint.services
                 }
 
                 // Adding arguments from invocation to evaluated lambda node.
-                var argsNode = new Node(".arguments", arguments);
-
-                // TODO: Recursively convert JSON argument(s).
+                var argsNode = new Node("", arguments);
                 _signaler.Signal(".from-json-raw", argsNode);
-                lambda.Insert(0, argsNode);
+                var convertedArgs = new Node(".arguments");
+                foreach (var idxArg in argsNode.Children)
+                {
+                    if (idxArg.Value == null)
+                        convertedArgs.Add(idxArg.Clone()); // TODO: Recursively sanity check arguments.
+                    else
+                        convertedArgs.Add(ConvertArgument(idxArg.Name, idxArg.Get<string>(), fileArgs.First().Children.FirstOrDefault(x => x.Name == idxArg.Name)));
+                }
+                lambda.Insert(0, convertedArgs);
 
                 _signaler.Signal("eval", lambda);
 
