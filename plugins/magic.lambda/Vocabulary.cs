@@ -24,7 +24,9 @@ namespace magic.lambda.slots
         public void Signal(Node input)
         {
             input.Clear();
-            input.AddRange(_signaler.Slots.Select((x) => new Node(x)));
+            input.AddRange(_signaler.Slots
+                .Where(x => !x.StartsWith(".", StringComparison.InvariantCulture))
+                .Select((x) => new Node("", x)));
             // TODO:Implement these in a different slot.
             //input.AddRange(Slot.Slots.Select((x) => new Node(x)));
         }

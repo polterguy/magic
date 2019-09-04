@@ -15,4 +15,8 @@ export class EvaluatorService {
       hyperlambda
     });
   }
+
+  vocabulary() {
+    return this.httpClient.get<string[]>(environment.apiURL + 'hl/system/vocabulary');
+  }
 }

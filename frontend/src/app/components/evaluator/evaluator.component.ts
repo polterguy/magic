@@ -19,7 +19,11 @@ export class EvaluatorComponent implements OnInit {
     private service: EvaluatorService,
     private snackBar: MatSnackBar) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.service.vocabulary().subscribe((res) => {
+      localStorage.setItem('vocabulary', JSON.stringify(res));
+    });
+  }
 
   evaluate() {
     this.service.evaluate(this.hyperlambda).subscribe((res) => {
@@ -40,7 +44,8 @@ export class EvaluatorComponent implements OnInit {
       indentAuto: true,
       extraKeys: {
         'Shift-Tab': 'indentLess',
-        Tab: 'indentMore'
+        Tab: 'indentMore',
+        'Ctrl-Space':'autocomplete',
       }
     };
   }
