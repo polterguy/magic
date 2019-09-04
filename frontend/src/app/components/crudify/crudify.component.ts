@@ -168,7 +168,7 @@ arg4:decimal`;
       endpointName: this.endpointName,
       sql: this.customSql,
     }).subscribe((res: CrudifyResult) => {
-      console.log(res);
+      this.showSuccess('Endpoint successfully created');
     }, (error) => {
       this.showError(error.error.message);
     });
