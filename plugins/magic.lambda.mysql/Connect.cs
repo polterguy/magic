@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using Microsoft.Extensions.Configuration;
 using magic.node;
 using ut = magic.utils;
 using magic.node.extensions;
@@ -18,16 +19,26 @@ namespace magic.lambda.mysql
 	{
 		readonly ISignaler _signaler;
         readonly ut.Stack<MySqlConnection> _connections;
+        readonly IConfiguration _configuration;
 
-        public Connect(ISignaler signaler, ut.Stack<MySqlConnection> connections)
+        public Connect(ISignaler signaler, ut.Stack<MySqlConnection> connections, IConfiguration configuration)
 		{
 			_signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
 		public void Signal(Node input)
 		{
             var connectionString = input.GetEx<string>(_signaler);
+
+            // Checking if this is a "generic connection string".
+            if (connectionString.StartsWith("[", StringComparison.InvariantCulture) &&
+                connectionString.EndsWith("]", StringComparison.InvariantCulture))
+            {
+                var generic = _configuration["databases:mysql:generic"];
+                connectionString = generic.Replace("{database}", connectionString.Substring(1, connectionString.Length - 2));
+            }
 
             using (var connection = new MySqlConnection(connectionString))
 			{
