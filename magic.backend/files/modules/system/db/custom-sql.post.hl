@@ -1,0 +1,72 @@
+
+/*
+ * Generate an HTTP REST endpoint according to the given
+ * [.arguments].
+ */
+.arguments
+   database:string
+   arguments:string
+   verb:string
+   endpointName:string
+   sql:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
+/*
+ * Creating our endpoint according to arguments given, by using [apply-file]
+ * on the [template] file given.
+ */
+unwrap:x:+/*
+apply-file:/modules/system/templates/mysql/sql.template.hl
+   database:x:@.arguments/*/database
+   sql:x:@.arguments/*/sql
+
+
+/*
+ * Making sure we add arguments to the above lambda.
+ */
+lambda:x:@.arguments/*/arguments
+add:x:@apply-file/*/.arguments
+   get-nodes:x:@lambda/*
+
+
+/*
+ * Creating our folder.
+ */
+.folder:/modules/
+set-value:x:@.folder
+   concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/database
+      .:/
+create-folder:x:@.folder
+
+
+/*
+ * Transforming above lambda to Hyperlambda, and saving in specified folder,
+ * with specified name.
+ */
+hyper:x:@apply-file/*
+unwrap:x:+
+.filename:x:@.folder
+set-value:x:@.filename
+   concat
+      get-value:x:@.filename
+      get-value:x:@.arguments/*/endpointName
+      .:.
+      get-value:x:@.arguments/*/verb
+      .:.hl
+save-file:x:@.filename
+   get-value:x:@hyper
+
+
+/*
+ * Returns success to caller.
+ */
+return-nodes
+   result:success

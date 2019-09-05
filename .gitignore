@@ -326,12 +326,6 @@ ASALocalRun/
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
 
-# Excluding all uploaded files
-magic.backend/files/*
-!magic.backend/files/README.md
-!magic.backend/files/modules/README.md
-!magic.backend/files/modules/system
-
 # Excluding all Mac folder files
 **/.DS_Store
 modules/**/*.controller.xml

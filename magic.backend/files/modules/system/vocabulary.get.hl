@@ -1,0 +1,23 @@
+
+/*
+ * Returns a JSON object representing every single registered
+ * system slot in the current installation
+ */
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
+/*
+ * Retrieving all system slots.
+ */
+vocabulary
+
+
+/*
+ * Returning results of the above to caller.
+ */
+return-nodes:x:@vocabulary/*
