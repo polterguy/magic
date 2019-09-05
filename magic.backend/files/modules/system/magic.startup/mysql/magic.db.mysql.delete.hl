@@ -1,4 +1,4 @@
-﻿
+
 /*
  * Deletes the specified [id] record from your [connection]/[table].
  */
@@ -32,7 +32,13 @@ slot:magic.db.mysql.delete
       /*
        * Opening up a connection.
        */
-      mysql.connect:x:@.arguments/*/connection
+      .connection
+      set-value:x:@.connection
+         concat
+            .:[
+            get-value:x:@.arguments/*/database
+            .:]
+      mysql.connect:x:@.connection
 
 
          /*
@@ -46,7 +52,6 @@ slot:magic.db.mysql.delete
           * Invoking [mysql.delete].
           */
          mysql.delete
-            connection:x:@.arguments/*/connection
             table:x:@.arguments/*/table
             where
                and
