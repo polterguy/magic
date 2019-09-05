@@ -1,4 +1,4 @@
-﻿
+
 /*
  * Creates a new item in your [connection]/[table] with the specified [values]
  * column values.
@@ -10,7 +10,13 @@ slot:magic.db.mysql.create
       /*
        * Opening up a connection.
        */
-      mysql.connect:x:@.arguments/*/connection
+      .connection
+      set-value:x:@.connection
+         concat
+            .:[
+            get-value:x:@.arguments/*/database
+            .:]
+      mysql.connect:x:@.connection
 
 
          /*
@@ -44,7 +50,6 @@ slot:magic.db.mysql.create
           * Invoking [mysql.create].
           */
          mysql.create
-            connection:x:@.arguments/*/connection
             table:x:@.arguments/*/table
             values
 

@@ -6,20 +6,12 @@
 
 
 /*
- * Retrieving connection string according to database constant.
- */
-signal:magic.db.mysql.connection
-   database:{database}
-
-
-/*
  * Invoking [magic.db.mysql.delete], making sure we unwrap the [id].
  */
-add:x:./*/signal/[1,1]/*/ids
+add:x:./*/signal/*/ids
    get-nodes:x:@.arguments/*
-unwrap:x:+/*/connection
 signal:magic.db.mysql.delete
-   connection:x:./@signal
+   database:{database}
    table:{table}
    ids
 

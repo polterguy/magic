@@ -1,4 +1,4 @@
-﻿
+
 /*
  * Updates the specified [ids] item in your [connection]/[table] with the
  * values from [values]. [ids] can be a collection of values, preferably the IDs of your table,
@@ -27,7 +27,13 @@ slot:magic.db.mysql.update
       /*
        * Opening up a connection.
        */
-      mysql.connect:x:@.arguments/*/connection
+      .connection
+      set-value:x:@.connection
+         concat
+            .:[
+            get-value:x:@.arguments/*/database
+            .:]
+      mysql.connect:x:@.connection
 
 
          /*
@@ -64,7 +70,6 @@ slot:magic.db.mysql.update
           * Invoking [mysql.update].
           */
          mysql.update
-            connection:x:@.arguments/*/connection
             table:x:@.arguments/*/table
             values
             where
