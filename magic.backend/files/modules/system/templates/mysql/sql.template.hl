@@ -1,0 +1,37 @@
+
+/*
+ * Template for custom SQL HTTP request.
+ */
+.arguments
+
+
+/*
+ * Retrieving connection string according to database constant.
+ */
+signal:magic.db.mysql.connection
+   database:{database}
+
+
+/*
+ * Opening up a database connection
+ */
+mysql.connect:x:@signal
+
+
+   /*
+    * Parametrizing [mysql.select].
+    */
+   add:x:./*/mysql.select
+      get-nodes:x:@.arguments/*
+
+
+   /*
+    * Evaluating [mysql.select] slot.
+    */
+   mysql.select:{sql}
+
+
+   /*
+    * Returning results to caller.
+    */
+   return-nodes:x:@mysql.select/*

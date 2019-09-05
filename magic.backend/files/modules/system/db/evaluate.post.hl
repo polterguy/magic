@@ -1,0 +1,32 @@
+
+/*
+ * Evaluates the given [sql] and returns results to caller.
+ */
+.arguments
+   sql:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.verify-ticket:root
+
+
+/*
+ * Invokes slot responsible for getting a database connection.
+ */
+signal:magic.db.mysql.connection
+   database:sys
+mysql.connect:x:@signal
+
+
+   /*
+    * Executing SQL.
+    */
+   mysql.select:x:@.arguments/*/sql
+
+
+   /*
+    * Returning results to caller.
+    */
+   return-nodes:x:@mysql.select/*
