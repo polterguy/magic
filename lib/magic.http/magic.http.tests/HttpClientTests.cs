@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ namespace magic.http.tests
         #region [ -- Unit tests -- ]
 
         [Fact]
-        public async void GetString()
+        public async Task GetString()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
@@ -31,7 +32,7 @@ namespace magic.http.tests
         }
 
         [Fact]
-        public async void GetJArray()
+        public async Task GetJArray()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
@@ -41,7 +42,7 @@ namespace magic.http.tests
         }
 
         [Fact]
-        public async void GetObject()
+        public async Task GetObject()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
@@ -51,7 +52,7 @@ namespace magic.http.tests
         }
 
         [Fact]
-        public async void GetEnumerable()
+        public async Task GetEnumerable()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
@@ -61,7 +62,7 @@ namespace magic.http.tests
         }
 
         [Fact]
-        public async void PostObject()
+        public async Task PostObject()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
@@ -77,7 +78,7 @@ namespace magic.http.tests
         }
 
         [Fact]
-        public async void PostStream()
+        public async Task PostStream()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
@@ -101,7 +102,7 @@ namespace magic.http.tests
         }
 
         [Fact]
-        public async void GetStream()
+        public async Task GetStream()
         {
             var kernel = Initialize();
             var client = kernel.GetService(typeof(IHttpClient)) as IHttpClient;
