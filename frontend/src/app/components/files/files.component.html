@@ -58,6 +58,11 @@
         (click)="evaluate()"
         matTooltip="Evaluates your file">Evaluate</button>
       <button
+        *ngIf="getMode(this.filePath) == 'text/x-mysql'"
+        mat-button
+        (click)="evaluateSql()"
+        matTooltip="Evaluates your SQL">Evaluate</button>
+      <button
         mat-button
         (click)="save()"
         matTooltip="Saves your file">Save</button>
