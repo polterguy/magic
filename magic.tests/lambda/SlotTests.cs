@@ -40,9 +40,7 @@ namespace magic.tests.lambda
         {
             var lambda = Common.Evaluate("vocabulary");
             Assert.True(lambda.Children.First().Children.Count() > 20);
-            var voc = lambda.Children.First().Children.First(x => x.Name == "vocabulary");
-            Assert.NotNull(voc);
-            Assert.Null(voc.Value);
+            var voc = lambda.Children.First().Children.First(x => x.Get<string>() == "vocabulary");
         }
 
         [Fact]
