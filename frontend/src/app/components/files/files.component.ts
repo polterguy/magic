@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileService } from '../../services/file-service';
 import { EvaluatorService } from '../../services/evaluator-service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { SqlService } from 'src/app/services/sql-service';
 
 export interface DialogData {
   filename: string;
@@ -25,6 +26,7 @@ export class FilesComponent implements OnInit {
   constructor(
     private fileService: FileService,
     private evaluateService: EvaluatorService,
+    private sqlService: SqlService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog) { }
 
@@ -191,6 +193,8 @@ export class FilesComponent implements OnInit {
         return 'jsx';
       case 'css':
         return 'css';
+      case 'sql':
+        return 'text/x-mysql';
       case 'htm':
       case 'html':
         return 'htmlmixed';
@@ -206,6 +210,14 @@ export class FilesComponent implements OnInit {
       this.showError(error.error.message);
     });
     return false;
+  }
+
+  evaluateSql() {
+    this.sqlService.evaluate(this.fileContent).subscribe((res) => {
+      this.showInfo('SQL was successfully evaluate');
+    }, (err) => {
+      this.showError(err.error.message);
+    });
   }
 
   save() {
