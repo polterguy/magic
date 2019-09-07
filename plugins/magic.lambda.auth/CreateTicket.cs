@@ -61,7 +61,6 @@ namespace magic.lambda
             var secret = _configuration["auth:secret"];
             var validMinutes = int.Parse(_configuration["auth:valid-minutes"]);
             var key = Encoding.ASCII.GetBytes(secret);
-            var rolesString = string.Join(",", roles.ToArray());
 
             // Creating our token.
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -70,13 +69,17 @@ namespace magic.lambda
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, rolesString),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(validMinutes),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha512Signature),
             };
+
+            // Adding all roles.
+            tokenDescriptor.Subject.AddClaims(roles.Select(x => new Claim(ClaimTypes.Role, x)));
+
+            // Creating token and returning to caller.
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
