@@ -6,6 +6,10 @@
  * Password is cryptographically hashed using the blow fish hashing algorithm,
  * and cryptographically and securely stored with a user provided salt in the
  * `users` table.
+ *
+ * This file is intended for being directly evaluated, for then to just
+ * having the [username] and [password] values replaced in your CodeMirror
+ * editor - In addition to changing the list of [roles] for the users you create.
  */
 .arguments
    username:username

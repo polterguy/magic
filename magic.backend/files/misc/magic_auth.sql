@@ -1,4 +1,20 @@
 
+/*
+ * This SQL script creates a database for you, with 3 tables,
+ * serving as an authentication/authorization database for you.
+ *
+ * You can of course implement your own logic, and use your existing
+ * database/table structure - However, this is a "one size fits all"
+ * solution to that problem if you need it.
+ *
+ * To insert a new user into your database, you can use the "create-user.hl"
+ * Hyperlambda file, that will cryptographically hash your password,
+ * using a per user based salt, with the blow fish algorithm (extremely secure).
+ */
+
+
+
+
 CREATE DATABASE  IF NOT EXISTS `magic_auth` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `magic_auth`;
 -- MySQL dump 10.13  Distrib 8.0.17, for macos10.14 (x86_64)
