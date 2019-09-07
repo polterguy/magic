@@ -34,16 +34,17 @@ namespace magic.lambda
             if (input.Children.Any(x => x.Name != "username" && x.Name != "roles"))
                 throw new ApplicationException("[authenticate] can only handle [username] and [roles] children nodes");
 
-            var usernameNode = input.Children.Where(x => x.Name == "username").ToList();
-            var rolesNode = input.Children.Where(x => x.Name == "roles").ToList();
+            var usernameNode = input.Children.Where(x => x.Name == "username");
+            var rolesNode = input.Children.Where(x => x.Name == "roles");
 
             if (usernameNode.Count() != 1 || rolesNode.Count() != 1)
                 throw new ApplicationException("[authenticate] must be given exactly one [username] and one [roles] children nodes");
 
+            var username = usernameNode.First().GetEx<string>(_signaler);
+            var roles = rolesNode.First().Children.Select(x => x.GetEx<string>(_signaler));
+
             input.Clear();
-            input.Value = CreateJWTToken(
-                usernameNode.First().GetEx<string>(_signaler),
-                rolesNode.First().Children.Select(x => x.GetEx<string>(_signaler)));
+            input.Value = CreateJWTToken(username, roles);
 		}
 
         public IEnumerable<Node> GetArguments()
