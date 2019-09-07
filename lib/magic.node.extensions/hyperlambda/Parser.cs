@@ -44,8 +44,12 @@ namespace magic.node.extensions.hyperlambda
                     return value;
                 case "int":
                     return Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                case "uint":
+                    return Convert.ToUInt32(value, CultureInfo.InvariantCulture);
                 case "long":
                     return Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                case "ulong":
+                    return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
                 case "decimal":
                     return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 case "double":

@@ -58,8 +58,18 @@ namespace magic.node.extensions.hyperlambda
                             value = idx.Get<int>().ToString(CultureInfo.InvariantCulture);
                             break;
 
+                        case "System.UInt32":
+                            type = "uint";
+                            value = idx.Get<int>().ToString(CultureInfo.InvariantCulture);
+                            break;
+
                         case "System.Int64":
                             type = "long";
+                            value = idx.Get<long>().ToString(CultureInfo.InvariantCulture);
+                            break;
+
+                        case "System.UInt64":
+                            type = "ulong";
                             value = idx.Get<long>().ToString(CultureInfo.InvariantCulture);
                             break;
 

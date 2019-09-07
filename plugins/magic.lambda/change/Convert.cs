@@ -44,8 +44,16 @@ namespace magic.lambda.change
                     input.Value = System.Convert.ToInt32(value, CultureInfo.InvariantCulture);
                     break;
 
+                case "uint":
+                    input.Value = System.Convert.ToUInt32(value, CultureInfo.InvariantCulture);
+                    break;
+
                 case "long":
                     input.Value = System.Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                    break;
+
+                case "ulong":
+                    input.Value = System.Convert.ToUInt64(value, CultureInfo.InvariantCulture);
                     break;
 
                 case "decimal":
