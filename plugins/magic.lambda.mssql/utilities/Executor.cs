@@ -24,7 +24,7 @@ namespace magic.lambda.mssql.utilities
             {
                 foreach (var idxPar in input.Children)
                 {
-                    cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Value);
+                    cmd.Parameters.AddWithValue(idxPar.Name, idxPar.Get());
                 }
 
                 // Making sure we clean nodes before invoking lambda callback.
