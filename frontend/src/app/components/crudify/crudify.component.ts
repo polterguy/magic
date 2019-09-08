@@ -25,6 +25,7 @@ export class CrudifyComponent implements OnInit {
   private endpointName = '';
   private arguments: string;
   private selectedVerb = '';
+  private authorizationForCustomSql = 'root';
 
   constructor(
     private crudService: CrudifyService,
@@ -167,6 +168,7 @@ arg4:decimal`;
       verb: this.selectedVerb,
       endpointName: this.endpointName,
       sql: this.customSql,
+      authorization: this.authorizationForCustomSql,
     }).subscribe((res: CrudifyResult) => {
       this.showSuccess('Endpoint successfully created');
     }, (error) => {

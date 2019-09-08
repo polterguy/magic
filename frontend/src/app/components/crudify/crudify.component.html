@@ -19,13 +19,13 @@
 
     <div class="code-mirror-wrapper">
 
-      <mat-form-field>
+      <mat-form-field style="margin-right: 2rem;">
         <mat-select placeholder="Select verb" (selectionChange)="verbChanged($event)">
           <mat-option *ngFor="let cur of verbs" [value]="cur">{{cur}}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field style="margin-left: 2rem;">
+      <mat-form-field style="margin-right: 2rem;">
         <input 
           matInput 
           placeholder="Endpoint name"
@@ -33,6 +33,15 @@
           type="text" 
           autocomplete="off"
           [(ngModel)]="endpointName">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input 
+          matInput 
+          placeholder="Authorization"
+          type="text" 
+          autocomplete="off"
+          [(ngModel)]="authorizationForCustomSql">
       </mat-form-field>
 
       <div class="air">
