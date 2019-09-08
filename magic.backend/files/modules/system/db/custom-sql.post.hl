@@ -4,6 +4,7 @@
  * [.arguments].
  */
 .arguments
+   authorization:string
    database:string
    arguments:string
    verb:string
@@ -33,6 +34,32 @@ apply-file:/modules/system/templates/mysql/sql.template.hl
 lambda:x:@.arguments/*/arguments
 add:x:@apply-file/*/.arguments
    get-nodes:x:@lambda/*
+
+
+/*
+ * Checking if caller provided specific authorization
+ * for us to use, and if so, applying it to lambda.
+ */
+if
+   and
+      not
+         eq
+            get-value:x:@.arguments/*/authorization
+            .:
+      not
+         eq
+            get-value:x:@.arguments/*/authorization
+            .
+   .lambda
+
+
+      /*
+       * Adding authorization to endpoint's lambda.
+       */
+      unwrap:x:+/*/*
+      insert-after:x:@apply-file/*/.arguments
+         .
+            auth.verify-ticket:x:@.arguments/*/authorization
 
 
 /*

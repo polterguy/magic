@@ -6,4 +6,5 @@ export class CustomSQLModel {
     sql: string;
     verb: string;
     endpointName: string;
+    authorization: string;
 }
