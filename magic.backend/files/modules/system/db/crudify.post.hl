@@ -116,12 +116,31 @@ for-each:x:@.arguments/*/args/**
              * These are unsupported column types.
              */
             default
-               .ex
-               set-value:x:@.ex
-                  concat
-                     get-value:x:@replace
-                     .:" is currently not supported by the crudifier"
-               throw:x:@.ex
+               if
+                  starts-with:x:@replace
+                     .:enum
+                  .lambda
+
+
+                     /*
+                      * Enum type
+                      */
+                     set-value:x:@.dp/#
+                        .:string
+
+
+               else
+
+
+                  /*
+                   * Unsupported type.
+                   */
+                  .ex
+                  set-value:x:@.ex
+                     concat
+                        get-value:x:@replace
+                        .:" is currently not supported by the crudifier"
+                  throw:x:@.ex
 
 
 /*
