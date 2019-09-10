@@ -15,9 +15,7 @@ auth.verify-ticket:root
 /*
  * Invokes slot responsible for getting a database connection.
  */
-signal:magic.db.mysql.connection
-   database:sys
-mysql.connect:x:@signal
+mysql.connect:[sys]
 
 
    /*

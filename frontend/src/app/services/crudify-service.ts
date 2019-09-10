@@ -14,29 +14,29 @@ export class CrudifyService {
   constructor(private httpClient: HttpClient) { }
 
   public getDatabases() {
-    return this.httpClient.get<any[]>(environment.apiURL + 'hl/system/db/databases');
+    return this.httpClient.get<any[]>(environment.apiURL + 'hl/mysql/databases');
   }
 
   public getTables(database: string) {
     return this.httpClient.get<any[]>(
       environment.apiURL +
-      'hl/system/db/tables?database=' + encodeURI(database));
+      'hl/mysql/tables?database=' + encodeURI(database));
   }
 
   public getColumns(database: string, table: string) {
     return this.httpClient.get<any[]>(
       environment.apiURL +
-      'hl/system/db/columns?database=' + encodeURI(database) +
+      'hl/mysql/columns?database=' + encodeURI(database) +
       '&table=' + encodeURI(table));
   }
 
   public generateCrudEndpoints(model: CrudifyModel) {
     return this.httpClient.post<CrudifyResult>(
-      environment.apiURL + 'hl/system/db/crudify', model);
+      environment.apiURL + 'hl/mysql/crudify', model);
   }
 
   public createCustomSqlEndpoint(model: CustomSQLModel) {
     return this.httpClient.post<CrudifyResult>(
-      environment.apiURL + 'hl/system/db/custom-sql', model);
+      environment.apiURL + 'hl/mysql/custom-sql', model);
   }
 }

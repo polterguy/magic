@@ -30,9 +30,9 @@ slot:magic.db.mysql.update
       .connection
       set-value:x:@.connection
          concat
-            .:[
+            :[
             get-value:x:@.arguments/*/database
-            .:]
+            :]
       mysql.connect:x:@.connection
 
 

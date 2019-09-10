@@ -3,25 +3,31 @@
  * Reads items from your [connection]/[table] according to [args] supplied.
  * [args] can contain [limit], [offset], [order] and [direction] - In addition
  * to that all other arguments will be treated as a part of the [where] to the
- * invocation to [mssql.read].
+ * invocation to [mysql.read].
  */
-slot:magic.db.mssql.read
+slot:magic.db.mysql.read
    .lambda
 
 
       /*
        * Opening up a connection.
        */
-      mssql.connect:x:@.arguments/*/connection
+      .connection
+      set-value:x:@.connection
+         concat
+            :[
+            get-value:x:@.arguments/*/database
+            :]
+      mysql.connect:x:@.connection
 
 
          /*
-          * Parametrizing invocation to [mssql.read], first with generic arguments, 
+          * Parametrizing invocation to [mysql.read], first with generic arguments, 
           * such as [limit], [offset], [order] and [direction].
           * Making sure we remove the nodes from the [.arguments] collection afterwards,
           * such that we don't add them into our [where].
           */
-         add:x:./*/mssql.read
+         add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/limit
 
          /*
@@ -39,15 +45,15 @@ slot:magic.db.mssql.read
                type:long
          remove-node:x:@.arguments/*/args/*/limit
 
-         add:x:./*/mssql.read
+         add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/offset
          remove-node:x:@.arguments/*/args/*/offset
 
-         add:x:./*/mssql.read
+         add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/order
          remove-node:x:@.arguments/*/args/*/order
 
-         add:x:./*/mssql.read
+         add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/direction
          remove-node:x:@.arguments/*/args/*/direction
 
@@ -63,13 +69,13 @@ slot:magic.db.mssql.read
 
 
                /*
-                * Adding [where] to [mssql.read].
+                * Adding [where] to [mysql.read].
                 */
-               add:x:../*/mssql.connect/*/mssql.read
+               add:x:../*/mysql.connect/*/mysql.read
                   .
                      where
                         and
-               add:x:../*/mssql.connect/*/mssql.read/*/where/*/and
+               add:x:../*/mysql.connect/*/mysql.read/*/where/*/and
                   get-nodes:x:@.arguments/*/args/*
 
 
@@ -84,20 +90,19 @@ slot:magic.db.mssql.read
 
 
                /*
-                * Adding [columns] to [mssql.read].
+                * Adding [columns] to [mysql.read].
                 */
-               add:x:../*/mssql.connect/*/mssql.read
+               add:x:../*/mysql.connect/*/mysql.read
                   .
                      columns
-               add:x:../*/mssql.connect/*/mssql.read/*/columns
+               add:x:../*/mysql.connect/*/mysql.read/*/columns
                   get-nodes:x:@.arguments/*/columns/*
 
 
          /*
-          * Invoking [mssql.read].
+          * Invoking [mysql.read].
           */
-         mssql.read
-            connection:x:@.arguments/*/connection
+         mysql.read
             table:x:@.arguments/*/table
 
 
@@ -114,9 +119,9 @@ slot:magic.db.mssql.read
                /*
                 * Returning a single object.
                 */
-               return-nodes:x:@mssql.read/*/*
+               return-nodes:x:@mysql.read/*/*
 
          /*
           * Returning an array of objects.
           */
-         return-nodes:x:@mssql.read/*
+         return-nodes:x:@mysql.read/*

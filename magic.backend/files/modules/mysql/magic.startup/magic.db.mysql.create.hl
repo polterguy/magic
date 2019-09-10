@@ -13,9 +13,9 @@ slot:magic.db.mysql.create
       .connection
       set-value:x:@.connection
          concat
-            .:[
+            :[
             get-value:x:@.arguments/*/database
-            .:]
+            :]
       mysql.connect:x:@.connection
 
 

@@ -35,9 +35,9 @@ slot:magic.db.mysql.delete
       .connection
       set-value:x:@.connection
          concat
-            .:[
+            :[
             get-value:x:@.arguments/*/database
-            .:]
+            :]
       mysql.connect:x:@.connection
 
 
