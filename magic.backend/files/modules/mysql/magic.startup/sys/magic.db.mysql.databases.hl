@@ -5,15 +5,13 @@
  * Normally expects a connection string pointing to "sys".
  */
 slot:magic.db.mysql.databases
-   .arguments
-      connection:string
    .lambda
 
 
       /*
        * Opens up our connection
        */
-      mysql.connect:x:@.arguments/*/connection
+      mysql.connect:[sys]
 
 
          /*

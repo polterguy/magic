@@ -33,11 +33,11 @@ export class EndpointsComponent implements OnInit {
   }
 
   getFilteredEndpoints() {
-    if (this.filter == '') {
+    if (this.filter === '') {
       return this.getFilteredSystemEndpoints();
-    } 
+    }
     return this.getFilteredSystemEndpoints().filter((x) => {
-      return x.verb == this.filter || x.path.indexOf(this.filter) > -1;
+      return x.verb === this.filter || x.path.indexOf(this.filter) > -1;
     });
   }
 
@@ -46,7 +46,7 @@ export class EndpointsComponent implements OnInit {
       return this.endpoints;
     }
     return this.endpoints.filter((x) => {
-      return x.path.indexOf('system/') !== 0;
+      return x.path.indexOf('system/') !== 0 && x.path.indexOf('mysql/') !== 0 && x.path.indexOf('mssql/') !== 0;
     });
   }
 

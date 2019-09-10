@@ -95,8 +95,8 @@ arg4:decimal`;
       this.crudService.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
         this.createEndpoints();
-        this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res) => {
-          if (res === true) {
+        this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res2) => {
+          if (res2 === true) {
             this.folderExists = true;
             this.showWarning('Warning, folder already exists!');
           } else {
@@ -241,8 +241,8 @@ arg4:decimal`;
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: `/modules/system/templates/${databaseType}/crud.template.${verb}.hl`,
-      verb: verb,
+      template: `/modules/${databaseType}/templates/crud.template.${verb}.hl`,
+      verb,
       args: {
         primary,
         columns,

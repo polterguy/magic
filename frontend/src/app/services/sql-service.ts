@@ -13,7 +13,7 @@ export class SqlService {
   public evaluate(sql: string) {
     return this.httpClient.post<any[]>(
       environment.apiURL +
-      'hl/system/db/evaluate', {
+      'hl/mysql/evaluate', {
         sql,
       });
   }

@@ -6,7 +6,6 @@
  */
 slot:magic.db.mysql.tables
    .arguments
-      connection:string
       database:string
    .lambda
 
@@ -14,7 +13,13 @@ slot:magic.db.mysql.tables
       /*
        * Opens up our connection
        */
-      mysql.connect:x:@.arguments/*/connection
+      .connection
+      set-value:x:@.connection
+         concat
+            :[
+            get-value:x:@.arguments/*/database
+            :]
+      mysql.connect:x:@.connection
 
 
          /*

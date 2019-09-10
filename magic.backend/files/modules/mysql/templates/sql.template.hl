@@ -6,16 +6,21 @@
 
 
 /*
- * Retrieving connection string according to database constant.
+ * Creating our database argument.
  */
-signal:magic.db.mysql.connection
-   database:{database}
+.connection:{database}
+set-value:x:@.connection
+   concat
+      :[
+      get-value:x:@.connection
+      :]
+mysql.connect:x:@.connection
 
 
 /*
  * Opening up a database connection
  */
-mysql.connect:x:@signal
+mysql.connect:x:@.connection
 
 
    /*

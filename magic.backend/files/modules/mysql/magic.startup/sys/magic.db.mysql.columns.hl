@@ -1,12 +1,9 @@
 
 /*
- * Lists all columns in your [connection]/[database]/[table] MySQL table.
- *
- * Normally expects a connection string pointing to "sys".
+ * Lists all columns in your [database]/[table] MySQL table.
  */
 slot:magic.db.mysql.columns
    .arguments
-      connection:string
       database:string
       table:string
    .lambda
@@ -15,7 +12,13 @@ slot:magic.db.mysql.columns
       /*
        * Opens up our connection
        */
-      mysql.connect:x:@.arguments/*/connection
+      .connection
+      set-value:x:@.connection
+         concat
+            :[
+            get-value:x:@.connection
+            :]
+      mysql.connect:x:@.connection
 
 
          .sql:"use "
