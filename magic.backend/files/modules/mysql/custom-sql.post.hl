@@ -23,7 +23,7 @@ auth.verify-ticket:root
  * on the [template] file given.
  */
 unwrap:x:+/*
-apply-file:/modules/system/templates/mysql/sql.template.hl
+apply-file:/modules/mysql/templates/sql.template.hl
    database:x:@.arguments/*/database
    sql:x:@.arguments/*/sql
 
@@ -45,7 +45,7 @@ if
       not
          eq
             get-value:x:@.arguments/*/authorization
-            .:
+            :
       not
          eq
             get-value:x:@.arguments/*/authorization
@@ -70,7 +70,7 @@ set-value:x:@.folder
    concat
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
-      .:/
+      :/
 create-folder:x:@.folder
 
 
@@ -85,9 +85,9 @@ set-value:x:@.filename
    concat
       get-value:x:@.filename
       get-value:x:@.arguments/*/endpointName
-      .:.
+      :.
       get-value:x:@.arguments/*/verb
-      .:.hl
+      :.hl
 save-file:x:@.filename
    get-value:x:@hyper
 

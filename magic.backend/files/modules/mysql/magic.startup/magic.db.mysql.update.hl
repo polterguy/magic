@@ -1,10 +1,16 @@
 
 /*
- * Updates the specified [ids] item in your [connection]/[table] with the
+ * Updates the specified [ids] item in your [database]/[table] with the
  * values from [values]. [ids] can be a collection of values, preferably the IDs of your table,
  * that defines which item(s) to update. All [ids] are mandatory, and reuiqred to have values.
  */
 slot:magic.db.mysql.update
+   .arguments
+      database:string
+      table:string
+      values
+      ids
+      exclude
    .lambda
 
 
@@ -19,7 +25,7 @@ slot:magic.db.mysql.update
                   .
                eq
                   get-value:x:@.dp/#
-                  .:
+                  :
             .lambda
                throw:[magic.db.update] was not given a valid ID
 
@@ -52,7 +58,7 @@ slot:magic.db.mysql.update
          if
             mt
                get-count:x:@.arguments/*/exclude/*
-               .:int:0
+               :int:0
             .lambda
 
 

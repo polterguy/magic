@@ -1,8 +1,12 @@
 
 /*
- * Deletes the specified [id] record from your [connection]/[table].
+ * Deletes the specified [id] record from your [database]/[table].
  */
 slot:magic.db.mysql.delete
+   .arguments
+      database:string
+      table:string
+      ids
    .lambda
 
 
@@ -16,6 +20,8 @@ slot:magic.db.mysql.delete
             .:int:0
          .lambda
             throw:No ID given to [magic.db.delete]
+
+
       for-each:x:@.arguments/*/ids/*
          if
             or
@@ -24,7 +30,7 @@ slot:magic.db.mysql.delete
                   .
                eq
                   get-value:x:@.dp/#
-                  .:
+                  :
             .lambda
                throw:[magic.db.delete] was not given a valid ID
 

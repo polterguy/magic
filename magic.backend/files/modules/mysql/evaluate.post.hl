@@ -13,7 +13,7 @@ auth.verify-ticket:root
 
 
 /*
- * Invokes slot responsible for getting a database connection.
+ * Connecting to "sys" database.
  */
 mysql.connect:[sys]
 
