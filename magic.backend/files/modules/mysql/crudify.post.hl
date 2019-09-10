@@ -109,7 +109,7 @@ for-each:x:@.arguments/*/args/**
             case:enum
             case:set
                set-value:x:@.dp/#
-                  .:string
+                  :string
 
 
             /*
@@ -126,7 +126,7 @@ for-each:x:@.arguments/*/args/**
                       * Enum type
                       */
                      set-value:x:@.dp/#
-                        .:string
+                        :string
 
 
                else
@@ -139,7 +139,7 @@ for-each:x:@.arguments/*/args/**
                   set-value:x:@.ex
                      concat
                         get-value:x:@replace
-                        .:" is currently not supported by the crudifier"
+                        :" is currently not supported by the crudifier"
                   throw:x:@.ex
 
 
@@ -165,7 +165,8 @@ insert-after:x:@apply-file/*/.arguments
 
 
 /*
- * Then making sure we do our specialized transformation.
+ * Then making sure we do our specialized transformation,
+ * according to verb requested by caller.
  */
 switch:x:@.arguments/*/verb
 
@@ -223,7 +224,7 @@ set-value:x:@.folder
    concat
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
-      .:/
+      :/
 create-folder:x:@.folder
 
 
@@ -237,9 +238,9 @@ set-value:x:@.filename
    concat
       get-value:x:@.filename
       get-value:x:@.arguments/*/table
-      .:.
+      :.
       get-value:x:@.arguments/*/verb
-      .:.hl
+      :.hl
 save-file:x:@.filename
    get-value:x:@hyper
 

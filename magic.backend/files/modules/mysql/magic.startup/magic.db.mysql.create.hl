@@ -1,9 +1,13 @@
 
 /*
- * Creates a new item in your [connection]/[table] with the specified [values]
- * column values.
+ * Creates a new item in your [database]/[table] with the specified [values].
  */
 slot:magic.db.mysql.create
+   .arguments
+      database:string
+      table:string
+      values
+      exclude
    .lambda
 
 
