@@ -1,6 +1,6 @@
 
 /*
- * Lists all database in your installation.
+ * Lists all tables in your specified [database].
  */
 .arguments
    database:string

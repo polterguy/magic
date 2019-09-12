@@ -20,4 +20,4 @@ slot:magic.db.mysql.tables
           * Runs our query
           */
          mysql.select:"show tables"
-         return-nodes:x:-/*
+         return-nodes:x:@mysql.select/*

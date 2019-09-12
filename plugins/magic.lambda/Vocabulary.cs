@@ -27,8 +27,6 @@ namespace magic.lambda.slots
             input.AddRange(_signaler.Slots
                 .Where(x => !x.StartsWith(".", StringComparison.InvariantCulture))
                 .Select((x) => new Node("", x)));
-            // TODO:Implement these in a different slot.
-            //input.AddRange(Slot.Slots.Select((x) => new Node(x)));
         }
 
         public IEnumerable<Node> GetArguments()

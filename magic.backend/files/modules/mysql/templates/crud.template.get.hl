@@ -1,6 +1,8 @@
 
 /*
  * Template for HTTP GET CRUD requests.
+ *
+ * Expects {database} and {table} [apply-file] arguments.
  */
 .arguments
    limit:long

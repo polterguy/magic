@@ -1,15 +1,14 @@
 
 /*
- * Generate an HTTP REST endpoint according to the given
- * [.arguments].
+ * Generate an HTTP REST endpoint according to the given [.arguments].
  */
 .arguments
    database:string
    table:string
    template:string
    verb:string
-   args
    auth:string
+   args
 
 
 /*
@@ -25,7 +24,7 @@ for-each:x:@.arguments/*/args/**
 
 
    /*
-    * Making sure this is a valid noe (that it has values).
+    * Making sure this is a valid node (that it has a value).
     */
    if
       not
@@ -59,7 +58,7 @@ for-each:x:@.arguments/*/args/**
             case:date
             case:datetime
                set-value:x:@.dp/#
-                  .:date
+                  :date
 
 
             /*
@@ -71,7 +70,7 @@ for-each:x:@.arguments/*/args/**
             case:decimal
             case:dec
                set-value:x:@.dp/#
-                  .:decimal
+                  :decimal
 
 
             /*
@@ -88,7 +87,7 @@ for-each:x:@.arguments/*/args/**
             case:int
             case:int unsigned
                set-value:x:@.dp/#
-                  .:long
+                  :long
 
 
             /*
@@ -118,7 +117,7 @@ for-each:x:@.arguments/*/args/**
             default
                if
                   starts-with:x:@replace
-                     .:enum
+                     :enum
                   .lambda
 
 
@@ -170,10 +169,18 @@ insert-after:x:@apply-file/*/.arguments
  */
 switch:x:@.arguments/*/verb
 
+
+   /*
+    * HTTP DELETE special cases
+    */
    case:delete
       add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*
 
+
+   /*
+    * HTTP GET special cases
+    */
    case:get
       add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*
@@ -186,6 +193,10 @@ switch:x:@.arguments/*/verb
       add:x:@apply-file/**/columns
          get-nodes:x:@.arguments/*/args/*/primary/*
 
+
+   /*
+    * HTTP POST special cases
+    */
    case:post
       add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*
@@ -194,6 +205,10 @@ switch:x:@.arguments/*/verb
       add:x:@apply-file/**/exclude
          get-nodes:x:@.arguments/*/args/*/primary/*
 
+
+   /*
+    * HTTP PUT special cases
+    */
    case:put
       add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*
@@ -241,6 +256,11 @@ set-value:x:@.filename
       :.
       get-value:x:@.arguments/*/verb
       :.hl
+
+
+/*
+ * Saving file, now applied according to template declaration.
+ */
 save-file:x:@.filename
    get-value:x:@hyper
 

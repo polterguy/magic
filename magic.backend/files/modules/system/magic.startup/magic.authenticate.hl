@@ -28,11 +28,11 @@ slot:magic.authenticate
             not
                eq
                   get-value:x:@.arguments/*/username
-                  .:root
+                  :root
             not
                eq
                   get-value:x:@.arguments/*/password
-                  .:root
+                  :root
          .lambda
             throw:Oops, wrong credentials!
 
@@ -45,7 +45,7 @@ slot:magic.authenticate
       auth.create-ticket
          username:x:@.arguments/*/username
          roles
-            .:root
+            :root
 
 
       /*

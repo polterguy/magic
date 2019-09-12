@@ -26,7 +26,7 @@ lambda:x:@.arguments/*/hyperlambda
 /*
  * Evaluates the transformed [hyperlambda].
  */
-eval:x:-
+eval:x:@lambda
 
 
 /*
