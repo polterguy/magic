@@ -13,23 +13,11 @@ slot:magic.db.mysql.tables
       /*
        * Opens up our connection
        */
-      concat
-         :[
-         get-value:x:@.arguments/*/database
-         :]
-      mysql.connect:x:@concat
+      mysql.connect:x:@.arguments/*/database
 
 
          /*
           * Runs our query
           */
-         .sql:"use "
-         set-value:x:@.sql
-            concat
-               get-value:x:@.sql
-               .:'`'
-               get-value:x:@.arguments/*/database
-               .:'`'
-               .:"; show tables"
-         mysql.select:x:@.sql
+         mysql.select:"show tables"
          return-nodes:x:-/*

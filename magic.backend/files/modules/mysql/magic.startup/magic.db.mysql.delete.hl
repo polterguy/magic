@@ -1,6 +1,6 @@
 
 /*
- * Deletes the specified [id] record from your [database]/[table].
+ * Deletes the specified [ids] record from your [database]/[table].
  */
 slot:magic.db.mysql.delete
    .arguments
@@ -19,7 +19,7 @@ slot:magic.db.mysql.delete
             get-count:x:@.arguments/*/ids/*
             .:int:0
          .lambda
-            throw:No ID given to [magic.db.delete]
+            throw:No IDs given to [magic.db.delete]
 
 
       for-each:x:@.arguments/*/ids/*
@@ -38,11 +38,7 @@ slot:magic.db.mysql.delete
       /*
        * Opening up a connection.
        */
-      concat
-         :[
-         get-value:x:@.arguments/*/database
-         :]
-      mysql.connect:x:@concat
+      mysql.connect:x:@.arguments/*/database
 
 
          /*

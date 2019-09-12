@@ -14,11 +14,7 @@ slot:magic.db.mysql.create
       /*
        * Opening up a connection.
        */
-      concat
-         :[
-         get-value:x:@.arguments/*/database
-         :]
-      mysql.connect:x:@concat
+      mysql.connect:x:@.arguments/*/database
 
 
          /*
@@ -34,7 +30,7 @@ slot:magic.db.mysql.create
          if
             mt
                get-count:x:@.arguments/*/exclude/*
-               .:int:0
+               :int:0
             .lambda
 
 

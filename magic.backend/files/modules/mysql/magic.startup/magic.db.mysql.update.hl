@@ -33,11 +33,7 @@ slot:magic.db.mysql.update
       /*
        * Opening up a connection.
        */
-      concat
-         :[
-         get-value:x:@.arguments/*/database
-         :]
-      mysql.connect:x:@concat
+      mysql.connect:x:@.arguments/*/database
 
 
          /*

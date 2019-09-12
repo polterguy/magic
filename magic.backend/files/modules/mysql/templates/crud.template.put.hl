@@ -15,7 +15,7 @@ add:x:./*/signal/*/values
 /*
  * Invoking [magic.db.mysql.update]
  */
-unwrap:x:./*/signal/*/ids/*
+unwrap:x:+/*/ids/*
 signal:magic.db.mysql.update
    database:{database}
    table:{table}
