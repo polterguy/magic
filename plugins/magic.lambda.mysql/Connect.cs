@@ -39,6 +39,11 @@ namespace magic.lambda.mysql
                 var generic = _configuration["databases:mysql:generic"];
                 connectionString = generic.Replace("{database}", connectionString.Substring(1, connectionString.Length - 2));
             }
+            else if (!connectionString.Contains(";"))
+            {
+                var generic = _configuration["databases:mysql:generic"];
+                connectionString = generic.Replace("{database}", connectionString);
+            }
 
             using (var connection = new MySqlConnection(connectionString))
 			{
