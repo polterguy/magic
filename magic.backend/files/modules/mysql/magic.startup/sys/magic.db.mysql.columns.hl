@@ -12,13 +12,11 @@ slot:magic.db.mysql.columns
       /*
        * Opens up our connection
        */
-      .connection
-      set-value:x:@.connection
-         concat
-            :[
-            get-value:x:@.connection
-            :]
-      mysql.connect:x:@.connection
+      concat
+         :[
+         get-value:x:@.connection
+         :]
+      mysql.connect:x:@concat
 
 
          .sql:"use "

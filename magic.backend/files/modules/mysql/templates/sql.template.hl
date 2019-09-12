@@ -8,19 +8,16 @@
 /*
  * Creating our database argument.
  */
-.connection:{database}
-set-value:x:@.connection
-   concat
-      :[
-      get-value:x:@.connection
-      :]
-mysql.connect:x:@.connection
+concat
+   :[
+   :{database}
+   :]
 
 
 /*
  * Opening up a database connection
  */
-mysql.connect:x:@.connection
+mysql.connect:x:@concat
 
 
    /*

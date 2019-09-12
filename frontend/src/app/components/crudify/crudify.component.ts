@@ -19,7 +19,7 @@ export class CrudifyComponent implements OnInit {
   private selectedTable: string = null;
   private columns: any[] = null;
   private endpoints: any[] = null;
-  private folderExists: boolean = false;
+  private folderExists = false;
   private customSql: string;
   private verbs: string[] = ['get', 'post', 'put', 'delete'];
   private endpointName = '';
