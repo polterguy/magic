@@ -29,6 +29,7 @@ slot:magic.db.mysql.read
          add:x:./*/mysql.read
             get-nodes:x:@.arguments/*/args/*/limit
 
+
          /*
           * We need to later check if [limit] was given, to check if only a single
           * value was requested - At which point we'll return a single JSON object,
@@ -63,12 +64,13 @@ slot:magic.db.mysql.read
          if
             mt
                get-count:x:@.arguments/*/args/*
-               .:int:0
+               :int:0
             .lambda
 
 
                /*
-                * Adding [where] to [mysql.read].
+                * Adding [where] to [mysql.read], making sure all specified criterias
+                * are added with an "and" clause wrapping them.
                 */
                add:x:../*/mysql.connect/*/mysql.read
                   .
@@ -84,7 +86,7 @@ slot:magic.db.mysql.read
          if
             mt
                get-count:x:@.arguments/*/columns/*
-               .:int:0
+               :int:0
             .lambda
 
 
@@ -119,6 +121,7 @@ slot:magic.db.mysql.read
                 * Returning a single object.
                 */
                return-nodes:x:@mysql.read/*/*
+
 
          /*
           * Returning an array of objects.

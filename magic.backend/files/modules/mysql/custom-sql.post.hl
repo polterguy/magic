@@ -1,7 +1,6 @@
 
 /*
- * Generate an HTTP REST endpoint according to the given
- * [.arguments].
+ * Generate an HTTP REST generic SQL endpoint according to the given [.arguments].
  */
 .arguments
    authorization:string

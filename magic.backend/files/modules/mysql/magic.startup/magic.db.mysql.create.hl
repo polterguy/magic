@@ -1,6 +1,7 @@
 
 /*
- * Creates a new item in your [database]/[table] with the specified [values].
+ * Creates a new item in your [database]/[table] with the specified [values],
+ * excluding everything from [exclude].
  */
 slot:magic.db.mysql.create
    .arguments

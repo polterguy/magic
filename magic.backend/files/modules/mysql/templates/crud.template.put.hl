@@ -1,6 +1,6 @@
 
 /*
- * Template for updating an item.
+ * Template for HTTP PUT CRUD requests.
  */
 .arguments
 

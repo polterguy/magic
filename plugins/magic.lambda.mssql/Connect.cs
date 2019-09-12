@@ -6,10 +6,11 @@
 using System;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using magic.node;
-using magic.signals.contracts;
-using magic.node.extensions;
 using ut = magic.utils;
+using magic.node.extensions;
+using magic.signals.contracts;
 
 namespace magic.lambda.mssql
 {
@@ -18,16 +19,33 @@ namespace magic.lambda.mssql
 	{
 		readonly ISignaler _signaler;
         readonly ut.Stack<SqlConnection> _connections;
+        readonly IConfiguration _configuration;
 
-        public Connect(ISignaler signaler, ut.Stack<SqlConnection> connections)
+        public Connect(ISignaler signaler, ut.Stack<SqlConnection> connections, IConfiguration configuration)
         {
 			_signaler = signaler ?? throw new ArgumentNullException(nameof(signaler));
             _connections = connections ?? throw new ArgumentNullException(nameof(connections));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public void Signal(Node input)
 		{
-			using (var connection = new SqlConnection(input.GetEx<string>(_signaler)))
+            var connectionString = input.GetEx<string>(_signaler);
+
+            // Checking if this is a "generic connection string".
+            if (connectionString.StartsWith("[", StringComparison.InvariantCulture) &&
+                connectionString.EndsWith("]", StringComparison.InvariantCulture))
+            {
+                var generic = _configuration["databases:mssql:generic"];
+                connectionString = generic.Replace("{database}", connectionString.Substring(1, connectionString.Length - 2));
+            }
+            else if (!connectionString.Contains(";"))
+            {
+                var generic = _configuration["databases:mssql:generic"];
+                connectionString = generic.Replace("{database}", connectionString);
+            }
+
+			using (var connection = new SqlConnection(connectionString))
 			{
 				connection.Open();
                 _connections.Push(connection);

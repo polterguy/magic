@@ -1,9 +1,8 @@
 
 /*
- * Lists all database in your installation.
+ * Lists all MySQL columns in your [database]/[table] combination.
  *
- * Currently only supports MySQL, and requires a working _"sys"_ connection
- * string in your _"appsettings.json"_ file.
+ * Requires a working _"sys"_ connection string in your _"appsettings.json"_ file.
  */
 .arguments
    database:string

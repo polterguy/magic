@@ -1,6 +1,8 @@
 
 /*
  * Template for custom SQL HTTP request.
+ *
+ * Expects {database} and {sql} [apply-file] arguments.
  */
 .arguments
 

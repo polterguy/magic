@@ -1,6 +1,8 @@
 
 /*
- * Template for creating a new item.
+ * Template for HTTP POST CRUD requests.
+ *
+ * Expects {database} and {table} [apply-file] arguments.
  */
 .arguments
 

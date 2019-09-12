@@ -1,11 +1,12 @@
+
 /*
- * Creates a user and inserts into the `magic_auth` database,
+ * Creates a user and inserts into the "magic_auth" database,
  * with the username/password specified in the [.parameters] collection,
- * and belonging to the specified roles in tha [.parameters] collection.
+ * and belonging to the specified [roles] from the [.parameters] collection.
  *
  * Password is cryptographically hashed using the blow fish hashing algorithm,
  * and cryptographically and securely stored with a user provided salt in the
- * `users` table.
+ * "users" table.
  *
  * This file is intended for being directly evaluated, for then to just
  * having the [username] and [password] values replaced in your CodeMirror

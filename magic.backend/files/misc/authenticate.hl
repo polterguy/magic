@@ -3,7 +3,7 @@
  * Authenticates the user with the specified [username] and [password] combination.
  *
  * NOTICE!
- * This is a "one size fits all" aolution to the authentication issue in Magic,
+ * This is a "one size fits all" solution to the authentication issue in Magic,
  * and intended to in combination with the "magic_auth.sql" script and
  * "create-user.hl" script replace the existing authentication, that simply checks
  * to see if the username/password as root/root.
@@ -15,7 +15,7 @@
  * Then insert at least one user using the "create-user.hl" file (remember your password).
  * Then copy and paste this entire file's content, and paste it into
  * "/modules/system/authenticate.get.hl", evaluate the file, and you can now login
- * using a "real" euthentication database.
+ * using a "real" authentication database.
  */
 slot:magic.authenticate
    .arguments
@@ -43,7 +43,7 @@ slot:magic.authenticate
          if
             eq
                get-count:x:@mysql.select/*
-               .:int:0
+               :int:0
             .lambda
 
 
