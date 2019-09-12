@@ -6,18 +6,9 @@
 
 
 /*
- * Creating our database argument.
- */
-concat
-   :[
-   :{database}
-   :]
-
-
-/*
  * Opening up a database connection
  */
-mysql.connect:x:@concat
+mysql.connect:{database}
 
 
    /*

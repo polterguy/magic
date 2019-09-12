@@ -17,11 +17,7 @@ slot:magic.db.mysql.read
       /*
        * Opening up a connection.
        */
-      concat
-         :[
-         get-value:x:@.arguments/*/database
-         :]
-      mysql.connect:x:@concat
+      mysql.connect:x:@.arguments/*/database
 
 
          /*
