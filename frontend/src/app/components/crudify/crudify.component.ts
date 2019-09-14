@@ -188,33 +188,17 @@ arg4:decimal`;
     });
   }
 
-  getDynamicColumns(): any[] {
-    const columns = [];
-    for (const iterator of this.columns) {
-      if (!(iterator.primary && iterator.automatic)) {
-        columns.push(JSON.parse('{"' + iterator.name + '": "' + iterator.hl + '"}'));
-      }
-    }
-    return columns;
-  }
-
-  getStaticColumns(): any[] {
-    const columns = [];
-    for (const iterator of this.columns) {
-      if (iterator.primary && iterator.automatic) {
-        columns.push(JSON.parse('{"' + iterator.name + '": "' + iterator.hl + '"}'));
-      }
-    }
-    return columns;
-  }
-
   getVerbAuthorization(verb: string) {
     return this.endpoints.filter((x) => x.verb == verb)[0].auth;
   }
 
   createHttpEndpoint(verb: string, callback: (res: any) => void) {
-    const primary = this.getStaticColumns();
-    let columns = this.getDynamicColumns();
+    const primary = this.columns
+      .filter(x => x.primary && x.automatic)
+      .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    const columns = this.columns
+      .filter(x => !x.automatic)
+      .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     const databaseType = 'mysql';
     const auth = this.getVerbAuthorization(verb);
     this.crudService.generateCrudEndpoints({
