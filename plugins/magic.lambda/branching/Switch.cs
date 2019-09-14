@@ -27,7 +27,7 @@ namespace magic.lambda.branching
             if (!input.Children.Any(x => x.Name == "case"))
                 throw new ApplicationException("[switch] must have one at least one [case] child");
 
-            if (input.Children.Any((x) => x.Name != "case" && x.Name != "default"))
+            if (input.Children.Any(x => x.Name != "case" && x.Name != "default"))
                 throw new ApplicationException("[switch] can only handle [case] and [default] children");
 
             if (input.Children.Any(x => x.Name == "case" && x.Value == null))
@@ -39,9 +39,9 @@ namespace magic.lambda.branching
             var result = input.GetEx(_signaler);
 
             var executionNode = input.Children
-                .FirstOrDefault((x) => x.Name == "case" && x.Value.Equals(result)) ??
+                .FirstOrDefault(x => x.Name == "case" && x.Value.Equals(result)) ??
                 input.Children
-                    .FirstOrDefault((x) => x.Name == "default");
+                    .FirstOrDefault(x => x.Name == "default");
 
             if (executionNode != null)
             {

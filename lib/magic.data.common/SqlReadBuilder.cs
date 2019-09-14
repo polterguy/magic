@@ -54,7 +54,7 @@ namespace magic.data.common
             GetOrderBy(builder);
 
             // Getting [limit].
-            var limitNodes = Root.Children.Where((x) => x.Name == "limit");
+            var limitNodes = Root.Children.Where(x => x.Name == "limit");
             if (limitNodes.Any())
             {
                 // Sanity checking.
@@ -70,7 +70,7 @@ namespace magic.data.common
                 builder.Append(" limit 25");
             }
 
-            var offsetNodes = Root.Children.Where((x) => x.Name == "offset");
+            var offsetNodes = Root.Children.Where(x => x.Name == "offset");
             if (offsetNodes.Any())
             {
                 // Sanity checking.
@@ -85,7 +85,7 @@ namespace magic.data.common
 
         protected void GetOrderBy(StringBuilder builder)
         {
-            var orderNodes = Root.Children.Where((x) => x.Name == "order");
+            var orderNodes = Root.Children.Where(x => x.Name == "order");
             if (orderNodes.Any())
             {
                 // Sanity checking.
@@ -96,7 +96,7 @@ namespace magic.data.common
                 builder.Append(" order by " + EscapeChar + orderColumn + EscapeChar);
 
                 // Checking if [direction] node exists.
-                var direction = Root.Children.Where((x) => x.Name == "direction");
+                var direction = Root.Children.Where(x => x.Name == "direction");
                 if (direction.Any())
                 {
                     // Sanity checking.
@@ -118,7 +118,7 @@ namespace magic.data.common
 
         void GetColumns(StringBuilder builder)
         {
-            var columns = Root.Children.Where((x) => x.Name == "columns");
+            var columns = Root.Children.Where(x => x.Name == "columns");
             if (columns.Any() && columns.First().Children.Any())
             {
                 var first = true;

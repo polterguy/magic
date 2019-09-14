@@ -40,7 +40,7 @@ namespace magic.lambda
             else if (input.Name == "eval" && input.Value != null)
             {
                 var nodes = input.Evaluate();
-                Execute(nodes.SelectMany((x) => x.Children));
+                Execute(nodes.SelectMany(x => x.Children));
             }
         }
 

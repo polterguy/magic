@@ -25,7 +25,7 @@ namespace magic.lambda.crypto
 
         public void Signal(Node input)
         {
-            var hash = input.Children.FirstOrDefault((x) => x.Name == "hash")?.GetEx<string>(_signaler);
+            var hash = input.Children.FirstOrDefault(x => x.Name == "hash")?.GetEx<string>(_signaler);
             if (hash == null)
                 throw new ApplicationException($"No [hash] value provided to [crypto.password.verify]");
 

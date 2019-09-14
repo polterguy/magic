@@ -121,7 +121,7 @@ namespace magic.node.extensions.hyperlambda
                         // Checking if token is a scope declaration.
                         if (idxNode == null &&
                             token.StartsWith(" ", StringComparison.CurrentCulture) &&
-                            !token.Any((x) => x != ' '))
+                            !token.Any(x => x != ' '))
                         {
                             // We have a scope declaration.
                             int newLevel = token.Length / 3;

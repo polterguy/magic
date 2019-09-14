@@ -34,7 +34,7 @@ namespace magic.lambda.slots
             get
             {
                 var result = new List<string>();
-                _slots.Read((x) =>
+                _slots.Read(x =>
                 {
                     result.AddRange(x.Keys);
                 });
@@ -44,14 +44,14 @@ namespace magic.lambda.slots
 
         public void Signal(Node input)
         {
-            if (!input.Children.Any((x) => x.Name == ".lambda"))
+            if (!input.Children.Any(x => x.Name == ".lambda"))
                 throw new ApplicationException("Keyword [slot] requires at least a [.lambda] children node");
 
             if (input.Children.Any((x => x.Name != ".lambda" && x.Name != ".arguments")))
                 throw new ApplicationException("Keyword [slot] can only handle [.lambda] and [.arguments] children nodes");
 
             var slotNode = new Node();
-            slotNode.AddRange(input.Children.Select((x) => x.Clone()));
+            slotNode.AddRange(input.Children.Select(x => x.Clone()));
             _slots.Write((slots) => slots[input.GetEx<string>(_signaler)] = slotNode);
         }
 

@@ -14,17 +14,17 @@ namespace magic.utils
 
         public void Push(T value)
         {
-            _connections.Write((x) => x.Add(value));
+            _connections.Write(x => x.Add(value));
         }
 
         public T Peek()
         {
-            return _connections.Read((x) => x.Last());
+            return _connections.Read(x => x.Last());
         }
 
         public void Pop()
         {
-            _connections.Write((x) => x.RemoveAt(x.Count - 1));
+            _connections.Write(x => x.RemoveAt(x.Count - 1));
         }
 	}
 }

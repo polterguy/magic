@@ -33,7 +33,7 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc((x) => x.OutputFormatters.Add(new ContentFormatters()))
+            services.AddMvc(x => x.OutputFormatters.Add(new ContentFormatters()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Adding some basic configurations.

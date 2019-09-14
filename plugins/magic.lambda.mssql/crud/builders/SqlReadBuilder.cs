@@ -25,7 +25,7 @@ namespace magic.lambda.mssql.crud.builders
             // Getting [order].
             GetOrderBy(builder);
 
-            var offsetNodes = Root.Children.Where((x) => x.Name == "offset");
+            var offsetNodes = Root.Children.Where(x => x.Name == "offset");
             if (offsetNodes.Any())
             {
                 // Sanity checking.
@@ -37,7 +37,7 @@ namespace magic.lambda.mssql.crud.builders
             }
 
             // Getting [limit].
-            var limitNodes = Root.Children.Where((x) => x.Name == "limit");
+            var limitNodes = Root.Children.Where(x => x.Name == "limit");
             if (limitNodes.Any())
             {
                 // Sanity checking.

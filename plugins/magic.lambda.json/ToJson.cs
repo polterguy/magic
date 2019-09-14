@@ -36,7 +36,7 @@ namespace magic.json
         private JToken Handle(Node root)
         {
             JToken result = null;
-            if (root.Children.Any((x) => x.Name != "" && x.Name != "."))
+            if (root.Children.Any(x => x.Name != "" && x.Name != "."))
             {
                 // Complex object.
                 var resObj = new JObject();

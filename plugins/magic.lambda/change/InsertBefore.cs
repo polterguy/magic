@@ -29,7 +29,7 @@ namespace magic.lambda.change
             foreach (var idxDest in input.Evaluate().ToList()) // To avoid changing collection during enumeration
             {
                 // Looping through each source node and adding its children to currently iterated destination.
-                foreach (var idxSource in input.Children.SelectMany((x) => x.Children))
+                foreach (var idxSource in input.Children.SelectMany(x => x.Children))
                 {
                     idxDest.InsertBefore(idxSource.Clone()); // Cloning in case of multiple destinations.
                 }

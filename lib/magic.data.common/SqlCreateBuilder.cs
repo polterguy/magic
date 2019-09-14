@@ -49,7 +49,7 @@ namespace magic.data.common
         protected virtual void BuildValues(StringBuilder builder, Node result)
         {
             // Appending actual insertion values.
-            var values = Root.Children.Where((x) => x.Name == "values");
+            var values = Root.Children.Where(x => x.Name == "values");
 
             // Sanity checking, making sure there's exactly one [values] node.
             if (values.Count() != 1)
