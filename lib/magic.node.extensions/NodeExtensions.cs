@@ -28,9 +28,9 @@ namespace magic.node.extensions
                 signaler.Signal(signal.Content.Name, signal.Content);
                 return signal.Content.Get<T>();
             }
-            else if (node.Value is Expression exp)
+            if (node.Value is Expression exp)
             {
-                var value = exp.Evaluate(new Node[] { node });
+                var value = exp.Evaluate(node);
                 if (value.Count() > 1)
                     throw new ApplicationException("Multiple resulting nodes from expression");
                 if (!value.Any())

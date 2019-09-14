@@ -93,7 +93,7 @@ namespace magic.node
         {
             if (evaluate && Value is Expression ex)
             {
-                var nodes = ex.Evaluate(new Node[] { this });
+                var nodes = ex.Evaluate(this);
 
                 if (nodes.Count() > 1)
                     throw new ApplicationException("Multiple values returned from Expression in Get");
@@ -111,7 +111,7 @@ namespace magic.node
             if (!(Value is Expression ex))
                 throw new ApplicationException($"'{Value}' is not a valid Expression");
 
-            return ex.Evaluate(new Node[] { this });
+            return ex.Evaluate(this);
         }
 
         public T Get<T>()
@@ -135,7 +135,7 @@ namespace magic.node
 
             if (Value is Expression ex)
             {
-                foreach (var idx in ex.Evaluate(new Node[] { this }))
+                foreach (var idx in ex.Evaluate(this))
                 {
                     if (idx.Value is Expression exInner)
                     {

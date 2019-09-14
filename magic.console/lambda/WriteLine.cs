@@ -18,16 +18,13 @@ namespace magic.console.lambda
             var val = input.Value;
             if (val is Expression ex)
             {
-                var node = ex.Evaluate(new Node[] { input }).ToList();
+                var node = ex.Evaluate(input).ToList();
                 if (node.Count() != 1)
                     throw new ApplicationException("Too few or too many source found for [write-line]");
 
                 val = node.First().Value;
             }
-            if (val == null)
-                throw new ApplicationException("Cannot write 'null' to the console");
-
-            Console.WriteLine(val);
+            Console.WriteLine(val ?? "");
         }
     }
 }
