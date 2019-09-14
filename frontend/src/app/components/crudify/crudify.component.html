@@ -3,7 +3,7 @@
 
   <mat-form-field *ngIf="databases !== null">
     <mat-select placeholder="Select database" (selectionChange)="databaseChanged($event)">
-      <mat-option *ngFor="let cur of databases" [value]="cur.Database">{{cur.Database}}</mat-option>
+      <mat-option *ngFor="let cur of databases" [value]="cur.db">{{cur.db}}</mat-option>
     </mat-select>
   </mat-form-field>
 

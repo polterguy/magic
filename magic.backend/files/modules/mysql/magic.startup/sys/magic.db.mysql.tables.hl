@@ -22,4 +22,6 @@ slot:magic.db.mysql.tables
           * Runs our query
           */
          mysql.select:"show tables"
+         set-name:x:@mysql.select/*/*
+            :table
          return-nodes:x:@mysql.select/*
