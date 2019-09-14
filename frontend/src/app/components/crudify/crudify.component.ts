@@ -2,7 +2,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CrudifyService } from 'src/app/services/crudify-service';
 import { MatSelectChange, MatSnackBar } from '@angular/material';
-import { FileService } from 'src/app/services/file-service';
 import { CrudifyResult } from 'src/app/models/endpoint-result-model';
 
 @Component({
@@ -11,25 +10,42 @@ import { CrudifyResult } from 'src/app/models/endpoint-result-model';
   styleUrls: ['./crudify.component.scss']
 })
 export class CrudifyComponent implements OnInit {
+
+  // Columns declarations for our tables
   private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
   private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action', 'auth'];
+
+  // Databases, tables, and selected instances of such
   private databases: any[] = null;
-  private selectedDatabase: string = null;
   private tables: any[] = null;
+  private selectedDatabase: string = null;
   private selectedTable: string = null;
+
+  // All columns in table
   private columns: any[] = null;
+
+  // Endpoints that will be created
   private endpoints: any[] = null;
-  private folderExists = false;
+
+  // Custom SQL that will be created, if any
   private customSql: string;
-  private verbs: string[] = ['get', 'post', 'put', 'delete'];
-  private endpointName = '';
-  private arguments: string;
-  private selectedVerb = '';
-  private authorizationForCustomSql = 'root';
+
+  // All verbs, and their CRUD associations
+  private verbs = [
+    {verb: 'post', action: 'create'},
+    {verb: 'get', action: 'read'},
+    {verb: 'put', action: 'update'},
+    {verb: 'delete', action: 'delete'},
+  ];
+
+  // Name of endpoint, arguments and HTTP verb for custom SQL
+  private customSqlEndpointName = '';
+  private customSqlArguments: string;
+  private customSqlEndpointVerb = '';
+  private customSqlAuthorization = 'root';
 
   constructor(
     private crudService: CrudifyService,
-    private fileService: FileService,
     private snackBar: MatSnackBar) { }
 
   ngOnInit() {
@@ -40,7 +56,7 @@ export class CrudifyComponent implements OnInit {
     });
   }
 
-  getCodeMirrorOptions() {
+  getCodeMirrorOptionsSql() {
     return {
       lineNumbers: true,
       theme: 'material',
@@ -64,13 +80,20 @@ export class CrudifyComponent implements OnInit {
   }
 
   databaseChanged(e: MatSelectChange) {
+
+    // User changes his active database
     this.selectedDatabase = e.value;
     this.tables = null;
     this.columns = null;
     this.endpoints = null;
+
+    // Getting tables for his new database of choice
     this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
-      const tables = [];
-      tables.push({'table': 'Custom SQL'});
+
+      // Making sure we append "Custom SQL" as first option in select
+      const tables = [{'table': 'Custom SQL'}];
+
+      // Appending all tables as option in select for selecting table
       for (const iterator of res) {
         tables.push({
           table: iterator[Object.keys(iterator)[0]],
@@ -83,24 +106,26 @@ export class CrudifyComponent implements OnInit {
   }
 
   tableChanged(e: MatSelectChange) {
+
     if (e.value === 'Custom SQL') {
+
+      // User wants to create a custom SQL endpoint
       this.selectedTable = e.value;
       this.customSql = 'select * from something';
-      this.arguments = `arg1:int
-arg2:string
-arg3:date
-arg4:decimal`;
+      this.customSqlArguments = 'filter:string';
+
     } else {
+
+      // User wants to crudify a table.
       this.selectedTable = e.value;
       this.crudService.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
-        this.createEndpoints();
-        this.fileService.folderExists('/modules/' + this.selectedDatabase).subscribe((res2) => {
-          if (res2 === true) {
-            this.folderExists = true;
-            this.showWarning('Warning, folder already exists!');
-          } else {
-            this.folderExists = false;
+        this.endpoints = this.verbs.map(x => {
+          return {
+            endpoint: this.selectedDatabase + '/' + this.selectedTable,
+            verb: x.verb,
+            action: x.action,
+            auth: 'root'
           }
         });
       }, (err) => {
@@ -109,66 +134,32 @@ arg4:decimal`;
     }
   }
 
-  createEndpoints() {
-    const endpoints = [];
-    const verbs = [
-      {verb: 'post', action: 'create'},
-      {verb: 'get', action: 'read'},
-      {verb: 'put', action: 'update'},
-      {verb: 'delete', action: 'delete'},
-    ];
-    for (const iterator of verbs) {
-      endpoints.push({
-        endpoint: this.selectedDatabase + '/' + this.selectedTable,
-        verb: iterator.verb,
-        action: iterator.action,
-        auth: 'root',
-      });
-    }
-    this.endpoints = endpoints;
-  }
-
-  verbChanged(e: MatSelectChange) {
-    this.selectedVerb = e.value;
-    this.checkIfCustomSqlEndpointExists();
-  }
-
-  endpointNameChanged() {
-    this.checkIfCustomSqlEndpointExists();
-  }
-
-  checkIfCustomSqlEndpointExists() {
-    if (this.selectedVerb !== '' && this.endpointName !== '') {
-      this.fileService.fileExists(`/modules/${this.selectedDatabase}/${this.endpointName}.${this.selectedVerb}.hl`).subscribe((res) => {
-        if (res === true) {
-          this.showWarning('Endpoint already exists');
-        }
-      }, (error: any) => {
-        this.showError(error.error.message);
-      });
-    }
-  }
-
+  // Invoked when user wants to create a Custom SQL endpoint
+  // As in user clicks the button to create endpoint
   generateSqlEndpoint() {
+
+    // Sanity checking data first
     if (this.customSql === '') {
       this.showError('No SQL provided');
       return;
     }
-    if (this.endpointName === '') {
+    if (this.customSqlEndpointName === '') {
       this.showError('No endpoint name provided');
       return;
     }
-    if (this.selectedVerb === '') {
+    if (this.customSqlEndpointVerb === '') {
       this.showError('No HTTP verb provided');
       return;
     }
+
+    // Creating custom SQL endpoint
     this.crudService.createCustomSqlEndpoint({
       database: this.selectedDatabase,
-      arguments: this.arguments,
-      verb: this.selectedVerb,
-      endpointName: this.endpointName,
+      arguments: this.customSqlArguments,
+      verb: this.customSqlEndpointVerb,
+      endpointName: this.customSqlEndpointName,
       sql: this.customSql,
-      authorization: this.authorizationForCustomSql,
+      authorization: this.customSqlAuthorization,
     }).subscribe((res: CrudifyResult) => {
       this.showSuccess('Endpoint successfully created');
     }, (error) => {
@@ -176,7 +167,8 @@ arg4:decimal`;
     });
   }
 
-  generate() {
+  // Crudifies a table in some database
+  crudifyTable() {
     this.createHttpEndpoint('get', (res: any) => {
       this.createHttpEndpoint('put', (res: any) => {
         this.createHttpEndpoint('post', (res: any) => {
@@ -188,29 +180,30 @@ arg4:decimal`;
     });
   }
 
-  getVerbAuthorization(verb: string) {
-    return this.endpoints.filter((x) => x.verb == verb)[0].auth;
-  }
-
+  // Helper method that creates one single HTTP endpoint
   createHttpEndpoint(verb: string, callback: (res: any) => void) {
+
+    // Notice, we might experience primary keys that does not have automatic values
     const primary = this.columns
       .filter(x => x.primary && x.automatic)
       .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+
+    // We allow for caller to provide values for everything that doesn't have automatic values
     const columns = this.columns
       .filter(x => !x.automatic)
       .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
-    const databaseType = 'mysql';
-    const auth = this.getVerbAuthorization(verb);
+
+    // Database type
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: `/modules/${databaseType}/templates/crud.template.${verb}.hl`,
+      template: `/modules/mysql/templates/crud.template.${verb}.hl`,
       verb,
       args: {
         primary,
         columns,
       },
-      auth,
+      auth: this.endpoints.filter((x) => x.verb == verb)[0].auth,
     }).subscribe((res) => {
       callback(res);
     }, (error) => {
@@ -225,16 +218,9 @@ arg4:decimal`;
     });
   }
 
-  showWarning(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 10000,
-      panelClass: ['warning-snackbar'],
-    });
-  }
-
   showSuccess(error: string) {
     this.snackBar.open(error, 'Close', {
-      duration: 10000,
+      duration: 2000,
     });
   }
 }
