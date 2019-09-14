@@ -11,7 +11,7 @@ import { CrudifyResult } from 'src/app/models/endpoint-result-model';
   styleUrls: ['./crudify.component.scss']
 })
 export class CrudifyComponent implements OnInit {
-  private displayedColumns: string[] = ['field', 'type', 'null', 'key', 'default', 'extra'];
+  private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
   private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action', 'auth'];
   private databases: any[] = null;
   private selectedDatabase: string = null;
@@ -188,45 +188,24 @@ arg4:decimal`;
     });
   }
 
-  getAllPrimaryKeyColumns(namesOnly: boolean = false): any[] {
-    const ids = [];
+  getDynamicColumns(): any[] {
+    const columns = [];
     for (const iterator of this.columns) {
-      if (iterator.Key === 'pri') {
-        if (namesOnly) {
-          ids.push(iterator.Field);
-        } else {
-          const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
-          ids.push(JSON.parse(str));
-        }
+      if (iterator.primary) {
+        columns.push(JSON.parse('{"' + iterator.name + '": "' + iterator.hl + '"}'));
       }
     }
-    return ids;
+    return columns;
   }
 
-  getAllNonPrimaryKeyColumns(verb: string): any[] {
-    const ids = [];
-    const exclusions = verb === 'post' || verb === 'put' ? this.getSpecialExclusionColumns() : [];
+  getStaticColumns(): any[] {
+    const columns = [];
     for (const iterator of this.columns) {
-      if (iterator.Key !== 'pri') {
-        if (exclusions.filter(x => x == iterator.Field).length === 0) {
-          const str = '{"' + iterator.Field + '": "' + iterator.Type + '"}';
-          ids.push(JSON.parse(str));
-        }
+      if (!iterator.primary) {
+        columns.push(JSON.parse('{"' + iterator.name + '": "' + iterator.hl + '"}'));
       }
     }
-    return ids;
-  }
-
-  getSpecialExclusionColumns(): string[] {
-    const ids = [];
-    for (const iterator of this.columns) {
-      switch (iterator.Extra) {
-        case 'default_generated':
-          ids.push(iterator.Field);
-          break;
-      }
-    }
-    return ids;
+    return columns;
   }
 
   getVerbAuthorization(verb: string) {
@@ -234,8 +213,8 @@ arg4:decimal`;
   }
 
   createHttpEndpoint(verb: string, callback: (res: any) => void) {
-    const primary = this.getAllPrimaryKeyColumns();
-    let columns = this.getAllNonPrimaryKeyColumns(verb);
+    const primary = this.getStaticColumns();
+    let columns = this.getDynamicColumns();
     const databaseType = 'mysql';
     const auth = this.getVerbAuthorization(verb);
     this.crudService.generateCrudEndpoints({
