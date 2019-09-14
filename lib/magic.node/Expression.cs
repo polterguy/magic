@@ -17,7 +17,7 @@ namespace magic.node
     {
         public class Iterator
         {
-            readonly Func<IEnumerable<Node>, IEnumerable<Node>> _evaluate;
+            readonly Func<Node, IEnumerable<Node>, IEnumerable<Node>> _evaluate;
 
             public Iterator(string value)
             {
@@ -27,9 +27,9 @@ namespace magic.node
 
             public string Value { get; private set; }
 
-            public IEnumerable<Node> Evaluate(IEnumerable<Node> input)
+            public IEnumerable<Node> Evaluate(Node identity, IEnumerable<Node> input)
             {
-                return _evaluate(input);
+                return _evaluate(identity, input);
             }
 
             #region [ -- Overrides -- ]
@@ -53,27 +53,27 @@ namespace magic.node
 
             #region [ -- Private helper methods -- ]
 
-            Func<IEnumerable<Node>, IEnumerable<Node>> CreateEvaluator(string value)
+            Func<Node, IEnumerable<Node>, IEnumerable<Node>> CreateEvaluator(string value)
             {
                 switch (value)
                 {
                     case "*":
-                        return (input) => input.SelectMany((x) => x.Children);
+                        return (identiy, input) => input.SelectMany((x) => x.Children);
 
                     case "#":
-                        return (input) => input.Select((x) => x.Get<Node>());
+                        return (identiy, input) => input.Select((x) => x.Get<Node>());
 
                     case "-":
-                        return (input) => input.Select((x) => x.Previous ?? x.Parent.Children.Last());
+                        return (identiy, input) => input.Select((x) => x.Previous ?? x.Parent.Children.Last());
 
                     case "+":
-                        return (input) => input.Select((x) => x.Next ?? x.Parent.Children.First());
+                        return (identiy, input) => input.Select((x) => x.Next ?? x.Parent.Children.First());
 
                     case ".":
-                        return (input) => input.Select((x) => x.Parent).Distinct();
+                        return (identiy, input) => input.Select((x) => x.Parent).Distinct();
 
                     case "..":
-                        return (input) =>
+                        return (identiy, input) =>
                         {
                             // Notice, input might be a "no sequence enumerable", so we'll have to accommodate for "null returns".
                             var idx = input.FirstOrDefault();
@@ -88,7 +88,7 @@ namespace magic.node
                         };
 
                     case "**":
-                        return (input) =>
+                        return (identiy, input) =>
                         {
                             return AllDescendants(input);
                         };
@@ -98,13 +98,20 @@ namespace magic.node
                         if (value.StartsWith("\\", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);
-                            return (input) => input.Where((x) => x.Name == value);
+                            return (identiy, input) => input.Where((x) => x.Name == value);
+                        }
+
+                        if (value.StartsWith("{", StringComparison.InvariantCulture) &&
+                            value.EndsWith("}", StringComparison.InvariantCulture))
+                        {
+                            var index = int.Parse(value.Substring(1, value.Length - 2));
+                            return (identity, input) => input.Where((x) => x.Name == identity.Children.Skip(index).First().Get<string>());
                         }
 
                         if (value.StartsWith("=", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);
-                            return (input) => input.Where((x) =>
+                            return (identiy, input) => input.Where((x) =>
                             {
                                 var val = x.Value;
                                 if (val == null)
@@ -123,13 +130,13 @@ namespace magic.node
                             var ints = value.Substring(1, value.Length - 2).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                             var start = int.Parse(ints[0]);
                             var count = int.Parse(ints[1]);
-                            return (input) => input.Skip(start).Take(count);
+                            return (identiy, input) => input.Skip(start).Take(count);
                         }
 
                         if (value.StartsWith("@", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);
-                            return (input) =>
+                            return (identiy, input) =>
                             {
                                 var cur = input.FirstOrDefault()?.Previous ?? input.FirstOrDefault()?.Parent;
                                 while (cur != null && cur.Name != lookup)
@@ -149,9 +156,9 @@ namespace magic.node
                         }
 
                         if (int.TryParse(value, out int number))
-                            return (input) => input.SelectMany((x) => x.Children.Skip(number).Take(1));
+                            return (identiy, input) => input.SelectMany((x) => x.Children.Skip(number).Take(1));
 
-                        return (input) => input.Where((x) => x.Name == value);
+                        return (identiy, input) => input.Where((x) => x.Name == value);
                 }
             }
 
@@ -182,15 +189,16 @@ namespace magic.node
 
         public IEnumerable<Iterator> Iterators { get { return _iterators; } }
 
-        public IEnumerable<Node> Evaluate(IEnumerable<Node> input)
+        public IEnumerable<Node> Evaluate(Node identity)
         {
+            IEnumerable<Node> result = new Node[] { identity };
             foreach (var idx in _iterators)
             {
-                input = idx.Evaluate(input);
-                if (!input.Any())
+                result = idx.Evaluate(identity, result);
+                if (!result.Any())
                     return new Node[] { }; // Short circuiting to slightly optimize invocation.
             }
-            return input;
+            return result;
         }
 
         #region [ -- Overrides -- ]

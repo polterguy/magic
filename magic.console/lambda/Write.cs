@@ -18,7 +18,7 @@ namespace magic.console.lambda
             var val = input.Value;
             if (val is Expression ex)
             {
-                var node = ex.Evaluate(new Node[] { input }).ToList();
+                var node = ex.Evaluate(input).ToList();
                 if (node.Count() != 1)
                     throw new ApplicationException("too many source found for [write-line]");
 

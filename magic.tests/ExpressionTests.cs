@@ -27,7 +27,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar");
             var hl = "foo\n   bar\n   xxx\n   bar";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Equal(2, result.Count());
             Assert.Equal("bar", result.First().Name);
             Assert.Equal("bar", result.Skip(1).First().Name);
@@ -36,9 +36,9 @@ namespace magic.tests
         [Fact]
         public void Evaluate_02()
         {
-            var x = new Expression("foo/*");
+            var x = new Expression("*/foo/*");
             var hl = "foo\n   bar1\n   bar2\nfoo\n   bar3";
-            var lambda = new Parser(hl).Lambda().Children;
+            var lambda = new Parser(hl).Lambda();
             var result = x.Evaluate(lambda).ToList();
             Assert.Equal(3, result.Count());
             Assert.Equal("bar1", result.First().Name);
@@ -52,7 +52,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar/.");
             var hl = "foo\n   bar\n   bar";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("foo", result.First().Name);
         }
@@ -63,7 +63,7 @@ namespace magic.tests
             var x = new Expression("foo/1/@foo");
             var hl = "foo\n   bar\n   bar";
             var lambda = new Parser(hl).Lambda();
-            var result = x.Evaluate(lambda.Children).ToList();
+            var result = x.Evaluate(lambda.Children.First()).ToList();
             Assert.Single(result);
             Assert.Equal("foo", result.First().Name);
         }
@@ -76,7 +76,7 @@ namespace magic.tests
    bar:error
    bar:success";
             var lambda = new Parser(hl).Lambda();
-            var result = x.Evaluate(lambda.Children).ToList();
+            var result = x.Evaluate(lambda.Children.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar", result.First().Name);
             Assert.Equal("success", result.First().Value);
@@ -88,7 +88,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar1/+");
             var hl = "foo\n   bar1\n   bar2";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar2", result.First().Name);
         }
@@ -99,7 +99,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar2/-");
             var hl = "foo\n   bar1\n   bar2";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar1", result.First().Name);
         }
@@ -110,7 +110,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar1/-");
             var hl = "foo\n   bar1\n   bar2";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar2", result.First().Name);
         }
@@ -121,7 +121,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar2/+");
             var hl = "foo\n   bar1\n   bar2";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar1", result.First().Name);
         }
@@ -132,7 +132,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar1/=xxx");
             var hl = "foo\n   bar1:xxx\n   bar1:yyy";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar1", result.First().Name);
             Assert.Equal("xxx", result.First().Value);
@@ -144,7 +144,7 @@ namespace magic.tests
             var x = new Expression("foo/*/bar1/=5");
             var hl = "foo\n   bar1:int:5\n   bar1:yyy";
             var lambda = new Parser(hl).Lambda().Children;
-            var result = x.Evaluate(lambda).ToList();
+            var result = x.Evaluate(lambda.First()).ToList();
             Assert.Single(result);
             Assert.Equal("bar1", result.First().Name);
         }
@@ -153,7 +153,7 @@ namespace magic.tests
         public void EmptySequence_01()
         {
             var x = new Expression("foo/1/@foo/*/..");
-            var result = x.Evaluate(new Node[] { }).ToList();
+            var result = x.Evaluate(new Node()).ToList();
             Assert.Empty(result);
         }
     }
