@@ -30,12 +30,18 @@ apply-file:x:@.arguments/*/template
 
 /*
  * Then ensuring we turn on authorization to our endpoints according
- * to caller's specifications.
+ * to caller's specifications, if caller supplied an [auth] value.
  */
-unwrap:x:+/*/*
-insert-after:x:@apply-file/*/.arguments
-   .
-      auth.verify-ticket:x:@.arguments/*/auth
+if
+   not
+      eq
+         get-value:x:@.arguments/*/auth
+         :
+   .lambda
+      unwrap:x:+/*/*
+      insert-after:x:@apply-file/*/.arguments
+         .
+            auth.verify-ticket:x:@.arguments/*/auth
 
 
 /*
@@ -46,7 +52,7 @@ switch:x:@.arguments/*/verb
 
 
    /*
-    * HTTP DELETE special cases
+    * HTTP DELETE special case
     */
    case:delete
       add:x:@apply-file/*/.arguments
@@ -54,19 +60,15 @@ switch:x:@.arguments/*/verb
 
 
    /*
-    * HTTP GET special cases
+    * HTTP GET special case
     */
    case:get
-      add:x:@apply-file/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/primary/*
       add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#
       add:x:@apply-file/**/columns
          get-nodes:x:@.arguments/*/args/*/columns/*
-      add:x:@apply-file/**/columns
-         get-nodes:x:@.arguments/*/args/*/primary/*
 
 
    /*
@@ -75,8 +77,6 @@ switch:x:@.arguments/*/verb
    case:post
       add:x:@apply-file/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*
-      for-each:x:@.arguments/*/args/*/*
-         set-value:x:@.dp/#
 
 
    /*
