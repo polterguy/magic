@@ -51,7 +51,7 @@ namespace magic.data.common
 
         void GetValues(StringBuilder builder, Node result)
         {
-            var valuesNodes = Root.Children.Where((x) => x.Name == "values");
+            var valuesNodes = Root.Children.Where(x => x.Name == "values");
             if (!valuesNodes.Any() || !valuesNodes.First().Children.Any())
                 throw new ApplicationException($"Missing [values] node in '{GetType().FullName}'");
 
