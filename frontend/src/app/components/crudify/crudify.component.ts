@@ -186,28 +186,36 @@ export class CrudifyComponent implements OnInit {
       callback();
       return;
     }
+    const curVerb = verbs[0];
 
-    // Notice, we might experience primary keys that does not have automatic values
-    const primary = this.columns
-      .filter(x => x.primary && x.automatic)
-      .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    // Contains arguments to crudifier
+    let args = {};
 
-    // We allow for caller to provide values for everything that doesn't have automatic values
-    const columns = this.columns
-      .filter(x => !x.automatic)
-      .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    // Figuring out which arguments to pass in, which depends upon HTTP verb we're
+    // currently crudifying.
+    if (curVerb === 'put' || curVerb === 'delete') {
+      args['primary'] = this.columns
+        .filter(x => x.primary)
+        .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    }
+    if (curVerb === 'post' || curVerb === 'put') {
+      args['columns'] = this.columns
+        .filter(x => !x.primary)
+        .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    }
+    if (curVerb === 'get') {
+      args['columns'] = this.columns
+        .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    }
 
     // Database type
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: `/modules/mysql/templates/crud.template.${verbs[0]}.hl`,
-      verb: verbs[0],
-      args: {
-        primary,
-        columns,
-      },
-      auth: this.endpoints.filter((x) => x.verb == verbs[0])[0].auth,
+      template: `/modules/mysql/templates/crud.template.${curVerb}.hl`,
+      verb: curVerb,
+      auth: this.endpoints.filter((x) => x.verb == curVerb)[0].auth,
+      args,
     }).subscribe((res) => {
       this.createHttpEndpoints(verbs.slice(1), callback);
     }, (error) => {
