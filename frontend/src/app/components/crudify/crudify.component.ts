@@ -191,7 +191,7 @@ arg4:decimal`;
   getDynamicColumns(): any[] {
     const columns = [];
     for (const iterator of this.columns) {
-      if (iterator.primary) {
+      if (!iterator.primary) {
         columns.push(JSON.parse('{"' + iterator.name + '": "' + iterator.hl + '"}'));
       }
     }
@@ -201,7 +201,7 @@ arg4:decimal`;
   getStaticColumns(): any[] {
     const columns = [];
     for (const iterator of this.columns) {
-      if (!iterator.primary) {
+      if (iterator.primary) {
         columns.push(JSON.parse('{"' + iterator.name + '": "' + iterator.hl + '"}'));
       }
     }
