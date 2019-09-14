@@ -1,7 +1,6 @@
 
 /*
- * Returns a JSON object representing every single registered
- * system slot in the current installation
+ * Returns all slots registered in the system.
  */
 
 

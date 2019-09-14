@@ -1,8 +1,13 @@
 
 /*
- * Updates the specified [ids] item in your [database]/[table] with the
- * values from [values]. [ids] can be a collection of values, preferably the IDs of your table,
- * that defines which item(s) to update. All [ids] are mandatory, and reuiqred to have values.
+ * Updates one record in your database.
+ *
+ * Arguments
+ *
+ * - [database] - What database to update a record in
+ * - [table] - What table to update a record in
+ * - [values] - A list of new columns/values for your updated item
+ * - [ids] - A list of IDs uniquely identifying your record
  */
 slot:magic.db.mysql.update
    .arguments
@@ -10,24 +15,19 @@ slot:magic.db.mysql.update
       table:string
       values
       ids
-      exclude
    .lambda
 
 
       /*
-       * Sanity checking invocation.
+       * Sanity checking invocation by making sure caller
+       * provided an ID at all, to avoid updating entire table.
        */
-      for-each:x:@.arguments/*/ids/*
-         if
-            or
-               eq
-                  get-value:x:@.dp/#
-                  .
-               eq
-                  get-value:x:@.dp/#
-                  :
-            .lambda
-               throw:[magic.db.update] was not given a valid ID
+      if
+         eq
+            get-count:x:@.arguments/*/ids/*
+            :int:0
+         .lambda
+            throw:No IDs given to [magic.db.mysql.update]
 
 
       /*
@@ -38,32 +38,30 @@ slot:magic.db.mysql.update
 
          /*
           * Parametrizing [mysql.update], first with the [where] parts,
-          * extracted form [ids].
+          * extracted from [ids].
           */
          add:x:./*/mysql.update/*/where/*/and
             get-nodes:x:@.arguments/*/ids/*
-         add:x:./*/mysql.update/*/values
-            get-nodes:x:@.arguments/*/values/*
 
 
          /*
-          * Then adding [exclude] if given.
+          * Then parametrizing [mysql.update] with new values, making
+          * sure it does not exist in [ids].
           */
-         if
-            mt
-               get-count:x:@.arguments/*/exclude/*
-               :int:0
-            .lambda
+         for-each:x:@.arguments/*/values/*
+            get-name:x:@.dp/#
+            if
+               not
+                  exists:x:@.arguments/*/ids/*/{0}
+                     :x:@get-name
+               .lambda
 
 
-               /*
-                * Adding [exclude] to [mysql.update].
-                */
-               add:x:../*/mysql.connect/*/mysql.update
-                  .
-                     exclude
-               add:x:../*/mysql.connect/*/mysql.update/*/exclude
-                  get-nodes:x:@.arguments/*/exclude/*
+                  /*
+                     * Currently iterated value from [values] was not found in [ids].
+                     */
+                  add:x:../*/mysql.connect/*/mysql.update/*/values
+                     get-nodes:x:@.dp/#
 
 
          /*
@@ -72,6 +70,7 @@ slot:magic.db.mysql.update
          mysql.update
             table:x:@.arguments/*/table
             values
+            exclude
             where
                and
 
