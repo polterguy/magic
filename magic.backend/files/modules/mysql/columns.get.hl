@@ -25,14 +25,6 @@ signal:magic.db.mysql.columns
 
 
 /*
- * Doing the [to-lowers] thing.
- */
-for-each:x:@signal/*/*
-   set-value:x:@.dp/#
-      to-lower:x:@.dp/#
-
-
-/*
  * Returning database to caller.
  */
 return-nodes:x:@signal/*
