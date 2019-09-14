@@ -21,7 +21,6 @@ signal:magic.db.mysql.create
    database:{database}
    table:{table}
    values
-   exclude
 
 
 /*

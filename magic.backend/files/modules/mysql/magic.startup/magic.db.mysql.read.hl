@@ -6,17 +6,17 @@
  *
  * - [database] - What database to read from
  * - [table] - Which table to read from
- * - [args] - Arguments to parametrize your read invocation
+ * - [columns] - What columns to return
+ * - [args] - Arguments to parametrize your read invocation.
  *   Can contain [limit], [offset], [order] and [direction]
  *   All other arguments are considered to be "where" clause arguments.
- * - [columns] - What columns to return
  */
 slot:magic.db.mysql.read
    .arguments
       database:string
       table:string
-      args
       columns
+      args
    .lambda
 
 
