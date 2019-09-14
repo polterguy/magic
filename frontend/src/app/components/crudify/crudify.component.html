@@ -20,8 +20,8 @@
     <div class="code-mirror-wrapper">
 
       <mat-form-field style="margin-right: 2rem;">
-        <mat-select placeholder="Select verb" (selectionChange)="verbChanged($event)">
-          <mat-option *ngFor="let cur of verbs" [value]="cur">{{cur}}</mat-option>
+        <mat-select placeholder="Select verb" [(ngModel)]="customSqlEndpointVerb">
+          <mat-option *ngFor="let cur of verbs" [value]="cur.verb">{{cur.verb}}</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -29,10 +29,9 @@
         <input 
           matInput 
           placeholder="Endpoint name"
-          (change)="endpointNameChanged()"
           type="text" 
           autocomplete="off"
-          [(ngModel)]="endpointName">
+          [(ngModel)]="customSqlEndpointName">
       </mat-form-field>
 
       <mat-form-field>
@@ -41,20 +40,20 @@
           placeholder="Authorization"
           type="text" 
           autocomplete="off"
-          [(ngModel)]="authorizationForCustomSql">
+          [(ngModel)]="customSqlAuthorization">
       </mat-form-field>
 
       <div class="air">
         <label>Arguments</label>
         <ngx-codemirror 
-          [(ngModel)]="arguments" 
+          [(ngModel)]="customSqlArguments" 
           [options]="getCodeMirrorOptionsHyperlambda()"></ngx-codemirror>
       </div>
 
       <label>SQL</label>
       <ngx-codemirror 
         [(ngModel)]="customSql" 
-        [options]="getCodeMirrorOptions()"></ngx-codemirror>
+        [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
 
       <div class="right-align">
         <button 
@@ -153,8 +152,7 @@
         *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL'"
         matTooltip="Generates CRUD endpoints for your table"
         mat-button
-        [color]="folderExists ? 'warn' : ''"
-        (click)="generate()">{{folderExists ? 'Re-Crudify' : 'Crudify'}}</button>
+        (click)="crudifyTable()">Crudify</button>
     </div>
 
   </mat-card>
