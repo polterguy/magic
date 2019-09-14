@@ -28,6 +28,13 @@ slot:magic.db.mysql.databases
 
 
          /*
+          * Renaming "Database" nodes.
+          */
+         set-name:x:@mysql.select/*/*
+            :db
+
+
+         /*
           * Returns the remaining databases to caller.
           */
          return-nodes:x:@mysql.select/*
