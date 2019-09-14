@@ -100,11 +100,9 @@ DROP TABLE IF EXISTS `roles_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles_users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `role_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `roles_users_unique` (`role_id`,`user_id`),
+  PRIMARY KEY (`role_id`, `user_id`),
   KEY `roles_fky_idx` (`role_id`),
   KEY `users_fky_idx` (`user_id`),
   CONSTRAINT `roles_fky` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
