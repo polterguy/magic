@@ -230,21 +230,6 @@ namespace magic.tests.lambda
         }
 
         [Fact]
-        public void InsertSQL_03_Throws()
-        {
-            var lambda = Common.Evaluate(@"mysql.create
-   generate:bool:true
-   table:SomeTable
-   exclude
-      fOo3
-   values
-      foo1:bar1
-      foo2:int:5
-      foo3:howdy");
-            Assert.Equal("insert into `SomeTable` (`foo1`, `foo2`) values (@0, @1); select last_insert_id();", lambda.Children.First().Value);
-        }
-
-        [Fact]
         public void InsertSQL_04()
         {
             var lambda = Common.Evaluate(@"mysql.create
@@ -303,24 +288,6 @@ namespace magic.tests.lambda
             Assert.Equal(5, lambda.Children.First().Children.Skip(1).First().Value);
             Assert.Equal("@0", lambda.Children.First().Children.Skip(2).First().Name);
             Assert.Equal(1, lambda.Children.First().Children.Skip(2).First().Value);
-        }
-
-        [Fact]
-        public void UpdateSQL_03_Throws()
-        {
-            Assert.Throws<ApplicationException>(() =>
-            {
-                Common.Evaluate(@"mysql.update
-   generate:bool:true
-   table:SomeTable
-   exclude
-      foo3
-   where
-      and
-         id:int:1
-   values
-      foo3:bar3");
-            });
         }
 
         [Fact]

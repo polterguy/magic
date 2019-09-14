@@ -20,9 +20,6 @@ namespace magic.data.common
 
         public override Node Build()
         {
-            // Sanity checking for [exclude] fields.
-            CheckExclusionColumns();
-
             // Return value.
             var result = new Node("sql");
             var builder = new StringBuilder();

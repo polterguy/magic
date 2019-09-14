@@ -46,21 +46,6 @@ namespace magic.data.common
             builder.Append(EscapeChar);
         }
 
-        protected void CheckExclusionColumns()
-        {
-            var exclude = Root.Children.FirstOrDefault(x => x.Name == "exclude");
-            if (exclude != null)
-            {
-                var valueNodes = Root.Children.First(x => x.Name == "values");
-                foreach (var idx in valueNodes.Children
-                    .Where(x => exclude.Children
-                        .Any(x2 => x2.Name.ToLowerInvariant() == x.Name.ToLowerInvariant())).ToList())
-                {
-                    idx.UnTie();
-                }
-            }
-        }
-
         protected void BuildWhere(Node result, StringBuilder builder)
         {
             var where = Root.Children.Where(x => x.Name == "where");
