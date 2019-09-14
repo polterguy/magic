@@ -202,8 +202,6 @@ switch:x:@.arguments/*/verb
          get-nodes:x:@.arguments/*/args/*/columns/*
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#
-      add:x:@apply-file/**/exclude
-         get-nodes:x:@.arguments/*/args/*/primary/*
 
 
    /*
@@ -216,8 +214,6 @@ switch:x:@.arguments/*/verb
          get-nodes:x:@.arguments/*/args/*/columns/*
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#
-      add:x:@apply-file/**/exclude
-         get-nodes:x:@.arguments/*/args/*/primary/*
       add:x:@apply-file/**/ids
          get-nodes:x:@.arguments/*/args/*/primary/*
       for-each:x:@apply-file/**/ids/*

@@ -1,6 +1,11 @@
 
 /*
- * Lists all columns in your [database]/[table] MySQL table.
+ * Lists all columns in some MySQL table.
+ *
+ * Arguments
+ *
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
  */
 slot:magic.db.mysql.columns
    .arguments

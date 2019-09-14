@@ -1,8 +1,6 @@
 
 /*
- * Lists all database in your [connection] MySQL database.
- *
- * Normally expects a connection string pointing to "sys".
+ * Lists all database in your MySQL instance.
  */
 slot:magic.db.mysql.databases
    .lambda

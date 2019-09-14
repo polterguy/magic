@@ -1,8 +1,6 @@
 
 /*
  * Returns metadata for specified endpoint.
- * Pass in [url] and [verb] being the URL and verb
- * you want to retrieve.
  *
  * Arguments
  *

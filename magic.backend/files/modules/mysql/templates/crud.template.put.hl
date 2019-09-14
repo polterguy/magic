@@ -21,7 +21,6 @@ signal:magic.db.mysql.update
    table:{table}
    values
    ids
-   exclude
 
 
 /*

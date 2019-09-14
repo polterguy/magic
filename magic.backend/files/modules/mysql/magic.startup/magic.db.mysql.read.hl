@@ -1,9 +1,15 @@
 
 /*
- * Reads items from your [database]/[table] according to [args] supplied.
- * [args] can contain [limit], [offset], [order] and [direction] - In addition
- * to that all other arguments will be treated as a part of the [where] to the
- * invocation to [mysql.read].
+ * Reads items from your database.
+ *
+ * Arguments
+ *
+ * - [database] - What database to read from
+ * - [table] - Which table to read from
+ * - [args] - Arguments to parametrize your read invocation
+ *   Can contain [limit], [offset], [order] and [direction]
+ *   All other arguments are considered to be "where" clause arguments.
+ * - [columns] - What columns to return
  */
 slot:magic.db.mysql.read
    .arguments
@@ -23,7 +29,7 @@ slot:magic.db.mysql.read
          /*
           * Parametrizing invocation to [mysql.read], first with generic arguments, 
           * such as [limit], [offset], [order] and [direction].
-          * Making sure we remove the nodes from the [.arguments] collection afterwards,
+          * Making sure we remove these nodes from the [.arguments] collection afterwards,
           * such that we don't add them into our [where].
           */
          add:x:./*/mysql.read
@@ -36,7 +42,7 @@ slot:magic.db.mysql.read
           * instead of an array.
           * Notice, we could have simply checked if [limit] was equal to "1",
           * but this would not work if caller explicitly invoked slot with an integer,
-          * or a long value,which is semantically more adequate anyway.
+          * or a long value, which is semantically more correct also.
           */
          unwrap:x:+
          .limit:x:@.arguments/*/args/*/limit

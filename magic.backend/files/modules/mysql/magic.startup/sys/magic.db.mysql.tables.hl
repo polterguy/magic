@@ -1,8 +1,10 @@
 
 /*
- * Lists all tables in your [connection]/[database] MySQL database.
+ * Lists all tables in your MySQL instance.
  *
- * Normally expects a connection string pointing to "sys".
+ * Arguments
+ *
+ * - [database] - What database you want to check
  */
 slot:magic.db.mysql.tables
    .arguments
