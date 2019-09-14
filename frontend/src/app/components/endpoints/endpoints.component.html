@@ -11,8 +11,7 @@
   <div class="mat-elevation-z4 endpoints">
 
     <label class="absolutize">
-      <mat-checkbox
-      [(ngModel)]="showSystemEndpoints">Show system endpoints</mat-checkbox>
+      <mat-checkbox [(ngModel)]="showSystemEndpoints">Show system endpoints</mat-checkbox>
     </label>
 
     <table mat-table [dataSource]="getFilteredEndpoints()">

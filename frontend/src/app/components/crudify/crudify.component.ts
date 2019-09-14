@@ -13,7 +13,7 @@ export class CrudifyComponent implements OnInit {
 
   // Columns declarations for our tables
   private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
-  private displayedColumnsEndpoints: string[] = ['endpoint', 'verb', 'action', 'auth'];
+  private displayedColumnsEndpoints: string[] = ['generate', 'endpoint', 'verb', 'action', 'auth'];
 
   // Databases, tables, and selected instances of such
   private databases: any[] = null;
@@ -56,6 +56,7 @@ export class CrudifyComponent implements OnInit {
     });
   }
 
+  // Returns options for CodeMirror for its SQL instance in "Custom SQL" creation mode
   getCodeMirrorOptionsSql() {
     return {
       lineNumbers: true,
@@ -64,6 +65,7 @@ export class CrudifyComponent implements OnInit {
     };
   }
 
+  // Returns CodeMirror options for Hyperlambda mode
   getCodeMirrorOptionsHyperlambda() {
     return {
       lineNumbers: true,
@@ -125,7 +127,8 @@ export class CrudifyComponent implements OnInit {
             endpoint: this.selectedDatabase + '/' + this.selectedTable,
             verb: x.verb,
             action: x.action,
-            auth: 'root'
+            auth: 'root',
+            generate: true
           }
         });
       }, (err) => {
@@ -169,19 +172,20 @@ export class CrudifyComponent implements OnInit {
 
   // Crudifies a table in some database
   crudifyTable() {
-    this.createHttpEndpoint('get', (res: any) => {
-      this.createHttpEndpoint('put', (res: any) => {
-        this.createHttpEndpoint('post', (res: any) => {
-          this.createHttpEndpoint('delete', (res: any) => {
-            this.showSuccess('4 endpoints created successfully');
-          });
-        });
-      });
+    const selectedVerbs = this.endpoints.filter(x => x.generate).map(x => x.verb);
+    this.createHttpEndpoints(selectedVerbs, () => {
+      this.showSuccess('4 endpoints created successfully');
     });
   }
 
   // Helper method that creates one single HTTP endpoint
-  createHttpEndpoint(verb: string, callback: (res: any) => void) {
+  createHttpEndpoints(verbs: string[], callback: () => void) {
+
+    // Checking if we're done
+    if (verbs.length === 0) {
+      callback();
+      return;
+    }
 
     // Notice, we might experience primary keys that does not have automatic values
     const primary = this.columns
@@ -197,15 +201,15 @@ export class CrudifyComponent implements OnInit {
     this.crudService.generateCrudEndpoints({
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: `/modules/mysql/templates/crud.template.${verb}.hl`,
-      verb,
+      template: `/modules/mysql/templates/crud.template.${verbs[0]}.hl`,
+      verb: verbs[0],
       args: {
         primary,
         columns,
       },
-      auth: this.endpoints.filter((x) => x.verb == verb)[0].auth,
+      auth: this.endpoints.filter((x) => x.verb == verbs[0])[0].auth,
     }).subscribe((res) => {
-      callback(res);
+      this.createHttpEndpoints(verbs.slice(1), callback);
     }, (error) => {
       this.showError(error.error.message);
     });
