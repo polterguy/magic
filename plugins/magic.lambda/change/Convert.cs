@@ -26,7 +26,7 @@ namespace magic.lambda.change
 
         public void Signal(Node input)
         {
-            if (input.Children.Count() != 1 || !input.Children.Any((x) => x.Name == "type"))
+            if (input.Children.Count() != 1 || !input.Children.Any(x => x.Name == "type"))
                 throw new ApplicationException("[convert] can only handle one argument, which is [type]");
 
             var type = input.Children.First().Get<string>();

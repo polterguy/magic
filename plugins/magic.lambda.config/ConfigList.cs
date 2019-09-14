@@ -33,7 +33,7 @@ namespace magic.lambda
             var settings = _configuration.GetSection(input.GetEx<string>(_signaler)).Get<Dictionary<string, string>>();
 
             input.Value = null;
-            input.AddRange(settings.Select((x) => new Node(x.Key, x.Value)));
+            input.AddRange(settings.Select(x => new Node(x.Key, x.Value)));
         }
 
         public IEnumerable<Node> GetArguments()

@@ -27,14 +27,14 @@ namespace magic.lambda.slots
             // Retrieving slot's lambda.
             var slotName = input.GetEx<string>(_signaler) ?? throw new ApplicationException("Keyword [signal] requires a value being the name of slot to invoke");
             var slotNode = Slot.GetSlot(slotName);
-            var lambda = slotNode.Children.First((x) => x.Name == ".lambda");
+            var lambda = slotNode.Children.First(x => x.Name == ".lambda");
 
             // Making sure lambda becomes its own root node.
             lambda.UnTie();
 
             // Sanity checking arguments.
-            var slotArgs = slotNode.Children.FirstOrDefault((x) => x.Name == ".arguments");
-            if (slotArgs?.Children.Any((x) => x.Name == "*") == false)
+            var slotArgs = slotNode.Children.FirstOrDefault(x => x.Name == ".arguments");
+            if (slotArgs?.Children.Any(x => x.Name == "*") == false)
             {
                 // No "accept all arguments" declaration.
                 if (input.Children.Any() && (slotArgs == null || slotArgs.Children.Count() == 0))
@@ -43,14 +43,14 @@ namespace magic.lambda.slots
                 }
                 foreach (var idxInputArg in input.Children)
                 {
-                    if (!slotArgs.Children.Any((x) => x.Name == idxInputArg.Name))
+                    if (!slotArgs.Children.Any(x => x.Name == idxInputArg.Name))
                         throw new ApplicationException($"Slot [{slotName}] does not know how to handle argument [{idxInputArg.Name}]");
                 }
             }
 
             // Preparing arguments, making sure we clon ethem to avoid that enumeration process is aborted.
             var args = new Node(".arguments");
-            args.AddRange(input.Children.Select((x) => x.Clone()));
+            args.AddRange(input.Children.Select(x => x.Clone()));
             lambda.Insert(0, args);
 
             // Evaluating lambda of slot.

@@ -27,11 +27,11 @@ namespace magic.lambda.http
 
         public void Signal(Node input)
         {
-            if (input.Children.Count() > 1 || input.Children.Any((x) => x.Name != "token"))
+            if (input.Children.Count() > 1 || input.Children.Any(x => x.Name != "token"))
                 throw new ApplicationException("[http.get.json] can only handle one [token] child node");
 
             var url = input.GetEx<string>(_signaler);
-            var token = input.Children.FirstOrDefault((x) => x.Name == "token")?.GetEx<string>(_signaler);
+            var token = input.Children.FirstOrDefault(x => x.Name == "token")?.GetEx<string>(_signaler);
 
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
             input.Value = _httpClient.GetAsync<string>(url, token).Result;

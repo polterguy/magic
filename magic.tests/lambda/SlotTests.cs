@@ -49,8 +49,8 @@ namespace magic.tests.lambda
             var signaler = Common.GetSignaler();
             var args = signaler.GetArguments("case");
             Assert.Equal(2, args.Count());
-            Assert.Contains(args, (x) => x.Name == "*" && x.Get<string>() == "*");
-            Assert.Contains(args, (x) => x.Name == ":" && x.Get<string>() == "*");
+            Assert.Contains(args, x => x.Name == "*" && x.Get<string>() == "*");
+            Assert.Contains(args, x => x.Name == ":" && x.Get<string>() == "*");
         }
 
         [Fact]

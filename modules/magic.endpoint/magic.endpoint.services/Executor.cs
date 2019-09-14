@@ -70,7 +70,7 @@ namespace magic.endpoint.services
                  * Checking file [.arguments], and if given, removing them to make sure invocation of file
                  * only has a single [.arguments] node.
                  */
-                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments").ToList();
+                var fileArgs = lambda.Children.Where(x => x.Name == ".arguments").ToList();
                 if (fileArgs.Any())
                 {
                     if (fileArgs.Count() > 1)
@@ -83,7 +83,7 @@ namespace magic.endpoint.services
                 if (arguments.Count > 0)
                 {
                     var argsNode = new Node(".arguments");
-                    argsNode.AddRange(arguments.Select((x) =>
+                    argsNode.AddRange(arguments.Select(x =>
                         ConvertArgument(x.Key, x.Value,
                             fileArgs.First().Children.FirstOrDefault(x2 => x2.Name == x.Key))));
                     lambda.Insert(0, argsNode);
@@ -121,7 +121,7 @@ namespace magic.endpoint.services
                  * only has a single [.arguments] node.
                  * Notice, future improvements implies validating arguments.
                  */
-                var fileArgs = lambda.Children.Where((x) => x.Name == ".arguments").ToList();
+                var fileArgs = lambda.Children.Where(x => x.Name == ".arguments").ToList();
                 if (fileArgs.Any())
                 {
                     if (fileArgs.Count() > 1)

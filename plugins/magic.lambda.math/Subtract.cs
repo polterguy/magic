@@ -25,7 +25,7 @@ namespace magic.lambda
         public void Signal(Node input)
         {
             _signaler.Signal("eval", input);
-            input.Value = input.Children.First().GetEx<dynamic>(_signaler) - input.Children.Skip(1).Sum((x) => x.GetEx<dynamic>(_signaler));
+            input.Value = input.Children.First().GetEx<dynamic>(_signaler) - input.Children.Skip(1).Sum(x => x.GetEx<dynamic>(_signaler));
         }
 
         public IEnumerable<Node> GetArguments()

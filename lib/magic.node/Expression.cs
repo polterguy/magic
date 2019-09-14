@@ -58,19 +58,19 @@ namespace magic.node
                 switch (value)
                 {
                     case "*":
-                        return (identiy, input) => input.SelectMany((x) => x.Children);
+                        return (identiy, input) => input.SelectMany(x => x.Children);
 
                     case "#":
-                        return (identiy, input) => input.Select((x) => x.Get<Node>());
+                        return (identiy, input) => input.Select(x => x.Get<Node>());
 
                     case "-":
-                        return (identiy, input) => input.Select((x) => x.Previous ?? x.Parent.Children.Last());
+                        return (identiy, input) => input.Select(x => x.Previous ?? x.Parent.Children.Last());
 
                     case "+":
-                        return (identiy, input) => input.Select((x) => x.Next ?? x.Parent.Children.First());
+                        return (identiy, input) => input.Select(x => x.Next ?? x.Parent.Children.First());
 
                     case ".":
-                        return (identiy, input) => input.Select((x) => x.Parent).Distinct();
+                        return (identiy, input) => input.Select(x => x.Parent).Distinct();
 
                     case "..":
                         return (identiy, input) =>
@@ -98,20 +98,20 @@ namespace magic.node
                         if (value.StartsWith("\\", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);
-                            return (identiy, input) => input.Where((x) => x.Name == value);
+                            return (identiy, input) => input.Where(x => x.Name == value);
                         }
 
                         if (value.StartsWith("{", StringComparison.InvariantCulture) &&
                             value.EndsWith("}", StringComparison.InvariantCulture))
                         {
                             var index = int.Parse(value.Substring(1, value.Length - 2));
-                            return (identity, input) => input.Where((x) => x.Name == identity.Children.Skip(index).First().Get<string>());
+                            return (identity, input) => input.Where(x => x.Name == identity.Children.Skip(index).First().Get<string>());
                         }
 
                         if (value.StartsWith("=", StringComparison.InvariantCulture))
                         {
                             var lookup = value.Substring(1);
-                            return (identiy, input) => input.Where((x) =>
+                            return (identiy, input) => input.Where(x =>
                             {
                                 var val = x.Value;
                                 if (val == null)
@@ -156,9 +156,9 @@ namespace magic.node
                         }
 
                         if (int.TryParse(value, out int number))
-                            return (identiy, input) => input.SelectMany((x) => x.Children.Skip(number).Take(1));
+                            return (identiy, input) => input.SelectMany(x => x.Children.Skip(number).Take(1));
 
-                        return (identiy, input) => input.Where((x) => x.Name == value);
+                        return (identiy, input) => input.Where(x => x.Name == value);
                 }
             }
 

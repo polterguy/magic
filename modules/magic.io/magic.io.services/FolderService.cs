@@ -39,7 +39,7 @@ namespace magic.io.services
                 throw new SecurityException("Access denied");
 
             return Directory.GetDirectories(path)
-                .Select((x) => _utilities.GetRelativePath(x) + "/");
+                .Select(x => _utilities.GetRelativePath(x) + "/");
         }
 
         public IEnumerable<string> ListFiles(

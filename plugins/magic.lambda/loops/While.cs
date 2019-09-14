@@ -30,7 +30,7 @@ namespace magic.lambda.loops
             while(true)
             {
                 // Making sure we can reset back to original nodes after every single iteration.
-                var old = input.Children.Select((x) => x.Clone()).ToList();
+                var old = input.Children.Select(x => x.Clone()).ToList();
 
                 // This will evaluate the condition.
                 _signaler.Signal("eval", input);
@@ -51,7 +51,7 @@ namespace magic.lambda.loops
                 input.Clear();
 
                 // Notice, cloning in case we've got another iteration, to avoid changing original nodes' values.
-                input.AddRange(old.Select((x) => x.Clone()));
+                input.AddRange(old.Select(x => x.Clone()));
             }
         }
 

@@ -23,7 +23,7 @@ namespace magic.data.common
 
         public abstract Node Build();
 
-        public bool IsGenerateOnly => Root.Children.FirstOrDefault((x) => x.Name == "generate")?.Get<bool>() ?? false;
+        public bool IsGenerateOnly => Root.Children.FirstOrDefault(x => x.Name == "generate")?.Get<bool>() ?? false;
 
         protected string EscapeChar { get; private set; }
 
@@ -38,7 +38,7 @@ namespace magic.data.common
             builder.Append(EscapeChar);
 
             // Retrieving actual table name from [table] node.
-            var tableName = Root.Children.FirstOrDefault((x) => x.Name == "table")?.GetEx<string>(Signaler);
+            var tableName = Root.Children.FirstOrDefault(x => x.Name == "table")?.GetEx<string>(Signaler);
             if (tableName == null)
                 throw new ApplicationException($"No table name supplied to '{GetType().FullName}'");
             builder.Append(tableName.Replace(EscapeChar, EscapeChar + EscapeChar));
@@ -48,10 +48,10 @@ namespace magic.data.common
 
         protected void CheckExclusionColumns()
         {
-            var exclude = Root.Children.FirstOrDefault((x) => x.Name == "exclude");
+            var exclude = Root.Children.FirstOrDefault(x => x.Name == "exclude");
             if (exclude != null)
             {
-                var valueNodes = Root.Children.First((x) => x.Name == "values");
+                var valueNodes = Root.Children.First(x => x.Name == "values");
                 foreach (var idx in valueNodes.Children
                     .Where(x => exclude.Children
                         .Any(x2 => x2.Name.ToLowerInvariant() == x.Name.ToLowerInvariant())).ToList())
@@ -63,7 +63,7 @@ namespace magic.data.common
 
         protected void BuildWhere(Node result, StringBuilder builder)
         {
-            var where = Root.Children.Where((x) => x.Name == "where");
+            var where = Root.Children.Where(x => x.Name == "where");
             if (where.Count() > 1)
                 throw new ApplicationException($"Syntax error in '{GetType().FullName}', too many [where] nodes");
 

@@ -27,7 +27,7 @@ namespace magic.endpoint.services
         public void Signal(Node input)
         {
             var doc = input.Value as SwaggerDocument;
-            var toRemove = new List<string>(doc.Paths.Keys.Where((x) => x == "/api/hl/{url}"));
+            var toRemove = new List<string>(doc.Paths.Keys.Where(x => x == "/api/hl/{url}"));
             foreach (var idx in toRemove)
             {
                 doc.Paths.Remove(idx);
