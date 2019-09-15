@@ -1,0 +1,8 @@
+﻿language: csharp
+solution: magic.sln
+mono: none
+dotnet: 2.0.0
+script:
+ - dotnet restore
+ - dotnet build ./magic.sln --configuration Release
+ - dotnet test ./magic.tests/magic.tests.csproj --configuration Release
