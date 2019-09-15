@@ -19,7 +19,10 @@ the rabbit hole.
 
 * [Super DRY Magic for ASP.NET Core](https://msdn.microsoft.com/en-us/magazine/mt833461)
 
-The article is written by the author of Magic.
+The above article is written by me, the developer behind Magic. In addition I also wrote the 5th most read article
+for MSDN Magazine about [Hyperlambda, making C# more dynamic](https://msdn.microsoft.com/magazine/mt809119).
+Although the article is a bit dated today, it explains some of the techniques that has been applied
+when creating Magic.
 
 ## License
 
