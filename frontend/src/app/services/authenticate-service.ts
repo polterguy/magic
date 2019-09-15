@@ -18,4 +18,8 @@ export class AuthenticateService {
       '&password=' +
       encodeURI(password));
   }
+
+  refreshTicket() {
+    return this.httpClient.get<any>(environment.apiURL + 'hl/system/auth/refresh-ticket');
+  }
 }
