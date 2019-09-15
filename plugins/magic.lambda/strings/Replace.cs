@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.strings
 {
     [Slot(Name = "replace")]
-    public class Replace : ISlot, IMeta
+    public class Replace : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -28,13 +28,6 @@ namespace magic.lambda.strings
             var what = input.Children.First(x => x.Name == "what").GetEx<string>(_signaler);
             var with = input.Children.First(x => x.Name == "with").GetEx<string>(_signaler);
             input.Value = original.Replace(what, with);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("what", 1);
-            yield return new Node("with", 1);
         }
     }
 }

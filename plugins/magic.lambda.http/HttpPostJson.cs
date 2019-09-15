@@ -14,7 +14,7 @@ using magic.signals.contracts;
 namespace magic.lambda.http
 {
     [Slot(Name = "http.post.json")]
-    public class HttpPostJson : ISlot, IMeta
+    public class HttpPostJson : ISlot
     {
         readonly ISignaler _signaler;
         readonly IHttpClient _httpClient;
@@ -37,13 +37,6 @@ namespace magic.lambda.http
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
             input.Value = _httpClient.PostAsync<string, string>(url, payload, token).Result;
             input.Clear();
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("token", 1);
-            yield return new Node("payload", 1);
         }
     }
 }

@@ -11,7 +11,7 @@ using magic.signals.contracts;
 namespace magic.lambda.slots
 {
     [Slot(Name = "return-nodes")]
-    public class ReturnNodes : ISlot, IMeta
+    public class ReturnNodes : ISlot
     {
         public void Signal(Node input)
         {
@@ -24,11 +24,6 @@ namespace magic.lambda.slots
                 root.Value = input.Children;
             else
                 root.Value = input.Evaluate().ToList();
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
     }
 }

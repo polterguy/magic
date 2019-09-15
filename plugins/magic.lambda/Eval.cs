@@ -13,7 +13,7 @@ using hl = magic.node.extensions;
 namespace magic.lambda
 {
     [Slot(Name = "eval")]
-    public class Eval : ISlot, IMeta
+    public class Eval : ISlot
     {
         readonly ISignaler _signaler;
         Node _root;
@@ -42,12 +42,6 @@ namespace magic.lambda
                 var nodes = input.Evaluate();
                 Execute(nodes.SelectMany(x => x.Children));
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
-            yield return new Node("*", "*");
         }
 
         #region [ -- Private helper methods -- ]

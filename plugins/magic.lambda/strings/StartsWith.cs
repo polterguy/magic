@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.strings
 {
     [Slot(Name = "starts-with")]
-    public class StartsWith : ISlot, IMeta
+    public class StartsWith : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -31,11 +31,6 @@ namespace magic.lambda.strings
 
             input.Value = input.GetEx<string>(_signaler)
                 .StartsWith(input.Children.First().GetEx<string>(_signaler), StringComparison.InvariantCulture);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

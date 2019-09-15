@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.crypto
 {
     [Slot(Name = "crypto.password.hash")]
-    public class HashPassword : ISlot, IMeta
+    public class HashPassword : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -25,11 +25,6 @@ namespace magic.lambda.crypto
         public void Signal(Node input)
         {
             input.Value = bc.BCrypt.HashPassword(input.GetEx<string>(_signaler));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

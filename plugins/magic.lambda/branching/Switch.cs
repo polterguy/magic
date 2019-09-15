@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.branching
 {
     [Slot(Name = "switch")]
-    public class Switch : ISlot, IMeta
+    public class Switch : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -54,14 +54,6 @@ namespace magic.lambda.branching
 
                 _signaler.Signal(executionNode.Name, executionNode);
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("*", 1);
-            yield return new Node("case", "*");
-            yield return new Node("default", 1);
         }
     }
 }

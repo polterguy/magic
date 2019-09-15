@@ -16,7 +16,7 @@ using magic.node.extensions.hyperlambda;
 namespace magic.endpoint.services
 {
     [Slot(Name = "system.endpoints")]
-    public class Endpoints : ISlot, IMeta
+    public class Endpoints : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -28,11 +28,6 @@ namespace magic.endpoint.services
         public void Signal(Node input)
         {
             input.AddRange(AddCustomEndpoints(RootResolver.Root).ToList());
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield break;
         }
 
         #region [ -- Private helper methods -- ]

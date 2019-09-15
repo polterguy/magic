@@ -10,7 +10,7 @@ using magic.signals.contracts;
 namespace magic.lambda.source
 {
     [Slot(Name = "get-nodes")]
-    public class GetNodes : ISlot, IMeta
+    public class GetNodes : ISlot
     {
         public void Signal(Node input)
         {
@@ -22,11 +22,6 @@ namespace magic.lambda.source
             {
                 input.Add(idx.Clone());
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
         }
     }
 }

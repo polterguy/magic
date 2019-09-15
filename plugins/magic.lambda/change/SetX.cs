@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.change
 {
     [Slot(Name = "set-x")]
-    public class SetX : ISlot, IMeta
+    public class SetX : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -38,12 +38,6 @@ namespace magic.lambda.change
             {
                 idx.Value = source;
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
-            yield return new Node("*", 1);
         }
     }
 }

@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda
 {
     [Slot(Name = "/")]
-    public class Division : ISlot, IMeta
+    public class Division : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -31,11 +31,6 @@ namespace magic.lambda
                 sum /= idx.GetEx<dynamic>(_signaler);
             }
             input.Value = sum;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
     }
 }

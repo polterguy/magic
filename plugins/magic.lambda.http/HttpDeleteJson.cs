@@ -14,7 +14,7 @@ using magic.signals.contracts;
 namespace magic.lambda.http
 {
     [Slot(Name = "http.delete.json")]
-    public class HttpDeleteJson : ISlot, IMeta
+    public class HttpDeleteJson : ISlot
     {
         readonly ISignaler _signaler;
         readonly IHttpClient _httpClient;
@@ -36,12 +36,6 @@ namespace magic.lambda.http
             // Notice, to sanity check the result we still want to roundtrip through a JToken result.
             input.Value = _httpClient.DeleteAsync<string>(url, token).Result;
             input.Clear();
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("token", 1);
         }
     }
 }

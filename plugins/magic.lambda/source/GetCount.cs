@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.source
 {
     [Slot(Name = "get-count")]
-    public class GetCount : ISlot, IMeta
+    public class GetCount : ISlot
     {
         public void Signal(Node input)
         {
@@ -21,11 +21,6 @@ namespace magic.lambda.source
 
             var src = input.Evaluate();
             input.Value = src.Count();
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

@@ -14,7 +14,7 @@ using magic.lambda.mssql.utilities;
 namespace magic.lambda.mssql
 {
     [Slot(Name = "mssql.scalar")]
-    public class Scalar : ISlot, IMeta
+    public class Scalar : ISlot
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -31,11 +31,6 @@ namespace magic.lambda.mssql
             {
                 input.Value = cmd.ExecuteScalar();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

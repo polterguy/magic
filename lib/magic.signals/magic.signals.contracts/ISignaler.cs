@@ -13,7 +13,5 @@ namespace magic.signals.contracts
         void Signal(string name, Node input);
 
         IEnumerable<string> Slots { get; }
-
-        IEnumerable<Node> GetArguments(string name);
     }
 }

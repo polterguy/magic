@@ -14,7 +14,7 @@ using magic.signals.contracts;
 namespace magic.lambda
 {
     [Slot(Name = "config-list")]
-    public class ConfigList : ISlot, IMeta
+    public class ConfigList : ISlot
     {
         readonly ISignaler _signaler;
         readonly IConfiguration _configuration;
@@ -34,11 +34,6 @@ namespace magic.lambda
 
             input.Value = null;
             input.AddRange(settings.Select(x => new Node(x.Key, x.Value)));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

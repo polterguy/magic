@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.slots
 {
     [Slot(Name = "return-value")]
-    public class ReturnValue : ISlot, IMeta
+    public class ReturnValue : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -33,11 +33,6 @@ namespace magic.lambda.slots
             while (root.Parent != null)
                 root = root.Parent;
             root.Value = input.GetEx(_signaler);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
     }
 }

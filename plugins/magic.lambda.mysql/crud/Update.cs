@@ -16,7 +16,7 @@ using magic.lambda.mysql.crud.builders;
 namespace magic.lambda.mysql.crud
 {
     [Slot(Name = "mysql.update")]
-    public class Update : ISlot, IMeta
+    public class Update : ISlot
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -47,15 +47,6 @@ namespace magic.lambda.mysql.crud
                 input.Value = cmd.ExecuteNonQuery();
                 input.Clear();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("connection", "*");
-            yield return new Node("table", "*");
-            yield return new Node("where");
-            yield return new Node("values");
         }
     }
 }

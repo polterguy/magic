@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.loops
 {
     [Slot(Name = "for-each")]
-    public class ForEach : ISlot, IMeta
+    public class ForEach : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -40,12 +40,6 @@ namespace magic.lambda.loops
                 // Notice, cloning in case we've got another iteration, to avoid changing original nodes' values.
                 input.AddRange(old.Select(x => x.Clone()));
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
-            yield return new Node(":", "x");
         }
     }
 }

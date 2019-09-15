@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.change
 {
     [Slot(Name = "remove-node")]
-    public class RemoveNode : ISlot, IMeta
+    public class RemoveNode : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -27,12 +27,6 @@ namespace magic.lambda.change
             {
                 idx.Parent.Remove(idx);
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
-            yield return new Node("*", 1);
         }
     }
 }

@@ -44,16 +44,6 @@ namespace magic.tests.lambda
         }
 
         [Fact]
-        public void Meta()
-        {
-            var signaler = Common.GetSignaler();
-            var args = signaler.GetArguments("case");
-            Assert.Equal(2, args.Count());
-            Assert.Contains(args, x => x.Name == "*" && x.Get<string>() == "*");
-            Assert.Contains(args, x => x.Name == ":" && x.Get<string>() == "*");
-        }
-
-        [Fact]
         public void CreateSlot()
         {
             Common.Evaluate(@"slot:custom.slot_1

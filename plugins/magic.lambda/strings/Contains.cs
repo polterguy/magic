@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.strings
 {
     [Slot(Name = "contains")]
-    public class Contains : ISlot, IMeta
+    public class Contains : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -30,11 +30,6 @@ namespace magic.lambda.strings
             _signaler.Signal("eval", input);
 
             input.Value = input.GetEx<string>(_signaler).Contains(input.Children.First().GetEx<string>(_signaler));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.source
 {
     [Slot(Name = "get-name")]
-    public class GetName : ISlot, IMeta
+    public class GetName : ISlot
     {
         public void Signal(Node input)
         {
@@ -20,11 +20,6 @@ namespace magic.lambda.source
             if (src.Count() > 1)
                 throw new ApplicationException("Too many nodes returned from [name] expression");
             input.Value = src.FirstOrDefault()?.Name ?? null;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
         }
     }
 }

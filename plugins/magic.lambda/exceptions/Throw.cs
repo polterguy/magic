@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.exceptions
 {
     [Slot(Name = "throw")]
-    public class Throw : ISlot, IMeta
+    public class Throw : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -24,11 +24,6 @@ namespace magic.lambda.exceptions
         public void Signal(Node input)
         {
             throw new ApplicationException(input.GetEx<string>(_signaler) ?? "[no-message]");
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }
