@@ -33,11 +33,9 @@ source projects, in addition to giving you access to Microsoft SQL Server adapte
 database tables in MS SQL Server. I also provide professional support for clients that buys a
 proprietary enabling license.
 
-
 ## Notice
 
-After refactoring Magic to use Hyperlambda, the library has not yet been completely stabilized and should be considered BETA
-software at the moment - At least until I manage to create a release of its current codebase. If you are looking for the
-version of Magic that the MSDN article describes, you can [find it here](https://github.com/polterguy/magic/releases/tag/v3.0).
-This is the last release of that codebase though, and I intend to completely change the library to exclusively be built around
-Hyperlambda for all future releases.
+If you are looking for the version of Magic that the MSDN article describes, you can 
+[find it here](https://github.com/polterguy/magic/releases/tag/v3.0). This is the last release of that
+codebase though, and I intend to completely change the library to exclusively be built around Hyperlambda
+for all future releases.
