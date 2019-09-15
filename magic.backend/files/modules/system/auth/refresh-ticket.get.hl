@@ -1,0 +1,20 @@
+
+/*
+ * Creates a new JWT token based upon the existing JWT token.
+ * Will throw unless user is already logged in.
+ */
+
+
+/*
+ * Invokes the slot that does the heavy lifting, and creates our JWT token,
+ * making sure we return that token to caller.
+ */
+auth.refresh-ticket
+
+
+/*
+ * Returns the authentication JWT ticket created above to caller.
+ */
+unwrap:x:+/*
+return-nodes
+   ticket:x:@auth.refresh-ticket
