@@ -49,12 +49,27 @@ export class AppComponent implements OnInit {
     });
   }
 
+  // This method makes sure JWT ticket is refreshed automatically before it expires
   public validateToken() {
     interval(10000).subscribe(x => {
+
+      // Checking if token is about to expire, or if it has already expired
       const token = localStorage.getItem('access_token');
-      const isExpired = this.jwtHelper.isTokenExpired(token);
-      if (isExpired) {
+      if (token == null || this.jwtHelper.isTokenExpired(token)) {
         this.logout();
+        return;
+      }
+      const expiration = this.jwtHelper.getTokenExpirationDate(token);
+      let now = new Date();
+      now.setSeconds(now.getSeconds() + 120);
+      if (now > expiration) {
+
+        // Refreshing JWT token
+        this.authService.refreshTicket().subscribe((res) => {
+          localStorage.setItem('access_token', res.ticket);
+        }, (error) => {
+          this.showError(error.error.message);
+        });
       }
     });
   }
