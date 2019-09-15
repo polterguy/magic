@@ -35,7 +35,7 @@ proprietary enabling license.
 
 ## Notice
 
-If you are looking for the version of Magic that the MSDN article describes, you can 
+If you are looking for the version of Magic that the Super DRY MSDN article describes, you can 
 [find it here](https://github.com/polterguy/magic/releases/tag/v3.0). This is the last release of that
 codebase though, and I intend to completely change the library to exclusively be built around Hyperlambda
 for all future releases.
