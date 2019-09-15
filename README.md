@@ -1,6 +1,8 @@
 
 # Magic for ASP.NET Core
 
+[![Build status](https://travis-ci.org/polterguy/magic.svg?master)](https://travis-ci.org/polterguy/magic)
+
 Magic is a starter kit for super dynamic and super DRY ASP.NET Core web API applications. Among other things, it allows you
 to _"declare"_ a web API endpoint, with a handful of Hyperlambda lines of code, 100% automatically. Hyperlambda is kind of
 like YAML, only significantly simpler in its syntax. Your Hyperlambda is again invoking C# methods, using a Super Signal
