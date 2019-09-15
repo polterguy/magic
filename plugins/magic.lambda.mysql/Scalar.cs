@@ -14,7 +14,7 @@ using magic.lambda.mysql.utilities;
 namespace magic.lambda.mysql
 {
     [Slot(Name = "mysql.scalar")]
-    public class Scalar : ISlot, IMeta
+    public class Scalar : ISlot
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -31,11 +31,6 @@ namespace magic.lambda.mysql
             {
                 input.Value = cmd.ExecuteScalar();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

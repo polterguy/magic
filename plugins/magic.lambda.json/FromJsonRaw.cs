@@ -12,17 +12,12 @@ namespace magic.json
 {
     // TODO: Sanity check. Not entirely sure it actually works for all possible permutations.
     [Slot(Name = ".from-json-raw")]
-    public class FromJsonRaw : ISlot, IMeta
+    public class FromJsonRaw : ISlot
     {
         public void Signal(Node input)
         {
             HandleToken(input, input.Value as JToken);
             input.Value = null;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
 
         #region [ -- Private helper methods -- ]

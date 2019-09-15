@@ -15,7 +15,7 @@ using magic.lambda.io.utilities;
 namespace magic.lambda.io
 {
     [Slot(Name = "load-file")]
-    public class LoadFile : ISlot, IMeta
+    public class LoadFile : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -28,11 +28,6 @@ namespace magic.lambda.io
         {
             var filename = RootResolver.Root + input.GetEx<string>(_signaler);
             input.Value = File.ReadAllText(filename, Encoding.UTF8);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

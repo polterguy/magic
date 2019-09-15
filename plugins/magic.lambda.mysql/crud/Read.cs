@@ -16,7 +16,7 @@ using magic.lambda.mysql.crud.builders;
 namespace magic.lambda.mysql.crud
 {
     [Slot(Name = "mysql.read")]
-    public class Read : ISlot, IMeta
+    public class Read : ISlot
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -59,18 +59,6 @@ namespace magic.lambda.mysql.crud
                     }
                 }
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("connection", "*");
-            yield return new Node("table", "*");
-            yield return new Node("columns");
-            yield return new Node("where");
-            yield return new Node("limit", "*");
-            yield return new Node("offset", "*");
-            yield return new Node("order", "*");
         }
     }
 }

@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Data.SqlClient;
-using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 using ut = magic.utils;
@@ -16,7 +15,7 @@ using magic.lambda.mssql.crud.builders;
 namespace magic.lambda.mysql.crud
 {
     [Slot(Name = "mssql.update")]
-    public class Update : ISlot, IMeta
+    public class Update : ISlot
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -47,15 +46,6 @@ namespace magic.lambda.mysql.crud
                 input.Value = cmd.ExecuteNonQuery();
                 input.Clear();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("connection", "*");
-            yield return new Node("table", "*");
-            yield return new Node("where");
-            yield return new Node("values");
         }
     }
 }

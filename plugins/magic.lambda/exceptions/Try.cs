@@ -11,7 +11,7 @@ using magic.signals.contracts;
 namespace magic.lambda.exceptions
 {
     [Slot(Name = "try")]
-    public class Try : ISlot, IMeta
+    public class Try : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -36,11 +36,6 @@ namespace magic.lambda.exceptions
                     throw;
             }
             ExecuteFinally(input);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
 
         #region [ -- Private helper methods -- ]

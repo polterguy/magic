@@ -16,7 +16,7 @@ using magic.lambda.mssql.crud.builders;
 namespace magic.lambda.mysql.crud
 {
     [Slot(Name = "mssql.delete")]
-    public class Delete : ISlot, IMeta
+    public class Delete : ISlot
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -47,14 +47,6 @@ namespace magic.lambda.mysql.crud
                 input.Value = cmd.ExecuteNonQuery();
                 input.Clear();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("connection", "*");
-            yield return new Node("table", "*");
-            yield return new Node("where");
         }
     }
 }

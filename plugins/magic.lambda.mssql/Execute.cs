@@ -14,7 +14,7 @@ using magic.lambda.mssql.utilities;
 namespace magic.lambda.mssql
 {
     [Slot(Name = "mssql.execute")]
-    public class Execute : ISlot, IMeta
+    public class Execute : ISlot
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -31,11 +31,6 @@ namespace magic.lambda.mssql
             {
                 input.Value = cmd.ExecuteNonQuery();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

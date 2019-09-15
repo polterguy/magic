@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.strings
 {
     [Slot(Name = "to-upper")]
-    public class ToUpper : ISlot, IMeta
+    public class ToUpper : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -24,11 +24,6 @@ namespace magic.lambda.strings
         public void Signal(Node input)
         {
             input.Value = input.GetEx<string>(_signaler).ToUpperInvariant();
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

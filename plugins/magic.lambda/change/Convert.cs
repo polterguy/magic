@@ -15,7 +15,7 @@ using magic.node.extensions.hyperlambda;
 namespace magic.lambda.change
 {
     [Slot(Name = "convert")]
-    public class Convert : ISlot, IMeta
+    public class Convert : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -103,12 +103,6 @@ namespace magic.lambda.change
                 default:
                     throw new ApplicationException($"Unknown type '{type}' when invoking [convert]");
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("type", 1);
         }
     }
 }

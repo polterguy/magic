@@ -14,7 +14,7 @@ using magic.signals.contracts;
 namespace magic.lambda
 {
     [Slot(Name = "config")]
-    public class Config : ISlot, IMeta
+    public class Config : ISlot
     {
         readonly ISignaler _signaler;
         readonly IConfiguration _configuration;
@@ -31,11 +31,6 @@ namespace magic.lambda
                 throw new ApplicationException("[config] cannot handle children nodes");
 
             input.Value = _configuration[input.GetEx<string>(_signaler)];
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

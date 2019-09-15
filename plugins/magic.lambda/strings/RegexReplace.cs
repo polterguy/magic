@@ -14,7 +14,7 @@ using magic.signals.contracts;
 namespace magic.lambda.strings
 {
     [Slot(Name = "regex-replace")]
-    public class RegexReplace : ISlot, IMeta
+    public class RegexReplace : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -30,13 +30,6 @@ namespace magic.lambda.strings
             var with = input.Children.First(x => x.Name == "with").GetEx<string>(_signaler);
             var ex = new Regex(what);
             input.Value = ex.Replace(original, with);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("what", 1);
-            yield return new Node("with", 1);
         }
     }
 }

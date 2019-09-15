@@ -12,18 +12,13 @@ using magic.node.extensions.hyperlambda;
 namespace magic.hyperlambda
 {
     [Slot(Name = "lambda")]
-    public class Lambda : ISlot, IMeta
+    public class Lambda : ISlot
     {
         public void Signal(Node input)
         {
             var parser = new Parser(input.Get<string>());
             input.AddRange(parser.Lambda().Children.ToList());
             input.Value = null;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

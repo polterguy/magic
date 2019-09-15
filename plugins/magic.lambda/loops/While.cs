@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.loops
 {
     [Slot(Name = "while")]
-    public class While : ISlot, IMeta
+    public class While : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -53,12 +53,6 @@ namespace magic.lambda.loops
                 // Notice, cloning in case we've got another iteration, to avoid changing original nodes' values.
                 input.AddRange(old.Select(x => x.Clone()));
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", 1);
-            yield return new Node(".lambda", 1);
         }
     }
 }

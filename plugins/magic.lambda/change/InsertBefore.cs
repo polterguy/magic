@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.change
 {
     [Slot(Name = "insert-before")]
-    public class InsertBefore : ISlot, IMeta
+    public class InsertBefore : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -34,12 +34,6 @@ namespace magic.lambda.change
                     idxDest.InsertBefore(idxSource.Clone()); // Cloning in case of multiple destinations.
                 }
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
-            yield return new Node("*", "*");
         }
     }
 }

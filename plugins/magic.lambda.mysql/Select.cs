@@ -14,7 +14,7 @@ using magic.lambda.mysql.utilities;
 namespace magic.lambda.mysql
 {
     [Slot(Name = "mysql.select")]
-    public class Select : ISlot, IMeta
+    public class Select : ISlot
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -43,11 +43,6 @@ namespace magic.lambda.mysql
                     }
                 }
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using bc = BCrypt.Net;
 using magic.node;
 using magic.node.extensions;
@@ -14,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.crypto
 {
     [Slot(Name = "crypto.password.verify")]
-    public class VerifyPassword : ISlot, IMeta
+    public class VerifyPassword : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -32,12 +31,6 @@ namespace magic.lambda.crypto
             var value = input.GetEx<string>(_signaler);
 
             input.Value = bc.BCrypt.Verify(value, hash);
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("hash", 1);
         }
     }
 }

@@ -11,7 +11,7 @@ using magic.signals.contracts;
 namespace magic.lambda.comparison
 {
     [Slot(Name = "lte")]
-    public class Lte : ISlot, IMeta
+    public class Lte : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -35,11 +35,6 @@ namespace magic.lambda.comparison
                 else
                     return ((IComparable)lhs).CompareTo(rhs) <= 0;
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", 2);
         }
     }
 }

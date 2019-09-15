@@ -14,7 +14,7 @@ namespace magic.json
 {
     // TODO: Sanity check. Not entirely sure it actually works for all possible permutations.
     [Slot(Name = "from-json")]
-    public class FromJson : ISlot, IMeta
+    public class FromJson : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -27,11 +27,6 @@ namespace magic.json
         {
             HandleToken(input, JToken.Parse(input.GetEx<string>(_signaler)));
             input.Value = null;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
 
         #region [ -- Private helper methods -- ]

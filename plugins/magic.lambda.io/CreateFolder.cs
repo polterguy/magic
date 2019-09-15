@@ -14,7 +14,7 @@ using magic.lambda.io.utilities;
 namespace magic.lambda.io
 {
     [Slot(Name = "create-folder")]
-    public class CreateFolder : ISlot, IMeta
+    public class CreateFolder : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -31,11 +31,6 @@ namespace magic.lambda.io
 
             Directory.CreateDirectory(path);
             input.Value = true;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

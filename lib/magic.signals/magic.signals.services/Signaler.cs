@@ -36,21 +36,6 @@ namespace magic.signals.services
 
         public IEnumerable<string> Slots => _signals.Keys;
 
-        public IEnumerable<Node> GetArguments(string name)
-        {
-            var type = _signals.GetSignaler(name);
-            if (type == null)
-                throw new ApplicationException($"No slot exists for [{name}]");
-
-            if (_provider.GetService(type) is IMeta instance)
-            {
-                foreach (var idxArg in instance.GetArguments())
-                {
-                    yield return idxArg;
-                }
-            }
-        }
-
         #endregion
     }
 }

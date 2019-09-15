@@ -14,7 +14,7 @@ using magic.lambda.mysql.utilities;
 namespace magic.lambda.mysql
 {
     [Slot(Name = "mysql.execute")]
-    public class Execute : ISlot, IMeta
+    public class Execute : ISlot
     {
         readonly ut.Stack<MySqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -31,11 +31,6 @@ namespace magic.lambda.mysql
             {
                 input.Value = cmd.ExecuteNonQuery();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

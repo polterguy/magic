@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.change
 {
     [Slot(Name = "apply-file")]
-    public class ApplyFile : ISlot, IMeta
+    public class ApplyFile : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -38,11 +38,6 @@ namespace magic.lambda.change
             input.Value = null;
             input.Clear();
             input.AddRange(template.Children.ToList());
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
 
         #region [ -- Private helper methods -- ]

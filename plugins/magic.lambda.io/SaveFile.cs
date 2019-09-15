@@ -15,7 +15,7 @@ using magic.lambda.io.utilities;
 namespace magic.lambda.io
 {
     [Slot(Name = "save-file")]
-    public class SaveFile : ISlot, IMeta
+    public class SaveFile : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -33,12 +33,6 @@ namespace magic.lambda.io
 
             var filename = RootResolver.Root + input.GetEx<string>(_signaler);
             File.WriteAllText(filename, input.Children.First().GetEx<string>(_signaler));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("*", 1);
         }
     }
 }

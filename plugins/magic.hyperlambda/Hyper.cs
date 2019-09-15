@@ -13,7 +13,7 @@ using magic.node.extensions.hyperlambda;
 namespace magic.hyperlambda
 {
     [Slot(Name = "hyper")]
-    public class Hyper : ISlot, IMeta
+    public class Hyper : ISlot
     {
         public void Signal(Node input)
         {
@@ -24,11 +24,6 @@ namespace magic.hyperlambda
                 input.Value = Stringifier.GetHyper(input.Children);
             else
                 input.Value = Stringifier.GetHyper(input.Evaluate());
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
     }
 }

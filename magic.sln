@@ -5,6 +5,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9C41749A-F623-476C-85FB-52A11B1C3CE4}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		.travis.yml = .travis.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{078C2490-F214-489D-BF3E-A14471B13244}"

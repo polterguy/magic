@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.branching
 {
     [Slot(Name = "else-if")]
-    public class ElseIf : ISlot, IMeta
+    public class ElseIf : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -53,12 +53,6 @@ namespace magic.lambda.branching
                 if (input.Children.First().GetEx<bool>(_signaler))
                     _signaler.Signal("eval", lambda);
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", 1);
-            yield return new Node(".lambda", 1);
         }
     }
 }

@@ -13,7 +13,7 @@ using hl = magic.node.extensions;
 namespace magic.lambda.change
 {
     [Slot(Name = "unwrap")]
-    public class Unwrap : ISlot, IMeta
+    public class Unwrap : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -40,11 +40,6 @@ namespace magic.lambda.change
                     idx.Value = exp.FirstOrDefault()?.Value;
                 }
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "x");
         }
     }
 }

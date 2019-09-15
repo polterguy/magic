@@ -16,7 +16,7 @@ using magic.node.extensions.hyperlambda;
 namespace magic.endpoint.services
 {
     [Slot(Name = "system.endpoint")]
-    public class Endpoint : ISlot, IMeta
+    public class Endpoint : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -63,12 +63,6 @@ namespace magic.endpoint.services
                 // We have arguments in file endpoint.
                 input.AddRange(argsNode.Children.ToList());
             }
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("url", 1);
-            yield return new Node("verb", 1);
         }
     }
 }

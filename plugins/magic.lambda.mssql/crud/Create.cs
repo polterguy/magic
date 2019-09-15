@@ -16,7 +16,7 @@ using magic.lambda.mssql.crud.builders;
 namespace magic.lambda.mssql.crud
 {
     [Slot(Name = "mssql.create")]
-    public class Create : ISlot, IMeta
+    public class Create : ISlot
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -48,14 +48,6 @@ namespace magic.lambda.mssql.crud
                 input.Value = cmd.ExecuteScalar();
                 input.Clear();
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("connection", "*");
-            yield return new Node("table", "*");
-            yield return new Node("values");
         }
     }
 }

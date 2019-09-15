@@ -12,7 +12,7 @@ using magic.signals.contracts;
 namespace magic.lambda.slots
 {
     [Slot(Name = "vocabulary")]
-    public class Vocabulary : ISlot, IMeta
+    public class Vocabulary : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -27,11 +27,6 @@ namespace magic.lambda.slots
             input.AddRange(_signaler.Slots
                 .Where(x => !x.StartsWith(".", StringComparison.InvariantCulture))
                 .Select(x => new Node("", x)));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield break;
         }
     }
 }

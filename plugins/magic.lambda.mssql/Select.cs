@@ -4,7 +4,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using magic.node;
 using magic.signals.contracts;
@@ -14,7 +13,7 @@ using magic.lambda.mssql.utilities;
 namespace magic.lambda.mssql
 {
     [Slot(Name = "mssql.select")]
-    public class Select : ISlot, IMeta
+    public class Select : ISlot
     {
         readonly ut.Stack<SqlConnection> _connections;
         readonly ISignaler _signaler;
@@ -43,11 +42,6 @@ namespace magic.lambda.mssql
                     }
                 }
             });
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

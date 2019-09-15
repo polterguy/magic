@@ -15,7 +15,7 @@ using magic.signals.contracts;
 namespace magic.lambda.mssql
 {
 	[Slot(Name = "mssql.connect")]
-	public class Connect : ISlot, IMeta
+	public class Connect : ISlot
 	{
 		readonly ISignaler _signaler;
         readonly ut.Stack<SqlConnection> _connections;
@@ -59,12 +59,6 @@ namespace magic.lambda.mssql
                 }
 				input.Value = null;
 			}
-		}
-
-		public IEnumerable<Node> GetArguments()
-		{
-			yield return new Node(":", "*");
-			yield return new Node("*", "*");
 		}
 	}
 }

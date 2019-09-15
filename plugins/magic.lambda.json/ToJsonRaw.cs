@@ -14,7 +14,7 @@ namespace magic.json
 {
     // TODO: Sanity check. Not entirely sure it actually works for all possible permutations.
     [Slot(Name = ".to-json-raw")]
-    public class ToJsonRaw : ISlot, IMeta
+    public class ToJsonRaw : ISlot
     {
         public void Signal(Node input)
         {
@@ -24,12 +24,6 @@ namespace magic.json
             var token = Handle(input);
             input.Clear();
             input.Value = token;
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
-            yield return new Node("*", "*");
         }
 
         #region [ -- Private helper methods -- ]

@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda
 {
     [Slot(Name = "+")]
-    public class Plus : ISlot, IMeta
+    public class Plus : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -26,11 +26,6 @@ namespace magic.lambda
         {
             _signaler.Signal("eval", input);
             input.Value = input.Children.Sum(x => x.GetEx<dynamic>(_signaler));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
     }
 }

@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.strings
 {
     [Slot(Name = "concat")]
-    public class Concat : ISlot, IMeta
+    public class Concat : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -30,11 +30,6 @@ namespace magic.lambda.strings
             _signaler.Signal("eval", input);
 
             input.Value = string.Join("", input.Children.Select(x => x.GetEx<string>(_signaler)));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node(":", "*");
         }
     }
 }

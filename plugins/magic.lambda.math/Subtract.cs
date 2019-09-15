@@ -13,7 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda
 {
     [Slot(Name = "-")]
-    public class Subtract : ISlot, IMeta
+    public class Subtract : ISlot
     {
         readonly ISignaler _signaler;
 
@@ -26,11 +26,6 @@ namespace magic.lambda
         {
             _signaler.Signal("eval", input);
             input.Value = input.Children.First().GetEx<dynamic>(_signaler) - input.Children.Skip(1).Sum(x => x.GetEx<dynamic>(_signaler));
-        }
-
-        public IEnumerable<Node> GetArguments()
-        {
-            yield return new Node("*", "*");
         }
     }
 }
