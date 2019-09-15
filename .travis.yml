@@ -4,5 +4,5 @@ mono: none
 dotnet: 2.2.402
 script:
  - dotnet restore
- - dotnet build ./magic.sln --configuration Release
- - dotnet test ./magic.tests/magic.tests.csproj --configuration Release
+ - dotnet build
+ - dotnet test
