@@ -1,7 +1,7 @@
 ﻿language: csharp
 solution: magic.sln
 mono: none
-dotnet: 2.2.7
+dotnet: 2.2.402
 script:
  - dotnet restore
  - dotnet build ./magic.sln --configuration Release
