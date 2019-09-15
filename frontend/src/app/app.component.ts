@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticateService } from './services/authenticate-service';
 import { MatSnackBar } from '@angular/material';
 import { interval } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
@@ -14,11 +13,11 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class AppComponent implements OnInit {
   private username: string;
   private password: string;
-  private jwtHelper: JwtHelperService;
 
   constructor(
     private authService: AuthenticateService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    private jwtHelper: JwtHelperService) { }
 
   ngOnInit() {
     this.validateToken();
@@ -51,15 +50,12 @@ export class AppComponent implements OnInit {
   }
 
   public validateToken() {
-    interval(1000).pipe(
-      map(() => {
-        const isExpired = this.jwtHelper.isTokenExpired(
-          localStorage.getItem('access_token'),
-        );
-        if (isExpired) {
-          this.logout();
-        }
-      }),
-    );
+    interval(10000).subscribe(x => {
+      const token = localStorage.getItem('access_token');
+      const isExpired = this.jwtHelper.isTokenExpired(token);
+      if (isExpired) {
+        this.logout();
+      }
+    });
   }
 }
