@@ -198,9 +198,14 @@ export class CrudifyComponent implements OnInit {
         .filter(x => x.primary)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
-    if (curVerb === 'post' || curVerb === 'put') {
+    if (curVerb === 'put') {
       args['columns'] = this.columns
         .filter(x => !x.primary)
+        .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+    }
+    if (curVerb === 'post') {
+      args['columns'] = this.columns
+        .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'get') {
