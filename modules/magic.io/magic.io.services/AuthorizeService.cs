@@ -12,6 +12,7 @@ namespace magic.io.services
     {
         public bool Authorize(string path, string username, string[] roles, AccessType type)
         {
+            // TODO: Implement Hyperlambda slot callback here, to allow for overriding authorization more dynamically
             return roles.Any(x => x == "root");
         }
     }
