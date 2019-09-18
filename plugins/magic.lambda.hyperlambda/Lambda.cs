@@ -4,12 +4,11 @@
  */
 
 using System.Linq;
-using System.Collections.Generic;
 using magic.node;
 using magic.signals.contracts;
 using magic.node.extensions.hyperlambda;
 
-namespace magic.hyperlambda
+namespace magic.lambda.hyperlambda
 {
     [Slot(Name = "lambda")]
     public class Lambda : ISlot
