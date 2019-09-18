@@ -25,6 +25,7 @@ namespace magic.signals.services
 
                 if (_slots.ContainsKey(name))
                     throw new ApplicationException($"Slot [{name}] already taken by another type");
+
                 _slots[name] = idxType;
             }
         }
@@ -33,8 +34,8 @@ namespace magic.signals.services
 
         public Type GetSignaler(string name)
         {
-            _slots.TryGetValue(name, out Type value);
-            return value;
+            _slots.TryGetValue(name, out Type result);
+            return result;
         }
     }
 }
