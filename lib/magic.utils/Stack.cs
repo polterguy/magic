@@ -10,21 +10,21 @@ namespace magic.utils
 {
 	public class Stack<T>
 	{
-        Synchronizer<List<T>> _connections = new Synchronizer<List<T>>(new List<T>());
+        Synchronizer<List<T>> _items = new Synchronizer<List<T>>(new List<T>());
 
         public void Push(T value)
         {
-            _connections.Write(x => x.Add(value));
+            _items.Write(x => x.Add(value));
         }
 
         public T Peek()
         {
-            return _connections.Read(x => x.Last());
+            return _items.Read(x => x.Last());
         }
 
         public void Pop()
         {
-            _connections.Write(x => x.RemoveAt(x.Count - 1));
+            _items.Write(x => x.RemoveAt(x.Count - 1));
         }
 	}
 }
