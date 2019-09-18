@@ -13,6 +13,7 @@ using magic.signals.contracts;
 namespace magic.lambda.change
 {
     [Slot(Name = "set-value")]
+    [Slot(Name = "set-x")]
     public class SetValue : ISlot
     {
         readonly ISignaler _signaler;
@@ -33,7 +34,7 @@ namespace magic.lambda.change
 
             _signaler.Signal("eval", input);
 
-            var source = input.Children.FirstOrDefault()?.GetEx(_signaler);
+            var source = input.Children.FirstOrDefault()?.GetEx(_signaler, input.Name == "set-value");
             foreach (var idx in destinations)
             {
                 idx.Value = source;

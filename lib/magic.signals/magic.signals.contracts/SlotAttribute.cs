@@ -7,6 +7,7 @@ using System;
 
 namespace magic.signals.contracts
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class SlotAttribute : Attribute
     {
         public string Name { get; set; }
