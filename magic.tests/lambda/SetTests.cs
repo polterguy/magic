@@ -5,6 +5,7 @@
 
 using System.Linq;
 using Xunit;
+using magic.node;
 
 namespace magic.tests.lambda
 {
@@ -43,6 +44,27 @@ namespace magic.tests.lambda
         {
             var lambda = Common.Evaluate(".foo1:.bar1\nset-value:x:../*/.foo1\n   get-name:x:../*/.foo1");
             Assert.Equal(".foo1", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void SetValueWithExpressionEvaluate()
+        {
+            var lambda = Common.Evaluate(@".foo1:.bar1
+.foo2:howdy
+set-value:x:../*/.foo1
+   :x:../*/.foo2");
+            Assert.Equal(typeof(string), lambda.Children.First().Value.GetType());
+            Assert.Equal("howdy", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void SetValueWithExpressionNotEvaluate()
+        {
+            var lambda = Common.Evaluate(@".foo1:.bar1
+set-x:x:../*/.foo1
+   :x:../*/.foo1");
+            Assert.Equal(typeof(Expression), lambda.Children.First().Value.GetType());
+            Assert.Equal("../*/.foo1", lambda.Children.First().Get<Expression>().Value);
         }
     }
 }

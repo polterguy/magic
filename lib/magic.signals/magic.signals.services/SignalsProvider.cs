@@ -18,15 +18,16 @@ namespace magic.signals.services
         {
             foreach (var idxType in types)
             {
-                var name = idxType.GetCustomAttributes(true).OfType<SlotAttribute>().FirstOrDefault()?.Name;
+                foreach (var idxAtrName in idxType.GetCustomAttributes(true).OfType<SlotAttribute>().Select(x => x.Name))
+                {
+                    if (string.IsNullOrEmpty(idxAtrName))
+                        throw new ArgumentNullException($"No name specified for type '{idxType}' in Slot attribute");
 
-                if (string.IsNullOrEmpty(name))
-                    throw new ArgumentNullException($"No name specified for type '{idxType}'");
+                    if (_slots.ContainsKey(idxAtrName))
+                        throw new ApplicationException($"Slot [{idxAtrName}] already taken by another type");
 
-                if (_slots.ContainsKey(name))
-                    throw new ApplicationException($"Slot [{name}] already taken by another type");
-
-                _slots[name] = idxType;
+                    _slots[idxAtrName] = idxType;
+                }
             }
         }
 
