@@ -21,7 +21,8 @@
     <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj" />
     <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj" />
     <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
-    <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.hyperlambda\magic.lambda.hyperlambda.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.logging\magic.lambda.logging.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />

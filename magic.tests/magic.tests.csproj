@@ -21,9 +21,10 @@
     <ProjectReference Include="..\lib\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.config\magic.lambda.config.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.crypto\magic.lambda.crypto.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.hyperlambda\magic.lambda.hyperlambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.json\magic.lambda.json.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.logging\magic.lambda.logging.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
-    <ProjectReference Include="..\plugins\magic.hyperlambda\magic.hyperlambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />

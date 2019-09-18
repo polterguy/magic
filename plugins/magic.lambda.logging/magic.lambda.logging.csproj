@@ -5,10 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\magic.common.contracts\magic.common.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node\magic.node.csproj" />
     <ProjectReference Include="..\..\lib\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\..\lib\magic.node.extensions\magic.node.extensions.csproj" />
