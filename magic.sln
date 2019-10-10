@@ -13,12 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.backend", "magic.back
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.library", "..\magic.library\magic.library\magic.library.csproj", "{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.contracts", "..\magic.endpoint\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj", "{A0051ED2-B36A-4996-8401-5EA6375A565D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.services", "..\magic.endpoint\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj", "{C4B6CC92-573C-4310-8C0C-FAEDC4298D14}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.endpoint.controller", "..\magic.endpoint\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj", "{D99159D7-2677-4A2B-ACF8-31910F75063C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,17 +27,5 @@ Global
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0051ED2-B36A-4996-8401-5EA6375A565D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0051ED2-B36A-4996-8401-5EA6375A565D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0051ED2-B36A-4996-8401-5EA6375A565D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0051ED2-B36A-4996-8401-5EA6375A565D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4B6CC92-573C-4310-8C0C-FAEDC4298D14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4B6CC92-573C-4310-8C0C-FAEDC4298D14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4B6CC92-573C-4310-8C0C-FAEDC4298D14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4B6CC92-573C-4310-8C0C-FAEDC4298D14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D99159D7-2677-4A2B-ACF8-31910F75063C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D99159D7-2677-4A2B-ACF8-31910F75063C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D99159D7-2677-4A2B-ACF8-31910F75063C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D99159D7-2677-4A2B-ACF8-31910F75063C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

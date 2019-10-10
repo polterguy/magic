@@ -22,15 +22,6 @@
     <ProjectReference Include="..\..\magic.library\magic.library\magic.library.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\..\magic.endpoint\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
-    <ProjectReference Include="..\..\magic.endpoint\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
-    <ProjectReference Include="..\..\magic.endpoint\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
   </ItemGroup>
 
 </Project>
