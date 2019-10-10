@@ -62,16 +62,4 @@ export class FileService {
     return this.httpClient.delete<void>(
       environment.apiURL + 'magic/modules/system/file-system/folder?folder=' + encodeURI(path));
   }
-
-  public folderExists(path: string) {
-    return this.httpClient.get<boolean>(
-      environment.apiURL + 
-      'folders/exists?path=' + encodeURI(path));
-  }
-
-  public fileExists(path: string) {
-    return this.httpClient.get<boolean>(
-      environment.apiURL + 
-      'folders/file-exists?path=' + encodeURI(path));
-  }
 }
