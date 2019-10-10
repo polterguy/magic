@@ -46,7 +46,9 @@ export class EndpointsComponent implements OnInit {
       return this.endpoints;
     }
     return this.endpoints.filter((x) => {
-      return x.path.indexOf('system/') !== 0 && x.path.indexOf('mysql/') !== 0 && x.path.indexOf('mssql/') !== 0;
+      return x.path.indexOf('magic/modules/system/') !== 0 && 
+        x.path.indexOf('magic/modules/mysql/') !== 0 && 
+        x.path.indexOf('magic/modules/mssql/') !== 0;
     });
   }
 

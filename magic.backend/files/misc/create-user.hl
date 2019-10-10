@@ -35,7 +35,7 @@ mysql.connect:[magic_auth]
    /*
     * Inserting user.
     */
-   mysql.scalar:"insert into users (username, password) values (@username, @password); select last_insert_id();"
+   mysql.scalar:insert into users (username, password) values (@username, @password); select last_insert_id();
       @username:x:@.arguments/*/username
       @password:x:@crypto.password.hash
 
@@ -59,10 +59,3 @@ mysql.connect:[magic_auth]
       mysql.execute:insert into roles_users (role_id, user_id) values (@role_id, @user_id)
          @role_id:x:@mysql.scalar
          @user_id:x:@for-each/@mysql.scalar
-
-
-
-
-
-
-

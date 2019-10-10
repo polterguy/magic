@@ -39,10 +39,10 @@ export class FilesComponent implements OnInit {
 
   getPath() {
     this.fileService.listFiles(this.path).subscribe((res) => {
-      this.files = res;
+      this.files = res || [];
     });
     this.fileService.listFolders(this.path).subscribe((res) => {
-      this.folders = res;
+      this.folders = res || [];
     });
   }
 

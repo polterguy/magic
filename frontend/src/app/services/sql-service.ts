@@ -13,7 +13,7 @@ export class SqlService {
   public evaluate(sql: string) {
     return this.httpClient.post<any[]>(
       environment.apiURL +
-      'hl/mysql/evaluate', {
+      'magic/modules/mysql/evaluate', {
         sql,
       });
   }

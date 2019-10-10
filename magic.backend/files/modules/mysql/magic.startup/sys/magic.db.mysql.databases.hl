@@ -2,39 +2,38 @@
 /*
  * Lists all database in your MySQL instance.
  */
-slot:magic.db.mysql.databases
-   .lambda
+slots.create:magic.db.mysql.databases
+
+
+   /*
+    * Opens up our connection
+    */
+   mysql.connect:[sys]
 
 
       /*
-       * Opens up our connection
+       * Runs our query
        */
-      mysql.connect:[sys]
+      mysql.select:show databases
 
 
-         /*
-          * Runs our query
-          */
-         mysql.select:show databases
+      /*
+       * Removes "system" databases.
+       */
+      remove-node:x:@mysql.select/*/*/=information_schema/.
+      remove-node:x:@mysql.select/*/*/=mysql/.
+      remove-node:x:@mysql.select/*/*/=performance_schema/.
+      remove-node:x:@mysql.select/*/*/=sys/.
 
 
-         /*
-          * Removes "system" databases.
-          */
-         remove-node:x:@mysql.select/*/*/=information_schema/.
-         remove-node:x:@mysql.select/*/*/=mysql/.
-         remove-node:x:@mysql.select/*/*/=performance_schema/.
-         remove-node:x:@mysql.select/*/*/=sys/.
+      /*
+       * Renaming "Database" nodes.
+       */
+      set-name:x:@mysql.select/*/*
+         :db
 
 
-         /*
-          * Renaming "Database" nodes.
-          */
-         set-name:x:@mysql.select/*/*
-            :db
-
-
-         /*
-          * Returns the remaining databases to caller.
-          */
-         return-nodes:x:@mysql.select/*
+      /*
+       * Returns the remaining databases to caller.
+       */
+      slots.return-nodes:x:@mysql.select/*

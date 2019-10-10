@@ -14,15 +14,15 @@
 /*
  * Ensures user is authorized to access endpoint.
  */
-auth.verify-ticket:root
+auth.ticket.verify:root
 
 
 /*
- * Creating our endpoint according to arguments given, by using [apply-file]
+ * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
 unwrap:x:+/*
-apply-file:/modules/mysql/templates/sql.template.hl
+apply:/modules/mysql/templates/sql.template.hl
    database:x:@.arguments/*/database
    sql:x:@.arguments/*/sql
 
@@ -30,9 +30,9 @@ apply-file:/modules/mysql/templates/sql.template.hl
 /*
  * Making sure we add arguments to the above lambda.
  */
-lambda:x:@.arguments/*/arguments
-add:x:@apply-file/*/.arguments
-   get-nodes:x:@lambda/*
+hyper2lambda:x:@.arguments/*/arguments
+add:x:@apply/*/.arguments
+   get-nodes:x:@hyper2lambda/*
 
 
 /*
@@ -56,9 +56,9 @@ if
        * Adding authorization to endpoint's lambda.
        */
       unwrap:x:+/*/*
-      insert-after:x:@apply-file/*/.arguments
+      insert-after:x:@apply/*/.arguments
          .
-            auth.verify-ticket:x:@.arguments/*/authorization
+            auth.ticket.verify:x:@.arguments/*/authorization
 
 
 /*
@@ -66,33 +66,33 @@ if
  */
 .folder:/modules/
 set-value:x:@.folder
-   concat
+   strings.concat
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
       :/
-create-folder:x:@.folder
+io.folders.create:x:@.folder
 
 
 /*
  * Transforming above lambda to Hyperlambda, and saving in specified folder,
  * with specified name.
  */
-hyper:x:@apply-file/*
+lambda2hyper:x:@apply/*
 unwrap:x:+
 .filename:x:@.folder
 set-value:x:@.filename
-   concat
+   strings.concat
       get-value:x:@.filename
       get-value:x:@.arguments/*/endpointName
       :.
       get-value:x:@.arguments/*/verb
       :.hl
-save-file:x:@.filename
-   get-value:x:@hyper
+io.files.save:x:@.filename
+   get-value:x:@lambda2hyper
 
 
 /*
  * Returns success to caller.
  */
-return-nodes
+slots.return-nodes
    result:success

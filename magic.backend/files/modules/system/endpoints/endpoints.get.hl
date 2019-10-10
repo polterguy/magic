@@ -7,8 +7,8 @@
 /*
  * Ensures user is authorized to access endpoint.
  */
-auth.verify-ticket:root
+auth.ticket.verify:root
 
 
-system.endpoints
-return-nodes:x:-/*
+endpoints.list
+slots.return-nodes:x:-/*

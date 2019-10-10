@@ -6,22 +6,19 @@
  *
  * - [database] - What database you want to check
  */
-slot:magic.db.mysql.tables
-   .arguments
-      database:string
-   .lambda
+slots.create:magic.db.mysql.tables
+
+
+   /*
+    * Opens up our connection
+    */
+   mysql.connect:x:@.arguments/*/database
 
 
       /*
-       * Opens up our connection
+       * Runs our query
        */
-      mysql.connect:x:@.arguments/*/database
-
-
-         /*
-          * Runs our query
-          */
-         mysql.select:"show tables"
-         set-name:x:@mysql.select/*/*
-            :table
-         return-nodes:x:@mysql.select/*
+      mysql.select:show tables
+      set-name:x:@mysql.select/*/*
+         :table
+      slots.return-nodes:x:@mysql.select/*

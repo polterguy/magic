@@ -6,34 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\lib\magic.common.contracts\magic.common.contracts.csproj" />
-    <ProjectReference Include="..\modules\magic.io\magic.io.services\magic.io.services.csproj" />
-    <ProjectReference Include="..\modules\magic.io\magic.io.controller\magic.io.controller.csproj" />
-    <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj" />
-    <ProjectReference Include="..\modules\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj" />
-    <ProjectReference Include="..\lib\magic.signals\magic.signals.services\magic.signals.services.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.hyperlambda\magic.lambda.hyperlambda.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.logging\magic.lambda.logging.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda\magic.lambda.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.http\magic.lambda.http.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.io\magic.lambda.io.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.json\magic.lambda.json.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.math\magic.lambda.math.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.mssql\magic.lambda.mssql.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.mysql\magic.lambda.mysql.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.config\magic.lambda.config.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.auth\magic.lambda.auth.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.crypto\magic.lambda.crypto.csproj" />
-    <ProjectReference Include="..\plugins\magic.lambda.slots\magic.lambda.slots.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,4 +17,20 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\magic.library\magic.library\magic.library.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\..\magic.endpoint\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\..\magic.endpoint\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\..\magic.endpoint\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+
 </Project>

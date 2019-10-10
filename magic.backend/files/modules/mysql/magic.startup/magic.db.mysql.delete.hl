@@ -8,51 +8,46 @@
  * - [table] - Table to delete a record from
  * - [ids] - A list of IDs that uniquely identifies your record
  */
-slot:magic.db.mysql.delete
-   .arguments
-      database:string
-      table:string
-      ids
-   .lambda
+slots.create:magic.db.mysql.delete
+
+
+   /*
+    * Sanity checking invocation by making sure caller
+    * provided an ID at all, to avoid deleting entire table.
+    */
+   if
+      eq
+         get-count:x:@.arguments/*/ids/*
+         :int:0
+      .lambda
+         throw:No IDs given to [magic.db.mysql.delete]
+
+
+   /*
+    * Opening up a connection.
+    */
+   mysql.connect:x:@.arguments/*/database
 
 
       /*
-       * Sanity checking invocation by making sure caller
-       * provided an ID at all, to avoid deleting entire table.
+       * Parametrizing [mysql.delete].
        */
-      if
-         eq
-            get-count:x:@.arguments/*/ids/*
-            :int:0
-         .lambda
-            throw:No IDs given to [magic.db.mysql.delete]
+      add:x:./*/mysql.delete/*/where/*/and
+         get-nodes:x:@.arguments/*/ids/*
 
 
       /*
-       * Opening up a connection.
+       * Invoking [mysql.delete].
        */
-      mysql.connect:x:@.arguments/*/database
+      mysql.delete
+         table:x:@.arguments/*/table
+         where
+            and
 
 
-         /*
-          * Parametrizing [mysql.delete].
-          */
-         add:x:./*/mysql.delete/*/where/*/and
-            get-nodes:x:@.arguments/*/ids/*
-
-
-         /*
-          * Invoking [mysql.delete].
-          */
-         mysql.delete
-            table:x:@.arguments/*/table
-            where
-               and
-
-
-         /*
-          * Returning results to caller.
-          */
-         unwrap:x:+/*
-         return-nodes
-            deleted-records:x:@mysql.delete
+      /*
+       * Returning results to caller.
+       */
+      unwrap:x:+/*
+      slots.return-nodes
+         deleted-records:x:@mysql.delete

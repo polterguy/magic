@@ -13,11 +13,11 @@
 
 
 /*
- * Invokes the slot that does the heavy lifting, and creates our JWT token,
+ * Invokes the slots.create that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
 unwrap:x:+/*
-signal:magic.authenticate
+slots.signal:magic.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
 
@@ -25,4 +25,4 @@ signal:magic.authenticate
 /*
  * Returns the authentication JWT ticket created above to caller.
  */
-return-nodes:x:@signal/*
+slots.return-nodes:x:@slots.signal/*

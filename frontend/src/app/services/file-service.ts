@@ -13,13 +13,13 @@ export class FileService {
   public listFiles(path: string) {
     return this.httpClient.get<string[]>(
       environment.apiURL + 
-      'folders/list-files?folder=' + encodeURI(path));
+      'magic/modules/system/file-system/list-files?folder=' + encodeURI(path));
   }
 
   public listFolders(path: string) {
     return this.httpClient.get<string[]>(
       environment.apiURL + 
-      'folders/list-folders?folder=' + encodeURI(path));
+      'magic/modules/system/file-system/list-folders?folder=' + encodeURI(path));
   }
 
   public getFileContent(path: string) {
@@ -28,13 +28,13 @@ export class FileService {
     };
     return this.httpClient.get<string>(
       environment.apiURL + 
-      'files?file=' + encodeURI(path), 
+      'api/files?file=' + encodeURI(path), 
       requestOptions);
   }
 
   public deleteFile(path: string) {
     return this.httpClient.delete<string>(
-      environment.apiURL + 'files?file=' + encodeURI(path)
+      environment.apiURL + 'magic/modules/system/file-system/file?file=' + encodeURI(path)
     );
   }
 
@@ -43,16 +43,16 @@ export class FileService {
     const formData: FormData = new FormData();
     const blob = new Blob([content], { type: "text/plain"});
     formData.append('file', blob, path.substr(path.lastIndexOf('/') + 1));
-    return this.httpClient.post<any>(
+    return this.httpClient.put<any>(
       environment.apiURL + 
-      'files?folder=' + encodeURI(folder),
+      'api/files?folder=' + encodeURI(folder),
       formData
     );
   }
 
   public createFolder(path: string) {
     return this.httpClient.put<void>(
-      environment.apiURL + 'folders', {
+      environment.apiURL + 'magic/modules/system/file-system/folder', {
         folder: path
       }
     );
@@ -60,7 +60,7 @@ export class FileService {
 
   public deleteFolder(path: string) {
     return this.httpClient.delete<void>(
-      environment.apiURL + 'folders?folder=' + encodeURI(path));
+      environment.apiURL + 'magic/modules/system/file-system/folder?folder=' + encodeURI(path));
   }
 
   public folderExists(path: string) {

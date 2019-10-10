@@ -2,7 +2,7 @@
 /*
  * Template for HTTP GET CRUD requests.
  *
- * Expects {database} and {table} [apply-file] arguments.
+ * Expects {database} and {table} [apply] arguments.
  */
 .arguments
    limit:long
@@ -14,14 +14,14 @@
 /*
  * Parametrizing [magic.db.mysql.read].
  */
-add:x:./*/signal/*/args
+add:x:./*/slots.signal/*/args
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mysql.read], making sure we unwrap the [id].
  */
-signal:magic.db.mysql.read
+slots.signal:magic.db.mysql.read
    database:{database}
    table:{table}
    args
@@ -31,4 +31,4 @@ signal:magic.db.mysql.read
 /*
  * Returning results back to caller.
  */
-return-nodes:x:@signal/*
+slots.return-nodes:x:@slots.signal/*

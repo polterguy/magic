@@ -9,75 +9,69 @@
  * - [values] - A list of new columns/values for your updated item
  * - [ids] - A list of IDs uniquely identifying your record
  */
-slot:magic.db.mysql.update
-   .arguments
-      database:string
-      table:string
-      values
-      ids
-   .lambda
+slots.create:magic.db.mysql.update
+
+
+   /*
+    * Sanity checking invocation by making sure caller
+    * provided an ID at all, to avoid updating entire table.
+    */
+   if
+      eq
+         get-count:x:@.arguments/*/ids/*
+         :int:0
+      .lambda
+         throw:No IDs given to [magic.db.mysql.update]
+
+
+   /*
+    * Opening up a connection.
+    */
+   mysql.connect:x:@.arguments/*/database
 
 
       /*
-       * Sanity checking invocation by making sure caller
-       * provided an ID at all, to avoid updating entire table.
+       * Parametrizing [mysql.update], first with the [where] parts,
+       * extracted from [ids].
        */
-      if
-         eq
-            get-count:x:@.arguments/*/ids/*
-            :int:0
-         .lambda
-            throw:No IDs given to [magic.db.mysql.update]
+      add:x:./*/mysql.update/*/where/*/and
+         get-nodes:x:@.arguments/*/ids/*
 
 
       /*
-       * Opening up a connection.
+       * Then parametrizing [mysql.update] with new values, making
+       * sure it does not exist in [ids].
        */
-      mysql.connect:x:@.arguments/*/database
+      for-each:x:@.arguments/*/values/*
+         get-name:x:@.dp/#
+         if
+            not
+               exists:x:@.arguments/*/ids/*/{0}
+                  :x:@get-name
+            .lambda
 
 
-         /*
-          * Parametrizing [mysql.update], first with the [where] parts,
-          * extracted from [ids].
-          */
-         add:x:./*/mysql.update/*/where/*/and
-            get-nodes:x:@.arguments/*/ids/*
+               /*
+                * Currently iterated value from [values] was not found in [ids].
+                */
+               add:x:../*/mysql.connect/*/mysql.update/*/values
+                  get-nodes:x:@.dp/#
 
 
-         /*
-          * Then parametrizing [mysql.update] with new values, making
-          * sure it does not exist in [ids].
-          */
-         for-each:x:@.arguments/*/values/*
-            get-name:x:@.dp/#
-            if
-               not
-                  exists:x:@.arguments/*/ids/*/{0}
-                     :x:@get-name
-               .lambda
+      /*
+       * Invoking [mysql.update].
+       */
+      mysql.update
+         table:x:@.arguments/*/table
+         values
+         exclude
+         where
+            and
 
 
-                  /*
-                     * Currently iterated value from [values] was not found in [ids].
-                     */
-                  add:x:../*/mysql.connect/*/mysql.update/*/values
-                     get-nodes:x:@.dp/#
-
-
-         /*
-          * Invoking [mysql.update].
-          */
-         mysql.update
-            table:x:@.arguments/*/table
-            values
-            exclude
-            where
-               and
-
-
-         /*
-          * Returning results to caller.
-          */
-         unwrap:x:+/*
-         return-nodes
-            updated-records:x:@mysql.update
+      /*
+       * Returning results to caller.
+       */
+      unwrap:x:+/*
+      slots.return-nodes
+         updated-records:x:@mysql.update

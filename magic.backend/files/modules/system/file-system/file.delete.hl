@@ -1,0 +1,18 @@
+
+/*
+ * Deletes the specified [file] file.
+ */
+.arguments
+   file:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Deletes the specified file.
+ */
+io.files.delete:x:@.arguments/*/file

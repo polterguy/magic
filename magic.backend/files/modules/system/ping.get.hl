@@ -1,0 +1,6 @@
+
+/*
+ * Pings the server side, to verify it's up running.
+ */
+slots.return-nodes
+   result:success
