@@ -9,7 +9,7 @@
 /*
  * Ensures user is authorized to access endpoint.
  */
-auth.verify-ticket:root
+auth.ticket.verify:root
 
 
 /*
@@ -27,4 +27,4 @@ mysql.connect:[sys]
    /*
     * Returning results to caller.
     */
-   return-nodes:x:@mysql.select/*
+   slots.return-nodes:x:@mysql.select/*

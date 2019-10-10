@@ -4,21 +4,17 @@
  */
 
 using System;
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Swashbuckle.AspNetCore.Swagger;
-using magic.backend.init;
-using magic.backend.init.internals;
+using magic.library;
 
 namespace magic.backend
 {
@@ -33,50 +29,25 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(x => x.OutputFormatters.Add(new ContentFormatters()))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
             // Adding some basic configurations.
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton(Configuration);
-            services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // Configuring swagger.
-            services.AddSwaggerGen(swag =>
-            {
-                swag.SwaggerDoc("v1", new Info
-                {
-                    Title = "Super DRY Magic",
-                    Version = "v1",
-                    Description = "An ASP.NET Core web API Starter Kit",
-                    License = new License
-                    {
-                        Name = "Affero GPL + Proprietary commercial (Closed Source) for a fee",
-                        Url = "https://github.com/polterguy/magic",
-                    },
-                    Contact = new Contact
-                    {
-                        Name = "Thomas Hansen",
-                        Email = "thomas@gaiasoul.com",
-                        Url = "https://github.com/polterguy/magic",
-                    },
-                });
-                foreach (var idxFile in Directory.GetFiles(AppContext.BaseDirectory, "*.xml"))
-                {
-                    swag.IncludeXmlComments(idxFile);
-                }
-                swag.OperationFilter<FileUploadOperation>();
-                swag.DocumentFilter<DynamicEndpointOperation>();
-            });
-
-            // Giving every module a chance to configure its services.
-            Configurator.ConfigureServices(services, Configuration);
-            services.AddHttpContextAccessor();
+            /*
+             * Initializing Magic.
+             */
+            Initializer.InitializeLog4net(
+                string.Concat(
+                    AppDomain.CurrentDomain.BaseDirectory, "log4net.config"));
+            Initializer.InitializeServices(Configuration, services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            // Making sure we add some default exception handling.
+            /*
+             * Making sure we're storing errors into our log file, and that
+             * we're abot to return the exception message to client.
+             */
             app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
             {
                 context.Response.StatusCode = 500;
@@ -95,16 +66,13 @@ namespace magic.backend
 
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
-
-            // Giving each module a chance to configure the application.
-            Configurator.ConfigureApplication(app, Configuration);
-
+            app.UseAuthentication();
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic"));
 
-            // Giving each module a chance to run startup logic.
-            Configurator.InitializeStartups(app.ApplicationServices, Configuration);
+            /*
+             * Initializing Magic.
+             */
+            Initializer.InitalizeApp(app);
         }
     }
 }

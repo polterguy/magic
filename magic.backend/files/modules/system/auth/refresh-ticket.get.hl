@@ -6,15 +6,15 @@
 
 
 /*
- * Invokes the slot that does the heavy lifting, and creates our JWT token,
+ * Invokes the slots.create that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
-auth.refresh-ticket
+auth.ticket.refresh
 
 
 /*
  * Returns the authentication JWT ticket created above to caller.
  */
 unwrap:x:+/*
-return-nodes
-   ticket:x:@auth.refresh-ticket
+slots.return-nodes
+   ticket:x:@auth.ticket.refresh

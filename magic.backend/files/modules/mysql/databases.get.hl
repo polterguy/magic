@@ -7,25 +7,25 @@
 /*
  * Ensures user is authorized to access endpoint.
  */
-auth.verify-ticket:root
+auth.ticket.verify:root
 
 
 /*
- * Invokes slot responsible for returning our database names,
+ * Invokes slots.create responsible for returning our database names,
  * and returns results to caller.
  */
-signal:magic.db.mysql.databases
+slots.signal:magic.db.mysql.databases
 
 
 /*
  * Doing the [to-lowers] thing.
  */
-for-each:x:@signal/*/*
+for-each:x:@slots.signal/*/*
    set-value:x:@.dp/#
-      to-lower:x:@.dp/#
+      strings.to-lower:x:@.dp/#
 
 
 /*
  * Returning database to caller.
  */
-return-nodes:x:@signal/*
+slots.return-nodes:x:@slots.signal/*

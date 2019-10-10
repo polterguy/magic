@@ -12,14 +12,14 @@
 /*
  * Ensures user is authorized to access endpoint.
  */
-auth.verify-ticket:root
+auth.ticket.verify:root
 
 
 /*
- * Invokes slot responsible for returning columns.
+ * Invokes slots.create responsible for returning columns.
  */
 unwrap:x:+/*
-signal:magic.db.mysql.columns
+slots.signal:magic.db.mysql.columns
    database:x:@.arguments/*/database
    table:x:@.arguments/*/table
 
@@ -27,4 +27,4 @@ signal:magic.db.mysql.columns
 /*
  * Returning database to caller.
  */
-return-nodes:x:@signal/*
+slots.return-nodes:x:@slots.signal/*

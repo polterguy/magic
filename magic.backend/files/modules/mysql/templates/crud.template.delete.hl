@@ -2,7 +2,7 @@
 /*
  * Template for HTTP DELETE CRUD requests.
  *
- * Expects {database} and {table} [apply-file] arguments.
+ * Expects {database} and {table} [apply] arguments.
  */
 .arguments
 
@@ -10,9 +10,9 @@
 /*
  * Invoking [magic.db.mysql.delete], making sure we unwrap the [id].
  */
-add:x:./*/signal/*/ids
+add:x:./*/slots.signal/*/ids
    get-nodes:x:@.arguments/*
-signal:magic.db.mysql.delete
+slots.signal:magic.db.mysql.delete
    database:{database}
    table:{table}
    ids
@@ -21,4 +21,4 @@ signal:magic.db.mysql.delete
 /*
  * Returning results back to caller.
  */
-return-nodes:x:@signal/*
+slots.return-nodes:x:@slots.signal/*

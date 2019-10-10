@@ -1,5 +1,5 @@
 
-# Magic for ASP.NET Core
+# Magic for ASP.NET
 
 [![Build status](https://travis-ci.org/polterguy/magic.svg?master)](https://travis-ci.org/polterguy/magic)
 
@@ -29,11 +29,11 @@ when creating Magic.
 ## License
 
 Magic is licensed as Affero GPL. This means that you can only use it to create Open Source solutions.
-If this is a problem, you can contact at thomas@gaiasoul.com me to negotiate a proprietary license if
-you want to use the framework to build closed source code. This will allow you to use Magic in closed
-source projects, in addition to giving you access to Microsoft SQL Server adapters, to _"crudify"_
-database tables in MS SQL Server. I also provide professional support for clients that buys a
-proprietary enabling license.
+If this is a problem, you can [purchase a commercial license here](https://gaiasoul.com/license-magic/).
+Notice, 5 hours after you put Magic into production, it will stop functioning, unless you have a valid
+license for it.
+
+* [Get licensed](https://gaiasoul.com/license-magic/)
 
 ## Notice
 

@@ -328,5 +328,3 @@ ASALocalRun/
 
 # Excluding all Mac folder files
 **/.DS_Store
-modules/**/*.controller.xml
-magic.backend/files/public/hyperlambda-auto-complete.js

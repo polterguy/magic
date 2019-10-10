@@ -8,7 +8,7 @@
  * - [password] - The password
  *
  * NOTICE!
- * The default implementation of this slot checks the supplied [username]
+ * The default implementation of this slots.create checks the supplied [username]
  * and [password] towards the values of "root"/"root" - Obviously this should
  * be exchanged and go towards your own database structure somehow.
  *
@@ -16,55 +16,51 @@
  * I have consciously left this as an exercize for yourself to figure out.
  *
  * There does however exist helper code to accomplish this, both to create
- * your own "magic_auth" database, and to replace this slot's code with
- * a real slot checking usernames and password combination towards that
+ * your own "magic_auth" database, and to strings.replace this slots.create's code with
+ * a real slots.create checking usernames and password combination towards that
  * database.
  *
  * See the files "/misc/magic_auth.sql", "/misc/authenticate.hl" and
  * "/misc/create-users.hl" for an example of how to implement a real
  * authentication system in your system.
  */
-slot:magic.authenticate
-   .arguments
-      username:string
-      password:string
-   .lambda
+slots.create:magic.authenticate
 
 
-      /*
-       * Statically checks the username/password combination towards the values
-       * "root"/"root". Exchange this part of the slot with your own
-       * custom lambda, looking up some username/password combination from
-       * your database to actually secure your installation.
-       */
-      if
-         or
-            not
-               eq
-                  get-value:x:@.arguments/*/username
-                  :root
-            not
-               eq
-                  get-value:x:@.arguments/*/password
-                  :root
-         .lambda
-            throw:Oops, wrong credentials!
+   /*
+    * Statically checks the username/password combination towards the values
+    * "root"/"root". Exchange this part of the slots.create with your own
+    * custom lambda, looking up some username/password combination from
+    * your database to actually secure your installation.
+    */
+   if
+      or
+         not
+            eq
+               get-value:x:@.arguments/*/username
+               :root
+         not
+            eq
+               get-value:x:@.arguments/*/password
+               :root
+      .lambda
+         throw:Oops, wrong credentials!
 
 
-      /*
-       * Creating a JWT token belonging to the username supplied, and the
-       * role of "root".
-       */
-      unwrap:x:+/*/username
-      auth.create-ticket
-         username:x:@.arguments/*/username
-         roles
-            :root
+   /*
+    * Creating a JWT token belonging to the username supplied, and the
+    * role of "root".
+    */
+   unwrap:x:+/*/username
+   auth.ticket.create
+      username:x:@.arguments/*/username
+      roles
+         :root
 
 
-      /*
-       * Returning results back to caller.
-       */
-      unwrap:x:+/*
-      return-nodes
-         ticket:x:@auth.create-ticket
+   /*
+    * Returning results back to caller.
+    */
+   unwrap:x:+/*
+   slots.return-nodes
+      ticket:x:@auth.ticket.create

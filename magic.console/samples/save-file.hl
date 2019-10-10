@@ -1,8 +1,0 @@
-
-// Creating a file or overwriting it if it already exists.
-save-file:samples/foo.txt
-   .src:@"Content for text file saved with [save-file]"
-
-// Loading the same file, and outputting its content
-load-file:samples/foo.txt
-write-line:x:-

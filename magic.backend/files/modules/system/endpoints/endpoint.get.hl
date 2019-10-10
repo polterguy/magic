@@ -15,10 +15,10 @@
 /*
  * Ensures user is authorized to access endpoint.
  */
-auth.verify-ticket:root
+auth.ticket.verify:root
 
 
-system.endpoint
+endpoints.get-arguments
    url:x:@.arguments/*/url
    verb:x:@.arguments/*/verb
-return-nodes:x:-/*
+slots.return-nodes:x:-/*

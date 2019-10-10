@@ -11,12 +11,12 @@ export class EvaluatorService {
   constructor(private httpClient: HttpClient) { }
 
   evaluate(hyperlambda: string) {
-    return this.httpClient.post<any>(environment.apiURL + 'hl/system/misc/evaluate', {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/misc/evaluate', {
       hyperlambda
     });
   }
 
   vocabulary() {
-    return this.httpClient.get<string[]>(environment.apiURL + 'hl/system/misc/vocabulary');
+    return this.httpClient.get<string[]>(environment.apiURL + 'magic/modules/system/misc/vocabulary');
   }
 }

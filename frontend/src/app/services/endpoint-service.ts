@@ -12,29 +12,29 @@ export class EndpointService {
   constructor(private httpClient: HttpClient) { }
 
   public getAllEndpoints() {
-    return this.httpClient.get<Endpoint[]>(environment.apiURL + 'hl/system/endpoints/endpoints');
+    return this.httpClient.get<Endpoint[]>(environment.apiURL + 'magic/modules/system/endpoints/endpoints');
   }
 
   getEndpointMeta(url: string, verb: string) {
     return this.httpClient.get<any>(
       environment.apiURL +
-      'hl/system/endpoints/endpoint?url=' + encodeURI(url) +
+      'magic/modules/system/endpoints/endpoint?url=' + encodeURI(url) +
       '&verb=' + encodeURI(verb));
   }
 
   executeGet(url: string) {
-    return this.httpClient.get<any>(environment.apiURL + 'hl/' + url);
+    return this.httpClient.get<any>(environment.apiURL + url);
   }
 
   executeDelete(url: string) {
-    return this.httpClient.delete<any>(environment.apiURL + 'hl/' + url);
+    return this.httpClient.delete<any>(environment.apiURL + 'magic/modules/' + url);
   }
 
   executePost(url: string, args: any) {
-    return this.httpClient.post<any>(environment.apiURL + 'hl/' + url, args);
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/' + url, args);
   }
 
   executePut(url: string, args: any) {
-    return this.httpClient.put<any>(environment.apiURL + 'hl/' + url, args);
+    return this.httpClient.put<any>(environment.apiURL + 'magic/modules/' + url, args);
   }
 }

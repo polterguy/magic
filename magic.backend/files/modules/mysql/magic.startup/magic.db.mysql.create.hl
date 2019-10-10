@@ -9,38 +9,33 @@
  * - [table] - Table to create your record in
  * - [values] - A column/value collection for your new record
  */
-slot:magic.db.mysql.create
-   .arguments
-      database:string
-      table:string
-      values
-   .lambda
+slots.create:magic.db.mysql.create
+
+
+   /*
+    * Opening up a connection.
+    */
+   mysql.connect:x:@.arguments/*/database
 
 
       /*
-       * Opening up a connection.
+       * Parametrizing invocation to [mysql.create] with [values].
        */
-      mysql.connect:x:@.arguments/*/database
+      add:x:./*/mysql.create/*/values
+         get-nodes:x:@.arguments/*/values/*
 
 
-         /*
-          * Parametrizing invocation to [mysql.create] with [values].
-          */
-         add:x:./*/mysql.create/*/values
-            get-nodes:x:@.arguments/*/values/*
+      /*
+       * Invoking [mysql.create].
+       */
+      mysql.create
+         table:x:@.arguments/*/table
+         values
 
 
-         /*
-          * Invoking [mysql.create].
-          */
-         mysql.create
-            table:x:@.arguments/*/table
-            values
-
-
-         /*
-          * Returning results to caller.
-          */
-         unwrap:x:+/*
-         return-nodes
-            id:x:@mysql.create
+      /*
+       * Returning results to caller.
+       */
+      unwrap:x:+/*
+      slots.return-nodes
+         id:x:@mysql.create

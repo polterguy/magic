@@ -1,0 +1,24 @@
+
+/*
+ * List all files in the specified [folder] argument.
+ */
+.arguments
+   folder:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Listing all files in specified folder.
+ */
+io.files.list:x:@.arguments/*/folder
+
+
+/*
+ * Returning results of above invocation to caller.
+ */
+slots.return-nodes:x:@io.files.list/*
