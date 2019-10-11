@@ -1,7 +1,7 @@
 
 <div class="evaluator-wrapper">
 
-  <div class="mat-elevation-z4 no-codemirror-auto-height">
+  <div class="mat-elevation-z4">
 
     <ngx-codemirror 
       [(ngModel)]="hyperlambda" 
@@ -19,7 +19,7 @@
 
 <div *ngIf="result !== null" class="result-wrapper">
 
-  <div class="mat-elevation-z4 no-codemirror-auto-height">
+  <div class="mat-elevation-z4">
     <ngx-codemirror 
       [(ngModel)]="result" 
       [options]="getCodeMirrorOptions()"></ngx-codemirror>
