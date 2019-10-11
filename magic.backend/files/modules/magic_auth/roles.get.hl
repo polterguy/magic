@@ -1,0 +1,18 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   name:string
+auth.ticket.verify:root
+add:x:./*/slots.signal/*/args
+   get-nodes:x:@.arguments/*
+slots.signal:magic.db.mysql.read
+   database:magic_auth
+   table:roles
+   args
+   columns
+      id
+      name
+slots.return-nodes:x:@slots.signal/*

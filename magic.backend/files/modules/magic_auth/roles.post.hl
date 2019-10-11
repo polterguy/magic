@@ -1,0 +1,10 @@
+.arguments
+   name:string
+auth.ticket.verify:root
+add:x:./*/slots.signal/*/values
+   get-nodes:x:@.arguments/*
+slots.signal:magic.db.mysql.create
+   database:magic_auth
+   table:roles
+   values
+slots.return-nodes:x:@slots.signal/*
