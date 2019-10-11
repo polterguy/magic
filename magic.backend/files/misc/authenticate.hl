@@ -69,7 +69,7 @@ slots.create:magic.authenticate
             /*
              * Then we can create our JWT token/ticket.
              */
-            add:x:./*/auth.create-ticket/*/roles
+            add:x:+/*/roles
                get-nodes:x:@mysql.select/*/*
             auth.ticket.create
                username:x:@.arguments/*/username
@@ -82,3 +82,10 @@ slots.create:magic.authenticate
             unwrap:x:+/*
             slots.return-nodes
                ticket:x:@auth.ticket.create
+      else
+
+
+         /*
+          * Hash version of password didn't match.
+          */
+         throw:Access denied
