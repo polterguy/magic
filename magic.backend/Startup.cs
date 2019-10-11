@@ -1,18 +1,13 @@
 ﻿/*
- * Magic, Copyright(c) Thomas Hansen 2019 - thomas@gaiasoul.com
- * Licensed as Affero GPL unless an explicitly proprietary license has been obtained.
+ * Magic, Copyright(c) Thomas Hansen 2019, thomas@gaiasoul.com, all rights reserved.
+ * See the enclosed LICENSE file for details.
  */
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using log4net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using magic.library;
 
 namespace magic.backend
@@ -28,13 +23,14 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Adding some basic configurations.
             services.AddSingleton(Configuration);
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             /*
              * Initializing Magic.
+             * 
+             * Notice, must be done AFTER you invoke "AddMvc".
              */
             services.AddMagic(Configuration);
         }
@@ -43,6 +39,8 @@ namespace magic.backend
         {
             /*
              * Initializing Magic.
+             *
+             * Notice, must be done BEFORE you invoke "UseMvc".
              */
 			app.UseMagic(Configuration);
 
