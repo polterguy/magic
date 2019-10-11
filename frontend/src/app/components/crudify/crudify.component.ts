@@ -50,7 +50,10 @@ export class CrudifyComponent implements OnInit {
 
   ngOnInit() {
     this.crudService.getDatabases().subscribe((res) => {
-      this.databases = res;
+      this.databases = res || [];
+      if (this.databases.length === 0) {
+        this.showError("You don't have any databases in your installation, please create one using e.g. the SQL menu");
+      }
     }, (err) => {
       this.showError(err.error.message);
     });
