@@ -1,30 +1,27 @@
 
 
-                  Magic Hippocratic Software license version 1.1
+Copyright 2019 Thomas Hansen, thomas@gaiasoul.com, all rights reserved
 
-                Copyright 2019 Thomas Hansen, thomas@gaiasoul.com
+Magic is not Open Source or Free Software, even though most of its code is
+publicly available - And you will need one license key for each production
+machine you intend to install it on. During development and testing however,
+you can use it for free, as you evaluate Magic. But once you decide to put
+Magic into production, you will need one license key for each hostname you
+intend to run Magic on.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-its associated documentation files (the "Software"), to use the software for any purpose, subject
-to the following conditions:
+If you create Free and Open Source Software however, and you publicly make
+your source code available for everybody to download - I might give you a
+free license key, to run it free of charge, on one production server,
+associated with one hostname.
 
-1. The above copyright notice and this permission notice shall be included in all copies or
-   substantial portions of the Software.
-2. Any source code you produce using the Software or that somehow depends upon the Software you
-   must make freely and publicly available under these same terms to everyone requesting it.
-3. All copies of the Software should clearly display a hyperlink/URL whenever it is interacted
-   with by a human being, that allows the human to easily obtain the entire source code for your
-   entire application, and use it under these same terms as you were given the right to use the
-   Software.
-4. You and your employer are not in any ways actively or knowingly participating in activities
-   that violates the United Nations Universal Declaration of Human Rights.
-   Read more here - https://www.un.org/en/universal-declaration-human-rights/
-5. For a monetary fee, you can opt out of the first 3 terms of this agreement,
-   read more here - https://gaiasoul.com/license-magic/
+Read more here - https://gaiasoul.com/license-magic/
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+Disclaimer!
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
