@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.backend", "magic.backend\magic.backend.csproj", "{9F3FCE8B-797A-4426-BF45-13DA694FC365}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.library", "..\magic.library\magic.library\magic.library.csproj", "{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.backend", "magic.backend\magic.backend.csproj", "{0B627BD5-EBBD-4832-8157-4283A990AF90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,13 +19,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9F3FCE8B-797A-4426-BF45-13DA694FC365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F3FCE8B-797A-4426-BF45-13DA694FC365}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F3FCE8B-797A-4426-BF45-13DA694FC365}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F3FCE8B-797A-4426-BF45-13DA694FC365}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A454195C-1CC7-476A-8BD1-CF5A5F339DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B627BD5-EBBD-4832-8157-4283A990AF90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B627BD5-EBBD-4832-8157-4283A990AF90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B627BD5-EBBD-4832-8157-4283A990AF90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B627BD5-EBBD-4832-8157-4283A990AF90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
