@@ -36,8 +36,8 @@ latest _"magic.library"_ NuGet package, using something resembling the following
 Install-Package magic.library
 ```
 
-**Notice**, you'd still need to make sure you have the contents of your _"files/"_ in your own system. This is
-because the files folder contains crucial Hyperlambda endpoints, required to have the _"crudifier"_ function.
+**Notice**, you'd still need to make sure you have the contents of the _"files/"_ folder in your own system. This is
+because the files folder contains crucial Hyperlambda endpoints, required to have the _"crudifier"_ work.
 If the choices I have done in the magic.library is not adequate for your needs, you can also
 [download the latest magic.library](https://github.com/polterguy/magic.library/releases) codebase,
 and modify it according to your needs. The magic.library project is just a helper to automagically pull
