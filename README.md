@@ -15,7 +15,7 @@ below for a demonstration of the system.
 </a>
 </p>
 
-It was build by leveraging the ideas written about in the following MSDN article to the extreme. However, the library has been completely
+Magic was built by leveraging the ideas written about in the following MSDN article to the extreme. However, the library has been completely
 changed since the article was written, and improved to become unrecognizable due to chasing these same ideas further and further down
 the rabbit hole.
 
