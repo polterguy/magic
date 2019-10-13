@@ -44,6 +44,10 @@ and modify it according to your needs. The magic.library project is just a helpe
 in all references to all modules in Magic, since Magic is extremely modularized in its architecture, and
 actually not one project, but in fact more than 20 different components.
 
+## Documentation
+
+Although documentation is work in progress, you can rapidly [teach yourself the basics here](https://polterguy.github.io).
+
 ## License
 
 Although most of Magic's source code is publicly available, Magic is _not_ Open Source or Free Software.
