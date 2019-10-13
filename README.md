@@ -3,11 +3,11 @@
 
 [![Build status](https://travis-ci.org/polterguy/magic.svg?master)](https://travis-ci.org/polterguy/magic)
 
-Magic is a starter kit for super dynamic and super DRY ASP.NET Core web API applications. Among other things, it allows you
-to _"declare"_ a web API endpoint, with a handful of Hyperlambda lines of code, 100% automatically. Hyperlambda is kind of
-like YAML, only significantly simpler in its syntax. Your Hyperlambda is again invoking C# methods, using a Super Signal
-design pattern, allowing you to make solutions that are unimaginably loosely coupled together, resulting in super dynamic
-and flexible web APIs. Basically, create a CRUD app, wrapping your database, by simply clicking a button.
+Magic is a CRUD app generator, allowing you to create CRUD Web APIs on top of ASP.NET Core.
+In 1 minute, you can basically create hundreds of HTTP REST based CRUD Web API endpoints,
+wrapping your entire database, even if it has hundreds of tables. It feels almost like Magic,
+allowing you to build secure CRUD Web API endpoints in seconds, hence its name. Watch the video
+below for a demonstration of the system.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=4TyT4lBEOg8">
@@ -35,10 +35,3 @@ Notice, 5 hours after you put Magic into production, it will stop functioning, u
 license for it.
 
 * [Get licensed](https://gaiasoul.com/license-magic/)
-
-## Notice
-
-If you are looking for the version of Magic that the Super DRY MSDN article describes, you can 
-[find it here](https://github.com/polterguy/magic/releases/tag/v3.0). This is the last release of that
-codebase though, and I intend to completely change the library to exclusively be built around Hyperlambda
-for all future releases.
