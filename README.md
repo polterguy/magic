@@ -41,7 +41,8 @@ because the files folder contains crucial Hyperlambda endpoints, required to hav
 If the choices I have done in the magic.library is not adequate for your needs, you can also
 [download the latest magic.library](https://github.com/polterguy/magic.library/releases) codebase,
 and modify it according to your needs. The magic.library project is just a helper to automagically pull
-in all references to all modules in Magic, since Magic is extremely modularized in its architecture.
+in all references to all modules in Magic, since Magic is extremely modularized in its architecture, and
+actually not one project, but in fact more than 20 different components.
 
 ## License
 
