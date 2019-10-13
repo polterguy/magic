@@ -26,6 +26,23 @@ for MSDN Magazine about [Hyperlambda, making C# more dynamic](https://msdn.micro
 Although the article is a bit dated today, it explains some of the techniques that has been applied
 when creating Magic.
 
+## Getting started
+
+The simplest way to get started, is to [download its latest release](https://github.com/polterguy/magic/releases),
+and use it as a _"starter kit"_. However, if you want to use Magic in an existing project, you could also install the
+latest _"magic.library"_ NuGet package, using something resembling the following.
+
+```
+Install-Package magic.library
+```
+
+**Notice**, you'd still need to make sure you have the contents of your _"files/"_ in your own system. This is
+because the files folder contains crucial Hyperlambda endpoints, required to have the _"crudifier"_ function.
+If the choices I have done in the magic.library is not adequate for your needs, you can also
+[download the latest magic.library](https://github.com/polterguy/magic.library/releases) codebase,
+and modify it according to your needs. The magic.library project is just a helper to automagically pull
+in all references to all modules in Magic, since Magic is extremely modularized in its architecture.
+
 ## License
 
 Although most of Magic's source code is publicly available, Magic is _not_ Open Source or Free Software.
