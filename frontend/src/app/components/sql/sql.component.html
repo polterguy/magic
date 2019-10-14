@@ -1,4 +1,10 @@
 
+<div class="database-selector">
+  <mat-select placeholder="Select database type" [(value)]="selectedDatabaseType">
+    <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+  </mat-select>
+</div>
+
 <div class="mat-elevation-z4 sql">
 
   <ngx-codemirror 

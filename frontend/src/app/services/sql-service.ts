@@ -10,10 +10,10 @@ export class SqlService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public evaluate(sql: string) {
+  public evaluate(sql: string, databaseType = 'mysql') {
     return this.httpClient.post<any[]>(
       environment.apiURL +
-      'magic/modules/mysql/evaluate', {
+      `magic/modules/${databaseType}/evaluate`, {
         sql,
       });
   }
