@@ -18,7 +18,5 @@ slots.create:magic.db.mssql.tables
       /*
        * Runs our query
        */
-      mssql.select:show tables
-      set-name:x:@mssql.select/*/*
-         :table
+      mssql.select:@"select table_name as ""table"" from information_schema.tables where table_type='base table'"
       slots.return-nodes:x:@mssql.select/*
