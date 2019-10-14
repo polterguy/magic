@@ -53,7 +53,14 @@ export class CrudifyComponent implements OnInit {
   ngOnInit() { }
 
   databaseTypeChanged(e: MatSelectChange) {
+
+    // User changes his active database type.
     this.databaseType = e.value;
+    this.selectedDatabase = null;
+    this.databases= null;
+    this.tables = null;
+    this.columns = null;
+    this.endpoints = null;
     this.getDatabases();
   }
 
