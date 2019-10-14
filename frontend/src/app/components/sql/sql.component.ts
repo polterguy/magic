@@ -11,7 +11,9 @@ import { SqlService } from 'src/app/services/sql-service';
 })
 export class SqlComponent implements OnInit {
   private result: any = null;
-  private sqlText: string = `/*
+  private databaseTypes = ['mysql', 'mssql'];
+  private selectedDatabaseType = 'mysql';
+  private sqlText = `/*
  * Type your SQL in here
  */
 use some_database;
@@ -33,7 +35,7 @@ select * from some_table;`;
   }
 
   evaluate() {
-    this.sqlService.evaluate(this.sqlText).subscribe((res) => {
+    this.sqlService.evaluate(this.sqlText, this.selectedDatabaseType).subscribe((res) => {
       this.result = res;
       this.showHttpSuccess('SQL executed successfully');
     }, (error) => {
