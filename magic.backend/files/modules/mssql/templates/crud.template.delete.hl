@@ -1,0 +1,24 @@
+
+/*
+ * Template for HTTP DELETE CRUD requests.
+ *
+ * Expects {database} and {table} [apply] arguments.
+ */
+.arguments
+
+
+/*
+ * Invoking [magic.db.mssql.delete], making sure we unwrap the [id].
+ */
+add:x:./*/slots.signal/*/ids
+   get-nodes:x:@.arguments/*
+slots.signal:magic.db.mssql.delete
+   database:{database}
+   table:{table}
+   ids
+
+
+/*
+ * Returning results back to caller.
+ */
+slots.return-nodes:x:@slots.signal/*
