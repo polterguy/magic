@@ -15,7 +15,9 @@ export class CrudifyComponent implements OnInit {
   private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
   private displayedColumnsEndpoints: string[] = ['generate', 'endpoint', 'verb', 'action', 'auth'];
 
-  // Databases, tables, and selected instances of such
+  // Databases, tables, and selected instances of such.
+  private databaseTypes = ['mysql', 'mssql'];
+  private databaseType: string;
   private databases: any[] = null;
   private tables: any[] = null;
   private selectedDatabase: string = null;
@@ -48,11 +50,18 @@ export class CrudifyComponent implements OnInit {
     private crudService: CrudifyService,
     private snackBar: MatSnackBar) { }
 
-  ngOnInit() {
-    this.crudService.getDatabases().subscribe((res) => {
+  ngOnInit() { }
+
+  databaseTypeChanged(e: MatSelectChange) {
+    this.databaseType = e.value;
+    this.getDatabases();
+  }
+
+  getDatabases() {
+    this.crudService.getDatabases(this.databaseType).subscribe((res) => {
       this.databases = res || [];
       if (this.databases.length === 0) {
-        this.showError("You don't have any databases in your installation, please create one using e.g. the SQL menu");
+        this.showError('You don\'t have any databases in your installation, please create one using e.g. the SQL menu');
       }
     }, (err) => {
       this.showError(err.error.message);
@@ -93,10 +102,10 @@ export class CrudifyComponent implements OnInit {
     this.endpoints = null;
 
     // Getting tables for his new database of choice
-    this.crudService.getTables(this.selectedDatabase).subscribe((res) => {
+    this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
 
       // Making sure we append "Custom SQL" as first option in select
-      const tables = [{'table': 'Custom SQL'}];
+      const tables = [{table: 'Custom SQL'}];
 
       // Appending all tables as option in select for selecting table
       for (const iterator of res) {
@@ -123,7 +132,7 @@ export class CrudifyComponent implements OnInit {
 
       // User wants to crudify a table.
       this.selectedTable = e.value;
-      this.crudService.getColumns(this.selectedDatabase, this.selectedTable).subscribe((res) => {
+      this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
         this.endpoints = this.verbs.map(x => {
           return {
@@ -159,7 +168,7 @@ export class CrudifyComponent implements OnInit {
     }
 
     // Creating custom SQL endpoint
-    this.crudService.createCustomSqlEndpoint({
+    this.crudService.createCustomSqlEndpoint(this.databaseType, {
       database: this.selectedDatabase,
       arguments: this.customSqlArguments,
       verb: this.customSqlEndpointVerb,
@@ -192,7 +201,7 @@ export class CrudifyComponent implements OnInit {
     const curVerb = verbs[0];
 
     // Contains arguments to crudifier
-    let args = {};
+    const args = {};
 
     // Figuring out which arguments to pass in, which depends upon HTTP verb we're
     // currently crudifying.
@@ -217,12 +226,12 @@ export class CrudifyComponent implements OnInit {
     }
 
     // Database type
-    this.crudService.generateCrudEndpoints({
+    this.crudService.generateCrudEndpoints(this.databaseType, {
       database: this.selectedDatabase,
       table: this.selectedTable,
-      template: `/modules/mysql/templates/crud.template.${curVerb}.hl`,
+      template: `/modules/${this.databaseType}/templates/crud.template.${curVerb}.hl`,
       verb: curVerb,
-      auth: this.endpoints.filter((x) => x.verb == curVerb)[0].auth,
+      auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
       args,
     }).subscribe((res) => {
       this.createHttpEndpoints(verbs.slice(1), callback);

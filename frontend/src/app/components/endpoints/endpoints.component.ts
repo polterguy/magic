@@ -26,7 +26,7 @@ export class EndpointsComponent implements OnInit {
 
   ngOnInit() {
     this.service.getAllEndpoints().subscribe((res) => {
-      this.endpoints = res;
+      this.endpoints = res || [];
     }, (err) => {
       this.showHttpError(err);
     });
@@ -46,8 +46,8 @@ export class EndpointsComponent implements OnInit {
       return this.endpoints;
     }
     return this.endpoints.filter((x) => {
-      return x.path.indexOf('magic/modules/system/') !== 0 && 
-        x.path.indexOf('magic/modules/mysql/') !== 0 && 
+      return x.path.indexOf('magic/modules/system/') !== 0 &&
+        x.path.indexOf('magic/modules/mysql/') !== 0 &&
         x.path.indexOf('magic/modules/mssql/') !== 0;
     });
   }
