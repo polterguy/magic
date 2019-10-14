@@ -1,0 +1,203 @@
+
+/*
+ * Lists all columns in some MySQL table.
+ *
+ * Arguments
+ *
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
+ */
+slots.create:magic.db.mssql.columns
+
+
+   /*
+    * Opens up our connection
+    */
+   mssql.connect:x:@.arguments/*/database
+
+
+      /*
+       * Making sure we support table names with special characters.
+       */
+      strings.concat
+         :"describe "
+         :'`'
+         get-value:x:@.arguments/*/table
+         :'`'
+      mssql.select:x:@strings.concat
+
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon MySQL's syntactic
+       * details.
+       */
+      for-each:x:@mssql.select/*
+         unwrap:x:+/*/*
+         .tmp
+            ""
+               name:x:@.dp/#/*/Field
+               db:x:@.dp/#/*/Type
+
+
+         /*
+          * Checking if column is nullable.
+          */
+         if
+            eq
+               get-value:x:@.dp/#/*/Null
+               :NO
+            .lambda
+               add:x:@.tmp/*
+                  .
+                     nullable:bool:false
+         else
+            add:x:@.tmp/*
+               .
+                  nullable:bool:true
+
+
+         /*
+          * Checking if column is a part of the primary key.
+          */
+         if
+            eq
+               get-value:x:@.dp/#/*/Key
+               :PRI
+            .lambda
+               add:x:@.tmp/*
+                  .
+                     primary:bool:true
+         else
+            add:x:@.tmp/*
+               .
+                  primary:bool:false
+
+
+         /*
+          * Checking if column has a default value.
+          */
+         if
+            eq
+               get-value:x:@.dp/#/*/Extra
+               :auto_increment
+            .lambda
+               add:x:@.tmp/*
+                  .
+                     automatic:bool:true
+         else
+            add:x:@.tmp/*
+               .
+                  automatic:bool:false
+
+
+         /*
+          * Figuring our which Hyperlambda type to project
+          * its database type to.
+          */
+         .type
+         strings.regex-replace:x:@.dp/#/*/Type
+            .:\([0-9,]+\)
+            .:
+         strings.replace:x:@strings.regex-replace
+            .:" unsigned"
+            .:
+         switch:x:@strings.replace
+
+
+            /*
+             * Everything transformed into date values.
+             */
+            case:date
+            case:datetime
+               set-value:x:@.type
+                  :date
+
+
+            /*
+             * Everything transformed into decimal values.
+             */
+            case:float
+            case:double
+            case:double precision
+            case:decimal
+            case:dec
+               set-value:x:@.type
+                  :decimal
+
+
+            /*
+             * Everything transformed into integer long values.
+             */
+            case:bit
+            case:tinyint
+            case:bool
+            case:boolean
+            case:smallint
+            case:mediumint
+            case:integer
+            case:bigint
+            case:int
+            case:int unsigned
+               set-value:x:@.type
+                  :long
+
+
+            /*
+             * Everything transformed into string values.
+             */
+            case:char
+            case:varchar
+            case:binary
+            case:varbinary
+            case:tinyblob
+            case:tinytext
+            case:text
+            case:blob
+            case:mediumtext
+            case:mediumblob
+            case:longtext
+            case:longblob
+            case:enum
+            case:set
+               set-value:x:@.type
+                  :string
+
+
+            /*
+             * Default/special cases.
+             */
+            default
+               if
+                  strings.starts-with:x:@strings.replace
+                     :enum
+                  .lambda
+
+
+                     /*
+                      * Enum type
+                      */
+                     set-value:x:@.type
+                        :string
+
+
+         /*
+          * Adding Hyperlambda type to [.tmp] above.
+          */
+         unwrap:x:+/*/*
+         add:x:@.tmp/*
+            .
+               hl:x:@.type
+
+
+         /*
+          * Adding [.tmp] to [slots.return-nodes] below.
+          */
+         add:x:../*/mssql.connect/*/slots.return-nodes
+            get-nodes:x:@.tmp/*
+
+
+      /*
+       * Returning results to caller.
+       */
+      slots.return-nodes

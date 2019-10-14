@@ -1,0 +1,31 @@
+
+/*
+ * Lists all database in your installation.
+ */
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Invokes slots.create responsible for returning our database names,
+ * and returns results to caller.
+ */
+slots.signal:magic.db.mssql.databases
+
+
+/*
+ * Doing the [to-lowers] thing.
+ */
+for-each:x:@slots.signal/*/*
+   set-value:x:@.dp/#
+      strings.to-lower:x:@.dp/#
+
+
+/*
+ * Returning database to caller.
+ */
+slots.return-nodes:x:@slots.signal/*

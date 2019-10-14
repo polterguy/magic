@@ -1,0 +1,98 @@
+
+/*
+ * Generate an HTTP REST generic SQL endpoint according to the given [.arguments].
+ */
+.arguments
+   authorization:string
+   database:string
+   arguments:string
+   verb:string
+   endpointName:string
+   sql:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Creating our endpoint according to arguments given, by using [apply]
+ * on the [template] file given.
+ */
+unwrap:x:+/*
+apply:/modules/mssql/templates/sql.template.hl
+   database:x:@.arguments/*/database
+   sql:x:@.arguments/*/sql
+
+
+/*
+ * Making sure we add arguments to the above lambda.
+ */
+hyper2lambda:x:@.arguments/*/arguments
+add:x:@apply/*/.arguments
+   get-nodes:x:@hyper2lambda/*
+
+
+/*
+ * Checking if caller provided specific authorization
+ * for us to use, and if so, applying it to lambda.
+ */
+if
+   and
+      not
+         eq
+            get-value:x:@.arguments/*/authorization
+            :
+      not
+         eq
+            get-value:x:@.arguments/*/authorization
+            .
+   .lambda
+
+
+      /*
+       * Adding authorization to endpoint's lambda.
+       */
+      unwrap:x:+/*/*
+      insert-after:x:@apply/*/.arguments
+         .
+            auth.ticket.verify:x:@.arguments/*/authorization
+
+
+/*
+ * Creating our folder.
+ */
+.folder:/modules/
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/database
+      :/
+io.folders.create:x:@.folder
+
+
+/*
+ * Transforming above lambda to Hyperlambda, and saving in specified folder,
+ * with specified name.
+ */
+lambda2hyper:x:@apply/*
+unwrap:x:+
+.filename:x:@.folder
+set-value:x:@.filename
+   strings.concat
+      get-value:x:@.filename
+      get-value:x:@.arguments/*/endpointName
+      :.
+      get-value:x:@.arguments/*/verb
+      :.hl
+io.files.save:x:@.filename
+   get-value:x:@lambda2hyper
+
+
+/*
+ * Returns success to caller.
+ */
+slots.return-nodes
+   result:success
