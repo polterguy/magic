@@ -1,6 +1,6 @@
 
 /*
- * Lists all columns in some MySQL table.
+ * Lists all columns in some SQL Server database table.
  *
  * Arguments
  *
@@ -17,78 +17,27 @@ slots.create:magic.db.mssql.columns
 
 
       /*
-       * Making sure we support table names with special characters.
+       * Running our query to retrieve meta information.
        */
-      strings.concat
-         :"describe "
-         :'`'
-         get-value:x:@.arguments/*/table
-         :'`'
-      mssql.select:x:@strings.concat
+      mssql.select:@"select c.name 'name', t.Name 'type', c.is_nullable 'nullable', isnull(i.is_primary_key, 0) 'primary', c.is_identity 'automatic'
+                     from sys.columns c inner join sys.types t on c.user_type_id = t.user_type_id left outer join 
+                     sys.index_columns ic on ic.object_id = c.object_id and ic.column_id = c.column_id left outer join sys.indexes i on
+                     ic.object_id = i.object_id AND ic.index_id = i.index_id where c.object_id = OBJECT_ID(@table)"
+         @table:x:@.arguments/*/table
 
 
       /*
-       * Creating our return value, by projecting it into
-       * a generic form, that does not rely upon MySQL's syntactic
-       * details.
+       * Adding the returned values from the above SQL into our return invocation below.
        */
       for-each:x:@mssql.select/*
          unwrap:x:+/*/*
          .tmp
             ""
-               name:x:@.dp/#/*/Field
-               db:x:@.dp/#/*/Type
-
-
-         /*
-          * Checking if column is nullable.
-          */
-         if
-            eq
-               get-value:x:@.dp/#/*/Null
-               :NO
-            .lambda
-               add:x:@.tmp/*
-                  .
-                     nullable:bool:false
-         else
-            add:x:@.tmp/*
-               .
-                  nullable:bool:true
-
-
-         /*
-          * Checking if column is a part of the primary key.
-          */
-         if
-            eq
-               get-value:x:@.dp/#/*/Key
-               :PRI
-            .lambda
-               add:x:@.tmp/*
-                  .
-                     primary:bool:true
-         else
-            add:x:@.tmp/*
-               .
-                  primary:bool:false
-
-
-         /*
-          * Checking if column has a default value.
-          */
-         if
-            eq
-               get-value:x:@.dp/#/*/Extra
-               :auto_increment
-            .lambda
-               add:x:@.tmp/*
-                  .
-                     automatic:bool:true
-         else
-            add:x:@.tmp/*
-               .
-                  automatic:bool:false
+               name:x:@.dp/#/*/name
+               db:x:@.dp/#/*/type
+               nullable:x:@.dp/#/*/nullable
+               primary:x:@.dp/#/*/primary
+               automatic:x:@.dp/#/*/automatic
 
 
          /*
@@ -96,13 +45,7 @@ slots.create:magic.db.mssql.columns
           * its database type to.
           */
          .type
-         strings.regex-replace:x:@.dp/#/*/Type
-            .:\([0-9,]+\)
-            .:
-         strings.replace:x:@strings.regex-replace
-            .:" unsigned"
-            .:
-         switch:x:@strings.replace
+         switch:x:@.dp/#/*/type
 
 
             /*
@@ -110,6 +53,10 @@ slots.create:magic.db.mssql.columns
              */
             case:date
             case:datetime
+            case:datetime2
+            case:datetimeoffset
+            case:smalldatetime
+            case:time
                set-value:x:@.type
                   :date
 
@@ -117,11 +64,11 @@ slots.create:magic.db.mssql.columns
             /*
              * Everything transformed into decimal values.
              */
-            case:float
-            case:double
-            case:double precision
+            case:numeric
             case:decimal
-            case:dec
+            case:smallmoney
+            case:money
+            case:float
                set-value:x:@.type
                   :decimal
 
@@ -129,16 +76,11 @@ slots.create:magic.db.mssql.columns
             /*
              * Everything transformed into integer long values.
              */
-            case:bit
-            case:tinyint
-            case:bool
-            case:boolean
-            case:smallint
-            case:mediumint
-            case:integer
             case:bigint
+            case:bit
+            case:smallint
             case:int
-            case:int unsigned
+            case:tinyint
                set-value:x:@.type
                   :long
 
@@ -148,37 +90,20 @@ slots.create:magic.db.mssql.columns
              */
             case:char
             case:varchar
-            case:binary
-            case:varbinary
-            case:tinyblob
-            case:tinytext
             case:text
-            case:blob
-            case:mediumtext
-            case:mediumblob
-            case:longtext
-            case:longblob
-            case:enum
-            case:set
+            case:nchar
+            case:nvarchar
+            case:ntext
+            case:binary
+            case:image
+            case:varbinary
+            case:uniqueidentifier
+            case:rowversion
+            case:varbinary
+            case:varbinary
+            case:varbinary
                set-value:x:@.type
                   :string
-
-
-            /*
-             * Default/special cases.
-             */
-            default
-               if
-                  strings.starts-with:x:@strings.replace
-                     :enum
-                  .lambda
-
-
-                     /*
-                      * Enum type
-                      */
-                     set-value:x:@.type
-                        :string
 
 
          /*
