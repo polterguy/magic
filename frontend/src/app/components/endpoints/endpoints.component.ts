@@ -11,6 +11,7 @@ import { EndpointService } from '../../services/endpoint-service';
 })
 export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'auth', 'verb'];
+  private selectedRowUrl = '';
   private endpoints: Endpoint[] = [];
   private filter = '';
   private selected: Endpoint;
@@ -34,6 +35,10 @@ export class EndpointsComponent implements OnInit {
 
   getFilterText() {
     return 'Search among ' + this.getFilteredSystemEndpoints().length + ' endpoints ...';
+  }
+
+  highlight(row: string) {
+    this.selectedRowUrl = row;
   }
 
   getFilteredEndpoints() {

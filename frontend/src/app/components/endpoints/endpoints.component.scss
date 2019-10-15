@@ -24,6 +24,9 @@
                     width: 40px;
                 }
             }
+            tr.highlight {
+                background-color: rgba(0,0,0,.1);
+            }
             tr.mat-row:hover {
                 background-color: rgba(0,0,0,.1);
                 cursor: pointer;
