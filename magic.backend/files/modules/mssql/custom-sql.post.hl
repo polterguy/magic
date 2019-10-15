@@ -21,8 +21,10 @@ auth.ticket.verify:root
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
+io.files.load:/modules/mssql/templates/sql.template.hl
+hyper2lambda:x:-
 unwrap:x:+/*
-apply:/modules/mssql/templates/sql.template.hl
+apply:x:@hyper2lambda
    database:x:@.arguments/*/database
    sql:x:@.arguments/*/sql
 
