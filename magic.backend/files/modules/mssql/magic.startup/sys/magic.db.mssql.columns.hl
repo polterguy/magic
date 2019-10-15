@@ -19,10 +19,14 @@ slots.create:magic.db.mssql.columns
       /*
        * Running our query to retrieve meta information.
        */
-      mssql.select:@"select distinct c.name 'name', t.Name 'type', c.is_nullable 'nullable', isnull(i.is_primary_key, 0) 'primary', c.is_identity 'automatic'
-                     from sys.columns c inner join sys.types t on c.user_type_id = t.user_type_id left outer join 
-                     sys.index_columns ic on ic.object_id = c.object_id and ic.column_id = c.column_id left outer join sys.indexes i on
-                     ic.object_id = i.object_id AND ic.index_id = i.index_id where c.object_id = OBJECT_ID(@table)"
+      mssql.select:@"select c.name 'name', t.Name 'type', c.is_nullable 'nullable', isnull(i.is_primary_key, 0) 'primary', c.is_identity 'automatic'
+         from sys.columns c 
+             inner join sys.types t on c.user_type_id = t.user_type_id
+             left outer join sys.index_columns ic 
+             left outer join sys.indexes i on ic.object_id = i.object_id and 
+                 ic.index_id = i.index_id on ic.object_id = c.object_id and 
+                 ic.column_id = c.column_id and i.is_primary_key = 1
+         where c.object_id = OBJECT_ID(@table)"
          @table:x:@.arguments/*/table
 
 
@@ -69,6 +73,7 @@ slots.create:magic.db.mssql.columns
             case:smallmoney
             case:money
             case:float
+            case:real
                set-value:x:@.type
                   .:decimal
 
