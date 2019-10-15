@@ -16,8 +16,8 @@
    username:username
    password:password
    roles
-      :root
-      :user
+      .:root
+      .:user
 
 
 /*

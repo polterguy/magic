@@ -44,7 +44,7 @@ if
       not
          eq
             get-value:x:@.arguments/*/authorization
-            :
+            .:
       not
          eq
             get-value:x:@.arguments/*/authorization
@@ -69,7 +69,7 @@ set-value:x:@.folder
    strings.concat
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
-      :/
+      .:/
 io.folders.create:x:@.folder
 
 
@@ -84,9 +84,9 @@ set-value:x:@.filename
    strings.concat
       get-value:x:@.filename
       get-value:x:@.arguments/*/endpointName
-      :.
+      .:.
       get-value:x:@.arguments/*/verb
-      :.hl
+      .:.hl
 io.files.save:x:@.filename
    get-value:x:@lambda2hyper
 

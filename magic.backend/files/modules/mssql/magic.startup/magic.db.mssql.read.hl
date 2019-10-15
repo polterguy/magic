@@ -64,7 +64,7 @@ slots.create:magic.db.mssql.read
       if
          mt
             get-count:x:@.arguments/*/args/*
-            :int:0
+            .:int:0
          .lambda
 
 
@@ -86,7 +86,7 @@ slots.create:magic.db.mssql.read
       if
          mt
             get-count:x:@.arguments/*/columns/*
-            :int:0
+            .:int:0
          .lambda
 
 

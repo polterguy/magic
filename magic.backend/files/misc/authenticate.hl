@@ -39,7 +39,7 @@ slots.create:magic.authenticate
       if
          eq
             get-count:x:@mysql.select/*
-            :int:0
+            .:int:0
          .lambda
 
 

@@ -18,7 +18,7 @@ slots.create:magic.db.mysql.delete
    if
       eq
          get-count:x:@.arguments/*/ids/*
-         :int:0
+         .:int:0
       .lambda
          throw:No IDs given to [magic.db.mysql.delete]
 
