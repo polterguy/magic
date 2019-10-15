@@ -22,7 +22,7 @@ auth.ticket.verify:root
  * on the [template] file given.
  */
 unwrap:x:+/*
-apply:/modules/mysql/templates/sql.template.hl
+apply:/modules/mssql/templates/sql.template.hl
    database:x:@.arguments/*/database
    sql:x:@.arguments/*/sql
 

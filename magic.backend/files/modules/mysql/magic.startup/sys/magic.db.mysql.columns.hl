@@ -20,10 +20,10 @@ slots.create:magic.db.mysql.columns
        * Making sure we support table names with special characters.
        */
       strings.concat
-         :"describe "
-         :'`'
+         .:"describe "
+         .:'`'
          get-value:x:@.arguments/*/table
-         :'`'
+         .:'`'
       mysql.select:x:@strings.concat
 
 
@@ -46,7 +46,7 @@ slots.create:magic.db.mysql.columns
          if
             eq
                get-value:x:@.dp/#/*/Null
-               :NO
+               .:NO
             .lambda
                add:x:@.tmp/*
                   .
@@ -63,7 +63,7 @@ slots.create:magic.db.mysql.columns
          if
             eq
                get-value:x:@.dp/#/*/Key
-               :PRI
+               .:PRI
             .lambda
                add:x:@.tmp/*
                   .
@@ -80,7 +80,7 @@ slots.create:magic.db.mysql.columns
          if
             eq
                get-value:x:@.dp/#/*/Extra
-               :auto_increment
+               .:auto_increment
             .lambda
                add:x:@.tmp/*
                   .
@@ -111,7 +111,7 @@ slots.create:magic.db.mysql.columns
             case:date
             case:datetime
                set-value:x:@.type
-                  :date
+                  .:date
 
 
             /*
@@ -123,7 +123,7 @@ slots.create:magic.db.mysql.columns
             case:decimal
             case:dec
                set-value:x:@.type
-                  :decimal
+                  .:decimal
 
 
             /*
@@ -140,7 +140,7 @@ slots.create:magic.db.mysql.columns
             case:int
             case:int unsigned
                set-value:x:@.type
-                  :long
+                  .:long
 
 
             /*
@@ -161,7 +161,7 @@ slots.create:magic.db.mysql.columns
             case:enum
             case:set
                set-value:x:@.type
-                  :string
+                  .:string
 
 
             /*
@@ -170,7 +170,7 @@ slots.create:magic.db.mysql.columns
             default
                if
                   strings.starts-with:x:@strings.replace
-                     :enum
+                     .:enum
                   .lambda
 
 
@@ -178,7 +178,7 @@ slots.create:magic.db.mysql.columns
                       * Enum type
                       */
                      set-value:x:@.type
-                        :string
+                        .:string
 
 
          /*

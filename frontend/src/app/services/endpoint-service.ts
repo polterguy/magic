@@ -27,14 +27,14 @@ export class EndpointService {
   }
 
   executeDelete(url: string) {
-    return this.httpClient.delete<any>(environment.apiURL + 'magic/modules/' + url);
+    return this.httpClient.delete<any>(environment.apiURL + url);
   }
 
   executePost(url: string, args: any) {
-    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/' + url, args);
+    return this.httpClient.post<any>(environment.apiURL + url, args);
   }
 
   executePut(url: string, args: any) {
-    return this.httpClient.put<any>(environment.apiURL + 'magic/modules/' + url, args);
+    return this.httpClient.put<any>(environment.apiURL + url, args);
   }
 }

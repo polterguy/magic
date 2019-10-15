@@ -9,7 +9,7 @@
  * - [values] - A list of new columns/values for your updated item
  * - [ids] - A list of IDs uniquely identifying your record
  */
-slots.create:magic.db.mysql.update
+slots.create:magic.db.mssql.update
 
 
    /*
@@ -21,25 +21,25 @@ slots.create:magic.db.mysql.update
          get-count:x:@.arguments/*/ids/*
          .:int:0
       .lambda
-         throw:No IDs given to [magic.db.mysql.update]
+         throw:No IDs given to [magic.db.mssql.update]
 
 
    /*
     * Opening up a connection.
     */
-   mysql.connect:x:@.arguments/*/database
+   mssql.connect:x:@.arguments/*/database
 
 
       /*
-       * Parametrizing [mysql.update], first with the [where] parts,
+       * Parametrizing [mssql.update], first with the [where] parts,
        * extracted from [ids].
        */
-      add:x:./*/mysql.update/*/where/*/and
+      add:x:./*/mssql.update/*/where/*/and
          get-nodes:x:@.arguments/*/ids/*
 
 
       /*
-       * Then parametrizing [mysql.update] with new values, making
+       * Then parametrizing [mssql.update] with new values, making
        * sure it does not exist in [ids].
        */
       for-each:x:@.arguments/*/values/*
@@ -48,21 +48,21 @@ slots.create:magic.db.mysql.update
          if
             not
                exists:x:@.arguments/*/ids/*/{0}
-                  .:x:@get-name
+                  :x:@get-name
             .lambda
 
 
                /*
                 * Currently iterated value from [values] was not found in [ids].
                 */
-               add:x:../*/mysql.connect/*/mysql.update/*/values
+               add:x:../*/mssql.connect/*/mssql.update/*/values
                   get-nodes:x:@.dp/#
 
 
       /*
-       * Invoking [mysql.update].
+       * Invoking [mssql.update].
        */
-      mysql.update
+      mssql.update
          table:x:@.arguments/*/table
          values
          where
@@ -74,4 +74,4 @@ slots.create:magic.db.mysql.update
        */
       unwrap:x:+/*
       slots.return-nodes
-         updated-records:x:@mysql.update
+         updated-records:x:@mssql.update

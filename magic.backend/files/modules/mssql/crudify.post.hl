@@ -134,7 +134,10 @@ set-value:x:@.filename
 /*
  * Saving file, now applied according to template declaration.
  */
-io.files.save:x:@.filename
+strings.replace:x:@.filename
+   .:' '
+   .:_
+io.files.save:x:@strings.replace
    get-value:x:@lambda2hyper
 
 

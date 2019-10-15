@@ -1,0 +1,32 @@
+
+/*
+ * Template for custom SQL HTTP request.
+ *
+ * Expects {database} and {sql} [apply] arguments.
+ */
+.arguments
+
+
+/*
+ * Opening up a database connection
+ */
+mssql.connect:{database}
+
+
+   /*
+    * Parametrizing [mssql.select].
+    */
+   add:x:./*/mssql.select
+      get-nodes:x:@.arguments/*
+
+
+   /*
+    * Evaluating [mssql.select] slots.create.
+    */
+   mssql.select:{sql}
+
+
+   /*
+    * Returning results to caller.
+    */
+   slots.return-nodes:x:@mssql.select/*

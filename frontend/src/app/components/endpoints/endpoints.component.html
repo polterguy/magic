@@ -3,7 +3,7 @@
   <mat-form-field class="fill-width">
     <input 
       matInput 
-      placeholder="Filter your endpoints"
+      [placeholder]="getFilterText()"
       type="text" 
       [(ngModel)]="filter">
   </mat-form-field>
@@ -32,7 +32,7 @@
           </ng-container>
       
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowUrl == row.path + row.verb}" (click)="highlight(row.path + row.verb)"></tr>
 
     </table>
   </div>

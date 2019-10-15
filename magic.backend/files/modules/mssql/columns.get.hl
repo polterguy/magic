@@ -1,0 +1,30 @@
+
+/*
+ * Lists all MySQL columns in your [database]/[table] combination.
+ *
+ * Requires a working _"sys"_ connection string in your _"appsettings.json"_ file.
+ */
+.arguments
+   database:string
+   table:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Invokes slots.create responsible for returning columns.
+ */
+unwrap:x:+/*
+slots.signal:magic.db.mssql.columns
+   database:x:@.arguments/*/database
+   table:x:@.arguments/*/table
+
+
+/*
+ * Returning database to caller.
+ */
+slots.return-nodes:x:@slots.signal/*

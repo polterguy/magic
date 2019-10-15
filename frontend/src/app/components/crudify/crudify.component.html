@@ -1,7 +1,13 @@
 
 <div class="crudify-wrapper">
 
-  <mat-form-field *ngIf="databases !== null">
+  <mat-form-field>
+    <mat-select placeholder="Select database type" (selectionChange)="databaseTypeChanged($event)">
+      <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="databases !== null" style="margin-left: 2rem;">
     <mat-select placeholder="Select database" (selectionChange)="databaseChanged($event)">
       <mat-option *ngFor="let cur of databases" [value]="cur.db">{{cur.db}}</mat-option>
     </mat-select>

@@ -1,6 +1,6 @@
 
 .sql {
-    margin:5rem 4rem .5rem 4rem;
+    margin:.5rem 4rem .5rem 4rem;
 }
 
 .right-aligned {
@@ -24,4 +24,9 @@
 ::ng-deep .error-snackbar {
     background:rgb(255,100,100);
     color:rgb(0,0,0);
+}
+
+.database-selector {
+    margin:5rem 4rem .5rem 4rem;
+    max-width: 15rem;
 }
