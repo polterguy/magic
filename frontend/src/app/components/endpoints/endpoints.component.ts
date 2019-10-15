@@ -33,7 +33,7 @@ export class EndpointsComponent implements OnInit {
   }
 
   getFilterText() {
-    return 'Search among ' + this.getFilteredSystemEndpoints().length + ' endpoints';
+    return 'Search among ' + this.getFilteredSystemEndpoints().length + ' endpoints ...';
   }
 
   getFilteredEndpoints() {
