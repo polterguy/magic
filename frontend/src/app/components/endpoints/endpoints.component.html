@@ -3,7 +3,7 @@
   <mat-form-field class="fill-width">
     <input 
       matInput 
-      placeholder="Filter your endpoints"
+      [placeholder]="getFilterText()"
       type="text" 
       [(ngModel)]="filter">
   </mat-form-field>

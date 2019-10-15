@@ -12,7 +12,7 @@ import { EndpointService } from '../../services/endpoint-service';
 export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'auth', 'verb'];
   private endpoints: Endpoint[] = [];
-  private filter: string = '';
+  private filter = '';
   private selected: Endpoint;
   private arguments: string;
   private isJsonArguments: boolean;
@@ -30,6 +30,10 @@ export class EndpointsComponent implements OnInit {
     }, (err) => {
       this.showHttpError(err);
     });
+  }
+
+  getFilterText() {
+    return 'Search among ' + this.endpoints.length + ' endpoints';
   }
 
   getFilteredEndpoints() {
