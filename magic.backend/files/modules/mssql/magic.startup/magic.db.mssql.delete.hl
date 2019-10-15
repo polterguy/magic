@@ -8,7 +8,7 @@
  * - [table] - Table to delete a record from
  * - [ids] - A list of IDs that uniquely identifies your record
  */
-slots.create:magic.db.mysql.delete
+slots.create:magic.db.mssql.delete
 
 
    /*
@@ -20,26 +20,26 @@ slots.create:magic.db.mysql.delete
          get-count:x:@.arguments/*/ids/*
          .:int:0
       .lambda
-         throw:No IDs given to [magic.db.mysql.delete]
+         throw:No IDs given to [magic.db.mssql.delete]
 
 
    /*
     * Opening up a connection.
     */
-   mysql.connect:x:@.arguments/*/database
+   mssql.connect:x:@.arguments/*/database
 
 
       /*
-       * Parametrizing [mysql.delete].
+       * Parametrizing [mssql.delete].
        */
-      add:x:./*/mysql.delete/*/where/*/and
+      add:x:./*/mssql.delete/*/where/*/and
          get-nodes:x:@.arguments/*/ids/*
 
 
       /*
-       * Invoking [mysql.delete].
+       * Invoking [mssql.delete].
        */
-      mysql.delete
+      mssql.delete
          table:x:@.arguments/*/table
          where
             and
@@ -50,4 +50,4 @@ slots.create:magic.db.mysql.delete
        */
       unwrap:x:+/*
       slots.return-nodes
-         deleted-records:x:@mysql.delete
+         deleted-records:x:@mssql.delete

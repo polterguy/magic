@@ -11,8 +11,9 @@ import { EndpointService } from '../../services/endpoint-service';
 })
 export class EndpointsComponent implements OnInit {
   private displayedColumns: string[] = ['url', 'auth', 'verb'];
+  private selectedRowUrl = '';
   private endpoints: Endpoint[] = [];
-  private filter: string = '';
+  private filter = '';
   private selected: Endpoint;
   private arguments: string;
   private isJsonArguments: boolean;
@@ -26,10 +27,18 @@ export class EndpointsComponent implements OnInit {
 
   ngOnInit() {
     this.service.getAllEndpoints().subscribe((res) => {
-      this.endpoints = res;
+      this.endpoints = res || [];
     }, (err) => {
       this.showHttpError(err);
     });
+  }
+
+  getFilterText() {
+    return 'Search among ' + this.getFilteredSystemEndpoints().length + ' endpoints ...';
+  }
+
+  highlight(row: string) {
+    this.selectedRowUrl = row;
   }
 
   getFilteredEndpoints() {
@@ -46,8 +55,8 @@ export class EndpointsComponent implements OnInit {
       return this.endpoints;
     }
     return this.endpoints.filter((x) => {
-      return x.path.indexOf('magic/modules/system/') !== 0 && 
-        x.path.indexOf('magic/modules/mysql/') !== 0 && 
+      return x.path.indexOf('magic/modules/system/') !== 0 &&
+        x.path.indexOf('magic/modules/mysql/') !== 0 &&
         x.path.indexOf('magic/modules/mssql/') !== 0;
     });
   }
@@ -103,7 +112,7 @@ export class EndpointsComponent implements OnInit {
 
       case 'get':
         this.service.executeGet(this.currentUrl).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res, null, 2);
+          this.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -112,7 +121,7 @@ export class EndpointsComponent implements OnInit {
 
       case 'delete':
         this.service.executeDelete(this.currentUrl).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res, null, 2);
+          this.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -121,7 +130,7 @@ export class EndpointsComponent implements OnInit {
 
       case 'post':
         this.service.executePost(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res, null, 2);
+          this.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -130,7 +139,7 @@ export class EndpointsComponent implements OnInit {
 
       case 'put':
         this.service.executePut(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res, null, 2);
+          this.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);

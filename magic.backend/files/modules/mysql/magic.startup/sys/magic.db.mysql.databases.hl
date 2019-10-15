@@ -30,7 +30,7 @@ slots.create:magic.db.mysql.databases
        * Renaming "Database" nodes.
        */
       set-name:x:@mysql.select/*/*
-         :db
+         .:db
 
 
       /*

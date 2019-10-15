@@ -1,0 +1,29 @@
+
+/*
+ * Template for HTTP PUT CRUD requests.
+ */
+.arguments
+
+
+/*
+ * Adding the rest of our parameters into [values].
+ */
+add:x:./*/slots.signal/*/values
+   get-nodes:x:@.arguments/*
+
+
+/*
+ * Invoking [magic.db.mssql.update]
+ */
+unwrap:x:+/*/ids/*
+slots.signal:magic.db.mssql.update
+   database:{database}
+   table:{table}
+   values
+   ids
+
+
+/*
+ * Returning results back to caller.
+ */
+slots.return-nodes:x:@slots.signal/*
