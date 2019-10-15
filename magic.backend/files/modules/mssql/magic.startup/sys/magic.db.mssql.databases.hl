@@ -30,7 +30,7 @@ slots.create:magic.db.mssql.databases
        * Renaming "Database" nodes.
        */
       set-name:x:@mssql.select/*/*
-         :db
+         .:db
 
 
       /*

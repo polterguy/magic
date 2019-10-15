@@ -20,5 +20,5 @@ slots.create:magic.db.mysql.tables
        */
       mysql.select:show tables
       set-name:x:@mysql.select/*/*
-         :table
+         .:table
       slots.return-nodes:x:@mysql.select/*

@@ -19,7 +19,7 @@ slots.create:magic.db.mysql.update
    if
       eq
          get-count:x:@.arguments/*/ids/*
-         :int:0
+         .:int:0
       .lambda
          throw:No IDs given to [magic.db.mysql.update]
 
@@ -48,7 +48,7 @@ slots.create:magic.db.mysql.update
          if
             not
                exists:x:@.arguments/*/ids/*/{0}
-                  :x:@get-name
+                  .:x:@get-name
             .lambda
 
 

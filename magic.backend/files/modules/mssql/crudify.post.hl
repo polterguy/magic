@@ -38,7 +38,7 @@ if
    not
       eq
          get-value:x:@.arguments/*/auth
-         :
+         .:
    .lambda
       unwrap:x:+/*/*
       insert-after:x:@apply/*/.arguments
@@ -112,7 +112,7 @@ set-value:x:@.folder
    strings.concat
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
-      :/
+      .:/
 io.folders.create:x:@.folder
 
 
@@ -126,9 +126,9 @@ set-value:x:@.filename
    strings.concat
       get-value:x:@.filename
       get-value:x:@.arguments/*/table
-      :.
+      .:.
       get-value:x:@.arguments/*/verb
-      :.hl
+      .:.hl
 
 
 /*

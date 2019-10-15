@@ -19,7 +19,7 @@ slots.create:magic.db.mssql.update
    if
       eq
          get-count:x:@.arguments/*/ids/*
-         :int:0
+         .:int:0
       .lambda
          throw:No IDs given to [magic.db.mssql.update]
 

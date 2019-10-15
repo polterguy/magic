@@ -58,7 +58,7 @@ slots.create:magic.db.mssql.columns
             case:smalldatetime
             case:time
                set-value:x:@.type
-                  :date
+                  .:date
 
 
             /*
@@ -70,7 +70,7 @@ slots.create:magic.db.mssql.columns
             case:money
             case:float
                set-value:x:@.type
-                  :decimal
+                  .:decimal
 
 
             /*
@@ -82,7 +82,7 @@ slots.create:magic.db.mssql.columns
             case:int
             case:tinyint
                set-value:x:@.type
-                  :long
+                  .:long
 
 
             /*
@@ -103,7 +103,7 @@ slots.create:magic.db.mssql.columns
             case:varbinary
             case:varbinary
                set-value:x:@.type
-                  :string
+                  .:string
 
 
          /*
