@@ -142,6 +142,8 @@ export class CrudifyComponent implements OnInit {
       this.customSql = 'select * from something';
       this.customSqlArguments = 'filter:string';
 
+    } else if (e.value === 'All tables') {
+      this.selectedTable = e.value;
     } else {
 
       // User wants to crudify a table.
@@ -236,7 +238,16 @@ export class CrudifyComponent implements OnInit {
     this.selectedTable = this.currentlyCrudifying;
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
       this.columns = res;
-      this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
+      this.endpoints = this.verbs.map(x => {
+        return {
+          endpoint: this.selectedDatabase + '/' + this.selectedTable,
+          verb: x.verb,
+          action: x.action,
+          auth: 'root',
+          generate: true
+        };
+      });
+    this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
         this.noEndpointsCreated += 4;
         this.crudifyTopTable(tables.splice(1));
       });
