@@ -104,6 +104,7 @@ slots.create:magic.db.mssql.columns
             case:varbinary
             case:uniqueidentifier
             case:rowversion
+            case:timestamp
             case:varbinary
             case:varbinary
             case:varbinary
