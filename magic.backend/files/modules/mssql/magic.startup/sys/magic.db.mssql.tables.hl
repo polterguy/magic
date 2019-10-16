@@ -18,5 +18,5 @@ slots.create:magic.db.mssql.tables
       /*
        * Runs our query
        */
-      mssql.select:@"select table_name as ""table"" from information_schema.tables where table_type='base table'"
+      mssql.select:@"select table_schema + '.' + table_name as ""table"" from information_schema.tables where table_type='base table'"
       slots.return-nodes:x:@mssql.select/*

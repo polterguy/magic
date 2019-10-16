@@ -18,6 +18,16 @@ auth.ticket.verify:root
 
 
 /*
+ * Making sure we create a valid filename.
+ */
+.filename
+set-value:x:-
+   strings.replace:x:@.arguments/*/table
+      .:'.'
+      .:-
+
+
+/*
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
@@ -121,11 +131,11 @@ io.folders.create:x:@.folder
  */
 lambda2hyper:x:@apply/*
 unwrap:x:+
-.filename:x:@.folder
-set-value:x:@.filename
+.path:x:@.folder
+set-value:x:@.path
    strings.concat
+      get-value:x:@.path
       get-value:x:@.filename
-      get-value:x:@.arguments/*/table
       .:.
       get-value:x:@.arguments/*/verb
       .:.hl
@@ -134,7 +144,7 @@ set-value:x:@.filename
 /*
  * Saving file, now applied according to template declaration.
  */
-strings.replace:x:@.filename
+strings.replace:x:@.path
    .:' '
    .:_
 io.files.save:x:@strings.replace
