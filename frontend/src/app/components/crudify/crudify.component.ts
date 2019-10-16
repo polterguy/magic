@@ -29,6 +29,7 @@ export class CrudifyComponent implements OnInit {
   // True while we're CRUDifying.
   isCrudifying = false;
   noEndpointsCreated = 0;
+  noLoc = 0;
   currentlyCrudifying: string;
 
   // Endpoints that will be created
@@ -66,6 +67,7 @@ export class CrudifyComponent implements OnInit {
     this.tables = null;
     this.columns = null;
     this.endpoints = null;
+    this.selectedTable = null;
     this.getDatabases();
   }
 
@@ -208,6 +210,7 @@ export class CrudifyComponent implements OnInit {
     // Making sure we "obscur" the main visual area while CRUDifier is working.
     this.isCrudifying = true;
     this.noEndpointsCreated = 0;
+    this.noLoc = 0;
 
     // Making sure we splice away "Custom SQL" and "All tables".
     this.crudifyTopTable(this.tables.splice(2));
@@ -225,7 +228,7 @@ export class CrudifyComponent implements OnInit {
       this.endpoints = null;
       this.selectedTable = null;
       this.getDatabases();
-      this.showSuccess(`${this.noEndpointsCreated} endpoints created successfully`);
+      this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} lines of code created successfully`);
       return;
     }
     const current = tables[0];
@@ -285,7 +288,8 @@ export class CrudifyComponent implements OnInit {
       verb: curVerb,
       auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
       args,
-    }).subscribe((res) => {
+    }).subscribe((res: any) => {
+      this.noLoc += res.loc;
       this.createHttpEndpoints(verbs.slice(1), callback);
     }, (error) => {
       this.showError(error.error.message);
@@ -299,9 +303,9 @@ export class CrudifyComponent implements OnInit {
     });
   }
 
-  showSuccess(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 2000,
+  showSuccess(msg: string) {
+    this.snackBar.open(msg, 'Close', {
+      duration: 5000,
     });
   }
 }
