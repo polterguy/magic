@@ -24,7 +24,7 @@ auth.ticket.verify:root
 set-value:x:-
    strings.replace:x:@.arguments/*/table
       .:'.'
-      .:-
+      .:/
 set-value:x:@.filename
    strings.to-lower:x:@.filename
 
@@ -125,6 +125,15 @@ set-value:x:@.folder
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
       .:/
+strings.split:x:@.filename
+   .:/
+remove-node:x:-/0/-
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      strings.join:x:@strings.split/*
+         .:/
+      .:/
 io.folders.create:x:@.folder
 
 
@@ -134,10 +143,12 @@ io.folders.create:x:@.folder
 lambda2hyper:x:@apply/*
 unwrap:x:+
 .path:x:@.folder
+strings.split:x:@.filename
+   .:/
 set-value:x:@.path
    strings.concat
       get-value:x:@.path
-      get-value:x:@.filename
+      get-value:x:@strings.split/0/-
       .:.
       get-value:x:@.arguments/*/verb
       .:.hl
