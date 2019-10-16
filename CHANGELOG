@@ -1,0 +1,9 @@
+
+## Changelog for version 5.0.2
+
+* Namespace support for MS SQL Server databases. This fixes a severe error making it impossible to CRUDify any SQL Server database that is not in the default namespace (_"dbo"_).
+
+* New slot called __[strings.join]__ that allows you to join multiple strings together with a separating character.
+
+* Better handling of folders when an SQL Server database is CRUDified, among other things, a separate folder for each namespace will be automatically created. Maintaining the namespace your database is already declared with.
+
