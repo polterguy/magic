@@ -141,5 +141,8 @@ io.files.save:x:@.filename
 /*
  * Returning success to caller.
  */
+get-count:x:@apply/*
+unwrap:x:+/*/loc
 slots.return-nodes
    result:success
+   loc:x:@get-count

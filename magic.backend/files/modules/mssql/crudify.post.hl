@@ -167,5 +167,8 @@ io.files.save:x:@strings.replace
 /*
  * Returning success to caller.
  */
+get-count:x:@apply/*
+unwrap:x:+/*/loc
 slots.return-nodes
    result:success
+   loc:x:@get-count
