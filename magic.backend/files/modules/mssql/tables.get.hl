@@ -22,14 +22,6 @@ slots.signal:magic.db.mssql.tables
 
 
 /*
- * Doing the [to-lowers] thing.
- */
-for-each:x:@slots.signal/*/*
-   set-value:x:@.dp/#
-      strings.to-lower:x:@.dp/#
-
-
-/*
  * Returning database to caller.
  */
 slots.return-nodes:x:@slots.signal/*

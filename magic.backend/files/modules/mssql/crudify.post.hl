@@ -25,6 +25,8 @@ set-value:x:-
    strings.replace:x:@.arguments/*/table
       .:'.'
       .:-
+set-value:x:@.filename
+   strings.to-lower:x:@.filename
 
 
 /*

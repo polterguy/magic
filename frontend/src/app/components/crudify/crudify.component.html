@@ -127,7 +127,7 @@
 
         <ng-container matColumnDef="endpoint">
           <th mat-header-cell *matHeaderCellDef>Endpoint</th>
-          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '-')}}</td>
+          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '-').toLowerCase()}}</td>
         </ng-container>
 
         <ng-container matColumnDef="verb">
