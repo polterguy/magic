@@ -26,6 +26,11 @@ export class CrudifyComponent implements OnInit {
   // All columns in table
   private columns: any[] = null;
 
+  // True while we're CRUDifying.
+  isCrudifying = false;
+  noEndpointsCreated = 0;
+  currentlyCrudifying: string;
+
   // Endpoints that will be created
   private endpoints: any[] = null;
 
@@ -57,7 +62,7 @@ export class CrudifyComponent implements OnInit {
     // User changes his active database type.
     this.databaseType = e.value;
     this.selectedDatabase = null;
-    this.databases= null;
+    this.databases = null;
     this.tables = null;
     this.columns = null;
     this.endpoints = null;
@@ -112,7 +117,7 @@ export class CrudifyComponent implements OnInit {
     this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
 
       // Making sure we append "Custom SQL" as first option in select
-      const tables = [{table: 'Custom SQL'}];
+      const tables = [{table: 'Custom SQL'}, {table: 'All tables'}];
 
       // Appending all tables as option in select for selecting table
       for (const iterator of res) {
@@ -148,7 +153,7 @@ export class CrudifyComponent implements OnInit {
             action: x.action,
             auth: 'root',
             generate: true
-          }
+          };
         });
       }, (err) => {
         this.showError(err.error.message);
@@ -189,13 +194,53 @@ export class CrudifyComponent implements OnInit {
     });
   }
 
-  // Crudifies a table in some database
+  // Crudifies a single table in some database.
   crudifyTable() {
     const selectedVerbs = this.endpoints.filter(x => x.generate).map(x => x.verb);
     this.createHttpEndpoints(selectedVerbs, () => {
       this.showSuccess('4 endpoints created successfully');
     });
   }
+
+  // Crudifies ALL tables in currently selected database.
+  crudifyAllTables() {
+
+    // Making sure we "obscur" the main visual area while CRUDifier is working.
+    this.isCrudifying = true;
+    this.noEndpointsCreated = 0;
+
+    // Making sure we splice away "Custom SQL" and "All tables".
+    this.crudifyTopTable(this.tables.splice(2));
+  }
+
+  crudifyTopTable(tables: any[]) {
+
+    // Checking if we're done.
+    if (tables.length === 0) {
+      this.isCrudifying = false;
+      this.selectedDatabase = null;
+      this.databases = null;
+      this.tables = null;
+      this.columns = null;
+      this.endpoints = null;
+      this.selectedTable = null;
+      this.getDatabases();
+      this.showSuccess(`${this.noEndpointsCreated} endpoints created successfully`);
+      return;
+    }
+    const current = tables[0];
+    this.currentlyCrudifying = current.table;
+    this.selectedTable = this.currentlyCrudifying;
+    this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
+      this.columns = res;
+      this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
+        this.noEndpointsCreated += 4;
+        this.crudifyTopTable(tables.splice(1));
+      });
+    }, (err) => {
+      this.showError(err.error.message);
+    });
+}
 
   // Helper method that creates one single HTTP endpoint
   createHttpEndpoints(verbs: string[], callback: () => void) {
@@ -208,27 +253,27 @@ export class CrudifyComponent implements OnInit {
     const curVerb = verbs[0];
 
     // Contains arguments to crudifier
-    const args = {};
+    const args: any = {};
 
     // Figuring out which arguments to pass in, which depends upon HTTP verb we're
     // currently crudifying.
     if (curVerb === 'put' || curVerb === 'delete') {
-      args['primary'] = this.columns
+      args.primary = this.columns
         .filter(x => x.primary)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'put') {
-      args['columns'] = this.columns
+      args.columns = this.columns
         .filter(x => !x.primary)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'post') {
-      args['columns'] = this.columns
+      args.columns = this.columns
         .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'get') {
-      args['columns'] = this.columns
+      args.columns = this.columns
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
 

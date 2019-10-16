@@ -1,4 +1,11 @@
 
+<div
+  class="obscurer"
+  *ngIf="isCrudifying">
+  <h3>Please wait while we CRUDify your database ...</h3>
+  <h4>{{currentlyCrudifying}}</h4>
+</div>
+
 <div class="crudify-wrapper">
 
   <mat-form-field>
@@ -18,6 +25,20 @@
       <mat-option *ngFor="let cur of tables" [value]="cur.table">{{cur.table}}</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <button 
+    *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
+    matTooltip="Generates CRUD endpoints for your table"
+    mat-button
+    style="margin-left: 2rem;"
+    (click)="crudifyTable()">Crudify</button>
+
+  <button 
+    *ngIf="selectedTable !== null && selectedTable === 'All tables'"
+    matTooltip="CRUDifies all tables in database"
+    mat-button
+    style="margin-left: 2rem;"
+    (click)="crudifyAllTables()">Crudify all</button>
 
   <mat-card 
     *ngIf="selectedTable === 'Custom SQL'"
@@ -72,7 +93,7 @@
   </mat-card>
 
   <mat-card 
-    *ngIf="columns !== null && selectedTable !== 'Custom SQL'"
+    *ngIf="columns !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     class="columns-card">
     <div class="wrapper">
       <table mat-table class="columns" [dataSource]="columns">
@@ -111,7 +132,7 @@
   </mat-card>
 
   <mat-card 
-    *ngIf="endpoints !== null && selectedTable !== 'Custom SQL'"
+    *ngIf="endpoints !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     class="endpoints-card">
 
     <div class="wrapper">
@@ -127,7 +148,7 @@
 
         <ng-container matColumnDef="endpoint">
           <th mat-header-cell *matHeaderCellDef>Endpoint</th>
-          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '-').toLowerCase()}}</td>
+          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').toLowerCase()}}</td>
         </ng-container>
 
         <ng-container matColumnDef="verb">
@@ -158,14 +179,6 @@
 
       </table>
 
-    </div>
-
-    <div class="right-align">
-      <button 
-        *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL'"
-        matTooltip="Generates CRUD endpoints for your table"
-        mat-button
-        (click)="crudifyTable()">Crudify</button>
     </div>
 
   </mat-card>
