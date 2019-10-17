@@ -45,8 +45,8 @@ export class EndpointsComponent implements OnInit {
     if (this.filter === '') {
       return this.getFilteredSystemEndpoints();
     }
-    return this.getFilteredSystemEndpoints().filter((x) => {
-      return x.verb === this.filter || x.path.indexOf(this.filter) > -1;
+    return this.getFilteredSystemEndpoints().filter(x => {
+      return x.verb === this.filter || x.path.indexOf(this.filter) > -1 || x.auth.filter(y => y === this.filter).length > 0;
     });
   }
 
