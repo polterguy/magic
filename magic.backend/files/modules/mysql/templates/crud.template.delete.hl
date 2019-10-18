@@ -10,9 +10,9 @@
 /*
  * Invoking [magic.db.mysql.delete], making sure we unwrap the [id].
  */
-add:x:./*/slots.signal/*/ids
+add:x:./*/wait.slots.signal/*/ids
    get-nodes:x:@.arguments/*
-slots.signal:magic.db.mysql.delete
+wait.slots.signal:magic.db.mysql.delete
    database:{database}
    table:{table}
    ids
@@ -21,4 +21,4 @@ slots.signal:magic.db.mysql.delete
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@wait.slots.signal/*

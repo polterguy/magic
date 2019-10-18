@@ -27,14 +27,14 @@ slots.create:magic.db.mysql.update
    /*
     * Opening up a connection.
     */
-   mysql.connect:x:@.arguments/*/database
+   wait.mysql.connect:x:@.arguments/*/database
 
 
       /*
        * Parametrizing [mysql.update], first with the [where] parts,
        * extracted from [ids].
        */
-      add:x:./*/mysql.update/*/where/*/and
+      add:x:./*/wait.mysql.update/*/where/*/and
          get-nodes:x:@.arguments/*/ids/*
 
 
@@ -55,14 +55,14 @@ slots.create:magic.db.mysql.update
                /*
                 * Currently iterated value from [values] was not found in [ids].
                 */
-               add:x:../*/mysql.connect/*/mysql.update/*/values
+               add:x:../*/wait.mysql.connect/*/wait.mysql.update/*/values
                   get-nodes:x:@.dp/#
 
 
       /*
        * Invoking [mysql.update].
        */
-      mysql.update
+      wait.mysql.update
          table:x:@.arguments/*/table
          values
          where
@@ -74,4 +74,4 @@ slots.create:magic.db.mysql.update
        */
       unwrap:x:+/*
       slots.return-nodes
-         updated-records:x:@mysql.update
+         updated-records:x:@wait.mysql.update

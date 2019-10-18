@@ -17,7 +17,7 @@ slots.create:magic.db.mysql.read
    /*
     * Opening up a connection.
     */
-   mysql.connect:x:@.arguments/*/database
+   wait.mysql.connect:x:@.arguments/*/database
 
 
       /*
@@ -26,7 +26,7 @@ slots.create:magic.db.mysql.read
        * Making sure we remove these nodes from the [.arguments] collection afterwards,
        * such that we don't add them into our [where].
        */
-      add:x:./*/mysql.read
+      add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/limit
 
 
@@ -72,11 +72,11 @@ slots.create:magic.db.mysql.read
              * Adding [where] to [mysql.read], making sure all specified criterias
              * are added with an "and" clause wrapping them.
              */
-            add:x:../*/mysql.connect/*/mysql.read
+            add:x:../*/wait.mysql.connect/*/mysql.read
                .
                   where
                      and
-            add:x:../*/mysql.connect/*/mysql.read/*/where/*/and
+            add:x:../*/wait.mysql.connect/*/wait.mysql.read/*/where/*/and
                get-nodes:x:@.arguments/*/args/*
 
 
@@ -93,17 +93,17 @@ slots.create:magic.db.mysql.read
             /*
              * Adding [columns] to [mysql.read].
              */
-            add:x:../*/mysql.connect/*/mysql.read
+            add:x:../*/wait.mysql.connect/*/mysql.read
                .
                   columns
-            add:x:../*/mysql.connect/*/mysql.read/*/columns
+            add:x:../*/wait.mysql.connect/*/wait.mysql.read/*/columns
                get-nodes:x:@.arguments/*/columns/*
 
 
       /*
        * Invoking [mysql.read].
        */
-      mysql.read
+      wait.mysql.read
          table:x:@.arguments/*/table
 
 
@@ -120,10 +120,10 @@ slots.create:magic.db.mysql.read
             /*
              * Returning a single object.
              */
-            slots.return-nodes:x:@mysql.read/*/*
+            slots.return-nodes:x:@wait.mysql.read/*/*
 
 
       /*
        * Returning an array of objects.
        */
-      slots.return-nodes:x:@mysql.read/*
+      slots.return-nodes:x:@wait.mysql.read/*
