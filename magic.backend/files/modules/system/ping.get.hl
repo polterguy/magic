@@ -2,5 +2,8 @@
 /*
  * Ping endpoint, allowing for anonymous access, simply to verify server is up and running.
  */
+version
+unwrap:x:+/*/version
 slots.return-nodes
    result:success
+   version:x:@version
