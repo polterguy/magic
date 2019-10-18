@@ -10,23 +10,23 @@
 /*
  * Opening up a database connection
  */
-mssql.connect:{database}
+wait.mssql.connect:{database}
 
 
    /*
     * Parametrizing [mssql.select].
     */
-   add:x:./*/mssql.select
+   add:x:./*/wait.mssql.select
       get-nodes:x:@.arguments/*
 
 
    /*
     * Evaluating [mssql.select] slots.create.
     */
-   mssql.select:{sql}
+   wait.mssql.select:{sql}
 
 
    /*
     * Returning results to caller.
     */
-   slots.return-nodes:x:@mssql.select/*
+   slots.return-nodes:x:@wait.mssql.select/*

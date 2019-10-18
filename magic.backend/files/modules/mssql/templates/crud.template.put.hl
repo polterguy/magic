@@ -8,7 +8,7 @@
 /*
  * Adding the rest of our parameters into [values].
  */
-add:x:./*/slots.signal/*/values
+add:x:./*/wait.slots.signal/*/values
    get-nodes:x:@.arguments/*
 
 
@@ -16,7 +16,7 @@ add:x:./*/slots.signal/*/values
  * Invoking [magic.db.mssql.update]
  */
 unwrap:x:+/*/ids/*
-slots.signal:magic.db.mssql.update
+wait.slots.signal:magic.db.mssql.update
    database:{database}
    table:{table}
    values
@@ -26,4 +26,4 @@ slots.signal:magic.db.mssql.update
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@wait.slots.signal/*

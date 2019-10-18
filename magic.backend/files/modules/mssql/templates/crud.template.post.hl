@@ -10,14 +10,14 @@
 /*
  * Parametrizing [magic.db.mssql.create].
  */
-add:x:./*/slots.signal/*/values
+add:x:./*/wait.slots.signal/*/values
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mssql.create]
  */
-slots.signal:magic.db.mssql.create
+wait.slots.signal:magic.db.mssql.create
    database:{database}
    table:{table}
    values
@@ -26,4 +26,4 @@ slots.signal:magic.db.mssql.create
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@wait.slots.signal/*
