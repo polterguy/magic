@@ -21,7 +21,7 @@ namespace magic.lambda.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Value = "5.2.0";
+            input.Value = 5.2D;
         }
     }
 }

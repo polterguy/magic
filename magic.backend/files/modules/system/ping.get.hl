@@ -3,6 +3,21 @@
  * Ping endpoint, allowing for anonymous access, simply to verify server is up and running.
  */
 version
+auth.ticket.get
+if
+   not
+      eq
+         get-value:x:@auth.ticket.get
+         .
+   .lambda
+      add:x:-/*/*/*/roles
+         get-nodes:x:@auth.ticket.get/*
+      unwrap:x:+/*/*/*/user/*/username
+      add:x:../*/slots.return-nodes
+         .
+            user
+               username:x:@auth.ticket.get
+               roles
 unwrap:x:+/*/version
 slots.return-nodes
    result:success
