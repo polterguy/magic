@@ -14,14 +14,14 @@
 /*
  * Parametrizing [magic.db.mysql.read].
  */
-add:x:./*/slots.signal/*/args
+add:x:./*/wait.slots.signal/*/args
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mysql.read], making sure we unwrap the [id].
  */
-slots.signal:magic.db.mysql.read
+wait.slots.signal:magic.db.mysql.read
    database:{database}
    table:{table}
    args
@@ -31,4 +31,4 @@ slots.signal:magic.db.mysql.read
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@wait.slots.signal/*

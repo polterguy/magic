@@ -10,14 +10,14 @@
 /*
  * Parametrizing [magic.db.mysql.create].
  */
-add:x:./*/slots.signal/*/values
+add:x:./*/wait.slots.signal/*/values
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.mysql.create]
  */
-slots.signal:magic.db.mysql.create
+wait.slots.signal:magic.db.mysql.create
    database:{database}
    table:{table}
    values
@@ -26,4 +26,4 @@ slots.signal:magic.db.mysql.create
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@wait.slots.signal/*

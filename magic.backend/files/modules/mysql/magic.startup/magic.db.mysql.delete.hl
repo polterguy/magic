@@ -26,20 +26,20 @@ slots.create:magic.db.mysql.delete
    /*
     * Opening up a connection.
     */
-   mysql.connect:x:@.arguments/*/database
+   wait.mysql.connect:x:@.arguments/*/database
 
 
       /*
        * Parametrizing [mysql.delete].
        */
-      add:x:./*/mysql.delete/*/where/*/and
+      add:x:./*/wait.mysql.delete/*/where/*/and
          get-nodes:x:@.arguments/*/ids/*
 
 
       /*
        * Invoking [mysql.delete].
        */
-      mysql.delete
+      wait.mysql.delete
          table:x:@.arguments/*/table
          where
             and
@@ -50,4 +50,4 @@ slots.create:magic.db.mysql.delete
        */
       unwrap:x:+/*
       slots.return-nodes
-         deleted-records:x:@mysql.delete
+         deleted-records:x:@wait.mysql.delete
