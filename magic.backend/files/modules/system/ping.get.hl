@@ -1,9 +1,25 @@
 
 /*
- * Ping endpoint, allowing for anonymous access, simply to verify server is up and running.
+ * Ping endpoint, allowing for anonymous access, 
+ * simply to verify server is up and running.
+ *
+ * Notice, if an authenticated user invokes this endpoint,
+ * it will return its username and the user's roles.
+ *
+ * The endpoint will also return the version of its server side bindings.
+ */
+
+
+/*
+ * Returning version of server side and the authenticated user, if any.
  */
 version
 auth.ticket.get
+
+
+/*
+ * Checking if user is authenticated, at which point we returns username + user's roles.
+ */
 if
    not
       eq
@@ -18,6 +34,11 @@ if
             user
                username:x:@auth.ticket.get
                roles
+
+
+/*
+ * Returning version, success, plus optionally also authenticated user + roles.
+ */
 unwrap:x:+/*/version
 slots.return-nodes
    result:success
