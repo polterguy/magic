@@ -26,20 +26,20 @@ slots.create:magic.db.mssql.delete
    /*
     * Opening up a connection.
     */
-   mssql.connect:x:@.arguments/*/database
+   wait.mssql.connect:x:@.arguments/*/database
 
 
       /*
        * Parametrizing [mssql.delete].
        */
-      add:x:./*/mssql.delete/*/where/*/and
+      add:x:./*/wait.mssql.delete/*/where/*/and
          get-nodes:x:@.arguments/*/ids/*
 
 
       /*
        * Invoking [mssql.delete].
        */
-      mssql.delete
+      wait.mssql.delete
          table:x:@.arguments/*/table
          where
             and
@@ -50,4 +50,4 @@ slots.create:magic.db.mssql.delete
        */
       unwrap:x:+/*
       slots.return-nodes
-         deleted-records:x:@mssql.delete
+         deleted-records:x:@wait.mssql.delete

@@ -1,0 +1,14 @@
+.arguments
+   RegionID:long
+   RegionDescription:string
+auth.ticket.verify:root
+add:x:./*/*slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+*slots.signal:magic.db.mssql.update
+   database:northwind
+   table:dbo.Region
+   values
+   ids
+      RegionID:x:@.arguments/*/RegionID
+slots.return-nodes:x:@*slots.signal/*
