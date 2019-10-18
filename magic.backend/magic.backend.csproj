@@ -10,7 +10,7 @@
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
     </PackageReference>
-    <PackageReference Include="magic.library" Version="2.0.5" />
+    <PackageReference Include="magic.library" Version="2.0.6" />
   </ItemGroup>
 
   <ItemGroup>
