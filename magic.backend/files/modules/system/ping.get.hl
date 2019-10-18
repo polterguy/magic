@@ -1,6 +1,6 @@
 
 /*
- * Pings the server side, to verify it's up running.
+ * Ping endpoint, allowing for anonymous access, simply to verify server is up and running.
  */
 slots.return-nodes
    result:success
