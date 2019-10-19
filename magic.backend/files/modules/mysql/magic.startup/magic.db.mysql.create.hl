@@ -7,6 +7,7 @@
  *
  * - [database] - Database to create a record in
  * - [table] - Table to create your record in
+ * - [return-id] - If true, will return the ID for the newly created record
  * - [values] - A column/value collection for your new record
  */
 slots.create:magic.db.mysql.create
@@ -36,6 +37,23 @@ slots.create:magic.db.mysql.create
       /*
        * Returning results to caller.
        */
-      unwrap:x:+/*
-      slots.return-nodes
-         id:x:@wait.mysql.create
+      if
+         get-value:x:@.arguments/*/return-id
+         .lambda
+
+
+            /*
+             * Returning ID to caller.
+             */
+            unwrap:x:+/*
+            slots.return-nodes
+               id:x:@wait.mysql.create
+
+      else
+
+
+         /*
+          * Returning success to caller.
+          */
+         slots.return-nodes
+            result:success

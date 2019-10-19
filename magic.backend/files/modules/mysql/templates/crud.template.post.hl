@@ -20,6 +20,7 @@ add:x:./*/wait.slots.signal/*/values
 wait.slots.signal:magic.db.mysql.create
    database:{database}
    table:{table}
+   return-id:{return-id}
    values
 
 
