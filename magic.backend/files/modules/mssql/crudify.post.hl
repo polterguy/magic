@@ -5,6 +5,7 @@
 .arguments
    database:string
    table:string
+   returnId:bool
    template:string
    verb:string
    auth:string
@@ -39,6 +40,7 @@ unwrap:x:+/*
 apply:x:@hyper2lambda
    database:x:@.arguments/*/database
    table:x:@.arguments/*/table
+   return-id:x:@.arguments/*/returnId
    args
 
 
