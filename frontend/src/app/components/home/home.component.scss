@@ -2,16 +2,25 @@
 h1 {
     text-align: center;
     margin-top: 3rem;
+    small {
+        font-size: .8rem;
+        color: #aaa;
+    }
 }
 
 .info-card {
     margin:2rem 5rem 2rem 5rem;
-    padding: 5rem;
+    padding: 3rem;
     margin-top: 3rem;
 }
 
+.error {
+    background-color: rgba(255,0,0,.2);
+    cursor: pointer;
+}
+
 .copyright {
-    margin: 5rem auto 5rem auto;
+    margin: 3rem auto 5rem auto;
     text-align: center;
     font-size: 0.9rem;
     color:#aaaaaa;

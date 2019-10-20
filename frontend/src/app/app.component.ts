@@ -4,6 +4,7 @@ import { AuthenticateService } from './services/authenticate-service';
 import { MatSnackBar } from '@angular/material';
 import { interval } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class AppComponent implements OnInit {
   private username: string;
   private password: string;
+  private backendUrl = environment.apiURL;
 
   constructor(
     private authService: AuthenticateService,
@@ -33,7 +35,8 @@ export class AppComponent implements OnInit {
   }
 
   login() {
-    this.authService.authenticate(this.username, this.password).subscribe((res) => {
+    environment.apiURL = this.backendUrl;
+    this.authService.authenticate(this.username, this.password).subscribe(res => {
       localStorage.setItem('access_token', res.ticket);
       this.username = '';
       this.password = '';
