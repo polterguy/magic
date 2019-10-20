@@ -39,7 +39,7 @@
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Endpoints</a>
 
-    <a 
+  <a 
     *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/sql" 
@@ -59,6 +59,14 @@
 
 <div *ngIf="!isLoggedIn()">
   <mat-card class="login-card">
+
+    <mat-form-field class="fill-width">
+      <input 
+        matInput 
+        placeholder="Backend URL"
+        type="text" 
+        [(ngModel)]="backendUrl">
+    </mat-form-field>
 
     <mat-form-field class="fill-width">
       <input 
