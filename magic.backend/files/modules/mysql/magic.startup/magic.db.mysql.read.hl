@@ -93,7 +93,7 @@ slots.create:magic.db.mysql.read
             /*
              * Adding [columns] to [mysql.read].
              */
-            add:x:../*/wait.mysql.connect/*/mysql.read
+            add:x:../*/wait.mysql.connect/*/wait.mysql.read
                .
                   columns
             add:x:../*/wait.mysql.connect/*/wait.mysql.read/*/columns
@@ -104,10 +104,7 @@ slots.create:magic.db.mysql.read
        * Invoking [mysql.read].
        */
       wait.mysql.read
-         generate:bool:true
          table:x:@.arguments/*/table
-      lambda2hyper:x:..
-      log.info:x:-
 
 
       /*
