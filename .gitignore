@@ -328,3 +328,4 @@ ASALocalRun/
 
 # Excluding all Mac folder files
 **/.DS_Store
+magic.backend/dev_magic.backend.csproj
