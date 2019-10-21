@@ -104,7 +104,10 @@ slots.create:magic.db.mysql.read
        * Invoking [mysql.read].
        */
       wait.mysql.read
+         generate:bool:true
          table:x:@.arguments/*/table
+      lambda2hyper:x:..
+      log.info:x:-
 
 
       /*
