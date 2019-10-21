@@ -1,7 +1,7 @@
 
 
 
-## Version 5.0.2, 17th of October 2019
+## Version 5.2, 17th of October 2019
 
 * Namespace support for MS SQL Server databases. This fixes a severe error making it impossible to CRUDify any SQL Server database that is not in the default namespace (_"dbo"_).
 
@@ -11,7 +11,7 @@
 
 
 
-## Version 5.0.3, future release
+## Version 5.3, 20th of October 2019
 
 * Support for invoking async slots through __[slots.signal]__
 
@@ -20,3 +20,13 @@
 * Started working on validators, to validate input. These can be found in the project magic.lambda.validators.
 
 
+
+## Version 5.4
+
+* Support for _"create"_ CRUD endpoints where the database table does _not_ implement some sort of automatically generated ID.
+
+* Displaying the version of the backend in the frontend, but only if logged in as root.
+
+* Logging warning to console if the _"auth secret"_ has not been changed from its default value.
+
+* Allowing the frontend to override its backend URL, to support maintaining multiple backends form the same frontend dashboard.
