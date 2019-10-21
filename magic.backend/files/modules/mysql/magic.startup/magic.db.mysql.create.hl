@@ -27,6 +27,13 @@ slots.create:magic.db.mysql.create
 
 
       /*
+       * Adding [return-id] if given.
+       */
+      add:x:./*/wait.mssql.create
+         get-nodes:x:@.arguments/*/return-id
+
+
+      /*
        * Invoking [mysql.create].
        */
       wait.mysql.create
