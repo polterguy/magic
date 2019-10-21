@@ -45,15 +45,15 @@ slots.create:magic.db.mssql.read
             type:long
       remove-node:x:@.arguments/*/args/*/limit
 
-      add:x:./*/mssql.read
+      add:x:./*/wait.mssql.read
          get-nodes:x:@.arguments/*/args/*/offset
       remove-node:x:@.arguments/*/args/*/offset
 
-      add:x:./*/mssql.read
+      add:x:./*/wait.mssql.read
          get-nodes:x:@.arguments/*/args/*/order
       remove-node:x:@.arguments/*/args/*/order
 
-      add:x:./*/mssql.read
+      add:x:./*/wait.mssql.read
          get-nodes:x:@.arguments/*/args/*/direction
       remove-node:x:@.arguments/*/args/*/direction
 
