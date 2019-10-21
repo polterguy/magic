@@ -38,3 +38,7 @@
 * Fixing a bug that prevented _"limit"_ and _"offset"_ criteria to function.
 
 * Fixing a bug that prevented limit and offset from working in MySQL CRUDified endpoints.
+
+* Fixed an error with [wait.io.file.save] that didn't overwrite the existing file, if the existing file was longer than its new content.
+
+
