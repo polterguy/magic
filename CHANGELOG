@@ -30,3 +30,9 @@
 * Logging warning to console if the _"auth secret"_ has not been changed from its default value.
 
 * Allowing the frontend to override its backend URL, to support maintaining multiple backends form the same frontend dashboard.
+
+
+
+## Version 5.5
+
+* Fixing a bug that prevented _"limit"_ and _"offset"_ criteria to function.
