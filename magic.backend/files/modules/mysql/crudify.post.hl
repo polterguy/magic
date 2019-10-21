@@ -9,6 +9,7 @@
    template:string
    verb:string
    auth:string
+   log:string
    args
 
 
@@ -30,6 +31,22 @@ apply:x:@hyper2lambda
    table:x:@.arguments/*/table
    return-id:x:@.arguments/*/returnId
    args
+
+
+/*
+ * Then ensuring we create a log entry, if the caller wants us to do
+ * such a thing.
+ */
+if
+   not
+      eq
+         get-value:x:@.arguments/*/log
+         .:
+   .lambda
+      unwrap:x:+/*/*
+      insert-after:x:@apply/*/.arguments
+         .
+            log.info:x:@.arguments/*/log
 
 
 /*
