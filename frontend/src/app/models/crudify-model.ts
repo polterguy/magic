@@ -8,4 +8,5 @@ export class CrudifyModel {
     verb: string;
     args: any;
     auth: string;
+    log: string;
 }

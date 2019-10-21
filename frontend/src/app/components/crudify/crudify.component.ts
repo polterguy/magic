@@ -13,7 +13,7 @@ export class CrudifyComponent implements OnInit {
 
   // Columns declarations for our tables
   private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
-  private displayedColumnsEndpoints: string[] = ['generate', 'endpoint', 'verb', 'action', 'auth'];
+  private displayedColumnsEndpoints: string[] = ['generate', 'endpoint', 'verb', 'action', 'log', 'auth'];
 
   // Databases, tables, and selected instances of such.
   private databaseTypes = ['mysql', 'mssql'];
@@ -156,7 +156,8 @@ export class CrudifyComponent implements OnInit {
             verb: x.verb,
             action: x.action,
             auth: 'root',
-            generate: true
+            generate: true,
+            log: ''
           };
         });
       }, (err) => {
@@ -247,7 +248,7 @@ export class CrudifyComponent implements OnInit {
           generate: true
         };
       });
-    this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
+      this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
         this.noEndpointsCreated += 4;
         this.crudifyTopTable(tables.splice(1));
       });
@@ -303,6 +304,7 @@ export class CrudifyComponent implements OnInit {
       template: `/modules/${this.databaseType}/templates/crud.template.${curVerb}.hl`,
       verb: curVerb,
       auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
+      log: this.endpoints.filter((x) => x.verb === curVerb)[0].log,
       args,
     }).subscribe((res: any) => {
       this.noLoc += res.loc;
