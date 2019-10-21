@@ -45,15 +45,15 @@ slots.create:magic.db.mysql.read
             type:long
       remove-node:x:@.arguments/*/args/*/limit
 
-      add:x:./*/mysql.read
+      add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/offset
       remove-node:x:@.arguments/*/args/*/offset
 
-      add:x:./*/mysql.read
+      add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/order
       remove-node:x:@.arguments/*/args/*/order
 
-      add:x:./*/mysql.read
+      add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/direction
       remove-node:x:@.arguments/*/args/*/direction
 
@@ -72,7 +72,7 @@ slots.create:magic.db.mysql.read
              * Adding [where] to [mysql.read], making sure all specified criterias
              * are added with an "and" clause wrapping them.
              */
-            add:x:../*/wait.mysql.connect/*/mysql.read
+            add:x:../*/wait.mysql.connect/*/wait.mysql.read
                .
                   where
                      and
