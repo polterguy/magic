@@ -92,6 +92,45 @@ switch:x:@.arguments/*/verb
    case:get
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*
+
+      /*
+       * Allowing for specifying operator to query.
+       */
+      .operators
+         mt
+         lt
+         mteq
+         lteq
+         neq
+         eq
+      for-each:x:@.arguments/*/args/*/columns/*
+         if
+            eq
+               get-value:x:@.dp/#
+               .:string
+            .lambda
+               .buffer
+                  .name:x:@.dp/#
+               unwrap:x:@.buffer/*
+               set-name:x:@.buffer/*
+                  strings.concat
+                     get-name:x:@.dp/#
+                     .:.like
+               add:x:@apply/*/.arguments
+                  get-nodes:x:@.buffer/*
+         for-each:x:@.operators/*
+            .buffer
+               .name:x:@.dp/@.dp/#
+            unwrap:x:@.buffer/*
+            set-name:x:@.buffer/*
+               strings.concat
+                  get-name:x:@.dp/@.dp/#
+                  .:.
+                  get-name:x:@.dp/#
+            add:x:@apply/*/.arguments
+               get-nodes:x:@.buffer/*
+
+
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#
       add:x:@apply/**/columns
