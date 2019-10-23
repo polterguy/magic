@@ -62,13 +62,6 @@ if
 
 
 /*
- * Informing client of that current request can be cached for 600 seconds (5 minutes).
- */
-http.response.headers.add
-   Cache-Control:max-age=500
-
-
-/*
  * Returning version, success, plus optionally also authenticated user + roles.
  */
 unwrap:x:+/*/version
