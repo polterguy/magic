@@ -48,6 +48,9 @@ actually not one project, but in fact more than 20 different components.
 
 Although documentation is work in progress, you can rapidly [teach yourself the basics here](https://polterguy.github.io).
 
+* [Main documentation website](https://polterguy.github.io)
+* [Component documentation](https://github.com/polterguy/magic/blob/master/components.md)
+
 ## License
 
 Although most of Magic's source code is publicly available, Magic is _not_ Open Source or Free Software.
