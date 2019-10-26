@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
 
   showError(error: string) {
     this.snackBar.open(error, null, {
-      duration: 2000,
+      duration: 5000,
       panelClass: ['error-snackbar'],
     });
   }

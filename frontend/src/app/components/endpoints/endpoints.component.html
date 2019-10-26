@@ -45,6 +45,15 @@
     <h3>{{selected.url}}</h3>
 
     <div class="active-verb">{{selected.verb}}</div>
+    <div
+      *ngIf="!isJsonArguments">
+      <h3>Possible query parameters</h3>
+      <ul class="argument-list">
+        <li *ngFor="let idx of queryParameters">
+          <strong>{{idx.name}}</strong><small>{{idx.type}}</small>
+        </li>
+      </ul>
+    </div>
 
     <mat-form-field *ngIf="!isJsonArguments" class="fill-width">
       <input 
