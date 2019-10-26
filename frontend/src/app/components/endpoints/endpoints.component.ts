@@ -20,6 +20,7 @@ export class EndpointsComponent implements OnInit {
   private endpointResult: string;
   private currentUrl: string;
   private showSystemEndpoints = false;
+  private queryParameters = [];
 
   constructor(
     private service: EndpointService,
@@ -79,21 +80,23 @@ export class EndpointsComponent implements OnInit {
         case 'put':
           this.isJsonArguments = true;
           this.arguments = JSON.stringify(res, null, 2);
+          this.queryParameters = null;
           break;
 
         case 'get':
         case 'delete':
           this.isJsonArguments = false;
-          let args = '';
+          this.arguments = '';
+          let args = [];
           for (const idx in res) {
             if (Object.prototype.hasOwnProperty.call(res, idx)) {
-              if (args.length > 0) {
-                args += '&';
-              }
-              args += idx + '=' + res[idx];
+              args.push({
+                name: idx,
+                type: res[idx],
+              });
             }
           }
-          this.arguments = args;
+          this.queryParameters = args;
           break;
         }
     }, (err) => {

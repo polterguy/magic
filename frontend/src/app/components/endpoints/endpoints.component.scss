@@ -59,6 +59,21 @@
             border-radius: .25rem;
             font-weight: bold;
         }
+        .argument-list {
+            list-style: none;
+            li {
+                background-color: rgba(0,0,0,.1);
+                display: block;
+                float: left;
+                margin-right: .5rem;
+                margin-bottom: .5rem;
+                padding: .5rem;
+                min-width: 10rem;
+                strong {
+                    margin-right: .5rem;
+                }
+            }
+        }
     }
 }
 
