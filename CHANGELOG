@@ -48,3 +48,5 @@
 
 * Making sure we no longer return exception messages or stack trace if build mode is _"Release"_.
   Notice, we still return message and stack trace in _"Debug"_ mode, and we still log exceptions in Release.
+
+* Added missing _"wait"_ slots for MySQL and MS SQL adapters, that will fix the _"Custom SQL"_ CRUDifier in the frontend.
