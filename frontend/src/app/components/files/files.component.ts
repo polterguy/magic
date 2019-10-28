@@ -22,6 +22,8 @@ export class FilesComponent implements OnInit {
   private files: string[] = [];
   private fileContent: string = null;
   private filePath: string;
+  private databaseTypes = ['mysql', 'mssql'];
+  private selectedDatabaseType = 'mysql';
 
   constructor(
     private fileService: FileService,
@@ -213,7 +215,7 @@ export class FilesComponent implements OnInit {
   }
 
   evaluateSql() {
-    this.sqlService.evaluate(this.fileContent).subscribe((res) => {
+    this.sqlService.evaluate(this.fileContent, this.selectedDatabaseType).subscribe((res) => {
       this.showInfo('SQL was successfully evaluate');
     }, (err) => {
       this.showError(err.error.message);
@@ -255,7 +257,7 @@ export class FilesComponent implements OnInit {
 
   showError(error: string) {
     this.snackBar.open(error, 'Close', {
-      duration: 2000,
+      duration: 5000,
       panelClass: ['error-snackbar'],
     });
   }
