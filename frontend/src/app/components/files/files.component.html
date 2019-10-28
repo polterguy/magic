@@ -51,12 +51,18 @@
       [options]="getCodeMirrorOptions()"></ngx-codemirror>
   </div>
 
-  <div class="right-aligned">
+  <div class="right-aligned" style="margin-top: 1rem;">
       <button
         *ngIf="getMode(this.filePath) == 'hyperlambda'"
         mat-button
         (click)="evaluate()"
         matTooltip="Evaluates your file">Evaluate</button>
+      <mat-form-field
+        *ngIf="getMode(this.filePath) == 'text/x-mysql'">
+        <mat-select placeholder="Select database type" [(value)]="selectedDatabaseType">
+          <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <button
         *ngIf="getMode(this.filePath) == 'text/x-mysql'"
         mat-button
