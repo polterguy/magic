@@ -42,3 +42,9 @@
 * Fixed an error with [wait.io.file.save] that didn't overwrite the existing file, if the existing file was longer than its new content.
 
 
+## Version 5.5.1
+
+* Fixed __[http.xxx]__ slots having missing IoC configuration, preventing it from working at all.
+
+* Making sure we no longer return exception messages or stack trace if build mode is _"Release"_.
+  Notice, we still return message and stack trace in _"Debug"_ mode, and we still log exceptions in Release.
