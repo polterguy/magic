@@ -2,6 +2,7 @@
 # Magic for ASP.NET
 
 [![Build status](https://travis-ci.org/polterguy/magic.svg?master)](https://travis-ci.org/polterguy/magic)
+[![Build status](https://travis-ci.org/polterguy/magic.signals.svg?master)](https://travis-ci.org/polterguy/magic.signals)
 
 Magic is a CRUD app generator, allowing you to create CRUD Web APIs on top of ASP.NET Core.
 In 1 minute, you can basically create hundreds of HTTP REST based CRUD Web API endpoints,
