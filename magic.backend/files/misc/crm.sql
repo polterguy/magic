@@ -21,6 +21,7 @@ CREATE TABLE `users` (
   `username` varchar(45) NOT NULL,
   `password` varchar(256) NOT NULL,
   `email` varchar(256) DEFAULT NULL,
+  `phone` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -82,7 +83,8 @@ CREATE TABLE `contacts` (
 CREATE TABLE `contacts_extra_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `type_UNIQUE` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 LOCK TABLES `contacts_extra_type` WRITE;
@@ -105,21 +107,26 @@ CREATE TABLE `contacts_extra` (
 CREATE TABLE `activity_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 LOCK TABLES `activity_types` WRITE;
-INSERT INTO `activity_types` VALUES (1,'Phone'),(2,'Email'),(3,'Meeting');
+INSERT INTO `activity_types` VALUES (1,'Phone'),(2,'Email'),(3,'Meeting'),(4,'Misc');
 UNLOCK TABLES;
 
 
 CREATE TABLE `activities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `contact` int(11) DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `header` varchar(128) NOT NULL,
   `description` varchar(2048) DEFAULT NULL,
+  `done` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
   KEY `type_fky_idx` (`type`),
+  KEY `contact_fky_idx` (`contact`),
+  CONSTRAINT `contact_fky` FOREIGN KEY (`contact`) REFERENCES `contacts` (`id`),
   CONSTRAINT `type_fky` FOREIGN KEY (`type`) REFERENCES `activity_types` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
