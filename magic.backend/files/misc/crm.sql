@@ -99,7 +99,7 @@ CREATE TABLE `contacts_extra` (
   PRIMARY KEY (`contact`,`type`),
   KEY `contacts_extra_type_fky_idx` (`type`),
   KEY `contacts_extre_fky_idx` (`contact`),
-  CONSTRAINT `contacts_extra_type_fky` FOREIGN KEY (`type`) REFERENCES `contacts_extra_type` (`id`),
+  CONSTRAINT `contacts_extra_type_fky` FOREIGN KEY (`type`) REFERENCES `contacts_extra_type` (`id`) ON DELETE CASCADE,
   CONSTRAINT `contacts_fky` FOREIGN KEY (`contact`) REFERENCES `contacts` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
