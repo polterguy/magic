@@ -58,7 +58,9 @@ export class FilesComponent implements OnInit {
   }
 
   getRowClass(el: string) {
-    console.log(el);
+    if (el === this.filePath) {
+      return 'selected-file';
+    }
     if (el.endsWith('/')) {
       return 'folder-row';
     }
