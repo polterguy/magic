@@ -1,8 +1,16 @@
 
 <div class="database-selector">
-  <mat-select placeholder="Select database type" [(value)]="selectedDatabaseType">
+  <mat-select placeholder="Select database type" (selectionChange)="databaseTypeChanged($event)" [(value)]="selectedDatabaseType">
     <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
   </mat-select>
+</div>
+
+<div class="file-selector">
+
+  <mat-select placeholder="Select saved file" (selectionChange)="fileChanged($event)" [(value)]="selectedScript">
+    <mat-option *ngFor="let cur of savedFiles" [value]="cur">{{cur}}</mat-option>
+  </mat-select>
+
 </div>
 
 <div class="mat-elevation-z4 sql">
@@ -19,7 +27,7 @@
     matTooltip="Evaluates your Hyperlambda"
     (click)="evaluate()">Evaluate</button>
 </div>
-
+  
 <div *ngIf="result !== null && result.length > 0" class="mat-elevation-z4 result">
   <table class="fill-width">
     <tr>

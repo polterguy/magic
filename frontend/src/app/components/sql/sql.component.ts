@@ -1,8 +1,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { PipeTransform, Pipe } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatSelectChange } from '@angular/material';
 import { SqlService } from 'src/app/services/sql-service';
+import { FileService } from 'src/app/services/file-service';
 
 @Component({
   selector: 'app-sql',
@@ -10,6 +11,8 @@ import { SqlService } from 'src/app/services/sql-service';
   styleUrls: ['./sql.component.scss']
 })
 export class SqlComponent implements OnInit {
+  private savedFiles = [];
+  private selectedScript: string;
   private result: any = null;
   private databaseTypes = ['mysql', 'mssql'];
   private selectedDatabaseType = 'mysql';
@@ -21,9 +24,33 @@ select * from some_table;`;
 
   constructor(
     private sqlService: SqlService,
+    private fileService: FileService,
     private snackBar: MatSnackBar) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.getFiles();
+  }
+
+  getFiles() {
+    this.sqlService.getSavedFiles(this.selectedDatabaseType).subscribe(res => {
+      if (res === null || res.length === 0) {
+        this.savedFiles = [];
+        return;
+      }
+      this.savedFiles = res.map(x => x.substr(x.lastIndexOf('/') + 1));
+    });
+  }
+
+  databaseTypeChanged(e: MatSelectChange) {
+    this.getFiles();
+  }
+
+  fileChanged(e: MatSelectChange) {
+    this.fileService.getFileContent(`/misc/mysql/${e.value}`).subscribe(res => {
+      this.sqlText = res;
+      this.selectedScript = null;
+    });
+  }
 
   getCodeMirrorOptions() {
     return {
