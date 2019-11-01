@@ -17,4 +17,8 @@ export class SqlService {
         sql,
       });
   }
+
+  public getSavedFiles(databaseType = 'mysql') {
+    return this.httpClient.get<string[]>(environment.apiURL + `magic/modules/${databaseType}/list-files`);
+  }
 }

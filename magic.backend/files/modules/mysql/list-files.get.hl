@@ -1,0 +1,17 @@
+
+/*
+ * Returns all saved MySQL files in the system.
+ */
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Returns all files in the "/files/misc/mysql/stored/" folder.
+ */
+io.files.list:/misc/mysql/
+slots.return-nodes:x:-/*
