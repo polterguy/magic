@@ -22,6 +22,7 @@ export class CrudifyComponent implements OnInit {
   private tables: any[] = null;
   private selectedDatabase: string = null;
   private selectedTable: string = null;
+  private caching: number;
 
   // All columns in table
   private columns: any[] = null;
@@ -292,6 +293,7 @@ export class CrudifyComponent implements OnInit {
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'get') {
+      args.cache = this.caching;
       args.columns = this.columns
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }

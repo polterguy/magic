@@ -95,7 +95,11 @@
   <mat-card 
     *ngIf="columns !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     class="columns-card">
+
     <div class="wrapper">
+
+      <h3>Columns</h3>
+
       <table mat-table class="columns" [dataSource]="columns">
 
         <ng-container matColumnDef="field">
@@ -137,7 +141,9 @@
 
     <div class="wrapper">
 
-      <table mat-table class="endpoints" [dataSource]="endpoints">
+        <h3>Endpoints</h3>
+
+        <table mat-table class="endpoints" [dataSource]="endpoints">
 
         <ng-container matColumnDef="generate">
           <th mat-header-cell *matHeaderCellDef>Generate</th>
@@ -196,6 +202,28 @@
 
     </div>
 
+  </mat-card>
+
+  <mat-card 
+    *ngIf="endpoints !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
+    class="endpoints-card">
+
+    <div class="wrapper">
+
+      <h3>Miscelanous</h3>
+
+      <mat-form-field class="misc-input">
+        <input 
+          matInput 
+          autocomplete="off"
+          type="number" 
+          min="0"
+          step="1"
+          placeholder="Caching (number of seconds to cache GET)"
+          [(ngModel)]="caching">
+        </mat-form-field>
+
+    </div>
   </mat-card>
 
 </div>
