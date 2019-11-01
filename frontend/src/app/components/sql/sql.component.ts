@@ -46,7 +46,7 @@ select * from some_table;`;
   }
 
   fileChanged(e: MatSelectChange) {
-    this.fileService.getFileContent(`/misc/mysql/${e.value}`).subscribe(res => {
+    this.fileService.getFileContent(`/misc/${this.selectedDatabaseType}/${e.value}`).subscribe(res => {
       this.sqlText = res;
       this.selectedScript = null;
     });
