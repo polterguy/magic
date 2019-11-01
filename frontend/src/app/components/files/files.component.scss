@@ -33,7 +33,10 @@
             tr.selected-file {
                 background-color: rgba(0,128,0,.2);
             }
-    }
+            tr.mat-row.selected-file:hover {
+                background-color: rgba(0,128,0,.3);
+            }
+        }
     }
 }
 
