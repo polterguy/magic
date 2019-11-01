@@ -30,7 +30,10 @@
             tr.folder-row {
                 font-weight: bold;
             }
-        }
+            tr.selected-file {
+                background-color: rgba(0,128,0,.2);
+            }
+    }
     }
 }
 
