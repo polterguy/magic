@@ -57,6 +57,22 @@ export class FilesComponent implements OnInit {
     return result.filter(x => x.indexOf(this.filter) !== -1);
   }
 
+  getRowClass(el: string) {
+    console.log(el);
+    if (el.endsWith('/')) {
+      return 'folder-row';
+    }
+    return '';
+  }
+
+  getFileName(el: string) {
+    if (el.endsWith('/')) {
+      const result = el.substr(0, el.length - 1);
+      return result.substr(result.lastIndexOf('/') + 1);
+    }
+    return el.substr(el.lastIndexOf('/') + 1);
+  }
+
   selectPath(path: string) {
     if (path.endsWith('/')) {
       this.path = path;
