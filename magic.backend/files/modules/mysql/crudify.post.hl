@@ -94,6 +94,33 @@ switch:x:@.arguments/*/verb
          get-nodes:x:@.arguments/*/args/*/columns/*
 
       /*
+       * Checking if we have an [.arguments]/[args]/[cache] value.
+       */
+      if
+         and
+            not
+               eq
+                  get-value:x:@.arguments/*/args/*/cache
+                  .:0
+            not
+               eq
+                  get-value:x:@.arguments/*/args/*/cache
+                  .:
+            not
+               eq
+                  get-value:x:@.arguments/*/args/*/cache
+                  .
+         .lambda
+            strings.concat
+               .:private, max-age=
+               get-value:x:@.arguments/*/args/*/cache
+            unwrap:x:+/*/*/*
+            insert-after:x:@apply/*/wait.slots.signal
+               .
+                  http.response.headers.add
+                     Cache-Control:x:@strings.concat
+
+      /*
        * Allowing for specifying operator to query.
        */
       .operators

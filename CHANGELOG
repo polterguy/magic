@@ -53,3 +53,14 @@
 * Added missing _"wait"_ slots for MySQL and MS SQL adapters, that will fix the _"Custom SQL"_ CRUDifier in the frontend.
 
 * Added support for passing in [headers] in all the [http.xxx] rest invocation lambda slots.
+
+
+
+## Version 5.5.2
+
+* Fixed severe error that prevented Hyperlambda from being able to add response HTTP headers.
+
+* Fixed error in crudifier scaffolding process that prevented MS SQL server from being able to accept complex query parameters
+
+* Added support for _"Cache-Control"_ HTTP header, to make backend communicate to frontend how many seconds some HTTP GET request 
+  is considered _"fresh"_, before cache dictates a new HTTP roundtrip should be done.
