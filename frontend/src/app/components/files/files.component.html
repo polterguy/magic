@@ -1,6 +1,14 @@
 
 <div class="files-wrapper">
 
+    <mat-form-field class="fill-width">
+        <input 
+          matInput 
+          placeholder="Filter files ..."
+          type="text" 
+          [(ngModel)]="filter">
+      </mat-form-field>
+    
   <h3>{{path}}</h3>
 
   <div class="mat-elevation-z4 relativized">
