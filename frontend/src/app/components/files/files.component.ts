@@ -17,13 +17,14 @@ export interface DialogData {
 })
 export class FilesComponent implements OnInit {
   private displayedColumns: string[] = ['path'];
-  private path: string = '/';
+  private path = '/';
   private folders: string[] = [];
   private files: string[] = [];
   private fileContent: string = null;
   private filePath: string;
   private databaseTypes = ['mysql', 'mssql'];
   private selectedDatabaseType = 'mysql';
+  private filter = '';
 
   constructor(
     private fileService: FileService,
@@ -49,8 +50,11 @@ export class FilesComponent implements OnInit {
   }
 
   dataSource() {
-    let result = this.folders.concat(this.files);
-    return result;
+    const result = this.folders.concat(this.files);
+    if (this.filter === '') {
+      return result;
+    }
+    return result.filter(x => x.indexOf(this.filter) !== -1);
   }
 
   selectPath(path: string) {
@@ -65,10 +69,11 @@ export class FilesComponent implements OnInit {
         this.openFile(path);
       }
     }
+    this.filter = '';
   }
 
   createNewFile() {
-    const dialogRef = this.dialog.open(NewFileDialog, {
+    const dialogRef = this.dialog.open(NewFileDialogComponent, {
       width: '500px',
       data: {
         path: '',
@@ -85,7 +90,7 @@ export class FilesComponent implements OnInit {
   }
 
   createNewFolder() {
-    const dialogRef = this.dialog.open(NewFileDialog, {
+    const dialogRef = this.dialog.open(NewFileDialogComponent, {
       width: '500px',
       data: {
         path: '',
@@ -102,7 +107,7 @@ export class FilesComponent implements OnInit {
   }
 
   createFile(filename: string) {
-    if (filename == '') {
+    if (filename === '') {
       this.showError('You have to give your filename a name');
     } else if (filename.indexOf('.') == -1) {
       this.showError('Your file needs an extension, such as ".hl" or something');
@@ -119,7 +124,7 @@ export class FilesComponent implements OnInit {
   }
 
   createFolder(foldername: string) {
-    if (foldername == '') {
+    if (foldername === '') {
       this.showError('You have to give your folder a name');
     } else {
       const letters = /^[0-9a-z]+$/;
@@ -143,6 +148,7 @@ export class FilesComponent implements OnInit {
       items = items.splice(-1, 1);
       this.path = items.join('/') + '/';
       this.getPath();
+      this.filter = '';
     }, (error) => {
       this.showError(error.error.message);
     });
@@ -153,6 +159,7 @@ export class FilesComponent implements OnInit {
     splits.splice(-2, 1);
     this.path = splits.join('/');
     this.getPath();
+    this.filter = '';
     return false;
   }
 
@@ -166,7 +173,7 @@ export class FilesComponent implements OnInit {
   }
 
   getCodeMirrorOptions() {
-    var result = {
+    const result = {
       lineNumbers: true,
       theme: 'material',
       mode: this.getMode(this.filePath),
@@ -267,10 +274,10 @@ export class FilesComponent implements OnInit {
   selector: 'new-file-dialog',
   templateUrl: 'new-file-dialog.html',
 })
-export class NewFileDialog {
+export class NewFileDialogComponent {
 
   constructor(
-    public dialogRef: MatDialogRef<NewFileDialog>,
+    public dialogRef: MatDialogRef<NewFileDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   close(): void {

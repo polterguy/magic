@@ -26,7 +26,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
-import { NewFileDialog } from './components/files/files.component';
+import { NewFileDialogComponent } from './components/files/files.component';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
@@ -43,7 +43,7 @@ export function tokenGetter() {
     HomeComponent,
     EvaluatorComponent,
     FilesComponent,
-    NewFileDialog,
+    NewFileDialogComponent,
     CrudifyComponent,
     SqlComponent,
     DynamicPipe,
@@ -86,6 +86,6 @@ export function tokenGetter() {
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents:[NewFileDialog]
+  entryComponents:[NewFileDialogComponent]
 })
 export class AppModule { }
