@@ -42,22 +42,13 @@
 .active-wrapper {
     padding:0 5rem 2rem 5rem;
     .view-endpoint-card {
-        padding-top: 3rem;
+        padding-top: 1rem;
         position: relative;
         .fill-width {
             width: 100%;
         }
         .right-aligned {
             text-align: right;
-        }
-        .active-verb {
-            position: absolute;
-            top: .5rem;
-            right: .5rem;
-            padding: .5rem 1.5rem .5rem 1.5rem;
-            background-color: rgba(128,255,128,.2);
-            border-radius: .25rem;
-            font-weight: bold;
         }
         .argument-list {
             list-style: none;
@@ -69,6 +60,8 @@
                 margin-bottom: .5rem;
                 padding: .5rem;
                 min-width: 10rem;
+                cursor: pointer;
+                border-radius: 5px;
                 strong {
                     margin-right: .5rem;
                 }

@@ -1,8 +1,9 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
+import { MatInput } from '@angular/material';
 
 @Component({
   selector: 'app-endpoints',
@@ -10,6 +11,7 @@ import { EndpointService } from '../../services/endpoint-service';
   styleUrls: ['./endpoints.component.scss']
 })
 export class EndpointsComponent implements OnInit {
+  @ViewChild('queryParamaters') queryParametersInput: MatInput;
   private displayedColumns: string[] = ['url', 'auth', 'verb'];
   private selectedRowUrl = '';
   private endpoints: Endpoint[] = [];
@@ -102,6 +104,17 @@ export class EndpointsComponent implements OnInit {
     }, (err) => {
       this.showHttpError(err);
     });
+  }
+
+  argumentClicked(name: string) {
+    let args = this.arguments;
+    if (args.length > 0) {
+      args += '&' + name + '=';
+    } else {
+      args += name + '=';
+    }
+    this.arguments = args;
+    this.queryParametersInput.focus();
   }
 
   evaluate() {
