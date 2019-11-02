@@ -45,12 +45,13 @@
  
     <h3>{{selected.url}}</h3>
 
-    <div class="active-verb">{{selected.verb}}</div>
     <div
       *ngIf="!isJsonArguments">
-      <h3>Possible query parameters</h3>
       <ul class="argument-list">
-        <li *ngFor="let idx of queryParameters">
+        <li 
+          *ngFor="let idx of queryParameters" 
+          (click)="argumentClicked(idx.name)"
+          role="button">
           <strong>{{idx.name}}</strong><small>{{idx.type}}</small>
         </li>
       </ul>
@@ -59,9 +60,14 @@
     <mat-form-field *ngIf="!isJsonArguments" class="fill-width">
       <input 
         matInput 
+        #queryParamaters="matInput"
         placeholder="Query parameters to your endpoint"
         type="text" 
-        [(ngModel)]="arguments">
+        [(ngModel)]="arguments"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false">
     </mat-form-field>
 
     <ngx-codemirror 
@@ -77,7 +83,7 @@
       <button 
         mat-button 
         matTooltip="Evaluates the endpoint with the specified parameters/payload" 
-        (click)="evaluate()">Evaluate</button>
+        (click)="evaluate()">{{selected.verb}}</button>
     </div>
 
   </mat-card>
