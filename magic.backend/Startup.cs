@@ -42,7 +42,7 @@ namespace magic.backend
              *
              * Notice, must be done BEFORE you invoke "UseMvc".
              */
-			app.UseMagic(Configuration);
+            app.UseMagic(Configuration);
 
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
