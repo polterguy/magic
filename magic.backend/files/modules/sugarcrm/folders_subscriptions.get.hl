@@ -1,0 +1,49 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   folder_id:string
+   assigned_user_id:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   folder_id.like:string
+   folder_id.mt:string
+   folder_id.lt:string
+   folder_id.mteq:string
+   folder_id.lteq:string
+   folder_id.neq:string
+   folder_id.eq:string
+   assigned_user_id.like:string
+   assigned_user_id.mt:string
+   assigned_user_id.lt:string
+   assigned_user_id.mteq:string
+   assigned_user_id.lteq:string
+   assigned_user_id.neq:string
+   assigned_user_id.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:folders_subscriptions
+   args
+   columns
+      id
+      folder_id
+      assigned_user_id
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,34 @@
+.arguments
+   id:string
+   name:string
+   folder_type:string
+   parent_folder:string
+   has_child:long
+   is_group:long
+   is_dynamic:long
+   dynamic_query:string
+   assign_to_id:string
+   team_id:string
+   team_set_id:string
+   created_by:string
+   modified_by:string
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:folders
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

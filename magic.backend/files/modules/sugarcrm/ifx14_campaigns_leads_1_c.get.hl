@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   date_modified:date
+   deleted:long
+   ifx14_campaigns_leads_1ifx14_campaigns_ida:string
+   ifx14_campaigns_leads_1leads_idb:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.like:string
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.mt:string
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.lt:string
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.mteq:string
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.lteq:string
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.neq:string
+   ifx14_campaigns_leads_1ifx14_campaigns_ida.eq:string
+   ifx14_campaigns_leads_1leads_idb.like:string
+   ifx14_campaigns_leads_1leads_idb.mt:string
+   ifx14_campaigns_leads_1leads_idb.lt:string
+   ifx14_campaigns_leads_1leads_idb.mteq:string
+   ifx14_campaigns_leads_1leads_idb.lteq:string
+   ifx14_campaigns_leads_1leads_idb.neq:string
+   ifx14_campaigns_leads_1leads_idb.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx14_campaigns_leads_1_c
+   args
+   columns
+      id
+      date_modified
+      deleted
+      ifx14_campaigns_leads_1ifx14_campaigns_ida
+      ifx14_campaigns_leads_1leads_idb
+slots.return-nodes:x:@wait.slots.signal/*

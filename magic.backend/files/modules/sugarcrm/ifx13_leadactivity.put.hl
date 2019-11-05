@@ -1,0 +1,52 @@
+.arguments
+   id:string
+   name:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   team_id:string
+   team_set_id:string
+   assigned_user_id:string
+   first_name:string
+   last_name:string
+   country:string
+   lead_source:string
+   portal_language:string
+   email:string
+   campaign_name:string
+   campaign_source:string
+   campaign_content:string
+   phone_work:string
+   phone_mobile:string
+   ga_keywork:string
+   aff_id:string
+   click_id:string
+   website:string
+   ip:string
+   seminar_code:string
+   seminar_city:string
+   seminar_date:date
+   seminar_time:string
+   new_registration:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx13_leadactivity
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

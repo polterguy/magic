@@ -1,0 +1,27 @@
+.arguments
+   id:string
+   email_address_id:string
+   bean_id:string
+   bean_module:string
+   primary_address:long
+   reply_to_address:long
+   date_created:date
+   date_modified:date
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:email_addr_bean_rel
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

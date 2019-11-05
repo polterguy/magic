@@ -1,0 +1,39 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   ibaccounts:decimal
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   ibaccounts.mt:decimal
+   ibaccounts.lt:decimal
+   ibaccounts.mteq:decimal
+   ibaccounts.lteq:decimal
+   ibaccounts.neq:decimal
+   ibaccounts.eq:decimal
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ib_accounts_per_client
+   args
+   columns
+      id
+      ibaccounts
+slots.return-nodes:x:@wait.slots.signal/*

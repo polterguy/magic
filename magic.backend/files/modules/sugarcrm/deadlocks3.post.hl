@@ -1,0 +1,34 @@
+.arguments
+   server:string
+   ts:null
+   thread:long
+   txn_id:long
+   txn_time:long
+   user:string
+   hostname:string
+   ip:string
+   db:string
+   tbl:string
+   idx:string
+   lock_type:string
+   lock_mode:string
+   wait_hold:string
+   victim:long
+   query:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:deadlocks3
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

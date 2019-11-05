@@ -1,0 +1,32 @@
+.arguments
+   id:string
+   timeperiod_id:string
+   forecast_type:string
+   opp_count:long
+   opp_weigh_value:long
+   best_case:long
+   likely_case:long
+   worst_case:long
+   user_id:string
+   date_entered:date
+   date_modified:date
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:forecasts
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*
