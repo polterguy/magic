@@ -1,0 +1,97 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   query_id:string
+   text:string
+   query_hash:string
+   sec_total:decimal
+   sec_avg:decimal
+   run_count:long
+   deleted:long
+   date_modified:date
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   query_id.like:string
+   query_id.mt:string
+   query_id.lt:string
+   query_id.mteq:string
+   query_id.lteq:string
+   query_id.neq:string
+   query_id.eq:string
+   text.like:string
+   text.mt:string
+   text.lt:string
+   text.mteq:string
+   text.lteq:string
+   text.neq:string
+   text.eq:string
+   query_hash.like:string
+   query_hash.mt:string
+   query_hash.lt:string
+   query_hash.mteq:string
+   query_hash.lteq:string
+   query_hash.neq:string
+   query_hash.eq:string
+   sec_total.mt:decimal
+   sec_total.lt:decimal
+   sec_total.mteq:decimal
+   sec_total.lteq:decimal
+   sec_total.neq:decimal
+   sec_total.eq:decimal
+   sec_avg.mt:decimal
+   sec_avg.lt:decimal
+   sec_avg.mteq:decimal
+   sec_avg.lteq:decimal
+   sec_avg.neq:decimal
+   sec_avg.eq:decimal
+   run_count.mt:long
+   run_count.lt:long
+   run_count.mteq:long
+   run_count.lteq:long
+   run_count.neq:long
+   run_count.eq:long
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:tracker_queries
+   args
+   columns
+      id
+      query_id
+      text
+      query_hash
+      sec_total
+      sec_avg
+      run_count
+      deleted
+      date_modified
+slots.return-nodes:x:@wait.slots.signal/*

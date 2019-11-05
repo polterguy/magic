@@ -1,0 +1,126 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   company_c:string
+   ifx21_brand_id_c:string
+   entity_c:string
+   country_c:string
+   except_country_c:string
+   all_countries_c:long
+   tradingaccount_type_c:string
+   all_tradingaccount_type_c:long
+   except_tradingaccount_type_c:string
+   approved_c:long
+   read_only_c:long
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   company_c.like:string
+   company_c.mt:string
+   company_c.lt:string
+   company_c.mteq:string
+   company_c.lteq:string
+   company_c.neq:string
+   company_c.eq:string
+   ifx21_brand_id_c.like:string
+   ifx21_brand_id_c.mt:string
+   ifx21_brand_id_c.lt:string
+   ifx21_brand_id_c.mteq:string
+   ifx21_brand_id_c.lteq:string
+   ifx21_brand_id_c.neq:string
+   ifx21_brand_id_c.eq:string
+   entity_c.like:string
+   entity_c.mt:string
+   entity_c.lt:string
+   entity_c.mteq:string
+   entity_c.lteq:string
+   entity_c.neq:string
+   entity_c.eq:string
+   country_c.like:string
+   country_c.mt:string
+   country_c.lt:string
+   country_c.mteq:string
+   country_c.lteq:string
+   country_c.neq:string
+   country_c.eq:string
+   except_country_c.like:string
+   except_country_c.mt:string
+   except_country_c.lt:string
+   except_country_c.mteq:string
+   except_country_c.lteq:string
+   except_country_c.neq:string
+   except_country_c.eq:string
+   all_countries_c.mt:long
+   all_countries_c.lt:long
+   all_countries_c.mteq:long
+   all_countries_c.lteq:long
+   all_countries_c.neq:long
+   all_countries_c.eq:long
+   tradingaccount_type_c.like:string
+   tradingaccount_type_c.mt:string
+   tradingaccount_type_c.lt:string
+   tradingaccount_type_c.mteq:string
+   tradingaccount_type_c.lteq:string
+   tradingaccount_type_c.neq:string
+   tradingaccount_type_c.eq:string
+   all_tradingaccount_type_c.mt:long
+   all_tradingaccount_type_c.lt:long
+   all_tradingaccount_type_c.mteq:long
+   all_tradingaccount_type_c.lteq:long
+   all_tradingaccount_type_c.neq:long
+   all_tradingaccount_type_c.eq:long
+   except_tradingaccount_type_c.like:string
+   except_tradingaccount_type_c.mt:string
+   except_tradingaccount_type_c.lt:string
+   except_tradingaccount_type_c.mteq:string
+   except_tradingaccount_type_c.lteq:string
+   except_tradingaccount_type_c.neq:string
+   except_tradingaccount_type_c.eq:string
+   approved_c.mt:long
+   approved_c.lt:long
+   approved_c.mteq:long
+   approved_c.lteq:long
+   approved_c.neq:long
+   approved_c.eq:long
+   read_only_c.mt:long
+   read_only_c.lt:long
+   read_only_c.mteq:long
+   read_only_c.lteq:long
+   read_only_c.neq:long
+   read_only_c.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx37_accountautoapproval_cstm
+   args
+   columns
+      id_c
+      company_c
+      ifx21_brand_id_c
+      entity_c
+      country_c
+      except_country_c
+      all_countries_c
+      tradingaccount_type_c
+      all_tradingaccount_type_c
+      except_tradingaccount_type_c
+      approved_c
+      read_only_c
+slots.return-nodes:x:@wait.slots.signal/*

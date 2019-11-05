@@ -1,0 +1,32 @@
+.arguments
+   id:string
+   name:string
+   type:string
+   user_id:string
+   mail_sendtype:string
+   mail_smtptype:string
+   mail_smtpserver:string
+   mail_smtpport:long
+   mail_smtpuser:string
+   mail_smtppass:string
+   mail_smtpauth_req:long
+   mail_smtpssl:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:outbound_email
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

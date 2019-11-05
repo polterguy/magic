@@ -1,0 +1,92 @@
+.arguments
+   id:string
+   name:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   team_id:string
+   team_set_id:string
+   assigned_user_id:string
+   education_level:string
+   customer_experience:string
+   trading_expirience_4:long
+   trading_expirience_4_volume:string
+   trading_expirience_4_rate:string
+   trading_expirience_5:long
+   trading_expirience_5_volume:string
+   trading_expirience_5_rate:string
+   trading_expirience_6:long
+   trading_expirience_6_volume:string
+   trading_expirience_6_rate:string
+   trading_expirience_7:long
+   trading_expirience_7_volume:string
+   trading_expirience_7_rate:string
+   trading_expirience_8:long
+   trading_expirience_8_volume:string
+   trading_expirience_8_rate:string
+   trading_expirience_9:long
+   trading_expirience_9_volume:string
+   trading_expirience_9_rate:string
+   trading_expirience_10:long
+   trading_expirience_10_volume:string
+   trading_expirience_10_rate:string
+   trading_expirience_11:long
+   trading_expirience_11_volume:string
+   trading_expirience_11_rate:string
+   trading_expirience_12:long
+   trading_expirience_12_volume:string
+   trading_expirience_12_rate:string
+   trading_expirience_13:long
+   trading_expirience_13_volume:string
+   trading_expirience_13_rate:string
+   trading_expirience_14:long
+   trading_expirience_14_volume:string
+   trading_expirience_14_rate:string
+   trading_expirience_15:long
+   trading_expirience_15_volume:string
+   trading_expirience_15_rate:string
+   nature_of_transactions_1:long
+   nature_of_transactions_2:long
+   nature_of_transactions_3:long
+   nature_of_transactions_4:long
+   nature_of_transactions_5:long
+   nature_of_transactions_6:long
+   nature_of_transactions_7:long
+   nature_of_transactions_8:long
+   nature_of_transactions_9:long
+   nature_of_transactions_10:long
+   nature_of_transactions_11:long
+   nature_of_transactions_12:long
+   duration_of_investment:string
+   frequency_of_transactions:string
+   level_of_investment_risk:string
+   investment_objectives:string
+   funds_available:string
+   principal_assets_of_the_custom:string
+   public_functions:string
+   family_members:string
+   financial_services:string
+   regulatory_body:string
+   declared_bankruptcy:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx20_investmentquestionnaire
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

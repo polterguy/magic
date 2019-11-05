@@ -1,0 +1,85 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   sub_group_stp_c:string
+   sub_group_book_c:string
+   ifx_tradingaccounts_id_c:string
+   ifx_tradingaccounts_id1_c:string
+   platform_c:string
+   currency_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   sub_group_stp_c.like:string
+   sub_group_stp_c.mt:string
+   sub_group_stp_c.lt:string
+   sub_group_stp_c.mteq:string
+   sub_group_stp_c.lteq:string
+   sub_group_stp_c.neq:string
+   sub_group_stp_c.eq:string
+   sub_group_book_c.like:string
+   sub_group_book_c.mt:string
+   sub_group_book_c.lt:string
+   sub_group_book_c.mteq:string
+   sub_group_book_c.lteq:string
+   sub_group_book_c.neq:string
+   sub_group_book_c.eq:string
+   ifx_tradingaccounts_id_c.like:string
+   ifx_tradingaccounts_id_c.mt:string
+   ifx_tradingaccounts_id_c.lt:string
+   ifx_tradingaccounts_id_c.mteq:string
+   ifx_tradingaccounts_id_c.lteq:string
+   ifx_tradingaccounts_id_c.neq:string
+   ifx_tradingaccounts_id_c.eq:string
+   ifx_tradingaccounts_id1_c.like:string
+   ifx_tradingaccounts_id1_c.mt:string
+   ifx_tradingaccounts_id1_c.lt:string
+   ifx_tradingaccounts_id1_c.mteq:string
+   ifx_tradingaccounts_id1_c.lteq:string
+   ifx_tradingaccounts_id1_c.neq:string
+   ifx_tradingaccounts_id1_c.eq:string
+   platform_c.like:string
+   platform_c.mt:string
+   platform_c.lt:string
+   platform_c.mteq:string
+   platform_c.lteq:string
+   platform_c.neq:string
+   platform_c.eq:string
+   currency_c.like:string
+   currency_c.mt:string
+   currency_c.lt:string
+   currency_c.mteq:string
+   currency_c.lteq:string
+   currency_c.neq:string
+   currency_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx36_pmstrategies_cstm
+   args
+   columns
+      id_c
+      sub_group_stp_c
+      sub_group_book_c
+      ifx_tradingaccounts_id_c
+      ifx_tradingaccounts_id1_c
+      platform_c
+      currency_c
+slots.return-nodes:x:@wait.slots.signal/*

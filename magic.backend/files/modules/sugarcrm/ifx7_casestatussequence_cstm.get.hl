@@ -1,0 +1,57 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   reassign_c:long
+   teams_c:string
+   target_case_owner_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   reassign_c.mt:long
+   reassign_c.lt:long
+   reassign_c.mteq:long
+   reassign_c.lteq:long
+   reassign_c.neq:long
+   reassign_c.eq:long
+   teams_c.like:string
+   teams_c.mt:string
+   teams_c.lt:string
+   teams_c.mteq:string
+   teams_c.lteq:string
+   teams_c.neq:string
+   teams_c.eq:string
+   target_case_owner_c.like:string
+   target_case_owner_c.mt:string
+   target_case_owner_c.lt:string
+   target_case_owner_c.mteq:string
+   target_case_owner_c.lteq:string
+   target_case_owner_c.neq:string
+   target_case_owner_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx7_casestatussequence_cstm
+   args
+   columns
+      id_c
+      reassign_c
+      teams_c
+      target_case_owner_c
+slots.return-nodes:x:@wait.slots.signal/*

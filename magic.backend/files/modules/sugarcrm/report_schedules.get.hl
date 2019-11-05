@@ -1,0 +1,106 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   user_id:string
+   report_id:string
+   date_start:date
+   next_run:date
+   active:long
+   time_interval:long
+   date_modified:date
+   schedule_type:string
+   deleted:long
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+   report_id.like:string
+   report_id.mt:string
+   report_id.lt:string
+   report_id.mteq:string
+   report_id.lteq:string
+   report_id.neq:string
+   report_id.eq:string
+   date_start.mt:date
+   date_start.lt:date
+   date_start.mteq:date
+   date_start.lteq:date
+   date_start.neq:date
+   date_start.eq:date
+   next_run.mt:date
+   next_run.lt:date
+   next_run.mteq:date
+   next_run.lteq:date
+   next_run.neq:date
+   next_run.eq:date
+   active.mt:long
+   active.lt:long
+   active.mteq:long
+   active.lteq:long
+   active.neq:long
+   active.eq:long
+   time_interval.mt:long
+   time_interval.lt:long
+   time_interval.mteq:long
+   time_interval.lteq:long
+   time_interval.neq:long
+   time_interval.eq:long
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   schedule_type.like:string
+   schedule_type.mt:string
+   schedule_type.lt:string
+   schedule_type.mteq:string
+   schedule_type.lteq:string
+   schedule_type.neq:string
+   schedule_type.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:report_schedules
+   args
+   columns
+      id
+      user_id
+      report_id
+      date_start
+      next_run
+      active
+      time_interval
+      date_modified
+      schedule_type
+      deleted
+slots.return-nodes:x:@wait.slots.signal/*

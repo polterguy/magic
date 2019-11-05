@@ -1,0 +1,34 @@
+.arguments
+   id:string
+   relationship_name:string
+   lhs_module:string
+   lhs_table:string
+   lhs_key:string
+   rhs_module:string
+   rhs_table:string
+   rhs_key:string
+   join_table:string
+   join_key_lhs:string
+   join_key_rhs:string
+   relationship_type:string
+   relationship_role_column:string
+   relationship_role_column_value:string
+   reverse:long
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:relationships
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

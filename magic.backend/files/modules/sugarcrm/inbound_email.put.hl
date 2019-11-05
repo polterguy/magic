@@ -1,0 +1,43 @@
+.arguments
+   id:string
+   team_id:string
+   team_set_id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   name:string
+   status:string
+   server_url:string
+   email_user:string
+   email_password:string
+   port:long
+   service:string
+   mailbox:string
+   delete_seen:long
+   mailbox_type:string
+   template_id:string
+   stored_options:string
+   group_id:string
+   is_personal:long
+   groupfolder_id:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:inbound_email
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,75 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   trading_account_left:string
+   trading_account_right:string
+   user_id:string
+   created:string
+   uuidval:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   trading_account_left.like:string
+   trading_account_left.mt:string
+   trading_account_left.lt:string
+   trading_account_left.mteq:string
+   trading_account_left.lteq:string
+   trading_account_left.neq:string
+   trading_account_left.eq:string
+   trading_account_right.like:string
+   trading_account_right.mt:string
+   trading_account_right.lt:string
+   trading_account_right.mteq:string
+   trading_account_right.lteq:string
+   trading_account_right.neq:string
+   trading_account_right.eq:string
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+   created.like:string
+   created.mt:string
+   created.lt:string
+   created.mteq:string
+   created.lteq:string
+   created.neq:string
+   created.eq:string
+   uuidval.like:string
+   uuidval.mt:string
+   uuidval.lt:string
+   uuidval.mteq:string
+   uuidval.lteq:string
+   uuidval.neq:string
+   uuidval.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:tml_trading_account_rel
+   args
+   columns
+      id
+      trading_account_left
+      trading_account_right
+      user_id
+      created
+      uuidval
+slots.return-nodes:x:@wait.slots.signal/*

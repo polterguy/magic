@@ -1,0 +1,83 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   user:string
+   timestamp:null
+   scope:string
+   object:string
+   request:string
+   response:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   user.like:string
+   user.mt:string
+   user.lt:string
+   user.mteq:string
+   user.lteq:string
+   user.neq:string
+   user.eq:string
+   timestamp.mt:null
+   timestamp.lt:null
+   timestamp.mteq:null
+   timestamp.lteq:null
+   timestamp.neq:null
+   timestamp.eq:null
+   scope.like:string
+   scope.mt:string
+   scope.lt:string
+   scope.mteq:string
+   scope.lteq:string
+   scope.neq:string
+   scope.eq:string
+   object.like:string
+   object.mt:string
+   object.lt:string
+   object.mteq:string
+   object.lteq:string
+   object.neq:string
+   object.eq:string
+   request.like:string
+   request.mt:string
+   request.lt:string
+   request.mteq:string
+   request.lteq:string
+   request.neq:string
+   request.eq:string
+   response.like:string
+   response.mt:string
+   response.lt:string
+   response.mteq:string
+   response.lteq:string
+   response.neq:string
+   response.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_webservice_log
+   args
+   columns
+      id
+      user
+      timestamp
+      scope
+      object
+      request
+      response
+slots.return-nodes:x:@wait.slots.signal/*

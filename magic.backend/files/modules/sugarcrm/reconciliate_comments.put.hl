@@ -1,0 +1,35 @@
+.arguments
+   id:long
+   email:string
+   account_number:string
+   oracle_comment:string
+   crm_comment:string
+   different:long
+   archived:long
+   case1:long
+   case2:long
+   case3:long
+   case4:long
+   case5:long
+   case6:long
+   processed:long
+   revision:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:reconciliate_comments
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

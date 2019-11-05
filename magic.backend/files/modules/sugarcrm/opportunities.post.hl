@@ -1,0 +1,39 @@
+.arguments
+   id:string
+   name:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   assigned_user_id:string
+   team_id:string
+   team_set_id:string
+   opportunity_type:string
+   campaign_id:string
+   lead_source:string
+   amount:decimal
+   amount_usdollar:decimal
+   currency_id:string
+   date_closed:date
+   next_step:string
+   sales_stage:string
+   probability:decimal
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:opportunities
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

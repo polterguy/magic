@@ -1,0 +1,35 @@
+.arguments
+   id_c:string
+   lead_c:long
+   funded_c:long
+   ib_c:long
+   country_c:string
+   lead_status_c:string
+   portal_language_c:string
+   client_c:long
+   newsletter_c:long
+   promotions_c:long
+   lead_source_c:string
+   sendgrid_provider_c:string
+   list_2_c:string
+   reg_date_from_c:date
+   reg_date_to_c:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx2_sendgridlist_cstm
+   values
+   ids
+      id_c:x:@.arguments/*/id_c
+slots.return-nodes:x:@wait.slots.signal/*

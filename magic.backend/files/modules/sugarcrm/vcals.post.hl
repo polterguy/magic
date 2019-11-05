@@ -1,0 +1,26 @@
+.arguments
+   id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   user_id:string
+   type:string
+   source:string
+   content:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:vcals
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

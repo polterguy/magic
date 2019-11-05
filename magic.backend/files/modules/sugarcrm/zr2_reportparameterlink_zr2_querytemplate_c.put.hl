@@ -1,0 +1,25 @@
+.arguments
+   id:string
+   date_modified:date
+   deleted:long
+   zr2_query313cemplate_ida:string
+   zr2_report0ed1terlink_idb:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:zr2_reportparameterlink_zr2_querytemplate_c
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

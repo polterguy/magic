@@ -1,0 +1,72 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   date_modified:date
+   deleted:long
+   kbdocument_id:string
+   views_number:long
+   ratings_number:long
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   kbdocument_id.like:string
+   kbdocument_id.mt:string
+   kbdocument_id.lt:string
+   kbdocument_id.mteq:string
+   kbdocument_id.lteq:string
+   kbdocument_id.neq:string
+   kbdocument_id.eq:string
+   views_number.mt:long
+   views_number.lt:long
+   views_number.mteq:long
+   views_number.lteq:long
+   views_number.neq:long
+   views_number.eq:long
+   ratings_number.mt:long
+   ratings_number.lt:long
+   ratings_number.mteq:long
+   ratings_number.lteq:long
+   ratings_number.neq:long
+   ratings_number.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:kbdocuments_views_ratings
+   args
+   columns
+      id
+      date_modified
+      deleted
+      kbdocument_id
+      views_number
+      ratings_number
+slots.return-nodes:x:@wait.slots.signal/*

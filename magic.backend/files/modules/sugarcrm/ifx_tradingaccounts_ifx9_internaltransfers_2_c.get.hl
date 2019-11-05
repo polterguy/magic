@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   date_modified:date
+   deleted:long
+   ifx_tradin3d2bccounts_ida:string
+   ifx_tradin6905ansfers_idb:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   ifx_tradin3d2bccounts_ida.like:string
+   ifx_tradin3d2bccounts_ida.mt:string
+   ifx_tradin3d2bccounts_ida.lt:string
+   ifx_tradin3d2bccounts_ida.mteq:string
+   ifx_tradin3d2bccounts_ida.lteq:string
+   ifx_tradin3d2bccounts_ida.neq:string
+   ifx_tradin3d2bccounts_ida.eq:string
+   ifx_tradin6905ansfers_idb.like:string
+   ifx_tradin6905ansfers_idb.mt:string
+   ifx_tradin6905ansfers_idb.lt:string
+   ifx_tradin6905ansfers_idb.mteq:string
+   ifx_tradin6905ansfers_idb.lteq:string
+   ifx_tradin6905ansfers_idb.neq:string
+   ifx_tradin6905ansfers_idb.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_tradingaccounts_ifx9_internaltransfers_2_c
+   args
+   columns
+      id
+      date_modified
+      deleted
+      ifx_tradin3d2bccounts_ida
+      ifx_tradin6905ansfers_idb
+slots.return-nodes:x:@wait.slots.signal/*

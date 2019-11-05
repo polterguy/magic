@@ -1,0 +1,72 @@
+.arguments
+   id:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   assigned_user_id:string
+   team_id:string
+   team_set_id:string
+   salutation:string
+   first_name:string
+   last_name:string
+   title:string
+   department:string
+   do_not_call:long
+   phone_home:string
+   phone_mobile:string
+   phone_work:string
+   phone_other:string
+   phone_fax:string
+   primary_address_street:string
+   primary_address_city:string
+   primary_address_state:string
+   primary_address_postalcode:string
+   primary_address_country:string
+   alt_address_street:string
+   alt_address_city:string
+   alt_address_state:string
+   alt_address_postalcode:string
+   alt_address_country:string
+   assistant:string
+   assistant_phone:string
+   converted:long
+   refered_by:string
+   lead_source:string
+   lead_source_description:string
+   status:string
+   status_description:string
+   reports_to_id:string
+   account_name:string
+   account_description:string
+   contact_id:string
+   account_id:string
+   opportunity_id:string
+   opportunity_name:string
+   opportunity_amount:string
+   campaign_id:string
+   birthdate:date
+   portal_name:string
+   portal_app:string
+   website:string
+   email_address:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:leads_emails
+   values
+   ids
+slots.return-nodes:x:@wait.slots.signal/*

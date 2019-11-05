@@ -1,0 +1,48 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   value:string
+   type:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   value.like:string
+   value.mt:string
+   value.lt:string
+   value.mteq:string
+   value.lteq:string
+   value.neq:string
+   value.eq:string
+   type.like:string
+   type.mt:string
+   type.lt:string
+   type.mteq:string
+   type.lteq:string
+   type.neq:string
+   type.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_dropdown_funding_comments
+   args
+   columns
+      id
+      value
+      type
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,117 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   scope:string
+   field_id:string
+   field1:string
+   field2:string
+   added_datetime:null
+   last_tried_datetime:string
+   last_result:string
+   response:string
+   success:long
+   count:long
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   scope.like:string
+   scope.mt:string
+   scope.lt:string
+   scope.mteq:string
+   scope.lteq:string
+   scope.neq:string
+   scope.eq:string
+   field_id.like:string
+   field_id.mt:string
+   field_id.lt:string
+   field_id.mteq:string
+   field_id.lteq:string
+   field_id.neq:string
+   field_id.eq:string
+   field1.like:string
+   field1.mt:string
+   field1.lt:string
+   field1.mteq:string
+   field1.lteq:string
+   field1.neq:string
+   field1.eq:string
+   field2.like:string
+   field2.mt:string
+   field2.lt:string
+   field2.mteq:string
+   field2.lteq:string
+   field2.neq:string
+   field2.eq:string
+   added_datetime.mt:null
+   added_datetime.lt:null
+   added_datetime.mteq:null
+   added_datetime.lteq:null
+   added_datetime.neq:null
+   added_datetime.eq:null
+   last_tried_datetime.like:string
+   last_tried_datetime.mt:string
+   last_tried_datetime.lt:string
+   last_tried_datetime.mteq:string
+   last_tried_datetime.lteq:string
+   last_tried_datetime.neq:string
+   last_tried_datetime.eq:string
+   last_result.like:string
+   last_result.mt:string
+   last_result.lt:string
+   last_result.mteq:string
+   last_result.lteq:string
+   last_result.neq:string
+   last_result.eq:string
+   response.like:string
+   response.mt:string
+   response.lt:string
+   response.mteq:string
+   response.lteq:string
+   response.neq:string
+   response.eq:string
+   success.mt:long
+   success.lt:long
+   success.mteq:long
+   success.lteq:long
+   success.neq:long
+   success.eq:long
+   count.mt:long
+   count.lt:long
+   count.mteq:long
+   count.lteq:long
+   count.neq:long
+   count.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_webservice_queue
+   args
+   columns
+      id
+      scope
+      field_id
+      field1
+      field2
+      added_datetime
+      last_tried_datetime
+      last_result
+      response
+      success
+      count
+slots.return-nodes:x:@wait.slots.signal/*

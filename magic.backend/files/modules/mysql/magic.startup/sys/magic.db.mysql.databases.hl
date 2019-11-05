@@ -8,7 +8,7 @@ slots.create:magic.db.mysql.databases
    /*
     * Opens up our connection
     */
-   mysql.connect:[sys]
+   mysql.connect:[information_schema]
 
 
       /*

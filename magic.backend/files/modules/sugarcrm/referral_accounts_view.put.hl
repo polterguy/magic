@@ -1,0 +1,30 @@
+.arguments
+   id_c:string
+   amount_c:string
+   ifx_tradingaccounts_id_c:string
+   ifx_tradingaccounts_id1_c:string
+   ifx26_clientcommission_id_c:string
+   path_c_1:string
+   path_c_2:string
+   path_c_3:string
+   path_c_4:string
+   level_c:long
+   account_path_c:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:referral_accounts_view
+   values
+   ids
+slots.return-nodes:x:@wait.slots.signal/*

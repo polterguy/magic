@@ -1,0 +1,91 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   user_id:string
+   type:string
+   source:string
+   content:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+   type.like:string
+   type.mt:string
+   type.lt:string
+   type.mteq:string
+   type.lteq:string
+   type.neq:string
+   type.eq:string
+   source.like:string
+   source.mt:string
+   source.lt:string
+   source.mteq:string
+   source.lteq:string
+   source.neq:string
+   source.eq:string
+   content.like:string
+   content.mt:string
+   content.lt:string
+   content.mteq:string
+   content.lteq:string
+   content.neq:string
+   content.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:vcals
+   args
+   columns
+      id
+      deleted
+      date_entered
+      date_modified
+      user_id
+      type
+      source
+      content
+slots.return-nodes:x:@wait.slots.signal/*

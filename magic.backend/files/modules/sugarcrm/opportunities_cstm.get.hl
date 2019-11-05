@@ -1,0 +1,67 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   source_of_funds_c:string
+   error_message_c:string
+   currency_c:string
+   payment_type_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   source_of_funds_c.like:string
+   source_of_funds_c.mt:string
+   source_of_funds_c.lt:string
+   source_of_funds_c.mteq:string
+   source_of_funds_c.lteq:string
+   source_of_funds_c.neq:string
+   source_of_funds_c.eq:string
+   error_message_c.like:string
+   error_message_c.mt:string
+   error_message_c.lt:string
+   error_message_c.mteq:string
+   error_message_c.lteq:string
+   error_message_c.neq:string
+   error_message_c.eq:string
+   currency_c.like:string
+   currency_c.mt:string
+   currency_c.lt:string
+   currency_c.mteq:string
+   currency_c.lteq:string
+   currency_c.neq:string
+   currency_c.eq:string
+   payment_type_c.like:string
+   payment_type_c.mt:string
+   payment_type_c.lt:string
+   payment_type_c.mteq:string
+   payment_type_c.lteq:string
+   payment_type_c.neq:string
+   payment_type_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:opportunities_cstm
+   args
+   columns
+      id_c
+      source_of_funds_c
+      error_message_c
+      currency_c
+      payment_type_c
+slots.return-nodes:x:@wait.slots.signal/*

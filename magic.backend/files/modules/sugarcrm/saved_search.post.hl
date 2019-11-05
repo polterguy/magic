@@ -1,0 +1,29 @@
+.arguments
+   team_id:string
+   team_set_id:string
+   id:string
+   name:string
+   search_module:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   assigned_user_id:string
+   contents:string
+   description:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:saved_search
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

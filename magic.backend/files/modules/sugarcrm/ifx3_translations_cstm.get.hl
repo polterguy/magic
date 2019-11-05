@@ -1,0 +1,101 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   pos_surname_c:string
+   pos_issuing_country_c:string
+   other_pos_c:string
+   pos_document_type_c:string
+   pos_issue_date_c:date
+   pos_name_c:string
+   street_2_c:string
+   id_no_expiry_c:long
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   pos_surname_c.like:string
+   pos_surname_c.mt:string
+   pos_surname_c.lt:string
+   pos_surname_c.mteq:string
+   pos_surname_c.lteq:string
+   pos_surname_c.neq:string
+   pos_surname_c.eq:string
+   pos_issuing_country_c.like:string
+   pos_issuing_country_c.mt:string
+   pos_issuing_country_c.lt:string
+   pos_issuing_country_c.mteq:string
+   pos_issuing_country_c.lteq:string
+   pos_issuing_country_c.neq:string
+   pos_issuing_country_c.eq:string
+   other_pos_c.like:string
+   other_pos_c.mt:string
+   other_pos_c.lt:string
+   other_pos_c.mteq:string
+   other_pos_c.lteq:string
+   other_pos_c.neq:string
+   other_pos_c.eq:string
+   pos_document_type_c.like:string
+   pos_document_type_c.mt:string
+   pos_document_type_c.lt:string
+   pos_document_type_c.mteq:string
+   pos_document_type_c.lteq:string
+   pos_document_type_c.neq:string
+   pos_document_type_c.eq:string
+   pos_issue_date_c.mt:date
+   pos_issue_date_c.lt:date
+   pos_issue_date_c.mteq:date
+   pos_issue_date_c.lteq:date
+   pos_issue_date_c.neq:date
+   pos_issue_date_c.eq:date
+   pos_name_c.like:string
+   pos_name_c.mt:string
+   pos_name_c.lt:string
+   pos_name_c.mteq:string
+   pos_name_c.lteq:string
+   pos_name_c.neq:string
+   pos_name_c.eq:string
+   street_2_c.like:string
+   street_2_c.mt:string
+   street_2_c.lt:string
+   street_2_c.mteq:string
+   street_2_c.lteq:string
+   street_2_c.neq:string
+   street_2_c.eq:string
+   id_no_expiry_c.mt:long
+   id_no_expiry_c.lt:long
+   id_no_expiry_c.mteq:long
+   id_no_expiry_c.lteq:long
+   id_no_expiry_c.neq:long
+   id_no_expiry_c.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx3_translations_cstm
+   args
+   columns
+      id_c
+      pos_surname_c
+      pos_issuing_country_c
+      other_pos_c
+      pos_document_type_c
+      pos_issue_date_c
+      pos_name_c
+      street_2_c
+      id_no_expiry_c
+slots.return-nodes:x:@wait.slots.signal/*

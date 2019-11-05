@@ -1,0 +1,27 @@
+.arguments
+   session_id:string
+   date_start:date
+   date_end:date
+   seconds:long
+   client_ip:string
+   user_id:string
+   active:long
+   round_trips:long
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:tracker_sessions
+   return-id:bool:true
+   values
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   prospect_list_id:string
+   campaign_id:string
+   date_modified:date
+   deleted:long
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   prospect_list_id.like:string
+   prospect_list_id.mt:string
+   prospect_list_id.lt:string
+   prospect_list_id.mteq:string
+   prospect_list_id.lteq:string
+   prospect_list_id.neq:string
+   prospect_list_id.eq:string
+   campaign_id.like:string
+   campaign_id.mt:string
+   campaign_id.lt:string
+   campaign_id.mteq:string
+   campaign_id.lteq:string
+   campaign_id.neq:string
+   campaign_id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:prospect_list_campaigns
+   args
+   columns
+      id
+      prospect_list_id
+      campaign_id
+      date_modified
+      deleted
+slots.return-nodes:x:@wait.slots.signal/*

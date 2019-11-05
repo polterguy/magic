@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   date_modified:date
+   deleted:long
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.like:string
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.mt:string
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.lt:string
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.mteq:string
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.lteq:string
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.neq:string
+   zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida.eq:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.like:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.mt:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.lt:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.mteq:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.lteq:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.neq:string
+   zr2_reportcontainer_zr2_reportzr2_report_idb.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:zr2_reportcontainer_zr2_report_c
+   args
+   columns
+      id
+      date_modified
+      deleted
+      zr2_reportcontainer_zr2_reportzr2_reportcontainer_ida
+      zr2_reportcontainer_zr2_reportzr2_report_idb
+slots.return-nodes:x:@wait.slots.signal/*

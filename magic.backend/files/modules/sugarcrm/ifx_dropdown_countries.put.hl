@@ -1,0 +1,30 @@
+.arguments
+   value:string
+   description:string
+   phone_code:string
+   client_comments:string
+   postcode_regex:string
+   eu:long
+   fatf:long
+   amltf:long
+   cpi:long
+   lang:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx_dropdown_countries
+   values
+   ids
+      value:x:@.arguments/*/value
+slots.return-nodes:x:@wait.slots.signal/*

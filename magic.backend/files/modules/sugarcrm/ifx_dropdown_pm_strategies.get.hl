@@ -1,0 +1,85 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   value:string
+   description:string
+   sub_group_book:string
+   sub_group_stp:string
+   master_book:string
+   master_stp:string
+   currency:string
+   value.like:string
+   value.mt:string
+   value.lt:string
+   value.mteq:string
+   value.lteq:string
+   value.neq:string
+   value.eq:string
+   description.like:string
+   description.mt:string
+   description.lt:string
+   description.mteq:string
+   description.lteq:string
+   description.neq:string
+   description.eq:string
+   sub_group_book.like:string
+   sub_group_book.mt:string
+   sub_group_book.lt:string
+   sub_group_book.mteq:string
+   sub_group_book.lteq:string
+   sub_group_book.neq:string
+   sub_group_book.eq:string
+   sub_group_stp.like:string
+   sub_group_stp.mt:string
+   sub_group_stp.lt:string
+   sub_group_stp.mteq:string
+   sub_group_stp.lteq:string
+   sub_group_stp.neq:string
+   sub_group_stp.eq:string
+   master_book.like:string
+   master_book.mt:string
+   master_book.lt:string
+   master_book.mteq:string
+   master_book.lteq:string
+   master_book.neq:string
+   master_book.eq:string
+   master_stp.like:string
+   master_stp.mt:string
+   master_stp.lt:string
+   master_stp.mteq:string
+   master_stp.lteq:string
+   master_stp.neq:string
+   master_stp.eq:string
+   currency.like:string
+   currency.mt:string
+   currency.lt:string
+   currency.mteq:string
+   currency.lteq:string
+   currency.neq:string
+   currency.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_dropdown_pm_strategies
+   args
+   columns
+      value
+      description
+      sub_group_book
+      sub_group_stp
+      master_book
+      master_stp
+      currency
+slots.return-nodes:x:@wait.slots.signal/*

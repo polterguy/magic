@@ -1,0 +1,40 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   name:string
+   new_name:string
+   name.like:string
+   name.mt:string
+   name.lt:string
+   name.mteq:string
+   name.lteq:string
+   name.neq:string
+   name.eq:string
+   new_name.like:string
+   new_name.mt:string
+   new_name.lt:string
+   new_name.mteq:string
+   new_name.lteq:string
+   new_name.neq:string
+   new_name.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:maria_comm_plan_conv
+   args
+   columns
+      name
+      new_name
+slots.return-nodes:x:@wait.slots.signal/*

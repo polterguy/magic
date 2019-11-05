@@ -1,0 +1,25 @@
+.arguments
+   id_batch:long
+   serverid:long
+   source_mt4_group:string
+   target_mt4_group:string
+   success:long
+   date_entered:date
+   date_finished:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:mass_mt4_groups_update
+   return-id:bool:true
+   values
+slots.return-nodes:x:@wait.slots.signal/*

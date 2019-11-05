@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   portal_bonus_id_c:string
+   promotion_code_c:string
+   terms_c:long
+   manual_c:long
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   portal_bonus_id_c.like:string
+   portal_bonus_id_c.mt:string
+   portal_bonus_id_c.lt:string
+   portal_bonus_id_c.mteq:string
+   portal_bonus_id_c.lteq:string
+   portal_bonus_id_c.neq:string
+   portal_bonus_id_c.eq:string
+   promotion_code_c.like:string
+   promotion_code_c.mt:string
+   promotion_code_c.lt:string
+   promotion_code_c.mteq:string
+   promotion_code_c.lteq:string
+   promotion_code_c.neq:string
+   promotion_code_c.eq:string
+   terms_c.mt:long
+   terms_c.lt:long
+   terms_c.mteq:long
+   terms_c.lteq:long
+   terms_c.neq:long
+   terms_c.eq:long
+   manual_c.mt:long
+   manual_c.lt:long
+   manual_c.mteq:long
+   manual_c.lteq:long
+   manual_c.neq:long
+   manual_c.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx6_bonus_cstm
+   args
+   columns
+      id_c
+      portal_bonus_id_c
+      promotion_code_c
+      terms_c
+      manual_c
+slots.return-nodes:x:@wait.slots.signal/*
