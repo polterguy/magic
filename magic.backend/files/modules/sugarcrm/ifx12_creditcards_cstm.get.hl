@@ -1,0 +1,67 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   portal_card_id_c:string
+   lastdigits_c:string
+   firstdigits_c:string
+   provider_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   portal_card_id_c.like:string
+   portal_card_id_c.mt:string
+   portal_card_id_c.lt:string
+   portal_card_id_c.mteq:string
+   portal_card_id_c.lteq:string
+   portal_card_id_c.neq:string
+   portal_card_id_c.eq:string
+   lastdigits_c.like:string
+   lastdigits_c.mt:string
+   lastdigits_c.lt:string
+   lastdigits_c.mteq:string
+   lastdigits_c.lteq:string
+   lastdigits_c.neq:string
+   lastdigits_c.eq:string
+   firstdigits_c.like:string
+   firstdigits_c.mt:string
+   firstdigits_c.lt:string
+   firstdigits_c.mteq:string
+   firstdigits_c.lteq:string
+   firstdigits_c.neq:string
+   firstdigits_c.eq:string
+   provider_c.like:string
+   provider_c.mt:string
+   provider_c.lt:string
+   provider_c.mteq:string
+   provider_c.lteq:string
+   provider_c.neq:string
+   provider_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx12_creditcards_cstm
+   args
+   columns
+      id_c
+      portal_card_id_c
+      lastdigits_c
+      firstdigits_c
+      provider_c
+slots.return-nodes:x:@wait.slots.signal/*

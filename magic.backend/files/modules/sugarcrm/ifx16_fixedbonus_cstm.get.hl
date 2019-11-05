@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   minimum_deposit_c:decimal
+   promotion_type_c:string
+   account_types_c:string
+   lots_traded_c:decimal
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   minimum_deposit_c.mt:decimal
+   minimum_deposit_c.lt:decimal
+   minimum_deposit_c.mteq:decimal
+   minimum_deposit_c.lteq:decimal
+   minimum_deposit_c.neq:decimal
+   minimum_deposit_c.eq:decimal
+   promotion_type_c.like:string
+   promotion_type_c.mt:string
+   promotion_type_c.lt:string
+   promotion_type_c.mteq:string
+   promotion_type_c.lteq:string
+   promotion_type_c.neq:string
+   promotion_type_c.eq:string
+   account_types_c.like:string
+   account_types_c.mt:string
+   account_types_c.lt:string
+   account_types_c.mteq:string
+   account_types_c.lteq:string
+   account_types_c.neq:string
+   account_types_c.eq:string
+   lots_traded_c.mt:decimal
+   lots_traded_c.lt:decimal
+   lots_traded_c.mteq:decimal
+   lots_traded_c.lteq:decimal
+   lots_traded_c.neq:decimal
+   lots_traded_c.eq:decimal
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx16_fixedbonus_cstm
+   args
+   columns
+      id_c
+      minimum_deposit_c
+      promotion_type_c
+      account_types_c
+      lots_traded_c
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   etype:long
+   eobject:string
+   etime:date
+   description:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   etype.mt:long
+   etype.lt:long
+   etype.mteq:long
+   etype.lteq:long
+   etype.neq:long
+   etype.eq:long
+   eobject.like:string
+   eobject.mt:string
+   eobject.lt:string
+   eobject.mteq:string
+   eobject.lteq:string
+   eobject.neq:string
+   eobject.eq:string
+   etime.mt:date
+   etime.lt:date
+   etime.mteq:date
+   etime.lteq:date
+   etime.neq:date
+   etime.eq:date
+   description.like:string
+   description.mt:string
+   description.lt:string
+   description.mteq:string
+   description.lteq:string
+   description.neq:string
+   description.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:em_events
+   args
+   columns
+      id
+      etype
+      eobject
+      etime
+      description
+slots.return-nodes:x:@wait.slots.signal/*

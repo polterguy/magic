@@ -1,0 +1,111 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   email_id:string
+   from_addr:string
+   reply_to_addr:string
+   to_addrs:string
+   cc_addrs:string
+   bcc_addrs:string
+   description:string
+   description_html:string
+   raw_source:string
+   deleted:long
+   email_id.like:string
+   email_id.mt:string
+   email_id.lt:string
+   email_id.mteq:string
+   email_id.lteq:string
+   email_id.neq:string
+   email_id.eq:string
+   from_addr.like:string
+   from_addr.mt:string
+   from_addr.lt:string
+   from_addr.mteq:string
+   from_addr.lteq:string
+   from_addr.neq:string
+   from_addr.eq:string
+   reply_to_addr.like:string
+   reply_to_addr.mt:string
+   reply_to_addr.lt:string
+   reply_to_addr.mteq:string
+   reply_to_addr.lteq:string
+   reply_to_addr.neq:string
+   reply_to_addr.eq:string
+   to_addrs.like:string
+   to_addrs.mt:string
+   to_addrs.lt:string
+   to_addrs.mteq:string
+   to_addrs.lteq:string
+   to_addrs.neq:string
+   to_addrs.eq:string
+   cc_addrs.like:string
+   cc_addrs.mt:string
+   cc_addrs.lt:string
+   cc_addrs.mteq:string
+   cc_addrs.lteq:string
+   cc_addrs.neq:string
+   cc_addrs.eq:string
+   bcc_addrs.like:string
+   bcc_addrs.mt:string
+   bcc_addrs.lt:string
+   bcc_addrs.mteq:string
+   bcc_addrs.lteq:string
+   bcc_addrs.neq:string
+   bcc_addrs.eq:string
+   description.like:string
+   description.mt:string
+   description.lt:string
+   description.mteq:string
+   description.lteq:string
+   description.neq:string
+   description.eq:string
+   description_html.like:string
+   description_html.mt:string
+   description_html.lt:string
+   description_html.mteq:string
+   description_html.lteq:string
+   description_html.neq:string
+   description_html.eq:string
+   raw_source.like:string
+   raw_source.mt:string
+   raw_source.lt:string
+   raw_source.mteq:string
+   raw_source.lteq:string
+   raw_source.neq:string
+   raw_source.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:emails_text
+   args
+   columns
+      email_id
+      from_addr
+      reply_to_addr
+      to_addrs
+      cc_addrs
+      bcc_addrs
+      description
+      description_html
+      raw_source
+      deleted
+slots.return-nodes:x:@wait.slots.signal/*

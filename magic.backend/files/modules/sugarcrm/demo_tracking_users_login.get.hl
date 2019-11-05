@@ -1,0 +1,46 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   date_insert:date
+   count:long
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   date_insert.mt:date
+   date_insert.lt:date
+   date_insert.mteq:date
+   date_insert.lteq:date
+   date_insert.neq:date
+   date_insert.eq:date
+   count.mt:long
+   count.lt:long
+   count.mteq:long
+   count.lteq:long
+   count.neq:long
+   count.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:demo_tracking_users_login
+   args
+   columns
+      id
+      date_insert
+      count
+slots.return-nodes:x:@wait.slots.signal/*

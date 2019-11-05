@@ -1,0 +1,56 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   bean_id:string
+   bean_module:string
+   date_modified:date
+   processed:long
+   bean_id.like:string
+   bean_id.mt:string
+   bean_id.lt:string
+   bean_id.mteq:string
+   bean_id.lteq:string
+   bean_id.neq:string
+   bean_id.eq:string
+   bean_module.like:string
+   bean_module.mt:string
+   bean_module.lt:string
+   bean_module.mteq:string
+   bean_module.lteq:string
+   bean_module.neq:string
+   bean_module.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   processed.mt:long
+   processed.lt:long
+   processed.mteq:long
+   processed.lteq:long
+   processed.neq:long
+   processed.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:fts_queue
+   args
+   columns
+      bean_id
+      bean_module
+      date_modified
+      processed
+slots.return-nodes:x:@wait.slots.signal/*

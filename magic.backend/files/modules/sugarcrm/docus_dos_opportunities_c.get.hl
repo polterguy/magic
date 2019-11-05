@@ -1,0 +1,65 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   date_modified:date
+   deleted:long
+   docus_d50fdties_ida:string
+   docus_d8daeatus_idb:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   docus_d50fdties_ida.like:string
+   docus_d50fdties_ida.mt:string
+   docus_d50fdties_ida.lt:string
+   docus_d50fdties_ida.mteq:string
+   docus_d50fdties_ida.lteq:string
+   docus_d50fdties_ida.neq:string
+   docus_d50fdties_ida.eq:string
+   docus_d8daeatus_idb.like:string
+   docus_d8daeatus_idb.mt:string
+   docus_d8daeatus_idb.lt:string
+   docus_d8daeatus_idb.mteq:string
+   docus_d8daeatus_idb.lteq:string
+   docus_d8daeatus_idb.neq:string
+   docus_d8daeatus_idb.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:docus_dos_opportunities_c
+   args
+   columns
+      id
+      date_modified
+      deleted
+      docus_d50fdties_ida
+      docus_d8daeatus_idb
+slots.return-nodes:x:@wait.slots.signal/*

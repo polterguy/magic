@@ -1,0 +1,24 @@
+.arguments
+   id:string
+   date_modified:date
+   deleted:long
+   documents_ifx_tradingaccounts_1documents_ida:string
+   documents_ifx_tradingaccounts_1ifx_tradingaccounts_idb:string
+   document_revision_id:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:documents_ifx_tradingaccounts_1_c
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

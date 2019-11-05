@@ -1,0 +1,41 @@
+.arguments
+   id:string
+   name:string
+   vname:string
+   comments:string
+   help:string
+   custom_module:string
+   type:string
+   len:long
+   required:long
+   default_value:string
+   date_modified:date
+   deleted:long
+   audited:long
+   massupdate:long
+   duplicate_merge:long
+   reportable:long
+   importable:string
+   ext1:string
+   ext2:string
+   ext3:string
+   ext4:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:fields_meta_data
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

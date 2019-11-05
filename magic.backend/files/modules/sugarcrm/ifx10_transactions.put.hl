@@ -1,0 +1,49 @@
+.arguments
+   id:string
+   name:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   team_id:string
+   team_set_id:string
+   assigned_user_id:string
+   ifx10_transactions_type:string
+   lead_source:string
+   amount:decimal
+   amount_usdollar:decimal
+   currency_id:string
+   date_closed:date
+   next_step:string
+   sales_stage:string
+   probability:decimal
+   reference:string
+   status:string
+   direct:long
+   stp:long
+   company_code:string
+   post_date:date
+   doc_currency:string
+   company_currency:string
+   document_type:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx10_transactions
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

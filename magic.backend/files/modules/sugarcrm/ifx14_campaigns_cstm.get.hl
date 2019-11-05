@@ -1,0 +1,49 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   onoff_c:string
+   budget_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   onoff_c.like:string
+   onoff_c.mt:string
+   onoff_c.lt:string
+   onoff_c.mteq:string
+   onoff_c.lteq:string
+   onoff_c.neq:string
+   onoff_c.eq:string
+   budget_c.like:string
+   budget_c.mt:string
+   budget_c.lt:string
+   budget_c.mteq:string
+   budget_c.lteq:string
+   budget_c.neq:string
+   budget_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx14_campaigns_cstm
+   args
+   columns
+      id_c
+      onoff_c
+      budget_c
+slots.return-nodes:x:@wait.slots.signal/*

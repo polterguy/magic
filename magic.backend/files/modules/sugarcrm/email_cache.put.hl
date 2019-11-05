@@ -1,0 +1,35 @@
+.arguments
+   ie_id:string
+   mbox:string
+   subject:string
+   fromaddr:string
+   toaddr:string
+   senddate:date
+   message_id:string
+   mailsize:long
+   imap_uid:long
+   msgno:long
+   recent:long
+   flagged:long
+   answered:long
+   deleted:long
+   seen:long
+   draft:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:email_cache
+   values
+   ids
+slots.return-nodes:x:@wait.slots.signal/*
