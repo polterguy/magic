@@ -110,6 +110,7 @@ slots.create:magic.db.mysql.columns
              */
             case:date
             case:datetime
+            case:timestamp
                set-value:x:@.type
                   .:date
 
