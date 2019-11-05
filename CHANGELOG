@@ -68,3 +68,13 @@
 * Fixed a bug in filtering your endpoints in the frontend.
 
 * Significantly improved the UX of the Files component in the frontend.
+
+
+
+## Version 5.5.3
+
+* Fixed error in MySQL CRUDifier that prevented us form handling timestamp type of columns correctly.
+
+* Changed the default connection database for MySQL from "sys" to "information_schema", since it is often more available regardless of user`s permissions.
+
+* Made table selector in CRUDifier larger, to accommodate for tables with longer names, trying to display entire table name.
