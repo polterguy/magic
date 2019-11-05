@@ -1,0 +1,37 @@
+.arguments
+   assigned_user_id:string
+   team_id:string
+   team_set_id:string
+   id:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   name:string
+   file_mime_type:string
+   filename:string
+   parent_type:string
+   parent_id:string
+   contact_id:string
+   portal_flag:long
+   embed_flag:long
+   description:string
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:notes_deleted
+   values
+   ids
+slots.return-nodes:x:@wait.slots.signal/*

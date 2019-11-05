@@ -1,0 +1,85 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   type_c:string
+   portal_request_id_c:string
+   reason_c:string
+   leverage_c:string
+   ib_type_c:string
+   ifx_tradingaccounts_id_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   type_c.like:string
+   type_c.mt:string
+   type_c.lt:string
+   type_c.mteq:string
+   type_c.lteq:string
+   type_c.neq:string
+   type_c.eq:string
+   portal_request_id_c.like:string
+   portal_request_id_c.mt:string
+   portal_request_id_c.lt:string
+   portal_request_id_c.mteq:string
+   portal_request_id_c.lteq:string
+   portal_request_id_c.neq:string
+   portal_request_id_c.eq:string
+   reason_c.like:string
+   reason_c.mt:string
+   reason_c.lt:string
+   reason_c.mteq:string
+   reason_c.lteq:string
+   reason_c.neq:string
+   reason_c.eq:string
+   leverage_c.like:string
+   leverage_c.mt:string
+   leverage_c.lt:string
+   leverage_c.mteq:string
+   leverage_c.lteq:string
+   leverage_c.neq:string
+   leverage_c.eq:string
+   ib_type_c.like:string
+   ib_type_c.mt:string
+   ib_type_c.lt:string
+   ib_type_c.mteq:string
+   ib_type_c.lteq:string
+   ib_type_c.neq:string
+   ib_type_c.eq:string
+   ifx_tradingaccounts_id_c.like:string
+   ifx_tradingaccounts_id_c.mt:string
+   ifx_tradingaccounts_id_c.lt:string
+   ifx_tradingaccounts_id_c.mteq:string
+   ifx_tradingaccounts_id_c.lteq:string
+   ifx_tradingaccounts_id_c.neq:string
+   ifx_tradingaccounts_id_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx8_premiumrequest_cstm
+   args
+   columns
+      id_c
+      type_c
+      portal_request_id_c
+      reason_c
+      leverage_c
+      ib_type_c
+      ifx_tradingaccounts_id_c
+slots.return-nodes:x:@wait.slots.signal/*

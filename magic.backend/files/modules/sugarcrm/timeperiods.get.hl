@@ -1,0 +1,106 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   name:string
+   parent_id:string
+   start_date:date
+   end_date:date
+   created_by:string
+   date_entered:date
+   date_modified:date
+   deleted:long
+   is_fiscal_year:long
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   name.like:string
+   name.mt:string
+   name.lt:string
+   name.mteq:string
+   name.lteq:string
+   name.neq:string
+   name.eq:string
+   parent_id.like:string
+   parent_id.mt:string
+   parent_id.lt:string
+   parent_id.mteq:string
+   parent_id.lteq:string
+   parent_id.neq:string
+   parent_id.eq:string
+   start_date.mt:date
+   start_date.lt:date
+   start_date.mteq:date
+   start_date.lteq:date
+   start_date.neq:date
+   start_date.eq:date
+   end_date.mt:date
+   end_date.lt:date
+   end_date.mteq:date
+   end_date.lteq:date
+   end_date.neq:date
+   end_date.eq:date
+   created_by.like:string
+   created_by.mt:string
+   created_by.lt:string
+   created_by.mteq:string
+   created_by.lteq:string
+   created_by.neq:string
+   created_by.eq:string
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   is_fiscal_year.mt:long
+   is_fiscal_year.lt:long
+   is_fiscal_year.mteq:long
+   is_fiscal_year.lteq:long
+   is_fiscal_year.neq:long
+   is_fiscal_year.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:timeperiods
+   args
+   columns
+      id
+      name
+      parent_id
+      start_date
+      end_date
+      created_by
+      date_entered
+      date_modified
+      deleted
+      is_fiscal_year
+slots.return-nodes:x:@wait.slots.signal/*

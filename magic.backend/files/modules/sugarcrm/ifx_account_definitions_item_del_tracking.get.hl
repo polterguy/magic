@@ -1,0 +1,83 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   old_id:long
+   account_definition_id:string
+   old_account_definition_id:string
+   server:string
+   count:string
+   current:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   old_id.mt:long
+   old_id.lt:long
+   old_id.mteq:long
+   old_id.lteq:long
+   old_id.neq:long
+   old_id.eq:long
+   account_definition_id.like:string
+   account_definition_id.mt:string
+   account_definition_id.lt:string
+   account_definition_id.mteq:string
+   account_definition_id.lteq:string
+   account_definition_id.neq:string
+   account_definition_id.eq:string
+   old_account_definition_id.like:string
+   old_account_definition_id.mt:string
+   old_account_definition_id.lt:string
+   old_account_definition_id.mteq:string
+   old_account_definition_id.lteq:string
+   old_account_definition_id.neq:string
+   old_account_definition_id.eq:string
+   server.like:string
+   server.mt:string
+   server.lt:string
+   server.mteq:string
+   server.lteq:string
+   server.neq:string
+   server.eq:string
+   count.like:string
+   count.mt:string
+   count.lt:string
+   count.mteq:string
+   count.lteq:string
+   count.neq:string
+   count.eq:string
+   current.like:string
+   current.mt:string
+   current.lt:string
+   current.mteq:string
+   current.lteq:string
+   current.neq:string
+   current.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_account_definitions_item_del_tracking
+   args
+   columns
+      id
+      old_id
+      account_definition_id
+      old_account_definition_id
+      server
+      count
+      current
+slots.return-nodes:x:@wait.slots.signal/*

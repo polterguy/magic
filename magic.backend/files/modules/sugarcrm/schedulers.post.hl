@@ -1,0 +1,34 @@
+.arguments
+   id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   created_by:string
+   modified_user_id:string
+   name:string
+   job:string
+   date_time_start:date
+   date_time_end:date
+   job_interval:string
+   time_from:null
+   time_to:null
+   last_run:date
+   status:string
+   catch_up:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:schedulers
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,40 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   ifx27_instrument_id_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   ifx27_instrument_id_c.like:string
+   ifx27_instrument_id_c.mt:string
+   ifx27_instrument_id_c.lt:string
+   ifx27_instrument_id_c.mteq:string
+   ifx27_instrument_id_c.lteq:string
+   ifx27_instrument_id_c.neq:string
+   ifx27_instrument_id_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx28_rebateinstrument_cstm
+   args
+   columns
+      id_c
+      ifx27_instrument_id_c
+slots.return-nodes:x:@wait.slots.signal/*

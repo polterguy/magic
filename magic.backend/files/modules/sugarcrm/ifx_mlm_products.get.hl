@@ -1,0 +1,57 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   symbol:string
+   product:string
+   product_key:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   symbol.like:string
+   symbol.mt:string
+   symbol.lt:string
+   symbol.mteq:string
+   symbol.lteq:string
+   symbol.neq:string
+   symbol.eq:string
+   product.like:string
+   product.mt:string
+   product.lt:string
+   product.mteq:string
+   product.lteq:string
+   product.neq:string
+   product.eq:string
+   product_key.like:string
+   product_key.mt:string
+   product_key.lt:string
+   product_key.mteq:string
+   product_key.lteq:string
+   product_key.neq:string
+   product_key.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_mlm_products
+   args
+   columns
+      id
+      symbol
+      product
+      product_key
+slots.return-nodes:x:@wait.slots.signal/*

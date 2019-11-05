@@ -1,0 +1,40 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_tradingaccount:string
+   post_data:string
+   id_tradingaccount.like:string
+   id_tradingaccount.mt:string
+   id_tradingaccount.lt:string
+   id_tradingaccount.mteq:string
+   id_tradingaccount.lteq:string
+   id_tradingaccount.neq:string
+   id_tradingaccount.eq:string
+   post_data.like:string
+   post_data.mt:string
+   post_data.lt:string
+   post_data.mteq:string
+   post_data.lteq:string
+   post_data.neq:string
+   post_data.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_account_tr_autoapproval_tracking
+   args
+   columns
+      id_tradingaccount
+      post_data
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,49 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   value:string
+   description:string
+   processor:string
+   value.like:string
+   value.mt:string
+   value.lt:string
+   value.mteq:string
+   value.lteq:string
+   value.neq:string
+   value.eq:string
+   description.like:string
+   description.mt:string
+   description.lt:string
+   description.mteq:string
+   description.lteq:string
+   description.neq:string
+   description.eq:string
+   processor.like:string
+   processor.mt:string
+   processor.lt:string
+   processor.mteq:string
+   processor.lteq:string
+   processor.neq:string
+   processor.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx7_case_types
+   args
+   columns
+      value
+      description
+      processor
+slots.return-nodes:x:@wait.slots.signal/*

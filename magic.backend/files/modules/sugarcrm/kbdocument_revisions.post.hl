@@ -1,0 +1,32 @@
+.arguments
+   id:string
+   change_log:string
+   kbdocument_id:string
+   date_entered:date
+   created_by:string
+   filename:string
+   file_ext:string
+   file_mime_type:string
+   revision:string
+   deleted:long
+   latest:long
+   kbcontent_id:string
+   document_revision_id:string
+   date_modified:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:kbdocument_revisions
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,93 @@
+.arguments
+   id_c:string
+   rating_c:string
+   call_back_enquiry_c:string
+   nickname_c:string
+   click_id_c:string
+   reg_account_type_c:string
+   portal_language_c:string
+   ga_keyword_c:string
+   country_c:string
+   campaign_source_c:string
+   campaign_term_c:string
+   campaign_content_c:string
+   ready_for_live_c:string
+   out_of_reach_c:string
+   bad_lead_c:string
+   working_with_competitor_c:string
+   interested_c:string
+   prospect_clients_c:string
+   no_employees_c:string
+   annual_revenue_c:string
+   ip_c:string
+   in_progress_c:string
+   campaign_name_c:string
+   not_interested_c:string
+   not_process_payment_c:string
+   comments_c:string
+   need_more_time_c:string
+   prospect_equity_c:string
+   industry_c:string
+   other_services_c:string
+   campaign_medium_c:string
+   date_converted_c:date
+   affid_c:string
+   last_contacted_c:date
+   reassigned_date_c:date
+   reassigned_c:long
+   user_id_c:string
+   seminar_code_c:string
+   seminar_date_c:date
+   seminar_city_c:string
+   seminar_time_c:string
+   campaign_email_verified_c:long
+   referring_url_c:string
+   browser_language_c:string
+   ifx21_brand_id_c:string
+   sales_category_c:string
+   sms_report_c:string
+   call_result_log_c:string
+   request_query_c:string
+   original_first_name_c:string
+   original_last_name_c:string
+   lead_contacted_c:string
+   cxid_c:string
+   assistant_cellxpert_c:string
+   department_cxid_c:string
+   cellxpert_referring_url_c:string
+   classification_c:string
+   redistributed_c:long
+   recreation_date_c:date
+   re_old_am_c:string
+   campaignredistribution_c:long
+   campaignredistributiondate_c:date
+   old_classificationn_c:string
+   affiliateredistribution_c:long
+   ibredistribution_c:long
+   organicredistribution_c:long
+   affiliateredistributiondate_c:date
+   ibredistributiondate_c:date
+   organicredistributiondate_c:date
+   redistribution_daten_c:date
+   redistributedn_c:long
+   lead_id_search_c:string
+   lead_tags_c:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:leads_cstm
+   values
+   ids
+      id_c:x:@.arguments/*/id_c
+slots.return-nodes:x:@wait.slots.signal/*

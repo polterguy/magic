@@ -1,0 +1,124 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   system_id:long
+   system_key:string
+   user_id:string
+   last_connect_date:date
+   status:string
+   num_syncs:long
+   system_name:string
+   install_method:string
+   date_entered:date
+   date_modified:date
+   deleted:long
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   system_id.mt:long
+   system_id.lt:long
+   system_id.mteq:long
+   system_id.lteq:long
+   system_id.neq:long
+   system_id.eq:long
+   system_key.like:string
+   system_key.mt:string
+   system_key.lt:string
+   system_key.mteq:string
+   system_key.lteq:string
+   system_key.neq:string
+   system_key.eq:string
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+   last_connect_date.mt:date
+   last_connect_date.lt:date
+   last_connect_date.mteq:date
+   last_connect_date.lteq:date
+   last_connect_date.neq:date
+   last_connect_date.eq:date
+   status.like:string
+   status.mt:string
+   status.lt:string
+   status.mteq:string
+   status.lteq:string
+   status.neq:string
+   status.eq:string
+   num_syncs.mt:long
+   num_syncs.lt:long
+   num_syncs.mteq:long
+   num_syncs.lteq:long
+   num_syncs.neq:long
+   num_syncs.eq:long
+   system_name.like:string
+   system_name.mt:string
+   system_name.lt:string
+   system_name.mteq:string
+   system_name.lteq:string
+   system_name.neq:string
+   system_name.eq:string
+   install_method.like:string
+   install_method.mt:string
+   install_method.lt:string
+   install_method.mteq:string
+   install_method.lteq:string
+   install_method.neq:string
+   install_method.eq:string
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:systems
+   args
+   columns
+      id
+      system_id
+      system_key
+      user_id
+      last_connect_date
+      status
+      num_syncs
+      system_name
+      install_method
+      date_entered
+      date_modified
+      deleted
+slots.return-nodes:x:@wait.slots.signal/*

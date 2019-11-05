@@ -1,0 +1,56 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   monitor_id:string
+   query_id:string
+   date_modified:date
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   monitor_id.like:string
+   monitor_id.mt:string
+   monitor_id.lt:string
+   monitor_id.mteq:string
+   monitor_id.lteq:string
+   monitor_id.neq:string
+   monitor_id.eq:string
+   query_id.like:string
+   query_id.mt:string
+   query_id.lt:string
+   query_id.mteq:string
+   query_id.lteq:string
+   query_id.neq:string
+   query_id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:tracker_tracker_queries
+   args
+   columns
+      id
+      monitor_id
+      query_id
+      date_modified
+slots.return-nodes:x:@wait.slots.signal/*

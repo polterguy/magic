@@ -1,0 +1,37 @@
+.arguments
+   id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   field_value:string
+   rel_email_value:string
+   rel_module1:string
+   rel_module2:string
+   rel_module1_type:string
+   rel_module2_type:string
+   where_filter:long
+   user_type:string
+   array_type:string
+   relate_type:string
+   address_type:string
+   parent_id:string
+   user_display_type:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:workflow_alerts
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

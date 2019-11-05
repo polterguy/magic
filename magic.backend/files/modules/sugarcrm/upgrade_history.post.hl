@@ -1,0 +1,30 @@
+.arguments
+   id:string
+   filename:string
+   md5sum:string
+   type:string
+   status:string
+   version:string
+   name:string
+   description:string
+   id_name:string
+   manifest:string
+   date_entered:date
+   enabled:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:upgrade_history
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

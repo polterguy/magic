@@ -1,0 +1,25 @@
+.arguments
+   id:string
+   date_modified:date
+   deleted:long
+   ifx9_internaltransfers_ifx15_bonus_1ifx9_internaltransfers_ida:string
+   ifx9_internaltransfers_ifx15_bonus_1ifx15_bonus_idb:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx9_internaltransfers_ifx15_bonus_1_c
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

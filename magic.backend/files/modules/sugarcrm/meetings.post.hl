@@ -1,0 +1,56 @@
+.arguments
+   id:string
+   name:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   assigned_user_id:string
+   team_id:string
+   team_set_id:string
+   location:string
+   password:string
+   join_url:string
+   host_url:string
+   displayed_url:string
+   creator:string
+   external_id:string
+   duration_hours:long
+   duration_minutes:long
+   date_start:date
+   date_end:date
+   parent_type:string
+   status:string
+   type:string
+   parent_id:string
+   reminder_time:long
+   email_reminder_time:long
+   email_reminder_sent:long
+   outlook_id:string
+   sequence:long
+   repeat_type:string
+   repeat_interval:long
+   repeat_dow:string
+   repeat_until:date
+   repeat_count:long
+   repeat_parent_id:string
+   recurring_source:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:meetings
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

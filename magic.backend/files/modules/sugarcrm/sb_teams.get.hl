@@ -1,0 +1,55 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   name:date
+   assigned_team:string
+   monthly_target:decimal
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   name.mt:date
+   name.lt:date
+   name.mteq:date
+   name.lteq:date
+   name.neq:date
+   name.eq:date
+   assigned_team.like:string
+   assigned_team.mt:string
+   assigned_team.lt:string
+   assigned_team.mteq:string
+   assigned_team.lteq:string
+   assigned_team.neq:string
+   assigned_team.eq:string
+   monthly_target.mt:decimal
+   monthly_target.lt:decimal
+   monthly_target.mteq:decimal
+   monthly_target.lteq:decimal
+   monthly_target.neq:decimal
+   monthly_target.eq:decimal
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:sb_teams
+   args
+   columns
+      id
+      name
+      assigned_team
+      monthly_target
+slots.return-nodes:x:@wait.slots.signal/*

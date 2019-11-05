@@ -1,0 +1,33 @@
+.arguments
+   id:string
+   user_id:string
+   timeperiod_id:string
+   quota_type:string
+   amount:long
+   amount_base_currency:long
+   currency_id:string
+   committed:long
+   modified_user_id:string
+   created_by:string
+   date_entered:date
+   date_modified:date
+   deleted:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:quotas
+   values
+   ids
+      id:x:@.arguments/*/id
+slots.return-nodes:x:@wait.slots.signal/*

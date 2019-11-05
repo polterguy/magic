@@ -15,7 +15,7 @@ auth.ticket.verify:root
 /*
  * Connecting to "sys" database.
  */
-mysql.connect:[sys]
+mysql.connect:[information_schema]
 
 
    /*

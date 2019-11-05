@@ -1,0 +1,32 @@
+.arguments
+   id_c:string
+   company_c:string
+   ifx21_brand_id_c:string
+   entity_c:string
+   country_c:string
+   except_country_c:string
+   all_countries_c:long
+   tradingaccount_type_c:string
+   all_tradingaccount_type_c:long
+   except_tradingaccount_type_c:string
+   approved_c:long
+   read_only_c:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:ifx37_accountautoapproval_cstm
+   values
+   ids
+      id_c:x:@.arguments/*/id_c
+slots.return-nodes:x:@wait.slots.signal/*

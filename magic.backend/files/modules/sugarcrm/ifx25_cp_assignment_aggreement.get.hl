@@ -1,0 +1,67 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   idifx25_commissionplan:string
+   symbol:string
+   category:string
+   rebate:string
+   pips_usd:string
+   idifx25_commissionplan.like:string
+   idifx25_commissionplan.mt:string
+   idifx25_commissionplan.lt:string
+   idifx25_commissionplan.mteq:string
+   idifx25_commissionplan.lteq:string
+   idifx25_commissionplan.neq:string
+   idifx25_commissionplan.eq:string
+   symbol.like:string
+   symbol.mt:string
+   symbol.lt:string
+   symbol.mteq:string
+   symbol.lteq:string
+   symbol.neq:string
+   symbol.eq:string
+   category.like:string
+   category.mt:string
+   category.lt:string
+   category.mteq:string
+   category.lteq:string
+   category.neq:string
+   category.eq:string
+   rebate.like:string
+   rebate.mt:string
+   rebate.lt:string
+   rebate.mteq:string
+   rebate.lteq:string
+   rebate.neq:string
+   rebate.eq:string
+   pips_usd.like:string
+   pips_usd.mt:string
+   pips_usd.lt:string
+   pips_usd.mteq:string
+   pips_usd.lteq:string
+   pips_usd.neq:string
+   pips_usd.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx25_cp_assignment_aggreement
+   args
+   columns
+      idifx25_commissionplan
+      symbol
+      category
+      rebate
+      pips_usd
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,48 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   user_id:string
+   lead_id:string
+   datetime_i:date
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+   lead_id.like:string
+   lead_id.mt:string
+   lead_id.lt:string
+   lead_id.mteq:string
+   lead_id.lteq:string
+   lead_id.neq:string
+   lead_id.eq:string
+   datetime_i.mt:date
+   datetime_i.lt:date
+   datetime_i.mteq:date
+   datetime_i.lteq:date
+   datetime_i.neq:date
+   datetime_i.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:lead_first_view_am
+   args
+   columns
+      user_id
+      lead_id
+      datetime_i
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,28 @@
+.arguments
+   id_c:string
+   auto_assign_c:long
+   sales_no_c:string
+   salesforce_id_c:string
+   affiliate_users_c:string
+   reassign_leads_c:long
+   ifx21_brand_id_c:string
+   language_support_c:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+unwrap:x:+/*/ids/*
+wait.slots.signal:magic.db.mysql.update
+   database:sugarcrm
+   table:users_cstm
+   values
+   ids
+      id_c:x:@.arguments/*/id_c
+slots.return-nodes:x:@wait.slots.signal/*

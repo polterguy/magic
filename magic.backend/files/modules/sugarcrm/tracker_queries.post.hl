@@ -1,0 +1,26 @@
+.arguments
+   query_id:string
+   text:string
+   query_hash:string
+   sec_total:decimal
+   sec_avg:decimal
+   run_count:long
+   deleted:long
+   date_modified:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:tracker_queries
+   return-id:bool:true
+   values
+slots.return-nodes:x:@wait.slots.signal/*

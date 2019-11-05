@@ -1,0 +1,51 @@
+.arguments
+   id:string
+   name:string
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   description:string
+   deleted:long
+   team_id:string
+   team_set_id:string
+   assigned_user_id:string
+   trading_account_type:string
+   trading_account_platform:string
+   currency:string
+   leverage:string
+   mt4_status:string
+   trading_account_id:string
+   server:string
+   enabled:long
+   read_only:long
+   mt4_group:string
+   nickname:string
+   comment:string
+   allow_change_password:long
+   send_reports:long
+   username:string
+   password:string
+   is_ib:long
+   company_code:string
+   approved:long
+   portal_account_id:string
+   trading_account_password:string
+   funded:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:ifx_tradingaccounts
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,27 @@
+.arguments
+   idifx25_commissionplan:string
+   created_by:string
+   date_created:date
+   symbol:string
+   category:string
+   field_name:string
+   before_value:string
+   after_value:string
+   action_d:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:ifx25_cp_assignment_aggreement_audit
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

@@ -1,0 +1,90 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   row:string
+   state:long
+   processor:string
+   create_date:date
+   process_date:date
+   ukey:string
+   user_id:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   row.like:string
+   row.mt:string
+   row.lt:string
+   row.mteq:string
+   row.lteq:string
+   row.neq:string
+   row.eq:string
+   state.mt:long
+   state.lt:long
+   state.mteq:long
+   state.lteq:long
+   state.neq:long
+   state.eq:long
+   processor.like:string
+   processor.mt:string
+   processor.lt:string
+   processor.mteq:string
+   processor.lteq:string
+   processor.neq:string
+   processor.eq:string
+   create_date.mt:date
+   create_date.lt:date
+   create_date.mteq:date
+   create_date.lteq:date
+   create_date.neq:date
+   create_date.eq:date
+   process_date.mt:date
+   process_date.lt:date
+   process_date.mteq:date
+   process_date.lteq:date
+   process_date.neq:date
+   process_date.eq:date
+   ukey.like:string
+   ukey.mt:string
+   ukey.lt:string
+   ukey.mteq:string
+   ukey.lteq:string
+   ukey.neq:string
+   ukey.eq:string
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:processor_row_queue
+   args
+   columns
+      id
+      row
+      state
+      processor
+      create_date
+      process_date
+      ukey
+      user_id
+slots.return-nodes:x:@wait.slots.signal/*

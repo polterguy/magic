@@ -1,0 +1,88 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   id_batch:long
+   serverid:long
+   source_mt4_group:string
+   target_mt4_group:string
+   success:long
+   date_entered:date
+   date_finished:date
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   id_batch.mt:long
+   id_batch.lt:long
+   id_batch.mteq:long
+   id_batch.lteq:long
+   id_batch.neq:long
+   id_batch.eq:long
+   serverid.mt:long
+   serverid.lt:long
+   serverid.mteq:long
+   serverid.lteq:long
+   serverid.neq:long
+   serverid.eq:long
+   source_mt4_group.like:string
+   source_mt4_group.mt:string
+   source_mt4_group.lt:string
+   source_mt4_group.mteq:string
+   source_mt4_group.lteq:string
+   source_mt4_group.neq:string
+   source_mt4_group.eq:string
+   target_mt4_group.like:string
+   target_mt4_group.mt:string
+   target_mt4_group.lt:string
+   target_mt4_group.mteq:string
+   target_mt4_group.lteq:string
+   target_mt4_group.neq:string
+   target_mt4_group.eq:string
+   success.mt:long
+   success.lt:long
+   success.mteq:long
+   success.lteq:long
+   success.neq:long
+   success.eq:long
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   date_finished.mt:date
+   date_finished.lt:date
+   date_finished.mteq:date
+   date_finished.lteq:date
+   date_finished.neq:date
+   date_finished.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:mass_mt4_groups_update
+   args
+   columns
+      id
+      id_batch
+      serverid
+      source_mt4_group
+      target_mt4_group
+      success
+      date_entered
+      date_finished
+slots.return-nodes:x:@wait.slots.signal/*

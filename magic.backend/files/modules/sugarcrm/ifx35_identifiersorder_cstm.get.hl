@@ -1,0 +1,58 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id_c:string
+   identifiers_order_group_c:string
+   client_identifiers_order_c:string
+   identifiers_country_c:string
+   id_c.like:string
+   id_c.mt:string
+   id_c.lt:string
+   id_c.mteq:string
+   id_c.lteq:string
+   id_c.neq:string
+   id_c.eq:string
+   identifiers_order_group_c.like:string
+   identifiers_order_group_c.mt:string
+   identifiers_order_group_c.lt:string
+   identifiers_order_group_c.mteq:string
+   identifiers_order_group_c.lteq:string
+   identifiers_order_group_c.neq:string
+   identifiers_order_group_c.eq:string
+   client_identifiers_order_c.like:string
+   client_identifiers_order_c.mt:string
+   client_identifiers_order_c.lt:string
+   client_identifiers_order_c.mteq:string
+   client_identifiers_order_c.lteq:string
+   client_identifiers_order_c.neq:string
+   client_identifiers_order_c.eq:string
+   identifiers_country_c.like:string
+   identifiers_country_c.mt:string
+   identifiers_country_c.lt:string
+   identifiers_country_c.mteq:string
+   identifiers_country_c.lteq:string
+   identifiers_country_c.neq:string
+   identifiers_country_c.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx35_identifiersorder_cstm
+   args
+   columns
+      id_c
+      identifiers_order_group_c
+      client_identifiers_order_c
+      identifiers_country_c
+slots.return-nodes:x:@wait.slots.signal/*

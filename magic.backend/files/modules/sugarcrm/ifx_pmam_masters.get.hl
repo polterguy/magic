@@ -1,0 +1,49 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   login:string
+   sid:string
+   mt4_group:string
+   login.like:string
+   login.mt:string
+   login.lt:string
+   login.mteq:string
+   login.lteq:string
+   login.neq:string
+   login.eq:string
+   sid.like:string
+   sid.mt:string
+   sid.lt:string
+   sid.mteq:string
+   sid.lteq:string
+   sid.neq:string
+   sid.eq:string
+   mt4_group.like:string
+   mt4_group.mt:string
+   mt4_group.lt:string
+   mt4_group.mteq:string
+   mt4_group.lteq:string
+   mt4_group.neq:string
+   mt4_group.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_pmam_masters
+   args
+   columns
+      login
+      sid
+      mt4_group
+slots.return-nodes:x:@wait.slots.signal/*

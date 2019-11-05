@@ -1,0 +1,83 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   assigned_user_id:string
+   contents:string
+   report_options:string
+   deleted:string
+   date_entered:date
+   date_modified:date
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   assigned_user_id.like:string
+   assigned_user_id.mt:string
+   assigned_user_id.lt:string
+   assigned_user_id.mteq:string
+   assigned_user_id.lteq:string
+   assigned_user_id.neq:string
+   assigned_user_id.eq:string
+   contents.like:string
+   contents.mt:string
+   contents.lt:string
+   contents.mteq:string
+   contents.lteq:string
+   contents.neq:string
+   contents.eq:string
+   report_options.like:string
+   report_options.mt:string
+   report_options.lt:string
+   report_options.mteq:string
+   report_options.lteq:string
+   report_options.neq:string
+   report_options.eq:string
+   deleted.like:string
+   deleted.mt:string
+   deleted.lt:string
+   deleted.mteq:string
+   deleted.lteq:string
+   deleted.neq:string
+   deleted.eq:string
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:report_cache
+   args
+   columns
+      id
+      assigned_user_id
+      contents
+      report_options
+      deleted
+      date_entered
+      date_modified
+slots.return-nodes:x:@wait.slots.signal/*

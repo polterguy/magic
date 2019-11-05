@@ -1,0 +1,117 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   team_id:string
+   team_set_id:string
+   id:string
+   parent_tag_id:string
+   tag_name:string
+   root_tag:long
+   date_entered:date
+   created_by:string
+   revision:string
+   deleted:long
+   date_modified:date
+   team_id.like:string
+   team_id.mt:string
+   team_id.lt:string
+   team_id.mteq:string
+   team_id.lteq:string
+   team_id.neq:string
+   team_id.eq:string
+   team_set_id.like:string
+   team_set_id.mt:string
+   team_set_id.lt:string
+   team_set_id.mteq:string
+   team_set_id.lteq:string
+   team_set_id.neq:string
+   team_set_id.eq:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   parent_tag_id.like:string
+   parent_tag_id.mt:string
+   parent_tag_id.lt:string
+   parent_tag_id.mteq:string
+   parent_tag_id.lteq:string
+   parent_tag_id.neq:string
+   parent_tag_id.eq:string
+   tag_name.like:string
+   tag_name.mt:string
+   tag_name.lt:string
+   tag_name.mteq:string
+   tag_name.lteq:string
+   tag_name.neq:string
+   tag_name.eq:string
+   root_tag.mt:long
+   root_tag.lt:long
+   root_tag.mteq:long
+   root_tag.lteq:long
+   root_tag.neq:long
+   root_tag.eq:long
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   created_by.like:string
+   created_by.mt:string
+   created_by.lt:string
+   created_by.mteq:string
+   created_by.lteq:string
+   created_by.neq:string
+   created_by.eq:string
+   revision.like:string
+   revision.mt:string
+   revision.lt:string
+   revision.mteq:string
+   revision.lteq:string
+   revision.neq:string
+   revision.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:kbtags
+   args
+   columns
+      team_id
+      team_set_id
+      id
+      parent_tag_id
+      tag_name
+      root_tag
+      date_entered
+      created_by
+      revision
+      deleted
+      date_modified
+slots.return-nodes:x:@wait.slots.signal/*

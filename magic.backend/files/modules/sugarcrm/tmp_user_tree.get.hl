@@ -1,0 +1,48 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   user_id:string
+   referrer_path:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   user_id.like:string
+   user_id.mt:string
+   user_id.lt:string
+   user_id.mteq:string
+   user_id.lteq:string
+   user_id.neq:string
+   user_id.eq:string
+   referrer_path.like:string
+   referrer_path.mt:string
+   referrer_path.lt:string
+   referrer_path.mteq:string
+   referrer_path.lteq:string
+   referrer_path.neq:string
+   referrer_path.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:tmp_user_tree
+   args
+   columns
+      id
+      user_id
+      referrer_path
+slots.return-nodes:x:@wait.slots.signal/*

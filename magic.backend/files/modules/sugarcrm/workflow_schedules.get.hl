@@ -1,0 +1,117 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   date_expired:date
+   workflow_id:string
+   target_module:string
+   bean_id:string
+   parameters:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   modified_user_id.like:string
+   modified_user_id.mt:string
+   modified_user_id.lt:string
+   modified_user_id.mteq:string
+   modified_user_id.lteq:string
+   modified_user_id.neq:string
+   modified_user_id.eq:string
+   created_by.like:string
+   created_by.mt:string
+   created_by.lt:string
+   created_by.mteq:string
+   created_by.lteq:string
+   created_by.neq:string
+   created_by.eq:string
+   date_expired.mt:date
+   date_expired.lt:date
+   date_expired.mteq:date
+   date_expired.lteq:date
+   date_expired.neq:date
+   date_expired.eq:date
+   workflow_id.like:string
+   workflow_id.mt:string
+   workflow_id.lt:string
+   workflow_id.mteq:string
+   workflow_id.lteq:string
+   workflow_id.neq:string
+   workflow_id.eq:string
+   target_module.like:string
+   target_module.mt:string
+   target_module.lt:string
+   target_module.mteq:string
+   target_module.lteq:string
+   target_module.neq:string
+   target_module.eq:string
+   bean_id.like:string
+   bean_id.mt:string
+   bean_id.lt:string
+   bean_id.mteq:string
+   bean_id.lteq:string
+   bean_id.neq:string
+   bean_id.eq:string
+   parameters.like:string
+   parameters.mt:string
+   parameters.lt:string
+   parameters.mteq:string
+   parameters.lteq:string
+   parameters.neq:string
+   parameters.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:workflow_schedules
+   args
+   columns
+      id
+      deleted
+      date_entered
+      date_modified
+      modified_user_id
+      created_by
+      date_expired
+      workflow_id
+      target_module
+      bean_id
+      parameters
+slots.return-nodes:x:@wait.slots.signal/*

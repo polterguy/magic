@@ -1,0 +1,92 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:string
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   project_id:string
+   resource_id:string
+   resource_type:string
+   deleted:long
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+   modified_user_id.like:string
+   modified_user_id.mt:string
+   modified_user_id.lt:string
+   modified_user_id.mteq:string
+   modified_user_id.lteq:string
+   modified_user_id.neq:string
+   modified_user_id.eq:string
+   created_by.like:string
+   created_by.mt:string
+   created_by.lt:string
+   created_by.mteq:string
+   created_by.lteq:string
+   created_by.neq:string
+   created_by.eq:string
+   project_id.like:string
+   project_id.mt:string
+   project_id.lt:string
+   project_id.mteq:string
+   project_id.lteq:string
+   project_id.neq:string
+   project_id.eq:string
+   resource_id.like:string
+   resource_id.mt:string
+   resource_id.lt:string
+   resource_id.mteq:string
+   resource_id.lteq:string
+   resource_id.neq:string
+   resource_id.eq:string
+   resource_type.like:string
+   resource_type.mt:string
+   resource_type.lt:string
+   resource_type.mteq:string
+   resource_type.lteq:string
+   resource_type.neq:string
+   resource_type.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:project_resources
+   args
+   columns
+      id
+      date_modified
+      modified_user_id
+      created_by
+      project_id
+      resource_id
+      resource_type
+      deleted
+slots.return-nodes:x:@wait.slots.signal/*

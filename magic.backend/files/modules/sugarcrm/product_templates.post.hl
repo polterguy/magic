@@ -1,0 +1,52 @@
+.arguments
+   id:string
+   deleted:long
+   date_entered:date
+   date_modified:date
+   modified_user_id:string
+   created_by:string
+   type_id:string
+   manufacturer_id:string
+   category_id:string
+   name:string
+   mft_part_num:string
+   vendor_part_num:string
+   date_cost_price:date
+   cost_price:decimal
+   discount_price:decimal
+   list_price:decimal
+   cost_usdollar:decimal
+   discount_usdollar:decimal
+   list_usdollar:decimal
+   currency_id:string
+   currency:string
+   status:string
+   tax_class:string
+   date_available:date
+   website:string
+   weight:decimal
+   qty_in_stock:long
+   description:string
+   support_name:string
+   support_description:string
+   support_contact:string
+   support_term:string
+   pricing_formula:string
+   pricing_factor:decimal
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:product_templates
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

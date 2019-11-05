@@ -1,0 +1,48 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   id:long
+   parent_id:string
+   team_id:string
+   id.mt:long
+   id.lt:long
+   id.mteq:long
+   id.lteq:long
+   id.neq:long
+   id.eq:long
+   parent_id.like:string
+   parent_id.mt:string
+   parent_id.lt:string
+   parent_id.mteq:string
+   parent_id.lteq:string
+   parent_id.neq:string
+   parent_id.eq:string
+   team_id.like:string
+   team_id.mt:string
+   team_id.lt:string
+   team_id.mteq:string
+   team_id.lteq:string
+   team_id.neq:string
+   team_id.eq:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:ifx_team_tree
+   args
+   columns
+      id
+      parent_id
+      team_id
+slots.return-nodes:x:@wait.slots.signal/*

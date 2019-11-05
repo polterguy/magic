@@ -1,0 +1,109 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   team_id:string
+   team_set_id:string
+   id:string
+   kbdocument_id:string
+   kbtag_id:string
+   date_entered:date
+   created_by:string
+   revision:string
+   deleted:long
+   date_modified:date
+   team_id.like:string
+   team_id.mt:string
+   team_id.lt:string
+   team_id.mteq:string
+   team_id.lteq:string
+   team_id.neq:string
+   team_id.eq:string
+   team_set_id.like:string
+   team_set_id.mt:string
+   team_set_id.lt:string
+   team_set_id.mteq:string
+   team_set_id.lteq:string
+   team_set_id.neq:string
+   team_set_id.eq:string
+   id.like:string
+   id.mt:string
+   id.lt:string
+   id.mteq:string
+   id.lteq:string
+   id.neq:string
+   id.eq:string
+   kbdocument_id.like:string
+   kbdocument_id.mt:string
+   kbdocument_id.lt:string
+   kbdocument_id.mteq:string
+   kbdocument_id.lteq:string
+   kbdocument_id.neq:string
+   kbdocument_id.eq:string
+   kbtag_id.like:string
+   kbtag_id.mt:string
+   kbtag_id.lt:string
+   kbtag_id.mteq:string
+   kbtag_id.lteq:string
+   kbtag_id.neq:string
+   kbtag_id.eq:string
+   date_entered.mt:date
+   date_entered.lt:date
+   date_entered.mteq:date
+   date_entered.lteq:date
+   date_entered.neq:date
+   date_entered.eq:date
+   created_by.like:string
+   created_by.mt:string
+   created_by.lt:string
+   created_by.mteq:string
+   created_by.lteq:string
+   created_by.neq:string
+   created_by.eq:string
+   revision.like:string
+   revision.mt:string
+   revision.lt:string
+   revision.mteq:string
+   revision.lteq:string
+   revision.neq:string
+   revision.eq:string
+   deleted.mt:long
+   deleted.lt:long
+   deleted.mteq:long
+   deleted.lteq:long
+   deleted.neq:long
+   deleted.eq:long
+   date_modified.mt:date
+   date_modified.lt:date
+   date_modified.mteq:date
+   date_modified.lteq:date
+   date_modified.neq:date
+   date_modified.eq:date
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:sugarcrm
+   table:kbdocuments_kbtags
+   args
+   columns
+      team_id
+      team_set_id
+      id
+      kbdocument_id
+      kbtag_id
+      date_entered
+      created_by
+      revision
+      deleted
+      date_modified
+slots.return-nodes:x:@wait.slots.signal/*

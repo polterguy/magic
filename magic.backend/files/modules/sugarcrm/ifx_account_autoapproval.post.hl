@@ -1,0 +1,31 @@
+.arguments
+   client_name:string
+   action:string
+   company:string
+   entity:string
+   brand:string
+   country:string
+   except_country:string
+   client_approved:long
+   status:long
+   date_created:date
+   user_created:string
+   date_modified:date
+   user_modified:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:ifx_account_autoapproval
+   return-id:bool:true
+   values
+slots.return-nodes:x:@wait.slots.signal/*

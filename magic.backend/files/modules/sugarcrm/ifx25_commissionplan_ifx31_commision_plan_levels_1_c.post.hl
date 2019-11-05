@@ -1,0 +1,23 @@
+.arguments
+   id:string
+   date_modified:date
+   deleted:long
+   ifx25_comm0b41ionplan_ida:string
+   ifx25_comm43dc_levels_idb:string
+auth.ticket.verify:root
+lambda2hyper:x:@.arguments/*
+.log
+strings.concat
+   get-value:x:@.log
+   .:@" - Arguments: 
+"
+   get-value:x:@lambda2hyper
+log.info:x:@strings.concat
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:sugarcrm
+   table:ifx25_commissionplan_ifx31_commision_plan_levels_1_c
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*
