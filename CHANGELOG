@@ -78,3 +78,5 @@
 * Changed the default connection database for MySQL from "sys" to "information_schema", since it is often more available regardless of user`s permissions.
 
 * Made table selector in CRUDifier larger, to accommodate for tables with longer names, trying to display entire table name.
+
+* Fixed a severe error when serializing Datetime values to Hyperlambda.
