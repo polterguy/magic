@@ -1,9 +1,8 @@
 ﻿/*
- * Magic, Copyright(c) Thomas Hansen 2019, thomas@gaiasoul.com, all rights reserved.
+ * Magic, Copyright(c) Thomas Hansen 2019, thomas@servergardens.com, all rights reserved.
  * See the enclosed LICENSE file for details.
  */
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,30 +23,30 @@ namespace magic.backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(Configuration);
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().AddNewtonsoftJson();
 
             /*
              * Initializing Magic.
-             * 
+             *
              * Notice, must be done AFTER you invoke "AddMvc".
              */
             services.AddMagic(Configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             /*
              * Initializing Magic.
              *
-             * Notice, must be done BEFORE you invoke "UseMvc".
+             * Notice, must be done BEFORE you invoke "UseEndpoints".
              */
             app.UseMagic(Configuration);
 
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(conf => conf.MapControllers());
         }
     }
 }
