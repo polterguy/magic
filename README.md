@@ -25,6 +25,10 @@
 [![Build status](https://travis-ci.org/polterguy/magic.endpoint.svg?master)](https://travis-ci.org/polterguy/magic.endpoint)
 [![Build status](https://travis-ci.org/polterguy/magic.data.common.svg?master)](https://travis-ci.org/polterguy/magic.data.common)
 
+<p align="left">
+  <a href="https://github.com/polterguy/magic/actions"><img alt="GitHub Actions status" src="https://github.com/polterguy/magic/workflows/.NET%20Core/badge.svg"></a>
+</p>
+
 Magic is a CRUD app generator, allowing you to create CRUD Web APIs on top of ASP.NET Core.
 In 1 minute, you can basically create hundreds of HTTP REST based CRUD Web API endpoints,
 wrapping your entire database, even if it has hundreds of tables. It feels almost like Magic,
