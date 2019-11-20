@@ -1,6 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
+import { SchedulerService } from 'src/app/services/scheduler-service';
 
 @Component({
   selector: 'app-scheduler',
@@ -9,9 +10,16 @@ import { MatSnackBar } from '@angular/material';
 })
 export class SchedulerComponent implements OnInit {
 
-  constructor(private snackBar: MatSnackBar) { }
+  constructor(
+    private snackBar: MatSnackBar,
+    private schedulerService: SchedulerService) {
+    }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.schedulerService.listTasks().subscribe(res => {
+      console.log(res);
+    });
+  }
 
   showHttpError(error: any) {
     this.snackBar.open(error.error.message, 'Close', {
