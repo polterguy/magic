@@ -30,6 +30,7 @@ import { NewFileDialogComponent } from './components/files/files.component';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
+import { SchedulerComponent } from './components/scheduler/scheduler.component';
 import { DynamicPipe } from './pipes/dynamic.pipe';
 
 export function tokenGetter() {
@@ -46,6 +47,7 @@ export function tokenGetter() {
     NewFileDialogComponent,
     CrudifyComponent,
     SqlComponent,
+    SchedulerComponent,
     DynamicPipe,
   ],
   imports: [
