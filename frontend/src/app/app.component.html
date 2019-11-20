@@ -46,6 +46,13 @@
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">SQL</a>
 
+  <a 
+    *ngIf="isLoggedIn()"
+    mat-button 
+    routerLink="/scheduler" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Scheduler</a>
+
   <a
     *ngIf="isLoggedIn()"
     mat-button
