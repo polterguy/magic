@@ -1,4 +1,36 @@
 
 .scheduler-wrapper {
     padding:2rem 5rem 2rem 5rem;
+    .tasks {
+        margin-top: 2rem;
+        padding: 5rem;
+        position: relative;
+        table {
+            width: 100%;
+            tr.highlight {
+                background-color: rgba(0,0,0,.1);
+            }
+            tr.mat-row:hover {
+                background-color: rgba(0,0,0,.1);
+                cursor: pointer;
+            }
+        }
+
+    }
 }
+
+.active-wrapper {
+    padding: 2rem 5rem 2rem 5rem;
+    .view-task-card {
+        margin-top: 2rem;
+        padding: 5rem;
+        position: relative;
+        .due-date {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: rgb(128,128,128);
+        }
+    }
+}
+

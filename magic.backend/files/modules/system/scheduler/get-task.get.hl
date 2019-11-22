@@ -1,0 +1,35 @@
+
+/*
+ * List all scheduled tasks that have been registered in the system.
+ */
+.arguments
+   name:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves all scheduled tasks in the system.
+ */
+scheduler.tasks.get:x:@.arguments/*/name
+
+
+/*
+ * Transforming task's lambda object to Hyperlambda.
+ */
+lambda2hyper:x:@scheduler.tasks.get/*/*/.lambda/*
+
+
+/*
+ * Returning the results of the evaluation to caller.
+ */
+unwrap:x:+/*
+slots.return-nodes
+   name:x:@.arguments/*/name
+   description:x:@scheduler.tasks.get/*/*/description
+   due:x:@scheduler.tasks.get/*/*/due
+   hyperlambda:x:@lambda2hyper

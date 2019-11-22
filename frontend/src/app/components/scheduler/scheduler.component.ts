@@ -2,6 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { SchedulerService } from 'src/app/services/scheduler-service';
+import { TaskModel } from 'src/app/models/task-model';
+import { DateFromPipe } from 'src/app/pipes/date-from-pipe';
 
 @Component({
   selector: 'app-scheduler',
@@ -9,6 +11,11 @@ import { SchedulerService } from 'src/app/services/scheduler-service';
   styleUrls: ['./scheduler.component.scss']
 })
 export class SchedulerComponent implements OnInit {
+
+  private displayedColumns = ['name'];
+  private tasks: string[];
+  private selectedTaskName: string = null;
+  private selectedTask: TaskModel = null;
 
   constructor(
     private snackBar: MatSnackBar,
@@ -18,6 +25,18 @@ export class SchedulerComponent implements OnInit {
   ngOnInit(): void {
     this.schedulerService.listTasks().subscribe(res => {
       console.log(res);
+      this.tasks = res;
+    });
+  }
+
+  getFilteredTasks() {
+    return this.tasks;
+  }
+
+  selectTask(name: string) {
+    this.selectedTaskName = name;
+    this.schedulerService.getTask(name).subscribe(res => {
+      this.selectedTask = res;
     });
   }
 
@@ -30,7 +49,7 @@ export class SchedulerComponent implements OnInit {
 
   showHttpSuccess(msg: string) {
     this.snackBar.open(msg, 'Close', {
-      duration: 5000,
+      duration: 2000,
     });
   }
 }
