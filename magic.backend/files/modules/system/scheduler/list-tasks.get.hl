@@ -19,5 +19,4 @@ scheduler.tasks.list
 /*
  * Returning the results of the evaluation to caller.
  */
-unwrap:x:+/*
 slots.return-nodes:x:@scheduler.tasks.list/*

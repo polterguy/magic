@@ -31,10 +31,11 @@ import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
 import { SchedulerComponent } from './components/scheduler/scheduler.component';
-import { DynamicPipe } from './pipes/dynamic.pipe';
+import { DateFromPipe } from './pipes/date-from-pipe';
+import { DynamicPipe } from './pipes/dynamic-pipe';
 
 export function tokenGetter() {
-  return localStorage.getItem("access_token");
+  return localStorage.getItem('access_token');
 }
 
 @NgModule({
@@ -48,6 +49,7 @@ export function tokenGetter() {
     CrudifyComponent,
     SqlComponent,
     SchedulerComponent,
+    DateFromPipe,
     DynamicPipe,
   ],
   imports: [
@@ -58,7 +60,7 @@ export function tokenGetter() {
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter,
+        tokenGetter,
         whitelistedDomains: [environment.apiDomain],
       }
     }),
