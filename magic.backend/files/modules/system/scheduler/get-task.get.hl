@@ -25,6 +25,22 @@ lambda2hyper:x:@scheduler.tasks.get/*/*/.lambda/*
 
 
 /*
+ * Checking what type of repetition pattern this task has, 
+ * and returning to caller accordingly.
+ */
+if
+   exists:x:@scheduler.tasks.get/*/*/repeat
+   .lambda
+      unwrap:x:+/*/*
+      .add
+         repeat
+            interval:x:@scheduler.tasks.get/*/*/repeat
+            time:x:@scheduler.tasks.get/*/*/repeat/*/time
+      add:x:../*/slots.return-nodes
+         get-nodes:x:@.add/*
+
+
+/*
  * Returning the results of the evaluation to caller.
  */
 unwrap:x:+/*
