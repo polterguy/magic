@@ -45,7 +45,7 @@ export class EvaluatorComponent implements OnInit {
       extraKeys: {
         'Shift-Tab': 'indentLess',
         Tab: 'indentMore',
-        'Ctrl-Space':'autocomplete',
+        'Ctrl-Space': 'autocomplete',
       }
     };
   }

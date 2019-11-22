@@ -20,13 +20,27 @@ export class SchedulerComponent implements OnInit {
   constructor(
     private snackBar: MatSnackBar,
     private schedulerService: SchedulerService) {
-    }
+  }
 
   ngOnInit(): void {
+    this.getTasks();
+  }
+
+  getTasks() {
     this.schedulerService.listTasks().subscribe(res => {
-      console.log(res);
+      this.selectedTask = null;
+      this.selectedTaskName = null;
       this.tasks = res;
     });
+  }
+
+  getCodeMirrorOptions() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'hyperlambda',
+      readOnly: true,
+    };
   }
 
   getFilteredTasks() {
@@ -37,6 +51,14 @@ export class SchedulerComponent implements OnInit {
     this.selectedTaskName = name;
     this.schedulerService.getTask(name).subscribe(res => {
       this.selectedTask = res;
+      console.log(res);
+    });
+  }
+
+  deleteActiveTask() {
+    this.schedulerService.deleteTask(this.selectedTask.name).subscribe(res => {
+      this.showHttpSuccess('Task was successfully deleted');
+      this.getTasks();
     });
   }
 

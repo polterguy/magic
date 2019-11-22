@@ -1,0 +1,24 @@
+
+/*
+ * Deletes the named task from the task scheduler.
+ */
+.arguments
+   name:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Deletes task.
+ */
+scheduler.tasks.delete:x:@.arguments/*/name
+
+
+/*
+ * Returns success to caller.
+ */
+slots.return-value:Success
