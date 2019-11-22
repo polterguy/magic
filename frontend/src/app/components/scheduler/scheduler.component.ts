@@ -34,6 +34,10 @@ export class SchedulerComponent implements OnInit {
     });
   }
 
+  createNewTask() {
+    console.log('TODO: Implement ...');
+  }
+
   getCodeMirrorOptions() {
     return {
       lineNumbers: true,

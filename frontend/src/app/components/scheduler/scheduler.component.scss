@@ -1,5 +1,6 @@
 
 .scheduler-wrapper {
+    position: relative;
     padding:2rem 5rem 2rem 5rem;
     .tasks {
         margin-top: 2rem;
@@ -15,7 +16,11 @@
                 cursor: pointer;
             }
         }
-
+        .create-new-task {
+            position: absolute;
+            top: 3rem;
+            right: 3rem;
+        }
     }
 }
 
