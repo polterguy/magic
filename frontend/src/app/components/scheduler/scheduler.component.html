@@ -27,8 +27,11 @@
     <h3>{{selectedTaskName}}</h3>
 
     <div *ngIf="selectedTask !== null">
-      <p>{{selectedTask.description}}</p>
+      <p>{{selectedTask.description || '&nbsp;'}}</p>
       <span class="due-date">Due in {{selectedTask.due | fromNow}}</span>
+      <div *ngIf="selectedTask.repeat !== null && selectedTask.repeat !== undefined" class="repeat-pattern">
+        Repeats every {{getInterval(selectedTask.repeat.interval)}} at {{selectedTask.repeat.time}}
+      </div>
       <ngx-codemirror 
         [(ngModel)]="selectedTask.hyperlambda" 
         [options]="getCodeMirrorOptions()"></ngx-codemirror>

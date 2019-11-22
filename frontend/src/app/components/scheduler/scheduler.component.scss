@@ -27,8 +27,14 @@
         position: relative;
         .due-date {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 3rem;
+            right: 3rem;
+            color: rgb(128,128,128);
+        }
+        .repeat-pattern {
+            position: absolute;
+            top: 5rem;
+            right: 3rem;
             color: rgb(128,128,128);
         }
     }

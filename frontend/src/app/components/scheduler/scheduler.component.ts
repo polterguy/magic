@@ -51,8 +51,23 @@ export class SchedulerComponent implements OnInit {
     this.selectedTaskName = name;
     this.schedulerService.getTask(name).subscribe(res => {
       this.selectedTask = res;
-      console.log(res);
     });
+  }
+
+  getInterval(interval: string) {
+    if (!isNaN(Number(interval))) {
+      switch (Number(interval)) {
+        case 1:
+          return '1st of every month';
+        case 2:
+          return '2nd of every month';
+        case 3:
+          return '3rd of every month';
+        default:
+            return interval + 'th of each month';
+      }
+    }
+    return interval;
   }
 
   deleteActiveTask() {
