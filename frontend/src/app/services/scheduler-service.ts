@@ -18,4 +18,8 @@ export class SchedulerService {
   public getTask(name: string) {
     return this.httpClient.get<TaskModel>(environment.apiURL + `magic/modules/system/scheduler/get-task?name=${encodeURIComponent(name)}`);
   }
+
+  public deleteTask(name: string) {
+    return this.httpClient.delete<any>(environment.apiURL + `magic/modules/system/scheduler/delete-task?name=${encodeURIComponent(name)}`);
+  }
 }

@@ -1,6 +1,6 @@
 
 /*
- * List all scheduled tasks that have been registered in the system.
+ * Returns the named task to caller.
  */
 .arguments
    name:string
@@ -13,7 +13,7 @@ auth.ticket.verify:root
 
 
 /*
- * Retrieves all scheduled tasks in the system.
+ * Retrieves the specified task from the task scheduler.
  */
 scheduler.tasks.get:x:@.arguments/*/name
 

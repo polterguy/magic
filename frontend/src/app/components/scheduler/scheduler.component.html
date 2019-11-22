@@ -29,6 +29,15 @@
     <div *ngIf="selectedTask !== null">
       <p>{{selectedTask.description}}</p>
       <span class="due-date">Due in {{selectedTask.due | fromNow}}</span>
+      <ngx-codemirror 
+        [(ngModel)]="selectedTask.hyperlambda" 
+        [options]="getCodeMirrorOptions()"></ngx-codemirror>
+      <div class="right-align">
+        <button 
+          mat-button
+          matTooltip="Deletes the task"
+          (click)="deleteActiveTask()">Delete</button>
+      </div>
     </div>
 
   </mat-card>
