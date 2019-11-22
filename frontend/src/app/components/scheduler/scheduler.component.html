@@ -4,6 +4,14 @@
 
   <div class="mat-elevation-z4 tasks">
 
+    <button
+      mat-button
+      class="create-new-task"
+      (click)="createNewTask()"
+      matTooltip="Creates a new task">
+      New ...
+    </button>
+
     <table mat-table [dataSource]="getFilteredTasks()">
 
       <ng-container matColumnDef="name">
