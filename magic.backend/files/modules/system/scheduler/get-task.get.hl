@@ -35,9 +35,24 @@ if
       .add
          repeat
             interval:x:@scheduler.tasks.get/*/*/repeat
-            time:x:@scheduler.tasks.get/*/*/repeat/*/time
       add:x:../*/slots.return-nodes
          get-nodes:x:@.add/*
+      switch:x:@scheduler.tasks.get/*/*/repeat
+         case:days
+         case:hours
+         case:minutes
+         case:seconds
+            unwrap:x:+/*
+            .add
+               value:x:@scheduler.tasks.get/*/*/repeat/*/value
+            add:x:../*/slots.return-nodes/*/repeat
+               get-nodes:x:@.add/*
+         default
+            unwrap:x:+/*
+            .add
+               time:x:@scheduler.tasks.get/*/*/repeat/*/time
+            add:x:../*/slots.return-nodes/*/repeat
+               get-nodes:x:@.add/*
 
 
 /*
