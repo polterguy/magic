@@ -1,9 +1,9 @@
 
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { SchedulerService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
-import { DateFromPipe } from 'src/app/pipes/date-from-pipe';
+import { NewTaskDialogComponent } from './modals/new-task-dialog';
 
 @Component({
   selector: 'app-scheduler',
@@ -18,6 +18,7 @@ export class SchedulerComponent implements OnInit {
   private selectedTask: TaskModel = null;
 
   constructor(
+    public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private schedulerService: SchedulerService) {
   }
@@ -35,7 +36,19 @@ export class SchedulerComponent implements OnInit {
   }
 
   createNewTask() {
-    console.log('TODO: Implement ...');
+    const dialogRef = this.dialog.open(NewTaskDialogComponent, {
+      width: '1000px',
+      disableClose: true,
+      data: {
+        path: '',
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res !== undefined) {
+        alert('success');
+      }
+    });
   }
 
   getCodeMirrorOptions() {

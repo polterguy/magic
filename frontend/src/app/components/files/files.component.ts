@@ -104,7 +104,6 @@ export class FilesComponent implements OnInit {
         this.createFile(res);
       }
     });
-    return false;
   }
 
   createNewFolder() {
@@ -121,7 +120,6 @@ export class FilesComponent implements OnInit {
         this.createFolder(res);
       }
     });
-    return false;
   }
 
   createFile(filename: string) {

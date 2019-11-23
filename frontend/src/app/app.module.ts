@@ -33,6 +33,7 @@ import { SqlComponent } from './components/sql/sql.component';
 import { SchedulerComponent } from './components/scheduler/scheduler.component';
 import { DateFromPipe } from './pipes/date-from-pipe';
 import { DynamicPipe } from './pipes/dynamic-pipe';
+import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-dialog';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -46,6 +47,7 @@ export function tokenGetter() {
     EvaluatorComponent,
     FilesComponent,
     NewFileDialogComponent,
+    NewTaskDialogComponent,
     CrudifyComponent,
     SqlComponent,
     SchedulerComponent,
@@ -90,6 +92,6 @@ export function tokenGetter() {
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents:[NewFileDialogComponent]
+  entryComponents:[NewFileDialogComponent, NewTaskDialogComponent]
 })
 export class AppModule { }
