@@ -1,0 +1,28 @@
+
+<h1 mat-dialog-title>New task</h1>
+<div mat-dialog-content>
+  <mat-form-field style="width: 20%;">
+    <input 
+      matInput
+      placeholder="Task name"
+      autocomplete="off">
+  </mat-form-field>
+  <mat-form-field style="margin-left: 2rem; width: 20%;">
+    <mat-select placeholder="Repetition pattern">
+      <mat-option value="seconds">Every second</mat-option>
+      <mat-option value="minutes">Every minute</mat-option>
+      <mat-option value="hours">Every hour</mat-option>
+      <mat-option value="days">Every days</mat-option>
+      <mat-option value="last-day-of-month">Last day of month</mat-option>
+      <mat-option value="every-n-day">Specific day of month</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <ngx-codemirror 
+    [(ngModel)]="taskHyperlambda" 
+    [options]="getCodeMirrorOptions()"></ngx-codemirror>
+</div>
+<div mat-dialog-actions>
+  <div style="width:100%; text-align: right;">
+    <button mat-button (click)="close()">Close</button>
+  </div>
+</div>
