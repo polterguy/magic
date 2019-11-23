@@ -72,6 +72,9 @@ export class SchedulerComponent implements OnInit {
   }
 
   getInterval(interval: string) {
+    if (interval === 'last-day-of-month') {
+      return 'last day of the month';
+    }
     if (!isNaN(Number(interval))) {
       switch (Number(interval)) {
         case 1:
