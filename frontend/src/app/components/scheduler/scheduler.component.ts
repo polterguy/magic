@@ -74,6 +74,10 @@ export class SchedulerComponent implements OnInit {
     return interval;
   }
 
+  getDate(due: string) {
+    return new Date(due).toLocaleString();
+  }
+
   deleteActiveTask() {
     this.schedulerService.deleteTask(this.selectedTask.name).subscribe(res => {
       this.showHttpSuccess('Task was successfully deleted');
