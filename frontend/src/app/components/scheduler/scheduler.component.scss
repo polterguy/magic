@@ -6,6 +6,11 @@
         margin-top: 2rem;
         padding: 5rem;
         position: relative;
+        .running-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
         table {
             width: 100%;
             tr.highlight {

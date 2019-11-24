@@ -17,6 +17,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -79,6 +80,7 @@ export function tokenGetter() {
     MatDialogModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatSlideToggleModule,
     MatDatepickerModule,
     MatMomentDateModule,
     CodemirrorModule,
