@@ -22,4 +22,20 @@ export class SchedulerService {
   public deleteTask(name: string) {
     return this.httpClient.delete<any>(environment.apiURL + `magic/modules/system/scheduler/delete-task?name=${encodeURIComponent(name)}`);
   }
+
+  public isRunning() {
+    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/scheduler/is-running');
+  }
+
+  public turnOff() {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/scheduler/is-running',{
+      value:false
+    });
+  }
+
+  public turnOn() {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/scheduler/is-running',{
+      value:true
+    });
+  }
 }

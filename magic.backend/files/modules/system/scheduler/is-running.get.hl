@@ -1,0 +1,24 @@
+
+/*
+ * Returns true if task scheduler is running.
+ */
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Checks to see if task scheduler is running.
+ */
+scheduler.running
+
+
+/*
+ * Returns the result of above invocation.
+ */
+unwrap:x:+/*
+slots.return-nodes
+   is-running:x:@scheduler.running

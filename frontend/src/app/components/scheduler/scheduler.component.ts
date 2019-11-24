@@ -1,6 +1,6 @@
 
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatSnackBar, MatDialog, MatSlideToggleChange } from '@angular/material';
 import { SchedulerService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
@@ -12,6 +12,8 @@ import { NewTaskDialogComponent } from './modals/new-task-dialog';
 })
 export class SchedulerComponent implements OnInit {
 
+  private schedulerState: string;
+  private isRunning: boolean;
   private displayedColumns = ['name'];
   private tasks: string[];
   private selectedTaskName: string = null;
@@ -25,6 +27,28 @@ export class SchedulerComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTasks();
+    this.schedulerService.isRunning().subscribe(res => {
+      this.isRunning = res['is-running'];
+      if (this.isRunning) {
+        this.schedulerState = 'Stop scheduler';
+      } else {
+        this.schedulerState = 'Start scheduler';
+      }
+    });
+  }
+
+  isRunningChanged(e: MatSlideToggleChange) {
+    if (e.checked) {
+      this.schedulerService.turnOn().subscribe(res => {
+        console.log(res);
+        this.schedulerState = 'Stop scheduler';
+      });
+    } else {
+      this.schedulerService.turnOff().subscribe(res => {
+        console.log(res);
+        this.schedulerState = 'Start scheduler';
+      });
+    }
   }
 
   getTasks() {
