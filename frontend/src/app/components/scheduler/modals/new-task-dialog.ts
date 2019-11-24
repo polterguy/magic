@@ -16,6 +16,7 @@ export class NewTaskDialogComponent implements OnInit {
   private taskDate: string = null;
   private taskValue: string = null;
   private taskName: string = null;
+  private taskDescription: string = null;
   private taskTime: string = null;
   private weekday: string = null;
   private taskHyperlambda: string;

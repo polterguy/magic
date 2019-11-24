@@ -42,8 +42,8 @@
     <div *ngIf="selectedTask !== null">
       <p>{{selectedTask.description || '&nbsp;'}}</p>
       <span 
-        class="due-date">Due in {{selectedTask.due | fromNow}} at the
-        {{getDate(selectedTask.due)}}</span>
+        title="{{getDate(selectedTask.due)}}"
+        class="due-date">Due in {{selectedTask.due | fromNow}}</span>
 
       <div *ngIf="selectedTask.repeat !== null && selectedTask.repeat !== undefined" class="repeat-pattern">
         <span 
