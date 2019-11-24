@@ -121,7 +121,8 @@ export class NewTaskDialogComponent implements OnInit {
         return;
       }
     }
-    if (this.repetitionPattern === 'day-of-month' && (this.taskValue === '' || this.taskValue === null)) {
+    if (this.repetitionPattern === 'day-of-month' && 
+      (this.taskValue === '' || this.taskValue === null)) {
       this.showError('You have to provide a day of month for your task repetition pattern');
       return;
     }
