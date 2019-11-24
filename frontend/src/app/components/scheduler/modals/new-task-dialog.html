@@ -65,6 +65,13 @@
       placeholder="Time"
       autocomplete="off">
   </mat-form-field>
+  <mat-form-field style="width: 100%;">
+    <input 
+      matInput
+      [(ngModel)]="taskDescription"
+      placeholder="Task description"
+      autocomplete="off">
+  </mat-form-field>
   <ngx-codemirror 
     [(ngModel)]="taskHyperlambda" 
     [options]="getCodeMirrorOptions()"></ngx-codemirror>
