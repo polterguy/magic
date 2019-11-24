@@ -33,7 +33,13 @@
   <mat-form-field
     *ngIf="shouldDisplayDatePicker()"
     style="margin-left: 2rem; width: 20%;">
-    <input autocomplete="off" matInput [matDatepicker]="picker" [min]="minDate" placeholder="Choose a date">
+    <input 
+      autocomplete="off" 
+      matInput 
+      [matDatepicker]="picker" 
+      [(ngModel)]="taskDate" 
+      [min]="minDate" 
+      placeholder="Choose a date">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>

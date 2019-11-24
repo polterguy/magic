@@ -13,6 +13,7 @@ export interface NewTaskDialogData {
 })
 export class NewTaskDialogComponent implements OnInit {
 
+  private taskDate: string = null;
   private taskValue: string = null;
   private taskName: string = null;
   private taskTime: string = null;
@@ -124,6 +125,12 @@ export class NewTaskDialogComponent implements OnInit {
       this.showError('You have to provide a day of month for your task repetition pattern');
       return;
     }
+    if (this.repetitionPattern === 'future-date') {
+      if (this.taskDate === '' || this.taskDate === null) {
+        this.showError('You have to provide a date for your task');
+        return;
+      }
+    }
     switch (this.repetitionPattern) {
       case 'seconds':
       case 'minutes':
@@ -132,18 +139,16 @@ export class NewTaskDialogComponent implements OnInit {
         if (this.taskValue === null || this.taskValue === '') {
           this.showError('You have to provide a value for your task repetition pattern');
           return;
-        }
-        break;
+        } break;
       case 'weekday':
       case 'last-day-of-month':
       case 'day-of-month':
       case 'future-date':
-          if (this.taskTime === null || this.taskTime === '') {
-            this.showError('You have to provide a time of day for your task repetition pattern');
-            return;
-          }
-          break;
-      }
+        if (this.taskTime === null || this.taskTime === '') {
+          this.showError('You have to provide a time of day for your task repetition pattern');
+          return;
+        } break;
+    }
   }
 
   showError(error: string) {
