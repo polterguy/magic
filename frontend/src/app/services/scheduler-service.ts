@@ -19,6 +19,10 @@ export class SchedulerService {
     return this.httpClient.get<TaskModel>(environment.apiURL + `magic/modules/system/scheduler/get-task?name=${encodeURIComponent(name)}`);
   }
 
+  public createTask(task: TaskModel) {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/scheduler/create-task', task);
+  }
+
   public deleteTask(name: string) {
     return this.httpClient.delete<any>(environment.apiURL + `magic/modules/system/scheduler/delete-task?name=${encodeURIComponent(name)}`);
   }
@@ -29,13 +33,13 @@ export class SchedulerService {
 
   public turnOff() {
     return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/scheduler/is-running',{
-      value:false
+      value: false
     });
   }
 
   public turnOn() {
     return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/scheduler/is-running',{
-      value:true
+      value: true
     });
   }
 }

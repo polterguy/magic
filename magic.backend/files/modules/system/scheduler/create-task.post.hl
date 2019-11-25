@@ -1,0 +1,45 @@
+
+/*
+ * Returns the named task to caller.
+ */
+.arguments
+   name:string
+   description:string
+   hyperlambda:string
+   due:date
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Converting Hyperlambda to lambda.
+ */
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+
+/*
+ * Checking what type of repetition pattern, if any, this task has.
+ */
+if
+   exists:x:@.arguments/*/due
+   .lambda
+
+      /*
+       * Creating a [when] type of task.
+       */
+      add:x:./*/scheduler.tasks.create/*/.lambda
+         get-nodes:x:@hyper2lambda/*
+      unwrap:x:./*/scheduler.tasks.create
+      unwrap:x:./*/scheduler.tasks.create/*/when
+      unwrap:x:./*/scheduler.tasks.create/*/description
+      scheduler.tasks.create:x:@.arguments/*/name
+         when:x:@.arguments/*/due
+         description:x:@.arguments/*/description
+         .lambda
+      slots.return-nodes
+         result:OK
+         data:[when] type of task was successfully created.
