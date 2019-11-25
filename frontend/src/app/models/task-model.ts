@@ -1,7 +1,8 @@
 
 export class RepeatModel {
     interval: string;
-    time: string;
+    time?: string;
+    value?: number;
 }
 
 export class TaskModel {

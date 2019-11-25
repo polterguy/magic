@@ -172,9 +172,13 @@ export class NewTaskDialogComponent implements OnInit {
     task.hyperlambda = this.taskHyperlambda;
 
     /*
-     * Settings repetition pattern.
+     * Creating our repetition pattern for then to create our task.
      */
     if (this.repetitionPattern === 'future-date') {
+
+      /*
+       * [when] type of task.
+       */
       const date = new Date(this.taskDate);
       const hours = this.getHours();
       if (hours === null) {
@@ -189,8 +193,68 @@ export class NewTaskDialogComponent implements OnInit {
       task.due = date;
       this.schedulerService.createTask(task).subscribe(res => {
         console.log(res);
+        this.dialogRef.close();
+      }, error => {
+        this.showError(error.error.message);
       });
     }
+
+    /*
+     * [repeat] type of task.
+     */
+    switch (this.repetitionPattern) {
+      case 'seconds':
+      case 'minutes':
+      case 'hours':
+      case 'days':
+        const value = this.getValue();
+        if (value === null) {
+          return; // Error
+        }
+        task.repeat = {
+          interval: this.repetitionPattern,
+          value: value,
+        };
+        this.schedulerService.createTask(task).subscribe(res => {
+          console.log(res);
+          this.dialogRef.close();
+        }, error => {
+          this.showError(error.error.message);
+        });
+        break;
+      case 'weekday':
+        const time = this.getTime();
+        if (time === null) {
+          return; // Error
+        }
+        task.repeat = {
+          interval: this.weekday,
+          time,
+        };
+        this.schedulerService.createTask(task).subscribe(res => {
+          console.log(res);
+          this.dialogRef.close();
+        }, error => {
+          this.showError(error.error.message);
+        });
+        break;
+    }
+  }
+
+  getTime(): string {
+    const result = this.taskTime;
+    if (result.length !== 5 || result.indexOf(':') !== 2) {
+      return null;
+    }
+    return result;
+  }
+
+  getValue(): number {
+    const value = Number(this.taskValue);
+    if (isNaN(value)) {
+      return null;
+    }
+    return value;
   }
 
   getHours(): number {
