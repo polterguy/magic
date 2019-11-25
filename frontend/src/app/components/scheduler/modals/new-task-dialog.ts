@@ -2,6 +2,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSelectChange, MatSnackBar } from '@angular/material';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
+import { TaskModel } from 'src/app/models/task-model';
+import { SchedulerService } from 'src/app/services/scheduler-service';
 
 export interface NewTaskDialogData {
   filename: string;
@@ -24,14 +26,15 @@ export class NewTaskDialogComponent implements OnInit {
   private minDate: Date = new Date();
 
   constructor(
-    private service: EvaluatorService,
+    private evaluatorService: EvaluatorService,
+    private schedulerService: SchedulerService,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<NewTaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: NewTaskDialogData) {
   }
 
   ngOnInit(): void {
-    this.service.vocabulary().subscribe(res => {
+    this.evaluatorService.vocabulary().subscribe(res => {
       localStorage.setItem('vocabulary', JSON.stringify(res));
     });
   }
@@ -141,7 +144,8 @@ export class NewTaskDialogComponent implements OnInit {
         if (this.taskValue === null || this.taskValue === '') {
           this.showError('You have to provide a value for your task repetition pattern');
           return;
-        } break;
+        }
+        break;
       case 'weekday':
       case 'last-day-of-month':
       case 'day-of-month':
@@ -149,8 +153,62 @@ export class NewTaskDialogComponent implements OnInit {
         if (this.taskTime === null || this.taskTime === '') {
           this.showError('You have to provide a time of day for your task repetition pattern');
           return;
-        } break;
+        }
+        break;
     }
+    if (this.taskHyperlambda === null || this.taskHyperlambda === undefined || this.taskHyperlambda.length === 0) {
+      this.showError('You have to provide some Hyperlambda for your task');
+      return;
+    }
+
+    /*
+     * If we come this far, no validation errors exists.
+     */
+    const task = new TaskModel();
+    task.name = this.taskName;
+    if (this.taskDescription !== null && this.taskDescription !== undefined) {
+      task.description = this.taskDescription;
+    }
+    task.hyperlambda = this.taskHyperlambda;
+
+    /*
+     * Settings repetition pattern.
+     */
+    if (this.repetitionPattern === 'future-date') {
+      const date = new Date(this.taskDate);
+      const hours = this.getHours();
+      if (hours === null) {
+        return; // Error
+      }
+      date.setHours(hours);
+      const minutes = this.getMinutes();
+      if (minutes === null) {
+        return; // Error
+      }
+      date.setMinutes(minutes);
+      task.due = date;
+      this.schedulerService.createTask(task).subscribe(res => {
+        console.log(res);
+      });
+    }
+  }
+
+  getHours(): number {
+    const hours = Number(this.taskTime.split(':')[0]);
+    if (isNaN(hours) || hours < 1 || hours > 23) {
+      this.showError('Your time needs to be hours and minutes separated by colon (:), e.g. \'23:59\'.');
+      return null;
+    }
+    return hours;
+  }
+
+  getMinutes(): number {
+    const minutes = Number(this.taskTime.split(':')[1]);
+    if (isNaN(minutes) || minutes < 0 || minutes > 59) {
+      this.showError('Your time needs to be hours and minutes separated by colon (:), e.g. \'23:59\'.');
+      return null;
+    }
+    return minutes;
   }
 
   showError(error: string) {
