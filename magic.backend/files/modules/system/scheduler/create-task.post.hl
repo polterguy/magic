@@ -118,6 +118,33 @@ else-if
          case:Thursday
          case:Friday
          case:Saturday
+         case:last-day-of-month
+
+            /*
+             * Unfortunately the [scheduler.tasks.create] requires
+             * expressions to be forward evaluated.
+             */
+            unwrap:x:./*/scheduler.tasks.create
+            unwrap:x:./*/scheduler.tasks.create/*/repeat
+            unwrap:x:./*/scheduler.tasks.create/*/repeat/*/time
+            unwrap:x:./*/scheduler.tasks.create/*/description
+
+            /*
+             * First adding lambda to task.
+             */
+            add:x:./*/scheduler.tasks.create/*/.lambda
+               get-nodes:x:@hyper2lambda/*
+
+            /*
+             * Actually creating our task.
+             */
+            scheduler.tasks.create:x:@.arguments/*/name
+               description:x:@.arguments/*/description
+               repeat:x:@.arguments/*/repeat/*/interval
+                  time:x:@.arguments/*/repeat/*/time
+               .lambda
+
+         default
 
             /*
              * Unfortunately the [scheduler.tasks.create] requires

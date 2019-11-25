@@ -69,9 +69,7 @@ export class SchedulerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((res) => {
-      if (res !== undefined) {
-        alert('success');
-      }
+      this.getTasks();
     });
   }
 

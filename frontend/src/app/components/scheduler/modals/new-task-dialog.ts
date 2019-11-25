@@ -213,7 +213,7 @@ export class NewTaskDialogComponent implements OnInit {
         }
         task.repeat = {
           interval: this.repetitionPattern,
-          value: value,
+          value,
         };
         this.schedulerService.createTask(task).subscribe(res => {
           console.log(res);
@@ -230,6 +230,42 @@ export class NewTaskDialogComponent implements OnInit {
         task.repeat = {
           interval: this.weekday,
           time,
+        };
+        this.schedulerService.createTask(task).subscribe(res => {
+          console.log(res);
+          this.dialogRef.close();
+        }, error => {
+          this.showError(error.error.message);
+        });
+        break;
+      case 'last-day-of-month':
+        const time2 = this.getTime();
+        if (time2 === null) {
+          return; // Error
+        }
+        task.repeat = {
+          interval: 'last-day-of-month',
+          time: time2,
+        };
+        this.schedulerService.createTask(task).subscribe(res => {
+          console.log(res);
+          this.dialogRef.close();
+        }, error => {
+          this.showError(error.error.message);
+        });
+        break;
+      case 'day-of-month':
+        const time3 = this.getTime();
+        if (time3 === null) {
+          return; // Error
+        }
+        const value2 = this.getValue();
+        if (value2 === null) {
+          return null; // Error
+        }
+        task.repeat = {
+          interval: value2.toString(),
+          time: time3,
         };
         this.schedulerService.createTask(task).subscribe(res => {
           console.log(res);
