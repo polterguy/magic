@@ -85,3 +85,12 @@
 
 * Fixed several minor bugs
 
+
+
+## Version 5.5.4
+
+* Created Magic Scheduler. Notice, this is a BETA release of it, and the scheduler should _not_ be considered to be production ready quite yet.
+  But for those wanting to try it out, it can be found in the menu of your dashboard under _"Scheduler"_.
+
+* Fixed minor bugs in frontend, especially relating to checking if JWT token is expired or not, making sure user is never allowed access to the dashboard,
+  unless the user is actually authenticated and authorized, with a JWT token that is not expired.
