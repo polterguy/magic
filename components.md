@@ -6,7 +6,8 @@ see as _"Magic"_. Most of these components are documented at their respective Gi
 you can find links to below.
 
 * [magic.lambda](https://github.com/polterguy/magic.lambda) - Contains the core keywords of Hyperlambda
-* [magic.lambda.http](https://github.com/polterguy/magic.lambda.http) - contains HTTP REST Hyperlambda extension methods
+* [magic.lambda.http](https://github.com/polterguy/magic.lambda.http) - Contains HTTP REST Hyperlambda extension methods
+* [magic.lambda.scheduler](https://github.com/polterguy/magic.lambda.scheduler) - Contains the Magic Scheduler, and its associated slots
 * [magic.lambda.crypto](https://github.com/polterguy/magic.lambda.crypto) - Contains encryption Hyperlambda extension methods
 * [magic.lambda.validators](https://github.com/polterguy/magic.lambda.validators) - Contains validators Hyperlambda extension methods
 * [magic.lambda.strings](https://github.com/polterguy/magic.lambda.strings) - Contains string manipulation Hyperlambda extension methods
