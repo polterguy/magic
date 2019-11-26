@@ -4,6 +4,7 @@ import { MatSnackBar, MatDialog, MatSlideToggleChange } from '@angular/material'
 import { SchedulerService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
+import { EvaluatorService } from 'src/app/services/evaluator-service';
 
 @Component({
   selector: 'app-scheduler',
@@ -14,14 +15,15 @@ export class SchedulerComponent implements OnInit {
 
   private schedulerState: string;
   private isRunning: boolean;
-  private displayedColumns = ['name'];
-  private tasks: string[];
+  private displayedColumns = ['name', 'description', 'due'];
+  private tasks: any[];
   private selectedTaskName: string = null;
   private selectedTask: TaskModel = null;
 
   constructor(
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private evaluatorService: EvaluatorService,
     private schedulerService: SchedulerService) {
   }
 
@@ -114,6 +116,12 @@ export class SchedulerComponent implements OnInit {
 
   getDate(due: string) {
     return new Date(due).toLocaleString();
+  }
+
+  runTask() {
+    this.evaluatorService.evaluate(this.selectedTask.hyperlambda).subscribe(res => {
+      this.showHttpSuccess('Task was evaluated sucecssfully');
+    });
   }
 
   deleteActiveTask() {
