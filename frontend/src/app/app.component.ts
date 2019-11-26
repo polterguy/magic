@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
   isLoggedIn() {
     const token = localStorage.getItem('access_token');
-    return token !== null && token !== undefined;
+    return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
   }
 
   logout() {

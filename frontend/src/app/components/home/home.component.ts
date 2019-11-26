@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
     this.pingService.ping().subscribe(res => {
       this.version = res.version;
       if (res.warnings !== undefined) {
-        for (let idx in res.warnings) {
+        for (const idx in res.warnings) {
           console.warn(res.warnings[idx]);
         }
       }
