@@ -19,6 +19,7 @@ export class SchedulerComponent implements OnInit {
   private tasks: any[];
   private selectedTaskName: string = null;
   private selectedTask: TaskModel = null;
+  private filter: string = null;
 
   constructor(
     public dialog: MatDialog,
@@ -85,7 +86,11 @@ export class SchedulerComponent implements OnInit {
   }
 
   getFilteredTasks() {
-    return this.tasks;
+    if (this.filter === null || this.filter === '') {
+      return this.tasks;
+    }
+    return this.tasks.filter(x => x.name.toLowerCase().indexOf(this.filter.toLowerCase()) > -1 ||
+      (x.description !== null && x.description !== undefined && x.description.toLowerCase().indexOf(this.filter.toLowerCase()) > -1));
   }
 
   selectTask(name: string) {
