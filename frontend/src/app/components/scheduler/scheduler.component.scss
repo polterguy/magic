@@ -13,6 +13,17 @@
         }
         table {
             width: 100%;
+            tr {
+                td:nth-child(1), th:nth-child(1) {
+                    width: 30%;
+                }
+                td:nth-child(2), th:nth-child(2) {
+                    width: 55%;
+                }
+                td:nth-child(3), th:nth-child(3) {
+                    width: 15%;
+                }
+            }
             tr.highlight {
                 background-color: rgba(0,0,0,.1);
             }
