@@ -6,7 +6,7 @@
 using magic.node;
 using magic.signals.contracts;
 
-namespace magic.lambda.slots
+namespace magic.backend.slots
 {
     /// <summary>
     /// [version] slot returning the version of Magic that is currently being used.
