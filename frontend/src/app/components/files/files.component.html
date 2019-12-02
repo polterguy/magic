@@ -32,15 +32,17 @@
         matTooltip="Up one level"
         (click)="upOneFolder()">Up one level</button>
       <button 
-        *ngIf="path !== '/'"
+        *ngIf="path !== '/' && !path.startsWith('/modules/system/') && path !== '/modules/'"
         mat-button
         matTooltip="Delete folder"
         (click)="deleteFolder()">Delete folder</button>
       <button
+        *ngIf="!path.startsWith('/modules/system/') && path !== '/modules/'"
         mat-button
         matTooltip="Create a new file"
         (click)="createNewFile()">New file</button>
       <button
+        *ngIf="!path.startsWith('/modules/system/')"
         mat-button
         matTooltip="Create a new folder"
         (click)="createNewFolder()">New folder</button>
@@ -61,7 +63,7 @@
 
   <div class="right-aligned" style="margin-top: 1rem;">
       <button
-        *ngIf="getMode(this.filePath) == 'hyperlambda'"
+        *ngIf="getMode(this.filePath) == 'hyperlambda' && !path.startsWith('/modules/system/')"
         mat-button
         (click)="evaluate()"
         matTooltip="Evaluates your file">Evaluate</button>
@@ -77,10 +79,12 @@
         (click)="evaluateSql()"
         matTooltip="Evaluates your SQL">Evaluate</button>
       <button
+        *ngIf="!path.startsWith('/modules/system/')"
         mat-button
         (click)="save()"
         matTooltip="Saves your file">Save</button>
       <button
+        *ngIf="!path.startsWith('/modules/system/')"
         mat-button
         (click)="delete()"
         matTooltip="Deletes your file">Delete</button>

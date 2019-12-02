@@ -36,6 +36,9 @@
             tr.mat-row.selected-file:hover {
                 background-color: rgba(0,128,0,.3);
             }
+            tr.danger td {
+                color: rgb(255,57,57);
+            }
         }
     }
 }

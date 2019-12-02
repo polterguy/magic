@@ -192,7 +192,6 @@ export class NewTaskDialogComponent implements OnInit {
       date.setMinutes(minutes);
       task.due = date;
       this.schedulerService.createTask(task).subscribe(res => {
-        console.log(res);
         this.dialogRef.close();
       }, error => {
         this.showError(error.error.message);
@@ -216,7 +215,6 @@ export class NewTaskDialogComponent implements OnInit {
           value,
         };
         this.schedulerService.createTask(task).subscribe(res => {
-          console.log(res);
           this.dialogRef.close();
         }, error => {
           this.showError(error.error.message);
@@ -232,7 +230,6 @@ export class NewTaskDialogComponent implements OnInit {
           time,
         };
         this.schedulerService.createTask(task).subscribe(res => {
-          console.log(res);
           this.dialogRef.close();
         }, error => {
           this.showError(error.error.message);
@@ -248,7 +245,6 @@ export class NewTaskDialogComponent implements OnInit {
           time: time2,
         };
         this.schedulerService.createTask(task).subscribe(res => {
-          console.log(res);
           this.dialogRef.close();
         }, error => {
           this.showError(error.error.message);
@@ -268,7 +264,6 @@ export class NewTaskDialogComponent implements OnInit {
           time: time3,
         };
         this.schedulerService.createTask(task).subscribe(res => {
-          console.log(res);
           this.dialogRef.close();
         }, error => {
           this.showError(error.error.message);

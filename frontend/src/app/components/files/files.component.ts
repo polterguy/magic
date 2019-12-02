@@ -43,6 +43,9 @@ export class FilesComponent implements OnInit {
   getPath() {
     this.fileService.listFiles(this.path).subscribe((res) => {
       this.files = res || [];
+      if (this.path === '/modules/system/') {
+        this.showInfo('These files and folders are protected for your safety!');
+      }
     });
     this.fileService.listFolders(this.path).subscribe((res) => {
       this.folders = res || [];
@@ -58,13 +61,17 @@ export class FilesComponent implements OnInit {
   }
 
   getRowClass(el: string) {
+    let additionalCss = '';
+    if (el.startsWith('/modules/system/')) {
+      additionalCss = 'danger ';
+    }
     if (el === this.filePath) {
-      return 'selected-file';
+      return additionalCss + 'selected-file';
     }
     if (el.endsWith('/')) {
-      return 'folder-row';
+      return additionalCss + 'folder-row';
     }
-    return '';
+    return additionalCss + '';
   }
 
   getFileName(el: string) {
@@ -162,7 +169,6 @@ export class FilesComponent implements OnInit {
       this.showInfo('Folder successfully deleted');
       let newPath = this.path.substr(1, this.path.length - 2);
       newPath = newPath.substr(0, newPath.lastIndexOf('/'));
-      console.log(newPath);
       this.path = '/' + newPath + '/';
       this.getPath();
       this.filter = '';
