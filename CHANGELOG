@@ -109,6 +109,6 @@
 * Implemented support for _"fire and forget"_ jobs in the scheduler, in addition to allowing the user to configure the scheduler such
   that it can take a folder as a path to where it serializes its tasks, which prevents saving every job, whenever a new job is created.
 
-* Simplified the crudifier, and merging the MySQL and MS SQL Special implementations into one common file, to avoid repeating code.
+* Simplified the crudifier, and merging the MySQL and MS SQL Special implementations into one common files, to avoid repeating code.
 
 * Allowing for expressions to [slots.signal].
