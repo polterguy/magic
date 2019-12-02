@@ -14,7 +14,10 @@ export class CrudifyService {
   constructor(private httpClient: HttpClient) { }
 
   public getDatabases(databaseType: string) {
-    return this.httpClient.get<any[]>(environment.apiURL + `magic/modules/${databaseType}/databases`);
+    return this.httpClient.get<any[]>(
+      environment.apiURL +
+      'magic/modules/system/crudifier/databases?databaseType=' +
+      encodeURIComponent(databaseType));
   }
 
   public getTables(databaseType: string, database: string) {

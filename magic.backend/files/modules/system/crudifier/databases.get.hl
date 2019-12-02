@@ -2,6 +2,8 @@
 /*
  * Lists all database in your installation.
  */
+.arguments
+   databaseType:string
 
 
 /*
@@ -14,7 +16,11 @@ auth.ticket.verify:root
  * Invokes slots.create responsible for returning our database names,
  * and returns results to caller.
  */
-slots.signal:magic.db.mysql.databases
+strings.concat
+   .:magic.db.
+   get-value:x:@.arguments/*/databaseType
+   .:.databases
+slots.signal:x:@strings.concat
 
 
 /*
