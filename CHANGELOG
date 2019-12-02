@@ -115,3 +115,10 @@
 
 * Allowing for both [mysql.connect] and [mssql.connect] to be given an empty or null connection string, at which a default a permissive
   initial catalogue will be chosen, depending upon the database type.
+
+* Making sure we don't overwrite the _"/system/"_ folder when creating CRUD endpoints.
+
+* Making sure we don't overwrite existing modules as we create CRUD endpoints.
+
+* Support for overriding the _"module name"_ during the CRUDification process, to use a different folder name than the database table,
+  which is default.
