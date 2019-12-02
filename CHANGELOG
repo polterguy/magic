@@ -122,3 +122,5 @@
 
 * Support for overriding the _"module name"_ during the CRUDification process, to use a different folder name than the database table,
   which is default.
+
+* Not displaying hidden operating system files (Unix style, starting with ".") when listing files.
