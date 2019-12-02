@@ -2,6 +2,7 @@
 
 export class CrudifyModel {
     databaseType: string;
+    moduleName: string;
     database: string;
     table: string;
     returnId: boolean;

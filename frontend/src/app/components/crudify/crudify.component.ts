@@ -17,6 +17,7 @@ export class CrudifyComponent implements OnInit {
 
   // Databases, tables, and selected instances of such.
   private databaseTypes = ['mysql', 'mssql'];
+  private moduleName: string = null;
   private databaseType: string;
   private databases: any[] = null;
   private tables: any[] = null;
@@ -148,6 +149,7 @@ export class CrudifyComponent implements OnInit {
     } else {
 
       // User wants to crudify a table.
+      this.moduleName = e.value;
       this.selectedTable = e.value;
       this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
@@ -302,6 +304,7 @@ export class CrudifyComponent implements OnInit {
     // Database type
     this.crudService.generateCrudEndpoints(this.databaseType, {
       databaseType: this.databaseType,
+      moduleName: this.moduleName,
       database: this.selectedDatabase,
       table: this.selectedTable,
       returnId,
