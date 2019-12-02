@@ -11,7 +11,7 @@ auth.ticket.verify:root
 
 
 /*
- * Returns all files in the "/files/misc/mssql/stored/" folder.
+ * Returns all files in the "/files/misc/mssql/" folder.
  */
 io.files.list:/misc/mssql/
 slots.return-nodes:x:-/*
