@@ -3,6 +3,7 @@
  * Generate an HTTP REST generic SQL endpoint according to the given [.arguments].
  */
 .arguments
+   databaseType:string
    authorization:string
    database:string
    arguments:string
@@ -21,7 +22,11 @@ auth.ticket.verify:root
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
-io.files.load:/modules/mysql/templates/sql.template.hl
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/databaseType
+   .:/templates/sql.template.hl
+io.files.load:x:@strings.concat
 hyper2lambda:x:-
 unwrap:x:+/*
 apply:x:@hyper2lambda
