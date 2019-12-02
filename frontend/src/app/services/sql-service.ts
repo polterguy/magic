@@ -10,7 +10,7 @@ export class SqlService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public evaluate(sql: string, databaseType = 'mysql') {
+  public evaluate(sql: string, databaseType: string) {
     return this.httpClient.post<any[]>(
       environment.apiURL +
       `magic/modules/${databaseType}/evaluate`, {
@@ -18,7 +18,9 @@ export class SqlService {
       });
   }
 
-  public getSavedFiles(databaseType = 'mysql') {
-    return this.httpClient.get<string[]>(environment.apiURL + `magic/modules/${databaseType}/list-files`);
+  public getSavedFiles(databaseType: string) {
+    return this.httpClient.get<string[]>(
+      environment.apiURL +
+      'magic/modules/system/crudifier/list-files?databaseType=' + encodeURIComponent(databaseType));
   }
 }
