@@ -20,7 +20,8 @@ export class CrudifyService {
   public getTables(databaseType: string, database: string) {
     return this.httpClient.get<any[]>(
       environment.apiURL +
-      `magic/modules/${databaseType}/tables?database=` + encodeURI(database));
+      'magic/modules/system/crudifier/tables?databaseType=' + encodeURIComponent(databaseType) +
+      '&database=' + encodeURIComponent(database));
   }
 
   public getColumns(databaseType: string, database: string, table: string) {
