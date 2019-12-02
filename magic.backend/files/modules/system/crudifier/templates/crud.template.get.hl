@@ -12,16 +12,16 @@
 
 
 /*
- * Parametrizing [magic.db.mssql.read].
+ * Parametrizing [magic.db.xxx.read].
  */
 add:x:./*/wait.slots.signal/*/args
    get-nodes:x:@.arguments/*
 
 
 /*
- * Invoking [magic.db.mssql.read], making sure we unwrap the [id].
+ * Invoking [magic.db.xxx.read], making sure we unwrap the [id].
  */
-wait.slots.signal:magic.db.mssql.read
+wait.slots.signal:magic.db.xxx.read
    database:{database}
    table:{table}
    args

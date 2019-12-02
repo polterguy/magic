@@ -1,6 +1,7 @@
 
 
 export class CrudifyModel {
+    databaseType: string;
     database: string;
     table: string;
     returnId: boolean;

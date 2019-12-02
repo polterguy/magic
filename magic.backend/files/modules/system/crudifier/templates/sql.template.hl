@@ -10,23 +10,23 @@
 /*
  * Opening up a database connection
  */
-wait.mysql.connect:{database}
+wait.xxx.connect:{database}
 
 
    /*
-    * Parametrizing [mysql.select].
+    * Parametrizing [xxx.select].
     */
-   add:x:./*/wait.mysql.select
+   add:x:+
       get-nodes:x:@.arguments/*
 
 
    /*
     * Evaluating [mysql.select] slots.create.
     */
-   wait.mysql.select:{sql}
+   wait.xxx.select:{sql}
 
 
    /*
     * Returning results to caller.
     */
-   slots.return-nodes:x:@wait.mysql.select/*
+   slots.return-nodes:x:-/*

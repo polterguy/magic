@@ -301,10 +301,11 @@ export class CrudifyComponent implements OnInit {
 
     // Database type
     this.crudService.generateCrudEndpoints(this.databaseType, {
+      databaseType: this.databaseType,
       database: this.selectedDatabase,
       table: this.selectedTable,
       returnId,
-      template: `/modules/${this.databaseType}/templates/crud.template.${curVerb}.hl`,
+      template: `/modules/system/crudifier/templates/crud.template.${curVerb}.hl`,
       verb: curVerb,
       auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
       log: this.endpoints.filter((x) => x.verb === curVerb)[0].log,

@@ -22,16 +22,29 @@ auth.ticket.verify:root
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
-strings.concat
-   .:/modules/
-   get-value:x:@.arguments/*/databaseType
-   .:/templates/sql.template.hl
-io.files.load:x:@strings.concat
+io.files.load:/modules/system/crudifier/templates/sql.template.hl
 hyper2lambda:x:-
 unwrap:x:+/*
 apply:x:@hyper2lambda
    database:x:@.arguments/*/database
    sql:x:@.arguments/*/sql
+
+
+/*
+ * Replacing generic slots with actual database type.
+ */
+for-each:x:@apply/**/wait.xxx.connect
+   set-name:x:@.dp/#
+      strings.concat
+         .:wait.
+         get-value:x:@.arguments/*/databaseType
+         .:.connect
+for-each:x:@apply/**/wait.xxx.select
+   set-name:x:@.dp/#
+      strings.concat
+         .:wait.
+         get-value:x:@.arguments/*/databaseType
+         .:.select
 
 
 /*

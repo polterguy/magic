@@ -3,6 +3,7 @@
  * Generate an HTTP REST endpoint according to the given [.arguments].
  */
 .arguments
+   databaseType:string
    database:string
    table:string
    returnId:bool
@@ -43,6 +44,35 @@ apply:x:@hyper2lambda
    table:x:@.arguments/*/table
    return-id:x:@.arguments/*/returnId
    args
+
+
+/*
+ * Replacing generic slots with actual database type.
+ */
+for-each:x:@apply/**/=magic.db.xxx.create
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.create
+for-each:x:@apply/**/=magic.db.xxx.delete
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.delete
+for-each:x:@apply/**/=magic.db.xxx.read
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.read
+for-each:x:@apply/**/=magic.db.xxx.update
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.update
 
 
 /*

@@ -13,10 +13,10 @@ add:x:./*/wait.slots.signal/*/values
 
 
 /*
- * Invoking [magic.db.mssql.update]
+ * Invoking [magic.db.xxx.update]
  */
 unwrap:x:+/*/ids/*
-wait.slots.signal:magic.db.mssql.update
+wait.slots.signal:magic.db.xxx.update
    database:{database}
    table:{table}
    values
