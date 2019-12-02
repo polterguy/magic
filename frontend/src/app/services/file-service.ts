@@ -12,7 +12,7 @@ export class FileService {
 
   public listFiles(path: string) {
     return this.httpClient.get<string[]>(
-      environment.apiURL + 
+      environment.apiURL +
       'magic/modules/system/file-system/list-files?folder=' + encodeURI(path));
   }
 
