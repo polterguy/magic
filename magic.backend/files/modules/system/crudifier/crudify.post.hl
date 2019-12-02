@@ -31,6 +31,16 @@ if
       .:system
    .lambda
       throw:"You can't use the name 'system' as your module's name"
+if
+   or
+      eq
+         get-value:x:@strings.to-lower
+         .:
+      eq
+         get-value:x:@strings.to-lower
+         .
+   .lambda
+      throw:"You can't use an empty string as your module's name. Your module must have a name."
 
 
 /*
@@ -287,11 +297,26 @@ set-value:x:@.path
 
 
 /*
- * Saving file, now applied according to template declaration.
+ * Figuring out filename for HTTP endpoint.
  */
 strings.replace:x:@.path
    .:' '
    .:_
+
+
+/*
+ * Making sure folder does not exist from before.
+ */
+if
+   io.files.exists:x:@strings.replace
+   .lambda
+      throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+
+
+/*
+ * Saving file, now applied according to template declaration,
+ * and with the correct filename.
+ */
 io.files.save:x:@strings.replace
    get-value:x:@lambda2hyper
 

@@ -214,6 +214,12 @@ export class CrudifyComponent implements OnInit {
   // Crudifies ALL tables in currently selected database.
   crudifyAllTables() {
 
+    // Making sure user has chosen a module name.
+    if (this.moduleName === '' || this.moduleName === null || this.moduleName === undefined) {
+      this.showError('You have to supply a module name for me');
+      return;
+    }
+
     // Making sure we "obscur" the main visual area while CRUDifier is working.
     this.isCrudifying = true;
     this.noEndpointsCreated = 0;
