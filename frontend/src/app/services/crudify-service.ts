@@ -26,13 +26,14 @@ export class CrudifyService {
   public getColumns(databaseType: string, database: string, table: string) {
     return this.httpClient.get<any[]>(
       environment.apiURL +
-      `magic/modules/${databaseType}/columns?database=` + encodeURI(database) +
-      '&table=' + encodeURI(table));
+      'magic/modules/system/crudifier/columns?databaseType=' + encodeURIComponent(databaseType) +
+      '&database=' + encodeURIComponent(database) +
+      '&table=' + encodeURIComponent(table));
   }
 
   public generateCrudEndpoints(databaseType: string, model: CrudifyModel) {
     return this.httpClient.post<CrudifyResult>(
-      environment.apiURL + `magic/modules/system/crudifier/crudify`, model);
+      environment.apiURL + 'magic/modules/system/crudifier/crudify', model);
   }
 
   public createCustomSqlEndpoint(databaseType: string, model: CustomSQLModel) {
