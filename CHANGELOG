@@ -112,3 +112,6 @@
 * Simplified the crudifier, and merging the MySQL and MS SQL Special implementations into one common files, to avoid repeating code.
 
 * Allowing for expressions to [slots.signal].
+
+* Allowing for both [mysql.connect] and [mssql.connect] to be given an empty or null connection string, at which a default a permissive
+  initial catalogue will be chosen, depending upon the database type.
