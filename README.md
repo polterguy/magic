@@ -25,11 +25,9 @@
 [![Build status](https://travis-ci.org/polterguy/magic.endpoint.svg?master)](https://travis-ci.org/polterguy/magic.endpoint)
 [![Build status](https://travis-ci.org/polterguy/magic.data.common.svg?master)](https://travis-ci.org/polterguy/magic.data.common)
 
-Magic is a CRUD app generator, allowing you to create CRUD Web APIs on top of ASP.NET Core.
-In 1 minute, you can basically create hundreds of HTTP REST based CRUD Web API endpoints,
-wrapping your entire database, even if it has hundreds of tables. It feels almost like Magic,
-allowing you to build secure CRUD Web API endpoints in seconds, hence its name. Watch the video
-below for a demonstration of the system.
+Magic is an automation tool for ASP.NET Core. It features a CRUD app generator, allowing you to create CRUD Web
+APIs by simply clicking a button - In addition to a task scheduler, allowing you to schedule tasks for execution
+in the future. Watch the video below for a demonstration of Magic's CRUD API generator.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=4TyT4lBEOg8">
@@ -37,16 +35,13 @@ below for a demonstration of the system.
 </a>
 </p>
 
-Magic was built by leveraging the ideas written about in the following MSDN article to the extreme. However, the library has been completely
-changed since the article was written, and improved to become unrecognizable due to chasing these same ideas further and further down
-the rabbit hole.
+Or watch the following video for a demonstration of Magic's task scheduler.
 
-* [Super DRY Magic for ASP.NET Core](https://msdn.microsoft.com/en-us/magazine/mt833461)
-
-The above article is written by me, the developer behind Magic. In addition I also wrote the 5th most read article
-for MSDN Magazine about [Hyperlambda, making C# more dynamic](https://msdn.microsoft.com/magazine/mt809119).
-Although the article is a bit dated today, it explains some of the techniques that has been applied
-when creating Magic.
+<p align="center">
+<a href="https://www.youtube.com/watch?v=I8iNg1wxRSo">
+<img alt="Scheduling tasks in ASP.NET Core" title="Scheduling tasks in ASP.NET Core" src="https://servergardens.files.wordpress.com/2019/12/magic-scheduler-screenshot.png" />
+</a>
+</p>
 
 ## Getting started
 
