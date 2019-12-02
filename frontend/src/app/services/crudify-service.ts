@@ -32,7 +32,7 @@ export class CrudifyService {
 
   public generateCrudEndpoints(databaseType: string, model: CrudifyModel) {
     return this.httpClient.post<CrudifyResult>(
-      environment.apiURL + `magic/modules/${databaseType}/crudify`, model);
+      environment.apiURL + `magic/modules/system/crudifier/crudify`, model);
   }
 
   public createCustomSqlEndpoint(databaseType: string, model: CustomSQLModel) {
