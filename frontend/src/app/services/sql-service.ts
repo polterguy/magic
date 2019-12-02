@@ -13,7 +13,8 @@ export class SqlService {
   public evaluate(sql: string, databaseType: string) {
     return this.httpClient.post<any[]>(
       environment.apiURL +
-      `magic/modules/${databaseType}/evaluate`, {
+      'magic/modules/system/crudifier/evaluate', {
+        databaseType,
         sql,
       });
   }

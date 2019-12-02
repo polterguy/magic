@@ -1,0 +1,39 @@
+
+/*
+ * Evaluates the given [sql] and returns results to caller.
+ */
+.arguments
+   databaseType:string
+   sql:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Connecting to default database.
+ */
+set-name:x:./*/foo.connect
+   strings.concat
+      get-value:x:@.arguments/*/databaseType
+      .:.connect
+foo.connect
+
+
+   /*
+    * Executing SQL.
+    */
+   set-name:x:./*/foo.select
+      strings.concat
+         get-value:x:@.arguments/*/databaseType
+         .:.select
+   foo.select:x:@.arguments/*/sql
+
+
+   /*
+    * Returning results to caller.
+    */
+   slots.return-nodes:x:-/*
