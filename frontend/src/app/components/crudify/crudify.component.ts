@@ -116,6 +116,7 @@ export class CrudifyComponent implements OnInit {
     this.tables = null;
     this.columns = null;
     this.endpoints = null;
+    this.moduleName = e.value;
 
     // Getting tables for his new database of choice
     this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
@@ -149,7 +150,6 @@ export class CrudifyComponent implements OnInit {
     } else {
 
       // User wants to crudify a table.
-      this.moduleName = e.value;
       this.selectedTable = e.value;
       this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
@@ -234,6 +234,7 @@ export class CrudifyComponent implements OnInit {
     // Checking if we're done.
     if (tables.length === 0) {
       this.isCrudifying = false;
+      this.moduleName = null;
       this.selectedDatabase = null;
       this.databases = null;
       this.tables = null;
@@ -263,6 +264,15 @@ export class CrudifyComponent implements OnInit {
         this.crudifyTopTable(tables.splice(1));
       });
     }, (err) => {
+      this.moduleName = null;
+      this.selectedDatabase = null;
+      this.databases = null;
+      this.tables = null;
+      this.columns = null;
+      this.endpoints = null;
+      this.selectedTable = null;
+      this.getDatabases();
+      this.isCrudifying = false;
       this.showError(err.error.message);
     });
 }
@@ -323,6 +333,15 @@ export class CrudifyComponent implements OnInit {
       this.noLoc += res.loc;
       this.createHttpEndpoints(verbs.slice(1), callback);
     }, (error) => {
+      this.moduleName = null;
+      this.selectedDatabase = null;
+      this.databases = null;
+      this.tables = null;
+      this.columns = null;
+      this.endpoints = null;
+      this.selectedTable = null;
+      this.getDatabases();
+      this.isCrudifying = false;
       this.showError(error.error.message);
     });
   }

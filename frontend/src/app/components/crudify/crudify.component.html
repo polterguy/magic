@@ -20,12 +20,6 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="tables !== null" style="margin-left: 2rem;" class="table-select">
-    <mat-select placeholder="Select table" (selectionChange)="tableChanged($event)">
-      <mat-option *ngFor="let cur of tables" [value]="cur.table">{{cur.table}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
   <mat-form-field *ngIf="tables !== null" style="margin-left: 2rem;" class="module-name">
     <input 
       matInput 
@@ -33,6 +27,12 @@
       type="text" 
       placeholder="Module name"
       [(ngModel)]="moduleName">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="tables !== null" style="margin-left: 2rem;" class="table-select">
+    <mat-select placeholder="Select table" (selectionChange)="tableChanged($event)">
+      <mat-option *ngFor="let cur of tables" [value]="cur.table">{{cur.table}}</mat-option>
+    </mat-select>
   </mat-form-field>
 
   <button 
