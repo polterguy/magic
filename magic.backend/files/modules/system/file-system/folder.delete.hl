@@ -13,6 +13,17 @@ auth.ticket.verify:root
 
 
 /*
+ * Making sure system folder is safe.
+ */
+if
+   or
+      strings.starts-with:x:@.arguments/*/folder
+         .:/system/
+   .lambda
+      throw:"You cannot delete anything within your '/system/ folder for security reasons. If you wish to delete things here, you should directly access it using your file system.'"
+
+
+/*
  * Deletes the specified folder.
  */
 io.folders.delete:x:@.arguments/*/folder
