@@ -13,6 +13,19 @@ auth.ticket.verify:root
 
 
 /*
+ * Making sure "/modules/system/" folder is safe.
+ */
+if
+   or
+      strings.starts-with:x:@.arguments/*/file
+         .:/modules/system/
+      strings.starts-with:x:@.arguments/*/file
+         .:/misc/
+   .lambda
+      throw:"You cannot delete anything within your '/modules/system/' folder for security reasons. If you wish to delete things here, you should directly access it using your file system.'"
+
+
+/*
  * Deletes the specified file.
  */
 io.files.delete:x:@.arguments/*/file
