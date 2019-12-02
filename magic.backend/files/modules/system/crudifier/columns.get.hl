@@ -5,6 +5,7 @@
  * Requires a working _"sys"_ connection string in your _"appsettings.json"_ file.
  */
 .arguments
+   databaseType:string
    database:string
    table:string
 
@@ -18,8 +19,12 @@ auth.ticket.verify:root
 /*
  * Invokes slots.create responsible for returning columns.
  */
+strings.concat
+   .:magic.db.
+   get-value:x:@.arguments/*/databaseType
+   .:.columns
 unwrap:x:+/*
-slots.signal:magic.db.mysql.columns
+slots.signal:x:@strings.concat
    database:x:@.arguments/*/database
    table:x:@.arguments/*/table
 
