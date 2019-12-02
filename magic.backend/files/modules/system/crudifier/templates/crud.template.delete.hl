@@ -1,6 +1,6 @@
 
 /*
- * Template for HTTP POST CRUD requests.
+ * Template for HTTP DELETE CRUD requests.
  *
  * Expects {database} and {table} [apply] arguments.
  */
@@ -8,20 +8,14 @@
 
 
 /*
- * Parametrizing [magic.db.mssql.create].
+ * Invoking [magic.db.xxx.delete], making sure we unwrap the [id].
  */
-add:x:./*/wait.slots.signal/*/values
+add:x:./*/wait.slots.signal/*/ids
    get-nodes:x:@.arguments/*
-
-
-/*
- * Invoking [magic.db.mssql.create]
- */
-wait.slots.signal:magic.db.mssql.create
+wait.slots.signal:magic.db.xxx.delete
    database:{database}
    table:{table}
-   return-id:{return-id}
-   values
+   ids
 
 
 /*
