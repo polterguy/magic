@@ -304,9 +304,7 @@ export class CrudifyComponent implements OnInit {
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'post') {
-      console.log(this.columns);
       returnId = this.columns.filter(x => x.primary === true && x.automatic === true).length > 0;
-      console.log(returnId);
       args.columns = this.columns
         .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));

@@ -43,12 +43,10 @@ export class SchedulerComponent implements OnInit {
   isRunningChanged(e: MatSlideToggleChange) {
     if (e.checked) {
       this.schedulerService.turnOn().subscribe(res => {
-        console.log(res);
         this.schedulerState = 'Stop scheduler';
       });
     } else {
       this.schedulerService.turnOff().subscribe(res => {
-        console.log(res);
         this.schedulerState = 'Start scheduler';
       });
     }
