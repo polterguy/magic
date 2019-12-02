@@ -18,17 +18,17 @@ export class FileService {
 
   public listFolders(path: string) {
     return this.httpClient.get<string[]>(
-      environment.apiURL + 
+      environment.apiURL +
       'magic/modules/system/file-system/list-folders?folder=' + encodeURI(path));
   }
 
   public getFileContent(path: string) {
-    const requestOptions: Object = {
+    const requestOptions: object = {
       responseType: 'text'
     };
     return this.httpClient.get<string>(
-      environment.apiURL + 
-      'api/files?file=' + encodeURI(path), 
+      environment.apiURL +
+      'api/files?file=' + encodeURI(path),
       requestOptions);
   }
 
