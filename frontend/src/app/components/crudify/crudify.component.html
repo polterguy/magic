@@ -26,6 +26,15 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field *ngIf="tables !== null" style="margin-left: 2rem;" class="module-name">
+    <input 
+      matInput 
+      autocomplete="off"
+      type="text" 
+      placeholder="Module name"
+      [(ngModel)]="moduleName">
+  </mat-form-field>
+
   <button 
     *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     matTooltip="Generates CRUD endpoints for your table"

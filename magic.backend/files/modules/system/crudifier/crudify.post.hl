@@ -4,6 +4,7 @@
  */
 .arguments
    databaseType:string
+   moduleName:string
    database:string
    table:string
    returnId:bool
@@ -18,6 +19,18 @@
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
+
+
+/*
+ * Sanity checking module name, to prevent overwriting "/system/".
+ */
+strings.to-lower:x:@.arguments/*/moduleName
+if
+   eq
+      get-value:x:@strings.to-lower
+      .:system
+   .lambda
+      throw:"You can't use the name 'system' as your module's name"
 
 
 /*
@@ -242,7 +255,7 @@ switch:x:@.arguments/*/verb
 set-value:x:@.folder
    strings.concat
       get-value:x:@.folder
-      get-value:x:@.arguments/*/database
+      get-value:x:@.arguments/*/moduleName
       .:/
 strings.split:x:@.filename
    .:/
