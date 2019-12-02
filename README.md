@@ -76,4 +76,4 @@ key. You can [obtain a license key here](https://gaiasoul.com/license-magic/).
 Notice, 5 hours after you put Magic into production, it will stop functioning, unless you have a valid
 license for it.
 
-* [Get licensed](https://gaiasoul.com/license-magic/)
+* [Get licensed](https://servergardens.com/buy/)
