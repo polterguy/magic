@@ -40,8 +40,8 @@ export class CrudifyService {
       environment.apiURL + 'magic/modules/system/crudifier/crudify', model);
   }
 
-  public createCustomSqlEndpoint(databaseType: string, model: CustomSQLModel) {
+  public createCustomSqlEndpoint(model: CustomSQLModel) {
     return this.httpClient.post<CrudifyResult>(
-      environment.apiURL + `magic/modules/${databaseType}/custom-sql`, model);
+      environment.apiURL + 'magic/modules/system/crudifier/custom-sql', model);
   }
 }

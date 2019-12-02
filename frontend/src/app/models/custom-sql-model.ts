@@ -1,6 +1,7 @@
 
 
 export class CustomSQLModel {
+    databaseType: string;
     database: string;
     arguments: string;
     sql: string;

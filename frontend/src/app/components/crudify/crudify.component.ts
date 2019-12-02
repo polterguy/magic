@@ -186,7 +186,8 @@ export class CrudifyComponent implements OnInit {
     }
 
     // Creating custom SQL endpoint
-    this.crudService.createCustomSqlEndpoint(this.databaseType, {
+    this.crudService.createCustomSqlEndpoint({
+      databaseType: this.databaseType,
       database: this.selectedDatabase,
       arguments: this.customSqlArguments,
       verb: this.customSqlEndpointVerb,
