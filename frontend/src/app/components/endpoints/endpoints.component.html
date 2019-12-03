@@ -72,7 +72,8 @@
 
     <ngx-codemirror 
       *ngIf="isJsonArguments"
-      [(ngModel)]="arguments" 
+      [(ngModel)]="arguments"
+      class="smaller"
       [options]="{
         lineNumbers: true,
         theme: 'material',
@@ -96,6 +97,7 @@
 
     <ngx-codemirror 
       [(ngModel)]="endpointResult" 
+      class="smaller"
       [options]="{
         lineNumbers: true,
         theme: 'material',
