@@ -21,6 +21,13 @@
         table {
             width: 100%;
             tr {
+                th.delete-column,
+                th.delete-column {
+                    min-width: 70px;
+                    text-align: right;
+                }
+            }
+            tr {
                 td:nth-child(1), th:nth-child(1) {
                     width: 100%;
                 }
@@ -74,4 +81,23 @@
 
 .right-aligned {
     text-align: right;
+}
+
+.file-button {
+    float:left;
+    position:absolute;
+    z-index:-1;
+    margin-left: -100px;
+}
+
+.invisible-file-element {
+    opacity: 0;
+    font-size: 0;
+    width: 90px;
+    height: 37px;
+    float: left; 
+}
+
+.invisible-file-element:hover {
+    cursor: pointer;
 }

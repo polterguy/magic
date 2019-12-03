@@ -57,21 +57,32 @@ export class FileService {
       });
   }
 
-  public deleteFile(path: string) {
-    return this.httpClient.delete<string>(
-      environment.apiURL + 'magic/modules/system/file-system/file?file=' + encodeURI(path)
+  public uploadFile(path: string, file: any) {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.httpClient.put<any>(
+      environment.apiURL +
+      'api/files?folder=' + encodeURI(path),
+      formData
     );
   }
+
 
   public saveFile(path: string, content: string) {
     const folder = path.substr(0, path.lastIndexOf('/') + 1);
     const formData: FormData = new FormData();
-    const blob = new Blob([content], { type: "text/plain"});
+    const blob = new Blob([content], { type: 'text/plain'});
     formData.append('file', blob, path.substr(path.lastIndexOf('/') + 1));
     return this.httpClient.put<any>(
-      environment.apiURL + 
+      environment.apiURL +
       'api/files?folder=' + encodeURI(folder),
       formData
+    );
+  }
+
+  public deleteFile(path: string) {
+    return this.httpClient.delete<string>(
+      environment.apiURL + 'magic/modules/system/file-system/file?file=' + encodeURI(path)
     );
   }
 
