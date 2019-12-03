@@ -17,7 +17,7 @@ export interface DialogData {
   styleUrls: ['./files.component.scss']
 })
 export class FilesComponent implements OnInit {
-  private displayedColumns: string[] = ['path', 'download'];
+  private displayedColumns: string[] = ['path', 'download', 'delete'];
   private path = '/';
   private folders: string[] = [];
   private files: string[] = [];
@@ -26,6 +26,7 @@ export class FilesComponent implements OnInit {
   private databaseTypes = ['mysql', 'mssql'];
   private selectedDatabaseType = 'mysql';
   private filter = '';
+  private fileName: string;
 
   constructor(
     private fileService: FileService,
@@ -77,6 +78,20 @@ export class FilesComponent implements OnInit {
 
   downloadFile(path: string) {
     this.fileService.downloadFile(path);
+  }
+
+  deletePath(path: string) {
+    if (path.endsWith('/')) {
+      this.fileService.deleteFolder(path).subscribe(res => {
+        this.showInfo('Folder was successfully deleted');
+        this.getPath();
+      });
+    } else {
+      this.fileService.deleteFile(path).subscribe(res => {
+        this.showInfo('File was successfully deleted');
+        this.getPath();
+      });
+    }
   }
 
   getFileName(el: string) {
@@ -197,7 +212,7 @@ export class FilesComponent implements OnInit {
       this.filePath = path;
     }, (err) => {
       this.showError(err.error.message);
-    })
+    });
   }
 
   getCodeMirrorOptions() {
@@ -254,6 +269,13 @@ export class FilesComponent implements OnInit {
       this.showInfo('SQL was successfully evaluate');
     }, (err) => {
       this.showError(err.error.message);
+    });
+  }
+
+  handleFileInput(files: FileList) {
+    this.fileService.uploadFile(this.path, files.item(0)).subscribe(res => {
+      this.showInfo('File was successfully uploaded');
+      this.getPath();
     });
   }
 
