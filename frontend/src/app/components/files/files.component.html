@@ -13,6 +13,10 @@
 
   <div class="mat-elevation-z4 relativized">
 
+    <label class="absolutize">
+      <mat-checkbox [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+    </label>
+
     <table mat-table [dataSource]="dataSource()">
 
       <ng-container matColumnDef="path">
