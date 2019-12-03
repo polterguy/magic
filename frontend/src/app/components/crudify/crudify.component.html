@@ -83,12 +83,14 @@
         <label>Arguments</label>
         <ngx-codemirror 
           [(ngModel)]="customSqlArguments" 
+          class="even-smaller"
           [options]="getCodeMirrorOptionsHyperlambda()"></ngx-codemirror>
       </div>
 
       <label>SQL</label>
       <ngx-codemirror 
         [(ngModel)]="customSql" 
+        class="even-smaller"
         [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
 
       <div class="right-align">

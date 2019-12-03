@@ -10,6 +10,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-bottom: 5rem;
 }
 
+.CodeMirror {
+  height: 500px;
+}
+
+.smaller .CodeMirror {
+  height: 300px;
+}
+
+.even-smaller .CodeMirror {
+  height: 150px;
+}
+
 .CodeMirror-hints {
     position: absolute;
     z-index: 10000;
