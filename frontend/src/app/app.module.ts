@@ -29,7 +29,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
-import { NewFileDialogComponent } from './components/files/files.component';
+import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';

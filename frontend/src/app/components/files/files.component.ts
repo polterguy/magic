@@ -5,11 +5,7 @@ import { FileService } from '../../services/file-service';
 import { EvaluatorService } from '../../services/evaluator-service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SqlService } from 'src/app/services/sql-service';
-import { environment } from 'src/environments/environment';
-
-export interface DialogData {
-  filename: string;
-}
+import { NewFileDialogComponent } from './modals/new-file-dialog';
 
 @Component({
   selector: 'app-files',
@@ -26,7 +22,7 @@ export class FilesComponent implements OnInit {
   private databaseTypes = ['mysql', 'mssql'];
   private selectedDatabaseType = 'mysql';
   private filter = '';
-  private fileName: string;
+  private safeMode = true;
 
   constructor(
     private fileService: FileService,
@@ -267,23 +263,14 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
-  showInfo(info: string) {
-    this.snackBar.open(info, 'Close', {
-      duration: 2000
-    });
-  }
-
-  showError(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
-    });
-  }
-
   getRowClass(el: string) {
     let additionalCss = '';
-    if (el.startsWith('/modules/system/')) {
-      additionalCss = 'danger ';
+    if (el.startsWith('/modules/system/') || el === '/modules/') {
+      if (this.safeMode) {
+        additionalCss = 'danger ';
+      } else {
+        additionalCss = 'semi-danger ';
+      }
     }
     if (el === this.filePath) {
       return additionalCss + 'selected-file';
@@ -295,7 +282,14 @@ export class FilesComponent implements OnInit {
   }
 
   canDelete(path: string) {
-    return path !== '/modules/' && path !== '/misc/' && !path.startsWith('/modules/system/');
+    if (!this.safeMode) {
+      return true;
+    }
+    return path !== '/modules/' &&
+      path !== '/misc/' &&
+      !path.startsWith('/modules/system/') &&
+      path !== '/misc/mysql/' &&
+      path !== '/misc/mssql/';
   }
 
   isFolder(path: string) {
@@ -307,37 +301,50 @@ export class FilesComponent implements OnInit {
   }
 
   canUpload() {
+    if (!this.safeMode) {
+      return true;
+    }
     return !this.path.startsWith('/modules/system/');
   }
 
   canCreateFile() {
+    if (!this.safeMode) {
+      return true;
+    }
     return !this.path.startsWith('/modules/system/');
   }
 
   canCreateFolder() {
+    if (!this.safeMode) {
+      return true;
+    }
     return !this.path.startsWith('/modules/system/');
   }
 
   canSave() {
+    if (!this.safeMode) {
+      return true;
+    }
     return !this.path.startsWith('/modules/system/');
   }
 
   canDeleteCurrent() {
+    if (!this.safeMode) {
+      return true;
+    }
     return !this.path.startsWith('/modules/system/');
   }
-}
 
-@Component({
-  selector: 'new-file-dialog',
-  templateUrl: 'new-file-dialog.html',
-})
-export class NewFileDialogComponent {
+  showInfo(info: string) {
+    this.snackBar.open(info, 'Close', {
+      duration: 2000
+    });
+  }
 
-  constructor(
-    public dialogRef: MatDialogRef<NewFileDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
-
-  close(): void {
-    this.dialogRef.close();
+  showError(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 5000,
+      panelClass: ['error-snackbar'],
+    });
   }
 }

@@ -49,6 +49,9 @@
                 background-color: rgba(0,128,0,.3);
             }
             tr.danger td {
+                color: rgb(200,128,129);
+            }
+            tr.semi-danger td {
                 color: rgb(255,57,57);
             }
         }
@@ -100,4 +103,10 @@
 
 .invisible-file-element:hover {
     cursor: pointer;
+}
+
+.absolutize {
+    position: absolute;
+    top: 3rem;
+    left: 3rem;
 }
