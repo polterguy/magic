@@ -6,6 +6,7 @@ import { EvaluatorService } from '../../services/evaluator-service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SqlService } from 'src/app/services/sql-service';
 import { NewFileDialogComponent } from './modals/new-file-dialog';
+import { ConfirmDeletionDialogComponent } from './modals/confirm-deletion-dialog';
 
 @Component({
   selector: 'app-files',
@@ -63,17 +64,27 @@ export class FilesComponent implements OnInit {
   }
 
   deletePath(path: string) {
-    if (path.endsWith('/')) {
-      this.fileService.deleteFolder(path).subscribe(res => {
-        this.showInfo('Folder was successfully deleted');
-        this.getPath();
-      });
-    } else {
-      this.fileService.deleteFile(path).subscribe(res => {
-        this.showInfo('File was successfully deleted');
-        this.getPath();
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDeletionDialogComponent, {
+      width: '500px',
+      data: {
+        file: path
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        if (path.endsWith('/')) {
+          this.fileService.deleteFolder(path).subscribe(res2 => {
+            this.showInfo('Folder was successfully deleted');
+            this.getPath();
+          });
+        } else {
+          this.fileService.deleteFile(path).subscribe(res2 => {
+            this.showInfo('File was successfully deleted');
+            this.getPath();
+          });
+        }
+      }
+    });
   }
 
   getFileName(el: string) {
