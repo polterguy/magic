@@ -184,19 +184,6 @@ export class FilesComponent implements OnInit {
     }
   }
 
-  deleteFolder() {
-    this.fileService.deleteFolder(this.path).subscribe((res) => {
-      this.showInfo('Folder successfully deleted');
-      let newPath = this.path.substr(1, this.path.length - 2);
-      newPath = newPath.substr(0, newPath.lastIndexOf('/'));
-      this.path = '/' + newPath + '/';
-      this.getPath();
-      this.filter = '';
-    }, (error) => {
-      this.showError(error.error.message);
-    });
-  }
-
   upOneFolder() {
     const splits = this.path.split('/');
     splits.splice(-2, 1);

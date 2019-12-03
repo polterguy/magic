@@ -25,6 +25,7 @@
         <td mat-cell *matCellDef="let el">
           <button
             *ngIf="!el.endsWith('/')"
+            [disabled]="filePath !== null && filePath !== undefined"
             (click)="downloadFile(el)"
             mat-button>
             Download
@@ -36,7 +37,7 @@
         <th mat-header-cell *matHeaderCellDef class="delete-column"></th>
         <td mat-cell *matCellDef="let el">
           <button
-            [disabled]="el.startsWith('/modules/system/')"
+            [disabled]="el === '/modules/' || el === '/misc/' || el.startsWith('/modules/system/') || (filePath !== null && filePath !== undefined)"
             (click)="deletePath(el)"
             mat-button>
             Delete
@@ -51,7 +52,7 @@
 
     <div class="absolutized-top">
       <button 
-        *ngIf="path !== '/' && (filePath === null || filePath === undefined)"
+        *ngIf="path !== '/'"
         mat-button
         matTooltip="Up one level"
         (click)="upOneFolder()">Up one level</button>
@@ -60,18 +61,15 @@
     <div class="absolutized-bottom">
       <button
         class="file-button"
+        *ngIf="!path.startsWith('/modules/system/') && path !== '/modules/'"
+        [disabled]="filePath !== null && filePath !== undefined"
         mat-button>Upload file</button>
         <div style="display: inline-block"></div>
       <input type="file"
         id="file"
+        [disabled]="(filePath !== null && filePath !== undefined) || (path.startsWith('/modules/system/'))"
         class="invisible-file-element"
         (change)="handleFileInput($event.target.files)">
-      <button 
-        *ngIf="path !== '/' && !path.startsWith('/modules/system/') && path !== '/modules/'"
-        [disabled]="filePath !== null && filePath !== undefined"
-        mat-button
-        matTooltip="Delete folder"
-        (click)="deleteFolder()">Delete folder</button>
       <button
         *ngIf="!path.startsWith('/modules/system/') && path !== '/modules/'"
         [disabled]="filePath !== null && filePath !== undefined"
