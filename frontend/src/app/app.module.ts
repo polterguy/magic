@@ -30,6 +30,7 @@ import { HomeComponent } from './components/home/home.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
+import { ConfirmDeletionDialogComponent } from './components/files/modals/confirm-deletion-dialog';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
@@ -50,6 +51,7 @@ export function tokenGetter() {
     EvaluatorComponent,
     FilesComponent,
     NewFileDialogComponent,
+    ConfirmDeletionDialogComponent,
     NewTaskDialogComponent,
     CrudifyComponent,
     SqlComponent,
@@ -98,6 +100,6 @@ export function tokenGetter() {
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents:[NewFileDialogComponent, NewTaskDialogComponent]
+  entryComponents:[NewFileDialogComponent, NewTaskDialogComponent, ConfirmDeletionDialogComponent]
 })
 export class AppModule { }
