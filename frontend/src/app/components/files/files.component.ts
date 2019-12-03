@@ -62,20 +62,6 @@ export class FilesComponent implements OnInit {
     return result.filter(x => x.indexOf(this.filter) !== -1);
   }
 
-  getRowClass(el: string) {
-    let additionalCss = '';
-    if (el.startsWith('/modules/system/')) {
-      additionalCss = 'danger ';
-    }
-    if (el === this.filePath) {
-      return additionalCss + 'selected-file';
-    }
-    if (el.endsWith('/')) {
-      return additionalCss + 'folder-row';
-    }
-    return additionalCss + '';
-  }
-
   downloadFile(path: string) {
     this.fileService.downloadFile(path);
   }
@@ -275,18 +261,6 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
-  delete() {
-    this.fileService.deleteFile(this.filePath).subscribe((res) => {
-      this.showInfo('File successfully deleted');
-      this.filePath = null;
-      this.fileContent = null;
-      this.getPath();
-    }, (error) => {
-      this.showError(error.error.message);
-    });
-    return false;
-  }
-
   close() {
     this.fileContent = null;
     this.filePath = null;
@@ -304,6 +278,52 @@ export class FilesComponent implements OnInit {
       duration: 5000,
       panelClass: ['error-snackbar'],
     });
+  }
+
+  getRowClass(el: string) {
+    let additionalCss = '';
+    if (el.startsWith('/modules/system/')) {
+      additionalCss = 'danger ';
+    }
+    if (el === this.filePath) {
+      return additionalCss + 'selected-file';
+    }
+    if (el.endsWith('/')) {
+      return additionalCss + 'folder-row';
+    }
+    return additionalCss + '';
+  }
+
+  canDelete(path: string) {
+    return path !== '/modules/' && path !== '/misc/' && !path.startsWith('/modules/system/');
+  }
+
+  isFolder(path: string) {
+    return path.endsWith('/');
+  }
+
+  atRoot() {
+    return this.path === '/';
+  }
+
+  canUpload() {
+    return !this.path.startsWith('/modules/system/');
+  }
+
+  canCreateFile() {
+    return !this.path.startsWith('/modules/system/');
+  }
+
+  canCreateFolder() {
+    return !this.path.startsWith('/modules/system/');
+  }
+
+  canSave() {
+    return !this.path.startsWith('/modules/system/');
+  }
+
+  canDeleteCurrent() {
+    return !this.path.startsWith('/modules/system/');
   }
 }
 

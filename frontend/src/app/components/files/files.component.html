@@ -2,12 +2,12 @@
 <div class="files-wrapper">
 
     <mat-form-field class="fill-width">
-        <input 
-          matInput 
-          placeholder="Filter files ..."
-          type="text" 
-          [(ngModel)]="filter">
-      </mat-form-field>
+      <input 
+        matInput 
+        placeholder="Filter files ..."
+        type="text" 
+        [(ngModel)]="filter">
+    </mat-form-field>
     
   <h3>{{path}}</h3>
 
@@ -24,8 +24,7 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let el">
           <button
-            *ngIf="!el.endsWith('/')"
-            [disabled]="filePath !== null && filePath !== undefined"
+            [disabled]="isFolder(el)"
             (click)="downloadFile(el)"
             mat-button>
             Download
@@ -37,7 +36,7 @@
         <th mat-header-cell *matHeaderCellDef class="delete-column"></th>
         <td mat-cell *matCellDef="let el">
           <button
-            [disabled]="el === '/modules/' || el === '/misc/' || el.startsWith('/modules/system/') || (filePath !== null && filePath !== undefined)"
+            [disabled]="!canDelete(el)"
             (click)="deletePath(el)"
             mat-button>
             Delete
@@ -52,7 +51,7 @@
 
     <div class="absolutized-top">
       <button 
-        *ngIf="path !== '/'"
+        [disabled]="atRoot()"
         mat-button
         matTooltip="Up one level"
         (click)="upOneFolder()">Up one level</button>
@@ -61,24 +60,21 @@
     <div class="absolutized-bottom">
       <button
         class="file-button"
-        *ngIf="!path.startsWith('/modules/system/') && path !== '/modules/'"
-        [disabled]="filePath !== null && filePath !== undefined"
+        [disabled]="!canUpload()"
         mat-button>Upload file</button>
         <div style="display: inline-block"></div>
       <input type="file"
         id="file"
-        [disabled]="(filePath !== null && filePath !== undefined) || (path.startsWith('/modules/system/'))"
+        [disabled]="!canUpload()"
         class="invisible-file-element"
         (change)="handleFileInput($event.target.files)">
       <button
-        *ngIf="!path.startsWith('/modules/system/') && path !== '/modules/'"
-        [disabled]="filePath !== null && filePath !== undefined"
+        [disabled]="!canCreateFile()"
         mat-button
         matTooltip="Create a new file"
         (click)="createNewFile()">New file</button>
       <button
-        *ngIf="!path.startsWith('/modules/system/')"
-        [disabled]="filePath !== null && filePath !== undefined"
+        [disabled]="!canCreateFolder()"
         mat-button
         matTooltip="Create a new folder"
         (click)="createNewFolder()">New folder</button>
@@ -105,31 +101,26 @@
 
   <div class="right-aligned" style="margin-top: 1rem;">
     <button
-      *ngIf="!path.startsWith('/modules/system/')"
+      [disabled]="!canSave()"
       mat-button
       (click)="save()"
       matTooltip="Saves your file">Save</button>
-    <mat-form-field
-      *ngIf="getMode(this.filePath) == 'text/x-mysql'">
-      <mat-select placeholder="Select database type" [(value)]="selectedDatabaseType">
-        <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
-      </mat-select>
-    </mat-form-field>
     <button
       *ngIf="getMode(this.filePath) == 'text/x-mysql'"
       mat-button
       (click)="evaluateSql()"
       matTooltip="Evaluates your SQL">Evaluate</button>
+    <mat-form-field
+      *ngIf="getMode(this.filePath) == 'text/x-mysql'">
+      <mat-select [(value)]="selectedDatabaseType">
+        <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+      </mat-select>
+    </mat-form-field>
     <button
       *ngIf="getMode(this.filePath) == 'hyperlambda' && !path.startsWith('/modules/system/')"
       mat-button
       (click)="evaluate()"
       matTooltip="Evaluates your file">Evaluate</button>
-    <button
-      *ngIf="!path.startsWith('/modules/system/')"
-      mat-button
-      (click)="delete()"
-      matTooltip="Deletes your file">Delete</button>
   </div>
   
 </div>
