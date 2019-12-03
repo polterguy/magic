@@ -5,6 +5,7 @@ import { FileService } from '../../services/file-service';
 import { EvaluatorService } from '../../services/evaluator-service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SqlService } from 'src/app/services/sql-service';
+import { environment } from 'src/environments/environment';
 
 export interface DialogData {
   filename: string;
@@ -16,7 +17,7 @@ export interface DialogData {
   styleUrls: ['./files.component.scss']
 })
 export class FilesComponent implements OnInit {
-  private displayedColumns: string[] = ['path'];
+  private displayedColumns: string[] = ['path', 'download'];
   private path = '/';
   private folders: string[] = [];
   private files: string[] = [];
@@ -72,6 +73,10 @@ export class FilesComponent implements OnInit {
       return additionalCss + 'folder-row';
     }
     return additionalCss + '';
+  }
+
+  downloadFile(path: string) {
+    this.fileService.downloadFile(path);
   }
 
   getFileName(el: string) {
@@ -132,7 +137,7 @@ export class FilesComponent implements OnInit {
   createFile(filename: string) {
     if (filename === '') {
       this.showError('You have to give your filename a name');
-    } else if (filename.indexOf('.') == -1) {
+    } else if (filename.indexOf('.') === -1) {
       this.showError('Your file needs an extension, such as ".hl" or something');
     } else {
       this.fileService.saveFile(this.path + filename, '/* Initial content */').subscribe((res) => {

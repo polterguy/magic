@@ -32,6 +32,31 @@ export class FileService {
       requestOptions);
   }
 
+  public downloadFile(path: string) {
+    this.httpClient.get(
+      environment.apiURL +
+      'api/files?file=' + encodeURI(path), {
+        observe: 'response',
+        responseType: 'arraybuffer',
+      }).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.substr(disp.indexOf('=') + 1);
+        filename = filename.substr(0, filename.indexOf(';'));
+
+        // Creating a BLOB URL.
+        const blob = new Blob([res.body], { type: res.headers.get('Content-Type')});
+        const url = window.URL.createObjectURL(blob);
+
+        // To maintain the correct filename, we have to apply this little "hack".
+        const fileLink = document.createElement('a');
+        fileLink.href = url;
+        fileLink.download = filename;
+        fileLink.click();
+      });
+  }
+
   public deleteFile(path: string) {
     return this.httpClient.delete<string>(
       environment.apiURL + 'magic/modules/system/file-system/file?file=' + encodeURI(path)
