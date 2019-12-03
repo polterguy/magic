@@ -8,9 +8,14 @@
     .relativized {
         position: relative;
         padding: 5rem;
-        .absolutized {
+        .absolutized-top {
             position: absolute;
             top: .5rem;
+            right: .5rem;
+        }
+        .absolutized-bottom {
+            position: absolute;
+            bottom: .5rem;
             right: .5rem;
         }
         table {
@@ -48,7 +53,13 @@
 }
 
 .result-wrapper {
+    position: relative;
     padding: 0 5rem 2rem 5rem;
+    .close-button {
+        position: absolute;
+        top: 0;
+        right: 5rem;
+}
 }
 
 ::ng-deep .error-snackbar {
