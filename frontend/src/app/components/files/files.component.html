@@ -20,6 +20,18 @@
         <td mat-cell *matCellDef="let el" (click)="selectPath(el)">{{getFileName(el)}}</td>
       </ng-container>
 
+      <ng-container matColumnDef="download">
+        <th mat-header-cell *matHeaderCellDef>Download</th>
+        <td mat-cell *matCellDef="let el">
+          <button
+            *ngIf="!el.endsWith('/')"
+            (click)="downloadFile(el)"
+            mat-button>
+            Download
+          </button>
+        </td>
+      </ng-container>
+  
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getRowClass(row)"></tr>
 
