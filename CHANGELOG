@@ -106,17 +106,19 @@
 
 ## Version 5.5.6
 
-* Implemented support for _"fire and forget"_ jobs in the scheduler, in addition to allowing the user to configure the scheduler such
-  that it can take a folder as a path to where it serializes its tasks, which prevents saving every job, whenever a new job is created.
+* Implemented support for _"fire and forget"_ jobs in the scheduler that are not serialized, in addition to allowing the user to configure 
+  the scheduler such that it can take a folder as a path to where it serializes its tasks, which prevents saving every job, whenever a new
+  job is created. This should make the scheduler significantly faster if it is creating and deleting jobs frequently.
 
-* Simplified the crudifier, and merging the MySQL and MS SQL Special implementations into one common files, to avoid repeating code.
+* Simplified the crudifier, and merging the MySQL and MS SQL Special implementations into one common files, to keep code DRY.
 
 * Allowing for expressions to [slots.signal].
 
 * Allowing for both [mysql.connect] and [mssql.connect] to be given an empty or null connection string, at which a default a permissive
   initial catalogue will be chosen, depending upon the database type.
 
-* Making sure we don't overwrite the _"/system/"_ folder when creating CRUD endpoints.
+* Making sure we don't overwrite the _"/files/modules/system/"_ folder when creating CRUD endpoints, and protecting these folders
+  and files from accidentally deleting them.
 
 * Making sure we don't overwrite existing modules as we create CRUD endpoints.
 
@@ -124,3 +126,6 @@
   which is default.
 
 * Not displaying hidden operating system files (Unix style, starting with ".") when listing files.
+
+* Dynamically loading up all assemblies in AppDomain's root folder, which allows drag'n'drop of assemblies into Web app's folder
+  in order to automatically have access to slots, without having to explicitly referencing types in assemblies.
