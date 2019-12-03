@@ -25,34 +25,46 @@
 
     </table>
 
-    <div class="absolutized">
+    <div class="absolutized-top">
       <button 
-        *ngIf="path !== '/'"
+        *ngIf="path !== '/' && filePath === null || filePath === undefined"
         mat-button
         matTooltip="Up one level"
         (click)="upOneFolder()">Up one level</button>
+    </div>
+
+    <div class="absolutized-bottom">
       <button 
         *ngIf="path !== '/' && !path.startsWith('/modules/system/') && path !== '/modules/'"
+        [disabled]="filePath !== null && filePath !== undefined"
         mat-button
         matTooltip="Delete folder"
         (click)="deleteFolder()">Delete folder</button>
       <button
         *ngIf="!path.startsWith('/modules/system/') && path !== '/modules/'"
+        [disabled]="filePath !== null && filePath !== undefined"
         mat-button
         matTooltip="Create a new file"
         (click)="createNewFile()">New file</button>
       <button
         *ngIf="!path.startsWith('/modules/system/')"
+        [disabled]="filePath !== null && filePath !== undefined"
         mat-button
         matTooltip="Create a new folder"
         (click)="createNewFolder()">New folder</button>
     </div>
-  
+
   </div>
 
 </div>
 
 <div *ngIf="fileContent !== null" class="result-wrapper">
+
+  <button
+    mat-button
+    class="close-button"
+    (click)="close()"
+    matTooltip="Close your edited file">Close</button>
 
   <h3>{{filePath}}</h3>
   <div class="mat-elevation-z4">
@@ -62,36 +74,32 @@
   </div>
 
   <div class="right-aligned" style="margin-top: 1rem;">
-      <button
-        *ngIf="getMode(this.filePath) == 'hyperlambda' && !path.startsWith('/modules/system/')"
-        mat-button
-        (click)="evaluate()"
-        matTooltip="Evaluates your file">Evaluate</button>
-      <mat-form-field
-        *ngIf="getMode(this.filePath) == 'text/x-mysql'">
-        <mat-select placeholder="Select database type" [(value)]="selectedDatabaseType">
-          <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button
-        *ngIf="getMode(this.filePath) == 'text/x-mysql'"
-        mat-button
-        (click)="evaluateSql()"
-        matTooltip="Evaluates your SQL">Evaluate</button>
-      <button
-        *ngIf="!path.startsWith('/modules/system/')"
-        mat-button
-        (click)="save()"
-        matTooltip="Saves your file">Save</button>
-      <button
-        *ngIf="!path.startsWith('/modules/system/')"
-        mat-button
-        (click)="delete()"
-        matTooltip="Deletes your file">Delete</button>
-      <button
-        mat-button
-        (click)="close()"
-        matTooltip="Close your edited file">Close</button>
-    </div>
+    <button
+      *ngIf="!path.startsWith('/modules/system/')"
+      mat-button
+      (click)="save()"
+      matTooltip="Saves your file">Save</button>
+    <mat-form-field
+      *ngIf="getMode(this.filePath) == 'text/x-mysql'">
+      <mat-select placeholder="Select database type" [(value)]="selectedDatabaseType">
+        <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button
+      *ngIf="getMode(this.filePath) == 'text/x-mysql'"
+      mat-button
+      (click)="evaluateSql()"
+      matTooltip="Evaluates your SQL">Evaluate</button>
+    <button
+      *ngIf="getMode(this.filePath) == 'hyperlambda' && !path.startsWith('/modules/system/')"
+      mat-button
+      (click)="evaluate()"
+      matTooltip="Evaluates your file">Evaluate</button>
+    <button
+      *ngIf="!path.startsWith('/modules/system/')"
+      mat-button
+      (click)="delete()"
+      matTooltip="Deletes your file">Delete</button>
+  </div>
   
 </div>
