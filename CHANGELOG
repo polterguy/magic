@@ -117,15 +117,18 @@
 * Allowing for both [mysql.connect] and [mssql.connect] to be given an empty or null connection string, at which a default a permissive
   initial catalogue will be chosen, depending upon the database type.
 
-* Making sure we don't overwrite the _"/files/modules/system/"_ folder when creating CRUD endpoints, and protecting these folders
-  and files from accidentally deleting them.
-
-* Making sure we don't overwrite existing modules as we create CRUD endpoints.
+* Making sure we don't overwrite existing modules as we create CRUD endpoints, but rather warning user that he needs to first delete
+  any old modules with the same name/folder/filename.
 
 * Support for overriding the _"module name"_ during the CRUDification process, to use a different folder name than the database table,
   which is default.
 
-* Not displaying hidden operating system files (Unix style, starting with ".") when listing files.
+* Not displaying hidden operating system files (Unix style, starting with ".") when listing files, unless [display-hidden] is passed
+  in to [io.files.list] as an argument with the value of true.
 
 * Dynamically loading up all assemblies in AppDomain's root folder, which allows drag'n'drop of assemblies into Web app's folder
   in order to automatically have access to slots, without having to explicitly referencing types in assemblies.
+
+* Support for uploading and downloading files in the Files module.
+
+* Better protection of _"system files"_, by providing visual clues, and also preventing the user from accidentally deleting system files.
