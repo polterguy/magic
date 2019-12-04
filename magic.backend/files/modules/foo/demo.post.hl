@@ -1,0 +1,15 @@
+.arguments
+   text:string
+auth.ticket.verify:root
+validators.integer:x:@.arguments/*/id
+   min:int:0
+   max:int:100
+validators.url:x:@.arguments/*/text
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:foo
+   table:demo
+   return-id:bool:true
+   values
+slots.return-nodes:x:@wait.slots.signal/*

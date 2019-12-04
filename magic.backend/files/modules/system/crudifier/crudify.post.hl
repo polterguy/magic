@@ -13,6 +13,7 @@
    auth:string
    log:string
    args
+   validators
 
 
 /*
@@ -118,6 +119,31 @@ if
                .:" - Arguments: \r\n"
                get-value:x:@lambda2hyper
             log.info:x:@strings.concat
+
+
+/*
+ * Making sure we append validators, if given by client.
+ */
+if
+   and
+      not
+         and
+            eq
+               get-value:x:@.arguments/*/validators
+               .:
+            eq
+               get-value:x:@.arguments/*/validators
+               .
+      or
+         eq
+            get-value:x:@.arguments/*/verb
+            .:post
+         eq
+            get-value:x:@.arguments/*/verb
+            .:put
+   .lambda
+      insert-after:x:@apply/*/.arguments
+         hyper2lambda:x:@.arguments/*/validators
 
 
 /*
