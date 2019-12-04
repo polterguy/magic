@@ -103,7 +103,7 @@ export class FilesComponent implements OnInit {
       const mode = this.getMode(path);
       if (mode == null) {
         this.showError('No editor registered for file. Download and edit locally.');
-      } else{
+      } else {
         this.openFile(path);
       }
     }
