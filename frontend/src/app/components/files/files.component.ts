@@ -102,7 +102,7 @@ export class FilesComponent implements OnInit {
     } else {
       const mode = this.getMode(path);
       if (mode == null) {
-        this.showError('No editor registered for file');
+        this.showError('No editor registered for file. Download and edit locally.');
       } else{
         this.openFile(path);
       }
@@ -253,10 +253,12 @@ export class FilesComponent implements OnInit {
   }
 
   handleFileInput(files: FileList) {
-    this.fileService.uploadFile(this.path, files.item(0)).subscribe(res => {
-      this.showInfo('File was successfully uploaded');
-      this.getPath();
-    });
+    for (let idx = 0; idx < files.length; idx++) {
+      this.fileService.uploadFile(this.path, files.item(idx)).subscribe(res => {
+        this.showInfo('File was successfully uploaded');
+        this.getPath();
+      });
+    }
   }
 
   save() {
@@ -276,7 +278,7 @@ export class FilesComponent implements OnInit {
 
   getRowClass(el: string) {
     let additionalCss = '';
-    if (el.startsWith('/modules/system/') || el === '/modules/') {
+    if (el.startsWith('/modules/system/') || el === '/modules/' || el === '/modules/README.md') {
       if (this.safeMode) {
         additionalCss = 'danger ';
       } else {
@@ -297,6 +299,7 @@ export class FilesComponent implements OnInit {
       return true;
     }
     return path !== '/modules/' &&
+      path !== '/modules/README.md' &&
       path !== '/misc/' &&
       !path.startsWith('/modules/system/') &&
       path !== '/misc/mysql/' &&
@@ -333,13 +336,6 @@ export class FilesComponent implements OnInit {
   }
 
   canSave() {
-    if (!this.safeMode) {
-      return true;
-    }
-    return !this.path.startsWith('/modules/system/');
-  }
-
-  canDeleteCurrent() {
     if (!this.safeMode) {
       return true;
     }

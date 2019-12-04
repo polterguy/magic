@@ -70,6 +70,7 @@
       <input type="file"
         id="file"
         [disabled]="!canUpload()"
+        multiple
         class="invisible-file-element"
         (change)="handleFileInput($event.target.files)">
       <button
