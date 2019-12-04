@@ -2,10 +2,7 @@
    id:long
    text:string
 auth.ticket.verify:root
-validators.integer:x:@.arguments/*/id
-   min:int:0
-   max:int:100
-validators.url:x:@.arguments/*/text
+validators.email:x:@.arguments/*/text
 add:x:./*/wait.slots.signal/*/values
    get-nodes:x:@.arguments/*
 unwrap:x:+/*/ids/*
