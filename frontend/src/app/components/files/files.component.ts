@@ -278,7 +278,8 @@ export class FilesComponent implements OnInit {
 
   getRowClass(el: string) {
     let additionalCss = '';
-    if (el.startsWith('/modules/system/') || el === '/modules/' || el === '/modules/README.md') {
+    if (el.startsWith('/modules/system/') || el === '/modules/' || el === '/modules/README.md' ||
+      el === '/misc/mssql/' || el === '/misc/mysql/' || el === '/misc/') {
       if (this.safeMode) {
         additionalCss = 'danger ';
       } else {
