@@ -330,3 +330,4 @@ ASALocalRun/
 **/.DS_Store
 magic.backend/dev_magic.backend.csproj
 magic.backend/files/tasks.hl
+magic.backend/tasks/**
