@@ -135,6 +135,8 @@
 
 * [slots.exist], [slots.signal] and [slots.get] can now take expressions.
 
+* Making sure all validators are throwing exceptions if validation error occurs to prevent logic from proceding (more secure)
+
 
 ### Updated modules for version 5.5.6
 
@@ -150,4 +152,5 @@
 
 * magic.lambda.library
 
+* magic.lambda.validators
 
