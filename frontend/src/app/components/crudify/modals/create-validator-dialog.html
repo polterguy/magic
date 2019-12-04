@@ -14,7 +14,79 @@
       <mat-option value="validators.date">validators.date</mat-option>
     </mat-select>
   </mat-form-field>
-    
+
+  <mat-form-field
+    *ngIf="validatorType === 'validators.string' || validatorType === 'validators.integer'"
+    style="margin-left: 2rem;">
+    <input 
+      matInput 
+      placeholder="Min"
+      type="number" 
+      autocomplete="off"
+      (change)="valueChanged()"
+      [(ngModel)]="min">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="validatorType === 'validators.string' || validatorType === 'validators.integer'"
+    style="margin-left: 2rem;">
+    <input 
+      matInput 
+      placeholder="Max"
+      type="number" 
+      autocomplete="off"
+      (change)="valueChanged()"
+      [(ngModel)]="max">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="validatorType === 'validators.regex'"
+    style="margin-left: 2rem;">
+    <input 
+      matInput 
+      placeholder="Regex"
+      type="string" 
+      autocomplete="off"
+      (change)="valueChanged()"
+      [(ngModel)]="regex">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="validatorType === 'validators.enum'"
+    style="margin-left: 2rem;width:400px;">
+    <input 
+      matInput 
+      placeholder="Comma separated values"
+      type="string" 
+      autocomplete="off"
+      (change)="valueChanged()"
+      [(ngModel)]="enumValues">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="validatorType === 'validators.date'"
+    style="margin-left: 2rem;">
+    <input 
+      matInput 
+      placeholder="Min"
+      type="date" 
+      autocomplete="off"
+      (change)="valueChanged()"
+      [(ngModel)]="dateMin">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="validatorType === 'validators.date'"
+    style="margin-left: 2rem;">
+    <input 
+      matInput 
+      placeholder="Max"
+      type="date" 
+      autocomplete="off"
+      (change)="valueChanged()"
+      [(ngModel)]="dateMax">
+  </mat-form-field>
+
 </div>
 
 <div mat-dialog-actions>
