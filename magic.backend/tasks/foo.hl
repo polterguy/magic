@@ -1,6 +1,0 @@
-foo
-   description:fdg
-   .lambda
-      .foo
-   repeat:minutes
-      value:long:5
