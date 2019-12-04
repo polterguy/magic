@@ -167,11 +167,13 @@ export class CrudifyComponent implements OnInit {
             log: ''
           };
         });
-        this.validators = this.columns.map(x => {
-          return {
-            field: x.name,
-            validator: '',
-          };
+        this.validators = this.columns
+          .filter(x => !x.automatic)
+          .map(x => {
+            return {
+              field: x.name,
+              validator: '',
+            };
         });
       }, (err) => {
         this.showError(err.error.message);
@@ -356,16 +358,16 @@ export class CrudifyComponent implements OnInit {
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
 
-    // Database type
     let validators = '';
-    if (this.validators !== null && this.validators !== undefined && this.validators.length > 0) {
-      for (var idx = 0; idx < this.validators.length; idx++) {
-        if (this.validators[idx].validator !== null && this.validators[idx].validator !== undefined) {
-          validators += this.validators[idx].validator + '\r\n';
+    if (curVerb === 'post' || curVerb === 'put') {
+      if (this.validators !== null && this.validators !== undefined && this.validators.length > 0) {
+        for (var idx = 0; idx < this.validators.length; idx++) {
+          if (this.validators[idx].validator !== null && this.validators[idx].validator !== undefined) {
+            validators += this.validators[idx].validator + '\r\n';
+          }
         }
       }
     }
-    console.log(validators);
     this.crudService.generateCrudEndpoints(this.databaseType, {
       databaseType: this.databaseType,
       moduleName: this.moduleName,
