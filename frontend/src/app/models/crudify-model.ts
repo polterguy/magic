@@ -11,4 +11,5 @@ export class CrudifyModel {
     args: any;
     auth: string;
     log: string;
+    validators: string;
 }

@@ -357,6 +357,15 @@ export class CrudifyComponent implements OnInit {
     }
 
     // Database type
+    let validators = '';
+    if (this.validators !== null && this.validators !== undefined && this.validators.length > 0) {
+      for (var idx = 0; idx < this.validators.length; idx++) {
+        if (this.validators[idx].validator !== null && this.validators[idx].validator !== undefined) {
+          validators += this.validators[idx].validator + '\r\n';
+        }
+      }
+    }
+    console.log(validators);
     this.crudService.generateCrudEndpoints(this.databaseType, {
       databaseType: this.databaseType,
       moduleName: this.moduleName,
@@ -368,6 +377,7 @@ export class CrudifyComponent implements OnInit {
       auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
       log: this.endpoints.filter((x) => x.verb === curVerb)[0].log,
       args,
+      validators
     }).subscribe((res: any) => {
       this.noLoc += res.loc;
       this.createHttpEndpoints(verbs.slice(1), callback);
