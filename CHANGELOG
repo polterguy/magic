@@ -146,11 +146,11 @@
 
 * magic.lambda.mssql
 
+* magic.lambda.validators
+
 * magic.lambda.io
 
 * magic.lambda.scheduler
 
 * magic.lambda.library
-
-* magic.lambda.validators
 
