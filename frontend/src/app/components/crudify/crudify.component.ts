@@ -183,7 +183,7 @@ export class CrudifyComponent implements OnInit {
 
   addValidator(el: any) {
     const dialogRef = this.dialog.open(CreateValidatorDialogComponent, {
-      width: '500px',
+      width: '700px',
       data: {
         field: el.field,
         hyperlambda: el.validator,
@@ -191,7 +191,11 @@ export class CrudifyComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        el.validator = res.hyperlambda;
+        if (el.validator === null || el.validator === undefined || el.validator === '') {
+          el.validator = res.hyperlambda;
+        } else {
+          el.validator += '\r\n' + res.hyperlambda;
+        }
         this.showSuccess('You might have to further parametrize your validator');
       }
     });
