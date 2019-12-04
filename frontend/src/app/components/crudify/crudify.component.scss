@@ -94,6 +94,30 @@
     }
 }
 
+.misc-card {
+    margin-top: 4rem;
+    .wrapper {
+        margin: 2rem 3rem 2rem 3rem;
+        .validator-table {
+            background: transparent;
+            width: 100%;
+            tr {
+                td, th {
+                    width: 15%;
+                }
+                td {
+                    vertical-align: top;
+                    padding-top: 2rem;
+                    padding-bottom: 1rem;
+                }
+                td:nth-child(2), th:nth-child(2) {
+                    width: 75%;
+                }
+            }
+        }
+    }
+}
+
 .right-align {
     text-align: right;
 }

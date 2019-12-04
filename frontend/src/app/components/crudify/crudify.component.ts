@@ -1,8 +1,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CrudifyService } from 'src/app/services/crudify-service';
-import { MatSelectChange, MatSnackBar } from '@angular/material';
+import { MatSelectChange, MatSnackBar, MatDialog } from '@angular/material';
 import { CrudifyResult } from 'src/app/models/endpoint-result-model';
+import { CreateValidatorDialogComponent } from './modals/create-validator-dialog';
 
 @Component({
   selector: 'app-crudify',
@@ -14,6 +15,7 @@ export class CrudifyComponent implements OnInit {
   // Columns declarations for our tables
   private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
   private displayedColumnsEndpoints: string[] = ['generate', 'endpoint', 'verb', 'action', 'log', 'auth'];
+  private displayedColumnsValidators: string[] = ['field', 'validator'];
 
   // Databases, tables, and selected instances of such.
   private databaseTypes = ['mysql', 'mssql'];
@@ -24,9 +26,8 @@ export class CrudifyComponent implements OnInit {
   private selectedDatabase: string = null;
   private selectedTable: string = null;
   private caching: number;
-
-  // All columns in table
   private columns: any[] = null;
+  private validators: any[] = null;
 
   // True while we're CRUDifying.
   isCrudifying = false;
@@ -56,7 +57,8 @@ export class CrudifyComponent implements OnInit {
 
   constructor(
     private crudService: CrudifyService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog) { }
 
   ngOnInit() { }
 
@@ -68,6 +70,7 @@ export class CrudifyComponent implements OnInit {
     this.databases = null;
     this.tables = null;
     this.columns = null;
+    this.validators = null;
     this.endpoints = null;
     this.selectedTable = null;
     this.getDatabases();
@@ -115,6 +118,7 @@ export class CrudifyComponent implements OnInit {
     this.selectedDatabase = e.value;
     this.tables = null;
     this.columns = null;
+    this.validators = null;
     this.endpoints = null;
     this.moduleName = e.value;
 
@@ -163,10 +167,47 @@ export class CrudifyComponent implements OnInit {
             log: ''
           };
         });
+        this.validators = this.columns.map(x => {
+          return {
+            field: x.name,
+            validator: '',
+          };
+        });
       }, (err) => {
         this.showError(err.error.message);
       });
     }
+  }
+
+  addValidator(el: any) {
+    const dialogRef = this.dialog.open(CreateValidatorDialogComponent, {
+      width: '500px',
+      data: {
+        field: el.field,
+        hyperlambda: el.validator,
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        el.validator = res.hyperlambda;
+      }
+    });
+  }
+
+  getCodeMirrorOptionsValidators() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'hyperlambda',
+      tabSize: 3,
+      indentUnit: 3,
+      indentAuto: true,
+      extraKeys: {
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore',
+        'Ctrl-Space': 'autocomplete',
+      }
+    };
   }
 
   // Invoked when user wants to create a Custom SQL endpoint
