@@ -216,7 +216,7 @@ export class FilesComponent implements OnInit {
 
   getMode(path: string) {
     const fileEnding = path.substr(path.lastIndexOf('.') + 1);
-    switch(fileEnding) {
+    switch (fileEnding) {
       case 'hl':
         return 'hyperlambda';
       case 'md':
