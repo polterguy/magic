@@ -112,8 +112,6 @@
 
 * Simplified the crudifier, and merging the MySQL and MS SQL Special implementations into one common files, to keep code DRY.
 
-* Allowing for expressions to [slots.signal].
-
 * Allowing for both [mysql.connect] and [mssql.connect] to be given an empty or null connection string, at which a default a permissive
   initial catalogue will be chosen, depending upon the database type.
 
@@ -132,3 +130,24 @@
 * Support for uploading and downloading files in the Files module.
 
 * Better protection of _"system files"_, by providing visual clues, and also preventing the user from accidentally deleting system files.
+
+* Support for providing a filter to [vocabulary] that will only return slots starting with whatever was given as a filter condition.
+
+* [slots.exist], [slots.signal] and [slots.get] can now take expressions.
+
+
+### Updated modules for version 5.5.6
+
+* magic.lambda.slots
+
+* magic.lambda.mysql
+
+* magic.lambda.mssql
+
+* magic.lambda.io
+
+* magic.lambda.scheduler
+
+* magic.lambda.library
+
+
