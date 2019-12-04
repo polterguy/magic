@@ -192,6 +192,7 @@ export class CrudifyComponent implements OnInit {
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
         el.validator = res.hyperlambda;
+        this.showSuccess('You might have to further parametrize your validator');
       }
     });
   }
