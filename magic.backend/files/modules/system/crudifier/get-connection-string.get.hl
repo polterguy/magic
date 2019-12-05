@@ -1,0 +1,30 @@
+
+/*
+ * Lists all MySQL columns in your [database]/[table] combination.
+ *
+ * Requires a working _"sys"_ connection string in your _"appsettings.json"_ file.
+ */
+.arguments
+   databaseType:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieve connection string from appsettings.json
+ */
+strings.concat
+   .:"magic:databases:"
+   get-value:x:@.arguments/*/databaseType
+   .:":generic"
+config.get:x:-
+
+
+/*
+ * Returning database to caller.
+ */
+slots.return-value:x:@config.get

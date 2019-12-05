@@ -2,8 +2,17 @@
 .setup-wrapper {
     padding:2rem 5rem 2rem 5rem;
     .setup {
-        margin-top: 2rem;
+        margin-top: 4rem;
         padding: 5rem;
+        .database-selector {
+            margin-top:1rem;
+            max-width: 15rem;
+            display: inline-block;
+        }
+        .connection-string {
+            width: 50rem;
+            margin-left: 2rem;
+        }
     }
 }
 
