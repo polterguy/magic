@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSelectChange, MatSnackBar } from '@angular/material';
 import { SetupService } from 'src/app/services/setup-service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-evaluator',
@@ -34,6 +35,7 @@ export class SetupComponent implements OnInit {
     }
     this.setupService.setupAuthentication(this.selectedDatabaseType, this.username, this.password).subscribe(res => {
       console.log(res);
+      environment.defaultAuth = false;
       this.showInfo('Congratulations, you have successfully secured your Magic installation.' +
         'Make sure you remember your new root password!');
     });
