@@ -46,8 +46,6 @@ export class SetupComponent implements OnInit {
         this.showInfo('New root user was created, and you are already logged in as it.');
       }
       environment.defaultAuth = false;
-      this.showInfo('Congratulations, you have successfully secured your Magic installation.' +
-        'Make sure you remember your new root password!');
     }, error => {
       this.showError(error.error.message);
     });
