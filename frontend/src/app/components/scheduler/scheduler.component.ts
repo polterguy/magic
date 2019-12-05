@@ -5,6 +5,7 @@ import { SchedulerService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
+import { ConfirmDeletionTaskDialogComponent } from './modals/confirm-deletion-dialog';
 
 @Component({
   selector: 'app-scheduler',
@@ -15,7 +16,7 @@ export class SchedulerComponent implements OnInit {
 
   private schedulerState: string;
   private isRunning: boolean;
-  private displayedColumns = ['name', 'description', 'due'];
+  private displayedColumns = ['name', 'description', 'due', 'delete'];
   private tasks: any[];
   private selectedTaskName: string = null;
   private selectedTask: TaskModel = null;
@@ -56,7 +57,7 @@ export class SchedulerComponent implements OnInit {
     this.schedulerService.listTasks().subscribe(res => {
       this.selectedTask = null;
       this.selectedTaskName = null;
-      this.tasks = res;
+      this.tasks = res || [];
     });
   }
 
@@ -70,6 +71,7 @@ export class SchedulerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((res) => {
+      this.filter = '';
       this.getTasks();
     });
   }
@@ -127,10 +129,20 @@ export class SchedulerComponent implements OnInit {
     });
   }
 
-  deleteActiveTask() {
-    this.schedulerService.deleteTask(this.selectedTask.name).subscribe(res => {
-      this.showHttpSuccess('Task was successfully deleted');
-      this.getTasks();
+  delete(el: any) {
+    const dialogRef = this.dialog.open(ConfirmDeletionTaskDialogComponent, {
+      width: '500px',
+      data: {
+        task: el.name
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        this.schedulerService.deleteTask(el.name).subscribe(res2 => {
+          this.showHttpSuccess('Task was successfully deleted');
+          this.getTasks();
+        });
+      }
     });
   }
 
