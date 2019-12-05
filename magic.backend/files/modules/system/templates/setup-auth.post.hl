@@ -86,11 +86,11 @@ eval:x:@hyper2lambda
  * and modifying slots accordingly.
  */
 io.files.move:/modules/system/magic.startup/magic.authenticate.hl
-   .:/trash/magic.authenticate.hl
+   .:/trash/
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
-   .:/magic.authenticate.hl
+   .:/
 io.files.copy:x:-
    .:/modules/system/magic.startup/magic.authenticate.hl
 
