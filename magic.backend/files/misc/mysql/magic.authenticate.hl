@@ -29,7 +29,7 @@ slots.create:magic.authenticate
       /*
        * Selects the user with the given username from our table.
        */
-      mysql.select:select id, password from users where username = @username
+      mysql.select:select password from users where username = @username
          @username:x:@.arguments/*/username
 
 
@@ -62,8 +62,8 @@ slots.create:magic.authenticate
              * Password is matching hashed value from database.
              * Now we need to select all roles user belongs to.
              */
-            mysql.select:select name from roles r inner join roles_users ru on ru.role_id = r.id where ru.user_id = @user_id
-               @user_id:x:@if/@mysql.select/*/*/id
+            mysql.select:select name from roles r inner join roles_users ru on ru.role = r.role where ru.user = @username
+               @username:x:@if/@mysql.select/*/*/username
 
 
             /*
