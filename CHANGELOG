@@ -144,6 +144,9 @@
 * Made the filename optional in [io.files.move] and [io.files.copy], and if not given, uses the old filename, only updating the folder
   where the file can be found.
 
+* Created a _"Setup authentication"_ wizard that allows the user to follow a wizard to create a secure database authentication system
+  out of his Magic installation.
+
 
 ### Updated modules for version 5.5.6
 
