@@ -38,7 +38,6 @@ USE `magic_auth`;
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
@@ -64,7 +63,6 @@ CREATE TABLE `users` (
 -- Table structure for table `roles`
 --
 
-DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles` (
@@ -92,13 +90,12 @@ insert into roles (name) values ('guest');
 
 
 --
--- Table structure for table `roles_users`
+-- Table structure for table `users_roles`
 --
 
-DROP TABLE IF EXISTS `roles_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `roles_users` (
+CREATE TABLE `users_roles` (
   `role` varchar(45) NOT NULL,
   `user` varchar(256) NOT NULL,
   PRIMARY KEY (`role`, `user`),
