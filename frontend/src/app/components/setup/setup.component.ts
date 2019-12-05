@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSelectChange, MatSnackBar } from '@angular/material';
-import { SqlService } from 'src/app/services/sql-service';
+import { SetupService } from 'src/app/services/setup-service';
 
 @Component({
   selector: 'app-evaluator',
@@ -12,26 +12,35 @@ export class SetupComponent implements OnInit {
 
   private selectedDatabaseType: string = null;
   private databaseTypes: string[] = ['mysql', 'mssql'];
-  private connectionString: string = null;
+  private username = 'root';
+  private password: string = null;
+  private passwordRepeat: string = null;
 
   constructor(
-    private sqlService: SqlService,
-    private snackBar: MatSnackBar) { }
+    private setupService: SetupService,
+    private snackBar: MatSnackBar,) { }
 
   ngOnInit() {
   }
 
   databaseTypeChanged(e: MatSelectChange) {
     console.log(e.value);
-    this.sqlService.getConnectionString(e.value).subscribe(res => {
-      this.connectionString = res;
-      this.showInfo('Make sure you keep the "{database}" part as is, since it is replaced dynamically by Magic');
+  }
+
+  setupAuthentication() {
+    if (this.password !== this.passwordRepeat) {
+      this.showError('Passwords are not matching');
+      return;
+    }
+    this.setupService.setupAuthentication(this.selectedDatabaseType, this.username, this.password).subscribe(res => {
+      console.log(res);
     });
   }
 
-  showInfo(msg: string) {
-    this.snackBar.open(msg, 'Close', {
-      duration: 5000,
+  showError(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['error-snackbar'],
     });
   }
 }

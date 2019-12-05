@@ -1,0 +1,68 @@
+
+/*
+ * Returns the named task to caller.
+ */
+.arguments
+   databaseType:string
+   rootUsername:string
+   rootPassword:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Verifying that system haven't already been setup with some secure
+ * authentication scheme previously.
+ */
+slots.get:magic.authenticate
+if
+   or
+      not
+         exists:x:@slots.get/*/.is-default-auth
+      not
+         eq
+            get-value:x:@slots.get/*/.is-default-auth
+            .:bool:true
+   .lambda
+      throw:Your system has already been configured to use a secure authentication scheme
+
+
+/*
+ * Evaluating SQL script that creates our database, but first we must dynamically
+ * determine which script to execute.
+ */
+strings.concat
+   .:/misc/
+   get-value:x:@.arguments/*/databaseType
+   .:/magic_auth.sql
+
+
+/*
+ * Loading file, and executing it.
+ */
+io.files.load:x:@strings.concat
+set-name:x:../*/xxx.connect
+   strings.concat
+      get-value:x:@.arguments/*/databaseType
+      .:.connect
+set-name:x:../**/xxx.execute
+   strings.concat
+      get-value:x:@.arguments/*/databaseType
+      .:.execute
+
+
+/*
+ * This part will be replaced dynamically according to the [databaseType] argument.
+ */
+xxx.connect
+   xxx.execute:x:@io.files.load
+
+
+/*
+ * Returning success to caller.
+ */
+slots.return-value:success

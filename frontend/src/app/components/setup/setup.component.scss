@@ -9,10 +9,26 @@
             max-width: 15rem;
             display: inline-block;
         }
-        .connection-string {
-            width: 50rem;
+        .username {
+            max-width: 15rem;
+            margin-left: 2rem;
+        }
+        .password {
+            max-width: 15rem;
+            margin-left: 2rem;
+        }
+        .password-repeat {
+            max-width: 15rem;
+            margin-left: 2rem;
+        }
+        .save-button {
             margin-left: 2rem;
         }
     }
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
 }
 
