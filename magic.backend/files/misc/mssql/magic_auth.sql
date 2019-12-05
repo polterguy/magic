@@ -1,122 +1,182 @@
+USE [master]
+GO
 
-/*
- * This SQL script creates a database for you, with 3 tables,
- * serving as an authentication/authorization database for you.
- *
- * You can of course implement your own logic, and use your existing
- * database/table structure - However, this is a "one size fits all"
- * solution to that problem if you need it.
- *
- * To insert a new user into your database, you can use the "create-user.hl"
- * Hyperlambda file, that will cryptographically hash your password,
- * using a per user based salt, with the blow fish algorithm (extremely secure).
- */
+/****** Object:  Database [magic_auth]    Script Date: 05/12/2019 3:13:05 PM ******/
+CREATE DATABASE [magic_auth]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'magic_auth', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.SQLEXPRESS\MSSQL\DATA\magic_auth.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'magic_auth_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.SQLEXPRESS\MSSQL\DATA\magic_auth_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+GO
+
+ALTER DATABASE [magic_auth] SET COMPATIBILITY_LEVEL = 140
+GO
+
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [magic_auth].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+
+ALTER DATABASE [magic_auth] SET ANSI_NULL_DEFAULT OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET ANSI_NULLS OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET ANSI_PADDING OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET ANSI_WARNINGS OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET ARITHABORT OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET AUTO_CLOSE OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET AUTO_SHRINK OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET AUTO_UPDATE_STATISTICS ON 
+GO
+
+ALTER DATABASE [magic_auth] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET CURSOR_DEFAULT  GLOBAL 
+GO
+
+ALTER DATABASE [magic_auth] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET NUMERIC_ROUNDABORT OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET QUOTED_IDENTIFIER OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET RECURSIVE_TRIGGERS OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET  DISABLE_BROKER 
+GO
+
+ALTER DATABASE [magic_auth] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET TRUSTWORTHY OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET PARAMETERIZATION SIMPLE 
+GO
+
+ALTER DATABASE [magic_auth] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET HONOR_BROKER_PRIORITY OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET RECOVERY SIMPLE 
+GO
+
+ALTER DATABASE [magic_auth] SET  MULTI_USER 
+GO
+
+ALTER DATABASE [magic_auth] SET PAGE_VERIFY CHECKSUM  
+GO
+
+ALTER DATABASE [magic_auth] SET DB_CHAINING OFF 
+GO
+
+ALTER DATABASE [magic_auth] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+
+ALTER DATABASE [magic_auth] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+
+ALTER DATABASE [magic_auth] SET DELAYED_DURABILITY = DISABLED 
+GO
+
+ALTER DATABASE [magic_auth] SET QUERY_STORE = OFF
+GO
+
+ALTER DATABASE [magic_auth] SET  READ_WRITE 
+GO
+
+
+USE [magic_auth]
+GO
+
+/****** Object:  Table [dbo].[users]    Script Date: 05/12/2019 3:13:25 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[users](
+	[username] [nvarchar](128) NOT NULL,
+	[password] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_users] PRIMARY KEY CLUSTERED 
+(
+	[username] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+USE [magic_auth]
+GO
+
+/****** Object:  Table [dbo].[roles]    Script Date: 05/12/2019 3:13:38 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[roles](
+	[name] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_roles] PRIMARY KEY CLUSTERED 
+(
+	[name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+USE [magic_auth]
+GO
+
+/****** Object:  Table [dbo].[users_roles]    Script Date: 05/12/2019 3:13:46 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[users_roles](
+	[user] [nvarchar](128) NOT NULL,
+	[role] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_users_roles] PRIMARY KEY CLUSTERED 
+(
+	[user] ASC,
+	[role] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
 
 
 
-
-CREATE DATABASE  IF NOT EXISTS `magic_auth` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `magic_auth`;
--- MySQL dump 10.13  Distrib 8.0.17, for macos10.14 (x86_64)
---
--- Host: localhost    Database: magic_auth
--- ------------------------------------------------------
--- Server version	8.0.17
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(45) NOT NULL,
-  `password` varchar(256) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
---
--- Table structure for table `roles`
---
-
-DROP TABLE IF EXISTS `roles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `roles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-/*
- * Inserting some few roles into our roles table.
- */
 insert into roles (name) values ('root');
 insert into roles (name) values ('user');
 insert into roles (name) values ('guest');
-
-
---
--- Table structure for table `users_roles`
---
-
-DROP TABLE IF EXISTS `users_roles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users_roles` (
-  `role_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`role_id`, `user_id`),
-  KEY `roles_fky_idx` (`role_id`),
-  KEY `users_fky_idx` (`user_id`),
-  CONSTRAINT `roles_fky` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
-  CONSTRAINT `users_fky` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2019-09-07  9:24:38
