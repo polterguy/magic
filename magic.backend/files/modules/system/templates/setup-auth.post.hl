@@ -58,18 +58,18 @@ set-name:x:../**/xxx.execute
 /*
  * This part will be replaced dynamically according to the [databaseType] argument.
  */
-xxx.connect
-   if
-      eq
-         get-value:x:@.arguments/*/databaseType
-         .:mssql
+if
+   eq
+      get-value:x:@.arguments/*/databaseType
+      .:mssql
    .lambda
       strings.split:x:@io.files.load
-         .:GO
+         .:" ---- "
       for-each:x:@strings.split/*
-         xxx.execute:x:@io.files.load
-   else
-      xxx.execute:x:@io.files.load
+         xxx.connect
+            xxx.execute:x:@.dp/#
+else
+   xxx.execute:x:@io.files.load
 
 
 /*
