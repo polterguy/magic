@@ -3,7 +3,7 @@ USE [master];
 
 CREATE DATABASE [magic_auth];
 
-USE [magic_auth]
+USE [magic_auth];
 
 CREATE TABLE [dbo].[users](
 	[username] [nvarchar](128) NOT NULL,
