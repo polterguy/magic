@@ -13,11 +13,11 @@ auth.ticket.verify:root
 
 
 /*
- * Returns all files in the "/files/misc/mssql/" folder.
+ * Returns all files in the "/misc/mssql/templates/" folder.
  */
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
-   .:/
+   .:/templates/
 io.files.list:x:@strings.concat
 slots.return-nodes:x:-/*
