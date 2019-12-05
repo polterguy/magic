@@ -69,7 +69,8 @@ if
          xxx.connect
             xxx.execute:x:@.dp/#
 else
-   xxx.execute:x:@io.files.load
+   xxx.connect
+      xxx.execute:x:@io.files.load
 
 
 /*
