@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   private username: string;
   private password: string;
   private backendUrl = environment.apiURL;
+  private forceSetup = false;
 
   constructor(
     private authService: AuthenticateService,
@@ -25,6 +26,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.validateToken();
+    this.ping();
+  }
+
+  ping() {
     this.pingService.ping().subscribe(res => {
       environment.version = res.version;
       if (res.warnings !== undefined) {
@@ -32,6 +37,7 @@ export class AppComponent implements OnInit {
           if (idx === 'defaultAuth') {
             // The default authentication slot has not been overridden.
             environment.defaultAuth = true;
+            this.forceSetup = true;
           }
           console.warn(res.warnings[idx]);
         }
@@ -48,14 +54,6 @@ export class AppComponent implements OnInit {
     return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
   }
 
-  showSetup() {
-    return this.isLoggedIn() && environment.defaultAuth === true;
-  }
-
-  finishedSetup() {
-    return environment.defaultAuth === false;
-  }
-
   logout() {
     localStorage.removeItem('access_token');
   }
@@ -66,6 +64,7 @@ export class AppComponent implements OnInit {
       localStorage.setItem('access_token', res.ticket);
       this.username = '';
       this.password = '';
+      this.ping();
     }, (error) => {
       this.showError(error.error.message);
     });
