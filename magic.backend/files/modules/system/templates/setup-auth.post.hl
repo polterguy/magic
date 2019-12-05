@@ -99,7 +99,8 @@ io.files.copy:x:-
  * Evaluating new authentication file, to update our slot.
  */
 io.files.load:/modules/system/magic.startup/magic.authenticate.hl
-eval:x:@io.files.load
+hyper2lambda:x:-
+eval:x:@hyper2lambda
 
 
 /*
