@@ -38,6 +38,8 @@ export class SetupComponent implements OnInit {
       environment.defaultAuth = false;
       this.showInfo('Congratulations, you have successfully secured your Magic installation.' +
         'Make sure you remember your new root password!');
+    }, error => {
+      this.showError(error.error.message);
     });
   }
 
