@@ -37,8 +37,14 @@ export class SetupComponent implements OnInit {
       this.showError('You must supply a password, and preferably a long and difficult to guess');
       return;
     }
+
     this.setupService.setupAuthentication(this.selectedDatabaseType, this.username, this.password).subscribe(res => {
-      console.log(res);
+      if (res.ticket) {
+        this.showInfo('The root user already exists, hence you were logged out of system.');
+      } else {
+        localStorage.setItem('access_token', res.ticket);
+        this.showInfo('New root user was created, and you are already logged in as it.');
+      }
       environment.defaultAuth = false;
       this.showInfo('Congratulations, you have successfully secured your Magic installation.' +
         'Make sure you remember your new root password!');

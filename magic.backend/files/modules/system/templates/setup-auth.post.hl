@@ -42,54 +42,83 @@ strings.concat
 
 
 /*
- * Loading file, and executing it.
+ * Wrapping the creation of the database in a try/catch block, to
+ * prevent failure if database exists from before.
  */
-io.files.load:x:@strings.concat
-set-name:x:../**/xxx.connect
-   strings.concat
-      get-value:x:@.arguments/*/databaseType
-      .:.connect
-set-name:x:../**/xxx.execute
-   strings.concat
-      get-value:x:@.arguments/*/databaseType
-      .:.execute
+try
+
+
+   /*
+    * Loading file, and executing it.
+    */
+   io.files.load:x:@strings.concat
+   set-name:x:../**/xxx.connect
+      strings.concat
+         get-value:x:@.arguments/*/databaseType
+         .:.connect
+   set-name:x:../**/xxx.execute
+      strings.concat
+         get-value:x:@.arguments/*/databaseType
+         .:.execute
+
+
+   /*
+    * This part will be replaced dynamically according to the [databaseType] argument.
+    */
+   if
+      eq
+         get-value:x:@.arguments/*/databaseType
+         .:mssql
+      .lambda
+         strings.split:x:@io.files.load
+            .:" ---- "
+         for-each:x:@strings.split/*
+            xxx.connect
+               xxx.execute:x:@.dp/#
+   else
+      xxx.connect
+         xxx.execute:x:@io.files.load
+.catch
+
+   /*
+    * Database probably exists from before.
+    */
+   log.error:x:@message
 
 
 /*
- * This part will be replaced dynamically according to the [databaseType] argument.
+ * Wrapping the creation of the user in a try/catch block, to
+ * prevent failure if user exists from before.
  */
-if
-   eq
+.user-exists:bool:false
+try
+
+
+   /*
+    * Inserting the root user according to arguments given.
+    */
+   strings.concat
+      .:/misc/
       get-value:x:@.arguments/*/databaseType
-      .:mssql
-   .lambda
-      strings.split:x:@io.files.load
-         .:" ---- "
-      for-each:x:@strings.split/*
-         xxx.connect
-            xxx.execute:x:@.dp/#
-else
-   xxx.connect
-      xxx.execute:x:@io.files.load
+      .:/create-user.hl
+   io.files.load:x:@strings.concat
+   hyper2lambda:x:-
+   unwrap:x:+/*/*
+   add:x:@hyper2lambda/*/.arguments
+      .
+         username:x:@.arguments/*/rootUsername
+         password:x:@.arguments/*/rootPassword
+         roles
+            .:root
+   eval:x:@hyper2lambda
+.catch
 
-
-/*
- * Inserting the root user according to arguments given.
- */
-strings.concat
-   .:/misc/
-   get-value:x:@.arguments/*/databaseType
-   .:/create-user.hl
-io.files.load:x:@strings.concat
-hyper2lambda:x:-
-unwrap:x:+/*/*
-add:x:@hyper2lambda/*/.arguments
-   .
-      username:x:@.arguments/*/rootUsername
-      password:x:@.arguments/*/rootPassword
-      roles
-         .:root
-eval:x:@hyper2lambda
+   /*
+    * Database probably exists from before.
+    */
+   log.error:x:@message
+   set-value:x:@.user-exists
+      .:bool:true
 
 
 /*
@@ -112,6 +141,18 @@ io.files.copy:x:-
 io.files.load:/modules/system/magic.startup/magic.authenticate.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
+
+
+/*
+ * Checking if user already existed, at which point we do not
+ * attempt to login in current root account, but return that fact to caller.
+ */
+if
+   eq
+      get-value:x:@.user-exists
+      .:bool:true
+   .lambda
+      slots.return-value:User already exists
 
 
 /*
