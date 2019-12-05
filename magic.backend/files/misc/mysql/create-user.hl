@@ -38,8 +38,8 @@ mysql.connect:[magic_auth]
 
 
       /*
-       * Then inserting into roles_users an association between user and role.
+       * Then inserting into users_roles an association between user and role.
        */
-      mysql.execute:insert into roles_users (role, user) values (@role, @user)
+      mysql.execute:insert into users_roles (role, user) values (@role, @user)
          @role:x:@.dp/#
          @user:x:@.arguments/*/username
