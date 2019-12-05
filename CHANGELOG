@@ -135,7 +135,9 @@
 
 * [slots.exist], [slots.signal] and [slots.get] can now take expressions.
 
-* Making sure all validators are throwing exceptions if validation error occurs to prevent logic from proceding (more secure)
+* Making sure all validators are throwing exceptions if validation error occurs to prevent logic from proceding (more secure).
+
+* Support for public and private caching of HTTP GET endpoints using Cache-Control HTTP header.
 
 
 ### Updated modules for version 5.5.6

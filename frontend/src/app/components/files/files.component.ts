@@ -340,7 +340,7 @@ export class FilesComponent implements OnInit {
     if (!this.safeMode) {
       return true;
     }
-    return !this.path.startsWith('/modules/system/');
+    return !this.path.startsWith('/modules/system/') && this.filePath !== '/modules/README.md';
   }
 
   showInfo(info: string) {
