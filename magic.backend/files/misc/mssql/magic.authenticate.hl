@@ -23,13 +23,13 @@ slots.create:magic.authenticate
    /*
     * Opens up our database connection.
     */
-   mysql.connect:[magic_auth]
+   mssql.connect:[magic_auth]
 
 
       /*
        * Selects the user with the given username from our table.
        */
-      mysql.select:select password from users where username = @username
+      mssql.select:select password from users where username = @username
          @username:x:@.arguments/*/username
 
 
@@ -38,7 +38,7 @@ slots.create:magic.authenticate
        */
       if
          eq
-            get-count:x:@mysql.select/*
+            get-count:x:@mssql.select/*
             .:int:0
          .lambda
 
@@ -54,7 +54,7 @@ slots.create:magic.authenticate
        */
       if
          crypto.password.verify:x:@.arguments/*/password
-            hash:x:@mysql.select/*/*/password
+            hash:x:@mssql.select/*/*/password
          .lambda
 
 
@@ -62,15 +62,15 @@ slots.create:magic.authenticate
              * Password is matching hashed value from database.
              * Now we need to select all roles user belongs to.
              */
-            mysql.select:select name from roles r inner join users_roles ru on ru.role = r.name where ru.user = @username
-               @username:x:@if/@mysql.select/*/*/username
+            mssql.select:select name from roles r inner join users_roles ru on ru.role = r.name where ru.user = @username
+               @username:x:@if/@mssql.select/*/*/username
 
 
             /*
              * Then we can create our JWT token/ticket.
              */
             add:x:+/*/roles
-               get-nodes:x:@mysql.select/*/*
+               get-nodes:x:@mssql.select/*/*
             auth.ticket.create
                username:x:@.arguments/*/username
                roles
