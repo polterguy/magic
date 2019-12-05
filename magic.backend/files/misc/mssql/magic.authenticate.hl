@@ -62,8 +62,8 @@ slots.create:magic.authenticate
              * Password is matching hashed value from database.
              * Now we need to select all roles user belongs to.
              */
-            mssql.select:select name from roles r inner join users_roles ru on ru.role = r.name where ru.user = @username
-               @username:x:@if/@mssql.select/*/*/username
+            mssql.select:@"select role from users_roles where ""user"" = @username"
+               @username:x:@.arguments/*/username
 
 
             /*
