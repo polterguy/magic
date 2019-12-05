@@ -141,6 +141,9 @@
 
 * Creating a warning that we return to client durin _"ping"_ invocation if installation is still using the default [magic.authenticate] slot.
 
+* Made the filename optional in [io.files.move] and [io.files.copy], and if not given, uses the old filename, only updating the folder
+  where the file can be found.
+
 
 ### Updated modules for version 5.5.6
 
@@ -157,6 +160,8 @@
 * magic.lambda.scheduler
 
 * magic.lambda.library
+
+* magic.lambda.io
 
 * Magic itself, especially the _"/files/"_ folder is important to update.
 

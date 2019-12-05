@@ -1,6 +1,6 @@
 
 /*
- * Returns the named task to caller.
+ * Sets up authentication of system according to the arguments provided.
  */
 .arguments
    databaseType:string
@@ -60,6 +60,42 @@ set-name:x:../**/xxx.execute
  */
 xxx.connect
    xxx.execute:x:@io.files.load
+
+
+/*
+ * Inserting the root user according to arguments given.
+ */
+strings.concat
+   .:/misc/
+   get-value:x:@.arguments/*/databaseType
+   .:/create-user.hl
+io.files.load:x:@strings.concat
+hyper2lambda:x:-
+unwrap:x:+/*/*
+add:x:@hyper2lambda/*/.arguments
+   .
+      username:x:@.arguments/*/rootUsername
+      password:x:@.arguments/*/rootPassword
+      roles
+         .:root
+eval:x:@hyper2lambda
+
+
+/*
+ * Now we have created our database, and our initial root user, and we can start moving files around,
+ * and modifying slots accordingly.
+ */
+io.files.move:/modules/system/magic.startup/magic.authenticate.hl
+   .:/trash/
+strings.concat
+   .:/misc/
+   get-value:x:@.arguments/*/databaseType
+   .:/authenticate.hl
+strings.concat:/misc/
+   get-value:x:@.arguments/*/databaseType
+   .:/magic.authenticate.hl
+io.files.move:x:-
+   .:/modules/system/magic.startup/
 
 
 /*
