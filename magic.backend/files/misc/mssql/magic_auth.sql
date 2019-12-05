@@ -1,4 +1,7 @@
 
+USE [master]
+GO
+
 CREATE DATABASE [magic_auth]
 GO
 
