@@ -90,9 +90,9 @@ io.files.move:/modules/system/magic.startup/magic.authenticate.hl
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
-   .:/
+   .:/magic.authenticate.hl
 io.files.copy:x:-
-   .:/modules/system/magic.startup/magic.authenticate.hl
+   .:/modules/system/magic.startup/
 
 
 /*
