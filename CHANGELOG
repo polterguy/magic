@@ -145,7 +145,8 @@
   where the file can be found.
 
 * Created a _"Setup authentication"_ wizard that allows the user to follow a wizard to create a secure database authentication system
-  out of his Magic installation.
+  out of his Magic installation. Works with both MS SQL Server and MySQL, and the user can choose which authentication database type he
+  or she wants to use.
 
 
 ### Updated modules for version 5.5.6
