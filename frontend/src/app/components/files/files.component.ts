@@ -278,8 +278,8 @@ export class FilesComponent implements OnInit {
 
   getRowClass(el: string) {
     let additionalCss = '';
-    if (el.startsWith('/modules/system/') || el === '/modules/' || el === '/modules/README.md' ||
-      el === '/misc/mssql/' || el === '/misc/mysql/' || el === '/misc/' || el === '/trash/' || el === '/trash/README.md') {
+    if (el.startsWith('/modules/system/') || el.startsWith('/misc/') || el === '/modules/' || el === '/modules/README.md' ||
+      el === '/trash/' || el === '/trash/README.md') {
       if (this.safeMode) {
         additionalCss = 'danger ';
       } else {
@@ -303,10 +303,8 @@ export class FilesComponent implements OnInit {
       path !== '/trash/' &&
       path !== '/trash/README.md' &&
       path !== '/modules/README.md' &&
-      path !== '/misc/' &&
       !path.startsWith('/modules/system/') &&
-      path !== '/misc/mysql/' &&
-      path !== '/misc/mssql/';
+      !path.startsWith('/misc/');
   }
 
   isFolder(path: string) {
@@ -321,28 +319,29 @@ export class FilesComponent implements OnInit {
     if (!this.safeMode) {
       return true;
     }
-    return !this.path.startsWith('/modules/system/');
+    return !this.path.startsWith('/modules/system/') && !this.path.startsWith('/misc/');
   }
 
   canCreateFile() {
     if (!this.safeMode) {
       return true;
     }
-    return !this.path.startsWith('/modules/system/');
+    return !this.path.startsWith('/modules/system/') && !this.path.startsWith('/misc/');
   }
 
   canCreateFolder() {
     if (!this.safeMode) {
       return true;
     }
-    return !this.path.startsWith('/modules/system/');
+    return !this.path.startsWith('/modules/system/') && !this.path.startsWith('/misc/');
   }
 
   canSave() {
     if (!this.safeMode) {
       return true;
     }
-    return !this.path.startsWith('/modules/system/') && this.filePath !== '/modules/README.md' && 
+    return !this.path.startsWith('/modules/system/') && this.filePath !== '/modules/README.md' &&
+      !this.filePath.startsWith('/misc/') &&
       this.filePath !== '/trash/README.md';
   }
 
