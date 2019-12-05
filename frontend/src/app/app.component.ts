@@ -30,6 +30,10 @@ export class AppComponent implements OnInit {
     return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
   }
 
+  showSetup() {
+    return this.isLoggedIn && environment.defaultAuth === true;
+  }
+
   logout() {
     localStorage.removeItem('access_token');
   }

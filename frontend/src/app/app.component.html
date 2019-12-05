@@ -12,6 +12,13 @@
     [routerLinkActiveOptions]="{exact:true}">Home</a>
 
   <a 
+    *ngIf="showSetup()"
+    mat-button 
+    routerLink="/setup" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Setup</a>
+
+  <a 
     *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/crudify" 

@@ -25,8 +25,9 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
 
-import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { HomeComponent } from './components/home/home.component';
+import { EndpointsComponent } from './components/endpoints/endpoints.component';
+import { SetupComponent } from './components/setup/setup.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
@@ -48,8 +49,9 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent,
-    EndpointsComponent,
     HomeComponent,
+    EndpointsComponent,
+    SetupComponent,
     EvaluatorComponent,
     FilesComponent,
     NewFileDialogComponent,

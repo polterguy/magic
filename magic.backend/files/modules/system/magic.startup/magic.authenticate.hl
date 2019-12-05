@@ -28,6 +28,13 @@ slots.create:magic.authenticate
 
 
    /*
+    * Notice, this is to allow for the core to check if the slot is
+    * the "default" authentication/authorization slot, or if it has been overridden.
+    */
+   .is-default-auth:bool:true
+
+
+   /*
     * Statically checks the username/password combination towards the values
     * "root"/"root". Exchange this part of the slots.create with your own
     * custom lambda, looking up some username/password combination from
