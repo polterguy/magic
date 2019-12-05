@@ -26,7 +26,7 @@ mssql.connect:[magic_auth]
    /*
     * Inserting user.
     */
-   mssql.scalar:insert into users (username, password) values (@username, @password); select scope_identity();
+   mssql.execute:insert into users (username, password) values (@username, @password);
       @username:x:@.arguments/*/username
       @password:x:@crypto.password.hash
 
@@ -38,15 +38,8 @@ mssql.connect:[magic_auth]
 
 
       /*
-       * First figuring out id of currently inserted role.
-       */
-      mssql.scalar:select id from roles where name = @name
-         @name:x:@.dp/#
-
-
-      /*
        * Then inserting into roles_users an association between user and role.
        */
-      mssql.execute:insert into roles_users (role_id, user_id) values (@role_id, @user_id)
-         @role_id:x:@mssql.scalar
-         @user_id:x:@for-each/@mssql.scalar
+      mssql.execute:insert into roles_users (role, user) values (@role, @user)
+         @role:x:@.dp/#
+         @user:x:@.arguments/*/username

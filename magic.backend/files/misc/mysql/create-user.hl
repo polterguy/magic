@@ -26,7 +26,7 @@ mysql.connect:[magic_auth]
    /*
     * Inserting user.
     */
-   mysql.scalar:insert into users (username, password) values (@username, @password);
+   mysql.execute:insert into users (username, password) values (@username, @password);
       @username:x:@.arguments/*/username
       @password:x:@crypto.password.hash
 
