@@ -91,18 +91,14 @@ strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/magic.authenticate.hl
-strings.concat
-   .:/misc/
-   get-value:x:@.arguments/*/databaseType
-   .:/magic.authenticate.hl
 io.files.move:x:-
    .:/modules/system/magic.startup/magic.authenticate.hl
-io.files.load:/modules/system/magic.startup/magic.authenticate.hl
 
 
 /*
  * Evaluating new authentication file, to update our slot.
  */
+io.files.load:/modules/system/magic.startup/magic.authenticate.hl
 eval:x:@io.files.load
 
 
