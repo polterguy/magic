@@ -9,11 +9,6 @@
  * "users" table.
  */
 .arguments
-   username:username
-   password:password
-   roles
-      .:root
-      .:user
 
 
 /*
@@ -25,13 +20,13 @@ crypto.password.hash:x:@.arguments/*/password
 /*
  * Opening up a database connection to `magic_auth`.
  */
-mysql.connect:[magic_auth]
+mssql.connect:[magic_auth]
 
 
    /*
     * Inserting user.
     */
-   mysql.scalar:insert into users (username, password) values (@username, @password); select last_insert_id();
+   mssql.scalar:insert into users (username, password) values (@username, @password); select scope_identity();
       @username:x:@.arguments/*/username
       @password:x:@crypto.password.hash
 
@@ -45,13 +40,13 @@ mysql.connect:[magic_auth]
       /*
        * First figuring out id of currently inserted role.
        */
-      mysql.scalar:select id from roles where name = @name
+      mssql.scalar:select id from roles where name = @name
          @name:x:@.dp/#
 
 
       /*
        * Then inserting into roles_users an association between user and role.
        */
-      mysql.execute:insert into roles_users (role_id, user_id) values (@role_id, @user_id)
-         @role_id:x:@mysql.scalar
-         @user_id:x:@for-each/@mysql.scalar
+      mssql.execute:insert into roles_users (role_id, user_id) values (@role_id, @user_id)
+         @role_id:x:@mssql.scalar
+         @user_id:x:@for-each/@mssql.scalar
