@@ -34,6 +34,8 @@ export class SetupComponent implements OnInit {
     }
     this.setupService.setupAuthentication(this.selectedDatabaseType, this.username, this.password).subscribe(res => {
       console.log(res);
+      this.showInfo('Congratulations, you have successfully secured your Magic installation.' +
+        'Make sure you remember your new root password!');
     });
   }
 
@@ -41,6 +43,13 @@ export class SetupComponent implements OnInit {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
+    });
+  }
+
+  showInfo(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['info-snackbar'],
     });
   }
 }
