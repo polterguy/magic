@@ -1,0 +1,91 @@
+
+/*
+ * Authenticates the user with the specified [username] and [password] combination.
+ *
+ * NOTICE!
+ * This is a "one size fits all" solution to the authentication issue in Magic,
+ * and intended to in combination with the "magic_auth.sql" script and
+ * "create-user.hl" script strings.replace the existing authentication, that simply checks
+ * to see if the username/password as root/root.
+ *
+ * It relies upon the existence of a "magic_auth" database, with its "users",
+ * "roles" and other tables to authenticate users.
+ *
+ * To use it, first create your "magic_auth" database by executing "magic_auth.sql".
+ * Then insert at least one user using the "create-user.hl" file (remember your password).
+ * Then copy and paste this entire file's content, and paste it into
+ * "/modules/system/authenticate.get.hl", evaluate the file, and you can now login
+ * using a "real" authentication database.
+ */
+slots.create:magic.authenticate
+
+
+   /*
+    * Opens up our database connection.
+    */
+   mysql.connect:[magic_auth]
+
+
+      /*
+       * Selects the user with the given username from our table.
+       */
+      mysql.select:select id, password from users where username = @username
+         @username:x:@.arguments/*/username
+
+
+      /*
+       * Checking that user with specified [username] exists.
+       */
+      if
+         eq
+            get-count:x:@mysql.select/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * No such user.
+             */
+            throw:Access denied
+
+
+      /*
+       * Verify we have a password match.
+       */
+      if
+         crypto.password.verify:x:@.arguments/*/password
+            hash:x:@mysql.select/*/*/password
+         .lambda
+
+
+            /*
+             * Password is matching hashed value from database.
+             * Now we need to select all roles user belongs to.
+             */
+            mysql.select:select name from roles r inner join roles_users ru on ru.role_id = r.id where ru.user_id = @user_id
+               @user_id:x:@if/@mysql.select/*/*/id
+
+
+            /*
+             * Then we can create our JWT token/ticket.
+             */
+            add:x:+/*/roles
+               get-nodes:x:@mysql.select/*/*
+            auth.ticket.create
+               username:x:@.arguments/*/username
+               roles
+
+
+            /*
+             * Returning results back to caller.
+             */
+            unwrap:x:+/*
+            slots.return-nodes
+               ticket:x:@auth.ticket.create
+      else
+
+
+         /*
+          * Hash version of password didn't match.
+          */
+         throw:Access denied
