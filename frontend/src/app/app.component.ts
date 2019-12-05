@@ -52,6 +52,10 @@ export class AppComponent implements OnInit {
     return this.isLoggedIn() && environment.defaultAuth === true;
   }
 
+  finishedSetup() {
+    return environment.defaultAuth === false;
+  }
+
   logout() {
     localStorage.removeItem('access_token');
   }

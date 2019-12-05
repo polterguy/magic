@@ -5,7 +5,7 @@
   <span class="example-fill-remaining-space"></span>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/" 
     routerLinkActive="active-link" 
@@ -19,42 +19,42 @@
     [routerLinkActiveOptions]="{exact:true}">Setup</a>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/crudify" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Crudify</a>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/files" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Files</a>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/evaluator" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Evaluator</a>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/endpoints" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Endpoints</a>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/sql" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">SQL</a>
 
   <a 
-    *ngIf="isLoggedIn()"
+    *ngIf="isLoggedIn() && finishedSetup()"
     mat-button 
     routerLink="/scheduler" 
     routerLinkActive="active-link" 
