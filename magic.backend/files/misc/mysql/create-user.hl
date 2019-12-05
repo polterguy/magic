@@ -38,15 +38,8 @@ mysql.connect:[magic_auth]
 
 
       /*
-       * First figuring out id of currently inserted role.
-       */
-      mysql.scalar:select id from roles where name = @name
-         @name:x:@.dp/#
-
-
-      /*
        * Then inserting into roles_users an association between user and role.
        */
-      mysql.execute:insert into roles_users (role_id, user_id) values (@role_id, @user_id)
-         @role_id:x:@mysql.scalar
-         @user_id:x:@for-each/@mysql.scalar
+      mysql.execute:insert into roles_users (role, user) values (@role, @user)
+         @role:x:@.dp/#
+         @user:x:@for-each/@mysql.scalar
