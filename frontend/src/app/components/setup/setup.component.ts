@@ -33,6 +33,10 @@ export class SetupComponent implements OnInit {
       this.showError('Passwords are not matching');
       return;
     }
+    if (this.password == null || this.password.length === 0) {
+      this.showError('You must supply a password, and preferably a long and difficult to guess');
+      return;
+    }
     this.setupService.setupAuthentication(this.selectedDatabaseType, this.username, this.password).subscribe(res => {
       console.log(res);
       environment.defaultAuth = false;
