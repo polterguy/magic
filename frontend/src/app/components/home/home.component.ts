@@ -12,4 +12,8 @@ export class HomeComponent {
   getVersion() {
     return environment.version;
   }
+
+  forceSetup() {
+    return environment.defaultAuth;
+  }
 }
