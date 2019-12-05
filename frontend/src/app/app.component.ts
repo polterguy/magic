@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material';
 import { interval } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from 'src/environments/environment';
+import { PingService } from './services/ping-service';
 
 @Component({
   selector: 'app-root',
@@ -19,10 +20,27 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthenticateService,
     private snackBar: MatSnackBar,
-    private jwtHelper: JwtHelperService) { }
+    private jwtHelper: JwtHelperService,
+    private pingService: PingService) { }
 
   ngOnInit() {
     this.validateToken();
+    this.pingService.ping().subscribe(res => {
+      environment.version = res.version;
+      if (res.warnings !== undefined) {
+        for (const idx of Object.keys(res.warnings)) {
+          if (idx === 'defaultAuth') {
+            // The default authentication slot has not been overridden.
+            environment.defaultAuth = true;
+          }
+          console.warn(res.warnings[idx]);
+        }
+      }
+      if (environment.defaultAuth) {
+        this.showWarning('The default [magic.authenticate] slot has not been overridden,' +
+          ' please secure your system by going through the "Setup" wizard.');
+      }
+    });
   }
 
   isLoggedIn() {
@@ -67,7 +85,7 @@ export class AppComponent implements OnInit {
         return;
       }
       const expiration = this.jwtHelper.getTokenExpirationDate(token);
-      let now = new Date();
+      const now = new Date();
       now.setSeconds(now.getSeconds() + 120);
       if (now > expiration) {
 
@@ -78,6 +96,13 @@ export class AppComponent implements OnInit {
           this.showError(error.error.message);
         });
       }
+    });
+  }
+
+  showWarning(warning: string) {
+    this.snackBar.open(warning, 'Close', {
+      duration: 10000,
+      panelClass: ['warning-system-snackbar'],
     });
   }
 }

@@ -7,6 +7,7 @@ export let environment = {
   apiURL: 'http://localhost:55247/',
   apiDomain: 'localhost:55247',
   defaultAuth: false,
+  version: '',
 };
 
 /*
