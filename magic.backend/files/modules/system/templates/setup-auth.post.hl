@@ -103,7 +103,7 @@ io.files.load:/modules/system/magic.startup/magic.authenticate.hl
 /*
  * Evaluating new authentication file, to update our slot.
  */
-eval:x:-
+eval:x:@io.files.load
 
 
 /*
