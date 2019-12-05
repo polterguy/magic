@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSelectChange, MatSnackBar } from '@angular/material';
 import { SetupService } from 'src/app/services/setup-service';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-evaluator',
@@ -19,7 +20,8 @@ export class SetupComponent implements OnInit {
 
   constructor(
     private setupService: SetupService,
-    private snackBar: MatSnackBar,) { }
+    private snackBar: MatSnackBar,
+    private router: Router) { }
 
   ngOnInit() {
   }
@@ -46,6 +48,7 @@ export class SetupComponent implements OnInit {
         this.showInfo('New root user was created, and you are already logged in as it.');
       }
       environment.defaultAuth = false;
+      this.router.navigate(['']);
     }, error => {
       this.showError(error.error.message);
     });
