@@ -36,12 +36,12 @@ CREATE TABLE [dbo].[users_roles](
  ---- 
 
 USE [magic_auth];
-insert into roles (name) values ("root");
+insert into roles ("name") values ('root');
  ---- 
 
 USE [magic_auth];
-insert into roles (name) values ("user");
+insert into roles ("name") values ('user');
  ---- 
 
 USE [magic_auth];
-insert into roles (name) values ("guest");
+insert into roles ("name") values ('guest');
