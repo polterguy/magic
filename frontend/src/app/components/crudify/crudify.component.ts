@@ -16,6 +16,7 @@ export class CrudifyComponent implements OnInit {
   private displayedColumns: string[] = ['field', 'type', 'nullable', 'primary', 'automatic'];
   private displayedColumnsEndpoints: string[] = ['generate', 'endpoint', 'verb', 'action', 'log', 'auth'];
   private displayedColumnsValidators: string[] = ['field', 'validator'];
+  private publicCache = false;
 
   // Databases, tables, and selected instances of such.
   private databaseTypes = ['mysql', 'mssql'];
@@ -361,6 +362,7 @@ export class CrudifyComponent implements OnInit {
       args.cache = this.caching;
       args.columns = this.columns
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+      args.publicCache = this.publicCache;
     }
 
     let validators = '';

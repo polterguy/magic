@@ -200,8 +200,17 @@ switch:x:@.arguments/*/verb
                   get-value:x:@.arguments/*/args/*/cache
                   .
          .lambda
+            .scope:private
+            if
+               eq
+                  get-value:x:@.arguments/*/args/*/publicCache
+                  .:bool:true
+               .lambda
+                  set-value:x:@.scope
+                     .:public
             strings.concat
-               .:private, max-age=
+               get-value:x:@.scope
+               .:, max-age=
                get-value:x:@.arguments/*/args/*/cache
             unwrap:x:+/*/*/*
             insert-after:x:@apply/*/wait.slots.signal
