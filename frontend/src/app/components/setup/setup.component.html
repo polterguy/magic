@@ -6,8 +6,7 @@
       <h3>Setup wizard</h3>
 
       <p>
-        First we must setup your system such that it provides a real authentication scheme. Select which database type you want
-        to store your users in below.
+        First we must setup your system such that it provides a real authentication scheme.
       </p>
 
       <div class="database-selector">
@@ -16,14 +15,41 @@
         </mat-select>
       </div>
 
-      <mat-form-field *ngIf="selectedDatabaseType !== null" class="connection-string">
+      <mat-form-field *ngIf="selectedDatabaseType !== null" class="username">
         <input 
           matInput 
           autocomplete="off"
+          readonly
           type="text" 
-          placeholder="Connection string"
-          [(ngModel)]="connectionString">
+          placeholder="Root username"
+          [(ngModel)]="username">
       </mat-form-field>
+
+      <mat-form-field *ngIf="selectedDatabaseType !== null" class="password">
+        <input 
+          matInput 
+          autocomplete="new-password"
+          type="password" 
+          placeholder="Root password"
+          [(ngModel)]="password">
+      </mat-form-field>
+
+      <mat-form-field *ngIf="selectedDatabaseType !== null" class="password-repeat">
+        <input 
+          matInput 
+          autocomplete="new-password"
+          type="password" 
+          placeholder="Repeat password"
+          [(ngModel)]="passwordRepeat">
+      </mat-form-field>
+
+      <button
+        *ngIf="selectedDatabaseType !== null"
+        class="save-button"
+        mat-button
+        (click)="setupAuthentication()">
+        Save
+      </button>
       
     </div>
 

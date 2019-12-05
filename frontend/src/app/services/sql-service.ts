@@ -24,10 +24,4 @@ export class SqlService {
       environment.apiURL +
       'magic/modules/system/crudifier/list-files?databaseType=' + encodeURIComponent(databaseType));
   }
-
-  public getConnectionString(databaseType: string) {
-    return this.httpClient.get<string>(
-      environment.apiURL +
-      'magic/modules/system/crudifier/get-connection-string?databaseType=' + encodeURIComponent(databaseType));
-  }
 }
