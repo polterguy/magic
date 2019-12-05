@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
   }
 
   showSetup() {
-    return this.isLoggedIn && environment.defaultAuth === true;
+    return this.isLoggedIn() && environment.defaultAuth === true;
   }
 
   logout() {
