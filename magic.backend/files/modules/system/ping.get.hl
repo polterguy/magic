@@ -47,7 +47,20 @@ if
 
 
             /*
+             * Creating a default [warnings] container, which will contain any warnings we can find by
+             * traversing meta data in the system.
+             */
+            add:x:../*/slots.return-nodes
+               .
+                  warnings
+
+
+            /*
              * User is authenticated as root.
+             * Making sure we check some system settings, to create warning on client side,
+             * for unfinished configurations, etc.
+             *
+             * First we check if root user has overridden the default JWT secret.
              */
             config.get:"magic:auth:secret"
             if
@@ -55,10 +68,23 @@ if
                   get-value:x:@config.get
                   .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
                .lambda
-                  add:x:../*/slots.return-nodes
+                  add:x:../*/slots.return-nodes/*/warnings
                      .
-                        warnings
-                           jwt:Please change your auth secret in your appSettings.json file
+                        jwt:Please change your auth secret in your appSettings.json file
+
+
+            /*
+             * Then we check to see if user is still using the default authentication slot.
+             */
+            slots.get:magic.authenticate
+            if
+               eq
+                  get-value:x:@slots.get/*/.is-default-auth
+                  .:bool:true
+               .lambda
+                  add:x:../*/slots.return-nodes/*/warnings
+                     .
+                        defaultAuth:Please secure your authentication scheme by overriding the [magic.authenticate] slot
 
 
 /*

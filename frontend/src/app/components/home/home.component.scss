@@ -30,3 +30,8 @@ h1 {
     font-size: 0.9rem;
     color:#aaaaaa;
 }
+
+::ng-deep .warning-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}

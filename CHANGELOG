@@ -139,6 +139,8 @@
 
 * Support for public and private caching of HTTP GET endpoints using Cache-Control HTTP header.
 
+* Creating a warning that we return to client durin _"ping"_ invocation if installation is still using the default [magic.authenticate] slot.
+
 
 ### Updated modules for version 5.5.6
 
@@ -155,4 +157,6 @@
 * magic.lambda.scheduler
 
 * magic.lambda.library
+
+* Magic itself, especially the _"/files/"_ folder is important to update.
 
