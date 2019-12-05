@@ -1,12 +1,9 @@
 
-USE [master]
-GO
+USE [master];
 
-CREATE DATABASE [magic_auth]
-GO
+CREATE DATABASE [magic_auth];
 
 USE [magic_auth]
-GO
 
 CREATE TABLE [dbo].[users](
 	[username] [nvarchar](128) NOT NULL,
@@ -15,8 +12,7 @@ CREATE TABLE [dbo].[users](
 (
 	[username] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+) ON [PRIMARY];
 
 
 CREATE TABLE [dbo].[roles](
@@ -25,8 +21,7 @@ CREATE TABLE [dbo].[roles](
 (
 	[name] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+) ON [PRIMARY];
 
 
 CREATE TABLE [dbo].[users_roles](
@@ -37,8 +32,7 @@ CREATE TABLE [dbo].[users_roles](
 	[user] ASC,
 	[role] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+) ON [PRIMARY];
 
 
 insert into roles (name) values ('root');
