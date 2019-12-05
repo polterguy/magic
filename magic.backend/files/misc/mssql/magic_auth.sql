@@ -1,9 +1,9 @@
 
-/****** Object:  Database [magic_auth]    Script Date: 05/12/2019 3:13:05 PM ******/
-CREATE DATABASE [magic_auth];
+CREATE DATABASE [magic_auth]
+GO
 
-
-USE [magic_auth];
+USE [magic_auth]
+GO
 
 CREATE TABLE [dbo].[users](
 	[username] [nvarchar](128) NOT NULL,
@@ -11,14 +11,16 @@ CREATE TABLE [dbo].[users](
  CONSTRAINT [PK_users] PRIMARY KEY CLUSTERED 
 (
 	[username] ASC
-);
+)
+GO
 
 CREATE TABLE [dbo].[roles](
 	[name] [nvarchar](128) NOT NULL,
  CONSTRAINT [PK_roles] PRIMARY KEY CLUSTERED 
 (
 	[name] ASC
-);
+)
+GO
 
 CREATE TABLE [dbo].[users_roles](
 	[user] [nvarchar](128) NOT NULL,
@@ -27,7 +29,8 @@ CREATE TABLE [dbo].[users_roles](
 (
 	[user] ASC,
 	[role] ASC
-);
+)
+GO
 
 insert into roles (name) values ('root');
 insert into roles (name) values ('user');
