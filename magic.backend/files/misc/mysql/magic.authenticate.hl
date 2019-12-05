@@ -63,7 +63,7 @@ slots.create:magic.authenticate
              * Now we need to select all roles user belongs to.
              */
             mysql.select:select role from users_roles where user = @username
-               @username:x:@.argument/*/username
+               @username:x:@.arguments/*/username
 
 
             /*
