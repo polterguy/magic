@@ -1,0 +1,30 @@
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   username.like:string
+   username.mt:string
+   username.lt:string
+   username.mteq:string
+   username.lteq:string
+   username.neq:string
+   username.eq:string
+   password.like:string
+   password.mt:string
+   password.lt:string
+   password.mteq:string
+   password.lteq:string
+   password.neq:string
+   password.eq:string
+auth.ticket.verify:root
+add:x:./*/wait.slots.signal/*/args
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.read
+   database:magic_auth
+   table:users
+   args
+   columns
+      username
+      password
+slots.return-nodes:x:@wait.slots.signal/*

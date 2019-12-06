@@ -32,6 +32,7 @@ import { UsersComponent } from './components/users/users.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
+import { NewUserDialogComponent } from './components/users/modals/new-user-dialog';
 import { ConfirmDeletionDialogComponent } from './components/files/modals/confirm-deletion-dialog';
 import { ConfirmDeletionTaskDialogComponent } from './components/scheduler/modals/confirm-deletion-dialog';
 import { CreateValidatorDialogComponent } from './components/crudify/modals/create-validator-dialog';
@@ -57,6 +58,7 @@ export function tokenGetter() {
     EvaluatorComponent,
     FilesComponent,
     NewFileDialogComponent,
+    NewUserDialogComponent,
     ConfirmDeletionDialogComponent,
     ConfirmDeletionTaskDialogComponent,
     NewTaskDialogComponent,
@@ -110,6 +112,7 @@ export function tokenGetter() {
   bootstrap: [AppComponent],
   entryComponents: [
     NewFileDialogComponent,
+    NewUserDialogComponent,
     NewTaskDialogComponent,
     ConfirmDeletionDialogComponent,
     ConfirmDeletionTaskDialogComponent,

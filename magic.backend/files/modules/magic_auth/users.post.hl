@@ -1,0 +1,20 @@
+.arguments
+   username:string
+   password:string
+auth.ticket.verify:root
+for-each:x:@.arguments/*
+   get-name:x:@.dp/#
+   switch:x:-
+      case:pwd
+      case:password
+      case:Password
+         set-value:x:@.dp/#
+            crypto.password.hash:x:@.dp/#
+add:x:./*/wait.slots.signal/*/values
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.create
+   database:magic_auth
+   table:users
+   return-id:bool:false
+   values
+slots.return-nodes:x:@wait.slots.signal/*

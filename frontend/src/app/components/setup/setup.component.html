@@ -13,6 +13,13 @@
         file if you haven't done so already!
       </p>
 
+      <p>
+        If you want to edit the database used for authentication, to add fields to it, you can use the <em>"Files"</em> menu
+        at the top, and find the <em>"/misc/dbtype/magic_auth.sql"</em> file, and add any fields you wish to any of the tables.
+        Notice though, you'll have to keep the existing structure and name - You can <strong>only</strong> add fields to it.
+        dbtype in the path, is either mysql or mssql. You have to do this <strong>before</strong> you do the rest of your setup.
+      </p>
+
       <div class="database-selector">
         <mat-select placeholder="Select database type" (selectionChange)="databaseTypeChanged($event)" [(value)]="selectedDatabaseType">
           <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
