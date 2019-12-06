@@ -11,9 +11,21 @@ export class UsersService {
   constructor(private httpClient: HttpClient) { }
 
   list(filter: string = null) {
-    const like = filter === null ? '' : '?username.like=%' + filter + '%';
+    const like = filter === null ? '' : '?username.like=' + encodeURIComponent('%' + filter + '%');
     return this.httpClient.get<any>(
       environment.apiURL +
       'magic/modules/magic_auth/users' + like);
+  }
+
+  createUser(username: string, password: string) {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/magic_auth/users', {
+      username
+    });
+  }
+
+  getRoles(username: string) {
+    return this.httpClient.get<any>(
+      environment.apiURL +
+      'magic/modules/magic_auth/users_roles?user.eq=' + encodeURIComponent(username));
   }
 }
