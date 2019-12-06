@@ -278,8 +278,7 @@ export class FilesComponent implements OnInit {
 
   getRowClass(el: string) {
     let additionalCss = '';
-    if (el.startsWith('/modules/system/') || el.startsWith('/misc/') || el === '/modules/' || el === '/modules/README.md' ||
-      el === '/trash/' || el === '/trash/README.md') {
+    if (!this.canDelete(el)) {
       if (this.safeMode) {
         additionalCss = 'danger ';
       } else {
@@ -304,7 +303,12 @@ export class FilesComponent implements OnInit {
       path !== '/trash/README.md' &&
       path !== '/modules/README.md' &&
       !path.startsWith('/modules/system/') &&
-      !path.startsWith('/misc/');
+      path !== '/misc/' &&
+      path !== '/misc/mysql/' &&
+      path !== '/misc/mssql/' &&
+      path !== '/misc/mysql/templates/' &&
+      path !== '/misc/mssql/templates/' &&
+      path !== '/misc/README.md';
   }
 
   isFolder(path: string) {

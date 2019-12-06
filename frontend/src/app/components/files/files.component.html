@@ -28,7 +28,7 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let el">
           <button
-            [disabled]="isFolder(el)"
+            *ngIf="!isFolder(el)"
             (click)="downloadFile(el)"
             mat-button>
             Download
