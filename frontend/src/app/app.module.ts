@@ -28,6 +28,7 @@ import './extensions/hyperlambda.js';
 import { HomeComponent } from './components/home/home.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { SetupComponent } from './components/setup/setup.component';
+import { UsersComponent } from './components/users/users.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
@@ -52,6 +53,7 @@ export function tokenGetter() {
     HomeComponent,
     EndpointsComponent,
     SetupComponent,
+    UsersComponent,
     EvaluatorComponent,
     FilesComponent,
     NewFileDialogComponent,

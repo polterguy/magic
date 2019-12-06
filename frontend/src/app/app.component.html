@@ -21,6 +21,13 @@
   <a 
     *ngIf="showMenu()"
     mat-button 
+    routerLink="/users" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Users</a>
+
+  <a 
+    *ngIf="showMenu()"
+    mat-button 
     routerLink="/crudify" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Crudify</a>
