@@ -6,6 +6,7 @@ import { interval } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from 'src/environments/environment';
 import { PingService } from './services/ping-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
     private authService: AuthenticateService,
     private snackBar: MatSnackBar,
     private jwtHelper: JwtHelperService,
-    private pingService: PingService) { }
+    private pingService: PingService,
+    private router: Router) { }
 
   ngOnInit() {
     this.validateToken();
@@ -58,6 +60,7 @@ export class AppComponent implements OnInit {
 
   logout() {
     localStorage.removeItem('access_token');
+    this.router.navigate(['']);
   }
 
   login() {
