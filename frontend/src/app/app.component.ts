@@ -28,6 +28,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.validateToken();
     this.ping();
+    if (!this.isLoggedIn() && this.router.url !== '') {
+      this.router.navigate(['']);
+    }
   }
 
   showMenu() {
