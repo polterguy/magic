@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
   private username: string;
   private password: string;
   private backendUrl = environment.apiURL;
-  private forceSetup = false;
 
   constructor(
     private authService: AuthenticateService,
@@ -29,6 +28,10 @@ export class AppComponent implements OnInit {
     this.ping();
   }
 
+  showMenu() {
+    return this.isLoggedIn() && environment.defaultAuth === false;
+  }
+
   ping() {
     this.pingService.ping().subscribe(res => {
       environment.version = res.version;
@@ -37,14 +40,13 @@ export class AppComponent implements OnInit {
           if (idx === 'defaultAuth') {
             // The default authentication slot has not been overridden.
             environment.defaultAuth = true;
-            this.forceSetup = true;
           }
           console.warn(res.warnings[idx]);
         }
       }
       if (environment.defaultAuth) {
-        this.showWarning('The default [magic.authenticate] slot has not been overridden,' +
-          ' please secure your system by going through the "Setup" wizard.');
+        this.showWarning('The default [magic.authenticate] slot has not been overridden, ' +
+          'please secure your system by going through the "Setup" wizard.');
       }
     });
   }
@@ -70,13 +72,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  showError(error: string) {
-    this.snackBar.open(error, null, {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
-    });
-  }
-
   // This method makes sure JWT ticket is refreshed automatically before it expires
   public validateToken() {
     interval(10000).subscribe(x => {
@@ -99,6 +94,13 @@ export class AppComponent implements OnInit {
           this.showError(error.error.message);
         });
       }
+    });
+  }
+
+  showError(error: string) {
+    this.snackBar.open(error, null, {
+      duration: 5000,
+      panelClass: ['error-snackbar'],
     });
   }
 
