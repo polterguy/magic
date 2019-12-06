@@ -33,7 +33,7 @@
     [routerLinkActiveOptions]="{exact:true}">Crudify</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/files" 
     routerLinkActive="active-link" 
