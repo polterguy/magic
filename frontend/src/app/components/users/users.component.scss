@@ -4,7 +4,35 @@
     padding:2rem 5rem 2rem 5rem;
     .users {
         margin-top: 2rem;
-        padding: 5rem;
+        padding: 2rem;
         position: relative;
+        width: 40%;
+        float: left;
+        box-sizing: border-box;
+        table {
+            width: 100%;
+            tr {
+                td:nth-child(1), th:nth-child(1) {
+                    width: 100%;
+                }
+                td:nth-child(2), th:nth-child(2) {
+                    width: 20px;
+                }
+            }
+            tr.mat-row:hover {
+                background-color: rgba(0,0,0,.1);
+                cursor: pointer;
+            }
+        }
     }
+    .user {
+        padding: 2rem;
+        position: relative;
+        margin-top: 2rem;
+        margin-left: calc(40% + 2rem);
+    }
+}
+
+.fill-width {
+    width: 100%;
 }
