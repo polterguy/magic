@@ -1,6 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users-service';
+import { MatDialog } from '@angular/material';
+import { NewUserDialogComponent } from './modals/new-user-dialog';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +18,9 @@ export class UsersComponent implements OnInit {
   private selectedUser: string = null;
   private selectedUserRoles: any[] = null;
 
-  constructor(private usersService: UsersService) { }
+  constructor(
+    private usersService: UsersService,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
     this.getUsers();
@@ -49,7 +53,21 @@ export class UsersComponent implements OnInit {
     this.selectedUser = username;
     this.usersService.getRoles(username).subscribe(res => {
       this.selectedUserRoles = res;
-      console.log(this.selectedUserRoles);
+    });
+  }
+
+  createUser() {
+    const dialogRef = this.dialog.open(NewUserDialogComponent, {
+      width: '500px',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        this.usersService.createUser(res.username, res.password).subscribe(res =>{
+          this.getUsers();
+        });
+      }
     });
   }
 }

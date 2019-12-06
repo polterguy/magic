@@ -1,0 +1,10 @@
+.arguments
+   username:string
+auth.ticket.verify:root
+add:x:./*/wait.slots.signal/*/ids
+   get-nodes:x:@.arguments/*
+wait.slots.signal:magic.db.mysql.delete
+   database:magic_auth
+   table:users
+   ids
+slots.return-nodes:x:@wait.slots.signal/*

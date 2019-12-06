@@ -19,7 +19,8 @@ export class UsersService {
 
   createUser(username: string, password: string) {
     return this.httpClient.post<any>(environment.apiURL + 'magic/modules/magic_auth/users', {
-      username
+      username,
+      password,
     });
   }
 

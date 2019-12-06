@@ -12,6 +12,12 @@
 
   <div class="mat-elevation-z4 users">
 
+    <button
+      class="new-user-button"
+      matTooltip="Create a new user"
+      (click)="createUser()"
+      mat-button>New ...</button>
+
     <table mat-table [dataSource]="dataSource()">
 
       <ng-container matColumnDef="username">

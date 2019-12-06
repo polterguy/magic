@@ -29,6 +29,7 @@ export class CrudifyComponent implements OnInit {
   private caching: number;
   private columns: any[] = null;
   private validators: any[] = null;
+  private hashPassword = false;
 
   // True while we're CRUDifying.
   isCrudifying = false;
@@ -139,6 +140,10 @@ export class CrudifyComponent implements OnInit {
     }, (err) => {
       this.showError(err.error.message);
     });
+  }
+
+  hasPasswordField() {
+    return this.columns.filter(x => x.name === 'password' || x.name === 'pwd' || x.name === 'Password').length > 0;
   }
 
   tableChanged(e: MatSelectChange) {
@@ -366,9 +371,13 @@ export class CrudifyComponent implements OnInit {
     }
 
     let validators = '';
+    let hashPasswordTemplate = ''
     if (curVerb === 'post' || curVerb === 'put') {
+      if (this.hasPasswordField() && this.hashPassword === true) {
+        hashPasswordTemplate = '-hash-password';
+      }
       if (this.validators !== null && this.validators !== undefined && this.validators.length > 0) {
-        for (var idx = 0; idx < this.validators.length; idx++) {
+        for (let idx = 0; idx < this.validators.length; idx++) {
           if (this.validators[idx].validator !== null && this.validators[idx].validator !== undefined) {
             validators += this.validators[idx].validator + '\r\n';
           }
@@ -381,12 +390,12 @@ export class CrudifyComponent implements OnInit {
       database: this.selectedDatabase,
       table: this.selectedTable,
       returnId,
-      template: `/modules/system/crudifier/templates/crud.template.${curVerb}.hl`,
+      template: `/modules/system/crudifier/templates/crud.template.${curVerb}${hashPasswordTemplate}.hl`,
       verb: curVerb,
       auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
       log: this.endpoints.filter((x) => x.verb === curVerb)[0].log,
       args,
-      validators
+      validators,
     }).subscribe((res: any) => {
       this.noLoc += res.loc;
       this.createHttpEndpoints(verbs.slice(1), callback);
