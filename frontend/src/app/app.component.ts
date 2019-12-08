@@ -50,8 +50,7 @@ export class AppComponent implements OnInit {
         }
       }
       if (environment.defaultAuth) {
-        this.showWarning('The default [magic.authenticate] slot has not been overridden, ' +
-          'please secure your system by going through the "Setup" wizard.');
+        this.showWarning('Secure your system in the "Setup" module.');
       }
     });
   }
