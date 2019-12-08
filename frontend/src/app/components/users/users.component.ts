@@ -13,7 +13,7 @@ import { AddRoleDialogComponent } from './modals/add-role-dialog';
 export class UsersComponent implements OnInit {
 
   private filter = '';
-  public displayedColumns: string[] = ['username'];
+  public displayedColumns: string[] = ['username', 'delete'];
   public displayedColumnsRoles: string[] = ['role', 'delete'];
   public users: any[];
   private selectedUser: string = null;
@@ -29,6 +29,8 @@ export class UsersComponent implements OnInit {
   }
 
   getUsers() {
+    this.selectedUser = null;
+    this.selectedUserRoles = null;
     this.usersService.list(this.filter).subscribe(res => {
       this.users = res;
     });
@@ -80,6 +82,13 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  deleteUser(username: string) {
+    this.usersService.deleteUser(username).subscribe(res => {
+      this.showInfo('User was successfully deleted');
+      this.getUsers();
+    });
+  }
+
   addRole() {
     const dialogRef = this.dialog.open(AddRoleDialogComponent, {
       width: '500px',
@@ -91,6 +100,8 @@ export class UsersComponent implements OnInit {
         this.usersService.addRoleToUser(this.selectedUser, res).subscribe(res2 => {
           this.showInfo('Role successfully added to user');
           this.getUserRoles();
+        }, error => {
+          this.showError(error.error.message);
         });
       }
     });

@@ -24,6 +24,12 @@ export class UsersService {
     });
   }
 
+  deleteUser(username: string) {
+    return this.httpClient.delete<any>(
+      environment.apiURL + 
+      'magic/modules/magic_auth/users?username=' + encodeURIComponent(username));
+  }
+
   getRoles(username: string) {
     return this.httpClient.get<any>(
       environment.apiURL +
