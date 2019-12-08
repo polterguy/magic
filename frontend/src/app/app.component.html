@@ -5,28 +5,28 @@
   <span class="example-fill-remaining-space"></span>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Home</a>
 
   <a 
-    *ngIf="!showMenu() && isLoggedIn()"
+    *ngIf="forceSetup()"
     mat-button 
     routerLink="/setup" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Setup</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="!forceSetup()"
     mat-button 
     routerLink="/users" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Users</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/crudify" 
     routerLinkActive="active-link" 
@@ -40,28 +40,28 @@
     [routerLinkActiveOptions]="{exact:true}">Files</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/evaluator" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Evaluator</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/endpoints" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Endpoints</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/sql" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">SQL</a>
 
   <a 
-    *ngIf="showMenu()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/scheduler" 
     routerLinkActive="active-link" 
