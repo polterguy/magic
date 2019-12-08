@@ -35,6 +35,11 @@
         position: relative;
         margin-top: 2rem;
         margin-left: calc(40% + 2rem);
+        .add-role-button {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+        }
         table {
             width: 100%;
             tr {

@@ -1,0 +1,17 @@
+
+<h1 mat-dialog-title>Add role to user</h1>
+<div mat-dialog-content>
+
+  <mat-form-field>
+    <mat-select placeholder="Select role" [(ngModel)]="data">
+      <mat-option *ngFor="let cur of roles" [value]="cur">{{cur.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+    
+</div>
+<div mat-dialog-actions>
+  <div style="width:100%; text-align: right;">
+    <button mat-button [mat-dialog-close]="data.name">Ok</button>
+    <button mat-button (click)="close()">Close</button>
+  </div>
+</div>

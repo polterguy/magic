@@ -29,4 +29,22 @@ export class UsersService {
       environment.apiURL +
       'magic/modules/magic_auth/users_roles?user.eq=' + encodeURIComponent(username));
   }
+
+  addRoleToUser(user: string, role: string) {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/magic_auth/users_roles', {
+      user,
+      role,
+    });
+  }
+
+  deleteRoleFromUser(user: string, role: string) {
+    return this.httpClient.delete<any>(
+      environment.apiURL + 
+      'magic/modules/magic_auth/users_roles?role=' + encodeURIComponent(role) +
+      '&user=' + encodeURIComponent(user));
+  }
+
+  getAllRoles() {
+    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/magic_auth/roles');
+  }
 }
