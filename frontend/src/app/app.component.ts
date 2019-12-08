@@ -33,8 +33,8 @@ export class AppComponent implements OnInit {
     }
   }
 
-  showMenu() {
-    return this.isLoggedIn() && environment.defaultAuth === false;
+  forceSetup() {
+    return this.isLoggedIn() && environment.defaultAuth !== false;
   }
 
   ping() {
