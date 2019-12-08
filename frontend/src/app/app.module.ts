@@ -36,6 +36,7 @@ import { NewUserDialogComponent } from './components/users/modals/new-user-dialo
 import { ConfirmDeletionDialogComponent } from './components/files/modals/confirm-deletion-dialog';
 import { ConfirmDeletionTaskDialogComponent } from './components/scheduler/modals/confirm-deletion-dialog';
 import { CreateValidatorDialogComponent } from './components/crudify/modals/create-validator-dialog';
+import { AddRoleDialogComponent } from './components/users/modals/add-role-dialog';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
@@ -63,6 +64,7 @@ export function tokenGetter() {
     ConfirmDeletionTaskDialogComponent,
     NewTaskDialogComponent,
     CreateValidatorDialogComponent,
+    AddRoleDialogComponent,
     CrudifyComponent,
     SqlComponent,
     SchedulerComponent,
@@ -116,6 +118,7 @@ export function tokenGetter() {
     NewTaskDialogComponent,
     ConfirmDeletionDialogComponent,
     ConfirmDeletionTaskDialogComponent,
-    CreateValidatorDialogComponent]
+    CreateValidatorDialogComponent,
+    AddRoleDialogComponent]
 })
 export class AppModule { }

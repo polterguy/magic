@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users-service';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { NewUserDialogComponent } from './modals/new-user-dialog';
+import { AddRoleDialogComponent } from './modals/add-role-dialog';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,7 @@ export class UsersComponent implements OnInit {
 
   private filter = '';
   public displayedColumns: string[] = ['username'];
-  public displayedColumnsRoles: string[] = ['role'];
+  public displayedColumnsRoles: string[] = ['role', 'delete'];
   public users: any[];
   private selectedUser: string = null;
   private selectedUserRoles: any[] = null;
@@ -52,7 +53,11 @@ export class UsersComponent implements OnInit {
 
   selectUser(username: string) {
     this.selectedUser = username;
-    this.usersService.getRoles(username).subscribe(res => {
+    this.getUserRoles();
+  }
+
+  getUserRoles() {
+    this.usersService.getRoles(this.selectedUser).subscribe(res => {
       this.selectedUserRoles = res || [];
     });
   }
@@ -72,6 +77,29 @@ export class UsersComponent implements OnInit {
           this.showError(error.error.message);
         });
       }
+    });
+  }
+
+  addRole() {
+    const dialogRef = this.dialog.open(AddRoleDialogComponent, {
+      width: '500px',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        this.usersService.addRoleToUser(this.selectedUser, res).subscribe(res2 => {
+          this.showInfo('Role successfully added to user');
+          this.getUserRoles();
+        });
+      }
+    });
+  }
+
+  deleteRoleFromUser(role: string) {
+    this.usersService.deleteRoleFromUser(this.selectedUser, role).subscribe(res => {
+      this.showInfo('Role successfully deleted');
+      this.getUserRoles();
     });
   }
 

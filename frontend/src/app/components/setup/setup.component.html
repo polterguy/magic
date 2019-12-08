@@ -8,16 +8,14 @@
       <p>
         You have to setup your system such that it provides a real authentication scheme. Notice, this will permanently change
         the state of your installation, so be careful, and make sure you have chosen the correct database type that you wish to
-        use. You can find any files that are overwritten in the process in your trashcan. Also, your connection string must
-        be correct at this point, for the specific database type you wish to use. Edit it in your <em>"appsettings.json"</em>
-        file if you haven't done so already!
+        use. You can find any files that are overwritten in the process in your <em>"trash"</em> folder. Also, your connection
+        string must be correct at this point, for the specific database type you wish to use. Edit it in your
+        <em>"appsettings.json"</em> file if you haven't done so already.
       </p>
 
       <p>
-        If you want to edit the database used for authentication, to add fields to it, you can use the <em>"Files"</em> menu
-        at the top, and find the <em>"/misc/dbtype/magic_auth.sql"</em> file, and add any fields you wish to any of the tables.
-        Notice though, you'll have to keep the existing structure and name - You can <strong>only</strong> add fields to it.
-        dbtype in the path, is either mysql or mssql. You have to do this <strong>before</strong> you do the rest of your setup.
+        When you are done, you can crudify the <em>"magic_auth"</em> database to make the <em>"Users"</em> module
+        work, allowing you to add, edit and delete users in your installation.
       </p>
 
       <div class="database-selector">
