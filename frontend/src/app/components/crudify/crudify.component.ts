@@ -363,7 +363,11 @@ export class CrudifyComponent implements OnInit {
         .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
+    let hashPasswordTemplate = ''
     if (curVerb === 'get') {
+      if (this.hasPasswordField() && this.hashPassword === true) {
+        hashPasswordTemplate = '-hash-password';
+      }
       args.cache = this.caching;
       args.columns = this.columns
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
@@ -371,7 +375,6 @@ export class CrudifyComponent implements OnInit {
     }
 
     let validators = '';
-    let hashPasswordTemplate = ''
     if (curVerb === 'post' || curVerb === 'put') {
       if (this.hasPasswordField() && this.hashPassword === true) {
         hashPasswordTemplate = '-hash-password';
