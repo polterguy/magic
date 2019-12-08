@@ -4,9 +4,9 @@
     padding:2rem 5rem 2rem 5rem;
     .users {
         margin-top: 2rem;
-        padding: 2rem;
+        padding: 4rem;
         position: relative;
-        width: 40%;
+        width: 50%;
         float: left;
         box-sizing: border-box;
         table {
@@ -31,10 +31,10 @@
         }
     }
     .user {
-        padding: 2rem;
+        padding: 4rem;
         position: relative;
         margin-top: 2rem;
-        margin-left: calc(40% + 2rem);
+        margin-left: calc(50% + 2rem);
         .add-role-button {
             position: absolute;
             top: .5rem;
