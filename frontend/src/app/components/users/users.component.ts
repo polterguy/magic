@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users-service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { NewUserDialogComponent } from './modals/new-user-dialog';
 
 @Component({
@@ -20,6 +20,7 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private usersService: UsersService,
+    private snackBar: MatSnackBar,
     public dialog: MatDialog) { }
 
   ngOnInit() {
@@ -52,7 +53,7 @@ export class UsersComponent implements OnInit {
   selectUser(username: string) {
     this.selectedUser = username;
     this.usersService.getRoles(username).subscribe(res => {
-      this.selectedUserRoles = res;
+      this.selectedUserRoles = res || [];
     });
   }
 
@@ -64,10 +65,27 @@ export class UsersComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        this.usersService.createUser(res.username, res.password).subscribe(res =>{
+        this.usersService.createUser(res.username, res.password).subscribe(res => {
+          this.showInfo('User was successfully created');
           this.getUsers();
+        }, error => {
+          this.showError(error.error.message);
         });
       }
+    });
+  }
+
+  showError(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['error-snackbar'],
+    });
+  }
+
+  showInfo(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 10000,
+      panelClass: ['info-snackbar'],
     });
   }
 }

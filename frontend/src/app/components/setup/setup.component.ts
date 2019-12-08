@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './setup.component.html',
   styleUrls: ['./setup.component.scss']
 })
-export class SetupComponent implements OnInit {
+export class SetupComponent {
 
   private selectedDatabaseType: string = null;
   private databaseTypes: string[] = ['mysql', 'mssql'];
@@ -22,9 +22,6 @@ export class SetupComponent implements OnInit {
     private setupService: SetupService,
     private snackBar: MatSnackBar,
     private router: Router) { }
-
-  ngOnInit() {
-  }
 
   databaseTypeChanged(e: MatSelectChange) {
     console.log(e.value);

@@ -52,3 +52,14 @@
 .filter-users {
     width: 100%;
 }
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
+}
+
+::ng-deep .info-snackbar {
+    background:rgb(100,255,100);
+    color:rgb(0,0,0);
+}
+
