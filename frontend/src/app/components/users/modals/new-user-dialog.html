@@ -1,12 +1,23 @@
 
 <h1 mat-dialog-title>Create a new user</h1>
 <div mat-dialog-content>
+
   <mat-form-field style="width: 100%;">
-    <input matInput autocomplete="off" [(ngModel)]="data.username">
+    <input
+      matInput 
+      placeholder="Username" 
+      autocomplete="off" 
+      [(ngModel)]="data.username">
   </mat-form-field>
+
   <mat-form-field style="width: 100%;">
-    <input matInput autocomplete="off" [(ngModel)]="data.password">
+    <input
+      matInput
+      placeholder="Password"
+      autocomplete="off"
+      [(ngModel)]="data.password">
   </mat-form-field>
+  
 </div>
 <div mat-dialog-actions>
   <div style="width:100%; text-align: right;">
