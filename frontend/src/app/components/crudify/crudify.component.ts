@@ -147,6 +147,20 @@ export class CrudifyComponent implements OnInit {
     return this.columns.filter(x => x.name === 'password' || x.name === 'pwd' || x.name === 'Password').length > 0;
   }
 
+  setModuleUrl(value: string) {
+    switch (value) {
+      case 'dbo.users':
+      case 'dbo.roles':
+      case 'dbo.users_roles':
+        this.moduleUrl = value.substring(4);
+        this.hashPassword = true;
+        break;
+      default:
+        this.moduleUrl = value;
+        this.hashPassword = false;
+    }
+  }
+
   tableChanged(e: MatSelectChange) {
 
     if (e.value === 'Custom SQL') {
@@ -161,7 +175,8 @@ export class CrudifyComponent implements OnInit {
     } else {
 
       // User wants to crudify a table.
-      this.moduleUrl = e.value;
+      // Special cases for "auth crudification".
+      this.setModuleUrl(e.value);
       this.selectedTable = e.value;
       this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
@@ -304,6 +319,7 @@ export class CrudifyComponent implements OnInit {
     const current = tables[0];
     this.currentlyCrudifying = current.table;
     this.selectedTable = this.currentlyCrudifying;
+    this.setModuleUrl(this.selectedTable);
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
       this.columns = res;
       this.endpoints = this.verbs.map(x => {
