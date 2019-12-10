@@ -35,6 +35,20 @@ CREATE TABLE [dbo].[users_roles](
 ) ON [PRIMARY]
  ---- 
 
+use [magic_auth];
+ALTER TABLE [dbo].[users_roles]
+ADD FOREIGN KEY ([user])
+REFERENCES users([username])
+ON DELETE CASCADE;
+ ---- 
+
+use [magic_auth];
+ALTER TABLE [dbo].[users_roles]
+ADD FOREIGN KEY ([role])
+REFERENCES roles([name])
+ON DELETE CASCADE;
+ ---- 
+
 USE [magic_auth];
 insert into roles ("name") values ('root');
  ---- 
