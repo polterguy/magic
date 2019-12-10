@@ -150,10 +150,13 @@ export class CrudifyComponent implements OnInit {
   setModuleUrl(value: string) {
     switch (value) {
       case 'dbo.users':
+          this.moduleUrl = value.substring(4);
+          this.hashPassword = true;
+          break;
       case 'dbo.roles':
       case 'dbo.users_roles':
         this.moduleUrl = value.substring(4);
-        this.hashPassword = true;
+        this.hashPassword = false;
         break;
       default:
         this.moduleUrl = value;
