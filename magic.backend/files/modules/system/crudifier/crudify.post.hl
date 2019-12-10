@@ -7,6 +7,7 @@
    moduleName:string
    database:string
    table:string
+   moduleUrl:string
    returnId:bool
    template:string
    verb:string
@@ -49,7 +50,7 @@ if
  */
 .filename
 set-value:x:-
-   strings.replace:x:@.arguments/*/table
+   strings.replace:x:@.arguments/*/moduleUrl
       .:'.'
       .:/
 set-value:x:@.filename
