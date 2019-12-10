@@ -5,6 +5,7 @@ export class CrudifyModel {
     moduleName: string;
     database: string;
     table: string;
+    moduleUrl: string;
     returnId: boolean;
     template: string;
     verb: string;

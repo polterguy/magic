@@ -21,6 +21,7 @@ export class CrudifyComponent implements OnInit {
   // Databases, tables, and selected instances of such.
   private databaseTypes = ['mysql', 'mssql'];
   private moduleName: string = null;
+  private moduleUrl: string = null;
   private databaseType: string;
   private databases: any[] = null;
   private tables: any[] = null;
@@ -160,6 +161,7 @@ export class CrudifyComponent implements OnInit {
     } else {
 
       // User wants to crudify a table.
+      this.moduleUrl = e.value;
       this.selectedTable = e.value;
       this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe((res) => {
         this.columns = res;
@@ -339,6 +341,10 @@ export class CrudifyComponent implements OnInit {
       callback();
       return;
     }
+    if (this.moduleUrl === null || this.moduleUrl === '' || this.moduleUrl === undefined) {
+      this.showError('No module URL supplied to crudification process');
+      return;
+    }
     const curVerb = verbs[0];
 
     // Contains arguments to crudifier
@@ -363,7 +369,7 @@ export class CrudifyComponent implements OnInit {
         .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
-    let hashPasswordTemplate = ''
+    let hashPasswordTemplate = '';
     if (curVerb === 'get') {
       if (this.hasPasswordField() && this.hashPassword === true) {
         hashPasswordTemplate = '-hash-password';
@@ -392,6 +398,7 @@ export class CrudifyComponent implements OnInit {
       moduleName: this.moduleName,
       database: this.selectedDatabase,
       table: this.selectedTable,
+      moduleUrl: this.moduleUrl,
       returnId,
       template: `/modules/system/crudifier/templates/crud.template.${curVerb}${hashPasswordTemplate}.hl`,
       verb: curVerb,
