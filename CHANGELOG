@@ -169,3 +169,19 @@
 
 * Magic itself, especially the _"/files/"_ folder is important to update.
 
+
+
+## Version 5.5.7
+
+* Getting authentication setup and crudifier to work with mssql data adapter.
+
+
+
+## Version 5.5.8
+
+* Support for filtering the results of the [slots.vocabulary] slot.
+
+* Started work on _"transformers"_, that allows to transform data supplied in through an HTTP endpoint to something else.
+  Among other things, this will replace the existing _"BlowFish hash passwords"_ functionality, by providing a generic means
+  of transforming some sort of input data, to something else - Especially for update and inserts, but also possibly (later)
+  for read and delete invocations.
