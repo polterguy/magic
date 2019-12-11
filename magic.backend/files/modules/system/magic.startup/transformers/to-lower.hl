@@ -1,0 +1,21 @@
+
+/*
+ * Returns the lower case version of the first given input argument, with the same
+ * name, but only lower case characters in its value.
+ */
+slots.create:transformer.to-lower
+
+   /*
+    * Invoking to-lowers on input argument.
+    */
+   strings.to-lower:x:@.arguments/0
+
+   /*
+    * Making sure we return the argument with the same name, but its
+    * lower case value characters.
+    */
+   add:x:../*/slots.return-nodes
+      get-nodes:x:@.arguments/0
+   set-value:x:../*/slots.return-nodes/0
+      get-value:x:@strings.to-lower
+   slots.return-nodes
