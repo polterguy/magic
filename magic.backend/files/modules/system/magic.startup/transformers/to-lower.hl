@@ -3,7 +3,7 @@
  * Returns the lower case version of the first given input argument, with the same
  * name, but only lower case characters in its value.
  */
-slots.create:transformer.to-lower
+slots.create:transformers.to-lower
 
    /*
     * Invoking to-lowers on input argument.

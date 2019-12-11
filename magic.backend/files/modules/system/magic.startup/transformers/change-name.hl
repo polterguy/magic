@@ -4,7 +4,7 @@
  * you to transform one node, to become something else. Requires two arguments, the first
  * being the node to return, the second having a value of its new name.
  */
-slots.create:transformer.change-name
+slots.create:transformers.change-name
 
    /*
     * Making sure we return the argument with the same value, but a new name.
