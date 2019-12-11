@@ -1,0 +1,16 @@
+
+/*
+ * Changes the name of the specified input node, but returns the value as is, allowing
+ * you to transform one node, to become something else. Requires two arguments, the first
+ * being the node to return, the second having a value of its new name.
+ */
+slots.create:transformer.change-name
+
+   /*
+    * Making sure we return the argument with the same value, but a new name.
+    */
+   add:x:../*/slots.return-nodes
+      get-nodes:x:@.arguments/0
+   set-name:x:../*/slots.return-nodes/0
+      get-value:x:@.arguments/1
+   slots.return-nodes
