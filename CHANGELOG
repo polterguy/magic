@@ -185,3 +185,8 @@
   Among other things, this will replace the existing _"BlowFish hash passwords"_ functionality, by providing a generic means
   of transforming some sort of input data, to something else - Especially for update and inserts, but also possibly (later)
   for read and delete invocations.
+
+
+### Updated modules for version 5.5.8
+
+* magic.lambda.slots
