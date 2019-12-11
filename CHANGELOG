@@ -188,7 +188,12 @@
 
 * Minor bugfixes in the frontend.
 
+* Preventing [unwrap] from trying to evaluate values that are not expressions, to allow for easily evaluate hierarchies of
+  "mixed values".
+
 
 ### Updated modules for version 5.5.8
 
 * magic.lambda.slots
+
+* magic.lambda
