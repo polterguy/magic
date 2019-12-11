@@ -46,7 +46,7 @@
         <th mat-header-cell *matHeaderCellDef>Delete</th>
         <td mat-cell *matCellDef="let el">
           <button
-            (click)="delete(el)"
+            (click)="delete(el); $event.stopPropagation()"
             mat-button>Delete</button>
         </td>
       </ng-container>
