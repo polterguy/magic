@@ -29,7 +29,7 @@
         <td mat-cell *matCellDef="let el">
           <button
             *ngIf="!isFolder(el)"
-            (click)="downloadFile(el)"
+            (click)="downloadFile(el); $event.stopPropogation();"
             mat-button>
             Download
           </button>
@@ -41,7 +41,7 @@
         <td mat-cell *matCellDef="let el">
           <button
             [disabled]="!canDelete(el)"
-            (click)="deletePath(el)"
+            (click)="deletePath(el); $event.stopPropogation();"
             mat-button>
             Delete
           </button>
