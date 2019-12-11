@@ -186,6 +186,8 @@
   of transforming some sort of input data, to something else - Especially for update and inserts, but also possibly (later)
   for read and delete invocations.
 
+* Minor bugfixes in the frontend.
+
 
 ### Updated modules for version 5.5.8
 
