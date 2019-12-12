@@ -32,97 +32,95 @@ if
 
 
 /*
- * Evaluating SQL script that creates our database, but first we must dynamically
- * determine which script to execute.
+ * Checking if database already exists, and if not, creating it.
  */
+.database-exists:bool:true
 strings.concat
-   .:/misc/
+   .:magic.db.
    get-value:x:@.arguments/*/databaseType
-   .:/magic_auth.sql
+   .:.databases
+slots.signal:x:-
+if
+   not
+      exists:x:@slots.signal/*/*/=magic_auth
+   .lambda
 
 
-/*
- * Wrapping the creation of the database in a try/catch block, to
- * prevent failure if database exists from before.
- */
-try
+      /*
+       * Making sure we inform outer layer that we are creating a new user.
+       */
+      set-value:x:@.database-exists
+         .:bool:false
 
 
-   /*
-    * Loading file, and executing it.
-    */
-   io.files.load:x:@strings.concat
-   set-name:x:../**/xxx.connect
+      /*
+       * Database does not exist.
+       *
+       * Evaluating SQL script that creates our database, but first we must dynamically
+       * determine which script to execute.
+       */
       strings.concat
+         .:/misc/
          get-value:x:@.arguments/*/databaseType
-         .:.connect
-   set-name:x:../**/xxx.execute
+         .:/magic_auth.sql
+
+
+      /*
+       * Loading create database SQL script file, and replacing execution slots according
+       * to which database type we're dealing with.
+       */
+      io.files.load:x:@strings.concat
+      set-name:x:../**/xxx.connect
+         strings.concat
+            get-value:x:@.arguments/*/databaseType
+            .:.connect
+      set-name:x:../**/xxx.execute
+         strings.concat
+            get-value:x:@.arguments/*/databaseType
+            .:.execute
+
+
+      /*
+       * Executing create database SQL script, which is different according to which
+       * database type we're currently using. Notice the little hack to allow for
+       * create database schema scripts in MS SQL, splitting upon " ---- ".
+       */
+      if
+         eq
+            get-value:x:@.arguments/*/databaseType
+            .:mssql
+         .lambda
+            strings.split:x:@io.files.load
+               .:" ---- "
+            for-each:x:@strings.split/*
+               xxx.connect
+                  xxx.execute:x:@.dp/#
+      else
+         xxx.connect
+            xxx.execute:x:@io.files.load
+
+
+      /*
+       * Inserting the root user according to arguments given.
+       */
       strings.concat
+         .:/misc/
          get-value:x:@.arguments/*/databaseType
-         .:.execute
-
-
-   /*
-    * This part will be replaced dynamically according to the [databaseType] argument.
-    */
-   if
-      eq
-         get-value:x:@.arguments/*/databaseType
-         .:mssql
-      .lambda
-         strings.split:x:@io.files.load
-            .:" ---- "
-         for-each:x:@strings.split/*
-            xxx.connect
-               xxx.execute:x:@.dp/#
-   else
-      xxx.connect
-         xxx.execute:x:@io.files.load
-.catch
-
-   /*
-    * Database probably exists from before.
-    */
-   log.error:x:@message
+         .:/create-user.hl
+      io.files.load:x:@strings.concat
+      hyper2lambda:x:-
+      unwrap:x:+/*/*
+      add:x:@hyper2lambda/*/.arguments
+         .
+            username:x:@.arguments/*/rootUsername
+            password:x:@.arguments/*/rootPassword
+            roles
+               .:root
+      eval:x:@hyper2lambda
 
 
 /*
- * Wrapping the creation of the user in a try/catch block, to
- * prevent failure if user exists from before.
- */
-.user-exists:bool:false
-try
-
-
-   /*
-    * Inserting the root user according to arguments given.
-    */
-   strings.concat
-      .:/misc/
-      get-value:x:@.arguments/*/databaseType
-      .:/create-user.hl
-   io.files.load:x:@strings.concat
-   hyper2lambda:x:-
-   unwrap:x:+/*/*
-   add:x:@hyper2lambda/*/.arguments
-      .
-         username:x:@.arguments/*/rootUsername
-         password:x:@.arguments/*/rootPassword
-         roles
-            .:root
-   eval:x:@hyper2lambda
-.catch
-
-   /*
-    * Database probably exists from before.
-    */
-   log.error:x:@message
-   set-value:x:@.user-exists
-      .:bool:true
-
-
-/*
- * Now we have created our database, and our initial root user, and we can start moving files around,
+ * Now we have our auth database, and our initial root user, and we can start moving files around,
  * and modifying slots accordingly.
  */
 io.files.move:/modules/system/magic.startup/magic.authenticate.hl
@@ -149,9 +147,15 @@ eval:x:@hyper2lambda
  */
 if
    eq
-      get-value:x:@.user-exists
+      get-value:x:@.database-exists
       .:bool:true
    .lambda
+
+
+      /*
+       * Returning early, since database already exists,
+       * and logging in probably won't work.
+       */
       slots.return-value:User already exists
 
 
