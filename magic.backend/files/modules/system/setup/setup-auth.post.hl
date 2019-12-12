@@ -1,0 +1,17 @@
+
+/*
+ * Returns the antire appsettings.json file to caller.
+ */
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Returns the "appsettings.json" file to caller
+ */
+get-app-settings
+slots.return-value:x:-

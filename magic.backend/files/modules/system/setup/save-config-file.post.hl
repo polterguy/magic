@@ -1,0 +1,18 @@
+
+/*
+ * Saves the content of [content] argument to your appsettings.json file.
+ */
+.arguments
+   content:string
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Saves the [content] from arguments to "appsettings.json" file.
+ */
+save-app-settings:x:@.arguments/*/content
+slots.return-value:success

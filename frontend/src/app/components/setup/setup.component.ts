@@ -17,6 +17,8 @@ export class SetupComponent {
   private username = 'root';
   private password: string = null;
   private passwordRepeat: string = null;
+  private validDatabaseConnectionString = false;
+  private appsettingsJson = '';
 
   constructor(
     private setupService: SetupService,
@@ -24,7 +26,16 @@ export class SetupComponent {
     private router: Router) { }
 
   databaseTypeChanged(e: MatSelectChange) {
-    console.log(e.value);
+    this.setupService.checkDatabaseConfiguration(e.value).subscribe(res => {
+      this.validDatabaseConnectionString = true;
+    }, err => {
+      console.log(err);
+      this.validDatabaseConnectionString = false;
+      this.showError('You will need to configure your database connection string before proceeding');
+      this.setupService.getAppSettingsJson().subscribe(res => {
+        this.appsettingsJson = res;
+      });
+    });
   }
 
   setupAuthentication() {
@@ -49,6 +60,20 @@ export class SetupComponent {
       this.router.navigate(['']);
     }, error => {
       this.showError(error.error.message);
+    });
+  }
+
+  getCodeMirrorOptions() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'application/ld+json',
+    };
+  }
+
+  saveConfigurationFile() {
+    this.setupService.saveAppSettingsJson(this.appsettingsJson).subscribe(res => {
+      this.showInfo('Appsettings.json file successfully saved');
     });
   }
 
