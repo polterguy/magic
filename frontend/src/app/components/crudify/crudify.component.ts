@@ -30,7 +30,6 @@ export class CrudifyComponent implements OnInit {
   private caching: number;
   private columns: any[] = null;
   private validators: any[] = null;
-  private hashPassword = false;
 
   // True while we're CRUDifying.
   isCrudifying = false;
@@ -146,17 +145,12 @@ export class CrudifyComponent implements OnInit {
   setModuleUrl(value: string) {
     switch (value) {
       case 'dbo.users':
-          this.moduleUrl = value.substring(4);
-          this.hashPassword = true;
-          break;
       case 'dbo.roles':
       case 'dbo.users_roles':
         this.moduleUrl = value.substring(4);
-        this.hashPassword = false;
         break;
       default:
         this.moduleUrl = value;
-        this.hashPassword = false;
     }
   }
 
@@ -194,13 +188,23 @@ export class CrudifyComponent implements OnInit {
           .map(x => {
             return {
               field: x.name,
-              validator: '',
+              validator: this.getDefaultValidator(x.name, this.selectedTable),
             };
         });
       }, (err) => {
         this.showError(err.error.message);
       });
     }
+  }
+
+  getDefaultValidator(fieldName: string, tableName: string) {
+    if (fieldName === 'password' && (tableName === 'dbo.users' || tableName === 'users')) {
+      this.showSuccess('Notice! BlowFish hashing was automatically added to your password field!');
+      return `eval:x:+
+slots.signal:transformers.hash-password
+   reference:x:@.arguments/*/password`;
+    }
+    return '';
   }
 
   addValidator(el: any) {
