@@ -1,0 +1,9 @@
+
+/*
+ * Returns the upper case version of the first given input argument, with the same
+ * name, but only upper case characters in its value.
+ */
+slots.create:transformers.to-upper
+
+   set-value:x:@.arguments/0/#
+      strings.to-upper:x:@.arguments/0/#

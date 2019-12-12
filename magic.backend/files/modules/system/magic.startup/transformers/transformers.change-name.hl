@@ -6,11 +6,5 @@
  */
 slots.create:transformers.change-name
 
-   /*
-    * Making sure we return the argument with the same value, but a new name.
-    */
-   add:x:../*/slots.return-nodes
-      get-nodes:x:@.arguments/0
-   set-name:x:../*/slots.return-nodes/0
+   set-name:x:@.arguments/0/#
       get-value:x:@.arguments/1
-   slots.return-nodes
