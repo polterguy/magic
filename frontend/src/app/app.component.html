@@ -19,7 +19,7 @@
     [routerLinkActiveOptions]="{exact:true}">Setup</a>
 
   <a 
-    *ngIf="!forceSetup()"
+    *ngIf="!forceSetup() && isLoggedIn()"
     mat-button 
     routerLink="/users" 
     routerLinkActive="active-link" 
