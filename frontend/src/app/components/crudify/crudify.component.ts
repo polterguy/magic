@@ -143,10 +143,6 @@ export class CrudifyComponent implements OnInit {
     });
   }
 
-  hasPasswordField() {
-    return this.columns.filter(x => x.name === 'password' || x.name === 'pwd' || x.name === 'Password').length > 0;
-  }
-
   setModuleUrl(value: string) {
     switch (value) {
       case 'dbo.users':
@@ -388,11 +384,7 @@ export class CrudifyComponent implements OnInit {
         .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
-    let hashPasswordTemplate = '';
     if (curVerb === 'get') {
-      if (this.hasPasswordField() && this.hashPassword === true) {
-        hashPasswordTemplate = '-hash-password';
-      }
       args.cache = this.caching;
       args.columns = this.columns
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
@@ -401,13 +393,10 @@ export class CrudifyComponent implements OnInit {
 
     let validators = '';
     if (curVerb === 'post' || curVerb === 'put') {
-      if (this.hasPasswordField() && this.hashPassword === true) {
-        hashPasswordTemplate = '-hash-password';
-      }
       if (this.validators !== null && this.validators !== undefined && this.validators.length > 0) {
-        for (let idx = 0; idx < this.validators.length; idx++) {
-          if (this.validators[idx].validator !== null && this.validators[idx].validator !== undefined) {
-            validators += this.validators[idx].validator + '\r\n';
+        for (const idx of this.validators) {
+          if (idx.validator !== null && idx.validator !== undefined) {
+            validators += idx.validator + '\r\n';
           }
         }
       }
@@ -419,7 +408,7 @@ export class CrudifyComponent implements OnInit {
       table: this.selectedTable,
       moduleUrl: this.moduleUrl,
       returnId,
-      template: `/modules/system/crudifier/templates/crud.template.${curVerb}${hashPasswordTemplate}.hl`,
+      template: `/modules/system/crudifier/templates/crud.template.${curVerb}.hl`,
       verb: curVerb,
       auth: this.endpoints.filter((x) => x.verb === curVerb)[0].auth,
       log: this.endpoints.filter((x) => x.verb === curVerb)[0].log,

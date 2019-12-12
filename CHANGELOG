@@ -191,6 +191,12 @@
 * Preventing [unwrap] from trying to evaluate values that are not expressions, to allow for easily evaluate hierarchies of
   "mixed values".
 
+* Created a new slot called [reference] that will return a node by reference, as its value, to allow for passing around nodes
+  by reference to other slots, etc.
+
+* Creates support for "transformers" and "injectors", as an addition to "validators". Transformers will somehow change an existing
+  node's value upon POST and PUT, while "injectors" will inject a node without changing an existing node's value.
+
 
 ### Updated modules for version 5.5.8
 

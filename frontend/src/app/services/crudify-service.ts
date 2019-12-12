@@ -44,4 +44,8 @@ export class CrudifyService {
     return this.httpClient.post<CrudifyResult>(
       environment.apiURL + 'magic/modules/system/crudifier/custom-sql', model);
   }
+
+  public getInputReactors() {
+    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/crudifier/input-reactors');
+  }
 }

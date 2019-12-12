@@ -1,6 +1,7 @@
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSelectChange } from '@angular/material';
+import { CrudifyService } from 'src/app/services/crudify-service';
 
 export interface DialogData {
   field: string;
@@ -10,8 +11,7 @@ export interface DialogData {
 @Component({
   templateUrl: 'create-validator-dialog.html',
 })
-export class CreateValidatorDialogComponent {
-
+export class CreateValidatorDialogComponent implements OnInit {
   private validatorType: string = null;
   private min = 0;
   private max = 100;
@@ -19,10 +19,29 @@ export class CreateValidatorDialogComponent {
   private enumValues = '';
   private dateMin = new Date();
   private dateMax = new Date();
+  private reactors: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CreateValidatorDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private crudifyService: CrudifyService) { }
+
+  ngOnInit() {
+    this.crudifyService.getInputReactors().subscribe(res => {
+      for (const idx of res.native) {
+        this.reactors.push({
+          name: idx,
+          dynamic: false,
+        });
+      }
+      for (const idx of res.dynamic) {
+        this.reactors.push({
+          name: idx,
+          dynamic: true,
+        });
+      }
+    });
+  }
 
   createHyperlambda(e: MatSelectChange) {
     this.parseValidator();
@@ -80,10 +99,16 @@ export class CreateValidatorDialogComponent {
    max:date:"${this.dateMax}"`;
         break;
 
+      default:
+        this.data.hyperlambda = `eval:x:+
+slots.signal:${this.validatorType}
+   reference:x:@.arguments/*/${this.data.field}`;
+        break;
+
     }
   }
 
-  close(): void {
+  close() {
     this.dialogRef.close();
   }
 }
