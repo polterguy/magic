@@ -4,14 +4,7 @@
 
   <mat-form-field>
     <mat-select placeholder="Validator type" [(ngModel)]="validatorType" (selectionChange)="createHyperlambda($event)">
-      <mat-option value="validators.url">validators.url</mat-option>
-      <mat-option value="validators.string">validators.string</mat-option>
-      <mat-option value="validators.regex">validators.regex</mat-option>
-      <mat-option value="validators.mandatory">validators.mandatory</mat-option>
-      <mat-option value="validators.integer">validators.integer</mat-option>
-      <mat-option value="validators.enum">validators.enum</mat-option>
-      <mat-option value="validators.email">validators.email</mat-option>
-      <mat-option value="validators.date">validators.date</mat-option>
+      <mat-option *ngFor="let cur of reactors" [value]="cur.name">{{cur.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 
