@@ -10,10 +10,10 @@ using magic.signals.contracts;
 namespace magic.backend.slots
 {
     /// <summary>
-    /// [get-app-settings] slot returning the entire contents of appsettings.json file raw to caller.
+    /// [load-app-settings] slot returning the entire contents of appsettings.json file raw to caller.
     /// </summary>
-    [Slot(Name = "get-app-settings")]
-    public class GetAppSettings : ISlot
+    [Slot(Name = "load-app-settings")]
+    public class LoadAppSettings : ISlot
     {
         /// <summary>
         /// Implementation of signal
