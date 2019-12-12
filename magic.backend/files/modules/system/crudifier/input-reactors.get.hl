@@ -1,0 +1,47 @@
+
+/*
+ * Lists all validators, transformers, and injectors that are registered in the system.
+ */
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * First finding all native validators, transformers, and injectors.
+ */
+vocabulary:validators.
+add:x:../*/slots.return-nodes/*/native
+   get-nodes:x:@vocabulary/*
+vocabulary:transformers.
+add:x:../*/slots.return-nodes/*/native
+   get-nodes:x:@vocabulary/*
+vocabulary:injectors.
+add:x:../*/slots.return-nodes/*/native
+   get-nodes:x:@vocabulary/*
+
+
+/*
+ * Then finding all dynamic validators, transformers, and injectors.
+ */
+slots.vocabulary:validators.
+add:x:../*/slots.return-nodes/*/dynamic
+   get-nodes:x:@slots.vocabulary/*
+slots.vocabulary:transformers.
+add:x:../*/slots.return-nodes/*/dynamic
+   get-nodes:x:@slots.vocabulary/*
+slots.vocabulary:injectors.
+add:x:../*/slots.return-nodes/*/dynamic
+   get-nodes:x:@slots.vocabulary/*
+
+
+/*
+ * Returning results to caller.
+ */
+slots.return-nodes
+   native
+   dynamic
+
