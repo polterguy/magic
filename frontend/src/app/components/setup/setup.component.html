@@ -38,6 +38,7 @@
       <mat-form-field *ngIf="selectedDatabaseType !== null" class="password">
         <input 
           matInput 
+          [disabled]="validDatabaseConnectionString !== true"
           autocomplete="new-password"
           type="password" 
           placeholder="Root password"
@@ -47,6 +48,7 @@
       <mat-form-field *ngIf="selectedDatabaseType !== null" class="password-repeat">
         <input 
           matInput 
+          [disabled]="validDatabaseConnectionString !== true"
           autocomplete="new-password"
           type="password" 
           placeholder="Repeat password"
@@ -55,12 +57,27 @@
 
       <button
         *ngIf="selectedDatabaseType !== null"
+        [disabled]="validDatabaseConnectionString !== true"
         class="save-button"
         matTooltip="This might take some time"
         mat-button
         (click)="setupAuthentication()">
         Setup
       </button>
+
+      <ngx-codemirror 
+        *ngIf="selectedDatabaseType !== null && validDatabaseConnectionString === false"
+        [(ngModel)]="appsettingsJson" 
+        class="smaller"
+        [options]="getCodeMirrorOptions()"></ngx-codemirror>
+      <div
+        *ngIf="selectedDatabaseType !== null && validDatabaseConnectionString === false"
+        style="text-align: right;">
+        <button
+          matTooltip="Saves your configuration file"
+          (click)="saveConfigurationFile()"
+          mat-button>Save</button>
+      </div>
       
     </div>
 
