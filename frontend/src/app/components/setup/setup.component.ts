@@ -17,7 +17,7 @@ export class SetupComponent {
   private username = 'root';
   private password: string = null;
   private passwordRepeat: string = null;
-  private validDatabaseConnectionString = false;
+  private validDatabaseConnectionString = true;
   private appsettingsJson = '';
 
   constructor(
