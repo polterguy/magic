@@ -25,6 +25,7 @@ CREATE TABLE `users` (
  */
 CREATE TABLE `roles` (
   `name` varchar(45) NOT NULL,
+  `description` varchar(256) NULL,
   PRIMARY KEY (`name`),
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -45,6 +46,6 @@ CREATE TABLE `users_roles` (
 /*
  * Inserting some few roles into our roles table.
  */
-insert into roles (name) values ('root');
-insert into roles (name) values ('user');
-insert into roles (name) values ('guest');
+insert into roles (name, description) values ('root', 'This is a root account in your system, and it has complete access to do anything.');
+insert into roles (name, description) values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
+insert into roles (name, description) values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
