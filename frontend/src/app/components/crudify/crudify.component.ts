@@ -151,6 +151,7 @@ export class CrudifyComponent implements OnInit {
         break;
       default:
         this.moduleUrl = value;
+        break;
     }
   }
 
@@ -334,6 +335,14 @@ slots.signal:transformers.hash-password
           generate: true
         };
       });
+      this.validators = this.columns
+        .filter(x => !x.automatic)
+        .map(x => {
+          return {
+            field: x.name,
+            validator: this.getDefaultValidator(x.name, this.selectedTable),
+          };
+        });
       this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
         this.noEndpointsCreated += 4;
         this.crudifyTopTable(tables.splice(1));
