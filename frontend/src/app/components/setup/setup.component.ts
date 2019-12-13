@@ -26,10 +26,13 @@ export class SetupComponent {
     private router: Router) { }
 
   databaseTypeChanged(e: MatSelectChange) {
-    this.setupService.checkDatabaseConfiguration(e.value).subscribe(res => {
+    this.checkDatabaseConfiguration(e.value);
+  }
+
+  checkDatabaseConfiguration(databaseType: string) {
+    this.setupService.checkDatabaseConfiguration(databaseType).subscribe(res => {
       this.validDatabaseConnectionString = true;
     }, err => {
-      console.log(err);
       this.validDatabaseConnectionString = false;
       this.showError('You will need to configure your database connection string before proceeding');
       this.setupService.getAppSettingsJson().subscribe(res => {
@@ -73,7 +76,9 @@ export class SetupComponent {
 
   saveConfigurationFile() {
     this.setupService.saveAppSettingsJson(this.appsettingsJson).subscribe(res => {
-      this.showInfo('Appsettings.json file successfully saved');
+      setTimeout(() => {
+        this.checkDatabaseConfiguration(this.selectedDatabaseType);
+      }, 500);
     });
   }
 
