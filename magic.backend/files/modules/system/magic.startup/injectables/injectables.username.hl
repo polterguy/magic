@@ -1,0 +1,14 @@
+
+/*
+ * Injects the authenticated user's username into the by reference passed first argument,
+ * with the name being its second argument.
+ */
+slots.create:injectables.username
+
+   set-name:x:../*/add/*/*
+      get-value:x:@.arguments/1
+   auth.ticket.get
+   unwrap:x:+/*/*
+   add:x:@.arguments/0/#
+      .
+         field:x:@auth.ticket.get
