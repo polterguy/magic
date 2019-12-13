@@ -247,7 +247,7 @@
         style="margin-left: 2rem;"
         [(ngModel)]="publicCache">Public cache</mat-checkbox>
 
-      <h3>Validators</h3>
+      <h3>Validators, transformers and injectables</h3>
 
       <table mat-table class="validator-table" [dataSource]="validators">
 
@@ -257,7 +257,7 @@
         </ng-container>
 
         <ng-container matColumnDef="validator">
-          <th mat-header-cell *matHeaderCellDef>Validator</th>
+          <th mat-header-cell *matHeaderCellDef>Input reactors</th>
           <td mat-cell *matCellDef="let el">
             <ngx-codemirror 
               [(ngModel)]="el.validator" 
