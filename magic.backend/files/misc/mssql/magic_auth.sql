@@ -15,7 +15,8 @@ CREATE TABLE [dbo].[users](
 
 USE [magic_auth];
 CREATE TABLE [dbo].[roles](
-	[name] [nvarchar](128) NOT NULL,
+	[name] [nvarchar](45) NOT NULL,
+	[description] [nvarchar](128) NOT NULL,
  CONSTRAINT [PK_roles] PRIMARY KEY CLUSTERED 
 (
 	[name] ASC
@@ -26,7 +27,7 @@ CREATE TABLE [dbo].[roles](
 USE [magic_auth];
 CREATE TABLE [dbo].[users_roles](
 	[user] [nvarchar](128) NOT NULL,
-	[role] [nvarchar](128) NOT NULL,
+	[role] [nvarchar](45) NOT NULL,
  CONSTRAINT [PK_users_roles] PRIMARY KEY CLUSTERED 
 (
 	[user] ASC,
@@ -50,12 +51,12 @@ ON DELETE CASCADE;
  ---- 
 
 USE [magic_auth];
-insert into roles ("name") values ('root');
+insert into roles ("name", "description") values ('root', 'This is a root account in your system, and it has complete access to do anything.');
  ---- 
 
 USE [magic_auth];
-insert into roles ("name") values ('user');
+insert into roles ("name", "description") values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
  ---- 
 
 USE [magic_auth];
-insert into roles ("name") values ('guest');
+insert into roles ("name", "description") values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
