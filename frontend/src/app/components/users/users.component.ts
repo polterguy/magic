@@ -15,9 +15,10 @@ export class UsersComponent implements OnInit {
   private filter = '';
   public displayedColumns: string[] = ['username', 'delete'];
   public displayedColumnsRoles: string[] = ['role', 'delete'];
-  public users: any[];
+  public users: any[] = null;
   private selectedUser: string = null;
   private selectedUserRoles: any[] = null;
+  private validAuthEndpoints = false;
 
   constructor(
     private usersService: UsersService,
@@ -32,7 +33,15 @@ export class UsersComponent implements OnInit {
     this.selectedUser = null;
     this.selectedUserRoles = null;
     this.usersService.list(this.filter).subscribe(res => {
+      this.validAuthEndpoints = true;
       this.users = res;
+    }, err => {
+      this.validAuthEndpoints = false;
+      if (err.status === 404) {
+        this.showError('You need to crudify your magic_auth database');
+      } else {
+        this.showError(err.error.message);
+      }
     });
   }
 
