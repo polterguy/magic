@@ -4,11 +4,5 @@
  */
 
 
-/*
- * Ensures user is authorized to access endpoint.
- */
-auth.ticket.verify:root
-
-
 endpoints.list
 slots.return-nodes:x:-/*
