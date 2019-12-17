@@ -284,7 +284,7 @@ slots.signal:transformers.hash-password
   crudifyTable() {
     const selectedVerbs = this.endpoints.filter(x => x.generate).map(x => x.verb);
     this.createHttpEndpoints(selectedVerbs, () => {
-      this.showSuccess('4 endpoints created successfully');
+      this.showSuccess(selectedVerbs.length + ' endpoints created successfully');
     });
   }
 
