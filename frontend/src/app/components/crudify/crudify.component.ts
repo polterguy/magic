@@ -30,6 +30,7 @@ export class CrudifyComponent implements OnInit {
   private caching: number;
   private columns: any[] = null;
   private validators: any[] = null;
+  private overwrite = false;
 
   // True while we're CRUDifying.
   isCrudifying = false;
@@ -271,6 +272,7 @@ slots.signal:transformers.hash-password
       endpointName: this.customSqlEndpointName,
       sql: this.customSql,
       authorization: this.customSqlAuthorization,
+      overwrite: this.overwrite,
     }).subscribe((res: CrudifyResult) => {
       this.showSuccess('Endpoint successfully created');
     }, (error) => {
@@ -427,6 +429,7 @@ slots.signal:transformers.hash-password
       log: this.endpoints.filter((x) => x.verb === curVerb)[0].log,
       args,
       validators,
+      overwrite: this.overwrite,
     }).subscribe((res: any) => {
       this.noLoc += res.loc;
       this.createHttpEndpoints(verbs.slice(1), callback);

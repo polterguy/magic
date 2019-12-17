@@ -44,6 +44,11 @@
       [(ngModel)]="moduleUrl">
   </mat-form-field>
 
+  <mat-checkbox
+    *ngIf="selectedTable !== null"
+    style="margin-left: 2rem;"
+    [(ngModel)]="overwrite">Overwrite existing endpoints</mat-checkbox>
+
   <button 
     *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     matTooltip="Generates CRUD endpoints for your table"

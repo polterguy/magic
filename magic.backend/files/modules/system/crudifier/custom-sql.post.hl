@@ -10,6 +10,7 @@
    verb:string
    endpointName:string
    sql:string
+   overwrite:bool
 
 
 /*
@@ -94,8 +95,7 @@ io.folders.create:x:@.folder
 
 
 /*
- * Transforming above lambda to Hyperlambda, and saving in specified folder,
- * with specified name.
+ * Transforming above lambda to Hyperlambda, and figuring out filename.
  */
 lambda2hyper:x:@apply/*
 unwrap:x:+
@@ -107,6 +107,23 @@ set-value:x:@.filename
       .:.
       get-value:x:@.arguments/*/verb
       .:.hl
+
+
+/*
+ * Making sure file does not exist from before, unless [.argument][overwrite] is true.
+ */
+if
+   and
+      not
+         get-value:x:@.arguments/*/overwrite
+      io.files.exists:x:@.filename
+   .lambda
+      throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+
+
+/*
+ * Saving file.
+ */
 io.files.save:x:@.filename
    get-value:x:@lambda2hyper
 
