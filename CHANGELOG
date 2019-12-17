@@ -212,6 +212,8 @@
 
 * Support for explicitly stating whether or not crudification process should allow for files being overwritten or not.
 
+* Correctly counting number of endpoints during generation process of HTTP REST endpoints.
+
 
 ### Updated modules for version 5.5.9
 

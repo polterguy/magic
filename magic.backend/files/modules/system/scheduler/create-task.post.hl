@@ -1,6 +1,6 @@
 
 /*
- * Returns the named task to caller.
+ * Creates a new scheduled task according to the arguments specified.
  */
 .arguments
    name:string
@@ -8,6 +8,7 @@
    hyperlambda:string
    due:date
    repeat:string
+.description:"Creates a new scheduled task according to the arguments specified."
 
 
 /*

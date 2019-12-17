@@ -4,6 +4,7 @@
  */
 .arguments
    folder:string
+.description:"Creates the specified [folder] folder."
 
 
 /*

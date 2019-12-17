@@ -4,6 +4,8 @@
  */
 .arguments
    content:string
+.description:"Saves the content of [content] argument to your appsettings.json file."
+
 
 /*
  * Ensures user is authorized to access endpoint.

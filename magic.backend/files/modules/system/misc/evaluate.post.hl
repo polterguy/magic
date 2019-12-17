@@ -9,6 +9,7 @@
  */
 .arguments
    hyperlambda:string
+.description:"Evaluates the given [hyperlambda], and returns the results of the evaluation."
 
 
 /*

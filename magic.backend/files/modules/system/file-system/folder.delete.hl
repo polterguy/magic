@@ -4,6 +4,7 @@
  */
 .arguments
    folder:string
+.description:"Deletes the specified [folder] folder."
 
 
 /*

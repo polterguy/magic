@@ -11,6 +11,7 @@
    endpointName:string
    sql:string
    overwrite:bool
+.description:"Creates a custom SQL HTTP REST endpoint according to the instructions given in the arguments."
 
 
 /*
