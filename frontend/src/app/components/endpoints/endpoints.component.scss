@@ -15,13 +15,16 @@
             width: 100%;
             tr {
                 td:nth-child(1), th:nth-child(1) {
-                    width: 80%;
+                    width: 70%;
                 }
                 td:nth-child(2), th:nth-child(2) {
-                    width: 20%;
+                    width: 10%;
                 }
                 td:nth-child(3), th:nth-child(3) {
-                    width: 40px;
+                    width: 10%;
+                }
+                td:nth-child(4), th:nth-child(4) {
+                    width: 80px;
                 }
             }
             tr.highlight {
