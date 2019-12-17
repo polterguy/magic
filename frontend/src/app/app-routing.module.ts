@@ -6,6 +6,7 @@ import { HomeComponent } from './components/home/home.component';
 import { FilesComponent } from './components/files/files.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { UsersComponent } from './components/users/users.component';
+import { RolesComponent } from './components/roles/roles.component';
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'setup', component: SetupComponent },
   { path: 'users', component: UsersComponent },
+  { path: 'roles', component: RolesComponent },
   { path: 'files', component: FilesComponent },
   { path: 'crudify', component: CrudifyComponent },
   { path: 'endpoints', component: EndpointsComponent },
