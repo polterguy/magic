@@ -202,3 +202,15 @@
 * magic.lambda
 
 * magic - The main project (of course)
+
+
+
+## Version 5.5.9
+
+* Much better meta data in _"endpoints.get.hl"_ through the [endpoints.list] slot, allowing us to return much more high quality meta
+  information to client, with the intention of allowing for automatically generating frontend grids, editors, etc.
+
+
+### Updated modules for version 5.5.9
+
+* magic.endpoint
