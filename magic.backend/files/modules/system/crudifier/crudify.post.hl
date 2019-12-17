@@ -13,6 +13,7 @@
    verb:string
    auth:string
    log:string
+   overwrite:bool
    args
    validators
 
@@ -341,10 +342,13 @@ strings.replace:x:@.path
 
 
 /*
- * Making sure folder does not exist from before.
+ * Making sure file does not exist from before, unless [.argument][overwrite] is true.
  */
 if
-   io.files.exists:x:@strings.replace
+   and
+      not
+         get-value:x:@.arguments/*/overwrite
+      io.files.exists:x:@strings.replace
    .lambda
       throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
 

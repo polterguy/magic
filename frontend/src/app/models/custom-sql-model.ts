@@ -8,4 +8,5 @@ export class CustomSQLModel {
     verb: string;
     endpointName: string;
     authorization: string;
+    overwrite: boolean;
 }
