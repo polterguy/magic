@@ -29,10 +29,12 @@ import { HomeComponent } from './components/home/home.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { UsersComponent } from './components/users/users.component';
+import { RolesComponent } from './components/roles/roles.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
 import { NewUserDialogComponent } from './components/users/modals/new-user-dialog';
+import { NewRoleDialogComponent } from './components/roles/modals/new-role-dialog';
 import { ConfirmDeletionDialogComponent } from './components/files/modals/confirm-deletion-dialog';
 import { ConfirmDeletionTaskDialogComponent } from './components/scheduler/modals/confirm-deletion-dialog';
 import { CreateValidatorDialogComponent } from './components/crudify/modals/create-validator-dialog';
@@ -56,10 +58,12 @@ export function tokenGetter() {
     EndpointsComponent,
     SetupComponent,
     UsersComponent,
+    RolesComponent,
     EvaluatorComponent,
     FilesComponent,
     NewFileDialogComponent,
     NewUserDialogComponent,
+    NewRoleDialogComponent,
     ConfirmDeletionDialogComponent,
     ConfirmDeletionTaskDialogComponent,
     NewTaskDialogComponent,
@@ -115,6 +119,7 @@ export function tokenGetter() {
   entryComponents: [
     NewFileDialogComponent,
     NewUserDialogComponent,
+    NewRoleDialogComponent,
     NewTaskDialogComponent,
     ConfirmDeletionDialogComponent,
     ConfirmDeletionTaskDialogComponent,
