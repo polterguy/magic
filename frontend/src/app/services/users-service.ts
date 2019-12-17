@@ -11,10 +11,27 @@ export class UsersService {
   constructor(private httpClient: HttpClient) { }
 
   list(filter: string = null) {
-    const like = filter === null ? '' : '?username.like=' + encodeURIComponent('%' + filter + '%');
+    const like = filter === null ||
+      filter === '' ||
+      filter === undefined ?
+        '' :
+        '?username.like=' + encodeURIComponent('%' + filter + '%');
+
     return this.httpClient.get<any>(
       environment.apiURL +
       'magic/modules/magic_auth/users' + like);
+  }
+
+  listRoles(filter: string = null) {
+    const like = filter === null ||
+      filter === '' ||
+      filter === undefined ?
+        '' :
+        '?name.like=' + encodeURIComponent('%' + filter + '%');
+
+    return this.httpClient.get<any>(
+      environment.apiURL +
+      'magic/modules/magic_auth/roles' + like);
   }
 
   createUser(username: string, password: string) {
@@ -24,10 +41,23 @@ export class UsersService {
     });
   }
 
+  createRole(name: string, description: string) {
+    return this.httpClient.post<any>(environment.apiURL + 'magic/modules/magic_auth/roles', {
+      name,
+      description
+    });
+  }
+
   deleteUser(username: string) {
     return this.httpClient.delete<any>(
       environment.apiURL + 
       'magic/modules/magic_auth/users?username=' + encodeURIComponent(username));
+  }
+
+  deleteRole(name: string) {
+    return this.httpClient.delete<any>(
+      environment.apiURL + 
+      'magic/modules/magic_auth/roles?name=' + encodeURIComponent(name));
   }
 
   getRoles(username: string) {

@@ -26,6 +26,13 @@
     [routerLinkActiveOptions]="{exact:true}">Users</a>
 
   <a 
+    *ngIf="!forceSetup() && isLoggedIn()"
+    mat-button 
+    routerLink="/roles" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Roles</a>
+
+  <a 
     *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/crudify" 
