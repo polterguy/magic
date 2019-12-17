@@ -23,17 +23,27 @@
       </ng-container>
 
       <ng-container matColumnDef="auth">
-          <th mat-header-cell *matHeaderCellDef>Auth</th>
-          <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{concatenateAuth(el.auth)}}</td>
-        </ng-container>
+        <th mat-header-cell *matHeaderCellDef>Auth</th>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{concatenateAuth(el.auth)}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="verb">
-            <th mat-header-cell *matHeaderCellDef>Verb</th>
-            <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.verb}}</td>
-          </ng-container>
+      <ng-container matColumnDef="verb">
+        <th mat-header-cell *matHeaderCellDef>Verb</th>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.verb}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="crud">
+        <th mat-header-cell *matHeaderCellDef>CRUD</th>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{getCrudType(el.type)}}</td>
+      </ng-container>
       
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowUrl == row.path + row.verb}" (click)="highlight(row.path + row.verb)"></tr>
+      <tr 
+        mat-row
+        *matRowDef="let row; columns: displayedColumns;"
+        [ngClass]="{'highlight': selectedRowUrl == row.path + row.verb}"
+        [title]="row.description"
+        (click)="highlight(row.path + row.verb)"></tr>
 
     </table>
   </div>

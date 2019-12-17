@@ -12,7 +12,7 @@ import { MatInput } from '@angular/material';
 })
 export class EndpointsComponent implements OnInit {
   @ViewChild('queryParamaters') queryParametersInput: MatInput;
-  private displayedColumns: string[] = ['url', 'auth', 'verb'];
+  private displayedColumns: string[] = ['url', 'auth', 'verb', 'crud'];
   private selectedRowUrl = '';
   private endpoints: Endpoint[] = [];
   private filter = '';
@@ -71,6 +71,13 @@ export class EndpointsComponent implements OnInit {
       return '';
     }
     return auth.join(',');
+  }
+
+  getCrudType(type: string) {
+    if (type !== undefined && type !== null && type !== '') {
+      return type.substr(5);
+    }
+    return 'custom';
   }
 
   selectEndpoint(el: Endpoint) {
