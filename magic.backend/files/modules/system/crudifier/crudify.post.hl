@@ -16,6 +16,7 @@
    overwrite:bool
    args
    validators
+.description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
 
 
 /*

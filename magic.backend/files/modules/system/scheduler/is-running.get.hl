@@ -2,6 +2,7 @@
 /*
  * Returns true if task scheduler is running.
  */
+.description:"Returns true if task scheduler is running."
 
 
 /*

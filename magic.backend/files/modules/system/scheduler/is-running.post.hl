@@ -4,6 +4,7 @@
  */
 .arguments
    value:bool
+.description:"Turns the scheduler on or off."
 
 
 /*

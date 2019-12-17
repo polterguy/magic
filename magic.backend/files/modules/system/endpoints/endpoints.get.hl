@@ -2,6 +2,7 @@
 /*
  * Returns all endpoints in the system.
  */
+.description:"Returns all endpoints in the system, and their meta data."
 
 
 endpoints.list

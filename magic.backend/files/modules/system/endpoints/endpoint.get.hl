@@ -10,6 +10,7 @@
 .arguments
    url:string
    verb:string
+.description:"Returns metadata for specified endpoint."
 
 
 /*

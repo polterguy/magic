@@ -5,6 +5,7 @@
 .arguments
    databaseType:string
    sql:string
+.description:"Evaluates the given SQL given for your specified databaseType, and returns the result to caller."
 
 
 /*

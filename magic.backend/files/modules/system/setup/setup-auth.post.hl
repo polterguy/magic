@@ -1,3 +1,4 @@
+
 /*
  * Sets up authentication of system according to the arguments provided.
  */
@@ -5,6 +6,7 @@
    databaseType:string
    rootUsername:string
    rootPassword:string
+.description:"Sets up authentication of system according to the arguments provided."
 
 
 /*

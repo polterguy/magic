@@ -1,13 +1,15 @@
 
 /*
- * Lists all MySQL columns in your [database]/[table] combination.
+ * Lists all columns in your [databaseType]/[database]/[table] combination.
  *
- * Requires a working _"sys"_ connection string in your _"appsettings.json"_ file.
+ * Requires a correctly configured connection string in your _"appsettings.json"_ file
+ * to your databaseType of choice.
  */
 .arguments
    databaseType:string
    database:string
    table:string
+.description:"Lists all columns in your databaseType/database/table combination."
 
 
 /*

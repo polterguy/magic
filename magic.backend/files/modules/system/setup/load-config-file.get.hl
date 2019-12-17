@@ -1,4 +1,9 @@
 
+/*
+ * Loads appsettings.json, and returns its content to caller.
+ */
+.description:"Loads appsettings.json, and returns its content to caller."
+
 
 /*
  * Ensures user is authorized to access endpoint.

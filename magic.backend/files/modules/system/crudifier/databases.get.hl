@@ -4,6 +4,7 @@
  */
 .arguments
    databaseType:string
+.description:"Returns all databases in your installation, according to the databaseType specified."
 
 
 /*

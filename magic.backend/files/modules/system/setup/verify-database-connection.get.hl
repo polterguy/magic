@@ -4,6 +4,7 @@
  */
 .arguments
    databaseType:string
+.description:"Verifies that the selected database is correctly configured."
 
 
 /*

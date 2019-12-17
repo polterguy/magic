@@ -8,6 +8,7 @@
  *
  * The endpoint will also return the version of its server side bindings.
  */
+.description:"Pings server, to verify connection is established - And if the client is authenticated, might return meta data depending upon authorization level of client."
 
 
 /*

@@ -4,6 +4,7 @@
  */
 .arguments
    name:string
+.description:"Deletes the named task from the task scheduler."
 
 
 /*

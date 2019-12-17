@@ -4,6 +4,7 @@
  */
 .arguments
    folder:string
+.description:"List all files in the specified [folder] argument."
 
 
 /*
