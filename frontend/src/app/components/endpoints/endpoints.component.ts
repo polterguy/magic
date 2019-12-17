@@ -80,6 +80,15 @@ export class EndpointsComponent implements OnInit {
     return 'custom';
   }
 
+  getTooltip(item: any) {
+    if (item.description !== undefined) {
+      return item.description;
+    }
+    if (item.type) {
+      return item.type.substr(5) + ' ' + item.path.substr(item.path.lastIndexOf('/') + 1);
+    }
+  }
+
   selectEndpoint(el: Endpoint) {
     this.endpointResult = null;
     this.selected = el;

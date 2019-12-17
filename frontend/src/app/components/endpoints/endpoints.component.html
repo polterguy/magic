@@ -42,7 +42,7 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns;"
         [ngClass]="{'highlight': selectedRowUrl == row.path + row.verb}"
-        [title]="row.description"
+        title="{{getTooltip(row)}}"
         (click)="highlight(row.path + row.verb)"></tr>
 
     </table>
