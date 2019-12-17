@@ -210,6 +210,8 @@
 * Much better meta data in _"endpoints.get.hl"_ through the [endpoints.list] slot, allowing us to return much more high quality meta
   information to client, with the intention of allowing for automatically generating frontend grids, editors, etc.
 
+* Support for explicitly stating whether or not crudification process should allow for files being overwritten or not.
+
 
 ### Updated modules for version 5.5.9
 
