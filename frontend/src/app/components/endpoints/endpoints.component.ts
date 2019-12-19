@@ -56,11 +56,7 @@ export class EndpointsComponent implements OnInit {
     if (this.showSystemEndpoints === true) {
       return this.endpoints;
     }
-    return this.endpoints.filter((x) => {
-      return x.endpoint.path.indexOf('magic/modules/system/') !== 0 &&
-        x.endpoint.path.indexOf('magic/modules/mysql/') !== 0 &&
-        x.endpoint.path.indexOf('magic/modules/mssql/') !== 0;
-    });
+    return this.endpoints.filter(x => x.endpoint.path.indexOf('magic/modules/system/') !== 0);
   }
 
   concatenateAuth(auth: string[]) {
@@ -94,6 +90,8 @@ export class EndpointsComponent implements OnInit {
   }
 
   selectEndpoint(el: any) {
+
+    // Checking if we can just toggle its visibility.
     if (el.extra !== null) {
       if (el.extra.visible) {
         el.extra.visible = false;
@@ -103,43 +101,38 @@ export class EndpointsComponent implements OnInit {
       return;
     }
 
-    this.service.getEndpointMeta(el.endpoint.path, el.endpoint.verb).subscribe((res) => {
+    switch (el.endpoint.verb) {
+      case 'post':
+      case 'put':
+        el.extra = {
+          isJsonArguments: true,
+          arguments: JSON.stringify(el.endpoint.input, null, 2),
+          queryParameters: null,
+          endpointResult: null,
+          visible: true,
+        };
+        break;
 
-      switch (el.endpoint.verb) {
-        case 'post':
-        case 'put':
-          el.extra = {
-            isJsonArguments: true,
-            arguments: JSON.stringify(res, null, 2),
-            queryParameters: null,
-            endpointResult: null,
-            visible: true,
-          };
-          break;
-
-        case 'get':
-        case 'delete':
-          const args = [];
-          for (const idx in res) {
-            if (Object.prototype.hasOwnProperty.call(res, idx)) {
-              args.push({
-                name: idx,
-                type: res[idx],
-              });
-            }
+      case 'get':
+      case 'delete':
+        const args = [];
+        for (const idx in el.endpoint.input) {
+          if (Object.prototype.hasOwnProperty.call(el.endpoint.input, idx)) {
+            args.push({
+              name: idx,
+              type: el.endpoint.input[idx],
+            });
           }
-          el.extra = {
-            isJsonArguments: false,
-            arguments: '',
-            queryParameters: args,
-            endpointResult: null,
-            visible: true,
-          };
-          break;
         }
-    }, (err) => {
-      this.showHttpError(err);
-    });
+        el.extra = {
+          isJsonArguments: false,
+          arguments: '',
+          queryParameters: args,
+          endpointResult: null,
+          visible: true,
+        };
+        break;
+      }
   }
 
   argumentClicked(el: any, name: string) {
