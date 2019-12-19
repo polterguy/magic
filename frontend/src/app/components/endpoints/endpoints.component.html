@@ -49,7 +49,7 @@
             *ngIf="el.extra !== null && el.extra.visible"
             class="active-wrapper">
 
-            <mat-card class="mat-elevation-z4 view-endpoint-card">
+            <div class="view-endpoint-card">
 
               <div
                 *ngIf="!el.extra.isJsonArguments">
@@ -68,6 +68,7 @@
                   matInput 
                   placeholder="Query parameters to your endpoint"
                   type="text" 
+                  class="query-params"
                   [(ngModel)]="el.extra.arguments"
                   autocomplete="off"
                   autocorrect="off"
@@ -92,10 +93,10 @@
                   (click)="evaluate(el)">{{el.endpoint.verb}}</button>
               </div>
 
-            </mat-card>
+            </div>
 
-            <mat-card
-              class="mat-elevation-z4 view-result-card"
+            <div
+              class="view-result-card"
               *ngIf="el.extra.endpointResult">
 
               <ngx-codemirror 
@@ -107,16 +108,19 @@
                   mode: 'application/ld+json'
                 }"></ngx-codemirror>
 
-            </mat-card>
+            </div>
 
           </div>
         </td>
       </ng-container>
       
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns"></tr>
       <tr 
         mat-row
         (click)="selectEndpoint(row)"
+        [ngClass]="getClassForRow(row)"
         *matRowDef="let row; columns: displayedColumns;"
         title="{{getTooltip(row.endpoint)}}"></tr>
       <tr
