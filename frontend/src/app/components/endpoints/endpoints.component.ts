@@ -13,16 +13,10 @@ import { MatInput } from '@angular/material';
 export class EndpointsComponent implements OnInit {
   @ViewChild('queryParamaters') queryParametersInput: MatInput;
   private displayedColumns: string[] = ['url', 'auth', 'verb', 'crud'];
-  private selectedRowUrl = '';
-  private endpoints: Endpoint[] = [];
+  private displayedSecondRowColumns: string[] = ['details'];
+  private endpoints: any[] = [];
   private filter = '';
-  private selected: Endpoint;
-  private arguments: string;
-  private isJsonArguments: boolean;
-  private endpointResult: string;
-  private currentUrl: string;
   private showSystemEndpoints = false;
-  private queryParameters = [];
 
   constructor(
     private service: EndpointService,
@@ -30,7 +24,12 @@ export class EndpointsComponent implements OnInit {
 
   ngOnInit() {
     this.service.getAllEndpoints().subscribe((res) => {
-      this.endpoints = res || [];
+      this.endpoints = (res || []).map(x => {
+        return {
+          endpoint: x,
+          extra: null,
+        };
+      });
     }, (err) => {
       this.showHttpError(err);
     });
@@ -40,18 +39,16 @@ export class EndpointsComponent implements OnInit {
     return 'Search among ' + this.getFilteredSystemEndpoints().length + ' endpoints ...';
   }
 
-  highlight(row: string) {
-    this.selectedRowUrl = row;
-  }
-
   getFilteredEndpoints() {
     if (this.filter === '') {
       return this.getFilteredSystemEndpoints();
     }
     return this.getFilteredSystemEndpoints().filter(x => {
-      return x.verb === this.filter ||
-        x.path.indexOf(this.filter) > -1 ||
-        (x.auth !== null && x.auth !== undefined && x.auth.filter(y => y === this.filter).length > 0);
+      return x.endpoint.verb === this.filter ||
+        x.endpoint.path.indexOf(this.filter) > -1 ||
+        (x.endpoint.auth !== null &&
+          x.endpoint.auth !== undefined &&
+          x.endpoint.auth.filter((y: string) => y === this.filter).length > 0);
     });
   }
 
@@ -60,9 +57,9 @@ export class EndpointsComponent implements OnInit {
       return this.endpoints;
     }
     return this.endpoints.filter((x) => {
-      return x.path.indexOf('magic/modules/system/') !== 0 &&
-        x.path.indexOf('magic/modules/mysql/') !== 0 &&
-        x.path.indexOf('magic/modules/mssql/') !== 0;
+      return x.endpoint.path.indexOf('magic/modules/system/') !== 0 &&
+        x.endpoint.path.indexOf('magic/modules/mysql/') !== 0 &&
+        x.endpoint.path.indexOf('magic/modules/mssql/') !== 0;
     });
   }
 
@@ -80,7 +77,7 @@ export class EndpointsComponent implements OnInit {
     return 'custom';
   }
 
-  getTooltip(item: any) {
+  getTooltip(item: Endpoint) {
     if (item.description !== undefined) {
       return item.description;
     }
@@ -89,24 +86,39 @@ export class EndpointsComponent implements OnInit {
     }
   }
 
-  selectEndpoint(el: Endpoint) {
-    this.endpointResult = null;
-    this.selected = el;
+  getClassForDetails(el: any) {
+    if (el.extra !== null && el.extra.visible) {
+      return 'has-details';
+    }
+    return 'no-details';
+  }
 
-    this.service.getEndpointMeta(el.path, el.verb).subscribe((res) => {
+  selectEndpoint(el: any) {
+    if (el.extra !== null) {
+      if (el.extra.visible) {
+        el.extra.visible = false;
+      } else {
+        el.extra.visible = true;
+      }
+      return;
+    }
 
-      switch (this.selected.verb) {
+    this.service.getEndpointMeta(el.endpoint.path, el.endpoint.verb).subscribe((res) => {
+
+      switch (el.endpoint.verb) {
         case 'post':
         case 'put':
-          this.isJsonArguments = true;
-          this.arguments = JSON.stringify(res, null, 2);
-          this.queryParameters = null;
+          el.extra = {
+            isJsonArguments: true,
+            arguments: JSON.stringify(res, null, 2),
+            queryParameters: null,
+            endpointResult: null,
+            visible: true,
+          };
           break;
 
         case 'get':
         case 'delete':
-          this.isJsonArguments = false;
-          this.arguments = '';
           const args = [];
           for (const idx in res) {
             if (Object.prototype.hasOwnProperty.call(res, idx)) {
@@ -116,7 +128,13 @@ export class EndpointsComponent implements OnInit {
               });
             }
           }
-          this.queryParameters = args;
+          el.extra = {
+            isJsonArguments: false,
+            arguments: '',
+            queryParameters: args,
+            endpointResult: null,
+            visible: true,
+          };
           break;
         }
     }, (err) => {
@@ -124,29 +142,28 @@ export class EndpointsComponent implements OnInit {
     });
   }
 
-  argumentClicked(name: string) {
-    let args = this.arguments;
+  argumentClicked(el: any, name: string) {
+    let args = el.extra.arguments;
     if (args.length > 0) {
       args += '&' + name + '=';
     } else {
       args += name + '=';
     }
-    this.arguments = args;
-    this.queryParametersInput.focus();
+    el.extra.arguments = args;
   }
 
-  evaluate() {
+  evaluate(el: any) {
 
-    this.currentUrl = this.selected.path;
-    if (!this.isJsonArguments && this.arguments !== '') {
-      this.currentUrl += '?' + this.arguments;
+    let path = el.endpoint.path;
+    if (!el.extra.isJsonArguments && el.extra.arguments !== '') {
+      path += '?' + el.extra.arguments;
     }
 
-    switch (this.selected.verb) {
+    switch (el.endpoint.verb) {
 
       case 'get':
-        this.service.executeGet(this.currentUrl).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res || [], null, 2);
+        this.service.executeGet(path).subscribe((res) => {
+          el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -154,8 +171,8 @@ export class EndpointsComponent implements OnInit {
         break;
 
       case 'delete':
-        this.service.executeDelete(this.currentUrl).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res || [], null, 2);
+        this.service.executeDelete(path).subscribe((res) => {
+          el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -163,8 +180,8 @@ export class EndpointsComponent implements OnInit {
         break;
 
       case 'post':
-        this.service.executePost(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res || [], null, 2);
+        this.service.executePost(path, JSON.parse(el.extra.arguments)).subscribe((res) => {
+          el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -172,8 +189,8 @@ export class EndpointsComponent implements OnInit {
         break;
 
       case 'put':
-        this.service.executePut(this.currentUrl, JSON.parse(this.arguments)).subscribe((res) => {
-          this.endpointResult = JSON.stringify(res || [], null, 2);
+        this.service.executePut(path, JSON.parse(el.extra.arguments)).subscribe((res) => {
+          el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
           this.showHttpError(error);
@@ -184,7 +201,6 @@ export class EndpointsComponent implements OnInit {
   }
 
   showHttpError(error: any) {
-    console.error(error);
     this.snackBar.open(error.error.message, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
