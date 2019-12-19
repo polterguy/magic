@@ -12,6 +12,7 @@
             left: 3rem;
         }
         table {
+            table-layout: fixed;
             width: 100%;
             tr {
                 td:nth-child(1), th:nth-child(1) {
@@ -41,6 +42,7 @@
                 display: none;
             }
             tr.has-details td {
+                padding: 0;
                 .active-wrapper {
                     padding:2rem 0 2rem 0;
                     .view-endpoint-card {
