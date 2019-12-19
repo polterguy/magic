@@ -89,12 +89,20 @@ export class EndpointsComponent implements OnInit {
     return 'no-details';
   }
 
+  getClassForRow(row: any) {
+    if (row.extra !== null && row.extra.visible) {
+      return 'selected';
+    }
+    return '';
+  }
+
   selectEndpoint(el: any) {
 
     // Checking if we can just toggle its visibility.
     if (el.extra !== null) {
       if (el.extra.visible) {
         el.extra.visible = false;
+        el.extra.endpointResult = null;
       } else {
         el.extra.visible = true;
       }

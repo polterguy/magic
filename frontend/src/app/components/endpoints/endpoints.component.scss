@@ -44,12 +44,14 @@
             tr.has-details td {
                 padding: 0;
                 .active-wrapper {
-                    padding:2rem 0 2rem 0;
+                    padding:0 0 2rem 0;
                     .view-endpoint-card {
                         padding-top: 1rem;
                         position: relative;
                         .fill-width {
                             width: 100%;
+                            margin: 0 1.5rem 0 1.5rem;
+                            box-sizing: border-box;
                         }
                         .right-aligned {
                             text-align: right;
@@ -73,17 +75,14 @@
                         }
                     }
                 }
-                
                 .view-result-card {
                     min-height: 250px;
-                    margin-top: 2rem;
-                    .fill-width {
-                        width: 100%;
-                    }
-                    .right-aligned {
-                        text-align: right;
-                    }
+                    margin-top: 1rem;
                 }
+            }
+            tr.selected td {
+                border-bottom: none;
+                font-weight: bold;
             }
         }
     }
