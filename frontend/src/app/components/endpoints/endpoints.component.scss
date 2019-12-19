@@ -34,56 +34,63 @@
                 background-color: rgba(0,0,0,.1);
                 cursor: pointer;
             }
-        }
-    }
-}
-
-.fill-width {
-    width: 100%;
-}
-
-.active-wrapper {
-    padding:0 5rem 2rem 5rem;
-    .view-endpoint-card {
-        padding-top: 1rem;
-        position: relative;
-        .fill-width {
-            width: 100%;
-        }
-        .right-aligned {
-            text-align: right;
-        }
-        .argument-list {
-            list-style: none;
-            li {
-                background-color: rgba(0,0,0,.1);
-                display: block;
-                float: left;
-                margin-right: .5rem;
-                margin-bottom: .5rem;
-                padding: .5rem;
-                min-width: 10rem;
-                cursor: pointer;
-                border-radius: 5px;
-                strong {
-                    margin-right: .5rem;
+            tr.has-details:hover {
+                background-color: rgb(255,255,255);
+            }
+            tr.no-details {
+                display: none;
+            }
+            tr.has-details td {
+                .active-wrapper {
+                    padding:2rem 0 2rem 0;
+                    .view-endpoint-card {
+                        padding-top: 1rem;
+                        position: relative;
+                        .fill-width {
+                            width: 100%;
+                        }
+                        .right-aligned {
+                            text-align: right;
+                        }
+                        .argument-list {
+                            list-style: none;
+                            li {
+                                background-color: rgba(0,0,0,.1);
+                                display: block;
+                                float: left;
+                                margin-right: .5rem;
+                                margin-bottom: .5rem;
+                                padding: .5rem;
+                                min-width: 10rem;
+                                cursor: pointer;
+                                border-radius: 5px;
+                                strong {
+                                    margin-right: .5rem;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                .result-wrapper {
+                    padding:0 5rem 2rem 5rem;
+                    .view-result-card {
+                        min-height: 250px;
+                        .fill-width {
+                            width: 100%;
+                        }
+                        .right-aligned {
+                            text-align: right;
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-.result-wrapper {
-    padding:0 5rem 2rem 5rem;
-    .view-result-card {
-        min-height: 250px;
-        .fill-width {
-            width: 100%;
-        }
-        .right-aligned {
-            text-align: right;
-        }
-    }
+.fill-width {
+    width: 100%;
 }
 
 ::ng-deep .error-snackbar {
