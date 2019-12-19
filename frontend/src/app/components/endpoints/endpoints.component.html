@@ -22,22 +22,22 @@
 
       <ng-container matColumnDef="url">
         <th mat-header-cell *matHeaderCellDef>URL</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.endpoint.path}}</td>
+        <td mat-cell *matCellDef="let el">{{el.endpoint.path}}</td>
       </ng-container>
 
       <ng-container matColumnDef="auth">
         <th mat-header-cell *matHeaderCellDef>Auth</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{concatenateAuth(el.endpoint.auth)}}</td>
+        <td mat-cell *matCellDef="let el">{{concatenateAuth(el.endpoint.auth)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="verb">
         <th mat-header-cell *matHeaderCellDef>Verb</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.endpoint.verb}}</td>
+        <td mat-cell *matCellDef="let el">{{el.endpoint.verb}}</td>
       </ng-container>
 
       <ng-container matColumnDef="crud">
         <th mat-header-cell *matHeaderCellDef>CRUD</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{getCrudType(el.endpoint.type)}}</td>
+        <td mat-cell *matCellDef="let el">{{getCrudType(el.endpoint.type)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="details">
@@ -50,8 +50,6 @@
             class="active-wrapper">
 
             <mat-card class="mat-elevation-z4 view-endpoint-card">
-          
-              <h3>{{el.endpoint.path}}</h3>
 
               <div
                 *ngIf="!el.extra.isJsonArguments">
@@ -118,6 +116,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr 
         mat-row
+        (click)="selectEndpoint(row)"
         *matRowDef="let row; columns: displayedColumns;"
         title="{{getTooltip(row.endpoint)}}"></tr>
       <tr

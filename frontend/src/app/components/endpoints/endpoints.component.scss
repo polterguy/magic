@@ -72,16 +72,14 @@
                     }
                 }
                 
-                .result-wrapper {
-                    padding:0 5rem 2rem 5rem;
-                    .view-result-card {
-                        min-height: 250px;
-                        .fill-width {
-                            width: 100%;
-                        }
-                        .right-aligned {
-                            text-align: right;
-                        }
+                .view-result-card {
+                    min-height: 250px;
+                    margin-top: 2rem;
+                    .fill-width {
+                        width: 100%;
+                    }
+                    .right-aligned {
+                        text-align: right;
                     }
                 }
             }

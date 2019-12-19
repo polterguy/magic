@@ -5,4 +5,5 @@ export class Endpoint {
     auth: string[];
     description: string;
     type: string;
+    input: any;
 }
