@@ -63,18 +63,22 @@
                 </ul>
               </div>
 
-              <mat-form-field *ngIf="!el.extra.isJsonArguments" class="fill-width">
-                <input 
-                  matInput 
-                  placeholder="Query parameters to your endpoint"
-                  type="text" 
-                  class="query-params"
-                  [(ngModel)]="el.extra.arguments"
-                  autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="off"
-                  spellcheck="false">
-              </mat-form-field>
+              <div class="query-params-wrapper">
+                <mat-form-field
+                  *ngIf="!el.extra.isJsonArguments"
+                  class="query-params">
+                  <input 
+                    matInput 
+                    placeholder="Query parameters to your endpoint"
+                    type="text" 
+                    class="query-params"
+                    [(ngModel)]="el.extra.arguments"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false">
+                </mat-form-field>
+              </div>
 
               <ngx-codemirror 
                 *ngIf="el.extra.isJsonArguments"
@@ -88,7 +92,7 @@
 
               <div class="right-aligned">
                 <button 
-                  mat-button 
+                  mat-raised-button 
                   matTooltip="Evaluates the endpoint with the specified parameters/payload" 
                   (click)="evaluate(el)">{{el.endpoint.verb}}</button>
               </div>

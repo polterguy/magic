@@ -48,16 +48,19 @@
                     .view-endpoint-card {
                         padding-top: 1rem;
                         position: relative;
-                        .fill-width {
-                            width: 100%;
-                            margin: 0 1.5rem 0 1.5rem;
-                            box-sizing: border-box;
+                        .query-params-wrapper {
+                            padding:0 1.5rem 0 1.5rem;
+                            .query-params {
+                                width: 100%;
+                            }
                         }
                         .right-aligned {
                             text-align: right;
+                            margin-right: 1.5rem;
                         }
                         .argument-list {
                             list-style: none;
+                            padding: 0 0 0 1.5rem;
                             li {
                                 background-color: rgba(0,0,0,.1);
                                 display: block;

@@ -31,7 +31,7 @@ export class EndpointsComponent implements OnInit {
         };
       });
     }, (err) => {
-      this.showHttpError(err);
+      this.showHttpError(err.error.message);
     });
   }
 
@@ -146,6 +146,10 @@ export class EndpointsComponent implements OnInit {
   argumentClicked(el: any, name: string) {
     let args = el.extra.arguments;
     if (args.length > 0) {
+      if (args.indexOf(name + '=') !== -1) {
+        this.showHttpError('You cannot set the same argument twice');
+        return;
+      }
       args += '&' + name + '=';
     } else {
       args += name + '=';
@@ -167,7 +171,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error);
+          this.showHttpError(error.error.message);
         });
         break;
 
@@ -176,7 +180,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error);
+          this.showHttpError(error.error.message);
         });
         break;
 
@@ -185,7 +189,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error);
+          this.showHttpError(error.error.message);
         });
         break;
 
@@ -194,15 +198,15 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error);
+          this.showHttpError(error.error.message);
         });
         break;
       }
     return false;
   }
 
-  showHttpError(error: any) {
-    this.snackBar.open(error.error.message, 'Close', {
+  showHttpError(error: string) {
+    this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
     });
