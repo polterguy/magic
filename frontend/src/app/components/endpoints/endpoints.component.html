@@ -15,105 +15,116 @@
       <mat-checkbox [(ngModel)]="showSystemEndpoints">Show system endpoints</mat-checkbox>
     </label>
 
-    <table mat-table [dataSource]="getFilteredEndpoints()">
+    <table
+      mat-table
+      multiTemplateDataRows
+      [dataSource]="getFilteredEndpoints()">
 
       <ng-container matColumnDef="url">
         <th mat-header-cell *matHeaderCellDef>URL</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.path}}</td>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.endpoint.path}}</td>
       </ng-container>
 
       <ng-container matColumnDef="auth">
         <th mat-header-cell *matHeaderCellDef>Auth</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{concatenateAuth(el.auth)}}</td>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{concatenateAuth(el.endpoint.auth)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="verb">
         <th mat-header-cell *matHeaderCellDef>Verb</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.verb}}</td>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{el.endpoint.verb}}</td>
       </ng-container>
 
       <ng-container matColumnDef="crud">
         <th mat-header-cell *matHeaderCellDef>CRUD</th>
-        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{getCrudType(el.type)}}</td>
+        <td mat-cell *matCellDef="let el" (click)="selectEndpoint(el)">{{getCrudType(el.endpoint.type)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="details">
+        <td
+          mat-cell
+          *matCellDef="let el"
+          colspan="4">
+          <div 
+            *ngIf="el.extra !== null && el.extra.visible"
+            class="active-wrapper">
+
+            <mat-card class="mat-elevation-z4 view-endpoint-card">
+          
+              <h3>{{el.endpoint.path}}</h3>
+
+              <div
+                *ngIf="!el.extra.isJsonArguments">
+                <ul class="argument-list">
+                  <li 
+                    *ngFor="let idx of el.extra.queryParameters" 
+                    (click)="argumentClicked(el, idx.name)"
+                    role="button">
+                    <strong>{{idx.name}}</strong><small>{{idx.type}}</small>
+                  </li>
+                </ul>
+              </div>
+
+              <mat-form-field *ngIf="!el.extra.isJsonArguments" class="fill-width">
+                <input 
+                  matInput 
+                  placeholder="Query parameters to your endpoint"
+                  type="text" 
+                  [(ngModel)]="el.extra.arguments"
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false">
+              </mat-form-field>
+
+              <ngx-codemirror 
+                *ngIf="el.extra.isJsonArguments"
+                [(ngModel)]="el.extra.arguments"
+                class="smaller"
+                [options]="{
+                  lineNumbers: true,
+                  theme: 'material',
+                  mode: 'application/ld+json'
+                }"></ngx-codemirror>
+
+              <div class="right-aligned">
+                <button 
+                  mat-button 
+                  matTooltip="Evaluates the endpoint with the specified parameters/payload" 
+                  (click)="evaluate(el)">{{el.endpoint.verb}}</button>
+              </div>
+
+            </mat-card>
+
+            <mat-card
+              class="mat-elevation-z4 view-result-card"
+              *ngIf="el.extra.endpointResult">
+
+              <ngx-codemirror 
+                [(ngModel)]="el.extra.endpointResult" 
+                class="smaller"
+                [options]="{
+                  lineNumbers: true,
+                  theme: 'material',
+                  mode: 'application/ld+json'
+                }"></ngx-codemirror>
+
+            </mat-card>
+
+          </div>
+        </td>
       </ng-container>
       
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr 
         mat-row
         *matRowDef="let row; columns: displayedColumns;"
-        [ngClass]="{'highlight': selectedRowUrl == row.path + row.verb}"
-        title="{{getTooltip(row)}}"
-        (click)="highlight(row.path + row.verb)"></tr>
+        title="{{getTooltip(row.endpoint)}}"></tr>
+      <tr
+        mat-row
+        [ngClass]="getClassForDetails(row)"
+        *matRowDef="let row; columns: displayedSecondRowColumns; "></tr>
 
     </table>
   </div>
-</div>
-
-<div class="active-wrapper" *ngIf="selected != null">
-
-  <mat-card class="mat-elevation-z4 view-endpoint-card">
- 
-    <h3>{{selected.url}}</h3>
-
-    <div
-      *ngIf="!isJsonArguments">
-      <ul class="argument-list">
-        <li 
-          *ngFor="let idx of queryParameters" 
-          (click)="argumentClicked(idx.name)"
-          role="button">
-          <strong>{{idx.name}}</strong><small>{{idx.type}}</small>
-        </li>
-      </ul>
-    </div>
-
-    <mat-form-field *ngIf="!isJsonArguments" class="fill-width">
-      <input 
-        matInput 
-        #queryParamaters="matInput"
-        placeholder="Query parameters to your endpoint"
-        type="text" 
-        [(ngModel)]="arguments"
-        autocomplete="off"
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="false">
-    </mat-form-field>
-
-    <ngx-codemirror 
-      *ngIf="isJsonArguments"
-      [(ngModel)]="arguments"
-      class="smaller"
-      [options]="{
-        lineNumbers: true,
-        theme: 'material',
-        mode: 'application/ld+json'
-      }"></ngx-codemirror>
-
-    <div class="right-aligned">
-      <button 
-        mat-button 
-        matTooltip="Evaluates the endpoint with the specified parameters/payload" 
-        (click)="evaluate()">{{selected.verb}}</button>
-    </div>
-
-  </mat-card>
-
-</div>
-
-<div class="result-wrapper" *ngIf="endpointResult">
-
-  <mat-card class="mat-elevation-z4 view-result-card">
-
-    <ngx-codemirror 
-      [(ngModel)]="endpointResult" 
-      class="smaller"
-      [options]="{
-        lineNumbers: true,
-        theme: 'material',
-        mode: 'application/ld+json'
-      }"></ngx-codemirror>
-
-  </mat-card>
-
 </div>
