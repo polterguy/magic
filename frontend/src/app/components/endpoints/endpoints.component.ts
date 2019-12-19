@@ -107,7 +107,7 @@ export class EndpointsComponent implements OnInit {
         case 'delete':
           this.isJsonArguments = false;
           this.arguments = '';
-          let args = [];
+          const args = [];
           for (const idx in res) {
             if (Object.prototype.hasOwnProperty.call(res, idx)) {
               args.push({
