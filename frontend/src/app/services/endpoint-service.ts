@@ -15,13 +15,6 @@ export class EndpointService {
     return this.httpClient.get<Endpoint[]>(environment.apiURL + 'magic/modules/system/endpoints/endpoints');
   }
 
-  getEndpointMeta(url: string, verb: string) {
-    return this.httpClient.get<any>(
-      environment.apiURL +
-      'magic/modules/system/endpoints/endpoint?url=' + encodeURI(url) +
-      '&verb=' + encodeURI(verb));
-  }
-
   executeGet(url: string) {
     return this.httpClient.get<any>(environment.apiURL + url);
   }
