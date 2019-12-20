@@ -16,7 +16,7 @@
             width: 100%;
             tr {
                 td:nth-child(1), th:nth-child(1) {
-                    width: 70%;
+                    width: 60%;
                 }
                 td:nth-child(2), th:nth-child(2) {
                     width: 10%;
@@ -25,6 +25,9 @@
                     width: 10%;
                 }
                 td:nth-child(4), th:nth-child(4) {
+                    width: 10%;
+                }
+                td:nth-child(5), th:nth-child(5) {
                     width: 80px;
                     text-align: right;
                 }
@@ -88,6 +91,10 @@
                 border-bottom: none;
                 font-weight: bold;
             }
+        }
+        .right-aligned {
+            text-align: right;
+            margin-top: 2rem;
         }
     }
 }
