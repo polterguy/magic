@@ -67,7 +67,7 @@
 
               <div
                 class="query-params-wrapper"
-                *ngIf="el.extra.queryParameters.length > 0">
+                *ngIf="!el.extra.isJsonArguments && el.extra.queryParameters.length > 0">
                 <mat-form-field
                   *ngIf="!el.extra.isJsonArguments"
                   class="query-params">
