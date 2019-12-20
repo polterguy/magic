@@ -1,0 +1,25 @@
+
+/*
+ * Returns all endpoints in the system.
+ */
+.description:"Generates frontend client side according to arguments given."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Debug helper.
+ */
+lambda2hyper:x:@.arguments/*
+log.info:x:-
+
+
+/*
+ * Returns success to caller.
+ */
+slots.return-nodes
+   result:success
