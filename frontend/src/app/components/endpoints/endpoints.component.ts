@@ -70,7 +70,7 @@ export class EndpointsComponent implements OnInit {
     if (type !== undefined && type !== null && type !== '') {
       return type.substr(5);
     }
-    return 'custom';
+    return '';
   }
 
   getDescription(item: Endpoint) {
