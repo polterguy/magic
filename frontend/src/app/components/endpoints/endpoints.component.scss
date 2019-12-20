@@ -26,6 +26,7 @@
                 }
                 td:nth-child(4), th:nth-child(4) {
                     width: 80px;
+                    text-align: right;
                 }
             }
             tr.highlight {
@@ -47,24 +48,19 @@
                 .active-wrapper {
                     padding:0 0 2rem 0;
                     .view-endpoint-card {
-                        padding-top: 1rem;
+                        padding:1rem 1.5rem 0 1.5rem;
                         position: relative;
-                        .endpoint-description {
-                            padding:0 1.5rem 0 1.5rem;
-                        }
                         .query-params-wrapper {
-                            padding:0 1.5rem 0 1.5rem;
                             .query-params {
                                 width: 100%;
                             }
                         }
                         .right-aligned {
                             text-align: right;
-                            margin-right: 1.5rem;
                         }
                         .argument-list {
                             list-style: none;
-                            padding: 0 0 0 1.5rem;
+                            padding: 0;
                             li {
                                 background-color: rgba(0,0,0,.1);
                                 display: block;
@@ -83,6 +79,7 @@
                     }
                 }
                 .view-result-card {
+                    padding:1rem 1.5rem 0 1.5rem;
                     min-height: 250px;
                     margin-top: 1rem;
                 }
