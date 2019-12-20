@@ -1,9 +1,9 @@
 
-<h1 mat-dialog-title>Create validator</h1>
+<h1 mat-dialog-title>Add validator/transformer/injectable</h1>
 <div mat-dialog-content>
 
   <mat-form-field>
-    <mat-select placeholder="Validator type" [(ngModel)]="validatorType" (selectionChange)="createHyperlambda($event)">
+    <mat-select placeholder="Type" [(ngModel)]="validatorType" (selectionChange)="createHyperlambda($event)">
       <mat-option *ngFor="let cur of reactors" [value]="cur.name">{{cur.name}}</mat-option>
     </mat-select>
   </mat-form-field>
