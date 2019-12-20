@@ -12,7 +12,7 @@ import { MatInput } from '@angular/material';
 })
 export class EndpointsComponent implements OnInit {
   @ViewChild('queryParamaters') queryParametersInput: MatInput;
-  private displayedColumns: string[] = ['url', 'auth', 'verb', 'crud'];
+  private displayedColumns: string[] = ['url', 'auth', 'verb', 'crud', 'selected'];
   private displayedSecondRowColumns: string[] = ['details'];
   private endpoints: any[] = [];
   private filter = '';
@@ -28,6 +28,7 @@ export class EndpointsComponent implements OnInit {
         return {
           endpoint: x,
           extra: null,
+          selected: !x.path.startsWith('magic/modules/system/'),
         };
       });
     }, (err) => {
@@ -203,6 +204,12 @@ export class EndpointsComponent implements OnInit {
         break;
       }
     return false;
+  }
+
+  generateFrontEnd() {
+    const toGenerate = this.endpoints.filter(x => x.selected).map(x => x.endpoint);
+    console.log(toGenerate);
+    console.log('TODO: Implement ...');
   }
 
   showHttpError(error: string) {
