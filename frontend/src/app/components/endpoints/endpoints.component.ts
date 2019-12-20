@@ -32,7 +32,7 @@ export class EndpointsComponent implements OnInit {
         };
       });
     }, (err) => {
-      this.showHttpError(err.error.message);
+      this.showError(err.error.message);
     });
   }
 
@@ -148,7 +148,7 @@ export class EndpointsComponent implements OnInit {
     let args = el.extra.arguments;
     if (args.length > 0) {
       if (args.indexOf(name + '=') !== -1) {
-        this.showHttpError('You cannot set the same argument twice');
+        this.showError('You cannot set the same argument twice');
         return;
       }
       args += '&' + name + '=';
@@ -172,7 +172,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error.error.message);
+          this.showError(error.error.message);
         });
         break;
 
@@ -181,7 +181,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error.error.message);
+          this.showError(error.error.message);
         });
         break;
 
@@ -190,7 +190,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error.error.message);
+          this.showError(error.error.message);
         });
         break;
 
@@ -199,7 +199,7 @@ export class EndpointsComponent implements OnInit {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {
-          this.showHttpError(error.error.message);
+          this.showError(error.error.message);
         });
         break;
       }
@@ -208,9 +208,14 @@ export class EndpointsComponent implements OnInit {
 
   generateFrontEnd() {
     const toGenerate = this.endpoints.filter(x => x.selected).map(x => x.endpoint);
+    this.service.generate(toGenerate).subscribe(res => {
+      console.log(res);
+    }, err => {
+      this.showError(err.error.message);
+    });
   }
 
-  showHttpError(error: string) {
+  showError(error: string) {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
