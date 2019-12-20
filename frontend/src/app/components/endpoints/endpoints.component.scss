@@ -37,6 +37,7 @@
             }
             tr.has-details:hover {
                 background-color: rgb(255,255,255);
+                cursor: auto;
             }
             tr.no-details {
                 display: none;
@@ -48,6 +49,9 @@
                     .view-endpoint-card {
                         padding-top: 1rem;
                         position: relative;
+                        .endpoint-description {
+                            padding:0 1.5rem 0 1.5rem;
+                        }
                         .query-params-wrapper {
                             padding:0 1.5rem 0 1.5rem;
                             .query-params {

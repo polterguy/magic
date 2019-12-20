@@ -51,6 +51,8 @@
 
             <div class="view-endpoint-card">
 
+              <p class="endpoint-description">{{getDescription(el.endpoint)}}</p>
+
               <div
                 *ngIf="!el.extra.isJsonArguments">
                 <ul class="argument-list">
@@ -63,7 +65,9 @@
                 </ul>
               </div>
 
-              <div class="query-params-wrapper">
+              <div
+                class="query-params-wrapper"
+                *ngIf="el.extra.queryParameters.length > 0">
                 <mat-form-field
                   *ngIf="!el.extra.isJsonArguments"
                   class="query-params">
@@ -126,7 +130,7 @@
         (click)="selectEndpoint(row)"
         [ngClass]="getClassForRow(row)"
         *matRowDef="let row; columns: displayedColumns;"
-        title="{{getTooltip(row.endpoint)}}"></tr>
+        title="{{getDescription(row.endpoint)}}"></tr>
       <tr
         mat-row
         [ngClass]="getClassForDetails(row)"

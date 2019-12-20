@@ -73,7 +73,7 @@ export class EndpointsComponent implements OnInit {
     return 'custom';
   }
 
-  getTooltip(item: Endpoint) {
+  getDescription(item: Endpoint) {
     if (item.description !== undefined) {
       return item.description;
     }
