@@ -20,12 +20,17 @@
       </p>
 
       <div class="database-selector">
-        <mat-select placeholder="Select database type" (selectionChange)="databaseTypeChanged($event)" [(value)]="selectedDatabaseType">
+        <mat-select
+          placeholder="Select database type"
+          (selectionChange)="databaseTypeChanged($event)"
+          [(value)]="selectedDatabaseType">
           <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
         </mat-select>
       </div>
 
-      <mat-form-field *ngIf="selectedDatabaseType !== null" class="username">
+      <mat-form-field
+        *ngIf="selectedDatabaseType !== null"
+        class="username">
         <input 
           matInput 
           autocomplete="off"
@@ -35,7 +40,9 @@
           [(ngModel)]="username">
       </mat-form-field>
 
-      <mat-form-field *ngIf="selectedDatabaseType !== null" class="password">
+      <mat-form-field
+        *ngIf="selectedDatabaseType !== null"
+        class="password">
         <input 
           matInput 
           [disabled]="validDatabaseConnectionString !== true"
@@ -45,7 +52,9 @@
           [(ngModel)]="password">
       </mat-form-field>
 
-      <mat-form-field *ngIf="selectedDatabaseType !== null" class="password-repeat">
+      <mat-form-field
+        *ngIf="selectedDatabaseType !== null"
+        class="password-repeat">
         <input 
           matInput 
           [disabled]="validDatabaseConnectionString !== true"
@@ -65,18 +74,18 @@
         Setup
       </button>
 
-      <ngx-codemirror 
-        *ngIf="selectedDatabaseType !== null && validDatabaseConnectionString === false"
-        [(ngModel)]="appsettingsJson" 
-        class="smaller"
-        [options]="getCodeMirrorOptions()"></ngx-codemirror>
-      <div
-        *ngIf="selectedDatabaseType !== null && validDatabaseConnectionString === false"
-        style="text-align: right;">
-        <button
-          matTooltip="Saves your configuration file"
-          (click)="saveConfigurationFile()"
-          mat-button>Save</button>
+      <div class="air-top">
+        <ngx-codemirror
+          [(ngModel)]="appsettingsJson" 
+          class="smaller"
+          [options]="getCodeMirrorOptions()"></ngx-codemirror>
+        <div
+          style="text-align: right;">
+          <button
+            matTooltip="Saves your configuration file"
+            (click)="saveConfigurationFile()"
+            mat-button>Save</button>
+        </div>
       </div>
       
     </div>
