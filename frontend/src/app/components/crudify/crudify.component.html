@@ -47,7 +47,8 @@
   <mat-checkbox
     *ngIf="selectedTable !== null"
     style="margin-left: 2rem;"
-    [(ngModel)]="overwrite">Overwrite existing endpoints</mat-checkbox>
+    matTooltip="Overwrite existing endpoints"
+    [(ngModel)]="overwrite">Overwrite</mat-checkbox>
 
   <button 
     *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
