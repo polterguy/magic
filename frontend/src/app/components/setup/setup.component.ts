@@ -4,6 +4,8 @@ import { MatSelectChange, MatSnackBar } from '@angular/material';
 import { SetupService } from 'src/app/services/setup-service';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { PingService } from 'src/app/services/ping-service';
+import { logWarnings } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-evaluator',
@@ -18,10 +20,12 @@ export class SetupComponent implements OnInit {
   private password: string = null;
   private passwordRepeat: string = null;
   private validDatabaseConnectionString = false;
+  private validJwtSecret = false;
   private appsettingsJson = '';
 
   constructor(
     private setupService: SetupService,
+    private pingService: PingService,
     private snackBar: MatSnackBar,
     private router: Router) { }
 
@@ -38,6 +42,14 @@ export class SetupComponent implements OnInit {
   checkDatabaseConfiguration(databaseType: string) {
     this.setupService.checkDatabaseConfiguration(databaseType).subscribe(res => {
       this.validDatabaseConnectionString = true;
+      this.pingService.ping().subscribe(res => {
+        if (res.warnings.jwt !== undefined) {
+          this.showError('You have to change your JWT secret');
+        } else {
+          this.validJwtSecret = true;
+          this.showInfo('Choose a root password and click Setup');
+        }
+      });
     }, err => {
       this.validDatabaseConnectionString = false;
       this.showError('Provide a valid connection string, and save your appsettings.json file');
