@@ -10,14 +10,14 @@ import { Router } from '@angular/router';
   templateUrl: './setup.component.html',
   styleUrls: ['./setup.component.scss']
 })
-export class SetupComponent {
+export class SetupComponent implements OnInit {
 
   private selectedDatabaseType: string = null;
   private databaseTypes: string[] = ['mysql', 'mssql'];
   private username = 'root';
   private password: string = null;
   private passwordRepeat: string = null;
-  private validDatabaseConnectionString = true;
+  private validDatabaseConnectionString = false;
   private appsettingsJson = '';
 
   constructor(
@@ -25,8 +25,14 @@ export class SetupComponent {
     private snackBar: MatSnackBar,
     private router: Router) { }
 
+  ngOnInit() {
+    this.setupService.getAppSettingsJson().subscribe(res => {
+      this.appsettingsJson = res;
+    });
+  }
+  
   databaseTypeChanged(e: MatSelectChange) {
-    this.checkDatabaseConfiguration(e.value);
+    this.checkDatabaseConfiguration(this.selectedDatabaseType);
   }
 
   checkDatabaseConfiguration(databaseType: string) {
@@ -34,10 +40,7 @@ export class SetupComponent {
       this.validDatabaseConnectionString = true;
     }, err => {
       this.validDatabaseConnectionString = false;
-      this.showError('You will need to configure your database connection string before proceeding');
-      this.setupService.getAppSettingsJson().subscribe(res => {
-        this.appsettingsJson = res;
-      });
+      this.showError('Provide a valid connection string, and save your appsettings.json file');
     });
   }
 
@@ -47,7 +50,7 @@ export class SetupComponent {
       return;
     }
     if (this.password == null || this.password.length === 0) {
-      this.showError('You must supply a password, and preferably a long and difficult to guess');
+      this.showError('You must supply a root password');
       return;
     }
 
@@ -78,7 +81,7 @@ export class SetupComponent {
     this.setupService.saveAppSettingsJson(this.appsettingsJson).subscribe(res => {
       setTimeout(() => {
         this.checkDatabaseConfiguration(this.selectedDatabaseType);
-      }, 500);
+      }, 1000);
     });
   }
 

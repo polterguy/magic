@@ -22,7 +22,9 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Value = File.ReadAllText(Directory.GetCurrentDirectory().Trim('\\').Trim('/') + "/appsettings.json");
+            input.Value = File.ReadAllText(
+                Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
+                "/appsettings.json");
         }
     }
 }

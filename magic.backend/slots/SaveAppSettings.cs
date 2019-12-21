@@ -24,7 +24,8 @@ namespace magic.backend.slots
         public void Signal(ISignaler signaler, Node input)
         {
             File.WriteAllText(
-                Directory.GetCurrentDirectory().Trim('\\').Trim('/') + "/appsettings.json",
+                Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
+                "/appsettings.json",
                 input.GetEx<string>());
         }
     }
