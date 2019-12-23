@@ -213,11 +213,7 @@ export class EndpointsComponent implements OnInit {
       files: toGenerate,
       apiUrl: environment.apiURL,
     };
-    this.service.generate(args).subscribe(res => {
-      console.log(res);
-    }, err => {
-      this.showError(err.error.message);
-    });
+    this.service.generate(args);
   }
 
   showError(error: string) {
