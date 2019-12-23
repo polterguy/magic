@@ -67,7 +67,13 @@ log.info:x:-
 
 
 /*
- * Returns success to caller.
+ * Returns zip stream to caller, making sure we get the HTTP headers more or less correct.
  */
-slots.return-nodes
-   result:success
+http.response.headers.add
+   Content-Type:application/zip
+   Content-Disposition:@"attachment; filename=""angular-magic.zip"""
+   Access-Control-Expose-Headers:Content-Disposition
+add:x:+
+   get-nodes:x:@.files/*
+io.content.zip
+slots.return-value:x:-

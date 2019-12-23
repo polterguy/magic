@@ -214,7 +214,11 @@
 
 * Correctly counting number of endpoints during generation process of HTTP REST endpoints.
 
+* Support for zipping files directly unto the HTTP stream.
+
 
 ### Updated modules for version 5.5.9
 
 * magic.endpoint
+
+* magic.lambda.io
