@@ -15,7 +15,7 @@ export class EndpointService {
     return this.httpClient.get<Endpoint[]>(environment.apiURL + 'magic/modules/system/endpoints/endpoints');
   }
 
-  generate(endpoints: any[]) {
+  generate(endpoints: any) {
     return this.httpClient.post<any>(environment.apiURL + 'magic/modules/system/endpoints/generate', endpoints);
   }
 

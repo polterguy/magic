@@ -1,0 +1,36 @@
+
+/*
+ * Lists all files recursively from the specified folder
+ *
+ * Arguments
+ *
+ * - [folder] - Folder from where to list all files recursively from.
+ */
+slots.create:magic.io.files.list-recursively
+
+
+   /*
+    * Lists all files in current [folder], and adds up the result to return value.
+    */
+   io.files.list:x:@.arguments/*/folder
+   add:x:../*/slots.return-nodes
+      get-nodes:x:@io.files.list/*
+
+
+   /*
+    * Traversing all folders beneath given [folder], and recursively invokes self.
+    */
+   io.folders.list:x:@.arguments/*/folder
+   for-each:x:-/*
+      unwrap:x:+/*
+      slots.signal:magic.io.files.list-recursively
+         folder:x:@.dp/#
+      add:x:../*/slots.return-nodes
+         get-nodes:x:@slots.signal/*
+
+
+   /*
+    * Returning to caller all files in folder, and sub folder(s).
+    */
+   slots.return-nodes
+   

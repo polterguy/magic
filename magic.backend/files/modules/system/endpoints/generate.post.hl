@@ -1,8 +1,11 @@
 
 /*
- * Returns all endpoints in the system.
+ * Generates a frontend wrapping your HTTP REST endpoints according to the specified [.arguments].
  */
 .description:"Generates frontend client side according to arguments given."
+.arguments
+   apiUrl:string
+   files
 
 
 /*
@@ -12,9 +15,54 @@ auth.ticket.verify:root
 
 
 /*
+ * Lists all files in Angular template folder recursively, and adds them into [.files].
+ */
+.files
+slots.signal:magic.io.files.list-recursively
+   folder:/misc/templates/angular/
+add:x:@.files
+   get-nodes:x:@slots.signal/*
+
+
+/*
+ * Loading every file, and appending as a child node to actual file node in above [.files].
+ */
+for-each:x:@.files/*
+   io.files.load:x:@.dp/#
+   add:x:@.dp/#
+      get-nodes:x:@io.files.load
+   set-name:x:@.dp/#/0
+      .:.
+
+
+/*
+ * Starting substitution process of files' content, according to [.argument] given.
+ */
+for-each:x:@.files/*/*
+   strings.replace:x:@.dp/#
+      .:[[apiUrl]]
+      strings.concat
+         .:"apiUrl: \""
+         get-value:x:@.arguments/*/apiUrl
+         .:"\","
+   set-value:x:@.dp/#
+      get-value:x:@strings.replace
+
+
+/*
+ * Removing "root" of filenames, to make more friendly filenames to zip.
+ */
+for-each:x:@.files/*
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:/misc/templates/angular/
+         .:/magic-angular/
+
+
+/*
  * Debug helper.
  */
-lambda2hyper:x:@.arguments/*
+lambda2hyper:x:@.files/*
 log.info:x:-
 
 

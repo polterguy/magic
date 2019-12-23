@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
 import { MatInput } from '@angular/material';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-endpoints',
@@ -208,7 +209,11 @@ export class EndpointsComponent implements OnInit {
 
   generateFrontEnd() {
     const toGenerate = this.endpoints.filter(x => x.selected).map(x => x.endpoint);
-    this.service.generate(toGenerate).subscribe(res => {
+    const args = {
+      files: toGenerate,
+      apiUrl: environment.apiURL,
+    };
+    this.service.generate(args).subscribe(res => {
       console.log(res);
     }, err => {
       this.showError(err.error.message);
