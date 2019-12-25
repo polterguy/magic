@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { saveAs } from "file-saver";
 
 @Injectable({
   providedIn: 'root'
@@ -44,16 +45,8 @@ export class FileService {
         const disp = res.headers.get('Content-Disposition');
         let filename = disp.substr(disp.indexOf('=') + 1);
         filename = filename.substr(0, filename.indexOf(';'));
-
-        // Creating a BLOB URL.
-        const blob = new Blob([res.body], { type: res.headers.get('Content-Type')});
-        const url = window.URL.createObjectURL(blob);
-
-        // To maintain the correct filename, we have to apply this little "hack".
-        const fileLink = document.createElement('a');
-        fileLink.href = url;
-        fileLink.download = filename;
-        fileLink.click();
+        let file = new Blob([res.body], { type: 'application/zip' });
+        saveAs(file, filename);
       });
   }
 
