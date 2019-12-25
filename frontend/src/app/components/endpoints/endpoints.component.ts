@@ -210,7 +210,7 @@ export class EndpointsComponent implements OnInit {
   generateFrontEnd() {
     const toGenerate = this.endpoints.filter(x => x.selected).map(x => x.endpoint);
     const args = {
-      files: toGenerate,
+      endpoints: toGenerate,
       apiUrl: environment.apiURL,
     };
     this.service.generate(args);
