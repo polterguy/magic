@@ -42,9 +42,9 @@ for-each:x:@.files/*/*
    strings.replace:x:@.dp/#
       .:[[apiUrl]]
       strings.concat
-         .:"apiUrl: \""
+         .:"apiUrl: '"
          get-value:x:@.arguments/*/apiUrl
-         .:"\","
+         .:"',"
    set-value:x:@.dp/#
       get-value:x:@strings.replace
 
@@ -75,5 +75,5 @@ http.response.headers.add
    Access-Control-Expose-Headers:Content-Disposition
 add:x:+
    get-nodes:x:@.files/*
-io.content.zip
+io.content.zip-stream
 slots.return-value:x:-

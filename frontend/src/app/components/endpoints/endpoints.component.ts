@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./endpoints.component.scss']
 })
 export class EndpointsComponent implements OnInit {
-  @ViewChild('queryParamaters') queryParametersInput: MatInput;
+  @ViewChild('queryParamaters', { static: false }) queryParametersInput: MatInput;
   private displayedColumns: string[] = ['url', 'auth', 'verb', 'crud', 'selected'];
   private displayedSecondRowColumns: string[] = ['details'];
   private endpoints: any[] = [];
