@@ -213,7 +213,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.replace:x:@io.files.load
       .:[[ng-containers]]
       get-value:x:@.ng-containers
-   log.info:x:-
 
 
    /*
@@ -224,6 +223,99 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
          .:/magic-angular/src/app/components/
          get-value:x:@.filename
          .:.component.html
+   set-value:x:+/*/*/*
+      get-value:x:@strings.replace
+   add:x:@.files
+      .
+         :
+            :
+
+
+   /*
+    * Loading template component SCSS file.
+    */
+   io.files.load:/misc/templates/angular-component/component.scss
+
+
+   /*
+    * Adding SCSS file to ZIP source.
+    */
+   set-value:x:+/+/*/*
+      strings.concat
+         .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:.component.scss
+   set-value:x:+/*/*/*
+      get-value:x:@io.files.load
+   add:x:@.files
+      .
+         :
+            :
+
+
+   /*
+    * Loading template component ts file.
+    */
+   io.files.load:/misc/templates/angular-component/component.ts
+
+
+   /*
+    * Simple replacements first.
+    */
+   strings.replace:x:@io.files.load
+      .:[[filename]]
+      get-value:x:@.filename
+
+
+   /*
+    * Figuring out component name.
+    */
+   .component-name
+   set-value:x:@.component-name
+      strings.concat
+         strings.capitalize:x:@.filename
+         .:Component
+   strings.replace:x:@strings.replace
+      .:[[component-name]]
+      get-value:x:@.component-name
+
+
+   /*
+    * Replacing columns list.
+    */
+   .columns-list:
+   for-each:x:@.columns/*
+      set-value:x:@.columns-list
+         strings.concat
+            get-value:x:@.columns-list
+            .:"'"
+            get-value:x:@.dp/#
+            .:"',"
+   strings.trim:x:@.columns-list
+      .:,
+   strings.replace:x:@strings.replace
+      .:[[columns-list]]
+      get-value:x:@strings.trim
+
+
+   /*
+    * Replacing service GET method.
+    */
+   strings.replace:x:@strings.replace
+      .:[[service-get-method]]
+      strings.concat
+         get-value:x:@.filename
+         .:Get
+
+
+   /*
+    * Adding ts file to ZIP source.
+    */
+   set-value:x:+/+/*/*
+      strings.concat
+         .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:.component.ts
    set-value:x:+/*/*/*
       get-value:x:@strings.replace
    add:x:@.files
