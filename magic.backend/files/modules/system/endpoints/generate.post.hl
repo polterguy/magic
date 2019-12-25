@@ -5,7 +5,7 @@
 .description:"Generates frontend client side according to arguments given."
 .arguments
    apiUrl:string
-   files
+   endpoints
 
 
 /*
@@ -36,9 +36,103 @@ for-each:x:@.files/*
 
 
 /*
- * Starting substitution process of files' content, according to [.argument] given.
+ * Removing "root" of filenames, to make more friendly filenames to zip file's content.
+ */
+for-each:x:@.files/*
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:/misc/templates/angular/
+         .:/magic-angular/
+
+
+/*
+ * Dynamically building up service methods according to specified [.arguments]/[endpoints].
+ */
+.services:
+for-each:x:@.arguments/*/endpoints/*
+
+
+   /*
+    * Figuring out method name.
+    */
+   .method
+   strings.split:x:@.dp/#/*/path
+      .:/
+   set-value:x:@.method
+      get-value:x:@strings.split/0/-
+   .verb
+   switch:x:@.dp/#/*/verb
+      case:delete
+         set-value:x:@.verb
+            .:Delete
+      case:get
+         set-value:x:@.verb
+            .:Get
+      case:post
+         set-value:x:@.verb
+            .:Post
+      case:put
+         set-value:x:@.verb
+            .:Put
+      default
+         throw:Unknown verb for HTTP endpoint
+   set-value:x:@.method
+      strings.concat
+         get-value:x:@.method
+         get-value:x:@.verb
+
+
+   /*
+    * Creating method body.
+    */
+   .query:
+   .payload:
+   switch:x:@.dp/#/*/verb
+      case:delete
+      case:get
+         set-value:x:@.query
+            .:" + this.getQueryArgs(args)"
+      default
+         set-value:x:@.payload
+            .:", args"
+   .body:@"
+    return this.httpClient."
+   set-value:x:@.body
+      strings.concat
+         get-value:x:@.body
+         get-value:x:@.dp/#/*/verb
+         .:"<any>(environment.apiURL + '"
+         get-value:x:@.dp/#/*/path
+         .:"'"
+         get-value:x:@.query
+         get-value:x:@.payload
+         .:");"
+
+
+   /*
+    * Appending entire method into [.services].
+    */
+   set-value:x:@.services
+      strings.concat
+         get-value:x:@.services
+         .:"\r\n\r\n"
+         .:"  "
+         get-value:x:@.method
+         .:"(args: any) {"
+         get-value:x:@.body
+         .:@"
+  }"
+
+
+/*
+ * Starting substitution process of files' content, according to [.arguments] given.
  */
 for-each:x:@.files/*/*
+
+
+   /*
+    * [[apiUrl]] replacement.
+    */
    strings.replace:x:@.dp/#
       .:[[apiUrl]]
       strings.concat
@@ -49,25 +143,18 @@ for-each:x:@.files/*/*
       get-value:x:@strings.replace
 
 
-/*
- * Removing "root" of filenames, to make more friendly filenames to zip.
- */
-for-each:x:@.files/*
+   /*
+    * [[service-endpoints]] replacement.
+    */
+   strings.replace:x:@.dp/#
+      .:[[service-endpoints]]
+      get-value:x:@.services
    set-value:x:@.dp/#
-      strings.replace:x:@.dp/#
-         .:/misc/templates/angular/
-         .:/magic-angular/
+      get-value:x:@strings.replace
 
 
 /*
- * Debug helper.
- */
-lambda2hyper:x:@.files/*
-log.info:x:-
-
-
-/*
- * Returns zip stream to caller, making sure we get the HTTP headers more or less correct.
+ * Returns zip stream to caller, making sure we get the HTTP headers correctly applied.
  */
 http.response.headers.add
    Content-Type:application/zip
