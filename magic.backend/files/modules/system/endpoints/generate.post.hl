@@ -444,6 +444,21 @@ for-each:x:@.files/*
             get-value:x:@strings.replace
 
 
+         /*
+          * [[environmentDomain]] replacement.
+          */
+         strings.split:x:@.arguments/*/apiUrl
+            .:/
+         strings.replace:x:@.dp/#/*
+            .:[[environmentDomain]]
+            strings.concat
+               .:"apiDomain: '"
+               get-value:x:@strings.split/1
+               .:"',"
+         set-value:x:@.dp/#/*
+            get-value:x:@strings.replace
+
+
    /*
     * Checking if this is our http-service.ts file.
     */
