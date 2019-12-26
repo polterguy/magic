@@ -15,7 +15,8 @@ auth.ticket.verify:root
 
 
 /*
- * Lists all files in Angular template folder recursively, and adds them into [.files].
+ * Lists all files in Angular template folder recursively,
+ * and adds them into [.files].
  */
 .files
 slots.signal:magic.io.files.list-recursively
@@ -25,7 +26,8 @@ add:x:@.files
 
 
 /*
- * Loading every file, and appending as a child node to actual file node in above [.files].
+ * Loading every file, and appending as a child node to actual
+ * file node in above [.files].
  */
 for-each:x:@.files/*
    io.files.load:x:@.dp/#
@@ -36,7 +38,8 @@ for-each:x:@.files/*
 
 
 /*
- * Removing "root" of filenames, to make more friendly filenames to zip file's content.
+ * Removing "root" of filenames, to create more friendly
+ * filenames to zip file's content.
  */
 for-each:x:@.files/*
    set-value:x:@.dp/#
@@ -102,7 +105,7 @@ for-each:x:@.arguments/*/endpoints/*
       strings.concat
          get-value:x:@.body
          get-value:x:@.dp/#/*/verb
-         .:"<any>(environment.apiURL + '"
+         .:"<any>(environment.apiUrl + '"
          get-value:x:@.dp/#/*/path
          .:"'"
          get-value:x:@.query
@@ -133,36 +136,6 @@ for-each:x:@.arguments/*/endpoints/*
  * This little node does just that.
  */
 .components
-
-
-/*
- * Starting substitution process of files' content,
- * according to [.arguments] given, and how we treated them above.
- */
-for-each:x:@.files/*/*
-
-
-   /*
-    * [[apiUrl]] replacement.
-    */
-   strings.replace:x:@.dp/#
-      .:[[apiUrl]]
-      strings.concat
-         .:"apiUrl: '"
-         get-value:x:@.arguments/*/apiUrl
-         .:"',"
-   set-value:x:@.dp/#
-      get-value:x:@strings.replace
-
-
-   /*
-    * [[service-endpoints]] replacement.
-    */
-   strings.replace:x:@.dp/#
-      .:[[service-endpoints]]
-      get-value:x:@.services
-   set-value:x:@.dp/#
-      get-value:x:@strings.replace
 
 
 /*
@@ -373,13 +346,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
 /*
- * Then we need to do replacements in our app.module.ts file.
- *
- * This will import all components we created above into our
- * app.module.ts files, and also reference them in its "declarations"
- * declaration.
- *
- * First we create what needs to be injected into our file.
+ * Then we need to create our imports and declarations strings
+ * for substituing these from inside our app.module.ts file.
  */
 .imports:
 .declarations:
@@ -411,9 +379,59 @@ for-each:x:@.components/*
 
 
 /*
- * Then we need to find our app.module.ts file in our list of files.
+ * Then we need to find our app.module.ts file, our http-service.ts file,
+ * and our environment.ts file from our list of files, and do substitutions
+ * inside of these.
  */
 for-each:x:@.files/*
+
+
+   /*
+    * Checking if this is our environment.ts file.
+    */
+   if
+      eq
+         get-value:x:@.dp/#
+         .:/magic-angular/src/environments/environment.ts
+      .lambda
+
+
+         /*
+          * [[apiUrl]] replacement.
+          */
+         strings.replace:x:@.dp/#/*
+            .:[[apiUrl]]
+            strings.concat
+               .:"apiUrl: '"
+               get-value:x:@.arguments/*/apiUrl
+               .:"',"
+         set-value:x:@.dp/#/*
+            get-value:x:@strings.replace
+
+
+   /*
+    * Checking if this is our http-service.ts file.
+    */
+   if
+      eq
+         get-value:x:@.dp/#
+         .:/magic-angular/src/app/http-service.ts
+      .lambda
+
+
+         /*
+          * [[service-endpoints]] replacement.
+          */
+         strings.replace:x:@.dp/#/*
+            .:[[service-endpoints]]
+            get-value:x:@.services
+         set-value:x:@.dp/#/*
+            get-value:x:@strings.replace
+
+
+   /*
+    * Checking if this is our app.module.ts file.
+    */
    if
       eq
          get-value:x:@.dp/#
@@ -433,7 +451,7 @@ for-each:x:@.files/*
 
 
          /*
-          * Then our [.declarations] part.
+          * Then our [[declarations]] part.
           */
          set-value:x:@.dp/#/*
             strings.replace:x:@.dp/#/*
