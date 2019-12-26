@@ -1,6 +1,7 @@
 
 /*
- * Generates a frontend wrapping your HTTP REST endpoints according to the specified [.arguments].
+ * Generates a frontend wrapping your HTTP REST endpoints
+ * according to the specified [.arguments].
  */
 .description:"Generates frontend client side according to arguments given."
 .arguments
@@ -26,8 +27,8 @@ add:x:@.files
 
 
 /*
- * Loading every file, and appending as a child node to actual
- * file node in above [.files].
+ * Loading every file, and appending file's content
+ * as a child node to actual file node in above [.files].
  */
 for-each:x:@.files/*
    io.files.load:x:@.dp/#
@@ -346,11 +347,12 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
 /*
- * Then we need to create our imports and declarations strings
- * for substituing these from inside our app.module.ts file.
+ * Then we need to create our imports, routes, and declarations strings
+ * for substituing these inside our app.module.ts and app-routing.module.ts files.
  */
 .imports:
 .declarations:
+.routes:
 for-each:x:@.components/*
 
 
@@ -376,6 +378,22 @@ for-each:x:@.components/*
          .:"    "
          get-value:x:@.dp/#
          .:",\r\n"
+
+
+   /*
+    * Then appending our routes into [.routes].
+    */
+   strings.replace:x:@.dp/#/0
+      .:.component
+      .:
+   set-value:x:@.routes
+      strings.concat
+         get-value:x:@.routes
+         .:"  { path: '"
+         get-value:x:@strings.replace
+         .:"', component: "
+         get-value:x:@.dp/#
+         .:" },\r\n"
 
 
 /*
@@ -430,12 +448,17 @@ for-each:x:@.files/*
 
 
    /*
-    * Checking if this is our app.module.ts file.
+    * Checking if this is our app.module.ts file, or
+    * our app-routing.module.ts file.
     */
    if
-      eq
-         get-value:x:@.dp/#
-         .:/magic-angular/src/app/app.module.ts
+      or
+         eq
+            get-value:x:@.dp/#
+            .:/magic-angular/src/app/app.module.ts
+         eq
+            get-value:x:@.dp/#
+            .:/magic-angular/src/app/app-routing.module.ts
       .lambda
 
 
@@ -459,13 +482,28 @@ for-each:x:@.files/*
                get-value:x:@.declarations
 
 
+         /*
+          * Then our [[routes]] part.
+          */
+         set-value:x:@.dp/#/*
+            strings.replace:x:@.dp/#/*
+               .:[[routes]]
+               get-value:x:@.routes
+
+
 /*
- * Returns zip stream to caller, making sure we get the HTTP headers correctly applied.
+ * Making sure we get the HTTP headers correctly applied.
  */
 http.response.headers.add
    Content-Type:application/zip
    Content-Disposition:@"attachment; filename=""angular-magic.zip"""
    Access-Control-Expose-Headers:Content-Disposition
+
+
+/*
+ * Adding [.files] to [io.content.zip-stream] invocation, and
+ * returning results of zipping to caller.
+ */
 add:x:+
    get-nodes:x:@.files/*
 io.content.zip-stream
