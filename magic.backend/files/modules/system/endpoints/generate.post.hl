@@ -347,12 +347,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
 /*
- * Then we need to create our imports, routes, and declarations strings
- * for substituing these inside our app.module.ts and app-routing.module.ts files.
+ * Then we need to create our imports, routes, router-links, and
+ * declarations strings for substituing these inside our app.module.ts,
+ * app-routing.module.ts, and app.component.html files.
  */
 .imports:
 .declarations:
 .routes:
+.router-links:
 for-each:x:@.components/*
 
 
@@ -396,10 +398,25 @@ for-each:x:@.components/*
          .:" },\r\n"
 
 
+   /*
+    * Then appending our router links into [.router-links].
+    */
+   set-value:x:@.router-links
+      strings.concat
+         get-value:x:@.router-links
+         .:"  <a\r\n    mat-button\r\n    routerLink=\"/"
+         get-value:x:@strings.replace
+         .:"\"\r\n    routerLinkActive=\"active-link\"\r\n"
+         .:"    [routerLinkActiveOptions]=\"{exact:true}\">"
+         get-value:x:@strings.replace
+         .:"</a>\r\n\r\n"
+
+
 /*
  * Then we need to find our app.module.ts file, our http-service.ts file,
- * and our environment.ts file from our list of files, and do substitutions
- * inside of these.
+ * our environment.ts file, and our app.component.html files from our list
+ * of files, and do substitutions inside of these, according to which components
+ * we'll need.
  */
 for-each:x:@.files/*
 
@@ -489,6 +506,25 @@ for-each:x:@.files/*
             strings.replace:x:@.dp/#/*
                .:[[routes]]
                get-value:x:@.routes
+
+
+   /*
+    * Checking if this is our app.component.html file.
+    */
+   if
+      eq
+         get-value:x:@.dp/#
+         .:/magic-angular/src/app/app.component.html
+      .lambda
+
+
+         /*
+          * [[router-links]] replacement.
+          */
+         set-value:x:@.dp/#/*
+            strings.replace:x:@.dp/#/*
+               .:[[router-links]]
+               get-value:x:@.router-links
 
 
 /*
