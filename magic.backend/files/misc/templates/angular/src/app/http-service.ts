@@ -12,7 +12,7 @@ export class HttpService {
 
   authenticate(username: string, password: string) {
     return this.httpClient.get<any>(
-      environment.apiURL +
+      environment.apiUrl +
       'magic/modules/system/auth/authenticate?username=' +
       encodeURI(username) +
       '&password=' +
@@ -20,7 +20,7 @@ export class HttpService {
   }
 
   refreshTicket() {
-    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/auth/refresh-ticket');
+    return this.httpClient.get<any>(environment.apiUrl + 'magic/modules/system/auth/refresh-ticket');
   }
   
   getQueryArgs(args: any) {
