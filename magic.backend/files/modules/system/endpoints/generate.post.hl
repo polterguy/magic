@@ -126,6 +126,16 @@ for-each:x:@.arguments/*/endpoints/*
 
 
 /*
+ * We need to keep track of each component we create, such that
+ * we can correctly import the components into our app.module.ts file
+ * after we have created all components.
+ *
+ * This little node does just that.
+ */
+.components
+
+
+/*
  * Starting substitution process of files' content,
  * according to [.arguments] given, and how we treated them above.
  */
@@ -157,10 +167,9 @@ for-each:x:@.files/*/*
 
 /*
  * Creating one component for each "crud-get" endpoint.
+ *
  * Notice, without a "crud-get", there is no reasons to create a grid component.
  */
-lambda2hyper:x:@.arguments
-log.info:x:-
 for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
@@ -172,12 +181,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       .:/
    set-value:x:@.filename
       get-value:x:@strings.split/0/-
-
-
-   /*
-    * Loading template component HTML file.
-    */
-   io.files.load:/misc/templates/angular-component/component.html
 
 
    /*
@@ -193,7 +196,16 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Creating one ng-container in HTML file for each columns returned from CRUD read.
+    * First we do replacements in our component's HTML file.
+    *
+    * Loading template component HTML file.
+    */
+   io.files.load:/misc/templates/angular-component/component.html
+
+
+   /*
+    * Creating one ng-container HTML snippet in HTML file for each
+    * column returned from CRUD read.
     */
    .ng-containers:
    for-each:x:@.columns/*
@@ -216,7 +228,9 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Adding HTML file to ZIP source.
+    * Then we're done with the component's HTML file.
+    *
+    * Now adding HTML file to ZIP source.
     */
    set-value:x:+/+/*/*
       strings.concat
@@ -232,7 +246,10 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Loading template component SCSS file.
+    * Then loading our component's template SCSS file.
+    * Notice, this file doesn't really have any replacements,
+    * and is just added as is, as a helper file, the final user can
+    * use as he see fit to add custom classes for his component later.
     */
    io.files.load:/misc/templates/angular-component/component.scss
 
@@ -254,13 +271,15 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Loading template component ts file.
+    * Then we need to do replacements in our component's TS file.
+    *
+    * Loading template component TS (TypeScript) file.
     */
    io.files.load:/misc/templates/angular-component/component.ts
 
 
    /*
-    * Simple replacements first.
+    * Replacing any [[filename]] occurencies in TS file first.
     */
    strings.replace:x:@io.files.load
       .:[[filename]]
@@ -268,7 +287,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Figuring out component name.
+    * Figuring out component name, and replacing [[component-name]] with
+    * the actual name of the component we want to use.
     */
    .component-name
    set-value:x:@.component-name
@@ -281,7 +301,31 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Replacing columns list.
+    * Adding component's name to the list outside of of for-each loop,
+    * such that we can now all components we've created later.
+    */
+   add:x:@.components
+      get-nodes:x:@.component-name
+
+
+   /*
+    * Figuring out component's import filename.
+    */
+   strings.concat
+      get-value:x:@.filename
+      .:.component
+   add:x:@.components/0/-
+      get-nodes:x:@strings.concat
+
+
+   /*
+    * Replacing [[columns-list]].
+    *
+    * The TS file for the component contains a list of each column
+    * that should be visible in the mat-table. This is contained in
+    * the "displayedColumns" field. This logic makes sure that value
+    * is dynamically changed, such that by default, all columns are
+    * shown.
     */
    .columns-list:
    for-each:x:@.columns/*
@@ -300,6 +344,10 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
    /*
     * Replacing service GET method.
+    *
+    * This is the place in the TS file that retrieves records from the
+    * server, and becomes a reference to the correct method in
+    * our "http-service.ts" file.
     */
    strings.replace:x:@strings.replace
       .:[[service-get-method]]
@@ -309,7 +357,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Adding ts file to ZIP source.
+    * Adding component's TS file to ZIP source.
     */
    set-value:x:+/+/*/*
       strings.concat
@@ -322,6 +370,75 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       .
          :
             :
+
+
+/*
+ * Then we need to do replacements in our app.module.ts file.
+ *
+ * This will import all components we created above into our
+ * app.module.ts files, and also reference them in its "declarations"
+ * declaration.
+ *
+ * First we create what needs to be injected into our file.
+ */
+.imports:
+.declarations:
+for-each:x:@.components/*
+
+
+   /*
+    * First appending our import declaration into [.imports].
+    */
+   set-value:x:@.imports
+      strings.concat
+         get-value:x:@.imports
+         .:"import { "
+         get-value:x:@.dp/#
+         .:" } from './components/"
+         get-value:x:@.dp/#/0
+         .:"';\r\n"
+
+
+   /*
+    * Then appending our declaration into [.declarations].
+    */
+   set-value:x:@.declarations
+      strings.concat
+         get-value:x:@.declarations
+         .:"    "
+         get-value:x:@.dp/#
+         .:",\r\n"
+
+
+/*
+ * Then we need to find our app.module.ts file in our list of files.
+ */
+for-each:x:@.files/*
+   if
+      eq
+         get-value:x:@.dp/#
+         .:/magic-angular/src/app/app.module.ts
+      .lambda
+
+
+         /*
+          * Doing actual replacements.
+          *
+          * First [[imports]] part.
+          */
+         set-value:x:@.dp/#/*
+            strings.replace:x:@.dp/#/*
+               .:[[imports]]
+               get-value:x:@.imports
+
+
+         /*
+          * Then our [.declarations] part.
+          */
+         set-value:x:@.dp/#/*
+            strings.replace:x:@.dp/#/*
+               .:[[declarations]]
+               get-value:x:@.declarations
 
 
 /*
