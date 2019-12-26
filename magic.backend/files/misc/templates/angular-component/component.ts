@@ -8,14 +8,14 @@ import { HttpService } from '../http-service';
   styleUrls: ['./[[filename]].component.scss']
 })
 export class [[component-name]] implements OnInit {
-  private dataSource: any;
+  private data: any;
   private displayedColumns: string[] = [[[columns-list]]];
 
   constructor(private httpService: HttpService) { }
 
   ngOnInit() {
     this.httpService.[[service-get-method]]({}).subscribe(res => {
-      this.dataSource = res;
+      this.data = res;
     });
   }
 }
