@@ -16,6 +16,7 @@
    overwrite:bool
    args
    validators
+   secretFields:string
 .description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
 
 
@@ -315,6 +316,37 @@ set-value:x:@.folder
          .:/
       .:/
 io.folders.create:x:@.folder
+
+
+/*
+ * Making sure we remove all [secretFields].
+ */
+if
+   or
+      not
+         eq
+            get-value:x:@.arguments/*/secretFields
+            .:
+      not
+         eq
+            get-value:x:@.arguments/*/secretFields
+            .
+   .lambda
+
+
+      /*
+       * Caller supplied secret fields, which are supposed to be hidden.
+       */
+      strings.split:x:@.arguments/*/secretFields
+         .:,
+      for-each:x:-/*
+         for-each:x:@apply/*/wait.slots.signal/*/columns/*
+            if
+               eq
+                  get-name:x:@.dp/#
+                  get-value:x:@for-each/@.dp/#
+               .lambda
+                  remove-node:x:@.dp/#
 
 
 /*

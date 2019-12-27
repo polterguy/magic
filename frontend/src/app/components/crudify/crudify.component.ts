@@ -31,6 +31,7 @@ export class CrudifyComponent implements OnInit {
   private columns: any[] = null;
   private validators: any[] = null;
   private overwrite = false;
+  private secretFields: string = null;
 
   // True while we're CRUDifying.
   isCrudifying = false;
@@ -201,7 +202,10 @@ export class CrudifyComponent implements OnInit {
 
   getDefaultValidator(fieldName: string, tableName: string) {
     if (fieldName === 'password' && (tableName === 'dbo.users' || tableName === 'users')) {
-      this.showSuccess('Notice! BlowFish hashing was automatically added to your password field!');
+      this.showSuccess('BlowFish was added to your password field, and it was marked as protected!');
+
+      // Also making sure we don't return password on HTTP GET endpoint.
+      this.secretFields = 'password';
       return `eval:x:+
 slots.signal:transformers.hash-password
    reference:x:@.arguments/*/password`;
@@ -399,11 +403,13 @@ slots.signal:transformers.hash-password
         .filter(x => !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
+    let secretFields = '';
     if (curVerb === 'get') {
       args.cache = this.caching;
       args.columns = this.columns
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
       args.publicCache = this.publicCache;
+      secretFields = this.secretFields;
     }
 
     let validators = '';
@@ -430,6 +436,7 @@ slots.signal:transformers.hash-password
       args,
       validators,
       overwrite: this.overwrite,
+      secretFields,
     }).subscribe((res: any) => {
       this.noLoc += res.loc;
       this.createHttpEndpoints(verbs.slice(1), callback);
