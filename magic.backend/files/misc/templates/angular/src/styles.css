@@ -8,10 +8,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     color:rgb(0,0,0);
 }
 
+.relativized {
+    position: relative;
+}
+
 .right-aligned {
     text-align: right;
 }
 
 .fill-width {
     width: 100%;
+}
+
+.top-right {
+    position: absolute !important;
+    top: .5rem;
+    right: .5rem;
 }

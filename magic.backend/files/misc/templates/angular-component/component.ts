@@ -11,6 +11,7 @@ import { HttpService } from '../../http-service';
 export class [[component-name]] implements OnInit {
   private data: any;
   private displayedColumns: string[] = [[[columns-list]]];
+  private filter: any = {};
 
   constructor(
     private httpService: HttpService,
@@ -22,7 +23,7 @@ export class [[component-name]] implements OnInit {
   }
 
   getData() {
-    this.httpService.[[service-get-method]]({}).subscribe(res => {
+    this.httpService.[[service-get-method]](this.filter).subscribe(res => {
       this.data = res;
     }, error => {
       this.error(error.error.message);
