@@ -212,6 +212,37 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
+    * Figuring out input to "crud-delete" endpoint, and doing
+    * substitution accordingly.
+    */
+   .delete-input:
+   for-each:x:@.arguments/*/endpoints/*
+      if
+         and
+            eq
+               get-value:x:@.dp/#/*/type
+               .:crud-delete
+            eq
+               get-value:x:@.dp/#/*/path
+               get-value:x:@for-each/@.dp/#/*/path
+         .lambda
+            for-each:x:@.dp/#/*/input/*
+               log.info:x:@.dp/#
+               set-value:x:@.delete-input
+                  strings.concat
+                     get-value:x:@.delete-input
+                     get-name:x:@.dp/#
+                     .:":el."
+                     get-name:x:@.dp/#
+                     .:,
+   strings.trim:x:@.delete-input
+      .:,
+   strings.replace:x:-/@strings.replace
+      .:[[delete-input]]
+      get-value:x:@strings.trim
+
+
+   /*
     * Then we're done with the component's HTML file.
     *
     * Now adding HTML file to ZIP source.
@@ -325,11 +356,13 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             .:"'"
             get-value:x:@.dp/#
             .:"',"
-   strings.trim:x:@.columns-list
-      .:,
+   set-value:x:@.columns-list
+      strings.concat
+         get-value:x:@.columns-list
+         .:"'delete-instance'"
    strings.replace:x:@strings.replace
       .:[[columns-list]]
-      get-value:x:@strings.trim
+      get-value:x:@.columns-list
 
 
    /*
@@ -341,6 +374,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     *
     * Notice, it will also replace the "count" method, necessary to know
     * how many total records can be found in table, with the given filter.
+    *
+    * In addition, it will also replace the "delete" method.
     */
    strings.replace:x:@strings.replace
       .:[[service-get-method]]
@@ -352,6 +387,11 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       strings.concat
          get-value:x:@.filename
          .:_countGet
+   strings.replace:x:@strings.replace
+      .:[[service-delete-method]]
+      strings.concat
+         get-value:x:@.filename
+         .:Delete
 
 
    /*

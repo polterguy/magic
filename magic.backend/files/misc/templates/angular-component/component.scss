@@ -6,10 +6,18 @@
         padding-top:2.5rem;
     }
     table {
-        th {
-            padding-right: 2rem;
-        }
         width: 100%;
+        tr {
+            th {
+                padding-right: 2rem;
+            }
+            td.delete-column,
+            th.delete-column {
+                width: 70px;
+                text-align: right;
+                padding-right: 0;
+            }
+        }
         tr.mat-row:hover {
             background-color: rgba(0,0,0,.1);
             cursor: pointer;

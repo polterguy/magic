@@ -34,6 +34,9 @@ export class AppComponent {
       localStorage.setItem('jwt_token', res.ticket);
       this.username = '';
       this.password = '';
+
+      // Refreshing JWT token every 5 minute.
+      setTimeout(() => this.tryRefreshTicket(), 300000);
     }, (error: any) => {
       this.snackBar.open(error, 'Close', {
         duration: 3000,
@@ -41,5 +44,21 @@ export class AppComponent {
       });
       console.log(error);
     });
+  }
+
+  tryRefreshTicket() {
+    if (this.isLoggedIn()) {
+      this.httpService.refreshTicket().subscribe(res => {
+        localStorage.setItem('jwt_token', res.ticket);
+        setTimeout(() => this.tryRefreshTicket(), 300000);
+      }, error => {
+        this.snackBar.open(error, 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar'],
+        });
+        console.log(error);
+        setTimeout(() => this.tryRefreshTicket(), 300000);
+      });
+    }
   }
 }
