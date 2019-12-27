@@ -28,6 +28,26 @@ export class [[component-name]] implements OnInit {
   getData() {
     this.httpService.[[service-get-method]](this.filter).subscribe(res => {
       this.data = res;
+      let cloned = {};
+      for(const idx in this.filter) {
+        if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
+          switch(idx) {
+            case 'limit':
+            case 'offset':
+            case 'order':
+            case 'direction':
+              break; // Ignoring
+            default:
+              cloned[idx] = this.filter[idx];
+              break;
+          }
+        }
+      }
+      this.httpService.[[service-count-method]](cloned).subscribe(res2 => {
+        this.count = res2.count;
+      }, error => {
+        this.error(error.error.message);
+      });
     }, error => {
       this.error(error.error.message);
     });

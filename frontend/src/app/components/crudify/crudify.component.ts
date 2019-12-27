@@ -288,7 +288,11 @@ slots.signal:transformers.hash-password
   crudifyTable() {
     const selectedVerbs = this.endpoints.filter(x => x.generate).map(x => x.verb);
     this.createHttpEndpoints(selectedVerbs, () => {
-      this.showSuccess(selectedVerbs.length + ' endpoints created successfully');
+      let count = selectedVerbs.length;
+      if (selectedVerbs.indexOf('get') > -1) {
+        count += 1;
+      }
+      this.showSuccess(count + ' endpoints created successfully');
     });
   }
 
@@ -350,7 +354,7 @@ slots.signal:transformers.hash-password
           };
         });
       this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
-        this.noEndpointsCreated += 4;
+        this.noEndpointsCreated += 5;
         this.crudifyTopTable(tables.splice(1));
       });
     }, (err) => {

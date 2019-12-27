@@ -34,7 +34,11 @@ export class HttpService {
           } else {
             result += '&';
           }
-          result += idx + '=' + encodeURIComponent(idxFilter);
+          if (idx.endsWith('.like')) {
+            result += idx + '=' + encodeURIComponent(idxFilter + '%');
+          } else {
+            result += idx + '=' + encodeURIComponent(idxFilter);
+          }
         }
       }
     }
