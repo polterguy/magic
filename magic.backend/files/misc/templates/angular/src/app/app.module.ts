@@ -23,7 +23,7 @@ import { HomeComponent } from './components/home.component';
 [[imports]]
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  return localStorage.getItem('jwt_token');
 }
 
 @NgModule({
