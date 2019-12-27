@@ -82,9 +82,12 @@ for-each:x:@.arguments/*/endpoints/*
             .:Put
       default
          throw:Unknown verb for HTTP endpoint
+   strings.replace:x:@.method
+      .:-
+      .:_
    set-value:x:@.method
       strings.concat
-         get-value:x:@.method
+         get-value:x:@strings.replace
          get-value:x:@.verb
 
 
@@ -335,12 +338,20 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     * This is the place in the TS file that retrieves records from the
     * server, and becomes a reference to the correct method in
     * our "http-service.ts" file.
+    *
+    * Notice, it will also replace the "count" method, necessary to know
+    * how many total records can be found in table, with the given filter.
     */
    strings.replace:x:@strings.replace
       .:[[service-get-method]]
       strings.concat
          get-value:x:@.filename
          .:Get
+   strings.replace:x:@strings.replace
+      .:[[service-count-method]]
+      strings.concat
+         get-value:x:@.filename
+         .:_countGet
 
 
    /*
