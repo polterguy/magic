@@ -322,7 +322,7 @@ io.folders.create:x:@.folder
  * Making sure we remove all [secretFields].
  */
 if
-   or
+   and
       not
          eq
             get-value:x:@.arguments/*/secretFields
@@ -350,7 +350,8 @@ if
 
 
 /*
- * Transforming lambda to hyper, and saving it to the correct file.
+ * Transforming lambda to hyper,
+ * and saving it to the correct file.
  */
 lambda2hyper:x:@apply/*
 unwrap:x:+
@@ -395,9 +396,94 @@ io.files.save:x:@strings.replace
 
 
 /*
- * Returning success to caller.
+ * Calculating how many lines of code we created.
  */
 get-count:x:@apply/*
+
+
+/*
+ * Checking if this is an HTTP GET verb, at which point we create two endpoints,
+ * one to retrieve actual data, and another to retrieve the count of records in table.
+ */
+if
+   eq
+      get-value:x:@.arguments/*/verb
+      .:get
+   .lambda
+
+
+      /*
+       * Creating our "count" endpoint, in addition to our normal GET endpoint.
+       *
+       * First removing [columns], adding [count(*)] and then transforming lambda
+       * to hyper, and saving it to the correct file.
+       */
+      remove-node:x:@apply/*/wait.slots.signal/*/columns/*
+      remove-node:x:@apply/*/.arguments/*/limit
+      remove-node:x:@apply/*/.arguments/*/offset
+      remove-node:x:@apply/*/.arguments/*/order
+      remove-node:x:@apply/*/.arguments/*/direction
+      add:x:@apply/*/wait.slots.signal/*/columns
+         .
+            count(*) as count
+      add:x:@apply/*/wait.slots.signal/*/args
+         .
+            limit:long:1
+      lambda2hyper:x:@apply/*
+      unwrap:x:+
+      .path:x:@.folder
+      strings.split:x:@.filename
+         .:/
+      set-value:x:@.path
+         strings.concat
+            get-value:x:@.path
+            get-value:x:@strings.split/0/-
+            .:-count
+            .:.
+            get-value:x:@.arguments/*/verb
+            .:.hl
+
+
+      /*
+       * Figuring out filename for HTTP endpoint.
+       */
+      strings.replace:x:@.path
+         .:' '
+         .:_
+
+
+      /*
+       * Making sure file does not exist from before, unless [.argument][overwrite] is true.
+       */
+      if
+         and
+            not
+               get-value:x:@.arguments/*/overwrite
+            io.files.exists:x:@strings.replace
+         .lambda
+            throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+
+
+      /*
+       * Saving file, now applied according to template declaration,
+       * and with the correct filename.
+       */
+      io.files.save:x:@strings.replace
+         get-value:x:@lambda2hyper
+
+
+      /*
+       * Adding count endpoint to LOC.
+       */
+      set-value:x:@get-count
+         math.add
+            get-value:x:@get-count
+            get-count:x:@apply/*
+
+
+/*
+ * Returning success to caller.
+ */
 unwrap:x:+/*/loc
 slots.return-nodes
    result:success
