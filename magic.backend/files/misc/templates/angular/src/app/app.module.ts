@@ -19,7 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { environment } from 'src/environments/environment';
-import { HomeComponent } from './components/home.component';
+import { HomeComponent } from './components/home/home.component';
 [[imports]]
 
 export function tokenGetter() {

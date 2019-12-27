@@ -211,6 +211,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       strings.concat
          .:/magic-angular/src/app/components/
          get-value:x:@.filename
+         .:/
+         get-value:x:@.filename
          .:.component.html
    set-value:x:+/*/*/*
       get-value:x:@strings.replace
@@ -235,6 +237,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    set-value:x:+/+/*/*
       strings.concat
          .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:/
          get-value:x:@.filename
          .:.component.scss
    set-value:x:+/*/*/*
@@ -276,7 +280,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Adding component's name to the list outside of of for-each loop,
+    * Adding component's name to the list outside of for-each loop,
     * such that we can now all components we've created later.
     */
    add:x:@.components
@@ -287,6 +291,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     * Figuring out component's import filename.
     */
    strings.concat
+      get-value:x:@.filename
+      .:/
       get-value:x:@.filename
       .:.component
    add:x:@.components/0/-
@@ -337,6 +343,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    set-value:x:+/+/*/*
       strings.concat
          .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:/
          get-value:x:@.filename
          .:.component.ts
    set-value:x:+/*/*/*
@@ -389,11 +397,13 @@ for-each:x:@.components/*
    strings.replace:x:@.dp/#/0
       .:.component
       .:
+   strings.split:x:@strings.replace
+      .:/
    set-value:x:@.routes
       strings.concat
          get-value:x:@.routes
          .:"  { path: '"
-         get-value:x:@strings.replace
+         get-value:x:@strings.split/0
          .:"', component: "
          get-value:x:@.dp/#
          .:" },\r\n"
@@ -406,11 +416,11 @@ for-each:x:@.components/*
       strings.concat
          get-value:x:@.router-links
          .:"  <a\r\n    mat-button\r\n    routerLink=\"/"
-         get-value:x:@strings.replace
+         get-value:x:@strings.split/0
          .:"\"\r\n    routerLinkActive=\"active-link\"\r\n"
          .:"    *ngIf=\"isLoggedIn()\"\r\n"
          .:"    [routerLinkActiveOptions]=\"{exact:true}\">"
-         get-value:x:@strings.replace
+         get-value:x:@strings.split/0
          .:"</a>\r\n\r\n"
 
 
@@ -558,7 +568,7 @@ for-each:x:@.files/*
             .:/magic-angular/src/index.html
          eq
             get-value:x:@.dp/#
-            .:/magic-angular/src/app/components/home.component.html
+            .:/magic-angular/src/app/components/home/home.component.html
       .lambda
 
 
