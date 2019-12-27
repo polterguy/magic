@@ -6,6 +6,7 @@
 .description:"Generates frontend client side according to arguments given."
 .arguments
    apiUrl:string
+   name:string
    endpoints
 
 
@@ -407,16 +408,17 @@ for-each:x:@.components/*
          .:"  <a\r\n    mat-button\r\n    routerLink=\"/"
          get-value:x:@strings.replace
          .:"\"\r\n    routerLinkActive=\"active-link\"\r\n"
+         .:"    *ngIf=\"isLoggedIn()\"\r\n"
          .:"    [routerLinkActiveOptions]=\"{exact:true}\">"
          get-value:x:@strings.replace
          .:"</a>\r\n\r\n"
 
 
 /*
- * Then we need to find our app.module.ts file, our http-service.ts file,
+ * Then we need to find our index.html file, app.module.ts file, our http-service.ts file,
  * our environment.ts file, and our app.component.html files from our list
  * of files, and do substitutions inside of these, according to which components
- * we'll need.
+ * we'll need, and other settings provided as arguments.
  */
 for-each:x:@.files/*
 
@@ -540,6 +542,33 @@ for-each:x:@.files/*
             strings.replace:x:@.dp/#/*
                .:[[router-links]]
                get-value:x:@.router-links
+
+
+   /*
+    * Checking if this is our app.component.html file,
+    * our index.html file, or our home.component.html file.
+    */
+   if
+      or
+         eq
+            get-value:x:@.dp/#
+            .:/magic-angular/src/app/app.component.html
+         eq
+            get-value:x:@.dp/#
+            .:/magic-angular/src/index.html
+         eq
+            get-value:x:@.dp/#
+            .:/magic-angular/src/app/components/home.component.html
+      .lambda
+
+
+         /*
+          * [[name]] replacement.
+          */
+         set-value:x:@.dp/#/*
+            strings.replace:x:@.dp/#/*
+               .:[[name]]
+               get-value:x:@.arguments/*/name
 
 
 /*

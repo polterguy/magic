@@ -5,8 +5,13 @@
     mat-button
     routerLink="/"
     routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{exact:true}">Magic</a>
+    [routerLinkActiveOptions]="{exact:true}">[[name]]</a>
 [[router-links]]
+  <a
+    *ngIf="isLoggedIn()"
+    mat-button
+    (click)="logout()">Logout</a>
+
 </mat-toolbar>
 
 <div *ngIf="isLoggedIn()">

@@ -1,7 +1,6 @@
 
 import { Component } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Router } from '@angular/router';
 
 import { HttpService } from './http-service';
 
@@ -16,25 +15,24 @@ export class AppComponent {
 
   constructor(
     private httpService: HttpService,
-    private jwtHelper: JwtHelperService,
-    private router: Router) {}
+    private jwtHelper: JwtHelperService) {
+  }
 
   isLoggedIn() {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('jwt_token');
     return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
   }
 
   logout() {
-    localStorage.removeItem('access_token');
-    this.router.navigate(['']);
+    localStorage.removeItem('jwt_token');
   }
 
   login() {
     this.httpService.authenticate(this.username, this.password).subscribe(res => {
-      localStorage.setItem('access_token', res.ticket);
+      localStorage.setItem('jwt_token', res.ticket);
       this.username = '';
       this.password = '';
-    }, error => {
+    }, (error: any) => {
       console.log(error);
     });
   }
