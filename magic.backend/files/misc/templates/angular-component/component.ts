@@ -53,6 +53,14 @@ export class [[component-name]] implements OnInit {
     });
   }
 
+  delete(ids: any) {
+    this.httpService.[[service-delete-method]](ids).subscribe(res => {
+      this.getData();
+    }, error => {
+      this.error(error.error.message);
+    });
+  }
+
   paged(e: PageEvent) {
     this.filter.limit = e.pageSize;
     this.filter.offset = e.pageIndex * this.filter.limit;
