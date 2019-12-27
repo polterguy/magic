@@ -1,7 +1,12 @@
 
 <div class="component-wrapper">
 
-  <div class="mat-elevation-z4">
+  <div class="mat-elevation-z4 relativized grid-wrapper">
+
+    <button
+      mat-button
+      class="top-right"
+      (click)="getData()">Filter</button>
 
     <table mat-table [dataSource]="data">
 [[ng-containers]]

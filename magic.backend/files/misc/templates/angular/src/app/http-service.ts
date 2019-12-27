@@ -27,12 +27,15 @@ export class HttpService {
     let result = '';
     for(const idx in args) {
       if (Object.prototype.hasOwnProperty.call(args, idx)) {
-        if (result === '') {
-          result += '?';
-        } else {
-          result += '&';
+        const idxFilter = args[idx];
+        if (idxFilter !== null && idxFilter !== undefined && idxFilter !== '') {
+          if (result === '') {
+            result += '?';
+          } else {
+            result += '&';
+          }
+          result += idx + '=' + encodeURIComponent(idxFilter);
         }
-        result += idx + '=' + encodeURIComponent(args[idx]);
       }
     }
     return result;
