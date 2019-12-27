@@ -1,5 +1,6 @@
 
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpService } from './http-service';
@@ -15,7 +16,8 @@ export class AppComponent {
 
   constructor(
     private httpService: HttpService,
-    private jwtHelper: JwtHelperService) {
+    private jwtHelper: JwtHelperService,
+    private snackBar: MatSnackBar) {
   }
 
   isLoggedIn() {
@@ -33,6 +35,10 @@ export class AppComponent {
       this.username = '';
       this.password = '';
     }, (error: any) => {
+      this.snackBar.open(error, 'Close', {
+        duration: 3000,
+        panelClass: ['error-snackbar'],
+      });
       console.log(error);
     });
   }
