@@ -1,6 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PageEvent } from '@angular/material/paginator';
 import { HttpService } from '../../http-service';
 
 @Component({
@@ -12,6 +13,7 @@ export class [[component-name]] implements OnInit {
   private data: any;
   private displayedColumns: string[] = [[[columns-list]]];
   private filter: any = {};
+  private count: number = 1000;
 
   constructor(
     private httpService: HttpService,
@@ -19,6 +21,7 @@ export class [[component-name]] implements OnInit {
   }
 
   ngOnInit() {
+    this.filter.limit = 25;
     this.getData();
   }
 
@@ -30,9 +33,15 @@ export class [[component-name]] implements OnInit {
     });
   }
 
+  paged(e: PageEvent) {
+    this.filter.limit = e.pageSize;
+    this.filter.offset = e.pageIndex * this.filter.limit;
+    this.getData();
+  }
+
   error(error: string) {
     this.snackBar.open(error, 'Close', {
-      duration: 10000,
+      duration: 5000,
       panelClass: ['error-snackbar'],
     });
   }
