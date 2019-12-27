@@ -17,6 +17,7 @@ export class EndpointsComponent implements OnInit {
   private displayedSecondRowColumns: string[] = ['details'];
   private endpoints: any[] = [];
   private filter = '';
+  private name: string = null;
   private showSystemEndpoints = false;
 
   constructor(
@@ -32,7 +33,7 @@ export class EndpointsComponent implements OnInit {
           selected: !x.path.startsWith('magic/modules/system/'),
         };
       });
-    }, (err) => {
+    }, err => {
       this.showError(err.error.message);
     });
   }
@@ -208,10 +209,15 @@ export class EndpointsComponent implements OnInit {
   }
 
   generateFrontEnd() {
+    if (this.name === null || this.name === undefined || this.name === '') {
+      this.showError('You have to provide a name for your app');
+      return;
+    }
     const toGenerate = this.endpoints.filter(x => x.selected).map(x => x.endpoint);
     const args = {
       endpoints: toGenerate,
       apiUrl: environment.apiURL,
+      name: this.name,
     };
     this.service.generate(args);
   }

@@ -144,6 +144,13 @@
 
     </table>
     <div class="right-aligned">
+      <mat-form-field class="app-name">
+        <input 
+          matInput 
+          placeholder="Name of your app"
+          type="text" 
+          [(ngModel)]="name">
+      </mat-form-field>
       <button
         mat-raised-button
         (click)="generateFrontEnd()">Generate</button>
