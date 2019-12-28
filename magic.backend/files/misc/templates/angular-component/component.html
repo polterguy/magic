@@ -3,6 +3,11 @@
 
   <div class="mat-elevation-z4 relativized grid-wrapper">
 
+    <button
+      mat-button
+      class="top-right"
+      (click)="createNewRecord()">New ...</button>
+
     <table mat-table [dataSource]="data">
 [[ng-containers]]
       <ng-container matColumnDef="delete-instance">
