@@ -28,8 +28,7 @@ export class [[component-name]] implements OnInit {
 
   ngOnInit() {
     this.getData();
-[[form-control-value-subscriptions]]
-  }
+[[form-control-value-subscriptions]]  }
 
   getData() {
     this.httpService.[[service-get-method]](this.filter).subscribe(res => {
@@ -65,6 +64,10 @@ export class [[component-name]] implements OnInit {
     }, error => {
       this.error(error.error.message);
     });
+  }
+
+  createNewRecord() {
+    alert('TODO');
   }
 
   paged(e: PageEvent) {

@@ -25,3 +25,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     top: .5rem;
     right: .5rem;
 }
+
+.filter-textbox {
+    max-width: 15rem;;
+}
