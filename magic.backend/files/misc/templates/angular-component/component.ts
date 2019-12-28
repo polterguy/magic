@@ -2,6 +2,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { HttpService } from '../../http-service';
 
 @Component({
@@ -12,17 +15,20 @@ import { HttpService } from '../../http-service';
 export class [[component-name]] implements OnInit {
   private data: any;
   private displayedColumns: string[] = [[[columns-list]]];
-  private filter: any = {};
-  private count: number = 1000;
-
+  private filter: any = {
+    limit: 10
+  };
+  private count: number = 0;
+  private debounce: number = 400;
+[[form-control-declarations]]
   constructor(
     private httpService: HttpService,
     private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
-    this.filter.limit = 25;
     this.getData();
+[[form-control-value-subscriptions]]
   }
 
   getData() {
