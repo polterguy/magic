@@ -1,49 +1,58 @@
 
-<mat-toolbar>
+<mat-sidenav-container mode="side" class="sidenav-container">
 
-  <a
-    mat-button
-    routerLink="/"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{exact:true}">[[name]]</a>
-[[router-links]]
-  <a
-    *ngIf="isLoggedIn()"
-    mat-button
-    (click)="logout()">logout</a>
+  <mat-sidenav class="sidenav-menu" [(opened)]="sidenavOpened">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-link"
+      class="menu-item"
+      [routerLinkActiveOptions]="{exact:true}">[[name]]</a>
+[[router-links]]    <a
+      *ngIf="isLoggedIn()"
+      mat-button
+      class="menu-item"
+      (click)="logout()">logout</a>
+  </mat-sidenav>
 
-</mat-toolbar>
-
-<div *ngIf="isLoggedIn()">
-  <router-outlet></router-outlet>
-</div>
-
-<div *ngIf="!isLoggedIn()">
-  <mat-card class="login-card">
-
-    <mat-form-field class="fill-width">
-      <input 
-        matInput 
-        placeholder="Username"
-        type="text" 
-        [(ngModel)]="username">
-    </mat-form-field>
-
-    <mat-form-field class="fill-width">
-      <input 
-        matInput 
-        placeholder="Password"
-        autocomplete="new-password"
-        type="password" 
-        [(ngModel)]="password">
-    </mat-form-field>
-
-    <div class="right-aligned">
-      <button 
-        mat-button
-        (click)="login()"
-        matTooltip="Login to your app">Login</button>
+  <mat-sidenav-content>
+    <div *ngIf="isLoggedIn()">
+      <button
+        (click)="openSideNavigation()"
+        class="sidenav-button"
+        mat-button>Menu</button>
+      <router-outlet></router-outlet>
     </div>
+    
+    <div *ngIf="!isLoggedIn()">
+      <mat-card class="login-card">
+    
+        <mat-form-field class="fill-width">
+          <input 
+            matInput 
+            placeholder="Username"
+            type="text" 
+            [(ngModel)]="username">
+        </mat-form-field>
+    
+        <mat-form-field class="fill-width">
+          <input 
+            matInput 
+            placeholder="Password"
+            autocomplete="new-password"
+            type="password" 
+            [(ngModel)]="password">
+        </mat-form-field>
+    
+        <div class="right-aligned">
+          <button 
+            mat-button
+            (click)="login()"
+            matTooltip="Login to your app">Login</button>
+        </div>
+    
+      </mat-card>
+    </div>
+  </mat-sidenav-content>
 
-  </mat-card>
-</div>
+<mat-sidenav-container>

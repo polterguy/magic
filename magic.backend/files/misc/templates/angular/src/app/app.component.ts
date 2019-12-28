@@ -13,6 +13,7 @@ import { HttpService } from './http-service';
 export class AppComponent {
   private username: string;
   private password: string;
+  private sidenavOpened: boolean = false;
 
   constructor(
     private httpService: HttpService,
@@ -60,5 +61,9 @@ export class AppComponent {
         setTimeout(() => this.tryRefreshTicket(), 300000);
       });
     }
+  }
+
+  openSideNavigation() {
+    this.sidenavOpened = true;
   }
 }
