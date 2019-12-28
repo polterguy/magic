@@ -197,9 +197,9 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
           <mat-form-field class=""fill-width air-right"">
             <input matInput placeholder="""
             get-value:x:@.dp/#
-            .:@""" type=""text"" [(ngModel)]=""filter['"
+            .:@""" type=""text"" [formControl]="""
             get-value:x:@.dp/#
-            .:@".eq']"">
+            .:@""">
           </mat-form-field>"
             .:"\r\n        </th>\r\n"
             .:@"        <td mat-cell *matCellDef=""let el"">{{el."
@@ -392,6 +392,53 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       strings.concat
          get-value:x:@.filename
          .:Delete
+
+
+   /*
+    * Creating a field for each form control we need to create.
+    */
+   .form-control-declarations:
+   for-each:x:@.columns/*
+      set-value:x:@.form-control-declarations
+         strings.concat
+            get-value:x:@.form-control-declarations
+            .:"  private "
+            get-value:x:@.dp/#
+            .:": FormControl;\r\n"
+   strings.replace:x:@strings.replace
+      .:[[form-control-declarations]]
+      get-value:x:@.form-control-declarations
+
+
+   /*
+    * Making sure we subscribe to the change event for each of our form controls,
+    * with a debounce time though, such that we don't flush the server with filtering
+    * requests.
+    */
+   .form-control-value-subscriptions:
+   for-each:x:@.columns/*
+      set-value:x:@.form-control-value-subscriptions
+         strings.concat
+            get-value:x:@.form-control-value-subscriptions
+            .:"    this."
+            get-value:x:@.dp/#
+            .:" = new FormControl('');\r\n"
+            .:"    this."
+            get-value:x:@.dp/#
+            .:".valueChanges\r\n"
+            .:@"      .pipe(debounceTime(this.debounce), distinctUntilChanged())
+      .subscribe(query => {
+        this.filter['"
+            get-value:x:@.dp/#
+            .:".eq'] = this."
+            get-value:x:@.dp/#
+            .:".value;\r\n"
+            .:@"        this.getData();
+      });
+"
+   strings.replace:x:@strings.replace
+      .:[[form-control-value-subscriptions]]
+      get-value:x:@.form-control-value-subscriptions
 
 
    /*
