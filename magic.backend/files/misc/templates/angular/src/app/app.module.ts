@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -47,7 +47,7 @@ export function tokenGetter() {
       }
     }),
     MatButtonModule,
-    MatToolbarModule,
+    MatSidenavModule,
     MatTableModule,
     MatCardModule,
     MatInputModule,

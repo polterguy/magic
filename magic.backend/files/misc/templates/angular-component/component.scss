@@ -1,9 +1,9 @@
 
 .component-wrapper {
-    padding:4rem 5rem 2rem 5rem;
     position: relative;
     .grid-wrapper {
         padding-top:2.5rem;
+        min-width: fit-content;
     }
     table {
         width: 100%;
@@ -22,5 +22,11 @@
             background-color: rgba(0,0,0,.1);
             cursor: pointer;
         }
+    }
+}
+
+@media screen and (min-width: 800px) {
+    .component-wrapper {
+        padding:4rem 5rem 2rem 5rem;
     }
 }

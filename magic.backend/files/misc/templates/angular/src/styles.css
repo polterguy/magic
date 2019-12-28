@@ -3,6 +3,20 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.sidenav-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-height: 100%;
+}
+
+.sidenav-menu {
+    border-right: solid 1px rgb(180, 180, 180);
+    background: #eee;
+}
+
 ::ng-deep .error-snackbar {
     background:rgb(255,100,100);
     color:rgb(0,0,0);
@@ -22,10 +36,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .top-right {
     position: absolute !important;
-    top: .5rem;
-    right: .5rem;
+    top: 0;
+    right: 0;
 }
 
 .filter-textbox {
     max-width: 15rem;;
+}
+
+.menu-item {
+    text-transform: capitalize;
+    display: list-item !important;
+    text-align: left !important;
 }

@@ -519,13 +519,14 @@ for-each:x:@.components/*
    set-value:x:@.router-links
       strings.concat
          get-value:x:@.router-links
-         .:"  <a\r\n    mat-button\r\n    routerLink=\"/"
+         .:"    <a\r\n      mat-button\r\n      routerLink=\"/"
          get-value:x:@strings.split/0
-         .:"\"\r\n    routerLinkActive=\"active-link\"\r\n"
-         .:"    *ngIf=\"isLoggedIn()\"\r\n"
-         .:"    [routerLinkActiveOptions]=\"{exact:true}\">"
+         .:"\"\r\n      routerLinkActive=\"active-link\"\r\n"
+         .:"      class=\"menu-item\"\r\n"
+         .:"      *ngIf=\"isLoggedIn()\"\r\n"
+         .:"      [routerLinkActiveOptions]=\"{exact:true}\">"
          get-value:x:@strings.split/0
-         .:"</a>\r\n\r\n"
+         .:"</a>\r\n"
 
 
 /*
