@@ -11,7 +11,7 @@
     <table mat-table [dataSource]="users" class="users-grid auth-grid">
 
       <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef>
+        <th colspan="2" mat-header-cell *matHeaderCellDef>
           <mat-form-field appearance="outline" class="fill-width filter-textbox">
             <mat-label>Search ...</mat-label>
             <input 
