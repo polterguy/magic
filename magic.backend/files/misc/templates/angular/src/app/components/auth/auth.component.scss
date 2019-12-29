@@ -1,0 +1,55 @@
+
+.auth-flex-grid {
+    width: auto;
+    margin-top: 2.5rem;
+}
+
+.auth-card {
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.auth-grid {
+    width: 100%;
+    tr {
+        td:nth-child(1), th:nth-child(1) {
+            width: 100%;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            text-align: right;
+        }
+        th:nth-child(2) {
+            padding-right: 16px;
+        }
+        td:nth-child(2) {
+            padding-right: 0;
+            button {
+                text-align: right;
+            }
+        }
+    }
+}
+
+.users-grid {
+    tr.mat-row:hover {
+        background-color: rgba(0,0,0,.1);
+        cursor: pointer;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    .auth-flex-grid {
+        display: flex;
+        margin: 5rem 2rem 0 2rem;
+        .users-card {
+            padding: 2rem;
+            flex: 1;
+            margin-right: .5rem;
+        }
+        .roles-card {
+            padding: 2rem;
+            flex: 1;
+            margin-left: .5rem;
+        }
+    }
+}

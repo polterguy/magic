@@ -1,0 +1,28 @@
+
+<h1 mat-dialog-title>New role</h1>
+<div mat-dialog-content>
+
+  <mat-form-field>
+    <input 
+      matInput 
+      placeholder="Name"
+      autocomplete="off"
+      [(ngModel)]="name">
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+
+  <div>
+
+    <button 
+      mat-button
+      (click)="ok()">Ok</button>
+
+    <button
+      mat-button
+      (click)="cancel()">Cancel</button>
+
+  </div>
+
+</div>
