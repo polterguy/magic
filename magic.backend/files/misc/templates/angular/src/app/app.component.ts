@@ -66,4 +66,8 @@ export class AppComponent {
   openSideNavigation() {
     this.sidenavOpened = true;
   }
+
+  closeNavigator() {
+    this.sidenavOpened = false;
+  }
 }

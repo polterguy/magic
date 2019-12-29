@@ -525,6 +525,7 @@ for-each:x:@.components/*
          get-value:x:@strings.split/0
          .:"\"\r\n      routerLinkActive=\"active-link\"\r\n"
          .:"      class=\"menu-item\"\r\n"
+         .:"      (click)=\"closeNavigator()\"\r\n"
          .:"      *ngIf=\"isLoggedIn()\"\r\n"
          .:"      [routerLinkActiveOptions]=\"{exact:true}\">"
          get-value:x:@strings.split/0

@@ -7,46 +7,6 @@
 CREATE DATABASE `magic_crm`;
 USE `magic_crm`;
 
-/*
- * Creating users table.
- */
-CREATE TABLE `users` (
-  `username` varchar(256) NOT NULL,
-  `password` varchar(256) NOT NULL,
-  PRIMARY KEY (`username`),
-  UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*
- * Creating roles table.
- */
-CREATE TABLE `roles` (
-  `name` varchar(45) NOT NULL,
-  `description` varchar(256) NULL,
-  PRIMARY KEY (`name`),
-  UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*
- * Creating association between roles and users through users_roles table.
- */
-CREATE TABLE `users_roles` (
-  `role` varchar(45) NOT NULL,
-  `user` varchar(256) NOT NULL,
-  PRIMARY KEY (`role`, `user`),
-  KEY `roles_fky_idx` (`role`),
-  KEY `users_fky_idx` (`user`),
-  CONSTRAINT `roles_fky` FOREIGN KEY (`role`) REFERENCES `roles` (`name`) ON DELETE CASCADE,
-  CONSTRAINT `users_fky` FOREIGN KEY (`user`) REFERENCES `users` (`username`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*
- * Inserting some few roles into our roles table.
- */
-insert into roles (name, description) values ('root', 'This is a root account in your system, and it has complete access to do anything.');
-insert into roles (name, description) values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
-insert into roles (name, description) values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
-
 
 /*
  * Creating account types, and accounts.
@@ -66,7 +26,6 @@ CREATE TABLE `accounts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
   `account_type` int(11) NOT NULL,
-  `account_manager` varchar(256) NOT NULL,
   `phone` varchar(45) DEFAULT NULL,
   `street` varchar(128) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
@@ -74,8 +33,6 @@ CREATE TABLE `accounts` (
   `country` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `account_typefky_idx` (`account_type`),
-  KEY `account_manager_fky_idx` (`account_manager`),
-  CONSTRAINT `account_manager_fky` FOREIGN KEY (`account_manager`) REFERENCES `users` (`username`),
   CONSTRAINT `account_type_fky` FOREIGN KEY (`account_type`) REFERENCES `account_types` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -114,7 +71,7 @@ CREATE TABLE `contacts_extra` (
   `value` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`contact`,`type`),
   KEY `contacts_extra_type_fky_idx` (`type`),
-  KEY `contacts_extre_fky_idx` (`contact`),
+  KEY `contacts_extra_fky_idx` (`contact`),
   CONSTRAINT `contacts_extra_type_fky` FOREIGN KEY (`type`) REFERENCES `contacts_extra_type` (`id`) ON DELETE CASCADE,
   CONSTRAINT `contacts_fky` FOREIGN KEY (`contact`) REFERENCES `contacts` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

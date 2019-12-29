@@ -31,6 +31,11 @@ export class CreateUserDialogComponent {
     }
     this.authService.createUser(this.data.name, this.data.password).subscribe(res => {
       this.dialogRef.close(this.data);
+    }, error => {
+      this.snackBar.open(error.error.message, 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar'],
+      });
     });
   }
   
