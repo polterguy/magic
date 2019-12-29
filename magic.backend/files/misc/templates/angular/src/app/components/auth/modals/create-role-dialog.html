@@ -2,18 +2,18 @@
 <h1 mat-dialog-title>New role</h1>
 <div mat-dialog-content>
 
-  <mat-form-field>
+  <mat-form-field class="fill-width">
     <input 
       matInput 
       placeholder="Name"
       autocomplete="off"
-      [(ngModel)]="name">
+      [(ngModel)]="data.name">
   </mat-form-field>
 </div>
 
 <div mat-dialog-actions>
 
-  <div>
+  <div class="right-aligned">
 
     <button 
       mat-button

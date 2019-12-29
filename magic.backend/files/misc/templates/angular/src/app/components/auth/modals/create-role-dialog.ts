@@ -1,6 +1,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { AuthService } from 'src/app/auth-service';
 
 export interface DialogData {
   name: string;
@@ -10,13 +11,19 @@ export interface DialogData {
   templateUrl: 'create-role-dialog.html',
 })
 export class CreateRoleDialogComponent {
-  private name: string = null;
 
   constructor(
     public dialogRef: MatDialogRef<CreateRoleDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private authService: AuthService) { }
 
-  close() {
+  ok() {
+    this.authService.createRole(this.data.name).subscribe(res => {
+      this.dialogRef.close(this.data);
+    });
+  }
+  
+  cancel() {
     this.dialogRef.close();
   }
 }

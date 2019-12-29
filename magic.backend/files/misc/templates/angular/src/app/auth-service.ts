@@ -71,7 +71,7 @@ export class AuthService {
     });
   }
 
-  createRole(name: string, description: string) {
+  createRole(name: string, description?: string) {
     return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic_auth/roles', {
       name,
       description,
