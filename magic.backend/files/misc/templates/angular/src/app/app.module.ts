@@ -21,6 +21,8 @@ import { AppComponent } from './app.component';
 
 import { environment } from 'src/environments/environment';
 import { HomeComponent } from './components/home/home.component';
+import { AuthComponent } from './components/auth/auth.component';
+import { NewRoleDialogComponent } from './components/auth/modals/new-role-dialog';
 [[imports]]
 
 export function tokenGetter() {
@@ -31,6 +33,8 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     HomeComponent,
+    AuthComponent,
+    NewRoleDialogComponent,
 [[declarations]]
   ],
   imports: [
@@ -56,6 +60,9 @@ export function tokenGetter() {
     MatPaginatorModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    NewRoleDialogComponent,
+  ]
 })
 export class AppModule { }

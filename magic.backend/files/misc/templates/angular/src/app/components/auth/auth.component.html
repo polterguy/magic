@@ -1,0 +1,77 @@
+
+<div class="auth-flex-grid">
+
+  <mat-card class="auth-card users-card">
+
+    <table mat-table [dataSource]="users" class="users-grid auth-grid">
+
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>Username</th>
+        <td mat-cell *matCellDef="let el">{{el.username}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let el">
+          <button
+            [disabled]="el.username === 'root'"
+            matTooltip="Delete this user"
+            (click)="deleteUser(el.username)"
+            mat-button>Delete</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="userColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: userColumns;"></tr>
+
+    </table>
+
+    <mat-paginator
+      [length]="userCount"
+      [pageSize]="userFilter.limit"
+      (page)="usersPaged($event)"
+      [pageSizeOptions]="[5,10,25,50]">
+    </mat-paginator>
+
+  </mat-card>
+
+  <mat-card class="auth-card roles-card">
+
+    <button
+      mat-button
+      class="top-right"
+      (click)="createNewRole()">New ...</button>
+
+    <table mat-table [dataSource]="roles" class="roles-grid auth-grid">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let el">{{el.name}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let el">
+          <button
+            [disabled]="el.name === 'root'"
+            matTooltip="Delete this role"
+            (click)="deleteRole(el.name)"
+            mat-button>Delete</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="roleColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: roleColumns;"></tr>
+
+    </table>
+
+    <mat-paginator
+      [length]="roleCount"
+      [pageSize]="roleFilter.limit"
+      (page)="rolesPaged($event)"
+      [pageSizeOptions]="[5,10,25,50]">
+    </mat-paginator>
+
+  </mat-card>
+
+</div>
