@@ -32,10 +32,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .right-aligned {
     text-align: right;
+    width: 100%;
 }
 
 .fill-width {
     width: 100%;
+}
+
+.half-size {
+    margin-right: .5rem;
+    width: calc(50% - .5rem);
 }
 
 .top-right {
@@ -45,11 +51,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .filter-textbox {
-    max-width: 15rem;;
+    max-width: 15rem;
+    font-size: 10px;
 }
 
 .menu-item {
     text-transform: capitalize;
     display: list-item !important;
     text-align: left !important;
+}
+
+.mat-dialog-container {
+    width: 700px !important;
 }

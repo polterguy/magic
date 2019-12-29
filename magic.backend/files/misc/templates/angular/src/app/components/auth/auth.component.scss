@@ -9,6 +9,15 @@
     margin-bottom: 2rem;
 }
 
+.users-card {
+    .top-left {
+        position: absolute;
+        top: .5rem;
+        left: .5rem;
+        font-size: 10px;
+    }
+}
+
 .auth-grid {
     width: 100%;
     tr {

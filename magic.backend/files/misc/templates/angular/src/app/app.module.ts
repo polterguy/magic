@@ -13,6 +13,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
@@ -22,7 +24,8 @@ import { AppComponent } from './app.component';
 import { environment } from 'src/environments/environment';
 import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
-import { NewRoleDialogComponent } from './components/auth/modals/new-role-dialog';
+import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
+import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
 [[imports]]
 
 export function tokenGetter() {
@@ -34,7 +37,8 @@ export function tokenGetter() {
     AppComponent,
     HomeComponent,
     AuthComponent,
-    NewRoleDialogComponent,
+    CreateRoleDialogComponent,
+    CreateUserDialogComponent,
 [[declarations]]
   ],
   imports: [
@@ -58,11 +62,14 @@ export function tokenGetter() {
     MatFormFieldModule,
     MatSnackBarModule,
     MatPaginatorModule,
+    MatDialogModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
   entryComponents: [
-    NewRoleDialogComponent,
+    CreateRoleDialogComponent,
+    CreateUserDialogComponent,
   ]
 })
 export class AppModule { }

@@ -3,10 +3,26 @@
 
   <mat-card class="auth-card users-card">
 
+    <mat-form-field appearance="outline" class="top-left">
+      <mat-label>Search ...</mat-label>
+      <input 
+        matInput 
+        autocomplete="off"
+        placeholder="Filter ..."
+        [formControl]="search"
+        type="text">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  
+    <button
+      mat-button
+      class="top-right"
+      (click)="createNewUser()">New ...</button>
+
     <table mat-table [dataSource]="users" class="users-grid auth-grid">
 
       <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef>Username</th>
+        <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let el">{{el.username}}</td>
       </ng-container>
 
