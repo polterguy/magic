@@ -1,6 +1,11 @@
 
 .component-wrapper {
     position: relative;
+    h3 {
+        text-align: center;
+        margin-top: -1rem;
+        text-transform: capitalize;
+    }
     .grid-wrapper {
         padding-top:2.5rem;
         min-width: fit-content;
@@ -8,7 +13,13 @@
     table {
         width: 100%;
         tr {
-            th {
+            th, td {
+                display: none;
+            }
+            th:nth-child(1), td:nth-child(1) {
+                display: table-cell;
+            }
+        th {
                 padding-right: 2rem;
             }
             td.delete-column,
@@ -25,8 +36,91 @@
     }
 }
 
-@media screen and (min-width: 800px) {
+.filter-textbox {
+    width: 100%;
+    font-size: 10px;
+}
+
+@media screen and (min-width: 520px) {
+    .component-wrapper {
+        table {
+            tr {
+                th:nth-child(1), td:nth-child(1),
+                th:nth-child(2), td:nth-child(2) {
+                    display: table-cell;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .component-wrapper {
+        table {
+            tr {
+                th:nth-child(3), td:nth-child(3) {
+                    display: table-cell;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 840px) {
     .component-wrapper {
         padding:5rem 2rem 2rem 2rem;
     }
+}
+
+@media screen and (min-width: 1080px) {
+    .component-wrapper {
+        table {
+            tr {
+                th:nth-child(4), td:nth-child(4) {
+                    display: table-cell;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 1420px) {
+    .component-wrapper {
+        table {
+            tr {
+                th:nth-child(5), td:nth-child(5) {
+                    display: table-cell;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 1620px) {
+    .component-wrapper {
+        table {
+            tr {
+                th:nth-child(6), td:nth-child(6) {
+                    display: table-cell;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 2048px) {
+    .component-wrapper {
+        table {
+            tr {
+                th:nth-child(7), td:nth-child(7) {
+                    display: table-cell;
+                }
+            }
+        }
+    }
+}
+
+::ng-deep .error-snackbar {
+    background:rgb(255,100,100);
+    color:rgb(0,0,0);
 }

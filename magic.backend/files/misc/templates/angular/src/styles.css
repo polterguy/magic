@@ -21,11 +21,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background: #eee;
 }
 
-::ng-deep .error-snackbar {
-    background:rgb(255,100,100);
-    color:rgb(0,0,0);
-}
-
 .relativized {
     position: relative;
 }
@@ -48,11 +43,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     position: absolute !important;
     top: 0;
     right: 0;
-}
-
-.filter-textbox {
-    max-width: 15rem;
-    font-size: 10px;
 }
 
 .menu-item {

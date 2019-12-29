@@ -195,10 +195,15 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             .:@""">
         <th mat-header-cell *matHeaderCellDef>
           <mat-form-field appearance=""outline"" class=""fill-width filter-textbox"">
-            <mat-label>Filter ...</mat-label>
-            <input matInput placeholder="""
+            <mat-label>"
             get-value:x:@.dp/#
-            .:@""" type=""text"" autocomplete=""off"" [formControl]="""
+            .:@"</mat-label>
+            <input
+              matInput
+              placeholder=""Filter ...""
+              type=""text""
+              autocomplete=""off""
+              [formControl]="""
             get-value:x:@.dp/#
             .:@""">
             <mat-icon matSuffix>search</mat-icon>
@@ -242,6 +247,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.replace:x:-/@strings.replace
       .:[[delete-input]]
       get-value:x:@strings.trim
+
+
+   /*
+    * Replacing any [[filename]] occurencies in HTML file.
+    */
+   strings.replace:x:@strings.replace
+      .:[[filename]]
+      get-value:x:@.filename
 
 
    /*
