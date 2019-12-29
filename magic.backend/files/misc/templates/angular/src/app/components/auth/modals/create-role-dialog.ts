@@ -1,6 +1,6 @@
 
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/auth-service';
 
 export interface DialogData {
@@ -15,11 +15,17 @@ export class CreateRoleDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<CreateRoleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private snackBar: MatSnackBar,
     private authService: AuthService) { }
 
   ok() {
     this.authService.createRole(this.data.name).subscribe(res => {
       this.dialogRef.close(this.data);
+    }, error => {
+      this.snackBar.open(error.error.message, 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar'],
+      });
     });
   }
   

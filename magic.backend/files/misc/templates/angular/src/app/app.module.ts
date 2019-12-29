@@ -10,6 +10,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -26,6 +27,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
 import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
+import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
 [[imports]]
 
 export function tokenGetter() {
@@ -39,6 +41,7 @@ export function tokenGetter() {
     AuthComponent,
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
+    EditUserDialogComponent,
 [[declarations]]
   ],
   imports: [
@@ -59,6 +62,7 @@ export function tokenGetter() {
     MatTableModule,
     MatCardModule,
     MatInputModule,
+    MatSelectModule,
     MatFormFieldModule,
     MatSnackBarModule,
     MatPaginatorModule,
@@ -70,6 +74,7 @@ export function tokenGetter() {
   entryComponents: [
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
+    EditUserDialogComponent,
   ]
 })
 export class AppModule { }

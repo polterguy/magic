@@ -7,6 +7,7 @@
       routerLink="/"
       routerLinkActive="active-link"
       class="menu-item"
+      (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">[[name]]</a>
 [[router-links]]    <a
       *ngIf="isLoggedIn()"
@@ -14,11 +15,13 @@
       routerLink="/auth"
       routerLinkActive="active-link"
       class="menu-item"
+      (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">auth</a>
     <a
       *ngIf="isLoggedIn()"
       mat-button
       class="menu-item"
+      (click)="closeNavigator()"
       (click)="logout()">logout</a>
   </mat-sidenav>
 

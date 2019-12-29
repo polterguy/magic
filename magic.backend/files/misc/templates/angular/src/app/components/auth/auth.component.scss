@@ -5,8 +5,9 @@
 }
 
 .auth-card {
-    padding: 1rem;
+    padding: 2rem 0 2rem 0;
     margin-bottom: 2rem;
+    position: relative;
 }
 
 .users-card {
@@ -51,12 +52,10 @@
         display: flex;
         margin: 5rem 2rem 0 2rem;
         .users-card {
-            padding: 2rem;
             flex: 1;
             margin-right: .5rem;
         }
         .roles-card {
-            padding: 2rem;
             flex: 1;
             margin-left: .5rem;
         }

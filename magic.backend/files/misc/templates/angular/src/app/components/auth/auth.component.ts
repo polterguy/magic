@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material';
 import { CreateRoleDialogComponent } from './modals/create-role-dialog';
 import { CreateUserDialogComponent } from './modals/create-user-dialog';
+import { EditUserDialogComponent } from './modals/edit-user-dialog';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -169,5 +170,24 @@ export class AuthComponent implements OnInit {
     this.roleFilter.limit = e.pageSize;
     this.roleFilter.offset = e.pageSize * e.pageIndex;
     this.getRoles();
+  }
+
+  editUser(username: string) {
+    if (username === 'root') {
+      this.snackBar.open('Root user cannot be edited!', 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar'],
+      });
+      return;
+    }
+    const dialogRef = this.dialog.open(EditUserDialogComponent, {
+      data: {
+        username,
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== null && res !== undefined) {
+      }
+    });
   }
 }
