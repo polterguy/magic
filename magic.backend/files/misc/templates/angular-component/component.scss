@@ -18,8 +18,9 @@
             }
             td {
                 .details-sheet {
-                    border: solid 1px rgb(250,250,250);
-                    margin-bottom: 1rem;
+                    border: solid 1px rgb(230,230,230);
+                    margin-top: 2rem;
+                    margin-bottom: 3rem;
                     border-radius: .5rem;
                     padding: 0 1rem 1rem 1rem;
                     position: relative;
@@ -28,6 +29,7 @@
                         top:0;
                         right: 0;
                         color: rgb(128,128,128);
+                        padding-right: 0;
                     }
                     .details {
                         label {
