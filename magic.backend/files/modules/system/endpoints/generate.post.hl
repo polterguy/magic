@@ -187,9 +187,21 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     */
    .container-count:int:1
    .ng-containers:
+   .entity-details:
    for-each:x:@.columns/*
+
+
+      /*
+       * Incrementing column count, such that we can figure out "colspan"
+       * to use for "details" ng-container.
+       */
       set-value:x:@.container-count
          math.increment:x:@.container-count
+
+
+      /*
+       * Appending currently iterated column to [.ng-containers].
+       */
       set-value:x:@.ng-containers
          strings.concat
             get-value:x:@.ng-containers
@@ -216,9 +228,38 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             get-value:x:@.dp/#
             .:"}}</td>\r\n"
             .:"      </ng-container>\r\n"
+
+
+      /*
+       * Appending currently iterated column to [.entity-details].
+       */
+      set-value:x:@.entity-details
+         strings.concat
+            get-value:x:@.entity-details
+            .:@"            <p class=""details"">"
+            .:<label>
+            get-value:x:@.dp/#
+            .:</label>
+            .:"<span>{{el."
+            get-value:x:@.dp/#
+            .:"}}</span></p>\r\n"
+
+
+   /*
+    * Doing actual substitution in HTML file.
+    *
+    * More specifically, we're substituting the following strings.
+    *
+    * - [[ng-containers]]
+    * - [[entity-details]]
+    * - [[colspan]]
+    */
    strings.replace:x:@io.files.load
       .:[[ng-containers]]
       get-value:x:@.ng-containers
+   strings.replace:x:@strings.replace
+      .:[[entity-details]]
+      get-value:x:@.entity-details
    strings.replace:x:@strings.replace
       .:[[colspan]]
       get-value:x:@.container-count

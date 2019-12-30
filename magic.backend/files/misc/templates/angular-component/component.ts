@@ -32,7 +32,8 @@ export class [[component-name]] implements OnInit {
     this.getData();
 [[form-control-value-subscriptions]]  }
 
-  getData() {
+  getData(countRecords: boolean = true) {
+    this.editing = [];
     this.httpService.[[service-get-method]](this.filter).subscribe(res => {
       this.data = res;
       let cloned = {};
@@ -50,11 +51,13 @@ export class [[component-name]] implements OnInit {
           }
         }
       }
-      this.httpService.[[service-count-method]](cloned).subscribe(res2 => {
-        this.count = res2.count;
-      }, error => {
-        this.error(error.error.message);
-      });
+      if (countRecords) {
+        this.httpService.[[service-count-method]](cloned).subscribe(res2 => {
+          this.count = res2.count;
+        }, error => {
+          this.error(error.error.message);
+        });
+      }
     }, error => {
       this.error(error.error.message);
     });
@@ -76,11 +79,18 @@ export class [[component-name]] implements OnInit {
     return false;
   }
 
+  getClassForRecord(entity: any) {
+    if (this.editing.indexOf(entity) != -1) {
+      return 'grid-row visible-details';
+    }
+    return 'grid-row';
+  }
+
   getClassForDetails(entity: any) {
     if (this.editing.indexOf(entity) != -1) {
-      return 'visible';
+      return 'details-row visible';
     }
-    return 'hidden';
+    return 'details-row hidden';
   }
 
   delete(entity: any, ids: any) {
@@ -102,7 +112,7 @@ export class [[component-name]] implements OnInit {
   paged(e: PageEvent) {
     this.filter.limit = e.pageSize;
     this.filter.offset = e.pageIndex * this.filter.limit;
-    this.getData();
+    this.getData(false);
   }
 
   error(error: string) {

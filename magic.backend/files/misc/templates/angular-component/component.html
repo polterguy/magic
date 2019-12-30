@@ -37,9 +37,16 @@
           mat-cell
           *matCellDef="let el"
           colspan="[[colspan]]">
-          <div *ngIf="shouldDisplayDetails(el)">
-            [[entity-details]]
-          </div>
+          <div
+            class="details-sheet"
+            *ngIf="shouldDisplayDetails(el)">
+            <button
+              mat-button
+              class="close-details"
+              (click)="showDetails(el)">
+              <mat-icon matSuffix>close</mat-icon>
+            </button>
+[[entity-details]]          </div>
         </td>
       </ng-container>
 
@@ -49,6 +56,7 @@
 
       <tr
         mat-row
+        [ngClass]="getClassForRecord(row)"
         *matRowDef="let row; columns: displayedColumns;"></tr>
 
       <tr
