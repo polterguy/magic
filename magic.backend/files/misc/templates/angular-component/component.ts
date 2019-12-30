@@ -5,7 +5,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-import { HttpService } from '../../http-service';
+import { HttpService } from '../../services/http-service';
 
 @Component({
   selector: 'app-[[filename]]',

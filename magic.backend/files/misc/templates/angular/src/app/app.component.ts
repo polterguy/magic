@@ -1,16 +1,19 @@
 
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
-import { HttpService } from './http-service';
+import { HttpService } from './services/http-service';
+import { LoaderService } from './services/loader-service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
   private username: string;
   private password: string;
   private sidenavOpened: boolean = false;
@@ -18,7 +21,8 @@ export class AppComponent {
   constructor(
     private httpService: HttpService,
     private jwtHelper: JwtHelperService,
-    private snackBar: MatSnackBar) {
+    private snackBar: MatSnackBar,
+    private loaderService: LoaderService) {
   }
 
   isLoggedIn() {

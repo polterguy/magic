@@ -687,7 +687,7 @@ for-each:x:@.files/*
    if
       eq
          get-value:x:@.dp/#
-         .:/magic-angular/src/app/http-service.ts
+         .:/magic-angular/src/app/services/http-service.ts
       .lambda
 
 

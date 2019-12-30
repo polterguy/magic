@@ -15,6 +15,7 @@
         tr {
             th, td {
                 display: none;
+                user-select: none;
             }
             th:last-child, td:last-child {
                 display: table-cell;
@@ -70,8 +71,7 @@
         }
         tr.visible-details {
             td {
-                font-weight: bold;
-                border-bottom-style: none !important;
+                border-bottom-color: transparent !important;
             }
         }
         tr.mat-row:hover {

@@ -1,16 +1,17 @@
 
-import { Component, OnInit } from '@angular/core';
-import { AuthService, AuthFilter } from 'src/app/auth-service';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material';
+import { AuthService, AuthFilter } from 'src/app/services/auth-service';
 import { CreateRoleDialogComponent } from './modals/create-role-dialog';
 import { CreateUserDialogComponent } from './modals/create-user-dialog';
 import { EditUserDialogComponent } from './modals/edit-user-dialog';
-import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']

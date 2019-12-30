@@ -1,7 +1,7 @@
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
-import { AuthService } from 'src/app/auth-service';
+import { AuthService } from 'src/app/services/auth-service';
 
 export interface DialogData {
   name: string;
@@ -9,6 +9,7 @@ export interface DialogData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'create-user-dialog.html',
 })
 export class CreateUserDialogComponent {
