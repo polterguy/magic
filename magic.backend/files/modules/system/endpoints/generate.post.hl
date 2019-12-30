@@ -185,8 +185,11 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     * Creating one ng-container HTML snippet in HTML file for each
     * column returned from CRUD read.
     */
+   .container-count:int:1
    .ng-containers:
    for-each:x:@.columns/*
+      set-value:x:@.container-count
+         math.increment:x:@.container-count
       set-value:x:@.ng-containers
          strings.concat
             get-value:x:@.ng-containers
@@ -209,13 +212,16 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>"
             .:"\r\n        </th>\r\n"
-            .:@"        <td mat-cell *matCellDef=""let el"">{{el."
+            .:@"        <td mat-cell (click)=""showDetails(el)"" *matCellDef=""let el"">{{el."
             get-value:x:@.dp/#
             .:"}}</td>\r\n"
             .:"      </ng-container>\r\n"
    strings.replace:x:@io.files.load
       .:[[ng-containers]]
       get-value:x:@.ng-containers
+   strings.replace:x:@strings.replace
+      .:[[colspan]]
+      get-value:x:@.container-count
 
 
    /*

@@ -15,11 +15,13 @@ import { HttpService } from '../../http-service';
 export class [[component-name]] implements OnInit {
   private data: any;
   private displayedColumns: string[] = [[[columns-list]]];
+  private displayedDetails: string[] = ['details'];
   private filter: any = {
     limit: 10
   };
   private count: number = 0;
   private debounce: number = 400;
+  private editing: any[] = [];
 [[form-control-declarations]]
   constructor(
     private httpService: HttpService,
@@ -58,8 +60,35 @@ export class [[component-name]] implements OnInit {
     });
   }
 
-  delete(ids: any) {
+  showDetails(entity: any) {
+    const indexOf = this.editing.indexOf(entity);
+    if (indexOf === -1) {
+      this.editing.push(entity);
+    } else {
+      this.editing.splice(indexOf, 1);
+    }
+  }
+
+  shouldDisplayDetails(entity: any) {
+    if (this.editing.indexOf(entity) != -1) {
+      return true;
+    }
+    return false;
+  }
+
+  getClassForDetails(entity: any) {
+    if (this.editing.indexOf(entity) != -1) {
+      return 'visible';
+    }
+    return 'hidden';
+  }
+
+  delete(entity: any, ids: any) {
     this.httpService.[[service-delete-method]](ids).subscribe(res => {
+      const indexOf = this.editing.indexOf(entity);
+      if (indexOf !== -1) {
+        this.editing.splice(indexOf, 1);
+      }
       this.getData();
     }, error => {
       this.error(error.error.message);
