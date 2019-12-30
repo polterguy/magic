@@ -21,7 +21,7 @@ export class [[component-name]] implements OnInit {
   };
   private count: number = 0;
   private debounce: number = 400;
-  private editing: any[] = [];
+  private viewDetails: any[] = [];
 [[form-control-declarations]]
   constructor(
     private httpService: HttpService,
@@ -33,7 +33,7 @@ export class [[component-name]] implements OnInit {
 [[form-control-value-subscriptions]]  }
 
   getData(countRecords: boolean = true) {
-    this.editing = [];
+    this.viewDetails = [];
     this.httpService.[[service-get-method]](this.filter).subscribe(res => {
       this.data = res;
       let cloned = {};
@@ -64,40 +64,44 @@ export class [[component-name]] implements OnInit {
   }
 
   showDetails(entity: any) {
-    const indexOf = this.editing.indexOf(entity);
+    const indexOf = this.viewDetails.indexOf(entity);
     if (indexOf === -1) {
-      this.editing.push(entity);
+      this.viewDetails.push(entity);
     } else {
-      this.editing.splice(indexOf, 1);
+      this.viewDetails.splice(indexOf, 1);
     }
   }
 
   shouldDisplayDetails(entity: any) {
-    if (this.editing.indexOf(entity) != -1) {
+    if (this.viewDetails.indexOf(entity) != -1) {
       return true;
     }
     return false;
   }
 
   getClassForRecord(entity: any) {
-    if (this.editing.indexOf(entity) != -1) {
+    if (this.viewDetails.indexOf(entity) != -1) {
       return 'grid-row visible-details';
     }
     return 'grid-row';
   }
 
   getClassForDetails(entity: any) {
-    if (this.editing.indexOf(entity) != -1) {
+    if (this.viewDetails.indexOf(entity) != -1) {
       return 'details-row visible';
     }
     return 'details-row hidden';
   }
 
+  editDetails(entity: any) {
+    alert('todo');
+  }
+
   delete(entity: any, ids: any) {
     this.httpService.[[service-delete-method]](ids).subscribe(res => {
-      const indexOf = this.editing.indexOf(entity);
+      const indexOf = this.viewDetails.indexOf(entity);
       if (indexOf !== -1) {
-        this.editing.splice(indexOf, 1);
+        this.viewDetails.splice(indexOf, 1);
       }
       this.getData();
     }, error => {
