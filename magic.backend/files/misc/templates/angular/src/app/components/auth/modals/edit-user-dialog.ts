@@ -1,13 +1,14 @@
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar, MatSelectChange } from '@angular/material';
-import { AuthService } from 'src/app/auth-service';
+import { AuthService } from 'src/app/services/auth-service';
 
 export interface DialogData {
   username: string;
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'edit-user-dialog.html',
   styleUrls: ['edit-user-dialog.scss']
 })

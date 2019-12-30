@@ -2,7 +2,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -16,11 +16,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LoaderService } from './services/loader-service';
+import { LoaderInterceptor } from './services/loader-interceptor';
 
 import { environment } from 'src/environments/environment';
 import { HomeComponent } from './components/home/home.component';
@@ -68,8 +71,15 @@ export function tokenGetter() {
     MatPaginatorModule,
     MatDialogModule,
     MatIconModule,
+    MatProgressSpinnerModule,
   ],
-  providers: [],
+  providers: [
+    LoaderService, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    },
+  ],
   bootstrap: [AppComponent],
   entryComponents: [
     CreateRoleDialogComponent,
