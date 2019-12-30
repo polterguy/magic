@@ -16,13 +16,16 @@
             th, td {
                 display: none;
             }
+            th:last-child, td:last-child {
+                display: table-cell;
+            }
             td {
                 .details-sheet {
                     border: solid 1px rgb(230,230,230);
-                    margin-top: 2rem;
-                    margin-bottom: 3rem;
+                    margin-top: 1rem;
+                    margin-bottom: 2rem;
                     border-radius: .5rem;
-                    padding: 0 1rem 1rem 1rem;
+                    padding: 0 1rem 0 1rem;
                     position: relative;
                     .close-details {
                         position: absolute;
@@ -114,6 +117,17 @@
 @media screen and (min-width: 840px) {
     .component-wrapper {
         padding:5rem 2rem 2rem 2rem;
+        table {
+            tr {
+                td {
+                    .details-sheet {
+                        padding: 2rem 3rem 2rem 3rem;
+                        margin-top: 2rem;
+                        margin-bottom: 3rem;
+                    }
+                }
+            }
+        }
     }
 }
 
