@@ -19,7 +19,7 @@
             th:nth-child(1), td:nth-child(1) {
                 display: table-cell;
             }
-        th {
+            th {
                 padding-right: 2rem;
             }
             td.delete-column,
@@ -32,6 +32,12 @@
         tr.mat-row:hover {
             background-color: rgba(0,0,0,.1);
             cursor: pointer;
+        }
+        tr.visible {
+            display: table-row;
+        }
+        tr.hidden {
+            display: none;
         }
     }
 }
