@@ -5,7 +5,7 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpResponse
-} from '@angular/common/http';import { finalize } from "rxjs/operators";
+} from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { LoaderService } from './loader-service';
 
@@ -17,16 +17,23 @@ export class LoaderInterceptor implements HttpInterceptor {
   constructor(public loadingService: LoaderService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler) {
-    this.totalRequests++;
-    this.loadingService.show();
+    const isCount = request.url.endsWith('-count');
+    if (!isCount) {
+      this.totalRequests++;
+      this.loadingService.show();
+    }
     return next.handle(request).pipe(
       tap(res => {
         if (res instanceof HttpResponse) {
-          this.decreaseRequests();
+          if (!isCount) {
+            this.decreaseRequests();
+          }
         }
       }),
       catchError(err => {
-        this.decreaseRequests();
+        if (!isCount) {
+          this.decreaseRequests();
+        }
         throw err;
       })
     );

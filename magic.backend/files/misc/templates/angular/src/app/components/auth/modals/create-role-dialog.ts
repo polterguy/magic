@@ -1,5 +1,5 @@
 
-import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/services/auth-service';
 
@@ -8,7 +8,6 @@ export interface DialogData {
 }
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'create-role-dialog.html',
 })
 export class CreateRoleDialogComponent {

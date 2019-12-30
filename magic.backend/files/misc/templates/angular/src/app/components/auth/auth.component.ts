@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,7 +11,6 @@ import { EditUserDialogComponent } from './modals/edit-user-dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
@@ -40,10 +39,8 @@ export class AuthComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.getUsers();
-    this.getRoles();
-    this.getUsersCount();
-    this.getRolesCount();
+    this.getUsers(() => this.getUsersCount());
+    this.getRoles(() => this.getRolesCount());
     this.search = new FormControl('');
     this.search.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
@@ -115,8 +112,8 @@ export class AuthComponent implements OnInit {
           this.snackBar.open('Role was successfully created', 'Close', {
             duration: 2000
           });
+          this.getRolesCount();
         });
-        this.getRolesCount();
       }
     });
   }
@@ -133,8 +130,8 @@ export class AuthComponent implements OnInit {
           this.snackBar.open('User was successfully created', 'Close', {
             duration: 2000
           });
+          this.getUsersCount();
         });
-        this.getUsersCount();
       }
     });
   }
