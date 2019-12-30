@@ -16,6 +16,33 @@
             th, td {
                 display: none;
             }
+            td {
+                .details-sheet {
+                    border: solid 1px rgb(250,250,250);
+                    margin-bottom: 1rem;
+                    border-radius: .5rem;
+                    padding: 0 1rem 1rem 1rem;
+                    position: relative;
+                    .close-details {
+                        position: absolute;
+                        top:0;
+                        right: 0;
+                        color: rgb(128,128,128);
+                    }
+                    .details {
+                        label {
+                            text-transform: capitalize;
+                            display: block;
+                            margin-top: 1rem;
+                            margin-bottom: .5rem;
+                            font-weight: bold;
+                        }
+                        span {
+                            color: rgb(128,128,128);
+                        }
+                    }
+                }
+            }
             th:nth-child(1), td:nth-child(1) {
                 display: table-cell;
             }
@@ -29,9 +56,19 @@
                 padding-right: 0;
             }
         }
+        tr.visible-details {
+            td {
+                font-weight: bold;
+                border-bottom-style: none !important;
+            }
+        }
         tr.mat-row:hover {
             background-color: rgba(0,0,0,.1);
             cursor: pointer;
+        }
+        tr.details-row:hover {
+            cursor:inherit;
+            background-color: inherit;
         }
         tr.visible {
             display: table-row;
