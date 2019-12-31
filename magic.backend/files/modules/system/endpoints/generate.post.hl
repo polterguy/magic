@@ -1,7 +1,39 @@
 
 /*
  * Generates a frontend wrapping your HTTP REST endpoints
- * according to the specified [.arguments].
+ * according to the specified [.arguments]. The file will use
+ * the angular template to generate an Angular starter kit ZIP
+ * file, doing replacements into your template, according to what
+ * endpoints have been selected.
+ *
+ * The file will create one Angular component for each of your
+ * "crud-read" endpoints that have been selected, creating a datagrid
+ * for you, and a delete method/button, etc.
+ *
+ * The string replacements this file will perform inside your
+ * template folder are as follows.
+ *
+ * - [[ng-containers]] - Replaced in each of your component files
+ * - [[entity-details]] - View details for record in each component file
+ * - [[colspan]] - Makes sure view details becomes as wide as the datagrid
+ * - [[delete-input]] - Input arguments for your HTTP delete method
+ * - [[filename]] - Name of component/SCSS/TS file generated for each table
+ * - [[component-name]] - Name of component in TS file for each table
+ * - [[columns-list]] - What columns to list in your datagrid
+ * - [[service-get-method]] - Name of the HTTP GET method for table
+ * - [[service-count-method]] - Name of the HTTP "count records" method for your table 
+ * - [[service-delete-method]] - Delete method name
+ * - [[form-control-declarations]] - Becomes FormControl declarations for each column in table
+ * - [[form-control-value-subscriptions]] - Subscribe to changes to textbox in header for column
+ * - [[apiUrl]] - The root URL of your API
+ * - [[environmentDomain]] - The domain of your API, needed for oauth0
+ * - [[service-endpoints]] - All service endpoint methods, appended into your HTTPO service file
+ * - [[imports]] - Becomes import declaration of your components
+ * - [[declarations]] - Becomes appended into the declarations parts of your app.module.ts
+ * - [[routes]] - Becomes the router paths for all automatically generated components
+ * - [[router-links]] - Becomes the router hyperlinks for all components
+ * - [[name]] - Name of your app
+ *
  */
 .description:"Generates frontend client side according to arguments given."
 .arguments
@@ -470,7 +502,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Replacing service GET method.
+    * Replacing service read/count/delete methods.
     *
     * This is the place in the TS file that retrieves records from the
     * server, and becomes a reference to the correct method in
