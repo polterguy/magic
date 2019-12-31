@@ -1,5 +1,6 @@
 
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-security',
@@ -11,8 +12,11 @@ export class SecurityComponent {
   private password: string = null;
   private passwordRepeat: string = null;
 
+  constructor(private snackBar: MatSnackBar) { }
+
   save() {
-    console.log(this.password + this.passwordRepeat);
-    alert('todo');
+    this.snackBar.open('TODO: Implement this later', 'Close', {
+      duration: 2000,
+    });
   }
 }

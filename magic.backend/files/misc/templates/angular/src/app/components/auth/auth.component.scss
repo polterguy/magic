@@ -28,11 +28,14 @@
         td:nth-child(1), th:nth-child(1) {
             width: 100%;
         }
+        th:nth-child(1) {
+            padding-right: 1rem;
+        }
         th:nth-child(2), td:nth-child(2) {
             text-align: right;
         }
         th:nth-child(2) {
-            padding-right: 16px;
+            padding-right: 0;
         }
         td:nth-child(2) {
             padding-right: 0;
