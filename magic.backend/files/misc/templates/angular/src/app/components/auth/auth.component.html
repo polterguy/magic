@@ -30,13 +30,12 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let el">
           <button
-            [disabled]="el.username === 'root'"
+            *ngIf="el.username === 'root'"
             class="delete-auth-entity"
             matTooltip="Delete this user"
             (click)="deleteUser(el.username)"
             mat-button>
-            <mat-icon
-              matSuffix>delete</mat-icon>
+            <mat-icon matSuffix>delete</mat-icon>
           </button>
         </td>
       </ng-container>
@@ -73,13 +72,12 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let el">
           <button
-            [disabled]="el.name === 'root'"
+            *ngIf="el.name === 'root'"
             class="delete-auth-entity"
             matTooltip="Delete this role"
             (click)="deleteRole(el.name)"
             mat-button>
-            <mat-icon
-              matSuffix>delete</mat-icon>
+            <mat-icon matSuffix>delete</mat-icon>
           </button>
         </td>
       </ng-container>
