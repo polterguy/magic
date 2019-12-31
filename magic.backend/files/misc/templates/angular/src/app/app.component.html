@@ -16,7 +16,7 @@
       routerLinkActive="active-link"
       class="menu-item"
       (click)="closeNavigator()"
-      [routerLinkActiveOptions]="{exact:true}">Home</a>
+      [routerLinkActiveOptions]="{exact:true}">home</a>
 [[router-links]]    <a
       *ngIf="isLoggedIn()"
       mat-button
@@ -25,6 +25,13 @@
       class="menu-item"
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">auth</a>
+    <a
+      mat-button
+      routerLink="/security"
+      routerLinkActive="active-link"
+      class="menu-item"
+      (click)="closeNavigator()"
+      [routerLinkActiveOptions]="{exact:true}">Security</a>
     <a
       *ngIf="isLoggedIn()"
       mat-button

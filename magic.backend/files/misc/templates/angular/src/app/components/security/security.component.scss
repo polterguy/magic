@@ -1,0 +1,20 @@
+
+.security-wrapper {
+    width: auto;
+    padding: 5rem 2rem 2rem 2rem;
+    .security-sheet {
+        padding: 2rem;
+        text-align: center;
+        h3 {
+            margin-top: -.5rem;
+        }
+        .password {
+            display: inline-block;
+        }
+        .password-repeat {
+            display: inline-block;
+            margin-left: .5rem;
+            margin-right: .5rem;
+        }
+    }
+}

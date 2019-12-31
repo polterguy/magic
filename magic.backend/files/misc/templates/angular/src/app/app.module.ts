@@ -31,6 +31,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
 import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
 import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
+import { SecurityComponent } from './components/security/security.component';
 [[imports]]
 
 export function tokenGetter() {
@@ -45,8 +46,8 @@ export function tokenGetter() {
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
     EditUserDialogComponent,
-[[declarations]]
-  ],
+    SecurityComponent,
+[[declarations]]  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
