@@ -8,6 +8,9 @@
       display: block;
       float: left;
       margin-right: .5rem;
+      .remove-role {
+        color: rgb(128, 128, 128);
+      }
   }
 }
 .user-roles:after {
