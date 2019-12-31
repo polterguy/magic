@@ -173,6 +173,7 @@ for-each:x:@.arguments/*/endpoints/*
  * This little node does just that.
  */
 .components
+.modal-components
 
 
 /*
@@ -403,13 +404,21 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     * the actual name of the component we want to use.
     */
    .component-name
+   .component-edit-modal-name
    set-value:x:@.component-name
       strings.concat
          strings.capitalize:x:@.filename
          .:Component
+   set-value:x:@.component-edit-modal-name
+      strings.concat
+         strings.capitalize:x:@.filename
+         .:EditModalComponent
    strings.replace:x:@strings.replace
       .:[[component-name]]
       get-value:x:@.component-name
+   strings.replace:x:@strings.replace
+      .:[[component-edit-modal-name]]
+      get-value:x:@.component-edit-modal-name
 
 
    /*
@@ -418,6 +427,20 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     */
    add:x:@.components
       get-nodes:x:@.component-name
+   add:x:@.modal-components
+      get-nodes:x:@.component-edit-modal-name
+
+
+   /*
+    * Figuring out component's modal import filename.
+    */
+   strings.concat
+      get-value:x:@.filename
+      .:/modals/
+      get-value:x:@.filename
+      .:-edit-modal
+   add:x:@.modal-components/0/-
+      get-nodes:x:@strings.concat
 
 
    /*
@@ -595,6 +618,86 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             :
 
 
+   /*
+    * Then we need to do replacements in our component's
+    * edit/create modal window's TypeScript file.
+    */
+   io.files.load:/misc/templates/angular-component/modals/edit-dialog.ts
+
+
+   /*
+    * Replacing modal dialog's template fields.
+    */
+   strings.replace:x:@io.files.load
+      .:[[filename]]
+      get-value:x:@.filename
+   strings.replace:x:@io.files.load
+      .:[[edit-component-name]]
+      strings.concat
+         strings.capitalize:x:@.filename
+         .:EditModal
+         .:Component
+   strings.replace:x:@strings.replace
+      .:[[filename]]
+      get-value:x:@.filename
+   strings.replace:x:@strings.replace
+      .:[[update-method]]
+      strings.concat
+         get-value:x:@.filename
+         .:Put
+
+
+   /*
+    * Adding component's create/edit modal TS file to ZIP source.
+    */
+   set-value:x:+/+/*/*
+      strings.concat
+         .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:/modals/
+         get-value:x:@.filename
+         .:-edit-modal.ts
+   set-value:x:+/*/*/*
+      get-value:x:@strings.replace
+   add:x:@.files
+      .
+         :
+            :
+
+
+   /*
+    * Then we need to do replacements in our component's
+    * edit/create modal window's HTML file.
+    */
+   io.files.load:/misc/templates/angular-component/modals/edit-dialog.html
+
+
+   /*
+    * Replacing modal dialog's template fields.
+    */
+   strings.replace:x:@io.files.load
+      .:[[capitalized-filename]]
+      strings.capitalize:x:@.filename
+
+
+   /*
+    * Adding component's create/edit modal HTML file to ZIP source.
+    */
+   set-value:x:+/+/*/*
+      strings.concat
+         .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:/modals/
+         get-value:x:@.filename
+         .:-edit-modal.html
+   set-value:x:+/*/*/*
+      get-value:x:@strings.replace
+   add:x:@.files
+      .
+         :
+            :
+
+
 /*
  * Then we need to create our imports, routes, router-links, and
  * declarations strings for substituing these inside our app.module.ts,
@@ -602,8 +705,47 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
  */
 .imports:
 .declarations:
+.entry-components
 .routes:
 .router-links:
+for-each:x:@.modal-components/*
+
+
+   /*
+    * First appending our import declaration into [.imports].
+    */
+   set-value:x:@.imports
+      strings.concat
+         get-value:x:@.imports
+         .:"import { "
+         get-value:x:@.dp/#
+         .:" } from './components/"
+         get-value:x:@.dp/#/0
+         .:"';\r\n"
+
+
+   /*
+    * Then appending our declaration into [.declarations].
+    */
+   set-value:x:@.declarations
+      strings.concat
+         get-value:x:@.declarations
+         .:"    "
+         get-value:x:@.dp/#
+         .:",\r\n"
+
+
+   /*
+    * Then appending our declaration into [.entry-components].
+    */
+   set-value:x:@.entry-components
+      strings.concat
+         get-value:x:@.entry-components
+         .:"    "
+         get-value:x:@.dp/#
+         .:",\r\n"
+
+
 for-each:x:@.components/*
 
 
@@ -766,6 +908,15 @@ for-each:x:@.files/*
             strings.replace:x:@.dp/#/*
                .:[[declarations]]
                get-value:x:@.declarations
+
+
+         /*
+          * Then our [[entry-components]] part.
+          */
+         set-value:x:@.dp/#/*
+            strings.replace:x:@.dp/#/*
+               .:[[entry-components]]
+               get-value:x:@.entry-components
 
 
          /*
