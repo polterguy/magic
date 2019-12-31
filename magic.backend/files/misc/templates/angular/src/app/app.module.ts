@@ -86,6 +86,6 @@ export function tokenGetter() {
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
     EditUserDialogComponent,
-  ]
+[[entry-components]]  ]
 })
 export class AppModule { }

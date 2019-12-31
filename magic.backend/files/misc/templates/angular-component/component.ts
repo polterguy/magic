@@ -1,11 +1,13 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material';
 import { PageEvent } from '@angular/material/paginator';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { HttpService } from 'src/app/services/http-service';
+import { [[component-edit-modal-name]] } from './modals/[[filename]]-edit-modal';
 
 @Component({
   selector: 'app-[[filename]]',
@@ -25,7 +27,8 @@ export class [[component-name]] implements OnInit {
 [[form-control-declarations]]
   constructor(
     private httpService: HttpService,
-    private snackBar: MatSnackBar) {
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -94,7 +97,14 @@ export class [[component-name]] implements OnInit {
   }
 
   editDetails(entity: any) {
-    alert('todo');
+    const dialogRef = this.dialog.open([[component-edit-modal-name]], {
+      data: entity,
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== null && res !== undefined) {
+      }
+      console.log(res);
+    });
   }
 
   delete(entity: any, ids: any) {
