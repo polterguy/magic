@@ -13,9 +13,10 @@
     <li *ngFor="let el of userRoles">
       <button
         matTooltip="Removes role from user"
+        class="remove-role"
         (click)="deleteRoleFromUser(el.role)"
         mat-raised-button>
-        <mat-icon matSuffix>delete</mat-icon>
+        <mat-icon matSuffix>remove</mat-icon>
         {{el.role}}
       </button>        
     </li>

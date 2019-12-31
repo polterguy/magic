@@ -31,9 +31,13 @@
         <td mat-cell *matCellDef="let el">
           <button
             [disabled]="el.username === 'root'"
+            class="delete-auth-entity"
             matTooltip="Delete this user"
             (click)="deleteUser(el.username)"
-            mat-button>Delete</button>
+            mat-button>
+            <mat-icon
+              matSuffix>delete</mat-icon>
+          </button>
         </td>
       </ng-container>
 
@@ -70,9 +74,13 @@
         <td mat-cell *matCellDef="let el">
           <button
             [disabled]="el.name === 'root'"
+            class="delete-auth-entity"
             matTooltip="Delete this role"
             (click)="deleteRole(el.name)"
-            mat-button>Delete</button>
+            mat-button>
+            <mat-icon
+              matSuffix>delete</mat-icon>
+          </button>
         </td>
       </ng-container>
 
