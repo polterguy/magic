@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { HttpService } from 'src/app/services/http-service';
 
 export interface DialogData {
-  name: string;
 }
 
 @Component({
@@ -21,7 +20,7 @@ export class [[edit-component-name]] {
   ok() {
     this.service.[[update-method]](this.data).subscribe(res => {
       this.dialogRef.close(this.data);
-      this.snackBar.open('Item successfully created', 'Close', {
+      this.snackBar.open('Item successfully updated', 'Close', {
         duration: 2000,
       });
     }, error => {
