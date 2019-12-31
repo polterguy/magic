@@ -17,12 +17,9 @@
                 display: none;
                 user-select: none;
             }
-            th:last-child, td:last-child {
-                display: table-cell;
-            }
             td {
                 .details-sheet {
-                    border: solid 1px rgb(230,230,230);
+                    border: solid 1px rgb(230, 230, 230);
                     margin-top: 1rem;
                     margin-bottom: 2rem;
                     border-radius: .5rem;
@@ -32,14 +29,14 @@
                         position: absolute;
                         top:0;
                         right: 0;
-                        color: rgb(128,128,128);
+                        color: rgb(128, 128, 128);
                         padding-right: 0;
                     }
                     .edit-details {
                         position: absolute;
                         bottom:0;
                         right: 0;
-                        color: rgb(128,128,128);
+                        color: rgb(128, 128, 128);
                         padding-right: 0;
                     }
                     .details {
@@ -51,7 +48,7 @@
                             font-weight: bold;
                         }
                         span {
-                            color: rgb(128,128,128);
+                            color: rgb(128, 128, 128);
                         }
                     }
                 }
@@ -64,9 +61,13 @@
             }
             td.delete-column,
             th.delete-column {
+                display: table-cell;
                 width: 70px;
                 text-align: right;
                 padding-right: 0;
+            }
+            td.delete-column {
+                color: rgb(128, 128, 128);
             }
         }
         tr.visible-details {
