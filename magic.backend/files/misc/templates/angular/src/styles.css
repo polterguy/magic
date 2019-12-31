@@ -49,6 +49,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     text-transform: capitalize;
     display: list-item !important;
     text-align: left !important;
+    margin: .5rem .5rem 0 .5rem;
 }
 
 .mat-dialog-container {
