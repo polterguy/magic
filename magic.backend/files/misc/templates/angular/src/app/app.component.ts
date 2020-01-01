@@ -16,12 +16,18 @@ export class AppComponent {
   private username: string;
   private password: string;
   private sidenavOpened: boolean = false;
+  private roles: string [] = [];
 
   constructor(
     private httpService: HttpService,
     private jwtHelper: JwtHelperService,
     private snackBar: MatSnackBar,
     private loaderService: LoaderService) {
+      const token = localStorage.getItem('jwt_token');
+      if (token !== null && token !== undefined) {
+        this.roles = this.jwtHelper
+          .decodeToken(token).role.split(',');
+      }
   }
 
   isLoggedIn() {
@@ -30,6 +36,7 @@ export class AppComponent {
   }
 
   logout() {
+    this.roles = [];
     localStorage.removeItem('jwt_token');
   }
 
@@ -38,6 +45,7 @@ export class AppComponent {
       localStorage.setItem('jwt_token', res.ticket);
       this.username = '';
       this.password = '';
+      this.roles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
 
       // Refreshing JWT token every 5 minute.
       setTimeout(() => this.tryRefreshTicket(), 300000);
@@ -72,5 +80,14 @@ export class AppComponent {
 
   closeNavigator() {
     this.sidenavOpened = false;
+  }
+
+  inRole(roles: string[]) {
+    for (let idx = 0; idx < roles.length; idx++) {
+      if (this.roles.indexOf(roles[idx]) !== -1) {
+        return true;
+      }
+    }
+    return false;
   }
 }

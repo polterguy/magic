@@ -177,9 +177,9 @@ for-each:x:@.arguments/*/endpoints/*
 
 
 /*
- * Creating one component for each "crud-get" endpoint.
+ * Creating one component for each "crud-read" endpoint.
  *
- * Notice, without a "crud-get", there is no reasons to create a grid component.
+ * Notice, without a "crud-read", there is no reasons to create a grid component.
  */
 for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
@@ -551,6 +551,25 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
+    * Figuring out component's auth settings.
+    */
+   .roles:
+   for-each:x:@.dp/#/*/auth/*
+      set-value:x:@.roles
+         strings.concat
+            get-value:x:@.roles
+            .:"'"
+            get-value:x:@.dp/#
+            .:"',"
+   strings.trim:x:@.roles
+      .:,
+   unwrap:x:+/*/*
+   add:x:@.components/0/-
+      .
+         roles:x:@strings.trim
+
+
+   /*
     * Adding delete instance column.
     */
    set-value:x:@.columns-list
@@ -878,12 +897,15 @@ for-each:x:@.components/*
    set-value:x:@.router-links
       strings.concat
          get-value:x:@.router-links
-         .:"    <a\r\n      mat-button\r\n      routerLink=\"/"
+         .:"    <a\r\n"
+         .:"      *ngIf=\"inRole(["
+         get-value:x:@.dp/#/1
+         .:"])\"\r\n"
+         .:"      mat-button\r\n      routerLink=\"/"
          get-value:x:@strings.split/0
          .:"\"\r\n      routerLinkActive=\"active-link\"\r\n"
          .:"      class=\"menu-item\"\r\n"
          .:"      (click)=\"closeNavigator()\"\r\n"
-         .:"      *ngIf=\"isLoggedIn()\"\r\n"
          .:"      [routerLinkActiveOptions]=\"{exact:true}\">"
          get-value:x:@strings.split/0
          .:"</a>\r\n"
