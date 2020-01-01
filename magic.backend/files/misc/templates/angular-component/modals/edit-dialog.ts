@@ -8,6 +8,7 @@ export interface DialogData {
 
 @Component({
   templateUrl: '[[filename]]-edit-modal.html',
+  styleUrls: ['[[filename]]-edit-modal.scss']
 })
 export class [[edit-component-name]] {
 
@@ -20,9 +21,6 @@ export class [[edit-component-name]] {
   ok() {
     this.service.[[update-method]](this.data).subscribe(res => {
       this.dialogRef.close(this.data);
-      this.snackBar.open('Item successfully updated', 'Close', {
-        duration: 2000,
-      });
     }, error => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,

@@ -97,13 +97,22 @@ export class [[component-name]] implements OnInit {
   }
 
   editDetails(entity: any) {
+    let data = {};
+    for (var idx in entity) {
+      if (Object.prototype.hasOwnProperty.call(entity, idx)) {
+        data[idx] = entity[idx];
+      }
+    }
     const dialogRef = this.dialog.open([[component-edit-modal-name]], {
-      data: entity,
+      data,
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== null && res !== undefined) {
+        this.getData(false);
+        this.snackBar.open('[[filename]] successfully updated', 'Close', {
+          duration: 2000,
+        });
       }
-      console.log(res);
     });
   }
 

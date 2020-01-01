@@ -217,10 +217,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    /*
     * Creating one ng-container HTML snippet in HTML file for each
     * column returned from CRUD read.
+    *
+    * In addition, we create one "edit column value textbox" for each
+    * of the column returned from the CRUD read invocation.
     */
    .container-count:int:1
    .ng-containers:
    .entity-details:
+   .form-fields:
    for-each:x:@.columns/*
 
 
@@ -276,6 +280,25 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             .:"<span>{{el."
             get-value:x:@.dp/#
             .:"}}</span></p>\r\n"
+
+
+      /*
+       * Appending currently iterated column to [.form-fields].
+       */
+      set-value:x:@.form-fields
+         strings.concat
+            get-value:x:@.form-fields
+            .:"\r\n  <mat-form-field class=\"entity-edit-field\">\r\n"
+            .:"    <input\r\n"
+            .:"      matInput\r\n"
+            .:"      placeholder=\""
+            get-value:x:@.dp/#
+            .:"\"\r\n"
+            .:"      [(ngModel)]=\"data."
+            get-value:x:@.dp/#
+            .:"\"\r\n"
+            .:"      autocomplete=\"off\">\r\n"
+            .:"  </mat-form-field>\r\n"
 
 
    /*
@@ -666,6 +689,30 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
+    * Making sure we include create/edit modal window's CSS file to ZIP source.
+    */
+   io.files.load:/misc/templates/angular-component/modals/edit-dialog.scss
+
+
+   /*
+    * Adding component's create/edit modal TS file to ZIP source.
+    */
+   set-value:x:+/+/*/*
+      strings.concat
+         .:/magic-angular/src/app/components/
+         get-value:x:@.filename
+         .:/modals/
+         get-value:x:@.filename
+         .:-edit-modal.scss
+   set-value:x:+/*/*/*
+      get-value:x:@io.files.load
+   add:x:@.files
+      .
+         :
+            :
+
+
+   /*
     * Then we need to do replacements in our component's
     * edit/create modal window's HTML file.
     */
@@ -678,6 +725,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.replace:x:@io.files.load
       .:[[capitalized-filename]]
       strings.capitalize:x:@.filename
+
+
+   /*
+    * Replacing modal dialog's template fields.
+    */
+   strings.replace:x:@strings.replace
+      .:[[form-fields]]
+      get-value:x:@.form-fields
 
 
    /*
