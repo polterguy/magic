@@ -108,7 +108,11 @@ export class [[component-name]] implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== null && res !== undefined) {
-        this.getData(false);
+        for (var idx in res) {
+          if (Object.prototype.hasOwnProperty.call(res, idx)) {
+            entity[idx] = res[idx];
+          }
+        }
         this.snackBar.open('[[filename]] successfully updated', 'Close', {
           duration: 2000,
         });
