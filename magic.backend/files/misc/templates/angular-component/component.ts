@@ -100,7 +100,6 @@ export class [[component-name]] implements OnInit {
     let data = {
       isEdit: true,
       entity: {},
-      editableFields: this.displayedColumns.filter(x => x !== 'delete-instance'),
     };
     for (var idx in entity) {
       if (Object.prototype.hasOwnProperty.call(entity, idx)) {
@@ -124,6 +123,24 @@ export class [[component-name]] implements OnInit {
     });
   }
 
+  createNewRecord() {
+    let data = {
+      isEdit: false,
+      entity: {},
+    };
+    const dialogRef = this.dialog.open([[component-edit-modal-name]], {
+      data
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== null && res !== undefined) {
+        this.getData();
+        this.snackBar.open('[[filename]] successfully created', 'Close', {
+          duration: 2000,
+        });
+      }
+    });
+  }
+
   delete(entity: any, ids: any) {
     this.httpService.[[service-delete-method]](ids).subscribe(res => {
       const indexOf = this.viewDetails.indexOf(entity);
@@ -134,10 +151,6 @@ export class [[component-name]] implements OnInit {
     }, error => {
       this.error(error.error.message);
     });
-  }
-
-  createNewRecord() {
-    alert('TODO');
   }
 
   paged(e: PageEvent) {

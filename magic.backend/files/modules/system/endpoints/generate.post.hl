@@ -207,6 +207,64 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
+    * Figuring out what columns we should show by default.
+    *
+    * The TS file for the component contains a list of each column
+    * that should be visible in the mat-table. This is contained in
+    * the "displayedColumns" field. This logic makes sure that value
+    * is possible to dynamically change, such that by default, all
+    * columns are shown, except primary key columns, which we by
+    * default don't allow the user to change.
+    */
+   .columns-list:
+   .columns-names
+   for-each:x:@.columns/*
+
+
+      /*
+       * Verifying currently iterated column is in "crud-create" endpoint,
+       * since if it's not, the column is an automatic primary key, and we don't
+       * want to display it in the grid (by default).
+       */
+      .display:bool:true
+      for-each:x:@.arguments/*/endpoints/*
+         if
+            and
+               eq
+                  get-value:x:@.dp/#/*/path
+                  get-value:x:@for-each/@for-each/@.dp/#/*/path
+               eq
+                  get-value:x:@.dp/#/*/type
+                  .:crud-create
+            .lambda
+               .exists:bool:false
+               for-each:x:@.dp/#/*/input/*
+                  if
+                     eq
+                        get-name:x:@.dp/#
+                        get-value:x:@.lambda/@for-each/@.dp/#
+                     .lambda
+                        set-value:x:@.exists
+                           .:bool:true
+               set-value:x:@.display
+                  get-value:x:@.exists
+      if
+         get-value:x:@.display
+         .lambda
+            set-value:x:@.columns-list
+               strings.concat
+                  get-value:x:@.columns-list
+                  .:"'"
+                  get-value:x:@.dp/#
+                  .:"',"
+            set-name:x:+/*/*
+               get-value:x:@.dp/#
+            add:x:@.columns-names
+               .
+                  .
+
+
+   /*
     * First we do replacements in our component's HTML file.
     *
     * Loading template component HTML file.
@@ -283,26 +341,36 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
       /*
-       * Appending currently iterated column to [.form-fields].
+       * Appending currently iterated column to [.form-fields], but only
+       * if it's a visible column in the datagrid.
        */
-      set-value:x:@.form-fields
-         strings.concat
-            get-value:x:@.form-fields
-            .:"\r\n  <mat-form-field\r\n"
-            .:"    *ngIf=\"isEditable('"
-            get-value:x:@.dp/#
-            .:"')\"\r\n"
-            .:"    class=\"entity-edit-field\">\r\n"
-            .:"    <input\r\n"
-            .:"      matInput\r\n"
-            .:"      placeholder=\""
-            get-value:x:@.dp/#
-            .:"\"\r\n"
-            .:"      [(ngModel)]=\"data.entity."
-            get-value:x:@.dp/#
-            .:"\"\r\n"
-            .:"      autocomplete=\"off\">\r\n"
-            .:"  </mat-form-field>\r\n"
+      .add:bool:false
+      for-each:x:@.columns-names/*
+         if
+            eq
+               get-name:x:@.dp/#
+               get-value:x:@for-each/@.dp/#
+            .lambda
+               set-value:x:@.add
+                  .:bool:true
+      if
+         get-value:x:@.add
+         .lambda
+            set-value:x:@.form-fields
+               strings.concat
+                  get-value:x:@.form-fields
+                  .:"\r\n  <mat-form-field\r\n"
+                  .:"    class=\"entity-edit-field\">\r\n"
+                  .:"    <input\r\n"
+                  .:"      matInput\r\n"
+                  .:"      placeholder=\""
+                  get-value:x:@for-each/@.dp/#
+                  .:"\"\r\n"
+                  .:"      [(ngModel)]=\"data.entity."
+                  get-value:x:@for-each/@.dp/#
+                  .:"\"\r\n"
+                  .:"      autocomplete=\"off\">\r\n"
+                  .:"  </mat-form-field>\r\n"
 
 
    /*
@@ -483,57 +551,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Replacing [[columns-list]].
-    *
-    * The TS file for the component contains a list of each column
-    * that should be visible in the mat-table. This is contained in
-    * the "displayedColumns" field. This logic makes sure that value
-    * is dynamically changed, such that by default, all columns are
-    * shown.
-    */
-   .columns-list:
-   for-each:x:@.columns/*
-
-
-      /*
-       * Verifying currently iterated column is in "crud-create" endpoint,
-       * since if it's not, the column is an automatic primary key, and we don't
-       * want to display it in the grid (by default).
-       */
-      .display:bool:true
-      for-each:x:@.arguments/*/endpoints/*
-         if
-            and
-               eq
-                  get-value:x:@.dp/#/*/path
-                  get-value:x:@for-each/@for-each/@.dp/#/*/path
-               eq
-                  get-value:x:@.dp/#/*/type
-                  .:crud-create
-            .lambda
-               .exists:bool:false
-               for-each:x:@.dp/#/*/input/*
-                  if
-                     eq
-                        get-name:x:@.dp/#
-                        get-value:x:@.lambda/@for-each/@.dp/#
-                     .lambda
-                        set-value:x:@.exists
-                           .:bool:true
-               set-value:x:@.display
-                  get-value:x:@.exists
-      if
-         get-value:x:@.display
-         .lambda
-            set-value:x:@.columns-list
-               strings.concat
-                  get-value:x:@.columns-list
-                  .:"'"
-                  get-value:x:@.dp/#
-                  .:"',"
-
-
-   /*
     * Adding delete instance column.
     */
    set-value:x:@.columns-list
@@ -672,6 +689,11 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       strings.concat
          get-value:x:@.filename
          .:Put
+   strings.replace:x:@strings.replace
+      .:[[create-method]]
+      strings.concat
+         get-value:x:@.filename
+         .:Post
 
 
    /*
