@@ -25,6 +25,8 @@
                     border-radius: .5rem;
                     padding: 0 1rem 0 1rem;
                     position: relative;
+                    display: flex;
+                    flex-wrap: wrap;
                     .close-details {
                         position: absolute;
                         top:0;
@@ -40,6 +42,9 @@
                         padding-right: 0;
                     }
                     .details {
+                        flex-grow: 1;
+                        width: 25%;
+                        height: 100%;
                         label {
                             text-transform: capitalize;
                             display: block;
