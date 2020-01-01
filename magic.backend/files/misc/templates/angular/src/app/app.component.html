@@ -18,7 +18,7 @@
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">home</a>
 [[router-links]]    <a
-      *ngIf="isLoggedIn()"
+      *ngIf="inRole('root','admin')"
       mat-button
       routerLink="/auth"
       routerLinkActive="active-link"
