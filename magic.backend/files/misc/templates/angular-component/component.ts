@@ -97,14 +97,18 @@ export class [[component-name]] implements OnInit {
   }
 
   editDetails(entity: any) {
-    let data = {};
+    let data = {
+      isEdit: true,
+      entity: {},
+      editableFields: this.displayedColumns.filter(x => x !== 'delete-instance'),
+    };
     for (var idx in entity) {
       if (Object.prototype.hasOwnProperty.call(entity, idx)) {
-        data[idx] = entity[idx];
+        data.entity[idx] = entity[idx];
       }
     }
     const dialogRef = this.dialog.open([[component-edit-modal-name]], {
-      data,
+      data
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== null && res !== undefined) {

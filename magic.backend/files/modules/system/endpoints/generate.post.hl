@@ -288,13 +288,17 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       set-value:x:@.form-fields
          strings.concat
             get-value:x:@.form-fields
-            .:"\r\n  <mat-form-field class=\"entity-edit-field\">\r\n"
+            .:"\r\n  <mat-form-field\r\n"
+            .:"    *ngIf=\"isEditable('"
+            get-value:x:@.dp/#
+            .:"')\"\r\n"
+            .:"    class=\"entity-edit-field\">\r\n"
             .:"    <input\r\n"
             .:"      matInput\r\n"
             .:"      placeholder=\""
             get-value:x:@.dp/#
             .:"\"\r\n"
-            .:"      [(ngModel)]=\"data."
+            .:"      [(ngModel)]=\"data.entity."
             get-value:x:@.dp/#
             .:"\"\r\n"
             .:"      autocomplete=\"off\">\r\n"
