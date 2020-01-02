@@ -180,6 +180,14 @@ slots.create:magic.db.mysql.columns
                       */
                      set-value:x:@.type
                         .:string
+               else
+
+
+                  /*
+                   * Defaulting to string type.
+                   */
+                  set-value:x:@.type
+                     .:string
 
 
          /*
