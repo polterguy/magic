@@ -114,12 +114,11 @@ for-each:x:@.arguments/*/endpoints/*
             .:Put
       default
          throw:Unknown verb for HTTP endpoint
-   strings.replace:x:@.method
-      .:-
-      .:_
    set-value:x:@.method
       strings.concat
-         get-value:x:@strings.replace
+         strings.replace-not-of:x:@.method
+            .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321_
+            .:_
          get-value:x:@.verb
 
 
@@ -498,15 +497,20 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     * Figuring out component name, and replacing [[component-name]] with
     * the actual name of the component we want to use.
     */
+   .entity-name
    .component-name
    .component-edit-modal-name
+   set-value:x:@.entity-name
+      strings.replace-not-of:x:@.filename
+         .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321_
+         .:_
    set-value:x:@.component-name
       strings.concat
-         strings.capitalize:x:@.filename
+         get-value:x:@.entity-name
          .:Component
    set-value:x:@.component-edit-modal-name
       strings.concat
-         strings.capitalize:x:@.filename
+         get-value:x:@.entity-name
          .:EditModalComponent
    strings.replace:x:@strings.replace
       .:[[component-name]]
@@ -602,17 +606,17 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.replace:x:@strings.replace
       .:[[service-get-method]]
       strings.concat
-         get-value:x:@.filename
+         get-value:x:@.entity-name
          .:Get
    strings.replace:x:@strings.replace
       .:[[service-count-method]]
       strings.concat
-         get-value:x:@.filename
+         get-value:x:@.entity-name
          .:_countGet
    strings.replace:x:@strings.replace
       .:[[service-delete-method]]
       strings.concat
-         get-value:x:@.filename
+         get-value:x:@.entity-name
          .:Delete
 
 
@@ -696,22 +700,19 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       get-value:x:@.filename
    strings.replace:x:@io.files.load
       .:[[edit-component-name]]
-      strings.concat
-         strings.capitalize:x:@.filename
-         .:EditModal
-         .:Component
+      get-value:x:@.component-edit-modal-name
    strings.replace:x:@strings.replace
       .:[[filename]]
       get-value:x:@.filename
    strings.replace:x:@strings.replace
       .:[[update-method]]
       strings.concat
-         get-value:x:@.filename
+         get-value:x:@.entity-name
          .:Put
    strings.replace:x:@strings.replace
       .:[[create-method]]
       strings.concat
-         get-value:x:@.filename
+         get-value:x:@.entity-name
          .:Post
 
 
