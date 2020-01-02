@@ -67,13 +67,8 @@ export class SetupComponent implements OnInit {
     }
 
     this.setupService.setupAuthentication(this.selectedDatabaseType, this.username, this.password).subscribe(res => {
-      if (res.ticket) {
-        localStorage.setItem('access_token', res.ticket);
-        this.showInfo('New root user was created, and you are already logged in as it.');
-      } else {
-        localStorage.removeItem('access_token');
-        this.showInfo('The root user already exists, hence you were logged out of system.');
-      }
+      localStorage.removeItem('access_token');
+      this.showInfo('Magic has been successfully setup');
       environment.defaultAuth = false;
       this.router.navigate(['']);
     }, error => {
