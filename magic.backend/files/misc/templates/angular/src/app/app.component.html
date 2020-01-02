@@ -19,7 +19,7 @@
       <mat-icon matSuffix>home</mat-icon>Home
     </a>
 [[router-links]]    <a
-      *ngIf="inRole('root','admin')"
+      *ngIf="inRole(['root','admin'])"
       mat-button
       routerLink="/auth"
       routerLinkActive="active-link"
