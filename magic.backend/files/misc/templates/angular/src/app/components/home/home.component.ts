@@ -1,3 +1,7 @@
+/*
+ * Magic, Copyright(c) Thomas Hansen 2019, thomas@servergardens.com, all rights reserved.
+ * See the enclosed LICENSE file for details.
+ */
 
 import { Component, OnInit } from '@angular/core';
 

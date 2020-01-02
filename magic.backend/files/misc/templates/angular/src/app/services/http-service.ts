@@ -1,8 +1,17 @@
+/*
+ * Magic, Copyright(c) Thomas Hansen 2019, thomas@servergardens.com, all rights reserved.
+ * See the enclosed LICENSE file for details.
+ */
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
+/*
+ * Your main HTTP service for invoking CRUD methods in your backend's API.
+ *
+ * Notice, also contains some "helper methods" such as authenticate, refresh JWT token, etc.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -10,6 +19,7 @@ export class HttpService {
 
   constructor(private httpClient: HttpClient) { }
 
+  // Authenticates you towards your backend API.
   authenticate(username: string, password: string) {
     return this.httpClient.get<any>(
       environment.apiUrl +
@@ -19,10 +29,12 @@ export class HttpService {
       encodeURI(password));
   }
 
+  // Will refresh an existing JWT token, if possible.
   refreshTicket() {
     return this.httpClient.get<any>(environment.apiUrl + 'magic/modules/system/auth/refresh-ticket');
   }
   
+  // Creates QUERY arguments from the specified "args" argument given.
   getQueryArgs(args: any) {
     let result = '';
     for(const idx in args) {
@@ -43,5 +55,8 @@ export class HttpService {
       }
     }
     return result;
-  }[[service-endpoints]]
+  }
+
+  // HTTP REST methods your backend exposes, and that was used to scaffold Angular frontend app.
+[[service-endpoints]]
 }
