@@ -143,34 +143,7 @@ eval:x:@hyper2lambda
 
 
 /*
- * Checking if user already existed, at which point we do not
- * attempt to login in current root account, but return that fact to caller.
+ * Returning early, since database already exists,
+ * and logging in probably won't work.
  */
-if
-   eq
-      get-value:x:@.database-exists
-      .:bool:true
-   .lambda
-
-
-      /*
-       * Returning early, since database already exists,
-       * and logging in probably won't work.
-       */
-      slots.return-value:User already exists
-
-
-/*
- * Logging in user again, using the specified credentials,
- * and returning a new JWT token to caller.
- */
-unwrap:x:+/*
-slots.signal:magic.authenticate
-   username:x:@.arguments/*/rootUsername
-   password:x:@.arguments/*/rootPassword
-
-
-/*
- * Returning success to caller.
- */
-slots.return-nodes:x:@slots.signal/*
+slots.return-value:Success
