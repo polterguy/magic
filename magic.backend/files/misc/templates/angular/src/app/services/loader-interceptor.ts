@@ -1,3 +1,7 @@
+/*
+ * Magic, Copyright(c) Thomas Hansen 2019, thomas@servergardens.com, all rights reserved.
+ * See the enclosed LICENSE file for details.
+ */
 
 import { Injectable } from "@angular/core";
 import {
@@ -9,9 +13,14 @@ import {
 import { tap, catchError } from 'rxjs/operators';
 import { LoaderService } from './loader-service';
 
+/*
+ * Our HTTP interceptor that change sthe LoaderService's state according to whether or not
+ * an Ajax request is currently going towards your backend API.
+ */
 @Injectable()
 export class LoaderInterceptor implements HttpInterceptor {
 
+  // Notice, to support multiple requests, we need to track how many "open" requests we currently have.
   private totalRequests = 0;
 
   constructor(public loadingService: LoaderService) { }

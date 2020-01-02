@@ -318,7 +318,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>"
             .:"\r\n        </th>\r\n"
-            .:@"        <td mat-cell (click)=""showDetails(el)"" *matCellDef=""let el"">{{el."
+            .:@"        <td mat-cell (click)=""toggleDetails(el)"" *matCellDef=""let el"">{{el."
             get-value:x:@.dp/#
             .:"}}</td>\r\n"
             .:"      </ng-container>\r\n"
@@ -654,6 +654,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             .:".valueChanges\r\n"
             .:@"      .pipe(debounceTime(this.debounce), distinctUntilChanged())
       .subscribe(query => {
+        this.paginator.pageIndex = 0;
         this.filter.offset = 0;
         this.filter['"
             get-value:x:@.dp/#
