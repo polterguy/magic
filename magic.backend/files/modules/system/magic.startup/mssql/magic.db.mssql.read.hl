@@ -93,7 +93,7 @@ slots.create:magic.db.mssql.read
             /*
              * Adding [columns] to [mssql.read].
              */
-            add:x:../*/*mssql.connect/*/wait.mssql.read
+            add:x:../*/wait.mssql.connect/*/wait.mssql.read
                .
                   columns
             add:x:../*/wait.mssql.connect/*/wait.mssql.read/*/columns
