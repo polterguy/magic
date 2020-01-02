@@ -112,6 +112,14 @@ slots.create:magic.db.mssql.columns
                   .:string
 
 
+            /*
+             * Defaulting Hyperlambda type to string.
+             */
+            default
+               set-value:x:@.type
+                  .:string
+
+
          /*
           * Adding Hyperlambda type to [.tmp] above.
           */
