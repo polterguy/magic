@@ -154,8 +154,6 @@ export class [[component-name]] implements OnInit {
   }
 
   paged(e: PageEvent) {
-    this.filter.limit = e.pageSize;
-    this.filter.offset = e.pageIndex * this.filter.limit;
     this.getData(false);
   }
 

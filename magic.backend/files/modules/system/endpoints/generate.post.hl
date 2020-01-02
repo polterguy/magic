@@ -654,6 +654,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             .:".valueChanges\r\n"
             .:@"      .pipe(debounceTime(this.debounce), distinctUntilChanged())
       .subscribe(query => {
+        this.filter.offset = 0;
         this.filter['"
             get-value:x:@.dp/#
             .:".eq'] = this."
@@ -907,7 +908,8 @@ for-each:x:@.components/*
          .:"\"\r\n      routerLinkActive=\"active-link\"\r\n"
          .:"      class=\"menu-item\"\r\n"
          .:"      (click)=\"closeNavigator()\"\r\n"
-         .:"      [routerLinkActiveOptions]=\"{exact:true}\">"
+         .:"      [routerLinkActiveOptions]=\"{exact:true}\">\r\n"
+         .:"      <mat-icon matSuffix>grade</mat-icon>"
          get-value:x:@strings.split/0
          .:"</a>\r\n"
 

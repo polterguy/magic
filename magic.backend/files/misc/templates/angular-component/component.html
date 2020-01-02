@@ -74,8 +74,9 @@
 
     </table>
     <mat-paginator
-      [length]="count"
-      [pageSize]="filter.limit"
+      [(length)]="count"
+      [(pageSize)]="filter.limit"
+      [(pageIndex)]="filter.offset"
       (page)="paged($event)"
       [pageSizeOptions]="[5,10,25,50]">
     </mat-paginator>
