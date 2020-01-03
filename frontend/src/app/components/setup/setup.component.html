@@ -8,15 +8,12 @@
       <p>
         You have to setup your system such that it provides a real authentication scheme. Notice, this will permanently change
         the state of your installation, so be careful, and make sure you have chosen the correct database type that you wish to
-        use. You can find any files that are overwritten in the process in your <em>"trash"</em> folder. Also, your connection
-        string must be correct at this point, for the specific database type you wish to use. Edit it in your
-        <em>"appsettings.json"</em> file if you haven't done so already. While you're editing your appsettings.json file,
-        make sure you also edit your JWT secret.
+        use. Make sure you have modified you <em>"magic:auth:secret"</em> configuration setting at this point, before you continue.
       </p>
 
       <p>
         When you are done, you can crudify the <em>"magic_auth"</em> database to make the <em>"Users"</em> module
-        work, allowing you to add, edit and delete users in your installation.
+        work, allowing you to add, edit, and delete users in your installation.
       </p>
 
       <div class="database-selector">
@@ -66,7 +63,7 @@
 
       <button
         *ngIf="selectedDatabaseType !== null"
-        [disabled]="validDatabaseConnectionString !== true || validJwtSecret !== true"
+        [disabled]="validDatabaseConnectionString !== true"
         class="save-button"
         matTooltip="This might take some time"
         mat-button
@@ -74,7 +71,9 @@
         Setup
       </button>
 
-      <div class="air-top">
+      <div
+        *ngIf="selectedDatabaseType !== null"
+        class="air-top">
         <ngx-codemirror
           [(ngModel)]="appsettingsJson" 
           class="smaller"
