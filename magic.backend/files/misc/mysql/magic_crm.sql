@@ -1,8 +1,9 @@
 
 
 /*
- * Creating actual database, and making sure we use it, such that
- * when we create tables, they're created in the correct database.
+ * Creating our CRM database.
+ *
+ * Notice, this will throw an exception if the database exists from before.
  */
 CREATE DATABASE `magic_crm`;
 USE `magic_crm`;
@@ -17,9 +18,7 @@ CREATE TABLE `account_types` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `account_types` WRITE;
-INSERT INTO `account_types` VALUES ('lead', 'A potential future client'),('client', 'An actual client account'),('vip', 'A VIP client account');
-UNLOCK TABLES;
+INSERT INTO `account_types` VALUES ('lead', 'A potential future client'), ('client', 'An actual client account'), ('vip', 'A VIP client account');
 
 
 CREATE TABLE `accounts` (
@@ -36,21 +35,37 @@ CREATE TABLE `accounts` (
   CONSTRAINT `account_type_fky` FOREIGN KEY (`account_type`) REFERENCES `account_types` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `accounts` (`name`, `account_type`, `phone`, `street`, `city`, `zip`, `country`) VALUES ('Acme, Inc.', 'lead', '96070605', 'Rick St. 57', '9607', 'Los Angeles', 'US');
+INSERT INTO `accounts` (`name`, `account_type`, `phone`, `street`, `city`, `zip`, `country`) VALUES ('Foo Bar, Inc.', 'vip', '90545767', 'Foo Bar St. 67', 'San Francisco', '0234', 'US');
+INSERT INTO `accounts` (`name`, `account_type`, `phone`, `street`, `city`, `zip`, `country`) VALUES ('Greek Imports.', 'client', '90808080', 'Athens Ave. 57', 'Athens', '1234', 'Greece');
+
 
 /*
- * Creating tables associated with contacts.
+ * Creating contacts tables.
  */
 CREATE TABLE `contacts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(128) NOT NULL,
   `last_name` varchar(128) NOT NULL,
   `email` varchar(256) DEFAULT NULL,
-  `phone` varchar(45) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
   `account_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `accounts_fky_idx` (`account_id`),
   CONSTRAINT `accounts_fky` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('John', 'Doe', 'john@doe.com', '96070605', 1);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Jane', 'Doe', 'jane@doe.com', '96123456', 1);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Peter', 'Fonda', 'peter@fonda.us', '555-444-6767', 2);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Thomas', 'Hansen', 'thomas@gaiasoul.us', '96070102', 3);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Sandy', 'Jensen', 'sjensen@foo-bar.cy.com', '93010203', 3);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Panicos', 'Demotricus', 'pdemo@forex.com', '90010101', 2);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Timothy', 'Petreus', 'tim_p@hotmail.com', '47010204', 1);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Giorgos', 'Demotriculus', 'george@demotriculus.com', '97080706', 2);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Line', 'Hansen', 'line@norge.no', '42040506', 2);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Helga', 'Schwartz', 'helg_schw@deutschland.de', '12345678', 1);
+INSERT INTO `contacts` (`first_name`, `last_name`, `email`, `phone`, `account_id`) VALUES ('Jane', 'Jensen', 'jane@usa.com', '555-444-3322', 1);
 
 
 CREATE TABLE `contacts_extra_type` (
@@ -59,9 +74,10 @@ CREATE TABLE `contacts_extra_type` (
   PRIMARY KEY (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `contacts_extra_type` WRITE;
-INSERT INTO `contacts_extra_type` VALUES ('facebook', 'Facebook handle for your contact'),('twitter', 'Twitter handle for your contact'),('linkedin', 'LinkedIn URL to your contacts profile');
-UNLOCK TABLES;
+INSERT INTO `contacts_extra_type` VALUES 
+   ('facebook', 'Facebook handle for your contact'),
+   ('twitter', 'Twitter handle for your contact'),
+   ('linkedin', 'LinkedIn URL to your contacts profile');
 
 
 CREATE TABLE `contacts_extra` (
@@ -85,9 +101,11 @@ CREATE TABLE `activity_types` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `activity_types` WRITE;
-INSERT INTO `activity_types` VALUES ('phone', 'A phone conversation with a contact'),('email', 'An email activity, implying a sent email'),('meeting', 'A physical meeting with your contact'),('misc', 'Some other activity related to a contact');
-UNLOCK TABLES;
+INSERT INTO `activity_types` VALUES 
+   ('phone', 'A phone conversation with a contact'),
+   ('email', 'An email activity, implying a sent email'),
+   ('meeting', 'A physical meeting with your contact'),
+   ('misc', 'Some other activity related to a contact');
 
 
 CREATE TABLE `activities` (

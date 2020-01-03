@@ -4,11 +4,15 @@
  * serving as an authentication/authorization database for you.
  */
 
+
 /*
- * Creating database
+ * Creating database.
+ *
+ * Notice, this will throw an exception if the database exists from before.
  */
-CREATE DATABASE IF NOT EXISTS `magic_auth`;
+CREATE DATABASE `magic_auth`;
 USE `magic_auth`;
+
 
 /*
  * Creating users table.
@@ -19,6 +23,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`username`),
   UNIQUE KEY `username_UNIQUE` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 /*
  * Creating roles table.
