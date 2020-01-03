@@ -16,7 +16,7 @@
    overwrite:bool
    args
    validators
-   secretFields:string
+   secretFields
 .description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
 
 
