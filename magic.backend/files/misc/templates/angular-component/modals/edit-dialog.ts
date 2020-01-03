@@ -22,8 +22,8 @@ export interface DialogData {
  * creating new entity types.
  */
 @Component({
-  templateUrl: '[[filename]]-edit-modal.html',
-  styleUrls: ['[[filename]]-edit-modal.scss']
+  templateUrl: './[[filename]]-edit-modal.html',
+  styleUrls: ['./[[filename]]-edit-modal.scss']
 })
 export class [[edit-component-name]] {
 
@@ -73,7 +73,7 @@ export class [[edit-component-name]] {
       });
     }
   }
-  
+
   // Invoked when user cancels edit/create operation.
   cancel() {
     this.dialogRef.close();

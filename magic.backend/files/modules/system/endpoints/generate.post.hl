@@ -255,7 +255,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                   get-value:x:@.columns-list
                   .:"'"
                   get-value:x:@.dp/#
-                  .:"',"
+                  .:"' ,"
             set-name:x:+/*/*
                get-value:x:@.dp/#
             add:x:@.columns-names
@@ -504,13 +504,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       strings.replace-not-of:x:@.filename
          .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321_
          .:_
+   strings.capitalize:x:@.entity-name
    set-value:x:@.component-name
       strings.concat
-         get-value:x:@.entity-name
+         get-value:x:@strings.capitalize
          .:Component
    set-value:x:@.component-edit-modal-name
       strings.concat
-         get-value:x:@.entity-name
+         get-value:x:@strings.capitalize
          .:EditModalComponent
    strings.replace:x:@strings.replace
       .:[[component-name]]
@@ -564,9 +565,9 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             get-value:x:@.roles
             .:"'"
             get-value:x:@.dp/#
-            .:"',"
+            .:"', "
    strings.trim:x:@.roles
-      .:,
+      .:", "
    unwrap:x:+/*/*
    add:x:@.components/0/-
       .
@@ -579,7 +580,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    set-value:x:@.columns-list
       strings.concat
          get-value:x:@.columns-list
-         .:"'delete-instance'"
+         .:" 'delete-instance'"
 
 
    /*
