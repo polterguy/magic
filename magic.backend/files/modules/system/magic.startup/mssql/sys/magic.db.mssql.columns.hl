@@ -103,13 +103,19 @@ slots.create:magic.db.mssql.columns
             case:image
             case:varbinary
             case:uniqueidentifier
-            case:rowversion
-            case:timestamp
-            case:varbinary
-            case:varbinary
-            case:varbinary
                set-value:x:@.type
                   .:string
+
+
+            /*
+             * Special case for timestamp, since it's actually an "automatic" column.
+             */
+            case:rowversion
+            case:timestamp
+               set-value:x:@.type
+                  .:string
+               set-value:x:@.tmp/*/*/automatic
+                  .:bool:true
 
 
             /*
