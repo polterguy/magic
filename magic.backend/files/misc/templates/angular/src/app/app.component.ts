@@ -84,7 +84,7 @@ export class AppComponent {
 
       // Oops, authentication error, or something similar.
       console.error(error);
-      this.snackBar.open(error, 'Close', {
+      this.snackBar.open(error.error.message, 'Close', {
         duration: 3000,
         panelClass: ['error-snackbar'],
       });
