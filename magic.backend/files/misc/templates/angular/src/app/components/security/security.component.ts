@@ -19,7 +19,8 @@ export class SecurityComponent {
   constructor(private snackBar: MatSnackBar) { }
 
   save() {
-    this.snackBar.open('TODO: Implement this later', 'Close', {
+    // TODO: Implement!
+    this.snackBar.open('TODO: Implement this yourself', 'Close', {
       duration: 2000,
     });
   }
