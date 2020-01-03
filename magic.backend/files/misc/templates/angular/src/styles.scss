@@ -138,8 +138,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
             th {
                 padding-right: 2rem;
                 .filter-textbox {
-                    width: 100%;
+                    float: left;
                     font-size: 10px;
+                    width: calc(100% - 70px);
+                }
+                .sort-button {
+                    float: right;
+                    width: 70px;
+                    box-sizing: border-box;
+                    padding-left: 0;
+                    padding-right: 0;
                 }
             }
             td.delete-column,

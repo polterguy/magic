@@ -317,7 +317,18 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             get-value:x:@.dp/#
             .:@""">
             <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>"
+          </mat-form-field>
+          <button
+            class=""sort-button""
+            (click)=""sort('"
+            get-value:x:@.dp/#
+            .:@"')""
+            mat-button>
+            <mat-icon matSuffix>{{getSortIcon('"
+            get-value:x:@.dp/#
+            .:@"')}}</mat-icon>
+            Sort
+          </button>"
             .:"\r\n        </th>\r\n"
             .:@"        <td mat-cell (click)=""toggleDetails(el)"" *matCellDef=""let el"">{{el."
             get-value:x:@.dp/#
