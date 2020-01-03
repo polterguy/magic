@@ -38,6 +38,7 @@ export class [[component-name]] implements OnInit {
 
   // Number of items our backend reports are available in total, matching our above filter condition.
   private count: number = 0;
+  private hasFiltered = false;
 
   // Number of milliseconds after a keystroke before filtering should be re-applied.
   private debounce: number = 400;
@@ -65,6 +66,17 @@ export class [[component-name]] implements OnInit {
 
     // Necessary to make sure we can have "live filtering" in our datagrid.
 [[form-control-value-subscriptions]]  }
+
+  /*
+   * Returns the class for the header row, which will only be visible
+   * if there are more than 20 records in dataset, before filtering has been applied.
+   */
+  getHeaderRowClass() {
+    if (this.hasFiltered || this.count > 10) {
+      return 'visible';
+    }
+    return 'hidden';
+  }
 
   // Method that retrieves data from backend according to specified filter.
   getData(countRecords: boolean = true) {
