@@ -656,6 +656,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       .subscribe(query => {
         this.paginator.pageIndex = 0;
         this.filter.offset = 0;
+        this.hasFiltered = true;
         this.filter['"
             get-value:x:@.dp/#
             .:".eq'] = this."
