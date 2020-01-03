@@ -60,6 +60,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     display: list-item !important;
     text-align: left !important;
     margin: .5rem .5rem 0 .5rem;
+    padding: .5rem 2rem .5rem 2rem !important;
+    font-size: 1.2rem;
+    .mat-icon {
+        margin-right: .5rem;
+    }
 }
 
 .mat-dialog-container {
