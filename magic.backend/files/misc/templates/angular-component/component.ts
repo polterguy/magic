@@ -259,6 +259,7 @@ export class [[component-name]] implements OnInit {
 
   // Invoked when pager is paged.
   paged(e: PageEvent) {
+    this.filter.offset = e.pageIndex * e.pageSize;
     this.getData(false);
   }
 
