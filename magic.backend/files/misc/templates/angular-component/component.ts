@@ -37,11 +37,11 @@ export class [[component-name]] implements OnInit {
   };
 
   // Number of items our backend reports are available in total, matching our above filter condition.
-  private count: number = 0;
+  private count = 0;
   private hasFiltered = false;
 
   // Number of milliseconds after a keystroke before filtering should be re-applied.
-  private debounce: number = 400;
+  private debounce = 400;
 
   // List of items we're currently viewing details for.
   private viewDetails: any[] = [];
