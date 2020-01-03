@@ -126,6 +126,38 @@ export class [[component-name]] implements OnInit {
     });
   }
 
+  // Sorts by the specified column.
+  sort(column: string) {
+    if (this.filter.order === column) {
+
+      // Inverting sort direction.
+      this.filter.direction = 
+        this.filter.direction === 'asc' ||
+        this.filter.direction === null ||
+        this.filter.direction === undefined ?
+          'desc' :
+          'asc';
+    } else {
+      this.filter.order = column;
+      this.filter.direction = 'asc';
+    }
+    this.getData(false);
+  }
+
+  getSortIcon(column: string) {
+    if (this.filter.order === column) {
+
+      // Inverting sort direction.
+      return this.filter.direction === 'asc' ||
+        this.filter.direction === null ||
+        this.filter.direction === undefined ?
+          'keyboard_arrow_down' :
+          'keyboard_arrow_up';
+    } else {
+      return 'keyboard_arrow_down';
+    }
+  }
+
   // Shows or hides the "view details" row for a specific record.
   toggleDetails(entity: any) {
     const indexOf = this.viewDetails.indexOf(entity);
