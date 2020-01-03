@@ -28,6 +28,16 @@ export interface DialogData {
 export class [[edit-component-name]] {
 
   /*
+   * Only the following properties of the given data.entity will actually
+   * be transmitted to the server. This is done to make sure we don't submit
+   * "automatic" columns, such as "timestamp" or "rowversion", etc.
+   * 
+   * TODO: Future improvement - Pass in these as part of the condition during
+   * update, kind of like parts of the row's primary key, or something ...
+   */
+  private columns: string[] = [[[update-columns]]];
+
+  /*
    * Constructor taking a bunch of services injected using dependency injection.
    */
   constructor(
@@ -40,6 +50,17 @@ export class [[edit-component-name]] {
    * Invoked when the user clicks the "Save" button.
    */
   save() {
+
+    /*
+     * Making sure we remove all parts of entity that is not explicitly
+     * listed in columns, to avoid passing "automatic" columns into update/create
+     * method of HTTP service.
+     */
+    for (const idx in this.data.entity) {
+      if (this.columns.indexOf(idx) === -1) {
+        delete this.data.entity[idx];
+      }
+    }
 
     /*
      * Checking if we're editing an existing entity type, or if we're

@@ -33,6 +33,7 @@
  * - [[routes]] - Becomes the router paths for all automatically generated components
  * - [[router-links]] - Becomes the router hyperlinks for all components
  * - [[name]] - Name of your app
+ * - ++++
  *
  */
 .description:"Generates frontend client side according to arguments given."
@@ -222,7 +223,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
       /*
        * Verifying currently iterated column is in "crud-create" endpoint,
-       * since if it's not, the column is an automatic primary key, and we don't
+       * since if it's not, the column is an "automatic" or primary key, and we don't
        * want to display it in the grid (by default).
        */
       .display:bool:true
@@ -255,7 +256,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                   get-value:x:@.columns-list
                   .:"'"
                   get-value:x:@.dp/#
-                  .:"' ,"
+                  .:"', "
             set-name:x:+/*/*
                get-value:x:@.dp/#
             add:x:@.columns-names
@@ -580,7 +581,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    set-value:x:@.columns-list
       strings.concat
          get-value:x:@.columns-list
-         .:" 'delete-instance'"
+         .:"'delete-instance'"
 
 
    /*
@@ -708,6 +709,11 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.replace:x:@strings.replace
       .:[[filename]]
       get-value:x:@.filename
+   strings.replace:x:@strings.replace
+      .:[[update-columns]]
+      strings.replace:x:@.columns-list
+         .:", 'delete-instance'"
+         .:
    strings.replace:x:@strings.replace
       .:[[update-method]]
       strings.concat

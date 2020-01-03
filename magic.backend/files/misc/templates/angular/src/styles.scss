@@ -29,6 +29,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .sidenav-menu {
     border-right: solid 1px rgb(180, 180, 180);
     background: #eee;
+    .active-link {
+        background-color: rgba(32, 15, 182, 0.1);
+    }
 }
 
 .relativized {
