@@ -20,7 +20,6 @@ export class SetupComponent implements OnInit {
   private password: string = null;
   private passwordRepeat: string = null;
   private validDatabaseConnectionString = false;
-  private validJwtSecret = false;
   private appsettingsJson = '';
 
   constructor(
@@ -34,7 +33,7 @@ export class SetupComponent implements OnInit {
       this.appsettingsJson = res;
     });
   }
-  
+
   databaseTypeChanged(e: MatSelectChange) {
     this.checkDatabaseConfiguration(this.selectedDatabaseType);
   }
@@ -42,11 +41,10 @@ export class SetupComponent implements OnInit {
   checkDatabaseConfiguration(databaseType: string) {
     this.setupService.checkDatabaseConfiguration(databaseType).subscribe(res => {
       this.validDatabaseConnectionString = true;
-      this.pingService.ping().subscribe(res => {
-        if (res.warnings.jwt !== undefined) {
-          this.showError('You have to change your JWT secret');
+      this.pingService.ping().subscribe(res2 => {
+        if (res2.warnings.jwt !== undefined) {
+          this.showError('You have to change your JWT secret. Notice, you need to restart your web application afterwards!', 25000);
         } else {
-          this.validJwtSecret = true;
           this.showInfo('Choose a root password and click Setup');
         }
       });
@@ -92,7 +90,7 @@ export class SetupComponent implements OnInit {
     });
   }
 
-  showError(error: string) {
+  showError(error: string, duariont: number = 10000) {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
