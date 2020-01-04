@@ -10,6 +10,7 @@ import { MatPaginator } from '@angular/material';
 import { PageEvent } from '@angular/material/paginator';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpService } from 'src/app/services/http-service';
 import { [[component-edit-modal-name]] } from './modals/[[filename]]-edit-modal';
@@ -49,14 +50,30 @@ export class [[component-name]] implements OnInit {
   // Need to view paginator as a child to update page index of it.
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  /*
+   * This is needed to figure out whether or not user has access to
+   * delete, create and update methods.
+   */
+  private roles: string [] = [];
+
   // Form control declarations to bind up with reactive form elements.
 [[form-control-declarations]]
 
   // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
     private httpService: HttpService,
+    private jwtHelper: JwtHelperService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog) {
+
+      // Checking if user is logged in, at which point we initialize the roles property.
+      const token = localStorage.getItem('jwt_token');
+      if (token !== null && token !== undefined) {
+
+        // Yup! User is logged in!
+        this.roles = this.jwtHelper.decodeToken(token).role.split(',');
+      }
+    }
 
   // OnInit implementation. Retrieves initial data (unfiltered) and instantiates our FormControls.
   ngOnInit() {
@@ -292,6 +309,16 @@ export class [[component-name]] implements OnInit {
     this.filter.limit = e.pageSize;
     this.filter.offset = e.pageIndex * e.pageSize;
     this.getData(false);
+  }
+
+  // Returns true if user belongs to (at least) one of the specified roles.
+  inRole(roles: string[]) {
+    for (const idx of roles) {
+      if (this.roles.indexOf(idx) !== -1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Helper method to display an error to user in a friendly SnackBar type of widget.

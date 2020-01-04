@@ -61,7 +61,7 @@ export class AuthComponent implements OnInit {
         callback();
       }
     }, error => {
-      this.snackBar.open(error, 'Close', {
+      this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
       });
@@ -75,7 +75,7 @@ export class AuthComponent implements OnInit {
         callback();
       }
     }, error => {
-      this.snackBar.open(error, 'Close', {
+      this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
       });
@@ -86,7 +86,7 @@ export class AuthComponent implements OnInit {
     this.service.getUsersCount().subscribe(res => {
       this.userCount = res.count;
     }, error => {
-      this.snackBar.open(error, 'Close', {
+      this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
       });
@@ -97,7 +97,7 @@ export class AuthComponent implements OnInit {
     this.service.getRolesCount().subscribe(res => {
       this.roleCount = res.count;
     }, error => {
-      this.snackBar.open(error, 'Close', {
+      this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
       });
@@ -148,6 +148,11 @@ export class AuthComponent implements OnInit {
         });
       });
       this.getUsersCount();
+    }, error => {
+      this.snackBar.open(error.error.message, 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar'],
+      });
     });
   }
 
@@ -159,6 +164,11 @@ export class AuthComponent implements OnInit {
         });
       });
       this.getRolesCount();
+    }, error => {
+      this.snackBar.open(error.error.message, 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar'],
+      });
     });
   }
 
@@ -177,7 +187,7 @@ export class AuthComponent implements OnInit {
   editUser(username: string) {
     if (username === 'root') {
       this.snackBar.open('Root user cannot be edited!', 'Close', {
-        duration: 5000,
+        duration: 2000,
         panelClass: ['error-snackbar'],
       });
       return;
@@ -189,6 +199,7 @@ export class AuthComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== null && res !== undefined) {
+        console.log('User successfully updated');
       }
     });
   }

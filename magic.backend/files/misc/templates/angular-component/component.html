@@ -7,6 +7,7 @@
 
     <button
       mat-button
+      *ngIf="inRole([[[create-roles]]])"
       class="top-right"
       (click)="createNewRecord()">New ...</button>
 
@@ -26,6 +27,7 @@
           *matCellDef="let el"
           class="delete-column">
           <button
+            *ngIf="inRole([[[delete-roles]]])"
             mat-button
             (click)="delete(el, {[[delete-input]]})"
             placeholder="Deletes this record">
@@ -49,6 +51,7 @@
               <mat-icon matSuffix>close</mat-icon>
             </button>
             <button
+              *ngIf="inRole([[[update-roles]]])"
               mat-button
               class="edit-details"
               (click)="editDetails(el)">

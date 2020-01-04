@@ -434,11 +434,119 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
+    * Finding our "crud-create" endpoint, to make sure we
+    * only show the "Create new entity" button for roles that are
+    * allowed to create new entities of specified type.
+    */
+   .create-roles:
+   for-each:x:@.arguments/*/endpoints/*
+      if
+         and
+            eq
+               get-value:x:@.dp/#/*/type
+               .:crud-create
+            eq
+               get-value:x:@.dp/#/*/path
+               get-value:x:@for-each/@.dp/#/*/path
+         .lambda
+            for-each:x:@.dp/#/*/auth/*
+               set-value:x:@.create-roles
+                  strings.concat
+                     get-value:x:@.create-roles
+                     .:"'"
+                     get-value:x:@.dp/#
+                     .:"', "
+            set-value:x:@.create-roles
+               strings.trim-end:x:@.create-roles
+                  .:", "
+
+
+   /*
+    * Finding our "crud-delete" endpoint, to make sure we
+    * only show the "Delete entity" button for roles that are
+    * allowed to delete entities of specified type.
+    */
+   .delete-roles:
+   for-each:x:@.arguments/*/endpoints/*
+      if
+         and
+            eq
+               get-value:x:@.dp/#/*/type
+               .:crud-delete
+            eq
+               get-value:x:@.dp/#/*/path
+               get-value:x:@for-each/@.dp/#/*/path
+         .lambda
+            for-each:x:@.dp/#/*/auth/*
+               set-value:x:@.delete-roles
+                  strings.concat
+                     get-value:x:@.delete-roles
+                     .:"'"
+                     get-value:x:@.dp/#
+                     .:"', "
+            set-value:x:@.delete-roles
+               strings.trim-end:x:@.delete-roles
+                  .:", "
+
+
+   /*
+    * Finding our "crud-update" endpoint, to make sure we
+    * only show the "Update entity" button for roles that are
+    * allowed to update entities of specified type.
+    */
+   .update-roles:
+   for-each:x:@.arguments/*/endpoints/*
+      if
+         and
+            eq
+               get-value:x:@.dp/#/*/type
+               .:crud-update
+            eq
+               get-value:x:@.dp/#/*/path
+               get-value:x:@for-each/@.dp/#/*/path
+         .lambda
+            for-each:x:@.dp/#/*/auth/*
+               set-value:x:@.update-roles
+                  strings.concat
+                     get-value:x:@.update-roles
+                     .:"'"
+                     get-value:x:@.dp/#
+                     .:"', "
+            set-value:x:@.update-roles
+               strings.trim-end:x:@.update-roles
+                  .:", "
+
+
+   /*
     * Replacing any [[filename]] occurencies in HTML file.
     */
    strings.replace:x:@strings.replace
       .:[[filename]]
       get-value:x:@.filename
+
+
+   /*
+    * Replacing any [[create-roles]] occurencies in HTML file.
+    */
+   strings.replace:x:@strings.replace
+      .:[[create-roles]]
+      get-value:x:@.create-roles
+
+
+   /*
+    * Replacing any [[delete-roles]] occurencies in HTML file.
+    */
+   strings.replace:x:@strings.replace
+      .:[[delete-roles]]
+      get-value:x:@.delete-roles
+
+
+   /*
+    * Replacing any [[update-roles]] occurencies in HTML file.
+    */
+   strings.replace:x:@strings.replace
+      .:[[update-roles]]
+      get-value:x:@.update-roles
 
 
    /*
