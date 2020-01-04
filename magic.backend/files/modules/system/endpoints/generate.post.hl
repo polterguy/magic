@@ -928,9 +928,11 @@ for-each:x:@.components/*
          .:"      class=\"menu-item\"\r\n"
          .:"      (click)=\"closeNavigator()\"\r\n"
          .:"      [routerLinkActiveOptions]=\"{exact:true}\">\r\n"
-         .:"      <mat-icon matSuffix>grade</mat-icon>"
+         .:"      <mat-icon matSuffix>grade</mat-icon>\r\n"
+         .:"      <span class=\"menu-item-text\">"
          get-value:x:@strings.split/0
-         .:"</a>\r\n"
+         .:"</span>\r\n"
+         .:"    </a>\r\n"
 
 
 /*

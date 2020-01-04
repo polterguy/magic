@@ -16,7 +16,8 @@
       class="menu-item"
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>home</mat-icon>Home
+      <mat-icon matSuffix>home</mat-icon>
+      <span class="menu-item-text">Home</span>
     </a>
 [[router-links]]    <a
       *ngIf="inRole(['root','admin'])"
@@ -26,7 +27,8 @@
       class="menu-item"
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>supervisor_account</mat-icon>Auth
+      <mat-icon matSuffix>supervisor_account</mat-icon>
+      <span class="menu-item-text">Auth</span>
     </a>
     <a
       mat-button
@@ -36,7 +38,8 @@
       class="menu-item"
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>home</mat-icon>Security
+      <mat-icon matSuffix>home</mat-icon>
+      <span class="menu-item-text">Security</span>
     </a>
     <a
       *ngIf="isLoggedIn()"
@@ -44,7 +47,8 @@
       class="menu-item"
       (click)="closeNavigator()"
       (click)="logout()">
-      <mat-icon matSuffix>lock</mat-icon>Logout
+      <mat-icon matSuffix>lock</mat-icon>
+      <span class="menu-item-text">Logout</span>
     </a>
   </mat-sidenav>
 

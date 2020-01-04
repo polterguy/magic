@@ -59,7 +59,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .menu-item {
-    text-transform: capitalize;
     display: list-item !important;
     text-align: left !important;
     margin: .5rem .5rem 0 .5rem;
@@ -67,6 +66,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: 1.2rem;
     .mat-icon {
         margin-right: .5rem;
+    }
+    .menu-item-text {
+        text-transform: capitalize;
+        display: inline-block;
     }
 }
 
