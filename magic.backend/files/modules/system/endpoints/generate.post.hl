@@ -327,7 +327,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             <mat-icon matSuffix>{{getSortIcon('"
             get-value:x:@.dp/#
             .:@"')}}</mat-icon>
-            Sort
           </button>"
             .:"\r\n        </th>\r\n"
             .:@"        <td mat-cell (click)=""toggleDetails(el)"" *matCellDef=""let el"">{{el."

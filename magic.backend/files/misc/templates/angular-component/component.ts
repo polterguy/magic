@@ -145,16 +145,13 @@ export class [[component-name]] implements OnInit {
   }
 
   getSortIcon(column: string) {
-    if (this.filter.order === column) {
-
-      // Inverting sort direction.
-      return this.filter.direction === 'asc' ||
-        this.filter.direction === null ||
-        this.filter.direction === undefined ?
-          'keyboard_arrow_down' :
-          'keyboard_arrow_up';
-    } else {
+    if (this.filter.order !== column) {
+      return 'sort_by_alpha';
+    }
+    if (this.filter.direction === 'asc') {
       return 'keyboard_arrow_down';
+    } else {
+      return 'keyboard_arrow_up';
     }
   }
 
