@@ -136,13 +136,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
                 display: table-cell;
             }
             th {
-                padding-right: 2rem;
                 .filter-textbox {
                     float: left;
                     font-size: 10px;
                     width: calc(100% - 70px);
                 }
                 .sort-button {
+                    margin-top: 2px;
                     float: right;
                     width: 70px;
                     box-sizing: border-box;
