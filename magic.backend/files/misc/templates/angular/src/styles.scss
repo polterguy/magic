@@ -163,6 +163,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
             td.delete-column {
                 color: rgb(128, 128, 128);
             }
+            th.hidden,
+            td.hidden {
+                display: none !important;
+            }
         }
         tr.visible-details {
             td {
