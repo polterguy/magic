@@ -25,48 +25,25 @@
 [![Build status](https://travis-ci.org/polterguy/magic.endpoint.svg?master)](https://travis-ci.org/polterguy/magic.endpoint)
 [![Build status](https://travis-ci.org/polterguy/magic.data.common.svg?master)](https://travis-ci.org/polterguy/magic.data.common)
 
-Magic is an automation tool for ASP.NET Core. It features a CRUD app generator, allowing you to create CRUD Web
-APIs by simply clicking a button - In addition to a task scheduler, allowing you to schedule tasks for execution
-in the future. Watch the video below for a demonstration of Magic's CRUD API generator.
+Magic allows you to create your Web applications by simply clicking a button. Watch the video below for a
+demonstration.
 
 <p align="center">
-<a href="https://www.youtube.com/watch?v=4TyT4lBEOg8">
-<img alt="Create a Magic CRUD app in seconds" title="Create a Magic CRUD app in seconds" src="https://phosphorusfive.files.wordpress.com/2019/09/create-a-magic-crud-app-in-seconds.png" />
-</a>
-</p>
-
-Or watch the following video for a demonstration of Magic's task scheduler.
-
-<p align="center">
-<a href="https://www.youtube.com/watch?v=I8iNg1wxRSo">
-<img alt="Scheduling tasks in ASP.NET Core" title="Scheduling tasks in ASP.NET Core" src="https://servergardens.files.wordpress.com/2019/12/magic-scheduler-screenshot.png" />
+<a href="https://www.youtube.com/watch?v=7zNh4Ekd67c">
+<img alt="Create a CRUD Web app in seconds" title="Create a CRUD Web app in seconds" src="https://servergardens.files.wordpress.com/2020/01/magic-video-screenshot.png" />
 </a>
 </p>
 
 ## Getting started
 
 The simplest way to get started, is to [download its latest release](https://github.com/polterguy/magic/releases),
-and use it as a _"starter kit"_. However, if you want to use Magic in an existing project, you could also install the
-latest _"magic.library"_ NuGet package, using something resembling the following.
-
-```
-Install-Package magic.library
-```
-
-**Notice**, you'd still need to make sure you have the contents of the _"files/"_ folder in your own system. This is
-because the files folder contains crucial Hyperlambda endpoints, required to have the _"crudifier"_ work.
-If the choices I have done in the magic.library is not adequate for your needs, you can also
-[download the latest magic.library](https://github.com/polterguy/magic.library/releases) codebase,
-and modify it according to your needs. The magic.library project is just a helper to automagically pull
-in all references to all modules in Magic, since Magic is extremely modularized in its architecture, and
-actually not one project, but in fact more than 20 different components.
+and use it as a _"starter kit"_.
 
 ## Documentation
 
 Although documentation is work in progress, you can rapidly [teach yourself the basics here](https://polterguy.github.io).
 
 * [Main documentation website](https://polterguy.github.io)
-* [Component documentation](https://github.com/polterguy/magic/blob/master/components.md)
 
 ## License
 
