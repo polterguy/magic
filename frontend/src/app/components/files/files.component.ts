@@ -14,6 +14,7 @@ import { ConfirmDeletionDialogComponent } from './modals/confirm-deletion-dialog
   styleUrls: ['./files.component.scss']
 })
 export class FilesComponent implements OnInit {
+
   private displayedColumns: string[] = ['path', 'download', 'delete'];
   private path = '/';
   private folders: string[] = [];
@@ -24,6 +25,33 @@ export class FilesComponent implements OnInit {
   private selectedDatabaseType = 'mysql';
   private filter = '';
   private safeMode = true;
+  private protectedFolders: string[] = [
+    '/misc/',
+    '/misc/mssql/',
+    '/misc/mssql/templates/',
+    '/misc/mysql/',
+    '/misc/mysql/templates/',
+    '/misc/templates/',
+    '/misc/templates/angular/',
+    '/misc/templates/angular-component/',
+    '/modules/',
+    '/modules/system/',
+    '/modules/system/*',
+    '/trash/',
+  ];
+  private protectedFiles: string[] = [
+    '/misc/README.md',
+    '/misc/templates/README.md',
+    '/misc/mssql/create-user.hl',
+    '/misc/mssql/magic_auth.sql',
+    '/misc/mssql/magic.authenticate.hl',
+    '/misc/mysql/create-user.hl',
+    '/misc/mysql/magic_auth.sql',
+    '/misc/mysql/magic.authenticate.hl',
+    '/misc/mysql/magic_crm.sql',
+    '/modules/README.md',
+    '/modules/system/*',
+  ];
 
   constructor(
     private fileService: FileService,
@@ -42,9 +70,6 @@ export class FilesComponent implements OnInit {
   getPath() {
     this.fileService.listFiles(this.path).subscribe((res) => {
       this.files = res || [];
-      if (this.path === '/modules/system/') {
-        this.showInfo('These files and folders are protected for your safety!');
-      }
     });
     this.fileService.listFolders(this.path).subscribe((res) => {
       this.folders = res || [];
@@ -276,9 +301,51 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
+  isProtected(path: string) {
+    const entities = path.split('/').filter(x => x !== '');
+    if (entities.length === 0) {
+      return false;
+    }
+    if (path.endsWith('/')) {
+
+      // Folder
+      const isProtected = this.protectedFolders.indexOf(path) !== -1;
+      if (isProtected) {
+        return true;
+      }
+      let incremental = '/';
+      for (const idx of entities) {
+        incremental += idx + '/';
+        if (this.protectedFolders.indexOf(incremental + '*') !== -1) {
+          return true;
+        }
+      }
+      return false; // No recursively protected folders matching current folder.
+    } else {
+
+      // File
+      const isProtected = this.protectedFiles.indexOf(path) !== -1;
+      if (isProtected) {
+        return true;
+      }
+      let incremental = '/';
+      for (const idx of entities) {
+        incremental += idx + '/';
+        if (this.protectedFiles.indexOf(incremental + '*') !== -1) {
+          return true;
+        }
+      }
+      return false; // No recursively protected folders matching current folder.
+    }
+  }
+
+  isFolder(path: string) {
+    return path.endsWith('/');
+  }
+
   getRowClass(el: string) {
     let additionalCss = '';
-    if (!this.canDelete(el)) {
+    if (this.isProtected(el)) {
       if (this.safeMode) {
         additionalCss = 'danger ';
       } else {
@@ -294,59 +361,8 @@ export class FilesComponent implements OnInit {
     return additionalCss + '';
   }
 
-  canDelete(path: string) {
-    if (!this.safeMode) {
-      return true;
-    }
-    return path !== '/modules/' &&
-      path !== '/trash/' &&
-      path !== '/trash/README.md' &&
-      path !== '/modules/README.md' &&
-      !path.startsWith('/modules/system/') &&
-      path !== '/misc/' &&
-      path !== '/misc/mysql/' &&
-      path !== '/misc/mssql/' &&
-      path !== '/misc/mysql/templates/' &&
-      path !== '/misc/mssql/templates/' &&
-      path !== '/misc/README.md';
-  }
-
-  isFolder(path: string) {
-    return path.endsWith('/');
-  }
-
   atRoot() {
     return this.path === '/';
-  }
-
-  canUpload() {
-    if (!this.safeMode) {
-      return true;
-    }
-    return !this.path.startsWith('/modules/system/') && !this.path.startsWith('/misc/');
-  }
-
-  canCreateFile() {
-    if (!this.safeMode) {
-      return true;
-    }
-    return !this.path.startsWith('/modules/system/') && !this.path.startsWith('/misc/');
-  }
-
-  canCreateFolder() {
-    if (!this.safeMode) {
-      return true;
-    }
-    return !this.path.startsWith('/modules/system/') && !this.path.startsWith('/misc/');
-  }
-
-  canSave() {
-    if (!this.safeMode) {
-      return true;
-    }
-    return !this.path.startsWith('/modules/system/') && this.filePath !== '/modules/README.md' &&
-      !this.filePath.startsWith('/misc/') &&
-      this.filePath !== '/trash/README.md';
   }
 
   showInfo(info: string) {
