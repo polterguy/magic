@@ -107,6 +107,7 @@
               <mat-form-field
                 *ngIf="getMode(el) == 'text/x-mysql'">
                 <mat-select
+                  [disabled]="!canModify(el.path)"
                   [(value)]="selectedDatabaseType">
                   <mat-option
                     *ngFor="let cur of databaseTypes"
