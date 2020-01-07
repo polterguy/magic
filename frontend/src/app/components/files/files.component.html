@@ -29,7 +29,7 @@
         <td mat-cell *matCellDef="let el">
           <button
             *ngIf="!isFolder(el)"
-            (click)="downloadFile(el); $event.stopPropogation();"
+            (click)="downloadFile(el);"
             mat-button>
             Download
           </button>
@@ -40,7 +40,7 @@
         <th mat-header-cell *matHeaderCellDef class="delete-column"></th>
         <td mat-cell *matCellDef="let el">
           <button
-            [disabled]="!canDelete(el)"
+            [disabled]="isProtected(el)"
             (click)="deletePath(el); $event.stopPropogation();"
             mat-button>
             Delete
@@ -61,25 +61,27 @@
         (click)="upOneFolder()">Up one level</button>
     </div>
 
-    <div class="absolutized-bottom">
+    <div
+      class="absolutized-bottom">
       <button
         class="file-button"
-        [disabled]="!canUpload()"
+        [disabled]="isProtected(path)"
         mat-button>Upload file</button>
         <div style="display: inline-block"></div>
-      <input type="file"
+      <input
+        type="file"
         id="file"
-        [disabled]="!canUpload()"
+        [disabled]="isProtected(path)"
         multiple
         class="invisible-file-element"
         (change)="handleFileInput($event.target.files)">
       <button
-        [disabled]="!canCreateFile()"
+        [disabled]="isProtected(path)"
         mat-button
         matTooltip="Create a new file"
         (click)="createNewFile()">New file</button>
       <button
-        [disabled]="!canCreateFolder()"
+        [disabled]="isProtected(path)"
         mat-button
         matTooltip="Create a new folder"
         (click)="createNewFolder()">New folder</button>
@@ -106,23 +108,23 @@
 
   <div class="right-aligned" style="margin-top: 1rem;">
     <button
-      [disabled]="!canSave()"
+      [disabled]="isProtected(filePath)"
       mat-button
       (click)="save()"
       matTooltip="Saves your file">Save</button>
     <button
-      *ngIf="getMode(this.filePath) == 'text/x-mysql'"
+      *ngIf="getMode(filePath) == 'text/x-mysql'"
       mat-button
       (click)="evaluateSql()"
       matTooltip="Evaluates your SQL">Evaluate</button>
     <mat-form-field
-      *ngIf="getMode(this.filePath) == 'text/x-mysql'">
+      *ngIf="getMode(filePath) == 'text/x-mysql'">
       <mat-select [(value)]="selectedDatabaseType">
         <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
       </mat-select>
     </mat-form-field>
     <button
-      *ngIf="getMode(this.filePath) == 'hyperlambda' && !path.startsWith('/modules/system/')"
+      *ngIf="getMode(filePath) == 'hyperlambda'"
       mat-button
       (click)="evaluate()"
       matTooltip="Evaluates your file">Evaluate</button>
