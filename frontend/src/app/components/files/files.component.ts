@@ -49,6 +49,7 @@ export class FilesComponent implements OnInit {
     '/misc/mysql/magic_crm.sql',
     '/modules/README.md',
     '/modules/system/*',
+    '/trash/README.md',
   ];
 
   constructor(
@@ -74,7 +75,6 @@ export class FilesComponent implements OnInit {
             extra: null,
           };
         });
-        console.log(this.dataSource);
       });
     });
   }
@@ -121,6 +121,10 @@ export class FilesComponent implements OnInit {
       this.path = el.path;
       this.getPath();
     } else {
+      if (el.extra !== null) {
+        el.extra = null; // Toggling visibility ...
+        return;
+      }
       const mode = this.getMode(el);
       if (mode == null) {
         this.showError('No editor registered for file. Download and edit locally.');
@@ -206,12 +210,10 @@ export class FilesComponent implements OnInit {
   }
 
   openFile(el: any) {
-    console.log(el);
     this.fileService.getFileContent(el.path).subscribe(res => {
       el.extra = {
         fileContent: res,
       };
-      console.log(el);
     }, error => {
       this.showError(error.error.message);
     });
@@ -237,22 +239,27 @@ export class FilesComponent implements OnInit {
   }
 
   getMode(el: any) {
-    console.log(el);
     const fileEnding = el.path.substr(el.path.lastIndexOf('.') + 1);
-    switch (fileEnding) {
+    switch (fileEnding.toLowerCase()) {
       case 'hl':
         return 'hyperlambda';
       case 'md':
         return 'markdown';
       case 'js':
-        return 'jsx';
+        return 'application/jsx';
       case 'css':
-        return 'css';
+        return 'text/css';
       case 'sql':
         return 'text/x-mysql';
+      case 'json':
+        return 'application/ld+json';
+      case 'ts':
+        return 'text/typescript';
       case 'htm':
       case 'html':
-        return 'htmlmixed';
+        return 'text/html';
+      case 'scss':
+        return 'text/x-scss';
       default:
         return null;
     }
@@ -355,13 +362,13 @@ export class FilesComponent implements OnInit {
         additionalCss = 'semi-danger ';
       }
     }
-    if (el.extra !== null && el === el.path) {
-      return additionalCss + 'selected-file';
+    if (el.extra !== null) {
+      additionalCss += 'selected-file';
     }
     if (el.path.endsWith('/')) {
-      return additionalCss + 'folder-row';
+      additionalCss += 'folder-row';
     }
-    return additionalCss + '';
+    return additionalCss;
   }
 
   getClassForDetails(el: any) {
