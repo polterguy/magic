@@ -368,7 +368,7 @@ export class FilesComponent implements OnInit {
     if (el.extra === null || el.extra.fileContent === null) {
       return 'invisible';
     }
-    return '';
+    return 'editor-visible';
   }
 
   atRoot() {

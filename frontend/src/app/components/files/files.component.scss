@@ -20,18 +20,30 @@
         }
         table {
             width: 100%;
-            tr {
-                th.delete-column {
-                    min-width: 70px;
-                    text-align: right;
-                }
-            }
-            tr {
+            tr:not(.editor-visible) {
                 td:nth-child(1), th:nth-child(1) {
-                    width: 100%;
+                    width: auto;
                 }
                 td:nth-child(2), th:nth-child(2) {
                     width: 20px;
+                }
+                td:nth-child(3), th:nth-child(3) {
+                    width: 20px;
+                    text-align: right;
+                }
+            }
+            tr.editor-visible {
+                td {
+                    width: auto;
+                    .edit-file {
+                        position: relative;
+                        padding: 4rem 0 4rem 0;
+                        .close-button {
+                            position: absolute;
+                            top: 1rem;
+                            right: 0;
+                        }
+                    }
                 }
             }
             tr.mat-row:hover {
@@ -61,6 +73,9 @@
             }
             tr.invisible {
                 display: none;
+            }
+            tr.editor-visible:hover {
+                background-color: transparent;
             }
         }
     }
