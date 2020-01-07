@@ -64,10 +64,7 @@
                 }
             }
             tr.semi-danger td {
-                color: rgb(255,57,57);
-                button:not([disabled]) {
-                    color: rgb(0,0,0);
-                }
+                color: inherit;
             }
             tr.invisible {
                 display: none;
