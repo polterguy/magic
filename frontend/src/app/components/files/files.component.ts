@@ -15,12 +15,10 @@ import { ConfirmDeletionDialogComponent } from './modals/confirm-deletion-dialog
 })
 export class FilesComponent implements OnInit {
 
+  private dataSource: any[] = [];
   private displayedColumns: string[] = ['path', 'download', 'delete'];
+  private displayedSecondRowColumns: string[] = ['details'];
   private path = '/';
-  private folders: string[] = [];
-  private files: string[] = [];
-  private fileContent: string = null;
-  private filePath: string;
   private databaseTypes = ['mysql', 'mssql'];
   private selectedDatabaseType = 'mysql';
   private filter = '';
@@ -68,43 +66,41 @@ export class FilesComponent implements OnInit {
   }
 
   getPath() {
-    this.fileService.listFiles(this.path).subscribe((res) => {
-      this.files = res || [];
+    this.fileService.listFiles(this.path).subscribe(files => {
+      this.fileService.listFolders(this.path).subscribe(folders => {
+        this.dataSource = (folders || []).concat(files || []).map(x => {
+          return {
+            path: x,
+            extra: null,
+          };
+        });
+        console.log(this.dataSource);
+      });
     });
-    this.fileService.listFolders(this.path).subscribe((res) => {
-      this.folders = res || [];
-    });
-  }
-
-  dataSource() {
-    const result = this.folders.concat(this.files);
-    if (this.filter === '') {
-      return result;
-    }
-    return result.filter(x => x.indexOf(this.filter) !== -1);
   }
 
   downloadFile(path: string) {
     this.fileService.downloadFile(path);
   }
 
-  deletePath(path: string) {
+  deletePath(el: any) {
     const dialogRef = this.dialog.open(ConfirmDeletionDialogComponent, {
       width: '500px',
       data: {
-        file: path
+        file: el.path
       }
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        if (path.endsWith('/')) {
-          this.fileService.deleteFolder(path).subscribe(res2 => {
+        if (el.path.endsWith('/')) {
+          this.fileService.deleteFolder(el.path).subscribe(res2 => {
             this.showInfo('Folder was successfully deleted');
             this.getPath();
           });
         } else {
-          this.fileService.deleteFile(path).subscribe(res2 => {
+          this.fileService.deleteFile(el.path).subscribe(res2 => {
             this.showInfo('File was successfully deleted');
+            el.extra = null;
             this.getPath();
           });
         }
@@ -120,16 +116,16 @@ export class FilesComponent implements OnInit {
     return el.substr(el.lastIndexOf('/') + 1);
   }
 
-  selectPath(path: string) {
-    if (path.endsWith('/')) {
-      this.path = path;
+  selectPath(el: any) {
+    if (el.path.endsWith('/')) {
+      this.path = el.path;
       this.getPath();
     } else {
-      const mode = this.getMode(path);
+      const mode = this.getMode(el);
       if (mode == null) {
         this.showError('No editor registered for file. Download and edit locally.');
       } else {
-        this.openFile(path);
+        this.openFile(el);
       }
     }
     this.filter = '';
@@ -144,7 +140,7 @@ export class FilesComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
         this.createFile(res);
       }
@@ -176,8 +172,6 @@ export class FilesComponent implements OnInit {
       this.fileService.saveFile(this.path + filename, '/* Initial content */').subscribe((res) => {
         this.showInfo('File successfully created');
         this.getPath();
-        this.filePath = this.path + filename;
-        this.openFile(this.filePath);
       }, (error) => {
         this.showError(error.error.message);
       });
@@ -211,20 +205,23 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
-  openFile(path: string) {
-    this.fileService.getFileContent(path).subscribe((res) => {
-      this.fileContent = res;
-      this.filePath = path;
-    }, (err) => {
-      this.showError(err.error.message);
+  openFile(el: any) {
+    console.log(el);
+    this.fileService.getFileContent(el.path).subscribe(res => {
+      el.extra = {
+        fileContent: res,
+      };
+      console.log(el);
+    }, error => {
+      this.showError(error.error.message);
     });
   }
 
-  getCodeMirrorOptions() {
+  getCodeMirrorOptions(el: any) {
     const result = {
       lineNumbers: true,
       theme: 'material',
-      mode: this.getMode(this.filePath),
+      mode: this.getMode(el),
       tabSize: 3,
       indentUnit: 3,
       indentAuto: true,
@@ -233,14 +230,15 @@ export class FilesComponent implements OnInit {
         Tab: 'indentMore',
       }
     };
-    if (this.getMode(this.filePath) === 'hyperlambda') {
+    if (this.getMode(el) === 'hyperlambda') {
       result.extraKeys['Ctrl-Space'] = 'autocomplete';
     }
     return result;
   }
 
-  getMode(path: string) {
-    const fileEnding = path.substr(path.lastIndexOf('.') + 1);
+  getMode(el: any) {
+    console.log(el);
+    const fileEnding = el.path.substr(el.path.lastIndexOf('.') + 1);
     switch (fileEnding) {
       case 'hl':
         return 'hyperlambda';
@@ -260,8 +258,8 @@ export class FilesComponent implements OnInit {
     }
   }
 
-  evaluate() {
-    this.evaluateService.evaluate(this.fileContent).subscribe((res) => {
+  evaluate(el: any) {
+    this.evaluateService.evaluate(el.extra.fileContent).subscribe(res => {
       this.showInfo('File successfully evaluated');
     }, (error) => {
       this.showError(error.error.message);
@@ -269,8 +267,8 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
-  evaluateSql() {
-    this.sqlService.evaluate(this.fileContent, this.selectedDatabaseType).subscribe((res) => {
+  evaluateSql(el: any) {
+    this.sqlService.evaluate(el.extra.fileContent, this.selectedDatabaseType).subscribe((res) => {
       this.showInfo('SQL was successfully evaluate');
     }, (err) => {
       this.showError(err.error.message);
@@ -286,8 +284,8 @@ export class FilesComponent implements OnInit {
     }
   }
 
-  save() {
-    this.fileService.saveFile(this.filePath, this.fileContent).subscribe((res) => {
+  save(el: any) {
+    this.fileService.saveFile(el.path, el.extra.fileContent).subscribe(res => {
       this.showInfo('File successfully saved');
     }, (error) => {
       this.showError(error.error.message);
@@ -295,10 +293,8 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
-  close() {
-    this.fileContent = null;
-    this.filePath = null;
-    return false;
+  close(el: any) {
+    el.extra = null;
   }
 
   canModify(path: string) {
@@ -350,22 +346,29 @@ export class FilesComponent implements OnInit {
     return path.endsWith('/');
   }
 
-  getRowClass(el: string) {
+  getRowClass(el: any) {
     let additionalCss = '';
-    if (this.isProtected(el)) {
+    if (this.isProtected(el.path)) {
       if (this.safeMode) {
         additionalCss = 'danger ';
       } else {
         additionalCss = 'semi-danger ';
       }
     }
-    if (el === this.filePath) {
+    if (el.extra !== null && el === el.path) {
       return additionalCss + 'selected-file';
     }
-    if (el.endsWith('/')) {
+    if (el.path.endsWith('/')) {
       return additionalCss + 'folder-row';
     }
     return additionalCss + '';
+  }
+
+  getClassForDetails(el: any) {
+    if (el.extra === null || el.extra.fileContent === null) {
+      return 'invisible';
+    }
+    return '';
   }
 
   atRoot() {

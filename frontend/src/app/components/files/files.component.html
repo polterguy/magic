@@ -14,12 +14,16 @@
   <div class="mat-elevation-z4 relativized">
 
     <label class="absolutize">
-      <mat-checkbox [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+      <mat-checkbox
+        [(ngModel)]="safeMode">
+        Safe mode
+      </mat-checkbox>
     </label>
 
     <table
       mat-table
-      [dataSource]="dataSource()">
+      multiTemplateDataRows
+      [dataSource]="dataSource">
 
       <ng-container
         matColumnDef="path">
@@ -29,7 +33,7 @@
         <td
           mat-cell
           *matCellDef="let el"
-          (click)="selectPath(el)">{{getFileName(el)}}</td>
+          (click)="selectPath(el)">{{getFileName(el.path)}}</td>
       </ng-container>
 
       <ng-container
@@ -42,8 +46,8 @@
           mat-cell
           *matCellDef="let el">
           <button
-            *ngIf="!isFolder(el)"
-            (click)="downloadFile(el);"
+            *ngIf="!isFolder(el.path)"
+            (click)="downloadFile(el.path);"
             mat-button>
             Download
           </button>
@@ -60,14 +64,72 @@
           mat-cell
           *matCellDef="let el">
           <button
-            [disabled]="!canModify(el)"
+            [disabled]="!canModify(el.path)"
             (click)="deletePath(el);"
             mat-button>
             Delete
           </button>
         </td>
       </ng-container>
-  
+
+      <ng-container
+        matColumnDef="details">
+        <td
+          mat-cell
+          colspan="3"
+          *matCellDef="let el">
+
+          <div
+            *ngIf="el.extra !== null && el.extra.fileContent !== null">
+            <button
+              mat-button
+              class="close-button"
+              (click)="close(el)"
+              matTooltip="Close your edited file">Close</button>
+            <h3>{{el.path}}</h3>
+            <div
+              class="mat-elevation-z4">
+              <ngx-codemirror 
+                [(ngModel)]="el.extra.fileContent" 
+                [options]="getCodeMirrorOptions(el)">
+              </ngx-codemirror>
+            </div>
+
+            <div
+              *ngIf="el.extra !== null && el.extra.fileContent !== undefined && el.extra.fileContent !== null"
+              class="right-aligned"
+              style="margin-top: 1rem;">
+              <button
+                [disabled]="!canModify(el.path)"
+                mat-button
+                (click)="save(el)"
+                matTooltip="Saves your file">Save</button>
+              <button
+                *ngIf="getMode(el) == 'text/x-mysql'"
+                mat-button
+                (click)="evaluateSql(el)"
+                matTooltip="Evaluates your SQL">Evaluate</button>
+              <mat-form-field
+                *ngIf="getMode(el) == 'text/x-mysql'">
+                <mat-select
+                  [(value)]="selectedDatabaseType">
+                  <mat-option
+                    *ngFor="let cur of databaseTypes"
+                    [value]="cur">{{cur}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button
+                *ngIf="getMode(el) == 'hyperlambda'"
+                mat-button
+                (click)="evaluate(el)"
+                matTooltip="Evaluates your file">Evaluate</button>
+            </div>
+          
+          </div>
+        
+        </td>
+      </ng-container>
+
       <tr
         mat-header-row
         *matHeaderRowDef="displayedColumns"></tr>
@@ -75,6 +137,10 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns;"
         [ngClass]="getRowClass(row)"></tr>
+      <tr
+        mat-row
+        [ngClass]="getClassForDetails(row)"
+        *matRowDef="let row; columns: displayedSecondRowColumns; "></tr>
 
     </table>
 
@@ -91,8 +157,10 @@
       <button
         class="file-button"
         [disabled]="!canModify(path)"
-        mat-button>Upload file</button>
-        <div style="display: inline-block"></div>
+        mat-button>
+        Upload file
+      </button>
+      <div style="display: inline-block"></div>
       <input
         type="file"
         id="file"
@@ -114,53 +182,4 @@
 
   </div>
 
-</div>
-
-<div
-  *ngIf="fileContent !== null"
-  class="result-wrapper">
-  <button
-    mat-button
-    class="close-button"
-    (click)="close()"
-    matTooltip="Close your edited file">Close</button>
-  <h3>{{filePath}}</h3>
-  <div
-    class="mat-elevation-z4">
-    <ngx-codemirror 
-      [(ngModel)]="fileContent" 
-      [options]="getCodeMirrorOptions()"></ngx-codemirror>
-</div>
-  
-
-  <div
-    class="right-aligned"
-    style="margin-top: 1rem;">
-    <button
-      [disabled]="!canModify(filePath)"
-      mat-button
-      (click)="save()"
-      matTooltip="Saves your file">Save</button>
-    <button
-      *ngIf="getMode(filePath) == 'text/x-mysql'"
-      mat-button
-      (click)="evaluateSql()"
-      matTooltip="Evaluates your SQL">Evaluate</button>
-    <mat-form-field
-      *ngIf="getMode(filePath) == 'text/x-mysql'">
-      <mat-select
-        [(value)]="selectedDatabaseType">
-        <mat-option
-          *ngFor="let cur of databaseTypes"
-          [value]="cur">{{cur}}</mat-option>
-      </mat-select>
-      
-    </mat-form-field>
-    <button
-      *ngIf="getMode(filePath) == 'hyperlambda'"
-      mat-button
-      (click)="evaluate()"
-      matTooltip="Evaluates your file">Evaluate</button>
-  </div>
-  
 </div>
