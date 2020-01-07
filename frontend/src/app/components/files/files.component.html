@@ -81,11 +81,6 @@
           <div
             class="edit-file"
             *ngIf="el.extra !== null && el.extra.fileContent !== null">
-            <button
-              mat-button
-              class="close-button"
-              (click)="close(el)"
-              matTooltip="Close your edited file">Close</button>
             <div
               class="mat-elevation-z4">
               <ngx-codemirror 
@@ -105,6 +100,7 @@
                 matTooltip="Saves your file">Save</button>
               <button
                 *ngIf="getMode(el) == 'text/x-mysql'"
+                [disabled]="!canModify(el.path)"
                 mat-button
                 (click)="evaluateSql(el)"
                 matTooltip="Evaluates your SQL">Evaluate</button>
@@ -119,10 +115,15 @@
               </mat-form-field>
               <button
                 *ngIf="getMode(el) == 'hyperlambda'"
+                [disabled]="!canModify(el.path)"
                 mat-button
                 (click)="evaluate(el)"
                 matTooltip="Evaluates your file">Evaluate</button>
-            </div>
+              <button
+                mat-button
+                (click)="close(el)"
+                matTooltip="Close your edited file">Close</button>
+              </div>
           
           </div>
         

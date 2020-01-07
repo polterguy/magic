@@ -3,7 +3,8 @@
  * Creates a new JWT token based upon the existing JWT token.
  * Will throw unless user is already logged in.
  */
-.description:"Will return a 'refreshed' JWT token, with the same authorization as your previous token, assuming your existing token is not expired. The new token will have a new expiration, allowing you to refresh your token, just before it becomes expired."
+.description:@"Will return a 'refreshed' JWT token, with the same authorization as your previous token, assuming your existing token is not expired.
+The new token will have a new expiration, allowing you to refresh your token, just before it becomes expired."
 
 
 /*

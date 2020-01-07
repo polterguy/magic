@@ -19,16 +19,20 @@
             right: .5rem;
         }
         table {
+            table-layout: fixed;
             width: 100%;
             tr:not(.editor-visible) {
+                td {
+                    user-select: none;
+                }
                 td:nth-child(1), th:nth-child(1) {
                     width: auto;
                 }
                 td:nth-child(2), th:nth-child(2) {
-                    width: 20px;
+                    width: 80px;
                 }
                 td:nth-child(3), th:nth-child(3) {
-                    width: 20px;
+                    width: 80px;
                     text-align: right;
                 }
             }
@@ -36,13 +40,7 @@
                 td {
                     width: auto;
                     .edit-file {
-                        position: relative;
                         padding: 4rem 0 4rem 0;
-                        .close-button {
-                            position: absolute;
-                            top: 1rem;
-                            right: 0;
-                        }
                     }
                 }
             }
@@ -54,10 +52,10 @@
                 font-weight: bold;
             }
             tr.selected-file {
-                background-color: rgba(0,128,0,.2);
-            }
-            tr.mat-row.selected-file:hover {
-                background-color: rgba(0,128,0,.3);
+                font-style: italic;
+                td {
+                    border-bottom-style: none;
+                }
             }
             tr.danger td {
                 color: rgb(200,128,129);
