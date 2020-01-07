@@ -301,6 +301,13 @@ export class FilesComponent implements OnInit {
     return false;
   }
 
+  canModify(path: string) {
+    if (this.safeMode === false) {
+      return true;
+    }
+    return !this.isProtected(path);
+  }
+
   isProtected(path: string) {
     const entities = path.split('/').filter(x => x !== '');
     if (entities.length === 0) {
