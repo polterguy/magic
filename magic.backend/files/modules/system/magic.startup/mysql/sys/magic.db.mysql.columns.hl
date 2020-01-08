@@ -78,9 +78,13 @@ slots.create:magic.db.mysql.columns
           * Checking if column has a default value.
           */
          if
-            eq
-               get-value:x:@.dp/#/*/Extra
-               .:auto_increment
+            or
+               eq
+                  get-value:x:@.dp/#/*/Extra
+                  .:auto_increment
+               eq
+                  get-value:x:@.dp/#/*/Extra
+                  .:DEFAULT_GENERATED
             .lambda
                add:x:@.tmp/*
                   .
