@@ -222,3 +222,21 @@
 * magic.endpoint
 
 * magic.lambda.io
+
+
+
+## Version 5.7.0
+
+* Entirely new Angular frontend generator, plus minor bugfixings in literally every single plugin.
+
+### Updated modules for version 5.7.0
+
+_Every single module_
+
+
+## Version 5.7.1
+
+* Better support for default values in MySQL during crudification.
+
+* Better file editor in dashboard, which allows for editing multiple files at the same time.
+
