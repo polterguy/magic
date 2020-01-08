@@ -13,7 +13,7 @@
 
   <div class="mat-elevation-z4 relativized">
 
-    <label class="absolutize">
+    <label class="safe-mode-checkbox">
       <mat-checkbox
         [(ngModel)]="safeMode">
         Safe mode
@@ -91,7 +91,7 @@
 
             <div
               *ngIf="el.extra !== null && el.extra.fileContent !== undefined && el.extra.fileContent !== null"
-              class="right-aligned"
+              class="file-toolbar"
               style="margin-top: 1rem;">
               <button
                 [disabled]="!canModify(el.path)"
@@ -145,7 +145,7 @@
 
     </table>
 
-    <div class="absolutized-top">
+    <div class="up-one-level-button">
       <button 
         [disabled]="atRoot()"
         mat-button
@@ -154,7 +154,7 @@
     </div>
 
     <div
-      class="absolutized-bottom">
+      class="bottom-toolbar">
       <button
         class="file-button"
         [disabled]="!canModify(path)"

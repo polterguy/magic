@@ -8,12 +8,12 @@
     .relativized {
         position: relative;
         padding: 5rem;
-        .absolutized-top {
+        .up-one-level-button {
             position: absolute;
             top: 1rem;
             right: 1rem;
         }
-        .absolutized-bottom {
+        .bottom-toolbar {
             position: absolute;
             bottom: .5rem;
             right: .5rem;
@@ -28,6 +28,9 @@
                 td:nth-child(1), th:nth-child(1) {
                     width: auto;
                 }
+                td:nth-child(1):hover {
+                    cursor: pointer;
+                }
                 td:nth-child(2), th:nth-child(2) {
                     width: 80px;
                 }
@@ -36,17 +39,16 @@
                     text-align: right;
                 }
             }
+            tr.mat-row:hover:not(.editor-visible) {
+                background-color: rgba(0,0,0,.1);
+            }
             tr.editor-visible {
                 td {
                     width: auto;
                     .edit-file {
-                        padding: 4rem 0 4rem 0;
+                        padding: 2rem 0 2rem 0;
                     }
                 }
-            }
-            tr.mat-row:hover {
-                background-color: rgba(0,0,0,.1);
-                cursor: pointer;
             }
             tr.folder-row {
                 font-weight: bold;
@@ -54,11 +56,11 @@
             tr.selected-file {
                 font-style: italic;
                 td {
-                    border-bottom-style: none;
+                    border-bottom-color: transparent;
                 }
             }
             tr.danger td {
-                color: rgb(200,128,129);
+                color: rgb(128,128,128);
                 button:not([disabled]) {
                     color: rgb(0,0,0);
                 }
@@ -68,9 +70,6 @@
             }
             tr.invisible {
                 display: none;
-            }
-            tr.editor-visible:hover {
-                background-color: transparent;
             }
         }
     }
@@ -85,12 +84,7 @@
     color:rgb(0,0,0);
 }
 
-::ng-deep .success-snackbar {
-    background:rgb(100,255,100);
-    color:rgb(0,0,0);
-}
-
-.right-aligned {
+.file-toolbar {
     text-align: right;
 }
 
@@ -113,7 +107,7 @@
     cursor: pointer;
 }
 
-.absolutize {
+.safe-mode-checkbox {
     position: absolute;
     top: 3rem;
     left: 3rem;
