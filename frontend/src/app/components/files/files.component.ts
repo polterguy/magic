@@ -46,7 +46,6 @@ export class FilesComponent implements OnInit {
     '/misc/mysql/create-user.hl',
     '/misc/mysql/magic_auth.sql',
     '/misc/mysql/magic.authenticate.hl',
-    '/misc/mysql/magic_crm.sql',
     '/modules/README.md',
     '/modules/system/*',
     '/trash/README.md',
