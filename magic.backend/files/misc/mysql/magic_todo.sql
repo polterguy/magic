@@ -5,7 +5,6 @@
  *
  * Notice, this will throw an exception if the database exists from before.
  */
-drop DATABASE if exists `magic_todo`;
 CREATE DATABASE `magic_todo`;
 USE `magic_todo`;
 

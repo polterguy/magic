@@ -265,7 +265,7 @@
         <ng-container matColumnDef="validator">
           <th mat-header-cell *matHeaderCellDef>Input reactors</th>
           <td mat-cell *matCellDef="let el">
-            <ngx-codemirror 
+            <ngx-codemirror
               [(ngModel)]="el.validator" 
               class="even-smaller"
               [options]="getCodeMirrorOptionsValidators()"></ngx-codemirror>
