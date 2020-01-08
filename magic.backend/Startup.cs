@@ -30,7 +30,7 @@ namespace magic.backend
              *
              * Notice, must be done AFTER you invoke "AddMvc".
              */
-            services.AddMagic(Configuration);
+            services.AddMagic(Configuration, Configuration["magic:license"]);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
