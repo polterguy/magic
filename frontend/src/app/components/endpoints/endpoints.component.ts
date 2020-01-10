@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
 import { MatInput } from '@angular/material';
+import { saveAs } from "file-saver";
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -20,12 +21,14 @@ export class EndpointsComponent implements OnInit {
   private filter = '';
   private name: string = null;
   private showSystemEndpoints = false;
+  private isFetching = false;
 
   constructor(
     private service: EndpointService,
     private snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    this.isFetching = true;
     this.service.getAllEndpoints().subscribe((res) => {
       this.endpoints = (res || []).map(x => {
         return {
@@ -35,8 +38,10 @@ export class EndpointsComponent implements OnInit {
           !x.path.startsWith('magic/modules/magic_auth/'),
         };
       });
+      this.isFetching = false;
     }, err => {
       this.showError(err.error.message);
+      this.isFetching = false;
     });
   }
 
@@ -221,7 +226,19 @@ export class EndpointsComponent implements OnInit {
       apiUrl: environment.apiURL,
       name: this.name,
     };
-    this.service.generate(args);
+    this.isFetching = true;
+    this.service.generate(args).subscribe(res => {
+      const file = new Blob([res.body], { type: 'application/zip' });
+      const disposition = res.headers.get('Content-Disposition');
+      const startIndex = disposition.indexOf('filename=') + 10;
+      const endIndex = disposition.length - 1;
+      const filename = disposition.substring(startIndex, endIndex);
+      saveAs(file, filename);
+      this.isFetching = false;
+    }, error => {
+      this.showError(error.error.message);
+      this.isFetching = false;
+    });
   }
 
   showError(error: string) {

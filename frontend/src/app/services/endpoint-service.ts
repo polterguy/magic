@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Endpoint } from '../models/endpoint';
-import { saveAs } from "file-saver";
 
 @Injectable({
   providedIn: 'root'
@@ -17,15 +16,11 @@ export class EndpointService {
   }
 
   generate(endpoints: any) {
-    this.httpClient.post<ArrayBuffer>(
+    return this.httpClient.post<ArrayBuffer>(
       environment.apiURL + 'magic/modules/system/endpoints/generate',
       endpoints, {
         observe: 'response',
         responseType: 'blob' as 'json',
-      }).subscribe(res => {
-        let file = new Blob([res.body], { type: 'application/zip' });
-        let filename = 'magic-angular.zip';
-        saveAs(file, filename);
       });
   }
 
