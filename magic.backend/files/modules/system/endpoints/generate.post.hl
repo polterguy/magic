@@ -217,6 +217,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
     * default don't allow the user to change.
     */
    .columns-list:
+   .update-columns-list:
    .columns-names
    for-each:x:@.columns/*
 
@@ -262,6 +263,38 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             add:x:@.columns-names
                .
                   .
+
+
+      /*
+       * Verifying currently iterated column is in "crud-update" endpoint,
+       * since if it's not, the column is an "automatic" or primary key, and we don't
+       * want to send it to the server during updates to entity.
+       */
+      for-each:x:@.arguments/*/endpoints/*
+         if
+            and
+               eq
+                  get-value:x:@.dp/#/*/path
+                  get-value:x:@for-each/@for-each/@for-each/@.dp/#/*/path
+               eq
+                  get-value:x:@.dp/#/*/type
+                  .:crud-update
+            .lambda
+               for-each:x:@.dp/#/*/input/*
+                  if
+                     eq
+                        get-name:x:@.dp/#
+                        get-value:x:@.lambda/@for-each/@for-each/@.dp/#
+                     .lambda
+                        set-value:x:@.update-columns-list
+                           strings.concat
+                              get-value:x:@.update-columns-list
+                              .:"'"
+                              get-name:x:@.dp/#
+                              .:"', "
+   set-value:x:@.update-columns-list
+      strings.trim:x:@.update-columns-list
+         .:", "
 
 
    /*
@@ -828,10 +861,13 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       .:[[filename]]
       get-value:x:@.filename
    strings.replace:x:@strings.replace
-      .:[[update-columns]]
+      .:[[create-columns]]
       strings.replace:x:@.columns-list
          .:", 'delete-instance'"
          .:
+   strings.replace:x:@strings.replace
+      .:[[update-columns]]
+      get-value:x:@.update-columns-list
    strings.replace:x:@strings.replace
       .:[[update-method]]
       strings.concat

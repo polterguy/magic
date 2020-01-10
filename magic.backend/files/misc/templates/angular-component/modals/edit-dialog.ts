@@ -29,13 +29,11 @@ export class [[edit-component-name]] {
 
   /*
    * Only the following properties of the given data.entity will actually
-   * be transmitted to the server. This is done to make sure we don't submit
-   * "automatic" columns, such as "timestamp" or "rowversion", etc.
-   * 
-   * TODO: Future improvement - Pass in these as part of the condition during
-   * update, kind of like parts of the row's primary key, or something ...
+   * be transmitted to the server when we create records. This is done to
+   * make sure we don't submit "automatic" primary key values.
    */
-  private columns: string[] = [[[update-columns]]];
+  private createColumns: string[] = [[[create-columns]]];
+  private updateColumns: string[] = [[[update-columns]]];
 
   /*
    * Constructor taking a bunch of services injected using dependency injection.
@@ -56,6 +54,15 @@ export class [[edit-component-name]] {
      * creating a new instance.
      */
     if (this.data.isEdit) {
+
+      /*
+       * Removing all columns that we're not supposed to transmit during "edit mode".
+       */
+      for (const idx in this.data.entity) {
+        if (this.updateColumns.indexOf(idx) === -1) {
+          delete this.data.entity[idx];
+        }
+      }
 
       // Updating existing item. Invoking update HTTP REST endpoint and closing dialog.
       this.service.[[update-method]](this.data.entity).subscribe(res => {
@@ -79,12 +86,10 @@ export class [[edit-component-name]] {
     } else {
 
       /*
-       * Notice, in "create mode" we must make sure we remove all parts of entity
-       * that is not explicitly listed in columns, to avoid passing "automatic"
-       * columns into update/create method of HTTP service.
+       * Removing all columns that we're not supposed to transmit during "create mode".
        */
       for (const idx in this.data.entity) {
-        if (this.columns.indexOf(idx) === -1) {
+        if (this.createColumns.indexOf(idx) === -1) {
           delete this.data.entity[idx];
         }
       }
