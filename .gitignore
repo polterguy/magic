@@ -331,3 +331,5 @@ ASALocalRun/
 magic.backend/dev_magic.backend.csproj
 magic.backend/files/tasks.hl
 magic.backend/tasks/**
+magic.backend/files/modules/**
+!magic.backend/files/modules/system/**

@@ -63,6 +63,7 @@ CREATE TABLE `items` (
   `created_by` varchar(45) NOT NULL,
   `assigned_to` varchar(45) NULL,
   `created` DATETIME NOT NULL DEFAULT NOW(),
+  `due` DATETIME NULL,
   `done` bit NOT NULL DEFAULT 0,
   `description` varchar(2048) NULL,
   PRIMARY KEY (`id`),

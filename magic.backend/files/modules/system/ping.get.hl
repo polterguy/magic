@@ -1,6 +1,6 @@
 
 /*
- * Ping endpoint, allowing for anonymous access, 
+ * Ping endpoint, allowing for anonymous access,
  * simply to verify server is up and running.
  *
  * Notice, if an authenticated user invokes this endpoint,
