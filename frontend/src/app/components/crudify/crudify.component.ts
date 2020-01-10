@@ -398,7 +398,7 @@ slots.signal:transformers.hash-password
     }
     if (curVerb === 'put') {
       args.columns = this.columns
-        .filter(x => !x.primary)
+        .filter(x => !x.primary && !x.automatic)
         .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
     }
     if (curVerb === 'post') {
