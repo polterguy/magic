@@ -148,7 +148,7 @@ export class [[component-name]] implements OnInit {
     if (this.filter.order === column) {
 
       // Inverting sort direction.
-      this.filter.direction = 
+      this.filter.direction =
         this.filter.direction === 'asc' ||
         this.filter.direction === null ||
         this.filter.direction === undefined ?
@@ -184,7 +184,7 @@ export class [[component-name]] implements OnInit {
 
   // Returns true if details should be displayed for a specific database record.
   shouldDisplayDetails(entity: any) {
-    if (this.viewDetails.indexOf(entity) != -1) {
+    if (this.viewDetails.indexOf(entity) !== -1) {
       return true;
     }
     return false;
@@ -196,7 +196,7 @@ export class [[component-name]] implements OnInit {
    * window is visible or not.
    */
   getClassForRecord(entity: any) {
-    if (this.viewDetails.indexOf(entity) != -1) {
+    if (this.viewDetails.indexOf(entity) !== -1) {
       return 'grid-row visible-details';
     }
     return 'grid-row';
@@ -208,7 +208,7 @@ export class [[component-name]] implements OnInit {
    * explicitly shown by the user choosing to view the details for a record.
    */
   getClassForDetails(entity: any) {
-    if (this.viewDetails.indexOf(entity) != -1) {
+    if (this.viewDetails.indexOf(entity) !== -1) {
       return 'details-row visible';
     }
     return 'details-row hidden';
@@ -242,7 +242,7 @@ export class [[component-name]] implements OnInit {
       if (res !== null && res !== undefined) {
 
         // User clicked "Save" button, making sure we update databound grid item according to the new value(s).
-        for (var idx in res) {
+        for (const idx in res) {
           if (Object.prototype.hasOwnProperty.call(res, idx)) {
             entity[idx] = res[idx];
           }
