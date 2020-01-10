@@ -1210,6 +1210,19 @@ for-each:x:@.files/*
 
 
 /*
+ * Making sure the root folder for our download becomes correct.
+ */
+for-each:x:@.files/*
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:/magic-angular/
+         strings.concat
+            .:/
+            get-value:x:@.arguments/*/name
+            .:/
+
+
+/*
  * Making sure we get the HTTP headers correctly applied.
  */
 strings.concat

@@ -109,10 +109,10 @@ export class [[component-name]] implements OnInit {
       if (countRecords) {
 
         // Notice, we need to clone all filter arguments, except limit, offset, order and direction.
-        let cloned = {};
+        const cloned = {};
         for(const idx in this.filter) {
           if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
-            switch(idx) {
+            switch (idx) {
               case 'limit':
               case 'offset':
               case 'order':
@@ -224,11 +224,11 @@ export class [[component-name]] implements OnInit {
      * Cloning our entity, in case user doesn't click the "Save" button,
      * to avoid changing main databound entity.
      */
-    let data = {
+    const data = {
       isEdit: true,
       entity: {},
     };
-    for (var idx in entity) {
+    for (const idx in entity) {
       if (Object.prototype.hasOwnProperty.call(entity, idx)) {
         data.entity[idx] = entity[idx];
       }
