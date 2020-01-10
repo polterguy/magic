@@ -287,6 +287,11 @@ export class [[component-name]] implements OnInit {
     // Invoking HTTP service DELETE method.
     this.httpService.[[service-delete-method]](ids).subscribe(res => {
 
+      // Sanity checking invocation.
+      if (res['deleted-records'] !== 1) {
+        this.error(`For some reasons ${res['deleted-records']} records was deleted, and not 1 as expected!`);
+      }
+
       // Making sure we remove "view details" for item, if item is currently being viewed.
       const indexOf = this.viewDetails.indexOf(entity);
       if (indexOf !== -1) {
