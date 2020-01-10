@@ -60,6 +60,14 @@ export class [[edit-component-name]] {
       // Updating existing item. Invoking update HTTP REST endpoint and closing dialog.
       this.service.[[update-method]](this.data.entity).subscribe(res => {
         this.dialogRef.close(this.data.entity);
+        if (res['updated-records'] !== 1) {
+
+          // Oops, error!
+          this.snackBar.open(`Oops, number of items was ${res['updated-records']}, which is very wrong. Should have been 1`, 'Close', {
+            duration: 5000,
+            panelClass: ['error-snackbar'],
+          });
+        }
       }, error => {
 
         // Oops, error!
@@ -84,6 +92,14 @@ export class [[edit-component-name]] {
       // Creating new item. Invoking create HTTP REST endpoint and closing dialog.
       this.service.[[create-method]](this.data.entity).subscribe(res => {
         this.dialogRef.close(this.data.entity);
+
+        if (res === null || res === undefined) {
+          // Oops, error!
+          this.snackBar.open(`Oops, for some reasons backend returned ${res}, which seems to be very wrong!`, 'Close', {
+            duration: 5000,
+            panelClass: ['error-snackbar'],
+          });
+        }
       }, error => {
 
         // Oops, error!
