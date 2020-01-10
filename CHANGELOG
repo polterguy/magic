@@ -244,3 +244,6 @@ _Every single module_
 
 * Fixed a severe error in the way frontend was generated, that prohibited (*ANY*) entity from being possible
   to update!
+
+* Fixed a severe error during conversion of node's value, that would convert values that already had the correct type,
+  resulting in errors.
