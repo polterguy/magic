@@ -5,6 +5,7 @@
  *
  * Notice, this will throw an exception if the database exists from before.
  */
+drop DATABASE `magic_todo`;
 CREATE DATABASE `magic_todo`;
 USE `magic_todo`;
 
@@ -19,6 +20,8 @@ CREATE TABLE `projects` (
   `description` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `projects` VALUES ('default', 'This is just a dummy example project for you');
 
 
 /*
@@ -73,6 +76,9 @@ CREATE TABLE `items` (
   CONSTRAINT `state_fky` FOREIGN KEY (`state`) REFERENCES `states` (`name`),
   CONSTRAINT `project_fky` FOREIGN KEY (`project`) REFERENCES `projects` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `items` (`header`, `project`, `item_type`, `state`, `created_by`, `assigned_to`, `due`, `description`) VALUES
+         ('Default TODO item', 'default', 'misc', 'new', 'system', 'root', '2021-01-01T23:59:00', 'This is just a dummy example TODO item for you');
 
 
 /*

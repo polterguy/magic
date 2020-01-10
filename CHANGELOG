@@ -242,3 +242,5 @@ _Every single module_
 
 * Improved UI on endpoints menu in dashboard
 
+* Fixed a severe error in the way frontend was generated, that prohibited (*ANY*) entity from being possible
+  to update!

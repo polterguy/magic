@@ -52,17 +52,6 @@ export class [[edit-component-name]] {
   save() {
 
     /*
-     * Making sure we remove all parts of entity that is not explicitly
-     * listed in columns, to avoid passing "automatic" columns into update/create
-     * method of HTTP service.
-     */
-    for (const idx in this.data.entity) {
-      if (this.columns.indexOf(idx) === -1) {
-        delete this.data.entity[idx];
-      }
-    }
-
-    /*
      * Checking if we're editing an existing entity type, or if we're
      * creating a new instance.
      */
@@ -80,6 +69,17 @@ export class [[edit-component-name]] {
         });
       });
     } else {
+
+      /*
+       * Notice, in "create mode" we must make sure we remove all parts of entity
+       * that is not explicitly listed in columns, to avoid passing "automatic"
+       * columns into update/create method of HTTP service.
+       */
+      for (const idx in this.data.entity) {
+        if (this.columns.indexOf(idx) === -1) {
+          delete this.data.entity[idx];
+        }
+      }
 
       // Creating new item. Invoking create HTTP REST endpoint and closing dialog.
       this.service.[[create-method]](this.data.entity).subscribe(res => {
