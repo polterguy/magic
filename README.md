@@ -31,6 +31,8 @@ license for it.
 
 * [Get licensed](https://servergardens.com/buy/)
 
+## Build status
+
 [![Build status](https://travis-ci.org/polterguy/magic.svg?master)](https://travis-ci.org/polterguy/magic)
 [![Build status](https://travis-ci.org/polterguy/magic.node.svg?master)](https://travis-ci.org/polterguy/magic.node)
 [![Build status](https://travis-ci.org/polterguy/magic.library.svg?master)](https://travis-ci.org/polterguy/magic.library)
