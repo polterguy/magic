@@ -18,7 +18,7 @@ and use it as a _"starter kit"_. You will need.
 1. [.Net Core CLI](https://dotnet.microsoft.com/download) version 3.x or more
 2. Some sort of database server [Mysql](https://dev.mysql.com/downloads/mysql/) or [MS SQL](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
 3. [NodeJS](https://nodejs.org/en/download/)
-4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window `npm install -g @angular/cli`
+4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window with `npm install -g @angular/cli`
 5. [Magic](https://github.com/polterguy/magic/releases)
 
 To start the Magic dashboard type `dotnet run` in the _"/magic.backend"_ folder. Then type `npm link` in your
