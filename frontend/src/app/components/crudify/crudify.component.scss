@@ -35,13 +35,33 @@
 }
 
 .crudify-wrapper {
-    padding:2rem 5rem 2rem 5rem;
+    padding:3rem 1rem 2rem 1rem;
+    position: relative;
+    .crudify-input {
+        width: 100%;
+    }
+    .crudify-button {
+        width: auto;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+}
+
+@media screen and (min-width: 840px) {
+    .crudify-wrapper {
+        padding:2rem 5rem 2rem 5rem;
+        .crudify-input {
+            width: auto;
+            margin-right: 2rem;
+        }
+    }
 }
 
 .columns-card {
     margin-top: 2rem;
     .wrapper {
-        margin: 2rem 3rem 4rem 3rem;
+        margin: 2rem 1rem 4rem 1rem;
         .columns {
             width: 100%;
             tr {
@@ -53,6 +73,15 @@
                 background-color: rgba(0,0,0,.1);
                 cursor: pointer;
             }
+        }
+    }
+}
+
+@media screen and (min-width: 840px) {
+    .columns-card {
+        margin-top: 2rem;
+        .wrapper {
+            margin: 2rem 3rem 4rem 3rem;
         }
     }
 }
@@ -70,7 +99,7 @@
 .endpoints-card {
     margin-top: 4rem;
     .wrapper {
-        margin: 2rem 3rem 2rem 3rem;
+        margin: 2rem 1rem 2rem 1rem;
         .endpoints {
             background: transparent;
             width: 100%;
@@ -86,6 +115,15 @@
                 background-color: rgba(0,0,0,.1);
                 cursor: pointer;
             }
+        }
+    }
+}
+
+@media screen and (min-width: 840px) {
+    .endpoints-card {
+        margin-top: 4rem;
+        .wrapper {
+            margin: 2rem 3rem 2rem 3rem;
         }
     }
 }

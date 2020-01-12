@@ -8,19 +8,32 @@
 
 <div class="crudify-wrapper">
 
-  <mat-form-field>
-    <mat-select placeholder="Select database type" (selectionChange)="databaseTypeChanged($event)">
-      <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+  <mat-form-field
+    class="crudify-input">
+    <mat-select
+      placeholder="Select database type"
+      (selectionChange)="databaseTypeChanged($event)">
+      <mat-option
+        *ngFor="let cur of databaseTypes"
+        [value]="cur">{{cur}}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="databases !== null" style="margin-left: 2rem;">
-    <mat-select placeholder="Select database" (selectionChange)="databaseChanged($event)">
-      <mat-option *ngFor="let cur of databases" [value]="cur.db">{{cur.db}}</mat-option>
+  <mat-form-field
+    *ngIf="databases !== null"
+    class="crudify-input">
+    <mat-select
+      placeholder="Select database"
+      (selectionChange)="databaseChanged($event)">
+      <mat-option
+        *ngFor="let cur of databases"
+        [value]="cur.db">{{cur.db}}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="tables !== null" style="margin-left: 2rem;" class="module-name">
+  <mat-form-field
+    *ngIf="tables !== null"
+    class="crudify-input">
     <input 
       matInput 
       autocomplete="off"
@@ -29,13 +42,21 @@
       [(ngModel)]="moduleName">
   </mat-form-field>
 
-  <mat-form-field *ngIf="tables !== null" style="margin-left: 2rem;" class="table-select">
-    <mat-select placeholder="Select table" (selectionChange)="tableChanged($event)">
-      <mat-option *ngFor="let cur of tables" [value]="cur.table">{{cur.table}}</mat-option>
+  <mat-form-field
+    *ngIf="tables !== null"
+    class="crudify-input">
+    <mat-select
+      placeholder="Select table"
+      (selectionChange)="tableChanged($event)">
+      <mat-option
+        *ngFor="let cur of tables"
+        [value]="cur.table">{{cur.table}}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="selectedTable !== null && selectedTable !== 'All tables' && selectedTable !== 'Custom SQL'" style="margin-left: 2rem;" class="module-url">
+  <mat-form-field
+    *ngIf="selectedTable !== null && selectedTable !== 'All tables' && selectedTable !== 'Custom SQL'"
+    class="crudify-input">
     <input 
       matInput 
       autocomplete="off"
@@ -46,7 +67,7 @@
 
   <mat-checkbox
     *ngIf="selectedTable !== null"
-    style="margin-left: 2rem;"
+    class="crudify-input"
     matTooltip="Overwrite existing endpoints"
     [(ngModel)]="overwrite">Overwrite</mat-checkbox>
 
@@ -54,14 +75,14 @@
     *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     matTooltip="Generates CRUD endpoints for your table"
     mat-button
-    style="margin-left: 2rem;"
+    class="crudify-input crudify-button"
     (click)="crudifyTable()">Crudify</button>
 
   <button 
     *ngIf="selectedTable !== null && selectedTable === 'All tables'"
     matTooltip="CRUDifies all tables in database"
     mat-button
-    style="margin-left: 2rem;"
+    class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
 
   <mat-card 
