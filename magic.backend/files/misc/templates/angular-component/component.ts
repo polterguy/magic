@@ -89,10 +89,20 @@ export class [[component-name]] implements OnInit {
    * if there are more than 20 records in dataset, before filtering has been applied.
    */
   getHeaderRowClass() {
-    if (this.hasFiltered || this.count > 10) {
+    if (this.showPager()) {
       return 'visible';
     }
     return 'hidden';
+  }
+
+  /*
+   * Returns true if the pager should be shown.
+   */
+  showPager() {
+    if (this.hasFiltered || this.count > 10) {
+      return true;
+    }
+    return false;
   }
 
   // Method that retrieves data from backend according to specified filter.
