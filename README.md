@@ -25,8 +25,8 @@
 [![Build status](https://travis-ci.org/polterguy/magic.endpoint.svg?master)](https://travis-ci.org/polterguy/magic.endpoint)
 [![Build status](https://travis-ci.org/polterguy/magic.data.common.svg?master)](https://travis-ci.org/polterguy/magic.data.common)
 
-Magic allows you to create your Web applications by simply clicking a button. Watch the video below for a
-demonstration.
+Magic is a scaffolding CRUD generator that allows you to create your .Net Core/Angular/Database Web applications
+by simply clicking a button. Watch the video below for a demonstration.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=7zNh4Ekd67c">
