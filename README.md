@@ -1,8 +1,8 @@
 
 # Magic for ASP.NET
 
-Magic is a scaffolding CRUD generator that allows you to create your .Net Core/Angular/Database Web applications
-by simply clicking a button. Watch the video below for a demonstration.
+Magic is a scaffolding CRUD generator for .Net Core that allows you to create your .Net Core/Angular/Database Web
+applications by simply clicking a button. Watch the video below for a demonstration.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=7zNh4Ekd67c">
