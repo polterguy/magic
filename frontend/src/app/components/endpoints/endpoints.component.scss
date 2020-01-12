@@ -112,6 +112,15 @@
     color:rgb(0,0,0);
 }
 
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 .obscurer {
     position: fixed;
     top: 0;
@@ -135,5 +144,11 @@
     h3, h4 {
         text-align: center;
         color: whitesmoke;
+    }
+    .ajax-wait {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
     }
 }
