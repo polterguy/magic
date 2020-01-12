@@ -21,6 +21,10 @@ and use it as a _"starter kit"_. You will need.
 4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window `npm install -g @angular/cli`
 5. [Magic](https://github.com/polterguy/magic/releases)
 
+To start the Magic dashboard type `dotnet run` in the _"/magic.backend"_ folder. Then type `npm link` in your
+_"frontend"_ folder. Start the Magic dashboard by typing `ng server` in the _"frontend"_ folder. Go to
+[http://localhost:4200](http://localhost:4200).
+
 ## Documentation
 
 Although documentation is work in progress, you can rapidly [teach yourself the basics here](https://polterguy.github.io).
