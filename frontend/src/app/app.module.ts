@@ -20,6 +20,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
@@ -100,6 +101,7 @@ export function tokenGetter() {
     MatCheckboxModule,
     MatSlideToggleModule,
     MatDatepickerModule,
+    MatProgressSpinnerModule,
     MatMomentDateModule,
     CodemirrorModule,
   ],
