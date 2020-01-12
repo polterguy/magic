@@ -36,8 +36,10 @@ Although documentation is work in progress, you can rapidly [teach yourself the 
 Although most of Magic's source code is publicly available, Magic is _not_ Open Source or Free Software.
 You have to obtain a valid license key to install it in production, and I normally charge a fee for such a
 key. You can [obtain a license key here](https://gaiasoul.com/license-magic/).
-Notice, 5 hours after you put Magic into production, it will stop functioning, unless you have a valid
+Notice, 5 hours after you put Magic into production, it will stop working, unless you have a valid
 license for it.
+
+Copyright(c) Thomas Hansen 2019 - 2020, Thomas Hansen - thomas@servergardens.com
 
 * [Get licensed](https://servergardens.com/buy/)
 
