@@ -78,6 +78,10 @@ export class FilesComponent implements OnInit {
     });
   }
 
+  getFilterPlaceholderText() {
+    return `Filter '${this.path}' for files ...`;
+  }
+
   downloadFile(path: string) {
     this.fileService.downloadFile(path);
   }

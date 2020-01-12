@@ -6,6 +6,11 @@
         margin-top: 2rem;
         padding: 5rem;
         position: relative;
+        .show-system-endpoints-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
         .absolutize {
             position: absolute;
             top: 3rem;

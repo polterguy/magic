@@ -23,9 +23,11 @@
 
   <div class="mat-elevation-z4 endpoints">
 
-    <label class="absolutize">
-      <mat-checkbox [(ngModel)]="showSystemEndpoints">Show system endpoints</mat-checkbox>
-    </label>
+    <mat-slide-toggle
+      [(ngModel)]="showSystemEndpoints"
+      class="show-system-endpoints-button">
+      Show system endpoints
+    </mat-slide-toggle>
 
     <table
       mat-table

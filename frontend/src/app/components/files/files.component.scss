@@ -5,9 +5,15 @@
     }
     padding:2rem 5rem 2rem 5rem;
     position: relative;
-    .relativized {
+    .files-grid-wrapper {
         position: relative;
         padding: 5rem;
+        margin-top: 2rem;
+        .safe-mode-button {
+            position: absolute;
+            top:2rem;
+            left: 2rem;
+        }
         .up-one-level-button {
             position: absolute;
             top: 1rem;
