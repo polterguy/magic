@@ -4,21 +4,18 @@
   <mat-form-field class="fill-width">
     <input 
       matInput 
-      placeholder="Filter files ..."
+      [placeholder]="getFilterPlaceholderText()"
       type="text" 
       [(ngModel)]="filter">
   </mat-form-field>
-    
-  <h3>{{path}}</h3>
 
-  <div class="mat-elevation-z4 relativized">
+  <div class="mat-elevation-z4 files-grid-wrapper">
 
-    <label class="safe-mode-checkbox">
-      <mat-checkbox
-        [(ngModel)]="safeMode">
-        Safe mode
-      </mat-checkbox>
-    </label>
+    <mat-slide-toggle
+      [(ngModel)]="safeMode"
+      class="safe-mode-button">
+      Safe mode
+    </mat-slide-toggle>
 
     <table
       mat-table
