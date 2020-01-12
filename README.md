@@ -22,7 +22,7 @@ and use it as a _"starter kit"_. You will need.
 5. [Magic](https://github.com/polterguy/magic/releases)
 
 To start the Magic dashboard type `dotnet run` in the _"magic.backend"_ folder. Then type `npm link` in your
-_"frontend"_ folder. Start the Magic dashboard by typing `ng server` in the _"frontend"_ folder. Go to
+_"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"frontend"_ folder. Go to
 [http://localhost:4200](http://localhost:4200).
 
 ## Documentation
