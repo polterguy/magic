@@ -77,7 +77,7 @@
 
     </table>
     <mat-paginator
-      *ngIf="showPager()"
+    [class]="showPager() ? '' : 'invisible'"
       #paginator
       [(length)]="count"
       [(pageSize)]="filter.limit"
