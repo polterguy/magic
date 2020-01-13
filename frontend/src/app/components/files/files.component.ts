@@ -82,6 +82,17 @@ export class FilesComponent implements OnInit {
     return `Filter '${this.path}' for files ...`;
   }
 
+  getFilteredDatasource() {
+    if (this.filter === '') {
+      return this.dataSource;
+    }
+    return this.dataSource.filter(x => {
+      const entities = x.path.split('/');
+      const filename = entities[entities.length - 1];
+      return filename.indexOf(this.filter) !== -1;
+    });
+  }
+
   downloadFile(path: string) {
     this.fileService.downloadFile(path);
   }
@@ -135,7 +146,6 @@ export class FilesComponent implements OnInit {
         this.openFile(el);
       }
     }
-    this.filter = '';
   }
 
   createNewFile() {

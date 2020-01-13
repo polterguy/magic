@@ -2,10 +2,10 @@
 <div class="files-wrapper">
 
   <mat-form-field class="fill-width">
-    <input 
-      matInput 
+    <input
+      matInput
       [placeholder]="getFilterPlaceholderText()"
-      type="text" 
+      type="text"
       [(ngModel)]="filter">
   </mat-form-field>
 
@@ -20,7 +20,7 @@
     <table
       mat-table
       multiTemplateDataRows
-      [dataSource]="dataSource">
+      [dataSource]="getFilteredDatasource()">
 
       <ng-container
         matColumnDef="path">
