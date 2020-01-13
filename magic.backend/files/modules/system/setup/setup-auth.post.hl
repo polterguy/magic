@@ -154,6 +154,14 @@ eval:x:@hyper2lambda
 
 
 /*
+ * Evaluating "change-password" file, to create our slot.
+ */
+io.files.load:/modules/system/magic.startup/magic.change-password.hl
+hyper2lambda:x:-
+eval:x:@hyper2lambda
+
+
+/*
  * Returning early, since database already exists,
  * and logging in probably won't work.
  */
