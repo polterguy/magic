@@ -135,6 +135,17 @@ io.files.copy:x:-
 
 
 /*
+ * Copying the database specific "change-password" file.
+ */
+strings.concat
+   .:/misc/
+   get-value:x:@.arguments/*/databaseType
+   .:/magic.change-password.hl
+io.files.copy:x:-
+   .:/modules/system/magic.startup/
+
+
+/*
  * Evaluating new authentication file, to update our slot.
  */
 io.files.load:/modules/system/magic.startup/magic.authenticate.hl
