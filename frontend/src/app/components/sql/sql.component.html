@@ -1,7 +1,13 @@
 
 <div class="database-selector">
-  <mat-select placeholder="Select database type" (selectionChange)="databaseTypeChanged($event)" [(value)]="selectedDatabaseType">
-    <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+  <mat-select
+    placeholder="Select database type"
+    (selectionChange)="databaseTypeChanged($event)"
+    [(value)]="selectedDatabaseType">
+    <mat-option
+      *ngFor="let cur of databaseTypes"
+      [value]="cur">{{cur}}</mat-option>
+      
   </mat-select>
 </div>
 

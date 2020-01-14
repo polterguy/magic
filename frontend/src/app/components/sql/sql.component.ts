@@ -11,10 +11,11 @@ import { FileService } from 'src/app/services/file-service';
   styleUrls: ['./sql.component.scss']
 })
 export class SqlComponent implements OnInit {
+
   private savedFiles = [];
   private selectedScript: string;
   private result: any = null;
-  private databaseTypes = ['mysql', 'mssql'];
+  private databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
   private selectedDatabaseType = 'mysql';
   private sqlText = `/*
  * Type your SQL in here
