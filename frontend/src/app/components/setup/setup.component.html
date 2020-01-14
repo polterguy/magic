@@ -72,7 +72,7 @@
     </button>
 
     <div
-      *ngIf="!changedSecret || !validDatabaseConnectionString"
+      *ngIf="!changedSecret || (!validDatabaseConnectionString && selectedDatabaseType !== null)"
       class="air-top">
       <ngx-codemirror
         [(ngModel)]="appsettingsJson" 
