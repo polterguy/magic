@@ -40,11 +40,15 @@ export class AppComponent implements OnInit {
   ping() {
     this.pingService.ping().subscribe(res => {
       environment.version = res.version;
-      if (res.warnings !== undefined) {
+      if (res.warnings !== undefined && res.warnings !== null) {
         for (const idx of Object.keys(res.warnings)) {
           if (idx === 'defaultAuth') {
             // The default authentication slot has not been overridden.
             environment.defaultAuth = true;
+          } else if (idx === 'jwt') {
+            environment.jwtIssues = true;
+            this.username = 'root';
+            this.password = 'root';
           }
           console.warn(res.warnings[idx]);
         }
@@ -53,6 +57,10 @@ export class AppComponent implements OnInit {
         this.router.navigate(['setup']);
       }
     });
+  }
+
+  hasJwtIssues() {
+    return environment.jwtIssues;
   }
 
   isLoggedIn() {

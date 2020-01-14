@@ -88,6 +88,13 @@
 <div *ngIf="!isLoggedIn()">
   <mat-card class="login-card">
 
+    <div
+      *ngIf="hasJwtIssues()"
+      class="setup-default-info">
+      The default username/password combination is <em>"root"/"root"</em>. Change this immediately after logging in by running through the <em>"Setup"</em> process.
+    </div>
+    
+
     <mat-form-field class="fill-width">
       <input 
         matInput 
