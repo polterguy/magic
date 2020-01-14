@@ -86,9 +86,8 @@ export class SetupComponent implements OnInit {
 
   saveConfigurationFile() {
     this.setupService.saveAppSettingsJson(this.appsettingsJson).subscribe(res => {
-      setTimeout(() => {
-        this.checkDatabaseConfiguration(this.selectedDatabaseType);
-      }, 1000);
+      localStorage.removeItem('access_token');
+      this.showInfo('Since you saved your config file, you must login again');
     });
   }
 
