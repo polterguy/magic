@@ -7,6 +7,7 @@ using System.IO;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using Newtonsoft.Json.Linq;
 
 namespace magic.backend.slots
 {
@@ -23,10 +24,17 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
+            var json = input.GetEx<string>();
+
+            /*
+             * This little bugger will validate that the JSON is actually valid JSON,
+             * which prevents saving of non-valid JSON to configuration file.
+             */
+            JObject.Parse(json);
             File.WriteAllText(
                 Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
                 "/appsettings.json",
-                input.GetEx<string>());
+                json);
         }
     }
 }
