@@ -98,6 +98,7 @@ export class SetupComponent implements OnInit {
             } else {
               this.changedSecret = true;
               environment.jwtIssues = false;
+              this.showInfo('Select your database type');
             }
           });
         }, error => {
