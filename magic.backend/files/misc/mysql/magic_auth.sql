@@ -9,7 +9,11 @@
  * Creating database.
  *
  * Notice, this will throw an exception if the database exists from before.
+ * Notice also, if you want to re-create the database, due to that something
+ * went wrong during your initial setup, you might want to uncomment the
+ * "-- DROP DATABASE `magic_auth;`" parts below.
  */
+-- DROP DATABASE `magic_auth`;
 CREATE DATABASE `magic_auth`;
 USE `magic_auth`;
 
@@ -22,7 +26,7 @@ CREATE TABLE `users` (
   `password` varchar(256) NOT NULL,
   PRIMARY KEY (`username`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 /*
@@ -33,7 +37,7 @@ CREATE TABLE `roles` (
   `description` varchar(256) NULL,
   PRIMARY KEY (`name`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 /*
  * Creating association between roles and users through users_roles table.
@@ -46,7 +50,7 @@ CREATE TABLE `users_roles` (
   KEY `users_fky_idx` (`user`),
   CONSTRAINT `roles_fky` FOREIGN KEY (`role`) REFERENCES `roles` (`name`) ON DELETE CASCADE,
   CONSTRAINT `users_fky` FOREIGN KEY (`user`) REFERENCES `users` (`username`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 /*
  * Inserting some few roles into our roles table.
