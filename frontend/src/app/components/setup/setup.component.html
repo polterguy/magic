@@ -82,7 +82,9 @@
         Setup
       </button>
 
-      <div class="air-top">
+      <div
+        *ngIf="changedSecret && validDatabaseConnectionString"
+        class="air-top">
         <ngx-codemirror
           [(ngModel)]="appsettingsJson" 
           class="smaller"
