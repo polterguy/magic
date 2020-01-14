@@ -155,7 +155,7 @@ strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/magic.authenticate.hl
-log.info:"Copying database specific 'magic.authenticate.hl' file to '/modules/system.magic.startup/' folder."
+log.info:"Copying database specific 'magic.authenticate.hl' file to '/modules/system/magic.startup/' folder."
 io.files.copy:x:@strings.concat
    .:/modules/system/magic.startup/
 
@@ -163,7 +163,7 @@ io.files.copy:x:@strings.concat
 /*
  * Copying the database specific "change-password" file.
  */
-log.info:"Copying database specific 'change-password.hl' file to '/modules/system.magic.startup/' folder"
+log.info:"Copying database specific 'change-password.hl' file to '/modules/system/magic.startup/' folder"
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
