@@ -93,17 +93,18 @@ export class SetupComponent implements OnInit {
         this.authService.authenticate('root', 'root').subscribe(res2 => {
           localStorage.setItem('access_token', res2.ticket);
           this.pingService.ping().subscribe(res3 => {
-            if (res3.warnings.jwt !== undefined) {
+            if (res3.warnings !== undefined && res3.warnings !== null && res3.warnings.jwt !== undefined) {
               this.showError(res3.warnings.jwt, 10000);
             } else {
               this.changedSecret = true;
+              environment.jwtIssues = false;
             }
           });
         }, error => {
           this.showError(error.error.message);
           localStorage.removeItem('access_token');
         });
-      }, 500);
+      }, 1000);
     });
   }
 
