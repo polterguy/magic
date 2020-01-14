@@ -86,6 +86,42 @@
             mat-button>Save</button>
         </div>
       </div>
+
+      <div
+        *ngIf="embarrassing"
+        class="warning">
+        <h3 style="text-align: center;">OK, this is embarrassing - Something went wrong during setup ...</h3>
+        <p>
+          We would highly appreciate it if you could send us your <em>"/magic.backend/logs/magic.log"</em> file, such that
+          we can hopefully figure out what went wrong. If you want to do this, you can send the entire magic.log file to
+          <a href="mailto:support@servergardens.com">support@servergardens.com</a>, and if you could provide us with as much
+          information as possible about your particular setup, it would also help us a lot. Information we'd love to have is
+          as follows.
+        </p>
+        <ul>
+          <li>Operating system (Windows/Linux/OSX/etc)</li>
+          <li>Database type and version (e.g. MySQL version 5.8.4, etc)</li>
+          <li>Magic version (this should be visible in your home link)</li>
+          <li>Collation, Default character set, etc - for your specific database</li>
+          <li>Etc ...</li>
+        </ul>
+        <p>
+          If you don't know this, or don't really care, as much as you would care to send us, would be of great help - In addition to
+          the entire contents of your <em>"magic.log"</em> file of course. Yet again, send this information to.
+        </p>
+        <p>
+          <a href="mailto:support@servergardens.com">support@servergardens.com</a>
+        </p>
+        <p>
+          Please ...
+        </p>
+        <p>
+          Kind Regards,
+        </p>
+        <p>
+          Thomas Hansen - CEO at Server Gardens
+        </p>
+      </div>
       
     </div>
 
