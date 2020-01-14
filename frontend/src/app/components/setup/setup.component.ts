@@ -5,7 +5,6 @@ import { SetupService } from 'src/app/services/setup-service';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { PingService } from 'src/app/services/ping-service';
-import { logWarnings } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-evaluator',
@@ -22,6 +21,7 @@ export class SetupComponent implements OnInit {
   private validDatabaseConnectionString = false;
   private appsettingsJson = '';
   private embarrassing = false;
+  private changedSecret = false;
 
   constructor(
     private setupService: SetupService,
@@ -33,6 +33,13 @@ export class SetupComponent implements OnInit {
     this.setupService.getAppSettingsJson().subscribe(res => {
       this.appsettingsJson = res;
     });
+    this.pingService.ping().subscribe(res2 => {
+      if (res2.warnings.jwt !== undefined) {
+        this.showError(res2.warnings.jwt, 10000);
+      } else {
+        this.changedSecret = true;
+      }
+    });
   }
 
   databaseTypeChanged(e: MatSelectChange) {
@@ -42,13 +49,7 @@ export class SetupComponent implements OnInit {
   checkDatabaseConfiguration(databaseType: string) {
     this.setupService.checkDatabaseConfiguration(databaseType).subscribe(res => {
       this.validDatabaseConnectionString = true;
-      this.pingService.ping().subscribe(res2 => {
-        if (res2.warnings.jwt !== undefined) {
-          this.showError(res2.warnings.jwt, 25000);
-        } else {
-          this.showInfo('Choose a root password and click Setup');
-        }
-      });
+      this.showInfo('Choose a root password and click Setup');
     }, err => {
       this.validDatabaseConnectionString = false;
       this.showError('Provide a valid connection string, and save your appsettings.json file');
