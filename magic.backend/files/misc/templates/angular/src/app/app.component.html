@@ -31,14 +31,14 @@
       <span class="menu-item-text">Auth</span>
     </a>
     <a
+      *ngIf="isLoggedIn()"
       mat-button
       routerLink="/security"
-      *ngIf="false"
       routerLinkActive="active-link"
       class="menu-item"
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>home</mat-icon>
+      <mat-icon matSuffix>account_circle</mat-icon>
       <span class="menu-item-text">Security</span>
     </a>
     <a

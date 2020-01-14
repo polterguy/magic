@@ -33,6 +33,13 @@ export class HttpService {
   refreshTicket() {
     return this.httpClient.get<any>(environment.apiUrl + 'magic/modules/system/auth/refresh-ticket');
   }
+
+  // Will refresh an existing JWT token, if possible.
+  changeMyPassword(password: string) {
+    return this.httpClient.put<any>(environment.apiUrl + 'magic/modules/system/auth/change-password', {
+      password,
+    });
+  }
   
   // Creates QUERY arguments from the specified "args" argument given.
   getQueryArgs(args: any) {
