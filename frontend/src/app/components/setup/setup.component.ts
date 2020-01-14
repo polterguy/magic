@@ -44,7 +44,7 @@ export class SetupComponent implements OnInit {
       this.validDatabaseConnectionString = true;
       this.pingService.ping().subscribe(res2 => {
         if (res2.warnings.jwt !== undefined) {
-          this.showError('You have to change your JWT secret. Notice, you need to restart your web application afterwards!', 25000);
+          this.showError(res2.warnings.jwt, 25000);
         } else {
           this.showInfo('Choose a root password and click Setup');
         }
