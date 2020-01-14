@@ -10,13 +10,11 @@
       </p>
 
       <ol>
-        <li>Change your <em>"magic/auth/secret"</em> config setting below, and make sure it's a <strong>unique and highly random</strong> set of characters. It must be longer than 50 characters in length.</li>
+        <li>Change your <em>"magic/auth/secret"</em> config setting below, and make sure it's a <strong>unique and highly random set of characters</strong>. It must be more than 50 characters in length.</li>
         <li>Then change the connection string to your chosen database type. <em>"magic/databases/mysql/generic"</em> for MySQL and the equivalent <em>"mssql"</em> setting for Microsoft SQL server</li>
         <li><strong>THEN</strong> click the <strong>Save</strong> button</li>
-        <li>Login again, then come back here to setup your authentication database</li>
         <li>Select which database type you wish to use, and provide a strong <em>"root"</em> password</li>
         <li>Click the <strong>Setup</strong> button</li>
-        <li>Enjoy :)</li>
       </ol>
 
       <p>
@@ -83,7 +81,7 @@
       </button>
 
       <div
-        *ngIf="changedSecret && validDatabaseConnectionString"
+        *ngIf="!changedSecret || !validDatabaseConnectionString"
         class="air-top">
         <ngx-codemirror
           [(ngModel)]="appsettingsJson" 

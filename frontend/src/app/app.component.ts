@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
         }
       }
       if (environment.defaultAuth) {
-        this.showWarning('Secure your system in the "Setup" module.');
+        this.router.navigate(['setup']);
       }
     });
   }

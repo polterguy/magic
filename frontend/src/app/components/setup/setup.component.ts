@@ -5,6 +5,7 @@ import { SetupService } from 'src/app/services/setup-service';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { PingService } from 'src/app/services/ping-service';
+import { AuthenticateService } from 'src/app/services/authenticate-service';
 
 @Component({
   selector: 'app-evaluator',
@@ -27,7 +28,8 @@ export class SetupComponent implements OnInit {
     private setupService: SetupService,
     private pingService: PingService,
     private snackBar: MatSnackBar,
-    private router: Router) { }
+    private router: Router,
+    private authService: AuthenticateService) { }
 
   ngOnInit() {
     this.setupService.getAppSettingsJson().subscribe(res => {
@@ -35,7 +37,7 @@ export class SetupComponent implements OnInit {
     });
     this.pingService.ping().subscribe(res2 => {
       if (res2.warnings.jwt !== undefined) {
-        this.showError(res2.warnings.jwt, 10000);
+        this.showError('Please configure your Magic installation', 10000);
       } else {
         this.changedSecret = true;
       }
@@ -87,8 +89,21 @@ export class SetupComponent implements OnInit {
 
   saveConfigurationFile() {
     this.setupService.saveAppSettingsJson(this.appsettingsJson).subscribe(res => {
-      localStorage.removeItem('access_token');
-      this.showInfo('Since you saved your config file, you must login again');
+      setTimeout(() => {
+        this.authService.authenticate('root', 'root').subscribe(res2 => {
+          localStorage.setItem('access_token', res2.ticket);
+          this.pingService.ping().subscribe(res3 => {
+            if (res3.warnings.jwt !== undefined) {
+              this.showError(res3.warnings.jwt, 10000);
+            } else {
+              this.changedSecret = true;
+            }
+          });
+        }, error => {
+          this.showError(error.error.message);
+          localStorage.removeItem('access_token');
+        });
+      }, 500);
     });
   }
 
