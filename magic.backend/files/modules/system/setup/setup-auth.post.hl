@@ -15,10 +15,18 @@
 auth.ticket.verify:root
 
 
+strings.concat
+   .:"Setting up Magic with '"
+   get-value:x:@.arguments/*/database
+   .:"' as authentication database type"
+log.info:x:@strings.concat
+
+
 /*
  * Verifying that system haven't already been setup with some secure
  * authentication scheme previously.
  */
+log.info:Checking is system has already been setup previously
 slots.get:magic.authenticate
 if
    or
@@ -29,12 +37,14 @@ if
             get-value:x:@slots.get/*/.is-default-auth
             .:bool:true
    .lambda
+      log.info:System has apparently already been setup previously
       throw:Your system has already been configured to use a secure authentication scheme
 
 
 /*
  * Checking if database already exists, and if not, creating it.
  */
+log.info:Checking if database exists from before
 .database-exists:bool:true
 strings.concat
    .:magic.db.
@@ -50,6 +60,7 @@ if
       /*
        * Making sure we inform outer layer that we are creating a new user.
        */
+      log.info:Database does not exist from before, hence we will try to create it
       set-value:x:@.database-exists
          .:bool:false
 
@@ -70,16 +81,23 @@ if
        * Loading create database SQL script file, and replacing execution slots according
        * to which database type we're dealing with.
        */
+      strings.concat
+         .:"Loading database script '"
+         get-value:x:./@strings.concat
+         .:"' and attempting to execute it"
+      log.info:x:@strings.concat
       .slot
-      io.files.load:x:@strings.concat
+      io.files.load:x:@strings.concat/@strings.concat
       if
          eq
             get-value:x:@.arguments/*/databaseType
             .:mssql
          .lambda
+            log.info:Executing Microsoft SQL Server batch script to create our authentication database
             set-value:x:@.slot
                .:mssql.execute-batch
       else
+         log.info:Executing SQL script to create database
          set-value:x:@.slot
             strings.concat
                get-value:x:@.arguments/*/databaseType
@@ -97,11 +115,13 @@ if
        */
       xxx.connect
          xxx.execute:x:@io.files.load
+      log.info:Database was successfully created
 
 
       /*
        * Inserting the root user according to arguments given.
        */
+      log.info:Creating our default root user in database
       strings.concat
          .:/misc/
          get-value:x:@.arguments/*/databaseType
@@ -116,18 +136,21 @@ if
             roles
                .:root
       eval:x:@hyper2lambda
+      log.info:Root user was successfully created in database
 
 
 /*
  * Now we have our auth database, and our initial root user, and we can start moving files around,
  * and modifying slots accordingly.
  */
+log.info:Creating backup of default authentication Hyperlambda file
 io.files.move:/modules/system/magic.startup/magic.authenticate.hl
    .:/trash/
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/magic.authenticate.hl
+log.info:Copying database specific authentication file to magic.startup folder
 io.files.copy:x:-
    .:/modules/system/magic.startup/
 
@@ -135,6 +158,7 @@ io.files.copy:x:-
 /*
  * Copying the database specific "change-password" file.
  */
+log.info:Copying database specific change-password file to magic.startup folder
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
@@ -146,6 +170,7 @@ io.files.copy:x:-
 /*
  * Evaluating new authentication file, to update our slot.
  */
+log.info:Evaluating new database specific magic.authenticate.hl file, to overwrite our old [magic.authenticate] slot
 io.files.load:/modules/system/magic.startup/magic.authenticate.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
@@ -154,6 +179,7 @@ eval:x:@hyper2lambda
 /*
  * Evaluating "change-password" file, to create our slot.
  */
+log.info:Evaluating new database specific magic.change-password.hl file, to overwrite our old [magic.change-password] slot
 io.files.load:/modules/system/magic.startup/magic.change-password.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
@@ -163,4 +189,5 @@ eval:x:@hyper2lambda
  * Returning early, since database already exists,
  * and logging in probably won't work.
  */
+log.info:System was successfully setup, returning success to caller
 slots.return-value:Success
