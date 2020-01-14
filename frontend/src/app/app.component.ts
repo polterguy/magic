@@ -14,8 +14,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  private username: string;
-  private password: string;
+  private username = '';
+  private password = '';
   private backendUrl = environment.apiURL;
 
   constructor(
@@ -76,9 +76,9 @@ export class AppComponent implements OnInit {
   login() {
     environment.apiURL = this.backendUrl;
     this.authService.authenticate(this.username, this.password).subscribe(res => {
-      localStorage.setItem('access_token', res.ticket);
       this.username = '';
       this.password = '';
+      localStorage.setItem('access_token', res.ticket);
       this.ping();
     }, (error) => {
       this.showError(error.error.message);
