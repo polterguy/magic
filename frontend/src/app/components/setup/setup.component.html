@@ -16,6 +16,12 @@
         work, allowing you to add, edit, and delete users in your installation.
       </p>
 
+      <p>
+        <strong>Notice</strong> You <em>have to change your JWT secret in your appSettings.config file</em>, and afterwards
+        you <em>have to restart your Magic Website</em> to have the settings take effect. Otherwise the JWT middleware
+        will not function correctly.
+      </p>
+
       <div class="database-selector">
         <mat-select
           placeholder="Select database type"
