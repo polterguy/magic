@@ -48,42 +48,7 @@ if
 
 
             /*
-             * Creating a default [warnings] container, which will contain any warnings we can find by
-             * traversing meta data in the system.
-             */
-            add:x:../*/slots.return-nodes
-               .
-                  warnings
-
-
-            /*
-             * User is authenticated as root.
-             * Making sure we check some system settings, to create warning on client side,
-             * for unfinished configurations, etc.
-             *
-             * First we check if root user has overridden the default JWT secret.
-             */
-            config.get:"magic:auth:secret"
-            if
-               eq
-                  get-value:x:@config.get
-                  .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
-               .lambda
-                  add:x:../*/slots.return-nodes/*/warnings
-                     .
-                        jwt:Please change your auth secret in your appSettings.json file
-            else-if
-               lt
-                  strings.length:x:@config.get
-                  .:int:50
-               .lambda
-                  add:x:../*/slots.return-nodes/*/warnings
-                     .
-                        jwt:Please make sure your magic.auth.secret is at least 50 characters long in your appSettings.json - And that it contains truly random gibberish
-
-
-            /*
-             * Then we check to see if user is still using the default authentication slot.
+             * Checking to see if user is still using the default authentication slot.
              */
             slots.get:magic.authenticate
             if
@@ -97,9 +62,33 @@ if
 
 
 /*
+ * Making sure we check some system settings, to create warning on client side,
+ * for unfinished configurations, etc.
+ */
+config.get:"magic:auth:secret"
+if
+   eq
+      get-value:x:@config.get
+      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   .lambda
+      add:x:../*/slots.return-nodes/*/warnings
+         .
+            jwt:Please change your auth secret in your appSettings.json file
+else-if
+   lt
+      strings.length:x:@config.get
+      .:int:50
+   .lambda
+      add:x:../*/slots.return-nodes/*/warnings
+         .
+            jwt:Please make sure your magic.auth.secret is at least 50 characters long in your appSettings.json - And that it contains truly random gibberish
+
+
+/*
  * Returning version, success, plus optionally also authenticated user + roles.
  */
 unwrap:x:+/*/version
 slots.return-nodes
    result:success
    version:x:@version
+   warnings
