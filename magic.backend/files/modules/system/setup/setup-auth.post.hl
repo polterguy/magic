@@ -16,8 +16,8 @@ auth.ticket.verify:root
 
 
 strings.concat
-   .:"Setting up Magic with '"
-   get-value:x:@.arguments/*/database
+   .:"Trying to setup up Magic with '"
+   get-value:x:@.arguments/*/databaseType
    .:"' as authentication database type"
 log.info:x:@strings.concat
 
@@ -26,7 +26,7 @@ log.info:x:@strings.concat
  * Verifying that system haven't already been setup with some secure
  * authentication scheme previously.
  */
-log.info:Checking is system has already been setup previously
+log.info:Checking if system has already been setup previously
 slots.get:magic.authenticate
 if
    or
@@ -39,6 +39,7 @@ if
    .lambda
       log.info:System has apparently already been setup previously
       throw:Your system has already been configured to use a secure authentication scheme
+log.info:Magic has not been previously setup
 
 
 /*
@@ -84,7 +85,7 @@ if
       strings.concat
          .:"Loading database script '"
          get-value:x:./@strings.concat
-         .:"' and attempting to execute it"
+         .:"' and attempting to execute it, to create our 'magic_auth' database schema"
       log.info:x:@strings.concat
       .slot
       io.files.load:x:@strings.concat/@strings.concat
@@ -139,26 +140,30 @@ if
       log.info:Root user was successfully created in database
 
 
+else
+   log.info:"'magic_auth' database already exists from before"
+
+
 /*
  * Now we have our auth database, and our initial root user, and we can start moving files around,
  * and modifying slots accordingly.
  */
-log.info:Creating backup of default authentication Hyperlambda file
+log.info:"Creating backup of default authentication Hyperlambda file, which can be found in '/trash/magic.authenticate.hl' afterwards"
 io.files.move:/modules/system/magic.startup/magic.authenticate.hl
    .:/trash/
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/magic.authenticate.hl
-log.info:Copying database specific authentication file to magic.startup folder
-io.files.copy:x:-
+log.info:"Copying database specific 'magic.authenticate.hl' file to '/modules/system.magic.startup/' folder."
+io.files.copy:x:@strings.concat
    .:/modules/system/magic.startup/
 
 
 /*
  * Copying the database specific "change-password" file.
  */
-log.info:Copying database specific change-password file to magic.startup folder
+log.info:"Copying database specific 'change-password.hl' file to '/modules/system.magic.startup/' folder"
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
@@ -170,7 +175,7 @@ io.files.copy:x:-
 /*
  * Evaluating new authentication file, to update our slot.
  */
-log.info:Evaluating new database specific magic.authenticate.hl file, to overwrite our old [magic.authenticate] slot
+log.info:"Evaluating new database specific 'magic.authenticate.hl' file, to overwrite our old [magic.authenticate] slot"
 io.files.load:/modules/system/magic.startup/magic.authenticate.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
@@ -179,7 +184,7 @@ eval:x:@hyper2lambda
 /*
  * Evaluating "change-password" file, to create our slot.
  */
-log.info:Evaluating new database specific magic.change-password.hl file, to overwrite our old [magic.change-password] slot
+log.info:"Evaluating new database specific 'magic.change-password.hl' file, to overwrite our old [magic.change-password] slot"
 io.files.load:/modules/system/magic.startup/magic.change-password.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
