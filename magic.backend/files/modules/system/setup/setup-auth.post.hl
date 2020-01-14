@@ -70,35 +70,33 @@ if
        * Loading create database SQL script file, and replacing execution slots according
        * to which database type we're dealing with.
        */
+      .slot
       io.files.load:x:@strings.concat
-      set-name:x:../**/xxx.connect
-         strings.concat
-            get-value:x:@.arguments/*/databaseType
-            .:.connect
-      set-name:x:../**/xxx.execute
-         strings.concat
-            get-value:x:@.arguments/*/databaseType
-            .:.execute
-
-
-      /*
-       * Executing create database SQL script, which is different according to which
-       * database type we're currently using. Notice the little hack to allow for
-       * create database schema scripts in MS SQL, splitting upon " ---- ".
-       */
       if
          eq
             get-value:x:@.arguments/*/databaseType
             .:mssql
          .lambda
-            strings.split:x:@io.files.load
-               .:" ---- "
-            for-each:x:@strings.split/*
-               xxx.connect
-                  xxx.execute:x:@.dp/#
+            set-value:x:@.slot
+               .:mssql.execute-batch
       else
-         xxx.connect
-            xxx.execute:x:@io.files.load
+         set-value:x:@.slot
+            strings.concat
+               get-value:x:@.arguments/*/databaseType
+               .:.execute
+      set-name:x:../**/xxx.connect
+         strings.concat
+            get-value:x:@.arguments/*/databaseType
+            .:.connect
+      set-name:x:../**/xxx.execute
+         get-value:x:@.slot
+
+
+      /*
+       * Executing create database SQL script.
+       */
+      xxx.connect
+         xxx.execute:x:@io.files.load
 
 
       /*
