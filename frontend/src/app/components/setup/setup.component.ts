@@ -21,6 +21,7 @@ export class SetupComponent implements OnInit {
   private passwordRepeat: string = null;
   private validDatabaseConnectionString = false;
   private appsettingsJson = '';
+  private embarrassing = false;
 
   constructor(
     private setupService: SetupService,
@@ -71,6 +72,7 @@ export class SetupComponent implements OnInit {
       this.router.navigate(['']);
     }, error => {
       this.showError(error.error.message);
+      this.embarrassing = true;
     });
   }
 

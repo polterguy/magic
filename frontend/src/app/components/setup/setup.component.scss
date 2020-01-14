@@ -27,6 +27,13 @@
         .air-top {
             margin-top: 1rem;
         }
+        .warning {
+            margin-top: 2rem;
+            padding: 3rem;
+            background-color: rgb(255,200,200);
+            border-radius: .5rem;
+            box-shadow: 3px 3px 8px rgba(0,0,0,.7);
+        }
     }
 }
 
