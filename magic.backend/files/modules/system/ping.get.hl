@@ -72,6 +72,14 @@ if
                   add:x:../*/slots.return-nodes/*/warnings
                      .
                         jwt:Please change your auth secret in your appSettings.json file
+            else-if
+               lt
+                  strings.length:x:@config.get
+                  .:int:50
+               .lambda
+                  add:x:../*/slots.return-nodes/*/warnings
+                     .
+                        jwt:Please make sure your magic.auth.secret is at least 50 characters long in your appSettings.json - And that it contains truly random gibberish
 
 
             /*
