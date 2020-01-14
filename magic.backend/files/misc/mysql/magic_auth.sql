@@ -8,8 +8,7 @@
 /*
  * Creating database.
  *
- * Notice, this will throw an exception if the database exists from before.
- * Notice also, if you want to re-create the database, due to that something
+ * Notice, if you want to re-create the database, due to that something
  * went wrong during your initial setup, you might want to uncomment the
  * "-- DROP DATABASE `magic_auth;`" parts below.
  */

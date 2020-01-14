@@ -113,6 +113,10 @@ if
 
       /*
        * Executing create database SQL script.
+       *
+       * Notice, we do not connect to a specific database schema,
+       * since we rely upon the default connection string, hooking us up to whatever
+       * is the default, for whatever type of database we're currently connecting to.
        */
       xxx.connect
          xxx.execute:x:@io.files.load
