@@ -6,20 +6,17 @@
       <h3>Setup wizard</h3>
 
       <p>
-        You have to setup your system such that it provides a real authentication scheme. Notice, this will permanently change
-        the state of your installation, so be careful, and make sure you have chosen the correct database type that you wish to
-        use. Make sure you have modified you <em>"magic:auth:secret"</em> configuration setting at this point, before you continue.
+        You have to setup your system such that it provides a real authentication scheme. The things you will have to change are as follows.
       </p>
+
+      <ul>
+        <li><em>"secret"</em> in the magic/auth/secret parts. Provide a random string of characters, at least 50 characters in length to improve entropy.</li>
+        <li>Database connection string of choice. This depends upon if you want to use MySQL or MS SQL as your primary database.</li>
+      </ul>
 
       <p>
         When you are done, you can crudify the <em>"magic_auth"</em> database to make the <em>"Users"</em> module
         work, allowing you to add, edit, and delete users in your installation.
-      </p>
-
-      <p>
-        <strong>Notice</strong> You <em>have to change your JWT secret in your appSettings.config file</em>, and afterwards
-        you <em>have to restart your Magic Website</em> to have the settings take effect. Otherwise the JWT middleware
-        will not function correctly.
       </p>
 
       <div class="database-selector">
