@@ -3,87 +3,89 @@
 
   <div class="mat-elevation-z4 setup">
 
-    <h3>Setup wizard</h3>
+    <div *ngIf="!embarrassing">
+      <h3>Setup wizard</h3>
 
-    <ol>
-      <li>Change your <em>"magic/auth/secret"</em> config setting below, and make sure it's a <strong>unique and highly random set of characters</strong>. It must be more than 50 characters in length.</li>
-      <li>Then change the connection string to your chosen database type. <em>"magic/databases/mysql/generic"</em> for MySQL and the equivalent <em>"mssql"</em> setting for Microsoft SQL server</li>
-      <li>Click the <strong>Save</strong> button</li>
-      <li>Select which database type you wish to use, and provide a strong <em>"root"</em> password</li>
-      <li>Click the <strong>Setup</strong> button</li>
-    </ol>
+      <ol>
+        <li>Change your <em>"magic/auth/secret"</em> config setting below, and make sure it's a <strong>unique and highly random set of characters</strong>. It must be more than 50 characters in length.</li>
+        <li>Then change the connection string to your chosen database type. <em>"magic/databases/mysql/generic"</em> for MySQL and the equivalent <em>"mssql"</em> setting for Microsoft SQL server</li>
+        <li>Click the <strong>Save</strong> button</li>
+        <li>Select which database type you wish to use, and provide a strong <em>"root"</em> password</li>
+        <li>Click the <strong>Setup</strong> button</li>
+      </ol>
 
-    <div
-      *ngIf="changedSecret"
-      class="database-selector">
-      <mat-select
-        placeholder="Select database type"
-        (selectionChange)="databaseTypeChanged($event)"
-        [(value)]="selectedDatabaseType">
-        <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
-      </mat-select>
-    </div>
-    
-
-    <mat-form-field
-      *ngIf="selectedDatabaseType !== null"
-      class="username">
-      <input 
-        matInput 
-        autocomplete="off"
-        readonly
-        type="text" 
-        placeholder="Root username"
-        [(ngModel)]="username">
-    </mat-form-field>
-
-    <mat-form-field
-      *ngIf="selectedDatabaseType !== null"
-      class="password">
-      <input 
-        matInput 
-        [disabled]="validDatabaseConnectionString !== true"
-        autocomplete="new-password"
-        type="password" 
-        placeholder="Root password"
-        [(ngModel)]="password">
-    </mat-form-field>
-
-    <mat-form-field
-      *ngIf="selectedDatabaseType !== null"
-      class="password-repeat">
-      <input 
-        matInput 
-        [disabled]="validDatabaseConnectionString !== true"
-        autocomplete="new-password"
-        type="password" 
-        placeholder="Repeat password"
-        [(ngModel)]="passwordRepeat">
-    </mat-form-field>
-
-    <button
-      *ngIf="selectedDatabaseType !== null"
-      [disabled]="validDatabaseConnectionString !== true"
-      class="save-button"
-      matTooltip="This might take some time"
-      mat-button
-      (click)="setupAuthentication()">
-      Setup
-    </button>
-
-    <div
-      *ngIf="!changedSecret || (!validDatabaseConnectionString && selectedDatabaseType !== null)"
-      class="air-top">
-      <ngx-codemirror
-        [(ngModel)]="appsettingsJson" 
-        class="smaller"
-        [options]="getCodeMirrorOptions()"></ngx-codemirror>
       <div
-        style="text-align: right;">
-        <button
-          matTooltip="Saves your configuration file"
-          (click)="saveConfigurationFile()"
-          mat-button>Save</button>
+        *ngIf="changedSecret"
+        class="database-selector">
+        <mat-select
+          placeholder="Select database type"
+          (selectionChange)="databaseTypeChanged($event)"
+          [(value)]="selectedDatabaseType">
+          <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
+        </mat-select>
+      </div>
+      
+
+      <mat-form-field
+        *ngIf="selectedDatabaseType !== null"
+        class="username">
+        <input 
+          matInput 
+          autocomplete="off"
+          readonly
+          type="text" 
+          placeholder="Root username"
+          [(ngModel)]="username">
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="selectedDatabaseType !== null"
+        class="password">
+        <input 
+          matInput 
+          [disabled]="validDatabaseConnectionString !== true"
+          autocomplete="new-password"
+          type="password" 
+          placeholder="Root password"
+          [(ngModel)]="password">
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="selectedDatabaseType !== null"
+        class="password-repeat">
+        <input 
+          matInput 
+          [disabled]="validDatabaseConnectionString !== true"
+          autocomplete="new-password"
+          type="password" 
+          placeholder="Repeat password"
+          [(ngModel)]="passwordRepeat">
+      </mat-form-field>
+
+      <button
+        *ngIf="selectedDatabaseType !== null"
+        [disabled]="validDatabaseConnectionString !== true"
+        class="save-button"
+        matTooltip="This might take some time"
+        mat-button
+        (click)="setupAuthentication()">
+        Setup
+      </button>
+
+      <div
+        *ngIf="!changedSecret || (!validDatabaseConnectionString && selectedDatabaseType !== null)"
+        class="air-top">
+        <ngx-codemirror
+          [(ngModel)]="appsettingsJson" 
+          class="smaller"
+          [options]="getCodeMirrorOptions()"></ngx-codemirror>
+        <div
+          style="text-align: right;">
+          <button
+            matTooltip="Saves your configuration file"
+            (click)="saveConfigurationFile()"
+            mat-button>Save</button>
+        </div>
       </div>
     </div>
 
