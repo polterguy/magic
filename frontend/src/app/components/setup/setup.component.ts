@@ -85,7 +85,7 @@ export class SetupComponent implements OnInit {
             if (res3.result === 'success') {
 
               /*
-               * If it was a success setting up auth database, and authenticaiton slot,
+               * If it was a success setting up auth database and authenticaiton slot,
                * our new password should now function - Hence, trying to login again,
                * but this time with the new password.
                */
