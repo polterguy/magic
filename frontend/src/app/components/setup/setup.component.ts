@@ -44,7 +44,8 @@ export class SetupComponent implements OnInit {
       this.jwtSecret.length >= 50 &&
       this.databaseType !== null &&
       this.password === this.repeatPassword &&
-      this.password !== null) {
+      this.password !== null &&
+      this.password !== 'root') {
         if (!this.hasShownSuccess) {
           this.hasShownSuccess = true;
           this.showInfo('You can now save your configuration');

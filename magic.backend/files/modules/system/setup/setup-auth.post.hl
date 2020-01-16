@@ -15,6 +15,7 @@
 auth.ticket.verify:root
 
 
+// Logging.
 strings.concat
    .:"Trying to setup up Magic with '"
    get-value:x:@.arguments/*/databaseType
@@ -37,6 +38,12 @@ if
             get-value:x:@slots.get/*/.is-default-auth
             .:bool:true
    .lambda
+
+
+      /*
+       * This shouldn't really be possible, but for some reasons we ended
+       * up here none the less.
+       */
       log.info:System has apparently already been setup previously
       throw:Your system has already been configured to use a secure authentication scheme
 
@@ -46,15 +53,20 @@ log.info:Magic has not been previously setup
 
 
 /*
- * Checking if database already exists, and if not, creating it.
+ * Retrieving all database from specified database type.
  */
 log.info:Checking if database exists from before
-.database-exists:bool:true
+.database-exists:bool:false
 strings.concat
    .:magic.db.
    get-value:x:@.arguments/*/databaseType
    .:.databases
 slots.signal:x:-
+
+
+/*
+ * Checking if "magic_auth" was returned from above invocation.
+ */
 if
    not
       exists:x:@slots.signal/*/*/=magic_auth
@@ -62,11 +74,9 @@ if
 
 
       /*
-       * Making sure we inform outer layer that we are creating a new user.
+       * Making sure we inform outer layer that we are creating the database.
        */
       log.info:Database does not exist from before, hence we will try to create it
-      set-value:x:@.database-exists
-         .:bool:false
 
 
       /*
@@ -85,27 +95,48 @@ if
        * Loading create database SQL script file, and replacing execution slots according
        * to which database type we're dealing with.
        */
-      strings.concat
-         .:"Loading database script '"
-         get-value:x:./@strings.concat
-         .:"' and attempting to execute it, to create our 'magic_auth' database schema"
       log.info:x:@strings.concat
+      io.files.load:x:@strings.concat
+
+
+      /*
+       * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
+       * accommodate for "GO" statements and such.
+       */
       .slot
-      io.files.load:x:@strings.concat/@strings.concat
       if
          eq
             get-value:x:@.arguments/*/databaseType
             .:mssql
          .lambda
+
+
+            /*
+             * MS SQL "batch" execute slot needed.
+             */
             log.info:Executing Microsoft SQL Server batch script to create our authentication database
             set-value:x:@.slot
                .:mssql.execute-batch
+
+
       else
+
+
+         /*
+          * Any other type of database.
+          */
          log.info:Executing SQL script to create database
          set-value:x:@.slot
             strings.concat
                get-value:x:@.arguments/*/databaseType
                .:.execute
+
+
+      /*
+       * Changing names of slots now according to which slot we should
+       * use to connect to database, and which slot we should use to 
+       * execute SQL schema script.
+       */
       set-name:x:../**/xxx.connect
          strings.concat
             get-value:x:@.arguments/*/databaseType
@@ -126,34 +157,72 @@ if
       log.info:Database was successfully created
 
 
-      /*
-       * Inserting the root user according to arguments given.
-       */
-      log.info:Creating our default root user in database
-      strings.concat
-         .:/misc/
-         get-value:x:@.arguments/*/databaseType
-         .:/create-user.hl
-      io.files.load:x:@strings.concat
-      hyper2lambda:x:-
-      unwrap:x:+/*/*
-      add:x:@hyper2lambda/*/.arguments
-         .
-            username:x:@.arguments/*/rootUsername
-            password:x:@.arguments/*/rootPassword
-            roles
-               .:root
-      eval:x:@hyper2lambda
-      log.info:Root user was successfully created in database
-
-
 else
+
+
+   /*
+    * Database already exists.
+    */
+   set-value:x:@.database-exists
+      .:bool:true
    log.info:"'magic_auth' database already exists from before"
+
+
+/*
+ * Trying to insert our root user.
+ *
+ * Notice, this will throw an exception if root user already exists.
+ */
+.user-exists:bool:false
+try
+
+
+   /*
+    * Inserting the root user according to arguments given.
+    */
+   log.info:Trying to create our default root user in database
+   strings.concat
+      .:/misc/
+      get-value:x:@.arguments/*/databaseType
+      .:/create-user.hl
+   io.files.load:x:@strings.concat
+   hyper2lambda:x:-
+   unwrap:x:+/*/*
+   add:x:@hyper2lambda/*/.arguments
+      .
+         username:x:@.arguments/*/rootUsername
+         password:x:@.arguments/*/rootPassword
+         roles
+            .:root
+   eval:x:@hyper2lambda
+   log.info:Root user was successfully created in database
+
+.catch
+
+
+   /*
+    * Need to store the fact that we need to change user's password further down in file.
+    */
+   log.info:Exception occurred as we tried to create root user. User probably exists form before.
+   if
+      get-value:x:@.database-exists
+      .lambda
+
+
+         /*
+          * Database already existed as we started out, implying
+          * there was (probably) already a root user account in it
+          * from before.
+          */
+         set-value:x:@.user-exists
+            .:bool:true
 
 
 /*
  * Now we have our auth database, and our initial root user, and we can start moving files around,
  * and modifying slots accordingly.
+ *
+ * First we start by moving our "authenticate" Hyperlambda file.
  */
 log.info:"Creating backup of default authentication Hyperlambda file, which can be found in '/trash/magic.authenticate.hl' afterwards"
 io.files.move:/modules/system/magic.startup/magic.authenticate.hl
@@ -198,8 +267,24 @@ eval:x:@hyper2lambda
 
 
 /*
- * Returning early, since database already exists,
- * and logging in probably won't work.
+ * Notice, if user already existed as we started out,
+ * we need to change the password of the root user.
+ */
+if
+   get-value:x:@.user-exists
+   .lambda
+
+
+      /*
+       * Changing root user's password.
+       */
+      unwrap:x:+/*
+      slots.signal:magic.change-password
+         password:x:@.arguments/*/rootPassword
+
+
+/*
+ * Returning success to caller.
  */
 log.info:System was successfully setup, returning success to caller
 slots.return-nodes
