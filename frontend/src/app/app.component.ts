@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   private username = '';
   private password = '';
   private backendUrl = environment.apiURL;
+  private connectedToBackend = false;
 
   constructor(
     private authService: AuthenticateService,
@@ -26,81 +27,88 @@ export class AppComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.validateToken();
+    this.periodicallyValidateJwtToken();
     this.ping();
     if (!this.isLoggedIn() && this.router.url !== '') {
       this.router.navigate(['']);
     }
   }
 
-  forceSetup() {
-    return this.isLoggedIn() && environment.defaultAuth !== false;
+  backendUrlChanged() {
+    // Need to verify the new URL is a valid magic.backend.
+    environment.apiURL = this.backendUrl;
+    this.ping();
   }
 
+  // Verifies that the user is connected to a magic backend.
   ping() {
     this.pingService.ping().subscribe(res => {
-      environment.version = res.version;
-      if (res.warnings !== undefined && res.warnings !== null) {
-        for (const idx of Object.keys(res.warnings)) {
-          if (idx === 'defaultAuth') {
-            // The default authentication slot has not been overridden.
-            environment.defaultAuth = true;
-          } else if (idx === 'jwt') {
-            environment.jwtIssues = true;
-            this.username = 'root';
-            this.password = 'root';
-          }
-          console.warn(res.warnings[idx]);
-        }
+      if (res.result === 'success') {
+        console.log('Successfully connected to backend');
+        this.connectedToBackend = true;
+      } else {
+        this.connectedToBackend = false;
       }
-      if (environment.defaultAuth) {
-        this.router.navigate(['setup']);
-      }
+    }, err => {
+      this.connectedToBackend = false;
+      this.showError('Not connected to backend. Make sure you start your Magic backend, ' +
+        'or change the backend URL to an actual Magic installation');
     });
   }
 
-  hasJwtIssues() {
-    return environment.jwtIssues;
-  }
-
+  // Returns true if client is authenticated.
   isLoggedIn() {
     const token = localStorage.getItem('access_token');
     return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
   }
 
+  // Logs out the user.
   logout() {
     localStorage.removeItem('access_token');
     this.router.navigate(['']);
   }
 
+  // Logs in user with username/password combination from HTML page.
   login() {
     environment.apiURL = this.backendUrl;
     this.authService.authenticate(this.username, this.password).subscribe(res => {
+      localStorage.setItem('access_token', res.ticket);
+      if (this.password === 'root') {
+        this.router.navigate(['/setup']);
+      }
       this.username = '';
       this.password = '';
-      localStorage.setItem('access_token', res.ticket);
-      this.ping();
     }, (error) => {
       this.showError(error.error.message);
     });
   }
 
-  // This method makes sure JWT ticket is refreshed automatically before it expires
-  public validateToken() {
+  /*
+   * Creates a timeout that executes every 10 seconds, that simply ensure the JWT token
+   * is valid - And if not, removes it from local storage, and logs out the user.
+   */
+  public periodicallyValidateJwtToken() {
+
+    // Makes sure we check token every 10 seconds.
     interval(10000).subscribe(x => {
 
-      // Checking if token is about to expire, or if it has already expired
+      // Checking if token exists or is expired, and if so, logs out user.
       const token = localStorage.getItem('access_token');
       if (token == null || this.jwtHelper.isTokenExpired(token)) {
         this.logout();
         return;
       }
+
+      /*
+       * Retrieves token's expiration datetime, to make sure we "refresh"
+       * the token 2 minutes before it expires.
+       */
       const expiration = this.jwtHelper.getTokenExpirationDate(token);
       const now = new Date();
       now.setSeconds(now.getSeconds() + 120);
       if (now > expiration) {
 
-        // Refreshing JWT token
+        // Refreshing JWT token.
         this.authService.refreshTicket().subscribe((res) => {
           localStorage.setItem('access_token', res.ticket);
         }, (error) => {

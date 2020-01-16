@@ -12,21 +12,20 @@
     [routerLinkActiveOptions]="{exact:true}">Home</a>
 
   <a 
-    *ngIf="forceSetup()"
     mat-button 
     routerLink="/setup" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Setup</a>
 
   <a 
-    *ngIf="!forceSetup() && isLoggedIn()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/users" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Users</a>
 
   <a 
-    *ngIf="!forceSetup() && isLoggedIn()"
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/roles" 
     routerLinkActive="active-link" 
@@ -85,21 +84,20 @@
   <router-outlet></router-outlet>
 </div>
 
-<div *ngIf="!isLoggedIn()">
+<div *ngIf="!isLoggedIn()" [ngClass]="connectedToBackend ? '' : 'warning'">
   <mat-card class="login-card">
 
     <div
-      *ngIf="hasJwtIssues()"
       class="setup-default-info">
-      The default username/password combination is <em>"root"/"root"</em>. Change this immediately after logging in by running through the <em>"Setup"</em> process.
+      The default username/password combination is <em>"root"/"root"</em>. Please change this after logging in.
     </div>
-    
 
     <mat-form-field class="fill-width">
       <input 
         matInput 
         placeholder="Backend URL"
-        type="text" 
+        type="text"
+        (change)="backendUrlChanged()"
         [(ngModel)]="backendUrl">
     </mat-form-field>
 
@@ -122,7 +120,8 @@
     </mat-form-field>
 
     <div class="right-aligned">
-      <button 
+      <button
+        [disabled]="!connectedToBackend"
         mat-button
         (click)="login()"
         matTooltip="Login to your Magic installation">Login</button>

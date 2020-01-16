@@ -4,35 +4,11 @@
     .setup {
         margin-top: 4rem;
         padding: 5rem;
-        .database-selector {
-            margin-top:1rem;
-            max-width: 15rem;
-            display: inline-block;
+        .fill-width {
+            width: 100%;
         }
-        .username {
-            max-width: 15rem;
-            margin-left: 2rem;
-        }
-        .password {
-            max-width: 15rem;
-            margin-left: 2rem;
-        }
-        .password-repeat {
-            max-width: 15rem;
-            margin-left: 2rem;
-        }
-        .save-button {
-            margin-left: 2rem;
-        }
-        .air-top {
-            margin-top: 1rem;
-        }
-        .warning {
-            margin-top: 2rem;
-            padding: 3rem;
-            background-color: rgb(255,200,200);
-            border-radius: .5rem;
-            box-shadow: 3px 3px 8px rgba(0,0,0,.7);
+        .right-align {
+            text-align: right;
         }
     }
 }

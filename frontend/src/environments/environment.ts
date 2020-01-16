@@ -6,8 +6,6 @@ export let environment = {
   production: false,
   apiURL: 'http://localhost:55247/',
   apiDomain: 'localhost:55247',
-  defaultAuth: false,
-  jwtIssues: false,
   version: '',
 };
 

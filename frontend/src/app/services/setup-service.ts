@@ -21,12 +21,10 @@ export class SetupService {
     return this.httpClient.get<string>(environment.apiURL + 'magic/modules/system/setup/load-config-file');
   }
 
-  saveAppSettingsJson(fileContent: string) {
-    return this.httpClient.post<string>(
+  saveAppSettingsJson(config: any) {
+    return this.httpClient.post<any>(
       environment.apiURL +
-      'magic/modules/system/setup/save-config-file', {
-        content: fileContent
-      });
+      'magic/modules/system/setup/save-config-file', config);
   }
 
   setupAuthentication(databaseType: string, rootUsername: string, rootPassword: string) {

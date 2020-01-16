@@ -17,4 +17,5 @@ auth.ticket.verify:root
  * Saves the [content] from arguments to "appsettings.json" file.
  */
 save-app-settings:x:@.arguments/*/content
-slots.return-value:success
+slots.return-nodes
+   result:success
