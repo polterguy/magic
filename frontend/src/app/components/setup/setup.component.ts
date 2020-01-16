@@ -71,51 +71,58 @@ export class SetupComponent implements OnInit {
       if (res.result === 'success') {
 
         /*
-         * If settings are saved, our JWT token is no longer valid, since the JWT secret
-         * has now been changed - Hence, logging in again.
+         * To make sure server gets the required time to pudate our IConfiguration
+         * object, we pause for a second here.
          */
-        this.authService.authenticate('root', 'root').subscribe(res2 => {
+        setTimeout(() => {
 
-          // Changing our JWT token.
-          localStorage.setItem('access_token', res2.ticket);
+          /*
+           * If settings are saved, our JWT token is no longer valid, since the JWT secret
+           * has now been changed - Hence, logging in again.
+           */
+          this.authService.authenticate('root', 'root').subscribe(res2 => {
 
-          // Setting up authentication system and database.
-          this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
+            // Changing our JWT token.
+            localStorage.setItem('access_token', res2.ticket);
 
-            if (res3.result === 'success') {
+            // Setting up authentication system and database.
+            this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
 
-              /*
-               * If it was a success setting up auth database and authenticaiton slot,
-               * our new password should now function - Hence, trying to login again,
-               * but this time with the new password.
-               */
-              this.authService.authenticate('root', this.password).subscribe(res4 => {
+              if (res3.result === 'success') {
 
-                // Changing our JWT token.
-                localStorage.setItem('access_token', res4.ticket);
+                /*
+                 * If it was a success setting up auth database and authenticaiton slot,
+                 * our new password should now function - Hence, trying to login again,
+                 * but this time with the new password.
+                 */
+                this.authService.authenticate('root', this.password).subscribe(res4 => {
 
-                // Success!
-                this.showInfo('You have successfully secured your system');
+                  // Changing our JWT token.
+                  localStorage.setItem('access_token', res4.ticket);
 
-                // Navigating to "Home" screen.
-                this.router.navigate(['']);
+                  // Success!
+                  this.showInfo('You have successfully secured your system');
 
-              }, error => {
+                  // Navigating to "Home" screen.
+                  this.router.navigate(['']);
 
-                // Couldn't authenticate with new password
-                this.showError(error.error.message);
-              });
-            }
+                }, error => {
+
+                  // Couldn't authenticate with new password
+                  this.showError(error.error.message);
+                });
+              }
+            }, error => {
+
+              // Couldn't setup authentication.
+              this.showError(error.error.message);
+            });
           }, error => {
 
-            // Couldn't setup authentication.
+            // Couldn't authenticate after saving config file.
             this.showError(error.error.message);
           });
-        }, error => {
-
-          // Couldn't authenticate after saving config file.
-          this.showError(error.error.message);
-        });
+        }, 1000);
       }
     }, error => {
 
