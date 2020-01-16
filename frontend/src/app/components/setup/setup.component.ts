@@ -59,14 +59,25 @@ export class SetupComponent implements OnInit {
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
     this.setupService.saveAppSettingsJson(this.config).subscribe(res => {
+
       if (res.result === 'success') {
-        this.authService.authenticate('root', this.password).subscribe(res2 => {
-          this.showInfo('You have successfully secured your system');
-          this.router.navigate(['']);
-        }, err => {
-          this.showError('Error, are you sure your connection string is correct?');
+        this.authService.authenticate('root', 'root').subscribe(res2 => {
+
+          this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
+
+            if (res3.result === 'success') {
+              this.showInfo('You have successfully secured your system');
+              this.router.navigate(['']);
+            }
+          }, error => {
+            this.showError(error.error.message);
+          });
+        }, error => {
+          this.showError(error.error.message);
         });
       }
+    }, error => {
+      this.showError(error.error.message);
     });
   }
 
