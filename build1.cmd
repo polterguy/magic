@@ -4,9 +4,14 @@ set key=%2
 
 dotnet nuget locals all --clear
 
-echo Building node, http, endpoint, and io
+cd %~dp0/..
+call magic.node/build.cmd %version% %key% 
 
-magic.node/build.cmd %version% %key% 
-magic.http/build.cmd %version% %key% 
-magic.endpoint/build.cmd %version% %key% 
-magic.io/build.cmd %version% %key% 
+cd %~dp0/..
+call magic.http/build.cmd %version% %key% 
+
+cd %~dp0/..
+call magic.endpoint/build.cmd %version% %key% 
+
+cd %~dp0/..
+call magic.io/build.cmd %version% %key% 
