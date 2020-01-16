@@ -5,49 +5,49 @@ set key=%2
 dotnet nuget locals all --clear
 
 cd %~dp0/..
-magic.lambda/build.cmd %key% %version%
+call magic.lambda/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.auth/build.cmd %key% %version%
+call magic.lambda.auth/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.config/build.cmd %key% %version%
+call magic.lambda.config/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.crypto/build.cmd %key% %version%
+call magic.lambda.crypto/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.http/build.cmd %key% %version%
+call magic.lambda.http/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.hyperlambda/build.cmd %key% %version%
+call magic.lambda.hyperlambda/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.io/build.cmd %key% %version%
+call magic.lambda.io/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.json/build.cmd %key% %version%
+call magic.lambda.json/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.logging/build.cmd %key% %version%
+call magic.lambda.logging/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.math/build.cmd %key% %version%
+call magic.lambda.math/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.mssql/build.cmd %key% %version%
+call magic.lambda.mssql/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.mysql/build.cmd %key% %version%
+call magic.lambda.mysql/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.scheduler/build.cmd %key% %version%
+call magic.lambda.scheduler/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.slots/build.cmd %key% %version%
+call magic.lambda.slots/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.strings/build.cmd %key% %version%
+call magic.lambda.strings/build.cmd %version% %key%
 
 cd %~dp0/..
-magic.lambda.validators/build.cmd %key% %version%
+call magic.lambda.validators/build.cmd %version% %key%

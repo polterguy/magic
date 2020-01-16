@@ -5,4 +5,4 @@ set key=%2
 dotnet nuget locals all --clear
 
 cd %~dp0/..
-magic.data.common/build.cmd %key% %version%
+magic.data.common/build.cmd %version% %key%
