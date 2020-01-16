@@ -1,0 +1,2 @@
+
+../magic.library/build.cmd

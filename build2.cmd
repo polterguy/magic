@@ -1,0 +1,2 @@
+
+../magic.signals/build.cmd
