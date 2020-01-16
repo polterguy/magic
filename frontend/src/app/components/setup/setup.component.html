@@ -49,8 +49,27 @@
         [(ngModel)]="mysqlConnectionString">
     </mat-form-field>
 
-    <div
+    <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
+      style="margin-right: 1rem;">
+      <input
+        matInput
+        placeholder="Password"
+        type="password"
+        [(ngModel)]="password">
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null">
+      <input
+        matInput
+        placeholder="Repeat password"
+        type="password"
+        [(ngModel)]="repeatPassword">
+    </mat-form-field>
+
+    <div
+      *ngIf="checkConfig()"
       class="right-align">
       <button
         mat-button
@@ -58,8 +77,7 @@
         Save
       </button>
     </div>
-    
-  
+
   </div>
 
 </div>
