@@ -10,13 +10,6 @@ export class SetupService {
 
   constructor(private httpClient: HttpClient) { }
 
-  checkDatabaseConfiguration(databaseType: string) {
-    return this.httpClient.get<any>(
-      environment.apiURL +
-      'magic/modules/system/setup/verify-database-connection?databaseType=' +
-      encodeURIComponent(databaseType));
-  }
-
   getAppSettingsJson() {
     return this.httpClient.get<string>(environment.apiURL + 'magic/modules/system/setup/load-config-file');
   }
