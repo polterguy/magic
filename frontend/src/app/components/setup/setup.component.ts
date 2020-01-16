@@ -12,14 +12,15 @@ import { Router } from '@angular/router';
 })
 export class SetupComponent implements OnInit {
 
-  config: any = null;
-  jwtSecret: string = null;
-  databaseType: string = null;
-  mssqlConnectionString: string = null;
-  mysqlConnectionString: string = null;
-  password: string = null;
-  repeatPassword: string = null;
-  hasShownSucces = false;
+  private config: any = null;
+  private jwtSecret: string = null;
+  private databaseType: string = null;
+  private mssqlConnectionString: string = null;
+  private mysqlConnectionString: string = null;
+  private password: string = null;
+  private repeatPassword: string = null;
+  private hasShownSuccess = false;
+  private isFetching = false;
 
   constructor(
     private setupService: SetupService,
@@ -44,13 +45,13 @@ export class SetupComponent implements OnInit {
       this.databaseType !== null &&
       this.password === this.repeatPassword &&
       this.password !== null) {
-        if (!this.hasShownSucces) {
-          this.hasShownSucces = true;
+        if (!this.hasShownSuccess) {
+          this.hasShownSuccess = true;
           this.showInfo('You can now save your configuration');
         }
         return true;
     }
-    this.hasShownSucces = false;
+    this.hasShownSuccess = false;
     return false;
   }
 
@@ -64,6 +65,7 @@ export class SetupComponent implements OnInit {
     this.config.magic.auth.secret = this.jwtSecret;
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
+    this.isFetching = true;
 
     // Saving appsettings.json file on server.
     this.setupService.saveAppSettingsJson(this.config).subscribe(res => {
@@ -106,21 +108,33 @@ export class SetupComponent implements OnInit {
                   // Navigating to "Home" screen.
                   this.router.navigate(['']);
 
+                  // Hiding obscurer.
+                  this.isFetching = false;
+
                 }, error => {
 
                   // Couldn't authenticate with new password
                   this.showError(error.error.message);
+
+                  // Hiding obscurer.
+                  this.isFetching = false;
                 });
               }
             }, error => {
 
               // Couldn't setup authentication.
               this.showError(error.error.message);
+
+              // Hiding obscurer.
+              this.isFetching = false;
             });
           }, error => {
 
             // Couldn't authenticate after saving config file.
             this.showError(error.error.message);
+
+            // Hiding obscurer.
+            this.isFetching = false;
           });
         }, 1000);
       }
@@ -128,6 +142,9 @@ export class SetupComponent implements OnInit {
 
       // couldn't save config file.
       this.showError(error.error.message);
+
+      // Hiding obscurer.
+      this.isFetching = false;
     });
   }
 
