@@ -74,7 +74,7 @@ export class SetupComponent implements OnInit {
 
         /*
          * To make sure server gets the required time to pudate our IConfiguration
-         * object, we pause for a second here.
+         * object, we pause for 5 seconds here.
          */
         setTimeout(() => {
 
@@ -136,7 +136,7 @@ export class SetupComponent implements OnInit {
             // Hiding obscurer.
             this.isFetching = false;
           });
-        }, 1000);
+        }, 5000);
       }
     }, error => {
 
