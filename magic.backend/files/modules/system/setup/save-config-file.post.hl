@@ -2,9 +2,9 @@
 /*
  * Saves the content of [content] argument to your appsettings.json file.
  */
-.arguments
-   content:string
 .description:"Saves the content of [content] argument to your appsettings.json file."
+lambda2json:x:@.arguments/*
+   format:bool:true
 
 
 /*
@@ -16,6 +16,6 @@ auth.ticket.verify:root
 /*
  * Saves the [content] from arguments to "appsettings.json" file.
  */
-save-app-settings:x:@.arguments/*/content
+save-app-settings:x:@lambda2json
 slots.return-nodes
    result:success
