@@ -54,29 +54,72 @@ export class SetupComponent implements OnInit {
     return false;
   }
 
+  // Saves settings as supplied by user.
   save() {
+
+    /*
+     * Applying input from user into config object, before transmitting it to
+     * the server to save appsettings.json file.
+     */
     this.config.magic.auth.secret = this.jwtSecret;
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
+
+    // Saving appsettings.json file on server.
     this.setupService.saveAppSettingsJson(this.config).subscribe(res => {
 
       if (res.result === 'success') {
+
+        /*
+         * If settings are saved, our JWT token is no longer valid, since the JWT secret
+         * has now been changed - Hence, logging in again.
+         */
         this.authService.authenticate('root', 'root').subscribe(res2 => {
 
+          // Changing our JWT token.
+          localStorage.setItem('access_token', res2.ticket);
+
+          // Setting up authentication system and database.
           this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
 
             if (res3.result === 'success') {
-              this.showInfo('You have successfully secured your system');
-              this.router.navigate(['']);
+
+              /*
+               * If it was a success setting up auth database, and authenticaiton slot,
+               * our new password should now function - Hence, trying to login again,
+               * but this time with the new password.
+               */
+              this.authService.authenticate('root', this.password).subscribe(res4 => {
+
+                // Changing our JWT token.
+                localStorage.setItem('access_token', res4.ticket);
+
+                // Success!
+                this.showInfo('You have successfully secured your system');
+
+                // Navigating to "Home" screen.
+                this.router.navigate(['']);
+
+              }, error => {
+
+                // Couldn't authenticate with new password
+                this.showError(error.error.message);
+              });
             }
           }, error => {
+
+            // Couldn't setup authentication.
             this.showError(error.error.message);
           });
         }, error => {
+
+          // Couldn't authenticate after saving config file.
           this.showError(error.error.message);
         });
       }
     }, error => {
+
+      // couldn't save config file.
       this.showError(error.error.message);
     });
   }
