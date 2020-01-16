@@ -3,131 +3,63 @@
 
   <div class="mat-elevation-z4 setup">
 
-    <div *ngIf="!embarrassing">
-      <h3>Setup wizard</h3>
+    <h3>Setup wizard</h3>
 
-      <ol>
-        <li>Change your JWT secret from <em>"THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT"</em> below, and make sure you provide at least 50 random charaters for it.</li>
-        <li>Then change the connection string to your chosen database type. <em>"magic/databases/mysql/generic"</em> for MySQL and the equivalent <em>"mssql"</em> setting for Microsoft SQL server</li>
-        <li>Click the <strong>Save</strong> button</li>
-        <li>Select which database type you wish to use, and provide a strong <em>"root"</em> password</li>
-        <li>Click the <strong>Setup</strong> button</li>
-      </ol>
+    <p>
+      The JWT secret key needs to be at least 50 random characters in length.
+    </p>
 
-      <div
-        *ngIf="changedSecret"
-        class="database-selector">
-        <mat-select
-          placeholder="Select database type"
-          (selectionChange)="databaseTypeChanged($event)"
-          [(value)]="selectedDatabaseType">
-          <mat-option *ngFor="let cur of databaseTypes" [value]="cur">{{cur}}</mat-option>
-        </mat-select>
-      </div>
-      
+    <mat-form-field
+      class="fill-width">
+      <input
+        matInput
+        placeholder="JWT secret key"
+        minlength="50"
+        type="text"
+        [(ngModel)]="jwtSecret">
+    </mat-form-field>
 
-      <mat-form-field
-        *ngIf="selectedDatabaseType !== null"
-        class="username">
-        <input 
-          matInput 
-          autocomplete="off"
-          readonly
-          type="text" 
-          placeholder="Root username"
-          [(ngModel)]="username">
-      </mat-form-field>
+    <mat-form-field
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50">
+      <mat-select
+        placeholder="Select auth database type"
+        [(ngModel)]="databaseType">
+        <mat-option value="mysql">My SQL</mat-option>
+        <mat-option value="mssql">Microsoft SQL server</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-      <mat-form-field
-        *ngIf="selectedDatabaseType !== null"
-        class="password">
-        <input 
-          matInput 
-          [disabled]="validDatabaseConnectionString !== true"
-          autocomplete="new-password"
-          type="password" 
-          placeholder="Root password"
-          [(ngModel)]="password">
-      </mat-form-field>
+    <mat-form-field
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mssql'"
+      class="fill-width">
+      <input
+        matInput
+        placeholder="MS SQL connection string"
+        type="text"
+        [(ngModel)]="mssqlConnectionString">
+    </mat-form-field>
 
-      <mat-form-field
-        *ngIf="selectedDatabaseType !== null"
-        class="password-repeat">
-        <input 
-          matInput 
-          [disabled]="validDatabaseConnectionString !== true"
-          autocomplete="new-password"
-          type="password" 
-          placeholder="Repeat password"
-          [(ngModel)]="passwordRepeat">
-      </mat-form-field>
-
-      <button
-        *ngIf="selectedDatabaseType !== null"
-        [disabled]="validDatabaseConnectionString !== true"
-        class="save-button"
-        matTooltip="This might take some time"
-        mat-button
-        (click)="setupAuthentication()">
-        Setup
-      </button>
-
-      <div
-        *ngIf="!changedSecret || (!validDatabaseConnectionString && selectedDatabaseType !== null)"
-        class="air-top">
-        <ngx-codemirror
-          [(ngModel)]="appsettingsJson" 
-          class="smaller"
-          [options]="getCodeMirrorOptions()"></ngx-codemirror>
-        <div
-          style="text-align: right;">
-          <button
-            matTooltip="Saves your configuration file"
-            (click)="saveConfigurationFile()"
-            mat-button>Save</button>
-        </div>
-      </div>
-    </div>
+    <mat-form-field
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql'"
+      class="fill-width">
+      <input
+        matInput
+        placeholder="MySQL connection string"
+        type="text"
+        [(ngModel)]="mysqlConnectionString">
+    </mat-form-field>
 
     <div
-      *ngIf="embarrassing"
-      class="warning">
-      <h3 style="text-align: center;">OK, this is embarrassing</h3>
-      <p>
-        Something went very wrong ...
-      </p>
-      <p>
-        We would highly appreciate it if you could send us your <em>"/magic.backend/logs/magic.log"</em> file, such that
-        we can hopefully figure out what went wrong. If you want to do this, you can send the entire magic.log file to
-        <a href="mailto:support@servergardens.com">support@servergardens.com</a>, and if you could provide us with as much
-        information as possible about your particular setup, it would also help us a lot. Information we'd love to have is
-        as follows.
-      </p>
-      <ul>
-        <li>Operating system (Windows/Linux/OSX/etc)</li>
-        <li>Database type and version (e.g. MySQL version 5.8.4, etc)</li>
-        <li>Magic version (this should be visible in your home link)</li>
-        <li>Collation, Default character set, etc - for your specific database</li>
-        <li>Etc ...</li>
-      </ul>
-      <p>
-        If you don't know this, or don't really care, as much as you would care to send us, would be of great help - In addition to
-        the entire contents of your <em>"magic.log"</em> file of course. Yet again, send this information to.
-      </p>
-      <p>
-        <a href="mailto:support@servergardens.com">support@servergardens.com</a>
-      </p>
-      <p>
-        Please ...
-      </p>
-      <p>
-        Kind Regards,
-      </p>
-      <p>
-        Thomas Hansen - CEO at Server Gardens
-      </p>
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
+      class="right-align">
+      <button
+        mat-button
+        (click)="save()">
+        Save
+      </button>
     </div>
     
+  
   </div>
 
 </div>

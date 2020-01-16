@@ -17,10 +17,14 @@
     .setup-default-info {
         padding: 1rem;
         border-radius: .5rem;
-        background-color: rgb(255,220,220);
+        background-color: rgb(230,230,230);
         margin-bottom: 2rem;
         margin-top: -2rem;
     }
+}
+
+.warning .login-card {
+    background-color: rgba(255,220,220);
 }
 
 .fill-width {
