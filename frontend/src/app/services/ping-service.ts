@@ -13,4 +13,8 @@ export class PingService {
   public ping() {
     return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/ping');
   }
+
+  public version() {
+    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/version');
+  }
 }
