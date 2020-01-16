@@ -45,6 +45,7 @@ export class SetupComponent implements OnInit {
       this.databaseType !== null &&
       this.password === this.repeatPassword &&
       this.password !== null &&
+      this.connectionStringGood() &&
       this.password !== 'root') {
         if (!this.hasShownSuccess) {
           this.hasShownSuccess = true;
@@ -53,6 +54,16 @@ export class SetupComponent implements OnInit {
         return true;
     }
     this.hasShownSuccess = false;
+    return false;
+  }
+
+  connectionStringGood() {
+    switch (this.databaseType) {
+      case 'mssql':
+        return this.mssqlConnectionString.indexOf('{database}') !== -1;
+      case 'mysql':
+        return this.mysqlConnectionString.indexOf('{database}') !== -1;
+    }
     return false;
   }
 
