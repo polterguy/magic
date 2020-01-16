@@ -1,16 +1,12 @@
 
-echo Moving one folder up
+set version=%1
+set key=%2
 
-cd ..
-
-echo Deleting all bin and obj folders
-
-FOR /d /r . %%d IN ("bin") DO @IF EXIST "%%d" rd /s /q "%%d"
-FOR /d /r . %%d IN ("obj") DO @IF EXIST "%%d" rd /s /q "%%d"
+dotnet nuget locals all --clear
 
 echo Building node, http, endpoint, and io
 
-magic.node/build.cmd
-magic.http/build.cmd
-magic.endpoint/build.cmd
-magic.io/build.cmd
+magic.node/build.cmd %version% %key% 
+magic.http/build.cmd %version% %key% 
+magic.endpoint/build.cmd %version% %key% 
+magic.io/build.cmd %version% %key% 
