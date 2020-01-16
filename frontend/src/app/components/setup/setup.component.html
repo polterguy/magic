@@ -26,12 +26,14 @@
       <input
         matInput
         placeholder="JWT secret key"
+        autocomplete="off"
         minlength="50"
         type="text"
         [(ngModel)]="jwtSecret">
     </mat-form-field>
 
     <mat-form-field
+      style="min-width: 20rem;"
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50">
       <mat-select
         placeholder="Select auth database type"
