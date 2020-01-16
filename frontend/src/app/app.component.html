@@ -12,6 +12,7 @@
     [routerLinkActiveOptions]="{exact:true}">Home</a>
 
   <a 
+    *ngIf="isLoggedIn()"
     mat-button 
     routerLink="/setup" 
     routerLinkActive="active-link" 
