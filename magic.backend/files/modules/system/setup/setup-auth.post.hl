@@ -39,6 +39,9 @@ if
    .lambda
       log.info:System has apparently already been setup previously
       throw:Your system has already been configured to use a secure authentication scheme
+
+
+// ... else ...
 log.info:Magic has not been previously setup
 
 
@@ -199,4 +202,5 @@ eval:x:@hyper2lambda
  * and logging in probably won't work.
  */
 log.info:System was successfully setup, returning success to caller
-slots.return-value:Success
+slots.return-nodes
+   result:success
