@@ -247,3 +247,8 @@ _Every single module_
 
 * Fixed a severe error during conversion of node's value, that would convert values that already had the correct type,
   resulting in errors.
+
+
+## Version 5.7.2
+
+* Significantly simplified the setup process
