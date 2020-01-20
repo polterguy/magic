@@ -225,6 +225,7 @@ export class EndpointsComponent implements OnInit {
       endpoints: toGenerate,
       apiUrl: environment.apiURL,
       name: this.name,
+      templateName: 'angular-default',
     };
     this.isFetching = true;
     this.service.generate(args).subscribe(res => {
