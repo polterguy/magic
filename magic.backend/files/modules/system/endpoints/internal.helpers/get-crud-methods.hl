@@ -26,16 +26,9 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
-    * Adding endpoint to temporary [.result] node above.
-    */
-   add:x:@.result
-      get-nodes:x:@.endpoint/*
-
-
-   /*
     * Finding all related endpoints.
     */
-   for-each:x:@.arguments/*/endpoints/*/*/type/.
+   for-each:x:@.arguments/*/endpoints/*
       if
          eq
             get-value:x:@.dp/#/*/path
@@ -50,7 +43,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                get-value:x:@.dp/#/*/verb
             add:x:@.endpoint/*/*/verbs
                .
-                  foo
+                  verb-name
+
+
+   /*
+    * Adding endpoint to temporary [.result] node above.
+    */
+   add:x:@.result
+      get-nodes:x:@.endpoint/*
 
 
 /*
