@@ -4,9 +4,15 @@
  *
  * Arguments
  *
- * - [folder] - Folder from where to load all files recursively from.
+ * - 1st argument. Folder from where to load all files recursively from.
  */
 slots.create:magic.io.files.load-recursively
+
+
+   /*
+    * In case we've got a "slot" type of argument.
+    */
+   eval:x:@.arguments
 
 
    /*
@@ -14,7 +20,7 @@ slots.create:magic.io.files.load-recursively
     */
    unwrap:x:+/*
    slots.signal:magic.io.files.list-recursively
-      folder:x:@.arguments/*/folder
+      .:x:@.arguments/0
 
 
    /*

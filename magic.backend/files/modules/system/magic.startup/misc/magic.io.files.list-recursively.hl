@@ -4,15 +4,21 @@
  *
  * Arguments
  *
- * - [folder] - Folder from where to list all files recursively from.
+ * - 1st. Folder from where to list all files recursively from.
  */
 slots.create:magic.io.files.list-recursively
 
 
    /*
+    * In case we've got a "slot" type of argument.
+    */
+   eval:x:@.arguments
+
+
+   /*
     * Lists all files in current [folder], and adds up the result to return value.
     */
-   io.files.list:x:@.arguments/*/folder
+   io.files.list:x:@.arguments/0
    add:x:../*/slots.return-nodes
       get-nodes:x:@io.files.list/*
 
@@ -20,11 +26,11 @@ slots.create:magic.io.files.list-recursively
    /*
     * Traversing all folders beneath given [folder], and recursively invokes self.
     */
-   io.folders.list:x:@.arguments/*/folder
+   io.folders.list:x:@.arguments/0
    for-each:x:-/*
       unwrap:x:+/*
       slots.signal:magic.io.files.list-recursively
-         folder:x:@.dp/#
+         .:x:@.dp/#
       add:x:../*/slots.return-nodes
          get-nodes:x:@slots.signal/*
 
