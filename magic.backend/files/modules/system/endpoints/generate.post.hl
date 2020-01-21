@@ -84,7 +84,7 @@ for-each:x:@.main-files/*
 
 
 /*
- * Creating our HTTP Client service metho implementations,
+ * Creating our HTTP Client service method implementations,
  * by invoking a helper file responsible for parsing arguments,
  * and creating our TypeScript HTTP client methods accordingly.
  */
@@ -95,9 +95,39 @@ set-value:x:@.http-service-methods
    io.files.execute:/modules/system/endpoints/internal.helpers/create-service-methods.hl
 
 
+
+
+
+
+/*
+ * Retrieving all CRUD endpoints passed into our [.arguments], by
+ * invoking a helper file responsible for extracting that information.
+ */
+.crud-methods
+add:x:+/*
+   get-nodes:x:@.arguments/*
+add:x:@.crud-methods
+   io.files.execute:/modules/system/endpoints/internal.helpers/get-crud-methods.hl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  * Debug helper.
  */
-log.info:x:@.main-files
-log.info:x:@.component-files
-log.info:x:@.http-service-methods
+.log.info:x:@.main-files
+.log.info:x:@.component-files
+.log.info:x:@.http-service-methods
+log.info:x:@.crud-methods

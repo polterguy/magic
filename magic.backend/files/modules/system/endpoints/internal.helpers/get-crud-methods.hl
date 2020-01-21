@@ -1,0 +1,59 @@
+
+/*
+ * Internal helper file to retrieve all CRUD methods, structured format,
+ * according to specified [.arguments].
+ */
+.result
+
+
+/*
+ * Iterating through each CRUD endpoint.
+ *
+ * Notice, CRUD [type] of "crud-read" is the "driver", and decides whether
+ * or not we should create a component in the first place at all.
+ */
+for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
+
+
+   /*
+    * Buffer to hold our endpoints data.
+    */
+   unwrap:x:+/*/*
+   .endpoint
+      .
+         url:x:@.dp/#/*/path
+         verbs
+
+
+   /*
+    * Adding endpoint to temporary [.result] node above.
+    */
+   add:x:@.result
+      get-nodes:x:@.endpoint/*
+
+
+   /*
+    * Finding all related endpoints.
+    */
+   for-each:x:@.arguments/*/endpoints/*/*/type/.
+      if
+         eq
+            get-value:x:@.dp/#/*/path
+            get-value:x:@for-each/@.dp/#/*/path
+         .lambda
+
+
+            /*
+            * Related endpoint, that is not the currently iterated "get" endpoint.
+            */
+            set-name:x:+/*/*
+               get-value:x:@.dp/#/*/verb
+            add:x:@.endpoint/*/*/verbs
+               .
+                  foo
+
+
+/*
+ * Returning results to caller.
+ */
+slots.return-nodes:x:@.result/*
