@@ -17,55 +17,41 @@ auth.ticket.verify:root
 
 
 /*
- * Lists all files in Angular template folder recursively,
- * and adds them into [.mail-files] and [.component-files].
+ * These two nodes will contain all files from specified template folder.
+ *
+ * The [.main-files] will contain the main template files.
+ * The [.component-files] will contain the "per component" files.
  */
 .main-files
 .component-files
+
+
+/*
+ * Load all files in main Angular template folder recursively.
+ */
 strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/templateName
    .:/main/
 unwrap:x:+/*
-slots.signal:magic.io.files.list-recursively
+slots.signal:magic.io.files.load-recursively
    folder:x:@strings.concat
 add:x:@.main-files
    get-nodes:x:@slots.signal/*
 
-// Then "component" folder.
+
+/*
+ * Load all files in component Angular template folder recursively.
+ */
 strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/templateName
    .:/component/
 unwrap:x:+/*
-slots.signal:magic.io.files.list-recursively
+slots.signal:magic.io.files.load-recursively
    folder:x:@strings.concat
 add:x:@.component-files
    get-nodes:x:@slots.signal/*
-
-
-/*
- * Loading every main file, and appending file's content
- * as a child node to actual file node in above [.main-files].
- */
-for-each:x:@.main-files/*
-   io.files.load:x:@.dp/#
-   add:x:@.dp/#
-      get-nodes:x:@io.files.load
-   set-name:x:@.dp/#/0
-      .:.
-
-
-/*
- * Loading every component file, and appending file's content
- * as a child node to actual file node in above [.component-files].
- */
-for-each:x:@.component-files/*
-   io.files.load:x:@.dp/#
-   add:x:@.dp/#
-      get-nodes:x:@io.files.load
-   set-name:x:@.dp/#/0
-      .:.
 
 
 /*
