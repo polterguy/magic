@@ -54,6 +54,22 @@ add:x:@.component-files
 
 
 /*
+ * Removing "root" of folder names, to make more friendly folder structure for
+ * our downloadable ZIP file.
+ */
+for-each:x:@.main-files/*
+   strings.concat
+      .:misc/templates/
+      get-value:x:@.arguments/*/templateName
+      .:/main
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         get-value:x:@strings.concat
+         get-value:x:@.arguments/*/name
+
+
+
+/*
  * Debug helper.
  */
 log.info:x:@.main-files
