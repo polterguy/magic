@@ -16,6 +16,17 @@
 auth.ticket.verify:root
 
 
+
+
+
+
+/*
+ * This parts loads up all template files, and changes the path names,
+ * to make sure we have a friendly folder structure to base our downloadable
+ * zip file upon.
+ */
+
+
 /*
  * These two nodes will contain all files from specified template folder.
  *
@@ -69,8 +80,92 @@ for-each:x:@.main-files/*
 
 
 
+
+
+
+/*
+ * This part loops through each service endpoint supplied
+ * by caller, and creates the TypeScript needed for our
+ * HTTP service layer.
+ */
+
+
+/*
+ * Iterating through each service endpoint.
+ */
+.http-service-methods
+for-each:x:@.arguments/*/endpoints/*
+
+
+   /*
+    * Figuring out method name.
+    */
+   strings.split:x:@.dp/#/*/path
+      .:/
+   .method-name
+   set-value:x:@.method-name
+      strings.concat
+         strings.replace-not-of:x:@strings.split/0/-
+            .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+            .:_
+         .:_
+         strings.capitalize:x:@.dp/#/*/verb
+
+
+   /*
+    * Figuring out method parameters.
+    */
+   .method-arguments
+   switch:x:@.dp/#/*/verb
+
+      case:delete
+      case:get
+
+         // Query parameters
+         set-value:x:@.method-arguments
+            .:" + this.getQueryArgs(args)"
+
+
+      default
+
+
+         // Body payload
+         set-value:x:@.method-arguments
+            .:", args"
+
+
+   /*
+    * Creating our method body.
+    */
+   .body
+   set-value:x:@.body
+      strings.concat
+         .:"\r\n    return this.httpClient."
+         get-value:x:@.dp/#/*/verb
+         .:"<any>(environment.apiUrl + '"
+         get-value:x:@.dp/#/*/path
+         .:"'"
+         get-value:x:@.method-arguments
+         .:");"
+
+
+   /*
+    * Appending entire method body into [.http-service-methods].
+    */
+   set-value:x:@.http-service-methods
+      strings.concat
+         get-value:x:@.http-service-methods
+         .:"\r\n\r\n"
+         .:"  "
+         get-value:x:@.method-name
+         .:"(args: any) {"
+         get-value:x:@.body
+         .:"\r\n  }"
+
+
 /*
  * Debug helper.
  */
 log.info:x:@.main-files
 log.info:x:@.component-files
+log.info:x:@.http-service-methods
