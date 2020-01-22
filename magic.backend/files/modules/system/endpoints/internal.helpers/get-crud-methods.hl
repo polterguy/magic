@@ -92,6 +92,15 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
             /*
+             * Adding input and output arguments to endpoint.
+             */
+            add:x:./**/input
+               get-nodes:x:@.dp/#/*/input/*
+            add:x:./**/output
+               get-nodes:x:@.dp/#/*/returns/*
+
+
+            /*
              * Setting correct verb, unwrapping service method name,
              * and adding currently iterated HTTP verb to temporary [.endpoint],
              * that we later return to caller.
@@ -103,6 +112,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                .
                   verb-name
                      service-method-name:x:@strings.concat
+                     input
+                     output
                      auth
 
 

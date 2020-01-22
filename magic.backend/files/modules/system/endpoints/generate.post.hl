@@ -137,12 +137,14 @@ add:x:@.crud-methods
  * Building our components.
  */
 .components
-add:x:+/+/*
+add:x:+/+/+/*
    get-nodes:x:@.component-files
-add:x:+/*
+add:x:+/+/*
    get-nodes:x:@.crud-methods
+unwrap:x:+/*/*
 add:x:@.components
    io.files.execute:/modules/system/endpoints/internal.helpers/create-components.hl
+      templateName:x:@.arguments/*/templateName
 
 
 /*
@@ -155,6 +157,7 @@ for-each:x:@.components/*
          get-value:x:@.arguments/*/name
          .:/src/app/components/
          get-value:x:@.dp/#
+log.info:x:@.crud-methods
 
 
 

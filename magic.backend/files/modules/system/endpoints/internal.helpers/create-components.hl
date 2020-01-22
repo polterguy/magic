@@ -7,6 +7,26 @@
 
 
 /*
+ * Loading column declaration file.
+ */
+strings.concat
+   .:/misc/templates/
+   get-value:x:@.arguments/*/templateName
+   .:/column.html
+io.files.load:x:-
+
+
+/*
+ * Loading details declaration file.
+ */
+strings.concat
+   .:/misc/templates/
+   get-value:x:@.arguments/*/templateName
+   .:/details.html
+io.files.load:x:-
+
+
+/*
  * Iterating through each crud method given.
  */
 for-each:x:@.arguments/*/.crud-methods/*
@@ -99,6 +119,108 @@ for-each:x:@.arguments/*/.crud-methods/*
             strings.replace:x:@strings.replace
                .:[[delete-roles]]
                get-value:x:@.delete-roles
+
+
+            /*
+             * Figuring out roles that are allowed to update entities,
+             * implying invoking the PUT endpoint.
+             */
+            .update-roles
+            for-each:x:@.lambda/@.dp/#/*/verbs/*/put/*/auth/*
+               set-value:x:@.update-roles
+                  strings.concat
+                     get-value:x:@.update-roles
+                     .:",'"
+                     get-value:x:@.dp/#
+                     .:"'"
+            set-value:x:@.update-roles
+               strings.trim:x:@.update-roles
+                  .:,
+            strings.replace:x:@strings.replace
+               .:[[update-roles]]
+               get-value:x:@.update-roles
+
+
+            /*
+             * Checking if this is the "component.html" file, at which point
+             * we need to build our material table's HTML content, according to what
+             * our GET endpoint actually returns.
+             */
+            if
+               strings.ends-with:x:@.dp/#
+                  .:.html
+               .lambda
+
+
+                  /*
+                   * An HTML file for our component.
+                   * Replacing [[ng-containers]].
+                   *
+                   * These are created according to whatever our GET endpoint returns, and
+                   * basically becomes the columns of our material table (datagrid).
+                   *
+                   * Notice, we start out with a container count of 1, since we always have a delete column.
+                   */
+                  .container-count:int:1
+                  .ng-containers
+                  .entity-details:
+                  for-each:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/output/*
+
+
+                     /*
+                      * Incrementing column count, such that we can figure out "colspan"
+                      * to use for "details" ng-container.
+                      */
+                     set-value:x:@.container-count
+                        math.increment:x:@.container-count
+
+
+                     /*
+                      * Appending currently iterated column to [.ng-containers].
+                      *
+                      * Notice, the contents for this is declared in our "column.html" file.
+                      */
+                     set-value:x:@.ng-containers
+                        strings.concat
+                           get-value:x:@.ng-containers
+                           strings.replace:x:@io.files.load/@io.files.load
+                              .:[[column-name]]
+                              get-name:x:@.dp/#
+
+
+                     /*
+                      * Appending currently iterated column to [.entity-details].
+                      *
+                      * Notice, the contents for this is declared in our "details.html" file.
+                      */
+                     set-value:x:@.entity-details
+                        strings.concat
+                           get-value:x:@.entity-details
+                           strings.replace:x:@io.files.load
+                              .:[[column-name]]
+                              get-name:x:@.dp/#
+
+
+                  /*
+                   * Doing actual substitution in HTML file.
+                   *
+                   * More specifically, we're substituting the following strings.
+                   *
+                   * - [[ng-containers]]
+                   * - [[entity-details]]
+                   * - [[colspan]]
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[ng-containers]]
+                     get-value:x:@.ng-containers
+                  strings.replace:x:@strings.replace
+                     .:[[entity-details]]
+                     get-value:x:@.entity-details
+                  strings.replace:x:@strings.replace
+                     .:[[colspan]]
+                     get-value:x:@.container-count
+                  set-value:x:./@strings.replace
+                     get-value:x:@strings.replace
 
 
             /*
