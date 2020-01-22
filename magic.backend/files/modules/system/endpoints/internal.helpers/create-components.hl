@@ -1,0 +1,71 @@
+
+/*
+ * Internal helper file that creates our components according to
+ * which endpoints we have at our disposal.
+ */
+.components
+
+
+/*
+ * Iterating through each crud method given.
+ */
+for-each:x:@.arguments/*/.crud-methods/*
+
+
+   /*
+    * Verifying CRUD endpoint have a "read" (GET) method, otherwise we
+    * don't create a component for it.
+    */
+   if
+      exists:x:@.dp/#/*/verbs/*/get
+      .lambda
+
+
+         /*
+          * Currently iterated endpoint can handle the GET verb, hence
+          * at the minimum we should create a datagrid "view" component.
+          *
+          * First we make sure we gets its relative path correct.
+          */
+         for-each:x:@.arguments/*/.component-files/*
+
+            // Replacing [[component-folder]]
+            strings.replace:x:@.dp/#
+               .:[[component-folder]]
+               get-value:x:@.lambda/@.dp/#/*/component-folder
+
+            // Replacing [[component-filename]]
+            strings.replace:x:@strings.replace
+               .:[[component-filename]]
+               get-value:x:@.lambda/@.dp/#/*/component-filename
+
+            // Buffer to hold component's filename.
+            unwrap:x:+
+            .filename:x:@strings.replace
+
+            // Replacing [[component-header]]
+            strings.replace:x:@.dp/#/*
+               .:[[component-header]]
+               get-value:x:@.lambda/@.dp/#/*/component-header
+
+            // Buffer to hold component's content.
+            unwrap:x:+
+            .content:x:@strings.replace
+
+            /*
+             * Making sure we create a temporary node to hold our
+             * actual component's file.
+             */
+            unwrap:x:+/+/*
+            unwrap:x:+/*/*
+            .component
+               :x:@.filename
+                  :x:@.content
+            add:x:@.components
+               get-nodes:x:@.component/*
+
+
+/*
+ * Returns results to caller.
+ */
+slots.return-nodes:x:@.components/*

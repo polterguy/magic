@@ -48,6 +48,9 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    // The component's routing URL.
    strings.to-lower:x:@strings.replace-not-of
 
+   // The component's header
+   strings.capitalize:x:@strings.split/0/-
+
 
    /*
     * Buffer to hold our endpoints data.
@@ -58,6 +61,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
          url:x:@.dp/#/*/path
          component-name:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat
          component-filename:x:@strings.concat/@strings.concat/@strings.concat
+         component-folder:x:@strings.to-lower
+         component-header:x:@strings.capitalize
          component-edit-name:x:@strings.concat/@strings.concat
          component-edit-filename:x:@strings.concat
          component-routing-url:x:@strings.to-lower

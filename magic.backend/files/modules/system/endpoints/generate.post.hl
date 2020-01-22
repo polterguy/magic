@@ -55,13 +55,32 @@ add:x:@.main-files
 /*
  * Loads all files in "component" Angular template folder recursively.
  */
-unwrap:x:+/*/*/1
+unwrap:x:+/*/*/*
 add:x:@.component-files
    slots.signal:magic.io.files.load-recursively
       strings.concat
          .:/misc/templates/
          .:x:@.arguments/*/templateName
          .:/component/
+
+
+/*
+ * Replacing component filenames such that we can keep them
+ * slightly more semantically correct before starting transformation
+ * process.
+ */
+for-each:x:@.component-files/*
+   strings.replace:x:@.dp/#
+      .:component.
+      .:[[component-filename]].
+   strings.replace:x:@strings.replace
+      strings.concat
+         .:/misc/templates/
+         get-value:x:@.arguments/*/templateName
+         .:/component/
+      .:/[[component-folder]]/
+   set-value:x:@.dp/#
+      get-value:x:@strings.replace
 
 
 /*
@@ -108,6 +127,34 @@ add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
    io.files.execute:/modules/system/endpoints/internal.helpers/get-crud-methods.hl
+
+
+
+
+
+
+/*
+ * Building our components.
+ */
+.components
+add:x:+/+/*
+   get-nodes:x:@.component-files
+add:x:+/*
+   get-nodes:x:@.crud-methods
+add:x:@.components
+   io.files.execute:/modules/system/endpoints/internal.helpers/create-components.hl
+
+
+/*
+ * Making sure we position our components correctly inside of our zip file.
+ */
+for-each:x:@.components/*
+   set-value:x:@.dp/#
+      strings.concat
+         .:/
+         get-value:x:@.arguments/*/name
+         .:/src/app/components/
+         get-value:x:@.dp/#
 
 
 
@@ -186,33 +233,12 @@ http.response.headers.add
 
 
 /*
- * Adding [.main-files] to [io.content.zip-stream] invocation, and
+ * Adding [.main-files] and [.components] to [io.content.zip-stream] invocation, and
  * returning results of zipping to caller.
  */
+add:x:+/+
+   get-nodes:x:@.components/*
 add:x:+
    get-nodes:x:@.main-files/*
 io.content.zip-stream
 slots.return-value:x:-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
- * Debug helper.
- */
-.log.info:x:@.main-files
-.log.info:x:@.component-files
-.log.info:x:@.http-service-methods
-.log.info:x:@.crud-methods
