@@ -65,5 +65,5 @@ export class HttpService {
   }
 
   // HTTP REST methods your backend exposes, and that was used to scaffold Angular frontend app.
-[[service-endpoints]]
+[[http-client-service-method-implementations]]
 }
