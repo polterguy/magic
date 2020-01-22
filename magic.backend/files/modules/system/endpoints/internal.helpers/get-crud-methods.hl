@@ -23,9 +23,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.replace-not-of:x:@strings.split/0/-
       .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
       .:_
-   strings.capitalize:x:@strings.replace-not-of
+
+   // Component selector.
+   strings.concat
+      .:app-
+      get-value:x:@strings.replace-not-of
 
    // Component name.
+   strings.capitalize:x:@strings.replace-not-of
    strings.concat
       get-value:x:@strings.capitalize
       .:Component
@@ -59,6 +64,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    .endpoint
       .
          url:x:@.dp/#/*/path
+         component-selector:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat/@strings.concat
          component-name:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat
          component-filename:x:@strings.concat/@strings.concat/@strings.concat
          component-folder:x:@strings.to-lower

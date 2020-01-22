@@ -142,6 +142,25 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
+             * Figuring out roles that are allowed to update entities,
+             * implying invoking the PUT endpoint.
+             */
+            .delete-input
+            for-each:x:@.lambda/@.dp/#/*/verbs/*/delete/*/input/*
+               set-value:x:@.delete-input
+                  strings.concat
+                     get-value:x:@.delete-input
+                     .:","
+                     get-name:x:@.dp/#
+            set-value:x:@.delete-input
+               strings.trim:x:@.delete-input
+                  .:,
+            strings.replace:x:@strings.replace
+               .:[[delete-input]]
+               get-value:x:@.delete-input
+
+
+            /*
              * Checking if this is the "component.html" file, at which point
              * we need to build our material table's HTML content, according to what
              * our GET endpoint actually returns.
@@ -219,6 +238,67 @@ for-each:x:@.arguments/*/.crud-methods/*
                   strings.replace:x:@strings.replace
                      .:[[colspan]]
                      get-value:x:@.container-count
+                  set-value:x:./@strings.replace
+                     get-value:x:@strings.replace
+
+
+            else-if
+               strings.ends-with:x:@.dp/#
+                  .:.ts
+               .lambda
+
+
+                  /*
+                   * TypeScript file for component.
+                   */
+
+
+                  /*
+                   * Replacing component's edit filename, which is our modal dialog's filename.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[component-filename]]
+                     strings.concat
+                        get-value:x:@.lambda/@.lambda/@.dp/#/*/component-filename
+
+
+                  /*
+                   * Replacing component's class name.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[component-name]]
+                     get-value:x:@.lambda/@.lambda/@.dp/#/*/component-name
+
+
+                  /*
+                   * Replacing component's selector.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[component-selector]]
+                     get-value:x:@.lambda/@.lambda/@.dp/#/*/component-selector
+
+
+                  /*
+                   * Figuring out column list.
+                   */
+                  .displayed-columns
+                  for-each:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/output/*
+                     set-value:x:@.displayed-columns
+                        strings.concat
+                           get-value:x:@.displayed-columns
+                           .:", '"
+                           get-name:x:@.dp/#
+                           .:"'"
+                  strings.trim:x:@.displayed-columns
+                     .:", "
+                  strings.replace:x:@strings.replace
+                     .:[[columns-list]]
+                     get-value:x:@strings.trim
+
+
+                  /*
+                   * Making sure we allow outer parts to reach our new TypeScript content.
+                   */
                   set-value:x:./@strings.replace
                      get-value:x:@strings.replace
 
