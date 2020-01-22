@@ -13,16 +13,16 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpService } from 'src/app/services/http-service';
-import { [[component-edit-modal-name]] } from './modals/[[filename]]-edit-modal';
+import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /*
  * "Datagrid" component for displaying instance of [[filename]]
  * entities from your HTTP REST backend.
  */
 @Component({
-  selector: 'app-[[filename]]',
-  templateUrl: './[[filename]].component.html',
-  styleUrls: ['./[[filename]].component.scss']
+  selector: '[[component-selector]]',
+  templateUrl: './[[component-filename]].html',
+  styleUrls: ['./[[component-filename]].scss']
 })
 export class [[component-name]] implements OnInit {
 
