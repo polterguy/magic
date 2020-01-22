@@ -16,12 +16,51 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
    /*
+    * Figuring out a valid component name, component filename, etc.
+    */
+   strings.split:x:@.dp/#/*/path
+      .:/
+   strings.replace-not-of:x:@strings.split/0/-
+      .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+      .:_
+   strings.capitalize:x:@strings.replace-not-of
+
+   // Component name.
+   strings.concat
+      get-value:x:@strings.capitalize
+      .:Component
+
+   // Component filename.
+   strings.concat
+      get-value:x:@strings.replace-not-of
+      .:.component
+
+   // Its "edit" component name.
+   strings.concat
+      get-value:x:@strings.capitalize
+      .:EditComponent
+
+   // Its "edit" component filename.
+   strings.concat
+      get-value:x:@strings.replace-not-of
+      .:.edit.component
+
+   // The component's routing URL.
+   strings.to-lower:x:@strings.replace-not-of
+
+
+   /*
     * Buffer to hold our endpoints data.
     */
    unwrap:x:+/*/*
    .endpoint
       .
          url:x:@.dp/#/*/path
+         component-name:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat
+         component-filename:x:@strings.concat/@strings.concat/@strings.concat
+         component-edit-name:x:@strings.concat/@strings.concat
+         component-edit-filename:x:@strings.concat
+         component-routing-url:x:@strings.to-lower
          verbs
 
 
@@ -37,13 +76,39 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
             /*
-            * Related endpoint, that is not the currently iterated "get" endpoint.
-            */
-            set-name:x:+/*/*
+             * Figuring out HTTP client service method name.
+             */
+            strings.split:x:@.dp/#/*/path
+               .:/
+            strings.concat
+               get-value:x:@strings.split/0/-
+               .:_
+               strings.capitalize:x:@.dp/#/*/verb
+
+
+            /*
+             * Setting correct verb, unwrapping service method name,
+             * and adding currently iterated HTTP verb to temporary [.endpoint],
+             * that we later return to caller.
+             */
+            set-name:x:+/+/*/*
                get-value:x:@.dp/#/*/verb
+            unwrap:x:+/*/*/*/service-method-name
             add:x:@.endpoint/*/*/verbs
                .
                   verb-name
+                     service-method-name:x:@strings.concat
+                     auth
+
+
+            /*
+             * Adding each role that are allowed to access URL/verb combination.
+             */
+            for-each:x:@.dp/#/*/auth/*
+               unwrap:x:+/*/*
+               add:x:@.endpoint/*/*/verbs/0/-/*/auth
+                  .
+                     .:x:@.dp/#
 
 
    /*
