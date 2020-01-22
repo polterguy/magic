@@ -114,6 +114,82 @@ add:x:@.crud-methods
 
 
 
+/*
+ * Iterating through each [.main-files] and doing substitutions
+ * according to specifications and META data.
+ *
+ * Notice, this is not completely optimal approach, since according to the
+ * way our template files are looking, we could further have optimised things slightly.
+ * However, to accommodate for future changes, such as for instance having the
+ * name of the app in *any* file we wish, we do things this way, to make sure
+ * we have a substitution process, as flexible as we possibly can.
+ */
+for-each:x:@.main-files/*/*
+
+
+   /*
+    * Replacing all [[name]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[name]]
+         get-value:x:@.arguments/*/name
+
+
+   /*
+    * Replacing all [[apiUrl]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[apiUrl]]
+         get-value:x:@.arguments/*/apiUrl
+
+
+   /*
+    * Replacing all [[environmentDomain]] occurrencies.
+    */
+   strings.split:x:@.arguments/*/apiUrl
+      .:"://"
+   strings.split:x:-/1
+      .:/
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[environmentDomain]]
+         get-value:x:@strings.split/0
+
+
+
+
+
+
+/*
+ * Returning zip file to caller.
+ * Making sure we get the HTTP headers correctly applied first.
+ */
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@.arguments/*/name
+   .:".zip\""
+http.response.headers.add
+   Content-Type:application/zip
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+
+
+/*
+ * Adding [.main-files] to [io.content.zip-stream] invocation, and
+ * returning results of zipping to caller.
+ */
+add:x:+
+   get-nodes:x:@.main-files/*
+io.content.zip-stream
+slots.return-value:x:-
+
+
+
+
+
+
 
 
 
@@ -130,4 +206,4 @@ add:x:@.crud-methods
 .log.info:x:@.main-files
 .log.info:x:@.component-files
 .log.info:x:@.http-service-methods
-log.info:x:@.crud-methods
+.log.info:x:@.crud-methods
