@@ -27,6 +27,26 @@ io.files.load:x:-
 
 
 /*
+ * Loading form control declaration file.
+ */
+strings.concat
+   .:/misc/templates/
+   get-value:x:@.arguments/*/templateName
+   .:/form-control.ts
+io.files.load:x:-
+
+
+/*
+ * Loading form control valud subscriptions file.
+ */
+strings.concat
+   .:/misc/templates/
+   get-value:x:@.arguments/*/templateName
+   .:/form-control-value-subscriptions.ts
+io.files.load:x:-
+
+
+/*
  * Iterating through each crud method given.
  */
 for-each:x:@.arguments/*/.crud-methods/*
@@ -202,7 +222,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      set-value:x:@.ng-containers
                         strings.concat
                            get-value:x:@.ng-containers
-                           strings.replace:x:@io.files.load/@io.files.load
+                           strings.replace:x:@io.files.load/@io.files.load/@io.files.load/@io.files.load
                               .:[[column-name]]
                               get-name:x:@.dp/#
 
@@ -215,7 +235,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      set-value:x:@.entity-details
                         strings.concat
                            get-value:x:@.entity-details
-                           strings.replace:x:@io.files.load
+                           strings.replace:x:@io.files.load/@io.files.load/@io.files.load
                               .:[[column-name]]
                               get-name:x:@.dp/#
 
@@ -282,18 +302,93 @@ for-each:x:@.arguments/*/.crud-methods/*
                    * Figuring out column list.
                    */
                   .displayed-columns
+                  .form-controls
+                  .form-controls-value-subscriptions
                   for-each:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/output/*
+
+
+                     /*
+                      * Appending currently iterated column to [.displayed-columns]
+                      */
                      set-value:x:@.displayed-columns
                         strings.concat
                            get-value:x:@.displayed-columns
                            .:", '"
                            get-name:x:@.dp/#
                            .:"'"
+
+
+                     /*
+                      * Making sure we create a TypeScript instance of correct type to
+                      * hold our column.
+                      */
+                     set-value:x:@.form-controls
+                        strings.concat
+                           get-value:x:@.form-controls
+                           strings.replace:x:@io.files.load/@io.files.load
+                              .:[[column-name]]
+                              get-name:x:@.dp/#
+
+
+                     /*
+                      * Making sure we correctly instantiate our TypeScript instance.
+                      */
+                     set-value:x:@.form-controls-value-subscriptions
+                        strings.concat
+                           get-value:x:@.form-controls-value-subscriptions
+                           strings.replace:x:@io.files.load
+                              .:[[column-name]]
+                              get-name:x:@.dp/#
+
+
+                  /*
+                   * Making sure we remove redundant commas and spaces from [.displayed-columns].
+                   */
                   strings.trim:x:@.displayed-columns
                      .:", "
                   strings.replace:x:@strings.replace
                      .:[[columns-list]]
                      get-value:x:@strings.trim
+
+
+                  /*
+                   * Appending our actual form controls into our TypeScript file.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[form-control-declarations]]
+                     get-value:x:@.form-controls
+
+
+                  /*
+                   * Appending our actual control instantiations into our TypeScript file.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[form-control-value-subscriptions]]
+                     get-value:x:@.form-controls-value-subscriptions
+
+
+                  /*
+                   * Appending our HTTP client service GET method name into TypeScript file.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[service-get-method]]
+                     get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/service-method-name
+
+
+                  /*
+                   * Appending our HTTP client service DELETE method name into TypeScript file.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[service-delete-method]]
+                     get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/delete/*/service-method-name
+
+
+                  /*
+                   * Appending our HTTP client service COUNT method name into TypeScript file.
+                   */
+                  strings.replace:x:@strings.replace
+                     .:[[service-count-method]]
+                     get-value:x:@.lambda/@.lambda/@.dp/#/*/count-method
 
 
                   /*
