@@ -131,6 +131,34 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                add:x:@.endpoint/*/*/verbs/0/-/*/auth
                   .
                      .:x:@.dp/#
+      else-if
+         and
+            eq
+               strings.concat
+                  get-value:x:@for-each/@.dp/#/*/path
+                  .:-count
+               get-value:x:@.dp/#/*/path
+            eq
+               get-value:x:@.dp/#/*/type
+               .:crud-count
+         .lambda
+
+
+            /*
+             * Component's "count" method.
+             */
+            strings.split:x:@for-each/@.dp/#/*/path
+               .:/
+            strings.replace-not-of:x:@strings.split/0/-
+               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+               .:_
+            strings.concat
+               get-value:x:@strings.replace-not-of
+               .:_Count
+            unwrap:x:+/*/*
+            insert-before:x:@.endpoint/0/-/*/verbs
+               .
+                  count-method:x:@strings.concat
 
 
    /*

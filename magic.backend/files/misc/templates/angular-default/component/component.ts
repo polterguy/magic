@@ -245,7 +245,7 @@ export class [[component-name]] implements OnInit {
     }
 
     // Creating our modal dialog, passing in the cloned entity, and "isEdit" as true.
-    const dialogRef = this.dialog.open([[component-edit-modal-name]], {
+    const dialogRef = this.dialog.open(Edit[[component-name]], {
       data
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -276,7 +276,7 @@ export class [[component-name]] implements OnInit {
     };
 
     // Opening our dialog.
-    const dialogRef = this.dialog.open([[component-edit-modal-name]], {
+    const dialogRef = this.dialog.open(Edit[[component-name]], {
       data
     });
     dialogRef.afterClosed().subscribe(res => {
