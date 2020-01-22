@@ -29,40 +29,95 @@ for-each:x:@.arguments/*/.crud-methods/*
           */
          for-each:x:@.arguments/*/.component-files/*
 
-            // Replacing [[component-folder]]
+
+            /*
+             * Replacing [[component-folder]].
+             */
             strings.replace:x:@.dp/#
                .:[[component-folder]]
                get-value:x:@.lambda/@.dp/#/*/component-folder
 
-            // Replacing [[component-filename]]
+
+            /*
+             * Replacing [[component-filename]].
+             */
             strings.replace:x:@strings.replace
                .:[[component-filename]]
                get-value:x:@.lambda/@.dp/#/*/component-filename
 
-            // Buffer to hold component's filename.
+
+            /*
+             * Buffer to hold component's filename.
+             */
             unwrap:x:+
             .filename:x:@strings.replace
 
-            // Replacing [[component-header]]
+
+            /*
+             * Replacing [[component-header]]
+             */
             strings.replace:x:@.dp/#/*
                .:[[component-header]]
                get-value:x:@.lambda/@.dp/#/*/component-header
 
-            // Buffer to hold component's content.
+
+            /*
+             * Figuring out roles that are allowed to create entities,
+             * implying invoking the "create"/POST endpoint.
+             */
+            .create-roles
+            for-each:x:@.lambda/@.dp/#/*/verbs/*/post/*/auth/*
+               set-value:x:@.create-roles
+                  strings.concat
+                     get-value:x:@.create-roles
+                     .:",'"
+                     get-value:x:@.dp/#
+                     .:"'"
+            set-value:x:@.create-roles
+               strings.trim:x:@.create-roles
+                  .:,
+            strings.replace:x:@strings.replace
+               .:[[create-roles]]
+               get-value:x:@.create-roles
+
+
+            /*
+             * Figuring out roles that are allowed to delete entities,
+             * implying invoking the DELETE endpoint.
+             */
+            .delete-roles
+            for-each:x:@.lambda/@.dp/#/*/verbs/*/delete/*/auth/*
+               set-value:x:@.delete-roles
+                  strings.concat
+                     get-value:x:@.delete-roles
+                     .:",'"
+                     get-value:x:@.dp/#
+                     .:"'"
+            set-value:x:@.delete-roles
+               strings.trim:x:@.delete-roles
+                  .:,
+            strings.replace:x:@strings.replace
+               .:[[delete-roles]]
+               get-value:x:@.delete-roles
+
+
+            /*
+             * Buffer to hold component's content.
+             */
             unwrap:x:+
             .content:x:@strings.replace
 
+
             /*
-             * Making sure we create a temporary node to hold our
-             * actual component's file.
+             * Adding finished component to [.components] node, that is
+             * returned to caller after file is done evaluating.
              */
-            unwrap:x:+/+/*
-            unwrap:x:+/*/*
-            .component
-               :x:@.filename
-                  :x:@.content
+            unwrap:x:+/+/*/*
+            unwrap:x:+/*/*/*
             add:x:@.components
-               get-nodes:x:@.component/*
+               .
+                  :x:@.filename
+                     :x:@.content
 
 
 /*
