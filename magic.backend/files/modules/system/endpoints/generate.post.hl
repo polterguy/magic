@@ -158,6 +158,15 @@ for-each:x:@.main-files/*/*
          get-value:x:@strings.split/0
 
 
+   /*
+    * Replacing all [[http-client-service-method-implementations]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[http-client-service-method-implementations]]
+         get-value:x:@.http-service-methods
+
+
 
 
 
