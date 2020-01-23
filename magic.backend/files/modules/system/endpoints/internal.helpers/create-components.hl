@@ -3,47 +3,93 @@
  * Internal helper file that creates our components according to
  * which endpoints we have at our disposal.
  */
-.components
+
+
 
 
 /*
- * Loading column declaration file.
+ * This is our buffer element, and will contain all component
+ * files, that are eventiually returned to caller at the bottom
+ * of the file.
+ */
+.components
+
+
+
+
+/*
+ * Loading column file, that contains the declaration for
+ * a single column.
  */
 strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/templateName
    .:/column.html
-io.files.load:x:-
+.column-file
+set-value:x:-
+   io.files.load:x:@strings.concat
+
+
 
 
 /*
- * Loading details declaration file.
+ * Loading view details file, that contains the declaration
+ * for viewing a single element's details.
  */
 strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/templateName
-   .:/details.html
-io.files.load:x:-
+   .:/view-details.html
+.view-details-file
+set-value:x:-
+   io.files.load:x:@strings.concat
+
+
 
 
 /*
- * Loading form control declaration file.
+ * Loading form control file, that contains the declaration
+ * for a single form control.
  */
 strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/templateName
    .:/form-control.ts
-io.files.load:x:-
+.form-control-file
+set-value:x:-
+   io.files.load:x:@strings.concat
+
+
 
 
 /*
- * Loading form control valud subscriptions file.
+ * Loading form field file, that contains the input necessary to
+ * edit a single column's value during editing.
  */
 strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/templateName
-   .:/form-control-value-subscriptions.ts
-io.files.load:x:-
+   .:/form-field.html
+.form-field-file
+set-value:x:-
+   io.files.load:x:@strings.concat
+
+
+
+
+/*
+ * Loading form control instantiations file, that instantiates
+ * a single form control somehow.
+ */
+strings.concat
+   .:/misc/templates/
+   get-value:x:@.arguments/*/templateName
+   .:/form-control-instantiations.ts
+.form-control-instantiation-file
+set-value:x:-
+   io.files.load:x:@strings.concat
+
+
 
 
 /*
@@ -64,8 +110,206 @@ for-each:x:@.arguments/*/.crud-methods/*
          /*
           * Currently iterated endpoint can handle the GET verb, hence
           * at the minimum we should create a datagrid "view" component.
-          *
-          * First we make sure we gets its relative path correct.
+          */
+         .substitutions
+
+            // Roles user must belong to in order to create entities.
+            create-roles
+
+            // Roles user must belong to in order to delete entities.
+            delete-roles
+
+            // Roles user must belong to in order to update entities.
+            update-roles
+
+            // Input to DELETE endpoint.
+            delete-input
+
+            // TODO: Implement
+            create-input
+
+            // TODO: Implement
+            update-input
+
+            // How many columns our table contains.
+            container-count:int:1
+
+            // All table column declarations. (normally HTML)
+            ng-containers
+
+            // View details for an entity. (normally HTML)
+            view-details
+
+            // A JavaScript list of strings, declaring which columns are visible in table.
+            displayed-columns
+
+            // JavaScript/TypeScript fields/properties, declaring the columns.
+            form-controls
+
+            // Declaration for a single column. (normally HTML)
+            form-fields
+
+            // Instantiations for each above form field.
+            form-controls-instantiations
+
+
+         /*
+          * Figuring out roles that are allowed to create entities,
+          * implying invoking the "create"/POST endpoint.
+          */
+         for-each:x:@.dp/#/*/verbs/*/post/*/auth/*
+            set-value:x:@.substitutions/*/create-roles
+               strings.concat
+                  get-value:x:@.substitutions/*/create-roles
+                  .:",'"
+                  get-value:x:@.dp/#
+                  .:"'"
+         set-value:x:@.substitutions/*/create-roles
+            strings.trim:x:@.substitutions/*/create-roles
+               .:,
+
+
+         /*
+          * Figuring out roles that are allowed to delete entities,
+          * implying invoking the DELETE endpoint.
+          */
+         for-each:x:@.dp/#/*/verbs/*/delete/*/auth/*
+            set-value:x:@.substitutions/*/delete-roles
+               strings.concat
+                  get-value:x:@.substitutions/*/delete-roles
+                  .:",'"
+                  get-value:x:@.dp/#
+                  .:"'"
+         set-value:x:@.substitutions/*/delete-roles
+            strings.trim:x:@.substitutions/*/delete-roles
+               .:,
+
+
+         /*
+          * Figuring out roles that are allowed to update entities,
+          * implying invoking the PUT endpoint.
+          */
+         for-each:x:@.dp/#/*/verbs/*/put/*/auth/*
+            set-value:x:@.substitutions/*/update-roles
+               strings.concat
+                  get-value:x:@.substitutions/*/update-roles
+                  .:",'"
+                  get-value:x:@.dp/#
+                  .:"'"
+         set-value:x:@.substitutions/*/update-roles
+            strings.trim:x:@.substitutions/*/update-roles
+               .:,
+
+
+         /*
+          * Figuring out input to our DELETE method.
+          */
+         for-each:x:@.dp/#/*/verbs/*/delete/*/input/*
+            set-value:x:@.substitutions/*/delete-input
+               strings.concat
+                  get-value:x:@.substitutions/*/delete-input
+                  .:","
+                  get-name:x:@.dp/#
+         set-value:x:@.substitutions/*/delete-input
+            strings.trim:x:@.substitutions/*/delete-input
+               .:,
+
+
+         /*
+          * Dynamically creating our datagrid parts.
+          */
+         for-each:x:@.dp/#/*/verbs/*/get/*/output/*
+
+
+            /*
+             * Incrementing column count, such that we can figure out "colspan"
+             * to use for "details" ng-container.
+             */
+            set-value:x:@.substitutions/*/container-count
+               math.increment:x:@.substitutions/*/container-count
+
+
+            /*
+             * Appending currently iterated column to [displayed-columns]
+             */
+            set-value:x:@.substitutions/*/displayed-columns
+               strings.concat
+                  get-value:x:@.substitutions/*/displayed-columns
+                  .:", '"
+                  get-name:x:@.dp/#
+                  .:"'"
+
+
+            /*
+             * Making sure we create a TypeScript instance of correct type to
+             * hold our column.
+             */
+            set-value:x:@.substitutions/*/form-controls
+               strings.concat
+                  get-value:x:@.substitutions/*/form-controls
+                  strings.replace:x:@.form-control-file
+                     .:[[column-name]]
+                     get-name:x:@.dp/#
+
+
+            /*
+             * Making sure we correctly instantiate our TypeScript instance.
+             */
+            set-value:x:@.substitutions/*/form-fields
+               strings.concat
+                  get-value:x:@.substitutions/*/form-fields
+                  strings.replace:x:@.form-field-file
+                     .:[[column-name]]
+                     get-name:x:@.dp/#
+
+
+            /*
+             * Making sure we correctly instantiate our TypeScript instance.
+             */
+            set-value:x:@.substitutions/*/form-controls-instantiations
+               strings.concat
+                  get-value:x:@.substitutions/*/form-controls-instantiations
+                  strings.replace:x:@.form-control-instantiation-file
+                     .:[[column-name]]
+                     get-name:x:@.dp/#
+
+
+            /*
+             * Appending currently iterated column to [.ng-containers].
+             *
+             * Notice, the contents for this is declared in our "column.html" file.
+             */
+            set-value:x:@.substitutions/*/ng-containers
+               strings.concat
+                  get-value:x:@.substitutions/*/ng-containers
+                  strings.replace:x:@.column-file
+                     .:[[column-name]]
+                     get-name:x:@.dp/#
+
+
+            /*
+             * Appending currently iterated column to [view-details].
+             *
+             * Notice, the contents for this is declared in our "details.html" file.
+             */
+            set-value:x:@.substitutions/*/view-details
+               strings.concat
+                  get-value:x:@.substitutions/*/view-details
+                  strings.replace:x:@.view-details-file
+                     .:[[column-name]]
+                     get-name:x:@.dp/#
+
+
+         /*
+          * Making sure we remove redundant commas and spaces from [.substitutions]/[displayed-columns].
+          */
+         set-value:x:@.substitutions/*/displayed-columns
+            strings.trim:x:@.substitutions/*/displayed-columns
+               .:", "
+
+
+         /*
+          * Iterating through each component file, to do our substitutions.
           */
          for-each:x:@.arguments/*/.component-files/*
 
@@ -94,7 +338,7 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Replacing [[component-header]]
+             * Replacing [[component-header]].
              */
             strings.replace:x:@.dp/#/*
                .:[[component-header]]
@@ -102,305 +346,162 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Figuring out roles that are allowed to create entities,
-             * implying invoking the "create"/POST endpoint.
+             * Replacing [[form-fields]].
              */
-            .create-roles
-            for-each:x:@.lambda/@.dp/#/*/verbs/*/post/*/auth/*
-               set-value:x:@.create-roles
-                  strings.concat
-                     get-value:x:@.create-roles
-                     .:",'"
-                     get-value:x:@.dp/#
-                     .:"'"
-            set-value:x:@.create-roles
-               strings.trim:x:@.create-roles
-                  .:,
+            strings.replace:x:@strings.replace
+               .:[[form-fields]]
+               get-value:x:@.substitutions/*/form-fields
+
+
+            /*
+             * Replacing our [[create-roles]].
+             */
             strings.replace:x:@strings.replace
                .:[[create-roles]]
-               get-value:x:@.create-roles
+               get-value:x:@.substitutions/*/create-roles
 
 
             /*
-             * Figuring out roles that are allowed to delete entities,
-             * implying invoking the DELETE endpoint.
+             * Replacing our [[delete-roles]].
              */
-            .delete-roles
-            for-each:x:@.lambda/@.dp/#/*/verbs/*/delete/*/auth/*
-               set-value:x:@.delete-roles
-                  strings.concat
-                     get-value:x:@.delete-roles
-                     .:",'"
-                     get-value:x:@.dp/#
-                     .:"'"
-            set-value:x:@.delete-roles
-               strings.trim:x:@.delete-roles
-                  .:,
             strings.replace:x:@strings.replace
                .:[[delete-roles]]
-               get-value:x:@.delete-roles
+               get-value:x:@.substitutions/*/delete-roles
 
 
             /*
-             * Figuring out roles that are allowed to update entities,
-             * implying invoking the PUT endpoint.
+             * Replacing our [[update-roles]].
              */
-            .update-roles
-            for-each:x:@.lambda/@.dp/#/*/verbs/*/put/*/auth/*
-               set-value:x:@.update-roles
-                  strings.concat
-                     get-value:x:@.update-roles
-                     .:",'"
-                     get-value:x:@.dp/#
-                     .:"'"
-            set-value:x:@.update-roles
-               strings.trim:x:@.update-roles
-                  .:,
             strings.replace:x:@strings.replace
                .:[[update-roles]]
-               get-value:x:@.update-roles
+               get-value:x:@.substitutions/*/update-roles
 
 
             /*
-             * Figuring out roles that are allowed to update entities,
-             * implying invoking the PUT endpoint.
+             * Replacing [[delete-input]].
              */
-            .delete-input
-            for-each:x:@.lambda/@.dp/#/*/verbs/*/delete/*/input/*
-               set-value:x:@.delete-input
-                  strings.concat
-                     get-value:x:@.delete-input
-                     .:","
-                     get-name:x:@.dp/#
-            set-value:x:@.delete-input
-               strings.trim:x:@.delete-input
-                  .:,
             strings.replace:x:@strings.replace
                .:[[delete-input]]
-               get-value:x:@.delete-input
+               get-value:x:@.substitutions/*/delete-input
 
 
             /*
-             * Checking if this is the "component.html" file, at which point
-             * we need to build our material table's HTML content, according to what
-             * our GET endpoint actually returns.
+             * Replacing [[ng-containers]].
              */
-            if
-               strings.ends-with:x:@.dp/#
-                  .:.html
-               .lambda
+            strings.replace:x:@strings.replace
+               .:[[ng-containers]]
+               get-value:x:@.substitutions/*/ng-containers
 
 
-                  /*
-                   * An HTML file for our component.
-                   * Replacing [[ng-containers]].
-                   *
-                   * These are created according to whatever our GET endpoint returns, and
-                   * basically becomes the columns of our material table (datagrid).
-                   *
-                   * Notice, we start out with a container count of 1, since we always have a delete column.
-                   */
-                  .container-count:int:1
-                  .ng-containers
-                  .entity-details:
-                  for-each:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/output/*
+            /*
+             * Replacing [[view-details]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[view-details]]
+               get-value:x:@.substitutions/*/view-details
 
 
-                     /*
-                      * Incrementing column count, such that we can figure out "colspan"
-                      * to use for "details" ng-container.
-                      */
-                     set-value:x:@.container-count
-                        math.increment:x:@.container-count
+            /*
+             * Replacing [[colspan]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[colspan]]
+               get-value:x:@.substitutions/*/container-count
 
 
-                     /*
-                      * Appending currently iterated column to [.ng-containers].
-                      *
-                      * Notice, the contents for this is declared in our "column.html" file.
-                      */
-                     set-value:x:@.ng-containers
-                        strings.concat
-                           get-value:x:@.ng-containers
-                           strings.replace:x:@io.files.load/@io.files.load/@io.files.load/@io.files.load
-                              .:[[column-name]]
-                              get-name:x:@.dp/#
+            /*
+             * Replacing [[component-filename]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-filename]]
+               strings.concat
+                  get-value:x:@.lambda/@.dp/#/*/component-filename
 
 
-                     /*
-                      * Appending currently iterated column to [.entity-details].
-                      *
-                      * Notice, the contents for this is declared in our "details.html" file.
-                      */
-                     set-value:x:@.entity-details
-                        strings.concat
-                           get-value:x:@.entity-details
-                           strings.replace:x:@io.files.load/@io.files.load/@io.files.load
-                              .:[[column-name]]
-                              get-name:x:@.dp/#
+            /*
+             * Replacing [[component-name]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-name]]
+               get-value:x:@.lambda/@.dp/#/*/component-name
 
 
-                  /*
-                   * Doing actual substitution in HTML file.
-                   *
-                   * More specifically, we're substituting the following strings.
-                   *
-                   * - [[ng-containers]]
-                   * - [[entity-details]]
-                   * - [[colspan]]
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[ng-containers]]
-                     get-value:x:@.ng-containers
-                  strings.replace:x:@strings.replace
-                     .:[[entity-details]]
-                     get-value:x:@.entity-details
-                  strings.replace:x:@strings.replace
-                     .:[[colspan]]
-                     get-value:x:@.container-count
-                  set-value:x:./@strings.replace
-                     get-value:x:@strings.replace
+            /*
+             * Replacing [[component-selector]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-selector]]
+               get-value:x:@.lambda/@.dp/#/*/component-selector
 
 
-            else-if
-               strings.ends-with:x:@.dp/#
-                  .:.ts
-               .lambda
+            /*
+             * Replacing [[displayed-columns]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[displayed-columns]]
+               get-value:x:@.substitutions/*/displayed-columns
 
 
-                  /*
-                   * TypeScript file for component.
-                   */
+            /*
+             * Appending our actual form controls into our TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[form-control-declarations]]
+               get-value:x:@.form-controls
 
 
-                  /*
-                   * Replacing component's edit filename, which is our modal dialog's filename.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[component-filename]]
-                     strings.concat
-                        get-value:x:@.lambda/@.lambda/@.dp/#/*/component-filename
+            /*
+             * Appending our actual control instantiations into our TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[form-control-value-subscriptions]]
+               get-value:x:@.form-controls-value-subscriptions
 
 
-                  /*
-                   * Replacing component's class name.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[component-name]]
-                     get-value:x:@.lambda/@.lambda/@.dp/#/*/component-name
+            /*
+             * Appending our HTTP client service GET method name into TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[service-get-method]]
+               get-value:x:@.lambda/@.dp/#/*/verbs/*/get/*/service-method-name
 
 
-                  /*
-                   * Replacing component's selector.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[component-selector]]
-                     get-value:x:@.lambda/@.lambda/@.dp/#/*/component-selector
+            /*
+             * Appending our HTTP client service DELETE method name into TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[service-delete-method]]
+               get-value:x:@.lambda/@.dp/#/*/verbs/*/delete/*/service-method-name
 
 
-                  /*
-                   * Figuring out column list.
-                   */
-                  .displayed-columns
-                  .form-controls
-                  .form-controls-value-subscriptions
-                  for-each:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/output/*
+            /*
+             * Appending our HTTP client service POST method name into TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[service-create-method]]
+               get-value:x:@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
 
 
-                     /*
-                      * Appending currently iterated column to [.displayed-columns]
-                      */
-                     set-value:x:@.displayed-columns
-                        strings.concat
-                           get-value:x:@.displayed-columns
-                           .:", '"
-                           get-name:x:@.dp/#
-                           .:"'"
+            /*
+             * Appending our HTTP client service PUT method name into TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[service-update-method]]
+               get-value:x:@.lambda/@.dp/#/*/verbs/*/put/*/service-method-name
 
 
-                     /*
-                      * Making sure we create a TypeScript instance of correct type to
-                      * hold our column.
-                      */
-                     set-value:x:@.form-controls
-                        strings.concat
-                           get-value:x:@.form-controls
-                           strings.replace:x:@io.files.load/@io.files.load
-                              .:[[column-name]]
-                              get-name:x:@.dp/#
-
-
-                     /*
-                      * Making sure we correctly instantiate our TypeScript instance.
-                      */
-                     set-value:x:@.form-controls-value-subscriptions
-                        strings.concat
-                           get-value:x:@.form-controls-value-subscriptions
-                           strings.replace:x:@io.files.load
-                              .:[[column-name]]
-                              get-name:x:@.dp/#
-
-
-                  /*
-                   * Making sure we remove redundant commas and spaces from [.displayed-columns].
-                   */
-                  strings.trim:x:@.displayed-columns
-                     .:", "
-                  strings.replace:x:@strings.replace
-                     .:[[columns-list]]
-                     get-value:x:@strings.trim
-
-
-                  /*
-                   * Appending our actual form controls into our TypeScript file.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[form-control-declarations]]
-                     get-value:x:@.form-controls
-
-
-                  /*
-                   * Appending our actual control instantiations into our TypeScript file.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[form-control-value-subscriptions]]
-                     get-value:x:@.form-controls-value-subscriptions
-
-
-                  /*
-                   * Appending our HTTP client service GET method name into TypeScript file.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[service-get-method]]
-                     get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/get/*/service-method-name
-
-
-                  /*
-                   * Appending our HTTP client service DELETE method name into TypeScript file.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[service-delete-method]]
-                     get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/delete/*/service-method-name
-
-
-                  /*
-                   * Appending our HTTP client service COUNT method name into TypeScript file.
-                   */
-                  strings.replace:x:@strings.replace
-                     .:[[service-count-method]]
-                     get-value:x:@.lambda/@.lambda/@.dp/#/*/count-method
-
-
-                  /*
-                   * Making sure we allow outer parts to reach our new TypeScript content.
-                   */
-                  set-value:x:./@strings.replace
-                     get-value:x:@strings.replace
+            /*
+             * Appending our HTTP client service COUNT method name into TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[service-count-method]]
+               get-value:x:@.lambda/@.dp/#/*/count-method
 
 
             /*
              * Buffer to hold component's content.
              */
+            .log.info:x:@.substitutions
             unwrap:x:+
             .content:x:@strings.replace
 

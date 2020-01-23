@@ -16,7 +16,7 @@ import { HttpService } from 'src/app/services/http-service';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /*
- * "Datagrid" component for displaying instance of [[filename]]
+ * "Datagrid" component for displaying instance of [[component-header]]
  * entities from your HTTP REST backend.
  */
 @Component({
@@ -30,7 +30,7 @@ export class [[component-name]] implements OnInit {
   private data: any[];
 
   // Which columns we should display. Reorder to prioritize columns differently.
-  private displayedColumns: string[] = [[[columns-list]]];
+  private displayedColumns: string[] = [[[displayed-columns]]];
 
   // Current filter being applied to filter items from our backend.
   private filter: any = {
@@ -259,7 +259,7 @@ export class [[component-name]] implements OnInit {
         }
 
         // Showing a little information window, giving the user feedback about that editing was successful.
-        this.snackBar.open('[[filename]] successfully updated', 'Close', {
+        this.snackBar.open('[[component-header]] item successfully updated', 'Close', {
           duration: 2000,
         });
       }
@@ -284,7 +284,7 @@ export class [[component-name]] implements OnInit {
 
         // Notice, at this point, the item is already saved. Hence, re-retrieving data from backend.
         this.getData();
-        this.snackBar.open('[[filename]] item successfully created', 'Close', {
+        this.snackBar.open('[[component-header]] item successfully created', 'Close', {
           duration: 2000,
         });
       }

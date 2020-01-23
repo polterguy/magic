@@ -157,7 +157,7 @@ for-each:x:@.components/*
          get-value:x:@.arguments/*/name
          .:/src/app/components/
          get-value:x:@.dp/#
-log.info:x:@.crud-methods
+.log.info:x:@.crud-methods
 
 
 
