@@ -28,7 +28,7 @@
           [ngClass]="inRole([[[delete-roles]]]) ? 'delete-column' : 'hidden'">
           <button
             mat-button
-            (click)="delete(el, {[[delete-input]]: el.[[delete-input]]})"
+            (click)="delete(el, {[[delete-input]]})"
             placeholder="Deletes this record">
             <mat-icon matSuffix>delete</mat-icon>
           </button>
