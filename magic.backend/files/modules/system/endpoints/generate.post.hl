@@ -65,6 +65,21 @@ add:x:@.component-files
 
 
 /*
+ * Removing "root" of folder names, to make more friendly folder structure for
+ * our downloadable ZIP file.
+ */
+for-each:x:@.main-files/*
+   strings.concat
+      .:misc/templates/
+      get-value:x:@.arguments/*/templateName
+      .:/main
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         get-value:x:@strings.concat
+         get-value:x:@.arguments/*/name
+
+
+/*
  * Replacing component filenames such that we can keep them
  * slightly more semantically correct before starting transformation
  * process.
@@ -81,21 +96,6 @@ for-each:x:@.component-files/*
       .:/[[component-folder]]/
    set-value:x:@.dp/#
       get-value:x:@strings.replace
-
-
-/*
- * Removing "root" of folder names, to make more friendly folder structure for
- * our downloadable ZIP file.
- */
-for-each:x:@.main-files/*
-   strings.concat
-      .:misc/templates/
-      get-value:x:@.arguments/*/templateName
-      .:/main
-   set-value:x:@.dp/#
-      strings.replace:x:@.dp/#
-         get-value:x:@strings.concat
-         get-value:x:@.arguments/*/name
 
 
 
@@ -148,6 +148,141 @@ add:x:@.components
 
 
 /*
+ * Retrieving import statements/router declarations, and such for each component we have.
+ */
+.imports
+.routes
+.module-declarations
+.entry-components
+for-each:x:@.arguments/*/endpoints/*
+
+   /*
+    * Checking if this is a "crud-read" type of endpoint
+    */
+   if
+      eq
+         get-value:x:@.dp/#/*/type
+         .:crud-read
+      .lambda
+
+
+         /*
+          * This is a CRUD read type of endpoint, hence a component has been created for it.
+          * Now we need to create an import statement, to make sure we import it into our
+          * main app's module file.
+          */
+         strings.split:x:@.dp/#/*/path
+            .:/
+         strings.replace-not-of:x:@strings.split/0/-
+            .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+            .:_
+
+
+         /*
+          * Import declarations.
+          */
+         set-value:x:@.imports
+            strings.concat
+               get-value:x:@.imports
+               .:"import { "
+               strings.capitalize:x:@strings.replace-not-of
+               .:"Component } from './components/"
+               get-value:x:@strings.split/0/-
+               .:"/"
+               get-value:x:@strings.split/0/-
+               .:".component';\r\n"
+               .:"import { Edit"
+               strings.capitalize:x:@strings.replace-not-of
+               .:"Component } from './components/"
+               get-value:x:@strings.split/0/-
+               .:"/modals/edit."
+               get-value:x:@strings.split/0/-
+               .:".component';\r\n"
+
+
+         /*
+          * Router declarations.
+          */
+         set-value:x:@.routes
+            strings.concat
+               get-value:x:@.routes
+               .:"  { path: '"
+               get-value:x:@strings.split/0/-
+               .:"', component: "
+               strings.capitalize:x:@strings.replace-not-of
+               .:"Component },\r\n"
+
+
+         /*
+          * Module declarations.
+          */
+         set-value:x:@.module-declarations
+            strings.concat
+               get-value:x:@.module-declarations
+               .:"    "
+               strings.capitalize:x:@strings.replace-not-of
+               .:"Component,\r\n"
+               .:"    Edit"
+               strings.capitalize:x:@strings.replace-not-of
+               .:"Component,\r\n"
+
+
+         /*
+          * Adding entry components, which basically is the Edit modal windows
+          * for each component we have.
+          */
+         set-value:x:@.entry-components
+            strings.concat
+               get-value:x:@.entry-components
+               .:"    Edit"
+               strings.capitalize:x:@strings.replace-not-of
+               .:"Component,\r\n"
+         
+
+
+/*
+ * Replacing any [[imports]], [[routes]], etc in any of our main files.
+ */
+for-each:x:@.main-files/*
+
+
+   /*
+    * Replacing [[imports]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[imports]]
+         get-value:x:@.imports
+
+
+   /*
+    * Replacing [[routes]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[routes]]
+         get-value:x:@.routes
+
+
+   /*
+    * Replacing [[module-declarations]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[module-declarations]]
+         get-value:x:@.module-declarations
+
+
+   /*
+    * Replacing [[entry-components]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[entry-components]]
+         get-value:x:@.entry-components
+
+
+/*
  * Making sure we position our components correctly inside of our zip file.
  */
 for-each:x:@.components/*
@@ -157,7 +292,6 @@ for-each:x:@.components/*
          get-value:x:@.arguments/*/name
          .:/src/app/components/
          get-value:x:@.dp/#
-.log.info:x:@.crud-methods
 
 
 

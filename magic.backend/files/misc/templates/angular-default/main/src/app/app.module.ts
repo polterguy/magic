@@ -60,7 +60,7 @@ export function tokenGetter() {
     CreateUserDialogComponent,
     EditUserDialogComponent,
     SecurityComponent,
-[[declarations]]  ],
+[[module-declarations]]  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
