@@ -32,8 +32,8 @@ export class Edit[[component-name]] {
    * be transmitted to the server when we create records. This is done to
    * make sure we don't submit "automatic" primary key values.
    */
-  private createColumns: string[] = [[[create-columns]]];
-  private updateColumns: string[] = [[[update-columns]]];
+  private createColumns: string[] = [[[create-input]]];
+  private updateColumns: string[] = [[[update-input]]];
 
   /*
    * Constructor taking a bunch of services injected using dependency injection.
