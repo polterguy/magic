@@ -82,7 +82,7 @@ export class [[component-name]] implements OnInit {
     this.getData();
 
     // Necessary to make sure we can have "live filtering" in our datagrid.
-[[form-control-value-subscriptions]]  }
+[[form-control-instantiations]]  }
 
   /*
    * Returns the class for the header row, which will only be visible

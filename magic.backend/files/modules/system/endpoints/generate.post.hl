@@ -131,6 +131,21 @@ add:x:@.crud-methods
 
 
 
+/*
+ * Loading router link file, that contains the declaration for
+ * our router links.
+ */
+strings.concat
+   .:/misc/templates/
+   get-value:x:@.arguments/*/templateName
+   .:/router-link.html
+.router-link-file
+set-value:x:-
+   io.files.load:x:@strings.concat
+
+
+
+
 
 
 /*
@@ -151,99 +166,132 @@ add:x:@.components
  * Retrieving import statements/router declarations, and such for each component we have.
  */
 .imports
+.imports-only-main
 .routes
 .module-declarations
 .entry-components
-for-each:x:@.arguments/*/endpoints/*
+.router-links
+for-each:x:@.crud-methods/*
+
 
    /*
-    * Checking if this is a "crud-read" type of endpoint
+    * Import declarations.
     */
-   if
-      eq
-         get-value:x:@.dp/#/*/type
-         .:crud-read
-      .lambda
+   set-value:x:@.imports
+      strings.concat
+         get-value:x:@.imports
+         .:"import { "
+         strings.capitalize:x:@.dp/#/*/component-name
+         .:" } from './components/"
+         get-value:x:@.dp/#/*/component-folder
+         .:"/"
+         get-value:x:@.dp/#/*/component-filename
+         .:"';\r\n"
+         .:"import { "
+         get-value:x:@.dp/#/*/component-edit-name
+         .:" } from './components/"
+         get-value:x:@.dp/#/*/component-folder
+         .:"/modals/"
+         get-value:x:@.dp/#/*/component-edit-filename
+         .:"';\r\n"
 
 
-         /*
-          * This is a CRUD read type of endpoint, hence a component has been created for it.
-          * Now we need to create an import statement, to make sure we import it into our
-          * main app's module file.
-          */
-         strings.split:x:@.dp/#/*/path
-            .:/
-         strings.replace-not-of:x:@strings.split/0/-
-            .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
-            .:_
+   /*
+    * Import declarations (only main component imports).
+    */
+   set-value:x:@.imports-only-main
+      strings.concat
+         get-value:x:@.imports-only-main
+         .:"import { "
+         strings.capitalize:x:@.dp/#/*/component-name
+         .:" } from './components/"
+         get-value:x:@.dp/#/*/component-folder
+         .:"/"
+         get-value:x:@.dp/#/*/component-filename
+         .:"';\r\n"
 
 
-         /*
-          * Import declarations.
-          */
-         set-value:x:@.imports
-            strings.concat
-               get-value:x:@.imports
-               .:"import { "
-               strings.capitalize:x:@strings.replace-not-of
-               .:"Component } from './components/"
-               get-value:x:@strings.split/0/-
-               .:"/"
-               get-value:x:@strings.split/0/-
-               .:".component';\r\n"
-               .:"import { Edit"
-               strings.capitalize:x:@strings.replace-not-of
-               .:"Component } from './components/"
-               get-value:x:@strings.split/0/-
-               .:"/modals/edit."
-               get-value:x:@strings.split/0/-
-               .:".component';\r\n"
+   /*
+    * Router declarations.
+    */
+   set-value:x:@.routes
+      strings.concat
+         get-value:x:@.routes
+         .:"  { path: '"
+         get-value:x:@.dp/#/*/component-routing-url
+         .:"', component: "
+         get-value:x:@.dp/#/*/component-name
+         .:" },\r\n"
 
 
-         /*
-          * Router declarations.
-          */
-         set-value:x:@.routes
-            strings.concat
-               get-value:x:@.routes
-               .:"  { path: '"
-               get-value:x:@strings.split/0/-
-               .:"', component: "
-               strings.capitalize:x:@strings.replace-not-of
-               .:"Component },\r\n"
+   /*
+    * Adding component to router links.
+    */
+   .read-roles
+   for-each:x:@.dp/#/*/verbs/*/get/*/auth/*
+      set-value:x:@.read-roles
+         strings.concat
+            get-value:x:@.read-roles
+            .:", '"
+            get-value:x:@.dp/#
+            .:"'"
+   strings.trim:x:@.read-roles
+      .:", "
+   strings.replace:x:@.router-link-file
+      .:[[read-roles]]
+      get-value:x:@strings.trim
+   strings.replace:x:@strings.replace
+      .:[[url]]
+      get-value:x:@.dp/#/*/component-routing-url
+   strings.replace:x:@strings.replace
+      .:[[name]]
+      get-value:x:@.dp/#/*/component-header
+   set-value:x:@.router-links
+      strings.concat
+         get-value:x:@.router-links
+         get-value:x:@strings.replace
 
 
-         /*
-          * Module declarations.
-          */
-         set-value:x:@.module-declarations
-            strings.concat
-               get-value:x:@.module-declarations
-               .:"    "
-               strings.capitalize:x:@strings.replace-not-of
-               .:"Component,\r\n"
-               .:"    Edit"
-               strings.capitalize:x:@strings.replace-not-of
-               .:"Component,\r\n"
+   /*
+    * Module declarations.
+    */
+   set-value:x:@.module-declarations
+      strings.concat
+         get-value:x:@.module-declarations
+         .:"    "
+         get-value:x:@.dp/#/*/component-name
+         .:",\r\n"
+         .:"    "
+         get-value:x:@.dp/#/*/component-edit-name
+         .:",\r\n"
 
 
-         /*
-          * Adding entry components, which basically is the Edit modal windows
-          * for each component we have.
-          */
-         set-value:x:@.entry-components
-            strings.concat
-               get-value:x:@.entry-components
-               .:"    Edit"
-               strings.capitalize:x:@strings.replace-not-of
-               .:"Component,\r\n"
-         
+   /*
+    * Adding entry components, which basically is the Edit modal windows
+    * for each component we have.
+    */
+   set-value:x:@.entry-components
+      strings.concat
+         get-value:x:@.entry-components
+         .:"    "
+         get-value:x:@.dp/#/*/component-name
+         .:",\r\n"
 
 
 /*
- * Replacing any [[imports]], [[routes]], etc in any of our main files.
+ * Replacing any [[imports]], [[imports-only-main]], [[routes]],
+ * etc in any of our main files.
  */
 for-each:x:@.main-files/*
+
+
+   /*
+    * Replacing [[router-links]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[router-links]]
+         get-value:x:@.router-links
 
 
    /*
@@ -252,6 +300,15 @@ for-each:x:@.main-files/*
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[imports]]
+         get-value:x:@.imports
+
+
+   /*
+    * Replacing [[imports-only-main]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[imports-only-main]]
          get-value:x:@.imports
 
 
