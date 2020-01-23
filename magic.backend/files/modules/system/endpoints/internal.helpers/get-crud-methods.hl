@@ -42,13 +42,15 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
    // Its "edit" component name.
    strings.concat
+      .:Edit
       get-value:x:@strings.capitalize
-      .:EditComponent
+      .:Component
 
    // Its "edit" component filename.
    strings.concat
+      .:edit.
       get-value:x:@strings.replace-not-of
-      .:.edit.component
+      .:.component
 
    // The component's routing URL.
    strings.to-lower:x:@strings.replace-not-of
@@ -154,7 +156,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                .:_
             strings.concat
                get-value:x:@strings.replace-not-of
-               .:_Count
+               .:_count_Get
             unwrap:x:+/*/*
             insert-before:x:@.endpoint/0/-/*/verbs
                .
