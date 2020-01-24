@@ -294,6 +294,19 @@ export class [[component-name]] implements OnInit {
   // Invoked when an entity is deleted. Invokes HTTP service that deletes item from backend.
   delete(entity: any, ids: any) {
 
+    // Making sure we actually have a primary key, and if not, preventing deletion.
+    let hasKeys = false;
+    for (const idx in ids) {
+      if (ids.hasOwnProperty(idx)) {
+        hasKeys = true;
+        break;
+      }
+    }
+    if (!hasKeys) {
+      this.error('Your endpoint does not accept any primary keys, and hence deletion of individual entities becomes impossible');
+      return;
+    }
+
     // Invoking HTTP service DELETE method.
     this.httpService.[[service-delete-method]](ids).subscribe(res => {
 
