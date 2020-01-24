@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
-import { MatInput } from '@angular/material';
+import { MatInput, MatSelectChange } from '@angular/material';
 import { saveAs } from "file-saver";
 import { environment } from 'src/environments/environment';
 
@@ -19,9 +19,12 @@ export class EndpointsComponent implements OnInit {
   private displayedSecondRowColumns: string[] = ['details'];
   private endpoints: any[] = [];
   private filter = '';
-  private name: string = null;
+  private name = '';
   private showSystemEndpoints = false;
   private isFetching = false;
+  private templates: string[] = [];
+  private selectedTemplate = '';
+  private templateDescription = '';
 
   constructor(
     private service: EndpointService,
@@ -42,6 +45,11 @@ export class EndpointsComponent implements OnInit {
     }, err => {
       this.showError(err.error.message);
       this.isFetching = false;
+    });
+    this.service.getAllTemplates().subscribe(res => {
+      this.templates = res;
+    }, error => {
+      this.showError(error.error.message);
     });
   }
 
@@ -239,6 +247,16 @@ export class EndpointsComponent implements OnInit {
     }, error => {
       this.showError(error.error.message);
       this.isFetching = false;
+    });
+  }
+
+  templateChanged(e: MatSelectChange) {
+    this.selectedTemplate = e.value;
+    this.service.getTemplateMarkdown(e.value).subscribe(res => {
+      this.templateDescription = res.markdown;
+      console.log(res);
+    }, error => {
+      this.showError(error.error.message);
     });
   }
 

@@ -47,6 +47,7 @@ import { SchedulerComponent } from './components/scheduler/scheduler.component';
 import { DateFromPipe } from './pipes/date-from-pipe';
 import { DynamicPipe } from './pipes/dynamic-pipe';
 import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-dialog';
+import { MarkedPipe } from './pipes/marked.pipe';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -75,6 +76,7 @@ export function tokenGetter() {
     SchedulerComponent,
     DateFromPipe,
     DynamicPipe,
+    MarkedPipe,
   ],
   imports: [
     BrowserModule,

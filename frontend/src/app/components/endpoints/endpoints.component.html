@@ -166,9 +166,25 @@
           type="text" 
           [(ngModel)]="name">
       </mat-form-field>
+      <mat-form-field
+        class="generate-template">
+        <mat-select
+          placeholder="Select template"
+          (selectionChange)="templateChanged($event)">
+          <mat-option
+            *ngFor="let cur of templates"
+            [value]="cur">{{cur}}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <button
         mat-raised-button
+        [disabled]="selectedTemplate === '' || name === ''"
+        color="primary"
+        matTooltip="Generates the selected endpoints by applying them to your selected template"
         (click)="generateFrontEnd()">Generate</button>
     </div>
+
+    <div [innerHTML]="templateDescription | marked"></div>
+
   </div>
 </div>
