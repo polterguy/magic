@@ -21,13 +21,9 @@
  * Loading column file, that contains the declaration for
  * a single column.
  */
-strings.concat
-   .:/misc/templates/
-   get-value:x:@.arguments/*/templateName
-   .:/column.html
 .column-file
 set-value:x:-
-   io.files.load:x:@strings.concat
+   io.files.load:/misc/templates/angular-default/column.html
 
 
 
@@ -36,13 +32,9 @@ set-value:x:-
  * Loading view details file, that contains the declaration
  * for viewing a single element's details.
  */
-strings.concat
-   .:/misc/templates/
-   get-value:x:@.arguments/*/templateName
-   .:/view-details.html
 .view-details-file
 set-value:x:-
-   io.files.load:x:@strings.concat
+   io.files.load:/misc/templates/angular-default/view-details.html
 
 
 
@@ -51,13 +43,9 @@ set-value:x:-
  * Loading form control file, that contains the declaration
  * for a single form control.
  */
-strings.concat
-   .:/misc/templates/
-   get-value:x:@.arguments/*/templateName
-   .:/form-control.ts
 .form-control-file
 set-value:x:-
-   io.files.load:x:@strings.concat
+   io.files.load:/misc/templates/angular-default/form-control.ts
 
 
 
@@ -66,13 +54,9 @@ set-value:x:-
  * Loading form field file, that contains the input necessary to
  * edit a single column's value during editing.
  */
-strings.concat
-   .:/misc/templates/
-   get-value:x:@.arguments/*/templateName
-   .:/form-field.html
 .form-field-file
 set-value:x:-
-   io.files.load:x:@strings.concat
+   io.files.load:/misc/templates/angular-default/form-field.html
 
 
 
@@ -81,13 +65,9 @@ set-value:x:-
  * Loading form control instantiations file, that instantiates
  * a single form control somehow.
  */
-strings.concat
-   .:/misc/templates/
-   get-value:x:@.arguments/*/templateName
-   .:/form-control-instantiations.ts
 .form-control-instantiation-file
 set-value:x:-
-   io.files.load:x:@strings.concat
+   io.files.load:/misc/templates/angular-default/form-control-instantiations.ts
 
 
 
