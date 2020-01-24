@@ -196,7 +196,7 @@
         <ng-container matColumnDef="generate">
           <th mat-header-cell *matHeaderCellDef>Generate</th>
           <td mat-cell *matCellDef="let el">
-            <mat-checkbox [(ngModel)]="el.generate"></mat-checkbox>
+            <mat-checkbox [disabled]="disableGeneratorForVerb(el)" [(ngModel)]="el.generate"></mat-checkbox>
           </td>
         </ng-container>
 
