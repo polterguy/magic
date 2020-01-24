@@ -24,6 +24,14 @@ export class EndpointService {
       });
   }
 
+  getAllTemplates() {
+    return this.httpClient.get<string[]>(environment.apiURL + 'magic/modules/system/endpoints/templates');
+  }
+
+  getTemplateMarkdown(name: string) {
+    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/endpoints/template?name=' + encodeURIComponent(name));
+  }
+
   executeGet(url: string) {
     return this.httpClient.get<any>(environment.apiURL + url);
   }
