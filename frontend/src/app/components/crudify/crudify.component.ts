@@ -204,6 +204,14 @@ export class CrudifyComponent implements OnInit {
     }
   }
 
+  showCache() {
+    return this.endpoints.filter(x => x.verb === 'get' && x.generate).length > 0;
+  }
+
+  showTransformers() {
+    return this.endpoints.filter(x => (x.verb === 'post' && x.generate) || (x.verb === 'put' && x.generate)).length > 0;
+  }
+
   getDefaultValidator(fieldName: string, tableName: string) {
     if (fieldName === 'password' && (tableName === 'dbo.users' || tableName === 'users')) {
       this.showSuccess('BlowFish was added to your password field, and it was marked as protected!');
