@@ -18,28 +18,28 @@ export interface DialogData {
 }
 
 /*
- * Modal dialog for editing your existing [[filename]] entity types, and/or
+ * Modal dialog for editing your existing [[component-header]] entity types, and/or
  * creating new entity types.
  */
 @Component({
-  templateUrl: './[[filename]]-edit-modal.html',
-  styleUrls: ['./[[filename]]-edit-modal.scss']
+  templateUrl: './edit.[[component-filename]].html',
+  styleUrls: ['./edit.[[component-filename]].scss']
 })
-export class [[edit-component-name]] {
+export class Edit[[component-name]] {
 
   /*
    * Only the following properties of the given data.entity will actually
    * be transmitted to the server when we create records. This is done to
    * make sure we don't submit "automatic" primary key values.
    */
-  private createColumns: string[] = [[[create-columns]]];
-  private updateColumns: string[] = [[[update-columns]]];
+  private createColumns: string[] = [[[create-input]]];
+  private updateColumns: string[] = [[[update-input]]];
 
   /*
    * Constructor taking a bunch of services injected using dependency injection.
    */
   constructor(
-    public dialogRef: MatDialogRef<[[edit-component-name]]>,
+    public dialogRef: MatDialogRef<Edit[[component-name]]>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private snackBar: MatSnackBar,
     private service: HttpService) { }
@@ -65,7 +65,7 @@ export class [[edit-component-name]] {
       }
 
       // Updating existing item. Invoking update HTTP REST endpoint and closing dialog.
-      this.service.[[update-method]](this.data.entity).subscribe(res => {
+      this.service.[[service-update-method]](this.data.entity).subscribe(res => {
         this.dialogRef.close(this.data.entity);
         if (res['updated-records'] !== 1) {
 
@@ -95,7 +95,7 @@ export class [[edit-component-name]] {
       }
 
       // Creating new item. Invoking create HTTP REST endpoint and closing dialog.
-      this.service.[[create-method]](this.data.entity).subscribe(res => {
+      this.service.[[service-create-method]](this.data.entity).subscribe(res => {
         this.dialogRef.close(this.data.entity);
 
         if (res === null || res === undefined) {

@@ -13,16 +13,16 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpService } from 'src/app/services/http-service';
-import { [[component-edit-modal-name]] } from './modals/[[filename]]-edit-modal';
+import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /*
- * "Datagrid" component for displaying instance of [[filename]]
+ * "Datagrid" component for displaying instance of [[component-header]]
  * entities from your HTTP REST backend.
  */
 @Component({
-  selector: 'app-[[filename]]',
-  templateUrl: './[[filename]].component.html',
-  styleUrls: ['./[[filename]].component.scss']
+  selector: '[[component-selector]]',
+  templateUrl: './[[component-filename]].html',
+  styleUrls: ['./[[component-filename]].scss']
 })
 export class [[component-name]] implements OnInit {
 
@@ -30,7 +30,7 @@ export class [[component-name]] implements OnInit {
   private data: any[];
 
   // Which columns we should display. Reorder to prioritize columns differently.
-  private displayedColumns: string[] = [[[columns-list]]];
+  private displayedColumns: string[] = [[[displayed-columns]]];
 
   // Current filter being applied to filter items from our backend.
   private filter: any = {
@@ -82,7 +82,7 @@ export class [[component-name]] implements OnInit {
     this.getData();
 
     // Necessary to make sure we can have "live filtering" in our datagrid.
-[[form-control-value-subscriptions]]  }
+[[form-control-instantiations]]  }
 
   /*
    * Returns the class for the header row, which will only be visible
@@ -245,7 +245,7 @@ export class [[component-name]] implements OnInit {
     }
 
     // Creating our modal dialog, passing in the cloned entity, and "isEdit" as true.
-    const dialogRef = this.dialog.open([[component-edit-modal-name]], {
+    const dialogRef = this.dialog.open(Edit[[component-name]], {
       data
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -259,7 +259,7 @@ export class [[component-name]] implements OnInit {
         }
 
         // Showing a little information window, giving the user feedback about that editing was successful.
-        this.snackBar.open('[[filename]] successfully updated', 'Close', {
+        this.snackBar.open('[[component-header]] item successfully updated', 'Close', {
           duration: 2000,
         });
       }
@@ -276,7 +276,7 @@ export class [[component-name]] implements OnInit {
     };
 
     // Opening our dialog.
-    const dialogRef = this.dialog.open([[component-edit-modal-name]], {
+    const dialogRef = this.dialog.open(Edit[[component-name]], {
       data
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -284,7 +284,7 @@ export class [[component-name]] implements OnInit {
 
         // Notice, at this point, the item is already saved. Hence, re-retrieving data from backend.
         this.getData();
-        this.snackBar.open('[[filename]] item successfully created', 'Close', {
+        this.snackBar.open('[[component-header]] item successfully created', 'Close', {
           duration: 2000,
         });
       }
