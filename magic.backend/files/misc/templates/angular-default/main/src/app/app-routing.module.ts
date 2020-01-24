@@ -13,7 +13,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { SecurityComponent } from './components/security/security.component';
 
 // Then importing all "entity components" (for editing entities from your backend).
-[[imports]]
+[[imports-only-main]]
 
 // Creating our routes, one route for each entity type.
 const routes: Routes = [
