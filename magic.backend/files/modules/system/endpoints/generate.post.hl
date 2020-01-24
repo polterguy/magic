@@ -23,7 +23,6 @@ auth.ticket.verify:root
 
 
 
-
 /*
  * Figuring out which template/generator to use, and invoking it.
  */

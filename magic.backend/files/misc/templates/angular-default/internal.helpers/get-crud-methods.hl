@@ -109,6 +109,14 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 
 
             /*
+             * Cleaning up method name, in case it has 'funny characters'.
+             */
+            strings.replace-not-of:x:@strings.concat
+               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+               .:_
+
+
+            /*
              * Setting correct verb, unwrapping service method name,
              * and adding currently iterated HTTP verb to temporary [.endpoint],
              * that we later return to caller.
@@ -119,7 +127,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             add:x:@.endpoint/*/*/verbs
                .
                   verb-name
-                     service-method-name:x:@strings.concat
+                     service-method-name:x:@strings.replace-not-of
                      input
                      output
                      auth
@@ -173,4 +181,5 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 /*
  * Returning results to caller.
  */
+log.info:x:@.result/*
 slots.return-nodes:x:@.result/*
