@@ -108,7 +108,7 @@ for-each:x:@.component-files/*
 add:x:+/*
    get-nodes:x:@.arguments/*
 set-value:x:@.http-service-methods
-   io.files.execute:/misc/templates/angular-default/internal.helpers/create-service-methods.hl
+   io.files.execute:/misc/templates/angular-default/helpers/create-service-methods.hl
 
 
 
@@ -123,7 +123,7 @@ set-value:x:@.http-service-methods
 add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
-   io.files.execute:/misc/templates/angular-default/internal.helpers/get-crud-methods.hl
+   io.files.execute:/misc/templates/angular-default/helpers/get-crud-methods.hl
 
 
 
@@ -136,7 +136,7 @@ add:x:@.crud-methods
  */
 .router-link-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/router-link.html
+   io.files.load:/misc/templates/angular-default/templates/router-link.html
 
 
 
@@ -152,7 +152,7 @@ add:x:+/+/*
 add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
-   io.files.execute:/misc/templates/angular-default/internal.helpers/create-components.hl
+   io.files.execute:/misc/templates/angular-default/helpers/create-components.hl
 
 
 

@@ -23,7 +23,7 @@
  */
 .column-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/column.html
+   io.files.load:/misc/templates/angular-default/templates/column.html
 
 
 
@@ -34,7 +34,7 @@ set-value:x:-
  */
 .view-details-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/view-details.html
+   io.files.load:/misc/templates/angular-default/templates/view-details.html
 
 
 
@@ -45,7 +45,7 @@ set-value:x:-
  */
 .form-control-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/form-control.ts
+   io.files.load:/misc/templates/angular-default/templates/form-control.ts
 
 
 
@@ -56,7 +56,7 @@ set-value:x:-
  */
 .form-field-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/form-field.html
+   io.files.load:/misc/templates/angular-default/templates/form-field.html
 
 
 
@@ -67,7 +67,7 @@ set-value:x:-
  */
 .form-control-instantiation-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/form-control-instantiations.ts
+   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations.ts
 
 
 
