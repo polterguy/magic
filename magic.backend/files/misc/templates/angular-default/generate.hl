@@ -1,0 +1,435 @@
+
+/*
+ * Generates an Angular frontend for you.
+ */
+.description:"Generates an Angular frontend client side according to the given arguments. The frontend will have one datagrid component and router link for each CRUD read endpoint in your backend endpoints."
+
+
+
+
+
+
+/*
+ * This parts loads up all template files, and changes the path names,
+ * to make sure we have a friendly folder structure to base our downloadable
+ * zip file upon.
+ */
+
+
+
+
+
+
+/*
+ * These two nodes will contain all template files.
+ *
+ * The [.main-files] will contain the main template files.
+ * The [.component-files] will contain the "per component" files, and
+ * will be duplicated once for each component that is dynamically created.
+ *
+ * The latter will be used as the basis for creating one component for each
+ * CRUD "read" endpoint specified by caller.
+ */
+.main-files
+.component-files
+
+
+
+
+
+
+/*
+ * Loads all files in "main" Angular template folder recursively.
+ */
+add:x:@.main-files
+   slots.signal:magic.io.files.load-recursively
+      strings.concat
+         .:/misc/templates/angular-default/main/
+
+
+
+
+
+
+/*
+ * Loads all files in "component" Angular template folder recursively.
+ */
+add:x:@.component-files
+   slots.signal:magic.io.files.load-recursively
+      strings.concat
+         .:/misc/templates/angular-default/component/
+
+
+
+
+
+
+/*
+ * Removing "root" parts of our folder names, to make a more friendly
+ * folder structure that we return to caller.
+ */
+for-each:x:@.main-files/*
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:misc/templates/angular-default/main
+         get-value:x:@.arguments/*/name
+
+
+
+
+
+
+/*
+ * Replacing component filenames such that we can keep them
+ * slightly more semantically correct before starting transformation process.
+ */
+for-each:x:@.component-files/*
+   strings.replace:x:@.dp/#
+      .:component.
+      .:[[component-filename]].
+   strings.replace:x:@strings.replace
+      strings.concat
+         .:/misc/templates/angular-default/component/
+      .:/[[component-folder]]/
+   set-value:x:@.dp/#
+      get-value:x:@strings.replace
+
+
+
+
+
+
+/*
+ * Creating our HTTP Client service method implementations,
+ * by invoking a helper file responsible for parsing arguments,
+ * and creating our TypeScript HTTP client methods accordingly.
+ */
+.http-service-methods
+add:x:+/*
+   get-nodes:x:@.arguments/*
+set-value:x:@.http-service-methods
+   io.files.execute:/misc/templates/angular-default/internal.helpers/create-service-methods.hl
+
+
+
+
+
+
+/*
+ * Transforming our CRUD methods, such that they become slightly more readable, and doing
+ * some common parsing, such as figuring out filenames, folder names, etc for each component.
+ */
+.crud-methods
+add:x:+/*
+   get-nodes:x:@.arguments/*
+add:x:@.crud-methods
+   io.files.execute:/misc/templates/angular-default/internal.helpers/get-crud-methods.hl
+
+
+
+
+
+
+/*
+ * Loading router link file, that contains the declaration for
+ * our router links.
+ */
+.router-link-file
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/router-link.html
+
+
+
+
+
+
+/*
+ * Building our components.
+ */
+.components
+add:x:+/+/*
+   get-nodes:x:@.component-files
+add:x:+/*
+   get-nodes:x:@.crud-methods
+add:x:@.components
+   io.files.execute:/misc/templates/angular-default/internal.helpers/create-components.hl
+
+
+
+
+
+
+/*
+ * Retrieving import statements/router declarations, and such for each component we have.
+ */
+.imports
+.imports-only-main
+.routes
+.module-declarations
+.entry-components
+.router-links
+for-each:x:@.crud-methods/*
+
+
+   /*
+    * Import declarations.
+    * TODO: Create template file.
+    */
+   set-value:x:@.imports
+      strings.concat
+         get-value:x:@.imports
+         .:"import { "
+         strings.capitalize:x:@.dp/#/*/component-name
+         .:" } from './components/"
+         get-value:x:@.dp/#/*/component-folder
+         .:"/"
+         get-value:x:@.dp/#/*/component-filename
+         .:"';\r\n"
+         .:"import { "
+         get-value:x:@.dp/#/*/component-edit-name
+         .:" } from './components/"
+         get-value:x:@.dp/#/*/component-folder
+         .:"/modals/"
+         get-value:x:@.dp/#/*/component-edit-filename
+         .:"';\r\n"
+
+
+   /*
+    * Import declarations (only main component imports).
+    * TODO: Create template file.
+    */
+   set-value:x:@.imports-only-main
+      strings.concat
+         get-value:x:@.imports-only-main
+         .:"import { "
+         strings.capitalize:x:@.dp/#/*/component-name
+         .:" } from './components/"
+         get-value:x:@.dp/#/*/component-folder
+         .:"/"
+         get-value:x:@.dp/#/*/component-filename
+         .:"';\r\n"
+
+
+   /*
+    * Router declarations.
+    * TODO: Create template file.
+    */
+   set-value:x:@.routes
+      strings.concat
+         get-value:x:@.routes
+         .:"  { path: '"
+         get-value:x:@.dp/#/*/component-routing-url
+         .:"', component: "
+         get-value:x:@.dp/#/*/component-name
+         .:" },\r\n"
+
+
+   /*
+    * Figuring out roles user must belong to in order to invoke "crud-read" endpoint.
+    */
+   .read-roles
+   for-each:x:@.dp/#/*/verbs/*/get/*/auth/*
+      set-value:x:@.read-roles
+         strings.concat
+            get-value:x:@.read-roles
+            .:", '"
+            get-value:x:@.dp/#
+            .:"'"
+   strings.trim:x:@.read-roles
+      .:", "
+
+
+   /*
+    * Router links.
+    */
+   strings.replace:x:@.router-link-file
+      .:[[read-roles]]
+      get-value:x:@strings.trim
+   strings.replace:x:@strings.replace
+      .:[[url]]
+      get-value:x:@.dp/#/*/component-routing-url
+   strings.replace:x:@strings.replace
+      .:[[name]]
+      get-value:x:@.dp/#/*/component-header
+   set-value:x:@.router-links
+      strings.concat
+         get-value:x:@.router-links
+         get-value:x:@strings.replace
+
+
+   /*
+    * Module declarations.
+    */
+   set-value:x:@.module-declarations
+      strings.concat
+         get-value:x:@.module-declarations
+         .:"    "
+         get-value:x:@.dp/#/*/component-name
+         .:",\r\n"
+         .:"    "
+         get-value:x:@.dp/#/*/component-edit-name
+         .:",\r\n"
+
+
+   /*
+    * Adding entry components, which basically is the Edit modal windows
+    * for each component we have.
+    */
+   set-value:x:@.entry-components
+      strings.concat
+         get-value:x:@.entry-components
+         .:"    "
+         get-value:x:@.dp/#/*/component-edit-name
+         .:",\r\n"
+
+
+
+
+
+
+/*
+ * Replacing any [[imports]], [[imports-only-main]], [[routes]],
+ * etc in any of our main files.
+ */
+for-each:x:@.main-files/*
+
+
+   /*
+    * Replacing [[router-links]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[router-links]]
+         get-value:x:@.router-links
+
+
+   /*
+    * Replacing [[imports]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[imports]]
+         get-value:x:@.imports
+
+
+   /*
+    * Replacing [[imports-only-main]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[imports-only-main]]
+         get-value:x:@.imports-only-main
+
+
+   /*
+    * Replacing [[routes]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[routes]]
+         get-value:x:@.routes
+
+
+   /*
+    * Replacing [[module-declarations]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[module-declarations]]
+         get-value:x:@.module-declarations
+
+
+   /*
+    * Replacing [[entry-components]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[entry-components]]
+         get-value:x:@.entry-components
+
+
+
+
+
+
+/*
+ * Making sure we position our components correctly inside of our zip file.
+ */
+for-each:x:@.components/*
+   set-value:x:@.dp/#
+      strings.concat
+         .:/
+         get-value:x:@.arguments/*/name
+         .:/src/app/components/
+         get-value:x:@.dp/#
+
+
+
+
+
+
+/*
+ * Iterating through each [.main-files] and doing substitutions
+ * according to specifications and META data.
+ *
+ * Notice, this is not completely optimal approach, since according to the
+ * way our template files are looking, we could further have optimised things slightly.
+ * However, to accommodate for future changes, such as for instance having the
+ * name of the app in *any* file we wish, we do things this way, to make sure
+ * we have a substitution process that is as flexible and generic as we possibly can.
+ */
+for-each:x:@.main-files/*/*
+
+
+   /*
+    * Replacing all [[name]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[name]]
+         get-value:x:@.arguments/*/name
+
+
+   /*
+    * Replacing all [[apiUrl]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[apiUrl]]
+         get-value:x:@.arguments/*/apiUrl
+
+
+   /*
+    * Replacing all [[environmentDomain]] occurrencies.
+    */
+   strings.split:x:@.arguments/*/apiUrl
+      .:"://"
+   strings.split:x:-/1
+      .:/
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[environmentDomain]]
+         get-value:x:@strings.split/0
+
+
+   /*
+    * Replacing all [[http-client-service-method-implementations]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[http-client-service-method-implementations]]
+         get-value:x:@.http-service-methods
+
+
+
+
+
+
+/*
+ * Returning transformed files to caller.
+ */
+add:x:+/+
+   get-nodes:x:@.main-files/*
+add:x:+
+   get-nodes:x:@.components/*
+slots.return-nodes
