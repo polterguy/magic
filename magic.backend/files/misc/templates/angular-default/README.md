@@ -1,13 +1,16 @@
 
 # Default Angular frontend template
 
-This folder contains your default Angular template, used during scaffolding your endpoints. It creates an Angular frontend for
-you, with a Material side navigator to the left, a material table, and one component for each of your CRUD read endpoints.
+This is the default Angular template, that comes out of the box with Magic. It creates an Angular frontend for
+you, with a Material side navigator to the left, and one router link for each of your CRUD read endpoints. It
+generates one component and router link for each of your database tables. The CRUD components it creates, will
+be built using an Angular Material table, and have support for sorting, paging and filtering. In addition it
+will support inserting, updating and deleting existing items. Inserting and updating is done through a modal
+Angular Material dialog.
 
-In addition, it allows you to delete, update and create records. Creating records, and updating them, will open up a modal
-dialog, allowing you to edit your entity's fields. This template is highly responsive in nature, and will shrink/grow the
-number of visible columns, according to how wide your browser surface is. It also allows you to page, sort and filter your items
-in its material datagrid/table.
+This template also contains an _"auth"_ component, allowing you to edit and view the users in your Magic
+installation.
 
-This template also contains an authentication/authorization component, allowing you to edit users/roles in your system - In
-addition to a _"change my password"_ component, from where a user can change his existing password if he wants to.
+Below is a screenshot of how it will look like.
+
+![Screenshot](https://servergardens.files.wordpress.com/2020/01/angular-crud-template.png)

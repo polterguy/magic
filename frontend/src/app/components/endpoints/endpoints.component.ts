@@ -254,7 +254,6 @@ export class EndpointsComponent implements OnInit {
     this.selectedTemplate = e.value;
     this.service.getTemplateMarkdown(e.value).subscribe(res => {
       this.templateDescription = res.markdown;
-      console.log(res);
     }, error => {
       this.showError(error.error.message);
     });
