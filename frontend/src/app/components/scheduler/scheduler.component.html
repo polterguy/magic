@@ -15,6 +15,7 @@
     <mat-slide-toggle
       [(checked)]="isRunning"
       (change)="isRunningChanged($event)"
+      matTooltip="Turns on or off the scheduler (all tasks)"
       class="running-button">
       {{schedulerState}}
     </mat-slide-toggle>
