@@ -43,6 +43,9 @@ export class EndpointsComponent implements OnInit {
         };
       });
       this.isFetching = false;
+      if (!this.hasSelectedEndpoints()) {
+        this.showError('You have to crudify at least one database table before there is anything here of interest');
+      }
     }, err => {
       this.showError(err.error.message);
       this.isFetching = false;
@@ -69,6 +72,10 @@ export class EndpointsComponent implements OnInit {
           x.endpoint.auth !== undefined &&
           x.endpoint.auth.filter((y: string) => y === this.filter).length > 0);
     });
+  }
+
+  hasSelectedEndpoints() {
+    return this.endpoints.filter(x => x.selected).length > 0;
   }
 
   getFilteredSystemEndpoints() {
