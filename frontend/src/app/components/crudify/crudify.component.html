@@ -208,6 +208,7 @@
           <th mat-header-cell *matHeaderCellDef>Get</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
+              [disabled]="isVerbDisabled('get')"
               [(ngModel)]="el.get"></mat-checkbox>
           </td>
         </ng-container>
@@ -216,6 +217,7 @@
           <th mat-header-cell *matHeaderCellDef>Put</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
+              [disabled]="isVerbDisabled('put')"
               [(ngModel)]="el.put"></mat-checkbox>
           </td>
         </ng-container>
@@ -224,6 +226,7 @@
           <th mat-header-cell *matHeaderCellDef>Post</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
+              [disabled]="isVerbDisabled('post')"
               [(ngModel)]="el.post"></mat-checkbox>
           </td>
         </ng-container>
@@ -232,6 +235,7 @@
           <th mat-header-cell *matHeaderCellDef>Delete</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
+              [disabled]="isVerbDisabled('delete')"
               [(ngModel)]="el.delete"></mat-checkbox>
           </td>
         </ng-container>

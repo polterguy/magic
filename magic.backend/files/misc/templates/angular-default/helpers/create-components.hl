@@ -112,7 +112,7 @@ for-each:x:@.arguments/*/.crud-methods/*
             update-input:
 
             // How many columns our table contains.
-            container-count:int:1
+            container-count:int:0
 
             // All table column declarations. (normally HTML)
             ng-containers
@@ -313,6 +313,32 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
+          * Figuring out if we have a crud-delete endpoint associated
+          * with the current crud-read endpoint, and if we do, we make
+          * sure the delete column is visible.
+          */
+         if
+            exists:x:@.dp/#/*/verbs/*/delete
+            .lambda
+
+
+               /*
+                * Adding one additional column to [container-count]
+                */
+               set-value:x:@.substitutions/*/container-count
+                  math.increment:x:@.substitutions/*/container-count
+
+
+               /*
+                * Adding "delete-instance" to [displayed-columns]
+                */
+               set-value:x:@.substitutions/*/displayed-columns
+                  strings.concat
+                     get-value:x:@.substitutions/*/displayed-columns
+                     .:", 'delete-instance'"
+
+
+         /*
           * Making sure we remove redundant commas and spaces from [.substitutions]/[displayed-columns].
           */
          set-value:x:@.substitutions/*/displayed-columns
@@ -323,6 +349,7 @@ for-each:x:@.arguments/*/.crud-methods/*
          /*
           * Iterating through each component file, to do our substitutions.
           */
+         .log.info:x:@.substitutions
          for-each:x:@.arguments/*/.component-files/*
 
 

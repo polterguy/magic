@@ -139,6 +139,8 @@ export class CrudifyComponent implements OnInit {
 
     // User changes his active database
     this.selectedDatabase = e.value;
+    this.selectedTable = '';
+    this.overwrite = false;
     this.tables = [];
     this.columns = [];
     this.validators = [];
@@ -233,6 +235,11 @@ export class CrudifyComponent implements OnInit {
         this.moduleUrl = value;
         break;
     }
+  }
+
+  isVerbDisabled(verb: string) {
+    var endpoint = this.endpoints.filter(x => x.verb == verb)[0];
+    return !endpoint.generate;
   }
 
   showCache() {
@@ -359,10 +366,11 @@ slots.signal:transformers.hash-password
     // Checking if we're done.
     if (tables.length === 0) {
       this.isCrudifying = false;
-      this.selectedTable = '';
+      this.selectedTable = 'All tables';
       this.columns = [];
       this.endpoints = [];
-      this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} lines of code created successfully`);
+      this.overwrite = true;
+      this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} lines of code created successfully. You might want to overwrite individual table endpoints for special cases now.`);
       return;
     }
     const current = tables[0];
@@ -370,14 +378,27 @@ slots.signal:transformers.hash-password
     this.selectedTable = this.currentlyCrudifying;
     this.setModuleUrl(this.selectedTable);
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
-      this.columns = res;
-      this.endpoints = this.verbs.map(x => {
+      this.columns = res.map(x => {
+        return {
+          name: x.name,
+          db: x.db,
+          nullable: x.nullable,
+          primary: x.primary,
+          automatic: x.automatic,
+          hl: x.hl,
+          get: true,
+          put: x.primary || !x.automatic,
+          post: !x.automatic,
+          delete: x.primary,
+        }
+      });
+    this.endpoints = this.verbs.map(x => {
         return {
           endpoint: this.selectedDatabase + '/' + this.selectedTable,
           verb: x.verb,
           action: x.action,
           auth: this.defaultAuth,
-          generate: true
+          generate: true,
         };
       });
       this.validators = this.columns
