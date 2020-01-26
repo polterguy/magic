@@ -39,6 +39,13 @@ export class Edit[[component-name]] {
     private snackBar: MatSnackBar,
     private service: HttpService) { }
 
+  canEditColumn(name: string) {
+    if (this.data.isEdit) {
+      return this.updateColumns.filter(x => x === name).length > 0;
+    }
+    return this.createColumns.filter(x => x === name).length > 0;
+  }
+
   /*
    * Invoked when the user clicks the "Save" button.
    */

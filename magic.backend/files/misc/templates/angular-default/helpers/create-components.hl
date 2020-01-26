@@ -18,12 +18,18 @@
 
 
 /*
- * Loading column file, that contains the declaration for
- * a single column.
+ * Loading column file, that contains the HTML markup for a single
+ * column.
  */
 .column-file
 set-value:x:-
    io.files.load:/misc/templates/angular-default/templates/column.html
+
+
+// Long specialisation for HTML markup column file.
+.column-file.long
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/column.long.html
 
 
 
@@ -59,6 +65,18 @@ set-value:x:-
    io.files.load:/misc/templates/angular-default/templates/form-field.html
 
 
+// Long specialisation of column HTML markup file.
+.form-field-file.long
+set-value:x:@.form-field-file.long
+   io.files.load:/misc/templates/angular-default/templates/form-field.long.html
+
+
+// Date specialisation of column HTML markup file.
+.form-field-file.date
+set-value:x:@.form-field-file.date
+   io.files.load:/misc/templates/angular-default/templates/form-field.date.html
+
+
 
 
 /*
@@ -68,6 +86,12 @@ set-value:x:-
 .form-control-instantiation-file
 set-value:x:-
    io.files.load:/misc/templates/angular-default/templates/form-control-instantiations.ts
+
+
+// String specialisation of form control instantiation file.
+.form-control-instantiation-file.string
+set-value:x:@.form-control-instantiation-file.string
+   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations.string.ts
 
 
 
@@ -228,9 +252,14 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Dynamically creating our datagrid parts.
+          * Dynamically creating our datagrid parts, which only show
+          * the parts we can supply as we create items, implying non-primary
+          * key fields.
+          *
+          * Notice, this also creates form edit/create controls for
+          * modal dialog editor window.
           */
-         for-each:x:@.dp/#/*/verbs/*/get/*/output/*
+         for-each:x:@.dp/#/*/verbs/*/post/*/input/*
 
 
             /*
@@ -265,38 +294,120 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Making sure we correctly instantiate our TypeScript instance.
+             * Making sure we correctly create our HTML markup for column.
+             *
+             * Notice, some types have specialized implementations here.
              */
-            set-value:x:@.substitutions/*/form-fields
-               strings.concat
-                  get-value:x:@.substitutions/*/form-fields
-                  strings.replace:x:@.form-field-file
-                     .:[[column-name]]
-                     get-name:x:@.dp/#
+            switch:x:@.dp/#
+
+
+               /*
+                * Long type.
+                */
+               case:long
+               case:int
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file.long
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Date type.
+                */
+               case:date
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file.date
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
 
 
             /*
              * Making sure we correctly instantiate our TypeScript instance.
+             *
+             * Notice, some types have specialized implementations here.
              */
-            set-value:x:@.substitutions/*/form-controls-instantiations
-               strings.concat
-                  get-value:x:@.substitutions/*/form-controls-instantiations
-                  strings.replace:x:@.form-control-instantiation-file
-                     .:[[column-name]]
-                     get-name:x:@.dp/#
+            switch:x:@.dp/#
+
+
+               /*
+                * String type.
+                */
+               case:string
+                  set-value:x:@.substitutions/*/form-controls-instantiations
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-controls-instantiations
+                        strings.replace:x:@.form-control-instantiation-file.string
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/form-controls-instantiations
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-controls-instantiations
+                        strings.replace:x:@.form-control-instantiation-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
 
 
             /*
              * Appending currently iterated column to [.ng-containers].
              *
-             * Notice, the contents for this is declared in our "column.html" file.
+             * Notice, some types have specialized implementations here.
              */
-            set-value:x:@.substitutions/*/ng-containers
-               strings.concat
-                  get-value:x:@.substitutions/*/ng-containers
-                  strings.replace:x:@.column-file
-                     .:[[column-name]]
-                     get-name:x:@.dp/#
+            switch:x:@.dp/#
+
+
+               /*
+                * Long type.
+                */
+               case:long
+               case:int
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file.long
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+         /*
+          * Creating our vie details part, which shows everything our read
+          * endpoint returns.
+          */
+         for-each:x:@.dp/#/*/verbs/*/get/*/output/*
 
 
             /*

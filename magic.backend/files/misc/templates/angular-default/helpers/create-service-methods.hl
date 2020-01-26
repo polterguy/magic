@@ -21,7 +21,7 @@ for-each:x:@.arguments/*/endpoints/*
    set-value:x:@.method-name
       strings.concat
          strings.replace-not-of:x:@strings.split/0/-
-            .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+            .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
             .:_
          .:_
          strings.capitalize:x:@.dp/#/*/verb

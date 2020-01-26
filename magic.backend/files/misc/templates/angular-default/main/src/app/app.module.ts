@@ -18,6 +18,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 // Importing "oauth0" to help out with our JWT tokens.
 import { JwtModule } from '@auth0/angular-jwt';
@@ -81,6 +83,8 @@ export function tokenGetter() {
     MatDialogModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatMomentDateModule,
   ],
   providers: [
     LoaderService, {
