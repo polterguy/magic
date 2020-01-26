@@ -21,7 +21,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
    strings.split:x:@.dp/#/*/path
       .:/
    strings.replace-not-of:x:@strings.split/0/-
-      .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+      .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
       .:_
 
    // Component selector.
@@ -112,7 +112,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
              * Cleaning up method name, in case it has 'funny characters'.
              */
             strings.replace-not-of:x:@strings.concat
-               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
                .:_
 
 
@@ -160,7 +160,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             strings.split:x:@for-each/@.dp/#/*/path
                .:/
             strings.replace-not-of:x:@strings.split/0/-
-               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_
+               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
                .:_
             strings.concat
                get-value:x:@strings.replace-not-of
@@ -181,5 +181,4 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 /*
  * Returning results to caller.
  */
-log.info:x:@.result/*
 slots.return-nodes:x:@.result/*
