@@ -1,8 +1,3 @@
-/*
- * Magic, Copyright(c) Thomas Hansen 2019 - 2020, thomas@servergardens.com, all rights reserved.
- * See the enclosed LICENSE file for details.
- */
-
 // Angular core imports.
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';

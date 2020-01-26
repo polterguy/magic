@@ -101,12 +101,19 @@
             text-align: right;
             margin-top: 2rem;
         }
-        .app-name {
-            margin-right: 2rem;
-            width: 20rem;
-        }
-        .generate-template {
-            margin-right: 2rem;
+        .generate-args {
+            margin-top: 5rem;
+            .app-name {
+                margin-right: 2rem;
+                width: 10rem;
+            }
+            .generate-template {
+                margin-right: 2rem;
+            }
+            .generate-copyright {
+                margin-right: 2rem;
+                width: 20rem;
+            }
         }
     }
 }

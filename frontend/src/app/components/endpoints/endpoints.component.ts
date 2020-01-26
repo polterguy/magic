@@ -25,6 +25,7 @@ export class EndpointsComponent implements OnInit {
   private templates: string[] = [];
   private selectedTemplate = '';
   private templateDescription = '';
+  private copyright = '';
 
   constructor(
     private service: EndpointService,
@@ -233,7 +234,8 @@ export class EndpointsComponent implements OnInit {
       endpoints: toGenerate,
       apiUrl: environment.apiURL,
       name: this.name,
-      templateName: 'angular-default',
+      templateName: this.selectedTemplate,
+      copyright: this.copyright,
     };
     this.isFetching = true;
     this.service.generate(args).subscribe(res => {
