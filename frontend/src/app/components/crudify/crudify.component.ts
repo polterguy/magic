@@ -21,6 +21,7 @@ export class CrudifyComponent implements OnInit {
   // Databases, tables, and selected instances of such.
   private databaseTypes = ['mysql', 'mssql'];
   private moduleName: string = null;
+  private defaultAuth = 'root';
   private moduleUrl: string = null;
   private databaseType: string;
   private databases: any[] = null;
@@ -185,7 +186,7 @@ export class CrudifyComponent implements OnInit {
             endpoint: this.selectedDatabase + '/' + this.selectedTable,
             verb: x.verb,
             action: x.action,
-            auth: 'root',
+            auth: this.defaultAuth,
             generate: x.verb === 'get' || x.verb === 'post' || generateChange,
             allowChange: generateChange,
             log: ''
@@ -363,7 +364,7 @@ slots.signal:transformers.hash-password
           endpoint: this.selectedDatabase + '/' + this.selectedTable,
           verb: x.verb,
           action: x.action,
-          auth: 'root',
+          auth: this.defaultAuth,
           generate: true
         };
       });
