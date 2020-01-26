@@ -16,7 +16,6 @@
    overwrite:bool
    args
    validators
-   secretFields
 .description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
 
 
@@ -319,37 +318,6 @@ io.folders.create:x:@.folder
 
 
 /*
- * Making sure we remove all [secretFields].
- */
-if
-   and
-      not
-         eq
-            get-value:x:@.arguments/*/secretFields
-            .:
-      not
-         eq
-            get-value:x:@.arguments/*/secretFields
-            .
-   .lambda
-
-
-      /*
-       * Caller supplied secret fields, which are supposed to be hidden.
-       */
-      strings.split:x:@.arguments/*/secretFields
-         .:,
-      for-each:x:-/*
-         for-each:x:@apply/*/wait.slots.signal/*/columns/*
-            if
-               eq
-                  get-name:x:@.dp/#
-                  get-value:x:@for-each/@.dp/#
-               .lambda
-                  remove-node:x:@.dp/#
-
-
-/*
  * Transforming lambda to hyper,
  * and saving it to the correct file.
  */
@@ -384,7 +352,7 @@ if
          get-value:x:@.arguments/*/overwrite
       io.files.exists:x:@strings.replace
    .lambda
-      throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+      throw:"That module already exists. If you want to re-create it, please check off 'Overwrite'."
 
 
 /*

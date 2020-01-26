@@ -14,5 +14,4 @@ export class CrudifyModel {
     log: string;
     validators: string;
     overwrite: boolean;
-    secretFields: string;
 }
