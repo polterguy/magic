@@ -20,7 +20,7 @@
   </mat-form-field>
 
   <mat-form-field
-    *ngIf="databases !== null"
+    *ngIf="databases.length > 0"
     class="crudify-input">
     <mat-select
       placeholder="Select database"
@@ -32,29 +32,7 @@
   </mat-form-field>
 
   <mat-form-field
-    *ngIf="tables !== null"
-    class="crudify-input">
-    <input 
-      matInput 
-      autocomplete="off"
-      type="text" 
-      placeholder="Module name"
-      [(ngModel)]="moduleName">
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="tables !== null"
-    class="crudify-input">
-    <input 
-      matInput 
-      autocomplete="off"
-      type="text" 
-      placeholder="Default auth"
-      [(ngModel)]="defaultAuth">
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="tables !== null"
+    *ngIf="tables.length > 0"
     class="crudify-input">
     <mat-select
       placeholder="Select table"
@@ -66,7 +44,29 @@
   </mat-form-field>
 
   <mat-form-field
-    *ngIf="selectedTable !== null && selectedTable !== 'All tables' && selectedTable !== 'Custom SQL'"
+    *ngIf="tables.length > 0 && selectedTable !== ''"
+    class="crudify-input">
+    <input 
+      matInput 
+      autocomplete="off"
+      type="text" 
+      placeholder="Module name"
+      [(ngModel)]="moduleName">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="tables.length > 0 && selectedTable !== ''"
+    class="crudify-input">
+    <input 
+      matInput 
+      autocomplete="off"
+      type="text" 
+      placeholder="Default auth"
+      [(ngModel)]="defaultAuth">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="selectedTable !== '' && selectedTable !== 'All tables' && selectedTable !== 'Custom SQL'"
     class="crudify-input">
     <input 
       matInput 
@@ -77,24 +77,26 @@
   </mat-form-field>
 
   <mat-checkbox
-    *ngIf="selectedTable !== null"
+    *ngIf="selectedTable !== ''"
     class="crudify-input"
     matTooltip="Overwrite existing endpoints"
     [(ngModel)]="overwrite">Overwrite</mat-checkbox>
 
   <button 
-    *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
+    *ngIf="selectedTable !== '' && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     matTooltip="Generates CRUD endpoints for your table"
     mat-raised-button
     color="primary"
+    [disabled]="moduleUrl === '' || moduleName === ''"
     class="crudify-input crudify-button"
     (click)="crudifyTable()">Crudify</button>
 
   <button 
-    *ngIf="selectedTable !== null && selectedTable === 'All tables'"
+    *ngIf="selectedTable !== '' && selectedTable === 'All tables'"
     matTooltip="CRUDifies all tables in database"
     mat-raised-button
     color="primary"
+    [disabled]="moduleName === ''"
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
 
@@ -153,14 +155,17 @@
   </mat-card>
 
   <mat-card 
-    *ngIf="columns !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
+    *ngIf="columns.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     class="columns-card">
 
     <div class="wrapper">
 
       <h3>Columns</h3>
 
-      <table mat-table class="columns" [dataSource]="columns">
+      <table
+        mat-table
+        class="columns"
+        [dataSource]="columns">
 
         <ng-container matColumnDef="field">
           <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -174,17 +179,61 @@
 
         <ng-container matColumnDef="nullable">
           <th mat-header-cell *matHeaderCellDef>Nullable</th>
-          <td mat-cell *matCellDef="let el">{{el.nullable}}</td>
+          <td mat-cell *matCellDef="let el">
+            <mat-icon
+              *ngIf="el.nullable"
+              matSuffix>done</mat-icon>
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="primary">
           <th mat-header-cell *matHeaderCellDef>Primary key</th>
-          <td mat-cell *matCellDef="let el">{{el.primary}}</td>
+          <td mat-cell *matCellDef="let el">
+            <mat-icon
+              *ngIf="el.primary"
+              matSuffix>done</mat-icon>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="automatic">
           <th mat-header-cell *matHeaderCellDef>Automatic</th>
-          <td mat-cell *matCellDef="let el">{{el.automatic}}</td>
+          <td mat-cell *matCellDef="let el">
+            <mat-icon
+              *ngIf="el.automatic"
+              matSuffix>done</mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="get">
+          <th mat-header-cell *matHeaderCellDef>Get</th>
+          <td mat-cell *matCellDef="let el">
+            <mat-checkbox
+              [(ngModel)]="el.get"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="put">
+          <th mat-header-cell *matHeaderCellDef>Put</th>
+          <td mat-cell *matCellDef="let el">
+            <mat-checkbox
+              [(ngModel)]="el.put"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="post">
+          <th mat-header-cell *matHeaderCellDef>Post</th>
+          <td mat-cell *matCellDef="let el">
+            <mat-checkbox
+              [(ngModel)]="el.post"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delete">
+          <th mat-header-cell *matHeaderCellDef>Delete</th>
+          <td mat-cell *matCellDef="let el">
+            <mat-checkbox
+              [(ngModel)]="el.delete"></mat-checkbox>
+          </td>
         </ng-container>
   
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -197,19 +246,22 @@
   </mat-card>
 
   <mat-card 
-    *ngIf="endpoints !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
+    *ngIf="endpoints.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     class="endpoints-card">
 
     <div class="wrapper">
 
         <h3>Endpoints</h3>
 
-        <table mat-table class="endpoints" [dataSource]="endpoints">
+        <table
+          mat-table
+          class="endpoints"
+          [dataSource]="endpoints">
 
         <ng-container matColumnDef="generate">
           <th mat-header-cell *matHeaderCellDef>Generate</th>
           <td mat-cell *matCellDef="let el">
-            <mat-checkbox [disabled]="disableGeneratorForVerb(el)" [(ngModel)]="el.generate"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="el.generate"></mat-checkbox>
           </td>
         </ng-container>
 
@@ -266,7 +318,7 @@
   </mat-card>
 
   <mat-card 
-    *ngIf="endpoints !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables' && (showTransformers() || showCache())"
+    *ngIf="endpoints.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables' && (showTransformers() || showCache())"
     class="misc-card">
 
     <div class="wrapper">

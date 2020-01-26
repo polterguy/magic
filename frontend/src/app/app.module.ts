@@ -19,6 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -103,6 +104,7 @@ export function tokenGetter() {
     MatCheckboxModule,
     MatSlideToggleModule,
     MatDatepickerModule,
+    MatIconModule,
     MatProgressSpinnerModule,
     MatMomentDateModule,
     CodemirrorModule,
