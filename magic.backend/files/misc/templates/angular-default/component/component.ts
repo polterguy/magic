@@ -30,6 +30,7 @@ export class [[component-name]] implements OnInit {
   private data: any[];
 
   // Which columns we should display. Reorder to prioritize columns differently.
+  // Notice! 'delete-instance' should always come last!
   private displayedColumns: string[] = [[[displayed-columns]]];
 
   // Current filter being applied to filter items from our backend.
@@ -168,6 +169,8 @@ export class [[component-name]] implements OnInit {
       this.filter.order = column;
       this.filter.direction = 'asc';
     }
+    this.paginator.pageIndex = 0;
+    this.filter.offset = 0;
     this.getData(false);
   }
 
@@ -334,8 +337,13 @@ export class [[component-name]] implements OnInit {
   // Invoked when pager is paged.
   paged(e: PageEvent) {
     this.viewDetails = [];
-    this.filter.limit = e.pageSize;
-    this.filter.offset = e.pageIndex * e.pageSize;
+    if (this.filter.limit !== e.pageSize) {
+      this.filter.limit = e.pageSize;
+      this.paginator.pageIndex = 0;
+      this.filter.offset = 0;
+    } else {
+      this.filter.offset = e.pageIndex * e.pageSize;
+    }
     this.getData(false);
   }
 
