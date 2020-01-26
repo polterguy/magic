@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { CrudifyModel } from '../models/crudify-model';
 import { CustomSQLModel } from '../models/custom-sql-model';
 import { CrudifyResult } from '../models/endpoint-result-model';
+import { Column } from '../models/column';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class CrudifyService {
   }
 
   public getColumns(databaseType: string, database: string, table: string) {
-    return this.httpClient.get<any[]>(
+    return this.httpClient.get<Column[]>(
       environment.apiURL +
       'magic/modules/system/crudifier/columns?databaseType=' + encodeURIComponent(databaseType) +
       '&database=' + encodeURIComponent(database) +

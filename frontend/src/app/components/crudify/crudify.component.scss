@@ -58,6 +58,13 @@
     }
 }
 
+.info-card {
+    margin-top: 2rem;
+    .wrapper {
+        margin: 2rem 1rem 4rem 1rem;
+    }
+}
+
 .columns-card {
     margin-top: 2rem;
     .wrapper {
@@ -66,7 +73,12 @@
             width: 100%;
             tr {
                 td, th {
-                    width: 16%;
+                    width: 25%;
+                }
+                td:nth-child(3), th:nth-child(3),
+                td:nth-child(4), th:nth-child(4),
+                td:nth-child(5), th:nth-child(5) {
+                    width: 10%;
                 }
                 td:nth-child(6), th:nth-child(6),
                 td:nth-child(7), th:nth-child(7),
@@ -77,7 +89,6 @@
             }
             tr.mat-row:hover {
                 background-color: rgba(0,0,0,.1);
-                cursor: pointer;
             }
         }
     }
@@ -119,7 +130,6 @@
             }
             tr.mat-row:hover {
                 background-color: rgba(0,0,0,.1);
-                cursor: pointer;
             }
         }
     }
