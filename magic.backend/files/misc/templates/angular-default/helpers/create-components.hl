@@ -252,12 +252,10 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Dynamically creating our datagrid parts, which only show
-          * the parts we can supply as we create items, implying non-primary
-          * key fields.
-          *
-          * Notice, this also creates form edit/create controls for
-          * modal dialog editor window.
+          * Dynamically creating our datagrid parts, and our for control
+          * for editing entities. Notice, this is done according to the input
+          * the create/POST endpoint requires, since this is most likely non-primary
+          * keys, and columns that does not have automatic values.
           */
          for-each:x:@.dp/#/*/verbs/*/post/*/input/*
 
