@@ -1,8 +1,3 @@
-/*
- * Magic, Copyright(c) Thomas Hansen 2019 - 2020, thomas@servergardens.com, all rights reserved.
- * See the enclosed LICENSE file for details.
- */
-
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/services/auth-service';

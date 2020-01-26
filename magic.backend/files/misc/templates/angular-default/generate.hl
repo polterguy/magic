@@ -426,10 +426,71 @@ for-each:x:@.main-files/*/*
 
 
 /*
- * Returning transformed files to caller.
+ * Adding all generated files to return value.
  */
-add:x:+/+
+add:x:../*/slots.return-nodes
    get-nodes:x:@.main-files/*
-add:x:+
+add:x:../*/slots.return-nodes
    get-nodes:x:@.components/*
+
+
+
+
+
+
+/*
+ * Applying copyright, if given.
+ */
+if
+   and
+      not
+         eq
+            get-value:x:@.arguments/*/copyright
+            .:
+      not
+         eq
+            get-value:x:@.arguments/*/copyright
+            .
+   .lambda
+
+
+      /*
+       * Copyright notice was supplied.
+       */
+      for-each:x:../*/slots.return-nodes/*
+         if
+            or
+               strings.ends-with:x:@.dp/#
+                  .:.ts
+               strings.ends-with:x:@.dp/#
+                  .:.js
+               strings.ends-with:x:@.dp/#
+                  .:.css
+               strings.ends-with:x:@.dp/#
+                  .:.scss
+               strings.ends-with:x:@.dp/#
+                  .:.sass
+            .lambda
+
+
+               /*
+                * Currently iterated file is of a type that can tolerate
+                * having a copyright header comment.
+                */
+               set-value:x:@.dp/#/*
+                  strings.concat
+                     .:"/*\r\n"
+                     .:" * "
+                     get-value:x:@.arguments/*/copyright
+                     .:"\r\n */\r\n\r\n"
+                     get-value:x:@.dp/#/*
+
+
+
+
+
+
+/*
+ * Returning all generated files to caller.
+ */
 slots.return-nodes

@@ -2,11 +2,12 @@
 /*
  * Generates a frontend for you.
  */
-.description:"Generates a frontend for you, according to the given arguments. Notice, the [templateName] becomes a reference to which generator to use."
+.description:"Generates a frontend for you, according to the given arguments. Notice, the [templateName] becomes a reference to which template/generator to use."
 .arguments
    templateName:string
    apiUrl:string
    name:string
+   copyright:string
    endpoints
 
 
@@ -36,6 +37,7 @@ unwrap:x:+/*
 io.files.execute:x:@strings.concat
    apiUrl:x:@.arguments/*/apiUrl
    name:x:@.arguments/*/name
+   copyright:x:@.arguments/*/copyright
 
 
 

@@ -13,4 +13,6 @@ installation.
 
 Below is a screenshot of how it will look like.
 
-![Screenshot](https://servergardens.files.wordpress.com/2020/01/angular-crud-template.png)
+<div class="image-container">
+    <img src="https://servergardens.files.wordpress.com/2020/01/angular-crud-template.png" alt="Screenshot of template">
+</div>

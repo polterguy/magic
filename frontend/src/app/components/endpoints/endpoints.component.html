@@ -157,8 +157,11 @@
         *matRowDef="let row; columns: displayedSecondRowColumns; "></tr>
 
     </table>
-    <div class="right-aligned">
-      <mat-form-field class="app-name">
+
+    <div class="generate-args">
+
+      <mat-form-field
+        class="app-name">
         <input 
           matInput 
           autocomplete="off"
@@ -166,6 +169,7 @@
           type="text" 
           [(ngModel)]="name">
       </mat-form-field>
+
       <mat-form-field
         class="generate-template">
         <mat-select
@@ -176,15 +180,28 @@
             [value]="cur">{{cur}}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field
+        class="generate-copyright">
+        <input
+          matInput
+          autocomplete="off"
+          placeholder="Copyright notice for your app"
+          type="text"
+          [(ngModel)]="copyright">
+      </mat-form-field>
+
       <button
         mat-raised-button
         [disabled]="selectedTemplate === '' || name === ''"
         color="primary"
         matTooltip="Generates the selected endpoints by applying them to your selected template"
         (click)="generateFrontEnd()">Generate</button>
+
     </div>
 
-    <div [innerHTML]="templateDescription | marked"></div>
+    <div
+      [innerHTML]="templateDescription | marked"></div>
 
   </div>
 </div>
