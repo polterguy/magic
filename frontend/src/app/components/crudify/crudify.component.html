@@ -45,6 +45,17 @@
   <mat-form-field
     *ngIf="tables !== null"
     class="crudify-input">
+    <input 
+      matInput 
+      autocomplete="off"
+      type="text" 
+      placeholder="Default auth"
+      [(ngModel)]="defaultAuth">
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="tables !== null"
+    class="crudify-input">
     <mat-select
       placeholder="Select table"
       (selectionChange)="tableChanged($event)">
@@ -74,14 +85,16 @@
   <button 
     *ngIf="selectedTable !== null && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
     matTooltip="Generates CRUD endpoints for your table"
-    mat-button
+    mat-raised-button
+    color="primary"
     class="crudify-input crudify-button"
     (click)="crudifyTable()">Crudify</button>
 
   <button 
     *ngIf="selectedTable !== null && selectedTable === 'All tables'"
     matTooltip="CRUDifies all tables in database"
-    mat-button
+    mat-raised-button
+    color="primary"
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
 
