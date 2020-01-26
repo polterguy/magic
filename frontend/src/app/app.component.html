@@ -21,6 +21,13 @@
   <a 
     *ngIf="isLoggedIn()"
     mat-button 
+    routerLink="/crudify" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Crudify</a>
+
+  <a 
+    *ngIf="isLoggedIn()"
+    mat-button 
     routerLink="/users" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Users</a>
@@ -31,13 +38,6 @@
     routerLink="/roles" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Roles</a>
-
-  <a 
-    *ngIf="isLoggedIn()"
-    mat-button 
-    routerLink="/crudify" 
-    routerLinkActive="active-link" 
-    [routerLinkActiveOptions]="{exact:true}">Crudify</a>
 
   <a 
     *ngIf="isLoggedIn()"
@@ -123,7 +123,8 @@
     <div class="right-aligned">
       <button
         [disabled]="!connectedToBackend"
-        mat-button
+        mat-raised-button
+        color="primary"
         (click)="login()"
         matTooltip="Login to your Magic installation">Login</button>
     </div>

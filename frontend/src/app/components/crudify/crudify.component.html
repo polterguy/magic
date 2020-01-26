@@ -233,6 +233,7 @@
           <td mat-cell *matCellDef="let el">
             <mat-icon
               *ngIf="el.nullable"
+              matTooltip="This column can be supplied a 'null' value"
               matSuffix>done</mat-icon>
             </td>
         </ng-container>
@@ -242,6 +243,7 @@
           <td mat-cell *matCellDef="let el">
             <mat-icon
               *ngIf="el.primary"
+              matTooltip="This is a part of your table's primary key"
               matSuffix>done</mat-icon>
           </td>
         </ng-container>
@@ -251,6 +253,7 @@
           <td mat-cell *matCellDef="let el">
             <mat-icon
               *ngIf="el.automatic"
+              matTooltip="This column has a default value in your database"
               matSuffix>done</mat-icon>
           </td>
         </ng-container>
