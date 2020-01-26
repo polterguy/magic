@@ -9,9 +9,10 @@
       [options]="getCodeMirrorOptions()"></ngx-codemirror>
     </div>
 
-    <div class="right-aligned">
+    <div class="execute-button">
       <button 
-        mat-button
+        mat-raised-button
+        color="primary"
         matTooltip="Evaluates your Hyperlambda"
         (click)="evaluate()">Evaluate</button>
     </div>

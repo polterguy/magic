@@ -5,7 +5,15 @@
 </div>
 <div mat-dialog-actions>
   <div style="width:100%; text-align: right;">
-    <button mat-button [mat-dialog-close]="data.file">Ok</button>
-    <button mat-button (click)="close()">Close</button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      [mat-dialog-close]="data.file">Ok</button>
+
+    <button
+      mat-button
+      (click)="close()">Close</button>
+
   </div>
 </div>

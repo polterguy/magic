@@ -1,6 +1,7 @@
 
 <h1 mat-dialog-title>New task</h1>
 <div mat-dialog-content>
+
   <mat-form-field style="width: 20%;">
     <input 
       matInput
@@ -8,6 +9,7 @@
       placeholder="Task name"
       autocomplete="off">
   </mat-form-field>
+
   <mat-form-field style="margin-left: 2rem; width: 20%;">
     <mat-select placeholder="Repetition pattern" (selectionChange)="repetitionChanged($event)">
       <mat-option value="seconds">Every second</mat-option>
@@ -20,6 +22,7 @@
       <mat-option value="future-date">Once in the future</mat-option>
     </mat-select>
   </mat-form-field>
+
   <mat-form-field 
     *ngIf="shouldDisplayValue()"
     style="margin-left: 2rem; width: 20%;">
@@ -30,6 +33,7 @@
       placeholder="{{getValueName()}}"
       autocomplete="off">
   </mat-form-field>
+
   <mat-form-field
     *ngIf="shouldDisplayDatePicker()"
     style="margin-left: 2rem; width: 20%;">
@@ -43,6 +47,7 @@
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
+
   <mat-form-field 
     style="margin-left: 2rem; width: 20%;"
     *ngIf="shouldDisplayWeekdays()">
@@ -56,6 +61,7 @@
       <mat-option value="Saturday">Saturdays</mat-option>
     </mat-select>
   </mat-form-field>
+
   <mat-form-field 
     *ngIf="shouldDisplayTime()"
     style="margin-left: 2rem; width: 20%;">
@@ -65,6 +71,7 @@
       placeholder="Time"
       autocomplete="off">
   </mat-form-field>
+
   <mat-form-field style="width: 100%;">
     <input 
       matInput
@@ -72,14 +79,24 @@
       placeholder="Task description"
       autocomplete="off">
   </mat-form-field>
-  <ngx-codemirror 
+
+  <ngx-codemirror
     [(ngModel)]="taskHyperlambda" 
     class="smaller"
     [options]="getCodeMirrorOptions()"></ngx-codemirror>
 </div>
+
 <div mat-dialog-actions>
   <div style="width:100%; text-align: right;">
-    <button mat-button (click)="saveTask()">OK</button>
-    <button mat-button (click)="close()">Close</button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="saveTask()">OK</button>
+
+    <button
+      mat-button
+      (click)="close()">Close</button>
+
   </div>
 </div>
