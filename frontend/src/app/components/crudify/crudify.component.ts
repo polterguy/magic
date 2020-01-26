@@ -4,6 +4,43 @@ import { CrudifyService } from 'src/app/services/crudify-service';
 import { MatSelectChange, MatSnackBar, MatDialog } from '@angular/material';
 import { CrudifyResult } from 'src/app/models/endpoint-result-model';
 import { CreateValidatorDialogComponent } from './modals/create-validator-dialog';
+import { Column } from 'src/app/models/column';
+
+// A single column, and its meta information.
+class ColumnModel {
+  name: string;
+  db: string;
+  nullable: boolean;
+  primary: boolean;
+  automatic: boolean;
+  hl: string;
+  get: boolean;
+  put: boolean;
+  post: boolean;
+  delete: boolean;
+}
+
+// A single verb, and its associated CRUD method.
+class VerbModel {
+  verb: string;
+  action: string;
+}
+
+// A single validator, its field, and its content.
+class ValidatorModel {
+  field: string;
+  validator: string;
+}
+
+// A single endpoint, and its associated data to be used during generating endpoint.
+class EndpointModel {
+  endpoint: string;
+  verb: string;
+  action: string;
+  auth: string;
+  generate: boolean;
+  log: string;
+}
 
 @Component({
   selector: 'app-crudify',
@@ -19,9 +56,9 @@ export class CrudifyComponent implements OnInit {
     'nullable',
     'primary',
     'automatic',
+    'post',
     'get',
     'put',
-    'post',
     'delete'
   ];
 
@@ -50,8 +87,8 @@ export class CrudifyComponent implements OnInit {
   private selectedDatabase = '';
   private selectedTable = '';
   private caching: number;
-  private columns: any[] = [];
-  private validators: any[] = [];
+  private columns: ColumnModel[] = [];
+  private validators: ValidatorModel[] = [];
   private overwrite = false;
   isCrudifying = false;
   noEndpointsCreated = 0;
@@ -59,13 +96,13 @@ export class CrudifyComponent implements OnInit {
   currentlyCrudifying = '';
 
   // Endpoints that will be created
-  private endpoints: any[] = [];
+  private endpoints: EndpointModel[] = [];
 
   // Custom SQL that will be created, if any
   private customSql: string;
 
   // All verbs, and their CRUD associations
-  private verbs = [
+  private verbs: VerbModel[] = [
     {verb: 'post', action: 'create'},
     {verb: 'get', action: 'read'},
     {verb: 'put', action: 'update'},
@@ -190,7 +227,7 @@ export class CrudifyComponent implements OnInit {
   }
 
   // Builds our local data model by mapping from result from HTTP endpoint
-  columnsFetched(res: any) {
+  columnsFetched(res: Column[]) {
     this.columns = res.map(x => {
       return {
         name: x.name,
@@ -378,6 +415,8 @@ slots.signal:transformers.hash-password
       this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} lines of code created successfully. You might want to overwrite individual table endpoints for special cases now.`);
       return;
     }
+
+    // Not done yet, continuing until we've got no more tables.
     const current = tables[0];
     this.currentlyCrudifying = current.table;
     this.selectedTable = this.currentlyCrudifying;

@@ -19,10 +19,18 @@
 .description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
 
 
+
+
+
+
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
+
+
+
+
 
 
 /*
@@ -47,6 +55,30 @@ if
       throw:"You can't use an empty string as your module's name. Your module must have a name."
 
 
+
+
+
+
+/*
+ * Creating a log entry explaining roughly what we're about to do.
+ */
+strings.concat
+   .:"Crudifying '"
+   get-value:x:@strings.to-lower
+   .:"' wrapping '"
+   get-value:x:@.arguments/*/database
+   .:"' and '"
+   get-value:x:@.arguments/*/table
+   .:"' with verb '"
+   get-value:x:@.arguments/*/verb
+   .:"'"
+log.info:x:-
+
+
+
+
+
+
 /*
  * Making sure we create a valid filename.
  */
@@ -57,6 +89,10 @@ set-value:x:-
       .:/
 set-value:x:@.filename
    strings.to-lower:x:@.filename
+
+
+
+
 
 
 /*
@@ -71,6 +107,10 @@ apply:x:@hyper2lambda
    table:x:@.arguments/*/table
    return-id:x:@.arguments/*/returnId
    args
+
+
+
+
 
 
 /*
@@ -102,9 +142,13 @@ for-each:x:@apply/**/=magic.db.xxx.update
          .:.update
 
 
+
+
+
+
 /*
- * Then ensuring we create a log entry, if the caller wants us to do
- * such a thing.
+ * Then ensuring we create a log entry during invocation of endpoint,
+ * if the caller wants us to do such a thing.
  */
 if
    not
@@ -122,6 +166,10 @@ if
                .:" - Arguments: \r\n"
                get-value:x:@lambda2hyper
             log.info:x:@strings.concat
+
+
+
+
 
 
 /*
@@ -149,6 +197,10 @@ if
          hyper2lambda:x:@.arguments/*/validators
 
 
+
+
+
+
 /*
  * Then ensuring we turn on authorization to our endpoints according
  * to caller's specifications, if caller supplied an [auth] value.
@@ -163,6 +215,10 @@ if
       insert-after:x:@apply/*/.arguments
          .
             auth.ticket.verify:x:@.arguments/*/auth
+
+
+
+
 
 
 /*
@@ -296,6 +352,10 @@ switch:x:@.arguments/*/verb
                type:x
 
 
+
+
+
+
 /*
  * Then creating our folder.
  */
@@ -317,6 +377,10 @@ set-value:x:@.folder
 io.folders.create:x:@.folder
 
 
+
+
+
+
 /*
  * Transforming lambda to hyper,
  * and saving it to the correct file.
@@ -335,12 +399,20 @@ set-value:x:@.path
       .:.hl
 
 
+
+
+
+
 /*
  * Figuring out filename for HTTP endpoint.
  */
 strings.replace:x:@.path
    .:' '
    .:_
+
+
+
+
 
 
 /*
@@ -355,6 +427,10 @@ if
       throw:"That module already exists. If you want to re-create it, please check off 'Overwrite'."
 
 
+
+
+
+
 /*
  * Saving file, now applied according to template declaration,
  * and with the correct filename.
@@ -363,10 +439,18 @@ io.files.save:x:@strings.replace
    get-value:x:@lambda2hyper
 
 
+
+
+
+
 /*
  * Calculating how many lines of code we created.
  */
 get-count:x:@apply/*
+
+
+
+
 
 
 /*
@@ -447,6 +531,10 @@ if
          math.add
             get-value:x:@get-count
             get-count:x:@apply/*
+
+
+
+
 
 
 /*

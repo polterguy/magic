@@ -12,6 +12,7 @@
     class="crudify-input">
     <mat-select
       placeholder="Select database type"
+      matTooltip="Select your database type, 'mysql' for MySQL or 'mssql' for Microsoft SQL Server. Notice, your connection string for your selected database type must be valid before you can choose that type of database here."
       (selectionChange)="databaseTypeChanged($event)">
       <mat-option
         *ngFor="let cur of databaseTypes"
@@ -24,6 +25,7 @@
     class="crudify-input">
     <mat-select
       placeholder="Select database"
+      matTooltip="Select which database schema you want to crudify"
       (selectionChange)="databaseChanged($event)">
       <mat-option
         *ngFor="let cur of databases"
@@ -36,6 +38,7 @@
     class="crudify-input">
     <mat-select
       placeholder="Select table"
+      matTooltip="Select which table you want to crudify, or select 'All tables' to crudify the entire database."
       (selectionChange)="tableChanged($event)">
       <mat-option
         *ngFor="let cur of tables"
@@ -49,10 +52,13 @@
     <input 
       matInput 
       autocomplete="off"
-      type="text" 
-      placeholder="Module name"
-      [(ngModel)]="moduleName">
+      type="text"
+      matTooltip="The default authorization roles associated with your endpoints. Supply a comma separated list of roles that are allowed to invoke your endpoints here."
+      placeholder="Default auth"
+      [(ngModel)]="defaultAuth">
   </mat-form-field>
+
+  <br>
 
   <mat-form-field
     *ngIf="tables.length > 0 && selectedTable !== ''"
@@ -61,8 +67,9 @@
       matInput 
       autocomplete="off"
       type="text" 
-      placeholder="Default auth"
-      [(ngModel)]="defaultAuth">
+      matTooltip="Root URL for your generated endpoints. This becomes the root module folder of your CRUD endpoints."
+      placeholder="Module URL 1"
+      [(ngModel)]="moduleName">
   </mat-form-field>
 
   <mat-form-field
@@ -71,8 +78,9 @@
     <input 
       matInput 
       autocomplete="off"
+      matTooltip="The second part of your URL. This becomes the table specific folder for your CRUD endpoints."
       type="text" 
-      placeholder="Module url"
+      placeholder="Module URL 2"
       [(ngModel)]="moduleUrl">
   </mat-form-field>
 
@@ -99,6 +107,46 @@
     [disabled]="moduleName === ''"
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
+
+  <mat-card 
+    *ngIf="selectedTable === '' || selectedTable === 'All tables'"
+    class="info-card">
+
+    <div class="wrapper">
+
+      <h3>Welcome to the crudifier</h3>
+
+      <p>
+        This is where you 'CRUDify' your database. To crudify a database implies wrapping it into
+        HTTP REST API endpoints, one endpoint for each CRUD operation. The possible CRUD operations are as follows.
+      </p>
+
+      <ul>
+        <li><strong>Create</strong> - POST HTTP verb</li>
+        <li><strong>Read</strong> - GET HTTP verb</li>
+        <li><strong>Update</strong> - PUT HTTP verb</li>
+        <li><strong>Delete</strong> - DELETE HTTP verb</li>
+      </ul>
+
+      <p>
+        You can choose each table you want to crudify, or you can crudify all tables at the same time. You
+        can also associate authorization towards one or more of your CRUD operations, in addition to a lot
+        of other settings. If you want more control over how your CRUD operations are
+        generated on the server-side, you might want to crudify one table at the time though.
+        However, the default settings applied as you choose 'All tables' will probably
+        be good enough for most scenarios.
+      </p>
+
+      <p>
+        The Magic crudifier will also create a <em>"count"</em> CRUD endpoint, in addition to the above
+        endpoints. When the crudifier is done, you can invoke your HTTP REST endpoints from your <em>"Endpoints"</em>,
+        menu item, and pass in for instance query parameters to page, filter, sort, and such during read operations.
+        You can also generate a complete Angular frontend from the Endpoints menu item.
+      </p>
+
+    </div>
+
+  </mat-card>
 
   <mat-card 
     *ngIf="selectedTable === 'Custom SQL'"
@@ -160,7 +208,19 @@
 
     <div class="wrapper">
 
-      <h3>Columns</h3>
+      <h3>Columns in table</h3>
+
+      <p>
+        These are all columns in your currently selected table, and the meta information associated with
+        each column. You can turn on/off whether or not each column should be associated with some specific
+        CRUD operation. For instance, if you don't want to allow for changing a specific column after a
+        record has been created, you can turn it off for the 'Update' operation by turning off the checkbox
+        in the 'Update' column for that endpoint, etc.
+        For the 'Delete' and 'Update' operation, each column you select which is a primary key type,
+        will become the condition for which column to delete/update. You normally want to make sure every
+        column that is a primary key is <strong>always associated with your delete and update operations</strong> -
+        Otherwise multiple records might be updated/deleted when you only intend to update/delete one record.
+      </p>
 
       <table
         mat-table
@@ -204,8 +264,17 @@
           </td>
         </ng-container>
 
+        <ng-container matColumnDef="post">
+          <th mat-header-cell *matHeaderCellDef>Create</th>
+          <td mat-cell *matCellDef="let el">
+            <mat-checkbox
+              [disabled]="isVerbDisabled('post')"
+              [(ngModel)]="el.post"></mat-checkbox>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="get">
-          <th mat-header-cell *matHeaderCellDef>Get</th>
+          <th mat-header-cell *matHeaderCellDef>Read</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
               [disabled]="isVerbDisabled('get')"
@@ -214,20 +283,11 @@
         </ng-container>
 
         <ng-container matColumnDef="put">
-          <th mat-header-cell *matHeaderCellDef>Put</th>
+          <th mat-header-cell *matHeaderCellDef>Update</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
               [disabled]="isVerbDisabled('put')"
               [(ngModel)]="el.put"></mat-checkbox>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="post">
-          <th mat-header-cell *matHeaderCellDef>Post</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-checkbox
-              [disabled]="isVerbDisabled('post')"
-              [(ngModel)]="el.post"></mat-checkbox>
           </td>
         </ng-container>
 
@@ -255,7 +315,16 @@
 
     <div class="wrapper">
 
-        <h3>Endpoints</h3>
+        <h3>Endpoints to generate</h3>
+
+        <p>
+          This parts allows you to configure which CRUD operations you want to generate, and what special
+          logic you want to associate with a specific operation. You can for instance have different
+          'Authorization' for your read operations and delete operations, to prevent most normal users to
+          delete records, requiring users to belong to for instance an 'admin' role in order to be allowed
+          to invoke your delete operations, etc. You can also associate a log entry with each endpoint,
+          which probably makes sense for most operations, to log when data is changed.
+        </p>
 
         <table
           mat-table
@@ -270,7 +339,7 @@
         </ng-container>
 
         <ng-container matColumnDef="endpoint">
-          <th mat-header-cell *matHeaderCellDef>Endpoint</th>
+          <th mat-header-cell *matHeaderCellDef>Endpoint URL</th>
           <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').toLowerCase()}}</td>
         </ng-container>
 
@@ -331,6 +400,13 @@
 
         <h3>Caching</h3>
 
+        <p>
+          This allows you to cache your read/GET operations, by informing the client that it can cache the result
+          according to the query parameters, for a specific amount of seconds. This might be highly useful for
+          tables that rarely or never changes, such as lookup tables, and similar types of constructs.
+          If you turn on public cache, you also allow proxies to cache your read operations.
+        </p>
+
         <mat-form-field class="misc-input">
           <input 
             matInput 
@@ -350,6 +426,15 @@
       <div *ngIf="showTransformers()">
 
         <h3>Validators, transformers and injectables</h3>
+
+        <p>
+          This section allows you to declare input reactors for your create and update invocations. An input
+          reactor can be a validator, enforcing some column to conform to some specific server-side validation
+          function, or it can be a transformer, that changes the specified input before it is saved, etc. Passwords
+          for instance, should as a general rule not be saved in clear text. By associating a transformer that hashes
+          your password before actually saving it to your database, you can secure your passwords, preventing
+          malicious users from reading it, in case they should somehow acquire access to your database.
+        </p>
 
         <table mat-table class="validator-table" [dataSource]="validators">
 
