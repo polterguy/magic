@@ -79,6 +79,15 @@ slots.create:magic.db.mysql.columns
           */
          if
             or
+               and
+                  not
+                     eq
+                        get-value:x:@.dp/#/*/Default
+                        .:
+                  not
+                     eq
+                        get-value:x:@.dp/#/*/Default
+                        .
                eq
                   get-value:x:@.dp/#/*/Extra
                   .:auto_increment
