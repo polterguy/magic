@@ -1,0 +1,4 @@
+  <mat-checkbox
+    *ngIf="canEditColumn('[[column-name]]')"
+    class="entity-edit-field"
+    [(ngModel)]="data.entity.[[column-name]]">[[column-name]]</mat-checkbox>

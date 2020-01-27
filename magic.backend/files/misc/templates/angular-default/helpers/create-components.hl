@@ -38,6 +38,12 @@ set-value:x:-
    io.files.load:/misc/templates/angular-default/templates/column.date.html
 
 
+// Date specialisation for HTML markup column file.
+.column-file.bool
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/column.bool.html
+
+
 
 
 /*
@@ -53,6 +59,12 @@ set-value:x:-
 .view-details-file.date
 set-value:x:-
    io.files.load:/misc/templates/angular-default/templates/view-details.date.html
+
+
+// Boolean specialization for view details HTML markup file.
+.view-details-file.bool
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/view-details.bool.html
 
 
 
@@ -81,6 +93,12 @@ set-value:x:-
 .form-field-file.long
 set-value:x:@.form-field-file.long
    io.files.load:/misc/templates/angular-default/templates/form-field.long.html
+
+
+// Bool specialisation of column HTML markup file.
+.form-field-file.bool
+set-value:x:@.form-field-file.bool
+   io.files.load:/misc/templates/angular-default/templates/form-field.bool.html
 
 
 // Date specialisation of column HTML markup file.
@@ -414,6 +432,18 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
                /*
+                * Bool type.
+                */
+               case:bool
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file.bool
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
                 * Default (anything not having a specialized implementation).
                 */
                default
@@ -442,6 +472,18 @@ for-each:x:@.arguments/*/.crud-methods/*
                      strings.concat
                         get-value:x:@.substitutions/*/view-details
                         strings.replace:x:@.view-details-file.date
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Boolean type.
+                */
+               case:bool
+                  set-value:x:@.substitutions/*/view-details
+                     strings.concat
+                        get-value:x:@.substitutions/*/view-details
+                        strings.replace:x:@.view-details-file.bool
                            .:[[column-name]]
                            get-name:x:@.dp/#
 
@@ -487,6 +529,18 @@ for-each:x:@.arguments/*/.crud-methods/*
                      strings.concat
                         get-value:x:@.substitutions/*/form-fields
                         strings.replace:x:@.form-field-file.long
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Boolean type.
+                */
+               case:bool
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file.bool
                            .:[[column-name]]
                            get-name:x:@.dp/#
 
