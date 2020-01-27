@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Material imports.
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -138,6 +139,7 @@ export class DefaultIntl extends OwlDateTimeIntl {
       }
     }),
     MatButtonModule,
+    MatCheckboxModule,
     MatSidenavModule,
     MatTableModule,
     MatCardModule,
