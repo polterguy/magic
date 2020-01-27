@@ -116,7 +116,7 @@ export class [[component-name]] implements OnInit {
 
         // Notice, we need to clone all filter arguments, except limit, offset, order and direction.
         const cloned = {};
-        for(const idx in this.filter) {
+        for (const idx in this.filter) {
           if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
             switch (idx) {
               case 'limit':
