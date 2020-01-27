@@ -135,6 +135,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
                     float: left;
                     font-size: 10px;
                     width: calc(100% - 70px);
+                    text-transform: capitalize;
                 }
                 .sort-button {
                     margin-top: 2px;
