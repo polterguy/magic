@@ -297,61 +297,21 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Checking if currently iterated get-output column exists in input
-             * to delete verb, at which point it's (probably) a primary key, and
-             * should by default not be visible in the datagrid - But still possible
-             * to pull in, so we do create an ng-container for it - We simply don't
-             * create that column as visible by default.
+             * Column exists in GET output, and hence should be displayed by default.
              */
-            .exists-in-delete-input:bool:false
-            for-each:x:@.dp/#/./././*/delete/*/input/*
-               if
-                  eq
-                     get-value:x:@.dp/#
-                     get-value:x:@for-each/@.dp/#
-                  .lambda
-
-
-                     /*
-                      * Currently iterated outer ouput GET column exists as input to DELETE.
-                      * Hence, by default we don't show it in the datagrid.
-                      */
-                     set-value:x:@.exists-in-delete-input
-                        .:bool:true
+            set-value:x:@.substitutions/*/container-count
+               math.increment:x:@.substitutions/*/container-count
 
 
             /*
-             * Checking if column should be displayed in table by default.
+             * Appending currently iterated column to [displayed-columns]
              */
-            if
-               not
-                  get-value:x:@.exists-in-delete-input
-               .lambda
-
-                  /*
-                   * Column should be displayed, incrementing container count to be able
-                   * to calculate colspan of view details container correctly.
-                   */
-                  set-value:x:@.substitutions/*/container-count
-                     math.increment:x:@.substitutions/*/container-count
-
-
-                  /*
-                   * Appending currently iterated column to [displayed-columns]
-                   */
-                  set-value:x:@.substitutions/*/displayed-columns
-                     strings.concat
-                        get-value:x:@.substitutions/*/displayed-columns
-                        .:", '"
-                        get-name:x:@.dp/#
-                        .:"'"
-
-
-            /*
-             * Notice, even though we don't display all columns by default in datagrid,
-             * we still create wrapper controls for all columns returned by GET, to make
-             * it easy for the end user to display them if he wants to for some reasons.
-             */
+            set-value:x:@.substitutions/*/displayed-columns
+               strings.concat
+                  get-value:x:@.substitutions/*/displayed-columns
+                  .:", '"
+                  get-name:x:@.dp/#
+                  .:"'"
 
 
             /*
