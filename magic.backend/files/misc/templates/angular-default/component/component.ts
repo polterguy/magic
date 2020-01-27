@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpService } from 'src/app/services/http-service';
+import { FormatDatePipe } from 'src/app/pipes/format-date-pipe';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /*

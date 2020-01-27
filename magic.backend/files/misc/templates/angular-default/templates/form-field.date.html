@@ -1,14 +1,12 @@
-  <mat-form-field
-    *ngIf="canEditColumn('[[column-name]]')"
-    class="entity-edit-field">
-    <input
-      matInput
-      placeholder="Choose a date"
-      [matDatepicker]="picker[[column-name]]"
-      [(ngModel)]="data.entity.[[column-name]]"
-      autocomplete="off">
-    <mat-datepicker-toggle
-      matSuffix
-      [for]="picker[[column-name]]"></mat-datepicker-toggle>
-    <mat-datepicker #picker[[column-name]]></mat-datepicker>
-  </mat-form-field>
+<mat-form-field
+  *ngIf="canEditColumn('[[column-name]]')"
+  class="entity-edit-field">
+  <input
+    matInput
+    placeholder="Choose a date"
+    [owlDateTime]="picker[[column-name]]"
+    [owlDateTimeTrigger]="picker[[column-name]]"
+    [(ngModel)]="data.entity.[[column-name]]"
+    autocomplete="off">
+  <owl-date-time #picker[[column-name]]></owl-date-time>
+</mat-form-field>
