@@ -93,6 +93,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
                 user-select: none;
             }
             td {
+                max-width: 80px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
                 .details-sheet {
                     border: solid 1px rgb(230, 230, 230);
                     margin-top: 1rem;
@@ -124,6 +128,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
                         }
                         span {
                             color: rgb(128, 128, 128);
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            display: block;
                         }
                     }
                 }
@@ -175,8 +182,29 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
             cursor:inherit;
             background-color: inherit;
         }
-        tr.visible {
-            display: table-row;
+        tr.show-pager {
+            mat-form-field {
+                display: inherit;
+            }
+            button {
+                display: inherit;
+            }
+            label.table-header {
+                display: none;
+            }
+        }
+        tr.hide-pager {
+            mat-form-field {
+                display: none;
+            }
+            button {
+                display: none;
+            }
+            label.table-header {
+                display: inline-block;
+                text-transform: capitalize;
+                margin: 1rem 0 1rem 0;
+            }
         }
         tr.hidden {
             display: none;

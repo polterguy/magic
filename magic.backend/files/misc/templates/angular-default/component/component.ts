@@ -8,7 +8,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpService } from 'src/app/services/http-service';
-import { FormatDatePipe } from 'src/app/pipes/format-date-pipe';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /*
@@ -87,9 +86,9 @@ export class [[component-name]] implements OnInit {
    */
   getHeaderRowClass() {
     if (this.showPager()) {
-      return 'visible';
+      return 'show-pager';
     }
-    return 'hidden';
+    return 'hide-pager';
   }
 
   /*
