@@ -252,31 +252,76 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Dynamically creating our datagrid parts, and our for control
-          * for editing entities. Notice, this is done according to the input
-          * the create/POST endpoint requires, since this is most likely non-primary
-          * keys, and columns that does not have automatic values.
+          * Now we know input to all 4 CRUD endpoints, and we also know what roles
+          * are allowed to invoke endpoints.
+          *
+          * Now we can start creating our datagrid component, and our edit/create component.
           */
-         for-each:x:@.dp/#/*/verbs/*/post/*/input/*
+
+
+         /*
+          * Dynamically creating our datagrid parts, and our for controls
+          * for editing entities.
+          */
+         for-each:x:@.dp/#/*/verbs/*/get/*/output/*
 
 
             /*
-             * Incrementing column count, such that we can figure out "colspan"
-             * to use for "details" ng-container.
+             * Checking if currently iterated get-output column exists in input
+             * to delete verb, at which point it's (probably) a primary key, and
+             * should by default not be visible in the datagrid - But still possible
+             * to pull in, so we do create an ng-container for it - We simply don't
+             * create that column as visible by default.
              */
-            set-value:x:@.substitutions/*/container-count
-               math.increment:x:@.substitutions/*/container-count
+            .exists-in-delete-input:bool:false
+            for-each:x:@.dp/#/./././*/delete/*/input/*
+               if
+                  eq
+                     get-value:x:@.dp/#
+                     get-value:x:@for-each/@.dp/#
+                  .lambda
+
+
+                     /*
+                      * Currently iterated outer ouput GET column exists as input to DELETE.
+                      * Hence, by default we don't show it in the datagrid.
+                      */
+                     set-value:x:@.exists-in-delete-input
+                        .:bool:true
 
 
             /*
-             * Appending currently iterated column to [displayed-columns]
+             * Checking if column should be displayed in table by default.
              */
-            set-value:x:@.substitutions/*/displayed-columns
-               strings.concat
-                  get-value:x:@.substitutions/*/displayed-columns
-                  .:", '"
-                  get-name:x:@.dp/#
-                  .:"'"
+            if
+               not
+                  get-value:x:@.exists-in-delete-input
+               .lambda
+
+                  /*
+                   * Column should be displayed, incrementing container count to be able
+                   * to calculate colspan of view details container correctly.
+                   */
+                  set-value:x:@.substitutions/*/container-count
+                     math.increment:x:@.substitutions/*/container-count
+
+
+                  /*
+                   * Appending currently iterated column to [displayed-columns]
+                   */
+                  set-value:x:@.substitutions/*/displayed-columns
+                     strings.concat
+                        get-value:x:@.substitutions/*/displayed-columns
+                        .:", '"
+                        get-name:x:@.dp/#
+                        .:"'"
+
+
+            /*
+             * Notice, even though we don't display all columns by default in datagrid,
+             * we still create wrapper controls for all columns returned by GET, to make
+             * it easy for the end user to display them if he wants to for some reasons.
+             */
 
 
             /*
@@ -289,51 +334,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                   strings.replace:x:@.form-control-file
                      .:[[column-name]]
                      get-name:x:@.dp/#
-
-
-            /*
-             * Making sure we correctly create our HTML markup for column.
-             *
-             * Notice, some types have specialized implementations here.
-             */
-            switch:x:@.dp/#
-
-
-               /*
-                * Long type.
-                */
-               case:long
-               case:int
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file.long
-                           .:[[column-name]]
-                           get-name:x:@.dp/#
-
-
-               /*
-                * Date type.
-                */
-               case:date
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file.date
-                           .:[[column-name]]
-                           get-name:x:@.dp/#
-
-
-               /*
-                * Default (anything not having a specialized implementation).
-                */
-               default
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file
-                           .:[[column-name]]
-                           get-name:x:@.dp/#
 
 
             /*
@@ -401,13 +401,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                            get-name:x:@.dp/#
 
 
-         /*
-          * Creating our vie details part, which shows everything our read
-          * endpoint returns.
-          */
-         for-each:x:@.dp/#/*/verbs/*/get/*/output/*
-
-
             /*
              * Appending currently iterated column to [view-details].
              *
@@ -419,6 +412,63 @@ for-each:x:@.arguments/*/.crud-methods/*
                   strings.replace:x:@.view-details-file
                      .:[[column-name]]
                      get-name:x:@.dp/#
+
+
+         /*
+          * Dynamically creating our editor component.
+          *
+          * Notice, this relies upon the POST endpoint's input, and
+          * not the read endpoint's output.
+          *
+          * We use the POST endpoint and not the PUT endpoint, since we do
+          * not want to create form controls for any automatic primary keys.
+          */
+         for-each:x:@.dp/#/*/verbs/*/post/*/input/*
+
+
+            /*
+             * Making sure we correctly create our HTML markup for edit/create component.
+             *
+             * Notice, some types have specialized implementations here.
+             */
+            switch:x:@.dp/#
+
+
+               /*
+                * Long type.
+                */
+               case:long
+               case:int
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file.long
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Date type.
+                */
+               case:date
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file.date
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
 
 
          /*
