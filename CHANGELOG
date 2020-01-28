@@ -318,6 +318,11 @@ _Every single module_
 * Improved structure of frontend scaffolder, by separating major jobs into separate files, and created support for much better
   templating system, to override resulting code, depending upon types etc.
 
+* Turning of crudifying of DELETE and PUT endpoints by default, if database table does not have a primary key. Without a
+  primary key it becomes impossible to uniquely identify a single record with certainty, and hence creating DELETE and PUT (update)
+  endpoints would be considered _"dangerous"_ in such scenarios - Hence, turning it OFF by default. Notice, you can still explicitly
+  turn it ON - Although I don't recommend it!
+
 * This is a _major update to Magic_, and you _will be amazed_! If you've tried Magic previously, but got stuck due to some
   sort of bug, annoyance, lack of feature - I would highly recommend you to try it out again. This is a _major_ upgrade to
   the Magic wand!
