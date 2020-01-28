@@ -249,6 +249,45 @@ _Every single module_
   resulting in errors.
 
 
+
 ## Version 5.7.2
 
 * Significantly simplified the setup process
+
+
+
+## Version 5.7.3
+
+* Always returning datetime from server as ZULU time. This eliminates a whole range of problems, especially
+  interacting with client-side libraries. Basically, this implies returning datetime objects as UTC times, appending
+  a "Z" to it in the end, informing clients that this is UTC time.
+
+* Created support for multiple endpoint scaffolders, and allowing the user to select one as he generates his frontend.
+  Currently Magic only supports _one_ actual scaffolder, but basically and folder you create inside of _"/misc/templates/"_
+  is assumed is a scaffolder accepting some sort of endpoints scaffolding input arguments. See the existing _"angular-default"_
+  folder for an example.
+
+* The default scaffolder now creates different types of Angular components, depending upon the type the server returns, such
+  as for instance creating a checkbox for bool fields, a date time picker for date fields, etc. This allows you to override
+  literally any aspect of the scaffolding process for individual columns, depending upon which type the endpoint returns,
+  for a specific column.
+
+* Seriously improved the scaffolder process of frontends. Notice, it's still to be considered immature technology, but now
+  it will much more intelligently create your components, depending upon what endpoints you have.
+  For instance, it will now only create edit/create form fields _only_ for input arguments to your POST/create endpoint,
+  etc.
+
+* Created support for overriding a lot more arguments during scaffolding, such as whether or not a specific column
+  should be returned in the GET/read endpoint, etc. This allows you to finegrain the process of backend crudification
+  much more, giving you more options to change your backend's behavior.
+  Notice, by default _"automatic"_ (default value) columns will _not_ be considered as input arguments to your POST/PUT/create/update
+  endpoints. But this behavior can now be overridden. And only primary keys will be considered input to delete endpoints, etc.
+
+* More intelligently showing/hiding configuration options now during crudification, depending upon overridden settings, such
+  as not showing _"input reactors"_ (validators, etc) unless either a POST or PUT endpoint is selected during crudification, etc.
+  Also hiding the cache control setting, unless GET is selected during crudification process, etc.
+
+* Better UI in the dashboard in general, such as emphasizing the most important (primary) button in most forms, etc.
+
+* Also cleaned up dashboard code significantly. It's still not perfect, but it should be much easier to understand now
+  than previously. Notice, more work still needs to be done here.
