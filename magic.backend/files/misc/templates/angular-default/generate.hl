@@ -108,7 +108,7 @@ for-each:x:@.component-files/*
 add:x:+/*
    get-nodes:x:@.arguments/*
 set-value:x:@.http-service-methods
-   io.files.execute:/misc/templates/angular-default/generator/create-service-methods.hl
+   io.files.execute:/misc/templates/angular-default/generator/generate-service-methods.hl
 
 
 
@@ -123,7 +123,7 @@ set-value:x:@.http-service-methods
 add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
-   io.files.execute:/misc/templates/angular-default/generator/get-crud-methods.hl
+   io.files.execute:/misc/templates/angular-default/generator/generate-http-methods.hl
 
 
 
@@ -179,7 +179,7 @@ add:x:+/+/*
 add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
-   io.files.execute:/misc/templates/angular-default/generator/create-components.hl
+   io.files.execute:/misc/templates/angular-default/generator/generate-components.hl
 
 
 

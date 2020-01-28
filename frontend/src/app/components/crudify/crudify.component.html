@@ -470,7 +470,7 @@
       matTooltip="Generates CRUD endpoints for your currently selected table"
       mat-raised-button
       color="primary"
-      [disabled]="moduleUrl === '' || moduleName === ''"
+      [disabled]="moduleUrl === '' || moduleName === '' || !hasSelectedEndpoints()"
       (click)="crudifyTable()">Crudify selected table</button>
   </div>
 
