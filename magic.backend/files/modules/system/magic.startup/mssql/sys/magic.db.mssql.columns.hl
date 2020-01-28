@@ -19,7 +19,7 @@ slots.create:magic.db.mssql.columns
       /*
        * Running our query to retrieve meta information.
        */
-      mssql.select:@"select c.name 'name', t.Name 'type', c.is_nullable 'nullable', isnull(i.is_primary_key, 0) 'primary', c.is_identity 'automatic'
+      mssql.select:@"select c.name 'name', t.Name 'type', c.is_nullable 'nullable', isnull(i.is_primary_key, 0) 'primary', c.is_identity 'automatic', c.default_object_id 'default'
          from sys.columns c 
              inner join sys.types t on c.user_type_id = t.user_type_id
              left outer join sys.index_columns ic 
@@ -42,6 +42,24 @@ slots.create:magic.db.mssql.columns
                nullable:x:@.dp/#/*/nullable
                primary:x:@.dp/#/*/primary
                automatic:x:@.dp/#/*/automatic
+
+
+         /*
+          * Checking if column is not automatic,
+          * but still seems to have a default value.
+          */
+         if
+            mt
+               get-value:x:@.dp/#/*/default
+               .:int:0
+            .lambda
+            
+            
+               /*
+                * Column has default value.
+                */
+               set-value:x:@.tmp/*/*/automatic
+                  .:bool:true
 
 
          /*
