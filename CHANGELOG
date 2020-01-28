@@ -312,4 +312,11 @@ _Every single module_
 * Support for file comment during frontend scaffolding process, to associate some comment with the end result, becoming
   a file comment, included in every single code file where multiline C comments are allowed (css files, typescript files, javascript files, etc).
 
+* Improved structure of frontend scaffolder, by separating major jobs into separate files, and created support for much better
+  templating system, to override resulting code, depending upon types etc.
+
+* This is a _major update to Magic_, and you _will be amazed_! If you've tried Magic previously, but got stuck due to some
+  sort of bug, annoyance, lack of feature - I would highly recommend you to try it out again. This is a _major_ upgrade to
+  the Magic wand!
+
 * Fixed many bugs, hopefully not created too many new ones :)
