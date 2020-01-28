@@ -75,7 +75,7 @@ set-value:x:-
  */
 .form-control-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/form-control/form-control.ts
+   io.files.load:/misc/templates/angular-default/templates/misc/form-control.ts
 
 
 

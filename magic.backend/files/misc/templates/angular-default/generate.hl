@@ -44,7 +44,7 @@
 add:x:@.main-files
    slots.signal:magic.io.files.load-recursively
       strings.concat
-         .:/misc/templates/angular-default/main/
+         .:/misc/templates/angular-default/templates/main/
 
 
 
@@ -57,7 +57,7 @@ add:x:@.main-files
 add:x:@.component-files
    slots.signal:magic.io.files.load-recursively
       strings.concat
-         .:/misc/templates/angular-default/component/
+         .:/misc/templates/angular-default/templates/component/
 
 
 
@@ -71,7 +71,7 @@ add:x:@.component-files
 for-each:x:@.main-files/*
    set-value:x:@.dp/#
       strings.replace:x:@.dp/#
-         .:misc/templates/angular-default/main
+         .:misc/templates/angular-default/templates/main
          get-value:x:@.arguments/*/name
 
 
@@ -89,7 +89,7 @@ for-each:x:@.component-files/*
       .:[[component-filename]].
    strings.replace:x:@strings.replace
       strings.concat
-         .:/misc/templates/angular-default/component/
+         .:/misc/templates/angular-default/templates/component/
       .:/[[component-folder]]/
    set-value:x:@.dp/#
       get-value:x:@strings.replace
@@ -108,7 +108,7 @@ for-each:x:@.component-files/*
 add:x:+/*
    get-nodes:x:@.arguments/*
 set-value:x:@.http-service-methods
-   io.files.execute:/misc/templates/angular-default/helpers/create-service-methods.hl
+   io.files.execute:/misc/templates/angular-default/generator/create-service-methods.hl
 
 
 
@@ -123,7 +123,7 @@ set-value:x:@.http-service-methods
 add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
-   io.files.execute:/misc/templates/angular-default/helpers/get-crud-methods.hl
+   io.files.execute:/misc/templates/angular-default/generator/get-crud-methods.hl
 
 
 
@@ -136,7 +136,34 @@ add:x:@.crud-methods
  */
 .router-link-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/router-link.html
+   io.files.load:/misc/templates/angular-default/templates/misc/router-link.html
+
+
+
+
+
+
+/*
+ * Loading import file, that contains the import declarations for components.
+ */
+.imports-file
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/misc/import.ts
+.imports-file-only-grid
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/misc/import-only-grid.ts
+
+
+
+
+
+
+/*
+ * Loading router declaration file.
+ */
+.router-declaration-file
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/misc/router-declaration.ts
 
 
 
@@ -152,7 +179,7 @@ add:x:+/+/*
 add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
-   io.files.execute:/misc/templates/angular-default/helpers/create-components.hl
+   io.files.execute:/misc/templates/angular-default/generator/create-components.hl
 
 
 
@@ -173,55 +200,59 @@ for-each:x:@.crud-methods/*
 
    /*
     * Import declarations.
-    * TODO: Create template file.
     */
+   strings.replace:x:@.imports-file
+      .:[[component-name]]
+      strings.capitalize:x:@.dp/#/*/component-name
+   strings.replace:x:-
+      .:[[component-folder]]
+      get-value:x:@.dp/#/*/component-folder
+   strings.replace:x:-
+      .:[[component-filename]]
+      get-value:x:@.dp/#/*/component-filename
+   strings.replace:x:-
+      .:[[component-edit-name]]
+      get-value:x:@.dp/#/*/component-edit-name
+   strings.replace:x:-
+      .:[[component-edit-filename]]
+      get-value:x:@.dp/#/*/component-edit-filename
    set-value:x:@.imports
       strings.concat
          get-value:x:@.imports
-         .:"import { "
-         strings.capitalize:x:@.dp/#/*/component-name
-         .:" } from './components/"
-         get-value:x:@.dp/#/*/component-folder
-         .:"/"
-         get-value:x:@.dp/#/*/component-filename
-         .:"';\r\n"
-         .:"import { "
-         get-value:x:@.dp/#/*/component-edit-name
-         .:" } from './components/"
-         get-value:x:@.dp/#/*/component-folder
-         .:"/modals/"
-         get-value:x:@.dp/#/*/component-edit-filename
-         .:"';\r\n"
+         get-value:x:@strings.replace
 
 
    /*
     * Import declarations (only main component imports).
-    * TODO: Create template file.
     */
+   strings.replace:x:@.imports-file-only-grid
+      .:[[component-name]]
+      strings.capitalize:x:@.dp/#/*/component-name
+   strings.replace:x:-
+      .:[[component-folder]]
+      get-value:x:@.dp/#/*/component-folder
+   strings.replace:x:-
+      .:[[component-filename]]
+      get-value:x:@.dp/#/*/component-filename
    set-value:x:@.imports-only-main
       strings.concat
          get-value:x:@.imports-only-main
-         .:"import { "
-         strings.capitalize:x:@.dp/#/*/component-name
-         .:" } from './components/"
-         get-value:x:@.dp/#/*/component-folder
-         .:"/"
-         get-value:x:@.dp/#/*/component-filename
-         .:"';\r\n"
+         get-value:x:@strings.replace
 
 
    /*
     * Router declarations.
-    * TODO: Create template file.
     */
+   strings.replace:x:@.router-declaration-file
+      .:[[component-name]]
+      strings.capitalize:x:@.dp/#/*/component-name
+   strings.replace:x:-
+      .:[[router-url]]
+      get-value:x:@.dp/#/*/component-routing-url
    set-value:x:@.routes
       strings.concat
          get-value:x:@.routes
-         .:"  { path: '"
-         get-value:x:@.dp/#/*/component-routing-url
-         .:"', component: "
-         get-value:x:@.dp/#/*/component-name
-         .:" },\r\n"
+         get-value:x:@strings.replace
 
 
    /*
