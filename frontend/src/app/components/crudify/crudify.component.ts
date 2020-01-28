@@ -280,8 +280,7 @@ export class CrudifyComponent implements OnInit {
   }
 
   isVerbDisabled(verb: string) {
-    var endpoint = this.endpoints.filter(x => x.verb == verb)[0];
-    return !endpoint.generate;
+    return !this.endpoints.filter(x => x.verb === verb)[0].generate;
   }
 
   showCache() {
@@ -295,7 +294,7 @@ export class CrudifyComponent implements OnInit {
   getDefaultValidator(fieldName: string, tableName: string) {
     if (fieldName === 'password' && (tableName === 'dbo.users' || tableName === 'users')) {
       this.showSuccess('BlowFish was added to your password field, and it is not returned in GET endpoint');
-      let password = this.columns.filter(x => x.name === 'password');
+      const password = this.columns.filter(x => x.name === 'password');
       password[0].get = false;
 
       // Also making sure we don't return password on HTTP GET endpoint.
@@ -304,6 +303,10 @@ slots.signal:transformers.hash-password
    reference:x:@.arguments/*/password`;
     }
     return '';
+  }
+
+  hasSelectedEndpoints() {
+    return this.endpoints.filter(x => x.generate).length > 0;
   }
 
   addValidator(el: any) {
@@ -445,11 +448,11 @@ slots.signal:transformers.hash-password
 
     // This one decides if we should return primary key
     // Only relevant for POST / create endpoints.
-    let returnId = curVerb === 'post' && this.columns
+    const returnId = curVerb === 'post' && this.columns
       .filter(x => x.primary && x.automatic).length > 0;
 
     // Constructing our arguments, according to which verb we're handling.
-    let args: any = {};
+    const args: any = {};
     switch (curVerb) {
 
       case 'post':
