@@ -283,6 +283,9 @@ _Every single module_
   Notice, by default _"automatic"_ (default value) columns will _not_ be considered as input arguments to your POST/PUT/create/update
   endpoints. But this behavior can now be overridden. And only primary keys will be considered input to delete endpoints, etc.
 
+* Improved the crudifier such that it's better at determining whether or not a database table-column has a default value or not,
+  and hence whether or not it should allow for supplying that column by default during creation of POST/PUT endpoints.
+
 * More intelligently showing/hiding configuration options now during crudification, depending upon overridden settings, such
   as not showing _"input reactors"_ (validators, etc) unless either a POST or PUT endpoint is selected during crudification, etc.
   Also hiding the cache control setting, unless GET is selected during crudification process, etc.
