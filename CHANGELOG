@@ -291,3 +291,25 @@ _Every single module_
 
 * Also cleaned up dashboard code significantly. It's still not perfect, but it should be much easier to understand now
   than previously. Notice, more work still needs to be done here.
+
+* Improved flow of crudifier process, making it more intuitive, and more difficult to do something wrong.
+
+* Added descriptive text to most components, allowing the user to more easily understand how to interact with the
+  different parts of the dashboard.
+
+* Better typing support during crudification, such as supporting most common boolean MySQL types, etc. Some
+  more work can still be done here, but this should create much better backend endpoints, with correct types,
+  than previous versions.
+
+* Allowing to override the _"default auth"_ during crudification, to set a default authorization role(s) setting,
+  that is applied for instance during _"Crudify all"_. This allows you to override the default roles during crudification,
+  such that you can crudify all tables, and still have different access roles than only _"root"_, which was the case previously.
+
+* When a scaffolder template is selected, its associated README.md file is loaded and displayed as HTML, allowing
+  scaffolder template creators (me mostly), to display some information about what the specific scaffolder template actually
+  does, and also attach screenshots with it, to show the end user an example of how things might end up looking like.
+
+* Support for file comment during frontend scaffolding process, to associate some comment with the end result, becoming
+  a file comment, included in every single code file where multiline C comments are allowed (css files, typescript files, javascript files, etc).
+
+* Fixed many bugs, hopefully not created too many new ones :)
