@@ -23,25 +23,25 @@
  */
 .column-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/column.html
+   io.files.load:/misc/templates/angular-default/templates/column/column.html
 
 
 // Long specialisation for HTML markup column file.
 .column-file.long
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/column.long.html
+   io.files.load:/misc/templates/angular-default/templates/column/column.long.html
 
 
 // Date specialisation for HTML markup column file.
 .column-file.date
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/column.date.html
+   io.files.load:/misc/templates/angular-default/templates/column/column.date.html
 
 
 // Date specialisation for HTML markup column file.
 .column-file.bool
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/column.bool.html
+   io.files.load:/misc/templates/angular-default/templates/column/column.bool.html
 
 
 
@@ -52,19 +52,19 @@ set-value:x:-
  */
 .view-details-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/view-details.html
+   io.files.load:/misc/templates/angular-default/templates/view-details/view-details.html
 
 
 // Date specialization for view details HTML markup file.
 .view-details-file.date
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/view-details.date.html
+   io.files.load:/misc/templates/angular-default/templates/view-details/view-details.date.html
 
 
 // Boolean specialization for view details HTML markup file.
 .view-details-file.bool
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/view-details.bool.html
+   io.files.load:/misc/templates/angular-default/templates/view-details/view-details.bool.html
 
 
 
@@ -75,7 +75,7 @@ set-value:x:-
  */
 .form-control-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/form-control.ts
+   io.files.load:/misc/templates/angular-default/templates/form-control/form-control.ts
 
 
 
@@ -86,25 +86,25 @@ set-value:x:-
  */
 .form-field-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/form-field.html
+   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.html
 
 
 // Long specialisation of column HTML markup file.
 .form-field-file.long
 set-value:x:@.form-field-file.long
-   io.files.load:/misc/templates/angular-default/templates/form-field.long.html
+   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.long.html
 
 
 // Bool specialisation of column HTML markup file.
 .form-field-file.bool
 set-value:x:@.form-field-file.bool
-   io.files.load:/misc/templates/angular-default/templates/form-field.bool.html
+   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.bool.html
 
 
 // Date specialisation of column HTML markup file.
 .form-field-file.date
 set-value:x:@.form-field-file.date
-   io.files.load:/misc/templates/angular-default/templates/form-field.date.html
+   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.date.html
 
 
 
@@ -115,13 +115,13 @@ set-value:x:@.form-field-file.date
  */
 .form-control-instantiation-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations.ts
+   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.ts
 
 
 // String specialisation of form control instantiation file.
 .form-control-instantiation-file.string
 set-value:x:@.form-control-instantiation-file.string
-   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations.string.ts
+   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.string.ts
 
 
 
