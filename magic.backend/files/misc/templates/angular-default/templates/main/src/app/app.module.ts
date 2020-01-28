@@ -43,7 +43,7 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
 import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
 import { SecurityComponent } from './components/security/security.component';
 
-// HTTP REST backend entity components.
+// CRUD wrapper components, both for the datagrid, and its associated editor/creator dialog.
 [[imports]]
 
 // Helper to retrieve JWT token. Needed for "oauth0".

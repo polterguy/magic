@@ -7,7 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { SecurityComponent } from './components/security/security.component';
 
-// Then importing all "entity components" (for editing entities from your backend).
+// Then importing all "entity components". Basically, the datagrids for viewing entities from your backend.
 [[imports-only-main]]
 
 // Creating our routes, one route for each entity type.
