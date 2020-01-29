@@ -126,13 +126,21 @@
         generated on the server-side, you might want to crudify one table at the time though.
         However, the default settings applied as you choose 'All tables' will probably
         be good enough for most scenarios.
-      </p>
-
-      <p>
         The Magic crudifier will also create a <em>"count"</em> CRUD endpoint, in addition to the above
         endpoints. When the crudifier is done, you can invoke your HTTP REST endpoints from your <em>"Endpoints"</em>,
         menu item, and pass in for instance query parameters to page, filter, sort, and such during read operations.
         You can also generate a complete Angular frontend from the Endpoints menu item.
+      </p>
+
+      <p>
+        <em>Details</em> - Your <strong>GET</strong> endpoints will by default return all columns your table contains, while
+        your <strong>DELETE</strong> endpoint will by default require all primary key fields as its input. Your <strong>PUT</strong>
+        endpoints does not allow for changing the primary keys associated with your records, but only takes primary keys as input
+        in order to uniquely identify which record to actually update. Your <strong>POST</strong> endpoints
+        doesn't even accept primary keys by default, as long as these fields have an <em>"automatic"</em> value, and only if your
+        primary keys does <em>not</em> have an automatic value, you will be allowed to by default invoke it with a primary key.
+        Most of these settings can be overridden though, and you can have almost complete control over how your endpoints ends
+        up looking, if you choose to crudify one table at the time.
       </p>
 
     </div>
