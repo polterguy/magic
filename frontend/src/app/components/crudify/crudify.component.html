@@ -120,6 +120,11 @@
       </ul>
 
       <p>
+        <strong>TL;TR</strong> - Choose database type, select your database, select <em>'All tables'</em>, click <em>'Crudify all'</em>
+        and go to your <em>'Endpoints'</em> menu item to generate your Angular frontend.
+      </p>
+
+      <p>
         You can choose each table you want to crudify, or you can crudify all tables at the same time. You
         can also associate authorization towards one or more of your CRUD operations, in addition to a lot
         of other settings. If you want more control over how your CRUD operations are
@@ -139,6 +144,11 @@
         in order to uniquely identify which record to actually update. Your <strong>POST</strong> endpoints
         doesn't even accept primary keys by default, as long as these fields have an <em>"automatic"</em> value, and only if your
         primary keys does <em>not</em> have an automatic value, you will be allowed to by default invoke it with a primary key.
+        In addition, non-primary key columns with an <em>"automatic"</em> (default) value, will not have these columns by default
+        as input to your <strong>POST</strong> or <strong>PUT</strong> endpoints.
+      </p>
+
+      <p>
         Most of these settings can be overridden though, and you can have almost complete control over how your endpoints ends
         up looking, if you choose to crudify one table at the time.
       </p>
