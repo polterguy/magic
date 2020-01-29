@@ -100,12 +100,19 @@ slots.create:magic.db.mssql.columns
              * Everything transformed into integer long values.
              */
             case:bigint
-            case:bit
             case:smallint
             case:int
             case:tinyint
                set-value:x:@.type
                   .:long
+
+
+            /*
+             * Everything transformed into boolean values.
+             */
+            case:bit
+               set-value:x:@.type
+                  .:bool
 
 
             /*
