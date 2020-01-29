@@ -136,6 +136,9 @@ for-each:x:@.arguments/*/.crud-methods/*
             // Input to DELETE endpoint.
             delete-input:
 
+            // Primary keys for entity
+            primary-keys:
+
             // Input to POST endpoint.
             create-input:
 
@@ -143,7 +146,7 @@ for-each:x:@.arguments/*/.crud-methods/*
             update-input:
 
             // How many columns our table contains.
-            container-count:int:0
+            container-count:int:1
 
             // All table column declarations. (normally HTML)
             ng-containers
@@ -213,9 +216,16 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Figuring out input to our DELETE method.
+          * Figuring out input to our DELETE method, in addition to
+          * our primary keys.
           */
          for-each:x:@.dp/#/*/verbs/*/delete/*/input/*
+            set-value:x:@.substitutions/*/primary-keys
+               strings.concat
+                  get-value:x:@.substitutions/*/primary-keys
+                  .:", '"
+                  get-name:x:@.dp/#
+                  .:"'"
             set-value:x:@.substitutions/*/delete-input
                strings.concat
                   get-value:x:@.substitutions/*/delete-input
@@ -223,6 +233,9 @@ for-each:x:@.arguments/*/.crud-methods/*
                   get-name:x:@.dp/#
                   .:": el."
                   get-name:x:@.dp/#
+         set-value:x:@.substitutions/*/primary-keys
+            strings.trim:x:@.substitutions/*/primary-keys
+               .:", "
          set-value:x:@.substitutions/*/delete-input
             strings.trim:x:@.substitutions/*/delete-input
                .:", "
@@ -440,16 +453,61 @@ for-each:x:@.arguments/*/.crud-methods/*
          /*
           * Dynamically creating our editor component.
           *
-          * Notice, this relies upon the POST endpoint's input, and
-          * not the read endpoint's output.
-          *
-          * We use the POST endpoint and not the PUT endpoint, since we do
-          * not want to create form controls for any automatic primary keys.
+          * Notice, this relies upon the combined input of both our
+          * POST and PUT endpoint's input. Depending upon whether or not
+          * it's a PUT or POST invocation, we'll hide some fields, depending upon
+          * which input these different endpoints requires.
+          */
+         .form-fields
+
+
+         /*
+          * First adding PUT input to above [.form-fields].
+          */
+         for-each:x:@.dp/#/*/verbs/*/put/*/input/*
+            add:x:@.form-fields
+               get-nodes:x:@.dp/#
+
+
+         /*
+          * Then adding POST input to above [.form-fields], making sure
+          * we don't add fields already existing in PUT input.
           */
          for-each:x:@.dp/#/*/verbs/*/post/*/input/*
 
 
             /*
+             * Checking if above PUT loop already added currently iterated field.
+             */
+            .exists:bool:false
+            for-each:x:@.form-fields/*
+               if
+                  eq
+                     get-name:x:@.dp/#
+                     get-name:x:@for-each/@.dp/#
+                  .lambda
+                     set-value:x:@.exists
+                        .:bool:true
+            if
+               not
+                  get-value:x:@.exists
+               .lambda
+                  add:x:@.form-fields
+                     get-nodes:x:@.dp/#
+
+
+         /*
+          * Looping through combined input fields of both PUT and POST, to create
+          * our edit/create form fields.
+          *
+          * Notice, we don't create form fields for anything that's an input field
+          * to our DELETE endpoint, since it's highly likely a prmary key.
+          */
+         for-each:x:@.form-fields/*
+
+
+            /*
+             * We can now safely create a form control for currently iterated [.form-fields] instance.
              * Making sure we correctly create our HTML markup for edit/create component.
              *
              * Notice, some types have specialized implementations here.
@@ -507,29 +565,12 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Figuring out if we have a crud-delete endpoint associated
-          * with the current crud-read endpoint, and if we do, we make
-          * sure the delete column is visible.
+          * Adding "delete-instance" to [displayed-columns]
           */
-         if
-            exists:x:@.dp/#/*/verbs/*/delete
-            .lambda
-
-
-               /*
-                * Adding one additional column to [container-count]
-                */
-               set-value:x:@.substitutions/*/container-count
-                  math.increment:x:@.substitutions/*/container-count
-
-
-               /*
-                * Adding "delete-instance" to [displayed-columns]
-                */
-               set-value:x:@.substitutions/*/displayed-columns
-                  strings.concat
-                     get-value:x:@.substitutions/*/displayed-columns
-                     .:", 'delete-instance'"
+         set-value:x:@.substitutions/*/displayed-columns
+            strings.concat
+               get-value:x:@.substitutions/*/displayed-columns
+               .:", 'delete-instance'"
 
 
          /*
@@ -615,6 +656,14 @@ for-each:x:@.arguments/*/.crud-methods/*
             strings.replace:x:@strings.replace
                .:[[delete-input]]
                get-value:x:@.substitutions/*/delete-input
+
+
+            /*
+             * Replacing [[primary-keys]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[primary-keys]]
+               get-value:x:@.substitutions/*/primary-keys
 
 
             /*
