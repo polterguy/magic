@@ -198,119 +198,131 @@ for-each:x:@.crud-methods/*
 
 
    /*
-    * Import declarations.
+    * Verifying all verbs exists for CRUD method.
     */
-   strings.replace:x:@.imports-file
-      .:[[component-name]]
-      strings.capitalize:x:@.dp/#/*/component-name
-   strings.replace:x:-
-      .:[[component-folder]]
-      get-value:x:@.dp/#/*/component-folder
-   strings.replace:x:-
-      .:[[component-filename]]
-      get-value:x:@.dp/#/*/component-filename
-   strings.replace:x:-
-      .:[[component-edit-name]]
-      get-value:x:@.dp/#/*/component-edit-name
-   strings.replace:x:-
-      .:[[component-edit-filename]]
-      get-value:x:@.dp/#/*/component-edit-filename
-   set-value:x:@.imports
-      strings.concat
-         get-value:x:@.imports
-         get-value:x:@strings.replace
+   if
+      and
+         exists:x:@.dp/#/*/verbs/*/get
+         exists:x:@.dp/#/*/verbs/*/delete
+         exists:x:@.dp/#/*/verbs/*/post
+         exists:x:@.dp/#/*/verbs/*/put
+      .lambda
 
 
-   /*
-    * Import declarations (only main component imports).
-    */
-   strings.replace:x:@.imports-file-only-grid
-      .:[[component-name]]
-      strings.capitalize:x:@.dp/#/*/component-name
-   strings.replace:x:-
-      .:[[component-folder]]
-      get-value:x:@.dp/#/*/component-folder
-   strings.replace:x:-
-      .:[[component-filename]]
-      get-value:x:@.dp/#/*/component-filename
-   set-value:x:@.imports-only-main
-      strings.concat
-         get-value:x:@.imports-only-main
-         get-value:x:@strings.replace
+         /*
+          * Import declarations.
+          */
+         strings.replace:x:@.imports-file
+            .:[[component-name]]
+            strings.capitalize:x:@.dp/#/*/component-name
+         strings.replace:x:-
+            .:[[component-folder]]
+            get-value:x:@.dp/#/*/component-folder
+         strings.replace:x:-
+            .:[[component-filename]]
+            get-value:x:@.dp/#/*/component-filename
+         strings.replace:x:-
+            .:[[component-edit-name]]
+            get-value:x:@.dp/#/*/component-edit-name
+         strings.replace:x:-
+            .:[[component-edit-filename]]
+            get-value:x:@.dp/#/*/component-edit-filename
+         set-value:x:@.imports
+            strings.concat
+               get-value:x:@.imports
+               get-value:x:@strings.replace
 
 
-   /*
-    * Router declarations.
-    */
-   strings.replace:x:@.router-declaration-file
-      .:[[component-name]]
-      strings.capitalize:x:@.dp/#/*/component-name
-   strings.replace:x:-
-      .:[[router-url]]
-      get-value:x:@.dp/#/*/component-routing-url
-   set-value:x:@.routes
-      strings.concat
-         get-value:x:@.routes
-         get-value:x:@strings.replace
+         /*
+          * Import declarations (only main component imports).
+          */
+         strings.replace:x:@.imports-file-only-grid
+            .:[[component-name]]
+            strings.capitalize:x:@.dp/#/*/component-name
+         strings.replace:x:-
+            .:[[component-folder]]
+            get-value:x:@.dp/#/*/component-folder
+         strings.replace:x:-
+            .:[[component-filename]]
+            get-value:x:@.dp/#/*/component-filename
+         set-value:x:@.imports-only-main
+            strings.concat
+               get-value:x:@.imports-only-main
+               get-value:x:@strings.replace
 
 
-   /*
-    * Figuring out roles user must belong to in order to invoke "crud-read" endpoint.
-    */
-   .read-roles
-   for-each:x:@.dp/#/*/verbs/*/get/*/auth/*
-      set-value:x:@.read-roles
-         strings.concat
-            get-value:x:@.read-roles
-            .:", '"
-            get-value:x:@.dp/#
-            .:"'"
-   strings.trim:x:@.read-roles
-      .:", "
+         /*
+          * Router declarations.
+          */
+         strings.replace:x:@.router-declaration-file
+            .:[[component-name]]
+            strings.capitalize:x:@.dp/#/*/component-name
+         strings.replace:x:-
+            .:[[router-url]]
+            get-value:x:@.dp/#/*/component-routing-url
+         set-value:x:@.routes
+            strings.concat
+               get-value:x:@.routes
+               get-value:x:@strings.replace
 
 
-   /*
-    * Router links.
-    */
-   strings.replace:x:@.router-link-file
-      .:[[read-roles]]
-      get-value:x:@strings.trim
-   strings.replace:x:@strings.replace
-      .:[[url]]
-      get-value:x:@.dp/#/*/component-routing-url
-   strings.replace:x:@strings.replace
-      .:[[name]]
-      get-value:x:@.dp/#/*/component-header
-   set-value:x:@.router-links
-      strings.concat
-         get-value:x:@.router-links
-         get-value:x:@strings.replace
+         /*
+          * Figuring out roles user must belong to in order to invoke "crud-read" endpoint.
+          */
+         .read-roles
+         for-each:x:@.dp/#/*/verbs/*/get/*/auth/*
+            set-value:x:@.read-roles
+               strings.concat
+                  get-value:x:@.read-roles
+                  .:", '"
+                  get-value:x:@.dp/#
+                  .:"'"
+         strings.trim:x:@.read-roles
+            .:", "
 
 
-   /*
-    * Module declarations.
-    */
-   set-value:x:@.module-declarations
-      strings.concat
-         get-value:x:@.module-declarations
-         .:"    "
-         get-value:x:@.dp/#/*/component-name
-         .:",\r\n"
-         .:"    "
-         get-value:x:@.dp/#/*/component-edit-name
-         .:",\r\n"
+         /*
+          * Router links.
+          */
+         strings.replace:x:@.router-link-file
+            .:[[read-roles]]
+            get-value:x:@strings.trim
+         strings.replace:x:@strings.replace
+            .:[[url]]
+            get-value:x:@.dp/#/*/component-routing-url
+         strings.replace:x:@strings.replace
+            .:[[name]]
+            get-value:x:@.dp/#/*/component-header
+         set-value:x:@.router-links
+            strings.concat
+               get-value:x:@.router-links
+               get-value:x:@strings.replace
 
 
-   /*
-    * Adding entry components, which basically is the Edit modal windows
-    * for each component we have.
-    */
-   set-value:x:@.entry-components
-      strings.concat
-         get-value:x:@.entry-components
-         .:"    "
-         get-value:x:@.dp/#/*/component-edit-name
-         .:",\r\n"
+         /*
+          * Module declarations.
+          */
+         set-value:x:@.module-declarations
+            strings.concat
+               get-value:x:@.module-declarations
+               .:"    "
+               get-value:x:@.dp/#/*/component-name
+               .:",\r\n"
+               .:"    "
+               get-value:x:@.dp/#/*/component-edit-name
+               .:",\r\n"
+
+
+         /*
+          * Adding entry components, which basically is the Edit modal windows
+          * for each component we have.
+          */
+         set-value:x:@.entry-components
+            strings.concat
+               get-value:x:@.entry-components
+               .:"    "
+               get-value:x:@.dp/#/*/component-edit-name
+               .:",\r\n"
 
 
 
