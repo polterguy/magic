@@ -2,7 +2,7 @@
 /*
  * Generates an Angular frontend for you.
  */
-.description:"Generates an Angular frontend client side according to the given arguments. The frontend will have one datagrid component and router link for each CRUD read endpoint in your backend endpoints."
+.description:"Generates an Angular frontend client side according to the given arguments. The frontend will have one datagrid component and router link/navbar menu item for each CRUD read endpoint in your backend endpoints."
 
 
 
@@ -10,10 +10,9 @@
 
 
 /*
- * This parts loads up all template files, and changes the path names,
- * to make sure we have a friendly folder structure to base our downloadable
- * zip file upon.
+ * Doing some logging.
  */
+log.info:Angular default template creating an Angular frontend for you
 
 
 
@@ -65,8 +64,8 @@ add:x:@.component-files
 
 
 /*
- * Removing "root" parts of our folder names, to make a more friendly
- * folder structure that we return to caller.
+ * Removing "root" parts of our folder names in [.main-files], to make a
+ * more friendly folder structure that we return to caller.
  */
 for-each:x:@.main-files/*
    set-value:x:@.dp/#
