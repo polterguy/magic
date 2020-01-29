@@ -229,6 +229,7 @@ export class CrudifyComponent implements OnInit {
   // Builds our local data model by mapping from result from HTTP endpoint
   columnsFetched(res: Column[]) {
     this.columns = res.map(x => {
+      const canCreate = x.db !== 'image' && x.db !== 'varbinary' && x.db !== 'binary' && x.db !== 'rowversion';
       return {
         name: x.name,
         db: x.db,
@@ -236,9 +237,9 @@ export class CrudifyComponent implements OnInit {
         primary: x.primary,
         automatic: x.automatic,
         hl: x.hl,
+        post: canCreate && !x.automatic,
         get: true,
-        put: x.primary || !x.automatic,
-        post: !x.automatic,
+        put: x.primary || (!x.automatic && canCreate),
         delete: x.primary,
       };
     });
@@ -415,7 +416,8 @@ slots.signal:transformers.hash-password
       this.columns = [];
       this.endpoints = [];
       this.overwrite = true;
-      this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} lines of code created successfully. You might want to overwrite individual table endpoints for special cases now.`);
+      this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} ` +
+        `lines of code created successfully. You might want to overwrite individual table endpoints for special cases now.`);
       return;
     }
 
