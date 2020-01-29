@@ -433,8 +433,12 @@ slots.signal:transformers.hash-password
     this.setModuleUrl(this.selectedTable);
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
       this.columnsFetched(res);
-      this.createHttpEndpoints(['get', 'post', 'put', 'delete'], () => {
-        this.noEndpointsCreated += 5;
+      const endpoints = this.endpoints.filter(x => x.generate).map(x => x.verb);
+      this.createHttpEndpoints(endpoints, () => {
+        this.noEndpointsCreated += endpoints.length;
+        if (endpoints.indexOf('get') > -1) {
+          this.noEndpointsCreated += 1;
+        }
         this.crudifyTopTable(tables.splice(1));
       });
     }, (err) => {
