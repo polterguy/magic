@@ -257,6 +257,7 @@ export class CrudifyComponent implements OnInit {
     // Creating our columns definition.
     this.columns = res.map(x => {
       const canCreate = x.db !== 'image' && x.db !== 'varbinary' && x.db !== 'binary' && x.db !== 'rowversion';
+      const canView = x.db !== 'image' && x.db !== 'varbinary' && x.db !== 'binary';
       return {
         name: x.name,
         db: x.db,
@@ -265,7 +266,7 @@ export class CrudifyComponent implements OnInit {
         automatic: x.automatic,
         hl: x.hl,
         post: canCreate && !x.automatic,
-        get: true,
+        get: canView,
         put: x.primary || (!x.automatic && canCreate),
         delete: x.primary,
       };

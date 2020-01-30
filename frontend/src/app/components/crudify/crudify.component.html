@@ -391,7 +391,7 @@
 
         <ng-container matColumnDef="endpoint">
           <th mat-header-cell *matHeaderCellDef>Endpoint URL</th>
-          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').toLowerCase()}}</td>
+          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').replace(' ', '_').toLowerCase()}}</td>
         </ng-container>
 
         <ng-container matColumnDef="verb">
