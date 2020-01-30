@@ -42,6 +42,15 @@ class EndpointModel {
   log: string;
 }
 
+class LogTables {
+  name: string;
+  columns: LogColumn[] = [];
+}
+
+class LogColumn {
+  name: string;
+}
+
 @Component({
   selector: 'app-crudify',
   templateUrl: './crudify.component.html',
@@ -114,6 +123,7 @@ export class CrudifyComponent implements OnInit {
   private customSqlArguments: string;
   private customSqlEndpointVerb = '';
   private customSqlAuthorization = 'root';
+  private verbsNotGenerated: LogTables[] = [];
 
   constructor(
     private crudService: CrudifyService,
@@ -203,21 +213,25 @@ export class CrudifyComponent implements OnInit {
   }
 
   tableChanged(e: MatSelectChange) {
+    this.setCurrentTable(e.value);
+  }
 
-    if (e.value === 'Custom SQL') {
+  setCurrentTable(table: string) {
+
+    if (table === 'Custom SQL') {
 
       // User wants to create a custom SQL endpoint
-      this.selectedTable = e.value;
+      this.selectedTable = table;
       this.customSql = 'select * from something';
       this.customSqlArguments = 'filter:string';
 
-    } else if (e.value === 'All tables') {
-      this.selectedTable = e.value;
+    } else if (table === 'All tables') {
+      this.selectedTable = table;
     } else {
 
       // User wants to crudify a single table.
-      this.selectedTable = e.value;
-      this.setModuleUrl(e.value);
+      this.selectedTable = table;
+      this.setModuleUrl(table);
       this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe(res => {
         this.columnsFetched(res);
       }, (err) => {
@@ -228,6 +242,8 @@ export class CrudifyComponent implements OnInit {
 
   // Builds our local data model by mapping from result from HTTP endpoint
   columnsFetched(res: Column[]) {
+
+    // Creating our columns definition.
     this.columns = res.map(x => {
       const canCreate = x.db !== 'image' && x.db !== 'varbinary' && x.db !== 'binary' && x.db !== 'rowversion';
       return {
@@ -243,10 +259,18 @@ export class CrudifyComponent implements OnInit {
         delete: x.primary,
       };
     });
+
+    // Figuring out what types of endpoints we should create for current table.
     const hasPrimaryKeys = this.columns.filter(x => x.primary).length > 0;
     const hasNonAutoPrimaryKeys = this.columns.filter(x => x.primary && !x.automatic).length > 0;
     const hasDataColumns = this.columns.filter(x => !x.primary).length > 0;
     const hasNonAutoDataColumns = this.columns.filter(x => !x.primary && !x.automatic).length > 0;
+
+    const createGet = true;
+    const createDelete = hasPrimaryKeys;
+    const createPost = hasDataColumns || hasNonAutoPrimaryKeys;
+    const createPut = hasPrimaryKeys && hasDataColumns && hasNonAutoDataColumns;
+
     this.endpoints = this.verbs.map(x => {
       return {
         endpoint: this.selectedDatabase + '/' + this.selectedTable,
@@ -254,13 +278,34 @@ export class CrudifyComponent implements OnInit {
         action: x.action,
         auth: this.defaultAuth,
         generate:
-          (x.verb === 'get') ||
-          (x.verb === 'delete' && hasPrimaryKeys) ||
-          (x.verb === 'post' && (hasDataColumns || hasNonAutoPrimaryKeys)) ||
-          (x.verb === 'put' && hasPrimaryKeys && hasDataColumns && hasNonAutoDataColumns),
+          (x.verb === 'post' && createPost) ||
+          (x.verb === 'get' && createGet) ||
+          (x.verb === 'put' && createPut) ||
+          (x.verb === 'delete' && createDelete),
         log: '',
       };
     });
+
+    // Checking if we're crudifying multiple tables, at which point we might have to generate some sort of log.
+    if (this.isCrudifying) {
+
+      // Checking if any verbs are not generated for some reasons.
+      const notGenerated = this.endpoints.filter(x => !x.generate);
+      if (notGenerated.length > 0 && this.verbsNotGenerated.findIndex(x => x.name === this.selectedTable) === -1) {
+
+        // Some endpoints are not generated for some reasons, making sure we log that fact.
+        this.verbsNotGenerated.push({
+          name: this.selectedTable,
+          columns: notGenerated.map(x => {
+            return {
+              name: x.endpoint
+            };
+          })
+        });
+      }
+    }
+
+    // Creating our default input reactors, if any.
     this.validators = this.columns
       .filter(x => !x.automatic)
       .map(x => {
@@ -269,6 +314,14 @@ export class CrudifyComponent implements OnInit {
           validator: this.getDefaultValidator(x.name, this.selectedTable),
         };
     });
+  }
+
+  selectTable(table: string) {
+    this.setCurrentTable(table);
+  }
+
+  getLogItemClass(el: string) {
+    return this.selectedTable === el ? 'selected-log-item' : '';
   }
 
   setModuleUrl(value: string) {
@@ -399,7 +452,11 @@ slots.signal:transformers.hash-password
     });
   }
 
-  // Crudifies ALL tables in currently selected database.
+  closeLog() {
+    this.verbsNotGenerated = [];
+  }
+
+  // Crudifies all tables in currently selected database.
   crudifyAllTables() {
 
     // Making sure we "obscure" the main visual area while CRUDifier is working.
