@@ -61,7 +61,26 @@
 .info-card {
     margin-top: 2rem;
     .wrapper {
-        margin: 2rem 1rem 4rem 1rem;
+        margin: 2rem 3.5rem 4rem 3.5rem;
+    }
+}
+
+.log-card {
+    margin-top: 2rem;
+    background-color: rgb(255,200,200);
+    position: relative;
+    .wrapper {
+        margin: 2rem 3.5rem 4rem 3.5rem;
+        ul {
+            li.selected-log-item {
+                font-weight: bold;
+            }
+        }
+    }
+    .close-log {
+        position: absolute;
+        top: .5rem;
+        right: .5rem;
     }
 }
 

@@ -39,6 +39,7 @@
     <mat-select
       placeholder="Select table"
       matTooltip="Select which table you want to crudify, or select 'All tables' to crudify the entire database."
+      [(ngModel)]="selectedTable"
       (selectionChange)="tableChanged($event)">
       <mat-option
         *ngFor="let cur of tables"
@@ -98,6 +99,33 @@
     [disabled]="moduleName === ''"
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
+
+  <mat-card 
+    *ngIf="verbsNotGenerated.length > 0"
+    class="log-card">
+
+    <button
+      mat-button
+      class="close-log"
+      (click)="closeLog()">Close</button>
+
+    <div class="wrapper">
+
+      <h3>Log</h3>
+
+      <p>
+        Endpoints you might want to have a closer look, due to that not all verbs was generated.
+      </p>
+  
+      <ul>
+        <li *ngFor="let el of verbsNotGenerated" [class]="getLogItemClass(el.name)">
+          <button mat-button (click)="selectTable(el.name)">Edit</button> - {{el.name}}
+        </li>
+      </ul>
+  
+    </div>
+
+  </mat-card>
 
   <mat-card 
     *ngIf="selectedTable === '' || selectedTable === 'All tables'"
