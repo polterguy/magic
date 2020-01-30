@@ -114,11 +114,22 @@
       <h3>Log</h3>
 
       <p>
-        Endpoints you might want to have a closer look, due to that not all verbs was generated.
+        Tables you might want to have a closer look at, due to not all verbs was generated for table.
       </p>
-  
+
       <ul>
         <li *ngFor="let el of verbsNotGenerated" [class]="getLogItemClass(el.name)">
+          <button mat-button (click)="selectTable(el.name)">Edit</button> - {{el.name}}
+        </li>
+      </ul>
+
+      <p>
+        Tables you might want to have a closer look at, due to that they contains automatic columns,
+        not transmitted to your endpoints during POST or PUT invocations.
+      </p>
+
+      <ul>
+        <li *ngFor="let el of columnsNotEditable" [class]="getLogItemClass(el.name)">
           <button mat-button (click)="selectTable(el.name)">Edit</button> - {{el.name}}
         </li>
       </ul>
@@ -341,7 +352,7 @@
         </ng-container>
   
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getColumnCssClass(row)"></tr>
 
       </table>
 

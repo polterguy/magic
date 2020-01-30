@@ -124,6 +124,7 @@ export class CrudifyComponent implements OnInit {
   private customSqlEndpointVerb = '';
   private customSqlAuthorization = 'root';
   private verbsNotGenerated: LogTables[] = [];
+  private columnsNotEditable: LogTables[] = [];
 
   constructor(
     private crudService: CrudifyService,
@@ -240,6 +241,16 @@ export class CrudifyComponent implements OnInit {
     }
   }
 
+  getColumnCssClass(row: ColumnModel) {
+    if (row.automatic && !row.primary) {
+      if (row.post || row.put) {
+        return 'fixed';
+      }
+      return 'warning-column';
+    }
+    return '';
+  }
+
   // Builds our local data model by mapping from result from HTTP endpoint
   columnsFetched(res: Column[]) {
 
@@ -291,7 +302,8 @@ export class CrudifyComponent implements OnInit {
 
       // Checking if any verbs are not generated for some reasons.
       const notGenerated = this.endpoints.filter(x => !x.generate);
-      if (notGenerated.length > 0 && this.verbsNotGenerated.findIndex(x => x.name === this.selectedTable) === -1) {
+      if (notGenerated.length > 0 &&
+        this.verbsNotGenerated.findIndex(x => x.name === this.selectedTable) === -1) {
 
         // Some endpoints are not generated for some reasons, making sure we log that fact.
         this.verbsNotGenerated.push({
@@ -299,6 +311,19 @@ export class CrudifyComponent implements OnInit {
           columns: notGenerated.map(x => {
             return {
               name: x.endpoint
+            };
+          })
+        });
+      }
+
+      // Checking if we have automatic columns, that are not primary keys, and making sure we log these.
+      const notSubmitted = this.columns.filter(x => x.automatic && !x.primary);
+      if (notSubmitted.length > 0 && this.columnsNotEditable.findIndex(x => x.name === this.selectedTable) === -1) {
+        this.columnsNotEditable.push({
+          name: this.selectedTable,
+          columns: notSubmitted.map(x => {
+            return {
+              name: x.name
             };
           })
         });

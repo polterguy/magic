@@ -109,6 +109,12 @@
             tr.mat-row:hover {
                 background-color: rgba(0,0,0,.1);
             }
+            tr.warning-column {
+                background-color: rgb(255,240,220);
+            }
+            tr.fixed {
+                background-color: rgb(240,255,220);
+            }
         }
     }
 }
