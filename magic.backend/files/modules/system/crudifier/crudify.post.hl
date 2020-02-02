@@ -232,6 +232,27 @@ switch:x:@.arguments/*/verb
     * HTTP DELETE special case
     */
    case:delete
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         eq
+            get-count:x:@.arguments/*/args/*/primary/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a DELETE endpoint without primary keys.
+             */
+            throw:There are no actual primary keys declared for your DELETE endpoint.
+
+
+      /*
+       * Applying DELETE arguments.
+       */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*
 
@@ -240,6 +261,22 @@ switch:x:@.arguments/*/verb
     * HTTP GET special case
     */
    case:get
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         eq
+            get-count:x:@.arguments/*/args/*/columns/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a GET endpoint returning no actual columns.
+             */
+            throw:There are no actual columns declared for your GET endpoint.
 
       /*
        * Checking if we have an [.arguments]/[args]/[cache] value.
@@ -325,6 +362,27 @@ switch:x:@.arguments/*/verb
     * HTTP POST special cases
     */
    case:post
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         eq
+            get-count:x:@.arguments/*/args/*/columns/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a POST endpoint without any actual data to POST.
+             */
+            throw:There are no actual columns declared for your POST endpoint.
+
+
+      /*
+       * Applying POST arguments.
+       */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*
 
@@ -333,6 +391,31 @@ switch:x:@.arguments/*/verb
     * HTTP PUT special cases
     */
    case:put
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         or
+            eq
+               get-count:x:@.arguments/*/args/*/primary/*
+               .:int:0
+            eq
+               get-count:x:@.arguments/*/args/*/columns/*
+               .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a PUT endpoint without any actual data to PUT.
+             */
+            throw:There are no actual columns, and/or primary keys declared for your PUT endpoint.
+
+
+      /*
+       * Applying PUT arguments.
+       */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*
       add:x:@apply/*/.arguments
