@@ -5,7 +5,7 @@ Magic is a scaffolding CRUD generator for .Net Core that allows you to create yo
 applications by simply clicking a button. Watch the video below for a demonstration.
 
 <p align="center">
-<a href="https://www.youtube.com/watch?v=7zNh4Ekd67c">
+<a href="https://www.youtube.com/watch?v=8xO9H-2Fejc">
 <img alt="Create a CRUD Web app in seconds" title="Create a CRUD Web app in seconds" src="https://servergardens.files.wordpress.com/2020/01/magic-video-screenshot.png" />
 </a>
 </p>
