@@ -29,6 +29,7 @@ export class Edit[[component-name]] {
    */
   private createColumns: string[] = [[[create-input]]];
   private updateColumns: string[] = [[[update-input]]];
+  private primaryKeys: string[] = [[[primary-keys]]];
 
   /*
    * Constructor taking a bunch of services injected using dependency injection.
@@ -41,7 +42,8 @@ export class Edit[[component-name]] {
 
   canEditColumn(name: string) {
     if (this.data.isEdit) {
-      return this.updateColumns.filter(x => x === name).length > 0;
+      return this.updateColumns.filter(x => x === name).length > 0 &&
+        this.primaryKeys.filter(x => x === name).length == 0;
     }
     return this.createColumns.filter(x => x === name).length > 0;
   }
