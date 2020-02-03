@@ -1,0 +1,90 @@
+
+/*
+ * Internal helper file that creates our custom SQL components according to
+ * which endpoints we have at our disposal.
+ */
+
+
+
+
+
+
+/*
+ * Used as buffer to hold reutrn values.
+ */
+.result
+
+
+
+
+
+
+/*
+ * Looping through each relevant endpoint, which implies endpoints being
+ * of type "crud-sql".
+ */
+for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
+
+
+   /*
+    * Verifying it's a GET endpoint, and that it takes no arguments.
+    */
+   if
+      and
+         eq
+            get-value:x:@.dp/#/*/verb
+            .:get
+         not
+            exists:x:@.dp/#/*/input/*
+      .lambda
+
+
+         /*
+          * This is a Custom SQL endpoint, its verb is GET,
+          * and it does not require input arguments.
+          *
+          * Iterating through each component file, and transforming it according to arguments.
+          */
+         for-each:x:@.arguments/*/.sql-component-files/*
+
+
+            /*
+             * Replacing [[component-header]]
+             */
+            strings.split:x:@for-each/@.dp/#/*/path
+               .:/
+            strings.capitalize:x:-/0/-
+            set-value:x:@.dp/#/*
+               strings.replace:x:@.dp/#/*
+                  .:[[component-header]]
+                  get-value:x:@strings.capitalize
+
+
+            /*
+             * Changing root filename of component.
+             */
+            strings.split:x:@.dp/#
+               .:/
+            strings.split:x:-/0/-
+               .:.
+            set-value:x:@.dp/#
+               strings.concat
+                  get-value:x:@strings.split/@strings.split/@strings.split/0/-
+                  .:/
+                  get-value:x:@strings.split/@strings.split/@strings.split/0/-
+                  .:.
+                  get-value:x:@strings.split/0/-
+
+
+            /*
+             * Adding transformed file to [.result].
+             */
+            add:x:@.result
+               get-nodes:x:@.dp/#
+
+
+
+/*
+ * Returning transformed files to caller.
+ */
+slots.return-nodes:x:@.result/*

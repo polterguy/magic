@@ -103,6 +103,7 @@ export class CrudifyComponent implements OnInit {
   noEndpointsCreated = 0;
   noLoc = 0;
   currentlyCrudifying = '';
+  isStatistics = false;
 
   // Endpoints that will be created
   private endpoints: EndpointModel[] = [];
@@ -457,6 +458,7 @@ slots.signal:transformers.hash-password
       sql: this.customSql,
       authorization: this.customSqlAuthorization,
       overwrite: this.overwrite,
+      isStatistics: this.isStatistics,
     }).subscribe((res: CrudifyResult) => {
       this.showSuccess('Endpoint successfully created');
     }, (error) => {

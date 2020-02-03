@@ -11,6 +11,7 @@
    endpointName:string
    sql:string
    overwrite:bool
+   isStatistics:bool
 .description:"Creates a custom SQL HTTP REST endpoint according to the instructions given in the arguments."
 
 
@@ -55,6 +56,24 @@ for-each:x:@apply/**/wait.xxx.select
 hyper2lambda:x:@.arguments/*/arguments
 add:x:@apply/*/.arguments
    get-nodes:x:@hyper2lambda/*
+
+
+/*
+ * Checking if caller declared current endpoint as a "statistics" endpoint.
+ */
+if
+   eq
+      get-value:x:@.arguments/*/isStatistics
+      .:bool:true
+   .lambda
+
+
+      /*
+       * Making sure we mark endpoint as a statistics type of endpoint.
+       */
+      insert-before:x:@apply/*/.arguments
+         .
+            .is-statistics:bool:true
 
 
 /*
