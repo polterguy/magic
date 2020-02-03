@@ -17,7 +17,6 @@ export class AppComponent implements OnInit {
 
   private username = '';
   private password = '';
-  private defaultAuth = false;
   private backendUrl = environment.apiURL;
   private connectedToBackend = false;
 
@@ -73,7 +72,7 @@ export class AppComponent implements OnInit {
   // Logs in user with username/password combination from HTML page.
   login() {
     environment.apiURL = this.backendUrl;
-    this.defaultAuth = this.password === 'root';
+    environment.hasBeenSetup = this.password !== 'root';
     this.authService.authenticate(this.username, this.password).subscribe(res => {
       localStorage.setItem('access_token', res.ticket);
       if (this.password === 'root') {
@@ -84,6 +83,10 @@ export class AppComponent implements OnInit {
     }, (error) => {
       this.showError(error.error.message);
     });
+  }
+
+  setupDone() {
+    return environment.hasBeenSetup;
   }
 
   /*

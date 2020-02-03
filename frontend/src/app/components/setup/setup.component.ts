@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material';
 import { SetupService } from 'src/app/services/setup-service';
 import { AuthenticateService } from 'src/app/services/authenticate-service';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-evaluator',
@@ -117,7 +118,8 @@ export class SetupComponent implements OnInit {
                   // Success!
                   this.showInfo('You have successfully secured your system');
 
-                  // Navigating to "Home" screen.
+                  // Navigating to "Home" screen, and making sure we signal that setup is done.
+                  environment.hasBeenSetup = true;
                   this.router.navigate(['']);
 
                   // Hiding obscurer.

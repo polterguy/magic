@@ -119,7 +119,7 @@
 
       <ul>
         <li *ngFor="let el of verbsNotGenerated" [class]="getLogItemClass(el.name)">
-          <button mat-button (click)="selectTable(el.name)">Edit</button> - {{el.name}}
+          <button mat-button (click)="selectTable(el.name)">Edit</button> {{el.name}}
         </li>
       </ul>
 
@@ -130,7 +130,7 @@
 
       <ul>
         <li *ngFor="let el of columnsNotEditable" [class]="getLogItemClass(el.name)">
-          <button mat-button (click)="selectTable(el.name)">Edit</button> - {{el.name}}
+          <button mat-button (click)="selectTable(el.name)">Edit</button> {{el.name}}
         </li>
       </ul>
   
