@@ -2,6 +2,9 @@
 /*
  * Internal helper file to create service method implementations (Angular style),
  * according to specified [.arguments].
+ *
+ * Notice, this file creates a service method for every single HTTP endpoint caller
+ * has told us he wants to wrap.
  */
 
 
