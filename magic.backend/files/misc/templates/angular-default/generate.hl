@@ -117,12 +117,15 @@ set-value:x:@.http-service-methods
 /*
  * Transforming our CRUD methods, such that they become slightly more readable, and doing
  * some common parsing, such as figuring out filenames, folder names, etc for each component.
+ *
+ * This is later used to generate our components, since we create one component for each
+ * CRUD type of endpoint that we were given as input.
  */
 .crud-methods
 add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
-   io.files.execute:/misc/templates/angular-default/generator/generate-http-methods.hl
+   io.files.execute:/misc/templates/angular-default/generator/generate-http-crud-methods.hl
 
 
 

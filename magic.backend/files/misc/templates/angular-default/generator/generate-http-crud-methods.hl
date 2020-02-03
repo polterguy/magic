@@ -2,6 +2,10 @@
 /*
  * Internal helper file to retrieve all CRUD methods, structured format,
  * according to specified [.arguments].
+ *
+ * Notice, this file simply creates a slightly more organised graph object from
+ * the HTTP methods that happens to be of HTTP CRUD type, and only if there
+ * exists a "crud-read" type of endpoint, at the very least.
  */
 .result
 
