@@ -22,8 +22,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .sidenav-menu {
     border-right: solid 1px rgb(180, 180, 180);
     background: #eee;
+    min-width: 100%;
     .active-link {
         background-color: rgba(32, 15, 182, 0.1);
+    }
+}
+
+@media screen and (min-width: 640px) {
+    .sidenav-menu {
+        min-width: 350px;
     }
 }
 
