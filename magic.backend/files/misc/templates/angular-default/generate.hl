@@ -25,12 +25,15 @@ log.info:Angular default template creating an Angular frontend for you
  * The [.main-files] will contain the main template files.
  * The [.component-files] will contain the "per component" files, and
  * will be duplicated once for each component that is dynamically created.
+ * The [.sql-components-files] will contain the "per component" files for each
+ * endpoint being of type "crud-sql".
  *
  * The latter will be used as the basis for creating one component for each
  * CRUD "read" endpoint specified by caller.
  */
 .main-files
 .component-files
+.sql-component-files
 
 
 
@@ -57,6 +60,19 @@ add:x:@.component-files
    slots.signal:magic.io.files.load-recursively
       strings.concat
          .:/misc/templates/angular-default/templates/component/
+
+
+
+
+
+
+/*
+ * Loads all files in "sql-component" Angular template folder recursively.
+ */
+add:x:@.sql-component-files
+   slots.signal:magic.io.files.load-recursively
+      strings.concat
+         .:/misc/templates/angular-default/templates/sql-component/
 
 
 
@@ -173,7 +189,7 @@ set-value:x:-
 
 
 /*
- * Building our components.
+ * Building our CRUD components.
  */
 .components
 add:x:+/+/*
@@ -182,6 +198,22 @@ add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
    io.files.execute:/misc/templates/angular-default/generator/generate-components.hl
+
+
+
+
+
+
+/*
+ * Building our Custom SQL components.
+ */
+.sql-components
+add:x:+/+/*
+   get-nodes:x:@.sql-component-files
+add:x:+/*
+   get-nodes:x:@.arguments/*
+add:x:@.sql-components
+   io.files.execute:/misc/templates/angular-default/generator/generate-sql-components.hl
 
 
 
@@ -414,6 +446,23 @@ for-each:x:@.components/*
 
 
 /*
+ * Making sure we position our SQL statistics components correctly
+ * inside of our zip file.
+ */
+for-each:x:@.sql-components/*
+   set-value:x:@.dp/#
+      strings.concat
+         .:/
+         get-value:x:@.arguments/*/name
+         .:/src/app/components/
+         get-value:x:@.dp/#
+
+
+
+
+
+
+/*
  * Iterating through each [.main-files] and doing substitutions
  * according to specifications and META data.
  *
@@ -477,6 +526,8 @@ add:x:../*/slots.return-nodes
    get-nodes:x:@.main-files/*
 add:x:../*/slots.return-nodes
    get-nodes:x:@.components/*
+add:x:../*/slots.return-nodes
+   get-nodes:x:@.sql-components/*
 
 
 

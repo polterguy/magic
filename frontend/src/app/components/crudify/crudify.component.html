@@ -202,13 +202,20 @@
 
     <div class="code-mirror-wrapper">
 
-      <mat-form-field style="margin-right: 2rem;">
-        <mat-select placeholder="Select verb" [(ngModel)]="customSqlEndpointVerb">
-          <mat-option *ngFor="let cur of verbs" [value]="cur.verb">{{cur.verb}}</mat-option>
+      <mat-form-field
+        style="margin-right: 2rem;">
+        <mat-select
+          placeholder="Select verb"
+          [(ngModel)]="customSqlEndpointVerb">
+          <mat-option
+            *ngFor="let cur of verbs"
+            [value]="cur.verb">{{cur.verb}}</mat-option>
         </mat-select>
       </mat-form-field>
+      
 
-      <mat-form-field style="margin-right: 2rem;">
+      <mat-form-field
+        style="margin-right: 2rem;">
         <input 
           matInput 
           placeholder="Endpoint name"
@@ -217,7 +224,8 @@
           [(ngModel)]="customSqlEndpointName">
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field
+        style="margin-right: 2rem;">
         <input 
           matInput 
           placeholder="Authorization"
@@ -225,6 +233,10 @@
           autocomplete="off"
           [(ngModel)]="customSqlAuthorization">
       </mat-form-field>
+
+      <mat-checkbox
+        matTooltip="Is statistics endpoint"
+        [(ngModel)]="isStatistics">Is statistics</mat-checkbox>
 
       <div class="air">
         <label>Arguments</label>
@@ -243,7 +255,8 @@
       <div class="right-align">
         <button 
           matTooltip="Creates your endpoint"
-          mat-button
+          mat-raised-button
+          color="primary"
           (click)="generateSqlEndpoint()">Create</button>
       </div>
     </div>
