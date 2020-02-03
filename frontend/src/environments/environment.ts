@@ -6,6 +6,7 @@ export let environment = {
   production: false,
   apiURL: 'http://localhost:55247/',
   apiDomain: 'localhost:55247',
+  hasBeenSetup: false,
 };
 
 /*
