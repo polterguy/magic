@@ -126,6 +126,9 @@ export class AppComponent {
 
   // Returns true if user belongs to (at least) one of the specified role names.
   inRole(roles: string[]) {
+    if (roles === null || roles === undefined || roles.length === 0) {
+      return true;
+    }
     for (const idx of roles) {
       if (this.roles.indexOf(idx) !== -1) {
         return true;

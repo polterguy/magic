@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { ChartOptions } from 'chart.js';
+import { Label } from 'ng2-charts';
 
 import { HttpService } from 'src/app/services/http-service';
 
@@ -21,6 +23,20 @@ export class [[component-name]] implements OnInit {
    */
   private roles: string [] = [];
 
+  private chartOptions: ChartOptions = {
+    responsive: true,
+    legend: {
+      position: 'left',
+    },
+  };
+  private chartLabels: Label[] = [];
+  private chartData: number[] = [];
+  private chartColors = [
+    {
+      backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
+    },
+  ];
+
   // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
     private httpService: HttpService,
@@ -38,6 +54,10 @@ export class [[component-name]] implements OnInit {
 
   // OnInit implementation. Retrieves statistics from backend, and initialized data for our graph/chart.
   ngOnInit() {
+    this.httpService.[[service-get-method]]({}).subscribe(res => {
+      this.chartData = res.map(x => x.value);
+      this.chartLabels = res.map(x => x.label);
+    });
   }
 
   // Helper method to display an error to user in a friendly SnackBar type of widget.
