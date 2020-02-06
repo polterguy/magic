@@ -17,16 +17,10 @@ import { HttpService } from 'src/app/services/http-service';
 })
 export class [[component-name]] implements OnInit {
 
-  /*
-   * This is needed to figure out whether or not user has access to
-   * delete, create and update methods.
-   */
-  private roles: string [] = [];
-
   private chartOptions: ChartOptions = {
     responsive: true,
     legend: {
-      position: 'left',
+      position: 'top',
     },
   };
   private chartLabels: Label[] = [];
@@ -37,20 +31,10 @@ export class [[component-name]] implements OnInit {
     },
   ];
 
-  // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
     private httpService: HttpService,
     private jwtHelper: JwtHelperService,
-    private snackBar: MatSnackBar) {
-
-    // Checking if user is logged in, at which point we initialize the roles property.
-    const token = localStorage.getItem('jwt_token');
-    if (token !== null && token !== undefined) {
-
-      // Yup! User is logged in!
-      this.roles = this.jwtHelper.decodeToken(token).role.split(',');
-    }
-  }
+    private snackBar: MatSnackBar) { }
 
   // OnInit implementation. Retrieves statistics from backend, and initialized data for our graph/chart.
   ngOnInit() {
