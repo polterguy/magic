@@ -2,3 +2,10 @@
     background:rgb(255,100,100);
     color:rgb(0,0,0);
 }
+
+.stats-wrapper {
+    padding: 3rem 3rem 1rem 3rem;
+    .chart {
+        max-width: 500px;
+    }
+}

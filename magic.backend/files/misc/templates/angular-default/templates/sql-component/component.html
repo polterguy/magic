@@ -1,9 +1,20 @@
 
 <div class="component-wrapper">
 
-  <div class="mat-elevation-z4 relativized grid-wrapper">
+  <div class="mat-elevation-z4 relativized stats-wrapper">
 
     <h3>[[component-header]]</h3>
+
+    <div class="chart">
+      <canvas baseChart
+        chartType="pie"
+        legend="true"
+        [data]="chartData"
+        [labels]="chartLabels"
+        [options]="chartOptions"
+        [colors]="chartColors">
+    </canvas>
+    </div>
 
   </div>
 

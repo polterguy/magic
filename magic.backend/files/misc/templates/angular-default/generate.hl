@@ -205,23 +205,8 @@ add:x:@.components
 
 
 /*
- * Building our Custom SQL components.
- */
-.sql-components
-add:x:+/+/*
-   get-nodes:x:@.sql-component-files
-add:x:+/*
-   get-nodes:x:@.arguments/*
-add:x:@.sql-components
-   io.files.execute:/misc/templates/angular-default/generator/generate-sql-components.hl
-
-
-
-
-
-
-/*
- * Retrieving import statements/router declarations, and such for each component we have.
+ * Retrieving import statements/router declarations,
+ * and such for each component we have.
  */
 .imports
 .imports-only-main
@@ -358,6 +343,200 @@ for-each:x:@.crud-methods/*
                .:"    "
                get-value:x:@.dp/#/*/component-edit-name
                .:",\r\n"
+
+
+
+
+
+
+/*
+ * Running through "crud-statistics" types of endpoints.
+ */
+.sql-components
+for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
+
+
+   /*
+    * Verifying it's a GET endpoint, and that it takes no arguments.
+    */
+   if
+      and
+         eq
+            get-value:x:@.dp/#/*/verb
+            .:get
+         not
+            exists:x:@.dp/#/*/input/*
+      .lambda
+
+
+         /*
+          * This is a Custom SQL endpoint, its verb is GET,
+          * and it does not require input arguments.
+          *
+          * Iterating through each component file, and transforming it according to arguments.
+          */
+         .component-url
+         .component-name
+         .component-header
+         .component-filename
+         .component-selector
+         .component-service-get-method
+         .component-folder
+
+
+         /*
+          * Replacing [[component-header]]
+          */
+         strings.split:x:@.dp/#/*/path
+            .:/
+         set-value:x:@.component-url
+            get-value:x:@strings.split/0/-
+         set-value:x:@.component-folder
+            get-value:x:@strings.split/0/-
+         strings.capitalize:x:@strings.split/0/-
+         set-value:x:@.component-name
+            strings.concat
+               .:Component
+               strings.replace-not-of:x:@strings.capitalize
+                  .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
+                  .:_
+         set-value:x:@.component-header
+            get-value:x:@strings.capitalize
+         set-value:x:@.component-filename
+            strings.concat
+               get-value:x:@strings.split/0/-
+               .:.component
+         set-value:x:@.component-selector
+            strings.concat
+               .:app-
+               get-value:x:@strings.split/0/-
+         set-value:x:@.component-service-get-method
+            strings.concat
+               strings.replace-not-of:x:@strings.split/0/-
+                  .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
+                  .:_
+               .:_Get
+
+
+         /*
+          * Iterating through each component template file.
+          */
+         for-each:x:@.sql-component-files/*
+
+
+            /*
+             * Doing actual substitutions in component's template files.
+             */
+            set-value:x:@.dp/#/*
+               strings.replace:x:@.dp/#/*
+                  .:[[component-header]]
+                  get-value:x:@.component-header
+            set-value:x:@.dp/#/*
+               strings.replace:x:@.dp/#/*
+                  .:[[component-filename]]
+                  get-value:x:@.component-filename
+            set-value:x:@.dp/#/*
+               strings.replace:x:@.dp/#/*
+                  .:[[component-selector]]
+                  get-value:x:@.component-selector
+            set-value:x:@.dp/#/*
+               strings.replace:x:@.dp/#/*
+                  .:[[component-name]]
+                  get-value:x:@.component-name
+            set-value:x:@.dp/#/*
+               strings.replace:x:@.dp/#/*
+                  .:[[service-get-method]]
+                  get-value:x:@.component-service-get-method
+
+
+            /*
+             * Changing root filename of component.
+             */
+            strings.split:x:@.dp/#
+               .:/
+            strings.split:x:-/0/-
+               .:.
+            set-value:x:@.dp/#
+               strings.concat
+                  get-value:x:@strings.split/@strings.split/@strings.split/0/-
+                  .:/
+                  get-value:x:@strings.split/@strings.split/@strings.split/0/-
+                  .:.component.
+                  get-value:x:@strings.split/0/-
+
+
+            /*
+             * Adding transformed file to [.sql-components].
+             */
+            add:x:@.sql-components
+               get-nodes:x:@.dp/#
+
+
+         /*
+          * Import declarations for statistics component.
+          */
+         strings.replace:x:@.imports-file-only-grid
+            .:[[component-name]]
+            get-value:x:@.component-name
+         strings.replace:x:-
+            .:[[component-folder]]
+            get-value:x:@.component-folder
+         strings.replace:x:-
+            .:[[component-filename]]
+            get-value:x:@.component-filename
+         set-value:x:@.imports
+            strings.concat
+               get-value:x:@.imports
+               get-value:x:@strings.replace
+         set-value:x:@.imports-only-main
+            strings.concat
+               get-value:x:@.imports-only-main
+               get-value:x:@strings.replace
+
+
+         /*
+          * Router declarations.
+          */
+         strings.replace:x:@.router-declaration-file
+            .:[[component-name]]
+            get-value:x:@.component-name
+         strings.replace:x:-
+            .:[[router-url]]
+            get-value:x:@.component-url
+         set-value:x:@.routes
+            strings.concat
+               get-value:x:@.routes
+               get-value:x:@strings.replace
+
+
+         /*
+          * Module declarations.
+          */
+         set-value:x:@.module-declarations
+            strings.concat
+               get-value:x:@.module-declarations
+               .:"    "
+               get-value:x:@.component-name
+               .:",\r\n"
+
+
+         /*
+          * Router links.
+          */
+         // TODO: Figure out read roles for statistic components.
+         strings.replace:x:@.router-link-file
+            .:[[read-roles]]
+            .:
+         strings.replace:x:@strings.replace
+            .:[[url]]
+            get-value:x:@.component-url
+         strings.replace:x:@strings.replace
+            .:[[name]]
+            get-value:x:@.component-header
+         set-value:x:@.router-links
+            strings.concat
+               get-value:x:@.router-links
+               get-value:x:@strings.replace
 
 
 
