@@ -235,11 +235,13 @@
       </mat-form-field>
 
       <mat-checkbox
+        *ngIf="customSqlEndpointVerb === 'get' && customSqlArguments === ''"
         matTooltip="A statistics type of endpoint will allow you to generate a chart during frontend scaffolding"
         [(ngModel)]="isStatistics">Is statistics</mat-checkbox>
 
-      <p *ngIf="isStatistics">
-        Must return a label/value type of result, such as for instance <code>select name as label, count(*) as value from sales group by name</code>
+      <p *ngIf="isStatistics && customSqlEndpointVerb === 'get' && customSqlArguments === ''">
+        Must return a label/value type of result, such as for instance <code>select name as label, count(*) as value from sales group by name</code>,
+        and cannot take parameters.
       </p>
 
       <div class="air">

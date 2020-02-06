@@ -1,9 +1,9 @@
 
 <div class="component-wrapper">
 
-  <div class="mat-elevation-z4 relativized stats-wrapper">
+  <h1>[[component-header]]</h1>
 
-    <h3>[[component-header]]</h3>
+  <div class="mat-elevation-z4 relativized stats-wrapper">
 
     <div class="chart">
       <canvas baseChart
@@ -13,7 +13,14 @@
         [labels]="chartLabels"
         [options]="chartOptions"
         [colors]="chartColors">
-    </canvas>
+      </canvas>
+    </div>
+
+    <div class="description">
+      <p>
+        Provide some descriptive text here about your chart, or alternatively add more charts by copying and pasting the above
+        chart, and provide a different datasource for it.
+      </p>
     </div>
 
   </div>

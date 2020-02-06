@@ -458,7 +458,7 @@ slots.signal:transformers.hash-password
       sql: this.customSql,
       authorization: this.customSqlAuthorization,
       overwrite: this.overwrite,
-      isStatistics: this.isStatistics,
+      isStatistics: this.customSqlEndpointVerb === 'get' && this.customSqlArguments === '' && this.isStatistics,
     }).subscribe((res: CrudifyResult) => {
       this.showSuccess('Endpoint successfully created');
     }, (error) => {

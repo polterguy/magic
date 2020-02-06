@@ -3,9 +3,29 @@
     color:rgb(0,0,0);
 }
 
+h1 {
+    text-align: center;
+}
+
 .stats-wrapper {
-    padding: 3rem 3rem 1rem 3rem;
+    padding: 3rem 1rem 1rem 1rem;
+    margin: 3rem 0 3rem 0;
     .chart {
-        max-width: 500px;
+        width: auto;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .stats-wrapper {
+        padding: 3rem 3rem 1rem 3rem;
+        margin: 3rem 8rem 3rem 8rem;
+        display: flex;
+        .chart {
+            max-width: 500px;
+            flex:50%;
+        }
+        .description {
+            flex:50%;
+        }
     }
 }
