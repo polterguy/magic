@@ -53,7 +53,7 @@ export class [[component-name]] implements OnInit {
 
   // OnInit implementation. Retrieves statistics from backend, and initialized data for our graph/chart.
   ngOnInit() {
-    this.httpService.statistics_1_Get({}).subscribe(res => {
+    this.httpService.[[service-get-method]]({}).subscribe(res => {
       this.chartData = res.map(x => x.value);
       this.chartLabels = res.map(x => x.label);
     }, error => {
