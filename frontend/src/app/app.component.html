@@ -12,7 +12,7 @@
     [routerLinkActiveOptions]="{exact:true}">Home</a>
 
   <a 
-    *ngIf="isLoggedIn() && !setupDone()"
+    *ngIf="isLoggedIn() && hasDefaultPassword()"
     mat-button 
     routerLink="/setup" 
     routerLinkActive="active-link" 
@@ -26,14 +26,14 @@
     [routerLinkActiveOptions]="{exact:true}">Crudify</a>
 
   <a 
-    *ngIf="isLoggedIn() && setupDone()"
+    *ngIf="isLoggedIn() && !hasDefaultPassword()"
     mat-button 
     routerLink="/users" 
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Users</a>
 
   <a 
-    *ngIf="isLoggedIn() && setupDone()"
+    *ngIf="isLoggedIn() && !hasDefaultPassword()"
     mat-button 
     routerLink="/roles" 
     routerLinkActive="active-link" 
