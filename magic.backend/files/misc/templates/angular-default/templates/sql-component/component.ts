@@ -19,7 +19,7 @@ export class [[component-name]] implements OnInit {
   private chartOptions: ChartOptions = {
     responsive: true,
     legend: {
-      position: 'left',
+      display: false
     },
   };
   private chartLabels: Label[] = [];
@@ -27,22 +27,22 @@ export class [[component-name]] implements OnInit {
   private chartColors = [
     {
       backgroundColor: [
-        'rgba(240,240,240,0.8)',
-        'rgba(225,225,225,0.8)',
-        'rgba(210,210,210,0.8)',
-        'rgba(195,195,195,0.8)',
-        'rgba(180,180,180,0.8)',
-        'rgba(165,165,165,0.8)',
-        'rgba(150,150,150,0.8)',
-        'rgba(135,135,135,0.8)',
-        'rgba(120,120,120,0.8)',
-        'rgba(105,105,105,0.8)',
-        'rgba(90,90,90,0.8)',
-        'rgba(75,75,75,0.8)',
-        'rgba(60,60,60,0.8)',
-        'rgba(45,45,45,0.8)',
-        'rgba(30,30,30,0.8)',
         'rgba(15,15,15,0.8)',
+        'rgba(30,30,30,0.8)',
+        'rgba(45,45,45,0.8)',
+        'rgba(60,60,60,0.8)',
+        'rgba(75,75,75,0.8)',
+        'rgba(90,90,90,0.8)',
+        'rgba(105,105,105,0.8)',
+        'rgba(120,120,120,0.8)',
+        'rgba(135,135,135,0.8)',
+        'rgba(150,150,150,0.8)',
+        'rgba(165,165,165,0.8)',
+        'rgba(180,180,180,0.8)',
+        'rgba(195,195,195,0.8)',
+        'rgba(210,210,210,0.8)',
+        'rgba(225,225,225,0.8)',
+        'rgba(240,240,240,0.8)',
       ],
     },
   ];

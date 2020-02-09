@@ -119,7 +119,7 @@ export class SetupComponent implements OnInit {
                   this.showInfo('You have successfully secured your system');
 
                   // Navigating to "Home" screen, and making sure we signal that setup is done.
-                  environment.hasBeenSetup = true;
+                  environment.hasDefaultPassword = false;
                   this.router.navigate(['']);
 
                   // Hiding obscurer.

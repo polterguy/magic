@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
   // Logs in user with username/password combination from HTML page.
   login() {
     environment.apiURL = this.backendUrl;
-    environment.hasBeenSetup = this.password !== 'root';
+    environment.hasDefaultPassword = this.password === 'root';
     this.authService.authenticate(this.username, this.password).subscribe(res => {
       localStorage.setItem('access_token', res.ticket);
       if (this.password === 'root') {
@@ -85,8 +85,8 @@ export class AppComponent implements OnInit {
     });
   }
 
-  setupDone() {
-    return environment.hasBeenSetup;
+  hasDefaultPassword() {
+    return environment.hasDefaultPassword;
   }
 
   /*
