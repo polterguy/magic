@@ -16,8 +16,7 @@ export class TicketService {
 
   constructor(
     private jwtHelper: JwtHelperService,
-    private httpClient: HttpClient,
-    private ticketService: TicketService) { }
+    private httpClient: HttpClient) { }
 
   getBackendUrl(): string {
     const url = localStorage.getItem('backendUrl');
@@ -87,7 +86,7 @@ export class TicketService {
     localStorage.setItem('hasDefaultPassword', password === 'root' && username === 'root' ? 'true' : 'false');
     return new Observable<any>(observer => {
       this.httpClient.get<any>(
-        this.ticketService.getBackendUrl() +
+        this.getBackendUrl() +
         'magic/modules/system/auth/authenticate?username=' +
         encodeURI(username) +
         '&password=' +
@@ -102,7 +101,7 @@ export class TicketService {
           if (!this.hasDefaultRootPassword()) {
 
             this.httpClient.get<any>(
-              this.ticketService.getBackendUrl() +
+              this.getBackendUrl() +
               'magic/modules/system/sql/default-database-type').subscribe(databaseTypeResult => {
                 localStorage.setItem('defaultDatabaseType', databaseTypeResult.type);
               });
@@ -122,7 +121,7 @@ export class TicketService {
   refreshTicket(): Observable<any> {
     return new Observable<any>(observer => {
       this.httpClient.get<any>(
-        this.ticketService.getBackendUrl() +
+        this.getBackendUrl() +
         'magic/modules/system/auth/refresh-ticket').subscribe(refreshTicketResult => {
 
           // Storing JWT token, and signaling completion.
