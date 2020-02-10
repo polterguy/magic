@@ -1,10 +1,10 @@
 
 import { Component, OnInit } from '@angular/core';
-import { PipeTransform, Pipe } from '@angular/core';
-import { MatSnackBar, MatSelectChange } from '@angular/material';
+import { MatSnackBar, MatSelectChange, MatDialog } from '@angular/material';
 import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
 import { TicketService } from 'src/app/services/ticket-service';
+import { GetSaveFilenameDialogComponent } from './modals/get-save-filename';
 
 @Component({
   selector: 'app-sql',
@@ -28,7 +28,8 @@ select * from some_table;`;
     private sqlService: SqlService,
     private fileService: FileService,
     private ticketService: TicketService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog) { }
 
   ngOnInit() {
     this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
@@ -63,6 +64,28 @@ select * from some_table;`;
       height: '250px',
       mode: 'text/x-mysql',
     };
+  }
+
+  save() {
+    const dialogRef = this.dialog.open(GetSaveFilenameDialogComponent, {
+      width: '500px',
+      data: {
+        filename: '',
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(filename => {
+      if (filename !== undefined) {
+        if (filename.indexOf('.') === -1) {
+          filename = filename + '.sql';
+        }
+        console.log(filename);
+        this.sqlService.saveFile(this.selectedDatabaseType, filename, this.sqlText).subscribe(res => {
+          this.showHttpSuccess('File successfully saved');
+          this.getFiles();
+        });
+      }
+    });
   }
 
   evaluate() {

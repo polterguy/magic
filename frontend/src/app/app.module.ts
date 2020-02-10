@@ -38,6 +38,7 @@ import { NewFileDialogComponent } from './components/files/modals/new-file-dialo
 import { NewUserDialogComponent } from './components/users/modals/new-user-dialog';
 import { NewRoleDialogComponent } from './components/roles/modals/new-role-dialog';
 import { ConfirmDeletionDialogComponent } from './components/files/modals/confirm-deletion-dialog';
+import { GetSaveFilenameDialogComponent } from './components/sql/modals/get-save-filename';
 import { ConfirmDeletionTaskDialogComponent } from './components/scheduler/modals/confirm-deletion-dialog';
 import { CreateValidatorDialogComponent } from './components/crudify/modals/create-validator-dialog';
 import { AddRoleDialogComponent } from './components/users/modals/add-role-dialog';
@@ -72,6 +73,7 @@ export function tokenGetter() {
     NewUserDialogComponent,
     NewRoleDialogComponent,
     ConfirmDeletionDialogComponent,
+    GetSaveFilenameDialogComponent,
     ConfirmDeletionTaskDialogComponent,
     NewTaskDialogComponent,
     CreateValidatorDialogComponent,
@@ -132,6 +134,7 @@ export function tokenGetter() {
     NewRoleDialogComponent,
     NewTaskDialogComponent,
     ConfirmDeletionDialogComponent,
+    GetSaveFilenameDialogComponent,
     ConfirmDeletionTaskDialogComponent,
     CreateValidatorDialogComponent,
     AddRoleDialogComponent]

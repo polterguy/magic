@@ -28,4 +28,14 @@ export class SqlService {
       this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/list-files?databaseType=' + encodeURIComponent(databaseType));
   }
+
+  public saveFile(databaseType: string, filename: string, content: string) {
+    return this.httpClient.put<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/sql/save-file', {
+        databaseType,
+        filename,
+        content
+      });
+  }
 }
