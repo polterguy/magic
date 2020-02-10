@@ -42,8 +42,9 @@ export class AppComponent implements OnInit {
     this.ping();
   }
 
-  // Verifies that the user is connected to a magic backend.
   ping() {
+
+    // Verifies that the user is connected to a magic backend.
     this.pingService.ping().subscribe(res => {
       if (res.result === 'success') {
         this.connectedToBackend = true;
@@ -70,7 +71,7 @@ export class AppComponent implements OnInit {
 
   // Logs in user with username/password combination from HTML page.
   login() {
-    environment.apiURL = this.backendUrl;
+    this.ticketService.setBackendUrl(this.backendUrl);
     this.ticketService.authenticate(this.username, this.password).subscribe(res => {
       this.username = '';
       this.password = '';

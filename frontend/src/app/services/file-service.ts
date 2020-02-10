@@ -3,23 +3,26 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { saveAs } from "file-saver";
+import { TicketService } from './ticket-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient,
+    private ticketService: TicketService) { }
 
   public listFiles(path: string) {
     return this.httpClient.get<string[]>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'magic/modules/system/file-system/list-files?folder=' + encodeURI(path));
   }
 
   public listFolders(path: string) {
     return this.httpClient.get<string[]>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'magic/modules/system/file-system/list-folders?folder=' + encodeURI(path));
   }
 
@@ -28,14 +31,14 @@ export class FileService {
       responseType: 'text'
     };
     return this.httpClient.get<string>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'api/files?file=' + encodeURI(path),
       requestOptions);
   }
 
   public downloadFile(path: string) {
     this.httpClient.get(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'api/files?file=' + encodeURI(path), {
         observe: 'response',
         responseType: 'arraybuffer',
@@ -45,7 +48,7 @@ export class FileService {
         const disp = res.headers.get('Content-Disposition');
         let filename = disp.substr(disp.indexOf('=') + 1);
         filename = filename.substr(0, filename.indexOf(';'));
-        let file = new Blob([res.body], { type: 'application/zip' });
+        const file = new Blob([res.body], { type: 'application/zip' });
         saveAs(file, filename);
       });
   }
@@ -54,7 +57,7 @@ export class FileService {
     const formData: FormData = new FormData();
     formData.append('file', file);
     return this.httpClient.put<any>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'api/files?folder=' + encodeURI(path),
       formData
     );
@@ -67,7 +70,7 @@ export class FileService {
     const blob = new Blob([content], { type: 'text/plain'});
     formData.append('file', blob, path.substr(path.lastIndexOf('/') + 1));
     return this.httpClient.put<any>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'api/files?folder=' + encodeURI(folder),
       formData
     );
@@ -75,13 +78,13 @@ export class FileService {
 
   public deleteFile(path: string) {
     return this.httpClient.delete<string>(
-      environment.apiURL + 'magic/modules/system/file-system/file?file=' + encodeURI(path)
+      this.ticketService.getBackendUrl() + 'magic/modules/system/file-system/file?file=' + encodeURI(path)
     );
   }
 
   public createFolder(path: string) {
     return this.httpClient.put<void>(
-      environment.apiURL + 'magic/modules/system/file-system/folder', {
+      this.ticketService.getBackendUrl() + 'magic/modules/system/file-system/folder', {
         folder: path
       }
     );
@@ -89,6 +92,6 @@ export class FileService {
 
   public deleteFolder(path: string) {
     return this.httpClient.delete<void>(
-      environment.apiURL + 'magic/modules/system/file-system/folder?folder=' + encodeURI(path));
+      this.ticketService.getBackendUrl() + 'magic/modules/system/file-system/folder?folder=' + encodeURI(path));
   }
 }
