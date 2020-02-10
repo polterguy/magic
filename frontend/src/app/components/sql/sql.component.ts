@@ -5,6 +5,23 @@ import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
 import { TicketService } from 'src/app/services/ticket-service';
 import { GetSaveFilenameDialogComponent } from './modals/get-save-filename';
+import * as CodeMirror from 'codemirror';
+
+// Helper class for SQL autocomplete
+class Column {
+  name: string;
+}
+
+// Helper class for SQL autocomplete
+class Table {
+  name: string;
+  columns: Column[];
+}
+
+class Database {
+  name: string;
+  tables: Table[];
+}
 
 @Component({
   selector: 'app-sql',
@@ -20,6 +37,9 @@ export class SqlComponent implements OnInit {
   private databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
   private selectedDatabaseType = 'mysql';
   private sqlText = '';
+  private databases: Database[] = null;
+  private selectedDatabase: Database = null;
+  private hintOptions: any;
 
   constructor(
     private sqlService: SqlService,
@@ -30,7 +50,38 @@ export class SqlComponent implements OnInit {
 
   ngOnInit() {
     this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
+    if (this.selectedDatabaseType !== null) {
+      this.getDatabases();
+    }
     this.getFiles();
+  }
+
+  getDatabases() {
+    const databaseType = this.selectedDatabaseType === 'mssql-batch' ? 'mssql' : this.selectedDatabaseType;
+    this.sqlService.getDatabases(databaseType).subscribe(res => {
+      this.databases = res.databases;
+      if (this.databases.length > 0) {
+        this.selectedDatabase = this.databases[0];
+        this.initializeSqlHints();
+      }
+    });
+  }
+
+  databaseChanged(e: MatSelectChange) {
+    this.initializeSqlHints();
+  }
+
+  initializeSqlHints() {
+    const tmpHints = {};
+    this.selectedDatabase.tables.forEach(idx => {
+      const columns = idx.columns.map(x => {
+        return x.name;
+      });
+      tmpHints[idx.name] = columns;
+    });
+    this.hintOptions = {
+      tables: tmpHints
+    };
   }
 
   getFiles() {
@@ -45,6 +96,7 @@ export class SqlComponent implements OnInit {
 
   databaseTypeChanged(e: MatSelectChange) {
     this.getFiles();
+    this.getDatabases();
   }
 
   fileChanged(e: MatSelectChange) {
@@ -57,10 +109,18 @@ export class SqlComponent implements OnInit {
 
   getCodeMirrorOptions() {
     return {
+      mode: 'text/x-mysql',
+      indentWithTabs: true,
+      smartIndent: true,
       lineNumbers: true,
+      matchBrackets: true,
+      autoFocus: true,
+      extraKeys: {
+        'Ctrl-Space': 'autocomplete'
+      },
+      hintOptions: this.hintOptions,
       theme: 'material',
       height: '250px',
-      mode: 'text/x-mysql',
     };
   }
 
@@ -87,7 +147,7 @@ export class SqlComponent implements OnInit {
   }
 
   evaluate() {
-    this.sqlService.evaluate(this.sqlText, this.selectedDatabaseType).subscribe((res) => {
+    this.sqlService.evaluate(this.sqlText, this.selectedDatabaseType, this.selectedDatabase.name).subscribe((res) => {
       this.result = res;
       this.showHttpSuccess('SQL executed successfully');
     }, (error) => {

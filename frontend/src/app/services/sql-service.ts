@@ -13,12 +13,13 @@ export class SqlService {
     private httpClient: HttpClient,
     private ticketService: TicketService) { }
 
-  public evaluate(sql: string, databaseType: string) {
+  public evaluate(sql: string, databaseType: string, database: string) {
     return this.httpClient.post<any[]>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/evaluate', {
         databaseType: databaseType === 'mssql-batch' ? 'mssql' : databaseType,
         sql,
+        database,
         batch: databaseType === 'mssql-batch' ? true : false,
       });
   }
@@ -27,6 +28,12 @@ export class SqlService {
     return this.httpClient.get<string[]>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/list-files?databaseType=' + encodeURIComponent(databaseType));
+  }
+
+  public getDatabases(databaseType: string) {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/sql/databases?databaseType=' + encodeURIComponent(databaseType));
   }
 
   public saveFile(databaseType: string, filename: string, content: string) {
