@@ -52,10 +52,47 @@ foo.connect
          strings.concat
             get-value:x:@.arguments/*/databaseType
             .:.select
-      strings.concat
-         .:"use \""
-         get-value:x:@.arguments/*/database
-         .:"\";"
-         get-value:x:@.arguments/*/sql
-      foo.select:x:@strings.concat
+
+
+      /*
+       * Creating our SQL, which depends upon whether or not an
+       * explicit database was selected or not.
+       */
+      .sql
+      if
+         and
+            not
+               eq
+                  get-value:x:@.arguments/*/database
+                  .:
+            not
+               eq
+                  get-value:x:@.arguments/*/database
+                  .
+         .lambda
+
+
+            /*
+             * Explicit database was given.
+             */
+            set-value:x:@.sql
+               strings.concat
+                  .:"use \""
+                  get-value:x:@.arguments/*/database
+                  .:"\";"
+                  get-value:x:@.arguments/*/sql
+      else
+
+
+         /*
+          * No database was given, hopefully it's in the actual SQL command.
+          */
+         set-value:x:@.sql
+            get-value:x:@.arguments/*/sql
+
+
+      /*
+       * Executing SQL and returning results to caller.
+       */
+      foo.select:x:@.sql
       slots.return-nodes:x:-/*
