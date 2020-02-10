@@ -6,6 +6,7 @@ import { EndpointService } from '../../services/endpoint-service';
 import { MatInput, MatSelectChange } from '@angular/material';
 import { saveAs } from 'file-saver';
 import { environment } from 'src/environments/environment';
+import { TicketService } from 'src/app/services/ticket-service';
 
 @Component({
   selector: 'app-endpoints',
@@ -29,6 +30,7 @@ export class EndpointsComponent implements OnInit {
 
   constructor(
     private service: EndpointService,
+    private ticketService: TicketService,
     private snackBar: MatSnackBar) { }
 
   ngOnInit() {
@@ -239,7 +241,7 @@ export class EndpointsComponent implements OnInit {
     const toGenerate = this.endpoints.filter(x => x.selected).map(x => x.endpoint);
     const args = {
       endpoints: toGenerate,
-      apiUrl: environment.apiURL,
+      apiUrl: this.ticketService.getBackendUrl(),
       name: this.name,
       templateName: this.selectedTemplate,
       copyright: this.copyright,

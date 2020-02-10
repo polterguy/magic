@@ -3,21 +3,27 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Endpoint } from '../models/endpoint';
+import { TicketService } from './ticket-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EndpointService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient,
+    private ticketService: TicketService) { }
 
   getAllEndpoints() {
-    return this.httpClient.get<Endpoint[]>(environment.apiURL + 'magic/modules/system/endpoints/endpoints');
+    return this.httpClient.get<Endpoint[]>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/endpoints/endpoints');
   }
 
   generate(endpoints: any) {
     return this.httpClient.post<ArrayBuffer>(
-      environment.apiURL + 'magic/modules/system/endpoints/generate',
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/endpoints/generate',
       endpoints, {
         observe: 'response',
         responseType: 'blob' as 'json',
@@ -25,26 +31,30 @@ export class EndpointService {
   }
 
   getAllTemplates() {
-    return this.httpClient.get<string[]>(environment.apiURL + 'magic/modules/system/endpoints/templates');
+    return this.httpClient.get<string[]>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/endpoints/templates');
   }
 
   getTemplateMarkdown(name: string) {
-    return this.httpClient.get<any>(environment.apiURL + 'magic/modules/system/endpoints/template?name=' + encodeURIComponent(name));
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/endpoints/template?name=' + encodeURIComponent(name));
   }
 
   executeGet(url: string) {
-    return this.httpClient.get<any>(environment.apiURL + url);
+    return this.httpClient.get<any>(this.ticketService.getBackendUrl() + url);
   }
 
   executeDelete(url: string) {
-    return this.httpClient.delete<any>(environment.apiURL + url);
+    return this.httpClient.delete<any>(this.ticketService.getBackendUrl() + url);
   }
 
   executePost(url: string, args: any) {
-    return this.httpClient.post<any>(environment.apiURL + url, args);
+    return this.httpClient.post<any>(this.ticketService.getBackendUrl() + url, args);
   }
 
   executePut(url: string, args: any) {
-    return this.httpClient.put<any>(environment.apiURL + url, args);
+    return this.httpClient.put<any>(this.ticketService.getBackendUrl() + url, args);
   }
 }

@@ -2,17 +2,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { TicketService } from './ticket-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SqlService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient,
+    private ticketService: TicketService) { }
 
   public evaluate(sql: string, databaseType: string) {
     return this.httpClient.post<any[]>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/evaluate', {
         databaseType: databaseType === 'mssql-batch' ? 'mssql' : databaseType,
         sql,
@@ -22,7 +25,7 @@ export class SqlService {
 
   public getSavedFiles(databaseType: string) {
     return this.httpClient.get<string[]>(
-      environment.apiURL +
+      this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/list-files?databaseType=' + encodeURIComponent(databaseType));
   }
 }
