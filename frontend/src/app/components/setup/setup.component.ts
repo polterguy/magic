@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { SetupService } from 'src/app/services/setup-service';
-import { AuthenticateService } from 'src/app/services/authenticate-service';
+import { TicketService } from 'src/app/services/ticket-service';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
@@ -25,7 +25,7 @@ export class SetupComponent implements OnInit {
 
   constructor(
     private setupService: SetupService,
-    private authService: AuthenticateService,
+    private ticketService: TicketService,
     private snackBar: MatSnackBar,
     private router: Router) { }
 
@@ -87,7 +87,7 @@ export class SetupComponent implements OnInit {
       if (res.result === 'success') {
 
         /*
-         * To make sure server gets the required time to pudate our IConfiguration
+         * To make sure server gets the required time to update our IConfiguration
          * object, we pause for 5 seconds here.
          */
         setTimeout(() => {
@@ -96,10 +96,7 @@ export class SetupComponent implements OnInit {
            * If settings are saved, our JWT token is no longer valid, since the JWT secret
            * has now been changed - Hence, logging in again.
            */
-          this.authService.authenticate('root', 'root').subscribe(res2 => {
-
-            // Changing our JWT token.
-            localStorage.setItem('access_token', JSON.stringify(res2));
+          this.ticketService.authenticate('root', 'root').subscribe(res2 => {
 
             // Setting up authentication system and database.
             this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
@@ -111,16 +108,12 @@ export class SetupComponent implements OnInit {
                  * our new password should now function - Hence, trying to login again,
                  * but this time with the new password.
                  */
-                this.authService.authenticate('root', this.password).subscribe(res4 => {
-
-                  // Changing our JWT token.
-                  localStorage.setItem('access_token', JSON.stringify(res4));
+                this.ticketService.authenticate('root', this.password).subscribe(res4 => {
 
                   // Success!
                   this.showInfo('You have successfully secured your system');
 
                   // Navigating to "Home" screen, and making sure we signal that setup is done.
-                  environment.hasDefaultPassword = false;
                   this.router.navigate(['']);
 
                   // Hiding obscurer.
@@ -155,7 +148,7 @@ export class SetupComponent implements OnInit {
       }
     }, error => {
 
-      // couldn't save config file.
+      // Couldn't save config file.
       this.showError(error.error.message);
 
       // Hiding obscurer.
