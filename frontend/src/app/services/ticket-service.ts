@@ -18,6 +18,14 @@ export class TicketService {
     private jwtHelper: JwtHelperService,
     private httpClient: HttpClient) { }
 
+  getBackendUrl() {
+    const url = localStorage.getItem('backendUrl');
+    if (url !== null && url !== undefined) {
+      return url;
+    }
+    return environment.apiURL; // Default
+  }
+
   getTicket() {
 
     // Checking local storage if it has an access token.

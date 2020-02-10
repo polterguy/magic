@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
 
   private username = '';
   private password = '';
-  private backendUrl = environment.apiURL;
+  private backendUrl = '';
   private connectedToBackend = false;
 
   constructor(
@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    this.backendUrl = this.ticketService.getBackendUrl();
     this.periodicallyValidateJwtToken();
     this.ping();
     if (!this.isLoggedIn() && this.router.url !== '') {
