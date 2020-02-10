@@ -69,6 +69,11 @@
         [(ngModel)]="mysqlConnectionString">
     </mat-form-field>
 
+    <p
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null">
+      Choose a password for your Magic root user.
+    </p>
+
     <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
       style="margin-right: 1rem;">
