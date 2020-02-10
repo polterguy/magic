@@ -9,10 +9,7 @@ import { EvaluatorService } from '../../services/evaluator-service';
   styleUrls: ['./evaluator.component.scss']
 })
 export class EvaluatorComponent implements OnInit {
-  private hyperlambda = `/*
- * Type in your Hyperlambda here.
- */
-`;
+  private hyperlambda = '';
   private result: string = null;
 
   constructor(

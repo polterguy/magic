@@ -4,6 +4,7 @@
  */
 .arguments
    databaseType:string
+   database:string
    sql:string
    batch:bool
 .description:"Evaluates the given SQL given for your specified databaseType, and returns the result to caller."
@@ -51,5 +52,10 @@ foo.connect
          strings.concat
             get-value:x:@.arguments/*/databaseType
             .:.select
-      foo.select:x:@.arguments/*/sql
+      strings.concat
+         .:"use \""
+         get-value:x:@.arguments/*/database
+         .:"\";"
+         get-value:x:@.arguments/*/sql
+      foo.select:x:@strings.concat
       slots.return-nodes:x:-/*

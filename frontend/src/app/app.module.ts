@@ -26,6 +26,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
+import 'codemirror/addon/hint/sql-hint.js';
 
 import { HomeComponent } from './components/home/home.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';

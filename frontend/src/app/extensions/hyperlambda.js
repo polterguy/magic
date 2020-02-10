@@ -1310,8 +1310,4 @@
 
   CodeMirror.defineOption("hintOptions", null);
 
-
-
-
-  
-  });
+});
