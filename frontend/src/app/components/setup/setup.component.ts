@@ -78,6 +78,7 @@ export class SetupComponent implements OnInit {
     this.config.magic.auth.secret = this.jwtSecret;
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
+    this.config.magic.databases.default = this.databaseType;
     this.isFetching = true;
 
     // Saving appsettings.json file on server.
