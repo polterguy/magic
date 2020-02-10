@@ -13,7 +13,7 @@ export class SqlService {
     private httpClient: HttpClient,
     private ticketService: TicketService) { }
 
-  public evaluate(sql: string, databaseType: string, database: string) {
+  public evaluate(sql: string, databaseType: string, database: string = null) {
     return this.httpClient.post<any[]>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/evaluate', {
