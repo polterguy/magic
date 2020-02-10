@@ -3,7 +3,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileService } from '../../services/file-service';
 import { EvaluatorService } from '../../services/evaluator-service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { SqlService } from 'src/app/services/sql-service';
 import { NewFileDialogComponent } from './modals/new-file-dialog';
 import { ConfirmDeletionDialogComponent } from './modals/confirm-deletion-dialog';
