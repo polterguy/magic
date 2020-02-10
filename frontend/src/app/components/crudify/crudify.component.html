@@ -12,6 +12,7 @@
     class="crudify-input">
     <mat-select
       placeholder="Select database type"
+      [(ngModel)]="databaseType"
       matTooltip="Select your database type, 'mysql' for MySQL or 'mssql' for Microsoft SQL Server. Notice, your connection string for your selected database type must be valid before you can choose that type of database here."
       (selectionChange)="databaseTypeChanged($event)">
       <mat-option

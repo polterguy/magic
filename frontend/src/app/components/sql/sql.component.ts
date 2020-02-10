@@ -4,6 +4,7 @@ import { PipeTransform, Pipe } from '@angular/core';
 import { MatSnackBar, MatSelectChange } from '@angular/material';
 import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
+import { TicketService } from 'src/app/services/ticket-service';
 
 @Component({
   selector: 'app-sql',
@@ -26,9 +27,11 @@ select * from some_table;`;
   constructor(
     private sqlService: SqlService,
     private fileService: FileService,
+    private ticketService: TicketService,
     private snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
     this.getFiles();
   }
 

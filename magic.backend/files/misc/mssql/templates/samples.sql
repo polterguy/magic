@@ -9,8 +9,8 @@ use some_database;
 select * from some_table;
 
 -- Selects top 15 average UnitPrice from Northwind
-
+use Northwind;
 select top 15 ProductName as label, avg(UnitPrice) as value
 	from Products
     group by ProductName
-    order by value desc
+    order by value desc;
