@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.backendUrl = this.ticketService.getBackendUrl();
-    this.periodicallyValidateJwtToken();
+    this.periodicallyRefreshJwtToken();
     this.ping();
     if (!this.isLoggedIn() && this.router.url !== '') {
       this.router.navigate(['']);
@@ -37,7 +37,8 @@ export class AppComponent implements OnInit {
   backendUrlChanged() {
 
     // Need to verify the new URL is a valid magic.backend.
-    environment.apiURL = this.backendUrl;
+    this.ticketService.setBackendUrl(this.backendUrl);
+    this.connectedToBackend = false;
     this.ping();
   }
 
@@ -82,14 +83,14 @@ export class AppComponent implements OnInit {
   }
 
   hasDefaultPassword() {
-    return this.ticketService.hasDefaultPassword();
+    return this.ticketService.hasDefaultRootPassword();
   }
 
   /*
    * Creates a timeout that executes every 10 seconds, that simply ensure the JWT token
    * is valid - And if not, removes it from local storage, and logs out the user.
    */
-  public periodicallyValidateJwtToken() {
+  public periodicallyRefreshJwtToken() {
 
     // Makes sure we check token every 10 seconds.
     interval(10000).subscribe(x => {

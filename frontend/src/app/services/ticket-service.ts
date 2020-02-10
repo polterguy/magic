@@ -26,6 +26,10 @@ export class TicketService {
     return environment.apiURL; // Default
   }
 
+  setBackendUrl(url: string) {
+    localStorage.setItem('backendUrl', url);
+  }
+
   getTicket() {
 
     // Checking local storage if it has an access token.
@@ -53,7 +57,7 @@ export class TicketService {
     localStorage.removeItem('accessToken');
   }
 
-  hasDefaultPassword() {
+  hasDefaultRootPassword() {
     return localStorage.getItem('hasDefaultPassword') === 'true';
   }
 
@@ -68,7 +72,7 @@ export class TicketService {
   }
 
   authenticate(username: string, password: string): Observable<boolean> {
-    localStorage.setItem('hasDefaultPassword', password === 'root' ? 'true' : 'false');
+    localStorage.setItem('hasDefaultPassword', password === 'root' && username === 'root' ? 'true' : 'false');
     return new Observable<any>(observer => {
       this.httpClient.get<any>(
         environment.apiURL +

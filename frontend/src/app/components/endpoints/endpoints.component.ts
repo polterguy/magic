@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
 import { MatInput, MatSelectChange } from '@angular/material';
-import { saveAs } from "file-saver";
+import { saveAs } from 'file-saver';
 import { environment } from 'src/environments/environment';
 
 @Component({

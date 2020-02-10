@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material';
 import { SetupService } from 'src/app/services/setup-service';
 import { TicketService } from 'src/app/services/ticket-service';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-evaluator',
@@ -82,9 +81,9 @@ export class SetupComponent implements OnInit {
     this.isFetching = true;
 
     // Saving appsettings.json file on server.
-    this.setupService.saveAppSettingsJson(this.config).subscribe(res => {
+    this.setupService.saveAppSettingsJson(this.config).subscribe(saveConfigResult => {
 
-      if (res.result === 'success') {
+      if (saveConfigResult.result === 'success') {
 
         /*
          * To make sure server gets the required time to update our IConfiguration
@@ -96,19 +95,19 @@ export class SetupComponent implements OnInit {
            * If settings are saved, our JWT token is no longer valid, since the JWT secret
            * has now been changed - Hence, logging in again.
            */
-          this.ticketService.authenticate('root', 'root').subscribe(res2 => {
+          this.ticketService.authenticate('root', 'root').subscribe(() => {
 
             // Setting up authentication system and database.
-            this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
+            this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(setupAuthResult => {
 
-              if (res3.result === 'success') {
+              if (setupAuthResult.result === 'success') {
 
                 /*
                  * If it was a success setting up auth database and authenticaiton slot,
                  * our new password should now function - Hence, trying to login again,
                  * but this time with the new password.
                  */
-                this.ticketService.authenticate('root', this.password).subscribe(res4 => {
+                this.ticketService.authenticate('root', this.password).subscribe(() => {
 
                   // Success!
                   this.showInfo('You have successfully secured your system');
