@@ -3,7 +3,7 @@
   <mat-select
     placeholder="Select database type"
     (selectionChange)="databaseTypeChanged($event)"
-    [(value)]="selectedDatabaseType">
+    [(ngModel)]="selectedDatabaseType">
     <mat-option
       *ngFor="let cur of databaseTypes"
       [value]="cur">{{cur}}</mat-option>

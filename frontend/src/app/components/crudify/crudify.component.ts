@@ -5,6 +5,7 @@ import { MatSelectChange, MatSnackBar, MatDialog } from '@angular/material';
 import { CrudifyResult } from 'src/app/models/endpoint-result-model';
 import { CreateValidatorDialogComponent } from './modals/create-validator-dialog';
 import { Column } from 'src/app/models/column';
+import { TicketService } from 'src/app/services/ticket-service';
 
 // A single column, and its meta information.
 class ColumnModel {
@@ -133,9 +134,15 @@ export class CrudifyComponent implements OnInit {
   constructor(
     private crudService: CrudifyService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog) { }
+    private ticketService: TicketService,
+    private dialog: MatDialog) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.databaseType = this.ticketService.getDefaultDatabaseType();
+    if (this.databaseType !== null) {
+      this.getDatabases();
+    }
+  }
 
   databaseTypeChanged(e: MatSelectChange) {
 

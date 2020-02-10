@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SqlService } from 'src/app/services/sql-service';
 import { NewFileDialogComponent } from './modals/new-file-dialog';
 import { ConfirmDeletionDialogComponent } from './modals/confirm-deletion-dialog';
+import { TicketService } from 'src/app/services/ticket-service';
 
 @Component({
   selector: 'app-files',
@@ -58,9 +59,11 @@ export class FilesComponent implements OnInit {
     private evaluateService: EvaluatorService,
     private sqlService: SqlService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog) { }
+    private ticketService: TicketService,
+    private dialog: MatDialog) { }
 
   ngOnInit() {
+    this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
     this.evaluateService.vocabulary().subscribe((res) => {
       localStorage.setItem('vocabulary', JSON.stringify(res));
     });
