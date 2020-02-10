@@ -1,13 +1,28 @@
 
 <h1 mat-dialog-title>Provide a filename for your script</h1>
 <div mat-dialog-content>
+
+  <mat-form-field style="width: 100%;">
+    <mat-select
+      placeholder="Overwrite existing file"
+      matTooltip="Allows you to select an existing file on your server"
+      (selectionChange)="selectedFileChanged($event)">
+      <mat-option
+        [value]="el"
+        *ngFor="let el of data.existingFiles">{{el}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <mat-form-field style="width: 100%;">
     <input matInput autocomplete="off" [(ngModel)]="data.filename">
   </mat-form-field>
+
 </div>
+
 <div mat-dialog-actions>
   <div style="width:100%; text-align: right;">
     <button mat-button [mat-dialog-close]="data.filename">Ok</button>
     <button mat-button (click)="close()">Close</button>
   </div>
+
 </div>
