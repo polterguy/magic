@@ -1,9 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
-import { AuthenticateService } from './services/authenticate-service';
+import { TicketService } from './services/ticket-service';
 import { MatSnackBar } from '@angular/material';
 import { interval } from 'rxjs';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from 'src/environments/environment';
 import { PingService } from './services/ping-service';
 import { Router } from '@angular/router';
@@ -21,9 +20,8 @@ export class AppComponent implements OnInit {
   private connectedToBackend = false;
 
   constructor(
-    private authService: AuthenticateService,
+    private ticketService: TicketService,
     private snackBar: MatSnackBar,
-    private jwtHelper: JwtHelperService,
     private pingService: PingService,
     private router: Router) { }
 
@@ -59,38 +57,31 @@ export class AppComponent implements OnInit {
 
   // Returns true if client is authenticated.
   isLoggedIn() {
-    let token = localStorage.getItem('access_token');
-    if (token !== null && token !== undefined && token.indexOf('{') !== 0) {
-      token = null;
-      localStorage.removeItem('access_token');
-    }
-    return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(JSON.parse(token).ticket);
+    return this.ticketService.hasTicket();
   }
 
   // Logs out the user.
   logout() {
-    localStorage.removeItem('access_token');
+    this.ticketService.logout();
     this.router.navigate(['']);
   }
 
   // Logs in user with username/password combination from HTML page.
   login() {
     environment.apiURL = this.backendUrl;
-    environment.hasDefaultPassword = this.password === 'root';
-    this.authService.authenticate(this.username, this.password).subscribe(res => {
-      localStorage.setItem('access_token', JSON.stringify(res));
-      if (this.password === 'root') {
-        this.router.navigate(['/setup']);
-      }
+    this.ticketService.authenticate(this.username, this.password).subscribe(res => {
       this.username = '';
       this.password = '';
+      if (this.hasDefaultPassword()) {
+        this.router.navigate(['/setup']);
+      }
     }, (error) => {
       this.showError(error.error.message);
     });
   }
 
   hasDefaultPassword() {
-    return environment.hasDefaultPassword;
+    return this.ticketService.hasDefaultPassword();
   }
 
   /*
@@ -103,27 +94,17 @@ export class AppComponent implements OnInit {
     interval(10000).subscribe(x => {
 
       // Checking if token exists or is expired, and if so, logs out user.
-      const token = localStorage.getItem('access_token');
-      if (token === null || token === undefined || this.jwtHelper.isTokenExpired(JSON.parse(token).ticket)) {
+      if (!this.ticketService.hasTicket()) {
         this.logout();
         return;
       }
 
       /*
-       * Retrieves token's expiration datetime, to make sure we "refresh"
-       * the token 2 minutes before it expires.
+       * Checking if we should refresh JWT token.
        */
-      const expiration = this.jwtHelper.getTokenExpirationDate(token);
-      const now = new Date();
-      now.setSeconds(now.getSeconds() + 120);
-      if (now > expiration) {
-
-        // Refreshing JWT token.
-        this.authService.refreshTicket().subscribe((res) => {
-          localStorage.setItem('access_token', JSON.stringify(res));
-        }, (error) => {
-          this.showError(error.error.message);
-        });
+      const expirationSeconds = this.ticketService.getExpirationSeconds();
+      if (expirationSeconds < 120) {
+        this.ticketService.refreshTicket();
       }
     });
   }
