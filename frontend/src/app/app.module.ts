@@ -51,7 +51,11 @@ import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-d
 import { MarkedPipe } from './pipes/marked.pipe';
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token');
+  if (token !== null && token !== undefined) {
+    return JSON.parse(token).ticket;
+  }
+  return null;
 }
 
 @NgModule({

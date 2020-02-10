@@ -99,7 +99,7 @@ export class SetupComponent implements OnInit {
           this.authService.authenticate('root', 'root').subscribe(res2 => {
 
             // Changing our JWT token.
-            localStorage.setItem('access_token', res2.ticket);
+            localStorage.setItem('access_token', JSON.stringify(res2));
 
             // Setting up authentication system and database.
             this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(res3 => {
@@ -114,7 +114,7 @@ export class SetupComponent implements OnInit {
                 this.authService.authenticate('root', this.password).subscribe(res4 => {
 
                   // Changing our JWT token.
-                  localStorage.setItem('access_token', res4.ticket);
+                  localStorage.setItem('access_token', JSON.stringify(res4));
 
                   // Success!
                   this.showInfo('You have successfully secured your system');

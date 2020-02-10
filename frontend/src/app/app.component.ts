@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
   }
 
   backendUrlChanged() {
+
     // Need to verify the new URL is a valid magic.backend.
     environment.apiURL = this.backendUrl;
     this.ping();
@@ -45,7 +46,6 @@ export class AppComponent implements OnInit {
   ping() {
     this.pingService.ping().subscribe(res => {
       if (res.result === 'success') {
-        console.log('Successfully connected to backend');
         this.connectedToBackend = true;
       } else {
         this.connectedToBackend = false;
@@ -59,8 +59,12 @@ export class AppComponent implements OnInit {
 
   // Returns true if client is authenticated.
   isLoggedIn() {
-    const token = localStorage.getItem('access_token');
-    return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
+    let token = localStorage.getItem('access_token');
+    if (token !== null && token !== undefined && token.indexOf('{') !== 0) {
+      token = null;
+      localStorage.removeItem('access_token');
+    }
+    return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(JSON.parse(token).ticket);
   }
 
   // Logs out the user.
@@ -74,7 +78,7 @@ export class AppComponent implements OnInit {
     environment.apiURL = this.backendUrl;
     environment.hasDefaultPassword = this.password === 'root';
     this.authService.authenticate(this.username, this.password).subscribe(res => {
-      localStorage.setItem('access_token', res.ticket);
+      localStorage.setItem('access_token', JSON.stringify(res));
       if (this.password === 'root') {
         this.router.navigate(['/setup']);
       }
@@ -100,7 +104,7 @@ export class AppComponent implements OnInit {
 
       // Checking if token exists or is expired, and if so, logs out user.
       const token = localStorage.getItem('access_token');
-      if (token == null || this.jwtHelper.isTokenExpired(token)) {
+      if (token === null || token === undefined || this.jwtHelper.isTokenExpired(JSON.parse(token).ticket)) {
         this.logout();
         return;
       }
@@ -116,7 +120,7 @@ export class AppComponent implements OnInit {
 
         // Refreshing JWT token.
         this.authService.refreshTicket().subscribe((res) => {
-          localStorage.setItem('access_token', res.ticket);
+          localStorage.setItem('access_token', JSON.stringify(res));
         }, (error) => {
           this.showError(error.error.message);
         });
