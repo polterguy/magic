@@ -14,14 +14,22 @@
   </mat-form-field>
 
   <mat-form-field style="width: 100%;">
-    <input matInput autocomplete="off" [(ngModel)]="data.filename">
+    <input
+      matInput
+      matTooltip="Provide a filename here"
+      placeholder="Provide a filename here"
+      autocomplete="off" [(ngModel)]="data.filename">
   </mat-form-field>
 
 </div>
 
 <div mat-dialog-actions>
   <div style="width:100%; text-align: right;">
-    <button mat-button [mat-dialog-close]="data.filename">Ok</button>
+    <button
+      [disabled]="data.filename === '' || data.filename === null || data.filename === undefined"
+      mat-raised-button
+      color="primary"
+      [mat-dialog-close]="data.filename">Ok</button>
     <button mat-button (click)="close()">Close</button>
   </div>
 
