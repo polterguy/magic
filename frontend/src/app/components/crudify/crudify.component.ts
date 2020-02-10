@@ -85,7 +85,10 @@ export class CrudifyComponent implements OnInit {
     'validator'
   ];
 
-  private databaseTypes = ['mysql', 'mssql'];
+  private databaseTypes = [
+    {name: 'MySQL', type: 'mysql'},
+    {name: 'Microsoft SQL Server', type: 'mssql'},
+  ];
   private publicCache = false;
   private moduleName = '';
   private defaultAuth = 'root';

@@ -16,7 +16,7 @@
       (selectionChange)="databaseTypeChanged($event)">
       <mat-option
         *ngFor="let cur of databaseTypes"
-        [value]="cur">{{cur}}</mat-option>
+        [value]="cur.type">{{cur.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 
