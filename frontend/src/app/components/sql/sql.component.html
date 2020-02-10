@@ -35,6 +35,10 @@
 
 <div class="execute-button">
   <button 
+    mat-button
+    matTooltip="Saves your current SQL on the server"
+    (click)="save()">Save</button>
+  <button 
     mat-raised-button
     color="primary"
     matTooltip="Evaluates your SQL"
