@@ -15,14 +15,11 @@ export class SqlComponent implements OnInit {
 
   private savedFiles = [];
   private selectedScript: string;
+  private selectedFilename: string = null;
   private result: any = null;
   private databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
   private selectedDatabaseType = 'mysql';
-  private sqlText = `/*
- * Type your SQL in here
- */
-use some_database;
-select * from some_table;`;
+  private sqlText = '';
 
   constructor(
     private sqlService: SqlService,
@@ -51,6 +48,7 @@ select * from some_table;`;
   }
 
   fileChanged(e: MatSelectChange) {
+    this.selectedFilename = this.selectedScript;
     this.fileService.getFileContent(`/misc/${this.selectedDatabaseType}/templates/${e.value}`).subscribe(res => {
       this.sqlText = res;
       this.selectedScript = null;
@@ -70,7 +68,8 @@ select * from some_table;`;
     const dialogRef = this.dialog.open(GetSaveFilenameDialogComponent, {
       width: '500px',
       data: {
-        filename: '',
+        filename: this.selectedFilename,
+        existingFiles: this.savedFiles,
       }
     });
 
@@ -79,7 +78,6 @@ select * from some_table;`;
         if (filename.indexOf('.') === -1) {
           filename = filename + '.sql';
         }
-        console.log(filename);
         this.sqlService.saveFile(this.selectedDatabaseType, filename, this.sqlText).subscribe(res => {
           this.showHttpSuccess('File successfully saved');
           this.getFiles();

@@ -35,6 +35,7 @@
 
 <div class="execute-button">
   <button 
+    [disabled]="sqlText === ''"
     mat-button
     matTooltip="Saves your current SQL on the server"
     (click)="save()">Save</button>
