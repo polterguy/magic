@@ -162,6 +162,18 @@ set-value:x:-
 
 
 /*
+ * Loading router link file for chart components.
+ */
+.router-link-file-chart
+set-value:x:-
+   io.files.load:/misc/templates/angular-default/templates/misc/router-link-chart.html
+
+
+
+
+
+
+/*
  * Loading import file, that contains the import declarations for components.
  */
 .imports-file
@@ -536,7 +548,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
          /*
           * Router links.
           */
-         strings.replace:x:@.router-link-file
+         strings.replace:x:@.router-link-file-chart
             .:[[read-roles]]
             .:x:@.read-roles
          strings.replace:x:@strings.replace
