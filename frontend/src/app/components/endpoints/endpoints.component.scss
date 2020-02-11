@@ -6,6 +6,11 @@
         margin-top: 2rem;
         padding: 5rem;
         position: relative;
+        .show-endpoints-button {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
         .show-system-endpoints-button {
             position: absolute;
             top: 2rem;
@@ -20,6 +25,9 @@
             table-layout: fixed;
             width: 100%;
             tr {
+                td {
+                    user-select: none;
+                }
                 td:nth-child(1), th:nth-child(1) {
                     width: 60%;
                 }
@@ -94,7 +102,7 @@
             }
             tr.selected td {
                 border-bottom: none;
-                font-weight: bold;
+                font-style: italic;
             }
         }
         .right-aligned {

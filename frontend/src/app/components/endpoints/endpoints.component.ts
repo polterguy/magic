@@ -18,6 +18,7 @@ export class EndpointsComponent implements OnInit {
   @ViewChild('queryParamaters', { static: false }) queryParametersInput: MatInput;
   private displayedColumns: string[] = ['url', 'auth', 'verb', 'crud', 'selected'];
   private displayedSecondRowColumns: string[] = ['details'];
+  private showEndpoints = false;
   private endpoints: any[] = [];
   private filter = '';
   private name = '';
