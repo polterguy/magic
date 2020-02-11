@@ -246,20 +246,20 @@
       </p>
 
       <div class="air">
-        <label>Arguments</label>
+        <label class="fat-label">Arguments</label>
         <ngx-codemirror 
           [(ngModel)]="customSqlArguments" 
           class="even-smaller"
           [options]="getCodeMirrorOptionsHyperlambda()"></ngx-codemirror>
       </div>
 
-      <label>SQL</label>
+      <label class="fat-label">SQL</label>
       <ngx-codemirror 
         [(ngModel)]="customSql" 
         class="even-smaller"
         [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
 
-      <div class="right-align">
+      <div class="right-align top-spacing">
         <button 
           matTooltip="Creates your endpoint"
           mat-raised-button
