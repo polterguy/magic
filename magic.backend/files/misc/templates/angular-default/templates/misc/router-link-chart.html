@@ -1,0 +1,11 @@
+    <a
+      *ngIf="inRole([[[read-roles]]])"
+      mat-button
+      routerLink="/[[url]]"
+      routerLinkActive="active-link"
+      class="menu-item"
+      (click)="closeNavigator()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>bar_chart</mat-icon>
+      <span class="menu-item-text">[[name]]</span>
+    </a>
