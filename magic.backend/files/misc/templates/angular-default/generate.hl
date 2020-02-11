@@ -376,12 +376,12 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
           * Iterating through each component file, and transforming it according to arguments.
           */
          .component-url
+         .component-folder
          .component-name
          .component-header
          .component-filename
          .component-selector
          .component-service-get-method
-         .component-folder
          .read-roles
 
 
@@ -443,26 +443,21 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
             /*
              * Doing actual substitutions in component's template files.
              */
-            set-value:x:@.dp/#/*
-               strings.replace:x:@.dp/#/*
-                  .:[[component-header]]
-                  get-value:x:@.component-header
-            set-value:x:@.dp/#/*
-               strings.replace:x:@.dp/#/*
-                  .:[[component-filename]]
-                  get-value:x:@.component-filename
-            set-value:x:@.dp/#/*
-               strings.replace:x:@.dp/#/*
-                  .:[[component-selector]]
-                  get-value:x:@.component-selector
-            set-value:x:@.dp/#/*
-               strings.replace:x:@.dp/#/*
-                  .:[[component-name]]
-                  get-value:x:@.component-name
-            set-value:x:@.dp/#/*
-               strings.replace:x:@.dp/#/*
-                  .:[[service-get-method]]
-                  get-value:x:@.component-service-get-method
+            strings.replace:x:@.dp/#/*
+               .:[[component-header]]
+               get-value:x:@.component-header
+            strings.replace:x:-
+               .:[[component-filename]]
+               get-value:x:@.component-filename
+            strings.replace:x:-
+               .:[[component-selector]]
+               get-value:x:@.component-selector
+            strings.replace:x:-
+               .:[[component-name]]
+               get-value:x:@.component-name
+            strings.replace:x:-
+               .:[[service-get-method]]
+               get-value:x:@.component-service-get-method
 
 
             /*
@@ -472,20 +467,22 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
                .:/
             strings.split:x:-/0/-
                .:.
-            set-value:x:@.dp/#
-               strings.concat
-                  get-value:x:@strings.split/@strings.split/@strings.split/0/-
-                  .:/
-                  get-value:x:@strings.split/@strings.split/@strings.split/0/-
-                  .:.component.
-                  get-value:x:@strings.split/0/-
+            strings.concat
+               get-value:x:@strings.split/@strings.split/@strings.split/0/-
+               .:/
+               get-value:x:@strings.split/@strings.split/@strings.split/0/-
+               .:.component.
+               get-value:x:@strings.split/0/-
 
 
             /*
              * Adding transformed file to [.sql-components].
              */
+            unwrap:x:+/*/**
             add:x:@.sql-components
-               get-nodes:x:@.dp/#
+               .
+                  .:x:@strings.concat
+                     .:x:@strings.replace
 
 
          /*

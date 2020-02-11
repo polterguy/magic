@@ -13,25 +13,36 @@
 
 <div class="endpoint-wrapper">
 
-  <mat-form-field class="fill-width">
-    <input 
-      matInput 
-      [placeholder]="getFilterText()"
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="filter">
-  </mat-form-field>
-
   <div class="mat-elevation-z4 endpoints">
 
     <mat-slide-toggle
+      [(ngModel)]="showEndpoints"
+      matTooltip="Click this slider to display your endpoints"
+      class="show-endpoints-button">
+      Show endpoints
+    </mat-slide-toggle>
+
+    <mat-slide-toggle
+      *ngIf="showEndpoints"
       [(ngModel)]="showSystemEndpoints"
       matTooltip="Click this slider to show system/protected root endpoints"
       class="show-system-endpoints-button">
       Show system endpoints
     </mat-slide-toggle>
 
+    <mat-form-field
+      *ngIf="showEndpoints"
+      class="fill-width">
+      <input 
+        matInput 
+        [placeholder]="getFilterText()"
+        type="text"
+        autocomplete="off"
+        [(ngModel)]="filter">
+    </mat-form-field>
+
     <table
+      *ngIf="showEndpoints"
       mat-table
       multiTemplateDataRows
       [dataSource]="getFilteredEndpoints()">
