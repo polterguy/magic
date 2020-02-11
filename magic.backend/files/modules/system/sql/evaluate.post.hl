@@ -17,12 +17,43 @@ auth.ticket.verify:root
 
 
 /*
- * Connecting to default database.
+ * Checking to see if an explicit database was specified, at which point we
+ * connect to that database explicitly, instead of using the default database.
+ */
+if
+   and
+      not
+         eq
+            get-value:x:@.arguments/*/database
+            .:
+      not
+         eq
+            get-value:x:@.arguments/*/database
+            .
+   .lambda
+
+
+      /*
+       * Explicit database was given.
+       */
+      set-value:x:../*/foo.connect
+         get-value:x:@.arguments/*/database
+
+
+/*
+ * Making sure we connect to the correct database type.
  */
 set-name:x:./*/foo.connect
    strings.concat
       get-value:x:@.arguments/*/databaseType
       .:.connect
+
+
+/*
+ * Creating our database connection.
+ * Notice, at this point the below slot will have been changed by
+ * the above logic.
+ */
 foo.connect
 
 
@@ -55,44 +86,7 @@ foo.connect
 
 
       /*
-       * Creating our SQL, which depends upon whether or not an
-       * explicit database was selected or not.
-       */
-      .sql
-      if
-         and
-            not
-               eq
-                  get-value:x:@.arguments/*/database
-                  .:
-            not
-               eq
-                  get-value:x:@.arguments/*/database
-                  .
-         .lambda
-
-
-            /*
-             * Explicit database was given.
-             */
-            set-value:x:@.sql
-               strings.concat
-                  .:"use \""
-                  get-value:x:@.arguments/*/database
-                  .:"\";"
-                  get-value:x:@.arguments/*/sql
-      else
-
-
-         /*
-          * No database was given, hopefully it's in the actual SQL command.
-          */
-         set-value:x:@.sql
-            get-value:x:@.arguments/*/sql
-
-
-      /*
        * Executing SQL and returning results to caller.
        */
-      foo.select:x:@.sql
+      foo.select:x:@.arguments/*/sql
       slots.return-nodes:x:-/*
