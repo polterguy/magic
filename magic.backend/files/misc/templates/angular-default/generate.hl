@@ -409,10 +409,10 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-statistics/.
          strings.capitalize:x:@strings.split/0/-
          set-value:x:@.component-name
             strings.concat
-               .:Component
                strings.replace-not-of:x:@strings.capitalize
                   .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
                   .:_
+               .:Component
          set-value:x:@.component-header
             get-value:x:@strings.capitalize
          set-value:x:@.component-filename
