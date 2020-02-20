@@ -1,0 +1,12 @@
+
+/*
+ * A default "dynamic content" slot.
+ * Override this if you want to build things serving more static types of files, such as CMS systems, etc.
+ */
+slots.create:magic.content.get
+
+
+   /*
+    * We simply return whatever URL was requested as content.
+    */
+   slots.return-value:x:@.arguments/*/url
