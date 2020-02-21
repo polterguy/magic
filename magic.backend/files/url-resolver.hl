@@ -1,0 +1,10 @@
+
+/*
+ * Resolves a dynamic (non-CRUD) URL.
+ */
+http.response.headers.add
+   Content-Type:text/html
+strings.concat
+   .:"You requested URL "
+   get-value:x:@.arguments/*/url
+slots.return-value:x:-
