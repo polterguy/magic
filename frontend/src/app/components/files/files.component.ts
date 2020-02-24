@@ -25,9 +25,12 @@ export class FilesComponent implements OnInit {
   private filter = '';
   private safeMode = true;
   private protectedFolders: string[] = [
+    '/static/',
     '/misc/',
     '/misc/mssql/',
     '/misc/mssql/templates/',
+    '/misc/mssql-batch/',
+    '/misc/mssql-batch/templates/',
     '/misc/mysql/',
     '/misc/mysql/templates/',
     '/misc/templates/',
@@ -39,6 +42,7 @@ export class FilesComponent implements OnInit {
     '/trash/',
   ];
   private protectedFiles: string[] = [
+    '/static/README.md',
     '/misc/README.md',
     '/misc/templates/README.md',
     '/misc/mssql/create-user.hl',
