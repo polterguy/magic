@@ -268,7 +268,7 @@ export class [[component-name]] implements OnInit {
   createNewRecord() {
 
     // Parametrizing our modal dialog correctly. Notice "idEdit" being false.
-    let data = {
+    const data = {
       isEdit: false,
       entity: {},
     };
