@@ -26,7 +26,7 @@ export class AppComponent {
   private password: string;
 
   // Databound towards your side navigation. If true, it implies the navbar menu is expanded.
-  private sidenavOpened: boolean = false;
+  private sidenavOpened = false;
 
   /*
    * Smaller optimisation to make it easier to check which roles currently logged in
