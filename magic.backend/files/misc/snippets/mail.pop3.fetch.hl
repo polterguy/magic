@@ -15,5 +15,5 @@ mail.pop3.fetch
        * Some lambda object invoked once for every email fetched.
        * Given message as [.message] node structured as lambda.
        */
-	  lambda2hyper:x:..
-	  log.info:x:-
+      lambda2hyper:x:..
+      log.info:x:-
