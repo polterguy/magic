@@ -2,6 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluatorService } from '../../services/evaluator-service';
+import { LegendDialogComponent } from './modals/legend-dialog';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-evaluator',
@@ -14,7 +16,8 @@ export class EvaluatorComponent implements OnInit {
 
   constructor(
     private service: EvaluatorService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog) { }
 
   ngOnInit() {
     this.service.vocabulary().subscribe((res) => {
@@ -60,6 +63,12 @@ export class EvaluatorComponent implements OnInit {
     this.snackBar.open(error.error.message, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
+    });
+  }
+
+  public showLegend() {
+    this.dialog.open(LegendDialogComponent, {
+      width: '700px',
     });
   }
 }
