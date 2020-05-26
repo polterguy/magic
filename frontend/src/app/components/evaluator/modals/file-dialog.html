@@ -1,6 +1,16 @@
 
-<h1 mat-dialog-title>Load snippet</h1>
+<h1 mat-dialog-title>Snippets</h1>
 <div mat-dialog-content>
+
+  <mat-form-field class="full-width">
+    <input 
+      matInput 
+      autocomplete="off"
+      type="text"
+      matTooltip="Name"
+      placeholder="Name"
+      [(ngModel)]="name">
+  </mat-form-field>
 
   <table
     mat-table

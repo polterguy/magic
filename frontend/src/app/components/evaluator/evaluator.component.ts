@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluatorService } from '../../services/evaluator-service';
 import { LegendDialogComponent } from './modals/legend-dialog';
 import { MatDialog } from '@angular/material';
-import { LoadDialogComponent } from './modals/load-dialog';
+import { FileDialogComponent } from './modals/file-dialog';
 import { FileService } from 'src/app/services/file-service';
 
 @Component({
@@ -71,7 +71,7 @@ export class EvaluatorComponent implements OnInit {
   }
 
   load() {
-    const dialogRef = this.dialog.open(LoadDialogComponent, {
+    const dialogRef = this.dialog.open(FileDialogComponent, {
       width: '700px',
       data: {
         path: '',
