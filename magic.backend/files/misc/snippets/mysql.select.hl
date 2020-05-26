@@ -1,0 +1,6 @@
+/*
+ * Opens a database connection and executes some arbitrary SQL,
+ * returning results as a record set.
+ */
+mysql.connect:magic_auth
+   mysql.select:select * from roles

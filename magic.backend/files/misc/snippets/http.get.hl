@@ -1,0 +1,4 @@
+/*
+ * Invokes an HTTP GET endpoint, and returns the result.
+ */
+http.get:"https://jsonplaceholder.typicode.com/users/1"
