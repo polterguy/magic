@@ -19,14 +19,23 @@
       <button 
         mat-button
         class="toolbar-button"
+        id="loadButton"
         matTooltip="Loads a Hyperlambda snippet from your archive"
         (click)="load()">Load</button>
       <button 
         mat-button
         [disabled]="hyperlambda === ''"
         class="toolbar-button"
+        id="saveButton"
         matTooltip="Saves your snippet to your Hyperlambda snippets collection"
         (click)="save()">Save</button>
+      <button 
+        mat-button
+        [disabled]="hyperlambda === '' || !filename"
+        class="toolbar-button"
+        id="saveAsButton"
+        matTooltip="Saves your snippet to your Hyperlambda snippets collection"
+        (click)="saveAs()">Save as ...</button>
       <button 
         mat-raised-button
         color="primary"
