@@ -46,6 +46,7 @@ export class LoadDialogComponent implements OnInit {
   selectFile(file: string) {
     this.fileService.getFileContent(file).subscribe(res => {
       this.data.content = res;
+      this.data.path = file;
       this.dialogRef.close(this.data);
     });
   }

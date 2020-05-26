@@ -5,6 +5,7 @@ import { EvaluatorService } from '../../services/evaluator-service';
 import { LegendDialogComponent } from './modals/legend-dialog';
 import { MatDialog } from '@angular/material';
 import { LoadDialogComponent } from './modals/load-dialog';
+import { FileService } from 'src/app/services/file-service';
 
 @Component({
   selector: 'app-evaluator',
@@ -13,10 +14,12 @@ import { LoadDialogComponent } from './modals/load-dialog';
 })
 export class EvaluatorComponent implements OnInit {
   private hyperlambda = '';
+  private filename: string;
   private result: string = null;
 
   constructor(
     private service: EvaluatorService,
+    private fileService: FileService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog) { }
 
@@ -78,17 +81,32 @@ export class EvaluatorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
         this.hyperlambda = res.content;
+        this.filename = res.path;
       }
     });
   }
 
   save() {
+    if (this.filename) {
+      // Saving assuming user simply wants to save file as is, with existing filename.
+      this.fileService.saveFile(this.filename, this.hyperlambda).subscribe(res => {
+        this.showInfo('File was successfully saved');
+      });
+    } else {
+      // Opening up "Save as" dialog.
+    }
   }
 
   showHttpError(error: any) {
     this.snackBar.open(error.error.message, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
+    });
+  }
+
+  showInfo(text: string) {
+    this.snackBar.open(text, 'Close', {
+      duration: 1000,
     });
   }
 
