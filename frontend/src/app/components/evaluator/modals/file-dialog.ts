@@ -2,17 +2,21 @@
 import {
   Component,
   Inject,
-  OnInit
+  OnInit,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
-  MatDialogRef
+  MatDialogRef,
+  MatSnackBar
 } from '@angular/material';
 import { FileService } from 'src/app/services/file-service';
 
 export interface DialogData {
   path: string;
   content: string;
+  select: boolean;
 }
 
 @Component({
@@ -21,6 +25,7 @@ export interface DialogData {
 })
 export class FileDialogComponent implements OnInit {
 
+  @ViewChild('nameElement', {static: true}) nameElement: ElementRef;
   public files: string[] = [];
   public displayedColumns: string[] = ['filename'];
   public name = '';
@@ -28,6 +33,7 @@ export class FileDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<FileDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private snackBar: MatSnackBar,
     private fileService: FileService) { }
 
   ngOnInit() {
@@ -40,7 +46,11 @@ export class FileDialogComponent implements OnInit {
     if (this.name === '') {
       return this.files;
     }
-    return this.files.filter(x => x.includes(this.name));
+    return this.files.filter(x => {
+      let result = x.substr(x.lastIndexOf('/') + 1);
+      result = result.substr(0, result.lastIndexOf('.'));
+      return result.includes(this.name);
+    });
   }
 
   getFileName(path: string) {
@@ -49,10 +59,38 @@ export class FileDialogComponent implements OnInit {
   }
 
   selectFile(file: string) {
-    this.fileService.getFileContent(file).subscribe(res => {
-      this.data.content = res;
-      this.data.path = file;
-      this.dialogRef.close(this.data);
+    if (this.data.select) {
+      this.fileService.getFileContent(file).subscribe(res => {
+        this.data.content = res;
+        this.data.path = file;
+        this.dialogRef.close(this.data);
+      });
+    } else {
+      const result = file.substr(file.lastIndexOf('/') + 1);
+      this.name = result.substr(0, result.lastIndexOf('.'));
+      setTimeout(() => {
+        this.nameElement.nativeElement.select();
+        this.nameElement.nativeElement.focus();
+      }, 100);
+    }
+  }
+
+  saveClicked() {
+    if (this.name.includes('/') || this.name.endsWith('.hl')) {
+      this.showError('No \'/\' or ending with \'.hl\' please');
+      setTimeout(() => {
+        this.nameElement.nativeElement.select();
+        this.nameElement.nativeElement.focus();
+      }, 100);
+      return;
+    }
+    this.data.path = '/misc/snippets/' + this.name + '.hl';
+    this.dialogRef.close(this.data);
+  }
+
+  showError(error: string) {
+    this.snackBar.open(error, 'Close', {
+      duration: 2000,
     });
   }
 }

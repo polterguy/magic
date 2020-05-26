@@ -23,6 +23,7 @@
         (click)="load()">Load</button>
       <button 
         mat-button
+        [disabled]="hyperlambda === ''"
         class="toolbar-button"
         matTooltip="Saves your snippet to your Hyperlambda snippets collection"
         (click)="save()">Save</button>
