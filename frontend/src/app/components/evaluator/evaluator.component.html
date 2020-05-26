@@ -17,6 +17,16 @@
 
     <div class="execute-button">
       <button 
+        mat-button
+        class="toolbar-button"
+        matTooltip="Loads a Hyperlambda snippet from your archive"
+        (click)="load()">Load</button>
+      <button 
+        mat-button
+        class="toolbar-button"
+        matTooltip="Saves your snippet to your Hyperlambda snippets collection"
+        (click)="save()">Save</button>
+      <button 
         mat-raised-button
         color="primary"
         id="executeButton"
