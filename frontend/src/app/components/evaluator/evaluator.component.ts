@@ -16,6 +16,7 @@ export class EvaluatorComponent implements OnInit {
   private hyperlambda = '';
   private filename: string;
   private result: string = null;
+  private editor: any;
 
   constructor(
     private service: EvaluatorService,
@@ -78,12 +79,45 @@ export class EvaluatorComponent implements OnInit {
         const element = document.getElementById('saveAsButton') as HTMLElement;
         element.click();
       };
-      result.extraKeys['Alt-I'] = (cm: any) => {
+      result.extraKeys['Alt-Q'] = (cm: any) => {
         const element = document.getElementById('infoButton') as HTMLElement;
         element.click();
       };
+      result.extraKeys['Alt-I'] = (cm: any) => {
+        this.editor = cm;
+        this.insertSnippet();
+      };
     }
     return result;
+  }
+
+  insertSnippet() {
+    const dialogRef = this.dialog.open(FileDialogComponent, {
+      width: '700px',
+      data: {
+        path: '',
+        content: '',
+        select: true,
+        header: 'Insert snippet',
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+
+        // Making sure we append correct number of spaces in front of the thing.
+        const start = this.editor.getCursor(true).ch as number;
+        let content = res.content as string;
+        const lines = content.split('\n');
+        content = '';
+        for (const idx of lines) {
+          if (content !== '') {
+            content += ' '.repeat(start);
+          }
+          content += idx + '\r\n';
+        }
+        this.editor.replaceSelection(content, 'around');
+      }
+    });
   }
 
   load() {
