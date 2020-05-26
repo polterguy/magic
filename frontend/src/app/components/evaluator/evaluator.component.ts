@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluatorService } from '../../services/evaluator-service';
 import { LegendDialogComponent } from './modals/legend-dialog';
 import { MatDialog } from '@angular/material';
+import { LoadDialogComponent } from './modals/load-dialog';
 
 @Component({
   selector: 'app-evaluator',
@@ -64,6 +65,24 @@ export class EvaluatorComponent implements OnInit {
       };
     }
     return result;
+  }
+
+  load() {
+    const dialogRef = this.dialog.open(LoadDialogComponent, {
+      width: '700px',
+      data: {
+        path: '',
+        content: '',
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.hyperlambda = res.content;
+      }
+    });
+  }
+
+  save() {
   }
 
   showHttpError(error: any) {

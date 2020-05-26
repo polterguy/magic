@@ -1,0 +1,21 @@
+
+<h1 mat-dialog-title>Load snippet</h1>
+<div mat-dialog-content>
+
+  <table
+    mat-table
+    class="full-width grid"
+    [dataSource]="getFilteredFiles()">
+
+    <ng-container matColumnDef="filename">
+      <th mat-header-cell *matHeaderCellDef>Filename</th>
+      <td (click)="selectFile(file)" mat-cell *matCellDef="let file">{{getFileName(file)}}</td>
+    </ng-container>
+      
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns; "></tr>
+
+  </table>
+
+</div>
