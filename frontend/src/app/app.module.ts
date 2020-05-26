@@ -34,6 +34,7 @@ import { SetupComponent } from './components/setup/setup.component';
 import { UsersComponent } from './components/users/users.component';
 import { RolesComponent } from './components/roles/roles.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { LegendDialogComponent } from './components/evaluator/modals/legend-dialog';
 import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
 import { NewUserDialogComponent } from './components/users/modals/new-user-dialog';
@@ -69,6 +70,7 @@ export function tokenGetter() {
     UsersComponent,
     RolesComponent,
     EvaluatorComponent,
+    LegendDialogComponent,
     FilesComponent,
     NewFileDialogComponent,
     NewUserDialogComponent,
@@ -133,6 +135,7 @@ export function tokenGetter() {
     NewFileDialogComponent,
     NewUserDialogComponent,
     NewRoleDialogComponent,
+    LegendDialogComponent,
     NewTaskDialogComponent,
     ConfirmDeletionDialogComponent,
     GetSaveFilenameDialogComponent,
