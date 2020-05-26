@@ -66,6 +66,18 @@ export class EvaluatorComponent implements OnInit {
         const element = document.getElementById('executeButton') as HTMLElement;
         element.click();
       };
+      result.extraKeys['Alt-L'] = (cm: any) => {
+        const element = document.getElementById('loadButton') as HTMLElement;
+        element.click();
+      };
+      result.extraKeys['Alt-S'] = (cm: any) => {
+        const element = document.getElementById('saveButton') as HTMLElement;
+        element.click();
+      };
+      result.extraKeys['Alt-A'] = (cm: any) => {
+        const element = document.getElementById('saveAsButton') as HTMLElement;
+        element.click();
+      };
     }
     return result;
   }
@@ -95,21 +107,25 @@ export class EvaluatorComponent implements OnInit {
       });
     } else {
       // Opening up "Save as" dialog.
-      const dialogRef = this.dialog.open(FileDialogComponent, {
-        width: '700px',
-        data: {
-          path: '',
-          content: '',
-          select: false,
-        }
-      });
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) {
-          this.filename = res.path;
-          this.save();
-        }
-      });
+      this.saveAs();
     }
+  }
+
+  saveAs() {
+    const dialogRef = this.dialog.open(FileDialogComponent, {
+      width: '700px',
+      data: {
+        path: '',
+        content: '',
+        select: false,
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.filename = res.path;
+        this.save();
+      }
+    });
   }
 
   showHttpError(error: any) {
