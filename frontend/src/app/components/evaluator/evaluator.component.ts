@@ -34,8 +34,8 @@ export class EvaluatorComponent implements OnInit {
     return false;
   }
 
-  getCodeMirrorOptions() {
-    return {
+  getCodeMirrorOptions(execute = false) {
+    const result: any = {
       lineNumbers: true,
       theme: 'material',
       mode: 'hyperlambda',
@@ -57,6 +57,13 @@ export class EvaluatorComponent implements OnInit {
         },
       }
     };
+    if (execute) {
+      result.extraKeys.F5 = (cm: any) => {
+        const element = document.getElementById('executeButton') as HTMLElement;
+        element.click();
+      };
+    }
+    return result;
   }
 
   showHttpError(error: any) {
