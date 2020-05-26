@@ -43,6 +43,15 @@ export class EvaluatorComponent implements OnInit {
         'Shift-Tab': 'indentLess',
         Tab: 'indentMore',
         'Ctrl-Space': 'autocomplete',
+        F11: (cm: any) => {
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+          console.log(cm);
+        },
+        Esc: (cm: any) => {
+          if (cm.getOption('fullScreen')) {
+            cm.setOption('fullScreen', false);
+          }
+        },
       }
     };
   }

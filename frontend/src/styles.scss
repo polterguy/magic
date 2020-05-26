@@ -5,6 +5,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @import "~codemirror/lib/codemirror";
 @import "~codemirror/theme/material";
+@import "~codemirror/addon/display/fullscreen";
 
 .content {
   margin-bottom: 5rem;
