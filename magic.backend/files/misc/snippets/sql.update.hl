@@ -1,0 +1,11 @@
+/*
+ * Updates a single record in a MySQL table.
+ */
+wait.slots.signal:magic.db.mysql.update
+   database:magic_auth
+   table:roles
+   values
+   ids
+      name:foo-bar
+   values
+      description:New description

@@ -1,0 +1,18 @@
+/*
+ * Example of how to send emails using an SMTP server.
+ */
+mail.smtp.send
+   server
+      host:smtp.gmail.com
+      port:int:465
+      secure:bool:true
+      username:gmail-username@gmail.com
+      password:Gmail-Password
+   message
+      to
+         John Doe:john@doe.com
+      from
+         Jane Doe:jane@doe.com
+      subject:Subject line
+      entity:text/plain
+         content:Body content

@@ -1,0 +1,10 @@
+/*
+ * Counts records from a MySQL table.
+ */
+wait.slots.signal:magic.db.mysql.read
+   database:magic_auth
+   table:roles
+   args
+      limit:long:1
+   columns
+      count(*) as count
