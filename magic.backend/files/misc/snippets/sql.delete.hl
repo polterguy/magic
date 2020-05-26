@@ -1,0 +1,8 @@
+/*
+ * Deletes a single record from a MySQL table.
+ */
+wait.slots.signal:magic.db.mysql.delete
+   database:magic_auth
+   table:roles
+   ids
+      name:foo-bar

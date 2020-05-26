@@ -22,4 +22,5 @@ scheduler.tasks.delete:x:@.arguments/*/name
 /*
  * Returns success to caller.
  */
-slots.return-value:Success
+slots.return-nodes
+   result:Success
