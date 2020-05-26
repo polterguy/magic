@@ -78,6 +78,10 @@ export class EvaluatorComponent implements OnInit {
         const element = document.getElementById('saveAsButton') as HTMLElement;
         element.click();
       };
+      result.extraKeys['Alt-I'] = (cm: any) => {
+        const element = document.getElementById('infoButton') as HTMLElement;
+        element.click();
+      };
     }
     return result;
   }
@@ -89,6 +93,7 @@ export class EvaluatorComponent implements OnInit {
         path: '',
         content: '',
         select: true,
+        header: 'Load snippet',
       }
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -112,12 +117,19 @@ export class EvaluatorComponent implements OnInit {
   }
 
   saveAs() {
+    let filename: string = null;
+    if (this.filename) {
+      filename = this.filename.substr(this.filename.lastIndexOf('/') + 1);
+      filename = filename.substr(0, filename.lastIndexOf('.'));
+    }
     const dialogRef = this.dialog.open(FileDialogComponent, {
       width: '700px',
       data: {
         path: '',
         content: '',
         select: false,
+        header: 'Save snippet as',
+        filename,
       }
     });
     dialogRef.afterClosed().subscribe(res => {

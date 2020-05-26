@@ -17,6 +17,8 @@ export interface DialogData {
   path: string;
   content: string;
   select: boolean;
+  header: string;
+  filename?: string;
 }
 
 @Component({
@@ -40,6 +42,13 @@ export class FileDialogComponent implements OnInit {
     this.fileService.listFiles('/misc/snippets/').subscribe(res => {
       this.files = res.filter(x => x.endsWith('.hl'));
     });
+    if (this.data.filename) {
+      this.name = this.data.filename;
+      setTimeout(() => {
+        this.nameElement.nativeElement.select();
+        this.nameElement.nativeElement.focus();
+      }, 100);
+    }
   }
 
   getFilteredFiles() {
