@@ -76,6 +76,7 @@ export class EvaluatorComponent implements OnInit {
       data: {
         path: '',
         content: '',
+        select: true,
       }
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -94,6 +95,20 @@ export class EvaluatorComponent implements OnInit {
       });
     } else {
       // Opening up "Save as" dialog.
+      const dialogRef = this.dialog.open(FileDialogComponent, {
+        width: '700px',
+        data: {
+          path: '',
+          content: '',
+          select: false,
+        }
+      });
+      dialogRef.afterClosed().subscribe(res => {
+        if (res) {
+          this.filename = res.path;
+          this.save();
+        }
+      });
     }
   }
 
