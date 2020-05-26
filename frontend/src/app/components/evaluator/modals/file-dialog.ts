@@ -16,16 +16,17 @@ export interface DialogData {
 }
 
 @Component({
-  templateUrl: 'load-dialog.html',
-  styleUrls: ['load-dialog.scss'],
+  templateUrl: 'file-dialog.html',
+  styleUrls: ['file-dialog.scss'],
 })
-export class LoadDialogComponent implements OnInit {
+export class FileDialogComponent implements OnInit {
 
   public files: string[] = [];
   public displayedColumns: string[] = ['filename'];
+  public name = '';
 
   constructor(
-    public dialogRef: MatDialogRef<LoadDialogComponent>,
+    public dialogRef: MatDialogRef<FileDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private fileService: FileService) { }
 
@@ -36,11 +37,15 @@ export class LoadDialogComponent implements OnInit {
   }
 
   getFilteredFiles() {
-    return this.files;
+    if (this.name === '') {
+      return this.files;
+    }
+    return this.files.filter(x => x.includes(this.name));
   }
 
   getFileName(path: string) {
-    return path.substr(path.lastIndexOf('/') + 1);
+    const result = path.substr(path.lastIndexOf('/') + 1);
+    return result.substr(0, result.lastIndexOf('.'));
   }
 
   selectFile(file: string) {
