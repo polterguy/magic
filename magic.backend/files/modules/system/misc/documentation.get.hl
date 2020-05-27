@@ -1,0 +1,19 @@
+
+/*
+ * Returns the documentation for the specified [module].
+ */
+.description:"Returns the documentation for the specified [module]."
+
+
+/*
+ * Forwarding request to slot responsible for actually retrieving documentation.
+ */
+.arguments
+   module:string
+auth.ticket.verify:root
+unwrap:x:+/*
+slots.signal:magic.documentation.get
+   module:x:@.arguments/*/module
+unwrap:x:+/-
+slots.return-nodes
+   result:x:@slots.signal
