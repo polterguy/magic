@@ -11,8 +11,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-bottom: 5rem;
 }
 
-.CodeMirror {
+.CodeMirror.cm-s-material {
   height: 500px;
+  .cm-variable-2 {
+    color: #e7c2f5;
+  }
 }
 
 .image-container {

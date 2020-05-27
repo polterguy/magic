@@ -1,0 +1,6 @@
+/*
+ * Adds a bunch of nodes into specified destination expression's children collection.
+ */
+add:x:@.destination
+   .
+      foo:bar

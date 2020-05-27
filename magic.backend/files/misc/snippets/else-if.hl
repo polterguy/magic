@@ -1,0 +1,16 @@
+/*
+ * Evaluates specified [.lambda] if condition evaluates to true.
+ * Notice, must follow an [if].
+ */
+else-if
+   eq
+      get-value:x:@.expression
+      .:bool:true
+   .lambda
+      /*
+       * Lambda evaluates if condition is true.
+       */
+else
+   /*
+    * Lambda evaluated if condition is NOT true.
+    */

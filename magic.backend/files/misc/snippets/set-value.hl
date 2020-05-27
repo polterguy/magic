@@ -1,0 +1,6 @@
+/*
+ * Changes the value of the specified node(s) to whatever the results of its
+ * parameter is.
+ */
+set-value:x:@.destination
+   .:value

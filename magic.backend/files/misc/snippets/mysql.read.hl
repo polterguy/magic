@@ -6,6 +6,7 @@ wait.slots.signal:magic.db.mysql.read
    table:roles
    args
       limit:int:5
+      name.like:"%ue%"
    columns
       name
       description
