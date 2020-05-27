@@ -1,0 +1,17 @@
+/*
+ * Evaluates specified [.lambda] for as long as condition evaluates to true.
+ */
+.no:int:0
+while
+   lt
+      get-value:x:@.no
+      .:int:20
+   .lambda
+      /*
+       * Your lambda goes here.
+       */
+      
+      /*
+       * Incrementing counter.
+       */
+      math.increment:x:@.no
