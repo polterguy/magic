@@ -14,7 +14,7 @@ auth.ticket.verify:root
 /*
  * Returns all templates to caller.
  */
-io.folders.list:/misc/templates/
+io.folder.list:/misc/templates/
 for-each:x:-/*
    strings.split:x:@.dp/#
       .:/

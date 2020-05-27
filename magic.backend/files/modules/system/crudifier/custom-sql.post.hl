@@ -111,7 +111,7 @@ set-value:x:@.folder
       get-value:x:@.folder
       get-value:x:@.arguments/*/database
       .:/
-io.folders.create:x:@.folder
+io.folder.create:x:@.folder
 
 
 /*
