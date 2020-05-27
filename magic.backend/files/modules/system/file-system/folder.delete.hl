@@ -16,4 +16,4 @@ auth.ticket.verify:root
 /*
  * Deletes the specified folder.
  */
-io.folders.delete:x:@.arguments/*/folder
+io.folder.delete:x:@.arguments/*/folder

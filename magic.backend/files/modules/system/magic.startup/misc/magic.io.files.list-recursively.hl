@@ -26,7 +26,7 @@ slots.create:magic.io.files.list-recursively
    /*
     * Traversing all folders beneath given [folder], and recursively invokes self.
     */
-   io.folders.list:x:@.arguments/0
+   io.folder.list:x:@.arguments/0
    for-each:x:-/*
       unwrap:x:+/*
       slots.signal:magic.io.files.list-recursively

@@ -457,7 +457,7 @@ set-value:x:@.folder
       strings.join:x:@strings.split/*
          .:/
       .:/
-io.folders.create:x:@.folder
+io.folder.create:x:@.folder
 
 
 
