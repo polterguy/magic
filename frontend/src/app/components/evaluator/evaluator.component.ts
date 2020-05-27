@@ -17,6 +17,7 @@ export class EvaluatorComponent implements OnInit {
   private filename: string;
   private result: string = null;
   private editor: any;
+  private files: string[] = [];
 
   constructor(
     private service: EvaluatorService,
@@ -27,6 +28,12 @@ export class EvaluatorComponent implements OnInit {
   ngOnInit() {
     this.service.vocabulary().subscribe((res) => {
       localStorage.setItem('vocabulary', JSON.stringify(res));
+    });
+    this.fileService.listFiles('/misc/snippets/').subscribe(res => {
+      this.files = res.filter(x => x.endsWith('.hl')).map(x => {
+        const result = x.substr(x.lastIndexOf('/') + 1);
+        return result.substr(0, result.lastIndexOf('.'));
+        });
     });
   }
 
@@ -53,7 +60,6 @@ export class EvaluatorComponent implements OnInit {
         'Ctrl-Space': 'autocomplete',
         'Alt-M': (cm: any) => {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-          console.log(cm);
         },
         Esc: (cm: any) => {
           if (cm.getOption('fullScreen')) {
@@ -92,32 +98,50 @@ export class EvaluatorComponent implements OnInit {
   }
 
   insertSnippet() {
-    const dialogRef = this.dialog.open(FileDialogComponent, {
-      width: '700px',
-      data: {
-        path: '',
-        content: '',
-        select: true,
-        header: 'Insert snippet',
-      }
-    });
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-
+    // Checking if user have something selected
+    const selection = this.editor.getSelection();
+    if (selection && selection !== '') {
+      // Loading file directly, and inserting.
+      this.fileService.getFileContent('/misc/snippets/' + selection + '.hl').subscribe(res => {
         // Making sure we append correct number of spaces in front of the thing.
         const start = this.editor.getCursor(true).ch as number;
-        let content = res.content as string;
-        const lines = content.split('\n');
-        content = '';
+        const lines = res.split('\n');
+        res = '';
         for (const idx of lines) {
-          if (content !== '') {
-            content += ' '.repeat(start);
+          if (res !== '') {
+            res += ' '.repeat(start);
           }
-          content += idx + '\r\n';
+          res += idx + '\r\n';
         }
-        this.editor.replaceSelection(content, 'around');
-      }
-    });
+        this.editor.replaceSelection(res, 'around');
+      });
+    } else {
+      const dialogRef = this.dialog.open(FileDialogComponent, {
+        width: '700px',
+        data: {
+          path: '',
+          content: '',
+          select: true,
+          header: 'Insert snippet',
+        }
+      });
+      dialogRef.afterClosed().subscribe(res => {
+        if (res) {
+          // Making sure we append correct number of spaces in front of the thing.
+          const start = this.editor.getCursor(true).ch as number;
+          let content = res.content as string;
+          const lines = content.split('\n');
+          content = '';
+          for (const idx of lines) {
+            if (content !== '') {
+              content += ' '.repeat(start);
+            }
+            content += idx + '\r\n';
+          }
+          this.editor.replaceSelection(content, 'around');
+        }
+      });
+    }
   }
 
   load() {
