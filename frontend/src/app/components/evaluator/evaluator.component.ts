@@ -100,7 +100,7 @@ export class EvaluatorComponent implements OnInit {
   insertSnippet() {
     // Checking if user have something selected
     const selection = this.editor.getSelection();
-    if (selection && selection !== '') {
+    if (selection && selection !== '' && this.files.indexOf(selection) !== -1) {
       // Loading file directly, and inserting.
       this.fileService.getFileContent('/misc/snippets/' + selection + '.hl').subscribe(res => {
         // Making sure we append correct number of spaces in front of the thing.
