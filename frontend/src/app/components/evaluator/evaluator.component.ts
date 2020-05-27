@@ -99,15 +99,19 @@ export class EvaluatorComponent implements OnInit {
   }
 
   insertSnippet() {
+
     // Checking if user have something selected
     const selection = this.editor.getSelection();
     if (selection && selection !== '' && this.files.indexOf(selection) !== -1) {
+
       // Loading file directly, and inserting.
       this.fileService.getFileContent('/misc/snippets/' + selection + '.hl').subscribe(res => {
         this.replaceSelection(res);
       });
+
     } else {
-      const dialogRef = this.dialog.open(FileDialogComponent, {
+
+      this.dialog.open(FileDialogComponent, {
         width: '700px',
         data: {
           path: '',
@@ -115,16 +119,17 @@ export class EvaluatorComponent implements OnInit {
           select: true,
           header: 'Insert snippet',
         }
-      });
-      dialogRef.afterClosed().subscribe(res => {
+      }).afterClosed().subscribe(res => {
         if (res) {
           this.replaceSelection(res.content);
         }
       });
+
     }
   }
 
   replaceSelection(content: string) {
+
     // Making sure we append correct number of spaces in front of the thing.
     const start = this.editor.getCursor(true).ch as number;
     const lines = content.split('\n');
@@ -158,23 +163,31 @@ export class EvaluatorComponent implements OnInit {
 
   save() {
     if (this.filename) {
+
       // Saving assuming user simply wants to save file as is, with existing filename.
       this.fileService.saveFile(this.filename, this.hyperlambda).subscribe(res => {
         this.showInfo('File was successfully saved');
       });
+
     } else {
+
       // Opening up "Save as" dialog.
       this.saveAs();
+
     }
   }
 
   saveAs() {
+
+    // Figuring out filename only, minus folder and extension.
     let filename: string = null;
     if (this.filename) {
       filename = this.filename.substr(this.filename.lastIndexOf('/') + 1);
       filename = filename.substr(0, filename.lastIndexOf('.'));
     }
-    const dialogRef = this.dialog.open(FileDialogComponent, {
+
+    // Opening up FileDialog passing in filename.
+    this.dialog.open(FileDialogComponent, {
       width: '700px',
       data: {
         path: '',
@@ -183,8 +196,7 @@ export class EvaluatorComponent implements OnInit {
         header: 'Save snippet as',
         filename,
       }
-    });
-    dialogRef.afterClosed().subscribe(res => {
+    }).afterClosed().subscribe(res => {
       if (res) {
         this.filename = res.path;
         this.save();
