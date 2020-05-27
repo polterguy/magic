@@ -4,7 +4,6 @@
 wait.slots.signal:magic.db.mysql.create
    database:magic_auth
    table:roles
-   return-id:bool:false
    values
       name:foo-bar
       description:Some description

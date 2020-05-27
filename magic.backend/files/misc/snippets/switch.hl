@@ -1,0 +1,17 @@
+/*
+ * Switch case comparison, evaluating lambda object matching expression.
+ */
+switch:x:@.expression
+   case:foo
+      /*
+       * Lambda object to evaluate if expression's value equals 'foo'.
+       */
+   case:bar
+      /*
+       * Lambda object to evaluate if expression's value equals 'bar'.
+       */
+   default
+      /*
+       * Lambda object to evaluate if expression is not matched to any
+       * of the above values.
+       */

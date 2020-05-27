@@ -1,0 +1,6 @@
+/*
+ * Not equals comparison.
+ */
+neq
+   get-value:x:@.expression
+   .:bool:true
