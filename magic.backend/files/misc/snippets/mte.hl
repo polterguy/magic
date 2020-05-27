@@ -1,0 +1,6 @@
+/*
+ * Greater than or equals comparison.
+ */
+mte
+   get-value:x:@.expression
+   .:int:5

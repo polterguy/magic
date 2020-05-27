@@ -1,0 +1,18 @@
+/*
+ * Creates a try/catch/finally block
+ */
+try
+   /*
+    * Perform your unsafe operation here.
+    */
+   throw:Foo
+.catch
+   /*
+    * If an exception is triggered, this lambda will be evaluated.
+    */
+   log.info:Exception thrown
+.finally
+   /*
+    * If an exception is triggered, this lambda will be evaluated.
+    */
+   log.info:Try finished evaluating
