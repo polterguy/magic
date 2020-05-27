@@ -1,0 +1,6 @@
+/*
+ * Less than comparison.
+ */
+lt
+   get-value:x:@.expression
+   .:int:5
