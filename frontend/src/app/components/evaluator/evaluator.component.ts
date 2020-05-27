@@ -104,18 +104,7 @@ export class EvaluatorComponent implements OnInit {
     if (selection && selection !== '' && this.files.indexOf(selection) !== -1) {
       // Loading file directly, and inserting.
       this.fileService.getFileContent('/misc/snippets/' + selection + '.hl').subscribe(res => {
-        // Making sure we append correct number of spaces in front of the thing.
-        const start = this.editor.getCursor(true).ch as number;
-        const lines = res.split('\n');
-        res = '';
-        for (const idx of lines) {
-          if (res !== '') {
-            res += ' '.repeat(start);
-          }
-          res += idx + '\n';
-        }
-        console.log(res);
-        this.editor.replaceSelection(res, 'around');
+        this.replaceSelection(res);
       });
     } else {
       const dialogRef = this.dialog.open(FileDialogComponent, {
@@ -129,21 +118,24 @@ export class EvaluatorComponent implements OnInit {
       });
       dialogRef.afterClosed().subscribe(res => {
         if (res) {
-          // Making sure we append correct number of spaces in front of the thing.
-          const start = this.editor.getCursor(true).ch as number;
-          let content = res.content as string;
-          const lines = content.split('\n');
-          content = '';
-          for (const idx of lines) {
-            if (content !== '') {
-              content += ' '.repeat(start);
-            }
-            content += idx + '\n';
-          }
-          this.editor.replaceSelection(content, 'around');
+          this.replaceSelection(res.content);
         }
       });
     }
+  }
+
+  replaceSelection(content: string) {
+    // Making sure we append correct number of spaces in front of the thing.
+    const start = this.editor.getCursor(true).ch as number;
+    const lines = content.split('\n');
+    content = '';
+    for (const idx of lines) {
+      if (content !== '') {
+        content += ' '.repeat(start);
+      }
+      content += idx + '\n';
+    }
+    this.editor.replaceSelection(content, 'around');
   }
 
   load() {
