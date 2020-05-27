@@ -32,7 +32,7 @@
        *  - comment      ==> Used for comments and multiline comments
        *  - string       ==> Used for strings and multiline strings
        *  - keyword      ==> Used for p5.lambda keywords, such as [while] and [if]
-       *  - variable     ==> Used for "variables", meaning a node having a name starting with "_"
+       *  - variable     ==> Used for "variables", meaning a node having a name starting with "."
        *  - variable-2   ==> Used for Active Event invocations, meaning a node having a name containing "."
        *  - def          ==> Used for type declarations of a node's value
        *  - number       ==> Used for p5.lambda expressions

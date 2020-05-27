@@ -91,7 +91,8 @@ export class EvaluatorComponent implements OnInit {
       };
       result.extraKeys['Alt-I'] = (cm: any) => {
         this.editor = cm;
-        this.insertSnippet();
+        const element = document.getElementById('insertButton') as HTMLElement;
+        element.click();
       };
     }
     return result;
@@ -111,8 +112,9 @@ export class EvaluatorComponent implements OnInit {
           if (res !== '') {
             res += ' '.repeat(start);
           }
-          res += idx + '\r\n';
+          res += idx + '\n';
         }
+        console.log(res);
         this.editor.replaceSelection(res, 'around');
       });
     } else {
@@ -136,7 +138,7 @@ export class EvaluatorComponent implements OnInit {
             if (content !== '') {
               content += ' '.repeat(start);
             }
-            content += idx + '\r\n';
+            content += idx + '\n';
           }
           this.editor.replaceSelection(content, 'around');
         }

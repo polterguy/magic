@@ -23,6 +23,12 @@
       <button 
         mat-button
         class="toolbar-button"
+        id="insertButton"
+        matTooltip="Inserts a Hyperlambda snippet from your archive"
+        (click)="insertSnippet()">Insert</button>
+      <button 
+        mat-button
+        class="toolbar-button"
         id="loadButton"
         matTooltip="Loads a Hyperlambda snippet from your archive"
         (click)="load()">Load</button>
