@@ -20,7 +20,15 @@
 
     <ng-container matColumnDef="filename">
       <th mat-header-cell *matHeaderCellDef>Filename</th>
-      <td (click)="selectFile(file)" mat-cell *matCellDef="let file">{{getFileName(file)}}</td>
+      <td (click)="selectFile(file.filename)" mat-cell *matCellDef="let file">
+        {{getFileName(file.filename)}}
+        <mat-icon
+          class="absolutize"
+          matTooltip="Shows parts of file's content"
+          (click)="showInfo(file, $event)"
+          matSuffix>info</mat-icon>
+        <pre class="file-content" *ngIf="file.content">{{file.content}}</pre>
+      </td>
     </ng-container>
       
     <tr
