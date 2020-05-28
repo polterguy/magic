@@ -9,7 +9,9 @@ if
       /*
        * Lambda evaluates if condition is true.
        */
+      log.info:Yup, condition was true.
 else
    /*
     * Lambda evaluated if condition is NOT true.
     */
+   log.info:Nope, condition was not true
