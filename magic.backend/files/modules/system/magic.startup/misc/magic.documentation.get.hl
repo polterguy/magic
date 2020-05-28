@@ -17,4 +17,5 @@ slots.create:magic.documentation.get
       get-value:x:@.arguments/*/module
       .:/master/README.md
    http.get:x:@strings.concat
-   slots.return-value:x:-/*/content
+   unwrap:x:+/*
+   slots.return-value:x:@http.get/*/content
