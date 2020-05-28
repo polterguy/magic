@@ -219,7 +219,7 @@ export class EvaluatorComponent implements OnInit {
 
   public showLegend() {
     this.dialog.open(LegendDialogComponent, {
-      width: '700px',
+      width: '80%',
     });
   }
 }

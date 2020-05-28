@@ -15,4 +15,23 @@
     <li><strong>Alt+Q</strong> - Opens up this dialog</li>
   </ul>
 
+  <mat-form-field
+    class="full-width">
+    <mat-select
+      placeholder="Select module"
+      matTooltip="Retrieves documentation for specified module"
+      [(ngModel)]="selectedModule"
+      (selectionChange)="moduleChanged()">
+      <mat-option
+        value="nope">Select module</mat-option>
+      <mat-option
+        *ngFor="let cur of modules"
+        [value]="cur">{{cur}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div
+    class="documentation"
+    [innerHTML]="documentation | marked"></div>
+
 </div>
