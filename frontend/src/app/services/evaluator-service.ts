@@ -26,4 +26,11 @@ export class EvaluatorService {
       this.ticketService.getBackendUrl() +
       'magic/modules/system/misc/vocabulary');
   }
+
+  documentation(module: string) {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/misc/documentation?module=' + encodeURIComponent(module)
+    );
+  }
 }
