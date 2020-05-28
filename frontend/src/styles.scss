@@ -32,6 +32,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
 }
 
+.large .CodeMirror {
+  height: 500px;
+}
+
 .smaller .CodeMirror {
   height: 300px;
 }
