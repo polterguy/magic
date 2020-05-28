@@ -21,6 +21,11 @@ export interface DialogData {
   filename?: string;
 }
 
+class File {
+  filename: string;
+  content: string;
+}
+
 @Component({
   templateUrl: 'file-dialog.html',
   styleUrls: ['file-dialog.scss'],
@@ -28,7 +33,7 @@ export interface DialogData {
 export class FileDialogComponent implements OnInit {
 
   @ViewChild('nameElement', {static: true}) nameElement: ElementRef;
-  public files: string[] = [];
+  public files: File[] = [];
   public displayedColumns: string[] = ['filename'];
   public name = '';
 
@@ -40,9 +45,13 @@ export class FileDialogComponent implements OnInit {
 
   ngOnInit() {
     this.fileService.listFiles('/misc/snippets/').subscribe(res => {
-      this.files = res.filter(x => x.endsWith('.hl'));
+      this.files = res.filter(x => x.endsWith('.hl')).map(x => {
+        return {
+          filename: x,
+          content: null,
+        };
+      });
     });
-    console.log(this.data);
     if (this.data.filename) {
       this.name = this.data.filename;
     }
@@ -57,15 +66,25 @@ export class FileDialogComponent implements OnInit {
       return this.files;
     }
     return this.files.filter(x => {
-      let result = x.substr(x.lastIndexOf('/') + 1);
+      let result = x.filename.substr(x.filename.lastIndexOf('/') + 1);
       result = result.substr(0, result.lastIndexOf('.'));
-      return result.includes(this.name);
+      if (result.includes(this.name)) {
+        return true;
+      }
+      return false;
     });
   }
 
   getFileName(path: string) {
     const result = path.substr(path.lastIndexOf('/') + 1);
     return result.substr(0, result.lastIndexOf('.'));
+  }
+
+  showInfo(file: any, event: any) {
+    this.fileService.getFileContent(file.filename).subscribe(res => {
+      file.content = res;
+    });
+    event.stopPropagation();
   }
 
   selectFile(file: string) {

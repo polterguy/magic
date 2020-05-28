@@ -1,17 +1,7 @@
 /*
- * Evaluates specified [.lambda] if condition evaluates to true.
+ * Adds a bunch of nodes into specified destination expression's children collection.
  */
-if
-   eq
-      get-value:x:@.expression
-      .:bool:true
-   .lambda
-      /*
-       * Lambda evaluates if condition is true.
-       */
-      log.info:Yup, condition was true.
-else
-   /*
-    * Lambda evaluated if condition is NOT true.
-    */
-   log.info:Nope, condition was not true
+add:x:@.destination
+   .
+      foo:bar
+

@@ -113,12 +113,13 @@ export class EvaluatorComponent implements OnInit {
     } else {
 
       this.dialog.open(FileDialogComponent, {
-        width: '700px',
+        width: '80%',
         data: {
           path: '',
           content: '',
           select: true,
           header: 'Insert snippet',
+          filename: selection && selection.length < 20 ? selection : null,
         }
       }).afterClosed().subscribe(res => {
         if (res) {
