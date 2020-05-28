@@ -94,6 +94,7 @@ export class EvaluatorComponent implements OnInit {
         const element = document.getElementById('insertButton') as HTMLElement;
         element.click();
       };
+      result.autofocus = true;
     }
     return result;
   }
