@@ -1,91 +1,73 @@
 
 /*
- * Authenticates the user with the specified [username] and [password] combination.
+ * Authenticates the user in the system.
+ *
+ * Arguments
+ *
+ * - [username] - The username
+ * - [password] - The password
  *
  * NOTICE!
- * This is a "one size fits all" solution to the authentication issue in Magic,
- * and intended to in combination with the "magic_auth.sql" script and
- * "create-user.hl" script strings.replace the existing authentication, that simply checks
- * to see if the username/password as root/root.
+ * The default implementation of this slots.create checks the supplied [username]
+ * and [password] towards the values of "root"/"root" - Obviously this should
+ * be exchanged and go towards your own database structure somehow.
  *
- * It relies upon the existence of a "magic_auth" database, with its "users",
- * "roles" and other tables to authenticate users.
+ * However, to make sure the core installation of Magic is database agnostic,
+ * I have consciously left this as an exercize for yourself to figure out.
  *
- * To use it, first create your "magic_auth" database by executing "magic_auth.sql".
- * Then insert at least one user using the "create-user.hl" file (remember your password).
- * Then copy and paste this entire file's content, and paste it into
- * "/modules/system/authenticate.get.hl", evaluate the file, and you can now login
- * using a "real" authentication database.
+ * There does however exist helper code to accomplish this, both to create
+ * your own "magic_auth" database, and to strings.replace this slots.create's code with
+ * a real slots.create checking usernames and password combination towards that
+ * database.
+ *
+ * See the files "/misc/magic_auth.sql", "/misc/authenticate.hl" and
+ * "/misc/create-users.hl" for an example of how to implement a real
+ * authentication system in your system.
  */
 slots.create:magic.authenticate
 
 
    /*
-    * Opens up our database connection.
+    * Notice, this is to allow for the core to check if the slot is
+    * the "default" authentication/authorization slot, or if it has been overridden.
     */
-   mysql.connect:[magic_auth]
+   .is-default-auth:bool:true
 
 
-      /*
-       * Selects the user with the given username from our table.
-       */
-      mysql.select:select password from users where username = @username
-         @username:x:@.arguments/*/username
+   /*
+    * Statically checks the username/password combination towards the values
+    * "root"/"root". Exchange this part of the slots.create with your own
+    * custom lambda, looking up some username/password combination from
+    * your database to actually secure your installation.
+    */
+   if
+      or
+         not
+            eq
+               get-value:x:@.arguments/*/username
+               .:root
+         not
+            eq
+               get-value:x:@.arguments/*/password
+               .:root
+      .lambda
+         throw:Oops, wrong credentials!
 
 
-      /*
-       * Checking that user with specified [username] exists.
-       */
-      if
-         eq
-            get-count:x:@mysql.select/*
-            .:int:0
-         .lambda
+   /*
+    * Creating a JWT token belonging to the username supplied, and the
+    * role of "root".
+    */
+   unwrap:x:+/*/username
+   auth.ticket.create
+      username:x:@.arguments/*/username
+      roles
+         .:root
 
 
-            /*
-             * No such user.
-             */
-            throw:Access denied
-
-
-      /*
-       * Verify we have a password match.
-       */
-      if
-         crypto.password.verify:x:@.arguments/*/password
-            hash:x:@mysql.select/*/*/password
-         .lambda
-
-
-            /*
-             * Password is matching hashed value from database.
-             * Now we need to select all roles user belongs to.
-             */
-            mysql.select:select role from users_roles where user = @username
-               @username:x:@.arguments/*/username
-
-
-            /*
-             * Then we can create our JWT token/ticket.
-             */
-            add:x:+/*/roles
-               get-nodes:x:@mysql.select/*/*
-            auth.ticket.create
-               username:x:@.arguments/*/username
-               roles
-
-
-            /*
-             * Returning results back to caller.
-             */
-            unwrap:x:+/*
-            slots.return-nodes
-               ticket:x:@auth.ticket.create
-      else
-
-
-         /*
-          * Hash version of password didn't match.
-          */
-         throw:Access denied
+   /*
+    * Returning results back to caller.
+    */
+   unwrap:x:+/*
+   slots.return-nodes
+      ticket:x:@auth.ticket.create
