@@ -22,12 +22,20 @@
       <th mat-header-cell *matHeaderCellDef>Filename</th>
       <td (click)="selectFile(file.filename)" mat-cell *matCellDef="let file">
         {{getFileName(file.filename)}}
-        <mat-icon
-          class="absolutize"
-          matTooltip="Shows parts of file's content"
+        <button
+          mat-raised-button
           (click)="showInfo(file, $event)"
-          matSuffix>info</mat-icon>
-        <pre class="file-content" *ngIf="file.content">{{file.content}}</pre>
+          class="absolutize">
+          <mat-icon
+            matTooltip="Shows parts of file's content"
+            matSuffix>info</mat-icon>
+        </button>
+        <ngx-codemirror
+          (click)="preventBubbling($event)"
+          *ngIf="file.content"
+          [(ngModel)]="file.content" 
+          class="even-smaller marginalize"
+          [options]="getCodeMirrorOptions()"></ngx-codemirror>
       </td>
     </ng-container>
       

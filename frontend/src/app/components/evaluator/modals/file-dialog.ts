@@ -61,6 +61,16 @@ export class FileDialogComponent implements OnInit {
     }, 100);
   }
 
+  getCodeMirrorOptions() {
+    return {
+      lineNumbers: false,
+      theme: 'material',
+      mode: 'hyperlambda',
+      indentAuto: true,
+      readOnly: 'noCursor',
+    };
+  }
+
   getFilteredFiles() {
     if (this.name === '') {
       return this.files;
@@ -80,10 +90,14 @@ export class FileDialogComponent implements OnInit {
     return result.substr(0, result.lastIndexOf('.'));
   }
 
-  showInfo(file: any, event: any) {
+  showInfo(file: File, event: any) {
     this.fileService.getFileContent(file.filename).subscribe(res => {
       file.content = res;
     });
+    event.stopPropagation();
+  }
+
+  preventBubbling(event: any) {
     event.stopPropagation();
   }
 
