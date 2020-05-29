@@ -25,7 +25,7 @@ auth.ticket.verify:root
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
-io.files.load:/modules/system/crudifier/templates/sql.template.hl
+io.file.load:/modules/system/crudifier/templates/sql.template.hl
 hyper2lambda:x:-
 unwrap:x:+/*
 apply:x:@hyper2lambda

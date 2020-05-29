@@ -99,7 +99,7 @@ set-value:x:@.filename
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
  */
-io.files.load:x:@.arguments/*/template
+io.file.load:x:@.arguments/*/template
 hyper2lambda:x:-
 unwrap:x:+/*
 apply:x:@hyper2lambda
