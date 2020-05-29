@@ -328,3 +328,28 @@ _Every single module_
   the Magic wand!
 
 * Fixed many bugs. Hopefully not created too many new ones :)
+
+
+
+## Version 5.8.0
+
+* Added new project called _"magic.lambda.mime"_ that can parse and create MIME messages (email messages).
+
+* Added new project called _"magic.lambda.mail"_ that can send and retrieve emails from SMTP and POP3 servers.
+
+* Refactored _"magic.lambda.io"_ such that it no longer has a hard reference to any file system parts, but the actual
+  file system implementation can be exchanged dynamically, to for instance provide a _"virtual file system"_ reading
+  and writing files from for instance a database, by implementing `IFileService` and `IFolderService` and make sure
+  the IoC container resolves to your custom services, by overriding the initialization towards magic.lambda.io in magic.library.
+  This also has the benefits of making the unit tests for the project much cleaner, and not accessing any of the underlaying
+  file system parts during execution.
+
+* Cleaned up namespaces of slots, and made sure only _"io.file"_ and _"io.folder"_ (singular form) are in use, to make the
+  slots slightly more consistent in naming conventions.
+
+* Significantly improved documentation, and also made it available inline through the frontend's evaluator component.
+
+* Significantly improved the evaluator components, allowing you to evaluate Hyperlambda snippets, among other things allowing
+  you to persist custom snippets, and also use keyboard shortcut commands to _"inject"_ them into your own code.
+
+* Fixed a bug with the scheduler, that would throw an exception when creating a new job over its HTTP REST endpoint in the frontend.
