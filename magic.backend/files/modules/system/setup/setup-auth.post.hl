@@ -96,7 +96,7 @@ if
        * to which database type we're dealing with.
        */
       log.info:x:@strings.concat
-      io.files.load:x:@strings.concat
+      io.file.load:x:@strings.concat
 
 
       /*
@@ -153,7 +153,7 @@ if
        * is the default, for whatever type of database we're currently connecting to.
        */
       xxx.connect
-         xxx.execute:x:@io.files.load
+         xxx.execute:x:@io.file.load
       log.info:Database was successfully created
 
 
@@ -185,7 +185,7 @@ try
       .:/misc/
       get-value:x:@.arguments/*/databaseType
       .:/create-user.hl
-   io.files.load:x:@strings.concat
+   io.file.load:x:@strings.concat
    hyper2lambda:x:-
    unwrap:x:+/*/*
    add:x:@hyper2lambda/*/.arguments
@@ -252,7 +252,7 @@ io.files.copy:x:-
  * Evaluating new authentication file, to update our slot.
  */
 log.info:"Evaluating new database specific 'magic.authenticate.hl' file, to overwrite our old [magic.authenticate] slot"
-io.files.load:/modules/system/magic.startup/magic.authenticate.hl
+io.file.load:/modules/system/magic.startup/magic.authenticate.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
 
@@ -261,7 +261,7 @@ eval:x:@hyper2lambda
  * Evaluating "change-password" file, to create our slot.
  */
 log.info:"Evaluating new database specific 'magic.change-password.hl' file, to overwrite our old [magic.change-password] slot"
-io.files.load:/modules/system/magic.startup/magic.change-password.hl
+io.file.load:/modules/system/magic.startup/magic.change-password.hl
 hyper2lambda:x:-
 eval:x:@hyper2lambda
 

@@ -6,7 +6,7 @@
  *
  * - 1st argument. Folder from where to load all files recursively from.
  */
-slots.create:magic.io.files.load-recursively
+slots.create:magic.io.file.load-recursively
 
 
    /*
@@ -28,9 +28,9 @@ slots.create:magic.io.files.load-recursively
     * for then to add their contents as a child node of iterated file.
     */
    for-each:x:@slots.signal/*
-      io.files.load:x:@.dp/#
+      io.file.load:x:@.dp/#
       add:x:@.dp/#
-         get-nodes:x:@io.files.load
+         get-nodes:x:@io.file.load
       set-name:x:@.dp/#/*
          .:
 

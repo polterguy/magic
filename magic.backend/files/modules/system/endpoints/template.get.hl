@@ -20,7 +20,7 @@ strings.concat
    .:/misc/templates/
    get-value:x:@.arguments/*/name
    .:/README.md
-io.files.load:x:-
+io.file.load:x:-
 unwrap:x:+/*
 slots.return-nodes
-   markdown:x:@io.files.load
+   markdown:x:@io.file.load
