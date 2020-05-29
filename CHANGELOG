@@ -122,7 +122,7 @@
   which is default.
 
 * Not displaying hidden operating system files (Unix style, starting with ".") when listing files, unless [display-hidden] is passed
-  in to [io.files.list] as an argument with the value of true.
+  in to [io.file.list] as an argument with the value of true.
 
 * Dynamically loading up all assemblies in AppDomain's root folder, which allows drag'n'drop of assemblies into Web app's folder
   in order to automatically have access to slots, without having to explicitly referencing types in assemblies.
@@ -141,7 +141,7 @@
 
 * Creating a warning that we return to client durin _"ping"_ invocation if installation is still using the default [magic.authenticate] slot.
 
-* Made the filename optional in [io.files.move] and [io.files.copy], and if not given, uses the old filename, only updating the folder
+* Made the filename optional in [io.file.move] and [io.file.copy], and if not given, uses the old filename, only updating the folder
   where the file can be found.
 
 * Created a _"Setup authentication"_ wizard that allows the user to follow a wizard to create a secure database authentication system

@@ -23,5 +23,5 @@ strings.concat
    get-value:x:@.arguments/*/databaseType
    .:/templates/
    get-value:x:@.arguments/*/filename
-io.files.save:x:-
+io.file.save:x:-
    get-value:x:@.arguments/*/content

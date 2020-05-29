@@ -136,7 +136,7 @@ if
    and
       not
          get-value:x:@.arguments/*/overwrite
-      io.files.exists:x:@.filename
+      io.file.exists:x:@.filename
    .lambda
       throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
 
@@ -144,7 +144,7 @@ if
 /*
  * Saving file.
  */
-io.files.save:x:@.filename
+io.file.save:x:@.filename
    get-value:x:@lambda2hyper
 
 
