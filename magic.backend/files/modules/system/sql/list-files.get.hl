@@ -20,5 +20,5 @@ strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/templates/
-io.files.list:x:@strings.concat
+io.file.list:x:@strings.concat
 slots.return-nodes:x:-/*

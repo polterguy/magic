@@ -505,7 +505,7 @@ if
    and
       not
          get-value:x:@.arguments/*/overwrite
-      io.files.exists:x:@strings.replace
+      io.file.exists:x:@strings.replace
    .lambda
       throw:"That module already exists. If you want to re-create it, please check off 'Overwrite'."
 
@@ -518,7 +518,7 @@ if
  * Saving file, now applied according to template declaration,
  * and with the correct filename.
  */
-io.files.save:x:@strings.replace
+io.file.save:x:@strings.replace
    get-value:x:@lambda2hyper
 
 
@@ -594,7 +594,7 @@ if
          and
             not
                get-value:x:@.arguments/*/overwrite
-            io.files.exists:x:@strings.replace
+            io.file.exists:x:@strings.replace
          .lambda
             throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
 
@@ -603,7 +603,7 @@ if
        * Saving file, now applied according to template declaration,
        * and with the correct filename.
        */
-      io.files.save:x:@strings.replace
+      io.file.save:x:@strings.replace
          get-value:x:@lambda2hyper
 
 

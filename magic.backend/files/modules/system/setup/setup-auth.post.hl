@@ -225,14 +225,14 @@ try
  * First we start by moving our "authenticate" Hyperlambda file.
  */
 log.info:"Creating backup of default authentication Hyperlambda file, which can be found in '/trash/magic.authenticate.hl' afterwards"
-io.files.move:/modules/system/magic.startup/magic.authenticate.hl
+io.file.move:/modules/system/magic.startup/magic.authenticate.hl
    .:/trash/
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/magic.authenticate.hl
 log.info:"Copying database specific 'magic.authenticate.hl' file to '/modules/system/magic.startup/' folder."
-io.files.copy:x:@strings.concat
+io.file.copy:x:@strings.concat
    .:/modules/system/magic.startup/
 
 
@@ -244,7 +244,7 @@ strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
    .:/magic.change-password.hl
-io.files.copy:x:-
+io.file.copy:x:-
    .:/modules/system/magic.startup/
 
 

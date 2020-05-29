@@ -6,7 +6,7 @@
  *
  * - 1st. Folder from where to list all files recursively from.
  */
-slots.create:magic.io.files.list-recursively
+slots.create:magic.io.file.list-recursively
 
 
    /*
@@ -18,9 +18,9 @@ slots.create:magic.io.files.list-recursively
    /*
     * Lists all files in current [folder], and adds up the result to return value.
     */
-   io.files.list:x:@.arguments/0
+   io.file.list:x:@.arguments/0
    add:x:../*/slots.return-nodes
-      get-nodes:x:@io.files.list/*
+      get-nodes:x:@io.file.list/*
 
 
    /*
@@ -29,7 +29,7 @@ slots.create:magic.io.files.list-recursively
    io.folder.list:x:@.arguments/0
    for-each:x:-/*
       unwrap:x:+/*
-      slots.signal:magic.io.files.list-recursively
+      slots.signal:magic.io.file.list-recursively
          .:x:@.dp/#
       add:x:../*/slots.return-nodes
          get-nodes:x:@slots.signal/*

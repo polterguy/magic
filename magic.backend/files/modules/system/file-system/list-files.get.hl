@@ -16,10 +16,10 @@ auth.ticket.verify:root
 /*
  * Listing all files in specified folder.
  */
-io.files.list:x:@.arguments/*/folder
+io.file.list:x:@.arguments/*/folder
 
 
 /*
  * Returning results of above invocation to caller.
  */
-slots.return-nodes:x:@io.files.list/*
+slots.return-nodes:x:@io.file.list/*

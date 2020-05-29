@@ -16,4 +16,4 @@ auth.ticket.verify:root
 /*
  * Deletes the specified file.
  */
-io.files.delete:x:@.arguments/*/file
+io.file.delete:x:@.arguments/*/file
