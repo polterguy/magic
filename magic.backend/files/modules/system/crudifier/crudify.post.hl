@@ -450,7 +450,7 @@ set-value:x:@.folder
       .:/
 strings.split:x:@.filename
    .:/
-remove-node:x:-/0/-
+remove-nodes:x:-/0/-
 set-value:x:@.folder
    strings.concat
       get-value:x:@.folder
@@ -553,11 +553,11 @@ if
        * First removing [columns], adding [count(*)] and then transforming lambda
        * to hyper, and saving it to the correct file.
        */
-      remove-node:x:@apply/*/wait.slots.signal/*/columns/*
-      remove-node:x:@apply/*/.arguments/*/limit
-      remove-node:x:@apply/*/.arguments/*/offset
-      remove-node:x:@apply/*/.arguments/*/order
-      remove-node:x:@apply/*/.arguments/*/direction
+      remove-nodes:x:@apply/*/wait.slots.signal/*/columns/*
+      remove-nodes:x:@apply/*/.arguments/*/limit
+      remove-nodes:x:@apply/*/.arguments/*/offset
+      remove-nodes:x:@apply/*/.arguments/*/order
+      remove-nodes:x:@apply/*/.arguments/*/direction
       add:x:@apply/*/wait.slots.signal/*/columns
          .
             count(*) as count

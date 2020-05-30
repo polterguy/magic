@@ -20,10 +20,10 @@ slots.create:magic.db.mssql.databases
       /*
        * Removes "system" databases.
        */
-      remove-node:x:@mssql.select/*/*/=master/.
-      remove-node:x:@mssql.select/*/*/=tempdb/.
-      remove-node:x:@mssql.select/*/*/=model/.
-      remove-node:x:@mssql.select/*/*/=msdb/.
+      remove-nodes:x:@mssql.select/*/*/=master/.
+      remove-nodes:x:@mssql.select/*/*/=tempdb/.
+      remove-nodes:x:@mssql.select/*/*/=model/.
+      remove-nodes:x:@mssql.select/*/*/=msdb/.
 
 
       /*

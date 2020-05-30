@@ -43,19 +43,19 @@ slots.create:magic.db.mysql.read
       set-value:x:@.limit
          convert:x:@.limit
             type:long
-      remove-node:x:@.arguments/*/args/*/limit
+      remove-nodes:x:@.arguments/*/args/*/limit
 
       add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/offset
-      remove-node:x:@.arguments/*/args/*/offset
+      remove-nodes:x:@.arguments/*/args/*/offset
 
       add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/order
-      remove-node:x:@.arguments/*/args/*/order
+      remove-nodes:x:@.arguments/*/args/*/order
 
       add:x:./*/wait.mysql.read
          get-nodes:x:@.arguments/*/args/*/direction
-      remove-node:x:@.arguments/*/args/*/direction
+      remove-nodes:x:@.arguments/*/args/*/direction
 
 
       /*
