@@ -151,5 +151,5 @@ io.file.save:x:@.filename
 /*
  * Returns success to caller.
  */
-slots.return-nodes
+return-nodes
    result:success

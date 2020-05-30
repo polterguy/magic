@@ -26,4 +26,4 @@ signal:magic.authenticate
 /*
  * Returns the authentication JWT ticket created above to caller.
  */
-slots.return-nodes:x:@signal/*
+return-nodes:x:@signal/*

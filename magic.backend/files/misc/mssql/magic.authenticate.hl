@@ -80,7 +80,7 @@ slots.create:magic.authenticate
              * Returning results back to caller.
              */
             unwrap:x:+/*
-            slots.return-nodes
+            return-nodes
                ticket:x:@auth.ticket.create
       else
 

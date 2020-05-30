@@ -20,4 +20,4 @@ scheduler.tasks.list
 /*
  * Returning the results of the evaluation to caller.
  */
-slots.return-nodes:x:@scheduler.tasks.list/*
+return-nodes:x:@scheduler.tasks.list/*

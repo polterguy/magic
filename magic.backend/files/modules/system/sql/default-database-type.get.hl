@@ -5,5 +5,5 @@
 .description:"Returns the default database type the backend is using, which is the same as the database used during setup for auth purposes."
 config.get:"magic:databases:default"
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    type:x:@config.get

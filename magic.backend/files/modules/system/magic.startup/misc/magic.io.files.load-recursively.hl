@@ -38,5 +38,5 @@ slots.create:magic.io.file.load-recursively
    /*
     * Returning to caller all files in folder, and sub folder(s).
     */
-   slots.return-nodes:x:@signal/*
+   return-nodes:x:@signal/*
    

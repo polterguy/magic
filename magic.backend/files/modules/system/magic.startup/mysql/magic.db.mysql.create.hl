@@ -53,7 +53,7 @@ slots.create:magic.db.mysql.create
              * Returning ID to caller.
              */
             unwrap:x:+/*
-            slots.return-nodes
+            return-nodes
                id:x:@wait.mysql.create
 
       else
@@ -62,5 +62,5 @@ slots.create:magic.db.mysql.create
          /*
           * Returning success to caller.
           */
-         slots.return-nodes
+         return-nodes
             result:success

@@ -36,4 +36,4 @@ slots.create:magic.db.mysql.databases
       /*
        * Returns the remaining databases to caller.
        */
-      slots.return-nodes:x:@mysql.select/*
+      return-nodes:x:@mysql.select/*

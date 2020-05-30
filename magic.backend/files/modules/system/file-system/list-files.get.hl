@@ -22,4 +22,4 @@ io.file.list:x:@.arguments/*/folder
 /*
  * Returning results of above invocation to caller.
  */
-slots.return-nodes:x:@io.file.list/*
+return-nodes:x:@io.file.list/*

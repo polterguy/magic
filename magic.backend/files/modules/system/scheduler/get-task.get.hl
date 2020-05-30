@@ -36,7 +36,7 @@ if
       .add
          repeat
             interval:x:@scheduler.tasks.get/*/*/repeat
-      add:x:../*/slots.return-nodes
+      add:x:../*/return-nodes
          get-nodes:x:@.add/*
       switch:x:@scheduler.tasks.get/*/*/repeat
          case:days
@@ -46,13 +46,13 @@ if
             unwrap:x:+/*
             .add
                value:x:@scheduler.tasks.get/*/*/repeat/*/value
-            add:x:../*/slots.return-nodes/*/repeat
+            add:x:../*/return-nodes/*/repeat
                get-nodes:x:@.add/*
          default
             unwrap:x:+/*
             .add
                time:x:@scheduler.tasks.get/*/*/repeat/*/time
-            add:x:../*/slots.return-nodes/*/repeat
+            add:x:../*/return-nodes/*/repeat
                get-nodes:x:@.add/*
 
 
@@ -60,7 +60,7 @@ if
  * Returning the results of the evaluation to caller.
  */
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    name:x:@.arguments/*/name
    description:x:@scheduler.tasks.get/*/*/description
    due:x:@scheduler.tasks.get/*/*/due

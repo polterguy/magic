@@ -49,5 +49,5 @@ slots.create:magic.db.mysql.delete
        * Returning results to caller.
        */
       unwrap:x:+/*
-      slots.return-nodes
+      return-nodes
          deleted-records:x:@wait.mysql.delete

@@ -71,7 +71,7 @@ if
       /*
        * Returning success to caller.
        */
-      slots.return-nodes
+      return-nodes
          result:OK
          data:[when] type of task was successfully created.
 

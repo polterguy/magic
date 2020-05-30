@@ -2,4 +2,4 @@
  * Creates a new Hyperlambda slot.
  */
 slots.create:meaning-of-life
-   slots.return-value:int:57
+   return-value:int:57

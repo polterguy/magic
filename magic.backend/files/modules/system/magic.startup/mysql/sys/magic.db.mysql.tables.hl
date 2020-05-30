@@ -22,4 +22,4 @@ slots.create:magic.db.mysql.tables
       remove-nodes:x:@mysql.select/*/*/Table_type
       set-name:x:@mysql.select/*/*
          .:table
-      slots.return-nodes:x:@mysql.select/*
+      return-nodes:x:@mysql.select/*

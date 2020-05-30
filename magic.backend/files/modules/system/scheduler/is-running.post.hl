@@ -22,11 +22,11 @@ if
       .:bool:true
    .lambda
       scheduler.start
-      slots.return-nodes
+      return-nodes
          result:OK
          status:Scheduler was started
 else
    scheduler.stop
-   slots.return-nodes
+   return-nodes
       result:OK
       status:Scheduler was stopped

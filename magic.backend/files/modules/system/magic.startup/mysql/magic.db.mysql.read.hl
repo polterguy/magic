@@ -120,10 +120,10 @@ slots.create:magic.db.mysql.read
             /*
              * Returning a single object.
              */
-            slots.return-nodes:x:@wait.mysql.read/*/*
+            return-nodes:x:@wait.mysql.read/*/*
 
 
       /*
        * Returning an array of objects.
        */
-      slots.return-nodes:x:@wait.mysql.read/*
+      return-nodes:x:@wait.mysql.read/*

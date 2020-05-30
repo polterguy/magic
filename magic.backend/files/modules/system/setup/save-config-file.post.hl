@@ -17,5 +17,5 @@ auth.ticket.verify:root
  * Saves the [content] from arguments to "appsettings.json" file.
  */
 save-app-settings:x:@lambda2json
-slots.return-nodes
+return-nodes
    result:success

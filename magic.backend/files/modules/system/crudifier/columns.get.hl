@@ -34,4 +34,4 @@ signal:x:@strings.concat
 /*
  * Returning database to caller.
  */
-slots.return-nodes:x:@signal/*
+return-nodes:x:@signal/*

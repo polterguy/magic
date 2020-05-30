@@ -15,5 +15,5 @@ unwrap:x:+/*
 wait.signal:magic.documentation.get
    module:x:@.arguments/*/module
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    result:x:@wait.signal

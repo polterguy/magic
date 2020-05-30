@@ -725,11 +725,11 @@ for-each:x:@.main-files/*/*
 /*
  * Adding all generated files to return value.
  */
-add:x:../*/slots.return-nodes
+add:x:../*/return-nodes
    get-nodes:x:@.main-files/*
-add:x:../*/slots.return-nodes
+add:x:../*/return-nodes
    get-nodes:x:@.components/*
-add:x:../*/slots.return-nodes
+add:x:../*/return-nodes
    get-nodes:x:@.sql-components/*
 
 
@@ -756,7 +756,7 @@ if
       /*
        * Copyright notice was supplied.
        */
-      for-each:x:../*/slots.return-nodes/*
+      for-each:x:../*/return-nodes/*
          if
             or
                strings.ends-with:x:@.dp/#
@@ -792,4 +792,4 @@ if
 /*
  * Returning all generated files to caller.
  */
-slots.return-nodes
+return-nodes

@@ -71,7 +71,7 @@ foo.connect
             .:mssql
       .lambda
          mssql.execute-batch:x:@.arguments/*/sql
-         slots.return-nodes:x:-/*
+         return-nodes:x:-/*
 
    else
 
@@ -89,4 +89,4 @@ foo.connect
        * Executing SQL and returning results to caller.
        */
       foo.select:x:@.arguments/*/sql
-      slots.return-nodes:x:-/*
+      return-nodes:x:-/*

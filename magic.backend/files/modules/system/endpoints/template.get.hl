@@ -22,5 +22,5 @@ strings.concat
    .:/README.md
 io.file.load:x:-
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    markdown:x:@io.file.load

@@ -19,7 +19,7 @@ slots.create:magic.io.file.list-recursively
     * Lists all files in current [folder], and adds up the result to return value.
     */
    io.file.list:x:@.arguments/0
-   add:x:../*/slots.return-nodes
+   add:x:../*/return-nodes
       get-nodes:x:@io.file.list/*
 
 
@@ -31,12 +31,12 @@ slots.create:magic.io.file.list-recursively
       unwrap:x:+/*
       signal:magic.io.file.list-recursively
          .:x:@.dp/#
-      add:x:../*/slots.return-nodes
+      add:x:../*/return-nodes
          get-nodes:x:@signal/*
 
 
    /*
     * Returning to caller all files in folder, and sub folder(s).
     */
-   slots.return-nodes
+   return-nodes
    
