@@ -252,13 +252,13 @@ slots.create:magic.db.mysql.columns
 
 
          /*
-          * Adding [.tmp] to [slots.return-nodes] below.
+          * Adding [.tmp] to [return-nodes] below.
           */
-         add:x:../*/mysql.connect/*/slots.return-nodes
+         add:x:../*/mysql.connect/*/return-nodes
             get-nodes:x:@.tmp/*
 
 
       /*
        * Returning results to caller.
        */
-      slots.return-nodes
+      return-nodes

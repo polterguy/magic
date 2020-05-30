@@ -19,7 +19,7 @@ for-each:x:-/*
    strings.split:x:@.dp/#
       .:/
    unwrap:x:+/*/*
-   add:x:../*/slots.return-nodes
+   add:x:../*/return-nodes
       .
          :x:@strings.split/0/-
-slots.return-nodes
+return-nodes

@@ -624,6 +624,6 @@ if
  * Returning success to caller.
  */
 unwrap:x:+/*/loc
-slots.return-nodes
+return-nodes
    result:success
    loc:x:@get-count

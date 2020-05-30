@@ -29,4 +29,4 @@ wait.xxx.connect:{database}
    /*
     * Returning results to caller.
     */
-   slots.return-nodes:x:-/*
+   return-nodes:x:-/*

@@ -18,5 +18,5 @@ auth.ticket.refresh
  * Returns the authentication JWT ticket created above to caller.
  */
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    ticket:x:@auth.ticket.refresh

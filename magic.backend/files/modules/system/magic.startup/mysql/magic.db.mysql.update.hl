@@ -73,5 +73,5 @@ slots.create:magic.db.mysql.update
        * Returning results to caller.
        */
       unwrap:x:+/*
-      slots.return-nodes
+      return-nodes
          updated-records:x:@wait.mysql.update

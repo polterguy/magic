@@ -20,4 +20,4 @@ vocabulary
 /*
  * Returning results of the above to caller.
  */
-slots.return-nodes:x:@vocabulary/*
+return-nodes:x:@vocabulary/*

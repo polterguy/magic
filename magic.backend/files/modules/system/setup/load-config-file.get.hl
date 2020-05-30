@@ -15,4 +15,4 @@ auth.ticket.verify:root
  * Returns the "appsettings.json" file to caller
  */
 load-app-settings
-slots.return-value:x:-
+return-value:x:-

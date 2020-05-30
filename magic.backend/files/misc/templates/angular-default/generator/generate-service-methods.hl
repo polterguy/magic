@@ -86,4 +86,4 @@ for-each:x:@.arguments/*/endpoints/*
 /*
  * Returning TypeScript for method implementations to caller.
  */
-slots.return-value:x:@.http-service-methods
+return-value:x:@.http-service-methods

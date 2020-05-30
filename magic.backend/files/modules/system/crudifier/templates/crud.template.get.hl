@@ -31,4 +31,4 @@ wait.signal:magic.db.xxx.read
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@wait.signal/*
+return-nodes:x:@wait.signal/*

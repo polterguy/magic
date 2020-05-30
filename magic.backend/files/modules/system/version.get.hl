@@ -17,5 +17,5 @@ auth.ticket.verify:root
  */
 version
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    version:x:@version

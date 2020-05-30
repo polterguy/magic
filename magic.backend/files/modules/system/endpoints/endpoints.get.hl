@@ -15,4 +15,4 @@ auth.ticket.verify:root
  * Returns all endpoints to caller.
  */
 endpoints.list
-slots.return-nodes:x:-/*
+return-nodes:x:-/*

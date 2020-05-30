@@ -26,4 +26,4 @@ wait.signal:magic.db.xxx.update
 /*
  * Returning results back to caller.
  */
-slots.return-nodes:x:@wait.signal/*
+return-nodes:x:@wait.signal/*

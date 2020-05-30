@@ -69,4 +69,4 @@ http.response.headers.add
 add:x:+
    get-nodes:x:@io.file.execute/*
 io.content.zip-stream
-slots.return-value:x:-
+return-value:x:-

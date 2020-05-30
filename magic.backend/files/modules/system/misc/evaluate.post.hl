@@ -35,5 +35,5 @@ wait.eval:x:@hyper2lambda
  */
 lambda2hyper:x:@hyper2lambda/*
 unwrap:x:+/*
-slots.return-nodes
+return-nodes
    result:x:@lambda2hyper

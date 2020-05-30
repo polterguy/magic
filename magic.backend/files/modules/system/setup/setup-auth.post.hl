@@ -287,5 +287,5 @@ if
  * Returning success to caller.
  */
 log.info:System was successfully setup, returning success to caller
-slots.return-nodes
+return-nodes
    result:success

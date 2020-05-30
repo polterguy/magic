@@ -4,5 +4,5 @@
  * backend is up running.
  */
 .description:"Pings server, to verify connection is successfully established. Will return result equaling success if successful."
-slots.return-nodes
+return-nodes
    result:success

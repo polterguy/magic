@@ -161,13 +161,13 @@ slots.create:magic.db.mssql.columns
 
 
          /*
-          * Adding [.tmp] to [slots.return-nodes] below.
+          * Adding [.tmp] to [return-nodes] below.
           */
-         add:x:../*/mssql.connect/*/slots.return-nodes
+         add:x:../*/mssql.connect/*/return-nodes
             get-nodes:x:@.tmp/*
 
 
       /*
        * Returning results to caller.
        */
-      slots.return-nodes
+      return-nodes
