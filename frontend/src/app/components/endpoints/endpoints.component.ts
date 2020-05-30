@@ -5,7 +5,6 @@ import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
 import { MatInput, MatSelectChange } from '@angular/material';
 import { saveAs } from 'file-saver';
-import { environment } from 'src/environments/environment';
 import { TicketService } from 'src/app/services/ticket-service';
 
 @Component({
