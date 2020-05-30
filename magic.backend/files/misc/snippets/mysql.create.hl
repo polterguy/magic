@@ -1,7 +1,7 @@
 /*
  * Creates a record in a MySQL table.
  */
-wait.slots.signal:magic.db.mysql.create
+wait.signal:magic.db.mysql.create
    database:magic_auth
    table:roles
    values

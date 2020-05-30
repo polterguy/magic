@@ -18,7 +18,7 @@
  * making sure we return that token to caller.
  */
 unwrap:x:+/*
-slots.signal:magic.authenticate
+signal:magic.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
 
@@ -26,4 +26,4 @@ slots.signal:magic.authenticate
 /*
  * Returns the authentication JWT ticket created above to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@signal/*

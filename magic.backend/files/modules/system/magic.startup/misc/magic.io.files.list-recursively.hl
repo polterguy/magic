@@ -29,10 +29,10 @@ slots.create:magic.io.file.list-recursively
    io.folder.list:x:@.arguments/0
    for-each:x:-/*
       unwrap:x:+/*
-      slots.signal:magic.io.file.list-recursively
+      signal:magic.io.file.list-recursively
          .:x:@.dp/#
       add:x:../*/slots.return-nodes
-         get-nodes:x:@slots.signal/*
+         get-nodes:x:@signal/*
 
 
    /*

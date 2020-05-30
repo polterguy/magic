@@ -21,14 +21,14 @@ strings.concat
    .:magic.db.
    get-value:x:@.arguments/*/databaseType
    .:.databases
-slots.signal:x:@strings.concat
+signal:x:@strings.concat
 
 
 /*
  * Creating our return value.
  */
 .result
-for-each:x:@slots.signal/*/*
+for-each:x:@signal/*/*
    set-value:x:@.dp/#
       strings.to-lower:x:@.dp/#
    set-name:x:@.dp/#
@@ -45,9 +45,9 @@ for-each:x:@.result/*
       get-value:x:@.arguments/*/databaseType
       .:.tables
    unwrap:x:+/*
-   slots.signal:x:@strings.concat
+   signal:x:@strings.concat
       database:x:@.dp/#/*/name
-   for-each:x:@slots.signal/*
+   for-each:x:@signal/*
       unwrap:x:+/*/*/*
       add:x:@for-each/@.dp/#/*/tables
          .
@@ -59,10 +59,10 @@ for-each:x:@.result/*
          get-value:x:@.arguments/*/databaseType
          .:.columns
       unwrap:x:+/*
-      slots.signal:x:@strings.concat
+      signal:x:@strings.concat
          database:x:@for-each/@.dp/#/*/name
          table:x:@.dp/#/*/table
-      for-each:x:@slots.signal/*
+      for-each:x:@signal/*
          unwrap:x:+/*/*/*
          add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
             .
