@@ -353,3 +353,16 @@ _Every single module_
   you to persist custom snippets, and also use keyboard shortcut commands to _"inject"_ them into your own code.
 
 * Fixed a bug with the scheduler, that would throw an exception when creating a new job over its HTTP REST endpoint in the frontend.
+
+* Fixed a bug in relationship to [if], [else-if] and [else] that sometimes would throw null reference exception
+
+### Breaking changes for version 5.8.0
+
+Renamed the following slots.
+
+* [slots.return-value] to [return-value]
+
+* [slots.return-nodes] to [return-nodes]
+
+* [slots.signal] to [signal]
+
