@@ -19,7 +19,7 @@ slots.create:magic.db.mysql.tables
        * Runs our query
        */
       mysql.select:"show full tables where Table_Type = 'BASE TABLE'"
-      remove-node:x:@mysql.select/*/*/Table_type
+      remove-nodes:x:@mysql.select/*/*/Table_type
       set-name:x:@mysql.select/*/*
          .:table
       slots.return-nodes:x:@mysql.select/*

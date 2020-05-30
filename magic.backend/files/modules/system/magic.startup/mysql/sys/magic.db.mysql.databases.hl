@@ -20,10 +20,10 @@ slots.create:magic.db.mysql.databases
       /*
        * Removes "system" databases.
        */
-      remove-node:x:@mysql.select/*/*/=information_schema/.
-      remove-node:x:@mysql.select/*/*/=mysql/.
-      remove-node:x:@mysql.select/*/*/=performance_schema/.
-      remove-node:x:@mysql.select/*/*/=sys/.
+      remove-nodes:x:@mysql.select/*/*/=information_schema/.
+      remove-nodes:x:@mysql.select/*/*/=mysql/.
+      remove-nodes:x:@mysql.select/*/*/=performance_schema/.
+      remove-nodes:x:@mysql.select/*/*/=sys/.
 
 
       /*
