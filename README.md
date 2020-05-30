@@ -32,7 +32,7 @@ Below you can find the reference documentation for all projects in Magic.
 
 ### Hyperlambda, Super Signals and Slots
 
-These areprobably the most important parts if you intend to develop in Hyperlambda.
+These are probably the most important parts if you intend to develop in Hyperlambda.
 
 * [Magic Signals](https://github.com/polterguy/magic.signals)
 * [Magic Node](https://github.com/polterguy/magic.node)
@@ -59,8 +59,8 @@ These areprobably the most important parts if you intend to develop in Hyperlamb
 
 * [Magic IO](https://github.com/polterguy/magic.io)
 * [Magic HTTP](https://github.com/polterguy/magic.http)
-* [Magic Endpoint](https://github.com/polterguy/magic.endpoint)
 * [Magic Library](https://github.com/polterguy/magic.library)
+* [Magic Endpoint](https://github.com/polterguy/magic.endpoint)
 * [Magic Data Common](https://github.com/polterguy/magic.data.common)
 
 ## License
