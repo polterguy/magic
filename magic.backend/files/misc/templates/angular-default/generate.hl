@@ -44,7 +44,7 @@ log.info:Angular default template creating an Angular frontend for you
  * Loads all files in "main" Angular template folder recursively.
  */
 add:x:@.main-files
-   slots.signal:magic.io.files.load-recursively
+   signal:magic.io.files.load-recursively
       strings.concat
          .:/misc/templates/angular-default/templates/main/
 
@@ -57,7 +57,7 @@ add:x:@.main-files
  * Loads all files in "component" Angular template folder recursively.
  */
 add:x:@.component-files
-   slots.signal:magic.io.files.load-recursively
+   signal:magic.io.files.load-recursively
       strings.concat
          .:/misc/templates/angular-default/templates/component/
 
@@ -70,7 +70,7 @@ add:x:@.component-files
  * Loads all files in "sql-component" Angular template folder recursively.
  */
 add:x:@.sql-component-files
-   slots.signal:magic.io.files.load-recursively
+   signal:magic.io.files.load-recursively
       strings.concat
          .:/misc/templates/angular-default/templates/sql-component/
 

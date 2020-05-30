@@ -1,7 +1,7 @@
 /*
  * Loads records from a MySQL table.
  */
-wait.slots.signal:magic.db.mysql.read
+wait.signal:magic.db.mysql.read
    database:magic_auth
    table:roles
    args

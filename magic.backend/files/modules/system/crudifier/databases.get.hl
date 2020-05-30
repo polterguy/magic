@@ -21,13 +21,13 @@ strings.concat
    .:magic.db.
    get-value:x:@.arguments/*/databaseType
    .:.databases
-slots.signal:x:@strings.concat
+signal:x:@strings.concat
 
 
 /*
  * Doing the [to-lowers] thing.
  */
-for-each:x:@slots.signal/*/*
+for-each:x:@signal/*/*
    set-value:x:@.dp/#
       strings.to-lower:x:@.dp/#
 
@@ -35,4 +35,4 @@ for-each:x:@slots.signal/*/*
 /*
  * Returning database to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@signal/*

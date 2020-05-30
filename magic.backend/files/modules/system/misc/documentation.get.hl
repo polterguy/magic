@@ -12,8 +12,8 @@
  */
 auth.ticket.verify:root
 unwrap:x:+/*
-wait.slots.signal:magic.documentation.get
+wait.signal:magic.documentation.get
    module:x:@.arguments/*/module
 unwrap:x:+/*
 slots.return-nodes
-   result:x:@wait.slots.signal
+   result:x:@wait.signal

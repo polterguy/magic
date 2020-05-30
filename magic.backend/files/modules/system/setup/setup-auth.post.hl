@@ -61,7 +61,7 @@ strings.concat
    .:magic.db.
    get-value:x:@.arguments/*/databaseType
    .:.databases
-slots.signal:x:-
+signal:x:-
 
 
 /*
@@ -69,7 +69,7 @@ slots.signal:x:-
  */
 if
    not
-      exists:x:@slots.signal/*/*/=magic_auth
+      exists:x:@signal/*/*/=magic_auth
    .lambda
 
 
@@ -279,7 +279,7 @@ if
        * Changing root user's password.
        */
       unwrap:x:+/*
-      slots.signal:magic.change-password
+      signal:magic.change-password
          password:x:@.arguments/*/rootPassword
 
 

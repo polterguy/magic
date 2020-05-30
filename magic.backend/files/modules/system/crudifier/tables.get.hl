@@ -23,11 +23,11 @@ strings.concat
    get-value:x:@.arguments/*/databaseType
    .:.tables
 unwrap:x:+/*
-slots.signal:x:@strings.concat
+signal:x:@strings.concat
    database:x:@.arguments/*/database
 
 
 /*
  * Returning database to caller.
  */
-slots.return-nodes:x:@slots.signal/*
+slots.return-nodes:x:@signal/*
