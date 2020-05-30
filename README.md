@@ -30,16 +30,18 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 You can rapidly [teach yourself the basics here](https://polterguy.github.io).
 Below you can find the reference documentation for all projects in Magic.
 
-* [Magic Data Common](https://github.com/polterguy/magic.data.common)
-* [Magic Endpoint](https://github.com/polterguy/magic.endpoint)
-* [Magic HTTP](https://github.com/polterguy/magic.http)
-* [Magic IO](https://github.com/polterguy/magic.io)
+### Hyperlambda, Super Signals and Slots
+
+These areprobably the most important parts if you intend to develop in Hyperlambda.
+
+* [Magic Signals](https://github.com/polterguy/magic.signals)
+* [Magic Node](https://github.com/polterguy/magic.node)
 * [Magic Lambda](https://github.com/polterguy/magic.lambda)
+* [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda)
 * [Magic Lambda Auth](https://github.com/polterguy/magic.lambda)
 * [Magic Lambda Config](https://github.com/polterguy/magic.lambda.config)
 * [Magic Lambda Crypto](https://github.com/polterguy/magic.lambda.crypto)
 * [Magic Lambda HTTP](https://github.com/polterguy/magic.lambda.http)
-* [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda)
 * [Magic Lambda IO](https://github.com/polterguy/magic.lambda.io)
 * [Magic Lambda JSON](https://github.com/polterguy/magic.lambda.json)
 * [Magic Lambda Logging](https://github.com/polterguy/magic.lambda.logging)
@@ -52,9 +54,14 @@ Below you can find the reference documentation for all projects in Magic.
 * [Magic Lambda Slots](https://github.com/polterguy/magic.lambda.slots)
 * [Magic Lambda Strings](https://github.com/polterguy/magic.lambda.strings)
 * [Magic Lambda Validators](https://github.com/polterguy/magic.lambda.validators)
+
+### Supporting libraries
+
+* [Magic IO](https://github.com/polterguy/magic.io)
+* [Magic HTTP](https://github.com/polterguy/magic.http)
+* [Magic Endpoint](https://github.com/polterguy/magic.endpoint)
 * [Magic Library](https://github.com/polterguy/magic.library)
-* [Magic Node](https://github.com/polterguy/magic.node)
-* [Magic Signals](https://github.com/polterguy/magic.signals)
+* [Magic Data Common](https://github.com/polterguy/magic.data.common)
 
 ## License
 
