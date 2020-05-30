@@ -34,7 +34,6 @@ Below you can find the reference documentation for all projects in Magic.
 
 These are probably the most important parts if you intend to develop in Hyperlambda.
 
-* [Magic Signals](https://github.com/polterguy/magic.signals)
 * [Magic Node](https://github.com/polterguy/magic.node)
 * [Magic Lambda](https://github.com/polterguy/magic.lambda)
 * [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda)
