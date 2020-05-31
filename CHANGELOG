@@ -356,6 +356,8 @@ _Every single module_
 
 * Fixed a bug in relationship to [if], [else-if] and [else] that sometimes would throw null reference exception
 
+* Added convenience slot called simply [return]
+
 ### Breaking changes for version 5.8.0
 
 Renamed the following slots.
@@ -365,4 +367,8 @@ Renamed the following slots.
 * [slots.return-nodes] to [return-nodes]
 
 * [slots.signal] to [signal]
+
+* [remove-node] to [remove-nodes]
+
+* All io.files.xxx and io.folders.xxx slots are now called io.file.xxx and io.folder.xxx
 
