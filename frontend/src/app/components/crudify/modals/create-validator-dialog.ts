@@ -101,7 +101,7 @@ export class CreateValidatorDialogComponent implements OnInit {
 
       default:
         this.data.hyperlambda = `eval:x:+
-slots.signal:${this.validatorType}
+signal:${this.validatorType}
    reference:x:@.arguments/*/${this.data.field}`;
         break;
 
