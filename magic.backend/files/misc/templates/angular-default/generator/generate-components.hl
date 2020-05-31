@@ -23,7 +23,7 @@
  */
 .form-control-file
 set-value:x:@.form-control-file
-   io.files.load:/misc/templates/angular-default/templates/misc/form-control.ts
+   io.file.load:/misc/templates/angular-default/templates/misc/form-control.ts
 
 
 
@@ -37,13 +37,13 @@ set-value:x:@.form-control-file
    date
    bool
 set-value:x:@.column-file
-   io.files.load:/misc/templates/angular-default/templates/column/column.html
+   io.file.load:/misc/templates/angular-default/templates/column/column.html
 set-value:x:@.column-file/*/long
-   io.files.load:/misc/templates/angular-default/templates/column/column.long.html
+   io.file.load:/misc/templates/angular-default/templates/column/column.long.html
 set-value:x:@.column-file/*/date
-   io.files.load:/misc/templates/angular-default/templates/column/column.date.html
+   io.file.load:/misc/templates/angular-default/templates/column/column.date.html
 set-value:x:@.column-file/*/bool
-   io.files.load:/misc/templates/angular-default/templates/column/column.bool.html
+   io.file.load:/misc/templates/angular-default/templates/column/column.bool.html
 
 
 
@@ -56,11 +56,11 @@ set-value:x:@.column-file/*/bool
    date
    bool
 set-value:x:@.view-details-file
-   io.files.load:/misc/templates/angular-default/templates/view-details/view-details.html
+   io.file.load:/misc/templates/angular-default/templates/view-details/view-details.html
 set-value:x:@.view-details-file/*/date
-   io.files.load:/misc/templates/angular-default/templates/view-details/view-details.date.html
+   io.file.load:/misc/templates/angular-default/templates/view-details/view-details.date.html
 set-value:x:@.view-details-file/*/bool
-   io.files.load:/misc/templates/angular-default/templates/view-details/view-details.bool.html
+   io.file.load:/misc/templates/angular-default/templates/view-details/view-details.bool.html
 
 
 
@@ -75,15 +75,15 @@ set-value:x:@.view-details-file/*/bool
    date
    decimal
 set-value:x:@.form-field-file
-   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.html
+   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.html
 set-value:x:@.form-field-file/*/long
-   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.long.html
+   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.long.html
 set-value:x:@.form-field-file/*/decimal
-   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.decimal.html
+   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.decimal.html
 set-value:x:@.form-field-file/*/bool
-   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.bool.html
+   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.bool.html
 set-value:x:@.form-field-file/*/date
-   io.files.load:/misc/templates/angular-default/templates/form-field/form-field.date.html
+   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.date.html
 
 
 
@@ -95,9 +95,9 @@ set-value:x:@.form-field-file/*/date
 .form-control-instantiation-file
    string
 set-value:x:@.form-control-instantiation-file
-   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.ts
+   io.file.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.ts
 set-value:x:@.form-control-instantiation-file/*/string
-   io.files.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.string.ts
+   io.file.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.string.ts
 
 
 
