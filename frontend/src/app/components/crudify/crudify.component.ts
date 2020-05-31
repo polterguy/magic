@@ -394,7 +394,7 @@ export class CrudifyComponent implements OnInit {
 
       // Also making sure we don't return password on HTTP GET endpoint.
       return `eval:x:+
-slots.signal:transformers.hash-password
+signal:transformers.hash-password
    reference:x:@.arguments/*/password`;
     }
     return '';
