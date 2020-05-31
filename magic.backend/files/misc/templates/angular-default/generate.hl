@@ -123,7 +123,7 @@ for-each:x:@.component-files/*
 add:x:+/*
    get-nodes:x:@.arguments/*
 set-value:x:@.http-service-methods
-   io.files.execute:/misc/templates/angular-default/generator/generate-service-methods.hl
+   io.file.execute:/misc/templates/angular-default/generator/generate-service-methods.hl
 
 
 
@@ -141,7 +141,7 @@ set-value:x:@.http-service-methods
 add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
-   io.files.execute:/misc/templates/angular-default/generator/generate-http-crud-methods.hl
+   io.file.execute:/misc/templates/angular-default/generator/generate-http-crud-methods.hl
 
 
 
@@ -154,7 +154,7 @@ add:x:@.crud-methods
  */
 .router-link-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/misc/router-link.html
+   io.file.load:/misc/templates/angular-default/templates/misc/router-link.html
 
 
 
@@ -166,7 +166,7 @@ set-value:x:-
  */
 .router-link-file-chart
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/misc/router-link-chart.html
+   io.file.load:/misc/templates/angular-default/templates/misc/router-link-chart.html
 
 
 
@@ -178,10 +178,10 @@ set-value:x:-
  */
 .imports-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/misc/import.ts
+   io.file.load:/misc/templates/angular-default/templates/misc/import.ts
 .imports-file-only-grid
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/misc/import-only-grid.ts
+   io.file.load:/misc/templates/angular-default/templates/misc/import-only-grid.ts
 
 
 
@@ -193,7 +193,7 @@ set-value:x:-
  */
 .router-declaration-file
 set-value:x:-
-   io.files.load:/misc/templates/angular-default/templates/misc/router-declaration.ts
+   io.file.load:/misc/templates/angular-default/templates/misc/router-declaration.ts
 
 
 
@@ -209,7 +209,7 @@ add:x:+/+/*
 add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
-   io.files.execute:/misc/templates/angular-default/generator/generate-components.hl
+   io.file.execute:/misc/templates/angular-default/generator/generate-components.hl
 
 
 
