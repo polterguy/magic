@@ -17,10 +17,13 @@
 
     <h3>Setup wizard</h3>
 
-    <ul>
-      <li>The JWT secret key needs to be at least 50 random characters in length</li>
-      <li>The connection string must have <code>{{ '{' }}database{{ '}' }}</code> as its database/initial-catalog</li>
-    </ul>
+    <ol>
+      <li>Choose a JWT secret that's at least 50 random characters long</li>
+      <li>Select your database type, either MySQL or Microsoft SQL Server</li>
+      <li>Modify your database connection string. The connection string must have <code>{{ '{' }}database{{ '}' }}</code> as its database/initial-catalog</li>
+      <li>Choose a root password, make sure it's highly difficult since it'll give you complete root access to your system</li>
+      <li>Click the <strong>Save</strong> button</li>
+    </ol>
 
     <p>
       This process will change your <em>"appsettings.json"</em> file, and also create a database called <em>"magic_auth"</em> in
