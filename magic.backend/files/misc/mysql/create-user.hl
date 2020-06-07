@@ -20,7 +20,8 @@ crypto.password.hash:x:@.arguments/*/password
 /*
  * Opening up a database connection to `magic_auth`.
  */
-mysql.connect:[magic_auth]
+config.get:"magic:auth:database"
+mysql.connect:x:-
 
 
    /*
