@@ -65,11 +65,17 @@ signal:x:-
 
 
 /*
- * Checking if "magic_auth" was returned from above invocation.
+ * Checking if "magic_auth" was returned from above invocation, and
+ * system does not have a non-default authentication database declared
+ * in its configuration.
  */
 if
-   not
-      exists:x:@signal/*/*/=magic_auth
+   and
+      eq
+         config.get:"magic:auth:database"
+         .:magic_auth
+      not
+         exists:x:@signal/*/*/=magic_auth
    .lambda
 
 
@@ -165,7 +171,7 @@ else
     */
    set-value:x:@.database-exists
       .:bool:true
-   log.info:"'magic_auth' database already exists from before"
+   log.info:Authenitcation database already exists from before, or a custom database was used
 
 
 /*
