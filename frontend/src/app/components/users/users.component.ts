@@ -38,7 +38,7 @@ export class UsersComponent implements OnInit {
     }, err => {
       this.validAuthEndpoints = false;
       if (err.status === 404) {
-        this.showError('You need to crudify your magic_auth database');
+        this.showError('You need to crudify your authentication database');
       } else {
         this.showError(err.error.message);
       }
