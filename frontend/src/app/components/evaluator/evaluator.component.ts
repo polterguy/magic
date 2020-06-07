@@ -57,7 +57,7 @@ export class EvaluatorComponent implements OnInit {
       extraKeys: {
         'Shift-Tab': 'indentLess',
         Tab: 'indentMore',
-        'Ctrl-Space': 'autocomplete',
+        'Alt-Space': 'autocomplete',
         'Alt-M': (cm: any) => {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));
         },
