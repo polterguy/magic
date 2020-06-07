@@ -1,0 +1,22 @@
+
+/*
+ * Returns the name of the authentication database in your system.
+ */
+.description:"Returns the name of the authentication database in your system."
+
+
+/*
+ * Reading the name of your auth database from the configuration for the application.
+ */
+config.get:"magic:auth:database"
+
+
+/*
+ * Returning the results of the above invocation, making sure
+ * the client can cache it for a long time.
+ */
+http.response.headers.add
+   Cache-Control:public, max-age=50000
+unwrap:x:+/*
+return-nodes
+   database:x:@config.get
