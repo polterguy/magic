@@ -6,6 +6,12 @@
 .description:@"Will return a 'refreshed' JWT token, with the same authorization as your previous token, assuming your existing token is not expired.
 The new token will have a new expiration, allowing you to refresh your token, just before it becomes expired."
 
+/*
+ * Doing some basic caching, basically caching for 3 minutes.
+ */
+http.response.headers.add
+   Cache-Control:private, max-age=180
+
 
 /*
  * Invokes the slots.create that does the heavy lifting, and creates our JWT token,
