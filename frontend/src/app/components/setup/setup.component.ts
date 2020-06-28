@@ -12,15 +12,15 @@ import { Router } from '@angular/router';
 })
 export class SetupComponent implements OnInit {
 
-  private config: any = null;
-  private jwtSecret: string = null;
-  private databaseType: string = null;
-  private mssqlConnectionString: string = null;
-  private mysqlConnectionString: string = null;
-  private password: string = null;
-  private repeatPassword: string = null;
-  private hasShownSuccess = false;
-  private isFetching = false;
+  public config: any = null;
+  public jwtSecret: string = null;
+  public databaseType: string = null;
+  public mssqlConnectionString: string = null;
+  public mysqlConnectionString: string = null;
+  public password: string = null;
+  public repeatPassword: string = null;
+  public hasShownSuccess = false;
+  public isFetching = false;
 
   constructor(
     private setupService: SetupService,

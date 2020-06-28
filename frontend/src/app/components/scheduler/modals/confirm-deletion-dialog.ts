@@ -2,7 +2,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-export interface DialogData {
+export interface ConfirmDeleteDialogData {
   task: string;
 }
 
@@ -13,7 +13,7 @@ export class ConfirmDeletionTaskDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDeletionTaskDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmDeleteDialogData) {}
 
   close(): void {
     this.dialogRef.close();

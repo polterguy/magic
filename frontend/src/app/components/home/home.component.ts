@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material';
 })
 export class HomeComponent implements OnInit {
 
-  private version: string;
+  public version: string;
 
   constructor(
     private pingService: PingService,

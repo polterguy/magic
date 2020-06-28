@@ -12,13 +12,13 @@ import { AddRoleDialogComponent } from './modals/add-role-dialog';
 })
 export class UsersComponent implements OnInit {
 
-  private filter = '';
+  public filter = '';
   public displayedColumns: string[] = ['username', 'delete'];
   public displayedColumnsRoles: string[] = ['role', 'delete'];
   public users: any[] = null;
-  private selectedUser: string = null;
-  private selectedUserRoles: any[] = null;
-  private validAuthEndpoints = false;
+  public selectedUser: string = null;
+  public selectedUserRoles: any[] = null;
+  public validAuthEndpoints = false;
 
   constructor(
     private usersService: UsersService,

@@ -11,10 +11,10 @@ import { NewRoleDialogComponent } from './modals/new-role-dialog';
 })
 export class RolesComponent implements OnInit {
 
-  private filter = '';
+  public filter = '';
   public displayedColumns: string[] = ['name', 'description', 'delete'];
   public roles: any[] = null;
-  private validAuthEndpoints = false;
+  public validAuthEndpoints = false;
 
   constructor(
     private usersService: UsersService,
