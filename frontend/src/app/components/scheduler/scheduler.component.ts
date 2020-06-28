@@ -14,13 +14,13 @@ import { ConfirmDeletionTaskDialogComponent } from './modals/confirm-deletion-di
 })
 export class SchedulerComponent implements OnInit {
 
-  private schedulerState: string;
-  private isRunning: boolean;
-  private displayedColumns = ['name', 'description', 'due', 'delete'];
-  private tasks: any[];
-  private selectedTaskName: string = null;
-  private selectedTask: TaskModel = null;
-  private filter: string = null;
+  public schedulerState: string;
+  public isRunning: boolean;
+  public displayedColumns = ['name', 'description', 'due', 'delete'];
+  public tasks: any[];
+  public selectedTaskName: string = null;
+  public selectedTask: TaskModel = null;
+  public filter: string = null;
 
   constructor(
     public dialog: MatDialog,

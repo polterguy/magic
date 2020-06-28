@@ -30,16 +30,16 @@ class Database {
 })
 export class SqlComponent implements OnInit {
 
-  private savedFiles = [];
-  private selectedScript: string;
-  private selectedFilename: string = null;
-  private result: any = null;
-  private databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
-  private selectedDatabaseType = 'mysql';
-  private sqlText = '';
-  private databases: Database[] = null;
-  private selectedDatabase: Database = null;
-  private hintOptions: any;
+  public savedFiles = [];
+  public selectedScript: string;
+  public selectedFilename: string = null;
+  public result: any = null;
+  public databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
+  public selectedDatabaseType = 'mysql';
+  public sqlText = '';
+  public databases: Database[] = null;
+  public selectedDatabase: Database = null;
+  public hintOptions: any;
 
   constructor(
     private sqlService: SqlService,

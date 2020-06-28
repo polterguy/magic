@@ -2,7 +2,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-export interface DialogData {
+export interface NewRoleDialogData {
   name: string;
   description: string;
 }
@@ -14,7 +14,7 @@ export class NewRoleDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<NewRoleDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: NewRoleDialogData) {}
 
   close(): void {
     this.dialogRef.close();

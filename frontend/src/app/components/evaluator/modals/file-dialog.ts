@@ -13,7 +13,7 @@ import {
 } from '@angular/material';
 import { FileService } from 'src/app/services/file-service';
 
-export interface DialogData {
+export interface FileDialogData {
   path: string;
   content: string;
   select: boolean;
@@ -39,7 +39,7 @@ export class FileDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<FileDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public data: FileDialogData,
     private snackBar: MatSnackBar,
     private fileService: FileService) { }
 

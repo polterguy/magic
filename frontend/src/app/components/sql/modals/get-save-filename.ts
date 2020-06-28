@@ -2,7 +2,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSelectChange } from '@angular/material';
 
-export interface DialogData {
+export interface SaveFileDialogData {
   filename: string;
   existingFiles: string[];
 }
@@ -14,7 +14,7 @@ export class GetSaveFilenameDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<GetSaveFilenameDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+    @Inject(MAT_DIALOG_DATA) public data: SaveFileDialogData) { }
 
   selectedFileChanged(e: MatSelectChange) {
     const strValue = e.value as string;

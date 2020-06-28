@@ -60,7 +60,7 @@ class LogColumn {
 export class CrudifyComponent implements OnInit {
 
   // Columns declarations for our tables
-  private displayedColumns: string[] = [
+  public displayedColumns: string[] = [
     'field',
     'type',
     'nullable',
@@ -72,7 +72,7 @@ export class CrudifyComponent implements OnInit {
     'delete'
   ];
 
-  private displayedColumnsEndpoints: string[] = [
+  public displayedColumnsEndpoints: string[] = [
     'generate',
     'endpoint',
     'verb',
@@ -81,28 +81,28 @@ export class CrudifyComponent implements OnInit {
     'auth'
   ];
 
-  private displayedColumnsValidators: string[] = [
+  public displayedColumnsValidators: string[] = [
     'field',
     'validator'
   ];
 
-  private databaseTypes = [
+  public databaseTypes = [
     {name: 'MySQL', type: 'mysql'},
     {name: 'Microsoft SQL Server', type: 'mssql'},
   ];
-  private publicCache = false;
-  private moduleName = '';
-  private defaultAuth = 'root';
-  private moduleUrl = '';
-  private databaseType = '';
-  private databases: any[] = [];
-  private tables: any[] = [];
-  private selectedDatabase = '';
-  private selectedTable = '';
-  private caching: number;
-  private columns: ColumnModel[] = [];
-  private validators: ValidatorModel[] = [];
-  private overwrite = false;
+  public publicCache = false;
+  public moduleName = '';
+  public defaultAuth = 'root';
+  public moduleUrl = '';
+  public databaseType = '';
+  public databases: any[] = [];
+  public tables: any[] = [];
+  public selectedDatabase = '';
+  public selectedTable = '';
+  public caching: number;
+  public columns: ColumnModel[] = [];
+  public validators: ValidatorModel[] = [];
+  public overwrite = false;
   isCrudifying = false;
   noEndpointsCreated = 0;
   noLoc = 0;
@@ -110,13 +110,13 @@ export class CrudifyComponent implements OnInit {
   isStatistics = false;
 
   // Endpoints that will be created
-  private endpoints: EndpointModel[] = [];
+  public endpoints: EndpointModel[] = [];
 
   // Custom SQL that will be created, if any
-  private customSql: string;
+  public customSql: string;
 
   // All verbs, and their CRUD associations
-  private verbs: VerbModel[] = [
+  public verbs: VerbModel[] = [
     {verb: 'post', action: 'create'},
     {verb: 'get', action: 'read'},
     {verb: 'put', action: 'update'},
@@ -124,12 +124,12 @@ export class CrudifyComponent implements OnInit {
   ];
 
   // Name of endpoint, arguments and HTTP verb for custom SQL
-  private customSqlEndpointName = '';
-  private customSqlArguments: string;
-  private customSqlEndpointVerb = '';
-  private customSqlAuthorization = 'root';
-  private verbsNotGenerated: LogTables[] = [];
-  private columnsNotEditable: LogTables[] = [];
+  public customSqlEndpointName = '';
+  public customSqlArguments: string;
+  public customSqlEndpointVerb = '';
+  public customSqlAuthorization = 'root';
+  public verbsNotGenerated: LogTables[] = [];
+  public columnsNotEditable: LogTables[] = [];
 
   constructor(
     private crudService: CrudifyService,

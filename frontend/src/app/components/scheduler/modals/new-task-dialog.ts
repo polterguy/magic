@@ -15,15 +15,15 @@ export interface NewTaskDialogData {
 })
 export class NewTaskDialogComponent implements OnInit {
 
-  private taskDate: string = null;
-  private taskValue: string = null;
-  private taskName: string = null;
-  private taskDescription: string = null;
-  private taskTime: string = null;
-  private weekday: string = null;
-  private taskHyperlambda: string;
-  private repetitionPattern: string = null;
-  private minDate: Date = new Date();
+  public taskDate: string = null;
+  public taskValue: string = null;
+  public taskName: string = null;
+  public taskDescription: string = null;
+  public taskTime: string = null;
+  public weekday: string = null;
+  public taskHyperlambda: string;
+  public repetitionPattern: string = null;
+  public minDate: Date = new Date();
 
   constructor(
     private evaluatorService: EvaluatorService,

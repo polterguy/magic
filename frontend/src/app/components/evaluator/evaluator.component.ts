@@ -13,11 +13,12 @@ import { FileService } from 'src/app/services/file-service';
   styleUrls: ['./evaluator.component.scss']
 })
 export class EvaluatorComponent implements OnInit {
-  private hyperlambda = '';
-  private filename: string;
-  private result: string = null;
-  private editor: any;
-  private files: string[] = [];
+
+  public hyperlambda = '';
+  public filename: string;
+  public result: string = null;
+  public editor: any;
+  public files: string[] = [];
 
   constructor(
     private service: EvaluatorService,

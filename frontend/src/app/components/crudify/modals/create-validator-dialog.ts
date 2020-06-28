@@ -12,14 +12,15 @@ export interface DialogData {
   templateUrl: 'create-validator-dialog.html',
 })
 export class CreateValidatorDialogComponent implements OnInit {
-  private validatorType: string = null;
-  private min = 0;
-  private max = 100;
-  private regex = '';
-  private enumValues = '';
-  private dateMin = new Date();
-  private dateMax = new Date();
-  private reactors: any[] = [];
+
+  public validatorType: string = null;
+  public min = 0;
+  public max = 100;
+  public regex = '';
+  public enumValues = '';
+  public dateMin = new Date();
+  public dateMax = new Date();
+  public reactors: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CreateValidatorDialogComponent>,

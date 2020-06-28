@@ -16,15 +16,15 @@ import { TicketService } from 'src/app/services/ticket-service';
 })
 export class FilesComponent implements OnInit {
 
-  private dataSource: any[] = [];
-  private displayedColumns: string[] = ['path', 'download', 'delete'];
-  private displayedSecondRowColumns: string[] = ['details'];
-  private path = '/';
-  private databaseTypes = ['mysql', 'mssql'];
-  private selectedDatabaseType = 'mysql';
-  private filter = '';
-  private safeMode = true;
-  private protectedFolders: string[] = [
+  public dataSource: any[] = [];
+  public displayedColumns: string[] = ['path', 'download', 'delete'];
+  public displayedSecondRowColumns: string[] = ['details'];
+  public path = '/';
+  public databaseTypes = ['mysql', 'mssql'];
+  public selectedDatabaseType = 'mysql';
+  public filter = '';
+  public safeMode = true;
+  public protectedFolders: string[] = [
     '/static/',
     '/misc/',
     '/misc/mssql/',
@@ -41,7 +41,7 @@ export class FilesComponent implements OnInit {
     '/modules/system/*',
     '/trash/',
   ];
-  private protectedFiles: string[] = [
+  public protectedFiles: string[] = [
     '/static/README.md',
     '/misc/README.md',
     '/misc/templates/README.md',
