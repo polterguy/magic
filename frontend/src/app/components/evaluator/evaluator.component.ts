@@ -89,7 +89,7 @@ export class EvaluatorComponent implements OnInit {
         const element = document.getElementById('infoButton') as HTMLElement;
         element.click();
       };
-      result.extraKeys['Alt-I'] = (cm: any) => {
+      result.extraKeys['Alt-P'] = (cm: any) => {
         this.editor = cm;
         const element = document.getElementById('insertButton') as HTMLElement;
         element.click();
