@@ -568,6 +568,12 @@ signal:transformers.hash-password
       case 'get':
         args.columns = this.columns.filter(x => x.get)
           .map(x => JSON.parse('{"' + x.name + '": "' + x.hl + '"}'));
+        if (this.caching !== null && this.caching !== 0) {
+          args.cache = this.caching;
+          if (this.publicCache) {
+            args.publicCache = true;
+          }
+        }
         break;
 
       case 'put':
