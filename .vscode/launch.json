@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/magic.backend/bin/Debug/netcoreapp2.2/magic.backend.dll",
+            "program": "${workspaceFolder}/backend/bin/Debug/netcoreapp2.2/backend.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/magic.backend",
+            "cwd": "${workspaceFolder}/backend",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {

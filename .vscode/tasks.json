@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/magic.backend/magic.backend.csproj"
+                "${workspaceFolder}/backend/backend.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
