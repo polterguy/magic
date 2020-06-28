@@ -12,7 +12,7 @@ export interface DialogData {
 })
 export class CreateUserDialogComponent {
 
-  private passwordRepeat: string;
+  public passwordRepeat: string;
 
   constructor(
     public dialogRef: MatDialogRef<CreateUserDialogComponent>,

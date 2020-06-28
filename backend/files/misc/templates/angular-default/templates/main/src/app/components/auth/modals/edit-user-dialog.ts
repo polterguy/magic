@@ -12,9 +12,9 @@ export interface DialogData {
 })
 export class EditUserDialogComponent implements OnInit {
 
-  private userRoles: any[] = null;
-  private allRoles: any[] = null;
-  private selectedValue: any = null;
+  public userRoles: any[] = null;
+  public allRoles: any[] = null;
+  public selectedValue: any = null;
 
   constructor(
     public dialogRef: MatDialogRef<EditUserDialogComponent>,
