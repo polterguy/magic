@@ -16,15 +16,15 @@ import { HttpService } from 'src/app/services/http-service';
 })
 export class [[component-name]] implements OnInit {
 
-  private chartOptions: ChartOptions = {
+  public chartOptions: ChartOptions = {
     responsive: true,
     legend: {
       display: false
     },
   };
-  private chartLabels: Label[] = [];
-  private chartData: number[] = [];
-  private chartColors = [
+  public chartLabels: Label[] = [];
+  public chartData: number[] = [];
+  public chartColors = [
     {
       backgroundColor: [
         'rgba(15,15,15,0.8)',

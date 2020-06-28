@@ -16,18 +16,18 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class AuthComponent implements OnInit {
 
-  private userColumns: string[] = ['username', 'delete'];
-  private roleColumns: string[] = ['name', 'delete'];
-  private users: any[] = null;
-  private roles: any[] = null;
-  private userCount: number = 0;
-  private roleCount: number = 0;
-  private search: FormControl;
-  private userFilter: AuthFilter = {
+  public userColumns: string[] = ['username', 'delete'];
+  public roleColumns: string[] = ['name', 'delete'];
+  public users: any[] = null;
+  public roles: any[] = null;
+  public userCount: number = 0;
+  public roleCount: number = 0;
+  public search: FormControl;
+  public userFilter: AuthFilter = {
     limit: 10,
     offset: 0,
   };
-  private roleFilter: AuthFilter = {
+  public roleFilter: AuthFilter = {
     limit: 10,
     offset: 0,
   };

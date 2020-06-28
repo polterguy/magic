@@ -9,8 +9,8 @@ import { HttpService } from 'src/app/services/http-service';
 })
 export class SecurityComponent {
 
-  private password = '';
-  private passwordRepeat = '';
+  public password = '';
+  public passwordRepeat = '';
 
   constructor(
     private snackBar: MatSnackBar,
