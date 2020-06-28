@@ -1,0 +1,28 @@
+
+/*
+ * Creates a new JWT token based upon the existing JWT token.
+ * Will throw unless user is already logged in.
+ */
+.description:@"Will return a 'refreshed' JWT token, with the same authorization as your previous token, assuming your existing token is not expired.
+The new token will have a new expiration, allowing you to refresh your token, just before it becomes expired."
+
+/*
+ * Doing some basic caching, basically caching for 3 minutes.
+ */
+http.response.headers.add
+   Cache-Control:private, max-age=180
+
+
+/*
+ * Invokes the slots.create that does the heavy lifting, and creates our JWT token,
+ * making sure we return that token to caller.
+ */
+auth.ticket.refresh
+
+
+/*
+ * Returns the authentication JWT ticket created above to caller.
+ */
+unwrap:x:+/*
+return-nodes
+   ticket:x:@auth.ticket.refresh

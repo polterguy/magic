@@ -1,0 +1,23 @@
+
+/*
+ * Returns all slots registered in the system.
+ */
+.description:"Returns all slots registered in the system."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieving all system slots.
+ */
+vocabulary
+
+
+/*
+ * Returning results of the above to caller.
+ */
+return-nodes:x:@vocabulary/*

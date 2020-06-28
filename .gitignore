@@ -332,5 +332,5 @@ backend/dev_backend.csproj
 backend/files/tasks.hl
 backend/tasks/**
 backend/files/modules/*
-backend/files/modules/system
+!backend/files/modules/system
 !backend/files/modules/README.md

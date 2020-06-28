@@ -1,0 +1,79 @@
+
+/*
+ * Lists all database in your installation.
+ */
+.arguments
+   databaseType:string
+.description:"Returns all databases in your installation, according to the databaseType specified."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Invokes slots.create responsible for returning our database names,
+ * and returns results to caller.
+ */
+strings.concat
+   .:magic.db.
+   get-value:x:@.arguments/*/databaseType
+   .:.databases
+signal:x:@strings.concat
+
+
+/*
+ * Creating our return value.
+ */
+.result
+for-each:x:@signal/*/*
+   set-value:x:@.dp/#
+      strings.to-lower:x:@.dp/#
+   set-name:x:@.dp/#
+      .:database
+   unwrap:x:+/*/*/*
+   add:x:@.result
+      .
+         .
+            name:x:@.dp/#
+            tables
+for-each:x:@.result/*
+   strings.concat
+      .:magic.db.
+      get-value:x:@.arguments/*/databaseType
+      .:.tables
+   unwrap:x:+/*
+   signal:x:@strings.concat
+      database:x:@.dp/#/*/name
+   for-each:x:@signal/*
+      unwrap:x:+/*/*/*
+      add:x:@for-each/@.dp/#/*/tables
+         .
+            .
+               name:x:@.dp/#/*/table
+               columns
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.columns
+      unwrap:x:+/*
+      signal:x:@strings.concat
+         database:x:@for-each/@.dp/#/*/name
+         table:x:@.dp/#/*/table
+      for-each:x:@signal/*
+         unwrap:x:+/*/*/*
+         add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+            .
+               .
+                  name:x:@.dp/#/*/name
+
+
+/*
+ * Returning database to caller.
+ */
+add:x:+/*
+   get-nodes:x:@.result/*
+return-nodes
+   databases

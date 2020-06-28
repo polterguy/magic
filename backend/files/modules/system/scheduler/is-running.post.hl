@@ -1,0 +1,32 @@
+
+/*
+ * Turns the scheduler on or off.
+ */
+.arguments
+   value:bool
+.description:"Turns the scheduler on or off."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Checks if caller wants to turn scheduler on or off.
+ */
+if
+   eq
+      get-value:x:@.arguments/*/value
+      .:bool:true
+   .lambda
+      scheduler.start
+      return-nodes
+         result:OK
+         status:Scheduler was started
+else
+   scheduler.stop
+   return-nodes
+      result:OK
+      status:Scheduler was stopped

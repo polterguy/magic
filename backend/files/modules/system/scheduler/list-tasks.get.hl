@@ -1,0 +1,23 @@
+
+/*
+ * List all scheduled tasks that have been registered in the system.
+ */
+.description:"List all scheduled tasks that have been registered in the system."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves all scheduled tasks in the system.
+ */
+scheduler.tasks.list
+
+
+/*
+ * Returning the results of the evaluation to caller.
+ */
+return-nodes:x:@scheduler.tasks.list/*

@@ -1,0 +1,629 @@
+
+/*
+ * Generate an HTTP REST endpoint according to the given [.arguments].
+ */
+.arguments
+   databaseType:string
+   moduleName:string
+   database:string
+   table:string
+   moduleUrl:string
+   returnId:bool
+   template:string
+   verb:string
+   auth:string
+   log:string
+   overwrite:bool
+   args
+   validators
+.description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
+
+
+
+
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+
+
+
+
+/*
+ * Sanity checking module name, to prevent overwriting "/system/".
+ */
+strings.to-lower:x:@.arguments/*/moduleName
+if
+   eq
+      get-value:x:@strings.to-lower
+      .:system
+   .lambda
+      throw:"You can't use the name 'system' as your module's name"
+if
+   or
+      eq
+         get-value:x:@strings.to-lower
+         .:
+      eq
+         get-value:x:@strings.to-lower
+         .
+   .lambda
+      throw:"You can't use an empty string as your module's name. Your module must have a name."
+
+
+
+
+
+
+/*
+ * Creating a log entry explaining roughly what we're about to do.
+ */
+strings.concat
+   .:"Crudifying '"
+   get-value:x:@strings.to-lower
+   .:"' wrapping '"
+   get-value:x:@.arguments/*/database
+   .:"' and '"
+   get-value:x:@.arguments/*/table
+   .:"' with verb '"
+   get-value:x:@.arguments/*/verb
+   .:"'"
+log.info:x:-
+
+
+
+
+
+
+/*
+ * Making sure we create a valid filename.
+ */
+.filename
+set-value:x:-
+   strings.replace:x:@.arguments/*/moduleUrl
+      .:'.'
+      .:/
+set-value:x:@.filename
+   strings.to-lower:x:@.filename
+
+
+
+
+
+
+/*
+ * Creating our endpoint according to arguments given, by using [apply]
+ * on the [template] file given.
+ */
+io.file.load:x:@.arguments/*/template
+hyper2lambda:x:-
+unwrap:x:+/*
+apply:x:@hyper2lambda
+   database:x:@.arguments/*/database
+   table:x:@.arguments/*/table
+   return-id:x:@.arguments/*/returnId
+   args
+
+
+
+
+
+
+/*
+ * Replacing generic slots with actual database type.
+ */
+for-each:x:@apply/**/=magic.db.xxx.create
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.create
+for-each:x:@apply/**/=magic.db.xxx.delete
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.delete
+for-each:x:@apply/**/=magic.db.xxx.read
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.read
+for-each:x:@apply/**/=magic.db.xxx.update
+   set-value:x:@.dp/#
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.update
+
+
+
+
+
+
+/*
+ * Then ensuring we create a log entry during invocation of endpoint,
+ * if the caller wants us to do such a thing.
+ */
+if
+   not
+      eq
+         get-value:x:@.arguments/*/log
+         .:
+   .lambda
+      unwrap:x:+/*/*/.log
+      insert-after:x:@apply/*/.arguments
+         .
+            lambda2hyper:x:@.arguments/*
+            .log:x:@.arguments/*/log
+            strings.concat
+               get-value:x:@.log
+               .:" - Arguments: \r\n"
+               get-value:x:@lambda2hyper
+            log.info:x:@strings.concat
+
+
+
+
+
+
+/*
+ * Making sure we append validators, if given by client.
+ */
+if
+   and
+      not
+         and
+            eq
+               get-value:x:@.arguments/*/validators
+               .:
+            eq
+               get-value:x:@.arguments/*/validators
+               .
+      or
+         eq
+            get-value:x:@.arguments/*/verb
+            .:post
+         eq
+            get-value:x:@.arguments/*/verb
+            .:put
+   .lambda
+      insert-after:x:@apply/*/.arguments
+         hyper2lambda:x:@.arguments/*/validators
+
+
+
+
+
+
+/*
+ * Then ensuring we turn on authorization to our endpoints according
+ * to caller's specifications, if caller supplied an [auth] value.
+ */
+if
+   not
+      eq
+         get-value:x:@.arguments/*/auth
+         .:
+   .lambda
+      unwrap:x:+/*/*
+      insert-after:x:@apply/*/.arguments
+         .
+            auth.ticket.verify:x:@.arguments/*/auth
+
+
+
+
+
+
+/*
+ * Then making sure we do our specialized transformation,
+ * according to verb requested by caller.
+ */
+switch:x:@.arguments/*/verb
+
+
+   /*
+    * HTTP DELETE special case
+    */
+   case:delete
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         eq
+            get-count:x:@.arguments/*/args/*/primary/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a DELETE endpoint without primary keys.
+             */
+            throw:There are no actual primary keys declared for your DELETE endpoint.
+
+
+      /*
+       * Applying DELETE arguments.
+       */
+      add:x:@apply/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*
+
+
+   /*
+    * HTTP GET special case
+    */
+   case:get
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         eq
+            get-count:x:@.arguments/*/args/*/columns/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a GET endpoint returning no actual columns.
+             */
+            throw:There are no actual columns declared for your GET endpoint.
+
+      /*
+       * Checking if we have an [.arguments]/[args]/[cache] value.
+       */
+      if
+         and
+            not
+               eq
+                  get-value:x:@.arguments/*/args/*/cache
+                  .:0
+            not
+               eq
+                  get-value:x:@.arguments/*/args/*/cache
+                  .:
+            not
+               eq
+                  get-value:x:@.arguments/*/args/*/cache
+                  .
+         .lambda
+            .scope:private
+            if
+               eq
+                  get-value:x:@.arguments/*/args/*/publicCache
+                  .:bool:true
+               .lambda
+                  set-value:x:@.scope
+                     .:public
+            strings.concat
+               get-value:x:@.scope
+               .:, max-age=
+               get-value:x:@.arguments/*/args/*/cache
+            unwrap:x:+/*/*/*
+            insert-after:x:@apply/*/wait.signal
+               .
+                  http.response.headers.add
+                     Cache-Control:x:@strings.concat
+
+      /*
+       * Allowing for specifying operator to query.
+       */
+      .operators
+         mt
+         lt
+         mteq
+         lteq
+         neq
+         eq
+      for-each:x:@.arguments/*/args/*/columns/*
+         if
+            eq
+               get-value:x:@.dp/#
+               .:string
+            .lambda
+               .buffer
+                  .name:x:@.dp/#
+               unwrap:x:@.buffer/*
+               set-name:x:@.buffer/*
+                  strings.concat
+                     get-name:x:@.dp/#
+                     .:.like
+               add:x:@apply/*/.arguments
+                  get-nodes:x:@.buffer/*
+         for-each:x:@.operators/*
+            .buffer
+               .name:x:@.dp/@.dp/#
+            unwrap:x:@.buffer/*
+            set-name:x:@.buffer/*
+               strings.concat
+                  get-name:x:@.dp/@.dp/#
+                  .:.
+                  get-name:x:@.dp/#
+            add:x:@apply/*/.arguments
+               get-nodes:x:@.buffer/*
+
+
+      for-each:x:@.arguments/*/args/*/*
+         set-value:x:@.dp/#
+      add:x:@apply/**/columns
+         get-nodes:x:@.arguments/*/args/*/columns/*
+
+
+   /*
+    * HTTP POST special cases
+    */
+   case:post
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         eq
+            get-count:x:@.arguments/*/args/*/columns/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a POST endpoint without any actual data to POST.
+             */
+            throw:There are no actual columns declared for your POST endpoint.
+
+
+      /*
+       * Applying POST arguments.
+       */
+      add:x:@apply/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/columns/*
+
+
+   /*
+    * HTTP PUT special cases
+    */
+   case:put
+
+
+      /*
+       * Sanity checking invocation.
+       */
+      if
+         or
+            eq
+               get-count:x:@.arguments/*/args/*/primary/*
+               .:int:0
+            eq
+               get-count:x:@.arguments/*/args/*/columns/*
+               .:int:0
+         .lambda
+
+
+            /*
+             * Cannot have a PUT endpoint without any actual data to PUT.
+             */
+            throw:There are no actual columns, and/or primary keys declared for your PUT endpoint.
+
+
+      /*
+       * Applying PUT arguments.
+       */
+      add:x:@apply/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      add:x:@apply/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/columns/*
+      for-each:x:@.arguments/*/args/*/*
+         set-value:x:@.dp/#
+      add:x:@apply/**/ids
+         get-nodes:x:@.arguments/*/args/*/primary/*
+      for-each:x:@apply/**/ids/*
+         .x:@.arguments/*/
+         set-value:x:@.x
+            strings.concat
+               get-value:x:@.x
+               get-name:x:@.dp/#
+         set-x:x:@.dp/#
+            convert:x:@.x
+               type:x
+
+
+
+
+
+
+/*
+ * Then creating our folder.
+ */
+.folder:/modules/
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/moduleName
+      .:/
+strings.split:x:@.filename
+   .:/
+remove-nodes:x:-/0/-
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      strings.join:x:@strings.split/*
+         .:/
+      .:/
+io.folder.create:x:@.folder
+
+
+
+
+
+
+/*
+ * Transforming lambda to hyper,
+ * and saving it to the correct file.
+ */
+lambda2hyper:x:@apply/*
+unwrap:x:+
+.path:x:@.folder
+strings.split:x:@.filename
+   .:/
+set-value:x:@.path
+   strings.concat
+      get-value:x:@.path
+      get-value:x:@strings.split/0/-
+      .:.
+      get-value:x:@.arguments/*/verb
+      .:.hl
+
+
+
+
+
+
+/*
+ * Figuring out filename for HTTP endpoint.
+ */
+strings.replace:x:@.path
+   .:' '
+   .:_
+
+
+
+
+
+
+/*
+ * Making sure file does not exist from before, unless [.argument][overwrite] is true.
+ */
+if
+   and
+      not
+         get-value:x:@.arguments/*/overwrite
+      io.file.exists:x:@strings.replace
+   .lambda
+      throw:"That module already exists. If you want to re-create it, please check off 'Overwrite'."
+
+
+
+
+
+
+/*
+ * Saving file, now applied according to template declaration,
+ * and with the correct filename.
+ */
+io.file.save:x:@strings.replace
+   get-value:x:@lambda2hyper
+
+
+
+
+
+
+/*
+ * Calculating how many lines of code we created.
+ */
+get-count:x:@apply/*
+
+
+
+
+
+
+/*
+ * Checking if this is an HTTP GET verb, at which point we create two endpoints,
+ * one to retrieve actual data, and another to retrieve the count of records in table.
+ */
+if
+   eq
+      get-value:x:@.arguments/*/verb
+      .:get
+   .lambda
+
+
+      /*
+       * Creating our "count" endpoint, in addition to our normal GET endpoint.
+       *
+       * First removing [columns], adding [count(*)] and then transforming lambda
+       * to hyper, and saving it to the correct file.
+       */
+      remove-nodes:x:@apply/*/wait.signal/*/columns/*
+      remove-nodes:x:@apply/*/.arguments/*/limit
+      remove-nodes:x:@apply/*/.arguments/*/offset
+      remove-nodes:x:@apply/*/.arguments/*/order
+      remove-nodes:x:@apply/*/.arguments/*/direction
+      add:x:@apply/*/wait.signal/*/columns
+         .
+            count(*) as count
+      add:x:@apply/*/wait.signal/*/args
+         .
+            limit:long:1
+      lambda2hyper:x:@apply/*
+      unwrap:x:+
+      .path:x:@.folder
+      strings.split:x:@.filename
+         .:/
+      set-value:x:@.path
+         strings.concat
+            get-value:x:@.path
+            get-value:x:@strings.split/0/-
+            .:-count
+            .:.
+            get-value:x:@.arguments/*/verb
+            .:.hl
+
+
+      /*
+       * Figuring out filename for HTTP endpoint.
+       */
+      strings.replace:x:@.path
+         .:' '
+         .:_
+
+
+      /*
+       * Making sure file does not exist from before, unless [.argument][overwrite] is true.
+       */
+      if
+         and
+            not
+               get-value:x:@.arguments/*/overwrite
+            io.file.exists:x:@strings.replace
+         .lambda
+            throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+
+
+      /*
+       * Saving file, now applied according to template declaration,
+       * and with the correct filename.
+       */
+      io.file.save:x:@strings.replace
+         get-value:x:@lambda2hyper
+
+
+      /*
+       * Adding count endpoint to LOC.
+       */
+      set-value:x:@get-count
+         math.add
+            get-value:x:@get-count
+            get-count:x:@apply/*
+
+
+
+
+
+
+/*
+ * Returning success to caller.
+ */
+unwrap:x:+/*/loc
+return-nodes
+   result:success
+   loc:x:@get-count

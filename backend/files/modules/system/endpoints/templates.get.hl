@@ -1,0 +1,25 @@
+
+/*
+ * Returns all templates for generating "stuff" from endpoints.
+ */
+.description:"Returns all templates you can use to create something out of a list of endpoints."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Returns all templates to caller.
+ */
+io.folder.list:/misc/templates/
+for-each:x:-/*
+   strings.split:x:@.dp/#
+      .:/
+   unwrap:x:+/*/*
+   add:x:../*/return-nodes
+      .
+         :x:@strings.split/0/-
+return-nodes

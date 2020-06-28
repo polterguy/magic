@@ -1,0 +1,25 @@
+
+/*
+ * Lists all tables in your MySQL instance.
+ *
+ * Arguments
+ *
+ * - [database] - What database you want to check
+ */
+slots.create:magic.db.mysql.tables
+
+
+   /*
+    * Opens up our connection
+    */
+   mysql.connect:x:@.arguments/*/database
+
+
+      /*
+       * Runs our query
+       */
+      mysql.select:"show full tables where Table_Type = 'BASE TABLE'"
+      remove-nodes:x:@mysql.select/*/*/Table_type
+      set-name:x:@mysql.select/*/*
+         .:table
+      return-nodes:x:@mysql.select/*

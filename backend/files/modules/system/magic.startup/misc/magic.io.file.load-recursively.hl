@@ -1,0 +1,42 @@
+
+/*
+ * Loads all files recursively from the specified folder.
+ *
+ * Arguments
+ *
+ * - 1st argument. Folder from where to load all files recursively from.
+ */
+slots.create:magic.io.file.load-recursively
+
+
+   /*
+    * In case we've got a "slot" type of argument.
+    */
+   eval:x:@.arguments
+
+
+   /*
+    * Lists all files in current [folder], and adds up the result to return value.
+    */
+   unwrap:x:+/*
+   signal:magic.io.file.list-recursively
+      .:x:@.arguments/0
+
+
+   /*
+    * Iterating through all files listed above, and loads them,
+    * for then to add their contents as a child node of iterated file.
+    */
+   for-each:x:@signal/*
+      io.file.load:x:@.dp/#
+      add:x:@.dp/#
+         get-nodes:x:@io.file.load
+      set-name:x:@.dp/#/*
+         .:
+
+
+   /*
+    * Returning to caller all files in folder, and sub folder(s).
+    */
+   return-nodes:x:@signal/*
+   

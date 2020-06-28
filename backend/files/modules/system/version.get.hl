@@ -1,0 +1,21 @@
+
+/*
+ * Returns the version of the backend to the client,
+ * but only if user is authenticated as root.
+ */
+.description:"Returns the backend version to the client."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves backend version, and returns to client.
+ */
+version
+unwrap:x:+/*
+return-nodes
+   version:x:@version

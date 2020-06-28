@@ -1,0 +1,24 @@
+
+/*
+ * Lists all tables in your MySQL instance.
+ *
+ * Arguments
+ *
+ * - [database] - What database you want to check
+ */
+slots.create:magic.db.mssql.tables
+
+
+   /*
+    * Opens up our connection
+    */
+   mssql.connect:x:@.arguments/*/database
+
+
+      /*
+       * Runs our query
+       */
+      mssql.select:@"select table_schema + '.' + table_name as ""table""
+   from information_schema.tables
+   where table_type='base table' and table_name != 'sysdiagrams'"
+      return-nodes:x:@mssql.select/*

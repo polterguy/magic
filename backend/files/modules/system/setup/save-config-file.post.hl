@@ -1,0 +1,21 @@
+
+/*
+ * Saves the content of [content] argument to your appsettings.json file.
+ */
+.description:"Saves the content of [content] argument to your appsettings.json file."
+lambda2json:x:@.arguments/*
+   format:bool:true
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Saves the [content] from arguments to "appsettings.json" file.
+ */
+save-app-settings:x:@lambda2json
+return-nodes
+   result:success
