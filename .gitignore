@@ -328,9 +328,9 @@ ASALocalRun/
 
 # Custom exclusions
 **/.DS_Store
-magic.backend/dev_magic.backend.csproj
-magic.backend/files/tasks.hl
-magic.backend/tasks/**
-magic.backend/files/modules/*
-!magic.backend/files/modules/system
-!magic.backend/files/modules/README.md
+backend/dev_backend.csproj
+backend/files/tasks.hl
+backend/tasks/**
+backend/files/modules/*
+backend/files/modules/system
+!backend/files/modules/README.md
