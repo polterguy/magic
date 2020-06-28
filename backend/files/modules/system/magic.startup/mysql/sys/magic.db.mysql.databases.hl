@@ -1,0 +1,39 @@
+
+/*
+ * Lists all database in your MySQL instance.
+ */
+slots.create:magic.db.mysql.databases
+
+
+   /*
+    * Opens up our connection
+    */
+   mysql.connect:[information_schema]
+
+
+      /*
+       * Runs our query
+       */
+      mysql.select:show databases
+
+
+      /*
+       * Removes "system" databases.
+       */
+      remove-nodes:x:@mysql.select/*/*/=information_schema/.
+      remove-nodes:x:@mysql.select/*/*/=mysql/.
+      remove-nodes:x:@mysql.select/*/*/=performance_schema/.
+      remove-nodes:x:@mysql.select/*/*/=sys/.
+
+
+      /*
+       * Renaming "Database" nodes.
+       */
+      set-name:x:@mysql.select/*/*
+         .:db
+
+
+      /*
+       * Returns the remaining databases to caller.
+       */
+      return-nodes:x:@mysql.select/*

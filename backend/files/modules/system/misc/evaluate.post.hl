@@ -1,0 +1,39 @@
+
+/*
+ * Evaluates the given [hyperlambda], and returns
+ * the results of the evaluation.
+ *
+ * Arguments
+ *
+ * - [hyperlambda] - Mandatory, Hyperlambda you want to evaluate
+ */
+.arguments
+   hyperlambda:string
+.description:"Evaluates the given [hyperlambda], and returns the results of the evaluation."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Transforms the specified [hyperlambda] to a lambda object.
+ */
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+
+/*
+ * Evaluates the transformed [hyperlambda].
+ */
+wait.eval:x:@hyper2lambda
+
+
+/*
+ * Returning the results of the evaluation to caller.
+ */
+lambda2hyper:x:@hyper2lambda/*
+unwrap:x:+/*
+return-nodes
+   result:x:@lambda2hyper

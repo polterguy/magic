@@ -1,0 +1,24 @@
+
+/*
+ * Returns all saved SQL files in the system for specified database.
+ */
+.arguments
+   databaseType:string
+.description:"Returns all saved SQL files in the system for specified databaseType."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Returns all files in the "/misc/mssql/templates/" folder.
+ */
+strings.concat
+   .:/misc/
+   get-value:x:@.arguments/*/databaseType
+   .:/templates/
+io.file.list:x:@strings.concat
+return-nodes:x:-/*

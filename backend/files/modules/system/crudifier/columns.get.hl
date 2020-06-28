@@ -1,0 +1,37 @@
+
+/*
+ * Lists all columns in your [databaseType]/[database]/[table] combination.
+ *
+ * Requires a correctly configured connection string in your _"appsettings.json"_ file
+ * to your databaseType of choice.
+ */
+.arguments
+   databaseType:string
+   database:string
+   table:string
+.description:"Lists all columns in your databaseType/database/table combination."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Invokes slots.create responsible for returning columns.
+ */
+strings.concat
+   .:magic.db.
+   get-value:x:@.arguments/*/databaseType
+   .:.columns
+unwrap:x:+/*
+signal:x:@strings.concat
+   database:x:@.arguments/*/database
+   table:x:@.arguments/*/table
+
+
+/*
+ * Returning database to caller.
+ */
+return-nodes:x:@signal/*

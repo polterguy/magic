@@ -1,0 +1,39 @@
+
+/*
+ * Lists all database in your MySQL instance.
+ */
+slots.create:magic.db.mssql.databases
+
+
+   /*
+    * Opens up our connection
+    */
+   mssql.connect:[master]
+
+
+      /*
+       * Runs our query
+       */
+      mssql.select:select name from master.dbo.sysdatabases
+
+
+      /*
+       * Removes "system" databases.
+       */
+      remove-nodes:x:@mssql.select/*/*/=master/.
+      remove-nodes:x:@mssql.select/*/*/=tempdb/.
+      remove-nodes:x:@mssql.select/*/*/=model/.
+      remove-nodes:x:@mssql.select/*/*/=msdb/.
+
+
+      /*
+       * Renaming "Database" nodes.
+       */
+      set-name:x:@mssql.select/*/*
+         .:db
+
+
+      /*
+       * Returns the remaining databases to caller.
+       */
+      return-nodes:x:@mssql.select/*

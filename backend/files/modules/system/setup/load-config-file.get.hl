@@ -1,0 +1,18 @@
+
+/*
+ * Loads appsettings.json, and returns its content to caller.
+ */
+.description:"Loads appsettings.json, and returns its content to caller."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Returns the "appsettings.json" file to caller
+ */
+load-app-settings
+return-value:x:-

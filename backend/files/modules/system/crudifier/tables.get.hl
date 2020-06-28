@@ -1,0 +1,33 @@
+
+/*
+ * Lists all tables in your specified [database].
+ */
+.arguments
+   databaseType:string
+   database:string
+.description:"Lists all tables in your specified [databaseType]/[database]."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Invokes slots.create responsible for returning our database names,
+ * and returns results to caller.
+ */
+strings.concat
+   .:magic.db.
+   get-value:x:@.arguments/*/databaseType
+   .:.tables
+unwrap:x:+/*
+signal:x:@strings.concat
+   database:x:@.arguments/*/database
+
+
+/*
+ * Returning database to caller.
+ */
+return-nodes:x:@signal/*

@@ -1,0 +1,129 @@
+
+/*
+ * Reads items from your database.
+ *
+ * Arguments
+ *
+ * - [database] - What database to read from
+ * - [table] - Which table to read from
+ * - [columns] - What columns to return
+ * - [args] - Arguments to parametrize your read invocation.
+ *   Can contain [limit], [offset], [order] and [direction]
+ *   All other arguments are considered to be "where" clause arguments.
+ */
+slots.create:magic.db.mssql.read
+
+
+   /*
+    * Opening up a connection.
+    */
+   wait.mssql.connect:x:@.arguments/*/database
+
+
+      /*
+       * Parametrizing invocation to [mssql.read], first with generic arguments, 
+       * such as [limit], [offset], [order] and [direction].
+       * Making sure we remove these nodes from the [.arguments] collection afterwards,
+       * such that we don't add them into our [where].
+       */
+      add:x:./*/wait.mssql.read
+         get-nodes:x:@.arguments/*/args/*/limit
+
+
+      /*
+       * We need to later check if [limit] was given, to check if only a single
+       * value was requested - At which point we'll return a single JSON object,
+       * instead of an array.
+       * Notice, we could have simply checked if [limit] was equal to "1",
+       * but this would not work if caller explicitly invoked slots.create with an integer,
+       * or a long value, which is semantically more correct also.
+       */
+      unwrap:x:+
+      .limit:x:@.arguments/*/args/*/limit
+      set-value:x:@.limit
+         convert:x:@.limit
+            type:long
+      remove-nodes:x:@.arguments/*/args/*/limit
+
+      add:x:./*/wait.mssql.read
+         get-nodes:x:@.arguments/*/args/*/offset
+      remove-nodes:x:@.arguments/*/args/*/offset
+
+      add:x:./*/wait.mssql.read
+         get-nodes:x:@.arguments/*/args/*/order
+      remove-nodes:x:@.arguments/*/args/*/order
+
+      add:x:./*/wait.mssql.read
+         get-nodes:x:@.arguments/*/args/*/direction
+      remove-nodes:x:@.arguments/*/args/*/direction
+
+
+      /*
+       * Then any remaining arguments.
+       */
+      if
+         mt
+            get-count:x:@.arguments/*/args/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Adding [where] to [mssql.read], making sure all specified criterias
+             * are added with an "and" clause wrapping them.
+             */
+            add:x:../*/wait.mssql.connect/*/wait.mssql.read
+               .
+                  where
+                     and
+            add:x:../*/wait.mssql.connect/*/wait.mssql.read/*/where/*/and
+               get-nodes:x:@.arguments/*/args/*
+
+
+      /*
+       * Then adding [columns] if given.
+       */
+      if
+         mt
+            get-count:x:@.arguments/*/columns/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * Adding [columns] to [mssql.read].
+             */
+            add:x:../*/wait.mssql.connect/*/wait.mssql.read
+               .
+                  columns
+            add:x:../*/wait.mssql.connect/*/wait.mssql.read/*/columns
+               get-nodes:x:@.arguments/*/columns/*
+
+
+      /*
+       * Invoking [mssql.read].
+       */
+      wait.mssql.read
+         table:x:@.arguments/*/table
+
+
+      /*
+       * Returning results to caller.
+       */
+      if
+         eq
+            get-value:x:@.limit
+            .:long:1
+         .lambda
+
+
+            /*
+             * Returning a single object.
+             */
+            return-nodes:x:@wait.mssql.read/*/*
+
+
+      /*
+       * Returning an array of objects.
+       */
+      return-nodes:x:@wait.mssql.read/*

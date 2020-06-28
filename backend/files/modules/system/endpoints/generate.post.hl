@@ -1,0 +1,72 @@
+
+/*
+ * Generates a frontend for you.
+ */
+.description:"Generates a frontend for you, according to the given arguments. Notice, the [templateName] becomes a reference to which template/generator to use."
+.arguments
+   templateName:string
+   apiUrl:string
+   name:string
+   copyright:string
+   endpoints
+
+
+
+
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+
+
+
+/*
+ * Figuring out which template/generator to use, and invoking it.
+ */
+strings.concat
+   .:/misc/templates/
+   .:x:@.arguments/*/templateName
+   .:/generate.hl
+add:x:+/+
+   get-nodes:x:@.arguments/*/endpoints
+unwrap:x:+/*
+io.file.execute:x:@strings.concat
+   apiUrl:x:@.arguments/*/apiUrl
+   name:x:@.arguments/*/name
+   copyright:x:@.arguments/*/copyright
+
+
+
+
+
+
+/*
+ * Making sure we get the HTTP headers correctly applied before we return ZIP
+ * file to caller.
+ */
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@.arguments/*/name
+   .:".zip\""
+http.response.headers.add
+   Content-Type:application/zip
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+
+
+
+
+
+
+/*
+ * Creating a ZIP stream from return value of above [io.file.execute]
+ * and returning it to client.
+ */
+add:x:+
+   get-nodes:x:@io.file.execute/*
+io.content.zip-stream
+return-value:x:-

@@ -1,0 +1,66 @@
+
+/*
+ * Creates a new item in your [database]/[table] with the specified [values],
+ * excluding everything from [exclude].
+ *
+ * Arguments
+ *
+ * - [database] - Database to create a record in
+ * - [table] - Table to create your record in
+ * - [return-id] - If true, will return the ID for the newly created record
+ * - [values] - A column/value collection for your new record
+ */
+slots.create:magic.db.mssql.create
+
+
+   /*
+    * Opening up a connection.
+    */
+   wait.mssql.connect:x:@.arguments/*/database
+
+
+      /*
+       * Parametrizing invocation to [mssql.create] with [values].
+       */
+      add:x:./*/wait.mssql.create/*/values
+         get-nodes:x:@.arguments/*/values/*
+
+
+      /*
+       * Adding [return-id] if given.
+       */
+      add:x:./*/wait.mssql.create
+         get-nodes:x:@.arguments/*/return-id
+
+
+      /*
+       * Invoking [mssql.create].
+       */
+      wait.mssql.create
+         table:x:@.arguments/*/table
+         values
+
+
+      /*
+       * Returning results to caller.
+       */
+      if
+         get-value:x:@.arguments/*/return-id
+         .lambda
+
+
+            /*
+             * Returning ID to caller.
+             */
+            unwrap:x:+/*
+            return-nodes
+               id:x:@wait.mssql.create
+
+      else
+
+
+         /*
+          * Returning success to caller.
+          */
+         return-nodes
+            result:success

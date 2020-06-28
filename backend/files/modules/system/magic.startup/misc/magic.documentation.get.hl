@@ -1,0 +1,21 @@
+
+/*
+ * Returns the documentation for the specified module.
+ *
+ * Arguments.
+ *
+ * - [module] - Name of module to retrieve README.md file for.
+ */
+slots.create:magic.documentation.get
+
+   /*
+    * Downloading file using [http.get]
+    */
+   .root-url:"https://raw.githubusercontent.com/polterguy/"
+   strings.concat
+      get-value:x:@.root-url
+      get-value:x:@.arguments/*/module
+      .:/master/README.md
+   http.get:x:@strings.concat
+   unwrap:x:+/*
+   return-value:x:@http.get/*/content

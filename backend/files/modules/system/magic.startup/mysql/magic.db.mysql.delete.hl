@@ -1,0 +1,53 @@
+
+/*
+ * Deletes one specified record from your database.
+ *
+ * Arguments
+ *
+ * - [database] - Database to delete a record from
+ * - [table] - Table to delete a record from
+ * - [ids] - A list of IDs that uniquely identifies your record
+ */
+slots.create:magic.db.mysql.delete
+
+
+   /*
+    * Sanity checking invocation by making sure caller
+    * provided an ID at all, to avoid deleting entire table.
+    */
+   if
+      eq
+         get-count:x:@.arguments/*/ids/*
+         .:int:0
+      .lambda
+         throw:No IDs given to [magic.db.mysql.delete]
+
+
+   /*
+    * Opening up a connection.
+    */
+   wait.mysql.connect:x:@.arguments/*/database
+
+
+      /*
+       * Parametrizing [mysql.delete].
+       */
+      add:x:./*/wait.mysql.delete/*/where/*/and
+         get-nodes:x:@.arguments/*/ids/*
+
+
+      /*
+       * Invoking [mysql.delete].
+       */
+      wait.mysql.delete
+         table:x:@.arguments/*/table
+         where
+            and
+
+
+      /*
+       * Returning results to caller.
+       */
+      unwrap:x:+/*
+      return-nodes
+         deleted-records:x:@wait.mysql.delete

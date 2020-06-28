@@ -1,0 +1,30 @@
+
+/*
+ * Template for HTTP POST CRUD requests.
+ *
+ * Expects {database} and {table} [apply] arguments.
+ */
+.arguments
+
+
+/*
+ * Parametrizing [magic.db.xxx.create].
+ */
+add:x:./*/wait.signal/*/values
+   get-nodes:x:@.arguments/*
+
+
+/*
+ * Invoking [magic.db.xxx.create]
+ */
+wait.signal:magic.db.xxx.create
+   database:{database}
+   table:{table}
+   return-id:{return-id}
+   values
+
+
+/*
+ * Returning results back to caller.
+ */
+return-nodes:x:@wait.signal/*

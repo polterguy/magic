@@ -1,0 +1,32 @@
+
+/*
+ * Template for custom SQL HTTP request.
+ *
+ * Expects {database} and {sql} [apply] arguments.
+ */
+.arguments
+
+
+/*
+ * Opening up a database connection
+ */
+wait.xxx.connect:{database}
+
+
+   /*
+    * Parametrizing [xxx.select].
+    */
+   add:x:+
+      get-nodes:x:@.arguments/*
+
+
+   /*
+    * Evaluating [mysql.select] slots.create.
+    */
+   wait.xxx.select:{sql}
+
+
+   /*
+    * Returning results to caller.
+    */
+   return-nodes:x:-/*
