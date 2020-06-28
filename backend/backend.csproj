@@ -7,13 +7,12 @@
 
   <ItemGroup>
     <Compile Remove="files\misc\templates\**" />
-    <Content Remove="files\misc\templates\**" />
     <EmbeddedResource Remove="files\misc\templates\**" />
     <None Remove="files\misc\templates\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.library" Version="5.0.10" />
+    <PackageReference Include="magic.library" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
   </ItemGroup>
 
