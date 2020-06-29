@@ -94,8 +94,8 @@ export abstract class GridComponent {
 
     this.viewDetails = [];
 
-    this.getItems(this.filter).subscribe(items => {
-      this.data = items;
+    this.getItems(this.filter).subscribe((items: any) => {
+      this.data = items || [];
 
       if (countRecords) {
 
@@ -130,7 +130,6 @@ export abstract class GridComponent {
    */
   public delete(entity: any, ids: any) {
 
-    // Making sure we actually have a primary key, and if not, preventing deletion.
     let hasKeys = false;
     for (const idx in ids) {
       if (ids.hasOwnProperty(idx)) {
@@ -143,21 +142,17 @@ export abstract class GridComponent {
       return;
     }
 
-    // Invoking HTTP service DELETE method.
     this.getDelete(ids).subscribe(deleteResult => {
 
-      // Sanity checking invocation.
       if (deleteResult['deleted-records'] !== 1) {
         this.showError(`For some reasons ${deleteResult['deleted-records']} records was deleted, and not 1 as expected!`);
       }
 
-      // Making sure we remove "view details" for item, if item is currently being viewed.
       const indexOf = this.viewDetails.indexOf(entity);
       if (indexOf !== -1) {
         this.viewDetails.splice(indexOf, 1);
       }
 
-      // Re-retrieving data from backend, according to filter (we're down one record now according to our pager).
       this.getData();
     }, (error: any) => this.showError(error));
   }
