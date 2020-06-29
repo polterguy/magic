@@ -28,13 +28,6 @@ export class [[component-name]] extends BaseComponent implements OnInit {
    */
   public displayedColumns: string[] = [[[displayed-columns]]];
 
-  /**
-   * Current filter being applied to filter items from our backend.
-   */
-  public filter: any = {
-    limit: 10
-  };
-
   // Need to view paginator as a child to update page index of it.
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
