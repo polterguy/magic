@@ -1,7 +1,7 @@
     this.[[column-name]] = new FormControl('');
     this.[[column-name]].valueChanges
       .pipe(debounceTime(this.debounce), distinctUntilChanged())
-      .subscribe(query => {
+      .subscribe((query: any) => {
         this.paginator.pageIndex = 0;
         this.filter.offset = 0;
         this.hasFiltered = true;

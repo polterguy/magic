@@ -43,14 +43,18 @@ export abstract class GridComponent {
    */
   public viewDetails: any[] = [];
 
+  /**
+   * Constructor for grid component, taking a couple of services using dependency injection.
+   * 
+   * @param snackBar Snack bar to use to display errors, and general information
+   * @param jwtHelper Helper service to parse JWT token, to retrieve roles user belongs to, if any
+   */
   constructor(
     protected snackBar: MatSnackBar,
     protected jwtHelper: JwtHelperService) {
-    // Checking if user is logged in, at which point we initialize the roles property.
+
     const token = localStorage.getItem('jwt_token');
     if (token !== null && token !== undefined) {
-
-      // Yup! User is logged in!
       this.roles = this.jwtHelper.decodeToken(token).role.split(',');
     }
   }
@@ -68,23 +72,33 @@ export abstract class GridComponent {
   protected abstract getCount(filter: any) : Observable<any>;
 
   /**
+   * Abstract method you'll have to override to actually return method that
+   * returns observable for deleting a single item.
+   * 
+   * @param ids Primary keys for item
+   */
+  protected abstract getDelete(ids: any) : Observable<any>;
+
+  /**
+   * Abstract method necessary to implement to make sure paginator
+   * gets reset when needed.
+   */
+  protected abstract resetPaginator() : void;
+
+  /**
    * Returns data items from backend.
    * 
    * @param countRecords Whether or not we should also retrieve and update count of records
    */
   protected getData(countRecords: boolean = true) {
 
-    // Resetting view details, to avoid "hanging objects". Notice, will close all "view details" items in grid.
     this.viewDetails = [];
 
-    // Retrieves items from our backend through our HTTP service layer.
     this.getItems(this.filter).subscribe(items => {
       this.data = items;
 
-      // Checking if user wants to (re)-count items, and if so, invoking "count records" HTTP service method.
       if (countRecords) {
 
-        // Notice, we need to clone all filter arguments, except limit, offset, order and direction.
         const filterCount = {};
         for (const idx in this.filter) {
           if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
@@ -101,12 +115,73 @@ export abstract class GridComponent {
           }
         }
 
-        // Invoking "count records" HTTP service layer method.
         this.getCount(filterCount).subscribe(count => {
           this.count = count.count;
-        }, error => this.showError(error));
+        }, (error: any) => this.showError(error));
       }
-    }, error => this.showError(error));
+    }, (error: any) => this.showError(error));
+  }
+
+  /**
+   * Invoked when an entity is deleted. Invokes HTTP service that deletes item from backend.
+   * 
+   * @param entity Entity to delete
+   * @param ids Primary keys for entity
+   */
+  public delete(entity: any, ids: any) {
+
+    // Making sure we actually have a primary key, and if not, preventing deletion.
+    let hasKeys = false;
+    for (const idx in ids) {
+      if (ids.hasOwnProperty(idx)) {
+        hasKeys = true;
+        break;
+      }
+    }
+    if (!hasKeys) {
+      this.showError('Your endpoint does not accept any primary keys, and hence deletion of individual entities becomes impossible');
+      return;
+    }
+
+    // Invoking HTTP service DELETE method.
+    this.getDelete(ids).subscribe(deleteResult => {
+
+      // Sanity checking invocation.
+      if (deleteResult['deleted-records'] !== 1) {
+        this.showError(`For some reasons ${deleteResult['deleted-records']} records was deleted, and not 1 as expected!`);
+      }
+
+      // Making sure we remove "view details" for item, if item is currently being viewed.
+      const indexOf = this.viewDetails.indexOf(entity);
+      if (indexOf !== -1) {
+        this.viewDetails.splice(indexOf, 1);
+      }
+
+      // Re-retrieving data from backend, according to filter (we're down one record now according to our pager).
+      this.getData();
+    }, (error: any) => this.showError(error));
+  }
+
+  /**
+   * Sorts according to the specified column.
+   * 
+   * @param column Which column to sort by
+   */
+  public sort(column: string) {
+    if (this.filter.order === column) {
+      this.filter.direction =
+        this.filter.direction === 'asc' ||
+        this.filter.direction === null ||
+        this.filter.direction === undefined ?
+          'desc' :
+          'asc';
+    } else {
+      this.filter.order = column;
+      this.filter.direction = 'asc';
+    }
+    this.resetPaginator();
+    this.filter.offset = 0;
+    this.getData(false);
   }
 
   /**
@@ -121,6 +196,60 @@ export abstract class GridComponent {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the necessary edit data for given entity, used to open
+   * modal dialog.
+   * 
+   * @param entity Entity to return edit data for.
+   */
+  protected getEditData(entity: any) {
+    const data = {
+      isEdit: true,
+      entity: {},
+    };
+    for (const idx in entity) {
+      if (Object.prototype.hasOwnProperty.call(entity, idx)) {
+        data.entity[idx] = entity[idx];
+      }
+    }
+    return data;
+  }
+
+  /**
+   * Updates the specified destination entity, with the values from the
+   * source entity.
+   * 
+   * @param srcEntity Entity containing new and potentially modified data for entity
+   * @param destEntity Original entity, which is the entity method will update
+   */
+  protected setEditData(srcEntity: any, destEntity: any) {
+
+    if (srcEntity) {
+      for (const idx in srcEntity) {
+        if (Object.prototype.hasOwnProperty.call(srcEntity, idx)) {
+          destEntity[idx] = srcEntity[idx];
+        }
+      }
+      this.snackBar.open('Item successfully updated', 'Close', {
+        duration: 2000,
+      });
+    }
+  }
+
+  /**
+   * Invoked when an item was successfully created.
+   * 
+   * @param createResult Result from modal dialog
+   */
+  protected itemCreated(createResult: any) {
+    if (createResult) {
+      this.getData();
+      this.snackBar.open('Item successfully created', 'Close', {
+        duration: 2000,
+      });
+    }
   }
 
   /**
