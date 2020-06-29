@@ -30,6 +30,13 @@ export class BaseComponent {
   public hasFiltered = false;
 
   /**
+   * Current filter being applied to filter items from our backend.
+   */
+  public filter: any = {
+    limit: 10
+  };
+
+  /**
    * List of items we're currently viewing details for.
    */
   public viewDetails: any[] = [];
