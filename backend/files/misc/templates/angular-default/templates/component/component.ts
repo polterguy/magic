@@ -6,6 +6,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { BaseComponent } from '../../base.component';
 
 import { HttpService } from 'src/app/services/http-service';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
@@ -19,56 +20,34 @@ import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
   templateUrl: './[[component-filename]].html',
   styleUrls: ['./[[component-filename]].scss']
 })
-export class [[component-name]] implements OnInit {
+export class [[component-name]] extends BaseComponent implements OnInit {
 
-  // Actual data currently displayed in the grid. The mat-table will be databound to this list.
-  private data: any[];
+  /**
+   * Which columns we should display. Reorder to prioritize columns differently.
+   * Notice! 'delete-instance' should always come last.
+   */
+  public displayedColumns: string[] = [[[displayed-columns]]];
 
-  // Which columns we should display. Reorder to prioritize columns differently.
-  // Notice! 'delete-instance' should always come last!
-  private displayedColumns: string[] = [[[displayed-columns]]];
-
-  // Current filter being applied to filter items from our backend.
-  private filter: any = {
+  /**
+   * Current filter being applied to filter items from our backend.
+   */
+  public filter: any = {
     limit: 10
   };
 
-  // Number of items our backend reports are available in total, matching our above filter condition.
-  private count = 0;
-  private hasFiltered = false;
-
-  // Number of milliseconds after a keystroke before filtering should be re-applied.
-  private debounce = 400;
-
-  // List of items we're currently viewing details for.
-  private viewDetails: any[] = [];
-
   // Need to view paginator as a child to update page index of it.
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-
-  /*
-   * This is needed to figure out whether or not user has access to
-   * delete, create and update methods.
-   */
-  private roles: string [] = [];
 
   // Form control declarations to bind up with reactive form elements.
 [[form-control-declarations]]
 
   // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
+    protected snackBar: MatSnackBar,
+    protected jwtHelper: JwtHelperService,
     private httpService: HttpService,
-    private jwtHelper: JwtHelperService,
-    private snackBar: MatSnackBar,
     public dialog: MatDialog) {
-
-      // Checking if user is logged in, at which point we initialize the roles property.
-      const token = localStorage.getItem('jwt_token');
-      if (token !== null && token !== undefined) {
-
-        // Yup! User is logged in!
-        this.roles = this.jwtHelper.decodeToken(token).role.split(',');
-      }
+      super(snackBar, jwtHelper);
     }
 
   // OnInit implementation. Retrieves initial data (unfiltered) and instantiates our FormControls.
@@ -79,27 +58,6 @@ export class [[component-name]] implements OnInit {
 
     // Necessary to make sure we can have "live filtering" in our datagrid.
 [[form-control-instantiations]]  }
-
-  /*
-   * Returns the class for the header row, which will only be visible
-   * if there are more than 20 records in dataset, before filtering has been applied.
-   */
-  getHeaderRowClass() {
-    if (this.showPager()) {
-      return 'show-pager';
-    }
-    return 'hide-pager';
-  }
-
-  /*
-   * Returns true if the pager should be shown.
-   */
-  showPager() {
-    if (this.hasFiltered || this.count > 10) {
-      return true;
-    }
-    return false;
-  }
 
   // Method that retrieves data from backend according to specified filter.
   getData(countRecords: boolean = true) {
@@ -134,19 +92,9 @@ export class [[component-name]] implements OnInit {
         // Invoking "count records" HTTP service layer method.
         this.httpService.[[service-count-method]](cloned).subscribe(res2 => {
           this.count = res2.count;
-        }, error => {
-
-          // Oops, error when invoking count method.
-          console.error(error);
-          this.error(error.error.message);
-        });
+        }, error => this.showError(error));
       }
-    }, error => {
-
-      // Oops, error when invoking get items method.
-      console.error(error);
-      this.error(error.error.message);
-    });
+    }, error => this.showError(error));
   }
 
   // Sorts by the specified column.
@@ -167,59 +115,6 @@ export class [[component-name]] implements OnInit {
     this.paginator.pageIndex = 0;
     this.filter.offset = 0;
     this.getData(false);
-  }
-
-  getSortIcon(column: string) {
-    if (this.filter.order !== column) {
-      return 'sort_by_alpha';
-    }
-    if (this.filter.direction === 'asc') {
-      return 'keyboard_arrow_down';
-    } else {
-      return 'keyboard_arrow_up';
-    }
-  }
-
-  // Shows or hides the "view details" row for a specific record.
-  toggleDetails(entity: any) {
-    const indexOf = this.viewDetails.indexOf(entity);
-    if (indexOf === -1) {
-      this.viewDetails.push(entity);
-    } else {
-      this.viewDetails.splice(indexOf, 1);
-    }
-  }
-
-  // Returns true if details should be displayed for a specific database record.
-  shouldDisplayDetails(entity: any) {
-    if (this.viewDetails.indexOf(entity) !== -1) {
-      return true;
-    }
-    return false;
-  }
-
-  /*
-   * Returns CSS class name for a specific table row (tr element).
-   * Notice, the CSS class is changed according to whether or not the details
-   * window is visible or not.
-   */
-  getClassForRecord(entity: any) {
-    if (this.viewDetails.indexOf(entity) !== -1) {
-      return 'grid-row visible-details';
-    }
-    return 'grid-row';
-  }
-
-  /*
-   * Returns the CSS class for the "view details" parts.
-   * Notice, this basically ensures that the "view details" is invisible unless
-   * explicitly shown by the user choosing to view the details for a record.
-   */
-  getClassForDetails(entity: any) {
-    if (this.viewDetails.indexOf(entity) !== -1) {
-      return 'details-row visible';
-    }
-    return 'details-row hidden';
   }
 
   /*
@@ -301,7 +196,7 @@ export class [[component-name]] implements OnInit {
       }
     }
     if (!hasKeys) {
-      this.error('Your endpoint does not accept any primary keys, and hence deletion of individual entities becomes impossible');
+      this.showError('Your endpoint does not accept any primary keys, and hence deletion of individual entities becomes impossible');
       return;
     }
 
@@ -310,7 +205,7 @@ export class [[component-name]] implements OnInit {
 
       // Sanity checking invocation.
       if (res['deleted-records'] !== 1) {
-        this.error(`For some reasons ${res['deleted-records']} records was deleted, and not 1 as expected!`);
+        this.showError(`For some reasons ${res['deleted-records']} records was deleted, and not 1 as expected!`);
       }
 
       // Making sure we remove "view details" for item, if item is currently being viewed.
@@ -321,12 +216,7 @@ export class [[component-name]] implements OnInit {
 
       // Re-retrieving data from backend, according to filter (we're down one record now according to our pager).
       this.getData();
-    }, error => {
-
-      // Oops, error when attempting to delete item.
-      console.error(error);
-      this.error(error.error.message);
-    });
+    }, error => this.showError(error));
   }
 
   // Invoked when pager is paged.
@@ -340,23 +230,5 @@ export class [[component-name]] implements OnInit {
       this.filter.offset = e.pageIndex * e.pageSize;
     }
     this.getData(false);
-  }
-
-  // Returns true if user belongs to (at least) one of the specified roles.
-  inRole(roles: string[]) {
-    for (const idx of roles) {
-      if (this.roles.indexOf(idx) !== -1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // Helper method to display an error to user in a friendly SnackBar type of widget.
-  error(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
-    });
   }
 }
