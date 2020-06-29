@@ -1,10 +1,12 @@
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
- * Base class for all "data-grid" components, diisplaying items to perform CRUD operations.
+ * Base class for all "data-grid" components,
+ * displaying items to perform CRUD operations.
  */
-export class BaseComponent {
+export abstract class GridComponent {
 
   // List of roles user authenticated belongs to.
   private roles: string [] = [];
@@ -43,8 +45,7 @@ export class BaseComponent {
 
   constructor(
     protected snackBar: MatSnackBar,
-    protected jwtHelper: JwtHelperService)
-  {
+    protected jwtHelper: JwtHelperService) {
     // Checking if user is logged in, at which point we initialize the roles property.
     const token = localStorage.getItem('jwt_token');
     if (token !== null && token !== undefined) {
@@ -52,6 +53,60 @@ export class BaseComponent {
       // Yup! User is logged in!
       this.roles = this.jwtHelper.decodeToken(token).role.split(',');
     }
+  }
+
+  /**
+   * Abstract method you'll need to override to actually return method that
+   * returns observable for retrieving items.
+   */
+  protected abstract getItems(filter: any) : Observable<any>;
+
+  /**
+   * Abstract method you'll have to override to actually return method that
+   * returns observable for counting items.
+   */
+  protected abstract getCount(filter: any) : Observable<any>;
+
+  /**
+   * Returns data items from backend.
+   * 
+   * @param countRecords Whether or not we should also retrieve and update count of records
+   */
+  protected getData(countRecords: boolean = true) {
+
+    // Resetting view details, to avoid "hanging objects". Notice, will close all "view details" items in grid.
+    this.viewDetails = [];
+
+    // Retrieves items from our backend through our HTTP service layer.
+    this.getItems(this.filter).subscribe(items => {
+      this.data = items;
+
+      // Checking if user wants to (re)-count items, and if so, invoking "count records" HTTP service method.
+      if (countRecords) {
+
+        // Notice, we need to clone all filter arguments, except limit, offset, order and direction.
+        const filterCount = {};
+        for (const idx in this.filter) {
+          if (Object.prototype.hasOwnProperty.call(this.filter, idx)) {
+            switch (idx) {
+              case 'limit':
+              case 'offset':
+              case 'order':
+              case 'direction':
+                break; // Ignoring
+              default:
+                filterCount[idx] = this.filter[idx];
+                break;
+            }
+          }
+        }
+
+        // Invoking "count records" HTTP service layer method.
+        this.getCount(filterCount).subscribe(count => {
+          this.count = count.count;
+        }, error => this.showError(error));
+      }
+    }, error => this.showError(error));
   }
 
   /**
@@ -152,7 +207,7 @@ export class BaseComponent {
    * 
    * @param entity Entity to check if we should display details view for
    */
-  shouldDisplayDetails(entity: any) {
+  public shouldDisplayDetails(entity: any) {
     if (this.viewDetails.indexOf(entity) !== -1) {
       return true;
     }
