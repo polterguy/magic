@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material';
 import { MatPaginator } from '@angular/material';
-import { PageEvent } from '@angular/material/paginator';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -113,22 +112,5 @@ export class [[component-name]] extends GridComponent implements OnInit {
     dialogRef.afterClosed().subscribe((createResult: any) => {
       this.itemCreated(createResult);
     });
-  }
-
-  /**
-   * Invoked when pager is paged.
-   * 
-   * @param e Paging event
-   */
-  paged(e: PageEvent) {
-    this.viewDetails = [];
-    if (this.filter.limit !== e.pageSize) {
-      this.filter.limit = e.pageSize;
-      this.paginator.pageIndex = 0;
-      this.filter.offset = 0;
-    } else {
-      this.filter.offset = e.pageIndex * e.pageSize;
-    }
-    this.getData(false);
   }
 }

@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
@@ -255,6 +256,23 @@ export abstract class GridComponent {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Invoked when pager is paged.
+   * 
+   * @param e Paging event
+   */
+  public paged(e: PageEvent) {
+    this.viewDetails = [];
+    if (this.filter.limit !== e.pageSize) {
+      this.filter.limit = e.pageSize;
+      this.resetPaginator()
+      this.filter.offset = 0;
+    } else {
+      this.filter.offset = e.pageIndex * e.pageSize;
+    }
+    this.getData(false);
   }
 
   /**
