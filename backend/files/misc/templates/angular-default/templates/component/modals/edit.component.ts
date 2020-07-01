@@ -1,127 +1,64 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { HttpService } from 'src/app/services/http-service';
+import { DialogComponent, DialogData } from '../../../dialog.component';
 
-/*
- * Input data to dialog.
- * Notice, if dialog is instantiated in "create entity mode", the
- * entity property will be an empty object, with no fields.
- */
-export interface DialogData {
-  isEdit: boolean;
-  entity: any;
-}
-
-/*
+/**
  * Modal dialog for editing your existing [[component-header]] entity types, and/or
- * creating new entity types.
+ * creating new entity types of type [[component-header]].
  */
 @Component({
   templateUrl: './edit.[[component-filename]].html',
   styleUrls: ['./edit.[[component-filename]].scss']
 })
-export class Edit[[component-name]] {
+export class Edit[[component-name]] extends DialogComponent {
 
-  /*
-   * Only the following properties of the given data.entity will actually
-   * be transmitted to the server when we create records. This is done to
-   * make sure we don't submit "automatic" primary key values.
-   */
-  private createColumns: string[] = [[[create-input]]];
-  private updateColumns: string[] = [[[update-input]]];
-  private primaryKeys: string[] = [[[primary-keys]]];
-
-  /*
+  /**
    * Constructor taking a bunch of services injected using dependency injection.
    */
   constructor(
     public dialogRef: MatDialogRef<Edit[[component-name]]>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private snackBar: MatSnackBar,
-    private service: HttpService) { }
-
-  canEditColumn(name: string) {
-    if (this.data.isEdit) {
-      return this.updateColumns.filter(x => x === name).length > 0 &&
-        this.primaryKeys.filter(x => x === name).length == 0;
-    }
-    return this.createColumns.filter(x => x === name).length > 0;
+    protected snackBar: MatSnackBar,
+    private service: HttpService) {
+    super(snackBar);
+    this.createColumns = [[[create-input]]];
+    this.updateColumns = [[[update-input]]];
+    this.primaryKeys = [[[primary-keys]]];
   }
 
-  /*
-   * Invoked when the user clicks the "Save" button.
+  /**
+   * Returns a reference to ths DialogData that was dependency injected
+   * into component during creation.
    */
-  save() {
-
-    /*
-     * Checking if we're editing an existing entity type, or if we're
-     * creating a new instance.
-     */
-    if (this.data.isEdit) {
-
-      /*
-       * Removing all columns that we're not supposed to transmit during "edit mode".
-       */
-      for (const idx in this.data.entity) {
-        if (this.updateColumns.indexOf(idx) === -1) {
-          delete this.data.entity[idx];
-        }
-      }
-
-      // Updating existing item. Invoking update HTTP REST endpoint and closing dialog.
-      this.service.[[service-update-method]](this.data.entity).subscribe(res => {
-        this.dialogRef.close(this.data.entity);
-        if (res['updated-records'] !== 1) {
-
-          // Oops, error!
-          this.snackBar.open(`Oops, number of items was ${res['updated-records']}, which is very wrong. Should have been 1`, 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar'],
-          });
-        }
-      }, error => {
-
-        // Oops, error!
-        this.snackBar.open(error.error.message, 'Close', {
-          duration: 5000,
-          panelClass: ['error-snackbar'],
-        });
-      });
-    } else {
-
-      /*
-       * Removing all columns that we're not supposed to transmit during "create mode".
-       */
-      for (const idx in this.data.entity) {
-        if (this.createColumns.indexOf(idx) === -1) {
-          delete this.data.entity[idx];
-        }
-      }
-
-      // Creating new item. Invoking create HTTP REST endpoint and closing dialog.
-      this.service.[[service-create-method]](this.data.entity).subscribe(res => {
-        this.dialogRef.close(this.data.entity);
-
-        if (res === null || res === undefined) {
-          // Oops, error!
-          this.snackBar.open(`Oops, for some reasons backend returned ${res}, which seems to be very wrong!`, 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar'],
-          });
-        }
-      }, error => {
-
-        // Oops, error!
-        this.snackBar.open(error.error.message, 'Close', {
-          duration: 5000,
-          panelClass: ['error-snackbar'],
-        });
-      });
-    }
+  protected getData() {
+    return this.data;
   }
 
-  // Invoked when user cancels edit/create operation.
-  cancel() {
-    this.dialogRef.close();
+  /**
+   * Returns a reference to the update method, to update entity.
+   */
+  protected getUpdateMethod() {
+    return this.service.[[service-update-method]](this.data.entity);
+  }
+
+  /**
+   * Returns a reference to the create method, to create new entities.
+   */
+  protected getCreateMethod() {
+    return this.service.[[service-create-method]](this.data.entity);
+  }
+
+  /**
+   * Closes dialog.
+   * 
+   * @param data Entity that was created or updated
+   */
+  public close(data: any) {
+    if (data) {
+      this.dialogRef.close(data);
+    } else {
+      this.dialogRef.close();
+    }
   }
 }

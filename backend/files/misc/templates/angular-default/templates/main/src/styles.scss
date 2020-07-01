@@ -343,3 +343,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .invisible {
     display: none;
 }
+
+.entity-edit-field {
+    width: calc(100% - 1rem);
+    margin-right: 1rem;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+@media screen and (min-width: 800px) {
+    .entity-edit-field {
+        width: calc(50% - 1rem);
+        margin-right: 1rem;
+        text-transform: capitalize;
+        display: inline-block;
+    }
+}
