@@ -7,10 +7,9 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { SecurityComponent } from './components/security/security.component';
 
-// Then importing all "entity components". Basically, the datagrids for viewing entities from your backend.
+// Then importing all CRUD components.
 [[imports-only-main]]
 
-// Creating our routes, one route for each entity type.
 const routes: Routes = [
 
   // First common/global routes.
@@ -18,10 +17,9 @@ const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'security', component: SecurityComponent },
 
-  // Then routes for all entity components.
+  // Then routes for all CRUD components.
 [[routes]]];
 
-// Declaring our main module.
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
