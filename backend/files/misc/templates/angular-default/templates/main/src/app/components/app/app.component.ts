@@ -4,11 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 // Services your app depends upon.
-import { HttpService } from './services/http-service';
-import { LoaderService } from './services/loader-service';
+import { HttpService } from '../../services/http-service';
+import { LoaderService } from '../../services/loader-service';
 
-/*
- * Your actual component.
+/**
+ * Your app's main component.
  *
  * Notice, this is your app's main "wire frame", and supplies you with
  * a login form, a navigation menu, in addition to some other helper functions,
@@ -17,23 +17,14 @@ import { LoaderService } from './services/loader-service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
 
-  // Databound towards login form parts of component.
-  private username: string;
-  private password: string;
-
-  // Databound towards your side navigation. If true, it implies the navbar menu is expanded.
-  private sidenavOpened = false;
-
-  /*
-   * Smaller optimisation to make it easier to check which roles currently logged in
-   * user belongs to. Notice, this is needed to figure out which navbar items we want
-   * to show, and which we want to hide.
-   */
-  private roles: string [] = [];
+  public sidenavOpened = false;
+  public username: string;
+  public password: string;
+  public roles: string [] = [];
 
   // Constructor taking a bunch of services ++ through dependency injection.
   constructor(
@@ -51,20 +42,26 @@ export class AppComponent {
       }
   }
 
-  // Returns true if user is logged in, with a valid token, that's not expired.
-  isLoggedIn() {
+  /**
+   * Returns true if user is logged in, with a valid token, that's not expired.
+   */
+  public isLoggedIn() {
     const token = localStorage.getItem('jwt_token');
     return token !== null && token !== undefined && !this.jwtHelper.isTokenExpired(token);
   }
 
-  // Logs the user out, and removes the token from local storage.
-  logout() {
+  /**
+   * Logs the user out, and removes the token from local storage.
+   */
+  public logout() {
     this.roles = [];
     localStorage.removeItem('jwt_token');
   }
 
-  // Attempts to login user, using the username/password combination he provided in the login form.
-  login() {
+  /**
+   * Attempts to login user, using the username/password combination he provided in the login form.
+   */
+  public login() {
     this.httpService.authenticate(this.username, this.password).subscribe(res => {
 
       // Success! User is authenticated.
@@ -86,8 +83,10 @@ export class AppComponent {
     });
   }
 
-  // Invoked before JWT token expires. Tries to "refresh" the JWT token, by invoking backend method.
-  tryRefreshTicket() {
+  /**
+   * Invoked before JWT token expires. Tries to "refresh" the JWT token, by invoking backend method.
+   */
+  public tryRefreshTicket() {
 
     // Verifying user hasn't logged out since timer was created.
     if (this.isLoggedIn()) {
@@ -99,7 +98,7 @@ export class AppComponent {
         localStorage.setItem('jwt_token', res.ticket);
         setTimeout(() => this.tryRefreshTicket(), 300000);
 
-      }, error => {
+      }, (error: any) => {
 
         // Oops, some sort of error.
         console.error(error);
@@ -114,17 +113,24 @@ export class AppComponent {
     }
   }
 
-  // Invoked when side navigation menu should be showed.
-  openSideNavigation() {
+  /**
+   * Invoked when side navigation menu should be showed.
+   */
+  public openSideNavigation() {
     this.sidenavOpened = true;
   }
 
-  // Invoked when side navigation menu should be hidden.
-  closeNavigator() {
+  /**
+   * Invoked when side navigation menu should be hidden.
+   */
+  public closeNavigator() {
     this.sidenavOpened = false;
   }
 
-  // Returns true if user belongs to (at least) one of the specified role names.
+  /**
+   * Returns true if user belongs to (at least) one of the specified role names.
+   * @param roles List of roles to check whether or not user belongs to one of them
+   */
   inRole(roles: string[]) {
     if (roles === null || roles === undefined || roles.length === 0) {
       return true;

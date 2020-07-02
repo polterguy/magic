@@ -30,7 +30,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 
 // Routing, services, etc imports.
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppComponent } from './components/app/app.component';
 import { LoaderService } from './services/loader-service';
 import { LoaderInterceptor } from './services/loader-interceptor';
 import { FormatDatePipe } from './pipes/format-date-pipe';
