@@ -26,24 +26,20 @@ export class AppComponent {
   public password: string;
   public roles: string [] = [];
 
-  // Constructor taking a bunch of services ++ through dependency injection.
   constructor(
     private httpService: HttpService,
     private jwtHelper: JwtHelperService,
     private snackBar: MatSnackBar,
     private loaderService: LoaderService) {
-
-      // Checking if user is logged in, at which point we initialize the roles property.
       const token = localStorage.getItem('jwt_token');
       if (token !== null && token !== undefined) {
-
-        // Yup! User is logged in!
         this.roles = this.jwtHelper.decodeToken(token).role.split(',');
       }
   }
 
   /**
-   * Returns true if user is logged in, with a valid token, that's not expired.
+   * Returns true if user is logged in, with a valid token,
+   * that is not expired.
    */
   public isLoggedIn() {
     const token = localStorage.getItem('jwt_token');
@@ -59,22 +55,17 @@ export class AppComponent {
   }
 
   /**
-   * Attempts to login user, using the username/password combination he provided in the login form.
+   * Attempts to login user, using the username/password combination he
+   * provided in the login form.
    */
   public login() {
     this.httpService.authenticate(this.username, this.password).subscribe(res => {
-
-      // Success! User is authenticated.
       localStorage.setItem('jwt_token', res.ticket);
       this.username = '';
       this.password = '';
       this.roles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
-
-      // Refreshing JWT token every 5 minute.
       setTimeout(() => this.tryRefreshTicket(), 300000);
     }, (error: any) => {
-
-      // Oops, authentication error, or something similar.
       console.error(error);
       this.snackBar.open(error.error.message, 'Close', {
         duration: 3000,
@@ -84,30 +75,20 @@ export class AppComponent {
   }
 
   /**
-   * Invoked before JWT token expires. Tries to "refresh" the JWT token, by invoking backend method.
+   * Invoked before JWT token expires. Tries to "refresh" the JWT token,
+   * by invoking backend method.
    */
   public tryRefreshTicket() {
-
-    // Verifying user hasn't logged out since timer was created.
     if (this.isLoggedIn()) {
-
-      // Invokes refresh backend method.
       this.httpService.refreshTicket().subscribe(res => {
-
-        // Success, updating JWT token, and invoking "self" 5 minutes from now.
         localStorage.setItem('jwt_token', res.ticket);
         setTimeout(() => this.tryRefreshTicket(), 300000);
-
       }, (error: any) => {
-
-        // Oops, some sort of error.
         console.error(error);
         this.snackBar.open(error, 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar'],
         });
-
-        // Invoking "self" 5 minutes from now.
         setTimeout(() => this.tryRefreshTicket(), 300000);
       });
     }
@@ -129,6 +110,7 @@ export class AppComponent {
 
   /**
    * Returns true if user belongs to (at least) one of the specified role names.
+   * 
    * @param roles List of roles to check whether or not user belongs to one of them
    */
   inRole(roles: string[]) {
