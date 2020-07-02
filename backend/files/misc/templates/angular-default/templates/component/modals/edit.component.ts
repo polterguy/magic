@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { HttpService } from 'src/app/services/http-service';
-import { DialogComponent, DialogData } from '../../../dialog.component';
+import { DialogComponent, DialogData } from '../../../base/dialog.component';
 
 /**
  * Modal dialog for editing your existing [[component-header]] entity types, and/or

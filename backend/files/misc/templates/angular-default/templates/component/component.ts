@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { GridComponent } from '../../grid.component';
+import { GridComponent } from '../../base/grid.component';
 
 import { HttpService } from 'src/app/services/http-service';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
