@@ -1,56 +1,49 @@
  // Common imports from Angular ++.
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-// Material imports.
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTableModule } from '@angular/material/table';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatPaginatorModule } from '@angular/material/paginator';
+// Material imports and other library imports.
+import { ChartsModule } from 'ng2-charts';
+import { JwtModule } from '@auth0/angular-jwt';
 import { MatDialogModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OWL_MOMENT_DATE_TIME_ADAPTER_OPTIONS } from 'ng-pick-datetime-moment';
-import { ChartsModule } from 'ng2-charts';
-
-// Importing "oauth0" to help out with our JWT tokens.
-import { JwtModule } from '@auth0/angular-jwt';
 
 // Routing, services, etc imports.
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './components/app/app.component';
 import { LoaderService } from './services/loader-service';
-import { LoaderInterceptor } from './services/loader-interceptor';
 import { FormatDatePipe } from './pipes/format-date-pipe';
 import { environment } from 'src/environments/environment';
+import { AppComponent } from './components/app/app.component';
+import { LoaderInterceptor } from './services/loader-interceptor';
 
-// All components. First all "global" components.
+// Custom common components.
 import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { SecurityComponent } from './components/security/security.component';
+import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
 import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
 import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
-import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
-import { SecurityComponent } from './components/security/security.component';
 
-// CRUD wrapper components, both for the datagrid, and its associated editor/creator dialog.
+// CRUD specific components (scaffolded components).
 [[imports]]
-
-// Helper to retrieve JWT token. Needed for "oauth0".
-export function tokenGetter() {
-  return localStorage.getItem('jwt_token');
-}
 
 // Your main Angular module.
 @NgModule({
@@ -73,7 +66,7 @@ export function tokenGetter() {
     ReactiveFormsModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter,
+        tokenGetter: () => localStorage.getItem('jwt_token'),
         whitelistedDomains: [environment.apiDomain],
       }
     }),
