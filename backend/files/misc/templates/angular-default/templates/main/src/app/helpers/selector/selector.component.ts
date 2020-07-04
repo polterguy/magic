@@ -1,4 +1,3 @@
-
 import { Observable } from 'rxjs';
 import { Component, OnInit, Input } from '@angular/core';
 import { HttpService } from '../../services/http-service';
@@ -19,6 +18,13 @@ import { HttpService } from '../../services/http-service';
  * The above would create a select list for you, allowing you to
  * select from a list of items, declared in a database table, instead
  * of having user to manually type in the correct key.
+ * 
+ * For the above you have 'data.entity.locale' normally being bound
+ * towards an input field, and the services.languages_Get method returns
+ * a list of items with a 'key' and a 'description', where the value of
+ * the 'data.entity.locale' would be expected to be the value of your
+ * select list when an item is chosen, with 'description' being its friendly
+ * description(s).
  */
 @Component({
   selector: 'app-selector',
