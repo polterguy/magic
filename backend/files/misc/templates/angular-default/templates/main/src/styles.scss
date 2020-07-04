@@ -349,6 +349,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin-right: 1rem;
     text-transform: capitalize;
     display: inline-block;
+    mat-icon {
+        color: rgb(128, 128, 128);
+        font-size: 1.1rem !important;
+    }
 }
 
 @media screen and (min-width: 800px) {

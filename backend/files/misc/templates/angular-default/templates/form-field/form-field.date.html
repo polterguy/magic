@@ -5,11 +5,10 @@
       matInput
       placeholder="[[column-name]]"
       [owlDateTime]="picker[[column-name]]"
+      [owlDateTimeTrigger]="picker[[column-name]]"
       [(ngModel)]="data.entity.[[column-name]]"
       autocomplete="off">
     <owl-date-time #picker[[column-name]]></owl-date-time>
-    <mat-datepicker-toggle matSuffix [for]="picker[[column-name]]">
-      <mat-icon matSuffix matDatepickerToggleIcon>calendar_today</mat-icon>
-    </mat-datepicker-toggle>
+    <mat-icon matSuffix matDatepickerToggleIcon>calendar_today</mat-icon>
   </mat-form-field>
 
