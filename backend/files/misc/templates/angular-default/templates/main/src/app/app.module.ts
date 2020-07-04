@@ -35,6 +35,7 @@ import { AppComponent } from './components/app/app.component';
 import { LoaderInterceptor } from './services/loader-interceptor';
 
 // Custom common components.
+import { SelectorComponent } from './helpers/selector/selector.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { SecurityComponent } from './components/security/security.component';
@@ -49,6 +50,7 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
 @NgModule({
   declarations: [
     AppComponent,
+    SelectorComponent,
     HomeComponent,
     AuthComponent,
     CreateRoleDialogComponent,
