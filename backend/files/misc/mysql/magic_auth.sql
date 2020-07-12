@@ -13,8 +13,8 @@
  * "-- DROP DATABASE `magic_auth;`" parts below.
  */
 -- DROP DATABASE `magic_auth`;
-CREATE DATABASE `magic_auth`;
-USE `magic_auth`;
+-- CREATE DATABASE `magic_auth`;
+-- USE `magic_auth`;
 
 
 /*
