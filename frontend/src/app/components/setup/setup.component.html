@@ -20,14 +20,14 @@
     <ol>
       <li>Choose a JWT secret that's at least 50 random characters long</li>
       <li>Select your database type, either MySQL or Microsoft SQL Server</li>
+      <li>Select your authentication database catalogue</li>
       <li>Modify your database connection string. The connection string must have <code>{{ '{' }}database{{ '}' }}</code> as its database/initial-catalog</li>
       <li>Choose a root password, make sure it's highly difficult since it'll give you complete root access to your system</li>
-      <li>Click the <strong>Save</strong> button</li>
     </ol>
 
     <p>
-      This process will change your <em>"appsettings.json"</em> file, and also create a database called <em>"magic_auth"</em> in
-      your MySQL or MS SQL instance.
+      This process will change your <em>"appsettings.json"</em> file, and also create your authentication database
+      your MySQL or MS SQL instance, unless this database already exists from before.
     </p>
 
     <mat-form-field
@@ -53,7 +53,17 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mssql'"
+      style="min-width: 20rem;margin-left: 1rem;"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null">
+      <input
+        matInput
+        placeholder="Authentication database name to use"
+        type="text"
+        [(ngModel)]="authenticationDatabase">
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mssql' && authenticationDatabase !== ''"
       class="fill-width">
       <input
         matInput
@@ -63,7 +73,7 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql'"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql' && authenticationDatabase !== ''"
       class="fill-width">
       <input
         matInput
@@ -73,13 +83,13 @@
     </mat-form-field>
 
     <p
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null">
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''">
       Choose a password for your Magic root user
     </p>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
-      style="margin-right: 1rem;">
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''"
+      style="margin-right: 1rem;min-width: 20rem;">
       <input
         matInput
         placeholder="Password"
@@ -88,7 +98,8 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null">
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''"
+      style="min-width: 20rem;">
       <input
         matInput
         placeholder="Repeat password"

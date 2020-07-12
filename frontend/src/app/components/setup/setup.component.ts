@@ -15,6 +15,7 @@ export class SetupComponent implements OnInit {
   public config: any = null;
   public jwtSecret: string = null;
   public databaseType: string = null;
+  public authenticationDatabase: string = 'magic_auth';
   public mssqlConnectionString: string = null;
   public mysqlConnectionString: string = null;
   public password: string = null;
@@ -98,7 +99,11 @@ export class SetupComponent implements OnInit {
           this.ticketService.authenticate('root', 'root').subscribe(() => {
 
             // Setting up authentication system and database.
-            this.setupService.setupAuthentication(this.databaseType, 'root', this.password).subscribe(setupAuthResult => {
+            this.setupService.setupAuthentication(
+              this.databaseType,
+              this.authenticationDatabase,
+              'root',
+              this.password).subscribe(setupAuthResult => {
 
               if (setupAuthResult.result === 'success') {
 
@@ -155,6 +160,11 @@ export class SetupComponent implements OnInit {
     });
   }
 
+  /**
+   * Shows an error
+   * 
+   * @param error Error, or string
+   */
   showError(error: string) {
     this.snackBar.open(error, 'Close', {
       duration: 10000,
@@ -162,8 +172,13 @@ export class SetupComponent implements OnInit {
     });
   }
 
-  showInfo(error: string) {
-    this.snackBar.open(error, 'Close', {
+  /**
+   * Shows generic information
+   * 
+   * @param info Information text to show
+   */
+  showInfo(info: string) {
+    this.snackBar.open(info, 'Close', {
       duration: 2000,
       panelClass: ['info-snackbar'],
     });

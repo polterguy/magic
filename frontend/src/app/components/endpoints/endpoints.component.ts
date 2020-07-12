@@ -77,7 +77,8 @@ export class EndpointsComponent implements OnInit {
   }
 
   hasSelectedEndpoints() {
-    return this.endpoints.filter(x => x.selected).length > 0;
+    return this.endpoints.filter(x => x.selected).length > 0 ||
+      this.endpoints.filter(x => x.endpoint.path.includes('/roles-count')).length > 0;
   }
 
   getFilteredSystemEndpoints() {
