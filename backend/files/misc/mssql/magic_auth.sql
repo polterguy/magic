@@ -6,17 +6,8 @@
 
 
 /*
- * Creates the magic_auth database in Microsoft SQL Server.
- *
- * Notice, if you want to re-create the database, due to that something
- * went wrong during your initial setup, you might want to uncomment the
- * "-- DROP DATABASE magic_auth;" parts below.
+ * Creates the authentication database in Microsoft SQL Server.
  */
-use [master];
--- DROP DATABASE magic_auth;
-CREATE DATABASE magic_auth;
-GO
-USE magic_auth;
 
 
 /*
