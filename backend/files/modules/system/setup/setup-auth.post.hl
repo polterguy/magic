@@ -4,6 +4,7 @@
  */
 .arguments
    databaseType:string
+   authDatabase:string
    rootUsername:string
    rootPassword:string
 .description:"Sets up authentication of system according to the arguments provided."
@@ -19,7 +20,9 @@ auth.ticket.verify:root
 strings.concat
    .:"Trying to setup up Magic with '"
    get-value:x:@.arguments/*/databaseType
-   .:"' as authentication database type"
+   .:"' as authentication database type and '"
+   get-value:x:@.arguments/*/authDatabase
+   .:"' as database catalogue for authentication"
 log.info:x:@strings.concat
 
 
@@ -65,17 +68,22 @@ signal:x:-
 
 
 /*
- * Checking if "magic_auth" was returned from above invocation, and
+ * Checking if authDatabase was returned from above invocation, and
  * system does not have a non-default authentication database declared
  * in its configuration.
  */
-if
-   and
+.exists:bool:false
+for-each:x:@signal/*/*
+   if
       eq
-         config.get:"magic:auth:database"
-         .:magic_auth
-      not
-         exists:x:@signal/*/*/=magic_auth
+         get-value:x:@.dp/#
+         get-value:x:@.arguments/*/authDatabase
+   .lambda
+      set-value:x:@.exists
+         .:bool:true
+if
+   not
+      get-value:x:@.exists
    .lambda
 
 
@@ -103,12 +111,36 @@ if
        */
       log.info:x:@strings.concat
       io.file.load:x:@strings.concat
+      switch:x:@.arguments/*/databaseType
+         case:mysql
+            set-value:x:@io.file.load
+               strings.concat
+                  .:"create database `"
+                  get-value:x:@.arguments/*/authDatabase
+                  .:"`;use `"
+                  get-value:x:@.arguments/*/authDatabase
+                  .:"`;"
+                  get-value:x:@io.file.load
+         case:mssql
+            set-value:x:@io.file.load
+               strings.concat
+                  .:@"use master;
+create database ["
+                  get-value:x:@.arguments/*/authDatabase
+                  .:@"];
+GO
+use ["
+                  get-value:x:@.arguments/*/authDatabase
+                  .:@"];
+"
+                  get-value:x:@io.file.load
 
 
       /*
        * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
        * accommodate for "GO" statements and such.
        */
+      log.info:x:@io.file.load
       .slot
       if
          eq
