@@ -78,9 +78,9 @@ for-each:x:@signal/*/*
       eq
          get-value:x:@.dp/#
          get-value:x:@.arguments/*/authDatabase
-   .lambda
-      set-value:x:@.exists
-         .:bool:true
+      .lambda
+         set-value:x:@.exists
+            .:bool:true
 if
    not
       get-value:x:@.exists
