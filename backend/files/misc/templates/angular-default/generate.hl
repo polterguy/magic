@@ -309,8 +309,14 @@ for-each:x:@.crud-methods/*
                   .:", '"
                   get-value:x:@.dp/#
                   .:"'"
-         strings.trim:x:@.read-roles
-            .:", "
+         if
+            not
+               eq
+                  get-value:x:@.read-roles
+                  .
+            .lambda
+               strings.trim:x:@.read-roles
+                  .:", "
 
 
          /*
