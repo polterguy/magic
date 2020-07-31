@@ -28,7 +28,7 @@ create table `task_log` (
   `task_id` int(11) not null,
   `success` boolean not null,
   `exception` text null,
-  `when` datetime not null default current_timestamp,
+  `created` datetime not null default current_timestamp,
   constraint `task_log_task_id_fky` foreign key (`task_id`) references `tasks` (`id`) on delete cascade
 );
 
