@@ -17,10 +17,7 @@ create table tasks (
   description varchar(1024) not null,
   content ntext not null,
   created datetime not null default current_timestamp,
-  constraint [pk_tasks] primary key clustered 
-  (
-      id asc
-  )
+  constraint [pk_tasks] primary key clustered (id asc)
 )
 go
 
@@ -32,7 +29,7 @@ create table task_log (
   success boolean not null,
   exception text null,
   created datetime not null default current_timestamp,
-  constraint [task_log_task_id_fky] foreign key ([task_id]) references [dbo].[tasks] ([id]) on delete cascade
+  constraint task_log_task_id_fky foreign key (task_id) references tasks (id) on delete cascade
 )
 go
 
