@@ -4,49 +4,45 @@
  * in MySQL.
  */
 create database magic_tasks
-
 go
 
 use magic_tasks
-
 go
 
 /*
  * Creating tasks table.
  */
-create table [dbo].[tasks] (
-  [id] int(11) not null auto_increment,
-  [description] varchar(1024) not null,
-  [content] ntext not null,
-  [created] datetime not null default current_timestamp,
+create table tasks (
+  id int(11) not null auto_increment,
+  description varchar(1024) not null,
+  content ntext not null,
+  created datetime not null default current_timestamp,
   constraint [pk_tasks] primary key clustered 
   (
-      [id] asc
+      id asc
   )
 )
-
 go
 
 /*
  * Creating task_log table.
  */
-create table [dbo].[task_log] (
-  [task_id] int(11) not null,
-  [success] boolean not null,
-  [exception] text null,
-  [when] datetime not null default current_timestamp,
+create table task_log (
+  task_id int(11) not null,
+  success boolean not null,
+  exception text null,
+  when datetime not null default current_timestamp,
   constraint [task_log_task_id_fky] foreign key ([task_id]) references [dbo].[tasks] ([id]) on delete cascade
 )
-
 go
 
 /*
  * Creating task_due table.
  */
-create table [dbo].[task_due] (
-  [id] int(11) not null auto_increment,
-  [task_id] int(11) not null,
-  [due] datetime not null default current_timestamp,
+create table task_due (
+  id int(11) not null auto_increment,
+  task_id int(11) not null,
+  due datetime not null default current_timestamp,
 
   /*
    * The following if defined should be a repetition pattern, in the form of
@@ -66,8 +62,9 @@ create table [dbo].[task_due] (
    * If no repetition pattern is defined (null), the task will only be executed once, during its
    * due date as defined when created, for then to have it task_due record deleted.
    */
-  [repetition] varchar(128) null,
-  constraint [task_due_task_id_fky] foreign key ([task_id]) references [dbo].[tasks] ([id]) on delete cascade,
-  primary key ([id]),
-  unique key [id_UNIQUE] ([id])
+  repetition varchar(128) null,
+  constraint task_due_task_id_fky foreign key (task_id) references tasks (id) on delete cascade,
+  primary key (id),
+  unique key id_UNIQUE (id)
 )
+go
