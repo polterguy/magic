@@ -3,7 +3,6 @@
  * This MySQL script creates the Magic Task Scheduler database for you,
  * in MySQL.
  */
-drop database magic_tasks;
 create database magic_tasks;
 use magic_tasks;
 
