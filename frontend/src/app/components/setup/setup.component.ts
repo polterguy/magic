@@ -81,8 +81,6 @@ export class SetupComponent implements OnInit {
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
     this.config.magic.databases.default = this.databaseType;
     this.config.magic.scheduler['auto-start'] = this.taskScheduler;
-    console.log(this.config);
-    return;
     this.isFetching = true;
 
     // Saving appsettings.json file on server.
