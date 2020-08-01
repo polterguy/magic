@@ -22,6 +22,7 @@ export class SetupComponent implements OnInit {
   public repeatPassword: string = null;
   public hasShownSuccess = false;
   public isFetching = false;
+  public taskScheduler = true;
 
   constructor(
     private setupService: SetupService,
@@ -79,6 +80,9 @@ export class SetupComponent implements OnInit {
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
     this.config.magic.databases.default = this.databaseType;
+    this.config.magic.scheduler['auto-start'] = this.taskScheduler;
+    console.log(this.config);
+    return;
     this.isFetching = true;
 
     // Saving appsettings.json file on server.
