@@ -347,7 +347,7 @@ if
                   mssql.execute:x:@io.file.load
       log.info:Task scheduler successfully initialized and its database was created
       .catch
-         log.info:Task scheduler database already exists
+         log.info:Exception during executing task scheduler SQL script. Task scheduler database probably already exists.
 
       /*
        * Starting scheduler.
