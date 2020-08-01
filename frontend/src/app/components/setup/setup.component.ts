@@ -105,7 +105,8 @@ export class SetupComponent implements OnInit {
               this.databaseType,
               this.authenticationDatabase,
               'root',
-              this.password).subscribe(setupAuthResult => {
+              this.password,
+              this.taskScheduler).subscribe(setupAuthResult => {
 
               if (setupAuthResult.result === 'success') {
 
