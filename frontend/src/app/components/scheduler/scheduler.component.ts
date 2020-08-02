@@ -16,9 +16,8 @@ export class SchedulerComponent implements OnInit {
 
   public schedulerState: string;
   public isRunning: boolean;
-  public displayedColumns = ['name', 'description', 'due', 'delete'];
+  public displayedColumns = ['id', 'description', 'delete'];
   public tasks: any[];
-  public selectedTaskName: string = null;
   public selectedTask: TaskModel = null;
   public filter: string = null;
 
@@ -56,7 +55,6 @@ export class SchedulerComponent implements OnInit {
   getTasks() {
     this.schedulerService.listTasks().subscribe(res => {
       this.selectedTask = null;
-      this.selectedTaskName = null;
       this.tasks = res || [];
     });
   }
@@ -93,11 +91,8 @@ export class SchedulerComponent implements OnInit {
       (x.description !== null && x.description !== undefined && x.description.toLowerCase().indexOf(this.filter.toLowerCase()) > -1));
   }
 
-  selectTask(name: string) {
-    this.selectedTaskName = name;
-    this.schedulerService.getTask(name).subscribe(res => {
-      this.selectedTask = res;
-    });
+  selectTask(task: any) {
+    this.selectedTask = task;
   }
 
   getInterval(interval: string) {
