@@ -14,10 +14,12 @@ go
  */
 create table tasks (
   id int(11) not null auto_increment,
+  title varchar(256) not null,
   description varchar(1024) not null,
-  content ntext not null,
+  hyperlambda ntext not null,
   created datetime not null default current_timestamp,
-  constraint [pk_tasks] primary key clustered (id asc)
+  constraint [pk_tasks] primary key clustered (id asc),
+  unique key title_UNIQUE (title)
 )
 go
 
