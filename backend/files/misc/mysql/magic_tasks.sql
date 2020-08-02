@@ -25,7 +25,7 @@ create table tasks (
 create table task_due (
   id int(11) not null auto_increment,
   task varchar(256) not null,
-  due datetime not null default current_timestamp,
+  due datetime not null,
   repetition varchar(128) null,
   constraint task_due_task_fky foreign key (task) references tasks (id) on delete cascade,
   primary key (id),
