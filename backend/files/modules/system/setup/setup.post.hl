@@ -8,7 +8,7 @@
    rootUsername:string
    rootPassword:string
    scheduler:bool
-.description:"Sets up authentication of system according to the arguments provided."
+.description:"Sets up authentication and other parts of the system according to the arguments provided."
 
 
 /*
@@ -113,6 +113,10 @@ if
       log.info:x:@strings.concat
       io.file.load:x:@strings.concat
       switch:x:@.arguments/*/databaseType
+
+         /*
+          * MySQL data adapter.
+          */
          case:mysql
             set-value:x:@io.file.load
                strings.concat
@@ -122,6 +126,10 @@ if
                   get-value:x:@.arguments/*/authDatabase
                   .:"`;"
                   get-value:x:@io.file.load
+
+         /*
+          * Microsoft SQL Server data adapter.
+          */
          case:mssql
             set-value:x:@io.file.load
                strings.concat
@@ -335,19 +343,28 @@ if
       log.info:Trying to setup task scheduler
       try
          switch:x:@.arguments/*/databaseType
+
+            /*
+             * MySQL data adapter.
+             */
             case:mysql
                log.info:Using MySQL as database type for task scheduler
                io.file.load:/misc/mysql/magic_tasks.sql
                mysql.connect
                   mysql.execute:x:@io.file.load
+
+            /*
+             * Microsoft SQL Server data adapter.
+             */
             case:mssql
                log.info:Using MS SQL as database type for task scheduler
                io.file.load:/misc/mssql/magic_tasks.sql
                mssql.connect
                   mssql.execute:x:@io.file.load
+
       log.info:Task scheduler successfully initialized and its database was created
       .catch
-         log.info:Exception during executing task scheduler SQL script. Task scheduler database probably already exists.
+         log.info:Exception during executing task scheduler SQL script. Task scheduler database probably already exists from before.
 
       /*
        * Starting scheduler.

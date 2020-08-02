@@ -101,7 +101,7 @@ export class SetupComponent implements OnInit {
           this.ticketService.authenticate('root', 'root').subscribe(() => {
 
             // Setting up authentication system and database.
-            this.setupService.setupAuthentication(
+            this.setupService.setup(
               this.databaseType,
               this.authenticationDatabase,
               'root',
