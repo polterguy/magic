@@ -34,7 +34,7 @@ export class AuthService {
     }
     return this.httpClient.get<any>(
       environment.apiUrl +
-      'magic/modules/magic_auth/users' + query);
+      'magic/modules/magic/users' + query);
   }
 
   // Returns count of users according to the specified filter condition.
@@ -45,7 +45,7 @@ export class AuthService {
     }
     return this.httpClient.get<any>(
       environment.apiUrl +
-      'magic/modules/magic_auth/users-count' + query);
+      'magic/modules/magic/users-count' + query);
   }
 
   // Returns all roles according to the specified filter condition.
@@ -60,7 +60,7 @@ export class AuthService {
     }
     return this.httpClient.get<any>(
       environment.apiUrl +
-      'magic/modules/magic_auth/roles' + query);
+      'magic/modules/magic/roles' + query);
   }
 
   // Returns count of roles according to the specified filter condition.
@@ -71,12 +71,12 @@ export class AuthService {
     }
     return this.httpClient.get<any>(
       environment.apiUrl +
-      'magic/modules/magic_auth/roles-count' + query);
+      'magic/modules/magic/roles-count' + query);
   }
 
   // Creates a new user.
   createUser(username: string, password: string) {
-    return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic_auth/users', {
+    return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/users', {
       username,
       password,
     });
@@ -84,7 +84,7 @@ export class AuthService {
 
   // Creates a new role.
   createRole(name: string, description?: string) {
-    return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic_auth/roles', {
+    return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/roles', {
       name,
       description,
     });
@@ -94,26 +94,26 @@ export class AuthService {
   deleteUser(username: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl + 
-      'magic/modules/magic_auth/users?username=' + encodeURIComponent(username));
+      'magic/modules/magic/users?username=' + encodeURIComponent(username));
   }
 
   // Deletes an existing role.
   deleteRole(name: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl + 
-      'magic/modules/magic_auth/roles?name=' + encodeURIComponent(name));
+      'magic/modules/magic/roles?name=' + encodeURIComponent(name));
   }
 
   // Returns all roles that the specified user belongs to.
   getUserRoles(username: string) {
     return this.httpClient.get<any>(
       environment.apiUrl +
-      'magic/modules/magic_auth/users_roles?user.eq=' + encodeURIComponent(username));
+      'magic/modules/magic/users_roles?user.eq=' + encodeURIComponent(username));
   }
 
   // Adds a specified user to a specified role.
   addRoleToUser(user: string, role: string) {
-    return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic_auth/users_roles', {
+    return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/users_roles', {
       user,
       role,
     });
@@ -123,7 +123,7 @@ export class AuthService {
   deleteRoleFromUser(user: string, role: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl + 
-      'magic/modules/magic_auth/users_roles?role=' + encodeURIComponent(role) +
+      'magic/modules/magic/users_roles?role=' + encodeURIComponent(role) +
       '&user=' + encodeURIComponent(user));
   }
 }

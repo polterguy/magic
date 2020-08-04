@@ -4,14 +4,14 @@
  *
  * NOTICE!
  * This is a "one size fits all" solution to the authentication issue in Magic,
- * and intended to in combination with the "magic_auth.sql" script and
+ * and intended to in combination with the "magic.sql" script and
  * "create-user.hl" script strings.replace the existing authentication, that simply checks
  * to see if the username/password as root/root.
  *
- * It relies upon the existence of a "magic_auth" database, with its "users",
+ * It relies upon the existence of a "magic" database, with its "users",
  * "roles" and other tables to authenticate users.
  *
- * To use it, first create your "magic_auth" database by executing "magic_auth.sql".
+ * To use it, first create your "magic" database by executing "magic.sql".
  * Then insert at least one user using the "create-user.hl" file (remember your password).
  * Then copy and paste this entire file's content, and paste it into
  * "/modules/system/authenticate.get.hl", evaluate the file, and you can now login
@@ -23,7 +23,7 @@ slots.create:magic.authenticate
    /*
     * Opens up our database connection.
     */
-   mssql.connect:[magic_auth]
+   mssql.connect:[magic]
 
 
       /*
