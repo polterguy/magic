@@ -2,7 +2,7 @@
  * Updates a single record in a MySQL table.
  */
 wait.signal:magic.db.mysql.update
-   database:magic_auth
+   database:magic
    table:roles
    values
    ids

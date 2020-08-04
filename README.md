@@ -54,6 +54,34 @@ These are probably the most important parts if you intend to develop in Hyperlam
 * [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda) - Parse Hyperlambda from text, and vice versa.
 * [Magic Lambda Validators](https://github.com/polterguy/magic.lambda.validators) - Validate input in Hyperlambda.
 
+#### Extending Hyperlambda
+
+You can easily extend Hyperlambda with your own _"keywords"_ - Or _"slots"_ to be specifically. This is done by
+implementing the `ISlot` interface on your class, and adding an attribute to it as follows.
+
+```csharp
+using magic.node;
+using magic.signals.contracts;
+
+namespace acme.foo
+{
+    [Slot(Name = "acme.foo")]
+    public class Foo : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
+            input.Value = "Hello World";
+        }
+    }
+}
+```
+
+The above will result in a slot you can invoke from Hyperlambda using the following code.
+
+```
+acme.foo
+```
+
 ### Supporting libraries
 
 * [Magic IO](https://github.com/polterguy/magic.io)

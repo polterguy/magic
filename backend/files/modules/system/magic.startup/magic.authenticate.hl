@@ -15,11 +15,11 @@
  * I have consciously left this as an exercize for yourself to figure out.
  *
  * There does however exist helper code to accomplish this, both to create
- * your own "magic_auth" database, and to strings.replace this slots.create's code with
+ * your own "magic" database, and to strings.replace this slots.create's code with
  * a real slots.create checking usernames and password combination towards that
  * database.
  *
- * See the files "/misc/magic_auth.sql", "/misc/authenticate.hl" and
+ * See the files "/misc/magic.sql", "/misc/authenticate.hl" and
  * "/misc/create-users.hl" for an example of how to implement a real
  * authentication system in your system.
  */
