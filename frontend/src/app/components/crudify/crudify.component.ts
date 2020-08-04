@@ -103,11 +103,11 @@ export class CrudifyComponent implements OnInit {
   public columns: ColumnModel[] = [];
   public validators: ValidatorModel[] = [];
   public overwrite = false;
-  isCrudifying = false;
-  noEndpointsCreated = 0;
-  noLoc = 0;
-  currentlyCrudifying = '';
-  isStatistics = false;
+  public isCrudifying = false;
+  public noEndpointsCreated = 0;
+  public noLoc = 0;
+  public currentlyCrudifying = '';
+  public isStatistics = false;
 
   // Endpoints that will be created
   public endpoints: EndpointModel[] = [];
@@ -517,6 +517,15 @@ signal:transformers.hash-password
       this.overwrite = true;
       this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} ` +
         `lines of code created successfully. You might want to overwrite individual table endpoints for special cases now.`);
+      return;
+    }
+
+    // Avoiding CRUDifying magic/tasks and due_task
+    if (this.selectedDatabase === 'magic' && (tables[0].table === 'tasks' || tables[0].table === 'task_due')) {
+
+      // We don't crudify these tables (by default).
+      this.crudifyTopTable(tables.slice(1));
+      this.showSuccess('magic/tasks and magic/task_due were not crudified. If you want to crudify these tables, choose them explicitly.');
       return;
     }
 
