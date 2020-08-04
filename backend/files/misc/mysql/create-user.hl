@@ -1,6 +1,6 @@
 
 /*
- * Creates a user and inserts into the "magic_auth" database,
+ * Creates a user and inserts into the "magic" database,
  * with the username/password specified in the [.parameters] collection,
  * and belonging to the specified [roles] from the [.parameters] collection.
  *
@@ -18,7 +18,7 @@ crypto.password.hash:x:@.arguments/*/password
 
 
 /*
- * Opening up a database connection to `magic_auth`.
+ * Opening up a database connection to magic.
  */
 config.get:"magic:auth:database"
 mysql.connect:x:-
