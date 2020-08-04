@@ -7,7 +7,8 @@
    authDatabase:string
    rootUsername:string
    rootPassword:string
-.description:"Sets up authentication of system according to the arguments provided."
+   scheduler:bool
+.description:"Sets up authentication and other parts of the system according to the arguments provided."
 
 
 /*
@@ -102,7 +103,7 @@ if
       strings.concat
          .:/misc/
          get-value:x:@.arguments/*/databaseType
-         .:/magic_auth.sql
+         .:/magic.sql
 
 
       /*
@@ -112,6 +113,10 @@ if
       log.info:x:@strings.concat
       io.file.load:x:@strings.concat
       switch:x:@.arguments/*/databaseType
+
+         /*
+          * MySQL data adapter.
+          */
          case:mysql
             set-value:x:@io.file.load
                strings.concat
@@ -121,6 +126,10 @@ if
                   get-value:x:@.arguments/*/authDatabase
                   .:"`;"
                   get-value:x:@io.file.load
+
+         /*
+          * Microsoft SQL Server data adapter.
+          */
          case:mssql
             set-value:x:@io.file.load
                strings.concat
@@ -319,6 +328,20 @@ if
       unwrap:x:+/*
       signal:magic.change-password
          password:x:@.arguments/*/rootPassword
+
+
+/*
+ * Checking if we should initialize task scheduler.
+ */
+wait.if
+   get-value:x:@.arguments/*/scheduler
+   .lambda
+
+      /*
+       * Starting scheduler.
+       */
+      log.info:Starting task scheduler
+      wait.scheduler.start
 
 
 /*

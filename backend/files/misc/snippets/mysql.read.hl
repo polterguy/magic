@@ -2,7 +2,7 @@
  * Loads records from a MySQL table.
  */
 wait.signal:magic.db.mysql.read
-   database:magic_auth
+   database:magic
    table:roles
    args
       limit:int:5

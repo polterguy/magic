@@ -99,13 +99,19 @@
 
     <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''"
-      style="min-width: 20rem;">
+      style="margin-right: 1rem;min-width: 20rem;">
       <input
         matInput
         placeholder="Repeat password"
         type="password"
         [(ngModel)]="repeatPassword">
     </mat-form-field>
+
+    <mat-checkbox
+      *ngIf="checkConfig()"
+      matTooltip="Starts task scheduler automatically"
+      style="min-width: 20rem;"
+      [(ngModel)]="taskScheduler">Start task scheduler</mat-checkbox>
 
     <div
       *ngIf="checkConfig()"

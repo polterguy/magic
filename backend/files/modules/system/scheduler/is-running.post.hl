@@ -16,12 +16,12 @@ auth.ticket.verify:root
 /*
  * Checks if caller wants to turn scheduler on or off.
  */
-if
+wait.if
    eq
       get-value:x:@.arguments/*/value
       .:bool:true
    .lambda
-      scheduler.start
+      wait.scheduler.start
       return-nodes
          result:OK
          status:Scheduler was started

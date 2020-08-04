@@ -2,7 +2,7 @@
  * Creates a record in a MySQL table.
  */
 wait.signal:magic.db.mysql.create
-   database:magic_auth
+   database:magic
    table:roles
    values
       name:foo-bar

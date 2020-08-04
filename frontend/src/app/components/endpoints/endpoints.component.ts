@@ -41,7 +41,7 @@ export class EndpointsComponent implements OnInit {
           endpoint: x,
           extra: null,
           selected: !x.path.startsWith('magic/modules/system/') &&
-          !x.path.startsWith('magic/modules/magic_auth/'),
+          !x.path.startsWith('magic/modules/magic/'),
         };
       });
       this.isFetching = false;

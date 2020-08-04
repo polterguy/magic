@@ -25,18 +25,20 @@ export class SetupService {
       'magic/modules/system/setup/save-config-file', config);
   }
 
-  setupAuthentication(
+  setup(
     databaseType: string,
     authDatabase: string,
     rootUsername: string,
-    rootPassword: string) {
+    rootPassword: string,
+    scheduler: boolean) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/setup/setup-auth', {
+      'magic/modules/system/setup/setup', {
         databaseType,
         authDatabase,
         rootUsername,
         rootPassword,
+        scheduler,
       });
   }
 }

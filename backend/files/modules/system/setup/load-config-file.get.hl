@@ -15,4 +15,11 @@ auth.ticket.verify:root
  * Returns the "appsettings.json" file to caller
  */
 load-app-settings
-return-value:x:-
+crypto.random
+   min:50
+   max:100
+json2lambda:x:@load-app-settings
+set-value:x:@json2lambda/*/magic/*/auth/*/secret
+   get-value:x:@crypto.random
+lambda2json:x:@json2lambda/*
+return-value:x:@lambda2json

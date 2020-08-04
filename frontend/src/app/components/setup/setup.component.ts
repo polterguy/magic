@@ -15,13 +15,14 @@ export class SetupComponent implements OnInit {
   public config: any = null;
   public jwtSecret: string = null;
   public databaseType: string = null;
-  public authenticationDatabase: string = 'magic_auth';
+  public authenticationDatabase: string = 'magic';
   public mssqlConnectionString: string = null;
   public mysqlConnectionString: string = null;
   public password: string = null;
   public repeatPassword: string = null;
   public hasShownSuccess = false;
   public isFetching = false;
+  public taskScheduler = true;
 
   constructor(
     private setupService: SetupService,
@@ -79,6 +80,7 @@ export class SetupComponent implements OnInit {
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
     this.config.magic.databases.default = this.databaseType;
+    this.config.magic.scheduler['auto-start'] = this.taskScheduler;
     this.isFetching = true;
 
     // Saving appsettings.json file on server.
@@ -99,11 +101,12 @@ export class SetupComponent implements OnInit {
           this.ticketService.authenticate('root', 'root').subscribe(() => {
 
             // Setting up authentication system and database.
-            this.setupService.setupAuthentication(
+            this.setupService.setup(
               this.databaseType,
               this.authenticationDatabase,
               'root',
-              this.password).subscribe(setupAuthResult => {
+              this.password,
+              this.taskScheduler).subscribe(setupAuthResult => {
 
               if (setupAuthResult.result === 'success') {
 
