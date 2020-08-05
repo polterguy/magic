@@ -1,4 +1,3 @@
-
 /*
  * This Microsoft SQL Server script creates a database for you, with 5 tables,
  * serving as an authentication/authorization database for you,
@@ -15,9 +14,9 @@
  * Creating our users table in the dbo namespace.
  */
 create table users (
-	username nvarchar(128) not null,
-	[password] nvarchar(128) not null,
-    constraint pk_users primary key clustered(username asc)
+  username nvarchar(128) not null,
+  [password] nvarchar(128) not null,
+  constraint pk_users primary key clustered(username asc)
 );
 go
 
@@ -26,9 +25,9 @@ go
  * Creating our roles table in the dbo namespace.
  */
 create table roles (
-	[name] nvarchar(45) not null,
-	[description] nvarchar(128) not null,
-    constraint pk_roles primary key clustered([name] asc)
+  [name] nvarchar(45) not null,
+  [description] nvarchar(128) not null,
+  constraint pk_roles primary key clustered([name] asc)
 );
 go
 
@@ -38,23 +37,23 @@ go
  * This table is our association from one user to multiple roles.
  */
 create table users_roles (
-	user nvarchar(128) not null,
-	[role] nvarchar(45) not null,
-    constraint pk_users_roles primary key clustered(user asc, [role] asc)
+  [user] nvarchar(128) not null,
+  [role] nvarchar(45) not null,
+  constraint pk_users_roles primary key clustered([user] asc, [role] asc)
 );
 go
 
 
 alter table users_roles
-    add foreign key (user)
-    references users(username)
-    on delete cascade;
+  add foreign key ([user])
+  references users(username)
+  on delete cascade;
 go
 
 alter table users_roles
-    add foreign key ([role])
-    references roles([name])
-    on delete cascade;
+  add foreign key ([role])
+  references roles([name])
+  on delete cascade;
 go
 
 
@@ -84,16 +83,16 @@ go
  * Creating task_due table.
  */
 create table task_due (
-  id int not null auto_increment,
+  id int not null identity(1,1),
   task nvarchar(256) not null,
   due datetime not null,
   repeats nvarchar(128) null,
   constraint pk_task_due primary key clustered(id asc)
 );
 alter table task_due
-    add foreign key (task)
-    references tasks(id)
-    on delete cascade;
+  add foreign key (task)
+  references tasks(id)
+  on delete cascade;
 go
 
 
