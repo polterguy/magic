@@ -1,7 +1,8 @@
 
 /*
- * This Microsoft SQL Server script creates a database for you, with 3 tables,
- * serving as an authentication/authorization database for you.
+ * This Microsoft SQL Server script creates a database for you, with 5 tables,
+ * serving as an authentication/authorization database for you,
+ * in addition to your task scheduler database tables.
  */
 
 
@@ -13,60 +14,48 @@
 /*
  * Creating our users table in the dbo namespace.
  */
-CREATE TABLE [dbo].[users](
-	[username] [nvarchar](128) NOT NULL,
-	[password] [nvarchar](128) NOT NULL,
-    CONSTRAINT [PK_users] PRIMARY KEY CLUSTERED 
-    (
-        [username] ASC
-    )
+create table users (
+	username nvarchar(128) not null,
+	[password] nvarchar(128) not null,
+    constraint pk_users primary key clustered(username asc)
 );
-GO
+go
 
 
 /*
  * Creating our roles table in the dbo namespace.
  */
-CREATE TABLE [dbo].[roles](
-	[name] [nvarchar](45) NOT NULL,
-	[description] [nvarchar](128) NOT NULL,
-    CONSTRAINT [PK_roles] PRIMARY KEY CLUSTERED 
-    (
-        [name] ASC
-    )
+create table roles (
+	[name] nvarchar(45) not null,
+	[description] nvarchar(128) not null,
+    constraint pk_roles primary key clustered([name] asc)
 );
-GO
+go
 
 
 /*
  * Creating our users_roles table in the dbo namespace.
  * This table is our association from one user to multiple roles.
  */
-CREATE TABLE [dbo].[users_roles](
-	[user] [nvarchar](128) NOT NULL,
-	[role] [nvarchar](45) NOT NULL,
-    CONSTRAINT [PK_users_roles] PRIMARY KEY CLUSTERED 
-    (
-        [user] ASC,
-        [role] ASC
-    )
+create table users_roles (
+	user nvarchar(128) not null,
+	[role] nvarchar(45) not null,
+    constraint pk_users_roles primary key clustered(user asc, [role] asc)
 );
-GO
+go
 
 
-/*
- * Making sure we get all of our foreign keys correctly defined.
- */
-ALTER TABLE [dbo].[users_roles]
-    ADD FOREIGN KEY ([user])
-    REFERENCES users([username])
-    ON DELETE CASCADE;
-GO
-ALTER TABLE [dbo].[users_roles]
-    ADD FOREIGN KEY ([role])
-    REFERENCES roles([name])
-    ON DELETE CASCADE;
-GO
+alter table users_roles
+    add foreign key (user)
+    references users(username)
+    on delete cascade;
+go
+
+alter table users_roles
+    add foreign key ([role])
+    references roles([name])
+    on delete cascade;
+go
 
 
 /*
@@ -79,9 +68,39 @@ GO
 
 
 /*
+ * Creating tasks table.
+ */
+create table tasks (
+  id nvarchar(256) not null,
+  [description] nvarchar(1024) null,
+  hyperlambda ntext not null,
+  created datetime not null default getdate(),
+  constraint pk_tasks primary key clustered(id asc)
+);
+go
+
+
+/*
+ * Creating task_due table.
+ */
+create table task_due (
+  id int not null auto_increment,
+  task nvarchar(256) not null,
+  due datetime not null,
+  repeats nvarchar(128) null,
+  constraint pk_task_due primary key clustered(id asc)
+);
+alter table task_due
+    add foreign key (task)
+    references tasks(id)
+    on delete cascade;
+go
+
+
+/*
  * This might look stupid, but actually releases our database's connections for some reasons,
  * due to connection pooling or something in SQL Server, "holding" the connection open.
- * Hence, by explcitly using master for current connection, we can more easily drop database
+ * Hence, by explicitly using master for current connection, we can more easily drop database
  * later, if something goes wrong, and we need to re-run the setup process.
  */
 use [master];
