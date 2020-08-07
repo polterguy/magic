@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Remove="files\misc\templates\**" />
+    <Content Remove="files\misc\templates\**" />
     <EmbeddedResource Remove="files\misc\templates\**" />
     <None Remove="files\misc\templates\**" />
   </ItemGroup>
