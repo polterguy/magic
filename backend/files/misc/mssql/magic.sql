@@ -18,7 +18,8 @@ create table users (
   [password] nvarchar(128) not null,
   constraint pk_users primary key clustered(username asc)
 );
-go
+
+GO
 
 
 /*
@@ -29,7 +30,8 @@ create table roles (
   [description] nvarchar(128) not null,
   constraint pk_roles primary key clustered([name] asc)
 );
-go
+
+GO
 
 
 /*
@@ -41,20 +43,23 @@ create table users_roles (
   [role] nvarchar(45) not null,
   constraint pk_users_roles primary key clustered([user] asc, [role] asc)
 );
-go
+
+GO
 
 
 alter table users_roles
   add foreign key ([user])
   references users(username)
   on delete cascade;
-go
+
+GO
 
 alter table users_roles
   add foreign key ([role])
   references roles([name])
   on delete cascade;
-go
+
+GO
 
 
 /*
@@ -63,6 +68,7 @@ go
 insert into roles ("name", "description") values ('root', 'This is a root account in your system, and it has complete access to do anything.');
 insert into roles ("name", "description") values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
 insert into roles ("name", "description") values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
+
 GO
 
 
@@ -76,7 +82,8 @@ create table tasks (
   created datetime not null default getdate(),
   constraint pk_tasks primary key clustered(id asc)
 );
-go
+
+GO
 
 
 /*
@@ -93,7 +100,8 @@ alter table task_due
   add foreign key (task)
   references tasks(id)
   on delete cascade;
-go
+
+GO
 
 
 /*
