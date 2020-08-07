@@ -48,7 +48,7 @@ These are probably the most important parts if you intend to develop in Hyperlam
 * [Magic Lambda JSON](https://github.com/polterguy/magic.lambda.json) - Manipulating JSON from Hyperlambda.
 * [Magic Lambda Config](https://github.com/polterguy/magic.lambda.config) - Accessing configuration values from Hyperlambda.
 * [Magic Lambda Logging](https://github.com/polterguy/magic.lambda.logging) - Logging from Hyperlambda.
-* [Magic Lambda Auth](https://github.com/polterguy/magic.lambda) - Doing basic authentication and authorisation from Hyperlambda.
+* [Magic Lambda Auth](https://github.com/polterguy/magic.lambda.auth) - Basic authentication and authorisation from Hyperlambda.
 * [Magic Lambda Crypto](https://github.com/polterguy/magic.lambda.crypto) - Cryptography helpers in Hyperlambda.
 * [Magic Lambda Scheduler](https://github.com/polterguy/magic.lambda.scheduler) - Scheduled tasks from Hyperlambda.
 * [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda) - Parse Hyperlambda from text, and vice versa.
