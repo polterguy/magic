@@ -14,10 +14,10 @@ auth.ticket.verify:root
 /*
  * Retrieves all scheduled tasks in the system.
  */
-scheduler.tasks.list
+wait.tasks.list
 
 
 /*
  * Returning the results of the evaluation to caller.
  */
-return-nodes:x:@scheduler.tasks.list/*
+return-nodes:x:@wait.tasks.list/*

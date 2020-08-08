@@ -3,8 +3,8 @@
  * Deletes the named task from the task scheduler.
  */
 .arguments
-   name:string
-.description:"Deletes the named task from the task scheduler."
+   id:string
+.description:"Deletes the task with the specified [id]."
 
 
 /*
@@ -16,7 +16,7 @@ auth.ticket.verify:root
 /*
  * Deletes task.
  */
-scheduler.tasks.delete:x:@.arguments/*/name
+wait.tasks.delete:x:@.arguments/*/id
 
 
 /*

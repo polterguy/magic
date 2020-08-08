@@ -43,7 +43,12 @@ export class SchedulerComponent implements OnInit {
   isRunningChanged(e: MatSlideToggleChange) {
     if (e.checked) {
       this.schedulerService.turnOn().subscribe(res => {
-        this.schedulerState = 'Stop scheduler';
+        if (res.result === 'OK') {
+          this.schedulerState = 'Stop scheduler';
+        } else {
+          this.showHttpError(res.status);
+          this.isRunning = false;
+        }
       });
     } else {
       this.schedulerService.turnOff().subscribe(res => {
@@ -79,7 +84,26 @@ export class SchedulerComponent implements OnInit {
       lineNumbers: true,
       theme: 'material',
       mode: 'hyperlambda',
-      readOnly: true,
+      tabSize: 3,
+      indentUnit: 3,
+      indentAuto: true,
+      extraKeys: {
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore',
+        'Alt-Space': 'autocomplete',
+        'Alt-M': (cm: any) => {
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        },
+        Esc: (cm: any) => {
+          if (cm.getOption('fullScreen')) {
+            cm.setOption('fullScreen', false);
+          }
+        },
+        F5: (cm: any) => {
+          const element = document.getElementById('executeButton') as HTMLElement;
+          element.click();
+        }
+      }
     };
   }
 
@@ -87,12 +111,17 @@ export class SchedulerComponent implements OnInit {
     if (this.filter === null || this.filter === '') {
       return this.tasks;
     }
-    return this.tasks.filter(x => x.name.toLowerCase().indexOf(this.filter.toLowerCase()) > -1 ||
+    return this.tasks.filter(x => x.id.toLowerCase().indexOf(this.filter.toLowerCase()) > -1 ||
       (x.description !== null && x.description !== undefined && x.description.toLowerCase().indexOf(this.filter.toLowerCase()) > -1));
   }
 
   selectTask(task: any) {
     this.selectedTask = task;
+      if (!this.selectedTask.hyperlambda) {
+      this.schedulerService.getTask(task.id).subscribe(res => {
+        this.selectedTask.hyperlambda = res.hyperlambda;
+      });
+    }
   }
 
   getInterval(interval: string) {
@@ -120,7 +149,17 @@ export class SchedulerComponent implements OnInit {
 
   runTask() {
     this.evaluatorService.evaluate(this.selectedTask.hyperlambda).subscribe(res => {
-      this.showHttpSuccess('Task was evaluated sucecssfully');
+      this.showHttpSuccess('Task was evaluated successfully');
+    });
+  }
+
+  updateTask() {
+    this.schedulerService.updateTask({
+      id: this.selectedTask.id,
+      hyperlambda: this.selectedTask.hyperlambda,
+      description: this.selectedTask.description,
+    }).subscribe(res => {
+      this.showHttpSuccess('Task was successfully updated');
     });
   }
 
@@ -128,12 +167,12 @@ export class SchedulerComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDeletionTaskDialogComponent, {
       width: '500px',
       data: {
-        task: el.name
+        task: el.id
       }
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        this.schedulerService.deleteTask(el.name).subscribe(res2 => {
+        this.schedulerService.deleteTask(el.id).subscribe(res2 => {
           this.showHttpSuccess('Task was successfully deleted');
           this.getTasks();
         });
@@ -142,7 +181,7 @@ export class SchedulerComponent implements OnInit {
   }
 
   showHttpError(error: any) {
-    this.snackBar.open(error.error.message, 'Close', {
+    this.snackBar.open(error.error ? error.error.message : error, 'Close', {
       duration: 10000,
       panelClass: ['error-snackbar'],
     });

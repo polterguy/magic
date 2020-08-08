@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { TaskModel } from '../models/task-model';
+import { TaskModel, TaskUpdateModel } from '../models/task-model';
 import { TicketService } from './ticket-service';
 
 @Injectable({
@@ -32,10 +32,16 @@ export class SchedulerService {
       'magic/modules/system/scheduler/create-task', task);
   }
 
-  public deleteTask(name: string) {
+  public updateTask(task: TaskUpdateModel) {
+    return this.httpClient.post<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/scheduler/update-task', task);
+  }
+
+  public deleteTask(id: string) {
     return this.httpClient.delete<any>(
       this.ticketService.getBackendUrl() +
-      `magic/modules/system/scheduler/delete-task?name=${encodeURIComponent(name)}`);
+      `magic/modules/system/scheduler/delete-task?id=${encodeURIComponent(id)}`);
   }
 
   public isRunning() {
