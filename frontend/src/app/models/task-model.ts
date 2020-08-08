@@ -8,9 +8,7 @@ export class RepeatModel {
 export class TaskModel {
     id: string;
     description?: string;
-    due?: Date;
     hyperlambda: string;
-    repeat?: RepeatModel;
 }
 
 export class TaskUpdateModel {

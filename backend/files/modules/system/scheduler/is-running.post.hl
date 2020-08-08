@@ -33,8 +33,8 @@ wait.if
          return-nodes
             result:Failure
             status:Scheduler was not started, probably because of not having any due tasks
-else
-   scheduler.stop
+wait.else
+   wait.scheduler.stop
    return-nodes
       result:OK
       status:Scheduler was stopped
