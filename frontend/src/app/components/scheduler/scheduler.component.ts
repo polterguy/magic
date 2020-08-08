@@ -16,6 +16,7 @@ export class SchedulerComponent implements OnInit {
 
   public schedulerState: string;
   public isRunning: boolean;
+  public nextDue: string;
   public displayedColumns = ['id', 'description', 'delete'];
   public tasks: any[];
   public selectedTask: TaskModel = null;
@@ -34,7 +35,10 @@ export class SchedulerComponent implements OnInit {
       this.isRunning = res['is-running'];
       if (this.isRunning) {
         this.schedulerState = 'Stop scheduler';
-      } else {
+        this.schedulerService.nextDue().subscribe(res => {
+          this.nextDue = res.next;
+        });
+    } else {
         this.schedulerState = 'Start scheduler';
       }
     });
@@ -45,14 +49,20 @@ export class SchedulerComponent implements OnInit {
       this.schedulerService.turnOn().subscribe(res => {
         if (res.result === 'OK') {
           this.schedulerState = 'Stop scheduler';
+          this.showHttpSuccess('Scheduler was successfully started');
+          this.schedulerService.nextDue().subscribe(res => {
+            this.nextDue = res.next;
+            this.isRunning = true;
+          });
         } else {
           this.showHttpError(res.status);
-          this.isRunning = false;
         }
       });
     } else {
       this.schedulerService.turnOff().subscribe(res => {
         this.schedulerState = 'Start scheduler';
+        this.isRunning = false;
+        this.nextDue = null;
       });
     }
   }
@@ -68,12 +78,9 @@ export class SchedulerComponent implements OnInit {
     const dialogRef = this.dialog.open(NewTaskDialogComponent, {
       width: '1000px',
       disableClose: true,
-      data: {
-        path: '',
-      }
     });
 
-    dialogRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().subscribe(res => {
       this.filter = '';
       this.getTasks();
     });

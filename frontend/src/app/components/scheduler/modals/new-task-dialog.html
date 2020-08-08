@@ -5,74 +5,12 @@
   <mat-form-field style="width: 20%;">
     <input 
       matInput
-      [(ngModel)]="taskName"
-      placeholder="Task name"
+      [(ngModel)]="taskId"
+      placeholder="Task id"
       autocomplete="off">
   </mat-form-field>
 
-  <mat-form-field style="margin-left: 2rem; width: 20%;">
-    <mat-select placeholder="Repetition pattern" (selectionChange)="repetitionChanged($event)">
-      <mat-option value="seconds">Every second</mat-option>
-      <mat-option value="minutes">Every minute</mat-option>
-      <mat-option value="hours">Every hour</mat-option>
-      <mat-option value="days">Every days</mat-option>
-      <mat-option value="weekday">Once a week</mat-option>
-      <mat-option value="last-day-of-month">Last day of month</mat-option>
-      <mat-option value="day-of-month">Specific day of month</mat-option>
-      <mat-option value="future-date">Once in the future</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field 
-    *ngIf="shouldDisplayValue()"
-    style="margin-left: 2rem; width: 20%;">
-    <input 
-      matInput
-      [(ngModel)]="taskValue"
-      type="number"
-      placeholder="{{getValueName()}}"
-      autocomplete="off">
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="shouldDisplayDatePicker()"
-    style="margin-left: 2rem; width: 20%;">
-    <input 
-      autocomplete="off" 
-      matInput 
-      [matDatepicker]="picker" 
-      [(ngModel)]="taskDate" 
-      [min]="minDate" 
-      placeholder="Choose a date">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-
-  <mat-form-field 
-    style="margin-left: 2rem; width: 20%;"
-    *ngIf="shouldDisplayWeekdays()">
-    <mat-select placeholder="Weekday" [(ngModel)]="weekday">
-      <mat-option value="Sunday">Sundays</mat-option>
-      <mat-option value="Monday">Mondays</mat-option>
-      <mat-option value="Tuesday">Tuesdays</mat-option>
-      <mat-option value="Wednesday">Wednesdays</mat-option>
-      <mat-option value="Thursday">Thursdays</mat-option>
-      <mat-option value="Friday">Fridays</mat-option>
-      <mat-option value="Saturday">Saturdays</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field 
-    *ngIf="shouldDisplayTime()"
-    style="margin-left: 2rem; width: 20%;">
-    <input 
-      matInput
-      [(ngModel)]="taskTime"
-      placeholder="Time"
-      autocomplete="off">
-  </mat-form-field>
-
-  <mat-form-field style="width: 100%;">
+  <mat-form-field style="width: calc(80% - 1rem); margin-left: 1rem;">
     <input 
       matInput
       [(ngModel)]="taskDescription"

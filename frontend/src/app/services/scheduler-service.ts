@@ -65,4 +65,10 @@ export class SchedulerService {
         value: true
     });
   }
+
+  public nextDue() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/scheduler/next-due');
+  }
 }

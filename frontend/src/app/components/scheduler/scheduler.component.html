@@ -17,7 +17,7 @@
       (change)="isRunningChanged($event)"
       matTooltip="Turns on or off the scheduler (all tasks)"
       class="running-button">
-      {{schedulerState}}
+      {{schedulerState}} <small>{{isRunning ? ' - Next task due ' + (nextDue | fromNow) : ''}}</small>
     </mat-slide-toggle>
 
     <button
