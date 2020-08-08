@@ -22,9 +22,17 @@ wait.if
       .:bool:true
    .lambda
       wait.scheduler.start
-      return-nodes
-         result:OK
-         status:Scheduler was started
+      scheduler.running
+      if
+         get-value:x:@scheduler.running
+         .lambda
+            return-nodes
+               result:OK
+               status:Scheduler was started
+      else
+         return-nodes
+            result:Failure
+            status:Scheduler was not started, probably because of not having any due tasks
 else
    scheduler.stop
    return-nodes

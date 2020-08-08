@@ -64,16 +64,27 @@
     <h3>{{selectedTask.id}}</h3>
 
     <div *ngIf="selectedTask !== null">
-      <p>{{selectedTask.description || '&nbsp;'}}</p>
+      <mat-form-field class="fill-width">
+        <input 
+          matInput 
+          placeholder="Description"
+          type="text" 
+          [(ngModel)]="selectedTask.description">
+      </mat-form-field>
 
       <ngx-codemirror 
         [(ngModel)]="selectedTask.hyperlambda" 
         class="smaller"
         [options]="getCodeMirrorOptions()"></ngx-codemirror>
-      <div class="right-align">
+      <div class="right-align task-toolbar">
         <button 
           mat-button
-          matTooltip="Evaluates the task"
+          matTooltip="Updates the task"
+          (click)="updateTask()">Update</button>
+        <button 
+          mat-button
+          id="executeButton"
+          matTooltip="Executes the task"
           (click)="runTask()">Run</button>
       </div>
     </div>

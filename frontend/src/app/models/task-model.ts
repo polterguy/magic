@@ -6,9 +6,15 @@ export class RepeatModel {
 }
 
 export class TaskModel {
-    name: string;
+    id: string;
     description?: string;
     due?: Date;
     hyperlambda: string;
     repeat?: RepeatModel;
+}
+
+export class TaskUpdateModel {
+    id: string;
+    description?: string;
+    hyperlambda?: string;
 }

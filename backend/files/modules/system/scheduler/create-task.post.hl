@@ -3,7 +3,7 @@
  * Creates a new scheduled task according to the arguments specified.
  */
 .arguments
-   name:string
+   id:string
    description:string
    hyperlambda:string
    due:date
@@ -63,7 +63,7 @@ if
       /*
        * Actually creating our task.
        */
-      scheduler.tasks.create:x:@.arguments/*/name
+      scheduler.tasks.create:x:@.arguments/*/id
          when:x:@.arguments/*/due
          description:x:@.arguments/*/description
          .lambda
