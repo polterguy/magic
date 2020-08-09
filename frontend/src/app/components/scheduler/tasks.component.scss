@@ -72,5 +72,26 @@
     .task-toolbar {
         margin-top: 1rem;
     }
+    .task-due {
+        list-style-type: none;
+        padding: 0;
+        margin-top: 3rem;
+        li {
+            display: block;
+            background-color: rgba(0,0,0,.1);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            .delete {
+                float: right;
+                color: rgb(128,128,128);
+                margin-top: -.5rem;
+            }
+            .info {
+                margin-right: 1rem;
+            }
+        }
+    }
 }
 

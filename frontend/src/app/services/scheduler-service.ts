@@ -67,6 +67,12 @@ export class TaskService {
       `magic/modules/system/scheduler/delete-task?id=${encodeURIComponent(id)}`);
   }
 
+  public deleteTaskDue(id: number) {
+    return this.httpClient.delete<any>(
+      this.ticketService.getBackendUrl() +
+      `magic/modules/system/scheduler/delete-due?id=${id}`);
+  }
+
   public isRunning() {
     return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +

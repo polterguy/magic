@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSlideToggleChange, MatPaginator, PageEvent } from '@angular/material';
 import { TaskService } from 'src/app/services/scheduler-service';
-import { TaskModel } from 'src/app/models/task-model';
+import { TaskModel, TaskSchedule } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
@@ -143,6 +143,7 @@ export class TasksComponent implements OnInit {
       if (!this.selectedTask.hyperlambda) {
         this.taskService.getTask(task.id).subscribe(res => {
           this.selectedTask.hyperlambda = res.hyperlambda;
+          this.selectedTask.schedule = res.schedule;
           el.scrollIntoView({ behavior: "smooth", block: "start" });
         });
     } else {
@@ -160,6 +161,10 @@ export class TasksComponent implements OnInit {
 
   closeTask() {
     this.selectedTask = null;
+  }
+
+  addDue() {
+    console.log(this.selectedTask);
   }
 
   updateTask() {
@@ -189,6 +194,15 @@ export class TasksComponent implements OnInit {
           this.getTasks();
         });
       }
+    });
+  }
+
+  deleteDue(item: TaskSchedule) {
+    this.taskService.deleteTaskDue(item.id).subscribe(res => {
+      this.showHttpSuccess('Task due item was deleted');
+      this.selectedTask.schedule = this.selectedTask.schedule.filter(x => x.id !== item.id);
+    }, error => {
+      this.showHttpError(error);
     });
   }
 
