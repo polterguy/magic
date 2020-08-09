@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSlideToggleChange, MatPaginator, PageEvent } from '@angular/material';
 import { TaskService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
@@ -138,12 +138,15 @@ export class TasksComponent implements OnInit {
     };
   }
 
-  selectTask(task: any) {
+  selectTask(task: any, el: HTMLElement) {
     this.selectedTask = task;
       if (!this.selectedTask.hyperlambda) {
-      this.taskService.getTask(task.id).subscribe(res => {
-        this.selectedTask.hyperlambda = res.hyperlambda;
-      });
+        this.taskService.getTask(task.id).subscribe(res => {
+          this.selectedTask.hyperlambda = res.hyperlambda;
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    } else {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 

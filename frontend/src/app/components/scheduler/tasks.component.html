@@ -52,7 +52,7 @@
       </ng-container>
       
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedTask && selectedTask.id == row.id}" (click)="selectTask(row)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedTask && selectedTask.id == row.id}" (click)="selectTask(row, editor)"></tr>
   
     </table>
 
@@ -69,9 +69,11 @@
 
 </div>
 
-<div class="active-wrapper" *ngIf="selectedTask != null">
+<div class="active-wrapper" #editor>
 
-  <mat-card class="mat-elevation-z4 view-task-card">
+  <mat-card
+    *ngIf="selectedTask != null"
+    class="mat-elevation-z4 view-task-card">
   
     <h3>{{selectedTask.id}}</h3>
 
