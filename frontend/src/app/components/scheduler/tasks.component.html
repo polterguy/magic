@@ -27,7 +27,7 @@
       (click)="createNewTask()"
       matTooltip="Creates a new task">New</button>
 
-    <table mat-table [dataSource]="getFilteredTasks()">
+    <table mat-table [dataSource]="tasks">
 
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>ID</th>
