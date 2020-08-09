@@ -4,8 +4,10 @@ import { MatSnackBar, MatDialog, MatSlideToggleChange } from '@angular/material'
 import { TaskService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
 import { ConfirmDeletionTaskDialogComponent } from './modals/confirm-deletion-dialog';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-tasks',
@@ -22,6 +24,7 @@ export class TasksComponent implements OnInit {
   public selectedTask: TaskModel = null;
   public filter: string = null;
   public offset = 0;
+  public filterFormControl: FormControl;
 
   constructor(
     public dialog: MatDialog,
@@ -31,6 +34,18 @@ export class TasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.filterFormControl = new FormControl('');
+    this.filterFormControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: any) => {
+        this.filter = query;
+        this.getTasks();
+        /*this.paginator.pageIndex = 0;
+        this.filter.offset = 0;
+        this.hasFiltered = true;
+        this.filter['[[column-name]].eq'] = this.[[column-name]].value;
+        this.getData();*/
+      });
     this.getTasks();
     this.taskService.isRunning().subscribe(res => {
       this.isRunning = res['is-running'];
@@ -69,7 +84,7 @@ export class TasksComponent implements OnInit {
   }
 
   getTasks() {
-    this.taskService.listTasks(this.offset).subscribe(res => {
+    this.taskService.listTasks(this.filter, this.offset).subscribe(res => {
       this.selectedTask = null;
       this.tasks = res || [];
     });
