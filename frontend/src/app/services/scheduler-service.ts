@@ -8,7 +8,7 @@ import { TicketService } from './ticket-service';
 @Injectable({
   providedIn: 'root'
 })
-export class SchedulerService {
+export class TaskService {
 
   constructor(
     private httpClient: HttpClient,

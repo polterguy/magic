@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSlideToggleChange } from '@angular/material';
-import { SchedulerService } from 'src/app/services/scheduler-service';
+import { TaskService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
@@ -26,16 +26,16 @@ export class TasksComponent implements OnInit {
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private evaluatorService: EvaluatorService,
-    private schedulerService: SchedulerService) {
+    private taskService: TaskService) {
   }
 
   ngOnInit(): void {
     this.getTasks();
-    this.schedulerService.isRunning().subscribe(res => {
+    this.taskService.isRunning().subscribe(res => {
       this.isRunning = res['is-running'];
       if (this.isRunning) {
         this.schedulerState = 'Stop scheduler';
-        this.schedulerService.nextDue().subscribe(res => {
+        this.taskService.nextDue().subscribe(res => {
           this.nextDue = res.next;
         });
     } else {
@@ -46,11 +46,11 @@ export class TasksComponent implements OnInit {
 
   isRunningChanged(e: MatSlideToggleChange) {
     if (e.checked) {
-      this.schedulerService.turnOn().subscribe(res => {
+      this.taskService.turnOn().subscribe(res => {
         if (res.result === 'OK') {
           this.schedulerState = 'Stop scheduler';
           this.showHttpSuccess('Scheduler was successfully started');
-          this.schedulerService.nextDue().subscribe(res => {
+          this.taskService.nextDue().subscribe(res => {
             this.nextDue = res.next;
             this.isRunning = true;
           });
@@ -59,7 +59,7 @@ export class TasksComponent implements OnInit {
         }
       });
     } else {
-      this.schedulerService.turnOff().subscribe(res => {
+      this.taskService.turnOff().subscribe(res => {
         this.schedulerState = 'Start scheduler';
         this.isRunning = false;
         this.nextDue = null;
@@ -68,7 +68,7 @@ export class TasksComponent implements OnInit {
   }
 
   getTasks() {
-    this.schedulerService.listTasks().subscribe(res => {
+    this.taskService.listTasks().subscribe(res => {
       this.selectedTask = null;
       this.tasks = res || [];
     });
@@ -125,7 +125,7 @@ export class TasksComponent implements OnInit {
   selectTask(task: any) {
     this.selectedTask = task;
       if (!this.selectedTask.hyperlambda) {
-      this.schedulerService.getTask(task.id).subscribe(res => {
+      this.taskService.getTask(task.id).subscribe(res => {
         this.selectedTask.hyperlambda = res.hyperlambda;
       });
     }
@@ -161,7 +161,7 @@ export class TasksComponent implements OnInit {
   }
 
   updateTask() {
-    this.schedulerService.updateTask({
+    this.taskService.updateTask({
       id: this.selectedTask.id,
       hyperlambda: this.selectedTask.hyperlambda,
       description: this.selectedTask.description,
@@ -179,7 +179,7 @@ export class TasksComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        this.schedulerService.deleteTask(el.id).subscribe(res2 => {
+        this.taskService.deleteTask(el.id).subscribe(res2 => {
           this.showHttpSuccess('Task was successfully deleted');
           this.getTasks();
         });
