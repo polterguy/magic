@@ -8,11 +8,11 @@ import { EvaluatorService } from 'src/app/services/evaluator-service';
 import { ConfirmDeletionTaskDialogComponent } from './modals/confirm-deletion-dialog';
 
 @Component({
-  selector: 'app-scheduler',
-  templateUrl: './scheduler.component.html',
-  styleUrls: ['./scheduler.component.scss']
+  selector: 'app-tasks',
+  templateUrl: './tasks.component.html',
+  styleUrls: ['./tasks.component.scss']
 })
-export class SchedulerComponent implements OnInit {
+export class TasksComponent implements OnInit {
 
   public schedulerState: string;
   public isRunning: boolean;
