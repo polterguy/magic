@@ -41,6 +41,7 @@ export class SqlComponent implements OnInit {
   public databases: Database[] = null;
   public selectedDatabase: Database = null;
   public hintOptions: any;
+  public hasConnection = true;
 
   constructor(
     private sqlService: SqlService,
@@ -67,9 +68,11 @@ export class SqlComponent implements OnInit {
         this.initializeSqlHints();
       }
       this.isFetching = false;
+      this.hasConnection = true;
     }, error => {
       this.showHttpError(error);
       this.isFetching = false;
+      this.hasConnection = false;
     });
   }
 

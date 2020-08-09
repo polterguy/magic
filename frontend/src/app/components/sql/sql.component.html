@@ -27,7 +27,7 @@
 </div>
 
 <div
-  *ngIf="databases !== null"
+  *ngIf="databases !== null && hasConnection"
   class="database-selector">
 
   <mat-select
@@ -43,7 +43,7 @@
 
 </div>
 
-<div class="file-selector">
+<div class="file-selector" *ngIf="hasConnection">
 
   <mat-select
     placeholder="Select saved file"
@@ -56,7 +56,7 @@
 
 </div>
 
-<div class="mat-elevation-z4 sql">
+<div class="mat-elevation-z4 sql" *ngIf="hasConnection">
 
   <ngx-codemirror
     *ngIf="selectedDatabase !== null"
@@ -66,7 +66,7 @@
 
 </div>
 
-<div class="execute-button">
+<div class="execute-button" *ngIf="hasConnection">
   <button 
     [disabled]="sqlText === ''"
     mat-button
@@ -78,9 +78,18 @@
     matTooltip="Evaluates your SQL"
     (click)="evaluate()">Evaluate</button>
 </div>
+
+<div
+  class="mat-elevation-z4 error"
+  *ngIf="!hasConnection">
+  <p>
+    I couldn't find a valid {{selectedDatabaseType}} database using your existing appSettings.json connection string.
+    Maybe try a different database type ...?
+  </p>
+</div>
   
 <div
-  *ngIf="result !== null && result.length > 0"
+  *ngIf="result !== null && result.length > 0 && hasConnection"
   class="mat-elevation-z4 result">
   <table class="fill-width">
     <tr>
