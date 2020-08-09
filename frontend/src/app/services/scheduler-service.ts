@@ -30,6 +30,19 @@ export class TaskService {
     }
   }
 
+  public countTasks(query: string) {
+    if (query) {
+      return this.httpClient.get<any>(
+        this.ticketService.getBackendUrl() +
+        'magic/modules/system/scheduler/count-tasks?query=' +
+        encodeURIComponent(query));
+    } else {
+      return this.httpClient.get<any>(
+        this.ticketService.getBackendUrl() +
+        'magic/modules/system/scheduler/count-tasks');
+    }
+  }
+
   public getTask(name: string) {
     return this.httpClient.get<TaskModel>(
       this.ticketService.getBackendUrl() +

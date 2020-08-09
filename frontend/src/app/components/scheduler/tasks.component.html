@@ -55,6 +55,15 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedTask && selectedTask.id == row.id}" (click)="selectTask(row)"></tr>
   
     </table>
+
+    <mat-paginator
+      [class]="count > 10 ? '' : 'invisible'"
+      #paginator
+      [length]="count"
+      pageSize="10"
+      (page)="paged($event)"
+      [pageSizeOptions]="[10]">
+    </mat-paginator>
     
   </div>
 

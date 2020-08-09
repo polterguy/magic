@@ -1,6 +1,6 @@
 
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar, MatDialog, MatSlideToggleChange } from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSnackBar, MatDialog, MatSlideToggleChange, MatPaginator, PageEvent } from '@angular/material';
 import { TaskService } from 'src/app/services/scheduler-service';
 import { TaskModel } from 'src/app/models/task-model';
 import { NewTaskDialogComponent } from './modals/new-task-dialog';
@@ -24,7 +24,11 @@ export class TasksComponent implements OnInit {
   public selectedTask: TaskModel = null;
   public filter: string = null;
   public offset = 0;
+  public count: number;
   public filterFormControl: FormControl;
+
+  // Need to view paginator as a child to update page index of it.
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   constructor(
     public dialog: MatDialog,
@@ -39,12 +43,9 @@ export class TasksComponent implements OnInit {
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: any) => {
         this.filter = query;
+        this.offset = 0;
+        this.paginator.pageIndex = 0;
         this.getTasks();
-        /*this.paginator.pageIndex = 0;
-        this.filter.offset = 0;
-        this.hasFiltered = true;
-        this.filter['[[column-name]].eq'] = this.[[column-name]].value;
-        this.getData();*/
       });
     this.getTasks();
     this.taskService.isRunning().subscribe(res => {
@@ -85,9 +86,16 @@ export class TasksComponent implements OnInit {
 
   getTasks() {
     this.taskService.listTasks(this.filter, this.offset).subscribe(res => {
-      this.selectedTask = null;
       this.tasks = res || [];
+      this.taskService.countTasks(this.filter).subscribe(res => {
+        this.count = res.count;
+      });
     });
+  }
+
+  paged(e: PageEvent) {
+    this.offset = e.pageSize * e.pageIndex;
+    this.getTasks();
   }
 
   createNewTask() {

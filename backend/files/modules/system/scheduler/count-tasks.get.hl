@@ -1,0 +1,27 @@
+
+/*
+ * Counts number of tasks in system given specified optional query.
+ */
+.arguments
+   query:string
+.description:"Counts number of tasks in system given specified optional query."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves all scheduled tasks in the system.
+ */
+wait.tasks.count:x:@.arguments/*/query
+
+
+/*
+ * Returning the results of the evaluation to caller.
+ */
+unwrap:x:+/*
+return-nodes
+   count:x:@wait.tasks.count
