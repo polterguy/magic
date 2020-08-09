@@ -90,12 +90,18 @@
         [(ngModel)]="selectedTask.hyperlambda" 
         class="smaller"
         [options]="getCodeMirrorOptions()"></ngx-codemirror>
+
       <div class="right-align task-toolbar">
         <button 
           mat-button
           matTooltip="Close editing of task"
           style="margin-right: 1rem"
           (click)="closeTask()">Close</button>
+        <button 
+          mat-button
+          matTooltip="Add due date or repetition pattern for task"
+          style="margin-right: 1rem"
+          (click)="addDue()">Add due</button>
         <button 
           mat-button
           id="executeButton"
@@ -107,6 +113,30 @@
           color="primary"
           matTooltip="Saves the task"
           (click)="updateTask()">Save</button>
+      </div>
+
+      <div
+        *ngIf="selectedTask.schedule && selectedTask.schedule.length > 0">
+        <ul class="task-due">
+          <li
+            *ngFor="let idx of selectedTask.schedule">
+            <span
+              class="info"
+              [title]="idx.due">Due {{idx.due | fromNow}}</span>
+            <span
+              class="info"
+              *ngIf="idx.repeats">
+              Repeats {{idx.repeats}}
+            </span>
+            <button
+              mat-button
+              (click)="deleteDue(idx)"
+              class="delete">
+              <mat-icon
+                matSuffix>delete</mat-icon>
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
 
