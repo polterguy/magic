@@ -3,7 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSelectChange, MatSnackBar } from '@angular/material';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
 import { TaskModel } from 'src/app/models/task-model';
-import { SchedulerService } from 'src/app/services/scheduler-service';
+import { TaskService } from 'src/app/services/scheduler-service';
 
 @Component({
   selector: 'new-task-dialog',
@@ -17,7 +17,7 @@ export class NewTaskDialogComponent implements OnInit {
 
   constructor(
     private evaluatorService: EvaluatorService,
-    private schedulerService: SchedulerService,
+    private schedulerService: TaskService,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<NewTaskDialogComponent>) {
   }
