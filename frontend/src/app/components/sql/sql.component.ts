@@ -30,6 +30,7 @@ class Database {
 })
 export class SqlComponent implements OnInit {
 
+  public isFetching = false;
   public savedFiles = [];
   public selectedScript: string;
   public selectedFilename: string = null;
@@ -57,6 +58,7 @@ export class SqlComponent implements OnInit {
   }
 
   getDatabases() {
+    this.isFetching = true;
     const databaseType = this.selectedDatabaseType === 'mssql-batch' ? 'mssql' : this.selectedDatabaseType;
     this.sqlService.getDatabases(databaseType).subscribe(res => {
       this.databases = res.databases;
@@ -64,6 +66,10 @@ export class SqlComponent implements OnInit {
         this.selectedDatabase = this.databases[0];
         this.initializeSqlHints();
       }
+      this.isFetching = false;
+    }, error => {
+      this.showHttpError(error);
+      this.isFetching = false;
     });
   }
 
@@ -95,6 +101,7 @@ export class SqlComponent implements OnInit {
   }
 
   databaseTypeChanged(e: MatSelectChange) {
+    this.isFetching = true;
     this.getFiles();
     this.getDatabases();
   }
