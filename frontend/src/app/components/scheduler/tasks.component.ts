@@ -179,6 +179,9 @@ export class TasksComponent implements OnInit {
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
         this.taskService.deleteTask(el.id).subscribe(res2 => {
+          if (this.selectedTask && this.selectedTask.id === el.id) {
+            this.selectedTask = null;
+          }
           this.showHttpSuccess('Task was successfully deleted');
           this.getTasks();
         });
