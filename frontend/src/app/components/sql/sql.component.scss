@@ -63,6 +63,11 @@
     }
 }
 
+.error {
+    margin:.5rem 4rem .5rem 4rem;
+    padding: 2rem 3rem 2rem 3rem;
+}
+
 ::ng-deep .error-snackbar {
     background:rgb(255,100,100);
     color:rgb(0,0,0);
