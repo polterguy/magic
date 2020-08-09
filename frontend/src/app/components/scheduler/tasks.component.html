@@ -3,11 +3,14 @@
 <div class="scheduler-wrapper">
 
   <mat-form-field class="fill-width">
-    <input 
-      matInput 
-      placeholder="Filter"
-      type="text" 
-      [(ngModel)]="filter">
+    <mat-label>Filter</mat-label>
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+    <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <div class="mat-elevation-z4 tasks">

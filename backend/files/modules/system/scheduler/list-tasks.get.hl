@@ -4,6 +4,7 @@
  */
 .arguments
    offset:long
+   query:string
 .description:"List 10 next tasks that have been registered in the system from the specified offset."
 
 
@@ -16,7 +17,7 @@ auth.ticket.verify:root
 /*
  * Retrieves all scheduled tasks in the system.
  */
-wait.tasks.list
+wait.tasks.list:x:@.arguments/*/query
    offset:x:@.arguments/*/offset
 
 
