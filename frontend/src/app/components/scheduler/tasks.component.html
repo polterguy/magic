@@ -94,16 +94,19 @@
         <button 
           mat-button
           matTooltip="Close editing of task"
+          style="margin-right: 1rem"
           (click)="closeTask()">Close</button>
-        <button 
-          mat-button
-          matTooltip="Saves the task"
-          (click)="updateTask()">Save</button>
         <button 
           mat-button
           id="executeButton"
           matTooltip="Executes the task"
+          style="margin-right: 1rem"
           (click)="runTask()">Run</button>
+        <button 
+          mat-raised-button
+          color="primary"
+          matTooltip="Saves the task"
+          (click)="updateTask()">Save</button>
       </div>
     </div>
 
