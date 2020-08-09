@@ -11,7 +11,7 @@ import { CrudifyComponent } from './components/crudify/crudify.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { SqlComponent } from './components/sql/sql.component';
-import { SchedulerComponent } from './components/scheduler/scheduler.component';
+import { TasksComponent } from './components/scheduler/tasks.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'endpoints', component: EndpointsComponent },
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'sql', component: SqlComponent },
-  { path: 'scheduler', component: SchedulerComponent },
+  { path: 'tasks', component: TasksComponent },
 ];
 
 @NgModule({

@@ -48,7 +48,7 @@ import { AddRoleDialogComponent } from './components/users/modals/add-role-dialo
 import { CrudifyComponent } from './components/crudify/crudify.component';
 import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
-import { SchedulerComponent } from './components/scheduler/scheduler.component';
+import { TasksComponent } from './components/scheduler/tasks.component';
 import { DateFromPipe } from './pipes/date-from-pipe';
 import { DynamicPipe } from './pipes/dynamic-pipe';
 import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-dialog';
@@ -85,7 +85,7 @@ export function tokenGetter() {
     AddRoleDialogComponent,
     CrudifyComponent,
     SqlComponent,
-    SchedulerComponent,
+    TasksComponent,
     DateFromPipe,
     DynamicPipe,
     MarkedPipe,
