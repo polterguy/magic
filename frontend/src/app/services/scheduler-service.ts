@@ -14,10 +14,10 @@ export class TaskService {
     private httpClient: HttpClient,
     private ticketService: TicketService) { }
 
-  public listTasks() {
+  public listTasks(offset: number) {
     return this.httpClient.get<string[]>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/scheduler/list-tasks');
+      'magic/modules/system/scheduler/list-tasks?offset=' + offset);
   }
 
   public getTask(name: string) {

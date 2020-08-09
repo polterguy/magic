@@ -21,6 +21,7 @@ export class TasksComponent implements OnInit {
   public tasks: any[];
   public selectedTask: TaskModel = null;
   public filter: string = null;
+  public offset = 0;
 
   constructor(
     public dialog: MatDialog,
@@ -68,7 +69,7 @@ export class TasksComponent implements OnInit {
   }
 
   getTasks() {
-    this.taskService.listTasks().subscribe(res => {
+    this.taskService.listTasks(this.offset).subscribe(res => {
       this.selectedTask = null;
       this.tasks = res || [];
     });
@@ -114,14 +115,6 @@ export class TasksComponent implements OnInit {
     };
   }
 
-  getFilteredTasks() {
-    if (this.filter === null || this.filter === '') {
-      return this.tasks;
-    }
-    return this.tasks.filter(x => x.id.toLowerCase().indexOf(this.filter.toLowerCase()) > -1 ||
-      (x.description !== null && x.description !== undefined && x.description.toLowerCase().indexOf(this.filter.toLowerCase()) > -1));
-  }
-
   selectTask(task: any) {
     this.selectedTask = task;
       if (!this.selectedTask.hyperlambda) {
@@ -129,29 +122,6 @@ export class TasksComponent implements OnInit {
         this.selectedTask.hyperlambda = res.hyperlambda;
       });
     }
-  }
-
-  getInterval(interval: string) {
-    if (interval === 'last-day-of-month') {
-      return 'last day of the month';
-    }
-    if (!isNaN(Number(interval))) {
-      switch (Number(interval)) {
-        case 1:
-          return '1st of every month';
-        case 2:
-          return '2nd of every month';
-        case 3:
-          return '3rd of every month';
-        default:
-            return interval + 'th of each month';
-      }
-    }
-    return interval;
-  }
-
-  getDate(due: string) {
-    return new Date(due).toLocaleString();
   }
 
   runTask() {
