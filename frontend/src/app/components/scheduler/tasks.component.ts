@@ -150,7 +150,13 @@ export class TasksComponent implements OnInit {
   runTask() {
     this.evaluatorService.evaluate(this.selectedTask.hyperlambda).subscribe(res => {
       this.showHttpSuccess('Task was evaluated successfully');
+    }, error => {
+      this.showHttpError(error);
     });
+  }
+
+  closeTask() {
+    this.selectedTask = null;
   }
 
   updateTask() {
