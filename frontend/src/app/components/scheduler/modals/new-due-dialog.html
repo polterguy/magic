@@ -1,0 +1,63 @@
+
+<h1 mat-dialog-title>Schedule task</h1>
+<div mat-dialog-content>
+
+  <mat-radio-group
+    aria-label="Select an option"
+    (change)="typeChanged($event)">
+    <mat-radio-button
+      checked
+      value="once">Schedule once</mat-radio-button>
+    <mat-radio-button
+      style="margin-left: 1rem;"
+      value="repeat">Repeat</mat-radio-button>
+  </mat-radio-group>
+
+  <mat-form-field
+    style="margin-top: 1rem;"
+    *ngIf="schedule === 'repeat'"
+    class="fill-width">
+    <input 
+      matInput
+      [(ngModel)]="repetition"
+      placeholder="Task repetition"
+      autocomplete="off">
+  </mat-form-field>
+
+  <mat-form-field
+    style="margin-top: 1rem;"
+    *ngIf="schedule === 'once'"
+    class="fill-width">
+    <input
+      matInput
+      placeholder="Explicit due date"
+      [(ngModel)]="due"
+      [owlDateTime]="dueDateControl"
+      [owlDateTimeTrigger]="dueDateControl"
+      placeholder="Pick date and time">
+    <owl-date-time #dueDateControl></owl-date-time>
+  </mat-form-field>
+
+  <div
+    *ngIf="schedule === 'repeat'">
+    Pattern <code>MM.dd.HH.hh.mm.ss.ww</code> where MM is month number, dd is day number,
+    hh is hours in military hour format, mm is minutes, ss is seconds, and ww is weekdays.
+    See <a target="_blank" href="https://github.com/polterguy/magic.lambda.scheduler">for further explanation</a>
+  </div>
+
+</div>
+
+<div mat-dialog-actions>
+  <div style="width:100%; text-align: right;">
+
+    <button
+      mat-button
+      (click)="close()">Close</button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="saveTask()">OK</button>
+
+  </div>
+</div>

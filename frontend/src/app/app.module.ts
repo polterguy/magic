@@ -21,9 +21,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { OWL_MOMENT_DATE_TIME_ADAPTER_OPTIONS } from 'ng-pick-datetime-moment';
 import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import './extensions/hyperlambda.js';
@@ -53,6 +55,7 @@ import { TasksComponent } from './components/scheduler/tasks.component';
 import { DateFromPipe } from './pipes/date-from-pipe';
 import { DynamicPipe } from './pipes/dynamic-pipe';
 import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-dialog';
+import { NewDueDialog } from './components/scheduler/modals/new-due-dialog';
 import { MarkedPipe } from './pipes/marked.pipe';
 
 export function tokenGetter() {
@@ -82,6 +85,7 @@ export function tokenGetter() {
     GetSaveFilenameDialogComponent,
     ConfirmDeletionTaskDialogComponent,
     NewTaskDialogComponent,
+    NewDueDialog,
     CreateValidatorDialogComponent,
     AddRoleDialogComponent,
     CrudifyComponent,
@@ -98,6 +102,8 @@ export function tokenGetter() {
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,
@@ -120,6 +126,7 @@ export function tokenGetter() {
     MatIconModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatRadioModule,
     MatMomentDateModule,
     CodemirrorModule,
   ],
@@ -134,7 +141,12 @@ export function tokenGetter() {
     MatSnackBarModule,
     MatSelectModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: OWL_MOMENT_DATE_TIME_ADAPTER_OPTIONS,
+      useValue: { useUtc: true }
+    }
+  ],
   bootstrap: [AppComponent],
   entryComponents: [
     NewFileDialogComponent,
@@ -143,6 +155,7 @@ export function tokenGetter() {
     LegendDialogComponent,
     FileDialogComponent,
     NewTaskDialogComponent,
+    NewDueDialog,
     ConfirmDeletionDialogComponent,
     GetSaveFilenameDialogComponent,
     ConfirmDeletionTaskDialogComponent,
