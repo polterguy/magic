@@ -1,13 +1,14 @@
 
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSlideToggleChange, MatPaginator, PageEvent } from '@angular/material';
 import { TaskService } from 'src/app/services/scheduler-service';
 import { TaskModel, TaskSchedule } from 'src/app/models/task-model';
-import { NewTaskDialogComponent } from './modals/new-task-dialog';
+import { NewDueDialog } from './modals/new-due-dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
 import { ConfirmDeletionTaskDialogComponent } from './modals/confirm-deletion-dialog';
 import { FormControl } from '@angular/forms';
+import { NewTaskDialogComponent } from './modals/new-task-dialog';
 
 @Component({
   selector: 'app-tasks',
@@ -138,14 +139,20 @@ export class TasksComponent implements OnInit {
     };
   }
 
+  getTaskFromService(id: string, el: HTMLElement = null) {
+    this.taskService.getTask(id).subscribe(res => {
+      this.selectedTask.hyperlambda = res.hyperlambda;
+      this.selectedTask.schedule = res.schedule;
+      if(el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+
   selectTask(task: any, el: HTMLElement) {
     this.selectedTask = task;
       if (!this.selectedTask.hyperlambda) {
-        this.taskService.getTask(task.id).subscribe(res => {
-          this.selectedTask.hyperlambda = res.hyperlambda;
-          this.selectedTask.schedule = res.schedule;
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        this.getTaskFromService(task.id, el);
     } else {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -163,8 +170,19 @@ export class TasksComponent implements OnInit {
     this.selectedTask = null;
   }
 
-  addDue() {
-    console.log(this.selectedTask);
+  schedule() {
+    const dialogRef = this.dialog.open(NewDueDialog, {
+      width: '500px',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        this.taskService.addTaskDue(this.selectedTask.id, res.due, res.repeats).subscribe(res => {
+          this.getTaskFromService(this.selectedTask.id);
+        });
+      }
+    });
   }
 
   updateTask() {

@@ -1,0 +1,39 @@
+
+/*
+ * Schedules the task with the specified [id] for execution according to the specified parameters.
+ */
+.arguments
+   id:string
+   due:date
+   repeats:string
+.description:"Schedules the task with the specified [id] for execution according to the specified parameters."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Deletes task due instance.
+ */
+if
+   not
+      eq
+         get-value:x:@.arguments/*/repeats
+         .
+   .lambda
+      add:x:../*/wait.tasks.schedule
+         get-nodes:x:@.arguments/*/repeats
+else
+   add:x:../*/wait.tasks.schedule
+      get-nodes:x:@.arguments/*/due
+wait.tasks.schedule:x:@.arguments/*/id
+
+
+/*
+ * Returns success to caller.
+ */
+return-nodes
+   result:Success
