@@ -2,25 +2,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TicketService } from './ticket-service';
+import { LogItem } from '../models/log-item';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PingService {
+export class LogService {
 
   constructor(
     private httpClient: HttpClient,
     private ticketService: TicketService) { }
 
-  public ping() {
-    return this.httpClient.get<any>(
+  public listLogItems(offset: number, limit: number) {
+    return this.httpClient.get<LogItem[]>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/ping');
-  }
-
-  public version() {
-    return this.httpClient.get<any>(
-      this.ticketService.getBackendUrl() +
-      'magic/modules/system/version');
+      'magic/modules/system/logging/log-items?offset=' +
+      offset +
+      '&limit=' + limit);
   }
 }

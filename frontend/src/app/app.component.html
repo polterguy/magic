@@ -74,6 +74,13 @@
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">SQL</a>
 
+  <a 
+    *ngIf="isLoggedIn()"
+    mat-button 
+    routerLink="/logs" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Logs</a>
+
   <a
     *ngIf="isLoggedIn()"
     mat-button
