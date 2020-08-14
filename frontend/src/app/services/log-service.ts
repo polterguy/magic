@@ -20,4 +20,10 @@ export class LogService {
       offset +
       '&limit=' + limit);
   }
+
+  public countLogItems() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/logging/count-items');
+  }
 }
