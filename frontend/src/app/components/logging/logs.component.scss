@@ -2,19 +2,18 @@
 .info-card {
     margin:5rem 4rem .5rem 4rem;
     padding: 3rem;
-    position: relative;
-    .count-items {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        color:rgb(128,128,128);
-    }
     table {
         width: 100%;
         tr {
             td:nth-child(1),
             td:nth-child(2) {
                 width: 20%;
+            }
+            td {
+                pre {
+                    background-color: rgb(245,245,245);
+                    padding:1rem;
+                }
             }
         }
     }
