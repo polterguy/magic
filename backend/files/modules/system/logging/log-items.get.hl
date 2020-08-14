@@ -1,0 +1,43 @@
+
+/*
+ * Returns log items in the database according to specified arguments.
+ */
+.arguments
+   offset:long
+   limit:long
+.description:"Returns log items according to the specified arguments."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves items from our database, according to which database is
+ * the default database and type in the system.
+ */
+config.get:"magic:logging:database"
+config.get:"magic:databases:default"
+strings.concat
+   .:magic.db.
+   get-value:x:@config.get
+   .:.read
+add:x:../*/wait.signal/*/args
+   get-nodes:x:@.arguments/*/limit
+   get-nodes:x:@.arguments/*/offset
+unwrap:x:+/*
+wait.signal:x:@strings.concat
+   database:x:@config.get/@config.get
+   table:log_entries
+   args
+
+
+/*
+ * Returning log items to caller.
+ */
+add:x:+/*
+   get-nodes:x:@wait.signal/*
+return-nodes
+   items
