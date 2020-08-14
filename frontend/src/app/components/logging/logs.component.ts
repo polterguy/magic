@@ -1,6 +1,5 @@
 
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
 import { LogService } from 'src/app/services/log-service';
 import { LogItem } from 'src/app/models/log-item';
 
