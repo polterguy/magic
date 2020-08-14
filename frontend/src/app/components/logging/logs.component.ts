@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LogService } from 'src/app/services/log-service';
 import { LogItem } from 'src/app/models/log-item';
+import { PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-logs',
@@ -19,11 +20,20 @@ export class LogsComponent implements OnInit {
   constructor(private logService: LogService) { }
 
   ngOnInit() {
+    this.getItems();
+  }
+
+  getItems() {
     this.logService.listLogItems(this.offset, this.limit).subscribe(res => {
       this.items = res;
     });
     this.logService.countLogItems().subscribe(res => {
       this.count = res.result;
     });
+  }
+
+  paged(e: PageEvent) {
+    this.offset = e.pageSize * e.pageIndex;
+    this.getItems();
   }
 }
