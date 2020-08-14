@@ -1,4 +1,26 @@
 
 <mat-card class="info-card">
-  Foo bar
+
+  <table mat-table [dataSource]="items">
+
+    <ng-container matColumnDef="when">
+      <th mat-header-cell *matHeaderCellDef>When</th>
+      <td mat-cell *matCellDef="let el">{{el.created | since}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let el">{{el.type}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="content">
+      <th mat-header-cell *matHeaderCellDef>Content</th>
+      <td mat-cell *matCellDef="let el">{{el.content}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
 </mat-card>

@@ -12,7 +12,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { TasksComponent } from './components/scheduler/tasks.component';
-import { LogsComponent } from './components/logs/logs.component';
+import { LogsComponent } from './components/logging/logs.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
