@@ -4,5 +4,11 @@
     padding: 3rem;
     table {
         width: 100%;
+        tr {
+            td:nth-child(1),
+            td:nth-child(2) {
+                width: 20%;
+            }
+        }
     }
 }
