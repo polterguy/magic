@@ -1,7 +1,6 @@
 /*
- * This Microsoft SQL Server script creates a database for you, with 5 tables,
- * serving as an authentication/authorization database for you,
- * in addition to your task scheduler database tables.
+ * This Microsoft SQL Server script creates a database for you, serving
+ * as Magic's main database.
  */
 
 
@@ -103,6 +102,25 @@ alter table task_due
 
 GO
 
+
+/*
+ * Logging tables.
+ */
+
+
+/*
+ * Creating log table.
+ */
+create table log_entries (
+  id int not null identity(1,1),
+  created datetime not null default getdate(),
+  type nvarchar(10) not null,
+  exception text null,
+  content text not null,
+  constraint pk_task_due primary key clustered(id asc)
+);
+
+GO
 
 /*
  * This might look stupid, but actually releases our database's connections for some reasons,
