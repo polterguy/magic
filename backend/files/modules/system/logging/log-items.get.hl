@@ -16,7 +16,7 @@ auth.ticket.verify:root
 
 /*
  * Retrieves items from our database, according to which database is
- * the default database and type in the system.
+ * the default database and database type in the system.
  */
 config.get:"magic:logging:database"
 config.get:"magic:databases:default"
