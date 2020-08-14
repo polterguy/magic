@@ -26,4 +26,10 @@ export class LogService {
       this.ticketService.getBackendUrl() +
       'magic/modules/system/logging/count-items');
   }
+
+  public countErrorItems() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/logging/count-error-items');
+  }
 }
