@@ -15,6 +15,7 @@ export class LogsComponent implements OnInit {
   public limit = 10;
   public items: LogItem[] = null;
   public count: number;
+  public noErrors = 0;
   public displayedColumns: string[] = ['when', 'type', 'content'];
 
   constructor(private logService: LogService) { }
@@ -29,6 +30,9 @@ export class LogsComponent implements OnInit {
     });
     this.logService.countLogItems().subscribe(res => {
       this.count = res.result;
+    });
+    this.logService.countErrorItems().subscribe(res => {
+      this.noErrors = res.result;
     });
   }
 
