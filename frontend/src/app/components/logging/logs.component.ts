@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { LogService } from 'src/app/services/log-service';
+import { LogItem } from 'src/app/models/log-item';
 
 @Component({
   selector: 'app-logs',
@@ -10,14 +11,16 @@ import { LogService } from 'src/app/services/log-service';
 })
 export class LogsComponent implements OnInit {
 
-  offset = 0;
-  limit = 10;
+  public offset = 0;
+  public limit = 10;
+  public items: LogItem[] = null;
+  public displayedColumns: string[] = ['when', 'type', 'content'];
 
   constructor(private logService: LogService) { }
 
   ngOnInit() {
     this.logService.listLogItems(this.offset, this.limit).subscribe(res => {
-      console.log(res);
+      this.items = res;
     });
   }
 }

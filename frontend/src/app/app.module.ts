@@ -32,7 +32,7 @@ import './extensions/hyperlambda.js';
 import 'codemirror/addon/hint/sql-hint.js';
 
 import { HomeComponent } from './components/home/home.component';
-import { LogsComponent } from './components/logs/logs.component';
+import { LogsComponent } from './components/logging/logs.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { UsersComponent } from './components/users/users.component';
@@ -54,6 +54,7 @@ import { environment } from 'src/environments/environment';
 import { SqlComponent } from './components/sql/sql.component';
 import { TasksComponent } from './components/scheduler/tasks.component';
 import { DateFromPipe } from './pipes/date-from-pipe';
+import { DateToPipe } from './pipes/date-to-pipe';
 import { DynamicPipe } from './pipes/dynamic-pipe';
 import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-dialog';
 import { NewDueDialog } from './components/scheduler/modals/new-due-dialog';
@@ -94,6 +95,7 @@ export function tokenGetter() {
     SqlComponent,
     TasksComponent,
     DateFromPipe,
+    DateToPipe,
     DynamicPipe,
     MarkedPipe,
   ],
