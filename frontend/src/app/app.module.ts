@@ -32,6 +32,7 @@ import './extensions/hyperlambda.js';
 import 'codemirror/addon/hint/sql-hint.js';
 
 import { HomeComponent } from './components/home/home.component';
+import { LogsComponent } from './components/logs/logs.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { UsersComponent } from './components/users/users.component';
@@ -70,6 +71,7 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     HomeComponent,
+    LogsComponent,
     EndpointsComponent,
     SetupComponent,
     UsersComponent,

@@ -12,6 +12,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { TasksComponent } from './components/scheduler/tasks.component';
+import { LogsComponent } from './components/logs/logs.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'sql', component: SqlComponent },
   { path: 'tasks', component: TasksComponent },
+  { path: 'logs', component: LogsComponent },
 ];
 
 @NgModule({

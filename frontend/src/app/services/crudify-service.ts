@@ -1,7 +1,6 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { CrudifyModel } from '../models/crudify-model';
 import { CustomSQLModel } from '../models/custom-sql-model';
 import { CrudifyResult } from '../models/endpoint-result-model';

@@ -32,12 +32,13 @@ wait.signal:x:@strings.concat
    database:x:@config.get/@config.get
    table:log_entries
    args
+      order:created
+      direction:desc
 
 
 /*
  * Returning log items to caller.
  */
-add:x:+/*
+add:x:+
    get-nodes:x:@wait.signal/*
 return-nodes
-   items
