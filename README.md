@@ -16,7 +16,7 @@ The simplest way to get started, is to [download its latest release](https://git
 and use it as a _"starter kit"_. You will need.
 
 1. [.Net Core CLI](https://dotnet.microsoft.com/download) version 3.x or more
-2. Some sort of database server [Mysql](https://dev.mysql.com/downloads/mysql/) or [MS SQL](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
+2. Some sort of database server [MySql](https://dev.mysql.com/downloads/mysql/) or [MS SQL](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
 3. [NodeJS](https://nodejs.org/en/download/)
 4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window with `npm install -g @angular/cli`
 5. [Magic](https://github.com/polterguy/magic/releases)
