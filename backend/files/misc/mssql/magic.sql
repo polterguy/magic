@@ -117,7 +117,7 @@ create table log_entries (
   type nvarchar(10) not null,
   exception text null,
   content text not null,
-  constraint pk_task_due primary key clustered(id asc)
+  constraint pk_log_entries primary key clustered(id asc)
 );
 
 GO
