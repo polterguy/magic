@@ -1,0 +1,40 @@
+
+<h1 mat-dialog-title>Details for item {{data.id}}</h1>
+<div mat-dialog-content>
+  <table class="details-table">
+    <tr>
+      <td>Type</td>
+      <td>{{data.type}}</td>
+    </tr>
+    <tr>
+      <td>Age</td>
+      <td>{{data.created | since}}</td>
+    </tr>
+    <tr>
+      <td>Created</td>
+      <td>{{data.created}}</td>
+    </tr>
+    <tr>
+      <td>Content</td>
+      <td>
+        <pre>{{data.content}}</pre>
+      </td>
+    </tr>
+    <tr
+      *ngIf="data.exception">
+      <td>Exception</td>
+      <td>
+        <pre>{{data.exception}}</pre>
+      </td>
+    </tr>
+  </table>
+</div>
+<div mat-dialog-actions>
+  <div style="width:100%; text-align: right;">
+
+    <button
+      mat-button
+      (click)="close()">Close</button>
+
+  </div>
+</div>
