@@ -1,8 +1,12 @@
 
-<h1 mat-dialog-title>Details for item {{data.id}}</h1>
-<div mat-dialog-content>
+<h1
+  mat-dialog-title>
+  Details for item {{data.id}}
+</h1>
+<div mat-dialog-content class="relativize">
   <table class="details-table">
-    <tr>
+    <tr
+      [class]="data.type === 'error' || data.type === 'fatal' ? 'error' : 'normal'">
       <td>Type</td>
       <td>{{data.type}}</td>
     </tr>

@@ -1,7 +1,7 @@
 
-
 .details-table {
   width: 100%;
+  border-collapse: collapse;
   tr {
     td {
       padding: 1rem 0 1rem 0;
@@ -16,6 +16,11 @@
       width: 150px;
       font-weight: bold;
       vertical-align: top;
+      padding-right: 1rem;
+      padding-left: 1rem;
     }
+  }
+  tr.error {
+    background-color: rgb(255,235,235);
   }
 }
