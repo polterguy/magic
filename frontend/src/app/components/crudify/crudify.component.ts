@@ -523,7 +523,9 @@ signal:transformers.hash-password
     }
 
     // Avoiding CRUDifying magic/tasks and due_task
-    if (this.selectedDatabase === 'magic' && (tables[0].table === 'tasks' || tables[0].table === 'task_due')) {
+    if (this.selectedDatabase === 'magic' && 
+      (tables[0].table === 'tasks' || tables[0].table === 'task_due' ||
+      tables[0].table === 'dbo.tasks' || tables[0].table === 'dbo.task_due')) {
 
       // We don't crudify these tables (by default).
       this.crudifyTopTable(tables.slice(1));
