@@ -14,7 +14,7 @@ import { TicketService } from 'src/app/services/ticket-service';
 })
 export class EndpointsComponent implements OnInit {
 
-  @ViewChild('queryParamaters', { static: false }) queryParametersInput: MatInput;
+  @ViewChild('queryParamaters') queryParametersInput: MatInput;
   public displayedColumns: string[] = ['url', 'auth', 'verb', 'crud', 'selected'];
   public displayedSecondRowColumns: string[] = ['details'];
   public showEndpoints = false;
