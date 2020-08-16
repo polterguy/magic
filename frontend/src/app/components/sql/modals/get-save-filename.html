@@ -26,7 +26,7 @@
 <div mat-dialog-actions>
   <div style="width:100%; text-align: right;">
     <button
-      [disabled]="data.filename === '' || data.filename === null || data.filename === undefined"
+      [attr.disabled]="data.filename === '' || data.filename === null || data.filename === undefined"
       mat-raised-button
       color="primary"
       [mat-dialog-close]="data.filename">Ok</button>
