@@ -6,7 +6,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @import "~codemirror/lib/codemirror";
 @import "~codemirror/theme/material";
 @import "~codemirror/addon/display/fullscreen";
-@import "~ng-pick-datetime/assets/style/picker.min.css";
+@import "~@danielmoncada/angular-datetime-picker/assets/style/picker.min.css";
 
 .content {
   margin-bottom: 5rem;
