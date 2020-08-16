@@ -129,7 +129,7 @@
 
     <div class="right-aligned">
       <button
-        [disabled]="!connectedToBackend"
+        [attr.disabled]="!connectedToBackend"
         mat-raised-button
         color="primary"
         (click)="login()"

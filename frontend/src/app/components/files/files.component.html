@@ -61,7 +61,7 @@
           mat-cell
           *matCellDef="let el">
           <button
-            [disabled]="!canModify(el.path)"
+            [attr.disabled]="!canModify(el.path)"
             (click)="deletePath(el);"
             mat-button>
             Delete
@@ -92,20 +92,20 @@
               class="file-toolbar"
               style="margin-top: 1rem;">
               <button
-                [disabled]="!canModify(el.path)"
+                [attr.disabled]="!canModify(el.path)"
                 mat-button
                 (click)="save(el)"
                 matTooltip="Saves your file">Save</button>
               <button
                 *ngIf="getMode(el) == 'text/x-mysql'"
-                [disabled]="!canModify(el.path)"
+                [attr.disabled]="!canModify(el.path)"
                 mat-button
                 (click)="evaluateSql(el)"
                 matTooltip="Evaluates your SQL">Evaluate</button>
               <mat-form-field
                 *ngIf="getMode(el) == 'text/x-mysql'">
                 <mat-select
-                  [disabled]="!canModify(el.path)"
+                  [attr.disabled]="!canModify(el.path)"
                   [(ngModel)]="selectedDatabaseType">
                   <mat-option
                     *ngFor="let cur of databaseTypes"
@@ -114,7 +114,7 @@
               </mat-form-field>
               <button
                 *ngIf="getMode(el) == 'hyperlambda'"
-                [disabled]="!canModify(el.path)"
+                [attr.disabled]="!canModify(el.path)"
                 mat-button
                 (click)="evaluate(el)"
                 matTooltip="Evaluates your file">Evaluate</button>
@@ -145,7 +145,7 @@
 
     <div class="up-one-level-button">
       <button 
-        [disabled]="atRoot()"
+        [attr.disabled]="atRoot()"
         mat-button
         matTooltip="Up one level"
         (click)="upOneFolder()">Up one level</button>
@@ -155,7 +155,7 @@
       class="bottom-toolbar">
       <button
         class="file-button"
-        [disabled]="!canModify(path)"
+        [attr.disabled]="!canModify(path)"
         mat-button>
         Upload file
       </button>
@@ -163,17 +163,17 @@
       <input
         type="file"
         id="file"
-        [disabled]="!canModify(path)"
+        [attr.disabled]="!canModify(path)"
         multiple
         class="invisible-file-element"
         (change)="handleFileInput($event.target.files)">
       <button
-        [disabled]="!canModify(path)"
+        [attr.disabled]="!canModify(path)"
         mat-button
         matTooltip="Create a new file"
         (click)="createNewFile()">New file</button>
       <button
-        [disabled]="!canModify(path)"
+        [attr.disabled]="!canModify(path)"
         mat-button
         matTooltip="Create a new folder"
         (click)="createNewFolder()">New folder</button>
