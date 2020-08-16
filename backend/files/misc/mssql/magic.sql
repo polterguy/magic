@@ -78,7 +78,7 @@ create table tasks (
   id nvarchar(256) not null,
   [description] nvarchar(1024) null,
   hyperlambda ntext not null,
-  created datetime not null default getdate(),
+  created datetime not null default getutcdate(),
   constraint pk_tasks primary key clustered(id asc)
 );
 
@@ -113,7 +113,7 @@ GO
  */
 create table log_entries (
   id int not null identity(1,1),
-  created datetime not null default getdate(),
+  created datetime not null default getutcdate(),
   type nvarchar(10) not null,
   exception text null,
   content text not null,
