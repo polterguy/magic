@@ -1,6 +1,6 @@
 
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SetupService } from 'src/app/services/setup-service';
 import { TicketService } from 'src/app/services/ticket-service';
 import { Router } from '@angular/router';

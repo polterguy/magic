@@ -1,7 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users-service';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NewUserDialogComponent } from './modals/new-user-dialog';
 import { AddRoleDialogComponent } from './modals/add-role-dialog';
 

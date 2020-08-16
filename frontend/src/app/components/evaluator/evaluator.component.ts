@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluatorService } from '../../services/evaluator-service';
 import { LegendDialogComponent } from './modals/legend-dialog';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { FileDialogComponent } from './modals/file-dialog';
 import { FileService } from 'src/app/services/file-service';
 

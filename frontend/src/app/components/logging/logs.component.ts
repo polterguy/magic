@@ -2,7 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LogService } from 'src/app/services/log-service';
 import { LogItem } from 'src/app/models/log-item';
-import { PageEvent, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { ViewLogDetails } from './modals/view-log-details';
 
 @Component({
