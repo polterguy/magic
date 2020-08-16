@@ -28,7 +28,7 @@
     "@danielmoncada/angular-datetime-picker": "^10.0.0",
     "angular-file-saver": "^1.1.3",
     "codemirror": "^5.55.0",
-    "core-js": "^2.6.11",
+    "core-js": "^3.6.5",
     "marked": "^0.8.0",
     "moment": "^2.27.0",
     "rxjs": "~6.5.3",
