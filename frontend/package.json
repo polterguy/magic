@@ -23,7 +23,7 @@
     "@angular/platform-browser": "~10.0.9",
     "@angular/platform-browser-dynamic": "~10.0.9",
     "@angular/router": "~10.0.9",
-    "@auth0/angular-jwt": "^3.0.1",
+    "@auth0/angular-jwt": "^5.0.1",
     "@ctrl/ngx-codemirror": "^4.0.0",
     "@danielmoncada/angular-datetime-picker": "^10.0.0",
     "angular-file-saver": "^1.1.3",
