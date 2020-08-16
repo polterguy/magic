@@ -68,7 +68,7 @@
 
 <div class="execute-button" *ngIf="hasConnection">
   <button 
-    [attr.disabled]="sqlText === ''"
+    [disabled]="sqlText === ''"
     mat-button
     matTooltip="Saves your current SQL on the server"
     (click)="save()">Save</button>

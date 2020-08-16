@@ -52,7 +52,7 @@
         <th mat-header-cell *matHeaderCellDef>Delete</th>
         <td mat-cell *matCellDef="let el">
           <button
-            [attr.disabled]="el.name === 'root'"
+            [disabled]="el.name === 'root'"
             matTooltip="Delete this role"
             (click)="deleteRole(el.name)"
             mat-button>Delete</button>
