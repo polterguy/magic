@@ -208,7 +208,7 @@
 
       <button
         mat-raised-button
-        [attr.disabled]="selectedTemplate === '' || name === ''"
+        [disabled]="selectedTemplate === '' || name === ''"
         color="primary"
         matTooltip="Generates the selected endpoints by applying them to your selected template"
         (click)="generateFrontEnd()">Generate</button>

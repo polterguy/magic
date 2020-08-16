@@ -43,7 +43,7 @@
         <th mat-header-cell *matHeaderCellDef>Delete</th>
         <td mat-cell *matCellDef="let el">
           <button
-            [attr.disabled]="el.username === 'root'"
+            [disabled]="el.username === 'root'"
             matTooltip="Delete this user"
             (click)="deleteUser(el.username)"
             mat-button>Delete</button>
@@ -62,7 +62,7 @@
     <button
       class="add-role-button"
       matTooltip="Add role to user"
-      [attr.disabled]="selectedUser === 'root'"
+      [disabled]="selectedUser === 'root'"
       (click)="addRole()"
       mat-button>Add ...</button>
     
@@ -78,7 +78,7 @@
           <td mat-cell *matCellDef="let el">
             <button
               matTooltip="Delete this role from user"
-              [attr.disabled]="selectedUser === 'root'"
+              [disabled]="selectedUser === 'root'"
               (click)="deleteRoleFromUser(el.role)"
               mat-button>Delete</button>
           </td>

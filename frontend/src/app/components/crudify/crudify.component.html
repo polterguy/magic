@@ -97,7 +97,7 @@
     matTooltip="CRUDifies all tables in database"
     mat-raised-button
     color="primary"
-    [attr.disabled]="moduleName === ''"
+    [disabled]="moduleName === ''"
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
 
@@ -339,7 +339,7 @@
           <th mat-header-cell *matHeaderCellDef>Create</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
-              [attr.disabled]="isVerbDisabled('post')"
+              [disabled]="isVerbDisabled('post')"
               [(ngModel)]="el.post"></mat-checkbox>
           </td>
         </ng-container>
@@ -348,7 +348,7 @@
           <th mat-header-cell *matHeaderCellDef>Read</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
-              [attr.disabled]="isVerbDisabled('get')"
+              [disabled]="isVerbDisabled('get')"
               [(ngModel)]="el.get"></mat-checkbox>
           </td>
         </ng-container>
@@ -357,7 +357,7 @@
           <th mat-header-cell *matHeaderCellDef>Update</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
-              [attr.disabled]="isVerbDisabled('put')"
+              [disabled]="isVerbDisabled('put')"
               [(ngModel)]="el.put"></mat-checkbox>
           </td>
         </ng-container>
@@ -366,7 +366,7 @@
           <th mat-header-cell *matHeaderCellDef>Delete</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
-              [attr.disabled]="isVerbDisabled('delete')"
+              [disabled]="isVerbDisabled('delete')"
               [(ngModel)]="el.delete"></mat-checkbox>
           </td>
         </ng-container>
@@ -429,7 +429,7 @@
           <td mat-cell *matCellDef="let el" style="padding-right: 1rem;">
             <mat-form-field class="fill-width">
                 <input 
-                  [attr.disabled]="el.generate === false"
+                  [disabled]="el.generate === false"
                   matInput 
                   autocomplete="off"
                   type="text" 
@@ -443,7 +443,7 @@
           <td mat-cell *matCellDef="let el">
             <mat-form-field class="fill-width">
                 <input 
-                [attr.disabled]="el.generate === false"
+                [disabled]="el.generate === false"
                 matInput 
                   autocomplete="off"
                   type="text" 
@@ -547,7 +547,7 @@
       matTooltip="Generates CRUD endpoints for your currently selected table"
       mat-raised-button
       color="primary"
-      [attr.disabled]="moduleUrl === '' || moduleName === '' || !hasSelectedEndpoints()"
+      [disabled]="moduleUrl === '' || moduleName === '' || !hasSelectedEndpoints()"
       (click)="crudifyTable()">Crudify selected table</button>
   </div>
 
