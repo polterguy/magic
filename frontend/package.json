@@ -33,7 +33,7 @@
     "marked": "^0.8.0",
     "moment": "^2.27.0",
     "rxjs": "~6.5.3",
-    "tslib": "^1.10.0",
+    "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
@@ -44,17 +44,17 @@
     "@types/jasmine": "^2.8.17",
     "@types/jasminewd2": "^2.0.8",
     "@types/node": "^12.11.1",
-    "codelyzer": "^5.1.2",
-    "jasmine-core": "~2.99.1",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~4.0.0",
-    "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "~2.0.1",
-    "karma-jasmine": "~1.1.2",
-    "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "^5.4.4",
+    "codelyzer": "^6.0.0",
+    "jasmine-core": "~3.5.0",
+    "jasmine-spec-reporter": "~5.0.0",
+    "karma": "~5.0.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage-istanbul-reporter": "~3.0.2",
+    "karma-jasmine": "~3.3.0",
+    "karma-jasmine-html-reporter": "^1.5.0",
+    "protractor": "~7.0.0",
     "ts-node": "~7.0.0",
-    "tslint": "~5.11.0",
+    "tslint": "~6.1.0",
     "typescript": "~3.9.7"
   }
 }
