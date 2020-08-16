@@ -113,7 +113,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        whitelistedDomains: environment.whitelistedDomains,
+        allowedDomains: environment.whitelistedDomains,
       }
     }),
     MatButtonModule,
