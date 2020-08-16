@@ -7,6 +7,12 @@
     {{noErrors}} errors
   </div>
 
+  <div class="delete-items">
+    <button
+      mat-button
+      (click)="deleteAll()">Clear</button>
+  </div>
+
   <table mat-table [dataSource]="items">
 
     <ng-container matColumnDef="when">

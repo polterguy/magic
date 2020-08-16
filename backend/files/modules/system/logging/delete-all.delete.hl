@@ -1,0 +1,35 @@
+
+/*
+ * Deletes all log items.
+ */
+.description:"Deletes all log items from database."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves items from our database, according to which database is
+ * the default database and database type in the system.
+ */
+config.get:"magic:logging:database"
+config.get:"magic:databases:default"
+set-name:x:../**/exe
+   strings.concat
+      get-value:x:@config.get
+      .:.execute
+set-name:x:../**/open
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+open:x:@config.get/@config.get
+   exe:delete from log_entries
+
+/*
+ * Returning log items to caller.
+ */
+return-nodes
+   result:SUCCESS

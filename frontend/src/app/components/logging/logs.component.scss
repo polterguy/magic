@@ -6,8 +6,13 @@
     .error-items {
         position: absolute;
         top: 1rem;
-        right: 1rem;
+        left: 1rem;
         color:rgb(255,128,128);
+    }
+    .delete-items {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
     }
     table {
         width: 100%;
