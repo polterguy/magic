@@ -3,7 +3,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Endpoint } from '../../models/endpoint';
 import { EndpointService } from '../../services/endpoint-service';
-import { MatInput, MatSelectChange } from '@angular/material';
+import { MatInput } from '@angular/material/input';
+import { MatSelectChange } from '@angular/material/select';
 import { saveAs } from 'file-saver';
 import { TicketService } from 'src/app/services/ticket-service';
 

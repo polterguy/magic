@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { TicketService } from './services/ticket-service';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { interval } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PingService } from './services/ping-service';

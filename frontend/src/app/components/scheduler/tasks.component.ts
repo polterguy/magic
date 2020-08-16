@@ -1,6 +1,9 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSnackBar, MatDialog, MatSlideToggleChange, MatPaginator, PageEvent } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TaskService } from 'src/app/services/scheduler-service';
 import { TaskModel, TaskSchedule } from 'src/app/models/task-model';
 import { NewDueDialog } from './modals/new-due-dialog';

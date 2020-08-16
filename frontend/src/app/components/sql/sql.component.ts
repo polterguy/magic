@@ -1,6 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar, MatSelectChange, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
 import { TicketService } from 'src/app/services/ticket-service';

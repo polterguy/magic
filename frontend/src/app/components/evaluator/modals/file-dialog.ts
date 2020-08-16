@@ -6,11 +6,8 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatSnackBar
-} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileService } from 'src/app/services/file-service';
 
 export interface FileDialogData {

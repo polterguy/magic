@@ -1,7 +1,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CrudifyService } from 'src/app/services/crudify-service';
-import { MatSelectChange, MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CrudifyResult } from 'src/app/models/endpoint-result-model';
 import { CreateValidatorDialogComponent } from './modals/create-validator-dialog';
 import { Column } from 'src/app/models/column';
