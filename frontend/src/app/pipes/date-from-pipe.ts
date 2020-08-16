@@ -9,25 +9,25 @@ export class DateFromPipe implements PipeTransform {
     const now = new Date().getTime();
     const deltaSeconds = Math.round((dateWhen - now) / 1000);
     if (deltaSeconds < 180) {
-      return `${deltaSeconds} seconds ago`;
+      return `${deltaSeconds} seconds from now`;
     }
     const deltaMinutes = Math.round(deltaSeconds / 60);
     if (deltaMinutes < 60) {
-      return `${deltaMinutes} minutes ago`;
+      return `${deltaMinutes} minutes from now`;
     }
     const deltaHours = Math.round(deltaMinutes / 60);
     if (deltaHours < 24) {
-      return `${deltaHours} hours ago`;
+      return `${deltaHours} hours from now`;
     }
     const deltaDays = Math.round(deltaHours / 24);
     if (deltaDays < 60) {
-      return `${deltaDays} days ago`;
+      return `${deltaDays} days from now`;
     }
     const deltaWeeks = Math.round(deltaDays / 7);
     if (deltaWeeks < 20) {
-      return `${deltaWeeks} weeks ago`;
+      return `${deltaWeeks} weeks from now`;
     }
     const deltaMonths = Math.round(deltaWeeks / 4.2);
-    return `${deltaMonths} months ago`;
+    return `${deltaMonths} months from now`;
   }
 }
