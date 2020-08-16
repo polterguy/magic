@@ -51,4 +51,10 @@ export class LogsComponent implements OnInit {
       data: item
     });
   }
+
+  deleteAll() {
+    this.logService.deleteAll().subscribe(res => {
+      this.getItems();
+    });
+  }
 }

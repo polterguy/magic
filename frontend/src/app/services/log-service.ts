@@ -32,4 +32,10 @@ export class LogService {
       this.ticketService.getBackendUrl() +
       'magic/modules/system/logging/count-error-items');
   }
+
+  public deleteAll() {
+    return this.httpClient.delete<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/logging/delete-all');
+  }
 }
