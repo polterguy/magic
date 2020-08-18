@@ -62,7 +62,7 @@ if
 /*
  * Creating a log entry explaining roughly what we're about to do.
  */
-strings.concat
+log.info
    .:"Crudifying '"
    get-value:x:@strings.to-lower
    .:"' wrapping '"
@@ -72,7 +72,6 @@ strings.concat
    .:"' with verb '"
    get-value:x:@.arguments/*/verb
    .:"'"
-log.info:x:-
 
 
 
