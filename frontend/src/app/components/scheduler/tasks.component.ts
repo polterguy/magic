@@ -154,11 +154,7 @@ export class TasksComponent implements OnInit {
 
   selectTask(task: any, el: HTMLElement) {
     this.selectedTask = task;
-      if (!this.selectedTask.hyperlambda) {
-        this.getTaskFromService(task.id, el);
-    } else {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    this.getTaskFromService(task.id, el);
   }
 
   runTask() {
