@@ -5,6 +5,8 @@ import { LogItem } from 'src/app/models/log-item';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ViewLogDetails } from './modals/view-log-details';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-logs',
@@ -19,17 +21,30 @@ export class LogsComponent implements OnInit {
   public count: number;
   public noErrors = 0;
   public displayedColumns: string[] = ['when', 'type', 'content', 'details'];
+  public filter: string = null;
+  public filterFormControl: FormControl;
 
   constructor(
     private logService: LogService,
     public dialog: MatDialog) { }
 
   ngOnInit() {
+    this.filterFormControl = new FormControl('');
+    this.filterFormControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: any) => {
+        this.filter = query;
+        this.offset = 0;
+        this.getItems();
+      });
     this.getItems();
   }
 
   getItems() {
-    this.logService.listLogItems(this.offset, this.limit).subscribe(res => {
+    this.logService.listLogItems(
+      this.filter,
+      this.offset,
+      this.limit).subscribe(res => {
       this.items = res;
     });
     this.logService.countLogItems().subscribe(res => {

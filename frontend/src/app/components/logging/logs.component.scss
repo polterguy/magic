@@ -1,8 +1,7 @@
 
-.info-card {
-    margin:5rem 4rem .5rem 4rem;
-    padding: 3rem;
+.logs-wrapper {
     position: relative;
+    padding:2rem 5rem 2rem 5rem;
     .error-items {
         position: absolute;
         top: 1rem;
@@ -14,25 +13,40 @@
         top: 1rem;
         right: 1rem;
     }
-    table {
-        width: 100%;
-        tr {
-            td:nth-child(1) {
-                width: 20%;
-            }
-            td:nth-child(2) {
-                width: 10%;
-            }
-            td:nth-child(4) {
-                width: 10%;
-                text-align: right;
-            }
-            td {
-                pre {
-                    background-color: rgb(245,245,245);
-                    padding:.5rem;
+    .logs {
+        margin-top: 2rem;
+        padding: 5rem;
+        position: relative;
+        table {
+            width: 100%;
+            tr {
+                td:nth-child(1) {
+                    width: 20%;
+                    padding-top: 1.25rem;
+                    vertical-align: top;
+                }
+                td:nth-child(2) {
+                    vertical-align: top;
+                    padding-top: 1.25rem;
+                    width: 10%;
+                }
+                td:nth-child(4) {
+                    width: 10%;
+                    text-align: right;
+                }
+                td {
+                    pre {
+                        background-color: rgb(245,245,245);
+                        padding:.5rem;
+                        max-height: 5.5rem;
+                        overflow: hidden;
+                    }
                 }
             }
         }
     }
+}
+
+.fill-width {
+    width: 100%;
 }

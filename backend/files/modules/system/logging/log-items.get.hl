@@ -5,6 +5,7 @@
 .arguments
    offset:long
    limit:long
+   query:string
 .description:"Returns log items according to the specified arguments."
 
 
@@ -24,9 +25,36 @@ strings.concat
    .:magic.db.
    get-value:x:@config.get
    .:.read
+
+
+/*
+ * Adding paging arguments.
+ */
 add:x:../*/wait.signal/*/args
    get-nodes:x:@.arguments/*/limit
    get-nodes:x:@.arguments/*/offset
+
+
+/*
+ * Adding filter argument, if given.
+ */
+if
+   exists:x:@.arguments/*/query
+   .lambda
+      strings.concat
+         get-value:x:@.arguments/*/query
+         .:%
+      unwrap:x:+/*/*/*
+      add:x:../*/wait.signal/*/args
+         .
+            or
+               type.eq:x:@.arguments/*/query
+               content.like:x:@strings.concat
+
+
+/*
+ * Retrieving items from database.
+ */
 unwrap:x:+/*
 wait.signal:x:@strings.concat
    database:x:@config.get/@config.get
@@ -37,7 +65,7 @@ wait.signal:x:@strings.concat
 
 
 /*
- * Returning log items to caller.
+ * Returning items to caller.
  */
 add:x:+
    get-nodes:x:@wait.signal/*
