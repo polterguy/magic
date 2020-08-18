@@ -8,6 +8,7 @@ import { ViewLogDetails } from './modals/view-log-details';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-logs',
@@ -28,6 +29,7 @@ export class LogsComponent implements OnInit {
 
   constructor(
     private logService: LogService,
+    private snackBar: MatSnackBar,
     public dialog: MatDialog) { }
 
   ngOnInit() {
@@ -62,12 +64,18 @@ export class LogsComponent implements OnInit {
       this.offset,
       this.limit).subscribe(res => {
       this.items = res;
+    }, error => {
+      this.showHttpError(error);
     });
     this.logService.countLogItems().subscribe(res => {
       this.count = res.result;
+    }, error => {
+      this.showHttpError(error);
     });
     this.logService.countErrorItems().subscribe(res => {
       this.noErrors = res.result;
+    }, error => {
+      this.showHttpError(error);
     });
   }
 
@@ -86,6 +94,15 @@ export class LogsComponent implements OnInit {
   deleteAll() {
     this.logService.deleteAll().subscribe(res => {
       this.getItems();
+    }, error => {
+      this.showHttpError(error);
+    });
+  }
+
+  showHttpError(error: any) {
+    this.snackBar.open(error.error ? error.error.message : error, 'Close', {
+      duration: 10000,
+      panelClass: ['error-snackbar'],
     });
   }
 }
