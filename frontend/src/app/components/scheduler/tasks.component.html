@@ -24,8 +24,7 @@
     </mat-slide-toggle>
 
     <button
-      mat-raised-button
-      color="primary"
+      mat-button
       class="create-new-task"
       (click)="createNewTask()"
       matTooltip="Creates a new task">New</button>
@@ -95,8 +94,13 @@
         <button 
           mat-button
           matTooltip="Close editing of task"
-          style="margin-right: 1rem"
+          style="margin-right: 1rem; position: absolute; top: 1rem; right: 0;"
           (click)="closeTask()">Close</button>
+        <button 
+          mat-button
+          matTooltip="Saves the task"
+          style="margin-right: 1rem"
+          (click)="updateTask()">Save</button>
         <button 
           mat-button
           matTooltip="Schedule task for execution"
@@ -106,13 +110,7 @@
           mat-button
           id="executeButton"
           matTooltip="Executes the task"
-          style="margin-right: 1rem"
-          (click)="runTask()">Run</button>
-        <button 
-          mat-raised-button
-          color="primary"
-          matTooltip="Saves the task"
-          (click)="updateTask()">Save</button>
+          (click)="runTask()">Execute</button>
       </div>
 
       <div

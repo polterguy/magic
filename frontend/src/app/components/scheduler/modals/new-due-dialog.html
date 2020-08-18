@@ -40,12 +40,7 @@
 
   <div
     *ngIf="schedule === 'repeat'">
-    Pattern <code>MM.dd.HH.hh.mm.ss.ww</code> where MM is month number, dd is day number,
-    hh is hours in military hour format, mm is minutes, ss is seconds, and ww is weekdays.
-    Alternatively <code>n.unit</code> where n is a number, and unit is seconds, minutes, hours,
-    days, weeks or months. See
-    <a target="_blank" href="https://github.com/polterguy/magic.lambda.scheduler">this link</a>
-    for further explanation.
+    <a target="_blank" href="https://github.com/polterguy/magic.lambda.scheduler#repeating-tasks">Documentation for repetition patterns</a>.
   </div>
 
 </div>
@@ -55,12 +50,11 @@
 
     <button
       mat-button
-      (click)="close()">Close</button>
+      (click)="saveTask()">OK</button>
 
     <button
-      mat-raised-button
-      color="primary"
-      (click)="saveTask()">OK</button>
+      mat-button
+      (click)="close()">Close</button>
 
   </div>
 </div>
