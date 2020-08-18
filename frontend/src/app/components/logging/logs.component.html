@@ -14,6 +14,13 @@
 
   <div class="mat-elevation-z4 logs">
 
+    <mat-slide-toggle
+      matTooltip="Turn on or off polling of backend for new log items every 5 seconds"
+      (change)="pollClicked($event)"
+      class="live-polling-button">
+      Live polling
+    </mat-slide-toggle>
+
     <div
       *ngIf="noErrors !== 0"
       class="error-items">

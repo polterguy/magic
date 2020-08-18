@@ -7,6 +7,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { ViewLogDetails } from './modals/view-log-details';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-logs',
@@ -23,6 +24,7 @@ export class LogsComponent implements OnInit {
   public displayedColumns: string[] = ['when', 'type', 'content', 'details'];
   public filter: string = null;
   public filterFormControl: FormControl;
+  public live: boolean;
 
   constructor(
     private logService: LogService,
@@ -38,6 +40,20 @@ export class LogsComponent implements OnInit {
         this.getItems();
       });
     this.getItems();
+  }
+
+  pollClicked(e: MatSlideToggleChange) {
+    this.live = e.checked;
+    this.poll();
+  }
+
+  poll() {
+    if (this.live) {
+      this.getItems();
+      setTimeout(() => {
+        this.poll();
+      }, 5000);
+    }
   }
 
   getItems() {

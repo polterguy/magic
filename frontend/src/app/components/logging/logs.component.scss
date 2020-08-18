@@ -2,10 +2,15 @@
 .logs-wrapper {
     position: relative;
     padding:2rem 5rem 2rem 5rem;
+    .live-polling-button {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+    }
     .error-items {
         position: absolute;
-        top: 1rem;
-        left: 1rem;
+        top: 2rem;
+        left: 20rem;
         color:rgb(255,128,128);
     }
     .delete-items {
