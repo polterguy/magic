@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.library;
+using magic.lambda.logging.helpers;
 
 namespace magic.backend
 {
@@ -47,6 +48,10 @@ namespace magic.backend
             app.UseAuthentication();
             app.UseRouting();
             app.UseEndpoints(conf => conf.MapControllers());
+
+            // Creating a log entry for having started application.
+            var logger = app.ApplicationServices.GetService(typeof(ILogger)) as ILogger;
+            logger.Info("Magic was successfully started");
         }
     }
 }

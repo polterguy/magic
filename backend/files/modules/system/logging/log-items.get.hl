@@ -60,7 +60,7 @@ wait.signal:x:@strings.concat
    database:x:@config.get/@config.get
    table:log_entries
    args
-      order:created
+      order:id
       direction:desc
 
 
