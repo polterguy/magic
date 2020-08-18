@@ -1,0 +1,69 @@
+/*
+ * How many times to retry lambda block.
+ */
+.no:int:5
+
+
+/*
+ * True if task executed successfully.
+ */
+.success:bool:false
+
+
+/*
+ * How many milliseconds to wait between each retry attempt.
+ */
+.wait:int:1000
+
+
+/*
+ * Actual retry loop.
+ */
+wait.while
+   mt
+      get-value:x:@.no
+      .:int:0
+   .lambda
+   
+      /*
+       * Making sure we catch exceptions.
+       */
+      wait.try
+      
+         /*
+          * Put your retry logic below.
+          * Remove the [throw] invocation, and exchange it with
+          * your own code, or slot invocation.
+          */
+         throw:Caught below
+         
+         /*
+          * Success, making sure we end loop, and reporting
+          * success to outer layer.
+          */
+         set-value:x:@.no
+            .:int:0
+         set-value:x:@.success
+            .:bool:true
+
+      .catch
+      
+         /*
+          * Decrementing retry counter.
+          */
+         math.decrement:x:@.no
+         
+         /*
+          * Wait for [.wait] milliseconds before retrying.
+          */
+         wait.sleep:x:@.wait
+
+
+/*
+ * Checking if task succeeded.
+ */
+if
+   not
+      get-value:x:@.success
+   .lambda
+      log.error:We attempted to do the task you requested 5 times, but every time it failed.
