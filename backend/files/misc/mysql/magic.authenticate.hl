@@ -57,6 +57,8 @@ slots.create:magic.authenticate
              * No such user.
              */
             throw:Access denied
+               status:int:401
+               public:bool:true
 
 
       /*
@@ -108,3 +110,5 @@ slots.create:magic.authenticate
           * Hash version of password didn't match.
           */
          throw:Access denied
+            status:int:401
+            public:bool:true
