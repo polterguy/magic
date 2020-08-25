@@ -90,9 +90,9 @@ slots.create:magic.authenticate
              * Logging the fact that user successfully logged in.
              */
             log.info
-               .:"User '"
+               .:"We successfully authenticated user '"
                get-value:x:@.arguments/*/username
-               .:"' was authenticated successfully"
+               .:"'"
 
 
             /*
