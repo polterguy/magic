@@ -21,9 +21,19 @@ slots.create:magic.authenticate
 
 
    /*
+    * Logging the fact that user tries to login.
+    */
+   log.info
+      .:"Trying to authenticate user '"
+      get-value:x:@.arguments/*/username
+      .:"'"
+
+
+   /*
     * Opens up our database connection.
     */
-   mssql.connect:[magic]
+   config.get:"magic:auth:database"
+   mssql.connect:x:-
 
 
       /*
