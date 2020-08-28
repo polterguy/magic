@@ -21,7 +21,9 @@
     <ng-container matColumnDef="filename">
       <th mat-header-cell *matHeaderCellDef>Filename</th>
       <td (click)="selectFile(file.filename)" mat-cell *matCellDef="let file">
-        {{getFileName(file.filename)}}
+        <span class="filename">
+          {{getFileName(file.filename)}}
+        </span>
         <button
           mat-raised-button
           (click)="showInfo(file, $event)"

@@ -10,6 +10,13 @@
             background-color: rgb(240,240,240);
         }
     }
+    tr {
+        td {
+            .filename {
+                line-height: 2.25rem;
+            }
+        }
+    }
 }
 
 .right-aligned {
