@@ -2,18 +2,15 @@
  * Example of how to retrieve emails form a POP3 server.
  */
 mail.pop3.fetch
-   server
-      host:pop.gmail.com
-      port:int:995
-      secure:bool:true
-      username:gmail-username@gmail.com
-      password:Gmail-Password
-   max:int:50
-   raw:bool:false
    .lambda
+
       /*
        * Some lambda object invoked once for every email fetched.
        * Given message as [.message] node structured as lambda.
        */
+      unwrap:x:+/*
+      .content
+         from:x:@.message/*/from/0
+         text:x:@.message/**/entity/**/content/[0,1]
       lambda2hyper:x:..
       log.info:x:-
