@@ -6,7 +6,7 @@ mail.pop3.fetch
 
       /*
        * Some lambda object invoked once for every email fetched.
-       * Given message as [.message] node structured as lambda.
+       * Given message as [.message].
        */
       unwrap:x:+/*
       .content
