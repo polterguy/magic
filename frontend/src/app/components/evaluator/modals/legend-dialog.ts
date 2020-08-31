@@ -26,6 +26,7 @@ export class LegendDialogComponent {
     'magic.lambda.mssql',
     'magic.lambda.mysql',
     'magic.lambda.slots',
+    'magic.lambda.dates',
     'magic.lambda.config',
     'magic.lambda.crypto',
     'magic.lambda.strings',
