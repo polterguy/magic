@@ -1,0 +1,7 @@
+/*
+ * Saves a piece of string to the memory cache,
+ * and retrieves it again.
+ */
+cache.set:foo
+   .:some cache value
+cache.get:foo
