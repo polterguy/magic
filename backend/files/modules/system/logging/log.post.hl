@@ -1,0 +1,25 @@
+
+/*
+ * Creates a log item using the specified arguments.
+ */
+.arguments
+   type:string
+   content:string
+.description:"Creates a log item using the specified arguments."
+
+
+/*
+ * Creating a log entry using the specified type of logger.
+ */
+set-name:x:../*/log-invocation
+   strings.concat
+      .:log.
+      get-value:x:@.arguments/*/type
+log-invocation:x:@.arguments/*/content
+
+
+/*
+ * Returning success to caller.
+ */
+return-nodes
+   result:success
