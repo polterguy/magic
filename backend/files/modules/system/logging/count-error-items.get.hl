@@ -2,7 +2,7 @@
 /*
  * Returns number of log items in the database of type error.
  */
-.description:"Returns the number of log items of type error."
+.description:"Returns the number of log items of type error in the log database."
 
 
 /*

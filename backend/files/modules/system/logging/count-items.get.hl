@@ -2,7 +2,7 @@
 /*
  * Returns number of log items in the database.
  */
-.description:"Returns the number of log items."
+.description:"Returns the number of log items in the log database."
 
 
 /*
