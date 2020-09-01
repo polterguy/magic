@@ -48,18 +48,6 @@ export class HttpService {
     });
   }
 
-  // Logs an error item in the backend server.
-  logError(content: string) {
-    this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
-      type: 'error',
-      content
-    }).subscribe(res => {
-      console.log('Error item successfully logged');
-    }, error => {
-      console.error(error.error.message);
-    });
-  }
-
   // Logs an info item in the backend server.
   logDebug(content: string) {
     this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
@@ -67,6 +55,18 @@ export class HttpService {
       content
     }).subscribe(res => {
       console.log('Debug item successfully logged');
+    }, error => {
+      console.error(error.error.message);
+    });
+  }
+
+  // Logs an error item in the backend server.
+  logError(content: string) {
+    this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
+      type: 'error',
+      content
+    }).subscribe(res => {
+      console.log('Error item successfully logged');
     }, error => {
       console.error(error.error.message);
     });
