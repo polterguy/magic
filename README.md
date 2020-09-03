@@ -66,6 +66,7 @@ acme.foo
   - [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=bugs)](https://sonarcloud.io/dashboard?id=polterguy_magic)
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic)
 * [Magic Node](https://github.com/polterguy/magic.node) - Explains nodes, Hyperlambda and Expressions
   - [![Build status](https://travis-ci.com/polterguy/magic.node.svg?master)](https://travis-ci.com/polterguy/magic.node)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.node)
@@ -73,12 +74,14 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.node)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.node)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.node)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.node)
 * [Magic Library](https://github.com/polterguy/magic.library) - Explains how magic is tied together with ASP.NET
   - [![Build status](https://travis-ci.com/polterguy/magic.library.svg?master)](https://travis-ci.com/polterguy/magic.library)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.library)
   - [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=bugs)](https://sonarcloud.io/dashboard?id=polterguy_magic.library)
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.library)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.library)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.library)
 * [Magic Lambda Auth](https://github.com/polterguy/magic.lambda.auth) - Authentication and authorisation from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.auth.svg?master)](https://travis-ci.com/polterguy/magic.lambda.auth)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth)
@@ -86,6 +89,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth)
 * [Magic Lambda Validators](https://github.com/polterguy/magic.lambda.validators) - Validate input in Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.validators.svg?master)](https://travis-ci.com/polterguy/magic.lambda.validators)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators)
@@ -93,6 +97,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators)
 * [Magic Lambda Strings](https://github.com/polterguy/magic.lambda.strings) - Manipulate strings in Hyperlambda
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.strings.svg?master)](https://travis-ci.com/polterguy/magic.lambda.strings)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings)
@@ -100,6 +105,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings)
 * [Magic Lambda Dates](https://github.com/polterguy/magic.lambda.dates) - Allows you to manipulate DateTime objects.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.dates.svg?master)](https://travis-ci.com/polterguy/magic.lambda.dates)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates)
@@ -107,6 +113,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates)
 * [Magic Lambda Slots](https://github.com/polterguy/magic.lambda.slots) - Dynamically create your own slots/functions
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.slots.svg?master)](https://travis-ci.com/polterguy/magic.lambda.slots)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots)
@@ -114,6 +121,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots)
 * [Magic Lambda MySQL](https://github.com/polterguy/magic.lambda.mysql) - Accessing your MySQL server from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mysql.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mysql)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql)
@@ -121,6 +129,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql)
 * [Magic Lambda MS SQL](https://github.com/polterguy/magic.lambda.mssql) - Accessing your MS SQL Server from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mssql.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mssql)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql)
@@ -128,6 +137,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql)
 * [Magic Lambda Math](https://github.com/polterguy/magic.lambda.math) - Math operations from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.math.svg?master)](https://travis-ci.com/polterguy/magic.lambda.math)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math)
@@ -135,6 +145,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math)
 * [Magic Lambda Logging](https://github.com/polterguy/magic.lambda.logging) - Logging from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.logging.svg?master)](https://travis-ci.com/polterguy/magic.lambda.logging)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging)
@@ -142,6 +153,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging)
 * [Magic Lambda Caching](https://github.com/polterguy/magic.lambda.caching) - Caching from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.caching.svg?master)](https://travis-ci.com/polterguy/magic.lambda.caching)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching)
@@ -149,6 +161,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching)
 * [Magic Lambda JSON](https://github.com/polterguy/magic.lambda.json) - Manipulating JSON from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.json.svg?master)](https://travis-ci.com/polterguy/magic.lambda.json)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json)
@@ -156,6 +169,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json)
 * [Magic Lambda Mail](https://github.com/polterguy/magic.lambda.mail) - Sending and retrieving emails from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mail.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mail)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda,mail)
@@ -163,6 +177,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mail)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mail)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mail)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mail)
 * [Magic Lambda MIME](https://github.com/polterguy/magic.lambda.mime) - Parsing email messages in Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mime.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mime)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime)
@@ -170,6 +185,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime)
 * [Magic Lambda IO](https://github.com/polterguy/magic.lambda.io) - File manipulation using Hyperlambda
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.io.svg?master)](https://travis-ci.com/polterguy/magic.lambda.io)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io)
@@ -177,6 +193,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io)
 * [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda) - Parse Hyperlambda from text, and vice versa.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.hyperlambda.svg?master)](https://travis-ci.com/polterguy/magic.lambda.hyperlambda)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda)
@@ -184,6 +201,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda)
 * [Magic Lambda HTTP](https://github.com/polterguy/magic.lambda.http) - Invoking HTTP REST endpoints from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.http.svg?master)](https://travis-ci.com/polterguy/magic.lambda.http)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http)
@@ -191,6 +209,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http)
 * [Magic Lambda Crypto](https://github.com/polterguy/magic.lambda.crypto) - Cryptography helpers in Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto)
@@ -198,6 +217,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto)
 * [Magic Lambda Config](https://github.com/polterguy/magic.lambda.config) - Accessing configuration values from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.config.svg?master)](https://travis-ci.com/polterguy/magic.lambda.config)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config)
@@ -205,6 +225,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config)
 * [Magic Lambda](https://github.com/polterguy/magic.lambda) - Explains all _"keywords"_ in Hyperlambda
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.svg?master)](https://travis-ci.com/polterguy/magic.lambda)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda)
@@ -212,6 +233,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda)
 * [Magic Lambda Scheduler](https://github.com/polterguy/magic.lambda.scheduler) - Scheduled tasks from Hyperlambda.
   - [![Build status](https://travis-ci.com/polterguy/magic.lambda.scheduler.svg?master)](https://travis-ci.com/polterguy/magic.lambda.scheduler)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
@@ -219,6 +241,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.sdcheduler&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
 * [Magic IO](https://github.com/polterguy/magic.io) - IO operations in Magic.
   - [![Build status](https://travis-ci.com/polterguy/magic.io.svg?master)](https://travis-ci.com/polterguy/magic.io)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
@@ -226,6 +249,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
 * [Magic HTTP](https://github.com/polterguy/magic.http) - HTTP rest in Magic
   - [![Build status](https://travis-ci.com/polterguy/magic.http.svg?master)](https://travis-ci.com/polterguy/magic.http)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.http)
@@ -233,6 +257,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.http)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.http)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.http)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.http)
 * [Magic Endpoint](https://github.com/polterguy/magic.endpoint) - Endpoint resolving in Magic
   - [![Build status](https://travis-ci.com/polterguy/magic.endpoint.svg?master)](https://travis-ci.com/polterguy/magic.endpoint)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint)
@@ -240,6 +265,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint)
 * [Magic Data Common](https://github.com/polterguy/magic.data.common) - Commonalities for data adapters in Magic.
   - [![Build status](https://travis-ci.com/polterguy/magic.data.common.svg?master)](https://travis-ci.com/polterguy/magic.data.common)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
@@ -247,6 +273,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
 
 ## License
 
