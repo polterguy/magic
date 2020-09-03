@@ -66,7 +66,6 @@ acme.foo
   - [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=bugs)](https://sonarcloud.io/dashboard?id=polterguy_magic)
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic)
-  - [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic)
   - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic)
   - [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic)
 * [Magic Node](https://github.com/polterguy/magic.node) - Explains nodes, Hyperlambda and Expressions
