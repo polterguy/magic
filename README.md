@@ -58,6 +58,8 @@ The above will result in a slot you can invoke from Hyperlambda using the follow
 acme.foo
 ```
 
+### Quality gates and reference documentation
+
 * Magic, this page
   - [![Build status](https://travis-ci.com/polterguy/magic.svg?master)](https://travis-ci.com/polterguy/magic)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic)
