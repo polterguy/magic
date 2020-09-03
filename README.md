@@ -105,83 +105,83 @@ Copyright(c) Thomas Hansen 2019 - 2020, Thomas Hansen - thomas@servergardens.com
 
 ## Build status
 
-Magic - [![Build status](https://travis-ci.com/polterguy/magic.svg?master)](https://travis-ci.com/polterguy/magic)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Build status](https://travis-ci.com/polterguy/magic.svg?master)](https://travis-ci.com/polterguy/magic)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic) - Magic
 
-Magic Node - [![Build status](https://travis-ci.com/polterguy/magic.node.svg?master)](https://travis-ci.com/polterguy/magic.node)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.node)
+[![Build status](https://travis-ci.com/polterguy/magic.node.svg?master)](https://travis-ci.com/polterguy/magic.node)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.node&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.node) - Magic Node
 
-Magic Library - [![Build status](https://travis-ci.com/polterguy/magic.library.svg?master)](https://travis-ci.com/polterguy/magic.library)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.library)
+[![Build status](https://travis-ci.com/polterguy/magic.library.svg?master)](https://travis-ci.com/polterguy/magic.library)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.library&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.library) - Magic Library
 
-Magic Lambda Auth - [![Build status](https://travis-ci.com/polterguy/magic.lambda.auth.svg?master)](https://travis-ci.com/polterguy/magic.lambda.auth)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.auth.svg?master)](https://travis-ci.com/polterguy/magic.lambda.auth)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.auth&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.auth) - Magic Lambda Auth
 
-Magic Lambda Validators - [![Build status](https://travis-ci.com/polterguy/magic.lambda.validators.svg?master)](https://travis-ci.com/polterguy/magic.lambda.validators)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.validators.svg?master)](https://travis-ci.com/polterguy/magic.lambda.validators)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.validators&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.validators) = Magic Lambda Validators
 
-Magic Lambda Strings - [![Build status](https://travis-ci.com/polterguy/magic.lambda.strings.svg?master)](https://travis-ci.com/polterguy/magic.lambda.strings)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.strings.svg?master)](https://travis-ci.com/polterguy/magic.lambda.strings)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.strings&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.strings) - Magic Lambda Strings
 
-Magic Lambda Dates - [![Build status](https://travis-ci.com/polterguy/magic.lambda.dates.svg?master)](https://travis-ci.com/polterguy/magic.lambda.dates)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.dates.svg?master)](https://travis-ci.com/polterguy/magic.lambda.dates)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.dates&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.dates) - Magic Lambda Dates
 
-Magic Lambda Slots - [![Build status](https://travis-ci.com/polterguy/magic.lambda.slots.svg?master)](https://travis-ci.com/polterguy/magic.lambda.slots)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.slots.svg?master)](https://travis-ci.com/polterguy/magic.lambda.slots)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.slots&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.slots) - Magic Lambda Slots
 
-Magic Lambda MySQL - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mysql.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mysql)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.mysql.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mysql)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mysql&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mysql) - Magic Lambda MySQL
 
-Magic Lambda MS SQL - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mssql.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mssql)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.mssql.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mssql)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mssql&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mssql) - Magic Lambda MS SQL
 
-Magic Lambda Math - [![Build status](https://travis-ci.com/polterguy/magic.lambda.math.svg?master)](https://travis-ci.com/polterguy/magic.lambda.math)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.math.svg?master)](https://travis-ci.com/polterguy/magic.lambda.math)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.math&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.math) - Magic Lambda Math
 
-Magic Lambda Logging - [![Build status](https://travis-ci.com/polterguy/magic.lambda.logging.svg?master)](https://travis-ci.com/polterguy/magic.lambda.logging)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.logging.svg?master)](https://travis-ci.com/polterguy/magic.lambda.logging)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.logging&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.logging) - Magic Lambda Logging
 
-Magic Lambda Caching - [![Build status](https://travis-ci.com/polterguy/magic.lambda.caching.svg?master)](https://travis-ci.com/polterguy/magic.lambda.caching)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.caching.svg?master)](https://travis-ci.com/polterguy/magic.lambda.caching)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.caching&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.caching) - Magic Lambda Caching
 
-Magic Lambda JSON - [![Build status](https://travis-ci.com/polterguy/magic.lambda.json.svg?master)](https://travis-ci.com/polterguy/magic.lambda.json)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.json.svg?master)](https://travis-ci.com/polterguy/magic.lambda.json)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.json&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.json) - Magic Lambda JSON
 
-Magic Lambda Mail - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mail.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mail)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda,mail)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.mail.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mail)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mail&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda,mail) - Magic Lambda Mail
 
-Magic Lambda MIME - [![Build status](https://travis-ci.com/polterguy/magic.lambda.mime.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mime)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.mime.svg?master)](https://travis-ci.com/polterguy/magic.lambda.mime)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.mime&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.mime) - Magic Lambda MIME
 
-Magic Lambda IO - [![Build status](https://travis-ci.com/polterguy/magic.lambda.io.svg?master)](https://travis-ci.com/polterguy/magic.lambda.io)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.io.svg?master)](https://travis-ci.com/polterguy/magic.lambda.io)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.io) - Magic Lambda IO
 
-Magic Lambda Hyperlambda - [![Build status](https://travis-ci.com/polterguy/magic.lambda.hyperlambda.svg?master)](https://travis-ci.com/polterguy/magic.lambda.hyperlambda)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.hyperlambda.svg?master)](https://travis-ci.com/polterguy/magic.lambda.hyperlambda)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.hyperlambda&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.hyperlambda) - Magic Lambda Hyperlambda
 
-Magic Lambda HTTP - [![Build status](https://travis-ci.com/polterguy/magic.lambda.http.svg?master)](https://travis-ci.com/polterguy/magic.lambda.http)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.http.svg?master)](https://travis-ci.com/polterguy/magic.lambda.http)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.http&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.http) - Magic Lambda HTTP
 
-Magic Lambda Crypto - [![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.crypto&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.crypto) - Magic Lambda Crypto
 
-Magic Lambda Config - [![Build status](https://travis-ci.com/polterguy/magic.lambda.config.svg?master)](https://travis-ci.com/polterguy/magic.lambda.config)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.config.svg?master)](https://travis-ci.com/polterguy/magic.lambda.config)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.config&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.config) - Magic Lambda Config
 
-Magic Lambda - [![Build status](https://travis-ci.com/polterguy/magic.lambda.svg?master)](https://travis-ci.com/polterguy/magic.lambda)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.svg?master)](https://travis-ci.com/polterguy/magic.lambda)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda) - Magic Lambda
 
-Magic Lambda Scheduler - [![Build status](https://travis-ci.com/polterguy/magic.lambda.scheduler.svg?master)](https://travis-ci.com/polterguy/magic.lambda.scheduler)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
+[![Build status](https://travis-ci.com/polterguy/magic.lambda.scheduler.svg?master)](https://travis-ci.com/polterguy/magic.lambda.scheduler)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler) - Magic Lambda Scheduler
 
-Magic IO - [![Build status](https://travis-ci.com/polterguy/magic.io.svg?master)](https://travis-ci.com/polterguy/magic.io)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
+[![Build status](https://travis-ci.com/polterguy/magic.io.svg?master)](https://travis-ci.com/polterguy/magic.io)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.io) - Magic IO
 
-Magic HTTP - [![Build status](https://travis-ci.com/polterguy/magic.http.svg?master)](https://travis-ci.com/polterguy/magic.http)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.http)
+[![Build status](https://travis-ci.com/polterguy/magic.http.svg?master)](https://travis-ci.com/polterguy/magic.http)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.http&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.http) - Magic HTTP
 
-Magic Endpoint - [![Build status](https://travis-ci.com/polterguy/magic.endpoint.svg?master)](https://travis-ci.com/polterguy/magic.endpoint)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint)
+[![Build status](https://travis-ci.com/polterguy/magic.endpoint.svg?master)](https://travis-ci.com/polterguy/magic.endpoint)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint) - Magic Endpoint
 
-Magic Data Common - [![Build status](https://travis-ci.com/polterguy/magic.data.common.svg?master)](https://travis-ci.com/polterguy/magic.data.common)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
+[![Build status](https://travis-ci.com/polterguy/magic.data.common.svg?master)](https://travis-ci.com/polterguy/magic.data.common)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common) - Magic Data Common
