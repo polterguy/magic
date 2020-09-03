@@ -31,6 +31,7 @@ export class LegendDialogComponent {
     'magic.lambda.crypto',
     'magic.lambda.strings',
     'magic.lambda.logging',
+    'magic.lambda.caching',
     'magic.lambda.scheduler',
     'magic.lambda.validators',
     'magic.lambda.hyperlambda',
