@@ -241,7 +241,7 @@ acme.foo
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
   - [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
   - [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
-  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.sdcheduler&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
+  - [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.lambda.scheduler&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda.scheduler)
 * [Magic IO](https://github.com/polterguy/magic.io) - IO operations in Magic.
   - [![Build status](https://travis-ci.com/polterguy/magic.io.svg?master)](https://travis-ci.com/polterguy/magic.io)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.io&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.io)
