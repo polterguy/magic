@@ -48,6 +48,7 @@ These are probably the most important parts if you intend to develop in Hyperlam
 * [Magic Lambda JSON](https://github.com/polterguy/magic.lambda.json) - Manipulating JSON from Hyperlambda.
 * [Magic Lambda Config](https://github.com/polterguy/magic.lambda.config) - Accessing configuration values from Hyperlambda.
 * [Magic Lambda Logging](https://github.com/polterguy/magic.lambda.logging) - Logging from Hyperlambda.
+* [Magic Lambda Caching](https://github.com/polterguy/magic.lambda.caching) - Caching from Hyperlambda.
 * [Magic Lambda Auth](https://github.com/polterguy/magic.lambda.auth) - Basic authentication and authorisation from Hyperlambda.
 * [Magic Lambda Crypto](https://github.com/polterguy/magic.lambda.crypto) - Cryptography helpers in Hyperlambda.
 * [Magic Lambda Scheduler](https://github.com/polterguy/magic.lambda.scheduler) - Scheduled tasks from Hyperlambda.
@@ -116,6 +117,7 @@ Copyright(c) Thomas Hansen 2019 - 2020, Thomas Hansen - thomas@servergardens.com
 [![Build status](https://travis-ci.org/polterguy/magic.lambda.mssql.svg?master)](https://travis-ci.org/polterguy/magic.lambda.mssql)
 [![Build status](https://travis-ci.org/polterguy/magic.lambda.math.svg?master)](https://travis-ci.org/polterguy/magic.lambda.math)
 [![Build status](https://travis-ci.org/polterguy/magic.lambda.logging.svg?master)](https://travis-ci.org/polterguy/magic.lambda.logging)
+[![Build status](https://travis-ci.org/polterguy/magic.lambda.caching.svg?master)](https://travis-ci.org/polterguy/magic.lambda.caching)
 [![Build status](https://travis-ci.org/polterguy/magic.lambda.json.svg?master)](https://travis-ci.org/polterguy/magic.lambda.json)
 [![Build status](https://travis-ci.org/polterguy/magic.lambda.mail.svg?master)](https://travis-ci.org/polterguy/magic.lambda.mail)
 [![Build status](https://travis-ci.org/polterguy/magic.lambda.mime.svg?master)](https://travis-ci.org/polterguy/magic.lambda.mime)
