@@ -17,41 +17,13 @@ and use it as a _"starter kit"_. You will need.
 
 1. [.Net Core CLI](https://dotnet.microsoft.com/download) version 3.1.300 or more
 2. Some sort of database server [MySql](https://dev.mysql.com/downloads/mysql/) or [MS SQL](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
-3. [NodeJS](https://nodejs.org/en/download/)
+3. [NodeJS](https://nodejs.org/en/download/), required to serve Angular frontend
 4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window with `npm install -g @angular/cli`
 5. [Magic](https://github.com/polterguy/magic/releases)
 
 To start the Magic dashboard type `dotnet run` in the _"backend"_ folder. Then type `npm link` in your
-_"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"frontend"_ folder. Go to
-[http://localhost:4200](http://localhost:4200).
-
-#### Extending Hyperlambda
-
-You can easily extend Hyperlambda with your own _"keywords"_ - Or _"slots"_ to be specifically. This is done by
-implementing the `ISlot` interface on your class, and adding an attribute to it as follows.
-
-```csharp
-using magic.node;
-using magic.signals.contracts;
-
-namespace acme.foo
-{
-    [Slot(Name = "acme.foo")]
-    public class Foo : ISlot
-    {
-        public void Signal(ISignaler signaler, Node input)
-        {
-            input.Value = "Hello World";
-        }
-    }
-}
-```
-
-The above will result in a slot you can invoke from Hyperlambda using the following code.
-
-```
-acme.foo
-```
+_"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"frontend"_ folder. then go to
+[http://localhost:4200](http://localhost:4200) with your browser.
 
 ## Documentation and Build Status
 
@@ -112,6 +84,34 @@ Below you can find the reference documentation for all projects in Magic.
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.endpoint&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.endpoint) [Magic Endpoint](https://github.com/polterguy/magic.endpoint) - Endpoint resolving in Magic
 * [![Build status](https://travis-ci.com/polterguy/magic.data.common.svg?master)](https://travis-ci.com/polterguy/magic.data.common)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common) [Magic Data Common](https://github.com/polterguy/magic.data.common) - Commonalities for data adapters in Magic.
+
+### Extending Hyperlambda
+
+You can easily extend Hyperlambda with your own _"keywords"_ - Or _"slots"_ to be specifically. This is done by
+implementing the `ISlot` interface on your class, and adding an attribute to it as follows.
+
+```csharp
+using magic.node;
+using magic.signals.contracts;
+
+namespace acme.foo
+{
+    [Slot(Name = "acme.foo")]
+    public class Foo : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
+            input.Value = "Hello World";
+        }
+    }
+}
+```
+
+The above will result in a slot you can invoke from Hyperlambda using the following code.
+
+```
+acme.foo
+```
 
 ## License
 
