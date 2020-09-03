@@ -27,8 +27,36 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 
 ## Documentation and Build Status
 
-You can rapidly [teach yourself the basics here](https://polterguy.github.io).
-Below you can find the reference documentation for all projects in Magic.
+You can rapidly [teach yourself the basics here](https://polterguy.github.io). The reference documentation you can find further down
+on this page, together with the current build status, and quality gates for the project(s).
+
+### Extending Hyperlambda
+
+You can easily extend Hyperlambda with your own _"keywords"_ - Or _"slots"_ to be specifically. This is done by
+implementing the `ISlot` interface on your class, and adding an attribute to it as follows.
+
+```csharp
+using magic.node;
+using magic.signals.contracts;
+
+namespace acme.foo
+{
+    [Slot(Name = "acme.foo")]
+    public class Foo : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
+            input.Value = "Hello World";
+        }
+    }
+}
+```
+
+The above will result in a slot you can invoke from Hyperlambda using the following code.
+
+```
+acme.foo
+```
 
 * Magic, this page
   - [![Build status](https://travis-ci.com/polterguy/magic.svg?master)](https://travis-ci.com/polterguy/magic)
@@ -165,34 +193,6 @@ Below you can find the reference documentation for all projects in Magic.
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
   - [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=bugs)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
   - [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic.data.common&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic.data.common)
-
-### Extending Hyperlambda
-
-You can easily extend Hyperlambda with your own _"keywords"_ - Or _"slots"_ to be specifically. This is done by
-implementing the `ISlot` interface on your class, and adding an attribute to it as follows.
-
-```csharp
-using magic.node;
-using magic.signals.contracts;
-
-namespace acme.foo
-{
-    [Slot(Name = "acme.foo")]
-    public class Foo : ISlot
-    {
-        public void Signal(ISignaler signaler, Node input)
-        {
-            input.Value = "Hello World";
-        }
-    }
-}
-```
-
-The above will result in a slot you can invoke from Hyperlambda using the following code.
-
-```
-acme.foo
-```
 
 ## License
 
