@@ -1,6 +1,9 @@
 
 # Quality gates for Magic, and its sub projects
 
+The quality gates below are performed as an integrated part of the Magic pipeline and Git repository, and reflects
+the code, in its current state, according to its unit tests, and SonarCloud.
+
 * Magic core
   - [![Build status](https://travis-ci.com/polterguy/magic.svg?master)](https://travis-ci.com/polterguy/magic)
   - [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic)
