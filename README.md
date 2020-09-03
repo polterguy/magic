@@ -98,4 +98,4 @@ license for it.
 
 Copyright(c) Thomas Hansen 2019 - 2020, Thomas Hansen - thomas@servergardens.com
 
-[Quality gates for Magic and all sub projects](QUALITY.md)
+* [Quality gates for Magic and all sub projects](QUALITY.md)
