@@ -1,0 +1,19 @@
+mysql.connect:sakila
+   mysql.read
+      columns
+         film.title
+         film.description
+         actor.last_name
+         actor.first_name
+      table:film
+         join:film_actor
+            type:inner
+            on
+               film_id:film_id
+            join:actor
+               type:inner
+               on
+                  actor_id:actor_id
+      where
+         and
+            actor.first_name:NICK
