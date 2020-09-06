@@ -30,36 +30,6 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 You can rapidly [teach yourself the basics here](https://polterguy.github.io). The reference documentation you can find further down
 on this page, together with the current build status, and quality gates for the project(s).
 
-### Extending Hyperlambda
-
-You can easily extend Hyperlambda with your own _"keywords"_ - Or _"slots"_ to be specifically. This is done by
-implementing the `ISlot` interface on your class, and adding an attribute to it as follows.
-
-```csharp
-using magic.node;
-using magic.signals.contracts;
-
-namespace acme.foo
-{
-    [Slot(Name = "acme.foo")]
-    public class Foo : ISlot
-    {
-        public void Signal(ISignaler signaler, Node input)
-        {
-            input.Value = "Hello World";
-        }
-    }
-}
-```
-
-The above will result in a slot you can invoke from Hyperlambda using the following code.
-
-```
-acme.foo
-```
-
-### Reference documentation
-
 * [Magic Node](https://github.com/polterguy/magic.node) - Explains nodes, Hyperlambda and Expressions
 * [Magic Library](https://github.com/polterguy/magic.library) - Explains how magic is tied together with ASP.NET
 * [Magic Lambda Auth](https://github.com/polterguy/magic.lambda.auth) - Authentication and authorisation from Hyperlambda.
