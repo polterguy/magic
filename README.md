@@ -30,6 +30,7 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 You can rapidly [teach yourself the basics here](https://polterguy.github.io). Below is the reference documentation
 for every project and sub-project Magic consists of.
 
+* [Magic Lambda](https://github.com/polterguy/magic.lambda) - Explains all _"keywords"_ in Hyperlambda
 * [Magic Node](https://github.com/polterguy/magic.node) - Explains nodes, Hyperlambda and Expressions
 * [Magic Library](https://github.com/polterguy/magic.library) - Explains how magic is tied together with ASP.NET
 * [Magic Lambda Auth](https://github.com/polterguy/magic.lambda.auth) - Authentication and authorisation from Hyperlambda.
@@ -50,7 +51,6 @@ for every project and sub-project Magic consists of.
 * [Magic Lambda HTTP](https://github.com/polterguy/magic.lambda.http) - Invoking HTTP REST endpoints from Hyperlambda.
 * [Magic Lambda Crypto](https://github.com/polterguy/magic.lambda.crypto) - Cryptography helpers in Hyperlambda.
 * [Magic Lambda Config](https://github.com/polterguy/magic.lambda.config) - Accessing configuration values from Hyperlambda.
-* [Magic Lambda](https://github.com/polterguy/magic.lambda) - Explains all _"keywords"_ in Hyperlambda
 * [Magic Lambda Scheduler](https://github.com/polterguy/magic.lambda.scheduler) - Scheduled tasks from Hyperlambda.
 * [Magic IO](https://github.com/polterguy/magic.io) - IO operations in Magic.
 * [Magic HTTP](https://github.com/polterguy/magic.http) - HTTP rest in Magic
