@@ -27,8 +27,8 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 
 ## Documentation
 
-You can rapidly [teach yourself the basics here](https://polterguy.github.io). The reference documentation you can find further down
-on this page, together with the current build status, and quality gates for the project(s).
+You can rapidly [teach yourself the basics here](https://polterguy.github.io). Below is the reference documentation
+for every project and sub-project Magic consists of.
 
 * [Magic Node](https://github.com/polterguy/magic.node) - Explains nodes, Hyperlambda and Expressions
 * [Magic Library](https://github.com/polterguy/magic.library) - Explains how magic is tied together with ASP.NET
