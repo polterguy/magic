@@ -30,19 +30,20 @@
       matTooltip="Creates a new task">New</button>
 
     <table mat-table [dataSource]="tasks">
+      <caption>Tasks in your system</caption>
 
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">ID</th>
         <td mat-cell *matCellDef="let el">{{el.id}}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Description</th>
         <td mat-cell *matCellDef="let el">{{el.description}}</td>
       </ng-container>
 
       <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef>Delete</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
         <td mat-cell *matCellDef="let el">
           <button
             (click)="delete(el); $event.stopPropagation()"

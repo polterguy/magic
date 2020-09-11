@@ -33,14 +33,15 @@
       mat-button>New ...</button>
 
     <table mat-table [dataSource]="dataSource()">
+      <caption>Users in your system</caption>
 
       <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef>Username</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Username</th>
         <td mat-cell *matCellDef="let el" (click)="selectUser(el.username)">{{el.username}}</td>
       </ng-container>
 
       <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef>Delete</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
         <td mat-cell *matCellDef="let el">
           <button
             [disabled]="el.username === 'root'"
@@ -68,13 +69,15 @@
     
     <table mat-table [dataSource]="selectedUserRoles">
 
+      <caption>Roles user belongs to</caption>
+
       <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Role</th>
         <td mat-cell *matCellDef="let el">{{el.role}}</td>
       </ng-container>
 
       <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef>Delete</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
           <td mat-cell *matCellDef="let el">
             <button
               matTooltip="Delete this role from user"
