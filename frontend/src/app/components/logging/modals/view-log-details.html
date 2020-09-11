@@ -5,6 +5,11 @@
 </h1>
 <div mat-dialog-content class="relativize">
   <table class="details-table">
+    <caption>Log item details</caption>
+    <tr>
+      <th>Field</th>
+      <th>Content</th>
+    </tr>
     <tr
       [class]="data.type === 'error' || data.type === 'fatal' ? 'error' : 'normal'">
       <td>Type</td>

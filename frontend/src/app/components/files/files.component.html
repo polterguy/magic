@@ -22,12 +22,14 @@
       mat-table
       multiTemplateDataRows
       [dataSource]="getFilteredDatasource()">
+      <caption>Folders and files in your installation</caption>
 
       <ng-container
         matColumnDef="path">
         <th
           mat-header-cell
-          *matHeaderCellDef>Path</th>
+          *matHeaderCellDef
+          scope="col">Path</th>
         <td
           mat-cell
           *matCellDef="let el"
@@ -39,7 +41,8 @@
         class="download-column">
         <th
           mat-header-cell
-          *matHeaderCellDef></th>
+          *matHeaderCellDef
+          scope="col"></th>
         <td
           mat-cell
           *matCellDef="let el">
@@ -56,7 +59,8 @@
         matColumnDef="delete">
         <th
           mat-header-cell
-          *matHeaderCellDef></th>
+          *matHeaderCellDef
+          scope="col"></th>
         <td
           mat-cell
           *matCellDef="let el">
