@@ -46,6 +46,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 450px;
 }
 
+.reactor .CodeMirror {
+  height: 150px;
+}
+
 .CodeMirror-hints {
   position: absolute;
   z-index: 10000;

@@ -90,6 +90,7 @@
         margin: 2rem 1rem 4rem 1rem;
         .columns {
             width: 100%;
+            margin-top: 2rem;
             tr {
                 td, th {
                     width: 25%;
@@ -145,6 +146,7 @@
         .endpoints {
             background: transparent;
             width: 100%;
+            margin-top: 2rem;
             tr {
                 td, th {
                     width: 15%;
@@ -224,3 +226,4 @@
 .misc-input {
     width: 400px;
 }
+  
