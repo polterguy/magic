@@ -1059,8 +1059,8 @@
     }
     var extra = completion.options.extraKeys;
     if (extra) {
-      for (var key in extra) if (extra.hasOwnProperty(key)) {
-        addBinding(key, extra[key]);
+      for (var key2 in extra) if (extra.hasOwnProperty(key)) {
+        addBinding(key2, extra[key2]);
       }
     }
     return ourMap;
@@ -1145,8 +1145,11 @@
       }
       hints.style.left = (left = pos.left - overlapX - offsetLeft) + "px";
     }
-    if (scrolls) for (var node = hints.firstChild; node; node = node.nextSibling)
-      node.style.paddingRight = cm.display.nativeBarWidth + "px"
+    if (scrolls) {
+      for (var node = hints.firstChild; node; node = node.nextSibling) {
+        node.style.paddingRight = cm.display.nativeBarWidth + "px"
+      }
+    }
 
     cm.addKeyMap(this.keyMap = buildKeyMap(completion, {
       moveFocus: function(n, avoidWrap) { widget.changeActive(widget.selectedHint + n, avoidWrap); },
