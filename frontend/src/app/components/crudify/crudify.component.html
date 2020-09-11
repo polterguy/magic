@@ -294,19 +294,20 @@
         mat-table
         class="columns"
         [dataSource]="columns">
+        <caption>What columns to crudify for what CRUD endpoint</caption>
 
         <ng-container matColumnDef="field">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Name</th>
           <td mat-cell *matCellDef="let el">{{el.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Type</th>
           <td mat-cell *matCellDef="let el">{{el.hl}} / {{el.db}}</td>
         </ng-container>
 
         <ng-container matColumnDef="nullable">
-          <th mat-header-cell *matHeaderCellDef>Nullable</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Nullable</th>
           <td mat-cell *matCellDef="let el">
             <mat-icon
               *ngIf="el.nullable"
@@ -316,7 +317,7 @@
         </ng-container>
 
         <ng-container matColumnDef="primary">
-          <th mat-header-cell *matHeaderCellDef>Primary key</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Primary key</th>
           <td mat-cell *matCellDef="let el">
             <mat-icon
               *ngIf="el.primary"
@@ -326,7 +327,7 @@
         </ng-container>
 
         <ng-container matColumnDef="automatic">
-          <th mat-header-cell *matHeaderCellDef>Automatic</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Automatic</th>
           <td mat-cell *matCellDef="let el">
             <mat-icon
               *ngIf="el.automatic"
@@ -336,7 +337,7 @@
         </ng-container>
 
         <ng-container matColumnDef="post">
-          <th mat-header-cell *matHeaderCellDef>Create</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Create</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
               [disabled]="isVerbDisabled('post')"
@@ -345,7 +346,7 @@
         </ng-container>
 
         <ng-container matColumnDef="get">
-          <th mat-header-cell *matHeaderCellDef>Read</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Read</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
               [disabled]="isVerbDisabled('get')"
@@ -354,7 +355,7 @@
         </ng-container>
 
         <ng-container matColumnDef="put">
-          <th mat-header-cell *matHeaderCellDef>Update</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Update</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
               [disabled]="isVerbDisabled('put')"
@@ -363,7 +364,7 @@
         </ng-container>
 
         <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef>Delete</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox
               [disabled]="isVerbDisabled('delete')"
@@ -401,31 +402,32 @@
           mat-table
           class="endpoints"
           [dataSource]="endpoints">
+          <caption>Configure your specific CRUD endpoints</caption>
 
         <ng-container matColumnDef="generate">
-          <th mat-header-cell *matHeaderCellDef>Generate</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Generate</th>
           <td mat-cell *matCellDef="let el">
             <mat-checkbox [(ngModel)]="el.generate"></mat-checkbox>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="endpoint">
-          <th mat-header-cell *matHeaderCellDef>Endpoint URL</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Endpoint URL</th>
           <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').replace(' ', '_').toLowerCase()}}</td>
         </ng-container>
 
         <ng-container matColumnDef="verb">
-          <th mat-header-cell *matHeaderCellDef>Verb</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Verb</th>
           <td mat-cell *matCellDef="let el">{{el.verb}}</td>
         </ng-container>
 
         <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Action</th>
           <td mat-cell *matCellDef="let el">{{el.action}}</td>
         </ng-container>
 
         <ng-container matColumnDef="log">
-          <th mat-header-cell *matHeaderCellDef>Log entry</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Log entry</th>
           <td mat-cell *matCellDef="let el" style="padding-right: 1rem;">
             <mat-form-field class="fill-width">
                 <input 
@@ -439,7 +441,7 @@
         </ng-container>
 
         <ng-container matColumnDef="auth">
-          <th mat-header-cell *matHeaderCellDef>Authorization</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Authorization</th>
           <td mat-cell *matCellDef="let el">
             <mat-form-field class="fill-width">
                 <input 
@@ -508,18 +510,19 @@
         </p>
 
         <table mat-table class="validator-table" [dataSource]="validators">
+          <caption>Input reactors for your columns</caption>
 
           <ng-container matColumnDef="field">
-            <th mat-header-cell *matHeaderCellDef>Field</th>
+            <th mat-header-cell *matHeaderCellDef scope="col">Field</th>
             <td mat-cell *matCellDef="let el">{{el.field}}</td>
           </ng-container>
 
           <ng-container matColumnDef="validator">
-            <th mat-header-cell *matHeaderCellDef>Input reactors</th>
+            <th mat-header-cell *matHeaderCellDef scope="col">Input reactors</th>
             <td mat-cell *matCellDef="let el">
               <ngx-codemirror
                 [(ngModel)]="el.validator" 
-                class="even-smaller"
+                class="reactor"
                 [options]="getCodeMirrorOptionsValidators()"></ngx-codemirror>
               <div style="text-align: right;">
                 <button
