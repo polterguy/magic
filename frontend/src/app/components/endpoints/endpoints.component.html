@@ -46,29 +46,30 @@
       mat-table
       multiTemplateDataRows
       [dataSource]="getFilteredEndpoints()">
+      <caption>Hyperlambda endpoints in your installation</caption>
 
       <ng-container matColumnDef="url">
-        <th mat-header-cell *matHeaderCellDef>URL</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">URL</th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{el.endpoint.path}}</td>
       </ng-container>
 
       <ng-container matColumnDef="auth">
-        <th mat-header-cell *matHeaderCellDef>Auth</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Auth</th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{concatenateAuth(el.endpoint.auth)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="verb">
-        <th mat-header-cell *matHeaderCellDef>Verb</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Verb</th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{el.endpoint.verb}}</td>
       </ng-container>
 
       <ng-container matColumnDef="crud">
-        <th mat-header-cell *matHeaderCellDef>CRUD</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">CRUD</th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{getCrudType(el.endpoint.type)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="selected">
-        <th mat-header-cell *matHeaderCellDef>Select</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Select</th>
         <td mat-cell *matCellDef="let el">
           <mat-checkbox [(ngModel)]="el.selected">Select</mat-checkbox>
         </td>

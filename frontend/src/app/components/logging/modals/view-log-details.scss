@@ -3,8 +3,9 @@
   width: 100%;
   border-collapse: collapse;
   tr {
-    td {
+    td, th {
       padding: 1rem 0 1rem 0;
+      text-align: left;
       border-bottom: solid 1px rgb(225,225,225);
       pre {
         background-color: rgb(245,245,245);
@@ -12,9 +13,9 @@
         margin: 0;
       }
     }
-    td:nth-child(1) {
+    td:nth-child(1),
+    th:nth-child(1) {
       width: 150px;
-      font-weight: bold;
       vertical-align: top;
       padding-right: 1rem;
       padding-left: 1rem;

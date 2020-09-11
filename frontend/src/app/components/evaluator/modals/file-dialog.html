@@ -17,9 +17,10 @@
     mat-table
     class="full-width grid"
     [dataSource]="getFilteredFiles()">
+    <caption>Existing file snippets in your installation</caption>
 
     <ng-container matColumnDef="filename">
-      <th mat-header-cell *matHeaderCellDef>Filename</th>
+      <th mat-header-cell *matHeaderCellDef scope="col">Filename</th>
       <td (click)="selectFile(file.filename)" mat-cell *matCellDef="let file">
         <span class="filename">
           {{getFileName(file.filename)}}

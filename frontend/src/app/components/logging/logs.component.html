@@ -36,26 +36,27 @@
     <div class="tasks">
 
       <table mat-table [dataSource]="items">
+        <caption>Log items in your installation</caption>
 
         <ng-container matColumnDef="when">
-          <th mat-header-cell *matHeaderCellDef>When</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">When</th>
           <td mat-cell *matCellDef="let el">{{el.created | since}}</td>
         </ng-container>
   
         <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Type</th>
           <td mat-cell *matCellDef="let el">{{el.type}}</td>
         </ng-container>
   
         <ng-container matColumnDef="content">
-          <th mat-header-cell *matHeaderCellDef>Content</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">Content</th>
           <td mat-cell *matCellDef="let el">
             <pre>{{el.content}}</pre>
           </td>
         </ng-container>
   
         <ng-container matColumnDef="details">
-          <th mat-header-cell *matHeaderCellDef>View details</th>
+          <th mat-header-cell *matHeaderCellDef scope="col">View details</th>
           <td mat-cell *matCellDef="let el">
             <button
               (click)="showDetails(el)"
