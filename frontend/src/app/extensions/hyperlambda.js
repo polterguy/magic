@@ -1039,7 +1039,7 @@
 
     var custom = completion.options.customKeys;
     var ourMap = custom ? {} : baseMap;
-    function addBinding(key, val) {
+    function addBinding(key2, val) {
       var bound;
       if (typeof val != "string")
         bound = function(cm) { return val(cm, handle); };
@@ -1048,15 +1048,21 @@
         bound = baseMap[val];
       else
         bound = val;
-      ourMap[key] = bound;
+      ourMap[key2] = bound;
     }
-    if (custom)
-      for (var key in custom) if (custom.hasOwnProperty(key))
-        addBinding(key, custom[key]);
+    if (custom) {
+      for (var key in custom) {
+        if (custom.hasOwnProperty(key)) {
+          addBinding(key, custom[key]);
+        }
+      }
+    }
     var extra = completion.options.extraKeys;
-    if (extra)
-      for (var key in extra) if (extra.hasOwnProperty(key))
+    if (extra) {
+      for (var key in extra) if (extra.hasOwnProperty(key)) {
         addBinding(key, extra[key]);
+      }
+    }
     return ourMap;
   }
 
@@ -1258,11 +1264,11 @@
   function resolveAutoHints(cm, pos) {
     var helpers = cm.getHelpers(pos, "hint"), words
     if (helpers.length) {
-      var resolved = function(cm, callback, options) {
+      var resolved = function(cm2, callback, options) {
         var app = applicableHelpers(cm, helpers);
         function run(i) {
           if (i == app.length) return callback(null)
-          fetchHints(app[i], cm, options, function(result) {
+          fetchHints(app[i], cm2, options, function(result) {
             if (result && result.list.length > 0) callback(result)
             else run(i + 1)
           })
@@ -1273,9 +1279,9 @@
       resolved.supportsSelection = true
       return resolved
     } else if (words = cm.getHelper(cm.getCursor(), "hintWords")) {
-      return function(cm) { return CodeMirror.hint.fromList(cm, {words: words}) }
+      return function(cm2) { return CodeMirror.hint.fromList(cm2, {words: words}) }
     } else if (CodeMirror.hint.anyword) {
-      return function(cm, options) { return CodeMirror.hint.anyword(cm, options) }
+      return function(cm2, options) { return CodeMirror.hint.anyword(cm2, options) }
     } else {
       return function() {}
     }
