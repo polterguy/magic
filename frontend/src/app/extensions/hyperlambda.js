@@ -993,12 +993,22 @@
   function parseOptions(cm, pos, options) {
     var editor = cm.options.hintOptions;
     var out = {};
-    for (var prop in defaultOptions) out[prop] = defaultOptions[prop];
-    if (editor) for (var prop in editor)
-      if (editor[prop] !== undefined) out[prop] = editor[prop];
-    if (options) for (var prop in options)
-      if (options[prop] !== undefined) out[prop] = options[prop];
-    if (out.hint.resolve) out.hint = out.hint.resolve(cm, pos)
+    for (let prop in defaultOptions) {
+      out[prop] = defaultOptions[prop];
+    }
+    if (editor) {
+      for (let prop in editor) {
+        if (editor[prop] !== undefined) out[prop] = editor[prop];
+      }
+    }
+    if (options) {
+      for (let prop in options) {
+        if (options[prop] !== undefined) out[prop] = options[prop];
+      }
+    }
+    if (out.hint.resolve) {
+      out.hint = out.hint.resolve(cm, pos);
+    }
     return out;
   }
 

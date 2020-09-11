@@ -23,29 +23,37 @@
         padding: 5rem;
         position: relative;
         table {
+            table-layout: fixed;
             width: 100%;
             tr {
+                th:nth-child(1) {
+                    width: 150px;
+                }
                 td:nth-child(1) {
-                    width: 20%;
                     padding-top: 1.25rem;
                     vertical-align: top;
+                }
+                th:nth-child(2) {
+                    width: 100px;
                 }
                 td:nth-child(2) {
                     vertical-align: top;
                     padding-top: 1.25rem;
-                    width: 10%;
                 }
-                td:nth-child(4) {
-                    width: 10%;
-                    text-align: right;
-                }
-                td {
+                td:nth-child(3) {
                     pre {
                         background-color: rgb(245,245,245);
                         padding:.5rem;
                         max-height: 5.5rem;
                         overflow: hidden;
+                        margin-right: 1rem;
                     }
+                }
+                th:nth-child(4) {
+                    width: 50px;
+                }
+                td:nth-child(4) {
+                    text-align: right;
                 }
             }
         }
