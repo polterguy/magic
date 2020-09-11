@@ -1039,7 +1039,7 @@
 
     var custom = completion.options.customKeys;
     var ourMap = custom ? {} : baseMap;
-    function addBinding(key2, val) {
+    function addBinding(key3, val) {
       var bound;
       if (typeof val != "string")
         bound = function(cm) { return val(cm, handle); };
@@ -1048,7 +1048,7 @@
         bound = baseMap[val];
       else
         bound = val;
-      ourMap[key2] = bound;
+      ourMap[key3] = bound;
     }
     if (custom) {
       for (var key in custom) {
