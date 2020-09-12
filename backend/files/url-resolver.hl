@@ -1,9 +1,0 @@
-
-/*
- * Resolves a dynamic (non-CRUD) URL.
- * Notice, this is where you'd like to do anything not related to Automagic CRUD - Such
- * as for instance service HTML, CSS etc ...
- *
- * Notice, the default implementation simply returns a 404 Not Found!
- */
-http.response.status-code.set:404
