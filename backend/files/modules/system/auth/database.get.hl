@@ -6,6 +6,12 @@
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
  * Reading the name of your auth database from the configuration for the application.
  */
 config.get:"magic:auth:database"

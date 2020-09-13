@@ -50,8 +50,15 @@ namespace magic.backend
             app.UseEndpoints(conf => conf.MapControllers());
 
             // Creating a log entry for having started application.
-            var logger = app.ApplicationServices.GetService(typeof(ILogger)) as ILogger;
-            logger.Info("Magic was successfully started");
+            try
+            {
+                var logger = app.ApplicationServices.GetService(typeof(ILogger)) as ILogger;
+                logger.Info("Magic was successfully started");
+            }
+            catch
+            {
+                // In case Magic has not yet been setup, the above will throw an exception.
+            }
         }
     }
 }

@@ -354,7 +354,7 @@ switch:x:@.arguments/*/verb
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#
       add:x:@apply/**/columns
-         get-nodes:x:@.arguments/*/args/*/columns/*
+         get-nodes:x:@.arguments/*/args/*/columns/*/*
 
 
    /*
