@@ -6,12 +6,6 @@
 
 
 /*
- * Ensures user is authorized to access endpoint.
- */
-auth.ticket.verify:root
-
-
-/*
  * Returns all endpoints to caller.
  */
 endpoints.list
