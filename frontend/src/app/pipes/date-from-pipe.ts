@@ -4,6 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'fromNow'
 })
 export class DateFromPipe implements PipeTransform {
+
   transform(value: any, args: string[]): any {
     const dateWhen = new Date(value).getTime();
     const now = new Date().getTime();
