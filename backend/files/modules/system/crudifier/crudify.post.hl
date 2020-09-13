@@ -14,8 +14,8 @@
    auth:string
    log:string
    overwrite:bool
-   args
-   validators
+   args:*
+   validators:string
 .description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
 
 
@@ -344,7 +344,7 @@ switch:x:@.arguments/*/verb
             unwrap:x:@.buffer/*
             set-name:x:@.buffer/*
                strings.concat
-                  get-name:x:@.dp/@.dp/#
+                  get-name:x:@.dp/@.dp/#/*
                   .:.
                   get-name:x:@.dp/#
             add:x:@apply/*/.arguments
