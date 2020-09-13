@@ -323,7 +323,7 @@ switch:x:@.arguments/*/verb
          lteq
          neq
          eq
-      for-each:x:@.arguments/*/args/*/columns/*
+      for-each:x:@.arguments/*/args/*/columns/*/*
          if
             eq
                get-value:x:@.dp/#
@@ -344,7 +344,7 @@ switch:x:@.arguments/*/verb
             unwrap:x:@.buffer/*
             set-name:x:@.buffer/*
                strings.concat
-                  get-name:x:@.dp/@.dp/#/*
+                  get-name:x:@.dp/@.dp/#
                   .:.
                   get-name:x:@.dp/#
             add:x:@apply/*/.arguments
