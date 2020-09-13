@@ -383,7 +383,7 @@ switch:x:@.arguments/*/verb
        * Applying POST arguments.
        */
       add:x:@apply/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/columns/*
+         get-nodes:x:@.arguments/*/args/*/columns/*/*
 
 
    /*
@@ -416,13 +416,13 @@ switch:x:@.arguments/*/verb
        * Applying PUT arguments.
        */
       add:x:@apply/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/primary/*
+         get-nodes:x:@.arguments/*/args/*/primary/*/*
       add:x:@apply/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/columns/*
+         get-nodes:x:@.arguments/*/args/*/columns/*/*
       for-each:x:@.arguments/*/args/*/*
          set-value:x:@.dp/#
       add:x:@apply/**/ids
-         get-nodes:x:@.arguments/*/args/*/primary/*
+         get-nodes:x:@.arguments/*/args/*/primary/*/*
       for-each:x:@apply/**/ids/*
          .x:@.arguments/*/
          set-value:x:@.x
