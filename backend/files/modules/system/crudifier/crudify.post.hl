@@ -253,7 +253,7 @@ switch:x:@.arguments/*/verb
        * Applying DELETE arguments.
        */
       add:x:@apply/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/primary/*
+         get-nodes:x:@.arguments/*/args/*/primary/*/*
 
 
    /*
