@@ -67,5 +67,3 @@ license for it.
 * [Get licensed](https://servergardens.com/buy/)
 
 Copyright(c) Thomas Hansen 2019 - 2020, Thomas Hansen - thomas@servergardens.com
-
-* [Quality gates for Magic and all sub projects](QUALITY.md)
