@@ -8,7 +8,7 @@
    apiUrl:string
    name:string
    copyright:string
-   endpoints
+   endpoints:*
 
 
 
