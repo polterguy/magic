@@ -27,7 +27,7 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 
 ## Documentation
 
-You can [find the reference documentation here](https://polterguy.github.io).
+You can find [the project's documentation here](https://polterguy.github.io).
 
 ## License
 
