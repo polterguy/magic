@@ -27,35 +27,7 @@ _"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"fro
 
 ## Documentation
 
-You can rapidly [teach yourself the basics here](https://polterguy.github.io). Below is the reference documentation
-for every project and sub-project Magic consists of.
-
-* [Magic Lambda](https://github.com/polterguy/magic.lambda) - Explains all _"keywords"_ in Hyperlambda
-* [Magic Node](https://github.com/polterguy/magic.node) - Explains nodes, Hyperlambda and Expressions
-* [Magic Library](https://github.com/polterguy/magic.library) - Explains how magic is tied together with ASP.NET
-* [Magic Lambda Auth](https://github.com/polterguy/magic.lambda.auth) - Authentication and authorisation from Hyperlambda.
-* [Magic Lambda Validators](https://github.com/polterguy/magic.lambda.validators) - Validate input in Hyperlambda.
-* [Magic Lambda Strings](https://github.com/polterguy/magic.lambda.strings) - Manipulate strings in Hyperlambda
-* [Magic Lambda Dates](https://github.com/polterguy/magic.lambda.dates) - Allows you to manipulate DateTime objects.
-* [Magic Lambda Slots](https://github.com/polterguy/magic.lambda.slots) - Dynamically create your own slots/functions
-* [Magic Lambda MySQL](https://github.com/polterguy/magic.lambda.mysql) - Accessing your MySQL server from Hyperlambda.
-* [Magic Lambda MS SQL](https://github.com/polterguy/magic.lambda.mssql) - Accessing your MS SQL Server from Hyperlambda.
-* [Magic Lambda Math](https://github.com/polterguy/magic.lambda.math) - Math operations from Hyperlambda.
-* [Magic Lambda Logging](https://github.com/polterguy/magic.lambda.logging) - Logging from Hyperlambda.
-* [Magic Lambda Caching](https://github.com/polterguy/magic.lambda.caching) - Caching from Hyperlambda.
-* [Magic Lambda JSON](https://github.com/polterguy/magic.lambda.json) - Manipulating JSON from Hyperlambda.
-* [Magic Lambda Mail](https://github.com/polterguy/magic.lambda.mail) - Sending and retrieving emails from Hyperlambda.
-* [Magic Lambda MIME](https://github.com/polterguy/magic.lambda.mime) - Parsing email messages in Hyperlambda.
-* [Magic Lambda IO](https://github.com/polterguy/magic.lambda.io) - File manipulation using Hyperlambda
-* [Magic Lambda Hyperlambda](https://github.com/polterguy/magic.lambda.hyperlambda) - Parse Hyperlambda from text, and vice versa.
-* [Magic Lambda HTTP](https://github.com/polterguy/magic.lambda.http) - Invoking HTTP REST endpoints from Hyperlambda.
-* [Magic Lambda Crypto](https://github.com/polterguy/magic.lambda.crypto) - Cryptography helpers in Hyperlambda.
-* [Magic Lambda Config](https://github.com/polterguy/magic.lambda.config) - Accessing configuration values from Hyperlambda.
-* [Magic Lambda Scheduler](https://github.com/polterguy/magic.lambda.scheduler) - Scheduled tasks from Hyperlambda.
-* [Magic IO](https://github.com/polterguy/magic.io) - IO operations in Magic.
-* [Magic HTTP](https://github.com/polterguy/magic.http) - HTTP rest in Magic
-* [Magic Endpoint](https://github.com/polterguy/magic.endpoint) - Endpoint resolving in Magic
-* [Magic Data Common](https://github.com/polterguy/magic.data.common) - Commonalities for data adapters in Magic.
+You can [find the reference documentation here](https://polterguy.github.io).
 
 ## License
 
