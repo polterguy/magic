@@ -310,7 +310,7 @@ switch:x:@.arguments/*/verb
             unwrap:x:+/*/*/*
             insert-after:x:@apply/*/wait.signal
                .
-                  http.response.headers.add
+                  response.headers.add
                      Cache-Control:x:@strings.concat
 
       /*

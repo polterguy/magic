@@ -16,7 +16,7 @@ auth.ticket.verify
 /*
  * Doing some basic caching, basically caching for 3 minutes.
  */
-http.response.headers.add
+response.headers.add
    Cache-Control:private, max-age=180
 
 
