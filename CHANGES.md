@@ -11,3 +11,23 @@ Added support for retrieving request HTTP headers, using the following two slots
 **Breaking changes** - Also renamed the HTTP response manipulation slots, removing the _"http."_ prefix.
 This might render existing Hyperlambda files incompatible, at which point you'll have to
 rename your slot invocations.
+
+## magic.data.common
+
+Minor simplifications
+
+## magic.lambda.mail
+
+Minor simplifications
+
+## magic.lambda.math
+
+Fixed severe error with increment/decrement slots
+
+## magic.lambda.io
+
+Fixed severe error with folder resolving when finding root URL
+
+## magic.lambda.json
+
+Fixed severe error when returning DateTime objects.
