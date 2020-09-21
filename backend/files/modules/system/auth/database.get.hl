@@ -21,7 +21,7 @@ config.get:"magic:auth:database"
  * Returning the results of the above invocation, making sure
  * the client can cache it for a long time.
  */
-http.response.headers.add
+response.headers.add
    Cache-Control:public, max-age=50000
 unwrap:x:+/*
 return-nodes
