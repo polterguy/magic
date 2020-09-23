@@ -1,0 +1,35 @@
+
+<h1 mat-dialog-title>Please login</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <input 
+      matInput 
+      placeholder="Username"
+      autocomplete="off"
+      type="text" 
+      [(ngModel)]="username">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <input 
+      matInput 
+      placeholder="Password"
+      autocomplete="new-password"
+      type="password" 
+      [(ngModel)]="password">
+  </mat-form-field>
+
+  <div class="right-aligned">
+    <button 
+      mat-button
+      (click)="login()"
+      matTooltip="Login to your app">Login</button>
+    <button 
+      mat-button
+      (click)="close()"
+      matTooltip="Close dialog">Cancel</button>
+  </div>
+
+</div>

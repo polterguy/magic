@@ -315,8 +315,9 @@ for-each:x:@.crud-methods/*
                   get-value:x:@.read-roles
                   .
             .lambda
-               strings.trim:x:@.read-roles
-                  .:", "
+               set-value:x:@.read-roles
+                  strings.trim:x:@.read-roles
+                     .:", "
 
 
          /*
@@ -324,7 +325,7 @@ for-each:x:@.crud-methods/*
           */
          strings.replace:x:@.router-link-file
             .:[[read-roles]]
-            get-value:x:@strings.trim
+            get-value:x:@.read-roles
          strings.replace:x:@strings.replace
             .:[[url]]
             get-value:x:@.dp/#/*/component-routing-url

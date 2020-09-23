@@ -33,64 +33,37 @@
     <a
       *ngIf="isLoggedIn()"
       mat-button
-      routerLink="/security"
+      routerLink="/profile"
       routerLinkActive="active-link"
       class="menu-item"
       (click)="closeNavigator()"
       [routerLinkActiveOptions]="{exact:true}">
       <mat-icon matSuffix>account_circle</mat-icon>
-      <span class="menu-item-text">Security</span>
-    </a>
-    <a
-      *ngIf="isLoggedIn()"
-      mat-button
-      class="menu-item"
-      (click)="closeNavigator()"
-      (click)="logout()">
-      <mat-icon matSuffix>lock</mat-icon>
-      <span class="menu-item-text">Logout</span>
+      <span class="menu-item-text">Profile</span>
     </a>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <div *ngIf="isLoggedIn()">
-      <button
-        (click)="openSideNavigation()"
-        class="sidenav-button"
-        mat-button>Menu</button>
-      <router-outlet></router-outlet>
-    </div>
-    
-    <div *ngIf="!isLoggedIn()">
-      <mat-card class="login-card">
-    
-        <mat-form-field class="fill-width">
-          <input 
-            matInput 
-            placeholder="Username"
-            autocomplete="off"
-            type="text" 
-            [(ngModel)]="username">
-        </mat-form-field>
-    
-        <mat-form-field class="fill-width">
-          <input 
-            matInput 
-            placeholder="Password"
-            autocomplete="new-password"
-            type="password" 
-            [(ngModel)]="password">
-        </mat-form-field>
-    
-        <div class="right-aligned">
-          <button 
-            mat-button
-            (click)="login()"
-            matTooltip="Login to your app">Login</button>
-        </div>
-    
-      </mat-card>
-    </div>
+  <mat-sidenav-content class="sidenav-content">
+
+    <button
+      (click)="openSideNavigation()"
+      class="sidenav-button"
+      mat-button>Menu</button>
+
+    <button
+      mat-button
+      class="login-button"
+      *ngIf="!isLoggedIn()"
+      (click)="login()">Login</button>
+
+    <button
+      mat-button
+      class="login-button"
+      *ngIf="isLoggedIn()"
+      (click)="logout()">Logout</button>
+
+    <router-outlet></router-outlet>
+
   </mat-sidenav-content>
 
 <mat-sidenav-container>
