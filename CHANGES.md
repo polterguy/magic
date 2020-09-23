@@ -37,5 +37,7 @@ Fixed severe error when returning DateTime objects.
 
 ## magic.lambda
 
-Fixed bug in [or] and [and] slots, preventing short circuiting
-when condition cannot possibly evaluate to true.
+Fixed bug in **[or]** and **[and]** slots, preventing short circuiting
+when condition cannot possibly evaluate to true. In addition also fixed a
+bug in these slots that would sometimes attempt to raise a slot where its
+name was "" (empty string).
