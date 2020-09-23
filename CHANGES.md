@@ -41,3 +41,19 @@ Fixed bug in **[or]** and **[and]** slots, preventing short circuiting
 when condition cannot possibly evaluate to true. In addition also fixed a
 bug in these slots that would sometimes attempt to raise a slot where its
 name was "" (empty string).
+
+## Magic (the core)
+
+### Scaffolder results
+
+Hopefully fixed a bug in the rendering of the menu button on Galaxy s series,
+which would hide the menu button, making the site impossible to navigate.
+
+Also allowed for anonymous access to the navigation, showing all CRUD
+forms, where anonymous users have access to read - Allowing for anonymous
+access to backend CRUD endpoints, but only where the backend endpoint
+is created such that it allows anonymous access.
+
+Created a modal login form now instead of the hardcoded login
+form in the appp.component.html file, which I feel is a much
+better approach than the previous existing solution.
