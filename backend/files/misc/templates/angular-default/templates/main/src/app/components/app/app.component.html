@@ -6,9 +6,13 @@
   class="ajax-wait">
 </mat-spinner>
 
-<mat-sidenav-container mode="side" class="sidenav-container">
+<mat-sidenav-container
+  mode="side"
+  class="sidenav-container">
 
-  <mat-sidenav class="sidenav-menu" [(opened)]="sidenavOpened">
+  <mat-sidenav
+    class="sidenav-menu"
+    [(opened)]="sidenavOpened">
     <a
       mat-button
       routerLink="/"
@@ -43,7 +47,8 @@
     </a>
   </mat-sidenav>
 
-  <mat-sidenav-content class="sidenav-content">
+  <mat-sidenav-content
+    class="sidenav-content">
 
     <button
       (click)="openSideNavigation()"
@@ -52,7 +57,7 @@
 
     <button
       mat-button
-      class="login-button"
+      class="logout-button"
       *ngIf="!isLoggedIn()"
       (click)="login()">Login</button>
 
