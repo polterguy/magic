@@ -31,3 +31,11 @@ Fixed severe error with folder resolving when finding root URL
 ## magic.lambda.json
 
 Fixed severe error when returning DateTime objects.
+
+
+# Version 8.1.21
+
+## magic.lambda
+
+Fixed bug in [or] and [and] slots, preventing short circuiting
+when condition cannot possibly evaluate to true.
