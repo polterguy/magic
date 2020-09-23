@@ -1,20 +1,32 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpService } from 'src/app/services/http-service';
 
 @Component({
-  selector: 'app-security',
-  templateUrl: './security.component.html',
-  styleUrls: ['./security.component.scss']
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.scss']
 })
-export class SecurityComponent {
+export class ProfileComponent {
 
   public password = '';
   public passwordRepeat = '';
 
   constructor(
     private snackBar: MatSnackBar,
-    private service: HttpService) { }
+    private jwtHelper: JwtHelperService,
+    private service: HttpService)
+  { }
+
+  /**
+   * Returns true if user is logged in, with a valid token,
+   * that is not expired.
+   */
+  public isLoggedIn() {
+    const token = localStorage.getItem('jwt_token');
+    return token && !this.jwtHelper.isTokenExpired(token);
+  }
 
   save() {
     if (this.password !== this.passwordRepeat || this.password === '') {
