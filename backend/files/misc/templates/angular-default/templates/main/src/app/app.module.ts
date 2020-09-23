@@ -38,10 +38,11 @@ import { LoaderInterceptor } from './services/loader-interceptor';
 import { SelectorComponent } from './helpers/selector/selector.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
-import { SecurityComponent } from './components/security/security.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
 import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
 import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
+import { LoginComponent } from './components/app/modals/login.component';
 
 // CRUD specific components (scaffolded components).
 [[imports]]
@@ -55,8 +56,9 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
     AuthComponent,
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
+    LoginComponent,
     EditUserDialogComponent,
-    SecurityComponent,
+    ProfileComponent,
     FormatDatePipe,
 [[module-declarations]]  ],
   imports: [
@@ -106,6 +108,7 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
   entryComponents: [
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
+    LoginComponent,
     EditUserDialogComponent,
 [[entry-components]]  ]
 })
