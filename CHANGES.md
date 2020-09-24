@@ -70,11 +70,16 @@ happen if you used 7Zip or WinZip, or for that matter any non-Windows
 based operating systems, because they're more resistance in regards
 to path errors. This would occur due to a double slash `//` in the
 paths of the zip file created as a download, containing the Angular
-frontend parts. This if now fixed, and unzipping using the built in
-Windows Explorer unzipper, should work perfectly now.
+frontend parts.
+
+The symptom was that when the zip file was unzipped, it would
+show _"funny folder names"_ inside of it. This if now fixed,
+and unzipping using the built in Windows Explorer unzipper,
+should work perfectly now.
 
 ### Better authentication declarations for frontend
 
 The scaffolded frontend will now allow for CRUD tables not
 requiring authentication to be edited and viewed by anonymous users,
 without having to login.
+
