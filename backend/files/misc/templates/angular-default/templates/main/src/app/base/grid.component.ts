@@ -186,6 +186,9 @@ export abstract class GridComponent {
    * @param roles Which roles to check if user exists within
    */
   public inRole(roles: string[]) {
+    if (!roles || roles.length === 0) {
+      return true; // This part doesn't require authentication
+    }
     for (const idx of roles) {
       if (this.roles.indexOf(idx) !== -1) {
         return true;
