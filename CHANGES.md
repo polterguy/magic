@@ -85,7 +85,7 @@ without having to login.
 
 ### Fixed bug in scaffolded frontend (auth) menu item
 
-It was impossible to create a new role using the scaffodled
+It was impossible to create a new role using the scaffolded
 frontend, due to not passing in a description when invoking the
 backend. This is now fixed.
 
