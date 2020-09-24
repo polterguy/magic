@@ -103,6 +103,7 @@ export class AuthComponent implements OnInit {
     const dialogRef = this.dialog.open(CreateRoleDialogComponent, {
       data: {
         name: '',
+        description: '',
       }
     });
     dialogRef.afterClosed().subscribe(res => {
