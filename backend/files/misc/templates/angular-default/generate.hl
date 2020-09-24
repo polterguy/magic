@@ -647,7 +647,7 @@ for-each:x:@.components/*
       strings.concat
          .:/
          get-value:x:@.arguments/*/name
-         .:/src/app/components/
+         .:/src/app/components
          get-value:x:@.dp/#
 
 
