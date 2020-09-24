@@ -83,7 +83,7 @@ export class AuthService {
   }
 
   // Creates a new role.
-  createRole(name: string, description?: string) {
+  createRole(name: string, description: string) {
     return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/roles', {
       name,
       description,
