@@ -83,3 +83,8 @@ The scaffolded frontend will now allow for CRUD tables not
 requiring authentication to be edited and viewed by anonymous users,
 without having to login.
 
+### Fixed bug in scaffolded frontend (auth) menu item
+
+It was impossible to create a new role using the scaffodled
+frontend, due to not passing in a description when invoking the
+backend. This is now fixed.
