@@ -88,3 +88,16 @@ without having to login.
 It was impossible to create a new role using the scaffodled
 frontend, due to not passing in a description when invoking the
 backend. This is now fixed.
+
+## magic.lambda.mime
+
+Removed decryption references, since this is not stable enough, and of high
+enough quality, due to an _"API architectural flaw"_ in MimeKit, preventing
+us from using our own custom storage for private PGP keys, and instead being
+forced to rely upon Gnu Privacy Guard, which of course is ridiculous for
+web projects. Once MimeKit have better support for providing custom (non-GPG)
+types of storage callbacks for looking up private PGP keys during decryption,
+we will revisit decryption, and hopefully be able to implement it again.
+
+The project still support PGP signing, _encrypting_, verifying signatures, etc.
+Just not decryption of received MIME messages unfortunately.
