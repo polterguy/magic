@@ -57,3 +57,24 @@ is created such that it allows anonymous access.
 Created a modal login form now instead of the hardcoded login
 form in the appp.component.html file, which I feel is a much
 better approach than the previous existing solution.
+
+# Version 8.1.22
+
+## Magic (the core)
+
+### Fixed severe scaffolding error related to Windows Explorer
+
+When you previously scaffolded a frontend, and you tried to
+unzip it using Windows Explorer, this would fail. This did never
+happen if you used 7Zip or WinZip, or for that matter any non-Windows
+based operating systems, because they're more resistance in regards
+to path errors. This would occur due to a double slash `//` in the
+paths of the zip file created as a download, containing the Angular
+frontend parts. This if now fixed, and unzipping using the built in
+Windows Explorer unzipper, should work perfectly now.
+
+### Better authentication declarations for frontend
+
+The scaffolded frontend will now allow for CRUD tables not
+requiring authentication to be edited and viewed by anonymous users,
+without having to login.
