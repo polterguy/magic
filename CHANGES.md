@@ -139,3 +139,8 @@ Fixed a bug when trying to copy a file, and you pass in the destination
 as only a folder name. This would occur _only_ in the async version of
 the slot.
 
+## Magic (main)
+
+Remove the _"trash"_ folder entirely, and no longer creating backup
+of files replaced during the setup process. This was anyways not necessary,
+since if you needed these files, you can anyways find them online.
