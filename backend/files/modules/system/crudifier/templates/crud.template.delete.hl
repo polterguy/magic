@@ -10,9 +10,9 @@
 /*
  * Invoking [magic.db.xxx.delete], making sure we unwrap the [id].
  */
-add:x:./*/wait.signal/*/ids
+add:x:./*/signal/*/ids
    get-nodes:x:@.arguments/*
-wait.signal:magic.db.xxx.delete
+signal:magic.db.xxx.delete
    database:{database}
    table:{table}
    ids
@@ -21,4 +21,4 @@ wait.signal:magic.db.xxx.delete
 /*
  * Returning results back to caller.
  */
-return-nodes:x:@wait.signal/*
+return-nodes:x:@signal/*

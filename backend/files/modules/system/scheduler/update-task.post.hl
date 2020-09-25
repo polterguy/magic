@@ -33,7 +33,7 @@ if
    .lambda
       add:x:@.lambda/@.lambda
          hyper2lambda:x:@.arguments/*/hyperlambda
-      add:x:../*/wait.tasks.update
+      add:x:../*/tasks.update
          get-nodes:x:@.lambda/@.lambda
-wait.tasks.update:x:@.arguments/*/id
+tasks.update:x:@.arguments/*/id
    description:x:@.arguments/*/description

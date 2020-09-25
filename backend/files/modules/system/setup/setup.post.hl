@@ -296,14 +296,14 @@ if
 /*
  * Checking if we should initialize task scheduler.
  */
-wait.if
+if
    get-value:x:@.arguments/*/scheduler
    .lambda
 
       /*
        * Starting scheduler.
        */
-      wait.scheduler.start
+      scheduler.start
 
 
 /*

@@ -16,7 +16,7 @@ auth.ticket.verify:root
 /*
  * Deletes task.
  */
-wait.tasks.delete:x:@.arguments/*/id
+tasks.delete:x:@.arguments/*/id
 
 
 /*

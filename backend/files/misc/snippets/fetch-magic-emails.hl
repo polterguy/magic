@@ -1,9 +1,9 @@
 
 // Connecting to database.
-wait.mysql.connect:magic_mail
+mysql.connect:magic_mail
 
    // Connecting to pop3 server.
-   wait.mail.pop3.fetch
+   mail.pop3.fetch
       .lambda
 
          // Lambda object evaluated once for every email fetched from pop3.
@@ -15,24 +15,24 @@ wait.mysql.connect:magic_mail
 
          // Checking if contact exists, and if not, inserting new contact.
          .sender-id
-         wait.set-value:x:@.sender-id
-            wait.mysql.scalar:select id from contacts where email = @email
+         set-value:x:@.sender-id
+            mysql.scalar:select id from contacts where email = @email
                @email:x:@.content/*/from
-         wait.if
+         if
             eq
                get-value:x:@.sender-id
                .
             .lambda
-               wait.set-value:x:@.sender-id
-                  wait.mysql.scalar:insert into contacts (email) values (@email); select last_insert_id();
+               set-value:x:@.sender-id
+                  mysql.scalar:insert into contacts (email) values (@email); select last_insert_id();
                      @email:x:@.content/*/from
 
          // Inserting into emails.
-         wait.mysql.scalar:"insert into emails (subject, body, direction) values (@subject, @body, 'received'); select last_insert_id();"
+         mysql.scalar:"insert into emails (subject, body, direction) values (@subject, @body, 'received'); select last_insert_id();"
             @subject:x:@.content/*/subject
             @body:x:@.content/*/body
 
          // Associating email with sender (contacts).
-         wait.mysql.execute:insert into emails_contacts (email_id, contact_id) values (@email, @contact)
-            @email:x:@wait.mysql.scalar
+         mysql.execute:insert into emails_contacts (email_id, contact_id) values (@email, @contact)
+            @email:x:@mysql.scalar
             @contact:x:@.sender-id

@@ -16,27 +16,27 @@ slots.create:magic.db.mysql.create
    /*
     * Opening up a connection.
     */
-   wait.mysql.connect:x:@.arguments/*/database
+   mysql.connect:x:@.arguments/*/database
 
 
       /*
        * Parametrizing invocation to [mysql.create] with [values].
        */
-      add:x:./*/wait.mysql.create/*/values
+      add:x:./*/mysql.create/*/values
          get-nodes:x:@.arguments/*/values/*
 
 
       /*
        * Adding [return-id] if given.
        */
-      add:x:./*/wait.mssql.create
+      add:x:./*/mssql.create
          get-nodes:x:@.arguments/*/return-id
 
 
       /*
        * Invoking [mysql.create].
        */
-      wait.mysql.create
+      mysql.create
          table:x:@.arguments/*/table
          values
 
@@ -54,7 +54,7 @@ slots.create:magic.db.mysql.create
              */
             unwrap:x:+/*
             return-nodes
-               id:x:@wait.mysql.create
+               id:x:@mysql.create
 
       else
 

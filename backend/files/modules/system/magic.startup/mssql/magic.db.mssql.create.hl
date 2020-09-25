@@ -16,27 +16,27 @@ slots.create:magic.db.mssql.create
    /*
     * Opening up a connection.
     */
-   wait.mssql.connect:x:@.arguments/*/database
+   mssql.connect:x:@.arguments/*/database
 
 
       /*
        * Parametrizing invocation to [mssql.create] with [values].
        */
-      add:x:./*/wait.mssql.create/*/values
+      add:x:./*/mssql.create/*/values
          get-nodes:x:@.arguments/*/values/*
 
 
       /*
        * Adding [return-id] if given.
        */
-      add:x:./*/wait.mssql.create
+      add:x:./*/mssql.create
          get-nodes:x:@.arguments/*/return-id
 
 
       /*
        * Invoking [mssql.create].
        */
-      wait.mssql.create
+      mssql.create
          table:x:@.arguments/*/table
          values
 
@@ -54,7 +54,7 @@ slots.create:magic.db.mssql.create
              */
             unwrap:x:+/*
             return-nodes
-               id:x:@wait.mssql.create
+               id:x:@mssql.create
 
       else
 

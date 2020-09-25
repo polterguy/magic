@@ -24,8 +24,8 @@ hyper2lambda:x:@.arguments/*/hyperlambda
 /*
  * Creates task.
  */
-add:x:../*/wait.tasks.create/*/.lambda
+add:x:../*/tasks.create/*/.lambda
    get-nodes:x:@hyper2lambda/*
-wait.tasks.create:x:@.arguments/*/id
+tasks.create:x:@.arguments/*/id
    description:x:@.arguments/*/description
    .lambda

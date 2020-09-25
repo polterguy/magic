@@ -1,7 +1,7 @@
 /*
  * Deletes a single record from a MySQL table.
  */
-wait.signal:magic.db.mysql.delete
+signal:magic.db.mysql.delete
    database:magic
    table:roles
    ids

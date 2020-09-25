@@ -1,7 +1,7 @@
 /*
  * Counts records from a MySQL table.
  */
-wait.signal:magic.db.mysql.read
+signal:magic.db.mysql.read
    database:magic
    table:roles
    args

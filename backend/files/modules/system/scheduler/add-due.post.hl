@@ -24,12 +24,12 @@ if
          get-value:x:@.arguments/*/repeats
          .
    .lambda
-      add:x:../*/wait.tasks.schedule
+      add:x:../*/tasks.schedule
          get-nodes:x:@.arguments/*/repeats
 else
-   add:x:../*/wait.tasks.schedule
+   add:x:../*/tasks.schedule
       get-nodes:x:@.arguments/*/due
-wait.tasks.schedule:x:@.arguments/*/id
+tasks.schedule:x:@.arguments/*/id
 
 
 /*

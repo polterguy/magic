@@ -19,7 +19,7 @@
 /*
  * Actual retry loop.
  */
-wait.while
+while
    mt
       get-value:x:@.no
       .:int:0
@@ -28,7 +28,7 @@ wait.while
       /*
        * Making sure we catch exceptions.
        */
-      wait.try
+      try
       
          /*
           * Put your retry logic below.
@@ -56,7 +56,7 @@ wait.while
          /*
           * Wait for [.wait] milliseconds before retrying.
           */
-         wait.sleep:x:@.wait
+         sleep:x:@.wait
 
 
 /*

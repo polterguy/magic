@@ -36,16 +36,16 @@ apply:x:@hyper2lambda
 /*
  * Replacing generic slots with actual database type.
  */
-for-each:x:@apply/**/wait.xxx.connect
+for-each:x:@apply/**/xxx.connect
    set-name:x:@.dp/#
       strings.concat
-         .:wait.
+         .:
          get-value:x:@.arguments/*/databaseType
          .:.connect
-for-each:x:@apply/**/wait.xxx.select
+for-each:x:@apply/**/xxx.select
    set-name:x:@.dp/#
       strings.concat
-         .:wait.
+         .:
          get-value:x:@.arguments/*/databaseType
          .:.select
 
