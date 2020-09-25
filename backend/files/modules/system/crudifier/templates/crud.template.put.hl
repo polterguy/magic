@@ -8,7 +8,7 @@
 /*
  * Adding the rest of our parameters into [values].
  */
-add:x:./*/wait.signal/*/values
+add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
 
 
@@ -16,7 +16,7 @@ add:x:./*/wait.signal/*/values
  * Invoking [magic.db.xxx.update]
  */
 unwrap:x:+/*/ids/*
-wait.signal:magic.db.xxx.update
+signal:magic.db.xxx.update
    database:{database}
    table:{table}
    values
@@ -26,4 +26,4 @@ wait.signal:magic.db.xxx.update
 /*
  * Returning results back to caller.
  */
-return-nodes:x:@wait.signal/*
+return-nodes:x:@signal/*

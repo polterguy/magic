@@ -3,7 +3,7 @@
    subject:string
    body:string
 auth.ticket.verify:root
-wait.mail.smtp.send
+mail.smtp.send
    message
       to
          :x:@.arguments/*/to

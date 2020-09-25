@@ -17,7 +17,7 @@ slots.create:magic.db.mssql.read
    /*
     * Opening up a connection.
     */
-   wait.mssql.connect:x:@.arguments/*/database
+   mssql.connect:x:@.arguments/*/database
 
 
       /*
@@ -26,7 +26,7 @@ slots.create:magic.db.mssql.read
        * Making sure we remove these nodes from the [.arguments] collection afterwards,
        * such that we don't add them into our [where].
        */
-      add:x:./*/wait.mssql.read
+      add:x:./*/mssql.read
          get-nodes:x:@.arguments/*/args/*/limit
 
 
@@ -45,15 +45,15 @@ slots.create:magic.db.mssql.read
             type:long
       remove-nodes:x:@.arguments/*/args/*/limit
 
-      add:x:./*/wait.mssql.read
+      add:x:./*/mssql.read
          get-nodes:x:@.arguments/*/args/*/offset
       remove-nodes:x:@.arguments/*/args/*/offset
 
-      add:x:./*/wait.mssql.read
+      add:x:./*/mssql.read
          get-nodes:x:@.arguments/*/args/*/order
       remove-nodes:x:@.arguments/*/args/*/order
 
-      add:x:./*/wait.mssql.read
+      add:x:./*/mssql.read
          get-nodes:x:@.arguments/*/args/*/direction
       remove-nodes:x:@.arguments/*/args/*/direction
 
@@ -72,11 +72,11 @@ slots.create:magic.db.mssql.read
              * Adding [where] to [mssql.read], making sure all specified criterias
              * are added with an "and" clause wrapping them.
              */
-            add:x:../*/wait.mssql.connect/*/wait.mssql.read
+            add:x:../*/mssql.connect/*/mssql.read
                .
                   where
                      and
-            add:x:../*/wait.mssql.connect/*/wait.mssql.read/*/where/*/and
+            add:x:../*/mssql.connect/*/mssql.read/*/where/*/and
                get-nodes:x:@.arguments/*/args/*
 
 
@@ -93,17 +93,17 @@ slots.create:magic.db.mssql.read
             /*
              * Adding [columns] to [mssql.read].
              */
-            add:x:../*/wait.mssql.connect/*/wait.mssql.read
+            add:x:../*/mssql.connect/*/mssql.read
                .
                   columns
-            add:x:../*/wait.mssql.connect/*/wait.mssql.read/*/columns
+            add:x:../*/mssql.connect/*/mssql.read/*/columns
                get-nodes:x:@.arguments/*/columns/*
 
 
       /*
        * Invoking [mssql.read].
        */
-      wait.mssql.read
+      mssql.read
          table:x:@.arguments/*/table
 
 
@@ -120,10 +120,10 @@ slots.create:magic.db.mssql.read
             /*
              * Returning a single object.
              */
-            return-nodes:x:@wait.mssql.read/*/*
+            return-nodes:x:@mssql.read/*/*
 
 
       /*
        * Returning an array of objects.
        */
-      return-nodes:x:@wait.mssql.read/*
+      return-nodes:x:@mssql.read/*

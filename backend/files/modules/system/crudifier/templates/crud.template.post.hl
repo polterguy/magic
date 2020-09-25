@@ -10,14 +10,14 @@
 /*
  * Parametrizing [magic.db.xxx.create].
  */
-add:x:./*/wait.signal/*/values
+add:x:./*/signal/*/values
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.xxx.create]
  */
-wait.signal:magic.db.xxx.create
+signal:magic.db.xxx.create
    database:{database}
    table:{table}
    return-id:{return-id}
@@ -27,4 +27,4 @@ wait.signal:magic.db.xxx.create
 /*
  * Returning results back to caller.
  */
-return-nodes:x:@wait.signal/*
+return-nodes:x:@signal/*

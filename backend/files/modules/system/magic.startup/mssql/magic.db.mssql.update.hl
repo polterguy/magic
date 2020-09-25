@@ -27,14 +27,14 @@ slots.create:magic.db.mssql.update
    /*
     * Opening up a connection.
     */
-   wait.mssql.connect:x:@.arguments/*/database
+   mssql.connect:x:@.arguments/*/database
 
 
       /*
        * Parametrizing [mssql.update], first with the [where] parts,
        * extracted from [ids].
        */
-      add:x:./*/wait.mssql.update/*/where/*/and
+      add:x:./*/mssql.update/*/where/*/and
          get-nodes:x:@.arguments/*/ids/*
 
 
@@ -55,14 +55,14 @@ slots.create:magic.db.mssql.update
                /*
                 * Currently iterated value from [values] was not found in [ids].
                 */
-               add:x:../*/wait.mssql.connect/*/wait.mssql.update/*/values
+               add:x:../*/mssql.connect/*/mssql.update/*/values
                   get-nodes:x:@.dp/#
 
 
       /*
        * Invoking [mssql.update].
        */
-      wait.mssql.update
+      mssql.update
          table:x:@.arguments/*/table
          values
          where
@@ -74,4 +74,4 @@ slots.create:magic.db.mssql.update
        */
       unwrap:x:+/*
       return-nodes
-         updated-records:x:@wait.mssql.update
+         updated-records:x:@mssql.update

@@ -17,7 +17,7 @@ slots.create:magic.db.mysql.read
    /*
     * Opening up a connection.
     */
-   wait.mysql.connect:x:@.arguments/*/database
+   mysql.connect:x:@.arguments/*/database
 
 
       /*
@@ -26,7 +26,7 @@ slots.create:magic.db.mysql.read
        * Making sure we remove these nodes from the [.arguments] collection afterwards,
        * such that we don't add them into our [where].
        */
-      add:x:./*/wait.mysql.read
+      add:x:./*/mysql.read
          get-nodes:x:@.arguments/*/args/*/limit
 
 
@@ -45,15 +45,15 @@ slots.create:magic.db.mysql.read
             type:long
       remove-nodes:x:@.arguments/*/args/*/limit
 
-      add:x:./*/wait.mysql.read
+      add:x:./*/mysql.read
          get-nodes:x:@.arguments/*/args/*/offset
       remove-nodes:x:@.arguments/*/args/*/offset
 
-      add:x:./*/wait.mysql.read
+      add:x:./*/mysql.read
          get-nodes:x:@.arguments/*/args/*/order
       remove-nodes:x:@.arguments/*/args/*/order
 
-      add:x:./*/wait.mysql.read
+      add:x:./*/mysql.read
          get-nodes:x:@.arguments/*/args/*/direction
       remove-nodes:x:@.arguments/*/args/*/direction
 
@@ -72,11 +72,11 @@ slots.create:magic.db.mysql.read
              * Adding [where] to [mysql.read], making sure all specified criterias
              * are added with an "and" clause wrapping them.
              */
-            add:x:../*/wait.mysql.connect/*/wait.mysql.read
+            add:x:../*/mysql.connect/*/mysql.read
                .
                   where
                      and
-            add:x:../*/wait.mysql.connect/*/wait.mysql.read/*/where/*/and
+            add:x:../*/mysql.connect/*/mysql.read/*/where/*/and
                get-nodes:x:@.arguments/*/args/*
 
 
@@ -93,17 +93,17 @@ slots.create:magic.db.mysql.read
             /*
              * Adding [columns] to [mysql.read].
              */
-            add:x:../*/wait.mysql.connect/*/wait.mysql.read
+            add:x:../*/mysql.connect/*/mysql.read
                .
                   columns
-            add:x:../*/wait.mysql.connect/*/wait.mysql.read/*/columns
+            add:x:../*/mysql.connect/*/mysql.read/*/columns
                get-nodes:x:@.arguments/*/columns/*
 
 
       /*
        * Invoking [mysql.read].
        */
-      wait.mysql.read
+      mysql.read
          table:x:@.arguments/*/table
 
 
@@ -120,10 +120,10 @@ slots.create:magic.db.mysql.read
             /*
              * Returning a single object.
              */
-            return-nodes:x:@wait.mysql.read/*/*
+            return-nodes:x:@mysql.read/*/*
 
 
       /*
        * Returning an array of objects.
        */
-      return-nodes:x:@wait.mysql.read/*
+      return-nodes:x:@mysql.read/*

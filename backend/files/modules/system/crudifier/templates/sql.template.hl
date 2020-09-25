@@ -10,7 +10,7 @@
 /*
  * Opening up a database connection
  */
-wait.xxx.connect:{database}
+xxx.connect:{database}
 
 
    /*
@@ -23,7 +23,7 @@ wait.xxx.connect:{database}
    /*
     * Evaluating [mysql.select] slots.create.
     */
-   wait.xxx.select:{sql}
+   xxx.select:{sql}
 
 
    /*

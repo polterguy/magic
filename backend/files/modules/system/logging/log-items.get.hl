@@ -30,7 +30,7 @@ strings.concat
 /*
  * Adding paging arguments.
  */
-add:x:../*/wait.signal/*/args
+add:x:../*/signal/*/args
    get-nodes:x:@.arguments/*/limit
    get-nodes:x:@.arguments/*/offset
 
@@ -45,7 +45,7 @@ if
          get-value:x:@.arguments/*/query
          .:%
       unwrap:x:+/*/*/*
-      add:x:../*/wait.signal/*/args
+      add:x:../*/signal/*/args
          .
             or
                type.eq:x:@.arguments/*/query
@@ -56,7 +56,7 @@ if
  * Retrieving items from database.
  */
 unwrap:x:+/*
-wait.signal:x:@strings.concat
+signal:x:@strings.concat
    database:x:@config.get/@config.get
    table:log_entries
    args
@@ -68,5 +68,5 @@ wait.signal:x:@strings.concat
  * Returning items to caller.
  */
 add:x:+
-   get-nodes:x:@wait.signal/*
+   get-nodes:x:@signal/*
 return-nodes

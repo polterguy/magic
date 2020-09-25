@@ -13,7 +13,7 @@
  */
 set-name:x:../*/log-invocation
    strings.concat
-      .:wait.log.
+      .:log.
       get-value:x:@.arguments/*/type
 log-invocation:x:@.arguments/*/content
 

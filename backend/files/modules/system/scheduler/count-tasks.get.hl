@@ -16,7 +16,7 @@ auth.ticket.verify:root
 /*
  * Retrieves all scheduled tasks in the system.
  */
-wait.tasks.count:x:@.arguments/*/query
+tasks.count:x:@.arguments/*/query
 
 
 /*
@@ -24,4 +24,4 @@ wait.tasks.count:x:@.arguments/*/query
  */
 unwrap:x:+/*
 return-nodes
-   count:x:@wait.tasks.count
+   count:x:@tasks.count

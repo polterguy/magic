@@ -14,14 +14,14 @@
 /*
  * Parametrizing [magic.db.xxx.read].
  */
-add:x:./*/wait.signal/*/args
+add:x:./*/signal/*/args
    get-nodes:x:@.arguments/*
 
 
 /*
  * Invoking [magic.db.xxx.read], making sure we unwrap the [id].
  */
-wait.signal:magic.db.xxx.read
+signal:magic.db.xxx.read
    database:{database}
    table:{table}
    args
@@ -31,4 +31,4 @@ wait.signal:magic.db.xxx.read
 /*
  * Returning results back to caller.
  */
-return-nodes:x:@wait.signal/*
+return-nodes:x:@signal/*

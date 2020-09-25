@@ -17,11 +17,11 @@ auth.ticket.verify:root
 /*
  * Retrieves all scheduled tasks in the system.
  */
-wait.tasks.list:x:@.arguments/*/query
+tasks.list:x:@.arguments/*/query
    offset:x:@.arguments/*/offset
 
 
 /*
  * Returning the results of the evaluation to caller.
  */
-return-nodes:x:@wait.tasks.list/*
+return-nodes:x:@tasks.list/*

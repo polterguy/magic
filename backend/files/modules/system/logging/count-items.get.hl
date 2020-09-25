@@ -22,7 +22,7 @@ strings.concat
    get-value:x:@config.get
    .:.read
 unwrap:x:+/*
-wait.signal:x:@strings.concat
+signal:x:@strings.concat
    database:x:@config.get/@config.get
    table:log_entries
    columns
@@ -34,4 +34,4 @@ wait.signal:x:@strings.concat
  */
 unwrap:x:+/*
 return-nodes
-   result:x:@wait.signal/*/*
+   result:x:@signal/*/*

@@ -6,6 +6,6 @@
  * fact that it runs on a different thread.
  */
 fork
-   wait.sleep:1000
+   sleep:1000
    log.info:INSIDE
 log.info:OUTSIDE

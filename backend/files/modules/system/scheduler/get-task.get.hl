@@ -16,10 +16,10 @@ auth.ticket.verify:root
 /*
  * Retrieves the specified task from the task scheduler.
  */
-wait.tasks.get:x:@.arguments/*/name
+tasks.get:x:@.arguments/*/name
 
 
 /*
  * Returning the results of the evaluation to caller.
  */
-return-nodes:x:@wait.tasks.get/*
+return-nodes:x:@tasks.get/*

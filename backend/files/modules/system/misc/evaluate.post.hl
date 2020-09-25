@@ -27,7 +27,7 @@ hyper2lambda:x:@.arguments/*/hyperlambda
 /*
  * Evaluates the transformed [hyperlambda].
  */
-wait.eval:x:@hyper2lambda
+eval:x:@hyper2lambda
 
 
 /*

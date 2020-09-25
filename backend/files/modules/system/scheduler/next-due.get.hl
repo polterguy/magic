@@ -14,7 +14,7 @@ auth.ticket.verify:root
 /*
  * Retrieves next due date, and returns to caller.
  */
-wait.scheduler.next
+scheduler.next
 unwrap:x:+/*
 return
-   next:x:@wait.scheduler.next
+   next:x:@scheduler.next

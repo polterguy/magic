@@ -308,7 +308,7 @@ switch:x:@.arguments/*/verb
                .:, max-age=
                get-value:x:@.arguments/*/args/*/cache
             unwrap:x:+/*/*/*
-            insert-after:x:@apply/*/wait.signal
+            insert-after:x:@apply/*/signal
                .
                   response.headers.add
                      Cache-Control:x:@strings.concat
@@ -552,15 +552,15 @@ if
        * First removing [columns], adding [count(*)] and then transforming lambda
        * to hyper, and saving it to the correct file.
        */
-      remove-nodes:x:@apply/*/wait.signal/*/columns/*
+      remove-nodes:x:@apply/*/signal/*/columns/*
       remove-nodes:x:@apply/*/.arguments/*/limit
       remove-nodes:x:@apply/*/.arguments/*/offset
       remove-nodes:x:@apply/*/.arguments/*/order
       remove-nodes:x:@apply/*/.arguments/*/direction
-      add:x:@apply/*/wait.signal/*/columns
+      add:x:@apply/*/signal/*/columns
          .
             count(*) as count
-      add:x:@apply/*/wait.signal/*/args
+      add:x:@apply/*/signal/*/args
          .
             limit:long:1
       lambda2hyper:x:@apply/*
