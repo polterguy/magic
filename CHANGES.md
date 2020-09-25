@@ -102,28 +102,34 @@ we will revisit decryption, and hopefully be able to implement it again.
 The project still support PGP signing, _encrypting_, verifying signatures, etc.
 Just not decryption of received MIME messages unfortunately.
 
-# Version 8.1.23
+# Version 8.2.1
+
+**BREAKING CHANGES**
 
 ## magic.signals
 
 Implemented support for having async slot invocations be _"prioritized"_, if a slot class
-implements the `ISlotAsync` interface. This implies that there is no longer
-any needs for explicitly invoking any **[wait.xxx]** overrides, to have the
-signaler choose the async slot, since if you're already within in async
-context, the async slot will be preferred, and invoked, instead of its
+implements the `ISlotAsync` interface, and its async implementation can be used. This
+implies that there is no longer any needs for explicitly invoking any **[wait.xxx]**
+overrides, to have the signaler choose the async slot, since if you're already within in async
+context, the async slot will be preferred, and invoked automatically, instead of its
 synchronous version. This should *significantly* simplify your Hyperlambda
-code, since there are never any reasons to explcitly choose the _"wait."_
-slot invocation name. In addition, it also allows you to use the same
+code, since there are never any reasons to explicitly choose the _"wait."_
+slot invocation. In addition, it also allows you to use the same
 Hyperlambda from both a synchronous and an async context, resulting in
 less _"async compatibility problems"_.
-
-Notice, I have still kept the **[wait.xxx]** attributes for all async slots,
-but these will in a future version be considered obosolete, and they are
-no longer needed.
 
 The signaler implementation is also now significantly optimized, in such
 that it doesn't create a new thread context nearly as many times as it
 would previously end up doing. Resulting in among other things, much
 better exceptions stacktraces, and fewer synchronization contexts
 being created - Resulting in more optimally performing code.
+
+**BREAKING CHANGES**
+
+Notice, this implies that if you want to upgrade an existing application to
+use the new core, you'll have to do a find and replace operation through
+all your Hyperlambda files/snippets, and replace every occurrency of _"wait."_
+with "" (empty string) - Since the async slots no longer exists, and hence
+invoking these will throw an exception.
 
