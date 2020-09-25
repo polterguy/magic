@@ -39,7 +39,6 @@ export class FilesComponent implements OnInit {
     '/modules/',
     '/modules/system/',
     '/modules/system/*',
-    '/trash/',
   ];
   public protectedFiles: string[] = [
     '/static/README.md',
@@ -55,7 +54,6 @@ export class FilesComponent implements OnInit {
     '/misc/mysql/magic.change-password.hl',
     '/modules/README.md',
     '/modules/system/*',
-    '/trash/README.md',
   ];
 
   constructor(
