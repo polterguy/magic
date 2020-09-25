@@ -239,8 +239,6 @@ try
  *
  * First we start by moving our "authenticate" Hyperlambda file.
  */
-io.file.move:/modules/system/magic.startup/magic.authenticate.hl
-   .:/trash/
 strings.concat
    .:/misc/
    get-value:x:@.arguments/*/databaseType
