@@ -133,3 +133,9 @@ all your Hyperlambda files/snippets, and replace every occurrency of _"wait."_
 with "" (empty string) - Since the async slots no longer exists, and hence
 invoking these will throw an exception.
 
+## magic.lambda.io
+
+Fixed a bug when trying to copy a file, and you pass in the destination
+as only a folder name. This would occur _only_ in the async version of
+the slot.
+
