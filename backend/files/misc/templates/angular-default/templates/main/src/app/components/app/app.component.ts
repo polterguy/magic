@@ -33,9 +33,13 @@ export class AppComponent {
     public loaderService: LoaderService,
     public dialog: MatDialog) {
       const token = localStorage.getItem('jwt_token');
-      if (token !== null && token !== undefined) {
-        this.roles = this.jwtHelper.decodeToken(token).role.split(',');
-        setTimeout(() => this.tryRefreshTicket(), 300000);
+      if (token) {
+        if (this.jwtHelper.isTokenExpired(token)) {
+          localStorage.removeItem('jwt_token');
+        } else {
+          this.roles = this.jwtHelper.decodeToken(token).role.split(',');
+          setTimeout(() => this.tryRefreshTicket(), 300000);
+        }
       }
   }
 
@@ -122,7 +126,7 @@ export class AppComponent {
    * @param roles List of roles to check whether or not user belongs to one of them
    */
   inRole(roles: string[]) {
-    if (roles === null || roles === undefined || roles.length === 0) {
+    if (!roles || roles.length === 0) {
       return true;
     }
     for (const idx of roles) {

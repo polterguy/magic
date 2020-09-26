@@ -143,6 +143,17 @@ Fixed a bug when trying to copy a file, and you pass in the destination
 as only a folder name. This would occur _only_ in the async version of
 the slot.
 
+## magic.lambda
+
+Fixed bug in **[add]** when descendants iterator is used to traverse your
+destination nodes. Previously it could trigger an exception, due to enumerator
+being changed.
+
+## magic.endpoint
+
+Completely new way to retrieve meta data, much more fault tolerant, and
+less dependent upon structure of Hyperlambda file.
+
 ## Magic (main)
 
 Remove the _"trash"_ folder entirely, and no longer creating backup
@@ -168,3 +179,7 @@ process.
 Improved the paging in the _"Logs"_ menu item, such that it no displays
 the number of _relevant_ records - Implying that it now takes your filter
 into account, as it displays the number of log items in your database.
+
+Improved the scaffolded Angular frontend, by checking if JWT token has
+expired before I set the user's roles, and if expired, the token is
+deleted from local storage.

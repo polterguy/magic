@@ -55,10 +55,14 @@ export abstract class GridComponent {
     protected jwtHelper: JwtHelperService) {
 
     const token = localStorage.getItem('jwt_token');
-    if (token !== null && token !== undefined) {
-      this.roles = this.jwtHelper.decodeToken(token).role.split(',');
-    }
-  }
+    if (token) {
+      if (this.jwtHelper.isTokenExpired(token)) {
+        localStorage.removeItem('jwt_token');
+      } else {
+        this.roles = this.jwtHelper.decodeToken(token).role.split(',');
+        setTimeout(() => this.tryRefreshTicket(), 300000);
+      }
+}
 
   /**
    * Abstract method you'll need to override to actually return method that
