@@ -20,6 +20,7 @@ export abstract class DialogComponent {
   protected createColumns: string[] = [];
   protected updateColumns: string[] = [];
   protected primaryKeys: string[] = [];
+  private changedValues: string[] = [];
 
   /**
    * Constructor for dialog component, taking a bunch of additional components,
@@ -64,6 +65,19 @@ export abstract class DialogComponent {
   }
 
   /**
+   * Invoked when a field is edited by the user, and marks a field
+   * as "dirty", implying it'll need to be transmitted to backend,
+   * during update invocations.
+   * 
+   * @param field Name of field that was edited
+   */
+  public changed(field: string) {
+    if (this.changedValues.filter(x => x == field).length === 0) {
+      this.changedValues.push(field);
+    }
+  }
+
+  /**
    * Invoked when the user clicks the "Save" button.
    */
   public save() {
@@ -71,7 +85,9 @@ export abstract class DialogComponent {
     if (this.getData().isEdit) {
 
       for (const idx in this.getData().entity) {
-        if (this.updateColumns.indexOf(idx) === -1) {
+        if (this.updateColumns.indexOf(idx) === -1 ||
+          (this.primaryKeys.indexOf(idx) === -1 &&
+            this.changedValues.indexOf(idx) === -1)) {
           delete this.getData().entity[idx];
         }
       }
@@ -79,7 +95,7 @@ export abstract class DialogComponent {
       this.getUpdateMethod().subscribe(res => {
         this.close(this.getData().entity);
         if (res['updated-records'] !== 1) {
-          this.snackBar.open(`Oops, number of items was ${res['updated-records']}, which is very wrong. Should have been 1`, 'Close', {
+          this.snackBar.open(`Oops, number of items was ${res['updated-records']}, which is very wrong. It should have been 1`, 'Close', {
             duration: 5000,
             panelClass: ['error-snackbar'],
           });
