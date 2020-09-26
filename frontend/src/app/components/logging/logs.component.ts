@@ -67,7 +67,7 @@ export class LogsComponent implements OnInit {
     }, error => {
       this.showHttpError(error);
     });
-    this.logService.countLogItems().subscribe(res => {
+    this.logService.countLogItems(this.filter).subscribe(res => {
       this.count = res.result;
     }, error => {
       this.showHttpError(error);

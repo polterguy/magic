@@ -1,9 +1,0 @@
-/*
- * Creates a record in a MySQL table.
- */
-signal:magic.db.mysql.create
-   database:magic
-   table:roles
-   values
-      name:foo-bar
-      description:Some description

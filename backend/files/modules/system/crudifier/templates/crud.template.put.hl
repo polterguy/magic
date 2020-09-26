@@ -3,27 +3,18 @@
  * Template for HTTP PUT CRUD requests.
  */
 .arguments
+.type:crud-update
 
 
 /*
- * Adding the rest of our parameters into [values].
+ * Invoking update, making sure we add [values] and ids as [where] conditions.
  */
-add:x:./*/signal/*/values
-   get-nodes:x:@.arguments/*
-
-
-/*
- * Invoking [magic.db.xxx.update]
- */
-unwrap:x:+/*/ids/*
-signal:magic.db.xxx.update
-   database:{database}
-   table:{table}
-   values
-   ids
-
-
-/*
- * Returning results back to caller.
- */
-return-nodes:x:@signal/*
+xxx.connect:{database}
+   xxx.update
+      table:{table}
+      values
+      where
+         and
+   unwrap:x:+/*
+   return
+      updated-records:x:./-/-

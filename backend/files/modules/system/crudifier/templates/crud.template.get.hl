@@ -1,34 +1,33 @@
 
 /*
  * Template for HTTP GET CRUD requests.
- *
- * Expects {database} and {table} [apply] arguments.
  */
 .arguments
    limit:long
    offset:long
    order:string
    direction:string
+.type:crud-read
 
 
 /*
- * Parametrizing [magic.db.xxx.read].
+ * Invoking read, making sure we add any [where] conditions.
  */
-add:x:./*/signal/*/args
-   get-nodes:x:@.arguments/*
-
-
-/*
- * Invoking [magic.db.xxx.read], making sure we unwrap the [id].
- */
-signal:magic.db.xxx.read
-   database:{database}
-   table:{table}
-   args
-   columns
-
-
-/*
- * Returning results back to caller.
- */
-return-nodes:x:@signal/*
+xxx.connect:{database}
+   add:x:+/+/+/+/+/+
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:+/*/where/*/and
+      get-nodes:x:@.arguments/*
+   xxx.read
+      table:{table}
+      columns
+      where
+         and
+   return-nodes:x:-/*

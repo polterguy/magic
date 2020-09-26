@@ -16,23 +16,27 @@ auth.ticket.verify:root
 
 
 /*
+ * Adding paging arguments.
+ */
+add:x:../*/xxx
+   get-nodes:x:@.arguments/*/limit
+   get-nodes:x:@.arguments/*/offset
+
+
+/*
  * Retrieves items from our database, according to which database is
  * the default database and database type in the system.
  */
 config.get:"magic:logging:database"
 config.get:"magic:databases:default"
-strings.concat
-   .:magic.db.
-   get-value:x:@config.get
-   .:.read
-
-
-/*
- * Adding paging arguments.
- */
-add:x:../*/signal/*/args
-   get-nodes:x:@.arguments/*/limit
-   get-nodes:x:@.arguments/*/offset
+set-name:x:./*/xxx.connect
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+set-name:x:./**/xxx.read
+   strings.concat
+      get-value:x:@config.get
+      .:.read
 
 
 /*
@@ -44,29 +48,29 @@ if
       strings.concat
          get-value:x:@.arguments/*/query
          .:%
-      unwrap:x:+/*/*/*
-      add:x:../*/signal/*/args
+      unwrap:x:+/*/*/*/*
+      add:x:../**/table/.
          .
-            or
-               type.eq:x:@.arguments/*/query
-               content.like:x:@strings.concat
+            where
+               or
+                  type.eq:x:@.arguments/*/query
+                  content.like:x:@strings.concat
 
 
 /*
  * Retrieving items from database.
  */
-unwrap:x:+/*
-signal:x:@strings.concat
-   database:x:@config.get/@config.get
-   table:log_entries
-   args
+unwrap:x:+
+xxx.connect:x:@config.get/@config.get
+   add:x:+
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/limit
+   xxx.read
+      table:log_entries
       order:id
       direction:desc
 
-
-/*
- * Returning items to caller.
- */
-add:x:+
-   get-nodes:x:@signal/*
-return-nodes
+   /*
+    * Returning items to caller.
+    */
+   return:x:-/*

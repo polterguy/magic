@@ -1,24 +1,21 @@
 
 /*
  * Template for HTTP DELETE CRUD requests.
- *
- * Expects {database} and {table} [apply] arguments.
  */
 .arguments
+.type:crud-delete
 
 
 /*
- * Invoking [magic.db.xxx.delete], making sure we unwrap the [id].
+ * Invoking delete, making sure we add any specified ids.
  */
-add:x:./*/signal/*/ids
-   get-nodes:x:@.arguments/*
-signal:magic.db.xxx.delete
-   database:{database}
-   table:{table}
-   ids
-
-
-/*
- * Returning results back to caller.
- */
-return-nodes:x:@signal/*
+xxx.connect:{database}
+   add:x:+/*/where/*/and
+      get-nodes:x:@.arguments/*
+   xxx.delete
+      table:{table}
+      where
+         and
+   unwrap:x:+/*
+   return
+      deleted-records:x:./-/-

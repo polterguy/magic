@@ -31,5 +31,5 @@ open:x:@config.get/@config.get
 /*
  * Returning log items to caller.
  */
-return-nodes
+return
    result:SUCCESS

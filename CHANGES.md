@@ -102,9 +102,13 @@ we will revisit decryption, and hopefully be able to implement it again.
 The project still support PGP signing, _encrypting_, verifying signatures, etc.
 Just not decryption of received MIME messages unfortunately.
 
-# Version 8.2.1
+# Version 8.2.2
 
-**BREAKING CHANGES**
+**NOTICE - 2 BREAKING CHANGES**
+
+**TL;TR** - Do not update an existing website, unless you can re-crudify all
+endpoints, and/or you are _certain_ about what you're doing. If you can re-crudify
+all endpoints (backend parts), you should be OK to upgrade though.
 
 ## magic.signals
 
@@ -120,7 +124,7 @@ Hyperlambda from both a synchronous and an async context, resulting in
 less _"async compatibility problems"_.
 
 The signaler implementation is also now significantly optimized, in such
-that it doesn't create a new thread context nearly as many times as it
+that it doesn't create a new synchronization context as many times as it
 would previously end up doing. Resulting in among other things, much
 better exceptions stacktraces, and fewer synchronization contexts
 being created - Resulting in more optimally performing code.
@@ -144,3 +148,23 @@ the slot.
 Remove the _"trash"_ folder entirely, and no longer creating backup
 of files replaced during the setup process. This was anyways not necessary,
 since if you needed these files, you can anyways find them online.
+
+Optimized how the Crudifier works, by entirely removing the dependencies
+upon the dynamic CRUD slots, which you could previously find in the
+mssql and mysql folders inside of the _"/files/modules/system/magic.startup/"_
+folder. This significantly simplifies your code, and also makes it more
+robust, easily maintained, and more easily changed and understood.
+
+**The above is a BREAKING CHANGE** - If you have existing websites,
+you should _really_ know what you're doing if you want to update it
+to use the new core.
+
+**Notice** - I was never really happy with the way this used to work
+to be honest with you, since these parts were too complex. However,
+now hopefully there won't be any more breaking changes, since I'm fairly
+happy with how the entirety of the core works - Including the crudification
+process.
+
+Improved the paging in the _"Logs"_ menu item, such that it no displays
+the number of _relevant_ records - Implying that it now takes your filter
+into account, as it displays the number of log items in your database.

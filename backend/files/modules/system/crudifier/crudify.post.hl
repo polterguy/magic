@@ -115,28 +115,29 @@ apply:x:@hyper2lambda
 /*
  * Replacing generic slots with actual database type.
  */
-for-each:x:@apply/**/=magic.db.xxx.create
-   set-value:x:@.dp/#
+for-each:x:@apply/**/xxx.connect
+   set-name:x:@.dp/#
       strings.concat
-         .:magic.db.
          get-value:x:@.arguments/*/databaseType
-         .:.create
-for-each:x:@apply/**/=magic.db.xxx.delete
-   set-value:x:@.dp/#
+         .:.connect
+for-each:x:@apply/**/xxx.delete
+   set-name:x:@.dp/#
       strings.concat
-         .:magic.db.
          get-value:x:@.arguments/*/databaseType
          .:.delete
-for-each:x:@apply/**/=magic.db.xxx.read
-   set-value:x:@.dp/#
+for-each:x:@apply/**/xxx.create
+   set-name:x:@.dp/#
       strings.concat
-         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.create
+for-each:x:@apply/**/xxx.read
+   set-name:x:@.dp/#
+      strings.concat
          get-value:x:@.arguments/*/databaseType
          .:.read
-for-each:x:@apply/**/=magic.db.xxx.update
-   set-value:x:@.dp/#
+for-each:x:@apply/**/xxx.update
+   set-name:x:@.dp/#
       strings.concat
-         .:magic.db.
          get-value:x:@.arguments/*/databaseType
          .:.update
 
@@ -176,6 +177,13 @@ if
  */
 if
    and
+      or
+         eq
+            get-value:x:@.arguments/*/verb
+            .:post
+         eq
+            get-value:x:@.arguments/*/verb
+            .:put
       not
          and
             eq
@@ -184,13 +192,6 @@ if
             eq
                get-value:x:@.arguments/*/validators
                .
-      or
-         eq
-            get-value:x:@.arguments/*/verb
-            .:post
-         eq
-            get-value:x:@.arguments/*/verb
-            .:put
    .lambda
       insert-after:x:@apply/*/.arguments
          hyper2lambda:x:@.arguments/*/validators
@@ -211,7 +212,7 @@ if
          .:
    .lambda
       unwrap:x:+/*/*
-      insert-after:x:@apply/*/.arguments
+      insert-after:x:@apply/*/.arguments/+
          .
             auth.ticket.verify:x:@.arguments/*/auth
 
@@ -254,6 +255,18 @@ switch:x:@.arguments/*/verb
        */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*/*
+      for-each:x:@.arguments/*/args/*/primary/*/*
+         .x:@.arguments/*/
+         set-value:x:@.x
+            strings.concat
+               get-value:x:@.x
+               get-name:x:@.dp/#
+         set-x:x:+/*/*
+            convert:x:@.x
+               type:x
+         insert-after:x:@apply/*/.arguments/+
+            .
+               validators.mandatory
 
 
    /*
@@ -351,7 +364,7 @@ switch:x:@.arguments/*/verb
                get-nodes:x:@.buffer/*
 
 
-      for-each:x:@.arguments/*/args/*/*
+      for-each:x:@.arguments/*/args/*/columns/*/*
          set-value:x:@.dp/#
       add:x:@apply/**/columns
          get-nodes:x:@.arguments/*/args/*/columns/*/*
@@ -415,23 +428,48 @@ switch:x:@.arguments/*/verb
       /*
        * Applying PUT arguments.
        */
-      add:x:@apply/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/primary/*/*
-      add:x:@apply/*/.arguments
-         get-nodes:x:@.arguments/*/args/*/columns/*/*
-      for-each:x:@.arguments/*/args/*/*
-         set-value:x:@.dp/#
-      add:x:@apply/**/ids
-         get-nodes:x:@.arguments/*/args/*/primary/*/*
-      for-each:x:@apply/**/ids/*
+      for-each:x:@.arguments/*/args/*/primary/*/*
          .x:@.arguments/*/
          set-value:x:@.x
             strings.concat
                get-value:x:@.x
                get-name:x:@.dp/#
-         set-x:x:@.dp/#
+         set-x:x:+/*/*
             convert:x:@.x
                type:x
+         insert-after:x:@apply/*/.arguments/+
+            .
+               validators.mandatory
+      add:x:@apply/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/primary/*/*
+      add:x:@apply/*/.arguments
+         get-nodes:x:@.arguments/*/args/*/columns/*/*
+      .x:@.arguments/*/[0,
+      set-value:x:@.x
+         strings.concat
+            get-value:x:@.x
+            get-count:x:@.arguments/*/args/*/primary/*/*
+            .:]
+      set-x:x:+/*/*/*
+         convert:x:@.x
+            type:x
+      insert-before:x:@apply/**/table/././0
+         .
+            add:x:+/+/*/where/*/and
+               get-nodes
+      .x:@.arguments/*/[
+      set-value:x:@.x
+         strings.concat
+            get-value:x:@.x
+            get-count:x:@.arguments/*/args/*/primary/*/*
+            .:,1000]
+      set-x:x:+/*/*/*
+         convert:x:@.x
+            type:x
+      insert-before:x:@apply/**/table/././1
+         .
+            add:x:+/*/values
+               get-nodes
 
 
 
@@ -552,17 +590,28 @@ if
        * First removing [columns], adding [count(*)] and then transforming lambda
        * to hyper, and saving it to the correct file.
        */
-      remove-nodes:x:@apply/*/signal/*/columns/*
+      remove-nodes:x:@apply/**/columns/*
+      remove-nodes:x:@apply/**/return-nodes
+      remove-nodes:x:@apply/**/table/././*/add
       remove-nodes:x:@apply/*/.arguments/*/limit
       remove-nodes:x:@apply/*/.arguments/*/offset
       remove-nodes:x:@apply/*/.arguments/*/order
       remove-nodes:x:@apply/*/.arguments/*/direction
-      add:x:@apply/*/signal/*/columns
+      set-value:x:@apply/*/.type
+         .:crud-count
+      add:x:@apply/**/columns
          .
             count(*) as count
-      add:x:@apply/*/signal/*/args
+      add:x:@apply/**/table/.
          .
             limit:long:1
+      insert-before:x:@apply/**/table/.
+         .
+            add:x:+/*/where/*/and
+               get-nodes:x:@.arguments/*
+      insert-after:x:@apply/**/table/.
+         .
+            return-nodes:x:-/*/*
       lambda2hyper:x:@apply/*
       unwrap:x:+
       .path:x:@.folder
@@ -622,7 +671,7 @@ if
 /*
  * Returning success to caller.
  */
-unwrap:x:+/*/loc
+unwrap:x:+/*
 return-nodes
    result:success
    loc:x:@get-count

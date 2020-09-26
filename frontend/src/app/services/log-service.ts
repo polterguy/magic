@@ -27,10 +27,15 @@ export class LogService {
       query);
   }
 
-  public countLogItems() {
+  public countLogItems(filter?: string) {
+    let query = '';
+    if (filter) {
+      query += '?query=' + encodeURIComponent(filter);
+    }
     return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/logging/count-items');
+      'magic/modules/system/logging/count-items' +
+      query);
   }
 
   public countErrorItems() {
