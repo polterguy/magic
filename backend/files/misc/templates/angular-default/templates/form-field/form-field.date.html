@@ -4,6 +4,7 @@
     <input
       matInput
       placeholder="[[column-name]]"
+      (change)="changed('[[column-name]]')"
       [owlDateTime]="picker[[column-name]]"
       [owlDateTimeTrigger]="picker[[column-name]]"
       [(ngModel)]="data.entity.[[column-name]]"
