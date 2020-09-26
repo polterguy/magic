@@ -2,6 +2,8 @@
 /*
  * Returns number of log items in the database.
  */
+.arguments
+   query:string
 .description:"Returns the number of log items in the log database."
 
 
@@ -17,21 +19,47 @@ auth.ticket.verify:root
  */
 config.get:"magic:logging:database"
 config.get:"magic:databases:default"
-strings.concat
-   .:magic.db.
-   get-value:x:@config.get
-   .:.read
-unwrap:x:+/*
-signal:x:@strings.concat
-   database:x:@config.get/@config.get
-   table:log_entries
-   columns
-      count(*)
+set-name:x:../**/xxx.connect
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+set-name:x:../**/xxx.read
+   strings.concat
+      get-value:x:@config.get
+      .:.read
 
 
 /*
- * Returning log items to caller.
+ * Adding filter argument, if given.
  */
-unwrap:x:+/*
-return-nodes
-   result:x:@signal/*/*
+if
+   exists:x:@.arguments/*/query
+   .lambda
+      strings.concat
+         get-value:x:@.arguments/*/query
+         .:%
+      unwrap:x:+/*/*/*/*
+      add:x:../**/table/.
+         .
+            where
+               or
+                  type.eq:x:@.arguments/*/query
+                  content.like:x:@strings.concat
+
+
+/*
+ * Retrieving count from database.
+ */
+unwrap:x:+
+xxx.connect:x:@config.get/@config.get
+   xxx.read
+      table:log_entries
+      columns
+         count(*) as count
+
+   /*
+    * Returning log items to caller.
+    */
+   unwrap:x:+/*
+   return
+      result:x:./-/-/*/*

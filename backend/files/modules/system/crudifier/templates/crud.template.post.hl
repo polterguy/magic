@@ -1,30 +1,20 @@
 
 /*
  * Template for HTTP POST CRUD requests.
- *
- * Expects {database} and {table} [apply] arguments.
  */
 .arguments
+.type:crud-create
 
 
 /*
- * Parametrizing [magic.db.xxx.create].
+ * Invoking create, making sure we add [values] to create.
  */
-add:x:./*/signal/*/values
-   get-nodes:x:@.arguments/*
-
-
-/*
- * Invoking [magic.db.xxx.create]
- */
-signal:magic.db.xxx.create
-   database:{database}
-   table:{table}
-   return-id:{return-id}
-   values
-
-
-/*
- * Returning results back to caller.
- */
-return-nodes:x:@signal/*
+xxx.connect:{database}
+   add:x:+/*/values
+      get-nodes:x:@.arguments/*
+   xxx.create
+      table:{table}
+      values
+   unwrap:x:+/*
+   return
+      id:x:./-/-

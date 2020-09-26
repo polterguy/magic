@@ -3,6 +3,8 @@
  * See the enclosed LICENSE file for details.
  */
 
+#if DEBUG
+
 using System.IO;
 using magic.node;
 using magic.signals.contracts;
@@ -28,3 +30,5 @@ namespace magic.backend.slots
         }
     }
 }
+
+#endif

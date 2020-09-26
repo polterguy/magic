@@ -9,4 +9,4 @@
  * Returns all endpoints to caller.
  */
 endpoints.list
-return-nodes:x:-/*
+return-nodes:x:@endpoints.list/*

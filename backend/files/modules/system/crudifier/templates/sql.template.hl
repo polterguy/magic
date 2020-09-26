@@ -5,6 +5,7 @@
  * Expects {database} and {sql} [apply] arguments.
  */
 .arguments
+.type:sql
 
 
 /*

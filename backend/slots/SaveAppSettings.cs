@@ -3,6 +3,8 @@
  * See the enclosed LICENSE file for details.
  */
 
+ #if DEBUG
+
 using System.IO;
 using magic.node;
 using magic.node.extensions;
@@ -38,3 +40,5 @@ namespace magic.backend.slots
         }
     }
 }
+
+#endif

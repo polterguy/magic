@@ -17,25 +17,28 @@ auth.ticket.verify:root
  */
 config.get:"magic:logging:database"
 config.get:"magic:databases:default"
-strings.concat
-   .:magic.db.
-   get-value:x:@config.get
-   .:.read
-unwrap:x:+/*
-signal:x:@strings.concat
-   database:x:@config.get/@config.get
-   table:log_entries
-   args
-      or
-         type.eq:error
-         type.eq:fatal
-   columns
-      count(*)
+set-name:x:../**/xxx.connect
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+set-name:x:../**/xxx.read
+   strings.concat
+      get-value:x:@config.get
+      .:.read
+unwrap:x:+
+xxx.connect:x:@config.get/@config.get
+   xxx.read
+      table:log_entries
+      where
+         or
+            type.eq:error
+            type.eq:fatal
+      columns
+         count(*) as count
 
-
-/*
- * Returning log items to caller.
- */
-unwrap:x:+/*
-return-nodes
-   result:x:@signal/*/*
+   /*
+    * Returning log items to caller.
+    */
+   unwrap:x:+/*
+   return
+      result:x:./-/-/*/*
