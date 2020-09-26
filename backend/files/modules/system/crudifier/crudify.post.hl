@@ -591,6 +591,7 @@ if
        * to hyper, and saving it to the correct file.
        */
       remove-nodes:x:@apply/**/columns/*
+      remove-nodes:x:@apply/**/table/././*/remove-nodes
       remove-nodes:x:@apply/**/return-nodes
       remove-nodes:x:@apply/**/table/././*/add
       remove-nodes:x:@apply/*/.arguments/*/limit
