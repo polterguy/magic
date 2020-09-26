@@ -183,3 +183,13 @@ into account, as it displays the number of log items in your database.
 Improved the scaffolded Angular frontend, by checking if JWT token has
 expired before I set the user's roles, and if expired, the token is
 deleted from local storage.
+
+Removed the **[load-app-settings]** and the **[save-app-settings]**
+slots in Release builds, due to that having these slots in production
+might in theory create security issues, although no endpoints are
+invoking them, before checking if the user is root or not. Still, this
+is defensive coding, and arguably the right thing to do. In a production
+environment, you should anyways apply appsettings.json settings through
+some kind of secret tansformations, etc - And _not_ follow the setup
+process, which is the only process that actually uses these slots today
+anyways.
