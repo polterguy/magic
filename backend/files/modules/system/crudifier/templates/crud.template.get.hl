@@ -11,7 +11,8 @@
 
 
 /*
- * Invoking read, making sure we add any [where] conditions.
+ * Invoking read, making sure we add any [where] conditions, and
+ * other conditions, such as paging and order conditions.
  */
 xxx.connect:{database}
    add:x:+/+/+/+/+/+

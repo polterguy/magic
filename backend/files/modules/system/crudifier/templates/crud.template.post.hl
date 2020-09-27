@@ -14,6 +14,7 @@ xxx.connect:{database}
       get-nodes:x:@.arguments/*
    xxx.create
       table:{table}
+      return-id:{return-id}
       values
    unwrap:x:+/*
    return

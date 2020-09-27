@@ -19,7 +19,7 @@ auth.ticket.verify:root
 
 
 /*
- * Invokes slots.create responsible for returning columns.
+ * Invokes [magic.db.xxx.columns] responsible for returning columns.
  */
 strings.concat
    .:magic.db.

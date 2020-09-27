@@ -14,8 +14,9 @@ auth.ticket.verify:root
 
 
 /*
- * Invokes slots.create responsible for returning our database names,
- * and returns results to caller.
+ * Invokes [magic.db.xxx.databases] slot, that's responsible
+ * for returning our database names according to what database type
+ * caller specified.
  */
 strings.concat
    .:magic.db.
@@ -25,7 +26,9 @@ signal:x:@strings.concat
 
 
 /*
- * Doing the [to-lowers] thing.
+ * Making sure we only return [to-lower] names to caller, to
+ * avoid creating CRUD endpoints with CAPS characters, which can
+ * create confusion when moving modules between Windows and Linux/OSX.
  */
 for-each:x:@signal/*/*
    set-value:x:@.dp/#

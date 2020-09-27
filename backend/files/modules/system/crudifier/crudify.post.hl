@@ -16,7 +16,7 @@
    overwrite:bool
    args:*
    validators:string
-.description:"Creates an HTTP REST endpoint, wrapping your existing database, according to the arguments given."
+.description:"Creates an HTTP REST CRUD endpoint, wrapping your existing database, according to the arguments given."
 
 
 
@@ -113,7 +113,7 @@ apply:x:@hyper2lambda
 
 
 /*
- * Replacing generic slots with actual database type.
+ * Replacing generic slot invocations with actual database type.
  */
 for-each:x:@apply/**/xxx.connect
    set-name:x:@.dp/#
@@ -156,16 +156,13 @@ if
          get-value:x:@.arguments/*/log
          .:
    .lambda
-      unwrap:x:+/*/*/.log
-      insert-after:x:@apply/*/.arguments
+      unwrap:x:+/*/*/*/.log
+      insert-after:x:@apply/*/.type
          .
-            lambda2hyper:x:@.arguments/*
-            .log:x:@.arguments/*/log
-            strings.concat
-               get-value:x:@.log
+            log.info
+               .log:x:@.arguments/*/log
                .:" - Arguments: \r\n"
-               get-value:x:@lambda2hyper
-            log.info:x:@strings.concat
+               lambda2hyper:x:@.arguments/*
 
 
 
@@ -193,7 +190,7 @@ if
                get-value:x:@.arguments/*/validators
                .
    .lambda
-      insert-after:x:@apply/*/.arguments
+      insert-after:x:@apply/*/.type
          hyper2lambda:x:@.arguments/*/validators
 
 
@@ -212,7 +209,7 @@ if
          .:
    .lambda
       unwrap:x:+/*/*
-      insert-after:x:@apply/*/.arguments/+
+      insert-after:x:@apply/*/.type
          .
             auth.ticket.verify:x:@.arguments/*/auth
 
@@ -252,6 +249,8 @@ switch:x:@.arguments/*/verb
 
       /*
        * Applying DELETE arguments.
+       *
+       * This basically ensures that all primary keys becomes mandatory arguments.
        */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*/*
@@ -264,7 +263,7 @@ switch:x:@.arguments/*/verb
          set-x:x:+/*/*
             convert:x:@.x
                type:x
-         insert-after:x:@apply/*/.arguments/+
+         insert-after:x:@apply/*/.type
             .
                validators.mandatory
 
@@ -308,6 +307,11 @@ switch:x:@.arguments/*/verb
                   get-value:x:@.arguments/*/args/*/cache
                   .
          .lambda
+
+            /*
+             * Caller wants results of endpoint to be cached, figuring out
+             * if we should publicly or privately cache the result.
+             */
             .scope:private
             if
                eq
@@ -321,13 +325,20 @@ switch:x:@.arguments/*/verb
                .:, max-age=
                get-value:x:@.arguments/*/args/*/cache
             unwrap:x:+/*/*/*
-            insert-after:x:@apply/*/signal
+            insert-after:x:@apply/*/.type
                .
                   response.headers.add
                      Cache-Control:x:@strings.concat
 
       /*
        * Allowing for specifying operator to query.
+       *
+       * This is the part where we create our condition arguments, allowing
+       * for filtering result when endpoint is invoked.
+       *
+       * Making sure we legalize all the most common operators for all
+       * columns, in addition to "like" conditions for string types of
+       * endpoints.
        */
       .operators
          mt
@@ -337,6 +348,11 @@ switch:x:@.arguments/*/verb
          neq
          eq
       for-each:x:@.arguments/*/args/*/columns/*/*
+
+         /*
+          * Checking if we should allow "like" filtering, which is only
+          * so if column is of type "string".
+          */
          if
             eq
                get-value:x:@.dp/#
@@ -351,6 +367,11 @@ switch:x:@.arguments/*/verb
                      .:.like
                add:x:@apply/*/.arguments
                   get-nodes:x:@.buffer/*
+
+         /*
+          * Allowing for all other types of condition filtering for our
+          * endpoint.
+          */
          for-each:x:@.operators/*
             .buffer
                .name:x:@.dp/@.dp/#
@@ -364,6 +385,10 @@ switch:x:@.arguments/*/verb
                get-nodes:x:@.buffer/*
 
 
+      /*
+       * Making sure we explicitly declare which [columns] that our
+       * endpoint should return, according to caller's specifications.
+       */
       for-each:x:@.arguments/*/args/*/columns/*/*
          set-value:x:@.dp/#
       add:x:@apply/**/columns
@@ -393,7 +418,9 @@ switch:x:@.arguments/*/verb
 
 
       /*
-       * Applying POST arguments.
+       * Applying POST arguments, which are basically the [values] that
+       * invokers of endpoint are allowed to insert during creationg of
+       * record.
        */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*/*
@@ -420,13 +447,19 @@ switch:x:@.arguments/*/verb
 
 
             /*
-             * Cannot have a PUT endpoint without any actual data to PUT.
+             * Cannot have a PUT endpoint without any [values] to modify and
+             * [where] statements to declare which records to modify.
              */
             throw:There are no actual columns, and/or primary keys declared for your PUT endpoint.
 
 
       /*
        * Applying PUT arguments.
+       * First our primary keys, which ends up becoming a [where] condition,
+       * to avoid allowing for updating all records, or something stupid.
+       *
+       * This is done by making sure all specified primary keys becomes mandatory
+       * arguments when invoking the endpoint.
        */
       for-each:x:@.arguments/*/args/*/primary/*/*
          .x:@.arguments/*/
@@ -437,13 +470,24 @@ switch:x:@.arguments/*/verb
          set-x:x:+/*/*
             convert:x:@.x
                type:x
-         insert-after:x:@apply/*/.arguments/+
+         insert-after:x:@apply/*/.type
             .
                validators.mandatory
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/primary/*/*
+
+      /*
+       * Then adding the [add] into [values] and [where] invocations to our endpoint.
+       * This is done by a little bit of intelligent offsetting using expressions,
+       * which we can get away with, since we know that all primary keys are mandatory,
+       * and declared first in our [.arguments] node in our endpoint.
+       */
       add:x:@apply/*/.arguments
          get-nodes:x:@.arguments/*/args/*/columns/*/*
+
+      /*
+       * First adding the [add] into [where] parts, which are the primary keys.
+       */
       .x:@.arguments/*/[0,
       set-value:x:@.x
          strings.concat
@@ -457,6 +501,13 @@ switch:x:@.arguments/*/verb
          .
             add:x:+/+/*/where/*/and
                get-nodes
+
+      /*
+       * Then adding the [add] into [values] parts, which are the values to update.
+       *
+       * Notice, we assume there are less than 1.000 values to update, which should be
+       * enough for any sane database table.
+       */
       .x:@.arguments/*/[
       set-value:x:@.x
          strings.concat
@@ -477,7 +528,10 @@ switch:x:@.arguments/*/verb
 
 
 /*
- * Then creating our folder.
+ * Then creating our folder if necessary.
+ *
+ * We find the foldername here, by taking the entire filepath, and
+ * removing its filename. Then we create the folder.
  */
 .folder:/modules/
 set-value:x:@.folder
@@ -502,8 +556,8 @@ io.folder.create:x:@.folder
 
 
 /*
- * Transforming lambda to hyper,
- * and saving it to the correct file.
+ * Transforming lambda to hyper, and saving it to the correct file, making sure
+ * we give the filename the correct verb, extension, etc.
  */
 lambda2hyper:x:@apply/*
 unwrap:x:+
@@ -524,7 +578,7 @@ set-value:x:@.path
 
 
 /*
- * Figuring out filename for HTTP endpoint.
+ * Substituting illegal characters in our filename, such as spaces, etc.
  */
 strings.replace:x:@.path
    .:' '
@@ -536,7 +590,7 @@ strings.replace:x:@.path
 
 
 /*
- * Making sure file does not exist from before, unless [.argument][overwrite] is true.
+ * Throwing an exception if the file exists from before, unless [.argument][overwrite] is true.
  */
 if
    and
@@ -544,7 +598,7 @@ if
          get-value:x:@.arguments/*/overwrite
       io.file.exists:x:@strings.replace
    .lambda
-      throw:"That module already exists. If you want to re-create it, please check off 'Overwrite'."
+      throw:"That module already exists. If you want to re-create it, please make sure you're OK with overwriting the file."
 
 
 
@@ -552,8 +606,8 @@ if
 
 
 /*
- * Saving file, now applied according to template declaration,
- * and with the correct filename.
+ * Saving file, now transformed according to arguments, database, table, columns etc -
+ * And with the correct filename.
  */
 io.file.save:x:@strings.replace
    get-value:x:@lambda2hyper
@@ -565,8 +619,10 @@ io.file.save:x:@strings.replace
 
 /*
  * Calculating how many lines of code we created.
+ *
+ * This is returned back to the caller after crudification is done.
  */
-get-count:x:@apply/*
+get-count:x:@apply/**
 
 
 
@@ -574,8 +630,11 @@ get-count:x:@apply/*
 
 
 /*
- * Checking if this is an HTTP GET verb, at which point we create two endpoints,
+ * Checking if this is an HTTP GET verb, at which point we create TWO endpoints,
  * one to retrieve actual data, and another to retrieve the count of records in table.
+ *
+ * This is done by taking our existing "get items" lambda structure, and modifying it
+ * until it becomes a "get count" endpoint file instead.
  */
 if
    eq
@@ -585,10 +644,9 @@ if
 
 
       /*
-       * Creating our "count" endpoint, in addition to our normal GET endpoint.
-       *
-       * First removing [columns], adding [count(*)] and then transforming lambda
-       * to hyper, and saving it to the correct file.
+       * First removing [columns], adding [count(*) as count], and then transforming lambda
+       * to hyper, and saving it to the correct file - Which is the same filename as the
+       * plain get, except adding "-count" at its end.
        */
       remove-nodes:x:@apply/**/columns/*
       remove-nodes:x:@apply/**/table/././*/remove-nodes
@@ -662,7 +720,7 @@ if
       set-value:x:@get-count
          math.add
             get-value:x:@get-count
-            get-count:x:@apply/*
+            get-count:x:@apply/**
 
 
 

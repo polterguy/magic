@@ -59,24 +59,6 @@ add:x:@apply/*/.arguments
 
 
 /*
- * Checking if caller declared current endpoint as a "statistics" endpoint.
- */
-if
-   eq
-      get-value:x:@.arguments/*/isStatistics
-      .:bool:true
-   .lambda
-
-
-      /*
-       * Making sure we mark endpoint as a statistics type of endpoint.
-       */
-      insert-before:x:@apply/*/.arguments
-         .
-            .is-statistics:bool:true
-
-
-/*
  * Checking if caller provided specific authorization
  * for us to use, and if so, applying it to lambda.
  */
@@ -103,7 +85,25 @@ if
 
 
 /*
- * Creating our folder.
+ * Checking if caller declared current endpoint as a "statistics" endpoint.
+ */
+if
+   eq
+      get-value:x:@.arguments/*/isStatistics
+      .:bool:true
+   .lambda
+
+
+      /*
+       * Making sure we mark endpoint as a statistics type of endpoint.
+       */
+      insert-after:x:@apply/*/.type
+         .
+            .is-statistics:bool:true
+
+
+/*
+ * Creating our folder if necessary.
  */
 .folder:/modules/
 set-value:x:@.folder
@@ -138,7 +138,7 @@ if
          get-value:x:@.arguments/*/overwrite
       io.file.exists:x:@.filename
    .lambda
-      throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+      throw:"That endpoint already exists. If you want to overwrite it, you'll have to explicitly tell me so."
 
 
 /*

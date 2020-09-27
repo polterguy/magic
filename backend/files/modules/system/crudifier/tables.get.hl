@@ -15,8 +15,9 @@ auth.ticket.verify:root
 
 
 /*
- * Invokes slots.create responsible for returning our database names,
- * and returns results to caller.
+ * Invokes [magic.db.xxx.tables] slot, that's responsible
+ * for returning our table names according to what database type
+ * caller specified, and which database he specified.
  */
 strings.concat
    .:magic.db.
@@ -28,6 +29,6 @@ signal:x:@strings.concat
 
 
 /*
- * Returning database to caller.
+ * Returning tables to caller.
  */
 return-nodes:x:@signal/*

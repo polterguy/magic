@@ -22,7 +22,7 @@ xxx.connect:{database}
 
 
    /*
-    * Evaluating [mysql.select] slots.create.
+    * Evaluating [xxx.select] slot.
     */
    xxx.select:{sql}
 
