@@ -2,6 +2,10 @@
 /*
  * Lists all files recursively from the specified folder.
  *
+ * This slot is used as we scaffold a frontend, since we'll need to
+ * recursively load all files in the template folder, before we start
+ * transforming the template to an actual result.
+ *
  * Arguments
  *
  * - 1st. Folder from where to list all files recursively from.

@@ -201,3 +201,11 @@ environment, you should anyways apply _"appsettings.json"_ settings through
 some kind of secret tansformations, etc - And _not_ follow the setup
 process, which is the only process that actually uses these slots today
 anyways.
+
+Fixed the counting of lines of code created during crudification, which
+was previously wrong, and way too small. The crudify process will now
+accurately report the number of lines of code created as it crudifies
+your database.
+
+Cleaned up a lot of the Hyperlambda in the backend, such as the Hyperlambda
+responsible for creating CRUD endpoints, etc.

@@ -7,7 +7,7 @@
 
 
 /*
- * Invoking delete, making sure we add any specified ids.
+ * Invoking delete, making sure we add any [where] conditions.
  */
 xxx.connect:{database}
    add:x:+/*/where/*/and

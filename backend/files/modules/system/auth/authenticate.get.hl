@@ -10,12 +10,15 @@
 .arguments
    username:string
    password:string
-.description:"Allows you to authenticate a user with a username/password combination, returning a JWT token, that you can use in later requests to authorize the client."
+.description:"Allows you to authenticate a user with a username/password combination, returning a JWT token, that you can use in later requests to the backend to authorize your client."
 
 
 /*
- * Invokes the slots.create that does the heavy lifting, and creates our JWT token,
+ * Invokes [magic.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
+ *
+ * Notice, this slot depends upon your database type, and is created during the setup
+ * process.
  */
 unwrap:x:+/*
 signal:magic.authenticate

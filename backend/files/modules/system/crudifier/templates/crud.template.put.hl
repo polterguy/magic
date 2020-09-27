@@ -7,7 +7,7 @@
 
 
 /*
- * Invoking update, making sure we add [values] and ids as [where] conditions.
+ * Invoking update, making sure we add [values] and any [where] conditions.
  */
 xxx.connect:{database}
    xxx.update
