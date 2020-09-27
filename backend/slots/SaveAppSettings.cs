@@ -6,10 +6,10 @@
  #if DEBUG
 
 using System.IO;
+using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using Newtonsoft.Json.Linq;
 
 namespace magic.backend.slots
 {
