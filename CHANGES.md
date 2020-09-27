@@ -116,7 +116,7 @@ Implemented support for having async slot invocations be _"prioritized"_, if a s
 implements the `ISlotAsync` interface, and its async implementation can be used. This
 implies that there is no longer any needs for explicitly invoking any **[wait.xxx]**
 overrides, to have the signaler choose the async slot, since if you're already within in async
-context, the async slot will be preferred, and invoked automatically, instead of its
+context, the async slot will be automatically preferred, and invoked automatically, instead of its
 synchronous version. This should *significantly* simplify your Hyperlambda
 code, since there are never any reasons to explicitly choose the _"wait."_
 slot invocation. In addition, it also allows you to use the same
@@ -158,7 +158,8 @@ less dependent upon structure of Hyperlambda file.
 
 Remove the _"trash"_ folder entirely, and no longer creating backup
 of files replaced during the setup process. This was anyways not necessary,
-since if you needed these files, you can anyways find them online.
+since if you needed these files, you could anyways find them online.
+It only resulted in unnecessary complications.
 
 Optimized how the Crudifier works, by entirely removing the dependencies
 upon the dynamic CRUD slots, which you could previously find in the
@@ -168,10 +169,12 @@ robust, easily maintained, and more easily changed and understood.
 
 **The above is a BREAKING CHANGE** - If you have existing websites,
 you should _really_ know what you're doing if you want to update it
-to use the new core.
+to use the new core. If you still want to take the chance of upgrading,
+you'll have to use the _"semantic SQL"_ slots directly now instead of the
+dynamic CRUD slots.
 
 **Notice** - I was never really happy with the way this used to work
-to be honest with you, since these parts were too complex. However,
+to be honest, since these parts were too complex. However,
 now hopefully there won't be any more breaking changes, since I'm fairly
 happy with how the entirety of the core works - Including the crudification
 process.
@@ -184,12 +187,17 @@ Improved the scaffolded Angular frontend, by checking if JWT token has
 expired before I set the user's roles, and if expired, the token is
 deleted from local storage.
 
+The scaffolded Angular frontend will now _patch_ records during
+updates, completely eliminating the needs for optimistic/pessimistic
+database record locking, allowing multiple users to edit the same
+record at the same time, without overwriting the other user's changes.
+
 Removed the **[load-app-settings]** and the **[save-app-settings]**
 slots in Release builds, due to that having these slots in production
 might in theory create security issues, although no endpoints are
-invoking them, before checking if the user is root or not. Still, this
+invoking them before checking if the user is root or not. Still, this
 is defensive coding, and arguably the right thing to do. In a production
-environment, you should anyways apply appsettings.json settings through
+environment, you should anyways apply _"appsettings.json"_ settings through
 some kind of secret tansformations, etc - And _not_ follow the setup
 process, which is the only process that actually uses these slots today
 anyways.
