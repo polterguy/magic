@@ -50,6 +50,16 @@ export class Messages {
    * for some reasons have changed.
    */
   static readonly ROLES_FETCHED = 'app.roles.fetched';
+
+  /**
+   * Message will be published by the system when the user logs in.
+   */
+  static readonly LOGGED_IN = 'app.user.logged-in';
+
+  /**
+   * Message will be published by the system when the user logs out.
+   */
+  static readonly LOGGED_OUT = 'app.user.logged-out';
 }
 
 @Injectable({

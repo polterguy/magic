@@ -130,7 +130,10 @@ export class AppComponent implements OnInit, OnDestroy {
       name: Messages.ROLES_FETCHED,
       content: this.roles,
     });
-}
+    this.messages.sendMessage({
+      name: Messages.LOGGED_OUT,
+    });
+  }
 
   /**
    * Attempts to login user, using the username/password combination he
@@ -149,7 +152,10 @@ export class AppComponent implements OnInit, OnDestroy {
             name: Messages.ROLES_FETCHED,
             content: this.roles,
           });
-          }, (error: any) => {
+          this.messages.sendMessage({
+            name: Messages.LOGGED_IN,
+          });
+        }, (error: any) => {
           console.error(error);
           this.snackBar.open(error.error.message, 'Close', {
             duration: 3000,
