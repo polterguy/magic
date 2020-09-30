@@ -219,9 +219,9 @@ export class AuthService {
    * Returns all endpoints, associated with their URL, verb, and authorization
    * being a list of roles that are allowed to invoke the endpoint.
    */
-  authorizations() {
+  endpoints() {
     return this.httpClient.get<Endpoints[]>(
       environment.apiUrl + 
-      'magic/modules/system/auth/authorizations');
+      'magic/modules/system/auth/endpoints');
   }
 }
