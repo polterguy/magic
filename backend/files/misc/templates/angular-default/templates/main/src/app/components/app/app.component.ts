@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 // Services your app depends upon.
-import { HttpService } from '../../services/http-service';
+import { AuthService } from '../../services/auth-service';
 import { LoaderService } from '../../services/loader-service';
 import { LoginComponent } from './modals/login.component';
 
@@ -27,7 +27,7 @@ export class AppComponent {
   public roles: string [] = [];
 
   constructor(
-    private httpService: HttpService,
+    private authService: AuthService,
     private jwtHelper: JwtHelperService,
     private snackBar: MatSnackBar,
     public loaderService: LoaderService,
@@ -71,7 +71,7 @@ export class AppComponent {
     });
     dialogRef.afterClosed().subscribe(authModel => {
       if (authModel) {
-        this.httpService.authenticate(authModel.username, authModel.password).subscribe(res => {
+        this.authService.authenticate(authModel.username, authModel.password).subscribe(res => {
           localStorage.setItem('jwt_token', res.ticket);
           this.roles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
           window.location.reload();
@@ -92,7 +92,7 @@ export class AppComponent {
    */
   public tryRefreshTicket() {
     if (this.isLoggedIn()) {
-      this.httpService.refreshTicket().subscribe(res => {
+      this.authService.refreshTicket().subscribe(res => {
         localStorage.setItem('jwt_token', res.ticket);
         setTimeout(() => this.tryRefreshTicket(), 300000);
       }, (error: any) => {

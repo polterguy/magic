@@ -14,28 +14,6 @@ export class HttpService {
 
   constructor(private httpClient: HttpClient) { }
 
-  // Authenticates you towards your backend API.
-  authenticate(username: string, password: string) {
-    return this.httpClient.get<any>(
-      environment.apiUrl +
-      'magic/modules/system/auth/authenticate?username=' +
-      encodeURI(username) +
-      '&password=' +
-      encodeURI(password));
-  }
-
-  // Will refresh an existing JWT token, if possible.
-  refreshTicket() {
-    return this.httpClient.get<any>(environment.apiUrl + 'magic/modules/system/auth/refresh-ticket');
-  }
-
-  // Will refresh an existing JWT token, if possible.
-  changeMyPassword(password: string) {
-    return this.httpClient.put<any>(environment.apiUrl + 'magic/modules/system/auth/change-password', {
-      password,
-    });
-  }
-
   // Logs an info item in the backend server.
   logInfo(content: string) {
     this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {

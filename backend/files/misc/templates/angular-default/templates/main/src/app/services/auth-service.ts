@@ -29,6 +29,39 @@ export class AuthService {
   constructor(private httpClient: HttpClient) { }
 
   /**
+   * Authenticates you towards your backend API.
+   * 
+   * @param username Username to use during authentication process
+   * @param password Password to use during authentication process
+   */
+  authenticate(username: string, password: string) {
+    return this.httpClient.get<any>(
+      environment.apiUrl +
+      'magic/modules/system/auth/authenticate?username=' +
+      encodeURI(username) +
+      '&password=' +
+      encodeURI(password));
+  }
+
+  /**
+   * Refreshes the JWT token of the currently authenticated user if possible.
+   */
+  refreshTicket() {
+    return this.httpClient.get<any>(environment.apiUrl + 'magic/modules/system/auth/refresh-ticket');
+  }
+
+  /**
+   * Changes the password of the currently logged in user.
+   * 
+   * @param password New password to use for user
+   */
+  changeMyPassword(password: string) {
+    return this.httpClient.put<any>(environment.apiUrl + 'magic/modules/system/auth/change-password', {
+      password,
+    });
+  }
+
+  /**
    * Returns all users according to the specified filter condition.
    * 
    * @param filter Filter declaring which users to retrieve
@@ -183,10 +216,11 @@ export class AuthService {
   }
 
   /**
-   * Returns all endpoints, associated with the URL, verb and authorization.
+   * Returns all endpoints, associated with their URL, verb, and authorization
+   * being a list of roles that are allowed to invoke the endpoint.
    */
   authorizations() {
-    return this.httpClient.get<Endpoints>(
+    return this.httpClient.get<Endpoints[]>(
       environment.apiUrl + 
       'magic/modules/system/auth/authorizations');
   }
