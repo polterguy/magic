@@ -7,11 +7,17 @@
 
 
 /*
+ * Declares how many seconds the operation should be cached.
+ */
+.cache-seconds:int:300
+
+
+/*
  * Invokes [endpoints.list], making sure we cache the results, since it's a
  * fairly expensive operation.
  */
 cache.try-get:authorizations
-   expiration:300
+   expiration:x:@.cache-seconds
    expiration-type:absolute
    .lambda
 
@@ -31,6 +37,19 @@ cache.try-get:authorizations
                   verb:x:@.dp/#/*/verb
                   auth
       return:x:@.result/*
+
+
+/*
+ * Making sure we cache result such that HTTP clients won't try to retrieve
+ * value from server, more frequently than our Cache-Control header declares
+ * as feasable.
+ */
+strings.concat
+   .:public, max-age=
+   get-value:x:@.cache-seconds
+response.headers.add
+   Cache-Control:x:@strings.concat
+
 
 /*
  * Returning results of above invocation to caller.
