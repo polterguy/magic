@@ -126,8 +126,11 @@ export class AppComponent implements OnInit, OnDestroy {
   public logout() {
     this.roles = [];
     localStorage.removeItem('jwt_token');
-    window.location.reload();
-  }
+    this.messages.sendMessage({
+      name: Messages.ROLES_FETCHED,
+      content: this.roles,
+    });
+}
 
   /**
    * Attempts to login user, using the username/password combination he
@@ -142,8 +145,11 @@ export class AppComponent implements OnInit, OnDestroy {
         this.authService.authenticate(authModel.username, authModel.password).subscribe(res => {
           localStorage.setItem('jwt_token', res.ticket);
           this.roles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
-          window.location.reload();
-        }, (error: any) => {
+          this.messages.sendMessage({
+            name: Messages.ROLES_FETCHED,
+            content: this.roles,
+          });
+          }, (error: any) => {
           console.error(error);
           this.snackBar.open(error.error.message, 'Close', {
             duration: 3000,
