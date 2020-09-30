@@ -1,0 +1,40 @@
+
+/*
+ * Returns all endpoints in the system, with the associated authorization requirements,
+ * as a list of roles.
+ */
+.description:"Returns all HTTP endpoints in the system, with the associated authorization requirements, as a list of [roles]."
+
+
+/*
+ * Invokes [endpoints.list], making sure we cache the results, since it's a
+ * fairly expensive operation.
+ */
+cache.try-get:authorizations
+   expiration:300
+   expiration-type:absolute
+   .lambda
+
+      /*
+       * Cache miss, retrieving endpoints, and returning to caller.
+       */
+      .result
+      endpoints.list
+      for-each:x:@endpoints.list/*
+         add:x:+/+/*/*/*/auth
+            get-nodes:x:@.dp/#/*/auth/*
+         unwrap:x:+/*/*/*
+         add:x:@.result
+            .
+               .
+                  path:x:@.dp/#/*/path
+                  verb:x:@.dp/#/*/verb
+                  auth
+      return:x:@.result/*
+
+/*
+ * Returning results of above invocation to caller.
+ */
+add:x:../*/return
+   get-nodes:x:@cache.try-get/#/*
+return
