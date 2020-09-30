@@ -93,6 +93,12 @@ export abstract class GridComponent implements OnDestroy {
   }
 
   /**
+   * Abstract method you'll need to override to actually return URL of
+   * CRUD methods.
+   */
+  protected abstract getUrl() : string;
+
+  /**
    * Abstract method you'll need to override to actually return method that
    * returns observable for retrieving items.
    */
@@ -126,6 +132,13 @@ export abstract class GridComponent implements OnDestroy {
   protected getData(countRecords: boolean = true) {
 
     this.viewDetails = [];
+
+    // Checking that we actually can retrieve data at all.
+    if (!this.canInvoke(this.getUrl(), 'get')) {
+      this.data = [];
+      this.count = 0;
+      return;
+    }
 
     this.getItems(this.filter).subscribe((items: any) => {
       this.data = items || [];
