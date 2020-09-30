@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { HttpService } from 'src/app/services/http-service';
+import { AuthService } from 'src/app/services/auth-service';
 
 @Component({
   selector: 'app-profile',
@@ -16,7 +16,7 @@ export class ProfileComponent {
   constructor(
     private snackBar: MatSnackBar,
     private jwtHelper: JwtHelperService,
-    private service: HttpService)
+    private authService: AuthService)
   { }
 
   /**
@@ -36,7 +36,7 @@ export class ProfileComponent {
       });
       return;
     }
-    this.service.changeMyPassword(this.password).subscribe(res => {
+    this.authService.changeMyPassword(this.password).subscribe(res => {
       this.snackBar.open('Your password was successfully changed', 'Close', {
         duration: 2000,
       });
