@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 // Services your app depends upon.
-import { AuthService } from '../../services/auth-service';
+import { AuthService, Endpoints } from '../../services/auth-service';
 import { LoaderService } from '../../services/loader-service';
 import { LoginComponent } from './modals/login.component';
 
@@ -23,6 +23,7 @@ import { LoginComponent } from './modals/login.component';
 })
 export class AppComponent {
 
+  private authorizations: Endpoints[] = [];
   public sidenavOpened = false;
   public roles: string [] = [];
 
@@ -41,6 +42,9 @@ export class AppComponent {
           setTimeout(() => this.tryRefreshTicket(), 300000);
         }
       }
+      this.authService.authorizations().subscribe((res: Endpoints[]) => {
+        this.authorizations = res;
+      });
   }
 
   /**
