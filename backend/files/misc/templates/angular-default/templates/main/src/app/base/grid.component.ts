@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService, Endpoints } from '../services/auth-service';
 
 /**
  * Base class for all "data-grid" components,
@@ -11,6 +12,7 @@ export abstract class GridComponent {
 
   // List of roles user authenticated belongs to.
   private roles: string [] = [];
+  private authorizations: Endpoints[] = [];
 
   /**
    * Number of milliseconds after a keystroke before filtering should be re-applied.
@@ -51,6 +53,7 @@ export abstract class GridComponent {
    * @param jwtHelper Helper service to parse JWT token, to retrieve roles user belongs to, if any
    */
   constructor(
+    protected authService: AuthService,
     protected snackBar: MatSnackBar,
     protected jwtHelper: JwtHelperService) {
 
@@ -62,6 +65,9 @@ export abstract class GridComponent {
         this.roles = this.jwtHelper.decodeToken(token).role.split(',');
       }
     }
+    this.authService.authorizations().subscribe((res: Endpoints[]) => {
+      this.authorizations = res;
+    });
   }
 
   /**
@@ -182,23 +188,6 @@ export abstract class GridComponent {
     this.resetPaginator();
     this.filter.offset = 0;
     this.getData(false);
-  }
-
-  /**
-   * Checks to see if currently logged in user belongs to any of the specified roles
-   * 
-   * @param roles Which roles to check if user exists within
-   */
-  public inRole(roles: string[]) {
-    if (!roles || roles.length === 0) {
-      return true; // This part doesn't require authentication
-    }
-    for (const idx of roles) {
-      if (this.roles.indexOf(idx) !== -1) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -376,5 +365,26 @@ export abstract class GridComponent {
       duration: 5000,
       panelClass: ['error-snackbar'],
     });
+  }
+
+  /**
+   * Returns true if the client can invoke the specified endpoint,
+   * with the specified verb.
+   * 
+   * @param url Endpoint's URL
+   * @param verb HTTP verb
+   */
+  canInvoke(url: string, verb: string) {
+    if (this.authorizations.length === 0) {
+      return false;
+    }
+    const endpoints = this.authorizations.filter(x => x.path === url && x.verb === verb);
+    if (endpoints.length > 0) {
+      const endpoint = endpoints[0];
+      if (endpoint.auth && endpoint.auth.length > 0) {
+        return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
+      }
+    }
+    return true;
   }
 }

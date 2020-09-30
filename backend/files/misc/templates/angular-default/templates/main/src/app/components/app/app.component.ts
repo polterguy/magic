@@ -149,9 +149,15 @@ export class AppComponent {
    * @param verb HTTP verb
    */
   canInvoke(url: string, verb: string) {
-    const endpoint = this.authorizations.filter(x => x.path === url && x.verb === verb)[0];
-    if (endpoint.auth && endpoint.auth.length > 0) {
-      return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
+    if (this.authorizations.length === 0) {
+      return false;
+    }
+    const endpoints = this.authorizations.filter(x => x.path === url && x.verb === verb);
+    if (endpoints.length > 0) {
+      const endpoint = endpoints[0];
+      if (endpoint.auth && endpoint.auth.length > 0) {
+        return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
+      }
     }
     return true;
   }
