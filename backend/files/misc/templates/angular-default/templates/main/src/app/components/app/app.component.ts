@@ -140,4 +140,19 @@ export class AppComponent {
     }
     return false;
   }
+
+  /**
+   * Returns true if the client can invoke the specified endpoint,
+   * with the specified verb.
+   * 
+   * @param url Endpoint's URL
+   * @param verb HTTP verb
+   */
+  canInvoke(url: string, verb: string) {
+    const endpoint = this.authorizations.filter(x => x.path === url && x.verb === verb)[0];
+    if (endpoint.auth && endpoint.auth.length > 0) {
+      return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
+    }
+    return true;
+  }
 }
