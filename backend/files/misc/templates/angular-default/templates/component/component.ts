@@ -46,6 +46,14 @@ export class [[component-name]] extends GridComponent implements OnInit {
   }
 
   /**
+   * Overridde abstract method necessary to return the URL endpoint
+   * for CRUD methods to base class.
+   */
+  protected getUrl() {
+    return '[[endpoint-url]]';
+  }
+
+  /**
    * Overridden abstract method from base class, that returns the Observable
    * necessary to actually retrieve items from backend.
    */
