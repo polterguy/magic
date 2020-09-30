@@ -74,6 +74,11 @@ export abstract class GridComponent implements OnDestroy {
     this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
       switch (msg.name) {
 
+        case Messages.LOGGED_IN:
+        case Messages.LOGGED_OUT:
+          this.getData(true);
+          break;
+
         case Messages.ENDPOINTS_FETCHED:
           this.endpoints = <Endpoints[]>msg.content;
           break;
