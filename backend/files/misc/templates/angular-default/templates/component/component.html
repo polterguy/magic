@@ -7,7 +7,7 @@
 
     <button
       mat-button
-      *ngIf="inRole([[[create-roles]]])"
+      *ngIf="canInvoke('[[endpoint-url]]', 'post')"
       class="top-right"
       (click)="createNewRecord()">New ...</button>
 
@@ -20,12 +20,12 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          [ngClass]="inRole([[[delete-roles]]]) ? 'delete-column' : 'hidden'"></th>
+          [ngClass]="canInvoke('[[endpoint-url]]', 'delete') ? 'delete-column' : 'hidden'"></th>
 
         <td
           mat-cell
           *matCellDef="let el"
-          [ngClass]="inRole([[[delete-roles]]]) ? 'delete-column' : 'hidden'">
+          [ngClass]="canInvoke('[[endpoint-url]]', 'delete') ? 'delete-column' : 'hidden'">
           <button
             mat-button
             (click)="delete(el, {[[delete-input]]})"
@@ -50,7 +50,7 @@
               <mat-icon matSuffix>close</mat-icon>
             </button>
             <button
-              *ngIf="inRole([[[update-roles]]])"
+              *ngIf="canInvoke('[[endpoint-url]]', 'put')"
               mat-button
               class="edit-details"
               (click)="editDetails(el)">

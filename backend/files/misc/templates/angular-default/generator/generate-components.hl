@@ -2,6 +2,11 @@
 /*
  * Internal helper file that creates our components according to
  * which endpoints we have at our disposal.
+ *
+ * The file will perform substitutions according to a [[xx]] pattern,
+ * substituting values in our component templates, return a list of
+ * substituted specialized template files, depending upon which arguments
+ * you supply.
  */
 
 
@@ -9,7 +14,7 @@
 
 /*
  * This is our buffer element, and will contain all component
- * files, that are eventiually returned to caller at the bottom
+ * files, that are eventually returned to caller at the bottom
  * of the file.
  */
 .components
@@ -109,15 +114,11 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
    /*
-    * Verifying CRUD endpoint have all associated CRUD endpoints, otherwise
+    * Verifying CRUD endpoint have GET CRUD endpoint, otherwise
     * we don't create a component for it.
     */
    if
-      and
-         exists:x:@.dp/#/*/verbs/*/get
-         exists:x:@.dp/#/*/verbs/*/post
-         exists:x:@.dp/#/*/verbs/*/put
-         exists:x:@.dp/#/*/verbs/*/delete
+      exists:x:@.dp/#/*/verbs/*/get
       .lambda
 
 
@@ -127,20 +128,14 @@ for-each:x:@.arguments/*/.crud-methods/*
           */
          .substitutions
 
-            // Roles user must belong to in order to create entities.
-            create-roles:
-
-            // Roles user must belong to in order to delete entities.
-            delete-roles:
-
-            // Roles user must belong to in order to update entities.
-            update-roles:
-
-            // Input to DELETE endpoint.
-            delete-input:
+            // URL of endpoint we're currently encapsulating.
+            endpoint-url
 
             // Primary keys for entity
             primary-keys:
+
+            // Input to DELETE endpoint.
+            delete-input:
 
             // Input to POST endpoint.
             create-input:
@@ -149,6 +144,7 @@ for-each:x:@.arguments/*/.crud-methods/*
             update-input:
 
             // How many columns our table contains.
+            // Notice, it always has at least one column, its delete-item column.
             container-count:int:1
 
             // All table column declarations. (normally HTML)
@@ -157,10 +153,10 @@ for-each:x:@.arguments/*/.crud-methods/*
             // View details for an entity. (normally HTML)
             view-details
 
-            // A JavaScript list of strings, declaring which columns are visible in table.
+            // A TypeScript list of strings, declaring which columns are visible in table.
             displayed-columns:
 
-            // JavaScript/TypeScript fields/properties, declaring the columns.
+            // TypeScript fields/properties, declaring the columns.
             form-controls
 
             // Declaration for a single column. (normally HTML)
@@ -171,56 +167,16 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Figuring out roles that are allowed to create entities,
-          * implying invoking the "create"/POST endpoint.
+          * Setting the URL for our endpoint.
           */
-         for-each:x:@.dp/#/*/verbs/*/post/*/auth/*
-            set-value:x:@.substitutions/*/create-roles
-               strings.concat
-                  get-value:x:@.substitutions/*/create-roles
-                  .:",'"
-                  get-value:x:@.dp/#
-                  .:"'"
-         set-value:x:@.substitutions/*/create-roles
-            strings.trim:x:@.substitutions/*/create-roles
-               .:,
+         set-value:x:@.substitutions/*/endpoint-url
+            get-value:x:@.dp/#/*/url
 
 
          /*
-          * Figuring out roles that are allowed to delete entities,
-          * implying invoking the DELETE endpoint.
-          */
-         for-each:x:@.dp/#/*/verbs/*/delete/*/auth/*
-            set-value:x:@.substitutions/*/delete-roles
-               strings.concat
-                  get-value:x:@.substitutions/*/delete-roles
-                  .:",'"
-                  get-value:x:@.dp/#
-                  .:"'"
-         set-value:x:@.substitutions/*/delete-roles
-            strings.trim:x:@.substitutions/*/delete-roles
-               .:,
-
-
-         /*
-          * Figuring out roles that are allowed to update entities,
-          * implying invoking the PUT endpoint.
-          */
-         for-each:x:@.dp/#/*/verbs/*/put/*/auth/*
-            set-value:x:@.substitutions/*/update-roles
-               strings.concat
-                  get-value:x:@.substitutions/*/update-roles
-                  .:",'"
-                  get-value:x:@.dp/#
-                  .:"'"
-         set-value:x:@.substitutions/*/update-roles
-            strings.trim:x:@.substitutions/*/update-roles
-               .:,
-
-
-         /*
-          * Figuring out input to our DELETE method, in addition to
-          * our primary keys.
+          * Figuring out input to our DELETE method, which happens to
+          * also be the primary keys for table - Hence setting primary
+          * keys in the same operation.
           */
          for-each:x:@.dp/#/*/verbs/*/delete/*/input/*
             set-value:x:@.substitutions/*/primary-keys
@@ -236,11 +192,11 @@ for-each:x:@.arguments/*/.crud-methods/*
                   get-name:x:@.dp/#
                   .:": el."
                   get-name:x:@.dp/#
-         set-value:x:@.substitutions/*/primary-keys
-            strings.trim:x:@.substitutions/*/primary-keys
-               .:", "
          set-value:x:@.substitutions/*/delete-input
             strings.trim:x:@.substitutions/*/delete-input
+               .:", "
+         set-value:x:@.substitutions/*/primary-keys
+            strings.trim:x:@.substitutions/*/primary-keys
                .:", "
 
 
@@ -275,15 +231,14 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Now we know input to all 4 CRUD endpoints, and we also know what roles
-          * are allowed to invoke endpoints.
+          * Now we know input to all 4 CRUD endpoints.
           *
           * Now we can start creating our datagrid component, and our edit/create component.
           */
 
 
          /*
-          * Dynamically creating our datagrid parts, and our for controls
+          * Dynamically creating our datagrid parts, and our form controls
           * for editing entities.
           */
          for-each:x:@.dp/#/*/verbs/*/get/*/output/*
@@ -642,30 +597,6 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Replacing our [[create-roles]].
-             */
-            strings.replace:x:@strings.replace
-               .:[[create-roles]]
-               get-value:x:@.substitutions/*/create-roles
-
-
-            /*
-             * Replacing our [[delete-roles]].
-             */
-            strings.replace:x:@strings.replace
-               .:[[delete-roles]]
-               get-value:x:@.substitutions/*/delete-roles
-
-
-            /*
-             * Replacing our [[update-roles]].
-             */
-            strings.replace:x:@strings.replace
-               .:[[update-roles]]
-               get-value:x:@.substitutions/*/update-roles
-
-
-            /*
              * Replacing [[delete-input]].
              */
             strings.replace:x:@strings.replace
@@ -752,6 +683,14 @@ for-each:x:@.arguments/*/.crud-methods/*
             strings.replace:x:@strings.replace
                .:[[displayed-columns]]
                get-value:x:@.substitutions/*/displayed-columns
+
+
+            /*
+             * Replacing [[endpoint-url]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[endpoint-url]]
+               get-value:x:@.substitutions/*/endpoint-url
 
 
             /*

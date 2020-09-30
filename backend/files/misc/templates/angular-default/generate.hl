@@ -233,11 +233,7 @@ for-each:x:@.crud-methods/*
     * Verifying all verbs exists for CRUD method.
     */
    if
-      and
-         exists:x:@.dp/#/*/verbs/*/get
-         exists:x:@.dp/#/*/verbs/*/delete
-         exists:x:@.dp/#/*/verbs/*/post
-         exists:x:@.dp/#/*/verbs/*/put
+      exists:x:@.dp/#/*/verbs/*/get
       .lambda
 
 
@@ -329,6 +325,9 @@ for-each:x:@.crud-methods/*
          strings.replace:x:@strings.replace
             .:[[url]]
             get-value:x:@.dp/#/*/component-routing-url
+         strings.replace:x:@strings.replace
+            .:[[endpoint-url]]
+            get-value:x:@.dp/#/*/url
          strings.replace:x:@strings.replace
             .:[[name]]
             get-value:x:@.dp/#/*/component-header

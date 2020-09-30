@@ -209,3 +209,18 @@ your database.
 
 Cleaned up a lot of the Hyperlambda in the backend, such as the Hyperlambda
 responsible for creating CRUD endpoints, etc.
+
+# Version 8.2.3
+
+## Magic (main)
+
+Re-engineered the authorization parts in the generated frontend, such that
+it's now 100% dynamically. Did this by creating a new _"authorization"_ endpoint,
+in the backend, that once invoked will return every endpoint, its verb, and
+a list of roles allowed to invoke it - Which again is used to dynamically
+determine if user has access to invoke endpoint or not.
+
+## magic.endpoint
+
+Fixed a bug in meta data retrieval, where it would not trim names of roles
+that are allowed to access an HTTP endpoint.

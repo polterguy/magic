@@ -8,6 +8,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { GridComponent } from '../../base/grid.component';
 
 import { HttpService } from 'src/app/services/http-service';
+import { AuthService } from 'src/app/services/auth-service';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /**
@@ -36,9 +37,10 @@ export class [[component-name]] extends GridComponent implements OnInit {
   constructor(
     protected snackBar: MatSnackBar,
     protected jwtHelper: JwtHelperService,
+    protected authService: AuthService,
     private httpService: HttpService,
     public dialog: MatDialog) {
-      super(snackBar, jwtHelper);
+      super(authService, snackBar, jwtHelper);
   }
 
   /**
