@@ -11,6 +11,12 @@ export class AuthFilter {
   limit: number;
 }
 
+export class Endpoints {
+  path: string;
+  verb: string;
+  auth: string[];
+}
+
 /*
  * Authentication and authorization service, allowing you to query your backend
  * for its users/roles/etc.
@@ -22,7 +28,11 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
-  // Returns all users according to the specified filter condition.
+  /**
+   * Returns all users according to the specified filter condition.
+   * 
+   * @param filter Filter declaring which users to retrieve
+   */
   getUsers(filter: AuthFilter = null) {
     let query = '';
     if (filter !== null) {
@@ -37,7 +47,11 @@ export class AuthService {
       'magic/modules/magic/users' + query);
   }
 
-  // Returns count of users according to the specified filter condition.
+  /**
+   * Returns count of all users according to the specified filter condition.
+   * 
+   * @param filter Filter declaring which users to count
+   */
   getUsersCount(filter: string = null) {
     let query = '';
     if (filter !== null) {
@@ -48,7 +62,11 @@ export class AuthService {
       'magic/modules/magic/users-count' + query);
   }
 
-  // Returns all roles according to the specified filter condition.
+  /**
+   * Returns all roles according to the specified filter condition.
+   * 
+   * @param filter Filter declaring which users to return
+   */
   getRoles(filter: AuthFilter = null) {
     let query = '';
     if (filter !== null) {
@@ -63,7 +81,12 @@ export class AuthService {
       'magic/modules/magic/roles' + query);
   }
 
-  // Returns count of roles according to the specified filter condition.
+
+  /**
+   * Returns count of all roles according to the specified filter condition.
+   * 
+   * @param filter Filter declaring which users to count
+   */
   getRolesCount(filter: string = null) {
     let query = '';
     if (filter !== null) {
@@ -74,7 +97,12 @@ export class AuthService {
       'magic/modules/magic/roles-count' + query);
   }
 
-  // Creates a new user.
+  /**
+   * Creates a new user in the system.
+   * 
+   * @param username Username for your new user
+   * @param password Initial password for your new user
+   */
   createUser(username: string, password: string) {
     return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/users', {
       username,
@@ -82,7 +110,12 @@ export class AuthService {
     });
   }
 
-  // Creates a new role.
+  /**
+   * Creates a new role in the system.
+   * 
+   * @param name Name of role to create
+   * @param description Description for your new role
+   */
   createRole(name: string, description: string) {
     return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/roles', {
       name,
@@ -90,28 +123,45 @@ export class AuthService {
     });
   }
 
-  // Deletes an existing user.
+  /**
+   * Deletes the specified user in your system.
+   * 
+   * @param username Username of user to delete
+   */
   deleteUser(username: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl + 
       'magic/modules/magic/users?username=' + encodeURIComponent(username));
   }
 
-  // Deletes an existing role.
+  /**
+   * Deletes the specified role in your system.
+   * 
+   * @param name Name of role to delete
+   */
   deleteRole(name: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl + 
       'magic/modules/magic/roles?name=' + encodeURIComponent(name));
   }
 
-  // Returns all roles that the specified user belongs to.
+  /**
+   * Returns all roles the specified user belongs to.
+   * 
+   * @param username Username of roles to return
+   */
   getUserRoles(username: string) {
     return this.httpClient.get<any>(
       environment.apiUrl +
       'magic/modules/magic/users_roles?user.eq=' + encodeURIComponent(username));
   }
 
-  // Adds a specified user to a specified role.
+  /**
+   * Adds the specified user to the specified role.
+   * 
+   * @param user Username of user to add to specified role
+   * @param role Role to add user to
+   */
   addRoleToUser(user: string, role: string) {
     return this.httpClient.post<any>(environment.apiUrl + 'magic/modules/magic/users_roles', {
       user,
@@ -119,11 +169,25 @@ export class AuthService {
     });
   }
 
-  // Removes a role fomr a user.
+  /**
+   * Removes the specified role from the specified user.
+   * 
+   * @param user Username of user to remove from specified role
+   * @param role Role to remove from user
+   */
   deleteRoleFromUser(user: string, role: string) {
     return this.httpClient.delete<any>(
       environment.apiUrl + 
       'magic/modules/magic/users_roles?role=' + encodeURIComponent(role) +
       '&user=' + encodeURIComponent(user));
+  }
+
+  /**
+   * Returns all endpoints, associated with the URL, verb and authorization.
+   */
+  authorizations() {
+    return this.httpClient.get<Endpoints>(
+      environment.apiUrl + 
+      'magic/modules/system/auth/authorizations');
   }
 }
