@@ -16,7 +16,7 @@
  * Invokes [endpoints.list], making sure we cache the results, since it's a
  * fairly expensive operation.
  */
-cache.try-get:authorizations
+cache.try-get:endpoints
    expiration:x:@.cache-seconds
    expiration-type:absolute
    .lambda

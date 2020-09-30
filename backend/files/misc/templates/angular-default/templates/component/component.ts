@@ -9,6 +9,7 @@ import { GridComponent } from '../../base/grid.component';
 
 import { HttpService } from 'src/app/services/http-service';
 import { AuthService } from 'src/app/services/auth-service';
+import { MessageService } from 'src/app/services/message-service';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
 
 /**
@@ -36,11 +37,12 @@ export class [[component-name]] extends GridComponent implements OnInit {
   // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
     protected snackBar: MatSnackBar,
+    protected messages: MessageService,
     protected jwtHelper: JwtHelperService,
     protected authService: AuthService,
     private httpService: HttpService,
     public dialog: MatDialog) {
-      super(authService, snackBar, jwtHelper);
+      super(authService, messages, snackBar, jwtHelper);
   }
 
   /**
@@ -80,6 +82,9 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * and instantiates our FormControls.
    */
   public ngOnInit() {
+
+    // Calls base initialization method.
+    this.initCommon();
 
     // Retrieves data from our backend, unfiltered, and binds our mat-table accordingly.
     this.getData();

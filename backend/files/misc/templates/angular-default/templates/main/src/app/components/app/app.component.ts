@@ -1,10 +1,12 @@
 // Angular imports.
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs';
 
-// Services your app depends upon.
+// Custom services your app depends upon.
+import { MessageService, Message, Messages } from 'src/app/services/message-service';
 import { AuthService, Endpoints } from '../../services/auth-service';
 import { LoaderService } from '../../services/loader-service';
 import { LoginComponent } from './modals/login.component';
@@ -21,30 +23,92 @@ import { LoginComponent } from './modals/login.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
 
-  private authorizations: Endpoints[] = [];
+  private endpoints: Endpoints[] = [];
+  private subscription: Subscription;
   public sidenavOpened = false;
   public roles: string [] = [];
 
+  /**
+   * Constructs our instance
+   * 
+   * @param messages Message service to use pub/sub to allow for cross component communication
+   * @param authService Authorization/authentication service to use
+   * @param jwtHelper Helps us extract the JWT token
+   * @param snackBar Used to display information and errors to user
+   * @param loaderService Helps us display an Ajax load icon as we're retrieving data from the server
+   * @param dialog Used to display a modal dialogue to allow user to login
+   */
   constructor(
+    private messages: MessageService,
     private authService: AuthService,
     private jwtHelper: JwtHelperService,
     private snackBar: MatSnackBar,
     public loaderService: LoaderService,
-    public dialog: MatDialog) {
-      const token = localStorage.getItem('jwt_token');
-      if (token) {
-        if (this.jwtHelper.isTokenExpired(token)) {
-          localStorage.removeItem('jwt_token');
-        } else {
-          this.roles = this.jwtHelper.decodeToken(token).role.split(',');
-          setTimeout(() => this.tryRefreshTicket(), 300000);
-        }
+    private dialog: MatDialog) { }
+
+  /**
+   * Implementation of OnInit.
+   */
+  ngOnInit() {
+
+    /*
+     * Checking if user is logged in, at which point we set the
+     * roles current user belongs to, and also creates a timer
+     * that will try to refresh our JWT token after some period
+     * of time.
+     */
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      if (this.jwtHelper.isTokenExpired(token)) {
+        localStorage.removeItem('jwt_token');
+      } else {
+        this.roles = this.jwtHelper.decodeToken(token).role.split(',');
+        this.messages.sendMessage({
+          name: Messages.ROLES_FETCHED,
+          content: this.roles,
+        });
+        setTimeout(() => this.tryRefreshTicket(), 300000);
       }
-      this.authService.authorizations().subscribe((res: Endpoints[]) => {
-        this.authorizations = res;
+    }
+
+    /*
+     * Retrieves all endpoints in system, with their associated URLs,
+     * verbs, and authorization settings - As in which roles are allowed
+     * to invoke which endpoints.
+     */
+    this.authService.endpoints().subscribe((res: Endpoints[]) => {
+      this.endpoints = res;
+      this.messages.sendMessage({
+        name: Messages.ENDPOINTS_FETCHED,
+        content: this.endpoints,
       });
+    });
+
+    /*
+     * Creating our subscription, which once asked for stuff, will
+     * return it back to the whomever is requesting it.
+     */
+    this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
+      switch (msg.name) {
+
+        case Messages.GET_ENDPOINTS:
+          msg.content = this.endpoints;
+          break;
+
+        case Messages.GET_ROLES:
+          msg.content = this.roles;
+          break;
+      }
+    });
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -149,10 +213,10 @@ export class AppComponent {
    * @param verb HTTP verb
    */
   canInvoke(url: string, verb: string) {
-    if (this.authorizations.length === 0) {
+    if (this.endpoints.length === 0) {
       return false;
     }
-    const endpoints = this.authorizations.filter(x => x.path === url && x.verb === verb);
+    const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
     if (endpoints.length > 0) {
       const endpoint = endpoints[0];
       if (endpoint.auth && endpoint.auth.length > 0) {

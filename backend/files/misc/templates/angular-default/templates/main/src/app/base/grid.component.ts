@@ -1,18 +1,24 @@
-import { Observable } from 'rxjs';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { PageEvent } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
+// Angular imports
 import { AuthService, Endpoints } from '../services/auth-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { PageEvent } from '@angular/material/paginator';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable, Subscription } from 'rxjs';
+import { OnDestroy } from '@angular/core';
+
+// Custom services your app depends upon.
+import { Message, Messages, MessageService } from 'src/app/services/message-service';
 
 /**
  * Base class for all "data-grid" components,
  * displaying items to perform CRUD operations.
  */
-export abstract class GridComponent {
+export abstract class GridComponent implements OnDestroy {
 
   // List of roles user authenticated belongs to.
   private roles: string [] = [];
-  private authorizations: Endpoints[] = [];
+  private endpoints: Endpoints[] = [];
+  private subscription: Subscription;
 
   /**
    * Number of milliseconds after a keystroke before filtering should be re-applied.
@@ -54,20 +60,36 @@ export abstract class GridComponent {
    */
   constructor(
     protected authService: AuthService,
+    protected messages: MessageService,
     protected snackBar: MatSnackBar,
-    protected jwtHelper: JwtHelperService) {
+    protected jwtHelper: JwtHelperService) { }
 
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      if (this.jwtHelper.isTokenExpired(token)) {
-        localStorage.removeItem('jwt_token');
-      } else {
-        this.roles = this.jwtHelper.decodeToken(token).role.split(',');
+  /**
+   * Implementation of OnInit.
+   */
+  protected initCommon() {
+    this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES)) || this.roles;
+    this.endpoints = (<Endpoints[]>this.messages.getValue(Messages.GET_ENDPOINTS)) || this.endpoints;
+
+    this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
+      switch (msg.name) {
+
+        case Messages.ENDPOINTS_FETCHED:
+          this.endpoints = <Endpoints[]>msg.content;
+          break;
+
+        case Messages.ROLES_FETCHED:
+          this.roles = <string[]>msg.content;
+          break;
       }
-    }
-    this.authService.authorizations().subscribe((res: Endpoints[]) => {
-      this.authorizations = res;
     });
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -375,10 +397,10 @@ export abstract class GridComponent {
    * @param verb HTTP verb
    */
   canInvoke(url: string, verb: string) {
-    if (this.authorizations.length === 0) {
+    if (this.endpoints.length === 0) {
       return false;
     }
-    const endpoints = this.authorizations.filter(x => x.path === url && x.verb === verb);
+    const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
     if (endpoints.length > 0) {
       const endpoint = endpoints[0];
       if (endpoint.auth && endpoint.auth.length > 0) {
