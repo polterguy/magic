@@ -220,6 +220,14 @@ in the backend, that once invoked will return every endpoint, its verb, and
 a list of roles allowed to invoke it - Which again is used to dynamically
 determine if user has access to invoke endpoint or not.
 
+Cleaned up the frontend generator's result, such that it's much more fault
+tolerant. Among other things, it'll now generate components for entities
+that doesn't have a PUT/update endpoint, still allowing for all other
+CRUD operations. Also significantly cleaned up the authorization logic,
+implementing component to component cross communication, using subscribers,
+such allowing for authenticating, and having the view update completely,
+without having to reload the page, etc.
+
 ## magic.endpoint
 
 Fixed a bug in meta data retrieval, where it would not trim names of roles
