@@ -26,7 +26,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OWL_MOMENT_DATE_TIME_ADAPTER_OPTIONS } from 'ng-pick-datetime-moment';
 
-// Routing, services, etc imports.
+// Application specifics Routing, services, etc, type of imports.
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderService } from './services/loader-service';
 import { FormatDatePipe } from './pipes/format-date-pipe';
@@ -35,63 +35,65 @@ import { AppComponent } from './components/app/app.component';
 import { LoaderInterceptor } from './services/loader-interceptor';
 
 // Custom common components.
-import { SelectorComponent } from './helpers/selector/selector.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { LoginComponent } from './components/app/modals/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { SelectorComponent } from './helpers/selector/selector.component';
 import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
 import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
 import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
-import { LoginComponent } from './components/app/modals/login.component';
 
-// CRUD specific components (scaffolded components).
+// Generated CRUD components here.
 [[imports]]
 
 // Your main Angular module.
 @NgModule({
   declarations: [
     AppComponent,
-    SelectorComponent,
     HomeComponent,
     AuthComponent,
+    LoginComponent,
+    FormatDatePipe,
+    ProfileComponent,
+    SelectorComponent,
+    EditUserDialogComponent,
     CreateRoleDialogComponent,
     CreateUserDialogComponent,
-    LoginComponent,
-    EditUserDialogComponent,
-    ProfileComponent,
-    FormatDatePipe,
+
+// Generated CRUD components here.
 [[module-declarations]]  ],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
     HttpClientModule,
-    FormsModule,
     ReactiveFormsModule,
+    BrowserAnimationsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: () => localStorage.getItem('jwt_token'),
         whitelistedDomains: [environment.apiDomain],
       }
     }),
-    MatButtonModule,
-    MatCheckboxModule,
-    MatSidenavModule,
-    MatTableModule,
+    ChartsModule,
+    MatIconModule,
     MatCardModule,
     MatInputModule,
+    MatTableModule,
+    MatButtonModule,
     MatSelectModule,
-    MatFormFieldModule,
-    MatSnackBarModule,
-    MatPaginatorModule,
     MatDialogModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
+    MatSidenavModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
+    OwlDateTimeModule,
+    MatFormFieldModule,
+    MatPaginatorModule,
     MatDatepickerModule,
     MatMomentDateModule,
-    OwlDateTimeModule,
     OwlNativeDateTimeModule,
-    ChartsModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     LoaderService, {
@@ -106,10 +108,12 @@ import { LoginComponent } from './components/app/modals/login.component';
   ],
   bootstrap: [AppComponent],
   entryComponents: [
-    CreateRoleDialogComponent,
-    CreateUserDialogComponent,
     LoginComponent,
     EditUserDialogComponent,
+    CreateRoleDialogComponent,
+    CreateUserDialogComponent,
+
+// Generated edit/create modal dialogues here.
 [[entry-components]]  ]
 })
 export class AppModule { }
