@@ -1,5 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Date formatting pipe, simply creating a locale string
+ * from the specified date, assumed to be a string, as returned
+ * from the backend.
+ */
 @Pipe({
   name: 'formatDate'
 })

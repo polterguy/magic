@@ -2,22 +2,52 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
-/*
+/**
  * Filter for invoking "auth" methods, allowing you to filter users/roles/etc.
  */
 export class AuthFilter {
+
+  /**
+   * What filter to apply.
+   */
   filter?: string;
+
+  /**
+   * Offset of where to start returning records.
+   */
   offset: number;
+
+  /**
+   * How many records to return max.
+   */
   limit: number;
 }
 
+/**
+ * Endpoint model, encapsulating a single endpoint/verb combination,
+ * combined with what roles are allowed to access endpoint with the
+ * specified verb.
+ */
 export class Endpoints {
+
+  /**
+   * Relative URL to endpoint.
+   */
   path: string;
+
+  /**
+   * HTTP verb for endpoint, normally either GET, PUT, POST, DELETE.
+   */
   verb: string;
+
+  /**
+   * List of roles allowed to access path/verb combination.
+   * If empty, everybody have access, including anonymous invocations.
+   */
   auth: string[];
 }
 
-/*
+/**
  * Authentication and authorization service, allowing you to query your backend
  * for its users/roles/etc.
  */
@@ -26,10 +56,15 @@ export class Endpoints {
 })
 export class AuthService {
 
+  /**
+   * Creates an instance of our object.
+   * 
+   * @param httpClient HTTP client to use for HTTP invocations
+   */
   constructor(private httpClient: HttpClient) { }
 
   /**
-   * Authenticates you towards your backend API.
+   * Authenticates user towards backend.
    * 
    * @param username Username to use during authentication process
    * @param password Password to use during authentication process

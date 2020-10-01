@@ -1,8 +1,8 @@
 
 <div
   *ngIf="isLoggedIn()"
-  class="security-wrapper">
-  <div class="mat-elevation-z4 security-sheet">
+  class="profile-wrapper">
+  <div class="mat-elevation-z4 profile-sheet">
 
     <h3>Change your password</h3>
 
@@ -25,7 +25,7 @@
     </mat-form-field>
 
     <button
-      (click)="save()"
+      (click)="saveNewPassword()"
       mat-button>Save</button>
 
   </div>
