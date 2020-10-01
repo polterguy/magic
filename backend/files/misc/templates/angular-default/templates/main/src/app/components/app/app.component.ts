@@ -65,10 +65,6 @@ export class AppComponent implements OnInit, OnDestroy {
         localStorage.removeItem('jwt_token');
       } else {
         this.roles = this.jwtHelper.decodeToken(token).role.split(',');
-        this.messages.sendMessage({
-          name: Messages.ROLES_FETCHED,
-          content: this.roles,
-        });
         setTimeout(() => this.tryRefreshTicket(), 300000);
       }
     }
@@ -80,10 +76,6 @@ export class AppComponent implements OnInit, OnDestroy {
      */
     this.authService.endpoints().subscribe((res: Endpoints[]) => {
       this.endpoints = res;
-      this.messages.sendMessage({
-        name: Messages.ENDPOINTS_FETCHED,
-        content: this.endpoints,
-      });
     });
 
     /*
@@ -127,10 +119,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.roles = [];
     localStorage.removeItem('jwt_token');
     this.messages.sendMessage({
-      name: Messages.ROLES_FETCHED,
-      content: this.roles,
-    });
-    this.messages.sendMessage({
       name: Messages.LOGGED_OUT,
     });
   }
@@ -148,10 +136,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.authService.authenticate(authModel.username, authModel.password).subscribe(res => {
           localStorage.setItem('jwt_token', res.ticket);
           this.roles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
-          this.messages.sendMessage({
-            name: Messages.ROLES_FETCHED,
-            content: this.roles,
-          });
           this.messages.sendMessage({
             name: Messages.LOGGED_IN,
           });
@@ -235,6 +219,6 @@ export class AppComponent implements OnInit, OnDestroy {
         return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
       }
     }
-    return true;
+    return false;
   }
 }

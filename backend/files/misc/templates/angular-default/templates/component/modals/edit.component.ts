@@ -34,14 +34,7 @@ export class Edit[[component-name]] extends DialogComponent {
   protected getData() {
     return this.data;
   }
-
-  /**
-   * Returns a reference to the update method, to update entity.
-   */
-  protected getUpdateMethod() {
-    return this.service.[[service-update-method]](this.data.entity);
-  }
-
+  [[service-update-wrapper]]
   /**
    * Returns a reference to the create method, to create new entities.
    */
