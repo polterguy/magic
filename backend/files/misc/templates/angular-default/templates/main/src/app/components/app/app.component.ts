@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnInit.
    */
-  ngOnInit() {
+  public ngOnInit() {
 
     /*
      * Checking if user is logged in, at which point we set the
@@ -99,7 +99,7 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
@@ -189,7 +189,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * 
    * @param roles List of roles to check whether or not user belongs to one of them
    */
-  inRole(roles: string[]) {
+  public inRole(roles: string[]) {
     if (!roles || roles.length === 0) {
       return true;
     }
@@ -208,16 +208,15 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param url Endpoint's URL
    * @param verb HTTP verb
    */
-  canInvoke(url: string, verb: string) {
+  public canInvoke(url: string, verb: string) {
     if (this.endpoints.length === 0) {
       return false;
     }
     const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
     if (endpoints.length > 0) {
       const endpoint = endpoints[0];
-      if (endpoint.auth && endpoint.auth.length > 0) {
-        return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
-      }
+      return endpoint.auth === null ||
+        endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
     }
     return false;
   }
