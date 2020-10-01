@@ -68,8 +68,8 @@ export abstract class GridComponent implements OnDestroy {
    * Implementation of OnInit.
    */
   protected initCommon() {
-    this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES)) || this.roles;
-    this.endpoints = (<Endpoints[]>this.messages.getValue(Messages.GET_ENDPOINTS)) || this.endpoints;
+    this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES));
+    this.endpoints = (<Endpoints[]>this.messages.getValue(Messages.GET_ENDPOINTS));
 
     this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
       switch (msg.name) {
@@ -77,14 +77,6 @@ export abstract class GridComponent implements OnDestroy {
         case Messages.LOGGED_IN:
         case Messages.LOGGED_OUT:
           this.getData(true);
-          break;
-
-        case Messages.ENDPOINTS_FETCHED:
-          this.endpoints = <Endpoints[]>msg.content;
-          break;
-
-        case Messages.ROLES_FETCHED:
-          this.roles = <string[]>msg.content;
           break;
       }
     });
@@ -425,6 +417,6 @@ export abstract class GridComponent implements OnDestroy {
         return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
       }
     }
-    return true;
+    return false;
   }
 }

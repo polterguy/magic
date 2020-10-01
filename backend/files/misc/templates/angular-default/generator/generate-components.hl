@@ -734,19 +734,56 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Appending our HTTP client service PUT method name into TypeScript file.
-             */
-            strings.replace:x:@strings.replace
-               .:[[service-update-method]]
-               get-value:x:@.lambda/@.dp/#/*/verbs/*/put/*/service-method-name
-
-
-            /*
              * Appending our HTTP client service COUNT method name into TypeScript file.
              */
             strings.replace:x:@strings.replace
                .:[[service-count-method]]
                get-value:x:@.lambda/@.dp/#/*/count-method
+
+
+            /*
+             * Appending our HTTP client service PUT method name into TypeScript file.
+             *
+             * Notice, some endpoints might not have a PUT method. If they don't we'll
+             * have to make sure we don't add any getUpdateMethod to the edit component,
+             * at which point the base method will kick in, and return an error in case
+             * method is invoked - Which should be impossible for the record, but since
+             * there might exist situations where the endpoint is later added, and the
+             * scaffolded Angular code is modified, to later include such an endpoint,
+             * we still generate an edit component for endpoints - Even those that don't
+             * even have a PUT method.
+             */
+            if
+               exists:x:@.lambda/@.dp/#/*/verbs/*/put
+               .lambda
+
+                  /*
+                   * PUT method exists for component.
+                   */
+                  set-value:x:@strings.replace
+                     strings.replace:x:@strings.replace
+                        .:[[service-update-wrapper]]
+                        strings.concat
+                           .:@"
+  /**
+   * Returns a reference to the update method, to update entity.
+   */
+  protected getUpdateMethod() {
+    return this.service."
+                           get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/put/*/service-method-name
+                           .:@"(this.data.entity);
+  }"
+
+            else
+
+               /*
+                * No PUT method for component, hence not adding getUpdateMethod method
+                * on edit component.
+                */
+               set-value:x:@strings.replace
+                  strings.replace:x:@strings.replace
+                     .:[[service-update-wrapper]]
+                     .:
 
 
             /*

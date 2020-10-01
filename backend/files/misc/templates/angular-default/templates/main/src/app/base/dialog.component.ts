@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
@@ -39,7 +39,16 @@ export abstract class DialogComponent {
   /**
    * Returns a reference to the update method, to update entity.
    */
-  protected abstract getUpdateMethod() : Observable<any>;
+  protected getUpdateMethod() : Observable<any> {
+    return new Observable<any>((observer: Subscriber<any>) => {
+      observer.error({
+        error: {
+          message: 'You cannot update these entities, since there exists no PUT endpoint for it'
+        }
+      });
+      observer.complete();
+    });
+  }
 
   /**
    * Returns a reference to the create method, to create new entities.

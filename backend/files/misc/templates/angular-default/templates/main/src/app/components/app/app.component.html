@@ -67,7 +67,7 @@
       *ngIf="isLoggedIn()"
       (click)="logout()">Logout</button>
 
-    <router-outlet></router-outlet>
+    <router-outlet *ngIf="endpoints.length > 0"></router-outlet>
 
   </mat-sidenav-content>
 

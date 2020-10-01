@@ -38,20 +38,6 @@ export class Messages {
   static readonly GET_ENDPOINTS = 'app.endpoints.get';
 
   /**
-   * Message will be published by the system whenever all endpoints,
-   * their associated HTTP verbs, and roles able to invoke them have
-   * been retrieved.
-   */
-  static readonly ENDPOINTS_FETCHED = 'app.endpoints.fetched';
-
-  /**
-   * Message will be published by the system whenever all roles
-   * have been fetched, and/or user have logged in, and authorization
-   * for some reasons have changed.
-   */
-  static readonly ROLES_FETCHED = 'app.roles.fetched';
-
-  /**
    * Message will be published by the system when the user logs in.
    */
   static readonly LOGGED_IN = 'app.user.logged-in';
