@@ -17,7 +17,11 @@ export abstract class GridComponent implements OnDestroy {
 
   // List of roles user authenticated belongs to.
   private roles: string [] = [];
+
+  // All endpoints in system.
   private endpoints: Endpoints[] = [];
+
+  // Used to subscribe to events triggered by other parts of the system.
   private subscription: Subscription;
 
   /**
@@ -71,11 +75,16 @@ export abstract class GridComponent implements OnDestroy {
     this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES));
     this.endpoints = (<Endpoints[]>this.messages.getValue(Messages.GET_ENDPOINTS));
 
+    // When user logs in/out, we'll need to re-databind the mat-table.
     this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
       switch (msg.name) {
 
         case Messages.LOGGED_IN:
+          this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES));
+          this.getData(true);
+          break;
         case Messages.LOGGED_OUT:
+          this.roles = [];
           this.getData(true);
           break;
       }
@@ -406,16 +415,15 @@ export abstract class GridComponent implements OnDestroy {
    * @param url Endpoint's URL
    * @param verb HTTP verb
    */
-  canInvoke(url: string, verb: string) {
+  public canInvoke(url: string, verb: string) {
     if (this.endpoints.length === 0) {
       return false;
     }
     const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
     if (endpoints.length > 0) {
       const endpoint = endpoints[0];
-      if (endpoint.auth && endpoint.auth.length > 0) {
-        return endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
-      }
+      return endpoint.auth === null ||
+        endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
     }
     return false;
   }
