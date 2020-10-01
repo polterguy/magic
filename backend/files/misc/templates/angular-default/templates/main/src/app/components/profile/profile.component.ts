@@ -46,7 +46,7 @@ export class ProfileComponent {
   /**
    * Saves the user's new password.
    */
-  public save() {
+  public saveNewPassword() {
 
     // Making sure password is typed the exact same twice.
     if (this.password !== this.passwordRepeat || this.password === '') {

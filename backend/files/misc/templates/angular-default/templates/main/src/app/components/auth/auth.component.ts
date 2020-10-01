@@ -99,6 +99,7 @@ export class AuthComponent implements OnInit, OnDestroy {
      * return it back to the whomever is requesting it.
      */
     this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
+
       switch (msg.name) {
 
         case Messages.LOGGED_IN:
@@ -179,7 +180,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         });
       });
       this.getUsersCount();
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
@@ -200,7 +201,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         });
       });
       this.getRolesCount();
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],

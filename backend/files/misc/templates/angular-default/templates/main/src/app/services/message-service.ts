@@ -48,6 +48,10 @@ export class Messages {
   static readonly LOGGED_OUT = 'app.user.logged-out';
 }
 
+/**
+ * Message send/receive class, allowing you to subscribe to events,
+ * and/or raise events.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -56,7 +60,7 @@ export class MessageService {
   private subject = new Subject<Message>();
 
   /**
-   * Sends a message to any subscribers.
+   * Sends a message to all subscribers.
    * 
    * @param message Message to transmit to other listeners
    */
@@ -65,9 +69,11 @@ export class MessageService {
   }
 
   /**
-   * Sends a message to any subscribers.
+   * Sends a message to all subscribers, assuming handlers
+   * adds data to the message, and returns that data to caller.
+   * Useful for one component to request data from another component.
    * 
-   * @param message Message to transmit to other listeners
+   * @param message Message to transmit to listeners
    */
   getValue(name: string) {
     let msg = {
