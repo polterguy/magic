@@ -5,18 +5,10 @@
 .description:"Generates an Angular frontend client side according to the given arguments. The frontend will have one datagrid component and router link/navbar menu item for each CRUD read endpoint in your backend endpoints."
 
 
-
-
-
-
 /*
  * Doing some logging.
  */
 log.info:Angular default template creating an Angular frontend for you
-
-
-
-
 
 
 /*
@@ -36,10 +28,6 @@ log.info:Angular default template creating an Angular frontend for you
 .sql-component-files
 
 
-
-
-
-
 /*
  * Loads all files in "main" Angular template folder recursively.
  */
@@ -47,10 +35,6 @@ add:x:@.main-files
    signal:magic.io.file.load-recursively
       strings.concat
          .:/misc/templates/angular-default/templates/main/
-
-
-
-
 
 
 /*
@@ -62,10 +46,6 @@ add:x:@.component-files
          .:/misc/templates/angular-default/templates/component/
 
 
-
-
-
-
 /*
  * Loads all files in "sql-component" Angular template folder recursively.
  */
@@ -73,10 +53,6 @@ add:x:@.sql-component-files
    signal:magic.io.file.load-recursively
       strings.concat
          .:/misc/templates/angular-default/templates/sql-component/
-
-
-
-
 
 
 /*
@@ -88,10 +64,6 @@ for-each:x:@.main-files/*
       strings.replace:x:@.dp/#
          .:misc/templates/angular-default/templates/main
          get-value:x:@.arguments/*/name
-
-
-
-
 
 
 /*
@@ -110,28 +82,8 @@ for-each:x:@.component-files/*
       get-value:x:@strings.replace
 
 
-
-
-
-
 /*
- * Creating our HTTP Client service method implementations,
- * by invoking a helper file responsible for parsing arguments,
- * and creating our TypeScript HTTP client methods accordingly.
- */
-.http-service-methods
-add:x:+/*
-   get-nodes:x:@.arguments/*
-set-value:x:@.http-service-methods
-   io.file.execute:/misc/templates/angular-default/generator/generate-service-methods.hl
-
-
-
-
-
-
-/*
- * Transforming our CRUD methods, such that they become slightly more readable, and doing
+ * Transforming our CRUD methods, such that they become slightly more structured, and doing
  * some common parsing, such as figuring out filenames, folder names, etc for each component.
  *
  * This is later used to generate our components, since we create one component for each
@@ -144,8 +96,16 @@ add:x:@.crud-methods
    io.file.execute:/misc/templates/angular-default/generator/generate-http-crud-methods.hl
 
 
-
-
+/*
+ * Creating our HTTP Client service method implementations,
+ * by invoking a helper file responsible for parsing arguments,
+ * and creating our TypeScript HTTP client methods accordingly.
+ */
+.http-service-methods
+add:x:+/*
+   get-nodes:x:@.crud-methods/*
+set-value:x:@.http-service-methods
+   io.file.execute:/misc/templates/angular-default/generator/generate-service-methods.hl
 
 
 /*
@@ -157,20 +117,12 @@ set-value:x:-
    io.file.load:/misc/templates/angular-default/templates/misc/router-link.html
 
 
-
-
-
-
 /*
  * Loading router link file for chart components.
  */
 .router-link-file-chart
 set-value:x:-
    io.file.load:/misc/templates/angular-default/templates/misc/router-link-chart.html
-
-
-
-
 
 
 /*
@@ -184,20 +136,12 @@ set-value:x:-
    io.file.load:/misc/templates/angular-default/templates/misc/import-only-grid.ts
 
 
-
-
-
-
 /*
  * Loading router declaration file.
  */
 .router-declaration-file
 set-value:x:-
    io.file.load:/misc/templates/angular-default/templates/misc/router-declaration.ts
-
-
-
-
 
 
 /*
@@ -210,10 +154,6 @@ add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
    io.file.execute:/misc/templates/angular-default/generator/generate-components.hl
-
-
-
-
 
 
 /*
