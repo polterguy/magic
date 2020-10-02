@@ -99,12 +99,28 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             /*
              * Figuring out HTTP client service method name.
              */
+            .method
+            switch:x:@.dp/#/*/verb
+               case:delete
+                  set-value:x:@.method
+                     .:delete
+               case:post
+                  set-value:x:@.method
+                     .:create
+               case:put
+                  set-value:x:@.method
+                     .:update
+               case:get
+                  set-value:x:@.method
+                     .:read
             strings.split:x:@.dp/#/*/path
                .:/
             strings.concat
-               get-value:x:@strings.split/0/-
-               .:_
-               strings.capitalize:x:@.dp/#/*/verb
+               strings.replace-not-of:x:@strings.split/0/-
+                  .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321
+                  .:_
+               .:.
+               get-value:x:@.method
 
 
             /*
@@ -114,14 +130,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                get-nodes:x:@.dp/#/*/input/*
             add:x:./**/output
                get-nodes:x:@.dp/#/*/returns/*
-
-
-            /*
-             * Cleaning up method name, in case it has 'funny characters'.
-             */
-            strings.replace-not-of:x:@strings.concat
-               .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
-               .:_
 
 
             /*
@@ -135,7 +143,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             add:x:@.endpoint/*/*/verbs
                .
                   verb-name
-                     service-method-name:x:@strings.replace-not-of
+                     service-method-name:x:@strings.concat
                      input
                      output
                      auth
@@ -172,7 +180,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                .:_
             strings.concat
                get-value:x:@strings.replace-not-of
-               .:_count_Get
+               .:.count
             unwrap:x:+/*/*
             insert-before:x:@.endpoint/0/-/*/verbs
                .
