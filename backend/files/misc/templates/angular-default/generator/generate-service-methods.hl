@@ -58,11 +58,6 @@ for-each:x:@.arguments/*
                strings.concat
                   get-value:x:@.method
                   .:@"
-      /**
-       * Creates a new entity.
-       *
-       * @param args Initial values for your entity
-       */
       create: (args: any) => {
         return this.httpClient.post<any>(
           environment.apiUrl +
@@ -80,11 +75,6 @@ for-each:x:@.arguments/*
                strings.concat
                   get-value:x:@.method
                   .:@"
-      /**
-       * Reads entities from your backend.
-       *
-       * @param filter Filter condition for items to retrieve
-       */
       read: (filter: any) => {
         return this.httpClient.get<any>(
           environment.apiUrl +
@@ -100,11 +90,6 @@ for-each:x:@.arguments/*
                strings.concat
                   get-value:x:@.method
                   .:@"
-      /**
-       * Counts entities from your backend.
-       *
-       * @param filter Filter condition for items to count
-       */
       count: (filter: any) => {
         return this.httpClient.get<any>(
           environment.apiUrl +
@@ -122,11 +107,6 @@ for-each:x:@.arguments/*
                strings.concat
                   get-value:x:@.method
                   .:@"
-      /**
-       * Updates one entity in your backend.
-       *
-       * @param args What item to update, and what values to update it with
-       */
       update: (args: any) => {
         return this.httpClient.put<any>(
           environment.apiUrl +
@@ -144,11 +124,6 @@ for-each:x:@.arguments/*
                strings.concat
                   get-value:x:@.method
                   .:@"
-      /**
-       * Deletes one entity from your backend.
-       *
-       * @param filter Filter condition for item to delete, primary key(s)
-       */
       delete: (filter: any) => {
         return this.httpClient.delete<any>(
           environment.apiUrl +
