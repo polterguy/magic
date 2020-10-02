@@ -232,3 +232,12 @@ without having to reload the page, etc.
 
 Fixed a bug in meta data retrieval, where it would not trim names of roles
 that are allowed to access an HTTP endpoint.
+
+# Version 8.3.0
+
+## Magic (main)
+
+Significantly improved the way the frontend generator creates its HTTP
+service methods for CRUD endpoints, by making the code much better, by
+grouping methods acting upon the same table, into a single property,
+returning all methods available for the specific database entity.
