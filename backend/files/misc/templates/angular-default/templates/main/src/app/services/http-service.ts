@@ -36,7 +36,7 @@ import { environment } from 'src/environments/environment';
   /**
    * Deletes one entity from your backend.
    *
-   * @param filter Filter condition for item to delete, primary key(s)
+   * @param args Filter condition for item to delete, primary key(s) for entity
    */
   delete(args: any) : Observable<any>;
 }
