@@ -239,5 +239,16 @@ that are allowed to access an HTTP endpoint.
 
 Significantly improved the way the frontend generator creates its HTTP
 service methods for CRUD endpoints, by making the code much better, by
-grouping methods acting upon the same table, into a single property,
+grouping methods acting upon the same table into a single property,
 returning all methods available for the specific database entity.
+Also changed the service method names to reflect their CRUD operation.
+
+## magic.lambda.io
+
+Passing in the filename to **[io.file.execute]** to make it easier for
+files to execute files in relative folders. Also completely removed the
+**[io.files.eval]** slot, since it only creates confusion, since it does
+the exact same thing as its execute counterpart.
+
+Created convenience slot called **[io.path.get-folder]** that will return
+the folder name given some path.
