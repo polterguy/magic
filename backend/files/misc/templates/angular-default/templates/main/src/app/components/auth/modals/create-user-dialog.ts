@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/services/auth-service';
+import { CreateResponse } from 'src/app/services/models/create-response';
 
 export interface DialogData {
   name: string;
@@ -28,7 +29,7 @@ export class CreateUserDialogComponent {
       });
       return;
     }
-    this.authService.users.create(this.data.name, this.data.password).subscribe(res => {
+    this.authService.users.create(this.data.name, this.data.password).subscribe((res: CreateResponse) => {
       this.dialogRef.close(this.data);
     }, error => {
       this.snackBar.open(error.error.message, 'Close', {

@@ -9,6 +9,8 @@ import { OnDestroy } from '@angular/core';
 
 // Custom services your app depends upon.
 import { Message, Messages, MessageService } from 'src/app/services/message-service';
+import { CountResponse } from '../services/models/count-response';
+import { DeleteResponse } from '../services/models/delete-response';
 
 /**
  * Base class for all "data-grid" components,
@@ -70,20 +72,27 @@ export abstract class GridComponent implements OnDestroy {
     protected jwtHelper: JwtHelperService) { }
 
   /**
-   * Implementation of OnInit.
+   * Invoked by derived class' OnInit implementation.
+   * 
+   * Retrieves current user's roles, if authenticated,
+   * and subscribes to a couple of events, making sure we update UI accordingly,
+   * as state changes in other parts of the app.
    */
   protected initCommon() {
-    this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES));
-    this.endpoints = (<Endpoint[]>this.messages.getValue(Messages.GET_ENDPOINTS));
+
+    this.roles = <string[]>this.messages.getValue(Messages.GET_ROLES);
+    this.endpoints = <Endpoint[]>this.messages.getValue(Messages.GET_ENDPOINTS);
 
     // When user logs in/out, we'll need to re-databind the mat-table.
     this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
+
       switch (msg.name) {
 
         case Messages.LOGGED_IN:
-          this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES));
+          this.roles = <string[]>this.messages.getValue(Messages.GET_ROLES);
           this.getData(true);
           break;
+
         case Messages.LOGGED_OUT:
           this.roles = [];
           this.getData(true);
@@ -109,13 +118,13 @@ export abstract class GridComponent implements OnDestroy {
    * Abstract method you'll need to override to actually return method that
    * returns observable for retrieving items.
    */
-  protected abstract getItems(filter: any) : Observable<any>;
+  protected abstract getItems(filter: any) : Observable<any[]>;
 
   /**
    * Abstract method you'll have to override to actually return method that
    * returns observable for counting items.
    */
-  protected abstract getCount(filter: any) : Observable<any>;
+  protected abstract getCount(filter: any) : Observable<CountResponse>;
 
   /**
    * Abstract method you'll have to override to actually return method that
@@ -123,7 +132,7 @@ export abstract class GridComponent implements OnDestroy {
    * 
    * @param ids Primary keys for item
    */
-  protected abstract getDelete(ids: any) : Observable<any>;
+  protected abstract getDelete(ids: any) : Observable<DeleteResponse>;
 
   /**
    * Abstract method necessary to implement to make sure paginator
@@ -147,7 +156,7 @@ export abstract class GridComponent implements OnDestroy {
       return;
     }
 
-    this.getItems(this.filter).subscribe((items: any) => {
+    this.getItems(this.filter).subscribe((items: any[]) => {
       this.data = items || [];
 
       if (countRecords) {
@@ -168,7 +177,7 @@ export abstract class GridComponent implements OnDestroy {
           }
         }
 
-        this.getCount(filterCount).subscribe(count => {
+        this.getCount(filterCount).subscribe((count: CountResponse) => {
           this.count = count.count;
         }, (error: any) => this.showError(error));
       }
@@ -195,10 +204,10 @@ export abstract class GridComponent implements OnDestroy {
       return;
     }
 
-    this.getDelete(ids).subscribe(deleteResult => {
+    this.getDelete(ids).subscribe((deleteResult: DeleteResponse) => {
 
-      if (deleteResult['deleted-records'] !== 1) {
-        this.showError(`For some reasons ${deleteResult['deleted-records']} records was deleted, and not 1 as expected!`);
+      if (deleteResult.affected !== 1) {
+        this.showError(`For some reasons ${deleteResult.affected} records was deleted, and not 1 as expected!`);
       }
 
       const indexOf = this.viewDetails.indexOf(entity);

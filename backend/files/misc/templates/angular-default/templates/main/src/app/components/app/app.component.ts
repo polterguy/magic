@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { MessageService, Message, Messages } from 'src/app/services/message-service';
 import { AuthService } from '../../services/auth-service';
 import { Endpoint } from '../../services/models/endpoint';
+import { AuthenticateToken } from '../../services/models/authenticate-token';
 import { LoaderService } from '../../services/loader-service';
 import { LoginComponent } from './modals/login.component';
 
@@ -134,7 +135,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(authModel => {
       if (authModel) {
-        this.authService.authenticate(authModel.username, authModel.password).subscribe(res => {
+        this.authService.authenticate(authModel.username, authModel.password).subscribe((res: AuthenticateToken) => {
           localStorage.setItem('jwt_token', res.ticket);
           this.roles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
           this.messages.sendMessage({
@@ -157,7 +158,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public tryRefreshTicket() {
     if (this.isLoggedIn()) {
-      this.authService.refreshTicket().subscribe(res => {
+      this.authService.refreshTicket().subscribe((res: AuthenticateToken) => {
         localStorage.setItem('jwt_token', res.ticket);
         setTimeout(() => this.tryRefreshTicket(), 300000);
       }, (error: any) => {

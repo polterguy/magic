@@ -18,4 +18,4 @@ xxx.connect:{database}
          and
    unwrap:x:+/*
    return
-      deleted-records:x:./-/-
+      affected:x:./-/-
