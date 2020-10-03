@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ICrdEntity, ICrudEntity } from './interfaces/crud-interfaces'
 import { ILog } from './interfaces/log-interface'
+import { StatusResponse } from './models/status-response';
+import { CreateResponse } from './models/create-response';
+import { CountResponse } from './models/count-response';
+import { UpdateResponse } from './models/update-response';
+import { DeleteResponse } from './models/delete-response';
 
 /**
  * Your main HTTP service for invoking CRUD methods in your backend.
@@ -35,10 +40,12 @@ export class HttpService {
        * @param content What to log
        */
       debug: (content: string) => {
-        this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
-          type: 'debug',
-          content
-        }).subscribe((res: any) => {
+        this.httpClient.post<StatusResponse>(
+          environment.apiUrl +
+          'magic/modules/system/logging/log', {
+            type: 'debug',
+            content
+        }).subscribe((res: StatusResponse) => {
           console.log('Info item successfully logged');
         }, (error: any) => {
           console.error(error.error.message);
@@ -51,10 +58,12 @@ export class HttpService {
        * @param content What to log
        */
       info: (content: string) => {
-        this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
-          type: 'info',
-          content
-        }).subscribe((res: any) => {
+        this.httpClient.post<StatusResponse>(
+          environment.apiUrl +
+          'magic/modules/system/logging/log', {
+            type: 'info',
+            content
+        }).subscribe((res: StatusResponse) => {
           console.log('Info item successfully logged');
         }, (error: any) => {
           console.error(error.error.message);
@@ -67,10 +76,12 @@ export class HttpService {
        * @param content What to log
        */
       error: (content: string) => {
-        this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
-          type: 'error',
-          content
-        }).subscribe((res: any) => {
+        this.httpClient.post<StatusResponse>(
+          environment.apiUrl +
+          'magic/modules/system/logging/log', {
+            type: 'error',
+            content
+        }).subscribe((res: StatusResponse) => {
           console.log('Info item successfully logged');
         }, (error: any) => {
           console.error(error.error.message);
@@ -83,10 +94,12 @@ export class HttpService {
        * @param content What to log
        */
       fatal: (content: string) => {
-        this.httpClient.post<any>(environment.apiUrl + 'magic/modules/system/logging/log', {
-          type: 'fatal',
-          content
-        }).subscribe((res: any) => {
+        this.httpClient.post<StatusResponse>(
+          environment.apiUrl +
+          'magic/modules/system/logging/log', {
+            type: 'fatal',
+            content
+        }).subscribe((res: StatusResponse) => {
           console.log('Info item successfully logged');
         }, (error: any) => {
           console.error(error.error.message);
@@ -95,7 +108,14 @@ export class HttpService {
     }
   }
 
-  // HTTP REST methods your backend exposes, and that was used to scaffold Angular frontend app.
+  /*
+   * HTTP REST methods your backend exposes,
+   * that was used to scaffold Angular frontend app.
+   * 
+   * These parts is exposed such that each table returns an ICrudEntity
+   * or an ICrdEntity, depending upon whether or not the endpoint group
+   * contains an update method or not.
+   */
 [[http-client-service-method-implementations]]
 
   /*

@@ -60,7 +60,7 @@ for-each:x:@.arguments/*
                   get-value:x:@.method
                   .:@"
       create: (args: any) => {
-        return this.httpClient.post<any>(
+        return this.httpClient.post<CreateResponse>(
           environment.apiUrl +
           '"
                   get-value:x:@.dp/#/././*/url
@@ -77,7 +77,7 @@ for-each:x:@.arguments/*
                   get-value:x:@.method
                   .:@"
       read: (filter: any) => {
-        return this.httpClient.get<any>(
+        return this.httpClient.get<any[]>(
           environment.apiUrl +
           '"
                   get-value:x:@.dp/#/././*/url
@@ -92,7 +92,7 @@ for-each:x:@.arguments/*
                   get-value:x:@.method
                   .:@"
       count: (filter: any) => {
-        return this.httpClient.get<any>(
+        return this.httpClient.get<CountResponse>(
           environment.apiUrl +
           '"
                   get-value:x:@.dp/#/././*/url
@@ -109,7 +109,7 @@ for-each:x:@.arguments/*
                   get-value:x:@.method
                   .:@"
       update: (args: any) => {
-        return this.httpClient.put<any>(
+        return this.httpClient.put<UpdateResponse>(
           environment.apiUrl +
           '"
                   get-value:x:@.dp/#/././*/url
@@ -126,7 +126,7 @@ for-each:x:@.arguments/*
                   get-value:x:@.method
                   .:@"
       delete: (filter: any) => {
-        return this.httpClient.delete<any>(
+        return this.httpClient.delete<DeleteResponse>(
           environment.apiUrl +
           '"
                   get-value:x:@.dp/#/././*/url

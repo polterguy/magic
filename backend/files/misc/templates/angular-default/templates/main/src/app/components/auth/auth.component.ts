@@ -1,6 +1,7 @@
 import { Message, Messages, MessageService } from 'src/app/services/message-service';
 import { AuthService } from 'src/app/services/auth-service';
 import { AuthFilter } from 'src/app/services/models/auth-filter';
+import { CountResponse } from 'src/app/services/models/count-response';
 import { CreateRoleDialogComponent } from './modals/create-role-dialog';
 import { CreateUserDialogComponent } from './modals/create-user-dialog';
 import { EditUserDialogComponent } from './modals/edit-user-dialog';
@@ -289,7 +290,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   // Retrieves the total numbers of users in the system.
   private getUsersCount() {
-    this.service.users.count().subscribe((res: any) => {
+    this.service.users.count().subscribe((res: CountResponse) => {
       this.userCount = res.count;
     }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
@@ -301,7 +302,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   // Retrieves the total numbers of roles in the system.
   private getRolesCount() {
-    this.service.roles.count().subscribe((res: any) => {
+    this.service.roles.count().subscribe((res: CountResponse) => {
       this.roleCount = res.count;
     }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {

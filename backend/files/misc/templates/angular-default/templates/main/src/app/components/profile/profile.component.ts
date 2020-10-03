@@ -2,6 +2,7 @@ import { AuthService } from 'src/app/services/auth-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Component } from '@angular/core';
+import { StatusResponse } from '../../services/models/status-response';
 
 /**
  * Profile component, allowing a user to edit his profile, change his password,
@@ -58,7 +59,7 @@ export class ProfileComponent {
     }
 
     // Invoking backend changing the user's password.
-    this.authService.changeMyPassword(this.password).subscribe(res => {
+    this.authService.changeMyPassword(this.password).subscribe((res: StatusResponse) => {
       this.snackBar.open('Your password was successfully changed', 'Close', {
         duration: 2000,
       });

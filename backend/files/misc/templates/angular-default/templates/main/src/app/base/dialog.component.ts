@@ -1,5 +1,7 @@
 import { Observable, Subscriber } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UpdateResponse } from '../services/models/update-response';
+import { CreateResponse } from '../services/models/create-response';
 
 /**
  * Input data to dialog.
@@ -39,8 +41,8 @@ export abstract class DialogComponent {
   /**
    * Returns a reference to the update method, to update entity.
    */
-  protected getUpdateMethod() : Observable<any> {
-    return new Observable<any>((observer: Subscriber<any>) => {
+  protected getUpdateMethod() : Observable<UpdateResponse> {
+    return new Observable<UpdateResponse>((observer: Subscriber<UpdateResponse>) => {
       observer.error({
         error: {
           message: 'You cannot update these entities, since there exists no PUT endpoint for it'
@@ -53,7 +55,7 @@ export abstract class DialogComponent {
   /**
    * Returns a reference to the create method, to create new entities.
    */
-  protected abstract getCreateMethod() : Observable<any>;
+  protected abstract getCreateMethod() : Observable<CreateResponse>;
 
   /**
    * Closes dialog.
@@ -101,10 +103,10 @@ export abstract class DialogComponent {
         }
       }
 
-      this.getUpdateMethod().subscribe(res => {
+      this.getUpdateMethod().subscribe((res: UpdateResponse) => {
         this.close(this.getData().entity);
-        if (res['updated-records'] !== 1) {
-          this.snackBar.open(`Oops, number of items was ${res['updated-records']}, which is very wrong. It should have been 1`, 'Close', {
+        if (res.affected !== 1) {
+          this.snackBar.open(`Oops, number of items was ${res.affected}, which is very wrong. It should have been 1`, 'Close', {
             duration: 5000,
             panelClass: ['error-snackbar'],
           });
@@ -123,14 +125,8 @@ export abstract class DialogComponent {
         }
       }
 
-      this.getCreateMethod().subscribe(res => {
+      this.getCreateMethod().subscribe((res: CreateResponse) => {
         this.close(this.getData().entity);
-        if (res === null || res === undefined) {
-          this.snackBar.open(`Oops, for some reasons backend returned ${res}, which seems to be very wrong!`, 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar'],
-          });
-        }
       }, (error: any) => {
         this.snackBar.open(error.error.message, 'Close', {
           duration: 5000,
