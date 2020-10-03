@@ -17,4 +17,4 @@ xxx.connect:{database}
          and
    unwrap:x:+/*
    return
-      updated-records:x:./-/-
+      affected:x:./-/-
