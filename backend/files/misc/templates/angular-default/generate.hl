@@ -8,7 +8,14 @@
 /*
  * Doing some logging.
  */
-log.info:Angular default template creating an Angular frontend for you
+log.info:Creating an Angular default frontend for you
+
+
+/*
+ * Retrieves main folder we're currently working in, to allow
+ * for retrieving files relative to our current "working directory".
+ */
+io.path.get-folder:x:@.filename
 
 
 /*
@@ -31,38 +38,48 @@ log.info:Angular default template creating an Angular frontend for you
 /*
  * Loads all files in "main" Angular template folder recursively.
  */
+unwrap:x:+/*/*/*
 add:x:@.main-files
    signal:magic.io.file.load-recursively
       strings.concat
-         .:/misc/templates/angular-default/templates/main/
+         .:x:@io.path.get-folder
+         .:templates/main/
 
 
 /*
  * Loads all files in "component" Angular template folder recursively.
  */
+unwrap:x:+/*/*/*
 add:x:@.component-files
    signal:magic.io.file.load-recursively
       strings.concat
-         .:/misc/templates/angular-default/templates/component/
+         .:x:@io.path.get-folder
+         .:templates/component/
 
 
 /*
  * Loads all files in "sql-component" Angular template folder recursively.
  */
+unwrap:x:+/*/*/*
 add:x:@.sql-component-files
    signal:magic.io.file.load-recursively
       strings.concat
-         .:/misc/templates/angular-default/templates/sql-component/
+         .:x:@io.path.get-folder
+         .:templates/sql-component/
 
 
 /*
  * Removing "root" parts of our folder names in [.main-files], to make a
  * more friendly folder structure that we return to caller.
  */
+strings.trim-start:x:@io.path.get-folder
+   .:/
 for-each:x:@.main-files/*
    set-value:x:@.dp/#
       strings.replace:x:@.dp/#
-         .:misc/templates/angular-default/templates/main
+         strings.concat
+            get-value:x:@strings.trim-start
+            .:templates/main
          get-value:x:@.arguments/*/name
 
 
@@ -76,7 +93,8 @@ for-each:x:@.component-files/*
       .:[[component-filename]].
    strings.replace:x:@strings.replace
       strings.concat
-         .:/misc/templates/angular-default/templates/component/
+         get-value:x:@io.path.get-folder
+         .:templates/component/
       .:/[[component-folder]]/
    set-value:x:@.dp/#
       get-value:x:@strings.replace
@@ -90,10 +108,13 @@ for-each:x:@.component-files/*
  * CRUD type of endpoint that we were given as input.
  */
 .crud-methods
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:generator/generate-http-crud-methods.hl
 add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
-   io.file.execute:/misc/templates/angular-default/generator/generate-http-crud-methods.hl
+   io.file.execute:x:@strings.concat
 
 
 /*
@@ -102,10 +123,13 @@ add:x:@.crud-methods
  * and creating our TypeScript HTTP client methods accordingly.
  */
 .http-service-methods
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:generator/generate-service-methods.hl
 add:x:+/*
    get-nodes:x:@.crud-methods/*
 set-value:x:@.http-service-methods
-   io.file.execute:/misc/templates/angular-default/generator/generate-service-methods.hl
+   io.file.execute:x:@strings.concat
 
 
 /*
@@ -113,47 +137,65 @@ set-value:x:@.http-service-methods
  * our router links.
  */
 .router-link-file
-set-value:x:-
-   io.file.load:/misc/templates/angular-default/templates/misc/router-link.html
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:templates/misc/router-link.html
+set-value:x:@.router-link-file
+   io.file.load:x:@strings.concat
 
 
 /*
  * Loading router link file for chart components.
  */
 .router-link-file-chart
-set-value:x:-
-   io.file.load:/misc/templates/angular-default/templates/misc/router-link-chart.html
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:templates/misc/router-link-chart.html
+set-value:x:@.router-link-file-chart
+   io.file.load:x:@strings.concat
 
 
 /*
  * Loading import file, that contains the import declarations for components.
  */
 .imports-file
-set-value:x:-
-   io.file.load:/misc/templates/angular-default/templates/misc/import.ts
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:templates/misc/import.ts
+set-value:x:@.imports-file
+   io.file.load:x:@strings.concat
 .imports-file-only-grid
-set-value:x:-
-   io.file.load:/misc/templates/angular-default/templates/misc/import-only-grid.ts
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:templates/misc/import-only-grid.ts
+set-value:x:@.imports-file-only-grid
+   io.file.load:x:@strings.concat
 
 
 /*
  * Loading router declaration file.
  */
 .router-declaration-file
-set-value:x:-
-   io.file.load:/misc/templates/angular-default/templates/misc/router-declaration.ts
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:templates/misc/router-declaration.ts
+set-value:x:@.router-declaration-file
+   io.file.load:x:@strings.concat
 
 
 /*
  * Building our CRUD components.
  */
 .components
+strings.concat
+   get-value:x:@io.path.get-folder
+   .:generator/generate-components.hl
 add:x:+/+/*
    get-nodes:x:@.component-files
 add:x:+/*
    get-nodes:x:@.crud-methods
 add:x:@.components
-   io.file.execute:/misc/templates/angular-default/generator/generate-components.hl
+   io.file.execute:x:@strings.concat
 
 
 /*
