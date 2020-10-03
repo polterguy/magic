@@ -16,10 +16,15 @@ auth.ticket.verify:root
  */
 io.folder.list:/misc/templates/
 for-each:x:-/*
-   strings.split:x:@.dp/#
-      .:/
-   unwrap:x:+/*/*
-   add:x:../*/return-nodes
-      .
-         :x:@strings.split/0/-
+   if
+      not
+         strings.ends-with:x:@.dp/#
+         .:/common/
+      .lambda
+         strings.split:x:@.dp/#
+            .:/
+         unwrap:x:+/*/*
+         add:x:../*/return-nodes
+            .
+               :x:@strings.split/0/-
 return-nodes
