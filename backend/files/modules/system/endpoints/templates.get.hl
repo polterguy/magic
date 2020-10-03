@@ -19,7 +19,7 @@ for-each:x:-/*
    if
       not
          strings.ends-with:x:@.dp/#
-         .:/common/
+            .:/common/
       .lambda
          strings.split:x:@.dp/#
             .:/
