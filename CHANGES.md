@@ -246,7 +246,8 @@ Also changed the service method names to reflect their CRUD operation.
 ## magic.lambda.io
 
 Passing in the filename to **[io.file.execute]** to make it easier for
-files to execute files in relative folders. Also completely removed the
+files to execute files in relative folders. This will be passed in as
+an **[.filename]** argument. Also completely removed the
 **[io.files.eval]** slot, since it only creates confusion, since it does
 the exact same thing as its execute counterpart.
 

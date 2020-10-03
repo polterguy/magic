@@ -25,6 +25,31 @@ io.path.get-folder:x:@.filename
 
 
 /*
+ * Transforming our CRUD methods, such that they become slightly more structured.
+ *
+ * This is later used to generate our components, since we create one component for each
+ * CRUD type of endpoint that we were given as input.
+ */
+.crud-methods
+add:x:+/*
+   get-nodes:x:@.arguments/*
+add:x:@.crud-methods
+   io.file.execute:/misc/templates/common/structure-endpoints.hl
+
+
+/*
+ * Creating our HTTP Client service method implementations,
+ * by invoking a helper file responsible for parsing arguments,
+ * and creating our TypeScript HTTP client methods accordingly.
+ */
+.http-service-methods
+add:x:+/*
+   get-nodes:x:@.crud-methods/*
+set-value:x:@.http-service-methods
+   io.file.execute:/misc/templates/common/create-angular-service-methods.hl
+
+
+/*
  * These two nodes will contain all template files.
  *
  * The [.main-files] will contain the main template files.
@@ -104,38 +129,6 @@ for-each:x:@.component-files/*
       .:/[[component-folder]]/
    set-value:x:@.dp/#
       get-value:x:@strings.replace
-
-
-/*
- * Transforming our CRUD methods, such that they become slightly more structured, and doing
- * some common parsing, such as figuring out filenames, folder names, etc for each component.
- *
- * This is later used to generate our components, since we create one component for each
- * CRUD type of endpoint that we were given as input.
- */
-.crud-methods
-strings.concat
-   get-value:x:@io.path.get-folder
-   .:generator/generate-http-crud-methods.hl
-add:x:+/*
-   get-nodes:x:@.arguments/*
-add:x:@.crud-methods
-   io.file.execute:x:@strings.concat
-
-
-/*
- * Creating our HTTP Client service method implementations,
- * by invoking a helper file responsible for parsing arguments,
- * and creating our TypeScript HTTP client methods accordingly.
- */
-.http-service-methods
-strings.concat
-   get-value:x:@io.path.get-folder
-   .:generator/generate-service-methods.hl
-add:x:+/*
-   get-nodes:x:@.crud-methods/*
-set-value:x:@.http-service-methods
-   io.file.execute:x:@strings.concat
 
 
 /*
@@ -285,34 +278,9 @@ for-each:x:@.crud-methods/*
 
 
          /*
-          * Figuring out roles user must belong to in order to invoke "crud-read" endpoint.
-          */
-         .read-roles
-         for-each:x:@.dp/#/*/verbs/*/get/*/auth/*
-            set-value:x:@.read-roles
-               strings.concat
-                  get-value:x:@.read-roles
-                  .:", '"
-                  get-value:x:@.dp/#
-                  .:"'"
-         if
-            not
-               eq
-                  get-value:x:@.read-roles
-                  .
-            .lambda
-               set-value:x:@.read-roles
-                  strings.trim:x:@.read-roles
-                     .:", "
-
-
-         /*
           * Router links.
           */
          strings.replace:x:@.router-link-file
-            .:[[read-roles]]
-            get-value:x:@.read-roles
-         strings.replace:x:@strings.replace
             .:[[url]]
             get-value:x:@.dp/#/*/component-routing-url
          strings.replace:x:@strings.replace
