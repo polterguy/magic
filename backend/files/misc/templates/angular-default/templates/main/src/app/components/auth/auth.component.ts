@@ -1,5 +1,6 @@
 import { Message, Messages, MessageService } from 'src/app/services/message-service';
-import { AuthService, AuthFilter } from 'src/app/services/auth-service';
+import { AuthService } from 'src/app/services/auth-service';
+import { AuthFilter } from 'src/app/services/models/auth-filter';
 import { CreateRoleDialogComponent } from './modals/create-role-dialog';
 import { CreateUserDialogComponent } from './modals/create-user-dialog';
 import { EditUserDialogComponent } from './modals/edit-user-dialog';
@@ -173,7 +174,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param username Username of user to delete
    */
   public deleteUser(username: string) {
-    this.service.deleteUser(username).subscribe(res => {
+    this.service.users.delete(username).subscribe(res => {
       this.getUsers(() => {
         this.snackBar.open('User was succesfully deleted', 'Close', {
           duration: 2000,
@@ -194,7 +195,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    * @param name Name of role to delete
    */
   public deleteRole(name: string) {
-    this.service.deleteRole(name).subscribe(res => {
+    this.service.roles.delete(name).subscribe(res => {
       this.getRoles(() => {
         this.snackBar.open('Role was succesfully deleted', 'Close', {
           duration: 2000,
@@ -258,7 +259,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   // Retrieves users from backend.
   private getUsers(callback: Function = null) {
-    this.service.getUsers(this.userFilter).subscribe(res => {
+    this.service.users.read(this.userFilter).subscribe(res => {
       this.users = res;
       if (callback !== null) {
         callback(); // Invoking callback specified by caller.
@@ -273,12 +274,12 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   // Retrieves roles from backend.
   private getRoles(callback: Function = null) {
-    this.service.getRoles(this.roleFilter).subscribe(res => {
+    this.service.roles.read(this.roleFilter).subscribe(res => {
       this.roles = res;
       if (callback !== null) {
         callback();
       }
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
@@ -288,9 +289,9 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   // Retrieves the total numbers of users in the system.
   private getUsersCount() {
-    this.service.getUsersCount().subscribe((res: any) => {
+    this.service.users.count().subscribe((res: any) => {
       this.userCount = res.count;
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
@@ -300,9 +301,9 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   // Retrieves the total numbers of roles in the system.
   private getRolesCount() {
-    this.service.getRolesCount().subscribe((res: any) => {
+    this.service.roles.count().subscribe((res: any) => {
       this.roleCount = res.count;
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],

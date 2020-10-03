@@ -1,5 +1,6 @@
 // Angular imports
-import { AuthService, Endpoints } from '../services/auth-service';
+import { AuthService } from '../services/auth-service';
+import { Endpoint } from '../services/models/endpoint';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -19,7 +20,7 @@ export abstract class GridComponent implements OnDestroy {
   private roles: string [] = [];
 
   // All endpoints in system.
-  private endpoints: Endpoints[] = [];
+  private endpoints: Endpoint[] = [];
 
   // Used to subscribe to events triggered by other parts of the system.
   private subscription: Subscription;
@@ -73,7 +74,7 @@ export abstract class GridComponent implements OnDestroy {
    */
   protected initCommon() {
     this.roles = (<string[]>this.messages.getValue(Messages.GET_ROLES));
-    this.endpoints = (<Endpoints[]>this.messages.getValue(Messages.GET_ENDPOINTS));
+    this.endpoints = (<Endpoint[]>this.messages.getValue(Messages.GET_ENDPOINTS));
 
     // When user logs in/out, we'll need to re-databind the mat-table.
     this.subscription = this.messages.subscriber().subscribe((msg: Message) => {

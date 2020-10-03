@@ -243,6 +243,12 @@ grouping methods acting upon the same table into a single property,
 returning all methods available for the specific database entity.
 Also changed the service method names to reflect their CRUD operation.
 
+Also significantly cleaned up the actual scaffolder process, to allow
+for multiple templates, yet still sharing common functionality.
+
+Cleaned up other services, to make them more fluid in feel, and added
+some slightly better typing - Yet still more work to be done here.
+
 ## magic.lambda.io
 
 Passing in the filename to **[io.file.execute]** to make it easier for

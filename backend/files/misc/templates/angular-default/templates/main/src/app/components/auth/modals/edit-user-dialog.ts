@@ -40,7 +40,7 @@ export class EditUserDialogComponent implements OnInit {
     this.getUserRoles();
 
     // Retrieves ALL roles in the system, such that user can choose new role to add edited user to.
-    this.authService.getRoles({
+    this.authService.roles.read({
       limit: 1000,
       offset: 0,
     }).subscribe(res => {
@@ -54,9 +54,9 @@ export class EditUserDialogComponent implements OnInit {
   }
 
   getUserRoles() {
-    this.authService.getUserRoles(this.data.username).subscribe(res => {
+    this.authService.users.roles(this.data.username).subscribe(res => {
       this.userRoles = res || [];
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
@@ -65,13 +65,13 @@ export class EditUserDialogComponent implements OnInit {
   }
 
   addRole(e: MatSelectChange) {
-    this.authService.addRoleToUser(this.data.username, e.value.name).subscribe(res => {
+    this.authService.users.addRole(this.data.username, e.value.name).subscribe((res: any) => {
       this.snackBar.open('Role added to user', 'Close', {
         duration: 2000,
       });
       this.selectedValue = undefined;
       this.getUserRoles();
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],
@@ -81,12 +81,12 @@ export class EditUserDialogComponent implements OnInit {
   }
 
   deleteRoleFromUser(role: string) {
-    this.authService.deleteRoleFromUser(this.data.username, role).subscribe(res => {
+    this.authService.users.deleteRole(this.data.username, role).subscribe(res => {
       this.snackBar.open('Role removed from user', 'Close', {
         duration: 2000,
       });
       this.getUserRoles();
-    }, error => {
+    }, (error: any) => {
       this.snackBar.open(error.error.message, 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar'],

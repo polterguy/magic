@@ -7,7 +7,8 @@ import { Subscription } from 'rxjs';
 
 // Custom services your app depends upon.
 import { MessageService, Message, Messages } from 'src/app/services/message-service';
-import { AuthService, Endpoints } from '../../services/auth-service';
+import { AuthService } from '../../services/auth-service';
+import { Endpoint } from '../../services/models/endpoint';
 import { LoaderService } from '../../services/loader-service';
 import { LoginComponent } from './modals/login.component';
 
@@ -25,7 +26,7 @@ import { LoginComponent } from './modals/login.component';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-  private endpoints: Endpoints[] = [];
+  private endpoints: Endpoint[] = [];
   private subscription: Subscription;
   public sidenavOpened = false;
   public roles: string [] = [];
@@ -74,7 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
      * verbs, and authorization settings - As in which roles are allowed
      * to invoke which endpoints.
      */
-    this.authService.endpoints().subscribe((res: Endpoints[]) => {
+    this.authService.endpoints().subscribe((res: Endpoint[]) => {
       this.endpoints = res;
     });
 
