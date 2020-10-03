@@ -4,7 +4,8 @@
  * according to specified [.arguments].
  *
  * Notice, this file creates a service method for every single HTTP endpoint caller
- * has told us he wants to wrap.
+ * has told us he wants to wrap. The files expects its [.arguments] to be in
+ * structured format, as created by the structure-endpoint.hl file.
  */
 
 
