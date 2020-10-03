@@ -1,6 +1,12 @@
 
 /*
- * Generates an Angular frontend for you.
+ * Generates an Angular frontend for you wrapping the given [endpoints].
+ * Frontend will contain one grid component for each CRUD method group supplied,
+ * in addition to an edit/create modal dialogue, and an HTTP service endpoint
+ * for each HTTP REST endpoint you supply.
+ *
+ * In addition, the generated frontend will also contain some helper components,
+ * for managing users, changing password of currently logged in user, etc.
  */
 .description:"Generates an Angular frontend client side according to the given arguments. The frontend will have one datagrid component and router link/navbar menu item for each CRUD read endpoint in your backend endpoints."
 
@@ -190,12 +196,14 @@ set-value:x:@.router-declaration-file
 strings.concat
    get-value:x:@io.path.get-folder
    .:generator/generate-components.hl
-add:x:+/+/*
+add:x:+/+/+/*
    get-nodes:x:@.component-files
-add:x:+/*
+add:x:+/+/*
    get-nodes:x:@.crud-methods
+unwrap:x:+/*/*
 add:x:@.components
    io.file.execute:x:@strings.concat
+      root-folder:x:@io.path.get-folder
 
 
 /*

@@ -7,6 +7,9 @@
  * substituting values in our component templates, return a list of
  * substituted specialized template files, depending upon which arguments
  * you supply.
+ *
+ * The file expects [root-folder] argument being the root folder for the
+ * generator template currently being used.
  */
 
 
@@ -27,8 +30,11 @@
  * for a single form control.
  */
 .form-control-file
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/misc/form-control.ts
 set-value:x:@.form-control-file
-   io.file.load:/misc/templates/angular-default/templates/misc/form-control.ts
+   io.file.load:x:@strings.concat
 
 
 
@@ -41,14 +47,30 @@ set-value:x:@.form-control-file
    long
    date
    bool
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.html
 set-value:x:@.column-file
-   io.file.load:/misc/templates/angular-default/templates/column/column.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.long.html
 set-value:x:@.column-file/*/long
-   io.file.load:/misc/templates/angular-default/templates/column/column.long.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.date.html
 set-value:x:@.column-file/*/date
-   io.file.load:/misc/templates/angular-default/templates/column/column.date.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.bool.html
 set-value:x:@.column-file/*/bool
-   io.file.load:/misc/templates/angular-default/templates/column/column.bool.html
+   io.file.load:x:@strings.concat
 
 
 
@@ -60,12 +82,24 @@ set-value:x:@.column-file/*/bool
 .view-details-file
    date
    bool
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.html
 set-value:x:@.view-details-file
-   io.file.load:/misc/templates/angular-default/templates/view-details/view-details.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.date.html
 set-value:x:@.view-details-file/*/date
-   io.file.load:/misc/templates/angular-default/templates/view-details/view-details.date.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.bool.html
 set-value:x:@.view-details-file/*/bool
-   io.file.load:/misc/templates/angular-default/templates/view-details/view-details.bool.html
+   io.file.load:x:@strings.concat
 
 
 
@@ -79,16 +113,36 @@ set-value:x:@.view-details-file/*/bool
    bool
    date
    decimal
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.html
 set-value:x:@.form-field-file
-   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.long.html
 set-value:x:@.form-field-file/*/long
-   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.long.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.decimal.html
 set-value:x:@.form-field-file/*/decimal
-   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.decimal.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.bool.html
 set-value:x:@.form-field-file/*/bool
-   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.bool.html
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.date.html
 set-value:x:@.form-field-file/*/date
-   io.file.load:/misc/templates/angular-default/templates/form-field/form-field.date.html
+   io.file.load:x:@strings.concat
 
 
 
@@ -99,10 +153,18 @@ set-value:x:@.form-field-file/*/date
  */
 .form-control-instantiation-file
    string
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-control-instantiations/form-control-instantiations.ts
 set-value:x:@.form-control-instantiation-file
-   io.file.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.ts
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-control-instantiations/form-control-instantiations.string.ts
 set-value:x:@.form-control-instantiation-file/*/string
-   io.file.load:/misc/templates/angular-default/templates/form-control-instantiations/form-control-instantiations.string.ts
+   io.file.load:x:@strings.concat
 
 
 
