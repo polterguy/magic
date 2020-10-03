@@ -19,7 +19,7 @@ export class CreateRoleDialogComponent {
     private authService: AuthService) { }
 
   ok() {
-    this.authService.createRole(this.data.name, this.data.description).subscribe(res => {
+    this.authService.roles.create(this.data.name, this.data.description).subscribe(res => {
       this.dialogRef.close(this.data);
     }, error => {
       this.snackBar.open(error.error.message, 'Close', {
