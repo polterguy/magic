@@ -9,7 +9,7 @@
       mat-button
       *ngIf="canInvoke('[[endpoint-url]]', 'post')"
       class="top-right"
-      (click)="createNewRecord()">New ...</button>
+      (click)="createEntity()">New ...</button>
 
     <table
       mat-table
@@ -28,7 +28,7 @@
           [ngClass]="canInvoke('[[endpoint-url]]', 'delete') ? 'delete-column' : 'hidden'">
           <button
             mat-button
-            (click)="delete(el, {[[delete-input]]})"
+            (click)="deleteEntity(el, {[[delete-input]]})"
             placeholder="Deletes this record">
             <mat-icon matSuffix>delete</mat-icon>
           </button>
@@ -47,7 +47,7 @@
               *ngIf="canInvoke('[[endpoint-url]]', 'put')"
               mat-button
               class="edit-details"
-              (click)="editDetails(el)">
+              (click)="editEntity(el)">
               <mat-icon matSuffix>edit</mat-icon>
             </button>
 [[view-details]]          </div>
@@ -56,7 +56,6 @@
 
       <tr
         mat-header-row
-        [class]="getHeaderRowClass()"
         *matHeaderRowDef="displayedColumns"></tr>
 
       <tr
@@ -71,9 +70,8 @@
 
     </table>
     <mat-paginator
-      [class]="showPager() ? '' : 'invisible'"
       #paginator
-      [(length)]="count"
+      [(length)]="itemsCount"
       [(pageSize)]="filter.limit"
       (page)="paged($event)"
       [pageSizeOptions]="[5,10,25,50]">

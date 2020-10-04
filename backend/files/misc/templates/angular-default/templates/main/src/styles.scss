@@ -187,30 +187,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
             cursor:inherit;
             background-color: inherit;
         }
-        tr.show-pager {
-            mat-form-field {
-                display: inherit;
-            }
-            button {
-                display: inherit;
-            }
-            label.table-header {
-                display: none;
-            }
-        }
-        tr.hide-pager {
-            mat-form-field {
-                display: none;
-            }
-            button {
-                display: none;
-            }
-            label.table-header {
-                display: inline-block;
-                text-transform: capitalize;
-                margin: 1rem 0 1rem 0;
-            }
-        }
         tr.hidden {
             display: none;
         }

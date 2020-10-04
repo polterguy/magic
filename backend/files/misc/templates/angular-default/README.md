@@ -9,7 +9,8 @@ will support inserting, updating and deleting existing items. Inserting and upda
 Angular Material dialog.
 
 This template also contains an _"auth"_ component, allowing you to edit and view the users in your Magic
-installation.
+installation, in addition to a _"profile"_ component allowing the currently authenticated user to change
+his or her password.
 
 Below is a screenshot of how it will look like.
 
