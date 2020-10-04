@@ -230,11 +230,6 @@ export abstract class GridComponent implements OnDestroy {
         this.showError(`For some reasons ${res.affected} records was deleted, and not 1 as expected!`);
       }
 
-      const indexOf = this.viewDetails.indexOf(entity);
-      if (indexOf !== -1) {
-        this.viewDetails.splice(indexOf, 1);
-      }
-
       this.getData();
     }, (error: any) => this.showError(error));
   }
