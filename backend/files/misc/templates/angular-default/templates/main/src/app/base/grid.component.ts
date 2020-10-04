@@ -2,31 +2,20 @@
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { OnDestroy } from '@angular/core';
 
 // Custom services and models your app depends upon.
-import { Message, Messages, MessageService } from 'src/app/services/message-service';
 import { DeleteResponse } from '../services/models/delete-response';
 import { CountResponse } from '../services/models/count-response';
-import { Endpoint } from '../services/models/endpoint';
+import { AuthService } from 'src/app/services/auth-service';
 
 /**
  * Base class for all "data-grid" components, displaying items to
  * perform CRUD operations in a Material table, applying live filtering,
  * sorting, paging, etc.
  */
-export abstract class GridComponent implements OnDestroy {
-
-  // List of roles user authenticated belongs to.
-  private roles: string [] = [];
-
-  // All endpoints in system.
-  private endpoints: Endpoint[] = [];
-
-  // Used to subscribe to events triggered by other parts of the system.
-  private subscription: Subscription;
+export abstract class GridComponent {
 
   /**
    * Number of milliseconds after a keystroke before
@@ -61,49 +50,12 @@ export abstract class GridComponent implements OnDestroy {
   /**
    * Constructor for grid component, taking a couple of services using dependency injection.
    * 
-   * @param messages Message service used to subscribe to events, and publish events, to communicate with other components in the system
+   * @param authService Authentication and authorization service
    * @param snackBar Snack bar to use to display errors, and also general information
    */
   constructor(
-    protected messages: MessageService,
+    protected authService: AuthService,
     protected snackBar: MatSnackBar) { }
-
-  /**
-   * Invoked by derived class' OnInit implementation.
-   * 
-   * Retrieves current user's roles, if authenticated,
-   * and subscribes to a couple of events, making sure we update UI accordingly,
-   * as state changes in other parts of the app.
-   */
-  protected initCommon() {
-
-    this.roles = <string[]>this.messages.getValue(Messages.GET_ROLES);
-    this.endpoints = <Endpoint[]>this.messages.getValue(Messages.GET_ENDPOINTS);
-
-    // When user logs in/out, we'll need to re-databind the mat-table.
-    this.subscription = this.messages.subscriber().subscribe((msg: Message) => {
-
-      switch (msg.name) {
-
-        case Messages.LOGGED_IN:
-          this.roles = <string[]>this.messages.getValue(Messages.GET_ROLES);
-          this.getData(true);
-          break;
-
-        case Messages.LOGGED_OUT:
-          this.roles = [];
-          this.getData(true);
-          break;
-      }
-    });
-  }
-
-  /**
-   * Implementation of OnDestroy.
-   */
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
 
   /**
    * Abstract method you'll need to override to actually return URL of
@@ -138,14 +90,6 @@ export abstract class GridComponent implements OnDestroy {
   protected abstract resetPaginator() : void;
 
   /**
-   * Abstract method necessary to process a new filter value.
-   * 
-   * @param name Name of filter to use
-   * @param value New value for filter
-   */
-  protected abstract processFilter(name: string, value: string) : void;
-
-  /**
    * Creates a new FormControl for filtering columns, and returns to caller.
    * 
    * @param filterName Name of FormControl's filter
@@ -170,7 +114,7 @@ export abstract class GridComponent implements OnDestroy {
     this.viewDetails = [];
 
     // Checking that we actually can retrieve data at all.
-    if (!this.canInvoke(this.url(), 'get')) {
+    if (!this.authService.canInvoke(this.url(), 'get')) {
       this.data = [];
       this.itemsCount = 0;
       return;
@@ -247,7 +191,6 @@ export abstract class GridComponent implements OnDestroy {
       this.filter.direction = 'asc';
     }
     this.resetPaginator();
-    this.filter.offset = 0;
     this.getData(false);
   }
 
@@ -315,7 +258,6 @@ export abstract class GridComponent implements OnDestroy {
     if (this.filter.limit !== e.pageSize) {
       this.filter.limit = e.pageSize;
       this.resetPaginator()
-      this.filter.offset = 0;
     } else {
       this.filter.offset = e.pageIndex * e.pageSize;
     }
@@ -408,18 +350,17 @@ export abstract class GridComponent implements OnDestroy {
   }
 
   /**
-   * Returns true if the client can invoke the specified endpoint,
-   * with the specified verb.
-   * 
-   * @param url Endpoint's URL
-   * @param verb HTTP verb
+   * Invoked as user tries to filter his result set. Will either
+   * create or remove an existing filter, depending upon the value
+   * the user typed into the filter textbox.
    */
-  public canInvoke(url: string, verb: string) {
-    const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
-    if (endpoints.length === 0) {
-      return false;
+  protected processFilter(name: string, value: string) {
+    this.resetPaginator();
+    if (value === '') {
+      delete this.filter[name];
+    } else {
+      this.filter[name] = value;
     }
-    return endpoints[0].auth === null ||
-      endpoints[0].auth.filter(x => this.roles.includes(x)).length > 0;
+    this.getData();
   }
 }

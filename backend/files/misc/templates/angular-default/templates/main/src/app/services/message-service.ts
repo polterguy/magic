@@ -25,19 +25,6 @@ export class Message {
 export class Messages {
 
   /**
-   * Send this message to retrieve roles currently logged
-   * in user belongs to, if any.
-   */
-  static readonly GET_ROLES = 'app.roles.get';
-
-  /**
-   * Send this message to retrieve all endpoints in the system,
-   * associated with their HTTP verb and roles that are able to
-   * invoke the endpoint.
-   */
-  static readonly GET_ENDPOINTS = 'app.endpoints.get';
-
-  /**
    * Message will be published by the system when the user logs in.
    */
   static readonly LOGGED_IN = 'app.user.logged-in';

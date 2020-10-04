@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material';
 import { FormControl } from '@angular/forms';
 
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
-import { MessageService } from 'src/app/services/message-service';
 import { HttpService } from 'src/app/services/http-service';
+import { AuthService } from 'src/app/services/auth-service';
 
 /**
  * "Datagrid" component for displaying instance of [[component-header]]
@@ -33,11 +33,11 @@ export class [[component-name]] extends GridComponent implements OnInit {
 [[form-control-declarations]]
   // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
+    protected authService: AuthService,
     protected snackBar: MatSnackBar,
-    protected messages: MessageService,
     private httpService: HttpService,
-    public dialog: MatDialog) {
-      super(messages, snackBar);
+    private dialog: MatDialog) {
+      super(authService, snackBar);
   }
 
   /**
@@ -78,6 +78,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
    */
   protected resetPaginator() {
     this.paginator.pageIndex = 0;
+    this.filter.offset = 0;
   }
 
   /**
@@ -85,9 +86,6 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * and instantiates our FormControls.
    */
   public ngOnInit() {
-
-    // Calls base initialization method.
-    this.initCommon();
 
     // Retrieves data from our backend, unfiltered, and binds our mat-table accordingly.
     this.getData();
@@ -133,23 +131,5 @@ export class [[component-name]] extends GridComponent implements OnInit {
         this.itemCreated(res);
       }
     });
-  }
-
-  /**
-   * Implementation of abstract method from base class.
-   * 
-   * Invoked as user tries to filter his result set. Will either
-   * create or remove an existing filter, depending upon the value
-   * the user typed into the filter textbox.
-   */
-  protected processFilter(name: string, value: string) {
-    this.paginator.pageIndex = 0;
-    this.filter.offset = 0;
-    if (value === '') {
-      delete this.filter[name];
-    } else {
-      this.filter[name] = value;
-    }
-    this.getData();
   }
 }
