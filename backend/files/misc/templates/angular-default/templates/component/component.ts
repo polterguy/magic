@@ -1,16 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material';
-import { MatPaginator } from '@angular/material';
-import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { GridComponent } from '../../base/grid.component';
+import { MatPaginator } from '@angular/material';
+import { MatDialog } from '@angular/material';
+import { FormControl } from '@angular/forms';
 
-import { HttpService } from 'src/app/services/http-service';
-import { AuthService } from 'src/app/services/auth-service';
-import { MessageService } from 'src/app/services/message-service';
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
+import { MessageService } from 'src/app/services/message-service';
+import { HttpService } from 'src/app/services/http-service';
 
 /**
  * "Datagrid" component for displaying instance of [[component-header]]
@@ -38,18 +35,16 @@ export class [[component-name]] extends GridComponent implements OnInit {
   constructor(
     protected snackBar: MatSnackBar,
     protected messages: MessageService,
-    protected jwtHelper: JwtHelperService,
-    protected authService: AuthService,
     private httpService: HttpService,
     public dialog: MatDialog) {
-      super(authService, messages, snackBar, jwtHelper);
+      super(messages, snackBar);
   }
 
   /**
    * Overridde abstract method necessary to return the URL endpoint
    * for CRUD methods to base class.
    */
-  protected getUrl() {
+  protected url() {
     return '[[endpoint-url]]';
   }
 
@@ -57,7 +52,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * Overridden abstract method from base class, that returns the Observable
    * necessary to actually retrieve items from backend.
    */
-  protected getItems(filter: any) {
+  protected read(filter: any) {
     return this.httpService.[[service-get-method]](filter);
   }
 
@@ -65,7 +60,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * Overridden abstract method from base class, that returns the Observable
    * necessary to actually retrieve count of items from backend.
    */
-  protected getCount(filter: any) {
+  protected count(filter: any) {
     return this.httpService.[[service-count-method]](filter);
   }
 
@@ -73,7 +68,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * Overridden abstract method from base class, that returns the Observable
    * necessary to actually delete items in backend.
    */
-  protected getDelete(ids: any) {
+  protected delete(ids: any) {
     return this.httpService.[[service-delete-method]](ids);
   }
 
@@ -97,14 +92,18 @@ export class [[component-name]] extends GridComponent implements OnInit {
     // Retrieves data from our backend, unfiltered, and binds our mat-table accordingly.
     this.getData();
 
-    // Necessary to make sure we can have "live filtering" in our datagrid.
+    /*
+     * Creating our filtering FormControl instances, which gives us "live filtering"
+     * on our columns.
+     */
 [[form-control-instantiations]]  }
 
   /**
    * Invoked when user wants to edit an entity
+   * 
    * This will show a modal dialog, allowing the user to edit his record.
    */
-  public editDetails(entity: any) {
+  public editEntity(entity: any) {
 
     const dialogRef = this.dialog.open(Edit[[component-name]], {
       data: this.getEditData(entity)
@@ -115,9 +114,12 @@ export class [[component-name]] extends GridComponent implements OnInit {
   }
 
   /**
-   * Creates a new data record, by showing the modal edit/create dialog.
+   * Invoked when user wants to create a new entity
+   * 
+   * This will show a modal dialog, allowing the user to supply
+   * the initial data for the entity.
    */
-  public createNewRecord() {
+  public createEntity() {
 
     const dialogRef = this.dialog.open(Edit[[component-name]], {
       data: {
@@ -127,5 +129,23 @@ export class [[component-name]] extends GridComponent implements OnInit {
     dialogRef.afterClosed().subscribe((createResult: any) => {
       this.itemCreated(createResult);
     });
+  }
+
+  /**
+   * Implementation of abstract method from base class.
+   * 
+   * Invoked as user tries to filter his result set. Will either
+   * create or remove an existing filter, depending upon the value
+   * the user typed into the filter textbox.
+   */
+  protected processFilter(name: string, value: string) {
+    this.paginator.pageIndex = 0;
+    this.filter.offset = 0;
+    if (value === '') {
+      delete this.filter[name];
+    } else {
+      this.filter[name] = value;
+    }
+    this.getData();
   }
 }

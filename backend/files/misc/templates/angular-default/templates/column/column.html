@@ -16,7 +16,6 @@
             mat-button>
             <mat-icon matSuffix>{{getSortIcon('[[column-name]]')}}</mat-icon>
           </button>
-          <label class="table-header">[[column-name]]</label>
         </th>
         <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">{{el.[[column-name]]}}</td>
       </ng-container>

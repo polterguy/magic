@@ -1,20 +1,21 @@
 // Angular imports
-import { AuthService } from '../services/auth-service';
-import { Endpoint } from '../services/models/endpoint';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
 import { OnDestroy } from '@angular/core';
 
-// Custom services your app depends upon.
+// Custom services and models your app depends upon.
 import { Message, Messages, MessageService } from 'src/app/services/message-service';
-import { CountResponse } from '../services/models/count-response';
 import { DeleteResponse } from '../services/models/delete-response';
+import { CountResponse } from '../services/models/count-response';
+import { Endpoint } from '../services/models/endpoint';
 
 /**
- * Base class for all "data-grid" components,
- * displaying items to perform CRUD operations.
+ * Base class for all "data-grid" components, displaying items to
+ * perform CRUD operations in a Material table, applying live filtering,
+ * sorting, paging, etc.
  */
 export abstract class GridComponent implements OnDestroy {
 
@@ -28,24 +29,22 @@ export abstract class GridComponent implements OnDestroy {
   private subscription: Subscription;
 
   /**
-   * Number of milliseconds after a keystroke before filtering should be re-applied.
+   * Number of milliseconds after a keystroke before
+   * filtering should be re-applied.
    */
   protected debounce = 400;
 
   /**
-   * Actual data currently displayed in the grid. The mat-table will be databound to this list.
+   * Actual data currently displayed in the grid.
+   * The Material table will be databound to this list.
    */
   public data: any[];
 
   /**
-   * Number of items our backend reports are available in total, matching our filter condition.
+   * Number of items our backend reports are available in total,
+   * that is matching our filter condition.
    */
-  public count = 0;
-
-  /**
-   * If true, the grid has been filtered.
-   */
-  public hasFiltered = false;
+  public itemsCount = 0;
 
   /**
    * Current filter being applied to filter items from our backend.
@@ -62,14 +61,12 @@ export abstract class GridComponent implements OnDestroy {
   /**
    * Constructor for grid component, taking a couple of services using dependency injection.
    * 
-   * @param snackBar Snack bar to use to display errors, and general information
-   * @param jwtHelper Helper service to parse JWT token, to retrieve roles user belongs to, if any
+   * @param messages Message service used to subscribe to events, and publish events, to communicate with other components in the system
+   * @param snackBar Snack bar to use to display errors, and also general information
    */
   constructor(
-    protected authService: AuthService,
     protected messages: MessageService,
-    protected snackBar: MatSnackBar,
-    protected jwtHelper: JwtHelperService) { }
+    protected snackBar: MatSnackBar) { }
 
   /**
    * Invoked by derived class' OnInit implementation.
@@ -112,19 +109,19 @@ export abstract class GridComponent implements OnDestroy {
    * Abstract method you'll need to override to actually return URL of
    * CRUD methods.
    */
-  protected abstract getUrl() : string;
+  protected abstract url() : string;
 
   /**
    * Abstract method you'll need to override to actually return method that
    * returns observable for retrieving items.
    */
-  protected abstract getItems(filter: any) : Observable<any[]>;
+  protected abstract read(filter: any) : Observable<any[]>;
 
   /**
    * Abstract method you'll have to override to actually return method that
    * returns observable for counting items.
    */
-  protected abstract getCount(filter: any) : Observable<CountResponse>;
+  protected abstract count(filter: any) : Observable<CountResponse>;
 
   /**
    * Abstract method you'll have to override to actually return method that
@@ -132,13 +129,36 @@ export abstract class GridComponent implements OnDestroy {
    * 
    * @param ids Primary keys for item
    */
-  protected abstract getDelete(ids: any) : Observable<DeleteResponse>;
+  protected abstract delete(ids: any) : Observable<DeleteResponse>;
 
   /**
    * Abstract method necessary to implement to make sure paginator
    * gets reset when needed.
    */
   protected abstract resetPaginator() : void;
+
+  /**
+   * Abstract method necessary to process a new filter value.
+   * 
+   * @param name Name of filter to use
+   * @param value New value for filter
+   */
+  protected abstract processFilter(name: string, value: string) : void;
+
+  /**
+   * Creates a new FormControl for filtering columns, and returns to caller.
+   * 
+   * @param filterName Name of FormControl's filter
+   */
+  protected createFormControl(filterName: string) {
+    const control = new FormControl('');
+    control.valueChanges
+      .pipe(debounceTime(this.debounce), distinctUntilChanged())
+      .subscribe((query: string) => {
+        this.processFilter(filterName, query);
+      });
+    return control;
+  }
 
   /**
    * Returns data items from backend.
@@ -150,13 +170,13 @@ export abstract class GridComponent implements OnDestroy {
     this.viewDetails = [];
 
     // Checking that we actually can retrieve data at all.
-    if (!this.canInvoke(this.getUrl(), 'get')) {
+    if (!this.canInvoke(this.url(), 'get')) {
       this.data = [];
-      this.count = 0;
+      this.itemsCount = 0;
       return;
     }
 
-    this.getItems(this.filter).subscribe((items: any[]) => {
+    this.read(this.filter).subscribe((items: any[]) => {
       this.data = items || [];
 
       if (countRecords) {
@@ -177,8 +197,8 @@ export abstract class GridComponent implements OnDestroy {
           }
         }
 
-        this.getCount(filterCount).subscribe((count: CountResponse) => {
-          this.count = count.count;
+        this.count(filterCount).subscribe((count: CountResponse) => {
+          this.itemsCount = count.count;
         }, (error: any) => this.showError(error));
       }
     }, (error: any) => this.showError(error));
@@ -190,7 +210,7 @@ export abstract class GridComponent implements OnDestroy {
    * @param entity Entity to delete
    * @param ids Primary keys for entity
    */
-  public delete(entity: any, ids: any) {
+  public deleteEntity(entity: any, ids: any) {
 
     let hasKeys = false;
     for (const idx in ids) {
@@ -204,10 +224,10 @@ export abstract class GridComponent implements OnDestroy {
       return;
     }
 
-    this.getDelete(ids).subscribe((deleteResult: DeleteResponse) => {
+    this.delete(ids).subscribe((res: DeleteResponse) => {
 
-      if (deleteResult.affected !== 1) {
-        this.showError(`For some reasons ${deleteResult.affected} records was deleted, and not 1 as expected!`);
+      if (res.affected !== 1) {
+        this.showError(`For some reasons ${res.affected} records was deleted, and not 1 as expected!`);
       }
 
       const indexOf = this.viewDetails.indexOf(entity);
@@ -296,16 +316,6 @@ export abstract class GridComponent implements OnDestroy {
   }
 
   /**
-   * Returns true if the pager should be shown.
-   */
-  public showPager() {
-    if (this.hasFiltered || this.count > 10) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Invoked when pager is paged.
    * 
    * @param e Paging event
@@ -320,17 +330,6 @@ export abstract class GridComponent implements OnDestroy {
       this.filter.offset = e.pageIndex * e.pageSize;
     }
     this.getData(false);
-  }
-
-  /**
-   * Returns the class for the header row, which will only be visible
-   * if there are more than 20 records in dataset, before filtering has been applied.
-   */
-  public getHeaderRowClass() {
-    if (this.showPager()) {
-      return 'show-pager';
-    }
-    return 'hide-pager';
   }
 
   /**

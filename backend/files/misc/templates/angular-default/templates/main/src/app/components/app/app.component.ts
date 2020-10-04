@@ -5,7 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 
-// Custom services your app depends upon.
+// Custom services and models your app depends upon.
 import { MessageService, Message, Messages } from 'src/app/services/message-service';
 import { AuthService } from '../../services/auth-service';
 import { Endpoint } from '../../services/models/endpoint';
