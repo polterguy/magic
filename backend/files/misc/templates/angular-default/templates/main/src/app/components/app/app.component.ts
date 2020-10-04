@@ -211,15 +211,11 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param verb HTTP verb
    */
   public canInvoke(url: string, verb: string) {
-    if (this.endpoints.length === 0) {
+    const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
+    if (endpoints.length === 0) {
       return false;
     }
-    const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
-    if (endpoints.length > 0) {
-      const endpoint = endpoints[0];
-      return endpoint.auth === null ||
-        endpoint.auth.filter(x => this.roles.includes(x)).length > 0;
-    }
-    return false;
+    return endpoints[0].auth === null ||
+      endpoints[0].auth.filter(x => this.roles.includes(x)).length > 0;
   }
 }
