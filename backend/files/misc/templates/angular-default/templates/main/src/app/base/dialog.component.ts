@@ -105,12 +105,6 @@ export abstract class DialogComponent {
 
       this.getUpdateMethod().subscribe((res: UpdateResponse) => {
         this.close(this.getData().entity);
-        if (res.affected !== 1) {
-          this.snackBar.open(`Oops, number of items was ${res.affected}, which is very wrong. It should have been 1`, 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar'],
-          });
-        }
       }, (error: any) => {
         this.snackBar.open(error.error.message, 'Close', {
           duration: 5000,
