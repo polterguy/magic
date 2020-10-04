@@ -225,11 +225,6 @@ export abstract class GridComponent implements OnDestroy {
     }
 
     this.delete(ids).subscribe((res: DeleteResponse) => {
-
-      if (res.affected !== 1) {
-        this.showError(`For some reasons ${res.affected} records was deleted, and not 1 as expected!`);
-      }
-
       this.getData();
     }, (error: any) => this.showError(error));
   }
