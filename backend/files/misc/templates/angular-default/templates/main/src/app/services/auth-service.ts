@@ -74,10 +74,10 @@ export class AuthService {
   /**
    * Returns true if current user belongs to specified role.
    * 
-   * @param role Role to check for
+   * @param roles Role to check for
    */
-  public inRole(role: string) {
-    return this.userRoles.indexOf(role) !== -1;
+  public inRole(roles: string[]) {
+    return this.userRoles.filter(x => roles.indexOf(x) !== -1).length > 0;
   }
 
   /**
