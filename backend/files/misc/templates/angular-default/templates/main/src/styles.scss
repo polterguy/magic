@@ -178,14 +178,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
             td {
                 border-bottom-color: transparent !important;
             }
+            background-color:rgba(0,0,0,.03);
         }
         tr.mat-row:hover {
             background-color: rgba(0,0,0,.1);
             cursor: pointer;
         }
+        tr.details-row {
+            cursor:inherit;
+            background-color:rgba(0,0,0,.03);
+        }
         tr.details-row:hover {
             cursor:inherit;
-            background-color: inherit;
+            background-color:rgba(0,0,0,.03);
         }
         tr.hidden {
             display: none;
