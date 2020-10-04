@@ -1,4 +1,6 @@
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Injectable } from '@angular/core';
+import { Observable, Subscriber } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { IUsers } from './interfaces/users-interface';
@@ -20,21 +22,75 @@ import { CountResponse } from './models/count-response';
 })
 export class AuthService {
 
+  private endpoints: Endpoint[] = [];
+  private userRoles: string[] = [];
+
   /**
    * Creates an instance of our object.
    * 
    * @param httpClient HTTP client to use for HTTP invocations
    */
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient,
+    private jwtHelper: JwtHelperService)
+  {
+    const ticket = localStorage.getItem('jwt_token');
+    if (this.jwtHelper.isTokenExpired(ticket)) {
+      localStorage.removeItem('jwt_token');
+    } else {
+      this.userRoles = this.jwtHelper.decodeToken(ticket).role.split(',');
+    }
+    this.httpClient.get<Endpoint[]>(
+      environment.apiUrl + 
+      'magic/modules/system/auth/endpoints').subscribe((res: Endpoint[]) => {
+        this.endpoints = res;
+      });
+  }
 
   /**
-   * Returns all endpoints, associated with their URL, verb, and authorization
-   * being a list of roles that are allowed to invoke the endpoint.
+   * Returns true if endpoints have been initialized.
+   * 
+   * Do not initialize your app before this one returns true
    */
-  endpoints() {
-    return this.httpClient.get<Endpoint[]>(
-      environment.apiUrl + 
-      'magic/modules/system/auth/endpoints');
+  public hasEndpoints() {
+    return this.endpoints.length > 0;
+  }
+
+  /**
+   * Returns true if user can invoke specified endpoint with specified verb.
+   * 
+   * @param url URL of endpoint
+   * @param verb HTTP verb for endpoint
+   */
+  public canInvoke(url: string, verb: string) {
+    const endpoints = this.endpoints.filter(x => x.path === url && x.verb === verb);
+    if (endpoints.length === 0) {
+      return false; // No such endpoint
+    }
+    return endpoints[0].auth === null ||
+      endpoints[0].auth.filter(x => this.userRoles.includes(x)).length > 0;
+  }
+
+  /**
+   * Returns true if current user belongs to specified role.
+   * 
+   * @param role Role to check for
+   */
+  public inRole(role: string) {
+    return this.userRoles.indexOf(role) !== -1;
+  }
+
+  /**
+   * Returns true if user is authenticated.
+   */
+  public isLoggedIn() {
+    const ticket = localStorage.getItem('jwt_token');
+    if (this.jwtHelper.isTokenExpired(ticket)) {
+      localStorage.removeItem('jwt_token');
+      return false;
+    } else {
+      return true;
+    }
   }
 
   /**
@@ -44,12 +100,35 @@ export class AuthService {
    * @param password Password to use during authentication process
    */
   authenticate(username: string, password: string) {
-    return this.httpClient.get<AuthenticateToken>(
-      environment.apiUrl +
-      'magic/modules/system/auth/authenticate?username=' +
-      encodeURI(username) +
-      '&password=' +
-      encodeURI(password));
+    return new Observable<any>((observer: Subscriber<AuthenticateToken>) => {
+      this.httpClient.get<AuthenticateToken>(
+        environment.apiUrl +
+        'magic/modules/system/auth/authenticate?username=' +
+        encodeURI(username) +
+        '&password=' +
+        encodeURI(password)).subscribe((res: any) => {
+
+          // Success.
+          localStorage.setItem('jwt_token', res.ticket);
+          this.userRoles = this.jwtHelper.decodeToken(res.ticket).role.split(',');
+          observer.next(res);
+          observer.complete();
+
+        }, (error: any) => {
+
+          // Error.
+          observer.error(error);
+          observer.complete();
+        });
+      });
+  }
+
+  /**
+   * Logs user out of system.
+   */
+  logout() {
+    localStorage.removeItem('jwt_token');
+    this.userRoles = [];
   }
 
   /**

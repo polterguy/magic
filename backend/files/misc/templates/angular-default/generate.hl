@@ -135,17 +135,6 @@ set-value:x:@.router-link-file
 
 
 /*
- * Loading router link file for chart components.
- */
-.router-link-file-chart
-strings.concat
-   get-value:x:@io.path.get-folder
-   .:templates/misc/router-link-chart.html
-set-value:x:@.router-link-file-chart
-   io.file.load:x:@strings.concat
-
-
-/*
  * Loading import file, that contains the import declarations for components.
  */
 .imports-file

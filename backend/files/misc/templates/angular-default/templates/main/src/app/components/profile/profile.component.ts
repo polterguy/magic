@@ -1,6 +1,5 @@
 import { AuthService } from 'src/app/services/auth-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { Component } from '@angular/core';
 import { StatusResponse } from '../../services/models/status-response';
 
@@ -31,18 +30,8 @@ export class ProfileComponent {
    */
   constructor(
     private snackBar: MatSnackBar,
-    private jwtHelper: JwtHelperService,
     private authService: AuthService)
   { }
-
-  /**
-   * Returns true if user is logged in, with a valid token,
-   * that is not expired.
-   */
-  public isLoggedIn() {
-    const token = localStorage.getItem('jwt_token');
-    return token && !this.jwtHelper.isTokenExpired(token);
-  }
 
   /**
    * Saves the user's new password.

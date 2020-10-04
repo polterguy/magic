@@ -90,8 +90,11 @@ export abstract class DialogComponent {
 
   /**
    * Invoked when the user clicks the "Save" button.
+   * 
+   * Will either create a new item or update an existing, depending upon
+   * whether or not this is an edit or create operation.
    */
-  public save() {
+  public upsert() {
 
     if (this.getData().isEdit) {
 
