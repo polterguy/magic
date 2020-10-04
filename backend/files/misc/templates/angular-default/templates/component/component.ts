@@ -108,7 +108,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
     const dialogRef = this.dialog.open(Edit[[component-name]], {
       data: this.getEditData(entity)
     });
-    dialogRef.afterClosed().subscribe(editResult => {
+    dialogRef.afterClosed().subscribe(res => {
       if (res) {
         this.setEditData(res, entity);
       }
@@ -128,7 +128,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
         isEdit: false,
         entity: {},
       }});
-    dialogRef.afterClosed().subscribe((createResult: any) => {
+    dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
         this.itemCreated(res);
       }
