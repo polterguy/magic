@@ -251,6 +251,10 @@ Cleaned up other generated Angular services, to make them more fluid
 in feel, and added some slightly better typing - Yet still more work
 to be done here.
 
+Added new template which produces a pure Angular HTTP service project
+for you, without any GUI or graphical objects - But still creates
+Angular HTTP service methods for every CRUD endpoint in your system.
+
 ## magic.lambda.io
 
 Passing in the filename to **[io.file.execute]** to make it easier for
