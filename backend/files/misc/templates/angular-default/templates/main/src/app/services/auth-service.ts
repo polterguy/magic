@@ -57,16 +57,20 @@ export class AuthService {
     return {
 
       canInvoke: (url: string, verb: string) => {
-        const endpoints = this.endpoints.filter((x: Endpoint) => x.path === url && x.verb === verb);
+        const endpoints = this.endpoints
+          .filter((x: Endpoint) => x.path === url && x.verb === verb);
+
         if (endpoints.length === 0) {
           return false; // No such endpoint
         }
         return endpoints[0].auth === null ||
-          endpoints[0].auth.filter(x => this.userRoles.includes(x)).length > 0;
+          endpoints[0].auth
+            .filter(x => this.userRoles.includes(x)).length > 0;
       },
     
       inRole: (roles: string[]) => {
-        return this.userRoles.filter(x => roles.indexOf(x) !== -1).length > 0;
+        return this.userRoles
+          .filter(x => roles.indexOf(x) !== -1).length > 0;
       },
     
       isLoggedIn: () => {
