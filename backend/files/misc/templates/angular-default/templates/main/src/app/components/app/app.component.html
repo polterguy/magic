@@ -65,7 +65,7 @@
       mat-button
       class="login-button"
       *ngIf="authService.me.isLoggedIn()"
-      (click)="authService.me.logout()">Logout</button>
+      (click)="logout()">Logout</button>
 
     <router-outlet *ngIf="authService.hasEndpoints()"></router-outlet>
 

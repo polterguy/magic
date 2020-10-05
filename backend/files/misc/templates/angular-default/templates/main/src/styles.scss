@@ -93,6 +93,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     .grid-wrapper {
         padding-top:2.5rem;
         min-width: fit-content;
+        .new-button {
+            position: absolute !important;
+            top: 0;
+            right: 0;
+        }
     }
     table {
         width: 100%;
