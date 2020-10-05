@@ -233,7 +233,7 @@ without having to reload the page, etc.
 Fixed a bug in meta data retrieval, where it would not trim names of roles
 that are allowed to access an HTTP endpoint.
 
-# Version 8.3.0
+# Version 8.3.1
 
 ## Magic (main)
 
@@ -246,8 +246,9 @@ Also changed the service method names to reflect their CRUD operation.
 Also significantly cleaned up the actual scaffolder process, to allow
 for multiple templates, yet still sharing common functionality.
 
-Cleaned up other services, to make them more fluid in feel, and added
-some slightly better typing - Yet still more work to be done here.
+Cleaned up other generated Angular services, to make them more fluid
+in feel, and added some slightly better typing - Yet still more work
+to be done here.
 
 ## magic.lambda.io
 
