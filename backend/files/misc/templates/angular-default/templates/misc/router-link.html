@@ -1,5 +1,5 @@
     <a
-      *ngIf="authService.canInvoke('[[endpoint-url]]', 'get')"
+      *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'get')"
       mat-button
       routerLink="/[[url]]"
       routerLinkActive="active-link"

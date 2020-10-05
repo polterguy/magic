@@ -48,7 +48,7 @@ export class ProfileComponent {
     }
 
     // Invoking backend changing the user's password.
-    this.authService.changeMyPassword(this.password).subscribe((res: StatusResponse) => {
+    this.authService.me.changePassword(this.password).subscribe((res: StatusResponse) => {
       this.snackBar.open('Your password was successfully changed', 'Close', {
         duration: 2000,
       });

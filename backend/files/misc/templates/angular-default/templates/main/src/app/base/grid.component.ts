@@ -114,7 +114,7 @@ export abstract class GridComponent {
     this.viewDetails = [];
 
     // Checking that we actually can retrieve data at all.
-    if (!this.authService.canInvoke(this.url(), 'get')) {
+    if (!this.authService.me.canInvoke(this.url(), 'get')) {
       this.data = [];
       this.itemsCount = 0;
       return;

@@ -52,7 +52,7 @@ export class AppComponent {
     });
     dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
-        this.authService.authenticate(res.username, res.password).subscribe((res: AuthenticateToken) => {
+        this.authService.me.authenticate(res.username, res.password).subscribe((res: AuthenticateToken) => {
 
           // Success, notifying listeners that we've authenticated.
           this.messages.sendMessage({

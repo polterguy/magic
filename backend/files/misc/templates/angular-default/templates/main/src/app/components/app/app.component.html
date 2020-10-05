@@ -24,7 +24,7 @@
       <span class="menu-item-text">Home</span>
     </a>
 [[router-links]]    <a
-      *ngIf="authService.inRole(['root','admin'])"
+      *ngIf="authService.me.inRole(['root','admin'])"
       mat-button
       routerLink="/auth"
       routerLinkActive="active-link"
@@ -35,7 +35,7 @@
       <span class="menu-item-text">Auth</span>
     </a>
     <a
-      *ngIf="authService.isLoggedIn()"
+      *ngIf="authService.me.isLoggedIn()"
       mat-button
       routerLink="/profile"
       routerLinkActive="active-link"
@@ -58,14 +58,14 @@
     <button
       mat-button
       class="logout-button"
-      *ngIf="!authService.isLoggedIn()"
+      *ngIf="!authService.me.isLoggedIn()"
       (click)="login()">Login</button>
 
     <button
       mat-button
       class="login-button"
-      *ngIf="authService.isLoggedIn()"
-      (click)="authService.logout()">Logout</button>
+      *ngIf="authService.me.isLoggedIn()"
+      (click)="authService.me.logout()">Logout</button>
 
     <router-outlet *ngIf="authService.hasEndpoints()"></router-outlet>
 
