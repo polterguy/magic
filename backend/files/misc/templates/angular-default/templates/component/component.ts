@@ -24,7 +24,9 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * Which columns we should display. Reorder to prioritize columns differently.
    * Notice! 'delete-instance' should always come last.
    */
-  public displayedColumns: string[] = [[[displayed-columns]]];
+  public displayedColumns: string[] = [
+    [[displayed-columns]]
+  ];
 
   // Need to view paginator as a child to update page index of it.
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
