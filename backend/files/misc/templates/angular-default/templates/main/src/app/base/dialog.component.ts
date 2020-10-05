@@ -96,6 +96,18 @@ export abstract class DialogComponent {
    */
   public upsert() {
 
+    // Sanity checking invocation, making sure user actually edited something.
+    if (this.changedValues.length === 0) {
+      this.snackBar.open(this.getData().isEdit ? 'No values were changed' : 'No record was created',
+        'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar'],
+      });
+      this.close(null);
+      return;
+    }
+
+    // Checking if this is edit invocation or create invocation.
     if (this.getData().isEdit) {
 
       for (const idx in this.getData().entity) {

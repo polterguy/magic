@@ -226,7 +226,8 @@ that doesn't have a PUT/update endpoint, still allowing for all other
 CRUD operations. Also significantly cleaned up the authorization logic,
 implementing component to component cross communication, using subscribers,
 such allowing for authenticating, and having the view update completely,
-without having to reload the page, etc.
+without having to reload the page, etc. This of course lends itself to
+having the end result subscribing to custom events.
 
 ## magic.endpoint
 

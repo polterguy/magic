@@ -8,8 +8,10 @@
     <button
       mat-button
       *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'post')"
-      class="top-right"
-      (click)="createEntity()">New ...</button>
+      class="new-button"
+      (click)="createEntity()">
+      <mat-icon>add_circle</mat-icon>
+    </button>
 
     <table
       mat-table

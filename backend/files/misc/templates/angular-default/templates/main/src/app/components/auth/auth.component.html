@@ -1,7 +1,9 @@
 
 <div class="auth-flex-grid">
 
-  <div class="mat-elevation-z4 auth-card users-card">
+  <div
+    *ngIf="service.me.isLoggedIn()"
+    class="mat-elevation-z4 auth-card users-card">
   
     <button
       mat-button
@@ -54,7 +56,9 @@
 
   </div>
 
-  <div class="mat-elevation-z4 auth-card roles-card">
+  <div
+    *ngIf="service.me.isLoggedIn()"
+    class="mat-elevation-z4 auth-card roles-card">
 
     <button
       mat-button

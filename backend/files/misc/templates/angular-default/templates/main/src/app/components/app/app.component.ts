@@ -72,6 +72,18 @@ export class AppComponent {
   }
 
   /**
+   * Logs current user out of system.
+   */
+  public logout() {
+
+    // Logging out user, and notifying subscribers that we've logged out the user.
+    this.authService.me.logout()
+    this.messages.sendMessage({
+      name: Messages.LOGGED_OUT,
+    });
+  }
+
+  /**
    * Invoked when side navigation menu should be showed.
    */
   public openSideNavigation() {
