@@ -34,11 +34,6 @@ export class HttpService {
 
     return {
 
-      /**
-       * Logs a debug entry.
-       * 
-       * @param content What to log
-       */
       debug: (content: string) => {
         this.httpClient.post<StatusResponse>(
           environment.apiUrl +
@@ -52,11 +47,6 @@ export class HttpService {
         });
       },
 
-      /**
-       * Logs an info entry.
-       * 
-       * @param content What to log
-       */
       info: (content: string) => {
         this.httpClient.post<StatusResponse>(
           environment.apiUrl +
@@ -70,11 +60,6 @@ export class HttpService {
         });
       },
 
-      /**
-       * Logs an error entry.
-       * 
-       * @param content What to log
-       */
       error: (content: string) => {
         this.httpClient.post<StatusResponse>(
           environment.apiUrl +
@@ -88,11 +73,6 @@ export class HttpService {
         });
       },
 
-      /**
-       * Logs a fatal entry.
-       * 
-       * @param content What to log
-       */
       fatal: (content: string) => {
         this.httpClient.post<StatusResponse>(
           environment.apiUrl +
@@ -109,8 +89,7 @@ export class HttpService {
   }
 
   /*
-   * HTTP REST methods your backend exposes,
-   * that was used to scaffold Angular frontend app.
+   * HTTP REST methods your backend exposes.
    * 
    * These parts is exposed such that each table returns an ICrudEntity
    * or an ICrdEntity, depending upon whether or not the endpoint group
