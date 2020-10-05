@@ -22,9 +22,11 @@ export class Edit[[component-name]] extends DialogComponent {
     protected snackBar: MatSnackBar,
     private service: HttpService) {
     super(snackBar);
-    this.createColumns = [[[create-input]]];
-    this.updateColumns = [[[update-input]]];
     this.primaryKeys = [[[primary-keys]]];
+    this.createColumns = [[[create-input]]
+    ];
+    this.updateColumns = [[[update-input]]
+    ];
   }
 
   /**
