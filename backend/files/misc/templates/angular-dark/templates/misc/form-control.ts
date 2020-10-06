@@ -1,0 +1,1 @@
+  public [[column-name]]: FormControl;

@@ -1,0 +1,36 @@
+
+<h1 mat-dialog-title>Edit {{this.data.username}}'s roles</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-select
+      [(ngModel)]="selectedValue"
+      placeholder="Add role to user"
+      (selectionChange)="addRole($event)">
+      <mat-option *ngFor="let cur of allRoles" [value]="cur">{{cur.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <ul class="user-roles">
+    <li *ngFor="let el of userRoles">
+      <button
+        matTooltip="Removes role from user"
+        class="remove-role"
+        (click)="deleteRoleFromUser(el.role)"
+        mat-raised-button>
+        <mat-icon matSuffix>remove</mat-icon>
+        {{el.role}}
+      </button>        
+    </li>
+  </ul>
+</div>
+
+<div mat-dialog-actions>
+
+  <div class="right-aligned">
+
+    <button
+      mat-button
+      (click)="close()">Close</button>
+
+  </div>
+
+</div>
