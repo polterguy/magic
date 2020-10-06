@@ -265,3 +265,11 @@ the exact same thing as its execute counterpart.
 
 Created convenience slot called **[io.path.get-folder]** that will return
 the folder name given some path.
+
+# Version 8.3.2
+
+## Magic (main)
+
+Added Dark Theme, which uses inverted colors, in addition to some other changes,
+such as having the default paging size being 25, and changing some of the buttons
+and the margins.
