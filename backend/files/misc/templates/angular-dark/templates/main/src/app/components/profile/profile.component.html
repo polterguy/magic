@@ -1,0 +1,32 @@
+
+<div
+  *ngIf="authService.me.isLoggedIn()"
+  class="profile-wrapper">
+  <div class="mat-elevation-z4 profile-sheet">
+
+    <h3>Change your password</h3>
+
+    <mat-form-field class="password">
+      <input
+        matInput
+        placeholder="Password"
+        type="password"
+        [(ngModel)]="password"
+        autocomplete="new-password">
+    </mat-form-field>
+
+    <mat-form-field class="password-repeat">
+      <input
+        matInput
+        placeholder="Repeat"
+        type="password"
+        [(ngModel)]="passwordRepeat"
+        autocomplete="new-password">
+    </mat-form-field>
+
+    <button
+      (click)="saveNewPassword()"
+      mat-button>Save</button>
+
+  </div>
+</div>
