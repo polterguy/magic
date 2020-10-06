@@ -1,6 +1,6 @@
 
 /*
- * Generates an Angular frontend for you wrapping the given [endpoints].
+ * Generates an Angular dark frontend for you wrapping the given [endpoints].
  * Frontend will contain one grid component for each CRUD method group supplied,
  * in addition to an edit/create modal dialogue, and an HTTP service endpoint
  * for each HTTP REST endpoint you supply.
@@ -16,7 +16,7 @@ CRUD endpoint method group in your backend endpoints."
 /*
  * Doing some logging.
  */
-log.info:Creating an Angular default frontend for you
+log.info:Creating an Angular dark frontend for you
 
 
 /*
