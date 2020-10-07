@@ -23,12 +23,12 @@ namespace magic.backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(Configuration);
-            services.AddMvc().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson();
 
             /*
              * Initializing Magic.
              *
-             * Notice, must be done AFTER you invoke "AddMvc".
+             * Notice, must be done AFTER you invoke "AddControllers".
              */
             services.AddMagic(Configuration, Configuration["magic:license"]);
         }
@@ -45,8 +45,7 @@ namespace magic.backend
             app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseAuthentication();
-            app.UseRouting();
-            app.UseEndpoints(conf => conf.MapControllers());
+            app.UseRouting().UseEndpoints(conf => conf.MapControllers());
 
             // Creating a log entry for having started application.
             try
