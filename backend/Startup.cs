@@ -34,7 +34,7 @@ namespace magic.backend
             services.AddMagic(Configuration, Configuration["magic:license"]);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             /*
              * Initializing Magic.
