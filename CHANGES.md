@@ -273,3 +273,9 @@ the folder name given some path.
 Added Dark Theme, which uses inverted colors, in addition to some other changes,
 such as having the default paging size being 25, and changing some of the buttons
 and the margins.
+
+# Version 8.3.3
+
+## magic.lambda.sheduler
+
+Simplified scheduler a bit, avoiding unnecessary arguments in constructor.
