@@ -279,3 +279,11 @@ and the margins.
 ## magic.lambda.sheduler
 
 Simplified scheduler a bit, avoiding unnecessary arguments in constructor.
+
+
+# Version 8.3.4
+
+## magic.http
+
+Much more resiliant, particularly in regards to DNS changes, due to relying upon `IHttpClientFactory`
+now instead of a static `HttpClient`.
