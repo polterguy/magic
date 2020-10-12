@@ -88,7 +88,7 @@
 
   <mat-checkbox
     *ngIf="selectedTable !== ''"
-    class="crudify-input"
+    class="crudify-input crudify-checkbox"
     matTooltip="Overwrite existing endpoints"
     [(ngModel)]="overwrite">Overwrite</mat-checkbox>
 
@@ -100,6 +100,15 @@
     [disabled]="moduleName === ''"
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
+
+  <button 
+    *ngIf="selectedTable !== '' && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
+    matTooltip="Generates CRUD endpoints for your currently selected table"
+    mat-raised-button
+    color="primary"
+    class="crudify-input crudify-button"
+    [disabled]="moduleUrl === '' || moduleName === '' || !hasSelectedEndpoints()"
+    (click)="crudifyTable()">Crudify selected table</button>
 
   <div
     *ngIf="verbsNotGenerated.length > 0"
@@ -517,17 +526,6 @@
 
     </div>
 
-  </div>
-
-  <div
-    *ngIf="selectedTable !== '' && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
-    class="right-align air-top">
-    <button 
-      matTooltip="Generates CRUD endpoints for your currently selected table"
-      mat-raised-button
-      color="primary"
-      [disabled]="moduleUrl === '' || moduleName === '' || !hasSelectedEndpoints()"
-      (click)="crudifyTable()">Crudify selected table</button>
   </div>
 
 </div>

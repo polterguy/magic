@@ -41,10 +41,12 @@
         width: 100%;
     }
     .crudify-button {
-        width: auto;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
+        width: 180px !important;
+        display: inline-block;
+    }
+    .crudify-checkbox {
+        width: 180px !important;
+        display: inline-block;
     }
 }
 
