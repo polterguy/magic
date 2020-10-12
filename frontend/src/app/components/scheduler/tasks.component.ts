@@ -125,7 +125,7 @@ export class TasksComponent implements OnInit {
       extraKeys: {
         'Shift-Tab': 'indentLess',
         Tab: 'indentMore',
-        'Alt-Space': 'autocomplete',
+        'Ctrl-Space': 'autocomplete',
         'Alt-M': (cm: any) => {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));
         },
