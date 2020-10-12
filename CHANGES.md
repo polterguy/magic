@@ -292,3 +292,7 @@ now instead of a static `HttpClient`.
 ## magic.data.common
 
 Clarified exception thrown as an unsupported **[join]** was supplied during **[sql.read]** invocations.
+
+## Magic (main)
+
+Chanmge AutoComplete keyboard shortcut to be CTRL+SPACE, since ALT+SPACE never seemed to work on Windows.
