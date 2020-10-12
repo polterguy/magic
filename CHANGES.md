@@ -286,3 +286,9 @@ Simplified scheduler a bit, avoiding unnecessary arguments in constructor.
 
 Much more resilient, particularly in regards to DNS changes, due to relying upon `IHttpClientFactory`
 now instead of a static `HttpClient`.
+
+# Version 8.3.5
+
+## magic.data.common
+
+Clarified exception thrown as an unsupported **[join]** was supplied during **[sql.read]** invocations.
