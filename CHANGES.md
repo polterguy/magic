@@ -295,4 +295,7 @@ Clarified exception thrown as an unsupported **[join]** was supplied during **[s
 
 ## Magic (main)
 
-Chanmge AutoComplete keyboard shortcut to be CTRL+SPACE, since ALT+SPACE never seemed to work on Windows.
+Changed AutoComplete keyboard shortcut to be CTRL+SPACE, since ALT+SPACE doesn't seem to work on Windows.
+Upgraded Angular components, such as material, cli, etc to their latest versions.
+
+Minor improvements in UI of Dashboard.

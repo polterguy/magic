@@ -2,15 +2,23 @@
 
 .endpoint-wrapper {
     padding:2rem 5rem 2rem 5rem;
+    .generate-args {
+        .app-name {
+            margin-right: 2rem;
+            width: 10rem;
+        }
+        .generate-template {
+            margin-right: 2rem;
+        }
+        .generate-copyright {
+            margin-right: 2rem;
+            width: 20rem;
+        }
+    }
     .endpoints {
         margin-top: 2rem;
         padding: 5rem;
         position: relative;
-        .show-endpoints-button {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-        }
         .show-system-endpoints-button {
             position: absolute;
             top: 2rem;
@@ -108,20 +116,6 @@
         .right-aligned {
             text-align: right;
             margin-top: 2rem;
-        }
-        .generate-args {
-            margin-top: 5rem;
-            .app-name {
-                margin-right: 2rem;
-                width: 10rem;
-            }
-            .generate-template {
-                margin-right: 2rem;
-            }
-            .generate-copyright {
-                margin-right: 2rem;
-                width: 20rem;
-            }
         }
     }
 }

@@ -101,447 +101,423 @@
     class="crudify-input crudify-button"
     (click)="crudifyAllTables()">Crudify all</button>
 
-  <mat-card 
+  <div
     *ngIf="verbsNotGenerated.length > 0"
-    class="log-card">
+    class="mat-elevation-z4 log-card">
 
     <button
       mat-button
       class="close-log"
       (click)="closeLog()">Close</button>
 
-    <div class="wrapper">
+    <h3>Log</h3>
 
-      <h3>Log</h3>
+    <p>
+      Tables you might want to have a closer look at, due to not all verbs was generated for table.
+    </p>
 
-      <p>
-        Tables you might want to have a closer look at, due to not all verbs was generated for table.
-      </p>
+    <ul>
+      <li *ngFor="let el of verbsNotGenerated" [class]="getLogItemClass(el.name)">
+        <button mat-button (click)="selectTable(el.name)">Edit</button> {{el.name}}
+      </li>
+    </ul>
 
-      <ul>
-        <li *ngFor="let el of verbsNotGenerated" [class]="getLogItemClass(el.name)">
-          <button mat-button (click)="selectTable(el.name)">Edit</button> {{el.name}}
-        </li>
-      </ul>
+    <p>
+      Tables you might want to have a closer look at, due to that they contains automatic columns,
+      not transmitted to your endpoints during POST or PUT invocations.
+    </p>
 
-      <p>
-        Tables you might want to have a closer look at, due to that they contains automatic columns,
-        not transmitted to your endpoints during POST or PUT invocations.
-      </p>
+    <ul>
+      <li *ngFor="let el of columnsNotEditable" [class]="getLogItemClass(el.name)">
+        <button mat-button (click)="selectTable(el.name)">Edit</button> {{el.name}}
+      </li>
+    </ul>
 
-      <ul>
-        <li *ngFor="let el of columnsNotEditable" [class]="getLogItemClass(el.name)">
-          <button mat-button (click)="selectTable(el.name)">Edit</button> {{el.name}}
-        </li>
-      </ul>
-  
-    </div>
+  </div>
 
-  </mat-card>
-
-  <mat-card 
+  <div 
     *ngIf="selectedTable === '' || selectedTable === 'All tables'"
-    class="info-card">
+    class="mat-elevation-z4 info-card">
 
-    <div class="wrapper">
+    <h3>Welcome to the crudifier</h3>
 
-      <h3>Welcome to the crudifier</h3>
+    <p>
+      This is where you 'CRUDify' your database. To crudify a database implies wrapping it into
+      HTTP REST API endpoints, one endpoint for each CRUD operation. The possible CRUD operations are as follows.
+    </p>
 
-      <p>
-        This is where you 'CRUDify' your database. To crudify a database implies wrapping it into
-        HTTP REST API endpoints, one endpoint for each CRUD operation. The possible CRUD operations are as follows.
-      </p>
+    <ul>
+      <li><strong>Create</strong> - POST HTTP verb</li>
+      <li><strong>Read</strong> - GET HTTP verb</li>
+      <li><strong>Update</strong> - PUT HTTP verb</li>
+      <li><strong>Delete</strong> - DELETE HTTP verb</li>
+    </ul>
 
-      <ul>
-        <li><strong>Create</strong> - POST HTTP verb</li>
-        <li><strong>Read</strong> - GET HTTP verb</li>
-        <li><strong>Update</strong> - PUT HTTP verb</li>
-        <li><strong>Delete</strong> - DELETE HTTP verb</li>
-      </ul>
+    <p>
+      <strong>TL;TR</strong> - Choose database type, select your database, select <em>'All tables'</em>, click <em>'Crudify all'</em>
+      and go to your <em>'Endpoints'</em> menu item to generate your Angular frontend.
+    </p>
 
-      <p>
-        <strong>TL;TR</strong> - Choose database type, select your database, select <em>'All tables'</em>, click <em>'Crudify all'</em>
-        and go to your <em>'Endpoints'</em> menu item to generate your Angular frontend.
-      </p>
+    <p>
+      You can choose each table you want to crudify, or you can crudify all tables at the same time. You
+      can also associate authorization towards one or more of your CRUD operations, in addition to a lot
+      of other settings. If you want more control over how your CRUD operations are
+      generated on the server-side, you might want to crudify one table at the time though.
+      However, the default settings applied as you choose 'All tables' will probably
+      be good enough for most scenarios.
+      The Magic crudifier will also create a <em>"count"</em> CRUD endpoint, in addition to the above
+      endpoints. When the crudifier is done, you can invoke your HTTP REST endpoints from your <em>"Endpoints"</em>,
+      menu item, and pass in for instance query parameters to page, filter, sort, and such during read operations.
+      You can also generate a complete Angular frontend from the Endpoints menu item.
+    </p>
 
-      <p>
-        You can choose each table you want to crudify, or you can crudify all tables at the same time. You
-        can also associate authorization towards one or more of your CRUD operations, in addition to a lot
-        of other settings. If you want more control over how your CRUD operations are
-        generated on the server-side, you might want to crudify one table at the time though.
-        However, the default settings applied as you choose 'All tables' will probably
-        be good enough for most scenarios.
-        The Magic crudifier will also create a <em>"count"</em> CRUD endpoint, in addition to the above
-        endpoints. When the crudifier is done, you can invoke your HTTP REST endpoints from your <em>"Endpoints"</em>,
-        menu item, and pass in for instance query parameters to page, filter, sort, and such during read operations.
-        You can also generate a complete Angular frontend from the Endpoints menu item.
-      </p>
+    <p>
+      <em>Details</em> - Your <strong>GET</strong> endpoints will by default return all columns your table contains, while
+      your <strong>DELETE</strong> endpoint will by default require all primary key fields as its input. Your <strong>PUT</strong>
+      endpoints does not allow for changing the primary keys associated with your records, but only takes primary keys as input
+      in order to uniquely identify which record to actually update. Your <strong>POST</strong> endpoints
+      doesn't even accept primary keys by default, as long as these fields have an <em>"automatic"</em> value, and only if your
+      primary keys does <em>not</em> have an automatic value, you will be allowed to by default invoke it with a primary key.
+      In addition, non-primary key columns with an <em>"automatic"</em> (default) value, will not have these columns by default
+      as input to your <strong>POST</strong> or <strong>PUT</strong> endpoints.
+    </p>
 
-      <p>
-        <em>Details</em> - Your <strong>GET</strong> endpoints will by default return all columns your table contains, while
-        your <strong>DELETE</strong> endpoint will by default require all primary key fields as its input. Your <strong>PUT</strong>
-        endpoints does not allow for changing the primary keys associated with your records, but only takes primary keys as input
-        in order to uniquely identify which record to actually update. Your <strong>POST</strong> endpoints
-        doesn't even accept primary keys by default, as long as these fields have an <em>"automatic"</em> value, and only if your
-        primary keys does <em>not</em> have an automatic value, you will be allowed to by default invoke it with a primary key.
-        In addition, non-primary key columns with an <em>"automatic"</em> (default) value, will not have these columns by default
-        as input to your <strong>POST</strong> or <strong>PUT</strong> endpoints.
-      </p>
+    <p>
+      Most of these settings can be overridden though, and you can have almost complete control over how your endpoints ends
+      up looking, if you choose to crudify one table at the time.
+    </p>
 
-      <p>
-        Most of these settings can be overridden though, and you can have almost complete control over how your endpoints ends
-        up looking, if you choose to crudify one table at the time.
-      </p>
+  </div>
 
-    </div>
-
-  </mat-card>
-
-  <mat-card 
+  <div
     *ngIf="selectedTable === 'Custom SQL'"
-    class="custom-sql-card">
+    class="mat-elevation-z4 custom-sql-card">
 
-    <div class="code-mirror-wrapper">
+    <mat-form-field
+      style="margin-right: 2rem;">
+      <mat-select
+        placeholder="Select verb"
+        [(ngModel)]="customSqlEndpointVerb">
+        <mat-option
+          *ngFor="let cur of verbs"
+          [value]="cur.verb">{{cur.verb}}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-      <mat-form-field
-        style="margin-right: 2rem;">
-        <mat-select
-          placeholder="Select verb"
-          [(ngModel)]="customSqlEndpointVerb">
-          <mat-option
-            *ngFor="let cur of verbs"
-            [value]="cur.verb">{{cur.verb}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      
+    <mat-form-field
+      style="margin-right: 2rem;">
+      <input 
+        matInput 
+        placeholder="Endpoint name"
+        type="text" 
+        autocomplete="off"
+        [(ngModel)]="customSqlEndpointName">
+    </mat-form-field>
 
-      <mat-form-field
-        style="margin-right: 2rem;">
-        <input 
-          matInput 
-          placeholder="Endpoint name"
-          type="text" 
-          autocomplete="off"
-          [(ngModel)]="customSqlEndpointName">
-      </mat-form-field>
+    <mat-form-field
+      style="margin-right: 2rem;">
+      <input 
+        matInput 
+        placeholder="Authorization"
+        type="text" 
+        autocomplete="off"
+        [(ngModel)]="customSqlAuthorization">
+    </mat-form-field>
 
-      <mat-form-field
-        style="margin-right: 2rem;">
-        <input 
-          matInput 
-          placeholder="Authorization"
-          type="text" 
-          autocomplete="off"
-          [(ngModel)]="customSqlAuthorization">
-      </mat-form-field>
+    <mat-checkbox
+      *ngIf="customSqlEndpointVerb === 'get' && customSqlArguments === ''"
+      matTooltip="A statistics type of endpoint will allow you to generate a chart during frontend scaffolding"
+      [(ngModel)]="isStatistics">Is statistics</mat-checkbox>
 
-      <mat-checkbox
-        *ngIf="customSqlEndpointVerb === 'get' && customSqlArguments === ''"
-        matTooltip="A statistics type of endpoint will allow you to generate a chart during frontend scaffolding"
-        [(ngModel)]="isStatistics">Is statistics</mat-checkbox>
+    <p *ngIf="isStatistics && customSqlEndpointVerb === 'get' && customSqlArguments === ''">
+      Must return a label/value type of result, such as for instance <code>select name as label, count(*) as value from sales group by name</code>,
+      and cannot take parameters.
+    </p>
 
-      <p *ngIf="isStatistics && customSqlEndpointVerb === 'get' && customSqlArguments === ''">
-        Must return a label/value type of result, such as for instance <code>select name as label, count(*) as value from sales group by name</code>,
-        and cannot take parameters.
-      </p>
-
-      <div class="air">
-        <label class="fat-label">Arguments</label>
-        <ngx-codemirror 
-          [(ngModel)]="customSqlArguments" 
-          class="smaller"
-          [options]="getCodeMirrorOptionsHyperlambda()"></ngx-codemirror>
-      </div>
-
-      <label class="fat-label">SQL</label>
+    <div class="air">
+      <label class="fat-label">Arguments</label>
       <ngx-codemirror 
-        [(ngModel)]="customSql" 
+        [(ngModel)]="customSqlArguments" 
         class="smaller"
-        [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
-
-      <div class="right-align top-spacing">
-        <button 
-          matTooltip="Creates your endpoint"
-          mat-raised-button
-          color="primary"
-          (click)="generateSqlEndpoint()">Create</button>
-      </div>
+        [options]="getCodeMirrorOptionsHyperlambda()"></ngx-codemirror>
     </div>
 
-  </mat-card>
+    <label class="fat-label">SQL</label>
+    <ngx-codemirror 
+      [(ngModel)]="customSql" 
+      class="smaller"
+      [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
 
-  <mat-card 
+    <div class="right-align top-spacing">
+      <button 
+        matTooltip="Creates your endpoint"
+        mat-raised-button
+        color="primary"
+        (click)="generateSqlEndpoint()">Create</button>
+    </div>
+
+  </div>
+
+  <div
     *ngIf="columns.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
-    class="columns-card">
+    class="mat-elevation-z4 columns-card">
 
-    <div class="wrapper">
+    <h3>Columns in table</h3>
 
-      <h3>Columns in table</h3>
+    <p>
+      These are all columns in your currently selected table, and the meta information associated with
+      each column. You can turn on/off whether or not each column should be associated with some specific
+      CRUD operation. For instance, if you don't want to allow for changing a specific column after a
+      record has been created, you can turn it off for the 'Update' operation by turning off the checkbox
+      in the 'Update' column for that endpoint, etc.
+      For the 'Delete' and 'Update' operation, each column you select which is a primary key type,
+      will become the condition for which column to delete/update. You normally want to make sure every
+      column that is a primary key is <strong>always associated with your delete and update operations</strong> -
+      Otherwise multiple records might be updated/deleted when you only intend to update/delete one record.
+    </p>
 
-      <p>
-        These are all columns in your currently selected table, and the meta information associated with
-        each column. You can turn on/off whether or not each column should be associated with some specific
-        CRUD operation. For instance, if you don't want to allow for changing a specific column after a
-        record has been created, you can turn it off for the 'Update' operation by turning off the checkbox
-        in the 'Update' column for that endpoint, etc.
-        For the 'Delete' and 'Update' operation, each column you select which is a primary key type,
-        will become the condition for which column to delete/update. You normally want to make sure every
-        column that is a primary key is <strong>always associated with your delete and update operations</strong> -
-        Otherwise multiple records might be updated/deleted when you only intend to update/delete one record.
-      </p>
+    <table
+      mat-table
+      class="columns"
+      [dataSource]="columns">
+      <caption>What columns to crudify for what CRUD endpoint</caption>
 
-      <table
-        mat-table
-        class="columns"
-        [dataSource]="columns">
-        <caption>What columns to crudify for what CRUD endpoint</caption>
+      <ng-container matColumnDef="field">
+        <th mat-header-cell *matHeaderCellDef scope="col">Name</th>
+        <td mat-cell *matCellDef="let el">{{el.name}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="field">
-          <th mat-header-cell *matHeaderCellDef scope="col">Name</th>
-          <td mat-cell *matCellDef="let el">{{el.name}}</td>
-        </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef scope="col">Type</th>
+        <td mat-cell *matCellDef="let el">{{el.hl}} / {{el.db}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef scope="col">Type</th>
-          <td mat-cell *matCellDef="let el">{{el.hl}} / {{el.db}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="nullable">
-          <th mat-header-cell *matHeaderCellDef scope="col">Nullable</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-icon
-              *ngIf="el.nullable"
-              matTooltip="This column can be supplied a 'null' value"
-              matSuffix>done</mat-icon>
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="primary">
-          <th mat-header-cell *matHeaderCellDef scope="col">Primary key</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-icon
-              *ngIf="el.primary"
-              matTooltip="This is a part of your table's primary key"
-              matSuffix>done</mat-icon>
+      <ng-container matColumnDef="nullable">
+        <th mat-header-cell *matHeaderCellDef scope="col">Nullable</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-icon
+            *ngIf="el.nullable"
+            matTooltip="This column can be supplied a 'null' value"
+            matSuffix>done</mat-icon>
           </td>
-        </ng-container>
+      </ng-container>
 
-        <ng-container matColumnDef="automatic">
-          <th mat-header-cell *matHeaderCellDef scope="col">Automatic</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-icon
-              *ngIf="el.automatic"
-              matTooltip="This column has a default value in your database"
-              matSuffix>done</mat-icon>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="primary">
+        <th mat-header-cell *matHeaderCellDef scope="col">Primary key</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-icon
+            *ngIf="el.primary"
+            matTooltip="This is a part of your table's primary key"
+            matSuffix>done</mat-icon>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="post">
-          <th mat-header-cell *matHeaderCellDef scope="col">Create</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-checkbox
-              [disabled]="isVerbDisabled('post')"
-              [(ngModel)]="el.post"></mat-checkbox>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="automatic">
+        <th mat-header-cell *matHeaderCellDef scope="col">Automatic</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-icon
+            *ngIf="el.automatic"
+            matTooltip="This column has a default value in your database"
+            matSuffix>done</mat-icon>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="get">
-          <th mat-header-cell *matHeaderCellDef scope="col">Read</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-checkbox
-              [disabled]="isVerbDisabled('get')"
-              [(ngModel)]="el.get"></mat-checkbox>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="post">
+        <th mat-header-cell *matHeaderCellDef scope="col">Create</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-checkbox
+            [disabled]="isVerbDisabled('post')"
+            [(ngModel)]="el.post"></mat-checkbox>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="put">
-          <th mat-header-cell *matHeaderCellDef scope="col">Update</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-checkbox
-              [disabled]="isVerbDisabled('put')"
-              [(ngModel)]="el.put"></mat-checkbox>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="get">
+        <th mat-header-cell *matHeaderCellDef scope="col">Read</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-checkbox
+            [disabled]="isVerbDisabled('get')"
+            [(ngModel)]="el.get"></mat-checkbox>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-checkbox
-              [disabled]="isVerbDisabled('delete')"
-              [(ngModel)]="el.delete"></mat-checkbox>
-          </td>
-        </ng-container>
-  
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getColumnCssClass(row)"></tr>
+      <ng-container matColumnDef="put">
+        <th mat-header-cell *matHeaderCellDef scope="col">Update</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-checkbox
+            [disabled]="isVerbDisabled('put')"
+            [(ngModel)]="el.put"></mat-checkbox>
+        </td>
+      </ng-container>
 
-      </table>
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-checkbox
+            [disabled]="isVerbDisabled('delete')"
+            [(ngModel)]="el.delete"></mat-checkbox>
+        </td>
+      </ng-container>
 
-    </div>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getColumnCssClass(row)"></tr>
 
-  </mat-card>
+    </table>
 
-  <mat-card 
+  </div>
+
+  <div
     *ngIf="endpoints.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
-    class="endpoints-card">
+    class="mat-elevation-z4 endpoints-card">
 
-    <div class="wrapper">
+    <h3>Endpoints to generate</h3>
 
-        <h3>Endpoints to generate</h3>
+    <p>
+      This parts allows you to configure which CRUD operations you want to generate, and what special
+      logic you want to associate with a specific operation. You can for instance have different
+      'Authorization' for your read operations and delete operations, to prevent most normal users to
+      delete records, requiring users to belong to for instance an 'admin' role in order to be allowed
+      to invoke your delete operations, etc. You can also associate a log entry with each endpoint,
+      which probably makes sense for most operations, to log when data is changed.
+    </p>
 
-        <p>
-          This parts allows you to configure which CRUD operations you want to generate, and what special
-          logic you want to associate with a specific operation. You can for instance have different
-          'Authorization' for your read operations and delete operations, to prevent most normal users to
-          delete records, requiring users to belong to for instance an 'admin' role in order to be allowed
-          to invoke your delete operations, etc. You can also associate a log entry with each endpoint,
-          which probably makes sense for most operations, to log when data is changed.
-        </p>
+    <table
+      mat-table
+      class="endpoints"
+      [dataSource]="endpoints">
+      <caption>Configure your specific CRUD endpoints</caption>
 
-        <table
-          mat-table
-          class="endpoints"
-          [dataSource]="endpoints">
-          <caption>Configure your specific CRUD endpoints</caption>
+      <ng-container matColumnDef="generate">
+        <th mat-header-cell *matHeaderCellDef scope="col">Generate</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-checkbox [(ngModel)]="el.generate"></mat-checkbox>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="generate">
-          <th mat-header-cell *matHeaderCellDef scope="col">Generate</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-checkbox [(ngModel)]="el.generate"></mat-checkbox>
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="endpoint">
+        <th mat-header-cell *matHeaderCellDef scope="col">Endpoint URL</th>
+        <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').replace(' ', '_').toLowerCase()}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="endpoint">
-          <th mat-header-cell *matHeaderCellDef scope="col">Endpoint URL</th>
-          <td mat-cell *matCellDef="let el">{{el.endpoint.replace('.', '/').replace(' ', '_').toLowerCase()}}</td>
-        </ng-container>
+      <ng-container matColumnDef="verb">
+        <th mat-header-cell *matHeaderCellDef scope="col">Verb</th>
+        <td mat-cell *matCellDef="let el">{{el.verb}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="verb">
-          <th mat-header-cell *matHeaderCellDef scope="col">Verb</th>
-          <td mat-cell *matCellDef="let el">{{el.verb}}</td>
-        </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef scope="col">Action</th>
+        <td mat-cell *matCellDef="let el">{{el.action}}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef scope="col">Action</th>
-          <td mat-cell *matCellDef="let el">{{el.action}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="log">
-          <th mat-header-cell *matHeaderCellDef scope="col">Log entry</th>
-          <td mat-cell *matCellDef="let el" style="padding-right: 1rem;">
-            <mat-form-field class="fill-width">
-                <input 
-                  [disabled]="el.generate === false"
-                  matInput 
-                  autocomplete="off"
-                  type="text" 
-                  [(ngModel)]="el.log">
-              </mat-form-field>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="auth">
-          <th mat-header-cell *matHeaderCellDef scope="col">Authorization</th>
-          <td mat-cell *matCellDef="let el">
-            <mat-form-field class="fill-width">
-                <input 
+      <ng-container matColumnDef="log">
+        <th mat-header-cell *matHeaderCellDef scope="col">Log entry</th>
+        <td mat-cell *matCellDef="let el" style="padding-right: 1rem;">
+          <mat-form-field class="fill-width">
+              <input 
                 [disabled]="el.generate === false"
                 matInput 
-                  autocomplete="off"
-                  type="text" 
-                  [(ngModel)]="el.auth">
-              </mat-form-field>
+                autocomplete="off"
+                type="text" 
+                [(ngModel)]="el.log">
+            </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="auth">
+        <th mat-header-cell *matHeaderCellDef scope="col">Authorization</th>
+        <td mat-cell *matCellDef="let el">
+          <mat-form-field class="fill-width">
+              <input 
+              [disabled]="el.generate === false"
+              matInput 
+                autocomplete="off"
+                type="text" 
+                [(ngModel)]="el.auth">
+            </mat-form-field>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsEndpoints"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsEndpoints;"></tr>
+
+    </table>
+
+  </div>
+
+  <div
+    *ngIf="endpoints.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables' && (showTransformers() || showCache())"
+    class="mat-elevation-z4 misc-card">
+
+    <div *ngIf="showCache()">
+
+      <h3>Caching</h3>
+
+      <p>
+        This allows you to cache your read/GET operations, by informing the client that it can cache the result
+        according to the query parameters, for a specific amount of seconds. This might be highly useful for
+        tables that rarely or never changes, such as lookup tables, and similar types of constructs.
+        If you turn on public cache, you also allow proxies to cache your read operations.
+      </p>
+
+      <mat-form-field class="misc-input">
+        <input 
+          matInput 
+          autocomplete="off"
+          type="number" 
+          min="0"
+          step="1"
+          placeholder="Caching (number of seconds to cache GET)"
+          [(ngModel)]="caching">
+      </mat-form-field>
+      <mat-checkbox
+        style="margin-left: 2rem;"
+        [(ngModel)]="publicCache">Public cache</mat-checkbox>
+
+    </div>
+
+    <div *ngIf="showTransformers()">
+
+      <h3>Validators, transformers and injectables</h3>
+
+      <p>
+        This section allows you to declare input reactors for your create and update invocations. An input
+        reactor can be a validator, enforcing some column to conform to some specific server-side validation
+        function, or it can be a transformer, that changes the specified input before it is saved, etc. Passwords
+        for instance, should as a general rule not be saved in clear text. By associating a transformer that hashes
+        your password before actually saving it to your database, you can secure your passwords, preventing
+        malicious users from reading it, in case they should somehow acquire access to your database.
+      </p>
+
+      <table mat-table class="validator-table" [dataSource]="validators">
+        <caption>Input reactors for your columns</caption>
+
+        <ng-container matColumnDef="field">
+          <th mat-header-cell *matHeaderCellDef scope="col">Field</th>
+          <td mat-cell *matCellDef="let el">{{el.field}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="validator">
+          <th mat-header-cell *matHeaderCellDef scope="col">Input reactors</th>
+          <td mat-cell *matCellDef="let el">
+            <ngx-codemirror
+              [(ngModel)]="el.validator" 
+              class="reactor"
+              [options]="getCodeMirrorOptionsValidators()"></ngx-codemirror>
+            <div style="text-align: right;">
+              <button
+                mat-button
+                (click)="addValidator(el)">Add</button>
+              </div>
           </td>
         </ng-container>
-    
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsEndpoints"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumnsEndpoints;"></tr>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsValidators"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsValidators;"></tr>
 
       </table>
 
     </div>
 
-  </mat-card>
-
-  <mat-card 
-    *ngIf="endpoints.length > 0 && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables' && (showTransformers() || showCache())"
-    class="misc-card">
-
-    <div class="wrapper">
-
-      <div *ngIf="showCache()">
-
-        <h3>Caching</h3>
-
-        <p>
-          This allows you to cache your read/GET operations, by informing the client that it can cache the result
-          according to the query parameters, for a specific amount of seconds. This might be highly useful for
-          tables that rarely or never changes, such as lookup tables, and similar types of constructs.
-          If you turn on public cache, you also allow proxies to cache your read operations.
-        </p>
-
-        <mat-form-field class="misc-input">
-          <input 
-            matInput 
-            autocomplete="off"
-            type="number" 
-            min="0"
-            step="1"
-            placeholder="Caching (number of seconds to cache GET)"
-            [(ngModel)]="caching">
-        </mat-form-field>
-        <mat-checkbox
-          style="margin-left: 2rem;"
-          [(ngModel)]="publicCache">Public cache</mat-checkbox>
-
-      </div>
-
-      <div *ngIf="showTransformers()">
-
-        <h3>Validators, transformers and injectables</h3>
-
-        <p>
-          This section allows you to declare input reactors for your create and update invocations. An input
-          reactor can be a validator, enforcing some column to conform to some specific server-side validation
-          function, or it can be a transformer, that changes the specified input before it is saved, etc. Passwords
-          for instance, should as a general rule not be saved in clear text. By associating a transformer that hashes
-          your password before actually saving it to your database, you can secure your passwords, preventing
-          malicious users from reading it, in case they should somehow acquire access to your database.
-        </p>
-
-        <table mat-table class="validator-table" [dataSource]="validators">
-          <caption>Input reactors for your columns</caption>
-
-          <ng-container matColumnDef="field">
-            <th mat-header-cell *matHeaderCellDef scope="col">Field</th>
-            <td mat-cell *matCellDef="let el">{{el.field}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="validator">
-            <th mat-header-cell *matHeaderCellDef scope="col">Input reactors</th>
-            <td mat-cell *matCellDef="let el">
-              <ngx-codemirror
-                [(ngModel)]="el.validator" 
-                class="reactor"
-                [options]="getCodeMirrorOptionsValidators()"></ngx-codemirror>
-              <div style="text-align: right;">
-                <button
-                  mat-button
-                  (click)="addValidator(el)">Add</button>
-                </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsValidators"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumnsValidators;"></tr>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  </mat-card>
+  </div>
 
   <div
     *ngIf="selectedTable !== '' && selectedTable !== 'Custom SQL' && selectedTable !== 'All tables'"
