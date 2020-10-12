@@ -13,17 +13,51 @@
 
 <div class="endpoint-wrapper">
 
+  <div class="generate-args">
+
+    <mat-form-field
+      class="app-name">
+      <input 
+        matInput 
+        autocomplete="off"
+        placeholder="Name of your app"
+        type="text" 
+        [(ngModel)]="name">
+    </mat-form-field>
+
+    <mat-form-field
+      class="generate-template">
+      <mat-select
+        placeholder="Select template"
+        (selectionChange)="templateChanged($event)">
+        <mat-option
+          *ngFor="let cur of templates"
+          [value]="cur">{{cur}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      class="generate-copyright">
+      <input
+        matInput
+        autocomplete="off"
+        placeholder="File comment header for your app"
+        type="text"
+        [(ngModel)]="copyright">
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      [disabled]="selectedTemplate === '' || name === ''"
+      color="primary"
+      matTooltip="Generates the selected endpoints by applying them to your selected template"
+      (click)="generateFrontEnd()">Generate</button>
+
+  </div>
+
   <div class="mat-elevation-z4 endpoints">
 
     <mat-slide-toggle
-      [(ngModel)]="showEndpoints"
-      matTooltip="Click this slider to display your endpoints"
-      class="show-endpoints-button">
-      Show endpoints
-    </mat-slide-toggle>
-
-    <mat-slide-toggle
-      *ngIf="showEndpoints"
       [(ngModel)]="showSystemEndpoints"
       matTooltip="Click this slider to show system/protected root endpoints"
       class="show-system-endpoints-button">
@@ -31,7 +65,6 @@
     </mat-slide-toggle>
 
     <mat-form-field
-      *ngIf="showEndpoints"
       class="fill-width">
       <input 
         matInput 
@@ -42,7 +75,6 @@
     </mat-form-field>
 
     <table
-      *ngIf="showEndpoints"
       mat-table
       multiTemplateDataRows
       [dataSource]="getFilteredEndpoints()">
@@ -171,50 +203,6 @@
         *matRowDef="let row; columns: displayedSecondRowColumns; "></tr>
 
     </table>
-
-    <div
-      *ngIf="hasSelectedEndpoints()"
-      class="generate-args">
-
-      <mat-form-field
-        class="app-name">
-        <input 
-          matInput 
-          autocomplete="off"
-          placeholder="Name of your app"
-          type="text" 
-          [(ngModel)]="name">
-      </mat-form-field>
-
-      <mat-form-field
-        class="generate-template">
-        <mat-select
-          placeholder="Select template"
-          (selectionChange)="templateChanged($event)">
-          <mat-option
-            *ngFor="let cur of templates"
-            [value]="cur">{{cur}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field
-        class="generate-copyright">
-        <input
-          matInput
-          autocomplete="off"
-          placeholder="File comment header for your app"
-          type="text"
-          [(ngModel)]="copyright">
-      </mat-form-field>
-
-      <button
-        mat-raised-button
-        [disabled]="selectedTemplate === '' || name === ''"
-        color="primary"
-        matTooltip="Generates the selected endpoints by applying them to your selected template"
-        (click)="generateFrontEnd()">Generate</button>
-
-    </div>
 
     <div
       *ngIf="hasSelectedEndpoints()"

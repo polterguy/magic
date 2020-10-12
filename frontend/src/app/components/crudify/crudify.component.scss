@@ -60,21 +60,18 @@
 
 .info-card {
     margin-top: 2rem;
-    .wrapper {
-        margin: 2rem 3.5rem 4rem 3.5rem;
-    }
+    padding: 2rem 3.5rem 4rem 3.5rem;
+    text-align: justify;
 }
 
 .log-card {
     margin-top: 2rem;
     background-color: rgb(255,255,200);
     position: relative;
-    .wrapper {
-        margin: 2rem 3.5rem 4rem 3.5rem;
-        ul {
-            li.selected-log-item {
-                font-weight: bold;
-            }
+    padding: 2rem 3.5rem 4rem 3.5rem;
+    ul {
+        li.selected-log-item {
+            font-weight: bold;
         }
     }
     .close-log {
@@ -86,36 +83,34 @@
 
 .columns-card {
     margin-top: 2rem;
-    .wrapper {
-        margin: 2rem 1rem 4rem 1rem;
-        .columns {
-            width: 100%;
-            margin-top: 2rem;
-            tr {
-                td, th {
-                    width: 25%;
-                }
-                td:nth-child(3), th:nth-child(3),
-                td:nth-child(4), th:nth-child(4),
-                td:nth-child(5), th:nth-child(5) {
-                    width: 10%;
-                }
-                td:nth-child(6), th:nth-child(6),
-                td:nth-child(7), th:nth-child(7),
-                td:nth-child(8), th:nth-child(8),
-                td:nth-child(9), th:nth-child(9) {
-                    width: 5%;
-                }
+    padding: 2rem 3.5rem 4rem 3.5rem;
+    .columns {
+        width: 100%;
+        margin-top: 2rem;
+        tr {
+            td, th {
+                width: 25%;
             }
-            tr.mat-row:hover {
-                background-color: rgba(0,0,0,.1);
+            td:nth-child(3), th:nth-child(3),
+            td:nth-child(4), th:nth-child(4),
+            td:nth-child(5), th:nth-child(5) {
+                width: 10%;
             }
-            tr.warning-column {
-                background-color: rgb(255,240,220);
+            td:nth-child(6), th:nth-child(6),
+            td:nth-child(7), th:nth-child(7),
+            td:nth-child(8), th:nth-child(8),
+            td:nth-child(9), th:nth-child(9) {
+                width: 5%;
             }
-            tr.fixed {
-                background-color: rgb(240,255,220);
-            }
+        }
+        tr.mat-row:hover {
+            background-color: rgba(0,0,0,.1);
+        }
+        tr.warning-column {
+            background-color: rgb(255,240,220);
+        }
+        tr.fixed {
+            background-color: rgb(240,255,220);
         }
     }
 }
@@ -123,14 +118,13 @@
 @media screen and (min-width: 840px) {
     .columns-card {
         margin-top: 2rem;
-        .wrapper {
-            margin: 2rem 3rem 4rem 3rem;
-        }
+        padding: 2rem 3.5rem 4rem 3.5rem;
     }
 }
 
 .custom-sql-card {
     margin-top: 2rem;
+    padding: 2rem 3.5rem 4rem 3.5rem;
     .code-mirror-wrapper {
         margin: 3rem;
     }
@@ -141,23 +135,21 @@
 
 .endpoints-card {
     margin-top: 4rem;
-    .wrapper {
-        margin: 2rem 1rem 2rem 1rem;
-        .endpoints {
-            background: transparent;
-            width: 100%;
-            margin-top: 2rem;
-            tr {
-                td, th {
-                    width: 15%;
-                }
-                td:nth-child(2), th:nth-child(2) {
-                    width: 35%;
-                }
+    padding: 2rem 3.5rem 4rem 3.5rem;
+    .endpoints {
+        background: transparent;
+        width: 100%;
+        margin-top: 2rem;
+        tr {
+            td, th {
+                width: 15%;
             }
-            tr.mat-row:hover {
-                background-color: rgba(0,0,0,.1);
+            td:nth-child(2), th:nth-child(2) {
+                width: 35%;
             }
+        }
+        tr.mat-row:hover {
+            background-color: rgba(0,0,0,.1);
         }
     }
 }
@@ -165,31 +157,27 @@
 @media screen and (min-width: 840px) {
     .endpoints-card {
         margin-top: 4rem;
-        .wrapper {
-            margin: 2rem 3rem 2rem 3rem;
-        }
+        padding: 2rem 3.5rem 4rem 3.5rem;
     }
 }
 
 .misc-card {
     margin-top: 4rem;
-    .wrapper {
-        margin: 2rem 3rem 2rem 3rem;
-        .validator-table {
-            background: transparent;
-            width: 100%;
-            tr {
-                td, th {
-                    width: 15%;
-                }
-                td {
-                    vertical-align: top;
-                    padding-top: 2rem;
-                    padding-bottom: 1rem;
-                }
-                td:nth-child(2), th:nth-child(2) {
-                    width: 75%;
-                }
+    padding: 2rem 3.5rem 4rem 3.5rem;
+    .validator-table {
+        background: transparent;
+        width: 100%;
+        tr {
+            td, th {
+                width: 15%;
+            }
+            td {
+                vertical-align: top;
+                padding-top: 2rem;
+                padding-bottom: 1rem;
+            }
+            td:nth-child(2), th:nth-child(2) {
+                width: 75%;
             }
         }
     }
