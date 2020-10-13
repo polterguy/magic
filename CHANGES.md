@@ -302,9 +302,9 @@ and doing other types of basic image manipulation.
 ## Magic (main)
 
 Changed AutoComplete keyboard shortcut to be CTRL+SPACE, since ALT+SPACE doesn't seem to work on Windows.
-Upgraded Angular components, such as material, cli, etc to their latest versions.
+Upgraded Angular components, such as material, CLI, etc to their latest versions.
 
-Minor improvements in UI of Dashboard.
+Minor improvements in UI of Dashboard. Removed the way too verbose explanation/information.
 
 New endpoint to generate QR code, using the new _"magic.lambda.image"_ library, that allows you to
 generate QR code, given any type of string/URL/etc, and have these returned back to the client as PNG

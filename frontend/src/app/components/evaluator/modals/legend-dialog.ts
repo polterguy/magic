@@ -28,6 +28,7 @@ export class LegendDialogComponent {
     'magic.lambda.slots',
     'magic.lambda.dates',
     'magic.lambda.config',
+    'magic.lambda.image',
     'magic.lambda.crypto',
     'magic.lambda.strings',
     'magic.lambda.logging',
