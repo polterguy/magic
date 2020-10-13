@@ -11,7 +11,6 @@
    endpointName:string
    sql:string
    overwrite:bool
-   isStatistics:bool
 .description:"Creates a custom SQL HTTP REST endpoint according to the instructions given in the arguments."
 
 
@@ -82,24 +81,6 @@ if
       insert-after:x:@apply/*/.arguments
          .
             auth.ticket.verify:x:@.arguments/*/authorization
-
-
-/*
- * Checking if caller declared current endpoint as a "statistics" endpoint.
- */
-if
-   eq
-      get-value:x:@.arguments/*/isStatistics
-      .:bool:true
-   .lambda
-
-
-      /*
-       * Making sure we mark endpoint as a statistics type of endpoint.
-       */
-      insert-after:x:@apply/*/.type
-         .
-            .is-statistics:bool:true
 
 
 /*
