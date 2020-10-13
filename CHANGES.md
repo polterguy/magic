@@ -287,11 +287,16 @@ Simplified scheduler a bit, avoiding unnecessary arguments in constructor.
 Much more resilient, particularly in regards to DNS changes, due to relying upon `IHttpClientFactory`
 now instead of a static `HttpClient`.
 
-# Version 8.3.5
+# Version 8.4.0
 
 ## magic.data.common
 
 Clarified exception thrown as an unsupported **[join]** was supplied during **[sql.read]** invocations.
+
+## magic.lambda.image
+
+New library, intended for doing basic image manipulation. Currently it only has one slot, allowing you to
+generate QR code - But in the future it will be expanded upon.
 
 ## Magic (main)
 
@@ -299,3 +304,7 @@ Changed AutoComplete keyboard shortcut to be CTRL+SPACE, since ALT+SPACE doesn't
 Upgraded Angular components, such as material, cli, etc to their latest versions.
 
 Minor improvements in UI of Dashboard.
+
+New endpoint to generate QR code, using the new _"magic.lambda.image"_ library, that allows you to
+generate QR code, given any type of string/URL/etc, and have these returned back to the client as PNG
+files.
