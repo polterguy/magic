@@ -11,6 +11,10 @@
         box-sizing: border-box;
         table {
             width: 100%;
+            caption {
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
             tr {
                 td:nth-child(1), th:nth-child(1) {
                     width: 100%;
@@ -42,6 +46,10 @@
         }
         table {
             width: 100%;
+            caption {
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
             tr {
                 td:nth-child(1), th:nth-child(1) {
                     width: 100%;

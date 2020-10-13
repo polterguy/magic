@@ -32,6 +32,11 @@
         table {
             table-layout: fixed;
             width: 100%;
+            caption {
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
             tr {
                 td {
                     user-select: none;

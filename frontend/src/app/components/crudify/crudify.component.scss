@@ -89,6 +89,10 @@
     .columns {
         width: 100%;
         margin-top: 2rem;
+        caption {
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
         tr {
             td, th {
                 width: 25%;
@@ -142,6 +146,10 @@
         background: transparent;
         width: 100%;
         margin-top: 2rem;
+        caption {
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
         tr {
             td, th {
                 width: 15%;
@@ -165,10 +173,14 @@
 
 .misc-card {
     margin-top: 4rem;
-    padding: 2rem 3.5rem 4rem 3.5rem;
+    padding: 4rem 3.5rem 4rem 3.5rem;
     .validator-table {
         background: transparent;
         width: 100%;
+        caption {
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
         tr {
             td, th {
                 width: 15%;
@@ -195,7 +207,8 @@
 
 .fat-label {
     font-weight: bold;
-    margin-bottom: .5rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
     display: block;
 }
 
@@ -214,6 +227,12 @@
 }
 
 .misc-input {
-    width: 400px;
+    width: 550px;
+    margin-top: 4rem;
+    margin-left: auto;
+    margin-right: auto;
+    mat-form-field {
+        width: 330px;
+    }
 }
   

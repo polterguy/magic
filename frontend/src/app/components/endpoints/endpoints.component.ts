@@ -85,7 +85,9 @@ export class EndpointsComponent implements OnInit {
     if (this.showSystemEndpoints === true) {
       return this.endpoints;
     }
-    return this.endpoints.filter(x => x.endpoint.path.indexOf('magic/modules/system/') !== 0);
+    return this.endpoints
+      .filter(x => x.endpoint.path.indexOf('magic/modules/system/') !== 0 &&
+      x.endpoint.path.indexOf('magic/modules/magic/') !== 0);
   }
 
   concatenateAuth(auth: string[]) {

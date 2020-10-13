@@ -211,7 +211,7 @@ export class CrudifyComponent implements OnInit {
     this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
 
       // Making sure we append "Custom SQL" as first option in select
-      const tables = [{table: 'Custom SQL'}, {table: 'All tables'}];
+      const tables = [{table: 'All tables'}, {table: 'Custom SQL'}];
 
       // Appending all tables as option in select for selecting table
       for (const iterator of res) {

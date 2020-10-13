@@ -19,7 +19,8 @@
     <input 
       matInput 
       placeholder="Filter ..."
-      type="text" 
+      type="text"
+      autocomplete="off"
       (keyup)="filterChanged()"
       [(ngModel)]="filter">
   </mat-form-field>

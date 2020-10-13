@@ -27,6 +27,10 @@
         table {
             table-layout: fixed;
             width: 100%;
+            caption {
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
             tr:not(.editor-visible) {
                 td {
                     user-select: none;

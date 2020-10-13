@@ -25,6 +25,10 @@
         table {
             table-layout: fixed;
             width: 100%;
+            caption {
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
             tr {
                 th:nth-child(1) {
                     width: 150px;
