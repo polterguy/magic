@@ -75,10 +75,19 @@
             tr.has-details td {
                 padding: 0;
                 .active-wrapper {
-                    padding:0 0 2rem 0;
+                    padding:3rem 0 4rem 0;
+                    margin-top: 2rem;
+                    margin-bottom: 4rem;
+                    position: relative;
                     .view-endpoint-card {
-                        padding:1rem 1.5rem 0 1.5rem;
-                        position: relative;
+                        padding:1rem 4rem 0 4rem;
+                        .endpoint-description {
+                            position: absolute;
+                            top: 1rem;
+                            right: 3rem;
+                            font-style: italic;
+                            color:#999;
+                        }
                         .query-params-wrapper {
                             .query-params {
                                 width: 100%;
@@ -86,6 +95,10 @@
                         }
                         .right-aligned {
                             text-align: right;
+                            margin-top: 1rem;
+                            button {
+                                min-width: 100px;
+                            }
                         }
                         .argument-list {
                             list-style: none;
@@ -108,7 +121,7 @@
                     }
                 }
                 .view-result-card {
-                    padding:1rem 1.5rem 0 1.5rem;
+                    padding:1rem 4rem 0 4rem;
                     min-height: 250px;
                     margin-top: 1rem;
                 }
