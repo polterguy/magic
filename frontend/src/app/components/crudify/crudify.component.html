@@ -110,6 +110,15 @@
     [disabled]="moduleUrl === '' || moduleName === '' || !hasSelectedEndpoints()"
     (click)="crudifyTable()">Crudify selected table</button>
 
+  <button 
+    *ngIf="selectedTable === 'Custom SQL'"
+    matTooltip="Creates your endpoint"
+    mat-raised-button
+    color="primary"
+    class="crudify-input crudify-button"
+    [disabled]="!customSqlEndpointVerb || customSqlEndpointName === '' || customSql === ''"
+    (click)="generateSqlEndpoint()">Create endpoint</button>
+
   <div
     *ngIf="verbsNotGenerated.length > 0"
     class="mat-elevation-z4 log-card">
@@ -246,14 +255,6 @@
       [(ngModel)]="customSql" 
       class="smaller"
       [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
-
-    <div class="right-align top-spacing">
-      <button 
-        matTooltip="Creates your endpoint"
-        mat-raised-button
-        color="primary"
-        (click)="generateSqlEndpoint()">Create</button>
-    </div>
 
   </div>
 
