@@ -11,6 +11,10 @@
         box-sizing: border-box;
         table {
             width: 100%;
+            caption {
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
             tr.mat-row:hover {
                 background-color: rgba(0,0,0,.1);
             }
