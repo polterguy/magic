@@ -114,7 +114,7 @@
           colspan="5">
           <div 
             *ngIf="el.extra !== null && el.extra.visible"
-            class="active-wrapper">
+            class="active-wrapper mat-elevation-z4">
 
             <div class="view-endpoint-card">
 
@@ -163,9 +163,12 @@
 
               <div class="right-aligned">
                 <button 
-                  mat-raised-button 
+                  mat-raised-button
+                  color="primary"
                   matTooltip="Evaluates the endpoint with the specified parameters/payload" 
-                  (click)="evaluate(el)">{{el.endpoint.verb}}</button>
+                  (click)="evaluate(el)">
+                  <mat-icon>flash_on</mat-icon>
+                </button>
               </div>
 
             </div>

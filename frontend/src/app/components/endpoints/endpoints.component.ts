@@ -70,6 +70,7 @@ export class EndpointsComponent implements OnInit {
     return this.getFilteredSystemEndpoints().filter(x => {
       return x.endpoint.verb === this.filter ||
         x.endpoint.path.indexOf(this.filter) > -1 ||
+        x.endpoint.type.indexOf(this.filter) > -1 ||
         (x.endpoint.auth !== null &&
           x.endpoint.auth !== undefined &&
           x.endpoint.auth.filter((y: string) => y === this.filter).length > 0);
@@ -87,7 +88,7 @@ export class EndpointsComponent implements OnInit {
     }
     return this.endpoints
       .filter(x => x.endpoint.path.indexOf('magic/modules/system/') !== 0 &&
-      x.endpoint.path.indexOf('magic/modules/magic/') !== 0);
+        x.endpoint.path.indexOf('magic/modules/magic/') !== 0);
   }
 
   concatenateAuth(auth: string[]) {
