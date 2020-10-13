@@ -236,10 +236,12 @@ export class CrudifyComponent implements OnInit {
       // User wants to create a custom SQL endpoint
       this.selectedTable = table;
       this.customSql = `select co.country, c.city
-  from city c inner join country co on c.country_id = co.country_id
-  order by country
-  limit 25 offset @offset`;
-      this.customSqlArguments = 'offset:long';
+      from city c inner join country co on c.country_id = co.country_id
+      order by country
+      limit @limit
+      offset @offset`;
+      this.customSqlArguments = `offset:long
+limit:long`;
 
     } else if (table === 'All tables') {
       this.selectedTable = table;
