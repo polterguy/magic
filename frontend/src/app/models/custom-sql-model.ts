@@ -9,5 +9,4 @@ export class CustomSQLModel {
     endpointName: string;
     authorization: string;
     overwrite: boolean;
-    isStatistics: boolean;
 }
