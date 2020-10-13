@@ -296,7 +296,8 @@ Clarified exception thrown as an unsupported **[join]** was supplied during **[s
 ## magic.lambda.image
 
 New library, intended for doing basic image manipulation. Currently it only has one slot, allowing you to
-generate QR code - But in the future it will be expanded upon.
+generate QR codes - But in the future it might be expanded upon, to allow for resizing images, cropping images,
+and doing other types of basic image manipulation.
 
 ## Magic (main)
 
