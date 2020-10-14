@@ -323,3 +323,8 @@ This would normally result in giving more detailed feedback to the client provid
 Also supporting having one validator validating multiple arguments, by invoking `Evaluate` on expression, if
 valud of validation node is an expression, and invoking validation logic once for *all* values resulting from
 iterating expression's results.
+
+## Magic (main)
+
+Fixed a TypeScript null reference error that would occur if you showed _"System endpoints"_ in the files menu,
+and applied filtering to look for a specific endpoint.

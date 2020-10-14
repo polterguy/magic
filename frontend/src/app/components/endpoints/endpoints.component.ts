@@ -70,7 +70,7 @@ export class EndpointsComponent implements OnInit {
     return this.getFilteredSystemEndpoints().filter(x => {
       return x.endpoint.verb === this.filter ||
         x.endpoint.path.indexOf(this.filter) > -1 ||
-        x.endpoint.type.indexOf(this.filter) > -1 ||
+        (x.endpoint.type && x.endpoint.type.indexOf(this.filter) > -1) ||
         (x.endpoint.auth !== null &&
           x.endpoint.auth !== undefined &&
           x.endpoint.auth.filter((y: string) => y === this.filter).length > 0);
