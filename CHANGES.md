@@ -306,7 +306,7 @@ Upgraded Angular components, such as material, CLI, etc to their latest versions
 
 Minor improvements in UI of Dashboard. Removed the way too verbose explanation/information.
 
-Better example of custom SQL enedpoint, end removed complex _"is statistics"_ parts, to refactor
+Better example of custom SQL endpoints, end removed complex _"is statistics"_ parts, to refactor
 and create better version later. Also significantly improved UX in endpoints, and most other components.
 
 New endpoint to generate QR code, using the new _"magic.lambda.image"_ library, that allows you to
