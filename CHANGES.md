@@ -336,8 +336,8 @@ Making sure we show the last iterator's value, which would normally be the argum
 This would normally result in giving more detailed feedback to the client providing the invalid input.
 
 Also supporting having one validator validating multiple arguments, by invoking `Evaluate` on expression, if
-valud of validation node is an expression, and invoking validation logic once for *all* values resulting from
-iterating expression's results.
+value of validation node is an expression, and invoking validation logic once for *all* values resulting from
+iterating expression's results. This allows one single validator to validate multiple arguments.
 
 ## magic.endpoint
 
