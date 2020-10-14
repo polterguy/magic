@@ -315,15 +315,6 @@ files.
 
 # Version 8.4.1
 
-## magic.lambda.validators
-
-Making sure we show the last iterator's value, which would normally be the argument name, if we throw exceptions.
-This would normally result in giving more detailed feedback to the client providing the invalid input.
-
-Also supporting having one validator validating multiple arguments, by invoking `Evaluate` on expression, if
-valud of validation node is an expression, and invoking validation logic once for *all* values resulting from
-iterating expression's results.
-
 ## Magic (main)
 
 Fixed a TypeScript null reference error that would occur if you showed _"System endpoints"_ in the files menu,
@@ -338,6 +329,15 @@ you can now do basic sorting of endpoints, in addition to the already existing f
 _"magic"_ endpoints (scaffolded database named magic) will no longer show, unless you explicitly choose
 to display system endpoints. Also slightly improved rendering of QUERY argument list, to make them more
 explicitly appear like buttons, with hovering and active effects.
+
+## magic.lambda.validators
+
+Making sure we show the last iterator's value, which would normally be the argument name, if we throw exceptions.
+This would normally result in giving more detailed feedback to the client providing the invalid input.
+
+Also supporting having one validator validating multiple arguments, by invoking `Evaluate` on expression, if
+valud of validation node is an expression, and invoking validation logic once for *all* values resulting from
+iterating expression's results.
 
 ## magic.endpoint
 
