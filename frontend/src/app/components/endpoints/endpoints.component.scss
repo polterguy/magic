@@ -38,6 +38,16 @@
                 font-weight: bold;
             }
             tr {
+                th {
+                    button {
+                        width: 100%;
+                        text-align: left;
+                        mat-icon {
+                            float: right;
+                            margin-top: .35rem;
+                        }
+                    }
+                }
                 td {
                     user-select: none;
                 }
@@ -107,6 +117,7 @@
                             list-style: none;
                             padding: 0;
                             li {
+                                border-color: rgba(0,0,0,.3);
                                 background-color: rgba(0,0,0,.1);
                                 display: block;
                                 float: left;
@@ -119,6 +130,9 @@
                                 strong {
                                     margin-right: .5rem;
                                 }
+                            }
+                            li:hover, li:active {
+                                background-color: rgba(0,0,0,.2);
                             }
                         }
                     }

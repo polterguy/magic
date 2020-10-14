@@ -81,27 +81,62 @@
       <caption>Hyperlambda endpoints in your installation</caption>
 
       <ng-container matColumnDef="url">
-        <th mat-header-cell *matHeaderCellDef scope="col">URL</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button
+            (click)="sortEndpoints('path')"
+            mat-button>
+            URL
+            <mat-icon *ngIf="sortingColumn === 'path'">sort_by_alpha</mat-icon>
+          </button>
+        </th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{el.endpoint.path}}</td>
       </ng-container>
 
       <ng-container matColumnDef="auth">
-        <th mat-header-cell *matHeaderCellDef scope="col">Auth</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button
+            (click)="sortEndpoints('auth')"
+            mat-button>
+            Auth
+            <mat-icon *ngIf="sortingColumn === 'auth'">sort_by_alpha</mat-icon>
+          </button>
+        </th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{concatenateAuth(el.endpoint.auth)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="verb">
-        <th mat-header-cell *matHeaderCellDef scope="col">Verb</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button
+            (click)="sortEndpoints('verb')"
+            mat-button>
+            Verb
+            <mat-icon *ngIf="sortingColumn === 'verb'">sort_by_alpha</mat-icon>
+          </button>
+        </th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{el.endpoint.verb}}</td>
       </ng-container>
 
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef scope="col">Type</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button
+            (click)="sortEndpoints('type')"
+            mat-button>
+            Type
+            <mat-icon *ngIf="sortingColumn === 'type'">sort_by_alpha</mat-icon>
+          </button>
+        </th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{getEndpointType(el.endpoint.type)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="returns">
-        <th mat-header-cell *matHeaderCellDef scope="col">Returns</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button
+            (click)="sortEndpoints('Content-Type')"
+            mat-button>
+            Content type
+            <mat-icon *ngIf="sortingColumn === 'Content-Type'">sort_by_alpha</mat-icon>
+          </button>
+        </th>
         <td (click)="selectEndpoint(el)" mat-cell *matCellDef="let el">{{el.endpoint['Content-Type']}}</td>
       </ng-container>
 
