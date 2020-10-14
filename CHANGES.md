@@ -328,3 +328,17 @@ iterating expression's results.
 
 Fixed a TypeScript null reference error that would occur if you showed _"System endpoints"_ in the files menu,
 and applied filtering to look for a specific endpoint.
+
+Support for displaying image results in hte _"Endpoints"_ menu item, but only for GET invocations. If the
+endpoint returns Content-Type of _"image/xxx"_, the results of the invocation will be displayed using an img
+tag, and not attempted to be loaded (erronously) into the JSON CodeMirror instance.
+
+In the _"Endpoints"_ file menu, we now also display the _"Content-Type"_ the endpoint returns.
+
+## magic.endpoint
+
+The meta data retrieval now returns the Content-Type the endpoint returns, if it can deduct it. Notice, this
+is not always possible, since the Content-Type might be the results of branching, and different according to
+which branch the code takes. But if there's only *one* declaration of Content-Type headers in the endpoint,
+the list-endpoints slots will return this during meta data retrieval. And if there is *no* explicit Content-Type
+declaration, we know the default will be returned, which is _"application/json"_.

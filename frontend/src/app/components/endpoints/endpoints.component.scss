@@ -42,7 +42,7 @@
                     user-select: none;
                 }
                 td:nth-child(1), th:nth-child(1) {
-                    width: 60%;
+                    width: 50%;
                 }
                 td:nth-child(2), th:nth-child(2) {
                     width: 10%;
@@ -54,6 +54,9 @@
                     width: 10%;
                 }
                 td:nth-child(5), th:nth-child(5) {
+                    width: 10%;
+                }
+                td:nth-child(6), th:nth-child(6) {
                     width: 80px;
                     text-align: right;
                 }
@@ -124,6 +127,16 @@
                     padding:1rem 4rem 0 4rem;
                     min-height: 250px;
                     margin-top: 1rem;
+                }
+                .view-image-result-card {
+                    padding:1rem 4rem 0 4rem;
+                    margin-top: 1rem;
+                    img {
+                        display: block;
+                        margin-left: auto;
+                        margin-right: auto;
+                        max-width: 100%;
+                    }
                 }
             }
             tr.selected td {

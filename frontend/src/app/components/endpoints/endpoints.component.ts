@@ -16,7 +16,7 @@ import { TicketService } from 'src/app/services/ticket-service';
 export class EndpointsComponent implements OnInit {
 
   @ViewChild('queryParamaters') queryParametersInput: MatInput;
-  public displayedColumns: string[] = ['url', 'auth', 'verb', 'crud', 'selected'];
+  public displayedColumns: string[] = ['url', 'auth', 'verb', 'type', 'returns', 'selected'];
   public displayedSecondRowColumns: string[] = ['details'];
   public endpoints: any[] = [];
   public filter = '';
@@ -71,9 +71,8 @@ export class EndpointsComponent implements OnInit {
       return x.endpoint.verb === this.filter ||
         x.endpoint.path.indexOf(this.filter) > -1 ||
         (x.endpoint.type && x.endpoint.type.indexOf(this.filter) > -1) ||
-        (x.endpoint.auth !== null &&
-          x.endpoint.auth !== undefined &&
-          x.endpoint.auth.filter((y: string) => y === this.filter).length > 0);
+        (x.endpoint['Content-Type'] && x.endpoint['Content-Type'].indexOf(this.filter) > -1) ||
+        (x.endpoint.auth && x.endpoint.auth.filter((y: string) => y === this.filter).length > 0);
     });
   }
 
@@ -98,7 +97,7 @@ export class EndpointsComponent implements OnInit {
     return auth.join(',');
   }
 
-  getCrudType(type: string) {
+  getEndpointType(type: string) {
     if (type !== undefined && type !== null && type !== '') {
       return type.substr(5);
     }
@@ -135,6 +134,7 @@ export class EndpointsComponent implements OnInit {
       if (el.extra.visible) {
         el.extra.visible = false;
         el.extra.endpointResult = null;
+        el.extra.image = null;
       } else {
         el.extra.visible = true;
       }
@@ -149,6 +149,7 @@ export class EndpointsComponent implements OnInit {
           arguments: JSON.stringify(el.endpoint.input, null, 2),
           queryParameters: null,
           endpointResult: null,
+          image: null,
           visible: true,
         };
         break;
@@ -169,6 +170,7 @@ export class EndpointsComponent implements OnInit {
           arguments: '',
           queryParameters: args,
           endpointResult: null,
+          image: null,
           visible: true,
         };
         break;
@@ -199,12 +201,21 @@ export class EndpointsComponent implements OnInit {
     switch (el.endpoint.verb) {
 
       case 'get':
-        this.service.executeGet(path).subscribe((res) => {
-          el.extra.endpointResult = JSON.stringify(res || [], null, 2);
-          this.showHttpSuccess('Endpoint successfully evaluated');
-        }, (error) => {
-          this.showError(error.error.message);
-        });
+
+        // Special case for image types.
+        if (el.endpoint['Content-Type'] && el.endpoint['Content-Type'].startsWith('image'))
+        {
+          el.extra.image = this.ticketService.getBackendUrl() + path;
+        }
+        else
+        {
+          this.service.executeGet(path).subscribe((res) => {
+            el.extra.endpointResult = JSON.stringify(res || [], null, 2);
+            this.showHttpSuccess('Endpoint successfully evaluated');
+          }, (error) => {
+            this.showError(error.error.message);
+          });
+        }
         break;
 
       case 'delete':
