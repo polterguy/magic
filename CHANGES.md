@@ -333,7 +333,11 @@ Support for displaying image results in hte _"Endpoints"_ menu item, but only fo
 endpoint returns Content-Type of _"image/xxx"_, the results of the invocation will be displayed using an img
 tag, and not attempted to be loaded (erronously) into the JSON CodeMirror instance.
 
-In the _"Endpoints"_ file menu, we now also display the _"Content-Type"_ the endpoint returns.
+In the _"Endpoints"_ file menu, we now also display the _"Content-Type"_ the endpoint returns. In addition,
+you can now do basic sorting of endpoints, in addition to the already existing filtering logic. Also,
+_"magic"_ endpoints (scaffolded database named magic) will no longer show, unless you explicitly choose
+to display system endpoints. Also slightly improved rendering of QUERY argument list, to make them more
+explicitly appear like buttons, with hovering and active effects.
 
 ## magic.endpoint
 
