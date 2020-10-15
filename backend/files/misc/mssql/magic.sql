@@ -18,7 +18,7 @@ create table users (
   constraint pk_users primary key clustered(username asc)
 );
 
-GO
+go
 
 
 /*
@@ -30,7 +30,7 @@ create table roles (
   constraint pk_roles primary key clustered([name] asc)
 );
 
-GO
+go
 
 
 /*
@@ -43,7 +43,7 @@ create table users_roles (
   constraint pk_users_roles primary key clustered([user] asc, [role] asc)
 );
 
-GO
+go
 
 
 alter table users_roles
@@ -51,14 +51,14 @@ alter table users_roles
   references users(username)
   on delete cascade;
 
-GO
+go
 
 alter table users_roles
   add foreign key ([role])
   references roles([name])
   on delete cascade;
 
-GO
+go
 
 
 /*
@@ -68,7 +68,7 @@ insert into roles ("name", "description") values ('root', 'This is a root accoun
 insert into roles ("name", "description") values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
 insert into roles ("name", "description") values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
 
-GO
+go
 
 
 /*
@@ -82,7 +82,7 @@ create table tasks (
   constraint pk_tasks primary key clustered(id asc)
 );
 
-GO
+go
 
 
 /*
@@ -100,7 +100,7 @@ alter table task_due
   references tasks(id)
   on delete cascade;
 
-GO
+go
 
 
 /*
@@ -120,7 +120,7 @@ create table log_entries (
   constraint pk_log_entries primary key clustered(id asc)
 );
 
-GO
+go
 
 /*
  * This might look stupid, but actually releases our database's connections for some reasons,
