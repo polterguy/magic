@@ -1,4 +1,4 @@
 
-# Credits
+# MS SQL batch sample scripts folder
 
-This script is taken from https://www.sqlservertutorial.net/sql-server-sample-database/ - A nice place to teach yourself SQL and SQL Server.
+This folder contains example _"batch"_ SQL server scripts, which you can play around with, to create databases, etc in Microsoft SQL Server.
