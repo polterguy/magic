@@ -402,6 +402,9 @@ limit:long`;
       return `eval:x:+
 signal:transformers.hash-password
    reference:x:@.arguments/*/password`;
+    } else if (fieldName === 'email') {
+      this.showSuccess('Email validator was added to your POST and PUT endpoint');
+      return `validators.email:x:@.arguments/*/email`;
     }
     return '';
   }
