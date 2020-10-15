@@ -2,11 +2,11 @@
  * This MS SQL script creates a minimalistic translation type
  * of database for you in your Microsoft SQL server.
  */
-create database magic_translations;
+create database babelfish;
 
 go
 
-use magic_translations;
+use babelfish;
 
 go
 
