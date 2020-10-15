@@ -20,7 +20,7 @@ export class FilesComponent implements OnInit {
   public displayedColumns: string[] = ['path', 'download', 'delete'];
   public displayedSecondRowColumns: string[] = ['details'];
   public path = '/';
-  public databaseTypes = ['mysql', 'mssql'];
+  public databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
   public selectedDatabaseType = 'mysql';
   public filter = '';
   public safeMode = true;
