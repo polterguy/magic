@@ -338,7 +338,7 @@ to the material table, since user's don't have to fiddle with the colspan proper
 in the backing database table, and backend HTTP REST endpoint.
 
 Created better example SQL scripts, creating some default databases, solving arguably more _"real world"_
-problems, such as translations, etc.
+problems, such as translations, registrations, etc.
 
 ## magic.lambda.validators
 
