@@ -356,3 +356,8 @@ is not always possible, since the Content-Type might be the results of branching
 which branch the code takes. But if there's only *one* declaration of Content-Type headers in the endpoint,
 the list-endpoints slots will return this during meta data retrieval. And if there is *no* explicit Content-Type
 declaration, we know the default will be returned, which is _"application/json"_.
+
+## magic.lambda.strings
+
+Added new slot called **[strings.url-encode]** that allows you to URL encode a string, for passing
+it in as a QUERY parameter to for instance an HTTP GET endpoint, etc.
