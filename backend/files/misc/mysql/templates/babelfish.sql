@@ -2,8 +2,8 @@
  * This MySQL script creates a minimalistic translation type
  * of database for you in MySQL.
  */
-create database magic_translations;
-use magic_translations;
+create database babelfish;
+use babelfish;
 
 
 /*
