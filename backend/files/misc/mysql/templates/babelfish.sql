@@ -27,7 +27,7 @@ insert into languages (locale, description) values ('fr', 'French')
 /*
  * Contains all translated units in the system.
  */
- create table translations (
+create table translations (
   id varchar(128) not null,
   locale varchar(5) not null,
   content text null,
