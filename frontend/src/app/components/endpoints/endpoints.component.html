@@ -55,6 +55,14 @@
 
   </div>
 
+  <div
+    *ngIf="templateDescription"
+    class="mat-elevation-z4 description">
+
+    <div [innerHTML]="templateDescription | marked"></div>
+
+  </div>
+
   <div class="mat-elevation-z4 endpoints">
 
     <mat-slide-toggle
@@ -254,10 +262,6 @@
         *matRowDef="let row; columns: displayedSecondRowColumns; "></tr>
 
     </table>
-
-    <div
-      *ngIf="hasSelectedEndpoints()"
-      [innerHTML]="templateDescription | marked"></div>
 
   </div>
 </div>
