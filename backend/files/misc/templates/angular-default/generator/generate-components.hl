@@ -305,6 +305,15 @@ for-each:x:@.arguments/*/.crud-methods/*
           */
          for-each:x:@.dp/#/*/verbs/*/get/*/output/*
 
+            /*
+             * Column is either of the following.
+             *
+             * - Not a primary key
+             * - Column is primary key, and URL doesn't have a PUT verb, implying ALL columns are primary keys.
+             */
+            set-value:x:@.substitutions/*/container-count
+               math.increment:x:@.substitutions/*/container-count
+
 
             /*
              * Column exists in GET output, now we need to check if the column is not
@@ -327,15 +336,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                      exists:x:@.dp/#/./././*/delete/*/input/*/{0}
                         :x:@get-name
                .lambda
-
-                  /*
-                   * Column is either of the following.
-                   *
-                   * - Not a primary key
-                   * - Column is primary key, and URL doesn't have a PUT verb, implying ALL columns are primary keys.
-                   */
-                  set-value:x:@.substitutions/*/container-count
-                     math.increment:x:@.substitutions/*/container-count
 
                   /*
                    * Appending currently iterated column to [displayed-columns]
