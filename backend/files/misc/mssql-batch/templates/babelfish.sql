@@ -22,9 +22,13 @@ go
 go
 
 /*
- * Inserting default language.
+ * Inserting default languages.
  */
 insert into languages (locale, description) values ('en', 'English')
+insert into languages (locale, description) values ('it', 'Italian')
+insert into languages (locale, description) values ('es', 'Spanis')
+insert into languages (locale, description) values ('no', 'Norwegian')
+insert into languages (locale, description) values ('fr', 'French')
 
 go
 
