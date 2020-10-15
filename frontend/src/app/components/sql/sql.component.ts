@@ -101,7 +101,9 @@ export class SqlComponent implements OnInit {
         this.savedFiles = [];
         return;
       }
-      this.savedFiles = res.map(x => x.substr(x.lastIndexOf('/') + 1));
+      this.savedFiles = res
+        .filter(x => x.endsWith('.sql'))
+        .map(x => x.substr(x.lastIndexOf('/') + 1));
     });
   }
 
