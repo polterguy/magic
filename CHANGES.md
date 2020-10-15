@@ -330,6 +330,16 @@ _"magic"_ endpoints (scaffolded database named magic) will no longer show, unles
 to display system endpoints. Also slightly improved rendering of QUERY argument list, to make them more
 explicitly appear like buttons, with hovering and active effects.
 
+Created better alignment of _"view details"_ sheet in scaffolded components, by making sure its colspan
+by default is the same size as the number of records returned from _"read"_ endpoint. This makes the colspan
+too large, since it'll also include primary keys - Which doesn't doo anything, since browser ignores columns
+that are larger than the total number of columns in table. But, it also makes it simpler to add *more* columns
+to the material table, since user's don't have to fiddle with the colspan property, unless they add more columns
+in the backing database table, and backend HTTP REST endpoint.
+
+Created better example SQL scripts, creating some default databases, solving arguably more _"real world"_
+problems, such as translations, etc.
+
 ## magic.lambda.validators
 
 Making sure we show the last iterator's value, which would normally be the argument name, if we throw exceptions.
