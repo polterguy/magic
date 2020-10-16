@@ -209,6 +209,22 @@
                   mode: 'application/ld+json'
                 }"></ngx-codemirror>
 
+              <ngx-codemirror 
+                *ngIf="el.extra.isBodyArguments && el.endpoint.Accept === 'application/hyperlambda'"
+                [(ngModel)]="el.extra.body"
+                class="smaller"
+                [options]="getCodeMirrorOptions()"></ngx-codemirror>
+
+              <ngx-codemirror 
+                *ngIf="el.extra.isBodyArguments && el.endpoint.Accept !== 'application/hyperlambda'"
+                [(ngModel)]="el.extra.body"
+                class="smaller"
+                [options]="{
+                  lineNumbers: true,
+                  theme: 'material',
+                  mode: 'markdown'
+                }"></ngx-codemirror>
+
               <div class="right-aligned">
                 <button 
                   mat-raised-button
