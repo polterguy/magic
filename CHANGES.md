@@ -364,6 +364,12 @@ it in as a QUERY parameter to for instance an HTTP GET endpoint, etc.
 
 # Version 8.4.2
 
+## Magic (main)
+
+Support for PATCH endpoints in _"Endpoints"_ menu item, including support for transmitting both
+plain text and Hyperlambda, using respectively a markdown or a Hyperlambda CodeMirror editor for
+supplying the **[body]** argument.
+
 ## magic.endpoint
 
 PATCH HTTP verb support, allowing clients to supply non-JSON types of payloads, such as for instance
@@ -374,13 +380,8 @@ send your content as `text/plain` Content-Type.
 Supporting **[.accept]** meta information on Hyperlambda endpoint files, declaring which Content-Type
 the endpoint can handle - Which is important if you create a PATCH endpoint type, since these types
 of endpoints can tolerate *any* types of payloads, including plain text, Hyperlambda, and "whatever"
-really.
-
-## Magic (main)
-
-Support for PATCH endpoints in _"Endpoints"_ menu item, including support for transmitting both
-plain text and Hyperlambda, using respectively a markdown or a Hyperlambda CodeMirror editor for
-supplying the **[body]** argument.
+really. If no explicit **[.patch]** exists on endpoint file, the default of `application/json` is
+assumed, and returned back to client.
 
 ## magic.lambda
 
