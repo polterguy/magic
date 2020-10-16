@@ -361,3 +361,35 @@ declaration, we know the default will be returned, which is _"application/json"_
 
 Added new slot called **[strings.url-encode]** that allows you to URL encode a string, for passing
 it in as a QUERY parameter to for instance an HTTP GET endpoint, etc.
+
+# Version 8.4.2
+
+## magic.endpoint
+
+PATCH HTTP verb support, allowing clients to supply non-JSON types of payloads, such as for instance
+Hyperlambda or plain text, etc. If you invoke a PATCH endpoint, the payload you supply, will be
+passed into your Hyperlambda endpoint file as a **[body]** argument by default, assuming you
+send your content as `text/plain` Content-Type.
+
+Supporting **[.accept]** meta information on Hyperlambda endpoint files, declaring which Content-Type
+the endpoint can handle - Which is important if you create a PATCH endpoint type, since these types
+of endpoints can tolerate *any* types of payloads, including plain text, Hyperlambda, and "whatever"
+really.
+
+## Magic (main)
+
+Support for PATCH endpoints in _"Endpoints"_ menu item, including support for transmitting both
+plain text and Hyperlambda, using respectively a markdown or a Hyperlambda CodeMirror editor for
+supplying the **[body]** argument.
+
+## magic.lambda
+
+Support for **[whitelist]** slot, creating a context of _"whitelisted slots"_, which are the *only*
+legal slots to invoke withing its given lambda object. Refer to magic.lambda's documentation for
+details. Also changed **[vocabulary]** now such that it only returns slots legally invoked by
+caller, within the context, which changes of course as you create a new **[whitelist]** scope.
+
+## magic.lambda.slots
+
+Supporting **[whitelist]** signal invocations, similar to magic.lambda, with roughly the same effect,
+except of course being *dynamic* slots instead of statically C# created slots.
