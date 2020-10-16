@@ -141,6 +141,22 @@ export class EndpointsComponent implements OnInit {
     });
   }
 
+  getCodeMirrorOptions() {
+    return {
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'hyperlambda',
+      tabSize: 3,
+      indentUnit: 3,
+      indentAuto: true,
+      extraKeys: {
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore',
+        'Ctrl-Space': 'autocomplete',
+      }
+    };
+  }
+
   selectEndpoint(el: any) {
 
     // Checking if we can just toggle its visibility.
@@ -160,6 +176,7 @@ export class EndpointsComponent implements OnInit {
       case 'put':
         el.extra = {
           isJsonArguments: true,
+          isBodyArguments: false,
           arguments: JSON.stringify(el.endpoint.input, null, 2),
           queryParameters: null,
           endpointResult: null,
@@ -170,23 +187,39 @@ export class EndpointsComponent implements OnInit {
 
       case 'get':
       case 'delete':
+      case 'patch':
         const args = [];
         for (const idx in el.endpoint.input) {
           if (Object.prototype.hasOwnProperty.call(el.endpoint.input, idx)) {
-            args.push({
-              name: idx,
-              type: el.endpoint.input[idx],
-            });
+            if (el.endpoint.verb !== 'patch' || idx !== 'body') {
+              args.push({
+                name: idx,
+                type: el.endpoint.input[idx],
+              });
+            }
           }
         }
-        el.extra = {
-          isJsonArguments: false,
-          arguments: '',
-          queryParameters: args,
-          endpointResult: null,
-          image: null,
-          visible: true,
-        };
+        if (el.endpoint.verb === 'patch') {
+          el.extra = {
+            isBodyArguments: true,
+            queryParameters: args,
+            arguments: '',
+            endpointResult: null,
+            image: null,
+            visible: true,
+            body: '',
+          };
+        } else {
+          el.extra = {
+            isJsonArguments: false,
+            isBodyArguments: false,
+            arguments: '',
+            queryParameters: args,
+            endpointResult: null,
+            image: null,
+            visible: true,
+          };
+        }
         break;
       }
   }
@@ -252,6 +285,15 @@ export class EndpointsComponent implements OnInit {
 
       case 'put':
         this.service.executePut(path, JSON.parse(el.extra.arguments)).subscribe((res) => {
+          el.extra.endpointResult = JSON.stringify(res || [], null, 2);
+          this.showHttpSuccess('Endpoint successfully evaluated');
+        }, (error) => {
+          this.showError(error.error.message);
+        });
+        break;
+
+      case 'patch':
+        this.service.executePatch(path, el.extra.body).subscribe((res) => {
           el.extra.endpointResult = JSON.stringify(res || [], null, 2);
           this.showHttpSuccess('Endpoint successfully evaluated');
         }, (error) => {

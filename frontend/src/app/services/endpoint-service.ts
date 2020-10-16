@@ -56,4 +56,8 @@ export class EndpointService {
   executePut(url: string, args: any) {
     return this.httpClient.put<any>(this.ticketService.getBackendUrl() + url, args);
   }
+
+  executePatch(url: string, args: any) {
+    return this.httpClient.patch<any>(this.ticketService.getBackendUrl() + url, args);
+  }
 }
