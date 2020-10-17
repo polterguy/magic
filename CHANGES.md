@@ -410,3 +410,34 @@ outside of the scope of their own execution context.
 Hence, the **[whitelist]** keyword now functions similar to e.g. a **[slots.signal]** invocation,
 in such that the only way for a whitelisted execution context to return data back to the parent scope,
 is by using for instance the **[return]** slot, etc.
+
+## magic.endpoint
+
+Stabilised the PATCH endpoint slightly, now only accepting the following `Content-Types`
+
+1. application/x-www-form-urlencoded - Allowing you to pass in multiple arguments as URL encoded
+2. application/hyperlambda - Allowing you to pass in Hyperlambda as your main payload
+3. application/x-hyperlambda - Override of the above, for cases where proxies might strip the above, due to not being a registered MIME type, and not officially sanctioned
+4. text/plain - Anything *but* the above 3 types
+
+Depending upon your Content-Type type, Magic will now intelligently parse your payload, and transmit it correctly
+into your Hyperlambda file. Notice, if you use anything *but* _"application/x-www-form-urlencoded"_ as your
+Content-Type, a **[body]** argument, containing the entire payload will be added to the **[.arguments]** collection
+as your Hyperlambda file is evaluated. Hence, you can retrieve the payload by reading it from the **[body]**
+node's value, inside of your **[.arguments]** collection, constructed as you execute your endpoint.
+
+If you use _"application/x-www-form-urlencoded"_ as your Content-Type, the parameters passed in can be referenced
+through your **[.arguments]** collection, using their parameter names. Notice, if you explicitly declare an **[.arguments]**
+collection for your endpoint, Magic will still verify that no illegal arguments are passed into it. This implies that
+if you for instance want to create an _"application/hyperlambda"_ type of endpoint, and you want it to have an
+explicit **[.arguments]** collection - You'll have to explicitly declare that your Hyperlambda file can handle
+the **[body]** argument, which will contain the plain text version of your Hyperlambda, injected into the arguments
+collection by the endpoint resolver.
+
+Magic will not discriminate between arguments passed in as URL encoded or body payloads, allowing the consumer
+of your endpoint to choose which Content-Type to transmit his payload with, depending upon what's considered
+convenient for his particular use case. The **[.accept]** node is only a convenience META data information
+piece of text, and not used for validating the input in any ways - Since this would arguably be redundant due to
+that Magic itself validates it during the endpoint resolving process. This makes it simpler to interact with
+browsers, and other types of clients, where the client has less control over the Content-Type the payload is
+transmitted with.
