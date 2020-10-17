@@ -400,9 +400,13 @@ except of course being *dynamic* slots instead of statically C# created slots.
 ## magic.lambda
 
 Fixed a security flaw in **[whitelist]** which could result in having code passed into a whitelist
-manipulate the endpoint's code as it was being executed, including changing the whitelist's **[vocabulary]**
-if the **[set-name]** or the **[set-value]** slots were whitelisted.
+execution manipulate the parent function object's code as it was being executed, including changing
+the whitelist's **[vocabulary]**, if the **[set-name]** or the **[set-value]** slots were whitelisted.
 
 **Breaking change** - To implement this correctly, I had to change the logic of whitelist evaluations,
 such that they're now considered _"first class function invocations"_, not having access to *anything*
 outside of the scope of their own execution context.
+
+Hence, the **[whitelist]** keyword now functions similar to e.g. a **[slots.signal]** invocation,
+in such that the only way for a whitelisted execution context to return data back to the parent scope,
+is by using for instance the **[return]** slot, etc.
