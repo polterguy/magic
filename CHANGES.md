@@ -394,3 +394,15 @@ caller, within the context, which changes of course as you create a new **[white
 
 Supporting **[whitelist]** signal invocations, similar to magic.lambda, with roughly the same effect,
 except of course being *dynamic* slots instead of statically C# created slots.
+
+# Version 8.4.3
+
+## magic.lambda
+
+Fixed a security flaw in **[whitelist]** which could result in having code passed into a whitelist
+manipulate the endpoint's code as it was being executed, including changing the whitelist's **[vocabulary]**
+if the **[set-name]** or the **[set-value]** slots were whitelisted.
+
+**Breaking change** - To implement this correctly, I had to change the logic of whitelist evaluations,
+such that they're now considered _"first class function invocations"_, not having access to *anything*
+outside of the scope of their own execution context.
