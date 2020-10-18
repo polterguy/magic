@@ -441,3 +441,17 @@ piece of text, and not used for validating the input in any ways - Since this wo
 that Magic itself validates it during the endpoint resolving process. This makes it simpler to interact with
 browsers, and other types of clients, where the client has less control over the Content-Type the payload is
 transmitted with.
+
+# Version 8.4.4
+
+## magic.lambda.crypto
+
+Created full support for RSA cryptography, having added the following slots.
+
+* __[crypto.rsa.create-key]__ - Creates an RSA keypair
+* __[crypto.rsa.sign]__ - Cryptographically signs a message
+* __[crypto.rsa.verify]__ - Verifies a previously created cryptographic signature
+* __[crypto.rsa.encrypt]__ - Encrypts a piece of text/data using some public key
+* __[crypto.rsa.decrypt]__ - Decrypts a previously encrypted message using a private key
+
+Refer to the documentation of magic.lambda.crypto for details.
