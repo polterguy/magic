@@ -461,5 +461,14 @@ Refer to the documentation of magic.lambda.crypto for details.
 ## magic.lambda.crypto
 
 Further expanded upon the library, creating more and better support for binary byte[] input/output,
-such as returning encrypted messages as `byte[]`, handling (correctly) byte[] input to both
+such as returning encrypted messages as `byte[]`, handling (correctly) `byte[]` input to both
 decrypt, verify signatures, etc.
+
+Changed the **[crypto.random]** slot, such that it now only returns alphanumeric characters, and no special characters.
+
+Added the two following slots.
+
+* __[crypto.aes.encrypt]__ - Encrypts data using AES encryption
+* __[crypto.aes.decrypt]__ - Decrypts data previously encrypted with AES encryption
+
+Refer to the documentation of magic.lambda.crypto for details.
