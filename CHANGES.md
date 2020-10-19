@@ -455,3 +455,11 @@ Created full support for RSA cryptography, having added the following slots.
 * __[crypto.rsa.decrypt]__ - Decrypts a previously encrypted message using a private key
 
 Refer to the documentation of magic.lambda.crypto for details.
+
+# Version 8.4.5
+
+## magic.lambda.crypto
+
+Further expanded upon the library, creating more and better support for binary byte[] input/output,
+such as returning encrypted messages as `byte[]`, handling (correctly) byte[] input to both
+decrypt, verify signatures, etc.
