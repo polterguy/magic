@@ -1,0 +1,50 @@
+
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SetupService } from 'src/app/services/setup-service';
+import { TicketService } from 'src/app/services/ticket-service';
+
+@Component({
+  selector: 'crypto-home',
+  templateUrl: './crypto.component.html',
+  styleUrls: ['./crypto.component.scss']
+})
+export class CryptoComponent implements OnInit {
+  public keyExists = false;
+  public fingerprint: string;
+  public publicKey: string;
+
+  constructor(
+    private ticketService: TicketService,
+    private service: SetupService,
+    private snackBar: MatSnackBar) { }
+
+  ngOnInit() {
+    this.service.getPublicKey().subscribe((res: any) => {
+      if (res.result !== 'FAILURE') {
+        this.showKey(res);
+      }
+    }, (error: any) => {
+      this.snackBar.open(error.error.msg);
+    });
+  }
+
+  generate() {
+    this.service.generateKeyPair('foo-bar-seed', 4096).subscribe((res: any) => {
+      this.showKey(res);
+    });
+  }
+
+  showKey(key: any) {
+    this.keyExists = true;
+    this.fingerprint = key.fingerprint;
+    this.publicKey = key['public-key'];
+  }
+
+  getQrCodeKeyFingerprintURL() {
+    return this.ticketService.getBackendUrl() +
+      'magic/modules/system/images/generate-qr?size=5&content=' +
+      encodeURIComponent(this.ticketService.getBackendUrl() +
+        'magic/modules/system/crypto/public-key-raw')
+  }
+}

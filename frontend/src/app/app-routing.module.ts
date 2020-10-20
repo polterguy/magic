@@ -13,6 +13,7 @@ import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { TasksComponent } from './components/scheduler/tasks.component';
 import { LogsComponent } from './components/logging/logs.component';
+import { CryptoComponent } from './components/crypto/crypto.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'sql', component: SqlComponent },
   { path: 'tasks', component: TasksComponent },
   { path: 'logs', component: LogsComponent },
+  { path: 'crypto', component: CryptoComponent },
 ];
 
 @NgModule({

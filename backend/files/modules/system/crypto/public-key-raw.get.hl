@@ -1,0 +1,26 @@
+
+/*
+ * Returns the public RSA key for the server.
+ */
+.description:"Returns the server's public RSA key without its fingerprint."
+
+
+/*
+ * Loads the file containing the public key, if existing,
+ * and returns its content to caller.
+ */
+if
+   io.file.exists:/modules/system/crypto/keys/public-key.key
+   .lambda
+else
+   return
+      result:FAILURE
+
+
+/*
+ * Key exists, returning it to caller, in addition to its fingerprint.
+ */
+response.headers.add
+   Content-Type:text/plain
+io.file.load:/modules/system/crypto/keys/public-key.key
+return:x:@io.file.load

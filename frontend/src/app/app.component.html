@@ -81,6 +81,13 @@
     routerLinkActive="active-link" 
     [routerLinkActiveOptions]="{exact:true}">Logs</a>
 
+  <a 
+    *ngIf="isLoggedIn()"
+    mat-button 
+    routerLink="/crypto" 
+    routerLinkActive="active-link" 
+    [routerLinkActiveOptions]="{exact:true}">Crypto</a>
+
   <a
     *ngIf="isLoggedIn()"
     mat-button

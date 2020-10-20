@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NewRoleDialogComponent } from './modals/new-role-dialog';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-roles',
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.scss']
 })

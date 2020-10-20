@@ -33,6 +33,7 @@ import 'codemirror/addon/hint/sql-hint.js';
 
 import { HomeComponent } from './components/home/home.component';
 import { LogsComponent } from './components/logging/logs.component';
+import { CryptoComponent } from './components/crypto/crypto.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { UsersComponent } from './components/users/users.component';
@@ -74,6 +75,7 @@ export function tokenGetter() {
     AppComponent,
     HomeComponent,
     LogsComponent,
+    CryptoComponent,
     EndpointsComponent,
     SetupComponent,
     UsersComponent,

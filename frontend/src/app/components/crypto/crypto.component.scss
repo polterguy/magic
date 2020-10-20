@@ -1,0 +1,56 @@
+
+h1 {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.info-card {
+    margin:2rem 5rem 2rem 5rem;
+    padding: 3rem;
+    margin-top: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .fingerprint {
+        color: #999;
+        text-align: center;
+    }
+    .key {
+        display: block;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .qr-code {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        box-shadow: 1px 1px 5px rgba(0,0,0,.2);
+        border-radius: 5px;
+        position: relative;
+        .txt {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            color: #bbb;
+            font-style: italic;
+            font-size: .7rem;
+        }
+    }
+}
+
+.copyright {
+    margin: 3rem auto 5rem auto;
+    text-align: center;
+    font-size: 0.9rem;
+    color:#aaaaaa;
+    clear: both;
+}
