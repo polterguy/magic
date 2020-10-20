@@ -27,4 +27,7 @@ unwrap:x:+/*
 return
    fingerprint:x:@crypto.hash
    public-key:x:@io.file.load
+   key-format:base64/DER
+   fingerprint-format:SHA256-fingerprint
+   key-type:RSA
 
