@@ -1,67 +1,82 @@
 
-<h1>Crypto</h1>
-<div class="mat-elevation-z4 info-card">
-
-  <div
-    *ngIf="!keyExists">
-
-    <mat-form-field
-      class="key-strength">
-      <mat-select
-        placeholder="Select key strength"
-        [(ngModel)]="strength"
-        matTooltip="Select your key strength">
-        <mat-option
-          *ngFor="let cur of strengthOptions"
-          [value]="cur">{{cur}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field
-      class="seed">
-      <input 
-        matInput 
-        autocomplete="off"
-        type="text"
-        matTooltip="Some random seed for your keey"
-        placeholder="Provide a seed"
-        [(ngModel)]="seed">
-    </mat-form-field>
-
-    <button
-      [disabled]="seed === '' || !strength"
-      color="primary"
-      mat-raised-button
-      (click)="generate()">
-      Generate key pair
-    </button>
-  </div>
-
-  <div
-    class="fingerprint"
-    *ngIf="keyExists">
-    {{fingerprint}}
-  </div>
-
-  <textarea
-    *ngIf="keyExists"
-    class="key"
-    rows="10">{{publicKey}}</textarea>
-
-  <div
-    *ngIf="keyExists"
-    class="qr-code">
-    <img
-      src="{{getQrCodeKeyFingerprintURL()}}"
-      alt="Your public key's fingerprint" />
-    <span class="txt">Download public key</span>
-
-    <mat-form-field>
-      <input
-        matInput 
-        type="text"
-        value="{{getQrCodeKeyFingerprintURL()}}">
-    </mat-form-field>
+<div
+  class="obscurer"
+  *ngIf="isFetching">
+  <h3>Please wait ...</h3>
+  <h4>Genius is thinking ...</h4>
+  <mat-spinner
+    mode="indeterminate"
+    diameter="50"
+    class="ajax-wait">
+  </mat-spinner>
 </div>
+
+<div class="crypto-wrapper">
+
+  <div class="mat-elevation-z4 crypto-keys">
+
+    <div
+      *ngIf="!keyExists">
+
+      <mat-form-field
+        class="key-strength">
+        <mat-select
+          placeholder="Select key strength"
+          [(ngModel)]="strength"
+          matTooltip="Select your key strength">
+          <mat-option
+            *ngFor="let cur of strengthOptions"
+            [value]="cur">{{cur}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        class="seed">
+        <input 
+          matInput 
+          autocomplete="off"
+          type="text"
+          matTooltip="Some random seed for your keey"
+          placeholder="Provide a seed"
+          [(ngModel)]="seed">
+      </mat-form-field>
+
+      <button
+        [disabled]="seed === '' || !strength"
+        color="primary"
+        mat-raised-button
+        (click)="generate()">
+        Generate key pair
+      </button>
+    </div>
+
+    <div
+      class="fingerprint"
+      *ngIf="keyExists">
+      {{fingerprint}}
+    </div>
+
+    <textarea
+      *ngIf="keyExists"
+      class="key"
+      rows="10">{{publicKey}}</textarea>
+
+    <div
+      *ngIf="keyExists"
+      class="qr-code">
+      <img
+        src="{{getQrCodeKeyFingerprintURL()}}"
+        alt="Your public key's fingerprint" />
+      <span class="txt">Download public key</span>
+
+      <mat-form-field>
+        <input
+          matInput 
+          type="text"
+          value="{{getQrCodeKeyFingerprintURL()}}">
+      </mat-form-field>
+  </div>
+
+  </div>
 
 </div>
