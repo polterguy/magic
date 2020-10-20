@@ -50,10 +50,12 @@
       </button>
     </div>
 
+    <h1 *ngIf="keyExists">Server cryptography key</h1>
+
     <div
       class="fingerprint"
       *ngIf="keyExists">
-      {{fingerprint}}
+      Fingerprint - {{fingerprint}}
     </div>
 
     <textarea
