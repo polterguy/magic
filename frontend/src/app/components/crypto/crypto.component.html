@@ -55,6 +55,13 @@
       src="{{getQrCodeKeyFingerprintURL()}}"
       alt="Your public key's fingerprint" />
     <span class="txt">Download public key</span>
-  </div>
+
+    <mat-form-field>
+      <input
+        matInput 
+        type="text"
+        value="{{getQrCodeKeyFingerprintURL()}}">
+    </mat-form-field>
+</div>
 
 </div>
