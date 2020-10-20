@@ -102,3 +102,24 @@ create table log_entries (
   primary key (id),
   unique key id_UNIQUE (id)
 );
+
+
+/*
+ * Cryptography tables.
+ */
+
+
+/*
+ * Creating crypto_keys table for holding public cryptography keys.
+ */
+create table crypto_keys (
+  id int(11) not null auto_increment,
+  subject varchar(120) not null, /* Typically the name of the owner of the key */
+  url varchar(120) null, /* The base URL of the subject */
+  content text not null, /* Actual public key */
+  fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
+  imported datetime not null default current_timestamp,
+  type varchar(20) not null, /* Typically 'RSA' or something */
+  primary key (id),
+  unique key id_UNIQUE (id)
+);

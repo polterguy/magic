@@ -122,6 +122,28 @@ create table log_entries (
 
 go
 
+
+/*
+ * Cryptography tables.
+ */
+
+
+/*
+ * Creating crypto_keys table for holding public cryptography keys.
+ */
+create table crypto_keys (
+  id int not null identity(1,1),
+  subject nvarchar(120) not null,
+  url nvarchar(120) not null,
+  content text not null,
+  fingerprint nvarchar(120) not null,
+  imported datetime not null default getutcdate(),
+  type nvarchar(20) not null,
+  constraint pk_crypto_keys primary key clustered(id asc)
+);
+
+go
+
 /*
  * This might look stupid, but actually releases our database's connections for some reasons,
  * due to connection pooling or something in SQL Server, "holding" the connection open.
