@@ -6,6 +6,9 @@ h1 {
 .crypto-wrapper {
     padding:2rem 5rem 2rem 5rem;
     .crypto-keys {
+        h1 {
+            margin-top: -2rem;
+        }
         margin-top: 2rem;
         padding: 5rem;
         .key-strength {
@@ -18,7 +21,6 @@ h1 {
         }
         .fingerprint {
             color: #999;
-            text-align: center;
         }
         .key {
             display: block;
