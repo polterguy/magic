@@ -10,6 +10,7 @@ import { TicketService } from 'src/app/services/ticket-service';
   styleUrls: ['./crypto.component.scss']
 })
 export class CryptoComponent implements OnInit {
+  public isFetching = false;
   public keyExists = false;
   public fingerprint: string;
   public publicKey: string;
@@ -38,8 +39,14 @@ export class CryptoComponent implements OnInit {
   }
 
   generate() {
+    this.isFetching = true;
     this.service.generateKeyPair(this.seed, this.strength).subscribe((res: any) => {
+      this.isFetching = false;
       this.showKey(res);
+      this.snackBar.open('Key successfully created', 'ok');
+    }, (error: any) => {
+      this.isFetching = false;
+      this.snackBar.open(error.error.message);
     });
   }
 

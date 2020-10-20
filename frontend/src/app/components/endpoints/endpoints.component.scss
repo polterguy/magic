@@ -187,35 +187,3 @@
 		opacity: 1;
 	}
 }
-
-.obscurer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.85);
-    z-index: 5;
-    animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: .5s;
-    h3 {
-        margin-top: 10rem;
-        font-size: 2rem;
-    }
-    h4 {
-        margin-top: 2rem;
-        font-size: 1.5rem;
-    }
-    h3, h4 {
-        text-align: center;
-        color: whitesmoke;
-    }
-    .ajax-wait {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1000;
-    }
-}
