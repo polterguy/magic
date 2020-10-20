@@ -13,6 +13,14 @@ export class CryptoComponent implements OnInit {
   public keyExists = false;
   public fingerprint: string;
   public publicKey: string;
+  public seed: string = '';
+  public strength: number = null;
+  public strengthOptions: number[] = [
+    1024,
+    2048,
+    4096,
+    8192
+  ];
 
   constructor(
     private ticketService: TicketService,
@@ -30,7 +38,7 @@ export class CryptoComponent implements OnInit {
   }
 
   generate() {
-    this.service.generateKeyPair('foo-bar-seed', 4096).subscribe((res: any) => {
+    this.service.generateKeyPair(this.seed, this.strength).subscribe((res: any) => {
       this.showKey(res);
     });
   }
