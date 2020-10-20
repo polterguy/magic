@@ -2,14 +2,40 @@
 <h1>Crypto</h1>
 <div class="mat-elevation-z4 info-card">
 
-  <button
-    *ngIf="!keyExists"
-    color="primary"
-    class="center"
-    mat-raised-button
-    (click)="generate()">
-    Generate key pair
-  </button>
+  <div
+    *ngIf="!keyExists">
+
+    <mat-form-field
+      class="key-strength">
+      <mat-select
+        placeholder="Select key strength"
+        [(ngModel)]="strength"
+        matTooltip="Select your key strength">
+        <mat-option
+          *ngFor="let cur of strengthOptions"
+          [value]="cur">{{cur}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      class="seed">
+      <input 
+        matInput 
+        autocomplete="off"
+        type="text"
+        matTooltip="Some random seed for your keey"
+        placeholder="Provide a seed"
+        [(ngModel)]="seed">
+    </mat-form-field>
+
+    <button
+      [disabled]="seed === '' || !strength"
+      color="primary"
+      mat-raised-button
+      (click)="generate()">
+      Generate key pair
+    </button>
+  </div>
 
   <div
     class="fingerprint"
