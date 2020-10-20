@@ -1,0 +1,56 @@
+
+/*
+ * Creates a new RSA key pair, with the specified parameters
+ */
+.description:"Creates a new RSA key pair using the specified parameters. Notice, will throw an exception if there's already an existing key for the server."
+.arguments
+   strength:int
+   seed:string
+auth.ticket.verify:root
+
+
+/*
+ * Checks to see if a key pair already exists.
+ */
+log.info:Attempting to generate an RSA key pair for server
+if
+   io.file.exists:/modules/system/crypto/keys/public-key.key
+   .lambda
+      throw:Oops, there's already an existing key pair for your server.
+
+
+/*
+ * Creating our RSA key pair using the specified arguments.
+ */
+crypto.rsa.create-key
+   strength:x:@.arguments/*/strength
+   seed:x:@.arguments/*/seed
+
+
+/*
+ * Saving key(s) to disc.
+ */
+io.file.save:/modules/system/crypto/keys/public-key.key
+   get-value:x:@crypto.rsa.create-key/*/public
+io.file.save:/modules/system/crypto/keys/private-key.key
+   get-value:x:@crypto.rsa.create-key/*/private
+
+
+/*
+ * Creating fingerprint, and doing some basic logging.
+ */
+crypto.hash:x:@crypto.rsa.create-key/*/public
+   format:fingerprint
+log.info
+   .:"RSA key pair generated for server, fingerprint; '"
+   get-value:x:@crypto.hash
+   .:"'"
+
+
+/*
+ * Returning the public key, and its fingerprint to caller.
+ */
+unwrap:x:+/*
+return
+   fingerprint:x:@crypto.hash
+   public-key:x:@crypto.rsa.create-key/*/public

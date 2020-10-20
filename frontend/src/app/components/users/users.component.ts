@@ -7,7 +7,7 @@ import { NewUserDialogComponent } from './modals/new-user-dialog';
 import { AddRoleDialogComponent } from './modals/add-role-dialog';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-roles',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })

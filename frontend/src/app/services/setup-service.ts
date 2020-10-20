@@ -40,4 +40,21 @@ export class SetupService {
         scheduler,
       });
   }
+
+  getPublicKey() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() + 
+      'magic/modules/system/crypto/public-key'
+    );
+  }
+
+  generateKeyPair(seed: string, strength: number) {
+    return this.httpClient.post<any>(
+      this.ticketService.getBackendUrl() + 
+      'magic/modules/system/crypto/generate-keypair', {
+        seed,
+        strength
+      }
+    );
+  }
 }

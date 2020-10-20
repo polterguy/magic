@@ -472,3 +472,10 @@ Added the two following slots.
 * __[crypto.aes.decrypt]__ - Decrypts data previously encrypted with AES encryption
 
 Refer to the documentation of magic.lambda.crypto for details.
+
+# Version 8.4.6
+
+## magic.lambda.crypto
+
+Added support for returning result of **[crypto.hash]** either as raw bytes (useful for AES crypto),
+or as fingerprint value (useful for displaying to human beings).
