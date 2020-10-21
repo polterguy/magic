@@ -96,10 +96,21 @@ export class CryptoComponent implements OnInit {
           res.url,
           res.email,
           res.content,
-          res.fingerprint).subscribe(res => {
+          res.fingerprint)
+          .subscribe(res => {
             this.getKeys();
+          }, error => {
+            this.snackBar.open(error.error.message, 'ok');
           });
       }
+    });
+  }
+
+  deleteKey(id: number) {
+    this.keysService.deleteKey(id).subscribe(res => {
+      this.keysService.getKeys(this.filter).subscribe(res => {
+        this.keys = res || [];
+      });
     });
   }
 }
