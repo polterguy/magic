@@ -1,9 +1,10 @@
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { KeysService } from 'src/app/services/keys-service';
 
 export interface ImportKeyDialogData {
+  id?: number;
   subject: string;
   url: string;
   email: string;
@@ -15,12 +16,20 @@ export interface ImportKeyDialogData {
 @Component({
   templateUrl: 'import-key-dialog.html',
 })
-export class ImportKeyDialogComponent {
+export class ImportKeyDialogComponent implements OnInit {
 
   constructor(
     private keysService: KeysService,
     public dialogRef: MatDialogRef<ImportKeyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ImportKeyDialogData) {}
+
+  ngOnInit() {
+    if (this.data.url.startsWith('http://')) {
+      this.data.url = this.data.url.substr(7);
+    } else {
+      this.data.url = this.data.url.substr(8);
+    }
+  }
 
   close(): void {
     this.dialogRef.close();

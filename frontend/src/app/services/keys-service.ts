@@ -41,6 +41,21 @@ export class KeysService {
         });
   }
 
+  editKey(
+    id: number,
+    subject: string,
+    url: string,
+    email: string) {
+      return this.httpClient.put<any>(
+        this.ticketService.getBackendUrl() +
+        'magic/modules/magic/crypto_keys', {
+          id,
+          subject,
+          url,
+          email
+        });
+  }
+
   deleteKey(id: number) {
     return this.httpClient.delete<any>(
       this.ticketService.getBackendUrl() +

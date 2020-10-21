@@ -1,13 +1,14 @@
 
-<h1 mat-dialog-title>Import crypto key</h1>
+<h1 mat-dialog-title>{{data.id ? 'Edit key' : 'Import crypto key'}}</h1>
 <div mat-dialog-content>
 
   <mat-form-field style="width: 100%;">
     <textarea
       matInput 
-      placeholder="Content"
+      placeholder="Key"
       matTooltip="Base64/DER encoded public key"
       rows="5"
+      [disabled]="data.id"
       (change)="keyChanged()"
       [(ngModel)]="data.content">
     </textarea>
@@ -16,7 +17,7 @@
   <mat-form-field style="width: 100%;">
     <input
       matInput 
-      placeholder="Subject" 
+      placeholder="Full name" 
       matTooltip="Full name of owner"
       autocomplete="off" 
       [(ngModel)]="data.subject">

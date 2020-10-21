@@ -96,17 +96,17 @@
 
       <ng-container matColumnDef="subject">
         <th mat-header-cell *matHeaderCellDef scope="col">Subject</th>
-        <td mat-cell *matCellDef="let el">{{el.subject}}</td>
+        <td mat-cell *matCellDef="let el" (click)="editKey(el)">{{el.subject}}</td>
       </ng-container>
 
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef scope="col">Email</th>
-        <td mat-cell *matCellDef="let el">{{el.email}}</td>
+        <td mat-cell *matCellDef="let el" (click)="editKey(el)">{{el.email}}</td>
       </ng-container>
 
       <ng-container matColumnDef="url">
         <th mat-header-cell *matHeaderCellDef scope="col">URL</th>
-        <td mat-cell *matCellDef="let el">{{el.url}}</td>
+        <td mat-cell *matCellDef="let el" (click)="editKey(el)">{{getUrl(el.url)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="delete">
