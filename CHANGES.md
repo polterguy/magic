@@ -475,7 +475,17 @@ Refer to the documentation of magic.lambda.crypto for details.
 
 # Version 8.4.6
 
+## Magic (main)
+
+Created support for creating a server RSA key, in addition to added support for managing public
+cryptography keys, to prepare for creating secure communication back and forth between the server
+and other servers.
+
 ## magic.lambda.crypto
 
 Added support for returning result of **[crypto.hash]** either as raw bytes (useful for AES crypto),
 or as fingerprint value (useful for displaying to human beings).
+
+## magic.lambda.validators
+
+Made the exception thrown during email validation slightly more _"semantically correct"_.

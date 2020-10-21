@@ -27,6 +27,10 @@ export class ImportKeyDialogComponent {
   }
 
   keyChanged() {
+    if (this.data.content === '') {
+      this.data.fingerprint = '';
+      return;
+    }
     this.keysService.getFingerprint(this.data.content).subscribe(res => {
       this.data.fingerprint = res.fingerprint;
     });

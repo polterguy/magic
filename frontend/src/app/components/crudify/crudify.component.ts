@@ -405,6 +405,9 @@ signal:transformers.hash-password
     } else if (fieldName === 'email') {
       this.showSuccess('Email validator was added to your POST and PUT endpoint');
       return `validators.email:x:@.arguments/*/email`;
+    } else if (fieldName === 'url') {
+      this.showSuccess('URL validator was added to your POST and PUT endpoint');
+      return `validators.url:x:@.arguments/*/url`;
     }
     return '';
   }
