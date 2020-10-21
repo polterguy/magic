@@ -489,3 +489,5 @@ or as fingerprint value (useful for displaying to human beings).
 ## magic.lambda.validators
 
 Made the exception thrown during email validation slightly more _"semantically correct"_.
+
+Fixed an error in **[validators.mandatory]** that would circumvent its entire logic.

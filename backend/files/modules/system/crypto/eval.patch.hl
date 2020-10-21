@@ -1,0 +1,62 @@
+
+/*
+ * Evaluates a cryptographically signed and encrypted
+ * HTTP REST invocation.
+ */
+.description:"Evaluates an encrypted and signed HTTP REST invocation."
+.arguments
+   body:string
+
+/*
+ * Retrieving fungerprint of server that sent the request, and verifying
+ * that we're "friend" with it, as in that the public key exists in our
+ * database.
+ */
+request.headers.get:X-Crypto-Fingerprint
+.public-key
+mysql.connect:magic
+   mysql.select:select content from crypto_keys where fingerprint = @fingerprint
+      @fingerprint:x:@request.headers.get
+   set-value:x:@.public-key
+      get-value:x:@mysql.select/*/*/content
+
+/*
+ * Verifying key exists in database.
+ */
+if
+   eq
+      get-value:x:@.public-key
+      .
+   .lambda
+
+      // No such friend.
+      throw:Unknown key
+
+/*
+ * Verifying signature of body.
+ */
+request.headers.get:X-Crypto-Signature
+crypto.rsa.verify:x:@.arguments/*/body
+   signature:x:@request.headers.get
+   public-key:x:@.public-key
+
+/*
+ * Decrypting AES session key using server's private key.
+ */
+request.headers.get:X-Crypto-Key
+io.file.load:/modules/system/crypto/keys/private-key.key
+crypto.rsa.decrypt:x:@request.headers.get
+   private-key:x:@io.file.load
+
+/*
+ * Decrypting body using AES session key, that's now decrypted.
+ */
+crypto.aes.decrypt:x:@.arguments/*/body
+   password:x:@crypto.rsa.decrypt
+
+/*
+ * Returning results of invocation to caller.
+ */
+log.info:x:@crypto.aes.decrypt
+return
+   result:success
