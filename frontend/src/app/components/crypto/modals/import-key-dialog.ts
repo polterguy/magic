@@ -5,6 +5,7 @@ import { KeysService } from 'src/app/services/keys-service';
 
 export interface ImportKeyDialogData {
   id?: number;
+  imported?: Date;
   subject: string;
   url: string;
   email: string;
@@ -15,6 +16,7 @@ export interface ImportKeyDialogData {
 
 @Component({
   templateUrl: 'import-key-dialog.html',
+  styleUrls: ['import-key-dialog.scss']
 })
 export class ImportKeyDialogComponent implements OnInit {
 
@@ -29,6 +31,10 @@ export class ImportKeyDialogComponent implements OnInit {
     } else {
       this.data.url = this.data.url.substr(8);
     }
+  }
+
+  getDate(date: any) {
+    return new Date(date).toLocaleString();
   }
 
   close(): void {
