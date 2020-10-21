@@ -140,7 +140,9 @@ create table crypto_keys (
   fingerprint nvarchar(120) not null,
   imported datetime not null default getutcdate(),
   type nvarchar(20) not null,
-  constraint pk_crypto_keys primary key clustered(id asc)
+  constraint pk_crypto_keys primary key clustered(id asc),
+  unique(fingerprint),
+  unique(email)
 );
 
 go
