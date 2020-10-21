@@ -1,0 +1,67 @@
+
+<h1 mat-dialog-title>Import crypto key</h1>
+<div mat-dialog-content>
+
+  <mat-form-field style="width: 100%;">
+    <textarea
+      matInput 
+      placeholder="Content"
+      matTooltip="Base64/DER encoded public key"
+      rows="5"
+      (change)="keyChanged()"
+      [(ngModel)]="data.content">
+    </textarea>
+  </mat-form-field>
+
+  <mat-form-field style="width: 100%;">
+    <input
+      matInput 
+      placeholder="Subject" 
+      matTooltip="Full name of owner"
+      autocomplete="off" 
+      [(ngModel)]="data.subject">
+  </mat-form-field>
+
+  <mat-form-field style="width: 100%;">
+    <input
+      matInput 
+      placeholder="URL"
+      matTooltip="URL of owner"
+      autocomplete="off" 
+      [(ngModel)]="data.url">
+  </mat-form-field>
+
+  <mat-form-field style="width: 100%;">
+    <input
+      matInput 
+      placeholder="Email"
+      matTooltip="Email address of owner"
+      autocomplete="off" 
+      [(ngModel)]="data.email">
+  </mat-form-field>
+
+  <mat-form-field style="width: 100%;">
+    <input
+      matInput 
+      placeholder="Fingerprint" 
+      autocomplete="off"
+      disabled="true"
+      [(ngModel)]="data.fingerprint">
+  </mat-form-field>
+  
+</div>
+<div mat-dialog-actions>
+  <div style="width:100%; text-align: right;">
+
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!data.fingerprint"
+      [mat-dialog-close]="data">Ok</button>
+
+    <button
+      mat-raised-button
+      (click)="close()">Close</button>
+      
+  </div>
+</div>

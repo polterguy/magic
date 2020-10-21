@@ -1,0 +1,16 @@
+
+/*
+ * Returns the fingerprint for the specified key.
+ */
+.description:"Returns the fingerprint for the specified key."
+.arguments
+   key:string
+
+/*
+ * Creating fingerprint and returning to caller.
+ */
+crypto.hash:x:@.arguments/*/key
+   format:fingerprint
+unwrap:x:+/*
+return
+   fingerprint:x:@crypto.hash

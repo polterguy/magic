@@ -46,6 +46,7 @@ import { FilesComponent } from './components/files/files.component';
 import { NewFileDialogComponent } from './components/files/modals/new-file-dialog';
 import { NewUserDialogComponent } from './components/users/modals/new-user-dialog';
 import { NewRoleDialogComponent } from './components/roles/modals/new-role-dialog';
+import { ImportKeyDialogComponent } from './components/crypto/modals/import-key-dialog';
 import { ConfirmDeletionDialogComponent } from './components/files/modals/confirm-deletion-dialog';
 import { GetSaveFilenameDialogComponent } from './components/sql/modals/get-save-filename';
 import { ConfirmDeletionTaskDialogComponent } from './components/scheduler/modals/confirm-deletion-dialog';
@@ -88,6 +89,7 @@ export function tokenGetter() {
     NewFileDialogComponent,
     NewUserDialogComponent,
     NewRoleDialogComponent,
+    ImportKeyDialogComponent,
     ConfirmDeletionDialogComponent,
     GetSaveFilenameDialogComponent,
     ConfirmDeletionTaskDialogComponent,
@@ -160,6 +162,7 @@ export function tokenGetter() {
     NewFileDialogComponent,
     NewUserDialogComponent,
     NewRoleDialogComponent,
+    ImportKeyDialogComponent,
     LegendDialogComponent,
     ViewLogDetails,
     FileDialogComponent,

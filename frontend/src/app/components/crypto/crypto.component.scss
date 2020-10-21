@@ -5,9 +5,10 @@ h1 {
 }
 .crypto-wrapper {
     padding:2rem 5rem 2rem 5rem;
-    .crypto-keys {
-        h1 {
+    .crypto-key {
+        h2 {
             margin-top: -2rem;
+            text-align: center;
         }
         margin-top: 2rem;
         padding: 5rem;
@@ -51,6 +52,29 @@ h1 {
                 margin-left: auto;
                 margin-right: auto;
             }
+        }
+    }
+    .keys {
+        margin-top: 4rem;
+        padding: 4rem;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        table {
+            width: 100%;
+            caption {
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
+            tr.mat-row:hover {
+                background-color: rgba(0,0,0,.1);
+                cursor: pointer;
+            }
+        }
+        .import-key-button {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
         }
     }
 }

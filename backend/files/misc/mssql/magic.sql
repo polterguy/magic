@@ -135,6 +135,7 @@ create table crypto_keys (
   id int not null identity(1,1),
   subject nvarchar(120) not null,
   url nvarchar(120) not null,
+  email nvarchar(120) not null,
   content text not null,
   fingerprint nvarchar(120) not null,
   imported datetime not null default getutcdate(),
