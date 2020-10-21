@@ -91,6 +91,9 @@ export class CryptoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
+        if (!res.url.startsWith('http')) {
+          res.url = 'https://' + res.url;
+        }
         this.keysService.importKey(
           res.subject,
           res.url,
@@ -106,11 +109,50 @@ export class CryptoComponent implements OnInit {
     });
   }
 
+  editKey(key: any) {
+    const dialogRef = this.dialog.open(ImportKeyDialogComponent, {
+      width: '500px',
+      data: {
+        id: key.id,
+        subject: key.subject,
+        url: key.url,
+        email: key.email,
+        content: key.content,
+        fingerprint: key.fingerprint,
+        type: key.type,
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        if (!res.url.startsWith('http')) {
+          res.url = 'https://' + res.url;
+        }
+        this.keysService.editKey(
+          res.id,
+          res.subject,
+          res.url,
+          res.email)
+          .subscribe(res => {
+            this.getKeys();
+          }, error => {
+            this.snackBar.open(error.error.message, 'ok');
+          });
+      }
+    });
+  }
+
   deleteKey(id: number) {
     this.keysService.deleteKey(id).subscribe(res => {
       this.keysService.getKeys(this.filter).subscribe(res => {
         this.keys = res || [];
       });
     });
+  }
+
+  getUrl(url: string) {
+    if (url.startsWith('http://')) {
+      return url.substr(7);
+    }
+    return url.substr(8);
   }
 }
