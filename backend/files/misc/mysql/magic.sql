@@ -124,5 +124,5 @@ create table crypto_keys (
   primary key (id),
   unique key id_UNIQUE (id),
   unique key fingerprint_UNIQUE (fingerprint),
-  unique key email_UNIQUE (email),
+  unique key email_UNIQUE (email)
 );
