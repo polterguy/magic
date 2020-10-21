@@ -137,6 +137,7 @@ create table crypto_keys (
   domain nvarchar(250) not null,
   email nvarchar(120) not null,
   content text not null,
+  vocabulary text not null,
   fingerprint nvarchar(120) not null,
   imported datetime not null default getutcdate(),
   type nvarchar(20) not null,

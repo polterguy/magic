@@ -1,0 +1,3 @@
+signal:magic.crypto.http.patch
+   url:"http://localhost:55247/magic/modules/system/crypto/eval"
+   payload:@"log.info:Howdy world"
