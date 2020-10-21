@@ -115,7 +115,7 @@ create table log_entries (
 create table crypto_keys (
   id int(11) not null auto_increment,
   subject varchar(120) not null, /* Typically the name of the owner of the key */
-  url varchar(120) null, /* The base URL of the subject */
+  domain varchar(250) null, /* The base URL of the subject */
   email varchar(120) null, /* Email address of owner */
   content text not null, /* Actual public key */
   fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
@@ -124,5 +124,6 @@ create table crypto_keys (
   primary key (id),
   unique key id_UNIQUE (id),
   unique key fingerprint_UNIQUE (fingerprint),
-  unique key email_UNIQUE (email)
+  unique key email_UNIQUE (email),
+  unique key url_UNIQUE (url)
 );

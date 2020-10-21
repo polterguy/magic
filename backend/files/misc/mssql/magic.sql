@@ -134,7 +134,7 @@ go
 create table crypto_keys (
   id int not null identity(1,1),
   subject nvarchar(120) not null,
-  url nvarchar(120) not null,
+  domain nvarchar(250) not null,
   email nvarchar(120) not null,
   content text not null,
   fingerprint nvarchar(120) not null,
@@ -142,7 +142,8 @@ create table crypto_keys (
   type nvarchar(20) not null,
   constraint pk_crypto_keys primary key clustered(id asc),
   unique(fingerprint),
-  unique(email)
+  unique(email),
+  unique(url)
 );
 
 go

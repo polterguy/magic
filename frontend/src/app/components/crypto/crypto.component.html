@@ -107,9 +107,9 @@
         <td mat-cell *matCellDef="let el" (click)="editKey(el)">{{el.email}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="url">
-        <th mat-header-cell *matHeaderCellDef scope="col">URL</th>
-        <td mat-cell *matCellDef="let el" (click)="editKey(el)">{{getUrl(el.url)}}</td>
+      <ng-container matColumnDef="domain">
+        <th mat-header-cell *matHeaderCellDef scope="col">Domain</th>
+        <td mat-cell *matCellDef="let el" (click)="editKey(el)">{{el.domain}}</td>
       </ng-container>
 
       <ng-container matColumnDef="delete">

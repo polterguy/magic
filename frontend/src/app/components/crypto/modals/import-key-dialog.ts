@@ -1,5 +1,5 @@
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { KeysService } from 'src/app/services/keys-service';
 
@@ -7,7 +7,7 @@ export interface ImportKeyDialogData {
   id?: number;
   imported?: Date;
   subject: string;
-  url: string;
+  domain: string;
   email: string;
   content: string;
   fingerprint: string;
@@ -18,20 +18,12 @@ export interface ImportKeyDialogData {
   templateUrl: 'import-key-dialog.html',
   styleUrls: ['import-key-dialog.scss']
 })
-export class ImportKeyDialogComponent implements OnInit {
+export class ImportKeyDialogComponent {
 
   constructor(
     private keysService: KeysService,
     public dialogRef: MatDialogRef<ImportKeyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ImportKeyDialogData) {}
-
-  ngOnInit() {
-    if (this.data.url.startsWith('http://')) {
-      this.data.url = this.data.url.substr(7);
-    } else {
-      this.data.url = this.data.url.substr(8);
-    }
-  }
 
   getDate(date: any) {
     return new Date(date).toLocaleString();
