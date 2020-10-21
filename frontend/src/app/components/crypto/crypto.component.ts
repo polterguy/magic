@@ -114,6 +114,7 @@ export class CryptoComponent implements OnInit {
       width: '500px',
       data: {
         id: key.id,
+        imported: key.imported,
         subject: key.subject,
         url: key.url,
         email: key.email,

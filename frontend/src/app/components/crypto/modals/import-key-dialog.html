@@ -1,7 +1,8 @@
 
 <h1 mat-dialog-title>{{data.id ? 'Edit key' : 'Import crypto key'}}</h1>
-<div mat-dialog-content>
 
+<div mat-dialog-content class="dialog">
+  
   <mat-form-field style="width: 100%;">
     <textarea
       matInput 
@@ -49,6 +50,13 @@
       disabled="true"
       [(ngModel)]="data.fingerprint">
   </mat-form-field>
+
+  <div
+    class="imported"
+    matTooltip="Import date"
+    *ngIf="data.id">
+    {{getDate(data.imported)}}
+  </div>
   
 </div>
 <div mat-dialog-actions>
