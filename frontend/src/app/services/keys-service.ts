@@ -25,7 +25,7 @@ export class KeysService {
 
   importKey(
     subject: string,
-    url: string,
+    domain: string,
     email: string,
     content: string,
     fingerprint: string) {
@@ -33,7 +33,7 @@ export class KeysService {
         this.ticketService.getBackendUrl() +
         'magic/modules/magic/crypto_keys', {
           subject,
-          url,
+          domain,
           email,
           content,
           fingerprint,
@@ -44,14 +44,14 @@ export class KeysService {
   editKey(
     id: number,
     subject: string,
-    url: string,
+    domain: string,
     email: string) {
       return this.httpClient.put<any>(
         this.ticketService.getBackendUrl() +
         'magic/modules/magic/crypto_keys', {
           id,
           subject,
-          url,
+          domain,
           email
         });
   }

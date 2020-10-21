@@ -118,7 +118,7 @@ export class CryptoComponent implements OnInit {
         id: key.id,
         imported: key.imported,
         subject: key.subject,
-        url: key.url,
+        domain: key.domain,
         email: key.email,
         content: key.content,
         fingerprint: key.fingerprint,
@@ -127,13 +127,15 @@ export class CryptoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        if (!res.url.startsWith('http')) {
-          res.url = 'https://' + res.url;
+        if (res.domain.startsWith('http://')) {
+          res.domain = res.domain.substring(7);
+        } else if (res.domain.startsWith('https://')) {
+          res.domain = res.domain.substring(8);
         }
         this.keysService.editKey(
           res.id,
           res.subject,
-          res.url,
+          res.domain,
           res.email)
           .subscribe(res => {
             this.getKeys();

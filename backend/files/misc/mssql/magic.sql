@@ -143,7 +143,7 @@ create table crypto_keys (
   constraint pk_crypto_keys primary key clustered(id asc),
   unique(fingerprint),
   unique(email),
-  unique(url)
+  unique(domain)
 );
 
 go
