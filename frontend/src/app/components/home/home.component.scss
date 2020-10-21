@@ -2,6 +2,12 @@
 h1 {
     text-align: center;
     margin-top: 3rem;
+    small {
+        font-size: .8rem;
+        color: #aaa;
+        font-weight: 300;
+        margin-left: 1rem;
+    }
 }
 
 .info-card {
