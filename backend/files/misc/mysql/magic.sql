@@ -116,6 +116,7 @@ create table crypto_keys (
   id int(11) not null auto_increment,
   subject varchar(120) not null, /* Typically the name of the owner of the key */
   url varchar(120) null, /* The base URL of the subject */
+  email varchar(120) null, /* Email address of owner */
   content text not null, /* Actual public key */
   fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
   imported datetime not null default current_timestamp,
