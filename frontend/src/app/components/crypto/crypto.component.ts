@@ -101,6 +101,7 @@ export class CryptoComponent implements OnInit {
           res.domain,
           res.email,
           res.content,
+          res.vocabulary,
           res.fingerprint)
           .subscribe(res => {
             this.getKeys();
@@ -113,7 +114,8 @@ export class CryptoComponent implements OnInit {
 
   editKey(key: any) {
     const dialogRef = this.dialog.open(ImportKeyDialogComponent, {
-      width: '500px',
+      width: '1000px',
+      disableClose: true,
       data: {
         id: key.id,
         imported: key.imported,
@@ -121,6 +123,7 @@ export class CryptoComponent implements OnInit {
         domain: key.domain,
         email: key.email,
         content: key.content,
+        vocabulary: key.vocabulary,
         fingerprint: key.fingerprint,
         type: key.type,
       }
@@ -136,7 +139,8 @@ export class CryptoComponent implements OnInit {
           res.id,
           res.subject,
           res.domain,
-          res.email)
+          res.email,
+          res.vocabulary)
           .subscribe(res => {
             this.getKeys();
           }, error => {

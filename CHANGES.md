@@ -473,21 +473,102 @@ Added the two following slots.
 
 Refer to the documentation of magic.lambda.crypto for details.
 
-# Version 8.4.6
+# Version 8.5.0
 
 ## Magic (main)
 
-Created support for creating a server RSA key, in addition to added support for managing public
-cryptography keys, to prepare for creating secure communication back and forth between the server
-and other servers.
+Created support for creating a server RSA key, in addition to support for managing public
+cryptography keys belonging to others. This creates secure communication back and forth between
+your server and other servers - Which again allows you to associate a bunch of slots with a public
+RSA key, for then to allow the owner of the key coupled with it to cryptographically
+transmit a message to your server, and execute Hyperlambda on your server, according to
+what vocabulary he is legally allowed to execute.
+
+**Breaking change** - Notice, the above feature requires one *additional* table in your magic
+database called _"crypto_keys"_. If you don't want to drop your existing _"magic"_ database
+and re-create it, you can execute the following SQL for your database to migrate your database
+to support the new tables.
+
+**MySQL**
+
+```
+create table crypto_keys (
+  id int(11) not null auto_increment,
+  subject varchar(120) not null, /* Typically the name of the owner of the key */
+  domain varchar(250) null, /* The base URL of the subject */
+  email varchar(120) null, /* Email address of owner */
+  content text not null, /* Actual public key */
+  vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
+  fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
+  imported datetime not null default current_timestamp,
+  type varchar(20) not null, /* Typically 'RSA' or something */
+  primary key (id),
+  unique key id_UNIQUE (id),
+  unique key fingerprint_UNIQUE (fingerprint),
+  unique key email_UNIQUE (email),
+  unique key url_UNIQUE (domain)
+);
+```
+
+**SQL Server**
+
+```
+create table crypto_keys (
+  id int not null identity(1,1),
+  subject nvarchar(120) not null,
+  domain nvarchar(250) not null,
+  email nvarchar(120) not null,
+  content text not null,
+  vocabulary text not null,
+  fingerprint nvarchar(120) not null,
+  imported datetime not null default getutcdate(),
+  type nvarchar(20) not null,
+  constraint pk_crypto_keys primary key clustered(id asc),
+  unique(fingerprint),
+  unique(email),
+  unique(domain)
+);
+```
+
+If you don't care about your existing magic database, you can also just drop the database entirely,
+before you start your backend - At which point you'll be asked to setup the database again, which
+will create the correct database schema, including the above table.
+
+The above SQL scripts will add the new table to your database. Make sure you are using your _"magic"_
+database when you invoke it, which you can do with the following SQL.
+
+```
+use magic;
+```
 
 ## magic.lambda.crypto
 
 Added support for returning result of **[crypto.hash]** either as raw bytes (useful for AES crypto),
 or as fingerprint value (useful for displaying to human beings).
 
+Created the following new slots.
+
+* __[crypto.encrypt]__ - Cryptographically signs and encrypts some content
+* __[crypto.decrypt]__ - Decrypts and verifies the signature of some content encrypted with the above slot
+* __[crypto.get-key]__ - Returns the encryption key some content was encrypted with using the above slot
+
+The above slots are convenience slots that allows you to combine RSA and AES encryption, to encrypt
+some message for transmitting over an insecure channel to some recipient. Refer to the documentation
+for _"magic.lambda.crypto"_ for details about how to use these slots.
+
 ## magic.lambda.validators
 
-Made the exception thrown during email validation slightly more _"semantically correct"_.
+Made the exception thrown during email validation slightly more _"semantically correct"_, by making
+sure we display the argument that did not validate as an email address when exception is thrown.
 
 Fixed an error in **[validators.mandatory]** that would circumvent its entire logic.
+
+## magic.node.extensions
+
+Support for `byte[]` types in Hyperlambda, using the _"bytes"_ typename. Raw bytes persisted into
+Hyperlambda will be persisted as base64 encoded, and then automatically converted back to `byte[]`
+again once the Hyperlambda is parsed.
+
+## magic.lambda.http
+
+New slot called **[http.patch]**, that creates an HTTP REST request with the `PATCH` verb.

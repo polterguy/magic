@@ -1,0 +1,4 @@
+signal:magic.crypto.http.eval
+   url:"http://localhost:55247/magic/modules/system/crypto/eval"
+   .lambda
+      log.info:Howdy world

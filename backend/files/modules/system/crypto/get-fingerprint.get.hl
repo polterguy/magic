@@ -9,8 +9,8 @@
 /*
  * Creating fingerprint and returning to caller.
  */
-crypto.hash:x:@.arguments/*/key
+crypto.fingerprint:x:@.arguments/*/key
    format:fingerprint
 unwrap:x:+/*
 return
-   fingerprint:x:@crypto.hash
+   fingerprint:x:@crypto.fingerprint

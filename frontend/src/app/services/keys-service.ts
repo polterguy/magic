@@ -28,6 +28,7 @@ export class KeysService {
     domain: string,
     email: string,
     content: string,
+    vocabulary: string,
     fingerprint: string) {
       return this.httpClient.post<any>(
         this.ticketService.getBackendUrl() +
@@ -36,6 +37,7 @@ export class KeysService {
           domain,
           email,
           content,
+          vocabulary,
           fingerprint,
           type: 'RSA'
         });
@@ -45,14 +47,16 @@ export class KeysService {
     id: number,
     subject: string,
     domain: string,
-    email: string) {
+    email: string,
+    vocabulary: string) {
       return this.httpClient.put<any>(
         this.ticketService.getBackendUrl() +
         'magic/modules/magic/crypto_keys', {
           id,
           subject,
           domain,
-          email
+          email,
+          vocabulary
         });
   }
 

@@ -51,7 +51,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .CodeMirror-hints {
-  position: absolute;
+  position: fixed;
   z-index: 10000;
   overflow: hidden;
   list-style: none;
