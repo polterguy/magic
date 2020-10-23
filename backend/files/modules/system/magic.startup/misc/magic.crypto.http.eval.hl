@@ -31,11 +31,24 @@ slots.create:magic.crypto.http.eval
    set-value:x:@.domain
       get-value:x:@strings.split/1
 
+   /*
+    * Making sure we use correct database type.
+    */
+   config.get:"magic:databases:default"
+   set-name:x:../**/xxx.connect
+      strings.concat
+         get-value:x:@config.get
+         .:.connect
+   set-name:x:../**/xxx.scalar
+      strings.concat
+         get-value:x:@config.get
+         .:.scalar
+
    // Looking up recipient's public key from database.
    .recipient-public-key
-   mysql.connect:magic
+   xxx.connect:magic
       set-value:x:@.recipient-public-key
-         mysql.scalar:select content from crypto_keys where domain = @domain
+         xxx.scalar:select content from crypto_keys where domain = @domain
             @domain:x:@.domain
 
    // Making sure we have a public key for recipient.
