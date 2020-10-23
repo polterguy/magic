@@ -3,60 +3,94 @@
  * Evaluates a cryptographically signed and encrypted
  * HTTP REST invocation.
  */
-.description:"Evaluates an encrypted and signed HTTP REST invocation."
-.arguments
-   body:string
+.description:"Evaluates an encrypted and cryptographically signed HTTP REST PATCH invocation."
 
 /*
- * Retrieving fungerprint of server that sent the request, and verifying
- * that we're "friend" with it, as in that the public key exists in our
- * database.
+ * Retrieving server's public key, which we'll need to decrypt message.
  */
-request.headers.get:X-Crypto-Fingerprint
-.public-key
+.self-private-key
+set-value:x:@.self-private-key
+   io.file.load:/modules/system/crypto/keys/private-key.key
+.self-public-key
+set-value:x:@.self-public-key
+   io.file.load:/modules/system/crypto/keys/public-key.key
+
+/*
+ * Invoking slot responsible for decrypting message.
+ */
+crypto.decrypt:x:@.arguments/*/body
+   decryption-key:x:@.self-private-key
+
+/*
+ * Looking up public key and vocabulary for signer of message.
+ */
+.sender-public-key
+.vocabulary
 mysql.connect:magic
-   mysql.select:select content from crypto_keys where fingerprint = @fingerprint
-      @fingerprint:x:@request.headers.get
-   set-value:x:@.public-key
+   mysql.select:select content, vocabulary from crypto_keys where fingerprint = @fingerprint
+      @fingerprint:x:@crypto.decrypt/*/fingerprint
+   set-value:x:@.sender-public-key
       get-value:x:@mysql.select/*/*/content
+   hyper2lambda:x:@mysql.select/*/*/vocabulary
+   add:x:@.vocabulary
+      get-nodes:x:@hyper2lambda/*
 
 /*
- * Verifying key exists in database.
+ * Verifying signature.
+ * Notice, this will throw if we have a signature mismatch.
  */
+crypto.rsa.verify:x:@crypto.decrypt
+   public-key:x:@.sender-public-key
+   signature:x:@crypto.decrypt/*/signature
+
+/*
+ * Invoking Hyperlambda specified by caller.
+ */
+add:x:../*/whitelist/*/.lambda
+   hyper2lambda:x:@crypto.decrypt
+add:x:../*/whitelist/*/vocabulary
+   get-nodes:x:@.vocabulary/*
+whitelist
+   vocabulary
+   .lambda
+
+/*
+ * Retrieving result of invocation.
+ *
+ * Defaulting result of invocation to value of [whitelist].
+ */
+unwrap:x:+
+.result:x:@whitelist
 if
    eq
-      get-value:x:@.public-key
+      get-value:x:@.result
       .
    .lambda
 
-      // No such friend.
-      throw:Unknown key
+      // No value, trying nodes.
+      set-value:x:@.result
+         lambda2hyper:x:@whitelist/*
+      if
+         eq
+            get-value:x:@.result
+            .:
+         .lambda
+            set-value:x:@.result
+               .:success
 
 /*
- * Verifying signature of body.
+ * Making sure we get correct HTTP header for response.
  */
-request.headers.get:X-Crypto-Signature
-crypto.rsa.verify:x:@.arguments/*/body
-   signature:x:@request.headers.get
-   public-key:x:@.public-key
+response.headers.add
+   Content-Type:application/octet-stream
 
 /*
- * Decrypting AES session key using server's private key.
+ * Signing and encrypting result of invocation.
  */
-request.headers.get:X-Crypto-Key
-io.file.load:/modules/system/crypto/keys/private-key.key
-crypto.rsa.decrypt:x:@request.headers.get
-   private-key:x:@io.file.load
-
-/*
- * Decrypting body using AES session key, that's now decrypted.
- */
-crypto.aes.decrypt:x:@.arguments/*/body
-   password:x:@crypto.rsa.decrypt
-
-/*
- * Returning results of invocation to caller.
- */
-log.info:x:@crypto.aes.decrypt
-return
-   result:success
+crypto.fingerprint:x:@.self-public-key
+crypto.encrypt:x:@.result
+   raw:true
+   encryption-key:x:@.sender-public-key
+   signing-key:x:@.self-private-key
+   signing-key-fingerprint:x:@crypto.fingerprint
+return:x:@crypto.encrypt

@@ -41,7 +41,7 @@ export class TasksComponent implements OnInit {
     private taskService: TaskService) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.filterFormControl = new FormControl('');
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())

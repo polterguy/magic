@@ -21,11 +21,10 @@ else
  * Key exists, returning it to caller, in addition to its fingerprint.
  */
 io.file.load:/modules/system/crypto/keys/public-key.key
-crypto.hash:x:@io.file.load
-   format:fingerprint
+crypto.fingerprint:x:@io.file.load
 unwrap:x:+/*
 return
-   fingerprint:x:@crypto.hash
+   fingerprint:x:@crypto.fingerprint
    public-key:x:@io.file.load
    key-format:base64/DER
    fingerprint-format:SHA256-fingerprint

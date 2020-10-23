@@ -1,7 +1,6 @@
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluatorService } from 'src/app/services/evaluator-service';
 import { TaskModel } from 'src/app/models/task-model';
@@ -24,7 +23,7 @@ export class NewTaskDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<NewTaskDialogComponent>) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.evaluatorService.vocabulary().subscribe(res => {
       localStorage.setItem('vocabulary', JSON.stringify(res));
     });
@@ -46,11 +45,11 @@ export class NewTaskDialogComponent implements OnInit {
     };
   }
 
-  close(): void {
+  close() {
     this.dialogRef.close();
   }
 
-  saveTask(): void {
+  saveTask() {
     if (this.taskId === '' || this.taskId === null) {
       this.showError('You have to provide an id for your task');
       return;
