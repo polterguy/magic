@@ -16,6 +16,19 @@ set-value:x:@.self-public-key
    io.file.load:/modules/system/crypto/keys/public-key.key
 
 /*
+ * Making sure we use correct database type.
+ */
+config.get:"magic:databases:default"
+set-name:x:../**/xxx.connect
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+set-name:x:../**/xxx.select
+   strings.concat
+      get-value:x:@config.get
+      .:.select
+
+/*
  * Invoking slot responsible for decrypting message.
  */
 crypto.decrypt:x:@.arguments/*/body
@@ -26,12 +39,12 @@ crypto.decrypt:x:@.arguments/*/body
  */
 .sender-public-key
 .vocabulary
-mysql.connect:magic
-   mysql.select:select content, vocabulary from crypto_keys where fingerprint = @fingerprint
+xxx.connect:magic
+   xxx.select:select content, vocabulary from crypto_keys where fingerprint = @fingerprint
       @fingerprint:x:@crypto.decrypt/*/fingerprint
    set-value:x:@.sender-public-key
-      get-value:x:@mysql.select/*/*/content
-   hyper2lambda:x:@mysql.select/*/*/vocabulary
+      get-value:x:./-/*/*/content
+   hyper2lambda:x:-/-/*/*/vocabulary
    add:x:@.vocabulary
       get-nodes:x:@hyper2lambda/*
 
