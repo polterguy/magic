@@ -585,6 +585,9 @@ Fixed a bug that made the _"Logs"_ menu item return nothing if the user for some
 had filtered such that there would be only one result, or there only was one result in
 the logs.
 
+Also made some minor improvements to the UX of the _"Crypto"_ menu item, allowing for
+changing a public key, among other things ...
+
 ## magic.lambda.crypto
 
 Simplified and improved the cryptography slots, in preparation of creating a pure C#
