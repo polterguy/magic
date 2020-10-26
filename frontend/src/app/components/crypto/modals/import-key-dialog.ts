@@ -36,6 +36,23 @@ export class ImportKeyDialogComponent implements OnInit {
         this.initializedVocabulary = true;
       }, 250);
     });
+    if (!this.data.id) {
+      this.data.vocabulary = `/*
+ * In order for clients to intelligently communicate with your
+ * server, at the very least you should whitelist [vocabulary]
+ * and [slots.vocabulary] - Since this allows them to query your
+ * server for what slots they're allowed to invoke.
+ * 
+ * In addition, you should whitelist the [magic.crypto.get-public-key]
+ * such that they can retrieve your newest RSA key, when you update your
+ * old key. The latter allows clients to update the public RSA key they
+ * are using to invoke endpoints in your server, if you should for some
+ * reasons choose to update your server's key pair.
+ */
+vocabulary
+slots.vocabulary
+signal:magic.crypto.get-public-key`;
+    }
   }
 
   getDate(date: any) {
