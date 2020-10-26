@@ -6,6 +6,13 @@
 .description:"Evaluates an encrypted and cryptographically signed HTTP REST PATCH invocation."
 
 /*
+ * Figuring out what RSA key pair to use for cryptographic invocation.
+ */
+.fingerprint
+set-value:x:@.fingerprint
+   crypto.get-key:x:@.arguments/*/body
+
+/*
  * Retrieving server's public key, which we'll need to decrypt message.
  */
 .self-private-key
@@ -14,6 +21,35 @@ set-value:x:@.self-private-key
 .self-public-key
 set-value:x:@.self-public-key
    io.file.load:/modules/system/crypto/keys/public-key.key
+
+/*
+ * Verifying the default server key is the key the package was encrypted for,
+ * and if not, loading a backup of the key specified by caller, if
+ * it exists.
+ */
+if
+   not
+      eq
+         get-value:x:@.fingerprint
+         crypto.fingerprint:x:@.self-public-key
+   .lambda
+
+      /*
+       * Package was not encrypted for the default server key,
+       * trying to load a backup of the encryption key, if it exists.
+       */
+      strings.concat
+         .:/modules/system/crypto/keys/public-key-
+         get-value:x:@.fingerprint
+         .:.key
+      set-value:x:@.self-public-key
+         io.file.load:x:@strings.concat
+      strings.concat
+         .:/modules/system/crypto/keys/private-key-
+         get-value:x:@.fingerprint
+         .:.key
+      set-value:x:@.self-private-key
+         io.file.load:x:@strings.concat
 
 /*
  * Making sure we use correct database type.
@@ -33,6 +69,7 @@ set-name:x:../**/xxx.select
  */
 crypto.decrypt:x:@.arguments/*/body
    decryption-key:x:@.self-private-key
+
 
 /*
  * Looking up public key and vocabulary for signer of message.

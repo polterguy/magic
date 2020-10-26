@@ -572,3 +572,16 @@ again once the Hyperlambda is parsed.
 ## magic.lambda.http
 
 New slot called **[http.patch]**, that creates an HTTP REST request with the `PATCH` verb.
+
+# Version 8.5.1
+
+## Magic (main)
+
+Support for creating new RSA key pairs, which will backup the old key pair, and still allow
+clients to use the old key pair, but by default try to use the newly generated key pair
+during decryption of cryptographic lambda invocations.
+
+## magic.lambda.crypto
+
+Simplified and improved the cryptography slots, in preparation of creating a pure C#
+project, allowing easy usage of Bouncy Castle in C# projects.

@@ -2,7 +2,7 @@
 /*
  * Creates a new RSA key pair, with the specified parameters
  */
-.description:"Creates a new RSA key pair using the specified parameters. Notice, will throw an exception if there's already an existing key for the server."
+.description:"Creates a new server RSA key pair using the specified parameters. Notice, will backup any existing key pairs."
 .arguments
    strength:int
    seed:string
@@ -16,7 +16,35 @@ log.info:Attempting to generate an RSA key pair for server
 if
    io.file.exists:/modules/system/crypto/keys/public-key.key
    .lambda
-      throw:Oops, there's already an existing key pair for your server.
+
+      /*
+       * Creates a backup of the old key pair.
+       */
+      .public-key
+      set-value:x:@.public-key
+         io.file.load:/modules/system/crypto/keys/public-key.key
+      .private-key
+      set-value:x:@.private-key
+         io.file.load:/modules/system/crypto/keys/private-key.key
+      .fingerprint
+      set-value:x:@.fingerprint
+         crypto.fingerprint:x:@.public-key
+      .public-key-filename
+      set-value:x:@.public-key-filename
+         strings.concat
+            .:/modules/system/crypto/keys/public-key-
+            get-value:x:@.fingerprint
+            .:.key
+      .private-key-filename
+      set-value:x:@.private-key-filename
+         strings.concat
+            .:/modules/system/crypto/keys/private-key-
+            get-value:x:@.fingerprint
+            .:.key
+      io.file.save:x:@.public-key-filename
+         get-value:x:@.public-key
+      io.file.save:x:@.private-key-filename
+         get-value:x:@.private-key
 
 
 /*
