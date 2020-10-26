@@ -15,8 +15,7 @@
 
   <div class="mat-elevation-z4 crypto-key">
 
-    <div
-      *ngIf="!keyExists">
+    <div>
 
       <mat-form-field
         class="key-strength">
@@ -46,7 +45,7 @@
         color="primary"
         mat-raised-button
         (click)="generate()">
-        Generate key pair
+        {{keyExists ? 'Generate new key pair' : 'Generate key pair'}}
       </button>
     </div>
 

@@ -85,7 +85,8 @@ export class CryptoComponent implements OnInit {
 
   importKey() {
     const dialogRef = this.dialog.open(ImportKeyDialogComponent, {
-      width: '500px',
+      width: '1000px',
+      disableClose: true,
       data: {
       }
     });
