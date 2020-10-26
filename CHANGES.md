@@ -581,6 +581,10 @@ Support for creating new RSA key pairs, which will backup the old key pair, and 
 clients to use the old key pair, but by default try to use the newly generated key pair
 during decryption of cryptographic lambda invocations.
 
+Fixed a bug that made the _"Logs"_ menu item return nothing if the user for some reasons
+had filtered such that there would be only one result, or there only was one result in
+the logs.
+
 ## magic.lambda.crypto
 
 Simplified and improved the cryptography slots, in preparation of creating a pure C#
