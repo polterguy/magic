@@ -9,7 +9,6 @@
       placeholder="Key"
       matTooltip="Base64/DER encoded public key"
       rows="5"
-      [disabled]="data.id"
       (change)="keyChanged()"
       [(ngModel)]="data.content">
     </textarea>
