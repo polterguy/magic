@@ -142,8 +142,11 @@ export class CryptoComponent implements OnInit {
           res.domain,
           res.email,
           res.vocabulary)
-          .subscribe(res => {
+          .subscribe(res2 => {
             this.getKeys();
+            this.keysService.evictCache('public-key.' + res.fingerprint).subscribe(res3 => {
+              console.log(res3);
+            });
           }, error => {
             this.snackBar.open(error.error.message, 'ok');
           });

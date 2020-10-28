@@ -60,6 +60,13 @@ export class KeysService {
         });
   }
 
+  evictCache(id: string) {
+    return this.httpClient.delete<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/misc/cache-evict?id=' +
+      encodeURIComponent(id));
+}
+
   deleteKey(id: number) {
     return this.httpClient.delete<any>(
       this.ticketService.getBackendUrl() +
