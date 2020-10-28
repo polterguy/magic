@@ -600,12 +600,8 @@ project, allowing easy usage of Bouncy Castle in C# projects.
 Re-engineered the **[magic.crypto.http.eval]** slot such that it no longer encrypts the
 payload, but only cryptographically signs it. This is a significant optimisation, in
 addition to that the TLS parts of HTTP should any ways do a good enough job at encrypting
-the actual communication. Also changed the way the _"eval"_ endpoint works, to
+the actual message. Also changed the way the _"eval"_ endpoint works, to
 pair it with the functionality of the slot invoking it.
-
-Notice, this made the generating process of the frontend completely fail, due to
-recursively invoking slots, which started occurring in the release we implemented
-the **[whitelist]** keyword - Sorry ... :/
 
 Fixed an error in the _"babelfish.sql"_ script, that would make it choke as you
 executed it in the _"Sql"_ menu item.
@@ -622,11 +618,22 @@ Fixed a severe error that would sometimes result in unpredictable results, due t
 removing the wrong stack item when recursively invoking dynamic slots, and other
 types of methods, that created stack items.
 
+Notice, this made the generating process of the frontend previously fail, due to
+recursively invoking slots, which started occurring in the release we implemented
+the **[whitelist]** keyword - Sorry ... :/
+
+If you had dynamic slots invoking dynamic slots, and it was behaving unpredictable,
+then this release should fix your issues.
+
 ## magic.lambda.crypto
 
 Separated the logic of cryptographically signing a message, and encrypting it,
 such that it's now possible to only sign a message. Simplified and refactored
 the way this entire project works now.
+
+## magic.crypto
+
+New utility project, containing only cryptographic helper classes and methods.
 
 ## magic.lambda.http
 
@@ -645,4 +652,10 @@ in the **[convert]** slot.
 ## magic.endpoint
 
 Slightly improved the way we handle `ActionResult` when returning response
-to client. Some more work remains here, but at least it's better.
+to client. Some more work remains here, but at least now it's better.
+NEeds cleanup.
+
+## magic.http
+
+Also did some cleaning here. More work to be done, but it should hopefully
+behave *better* now ... :/
