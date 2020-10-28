@@ -43,7 +43,7 @@ export class ImportKeyDialogComponent implements OnInit {
  * and [slots.vocabulary] - Since this allows them to query your
  * server for what slots they're allowed to invoke.
  * 
- * In addition, you should whitelist the [magic.crypto.get-public-key]
+ * In addition, you should whitelist the [magic.crypto.get-server-public-key]
  * such that they can retrieve your newest RSA key, when you update your
  * old key. The latter allows clients to update the public RSA key they
  * are using to invoke endpoints in your server, if you should for some
@@ -51,7 +51,7 @@ export class ImportKeyDialogComponent implements OnInit {
  */
 vocabulary
 slots.vocabulary
-signal:magic.crypto.get-public-key`;
+signal:magic.crypto.get-server-public-key`;
     }
   }
 

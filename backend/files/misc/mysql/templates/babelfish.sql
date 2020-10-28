@@ -18,11 +18,11 @@ use babelfish;
 /*
  * Inserting default language.
  */
-insert into languages (locale, description) values ('en', 'English')
-insert into languages (locale, description) values ('it', 'Italian')
-insert into languages (locale, description) values ('es', 'Spanis')
-insert into languages (locale, description) values ('no', 'Norwegian')
-insert into languages (locale, description) values ('fr', 'French')
+insert into languages (locale, description) values ('en', 'English');
+insert into languages (locale, description) values ('it', 'Italian');
+insert into languages (locale, description) values ('es', 'Spanis');
+insert into languages (locale, description) values ('no', 'Norwegian');
+insert into languages (locale, description) values ('fr', 'French');
 
 /*
  * Contains all translated units in the system.

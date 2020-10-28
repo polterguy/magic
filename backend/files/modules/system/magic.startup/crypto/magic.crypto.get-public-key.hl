@@ -1,8 +1,77 @@
 
 /*
- * Returns the public RSA server key.
+ * Returns a public cryptography key, and its associated [vocabulary].
  */
 slots.create:magic.crypto.get-public-key
 
-   io.file.load:/modules/system/crypto/keys/public-key.key
-   return:x:-
+   /*
+    * Making sure we cache result, to avoid having to hit database
+    * on every single invocation. Notice, we cache invocation for
+    * 5 minutes only. First we create a cache key though.
+    */
+   strings.concat
+      .:public-key.
+      get-value:x:@.arguments/*/fingerprint
+   unwrap:x:./*/cache.try-get/*/.lambda/*/.fingerprint
+
+   /*
+    * Then we retrieve result from cache, possibly invoking [.lambda]
+    * if item doesn't exist in cache.
+    */
+   cache.try-get:x:@strings.concat
+      expiration:300
+      expiration-type:absolute
+      .lambda
+
+         /*
+          * Forward evaluated above.
+          */
+         .fingerprint:x:@.arguments/*/fingerprint
+
+         /*
+          * Making sure we use corrrect database type.
+          */
+         config.get:"magic:databases:default"
+         set-name:x:./*/xxx.connect
+            strings.concat
+               get-value:x:@config.get
+               .:.connect
+         set-name:x:./**/xxx.select
+            strings.concat
+               get-value:x:@config.get
+               .:.select
+
+         /*
+          * Selecting key and vocabulary from database,
+          * according to the specified fingerprint.
+          */
+         xxx.connect:magic
+            xxx.select:select content as public_key, vocabulary from crypto_keys where fingerprint = @fingerprint
+               @fingerprint:x:@.fingerprint
+            if
+               not
+                  exists:x:./././0/0
+               .lambda
+
+                  /*
+                   * Public key doesn't exist in database.
+                   */
+                  throw:Public key doesn't exist
+
+            /*
+             * Returning result of database invocation to caller.
+             */
+            add:x:./*/return
+               get-nodes:x:././0/*/*/public_key
+            hyper2lambda:x:./0/*/*/vocabulary
+            add:x:./*/return/*/vocabulary
+               get-nodes:x:@hyper2lambda/*
+            return
+               vocabulary
+
+   /*
+    * Returning results of above invocation to caller.
+    */
+   add:x:./*/return
+      get-nodes:x:@cache.try-get/#/*
+   return
