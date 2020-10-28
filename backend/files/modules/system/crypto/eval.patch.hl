@@ -1,146 +1,59 @@
 
 /*
- * Evaluates a cryptographically signed and encrypted
- * HTTP REST invocation.
+ * Evaluates a cryptographically signed HTTP REST invocation.
  */
-.description:"Evaluates an encrypted and cryptographically signed HTTP REST PATCH invocation."
-
-/*
- * Figuring out what RSA key pair to use for cryptographic invocation.
- */
-.fingerprint
-set-value:x:@.fingerprint
-   crypto.get-key:x:@.arguments/*/body
-
-/*
- * Retrieving server's public key, which we'll need to decrypt message.
- */
-.self-private-key
-set-value:x:@.self-private-key
-   io.file.load:/modules/system/crypto/keys/private-key.key
-.self-public-key
-set-value:x:@.self-public-key
-   io.file.load:/modules/system/crypto/keys/public-key.key
-
-/*
- * Verifying the default server key is the key the package was encrypted for,
- * and if not, loading a backup of the key specified by caller, if
- * it exists.
- */
-if
-   not
-      eq
-         get-value:x:@.fingerprint
-         crypto.fingerprint:x:@.self-public-key
-   .lambda
-
-      /*
-       * Package was not encrypted for the default server key,
-       * trying to load a backup of the encryption key, if it exists.
-       */
-      strings.concat
-         .:/modules/system/crypto/keys/public-key-
-         get-value:x:@.fingerprint
-         .:.key
-      set-value:x:@.self-public-key
-         io.file.load:x:@strings.concat
-      strings.concat
-         .:/modules/system/crypto/keys/private-key-
-         get-value:x:@.fingerprint
-         .:.key
-      set-value:x:@.self-private-key
-         io.file.load:x:@strings.concat
-
-/*
- * Making sure we use correct database type.
- */
-config.get:"magic:databases:default"
-set-name:x:../**/xxx.connect
-   strings.concat
-      get-value:x:@config.get
-      .:.connect
-set-name:x:../**/xxx.select
-   strings.concat
-      get-value:x:@config.get
-      .:.select
-
-/*
- * Invoking slot responsible for decrypting message.
- */
-crypto.decrypt:x:@.arguments/*/body
-   decryption-key:x:@.self-private-key
+.description:"Evaluates a cryptographically signed HTTP REST invocation."
 
 
 /*
- * Looking up public key and vocabulary for signer of message.
+ * Retrieving signing key's fingerprint, for then to retrieve
+ * the public key associated with the fingerprint.
  */
-.sender-public-key
-.vocabulary
-xxx.connect:magic
-   xxx.select:select content, vocabulary from crypto_keys where fingerprint = @fingerprint
-      @fingerprint:x:@crypto.decrypt/*/fingerprint
-   set-value:x:@.sender-public-key
-      get-value:x:./-/*/*/content
-   hyper2lambda:x:-/-/*/*/vocabulary
-   add:x:@.vocabulary
-      get-nodes:x:@hyper2lambda/*
+crypto.get-key:x:@.arguments/*/body
+unwrap:x:+/*
+signal:magic.crypto.get-public-key
+   fingerprint:x:@crypto.get-key
+
 
 /*
  * Verifying signature.
- * Notice, this will throw if we have a signature mismatch.
  */
-crypto.rsa.verify:x:@crypto.decrypt
-   public-key:x:@.sender-public-key
-   signature:x:@crypto.decrypt/*/signature
+try
 
-/*
- * Invoking Hyperlambda specified by caller.
- */
-add:x:../*/whitelist/*/.lambda
-   hyper2lambda:x:@crypto.decrypt
-add:x:../*/whitelist/*/vocabulary
-   get-nodes:x:@.vocabulary/*
-whitelist
-   vocabulary
-   .lambda
+   /*
+    * Verifies signature, and also chops up payload.
+    */
+   crypto.verify:x:@.arguments/*/body
+      public-key:x:@signal/*/public_key
 
-/*
- * Retrieving result of invocation.
- *
- * Defaulting result of invocation to value of [whitelist].
- */
-unwrap:x:+
-.result:x:@whitelist
-if
-   eq
-      get-value:x:@.result
-      .
-   .lambda
 
-      // No value, trying nodes.
-      set-value:x:@.result
-         lambda2hyper:x:@whitelist/*
-      if
-         eq
-            get-value:x:@.result
-            .:
-         .lambda
-            set-value:x:@.result
-               .:success
+   /*
+    * Invoking Hyperlambda specified by caller.
+    */
+   add:x:./*/whitelist/*/.lambda
+      hyper2lambda:x:@crypto.verify
+   add:x:./*/whitelist/*/vocabulary
+      get-nodes:x:@signal/*/vocabulary/*
+   whitelist
+      vocabulary
+      .lambda
 
-/*
- * Making sure we get correct HTTP header for response.
- */
-response.headers.add
-   Content-Type:application/octet-stream
+   /*
+    * Returning result of execution.
+    */
+   unwrap:x:./*/return
+   add:x:./*/return
+      get-nodes:x:@whitelist/*
+   return:x:@whitelist
 
-/*
- * Signing and encrypting result of invocation.
- */
-crypto.fingerprint:x:@.self-public-key
-crypto.encrypt:x:@.result
-   raw:true
-   encryption-key:x:@.sender-public-key
-   signing-key:x:@.self-private-key
-   signing-key-fingerprint:x:@crypto.fingerprint
-return:x:@crypto.encrypt
+.catch
+
+   /*
+    * Execution error occurred, making sure we return that
+    * fact to the caller, by throwing "intelligent" exception,
+    * in addition to logging error locally.
+    */
+   log.info:x:@.arguments/*/message
+   throw:Access denied
+      public:true
+      status:401

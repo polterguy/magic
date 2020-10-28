@@ -1,0 +1,8 @@
+
+/*
+ * Returns the public RSA server key.
+ */
+slots.create:magic.crypto.get-server-public-key
+
+   io.file.load:/modules/system/crypto/keys/public-key.key
+   return:x:-

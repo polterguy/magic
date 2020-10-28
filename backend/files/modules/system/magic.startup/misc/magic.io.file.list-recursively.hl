@@ -43,4 +43,3 @@ slots.create:magic.io.file.list-recursively
     * Returning to caller all files in folder, and sub folder(s).
     */
    return-nodes
-   

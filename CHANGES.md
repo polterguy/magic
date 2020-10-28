@@ -592,3 +592,57 @@ changing a public key, among other things ...
 
 Simplified and improved the cryptography slots, in preparation of creating a pure C#
 project, allowing easy usage of Bouncy Castle in C# projects.
+
+# Version 8.6.0
+
+## Magic (main)
+
+Re-engineered the **[magic.crypto.http.eval]** slot such that it no longer encrypts the
+payload, but only cryptographically signs it. This is a significant optimisation, in
+addition to that the TLS parts of HTTP should any ways do a good enough job at encrypting
+the actual communication. Also changed the way the _"eval"_ endpoint works, to
+pair it with the functionality of the slot invoking it.
+
+Notice, this made the generating process of the frontend completely fail, due to
+recursively invoking slots, which started occurring in the release we implemented
+the **[whitelist]** keyword - Sorry ... :/
+
+Fixed an error in the _"babelfish.sql"_ script, that would make it choke as you
+executed it in the _"Sql"_ menu item.
+
+Created a couple of synamic convenience slots, such as **[magic.crypto.get-server-public-key]**
+to return the server's public RSA key - In addition to **[magic.crypto.get-public-key]** to
+retrieve some public RSA key from a fingerprint. The latter will lookup the fingerprint
+from the _"crypto\_keys"_ database table, and return both the public key, and the
+vocabulary the key is allowed to evaluate.
+
+## magic.signals
+
+Fixed a severe error that would sometimes result in unpredictable results, due to
+removing the wrong stack item when recursively invoking dynamic slots, and other
+types of methods, that created stack items.
+
+## magic.lambda.crypto
+
+Separated the logic of cryptographically signing a message, and encrypting it,
+such that it's now possible to only sign a message. Simplified and refactored
+the way this entire project works now.
+
+## magic.lambda.http
+
+Improved logic of **[http.patch]** slot. Some work remains here, but at least it's
+better than previously.
+
+## magic.node.extensions
+
+Implemented support for converting between `byte[]` and `string` types.
+
+## magic.lambda
+
+Implemented support for converting between `byte[]` and `string` types
+in the **[convert]** slot.
+
+## magic.endpoint
+
+Slightly improved the way we handle `ActionResult` when returning response
+to client. Some more work remains here, but at least it's better.
