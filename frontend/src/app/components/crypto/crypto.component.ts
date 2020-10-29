@@ -56,7 +56,9 @@ export class CryptoComponent implements OnInit {
     this.service.generateKeyPair(this.seed, this.strength).subscribe((res: any) => {
       this.isFetching = false;
       this.showKey(res);
-      this.snackBar.open('Key successfully created', 'ok');
+      this.snackBar.open('Key successfully created', 'ok', {
+        duration: 5000,
+      });
       this.keysService.evictCache('magic.crypto.get-server-public-key').subscribe(res3 => {
         console.log(res3);
       });
