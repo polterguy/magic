@@ -676,6 +676,8 @@ server keys. For instance no longer giving the user the option of generating a
 key with a strength of 1024, since it's simply not large enough to encrypt the
 symmetric AES key used to encrypt and sign packages, etc.
 
+Better positioning of CodeMirror hints popup.
+
 ## magic.http
 
 Minor cleanups and optimisations in the way it handles the response from
