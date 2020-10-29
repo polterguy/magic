@@ -4,5 +4,18 @@
  */
 slots.create:magic.crypto.get-server-public-key
 
-   io.file.load:/modules/system/crypto/keys/public-key.key
-   return:x:-
+   /*
+    * Caching the results for minor improvements.
+    */
+   cache.try-get:magic.crypto.get-server-public-key
+      expiration:300
+      expiration-type:sliding
+      .lambda
+
+         io.file.load:/modules/system/crypto/keys/public-key.key
+         crypto.fingerprint:x:@io.file.load
+         unwrap:x:+/*
+         return
+            key:x:@io.file.load
+            fingerprint:x:@crypto.fingerprint
+   return:x:@cache.try-get

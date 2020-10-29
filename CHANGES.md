@@ -662,12 +662,31 @@ behave *better* now ... :/
 
 # Version 8.6.1
 
+## Magic (Main)
+
+Improvements in how it handles crypto invocations, and vocabulary associated
+with a public key. Among other things, evicts from cache when public key is
+saved now.
+
+Changed the way the dynamica **[magic.crypto.get-server-public-key]** works.
+It'll now return both the fingerprint and the public key itself back to caller.
+
+Fixed several minor errors in regards to resolving of public keys, and generating
+server keys. For instance no longer giving the user the option of generating a
+key with a strength of 1024, since it's simply not large enough to encrypt the
+symmetric AES key used to encrypt and sign packages, etc.
+
 ## magic.http
 
 Minor cleanups and optimisations in the way it handles the response from
 HTTP invocations. Still needs further cleanups.
 
 ## magic.endpoint
+
+Minor improvements in how it handles the response object it returns.
+Still needs further cleanups.
+
+## magic.lambda.http
 
 Minor improvements in how it handles the response object it returns.
 Still needs further cleanups.

@@ -48,6 +48,8 @@ export class KeysService {
     subject: string,
     domain: string,
     email: string,
+    content: string,
+    fingerprint: string,
     vocabulary: string) {
       return this.httpClient.put<any>(
         this.ticketService.getBackendUrl() +
@@ -56,6 +58,8 @@ export class KeysService {
           subject,
           domain,
           email,
+          content,
+          fingerprint,
           vocabulary
         });
   }
