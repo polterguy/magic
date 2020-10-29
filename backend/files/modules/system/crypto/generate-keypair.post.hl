@@ -67,11 +67,9 @@ io.file.save:/modules/system/crypto/keys/private-key.key
 /*
  * Creating fingerprint, and doing some basic logging.
  */
-crypto.hash:x:@crypto.rsa.create-key/*/public
-   format:fingerprint
 log.info
    .:"RSA key pair generated for server, fingerprint; '"
-   get-value:x:@crypto.hash
+   get-value:x:@crypto.rsa.create-key/*/fingeprint
    .:"'"
 
 
@@ -80,5 +78,5 @@ log.info
  */
 unwrap:x:+/*
 return
-   fingerprint:x:@crypto.hash
+   fingerprint:x:@crypto.rsa.create-key/*/fingerprint
    public-key:x:@crypto.rsa.create-key/*/public

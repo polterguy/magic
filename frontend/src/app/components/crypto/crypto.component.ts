@@ -20,7 +20,6 @@ export class CryptoComponent implements OnInit {
   public seed: string = '';
   public strength: number = null;
   public strengthOptions: number[] = [
-    1024,
     2048,
     4096,
     8192
@@ -58,6 +57,9 @@ export class CryptoComponent implements OnInit {
       this.isFetching = false;
       this.showKey(res);
       this.snackBar.open('Key successfully created', 'ok');
+      this.keysService.evictCache('magic.crypto.get-server-public-key').subscribe(res3 => {
+        console.log(res3);
+      });
     }, (error: any) => {
       this.isFetching = false;
       this.snackBar.open(error.error.message);
@@ -141,6 +143,8 @@ export class CryptoComponent implements OnInit {
           nKey.subject,
           nKey.domain,
           nKey.email,
+          nKey.content,
+          nKey.fingerprint,
           nKey.vocabulary)
           .subscribe(res2 => {
             this.getKeys();

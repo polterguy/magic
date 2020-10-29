@@ -20,24 +20,17 @@ slots.create:magic.crypto.http.eval
 
 
    /*
-    * Loading server private and public key.
-    *
-    * Private key is used to sign the payload, and the public key's
-    * fingerprint is a part of the payload, such that the other party
-    * can verify the integrity and authenticity of the payload.
+    * Loading server private key since we'll need to sign the payload.
     */
    .private-key
-   .public-key
    set-value:x:@.private-key
       io.file.load:/modules/system/crypto/keys/private-key.key
-   set-value:x:@.public-key
-      io.file.load:/modules/system/crypto/keys/public-key.key
 
 
    /*
-    * Creating a fingerprint from our public key.
+    * Retrieving server's public key, and its fingerprint.
     */
-   crypto.fingerprint:x:@.public-key
+   signal:magic.crypto.get-server-public-key
 
 
    /*
@@ -48,7 +41,7 @@ slots.create:magic.crypto.http.eval
    crypto.sign:x:@lambda2hyper
       raw:true
       signing-key:x:@.private-key
-      signing-key-fingerprint:x:@crypto.fingerprint
+      signing-key-fingerprint:x:@signal/#/*/fingerprint
 
 
    /*
