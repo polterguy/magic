@@ -659,3 +659,15 @@ NEeds cleanup.
 
 Also did some cleaning here. More work to be done, but it should hopefully
 behave *better* now ... :/
+
+# Version 8.6.1
+
+## magic.http
+
+Minor cleanups and optimisations in the way it handles the response from
+HTTP invocations. Still needs further cleanups.
+
+## magic.endpoint
+
+Minor improvements in how it handles the response object it returns.
+Still needs further cleanups.

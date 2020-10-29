@@ -5,6 +5,9 @@
 .description:"Evicts an item from the cache."
 .arguments
    id:string
-log.info:x:@.arguments/*/id
+
 auth.ticket.verify:root
+
 cache.set:x:@.arguments/*/id
+return
+   result:success

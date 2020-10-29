@@ -129,22 +129,22 @@ export class CryptoComponent implements OnInit {
         type: key.type,
       }
     });
-    dialogRef.afterClosed().subscribe(res => {
-      if (res !== undefined) {
-        if (res.domain.startsWith('http://')) {
-          res.domain = res.domain.substring(7);
-        } else if (res.domain.startsWith('https://')) {
-          res.domain = res.domain.substring(8);
+    dialogRef.afterClosed().subscribe(nKey => {
+      if (nKey !== undefined) {
+        if (nKey.domain.startsWith('http://')) {
+          nKey.domain = nKey.domain.substring(7);
+        } else if (nKey.domain.startsWith('https://')) {
+          nKey.domain = nKey.domain.substring(8);
         }
         this.keysService.editKey(
-          res.id,
-          res.subject,
-          res.domain,
-          res.email,
-          res.vocabulary)
+          nKey.id,
+          nKey.subject,
+          nKey.domain,
+          nKey.email,
+          nKey.vocabulary)
           .subscribe(res2 => {
             this.getKeys();
-            this.keysService.evictCache('public-key.' + res.fingerprint).subscribe(res3 => {
+            this.keysService.evictCache('public-key.' + nKey.fingerprint).subscribe(res3 => {
               console.log(res3);
             });
           }, error => {
