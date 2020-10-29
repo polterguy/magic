@@ -16,12 +16,15 @@ slots.create:magic.crypto.http.eval
     * Sanity checking invocation.
     */
    validators.mandatory:x:@.arguments/*/.lambda
-   validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
 
 
    /*
     * Loading server private and public key.
+    *
+    * Private key is used to sign the payload, and the public key's
+    * fingerprint is a part of the payload, such that the other party
+    * can verify the integrity and authenticity of the payload.
     */
    .private-key
    .public-key
@@ -38,7 +41,8 @@ slots.create:magic.crypto.http.eval
 
 
    /*
-    * Signing message with our private key.
+    * Creating Hyperlambda payload, and signing
+    * the message with our private key.
     */
    lambda2hyper:x:@.arguments/*/.lambda/*
    crypto.sign:x:@lambda2hyper
@@ -48,22 +52,20 @@ slots.create:magic.crypto.http.eval
 
 
    /*
-    * Invoking HTTP REST endpoint.
+    * Invoking HTTP REST endpoint with signed payload.
     */
    http.patch:x:@.arguments/*/url
       headers
          Content-Type:application/octet-stream
-         Accept:application/octet-stream
       payload:x:@crypto.sign
 
 
    /*
     * Returning result to caller.
     */
-   unwrap:x:./*/return/*
+   unwrap:x:./*/return
    add:x:./*/return
       get-nodes:x:@http.patch/*/headers
-   add:x:./*/return/*/headers
+   add:x:./*/return
       get-nodes:x:@http.patch/*/content
-   return
-      status:x:@http.patch
+   return:x:@http.patch
