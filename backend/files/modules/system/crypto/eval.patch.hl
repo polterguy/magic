@@ -39,19 +39,46 @@ try
       .lambda
 
    /*
-    * Returning result of execution.
+    * Figuring out how to return results to caller, defaulting to
+    * simply "success".
     */
-   unwrap:x:./*/return
-   add:x:./*/return
-      get-nodes:x:@whitelist/*
-   return:x:@whitelist
+   .result:success
+   if
+      not
+         eq
+            get-value:x:@whitelist
+            .
+      .lambda
+         set-value:x:@.result
+            get-value:x:@whitelist
+   else-if
+      exists:x:@whitelist/*
+      .lambda
+         set-value:x:@.result
+            lambda2hyper:x:@whitelist/*
+
+   /*
+    * Making sure we apply the correct HTTP header.
+    */
+   response.headers.add
+      Content-Type:application/octet-stream
+
+   /*
+    * Signing result.
+    */
+   signal:magic.crypto.get-server-private-key
+   crypto.sign:x:@.result
+      raw:true
+      signing-key:x:@signal/*/private-key
+      signing-key-fingerprint:x:@signal/*/fingerprint
+   return:x:@crypto.sign
 
 .catch
 
    /*
-    * Execution error occurred, making sure we return that
-    * fact to the caller, by throwing "intelligent" exception,
-    * in addition to logging error locally.
+    * Execution error occurred, or signing verification - Regardless,
+    * making sure we return that fact to the caller, by throwing "intelligent"
+    * exception, in addition to logging error locally.
     */
    log.info:x:@.arguments/*/message
    throw:Access denied

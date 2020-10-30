@@ -46,7 +46,7 @@ slots.create:magic.crypto.get-public-key
           * according to the specified fingerprint.
           */
          xxx.connect:magic
-            xxx.select:select content as public_key, vocabulary from crypto_keys where fingerprint = @fingerprint
+            xxx.select:select content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint
                @fingerprint:x:@.fingerprint
             if
                not
@@ -63,9 +63,9 @@ slots.create:magic.crypto.get-public-key
              */
             add:x:./*/return
                get-nodes:x:././0/*/*/public_key
-            hyper2lambda:x:./0/*/*/vocabulary
+               get-nodes:x:././0/*/*/domain
             add:x:./*/return/*/vocabulary
-               get-nodes:x:@hyper2lambda/*
+               hyper2lambda:x:././0/*/*/vocabulary
             return
                vocabulary
 

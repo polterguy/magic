@@ -20,17 +20,10 @@ slots.create:magic.crypto.http.eval
 
 
    /*
-    * Loading server private key since we'll need to sign the payload.
+    * Loading server private key since we'll need to sign the payload,
+    * and the fingerprint for its associated public key.
     */
-   .private-key
-   set-value:x:@.private-key
-      io.file.load:/modules/system/crypto/keys/private-key.key
-
-
-   /*
-    * Retrieving server's public key, and its fingerprint.
-    */
-   signal:magic.crypto.get-server-public-key
+   signal:magic.crypto.get-server-private-key
 
 
    /*
@@ -40,8 +33,8 @@ slots.create:magic.crypto.http.eval
    lambda2hyper:x:@.arguments/*/.lambda/*
    crypto.sign:x:@lambda2hyper
       raw:true
-      signing-key:x:@.private-key
-      signing-key-fingerprint:x:@signal/#/*/fingerprint
+      signing-key:x:@signal/*/private-key
+      signing-key-fingerprint:x:@signal/*/fingerprint
 
 
    /*
@@ -54,11 +47,43 @@ slots.create:magic.crypto.http.eval
 
 
    /*
+    * Retrieving signing key's fingerprint, for then to retrieve
+    * the public key associated with the fingerprint.
+    */
+   crypto.get-key:x:@http.patch/*/content
+   unwrap:x:+/*
+   signal:magic.crypto.get-public-key
+      fingerprint:x:@crypto.get-key
+
+
+   /*
+    * Verifying signature of response, and making sure it
+    * originated from the correct domain.
+    */
+   crypto.verify:x:@http.patch/*/content
+      public-key:x:@signal/*/public_key
+   if
+      not
+         or
+            strings.starts-with:x:@.arguments/*/url
+               strings.concat
+                  .:"https://"
+                  get-value:x:@signal/*/domain
+            strings.starts-with:x:@.arguments/*/url
+               strings.concat
+                  .:"http://"
+                  get-value:x:@signal/*/domain
+      .lambda
+         throw:Response payload was not signed by public key associated with domain
+
+
+   /*
     * Returning result to caller.
     */
    unwrap:x:./*/return
-   add:x:./*/return
-      get-nodes:x:@http.patch/*/headers
-   add:x:./*/return
-      get-nodes:x:@http.patch/*/content
+   unwrap:x:./*/return/*/content
+   add:x:./*/return/*/headers
+      get-nodes:x:@http.patch/*/headers/*
    return:x:@http.patch
+      headers
+      content:x:@crypto.verify
