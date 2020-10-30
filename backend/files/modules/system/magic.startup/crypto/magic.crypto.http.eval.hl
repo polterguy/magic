@@ -49,6 +49,28 @@ slots.create:magic.crypto.http.eval
 
 
    /*
+    * Verifying success, and if not, returning failure to caller.
+    */
+   if
+      not
+         and
+            mte
+               get-value:x:@http.patch
+               .:int:200
+            lt
+               get-value:x:@http.patch
+               .:int:300
+      .lambda
+
+         /*
+          * Success was not returned from [http.patch] invocation.
+          */
+         log.info
+            lambda2hyper:x:@http.patch
+         throw:Invocation to cryptographically secured HTTP REST endpoint was not successful
+
+
+   /*
     * Retrieving signing key's fingerprint, for then to retrieve
     * the public key associated with the fingerprint.
     */
@@ -91,7 +113,7 @@ slots.create:magic.crypto.http.eval
     *
     * Notice, we try to make sure we return something that's
     * exactly similar to the result created by [http.patch] and
-    * [http.post] to allow for users to easily replace existing
+    * [http.post] etc, to allow for users to easily replace existing
     * HTTP invocations with cryptographically signed invocations.
     */
    unwrap:x:./*/return
