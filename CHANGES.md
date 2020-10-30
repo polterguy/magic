@@ -715,3 +715,11 @@ entire node, to avoid having caller modify the cache unintentionally.
 
 Made sure we return the correct HTTP status code when a public Hyperlambda
 exception is thrown.
+
+# Version 8.6.3
+
+## magic.lambda.crypto
+
+Fixed minor error that would try to verify the signature of an encrypted
+package in **[crypto.decrypt]** even if you didn't supply a **[verify-key]**
+argument, which would make the invocation fail.
