@@ -1,21 +1,22 @@
 
 /*
- * Returns the public RSA server key.
+ * Returns the private RSA server key.
  */
-slots.create:magic.crypto.get-server-public-key
+slots.create:magic.crypto.get-server-private-key
 
    /*
     * Caching the results for minor optimisations.
     */
-   cache.try-get:magic.crypto.get-server-public-key
+   cache.try-get:magic.crypto.get-server-private-key
       expiration:300
       expiration-type:sliding
       .lambda
 
          io.file.load:/modules/system/crypto/keys/public-key.key
          crypto.fingerprint:x:@io.file.load
+         io.file.load:/modules/system/crypto/keys/private-key.key
          unwrap:x:+/*
          return
-            key:x:@io.file.load
+            private-key:x:@io.file.load
             fingerprint:x:@crypto.fingerprint
-   return:x:@cache.try-get
+   return:x:@cache.try-get/#/*

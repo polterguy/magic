@@ -692,3 +692,21 @@ Still needs further cleanups.
 
 Minor improvements in how it handles the response object it returns.
 Still needs further cleanups.
+
+# Version 8.6.2
+
+## Magic (main)
+
+Rewritten (yet another time!) the logic of cryptographically signed
+HTTP invocations, after getting advice from the Redditers at /r/cryptography.
+
+## magic.lambda
+
+Fixed a severe error in **[return]** and **[return-nodes]** that would
+sometimes return nothing, even though it should, due to that the results
+of expressions evaluated was not cloned while returning nodes.
+
+## magic.lambda.caching
+
+Made sure we clone the node we return if we're supposed to return an
+entire node, to avoid having caller modify the cache unintentionally.
