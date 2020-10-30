@@ -710,3 +710,8 @@ of expressions evaluated was not cloned while returning nodes.
 
 Made sure we clone the node we return if we're supposed to return an
 entire node, to avoid having caller modify the cache unintentionally.
+
+## magic.library
+
+Made sure we return the correct HTTP status code when a public Hyperlambda
+exception is thrown.
