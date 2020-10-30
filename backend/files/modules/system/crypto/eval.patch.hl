@@ -71,6 +71,11 @@ try
       raw:true
       signing-key:x:@signal/*/private-key
       signing-key-fingerprint:x:@signal/*/fingerprint
+
+   /*
+    * Returning result of signing to caller, which will
+    * return it as byte[] as our response.
+    */
    return:x:@crypto.sign
 
 .catch
@@ -79,6 +84,10 @@ try
     * Execution error occurred, or signing verification - Regardless,
     * making sure we return that fact to the caller, by throwing "intelligent"
     * exception, in addition to logging error locally.
+    *
+    * Notice, we return a "generic" error to make sure we don't supply
+    * valuable information to malicious adversaries, trying to find out
+    * valuable information about the system, in order to crack it.
     */
    log.info:x:@.arguments/*/message
    throw:Access denied

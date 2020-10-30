@@ -2,7 +2,9 @@
 /*
  * Allows you to invoke an HTTP REST GET method on another server,
  * cryptographically signing your payload before it's sent, with your
- * server's private key.
+ * server's private key - And verifying the response from the server
+ * is correct, by verifying the payload is cryptographically signed
+ * by the (correct) endpoint when parsing the response.
  *
  * Arguments.
  *
@@ -20,8 +22,8 @@ slots.create:magic.crypto.http.eval
 
 
    /*
-    * Loading server private key since we'll need to sign the payload,
-    * and the fingerprint for its associated public key.
+    * Loading server's private key and key fingerprint since
+    * we'll need to sign the request.
     */
    signal:magic.crypto.get-server-private-key
 
@@ -57,28 +59,40 @@ slots.create:magic.crypto.http.eval
 
 
    /*
-    * Verifying signature of response, and making sure it
-    * originated from the correct domain.
+    * Verifying signature of response.
     */
    crypto.verify:x:@http.patch/*/content
       public-key:x:@signal/*/public_key
+
+
+   /*
+    * Making sure the response was signed with the key
+    * associated with the domain we sent the request to.
+    */
+   strings.split:x:@.arguments/*/url
+      .:/
    if
       not
-         or
-            strings.starts-with:x:@.arguments/*/url
-               strings.concat
-                  .:"https://"
-                  get-value:x:@signal/*/domain
-            strings.starts-with:x:@.arguments/*/url
-               strings.concat
-                  .:"http://"
-                  get-value:x:@signal/*/domain
+         eq
+            get-value:x:@strings.split/1
+            get-value:x:@signal/*/domain
       .lambda
-         throw:Response payload was not signed by public key associated with domain
+
+         /*
+          * Man in the middle picked up response, and resigned it with
+          * a different key, than the key we have asssociated with the domain
+          * we sent the request to.
+          */
+         throw:Response payload was not signed by the public key associated with domain we sent the request to
 
 
    /*
     * Returning result to caller.
+    *
+    * Notice, we try to make sure we return something that's
+    * exactly similar to the result created by [http.patch] and
+    * [http.post] to allow for users to easily replace existing
+    * HTTP invocations with cryptographically signed invocations.
     */
    unwrap:x:./*/return
    unwrap:x:./*/return/*/content
