@@ -20,6 +20,7 @@ signal:magic.crypto.get-public-key
  */
 try
 
+
    /*
     * Verifies signature, and also chops up payload.
     */
@@ -28,15 +29,23 @@ try
 
 
    /*
-    * Invoking Hyperlambda specified by caller.
+    * Parametrising [whitelist] invocation, according to
+    * arguments supplied by caller.
     */
    add:x:./*/whitelist/*/.lambda
       hyper2lambda:x:@crypto.verify
    add:x:./*/whitelist/*/vocabulary
       get-nodes:x:@signal/*/vocabulary/*
+
+
+   /*
+    * Invoking lambda object, now associated with a [vocabulary],
+    * restricting the caller's access rights on the server.
+    */
    whitelist
       vocabulary
       .lambda
+
 
    /*
     * Figuring out how to return results to caller, defaulting to
@@ -57,11 +66,13 @@ try
          set-value:x:@.result
             lambda2hyper:x:@whitelist/*
 
+
    /*
     * Making sure we apply the correct HTTP header.
     */
    response.headers.add
       Content-Type:application/octet-stream
+
 
    /*
     * Signing result.
@@ -72,13 +83,16 @@ try
       signing-key:x:@signal/*/private-key
       signing-key-fingerprint:x:@signal/*/fingerprint
 
+
    /*
     * Returning result of signing to caller, which will
     * return it as byte[] as our response.
     */
    return:x:@crypto.sign
 
+
 .catch
+
 
    /*
     * Execution error occurred, or signing verification - Regardless,
