@@ -1,0 +1,179 @@
+
+/*
+ * Evaluates a cryptographically signed HTTP REST invocation.
+ */
+.description:"Evaluates a cryptographically signed HTTP REST invocation."
+.arguments
+   body:string
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/body
+
+
+/*
+ * Retrieving signing key's fingerprint, for then to retrieve
+ * the public key associated with the fingerprint.
+ */
+crypto.get-key:x:@.arguments/*/body
+unwrap:x:+/*
+signal:magic.crypto.get-public-key
+   fingerprint:x:@crypto.get-key
+
+
+/*
+ * Verifying signature.
+ */
+try
+
+
+   /*
+    * Verifies signature, and also chops up payload.
+    */
+   crypto.verify:x:@.arguments/*/body
+      public-key:x:@signal/*/public_key
+
+
+   /*
+    * Transforming Hyperlambda to lambda object, and adding into
+    * [whitelist] invocation below.
+    */
+   hyper2lambda:x:@crypto.verify
+   add:x:./*/whitelist/*/.lambda
+      get-nodes:x:@hyper2lambda/*
+
+
+   /*
+    * In case caller supplied a Guid, we store this, to make sure
+    * we don't execute the same request twice - Idempotency!
+    */
+   .request
+   .request-id
+   .request-raw
+   set-value:x:@.request
+      get-value:x:@crypto.verify
+   set-value:x:@.request-id
+      get-value:x:@hyper2lambda/*/.request-id
+   set-value:x:@.request-raw
+      convert:x:@.arguments/*/body
+         type:base64
+
+
+   /*
+    * Making sure this request haven't been invoked previously
+    */
+   unwrap:x:+/*/or/**/signal/*
+   if
+      or
+         eq
+            get-value:x:@.request-id
+            .
+         eq
+            get-value:x:@.request-id
+            .
+         signal:magic.crypto.http.has-invoked
+            request-id:x:@.request-id
+      .lambda
+
+         /*
+          * Request has been previously sent to this server.
+          */
+         strings.concat
+            .:"Request with the id of '"
+            get-value:x:@.request-id
+            .:"' has been previously evaluated in this server"
+         throw:x:-
+
+
+   /*
+    * Adding the [vocabulary] to [whitelist] invocation, according
+    * to the user's authorisations, declared in database, associated
+    * with fingerprint of his or her public key.
+    */
+   add:x:./*/whitelist/*/vocabulary
+      get-nodes:x:@signal/*/vocabulary/*
+
+
+   /*
+    * Evaluating request.
+    */
+   whitelist
+      vocabulary
+      .lambda
+
+
+   /*
+    * Figuring out how to return results to caller, defaulting to
+    * simply "success".
+    */
+   .result:success
+   if
+      not
+         eq
+            get-value:x:@whitelist
+            .
+      .lambda
+         set-value:x:@.result
+            get-value:x:@whitelist
+   else-if
+      exists:x:@whitelist/*
+      .lambda
+         set-value:x:@.result
+            lambda2hyper:x:@whitelist/*
+
+
+   /*
+    * Making sure we apply the correct HTTP header.
+    */
+   response.headers.add
+      Content-Type:application/octet-stream
+
+
+   /*
+    * Persisting request, including payload, raw request,
+    * and response for future references.
+    */
+   unwrap:x:+/*
+   signal:magic.crypto.http.persist-invocation
+      crypto-key:x:../*/signal/[0,1]/*/id
+      request-id:x:@.request-id
+      request:x:@.request
+      request-raw:x:@.request-raw
+      response:x:@.result
+   
+
+   /*
+    * Signing result.
+    */
+   signal:magic.crypto.get-server-private-key
+   crypto.sign:x:@.result
+      raw:true
+      signing-key:x:@signal/*/private-key
+      signing-key-fingerprint:x:@signal/*/fingerprint
+
+
+   /*
+    * Returning result of signing to caller, which will
+    * return it as byte[] as our response.
+    */
+   return:x:@crypto.sign
+
+
+.catch
+
+
+   /*
+    * Execution error occurred, or signing verification - Regardless,
+    * making sure we return that fact to the caller, by throwing "intelligent"
+    * exception, in addition to logging error locally.
+    *
+    * Notice, we return a "generic" error to make sure we don't supply
+    * valuable information to malicious adversaries, trying to find out
+    * valuable information about the system, in order to crack it.
+    */
+   log.info:x:@.arguments/*/message
+   throw:Access denied
+      public:true
+      status:401
