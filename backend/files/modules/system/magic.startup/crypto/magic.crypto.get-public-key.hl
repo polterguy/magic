@@ -46,7 +46,7 @@ slots.create:magic.crypto.get-public-key
           * according to the specified fingerprint.
           */
          xxx.connect:magic
-            xxx.select:select content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint
+            xxx.select:select id, content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint
                @fingerprint:x:@.fingerprint
             if
                not
@@ -62,6 +62,7 @@ slots.create:magic.crypto.get-public-key
              * Returning result of database invocation to caller.
              */
             add:x:./*/return
+               get-nodes:x:././0/*/*/id
                get-nodes:x:././0/*/*/public_key
                get-nodes:x:././0/*/*/domain
             add:x:./*/return/*/vocabulary
