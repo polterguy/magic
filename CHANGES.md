@@ -723,3 +723,10 @@ exception is thrown.
 Fixed minor error that would try to verify the signature of an encrypted
 package in **[crypto.decrypt]** even if you didn't supply a **[verify-key]**
 argument, which would make the invocation fail.
+
+# Version 8.6.5
+
+## magic.lambda
+
+Added support for converting from `byte[]` to base64 using the **[convert]** slot,
+passing in base64 as the **[type]** argument.
