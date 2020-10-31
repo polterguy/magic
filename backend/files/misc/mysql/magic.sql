@@ -128,3 +128,21 @@ create table crypto_keys (
   unique key email_UNIQUE (email),
   unique key url_UNIQUE (domain)
 );
+
+
+/*
+ * Creating crypto_invocations table for holding invocations associated
+ * with some public key.
+ */
+create table crypto_invocations (
+  id int(11) not null auto_increment,
+  crypto_key int(11) not null, /* A reference to the crypto key associated with the evaluation */
+  request_id varchar(250) null, /* The ID of the request - Ensures idempotency if caller specifies an ID */
+  request text not null, /* The request payload supplied by the caller */
+  request_raw text not null, /* The request payload supplied by the caller */
+  response text not null, /* The response payload returned to the caller */
+  primary key (id),
+  unique key id_UNIQUE (id),
+  unique key `request_id_UNIQUE` (`request_id`),
+  constraint `crypto_key_fky` foreign key (`crypto_key`) references `crypto_keys` (`id`) on delete cascade
+);
