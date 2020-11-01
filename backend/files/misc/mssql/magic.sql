@@ -175,7 +175,7 @@ go
 
 /*
  * This might look stupid, but actually releases our database's connections for some reasons,
- * due to connection pooling or something in SQL Server, "holding" the connection open.
+ * due to connection pooling or something in SQL Server "holding" the connection open.
  * Hence, by explicitly using master for current connection, we can more easily drop database
  * later, if something goes wrong, and we need to re-run the setup process.
  */
