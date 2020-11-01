@@ -149,6 +149,30 @@ create table crypto_keys (
 
 go
 
+
+/*
+ * Creating crypto_invocations table for holding invocations associated
+ * with some public key.
+ */
+create table crypto_invocations (
+  id int not null identity(1,1),
+  crypto_key int not null,
+  request_id nvarchar(120) not null,
+  request text not null,
+  request_raw text not null,
+  response text not null,
+  created datetime not null default getutcdate(),
+  constraint pk_crypto_invocations primary key clustered(id asc),
+  unique(request_id),
+);
+alter table crypto_invocations
+  add foreign key (crypto_key)
+  references crypto_keys(id)
+  on delete cascade;
+
+go
+
+
 /*
  * This might look stupid, but actually releases our database's connections for some reasons,
  * due to connection pooling or something in SQL Server, "holding" the connection open.
