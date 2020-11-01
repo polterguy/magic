@@ -4,8 +4,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SetupService } from 'src/app/services/setup-service';
 import { TicketService } from 'src/app/services/ticket-service';
 import { KeysService } from 'src/app/services/keys-service';
+import { EvaluatorService } from 'src/app/services/evaluator-service';
 import { ImportKeyDialogComponent } from './modals/import-key-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'crypto-home',
@@ -33,8 +35,22 @@ export class CryptoComponent implements OnInit {
   public keys: any = [];
   public filter = '';
 
+  public displayedColumnsInvocations: string[] = [
+    'crypto_key',
+    'request_id',
+    'created',
+    'request',
+  ];
+  public invocations: any = [];
+  public invocationsFilter: any = {
+    limit: 10,
+    offset: 0,
+  };
+  public invocationsCount: number;
+
   constructor(
     private ticketService: TicketService,
+    private evaluatorService: EvaluatorService,
     private keysService: KeysService,
     private service: SetupService,
     private snackBar: MatSnackBar,
@@ -49,6 +65,7 @@ export class CryptoComponent implements OnInit {
       this.snackBar.open(error.error.msg);
     });
     this.getKeys();
+    this.getInvocations();
   }
 
   generate() {
@@ -166,5 +183,30 @@ export class CryptoComponent implements OnInit {
         this.keys = res || [];
       });
     });
+  }
+
+  getInvocations() {
+    this.evaluatorService.invocations(this.invocationsFilter).subscribe(res => {
+      this.invocations = res;
+      this.evaluatorService.countInvocations(this.invocationsFilter).subscribe(res => {
+        this.invocationsCount = res.count;
+      });
+    });
+  }
+
+  paged(e: PageEvent) {
+    this.invocationsFilter.offset = e.pageSize * e.pageIndex;
+    this.getInvocations();
+  }
+
+  viewReceipt(el: any) {
+    if (el.viewReceipt && el.viewReceipt === true) {
+      el.viewReceipt = false;
+    }
+    else if (el.viewReceipt && el.viewReceipt === false) {
+      el.viewReceipt = true;
+    } else {
+      el.viewReceipt = true;
+    }
   }
 }
