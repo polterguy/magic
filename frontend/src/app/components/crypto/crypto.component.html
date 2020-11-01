@@ -120,7 +120,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [matTooltip]="row.imported | since"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [matTooltip]="'Key was imported ' + (row.imported | since) + ' on the ' + getLocaleDate(row.imported)"></tr>
 
     </table>
 
@@ -131,10 +131,10 @@
     <div class="key-filter">
       <mat-form-field>
         <mat-select
-          placeholder="Filter by key"
+          placeholder="Filter by client"
           [(ngModel)]="keyFilter"
           (selectionChange)="filterChanged()"
-          matTooltip="Filter requests by user">
+          matTooltip="Filter requests by client">
           <mat-option
             *ngFor="let cur of allKeys"
             [value]="cur.id">{{cur.subject + ' - ' + cur.email}}</mat-option>
@@ -161,17 +161,17 @@
 
       <ng-container matColumnDef="created">
         <th mat-header-cell *matHeaderCellDef scope="col">Created</th>
-        <td mat-cell *matCellDef="let el" [matTooltip]="el.created" (click)="viewReceipt(el)">{{el.created | since}}</td>
+        <td mat-cell *matCellDef="let el" [matTooltip]="getLocaleDate(el.created)" (click)="viewReceipt(el)">{{el.created | since}}</td>
       </ng-container>
 
       <ng-container matColumnDef="request">
         <th mat-header-cell *matHeaderCellDef scope="col">Payload</th>
         <td mat-cell *matCellDef="let el">
-          <pre *ngIf="!el.viewReceipt || el.viewReceipt === false" class="request">{{el.request}}</pre>
-          <div *ngIf="el.viewReceipt === true" class="request-raw">
+          <pre *ngIf="!el.viewReceipt || el.viewReceipt === false" class="request" matTooltip="Hyperlambda request">{{el.request}}</pre>
+          <div *ngIf="el.viewReceipt === true" class="request-raw" matTooltip="Cryptographically signed request">
             {{el.request_raw}}
           </div>
-          <div class="response">
+          <div class="response" matTooltip="Response">
             {{el.response}}
           </div>
         </td>
