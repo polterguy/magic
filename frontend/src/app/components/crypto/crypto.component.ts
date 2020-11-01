@@ -122,10 +122,12 @@ export class CryptoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res !== undefined) {
-        if (res.domain.startsWith('http://')) {
-          res.domain = res.domain.substring(7);
-        } else if (res.domain.startsWith('https://')) {
-          res.domain = res.domain.substring(8);
+        if (res.domain && res.domain !== '') {
+          if (res.domain.startsWith('http://')) {
+            res.domain = res.domain.substring(7);
+          } else if (res.domain.startsWith('https://')) {
+            res.domain = res.domain.substring(8);
+          }
         }
         this.keysService.importKey(
           res.subject,
@@ -244,5 +246,9 @@ export class CryptoComponent implements OnInit {
         return result.subject;
       }
     }
+  }
+
+  getLocaleDate(date: string) {
+    return new Date(date).toLocaleString();
   }
 }
