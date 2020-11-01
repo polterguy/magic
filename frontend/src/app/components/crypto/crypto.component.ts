@@ -48,6 +48,9 @@ export class CryptoComponent implements OnInit {
   };
   public invocationsCount: number;
 
+  public allKeys: any = [];
+  public keyFilter = -1;
+
   constructor(
     private ticketService: TicketService,
     private evaluatorService: EvaluatorService,
@@ -66,6 +69,9 @@ export class CryptoComponent implements OnInit {
     });
     this.getKeys();
     this.getInvocations();
+    this.keysService.getAllKeys().subscribe(res => {
+      this.allKeys = res;
+    });
   }
 
   generate() {
@@ -186,6 +192,11 @@ export class CryptoComponent implements OnInit {
   }
 
   getInvocations() {
+    if (this.keyFilter !== -1) {
+      this.invocationsFilter.crypto_key = this.keyFilter;
+    } else {
+      delete this.invocationsFilter.crypto_key;      
+    }
     this.evaluatorService.invocations(this.invocationsFilter).subscribe(res => {
       this.invocations = res;
       this.evaluatorService.countInvocations(this.invocationsFilter).subscribe(res => {
@@ -208,5 +219,14 @@ export class CryptoComponent implements OnInit {
     } else {
       el.viewReceipt = true;
     }
+  }
+
+  clearFilter() {
+    this.keyFilter = -1;
+    this.getInvocations();
+  }
+
+  filterChanged() {
+    this.getInvocations();
   }
 }

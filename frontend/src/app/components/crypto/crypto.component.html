@@ -83,8 +83,7 @@
 
   </div>
 
-  <div
-    class="mat-elevation-z4 keys">
+  <div class="mat-elevation-z4 keys">
 
     <button
       class="import-key-button"
@@ -127,8 +126,25 @@
 
   </div>
 
-  <div
-    class="mat-elevation-z4 invocations">
+  <div class="mat-elevation-z4 invocations">
+
+    <div class="key-filter">
+      <mat-form-field>
+        <mat-select
+          placeholder="Filter by key"
+          [(ngModel)]="keyFilter"
+          (selectionChange)="filterChanged()"
+          matTooltip="Filter requests by user">
+          <mat-option
+            *ngFor="let cur of allKeys"
+            [value]="cur.id">{{cur.subject + ' - ' + cur.email}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-button
+        matTooltip="Clears filter"
+        (click)="clearFilter()">Clear</button>
+    </div>
 
     <table mat-table [dataSource]="invocations">
       <caption>Cryptographically signed invocations</caption>

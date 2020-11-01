@@ -23,6 +23,12 @@ export class KeysService {
       'magic/modules/magic/crypto_keys');
   }
 
+  getAllKeys() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/magic/crypto_keys?limit=-1');
+  }
+
   importKey(
     subject: string,
     domain: string,
