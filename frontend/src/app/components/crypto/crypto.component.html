@@ -49,7 +49,7 @@
       </button>
     </div>
 
-    <h2 *ngIf="keyExists">Server cryptography key</h2>
+    <h2 *ngIf="keyExists">Server public key</h2>
 
     <div
       class="fingerprint"
@@ -92,7 +92,7 @@
       mat-button>Import ...</button>
 
     <table mat-table [dataSource]="keys">
-      <caption>Public keys in your system</caption>
+      <caption>Public client keys in your system</caption>
 
       <ng-container matColumnDef="subject">
         <th mat-header-cell *matHeaderCellDef scope="col">Subject</th>
@@ -143,7 +143,7 @@
       <button
         mat-button
         matTooltip="Clears filter"
-        (click)="clearFilter()">Clear</button>
+        (click)="clearFilter()">Clear filter</button>
     </div>
 
     <table mat-table [dataSource]="invocations">
@@ -151,7 +151,7 @@
 
       <ng-container matColumnDef="crypto_key">
         <th mat-header-cell *matHeaderCellDef scope="col">Key</th>
-        <td mat-cell *matCellDef="let el" [matTooltip]="getCryptoKey(el.crypto_key, true)" (click)="viewReceipt(el)">{{getCryptoKey(el.crypto_key, false)}}</td>
+        <td mat-cell *matCellDef="let el" [matTooltip]="getCryptoKey(el.crypto_key, true)" (click)="editKeyFromReceipt(el)">{{getCryptoKey(el.crypto_key, false)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="request_id">
@@ -185,6 +185,7 @@
     <mat-paginator
       hidePageSize="true"
       showFirstLastButtons="true"
+      [pageIndex]="invocationsFilter.offset / 10"
       [length]="invocationsCount"
       pageSize="10"
       (page)="paged($event)"

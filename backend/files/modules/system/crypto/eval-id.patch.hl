@@ -1,8 +1,8 @@
 
 /*
- * Evaluates a cryptographically signed HTTP REST invocation.
+ * Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database.
  */
-.description:"Evaluates a cryptographically signed HTTP REST invocation."
+.description:"Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database."
 .arguments
    body:string
 
