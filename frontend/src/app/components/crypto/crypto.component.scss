@@ -101,6 +101,15 @@ h1 {
         position: relative;
         width: 100%;
         box-sizing: border-box;
+        .key-filter {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            font-size: .7rem;
+            mat-form-field {
+                margin-right: .5rem;
+            }
+        }
         table {
             width: 100%;
             caption {

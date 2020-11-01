@@ -38,6 +38,13 @@ export class EvaluatorService {
     let query = '';
     if (filter.offset !== 0) {
       query += '?offset=' + filter.offset;
+      if (filter.crypto_key) {
+        query += '&crypto_key.eq=' + filter.crypto_key;
+      }
+    } else {
+      if (filter.crypto_key) {
+        query += '?crypto_key.eq=' + filter.crypto_key;
+      }
     }
     return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +
@@ -46,8 +53,13 @@ export class EvaluatorService {
   }
 
   countInvocations(filter: any) {
+    let query = '';
+    if (filter.crypto_key) {
+      query += '?crypto_key.eq=' + filter.crypto_key;
+    }
     return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/magic/crypto_invocations-count');
+      'magic/modules/magic/crypto_invocations-count' +
+      query);
   }
 }
