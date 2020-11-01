@@ -1,0 +1,14 @@
+
+/*
+ * This snippet cryptographically signs and encrypts the
+ * specified [.lambda] object, for then to transmit it to
+ * the specified URL, which then will execute the lambda object,
+ * wrapped in a [whitelist] invocation - For then to return
+ * the results of the invocation back to the caller
+ * cryptographically signed and encrypted.
+ */
+signal:magic.crypto.http.eval
+   url:"http://localhost:55247/magic/modules/system/crypto/eval-id"
+   .lambda
+      .request-id:a-unique-id-here
+      log.info:Howdy world

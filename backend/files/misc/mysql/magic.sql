@@ -116,7 +116,7 @@ create table crypto_keys (
   id int(11) not null auto_increment,
   subject varchar(120) not null, /* Typically the name of the owner of the key */
   domain varchar(250) null, /* The base URL of the subject */
-  email varchar(120) null, /* Email address of owner */
+  email varchar(120) not null, /* Email address of owner */
   content text not null, /* Actual public key */
   vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
   fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
@@ -125,8 +125,7 @@ create table crypto_keys (
   primary key (id),
   unique key id_UNIQUE (id),
   unique key fingerprint_UNIQUE (fingerprint),
-  unique key email_UNIQUE (email),
-  unique key url_UNIQUE (domain)
+  unique key email_UNIQUE (email)
 );
 
 
@@ -137,10 +136,11 @@ create table crypto_keys (
 create table crypto_invocations (
   id int(11) not null auto_increment,
   crypto_key int(11) not null, /* A reference to the crypto key associated with the evaluation */
-  request_id varchar(250) null, /* The ID of the request - Ensures idempotency if caller specifies an ID */
+  request_id varchar(250) not null, /* The ID of the request - Ensures idempotency if caller specifies an ID */
   request text not null, /* The request payload supplied by the caller */
   request_raw text not null, /* The request payload supplied by the caller */
   response text not null, /* The response payload returned to the caller */
+  created datetime not null default current_timestamp,
   primary key (id),
   unique key id_UNIQUE (id),
   unique key `request_id_UNIQUE` (`request_id`),

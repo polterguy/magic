@@ -29,7 +29,25 @@ export class EvaluatorService {
   documentation(module: string) {
     return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/misc/documentation?module=' + encodeURIComponent(module)
+      'magic/modules/system/misc/documentation?module=' +
+      encodeURIComponent(module)
     );
+  }
+
+  invocations(filter: any) {
+    let query = '';
+    if (filter.offset !== 0) {
+      query += '?offset=' + filter.offset;
+    }
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/magic/crypto_invocations' +
+      query);
+  }
+
+  countInvocations(filter: any) {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/magic/crypto_invocations-count');
   }
 }
