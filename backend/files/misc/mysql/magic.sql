@@ -124,8 +124,7 @@ create table crypto_keys (
   type varchar(20) not null, /* Typically 'RSA' or something */
   primary key (id),
   unique key id_UNIQUE (id),
-  unique key fingerprint_UNIQUE (fingerprint),
-  unique key email_UNIQUE (email)
+  unique key fingerprint_UNIQUE (fingerprint)
 );
 
 

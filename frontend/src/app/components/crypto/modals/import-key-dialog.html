@@ -5,9 +5,10 @@
   
   <mat-form-field style="width: 100%;">
     <textarea
-      matInput 
+      matInput
       placeholder="Key"
       matTooltip="Base64/DER encoded public key"
+      [disabled]="data.id"
       rows="5"
       (change)="keyChanged()"
       [(ngModel)]="data.content">

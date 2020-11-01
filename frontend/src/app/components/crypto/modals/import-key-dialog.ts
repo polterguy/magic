@@ -51,7 +51,10 @@ export class ImportKeyDialogComponent implements OnInit {
  */
 vocabulary
 slots.vocabulary
-signal:magic.crypto.get-server-public-key`;
+signal:magic.crypto.get-server-public-key
+add
+return
+`;
     }
   }
 

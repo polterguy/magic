@@ -82,6 +82,8 @@ export class CryptoComponent implements OnInit {
       this.snackBar.open('Key successfully created', 'ok', {
         duration: 5000,
       });
+      this.seed = '';
+      this.strength = null;
       this.keysService.evictCache('magic.crypto.get-server-public-key').subscribe(res3 => {
         console.log('Public key was evicted from cache');
       });
@@ -145,6 +147,13 @@ export class CryptoComponent implements OnInit {
     });
   }
 
+  editKeyFromReceipt(el: any) {
+    if (this.allKeys.length !== 0) {
+      const result = this.allKeys.filter(x => x.id === el.crypto_key)[0];
+      this.editKey(result);
+    }
+  }
+
   editKey(key: any) {
     const dialogRef = this.dialog.open(ImportKeyDialogComponent, {
       width: '1000px',
@@ -193,6 +202,23 @@ export class CryptoComponent implements OnInit {
       this.keysService.getKeys(this.filter).subscribe(res => {
         this.keys = res || [];
       });
+      var oldKeyFingerprint = this.allKeys.filter(x => x.id === id)[0].fingerprint;
+      this.keysService.getAllKeys().subscribe(res => {
+        this.allKeys = res;
+      });
+      delete this.invocationsFilter.crypto_key;
+      this.invocationsFilter.offset = 0;
+      this.keyFilter = -1;
+      this.getInvocations();
+      this.keysService.evictCache('magic.crypto.get-server-public-key').subscribe(res3 => {
+        console.log('Public key was evicted from cache');
+      });
+      this.keysService.evictCache('magic.crypto.get-server-private-key').subscribe(res3 => {
+        console.log('Private key was evicted from cache');
+      });
+      this.keysService.evictCache('public-key.' + oldKeyFingerprint).subscribe(res3 => {
+        console.log('Client key was evicted from the cache');
+      });
     });
   }
 
@@ -200,7 +226,7 @@ export class CryptoComponent implements OnInit {
     if (this.keyFilter !== -1) {
       this.invocationsFilter.crypto_key = this.keyFilter;
     } else {
-      delete this.invocationsFilter.crypto_key;      
+      delete this.invocationsFilter.crypto_key;
     }
     this.evaluatorService.invocations(this.invocationsFilter).subscribe(res => {
       this.invocations = res;
@@ -228,10 +254,12 @@ export class CryptoComponent implements OnInit {
 
   clearFilter() {
     this.keyFilter = -1;
+    this.invocationsFilter.offset = 0;
     this.getInvocations();
   }
 
   filterChanged() {
+    this.invocationsFilter.offset = 0;
     this.getInvocations();
   }
 
