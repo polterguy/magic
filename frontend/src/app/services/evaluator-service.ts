@@ -35,15 +35,15 @@ export class EvaluatorService {
   }
 
   invocations(filter: any) {
-    let query = '';
+    let query = '?order=created&direction=desc';
     if (filter.offset !== 0) {
-      query += '?offset=' + filter.offset;
+      query += '&offset=' + filter.offset;
       if (filter.crypto_key) {
         query += '&crypto_key.eq=' + filter.crypto_key;
       }
     } else {
       if (filter.crypto_key) {
-        query += '?crypto_key.eq=' + filter.crypto_key;
+        query += '&crypto_key.eq=' + filter.crypto_key;
       }
     }
     return this.httpClient.get<any>(

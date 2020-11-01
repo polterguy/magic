@@ -123,20 +123,26 @@ h1 {
             tr {
                 th:nth-child(1),
                 td:nth-child(1) {
-                    width: 10%;
+                    width: 20%;
                     max-width: 50px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
                 th:nth-child(2),
                 td:nth-child(2) {
                     width: 20%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
                 th:nth-child(3),
                 td:nth-child(3) {
                     width: 20%;
+                    white-space: nowrap;
                 }
                 th:nth-child(4),
                 td:nth-child(4) {
-                    width: 50%;
+                    width: 40%;
                 }
                 td:nth-child(1),
                 td:nth-child(2),
@@ -153,6 +159,16 @@ h1 {
                         cursor: default;
                     }
                     .request-raw {
+                        background-color: #eee;
+                        font-family: 'Courier New', Courier, monospace;
+                        font-size: .8rem;
+                        padding: .5rem;
+                        margin-top: .5rem;
+                        margin-bottom: .5rem;
+                        overflow-wrap: anywhere;
+                        cursor: default;
+                    }
+                    .response {
                         background-color: #eee;
                         font-family: 'Courier New', Courier, monospace;
                         font-size: .8rem;

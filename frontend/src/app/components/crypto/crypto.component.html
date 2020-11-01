@@ -151,29 +151,34 @@
 
       <ng-container matColumnDef="crypto_key">
         <th mat-header-cell *matHeaderCellDef scope="col">Key</th>
-        <td mat-cell *matCellDef="let el" (click)="viewReceipt(el)">{{el.crypto_key}}</td>
+        <td mat-cell *matCellDef="let el" [matTooltip]="getCryptoKey(el.crypto_key, true)" (click)="viewReceipt(el)">{{getCryptoKey(el.crypto_key, false)}}</td>
       </ng-container>
 
       <ng-container matColumnDef="request_id">
         <th mat-header-cell *matHeaderCellDef scope="col">Request ID</th>
-        <td mat-cell *matCellDef="let el" (click)="viewReceipt(el)">{{el.request_id}}</td>
+        <td mat-cell *matCellDef="let el" [matTooltip]="el.request_id" (click)="viewReceipt(el)">{{el.request_id}}</td>
       </ng-container>
 
       <ng-container matColumnDef="created">
         <th mat-header-cell *matHeaderCellDef scope="col">Created</th>
-        <td mat-cell *matCellDef="let el" (click)="viewReceipt(el)">{{el.created | since}}</td>
+        <td mat-cell *matCellDef="let el" [matTooltip]="el.created" (click)="viewReceipt(el)">{{el.created | since}}</td>
       </ng-container>
 
       <ng-container matColumnDef="request">
-        <th mat-header-cell *matHeaderCellDef scope="col">Request</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">Payload</th>
         <td mat-cell *matCellDef="let el">
           <pre *ngIf="!el.viewReceipt || el.viewReceipt === false" class="request">{{el.request}}</pre>
-          <div *ngIf="el.viewReceipt === true" class="request-raw">{{el.request_raw}}</div>
+          <div *ngIf="el.viewReceipt === true" class="request-raw">
+            {{el.request_raw}}
+          </div>
+          <div class="response">
+            {{el.response}}
+          </div>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumnsInvocations"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsInvocations;" [matTooltip]="row.created"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsInvocations;"></tr>
 
     </table>
   

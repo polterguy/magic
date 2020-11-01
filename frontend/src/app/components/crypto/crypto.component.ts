@@ -48,7 +48,7 @@ export class CryptoComponent implements OnInit {
   };
   public invocationsCount: number;
 
-  public allKeys: any = [];
+  public allKeys: any[] = [];
   public keyFilter = -1;
 
   constructor(
@@ -83,7 +83,10 @@ export class CryptoComponent implements OnInit {
         duration: 5000,
       });
       this.keysService.evictCache('magic.crypto.get-server-public-key').subscribe(res3 => {
-        console.log(res3);
+        console.log('Public key was evicted from cache');
+      });
+      this.keysService.evictCache('magic.crypto.get-server-private-key').subscribe(res3 => {
+        console.log('Private key was evicted from cache');
       });
     }, (error: any) => {
       this.isFetching = false;
@@ -228,5 +231,18 @@ export class CryptoComponent implements OnInit {
 
   filterChanged() {
     this.getInvocations();
+  }
+
+  getCryptoKey(cryptoKey: number, fullIdentity: boolean) {
+    if (this.allKeys.length === 0) {
+      return cryptoKey;
+    } else {
+      const result = this.allKeys.filter(x => x.id === cryptoKey)[0];
+      if (fullIdentity) {
+        return result.subject + ' - ' + result.email;
+      } else {
+        return result.subject;
+      }
+    }
   }
 }
