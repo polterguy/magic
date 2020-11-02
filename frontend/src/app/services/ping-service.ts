@@ -23,4 +23,10 @@ export class PingService {
       this.ticketService.getBackendUrl() +
       'magic/modules/system/version');
   }
+
+  public license() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/license');
+  }
 }
