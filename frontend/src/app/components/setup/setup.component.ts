@@ -20,9 +20,9 @@ export class SetupComponent implements OnInit {
   public mysqlConnectionString: string = null;
   public password: string = null;
   public repeatPassword: string = null;
+  public licenseFile: string = 'SUPPLY-YOUR-LICENSE-HERE';
   public hasShownSuccess = false;
   public isFetching = false;
-  public taskScheduler = true;
 
   constructor(
     private setupService: SetupService,
@@ -80,7 +80,7 @@ export class SetupComponent implements OnInit {
     this.config.magic.databases.mssql.generic = this.mssqlConnectionString;
     this.config.magic.databases.mysql.generic = this.mysqlConnectionString;
     this.config.magic.databases.default = this.databaseType;
-    this.config.magic.tasks.scheduler['auto-start'] = this.taskScheduler;
+    this.config.magic.license = this.licenseFile;
     this.isFetching = true;
 
     // Saving appsettings.json file on server.
@@ -105,8 +105,7 @@ export class SetupComponent implements OnInit {
               this.databaseType,
               this.authenticationDatabase,
               'root',
-              this.password,
-              this.taskScheduler).subscribe(setupAuthResult => {
+              this.password).subscribe(setupAuthResult => {
 
               if (setupAuthResult.result === 'success') {
 
