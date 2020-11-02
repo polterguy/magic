@@ -730,3 +730,15 @@ argument, which would make the invocation fail.
 
 Added support for converting from `byte[]` to base64 using the **[convert]** slot,
 passing in base64 as the **[type]** argument.
+
+# Version 8.6.6
+
+## Magic (main)
+
+Support for applying license during setup of Magic.
+
+## magic.signals
+
+Support for richer license keys, containing meta data, and also being asymmetrically and
+cryptographically signed my Server Gardens private RSA key. Eliminating piracy and such,
+among other things.
