@@ -40,26 +40,14 @@ export class HomeComponent implements OnInit {
   }
 
   saveLicense() {
-    this.setupService.getAppSettingsJson().subscribe(obj => {
-      obj.magic.license = this.license;
-      this.setupService.saveAppSettingsJson(obj).subscribe(res => {
-        this.snackBar.open('License successfully saved, wait 2 seconds while I refresh your information', 'ok', {
-          duration: 5000,
-        });
-        setTimeout(() => {
-          this.pingService.license().subscribe(res => {
-            this.licenseInfo = res;
-          });
-        }, 2000);
-      }, error => {
-        this.snackBar.open(error.error.message, 'ok', {
-          duration: 5000,
-        });
-      });
+    this.setupService.saveLicense(this.license).subscribe(res => {
+      this.snackBar.open('License was successfully saved', 'ok', {
+        duration: 5000,
+      })
     }, error => {
       this.snackBar.open(error.error.message, 'ok', {
-        duration: 5000,
-      });
+        duration: 10000,
+      })
     });
   }
 }
