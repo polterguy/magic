@@ -20,7 +20,7 @@ export class SetupComponent implements OnInit {
   public mysqlConnectionString: string = null;
   public password: string = null;
   public repeatPassword: string = null;
-  public licenseFile: string = 'SUPPLY-YOUR-LICENSE-HERE';
+  public licenseFile: string = 'TRIAL-VERSION';
   public hasShownSuccess = false;
   public isFetching = false;
 
