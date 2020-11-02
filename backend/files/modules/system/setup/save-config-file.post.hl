@@ -17,5 +17,16 @@ auth.ticket.verify:root
  * Saves the [content] from arguments to "appsettings.json" file.
  */
 save-app-settings:x:@lambda2json
+
+
+/*
+ * Invoking slot responsible for applying license, if it was explicitly given.
+ */
+license.apply
+
+
+/*
+ * Returning success to calller.
+ */
 return-nodes
    result:success
