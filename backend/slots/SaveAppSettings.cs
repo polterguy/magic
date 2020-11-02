@@ -3,8 +3,6 @@
  * See the enclosed LICENSE file for details.
  */
 
- #if DEBUG
-
 using System.IO;
 using Newtonsoft.Json.Linq;
 using magic.node;
