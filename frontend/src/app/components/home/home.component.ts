@@ -14,6 +14,7 @@ export class HomeComponent implements OnInit {
   public version: string;
   public licenseInfo: any = null;
   public license = '';
+  public isFetching = false;
 
   constructor(
     private pingService: PingService,
@@ -40,17 +41,24 @@ export class HomeComponent implements OnInit {
   }
 
   saveLicense() {
+    this.isFetching = true;
     this.setupService.saveLicense(this.license).subscribe(res => {
       this.snackBar.open('License was successfully saved', 'ok', {
         duration: 5000,
       });
       this.pingService.license().subscribe(res => {
         this.licenseInfo = res;
+        this.isFetching = false;
+      }, error => {
+        this.snackBar.open(error.error.message, 'ok', {
+          duration: 10000,
+        });
+        this.isFetching = true;
       });
     }, error => {
       this.snackBar.open(error.error.message, 'ok', {
         duration: 10000,
-      })
+      });
     });
   }
 }
