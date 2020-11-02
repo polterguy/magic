@@ -24,6 +24,14 @@ export class SetupService {
       'magic/modules/system/setup/save-config-file', config);
   }
 
+  saveLicense(license: string) {
+    return this.httpClient.post<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/setup/save-license', {
+        license
+      });
+  }
+
   setup(
     databaseType: string,
     authDatabase: string,

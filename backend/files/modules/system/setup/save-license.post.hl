@@ -1,0 +1,37 @@
+
+/*
+ * Saves a license specified by caller.
+ */
+.description:"Saves a license as specified by caller."
+.arguments
+   license:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Loads the configuration, changes the current license, and saves it again.
+ */
+load-app-settings
+json2lambda:x:-
+set-value:x:@json2lambda/*/magic/*/license
+   get-value:x:@.arguments/*/license
+lambda2json:x:@json2lambda/*
+save-app-settings:x:@lambda2json
+
+
+/*
+ * Invoking slot responsible for applying license, if it was explicitly given.
+ */
+license.apply
+
+
+/*
+ * Returning success to calller.
+ */
+return-nodes
+   result:success
