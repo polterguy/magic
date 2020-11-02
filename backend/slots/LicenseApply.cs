@@ -31,7 +31,7 @@ namespace magic.backend.slots
         public void Signal(ISignaler signaler, Node input)
         {
             var license = _configuration["magic:license"];
-            if (license != "SUPPLY-YOUR-LICENSE-HERE")
+            if (license != "TRIAL-VERSION")
                 Signaler.SetLicenseKey(license);
         }
     }
