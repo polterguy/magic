@@ -741,5 +741,4 @@ on main landing page of Magic now by default.
 ## magic.signals
 
 Support for richer license keys, containing meta data, and also being asymmetrically and
-cryptographically signed my Server Gardens private RSA key. Eliminating piracy and such,
-among other things.
+cryptographically signed by Server Garden's private RSA key.
