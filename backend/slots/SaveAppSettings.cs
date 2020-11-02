@@ -38,5 +38,3 @@ namespace magic.backend.slots
         }
     }
 }
-
-#endif
