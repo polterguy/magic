@@ -26,8 +26,10 @@ save-app-settings:x:@lambda2json
 
 
 /*
- * Invoking slot responsible for applying license, if it was explicitly given.
+ * Invoking slot responsible for applying license, if it was explicitly given,
+ * making sure we give the above save invocation some time to finish up.
  */
+sleep:2000
 license.apply
 
 
