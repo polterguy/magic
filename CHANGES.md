@@ -735,7 +735,8 @@ passing in base64 as the **[type]** argument.
 
 ## Magic (main)
 
-Support for applying license during setup of Magic.
+Support for applying license during setup of Magic. Also showing license information
+on main landing page of Magic now by default.
 
 ## magic.signals
 
