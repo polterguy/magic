@@ -305,6 +305,12 @@ if
 
 
 /*
+ * Invoking slot responsible for applying license, if it was explicitly given.
+ */
+license.apply
+
+
+/*
  * Returning success to caller.
  */
 log.info:System was successfully setup
