@@ -1,10 +1,15 @@
 
 <h1>Magic Dashboard <small>backend version {{getVersion()}}</small></h1>
-<mat-card class="info-card">
+
+<mat-card
+  *ngIf="!licenseInfo || licenseInfo.version === 'trial'"
+  class="info-card">
+
   <img 
     src="../assets/magic-logo.png" 
     style="float:right; width:200px; margin-left: 1rem;margin-bottom:3rem;"
     alt="Magically create your HTTP REST Web APIs">
+
   <p>
     Magic is an automation framework built in ASP.NET Core. Its purpose is to
     allow you to <em>"magically"</em> do the boring stuff, by using automation techniques.
@@ -12,12 +17,53 @@
     automatically create CRUD endpoints wrapping your MySQL or MS SQL Server database -
     In addition to an Angular frontend scaffolder, to generate a default frontend for you.
   </p>
+
   <p>
     Although most of Magic is Open Source, you do need a license key to run it in production.
     <a href="https://servergardens.com/buy/">You can obtain a license here</a>.
     Or contact us on <a href="mailto:license@servergardens.com">license@servergardens.com</a>
     for licensing inquiries.
   </p>
+
+  <div class="copyright">
+    Copyright © Thomas Hansen, info@servergardens.com, all rights reserved -
+    <a rel="noopener noreferrer" href="https://polterguy.github.io" target="_blank">Read more about Magic</a>
+  </div>
+
+</mat-card>
+
+<mat-card
+  *ngIf="licenseInfo && licenseInfo.version !== 'trial'"
+  class="license-card">
+
+  <table>
+    <caption>License information</caption>
+    <tr>
+      <td>Name</td>
+      <td>{{licenseInfo.name}}</td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td>{{licenseInfo.email}}</td>
+    </tr>
+    <tr>
+      <td>Issued</td>
+      <td>{{getLocalDate(licenseInfo.issued)}}</td>
+    </tr>
+    <tr>
+      <td>License type</td>
+      <td>{{licenseInfo['license-type']}}</td>
+    </tr>
+    <tr>
+      <td>Valid</td>
+      <td>Version {{licenseInfo['valid-version']}}</td>
+    </tr>
+    <tr *ngIf="licenseInfo.expires">
+      <td>Expires</td>
+      <td>{{licenseInfo.expires}}</td>
+    </tr>
+  </table>
+
   <div class="copyright">
     Copyright © Thomas Hansen, info@servergardens.com, all rights reserved -
     <a rel="noopener noreferrer" href="https://polterguy.github.io" target="_blank">Read more about Magic</a>
