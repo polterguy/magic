@@ -5,25 +5,39 @@
   *ngIf="!licenseInfo || licenseInfo.version === 'trial'"
   class="info-card">
 
-  <img 
-    src="../assets/magic-logo.png" 
-    style="float:right; width:200px; margin-left: 1rem;margin-bottom:3rem;"
-    alt="Magically create your HTTP REST Web APIs">
+  <h3>Trial version</h3>
 
   <p>
-    Magic is an automation framework built in ASP.NET Core. Its purpose is to
-    allow you to <em>"magically"</em> do the boring stuff, by using automation techniques.
-    It features among other things an HTTP Web API REST CRUD generator, that will
-    automatically create CRUD endpoints wrapping your MySQL or MS SQL Server database -
-    In addition to an Angular frontend scaffolder, to generate a default frontend for you.
+    You seem to be using a trial version of Magic, that will stop working after 47 hours.
+    Click the button in the top right corner to obtain a license, and paste in the license
+    you get in the text box below.
   </p>
 
-  <p>
-    Although most of Magic is Open Source, you do need a license key to run it in production.
-    <a href="https://servergardens.com/buy/">You can obtain a license here</a>.
-    Or contact us on <a href="mailto:license@servergardens.com">license@servergardens.com</a>
-    for licensing inquiries.
-  </p>
+  <mat-form-field style="width: 100%;">
+    <textarea
+      matInput
+      placeholder="License"
+      matTooltip="License as obtained by Server Gardens"
+      rows="4"
+      [(ngModel)]="license">
+    </textarea>
+  </mat-form-field>
+
+  <div class="save-license">
+    <button
+      [disabled]="license === ''"
+      mat-raised-button
+      (click)="saveLicense()"
+      color="primary">Save license</button>
+  </div>
+
+  <a
+    mat-button
+    color="primary"
+    rel="noopener noreferrer"
+    class="obtain-license"
+    target="_blank"
+    href="https://servergardens.com/buy">Obtain license</a>
 
   <div class="copyright">
     Copyright © Thomas Hansen, info@servergardens.com, all rights reserved -

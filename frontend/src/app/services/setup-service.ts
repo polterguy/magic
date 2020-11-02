@@ -13,7 +13,7 @@ export class SetupService {
     private ticketService: TicketService) { }
 
   getAppSettingsJson() {
-    return this.httpClient.get<string>(
+    return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/setup/load-config-file');
   }
