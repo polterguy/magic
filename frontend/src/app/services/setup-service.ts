@@ -28,8 +28,7 @@ export class SetupService {
     databaseType: string,
     authDatabase: string,
     rootUsername: string,
-    rootPassword: string,
-    scheduler: boolean) {
+    rootPassword: string) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/setup/setup', {
@@ -37,7 +36,7 @@ export class SetupService {
         authDatabase,
         rootUsername,
         rootPassword,
-        scheduler,
+        scheduler: true,
       });
   }
 

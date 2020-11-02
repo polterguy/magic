@@ -18,17 +18,11 @@
     <h3>Setup wizard</h3>
 
     <ol>
-      <li>Choose a JWT secret that's at least 50 random characters long</li>
-      <li>Select your database type, either MySQL or Microsoft SQL Server</li>
-      <li>Select your authentication database catalogue</li>
+      <li>Select your database type</li>
       <li>Modify your database connection string. The connection string must have <code>{{ '{' }}database{{ '}' }}</code> as its database/initial-catalog</li>
-      <li>Choose a root password, make sure it's highly difficult since it'll give you complete root access to your system</li>
+      <li>Choose a root password</li>
+      <li>Apply your license, if you have one</li>
     </ol>
-
-    <p>
-      This process will change your <em>"appsettings.json"</em> file, and also create your authentication database
-      your MySQL or MS SQL instance, unless this database already exists from before.
-    </p>
 
     <mat-form-field
       class="fill-width">
@@ -36,6 +30,7 @@
         matInput
         placeholder="JWT secret key"
         autocomplete="off"
+        disabled="true"
         minlength="50"
         type="text"
         [(ngModel)]="jwtSecret">
@@ -45,7 +40,7 @@
       style="min-width: 20rem;"
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50">
       <mat-select
-        placeholder="Select auth database type"
+        placeholder="Select database type"
         [(ngModel)]="databaseType">
         <mat-option value="mysql">My SQL</mat-option>
         <mat-option value="mssql">Microsoft SQL server</mat-option>
@@ -58,6 +53,7 @@
       <input
         matInput
         placeholder="Authentication database name to use"
+        disabled="true"
         type="text"
         [(ngModel)]="authenticationDatabase">
     </mat-form-field>
@@ -82,17 +78,12 @@
         [(ngModel)]="mysqlConnectionString">
     </mat-form-field>
 
-    <p
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''">
-      Choose a password for your Magic root user
-    </p>
-
     <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''"
       style="margin-right: 1rem;min-width: 20rem;">
       <input
         matInput
-        placeholder="Password"
+        placeholder="Root password"
         type="password"
         [(ngModel)]="password">
     </mat-form-field>
@@ -102,16 +93,20 @@
       style="margin-right: 1rem;min-width: 20rem;">
       <input
         matInput
-        placeholder="Repeat password"
+        placeholder="Repeat root password"
         type="password"
         [(ngModel)]="repeatPassword">
     </mat-form-field>
 
-    <mat-checkbox
-      *ngIf="checkConfig()"
-      matTooltip="Starts task scheduler automatically"
-      style="min-width: 20rem;"
-      [(ngModel)]="taskScheduler">Start task scheduler</mat-checkbox>
+    <mat-form-field
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql' && authenticationDatabase !== ''"
+      class="fill-width">
+      <input
+        matInput
+        placeholder="License"
+        type="text"
+        [(ngModel)]="licenseFile">
+    </mat-form-field>
 
     <div
       *ngIf="checkConfig()"
