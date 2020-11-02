@@ -17,6 +17,16 @@ h1 {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    position: relative;
+    .obtain-license {
+        position: absolute;
+        top: .5rem;
+        right: .5rem;
+    }
+    .save-license {
+        margin-top: .5rem;
+        text-align: right;
+    }
 }
 
 .license-card {

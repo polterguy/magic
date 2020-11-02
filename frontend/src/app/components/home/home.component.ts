@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PingService } from 'src/app/services/ping-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SetupService } from 'src/app/services/setup-service';
 
 @Component({
   selector: 'app-home',
@@ -12,10 +13,12 @@ export class HomeComponent implements OnInit {
 
   public version: string;
   public licenseInfo: any = null;
+  public license = '';
 
   constructor(
     private pingService: PingService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    private setupService: SetupService) { }
 
   ngOnInit() {
     this.pingService.version().subscribe(res => {
@@ -34,5 +37,24 @@ export class HomeComponent implements OnInit {
 
   getLocalDate(date: string) {
     return new Date(date).toLocaleString();
+  }
+
+  saveLicense() {
+    this.setupService.getAppSettingsJson().subscribe(obj => {
+      obj.magic.license = this.license;
+      this.setupService.saveAppSettingsJson(obj).subscribe(res => {
+        this.snackBar.open('License successfully saved', 'ok', {
+          duration: 5000,
+        });
+      }, error => {
+        this.snackBar.open(error.error.message, 'ok', {
+          duration: 5000,
+        });
+      });
+    }, error => {
+      this.snackBar.open(error.error.message, 'ok', {
+        duration: 5000,
+      });
+    });
   }
 }
