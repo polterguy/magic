@@ -43,7 +43,10 @@ export class HomeComponent implements OnInit {
     this.setupService.saveLicense(this.license).subscribe(res => {
       this.snackBar.open('License was successfully saved', 'ok', {
         duration: 5000,
-      })
+      });
+      this.pingService.license().subscribe(res => {
+        this.licenseInfo = res;
+      });
     }, error => {
       this.snackBar.open(error.error.message, 'ok', {
         duration: 10000,
