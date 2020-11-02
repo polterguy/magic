@@ -21,6 +21,7 @@ json2lambda:x:-
 set-value:x:@json2lambda/*/magic/*/license
    get-value:x:@.arguments/*/license
 lambda2json:x:@json2lambda/*
+   format:true
 save-app-settings:x:@lambda2json
 
 
