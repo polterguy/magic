@@ -41,14 +41,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: 300px;
 }
 
-.even-smaller .CodeMirror {
-  height: 150px;
-  width: 450px;
-  .CodeMirror-hints {
-    position: fixed !important;
-  }
-}
-
 .reactor .CodeMirror {
   height: 150px;
 }
