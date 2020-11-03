@@ -81,7 +81,8 @@ export class UsersComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(res => {
-      if (res !== undefined) {
+      if (res) {
+        console.log(res);
         this.usersService.createUser(res.username, res.password).subscribe(res2 => {
           this.showInfo('User was successfully created');
           this.getUsers();
