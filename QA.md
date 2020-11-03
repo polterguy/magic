@@ -109,6 +109,9 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 10. Verify you *cannot* delete the _"root"_ user, or in any ways edit it or modify it.
 11. Change your root user's password in the _"Profile"_ menu item. Log out and log in again, and make sure you can login with your new password.
 12. Repeat this entire section with the _"angular-default"_ template, and name your app _"foo2"_.
+13. Toggle the _"Show system endpoints"_ slider, and verify you get roughly 100 endpoints, contrary to roughly 10 previously.
+14. Filter on _"ping"_, click ping endpoint, and verify it's got a description in the top right corner.
+15. Filter on _"translations"_. Choose the post endpoint, and create a _"foo/en/howdy"_ entry. Make sure the entry can be found afterwards when invoking the get endpoint.
 
 ## Tasks
 
