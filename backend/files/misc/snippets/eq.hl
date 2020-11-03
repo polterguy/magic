@@ -1,6 +1,0 @@
-/*
- * Equality comparison.
- */
-eq
-   get-value:x:@.expression
-   .:bool:true

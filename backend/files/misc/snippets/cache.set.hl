@@ -3,5 +3,5 @@
  * and retrieves it again.
  */
 cache.set:foo
-   .:some cache value
+   value:some cache value
 cache.get:foo

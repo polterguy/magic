@@ -1,7 +1,0 @@
-/*
- * Evaluates lambda once for each resulting node in expression.
- */
-for-each:x:.expression
-   /*
-    * Lambda to evaluate.
-    */

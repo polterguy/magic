@@ -1,6 +1,8 @@
 /*
  * Inserts a bunch of nodes before the specified destination expression's node.
  */
-insert-before:x:@.destination
+.destination
+   foo1
+insert-before:x:@.destination/*/foo1
    .
-      foo:bar
+      foo2:bar

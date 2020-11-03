@@ -1,3 +1,11 @@
+/*
+ * Illustrates how to create a complex read invocation,
+ * that joins two different tables together, using lambda
+ * and semantic SQL.
+ *
+ * Notice, requires you to have the Sakila database installed
+ * from Oracle.
+ */
 mysql.connect:sakila
    mysql.read
       columns

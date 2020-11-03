@@ -7,9 +7,11 @@ while
       get-value:x:@.no
       .:int:20
    .lambda
+
       /*
        * Your lambda goes here.
        */
+      log.info:Howdy from while
       
       /*
        * Incrementing counter.

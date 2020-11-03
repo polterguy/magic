@@ -2,16 +2,21 @@
  * Creates a try/catch/finally block
  */
 try
+
    /*
     * Perform your unsafe operation here.
     */
-   throw:Foo
+   throw:Some error is thrown here
+
 .catch
+
    /*
     * If an exception is triggered, this lambda will be evaluated.
     */
-   log.info:Exception thrown
+   log.info:x:@.arguments/*/message
+
 .finally
+
    /*
     * If an exception is triggered, this lambda will be evaluated.
     */

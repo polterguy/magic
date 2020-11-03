@@ -1,4 +1,0 @@
-/*
- * Evaluates the specified lambda object found through the expression.
- */
-eval:x:@.expression
