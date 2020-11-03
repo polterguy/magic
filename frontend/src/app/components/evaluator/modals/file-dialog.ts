@@ -87,17 +87,6 @@ export class FileDialogComponent implements OnInit {
     return result.substr(0, result.lastIndexOf('.'));
   }
 
-  showInfo(file: File, event: any) {
-    this.fileService.getFileContent(file.filename).subscribe(res => {
-      file.content = res;
-    });
-    event.stopPropagation();
-  }
-
-  preventBubbling(event: any) {
-    event.stopPropagation();
-  }
-
   selectFile(file: string) {
     if (this.data.select) {
       this.fileService.getFileContent(file).subscribe(res => {
