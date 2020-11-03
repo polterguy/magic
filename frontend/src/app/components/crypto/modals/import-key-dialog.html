@@ -1,5 +1,5 @@
 
-<h1 mat-dialog-title>{{data.id ? ('Edit key ' + data.id) : 'Import crypto key'}}</h1>
+<h1 mat-dialog-title>{{data.id ? (data.readOnly ? 'Key ' + data.id : 'Edit key ' + data.id) : 'Import crypto key'}}</h1>
 
 <div mat-dialog-content class="dialog">
   
@@ -29,6 +29,7 @@
       matInput 
       placeholder="Full name" 
       matTooltip="Full name of owner"
+      [disabled]="data.readOnly"
       autocomplete="off" 
       [(ngModel)]="data.subject">
   </mat-form-field>
@@ -38,6 +39,7 @@
       matInput 
       placeholder="Domain"
       matTooltip="Domain of owner"
+      [disabled]="data.readOnly"
       autocomplete="off" 
       [(ngModel)]="data.domain">
   </mat-form-field>
@@ -47,12 +49,13 @@
       matInput 
       placeholder="Email"
       matTooltip="Email address of owner"
+      [disabled]="data.readOnly"
       autocomplete="off" 
       [(ngModel)]="data.email">
   </mat-form-field>
   
   <ngx-codemirror
-    *ngIf="initializedVocabulary"
+    *ngIf="!data.readOnly && initializedVocabulary"
     [(ngModel)]="data.vocabulary"
     class="smaller"
     [options]="getCodeMirrorOptions()"></ngx-codemirror>
@@ -60,7 +63,7 @@
   <div
     class="imported"
     matTooltip="Import date"
-    *ngIf="data.id">
+    *ngIf="!data.readOnly && data.id">
     {{getDate(data.imported)}}
   </div>
   
@@ -70,10 +73,11 @@
   <div style="width:100%; text-align: right;">
 
     <button
+      *ngIf="!data.readOnly"
       mat-raised-button
       color="primary"
       [disabled]="!data.fingerprint"
-      [mat-dialog-close]="data">Ok</button>
+      [mat-dialog-close]="data">Save</button>
 
     <button
       mat-raised-button

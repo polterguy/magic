@@ -120,6 +120,7 @@ export class CryptoComponent implements OnInit {
       width: '1000px',
       disableClose: true,
       data: {
+        readOnly: false,
       }
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -150,11 +151,11 @@ export class CryptoComponent implements OnInit {
   editKeyFromReceipt(el: any) {
     if (this.allKeys.length !== 0) {
       const result = this.allKeys.filter(x => x.id === el.crypto_key)[0];
-      this.editKey(result);
+      this.editKey(result, true);
     }
   }
 
-  editKey(key: any) {
+  editKey(key: any, readOnly: boolean) {
     const dialogRef = this.dialog.open(ImportKeyDialogComponent, {
       width: '1000px',
       disableClose: true,
@@ -168,6 +169,7 @@ export class CryptoComponent implements OnInit {
         vocabulary: key.vocabulary,
         fingerprint: key.fingerprint,
         type: key.type,
+        readOnly
       }
     });
     dialogRef.afterClosed().subscribe(nKey => {
