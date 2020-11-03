@@ -122,7 +122,7 @@ create table crypto_keys (
   content text not null, /* Actual public key */
   vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
   imported datetime not null default current_timestamp,
-  enabled boolean not null default false,
+  enabled boolean not null,
   primary key (id),
   unique key id_UNIQUE (id),
   unique key fingerprint_UNIQUE (fingerprint)
