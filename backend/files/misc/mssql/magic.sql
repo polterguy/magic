@@ -162,6 +162,7 @@ create table crypto_invocations (
   request_raw text not null,
   response text not null,
   created datetime not null default getutcdate(),
+  enabled bit not null default 0,
   constraint pk_crypto_invocations primary key clustered(id asc),
   unique(request_id),
 );

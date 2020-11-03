@@ -115,13 +115,14 @@ create table log_entries (
 create table crypto_keys (
   id int(11) not null auto_increment,
   subject varchar(120) not null, /* Typically the name of the owner of the key */
-  domain varchar(250) null, /* The base URL of the subject */
   email varchar(120) not null, /* Email address of owner */
+  domain varchar(250) null, /* The base URL of the subject */
+  type varchar(20) not null, /* Typically 'RSA' or something */
+  fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
   content text not null, /* Actual public key */
   vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
-  fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
   imported datetime not null default current_timestamp,
-  type varchar(20) not null, /* Typically 'RSA' or something */
+  enabled boolean not null default false,
   primary key (id),
   unique key id_UNIQUE (id),
   unique key fingerprint_UNIQUE (fingerprint)
