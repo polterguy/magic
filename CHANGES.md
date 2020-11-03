@@ -762,7 +762,10 @@ his users.
 **Breaking change** - Added some changes to the magic database script, specifically
 added the ability to have a boolean flag (enabled) for the crypto_keys database table.
 Either apply the changes for this specific column, or drop and re-create your magic database
-as you install this version.
+as you install this version. Also created new _"magic_version"_ database table, to keep
+track of versioning in the future, and hopefully be able to create some sort of database
+migration script(s) logic in future releases - To avoid having to drop and re-create
+database every time users installs a new version.
 
 ## magic.logging
 
