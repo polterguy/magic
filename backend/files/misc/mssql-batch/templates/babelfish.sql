@@ -15,7 +15,7 @@ go
  */
  create table languages (
   locale varchar(5) not null,
-  description varchar(2048) null,
+  language varchar(2048) null,
   primary key (locale)
 )
 
@@ -24,11 +24,11 @@ go
 /*
  * Inserting default languages.
  */
-insert into languages (locale, description) values ('en', 'English')
-insert into languages (locale, description) values ('it', 'Italian')
-insert into languages (locale, description) values ('es', 'Spanis')
-insert into languages (locale, description) values ('no', 'Norwegian')
-insert into languages (locale, description) values ('fr', 'French')
+insert into languages (locale, language) values ('en', 'English')
+insert into languages (locale, language) values ('it', 'Italian')
+insert into languages (locale, language) values ('es', 'Spanish')
+insert into languages (locale, language) values ('no', 'Norwegian')
+insert into languages (locale, language) values ('fr', 'French')
 
 go
 
