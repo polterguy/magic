@@ -41,7 +41,7 @@
       </mat-form-field>
 
       <button
-        [disabled]="seed === '' || !strength"
+        [disabled]="!strength"
         color="primary"
         mat-raised-button
         (click)="generate()">
