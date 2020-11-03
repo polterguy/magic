@@ -66,7 +66,7 @@ slots.create:magic.crypto.http.eval
          /*
           * Success was not returned from [http.patch] invocation.
           */
-         log.info
+         log.error
             lambda2hyper:x:@http.patch
          throw:Invocation to cryptographically secured HTTP REST endpoint was not successful
 

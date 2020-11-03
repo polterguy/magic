@@ -173,7 +173,7 @@ try
     * valuable information to malicious adversaries, trying to find out
     * valuable information about the system, in order to crack it.
     */
-   log.info:x:@.arguments/*/message
+   log.error:x:@.arguments/*/message
    throw:Access denied
       public:true
       status:401
