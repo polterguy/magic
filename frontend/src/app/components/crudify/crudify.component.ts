@@ -174,7 +174,7 @@ export class CrudifyComponent implements OnInit {
   getCodeMirrorOptionsSql() {
     return {
       lineNumbers: true,
-      theme: 'material',
+      theme: 'mbo',
       mode: 'text/x-mysql',
     };
   }
@@ -183,7 +183,7 @@ export class CrudifyComponent implements OnInit {
   getCodeMirrorOptionsHyperlambda() {
     return {
       lineNumbers: true,
-      theme: 'material',
+      theme: 'mbo',
       mode: 'hyperlambda',
       tabSize: 3,
       indentUnit: 3,
@@ -439,7 +439,7 @@ signal:transformers.hash-password
   getCodeMirrorOptionsValidators() {
     return {
       lineNumbers: true,
-      theme: 'material',
+      theme: 'mbo',
       mode: 'hyperlambda',
       tabSize: 3,
       indentUnit: 3,

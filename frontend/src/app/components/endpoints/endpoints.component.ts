@@ -144,7 +144,7 @@ export class EndpointsComponent implements OnInit {
   getCodeMirrorOptions() {
     return {
       lineNumbers: true,
-      theme: 'material',
+      theme: 'mbo',
       mode: 'hyperlambda',
       tabSize: 3,
       indentUnit: 3,
