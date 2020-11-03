@@ -14,6 +14,7 @@ export interface ImportKeyDialogData {
   vocabulary: string;
   fingerprint: string;
   type: string;
+  readOnly: boolean;
 }
 
 @Component({
