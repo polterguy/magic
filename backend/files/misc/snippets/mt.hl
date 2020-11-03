@@ -1,6 +1,0 @@
-/*
- * Greater than comparison.
- */
-mt
-   get-value:x:@.expression
-   .:int:5

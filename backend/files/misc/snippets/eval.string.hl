@@ -1,7 +1,0 @@
-/*
- * Parses the [.hyper] node's value to a lambda object, and
- * evaluates that lambda result.
- */
-.hyper:@".some-hyperlambda"
-hyper2lambda:x:@.hyper
-eval:x:@hyper2lambda

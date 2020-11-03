@@ -1,16 +1,15 @@
 /*
- * Example of how to retrieve emails form a POP3 server.
+ * A small script that connects to a POP3 server,
+ * and retrieves all emails on the server, simply
+ * creating a log entry for each email found on POP3
+ * server.
  */
 mail.pop3.fetch
    .lambda
 
       /*
-       * Some lambda object invoked once for every email fetched.
-       * Given message as [.message].
+       * Lambda object evaluated once for every
+       * email fetched from POP3 server.
        */
-      unwrap:x:+/*
-      .content
-         from:x:@.message/*/from/0
-         text:x:@.message/**/entity/**/content/[0,1]
-      lambda2hyper:x:..
-      log.info:x:-
+      log.info
+         lambda2hyper:x:./.

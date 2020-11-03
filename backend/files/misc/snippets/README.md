@@ -1,4 +1,4 @@
 
 # Hyperlambda Snippets
 
-This folder contains your Hyperlambda snippets.
+This folder contains your persisted Hyperlambda snippets.

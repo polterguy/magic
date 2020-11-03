@@ -3,3 +3,6 @@
  */
 slots.create:meaning-of-life
    return-value:int:57
+
+// Invoking slot we created above.
+signal:meaning-of-life
