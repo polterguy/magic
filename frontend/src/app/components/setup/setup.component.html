@@ -48,7 +48,7 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mssql' && authenticationDatabase !== ''"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mssql'"
       class="fill-width">
       <input
         matInput
@@ -58,7 +58,7 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql' && authenticationDatabase !== ''"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql'"
       class="fill-width">
       <input
         matInput
@@ -68,7 +68,7 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
       style="margin-right: 1rem;min-width: 20rem;">
       <input
         matInput
@@ -78,7 +78,7 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null && authenticationDatabase !== ''"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
       style="margin-right: 1rem;min-width: 20rem;">
       <input
         matInput
@@ -88,7 +88,7 @@
     </mat-form-field>
 
     <mat-form-field
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql' && authenticationDatabase !== ''"
+      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mysql'"
       class="fill-width">
       <input
         matInput
