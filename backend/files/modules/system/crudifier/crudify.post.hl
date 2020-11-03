@@ -598,7 +598,7 @@ if
          get-value:x:@.arguments/*/overwrite
       io.file.exists:x:@strings.replace
    .lambda
-      throw:"That module already exists. If you want to re-create it, please make sure you're OK with overwriting the file."
+      throw:"That module already exists. If you want to re-create it, please explicitly inform me that this is your intention."
 
 
 
