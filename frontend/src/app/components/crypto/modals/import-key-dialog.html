@@ -15,16 +15,7 @@
     </textarea>
   </mat-form-field>
 
-  <mat-form-field style="width: 100%;">
-    <input
-      matInput 
-      placeholder="Fingerprint" 
-      autocomplete="off"
-      disabled="true"
-      [(ngModel)]="data.fingerprint">
-  </mat-form-field>
-
-  <mat-form-field style="width: 100%;">
+  <mat-form-field class="input-field">
     <input
       matInput 
       placeholder="Full name" 
@@ -34,17 +25,16 @@
       [(ngModel)]="data.subject">
   </mat-form-field>
 
-  <mat-form-field style="width: 100%;">
+  <mat-form-field class="input-field">
     <input
       matInput 
-      placeholder="Domain"
-      matTooltip="Domain of owner"
-      [disabled]="data.readOnly"
-      autocomplete="off" 
-      [(ngModel)]="data.domain">
+      placeholder="Fingerprint" 
+      autocomplete="off"
+      disabled="true"
+      [(ngModel)]="data.fingerprint">
   </mat-form-field>
 
-  <mat-form-field style="width: 100%;">
+  <mat-form-field class="input-field">
     <input
       matInput 
       placeholder="Email"
@@ -52,6 +42,16 @@
       [disabled]="data.readOnly"
       autocomplete="off" 
       [(ngModel)]="data.email">
+  </mat-form-field>
+
+  <mat-form-field class="input-field">
+    <input
+      matInput 
+      placeholder="Domain"
+      matTooltip="Domain of owner"
+      [disabled]="data.readOnly"
+      autocomplete="off" 
+      [(ngModel)]="data.domain">
   </mat-form-field>
   
   <ngx-codemirror
@@ -69,14 +69,20 @@
   
 </div>
 
-<div mat-dialog-actions>
+<div mat-dialog-actions class="actions">
   <div style="width:100%; text-align: right;">
+
+    <mat-checkbox
+      [disabled]="data.readOnly"
+      matTooltip="Whether or not key is enabled on server or not"
+      class="enabled-check"
+      [(ngModel)]="data.enabled">Enabled</mat-checkbox>
 
     <button
       *ngIf="!data.readOnly"
       mat-raised-button
       color="primary"
-      [disabled]="!data.fingerprint"
+      [disabled]="!data.fingerprint || !data.subject || data.subject === '' || !data.email || data.email === ''"
       [mat-dialog-close]="data">Save</button>
 
     <button

@@ -35,7 +35,8 @@ export class KeysService {
     email: string,
     content: string,
     vocabulary: string,
-    fingerprint: string) {
+    fingerprint: string,
+    enabled: boolean) {
       return this.httpClient.post<any>(
         this.ticketService.getBackendUrl() +
         'magic/modules/magic/crypto_keys', {
@@ -45,7 +46,8 @@ export class KeysService {
           content,
           vocabulary,
           fingerprint,
-          type: 'RSA'
+          type: 'RSA',
+          enabled,
         });
   }
 
@@ -56,7 +58,8 @@ export class KeysService {
     email: string,
     content: string,
     fingerprint: string,
-    vocabulary: string) {
+    vocabulary: string,
+    enabled: boolean) {
       return this.httpClient.put<any>(
         this.ticketService.getBackendUrl() +
         'magic/modules/magic/crypto_keys', {
@@ -66,7 +69,8 @@ export class KeysService {
           email,
           content,
           fingerprint,
-          vocabulary
+          vocabulary,
+          enabled,
         });
   }
 

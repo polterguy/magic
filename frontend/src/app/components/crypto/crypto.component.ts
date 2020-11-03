@@ -121,6 +121,7 @@ export class CryptoComponent implements OnInit {
       disableClose: true,
       data: {
         readOnly: false,
+        enabled: true,
       }
     });
     dialogRef.afterClosed().subscribe(res => {
@@ -138,7 +139,8 @@ export class CryptoComponent implements OnInit {
           res.email,
           res.content,
           res.vocabulary,
-          res.fingerprint)
+          res.fingerprint,
+          res.enabled)
           .subscribe(res => {
             this.getKeys();
           }, error => {
@@ -169,15 +171,18 @@ export class CryptoComponent implements OnInit {
         vocabulary: key.vocabulary,
         fingerprint: key.fingerprint,
         type: key.type,
-        readOnly
+        enabled: key.enabled,
+        readOnly,
       }
     });
     dialogRef.afterClosed().subscribe(nKey => {
       if (nKey !== undefined) {
-        if (nKey.domain.startsWith('http://')) {
-          nKey.domain = nKey.domain.substring(7);
-        } else if (nKey.domain.startsWith('https://')) {
-          nKey.domain = nKey.domain.substring(8);
+        if (nKey.domain) {
+          if (nKey.domain.startsWith('http://')) {
+            nKey.domain = nKey.domain.substring(7);
+          } else if (nKey.domain.startsWith('https://')) {
+            nKey.domain = nKey.domain.substring(8);
+          }
         }
         this.keysService.editKey(
           nKey.id,
@@ -186,7 +191,8 @@ export class CryptoComponent implements OnInit {
           nKey.email,
           nKey.content,
           nKey.fingerprint,
-          nKey.vocabulary)
+          nKey.vocabulary,
+          nKey.enabled)
           .subscribe(res2 => {
             this.getKeys();
             this.keysService.evictCache('public-key.' + nKey.fingerprint).subscribe(res3 => {
