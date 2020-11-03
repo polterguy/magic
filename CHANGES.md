@@ -769,3 +769,11 @@ as you install this version.
 Removed the ability to configure which database to persist log entries into, since
 it only complicates the code, and I suspect it's never really actually used with anything
 but the default value.
+
+## magic.strings
+
+Removing arguments after invocation to **[strings.concat]**.
+
+## magic.lambda
+
+Removing arguments after invocation to **[add]**, **[insert-before]** and **[insert-after]**.
