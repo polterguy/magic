@@ -1,11 +1,21 @@
 
 .dialog {
+  .input-field {
+    width: calc(50% - .5rem);
+    margin-right: .5rem;
+  }
   .imported {
     font-style: italic;
     color: #aaa;
     font-size: .7rem;
     text-align: right;
     margin-top: 1rem;
+  }
+}
+
+.actions {
+  .enabled-check {
+    margin-right: .5rem;
   }
 }
 
