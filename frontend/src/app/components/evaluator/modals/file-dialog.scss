@@ -4,6 +4,10 @@
 }
 
 .grid {
+    caption {
+        margin-bottom: 2rem;
+        font-weight: bold;
+    }
     cursor: pointer;
     tr:hover {
         td {
