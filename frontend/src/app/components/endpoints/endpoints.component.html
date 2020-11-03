@@ -199,29 +199,38 @@
                 </mat-form-field>
               </div>
 
+              <strong
+                *ngIf="el.extra.isJsonArguments"
+                class="cm-type">Request</strong>
               <ngx-codemirror 
                 *ngIf="el.extra.isJsonArguments"
                 [(ngModel)]="el.extra.arguments"
                 class="smaller"
                 [options]="{
                   lineNumbers: true,
-                  theme: 'material',
+                  theme: 'mbo',
                   mode: 'application/ld+json'
                 }"></ngx-codemirror>
 
+              <strong
+                *ngIf="el.extra.isBodyArguments && el.endpoint.Accept === 'application/hyperlambda'"
+                class="cm-type">Request</strong>
               <ngx-codemirror 
                 *ngIf="el.extra.isBodyArguments && el.endpoint.Accept === 'application/hyperlambda'"
                 [(ngModel)]="el.extra.body"
                 class="smaller"
                 [options]="getCodeMirrorOptions()"></ngx-codemirror>
 
+              <strong
+                *ngIf="el.extra.isBodyArguments && el.endpoint.Accept !== 'application/hyperlambda'"
+                class="cm-type">Request</strong>
               <ngx-codemirror 
                 *ngIf="el.extra.isBodyArguments && el.endpoint.Accept !== 'application/hyperlambda'"
                 [(ngModel)]="el.extra.body"
                 class="smaller"
                 [options]="{
                   lineNumbers: true,
-                  theme: 'material',
+                  theme: 'mbo',
                   mode: 'markdown'
                 }"></ngx-codemirror>
 
@@ -249,13 +258,16 @@
               class="view-result-card"
               *ngIf="el.extra.endpointResult">
 
-              <ngx-codemirror 
+              <strong
+                class="cm-type">Response</strong>
+              <ngx-codemirror
                 [(ngModel)]="el.extra.endpointResult" 
                 class="smaller"
                 [options]="{
                   lineNumbers: true,
-                  theme: 'material',
-                  mode: 'application/ld+json'
+                  theme: 'bespin',
+                  mode: 'application/ld+json',
+                  readOnly: true
                 }"></ngx-codemirror>
 
             </div>
