@@ -133,7 +133,7 @@ export class SqlComponent implements OnInit {
         'Ctrl-Space': 'autocomplete'
       },
       hintOptions: this.hintOptions,
-      theme: 'material',
+      theme: 'mbo',
       height: '250px',
     };
   }

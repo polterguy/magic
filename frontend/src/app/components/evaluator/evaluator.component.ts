@@ -50,7 +50,6 @@ export class EvaluatorComponent implements OnInit {
   getCodeMirrorOptions(execute = false) {
     const result: any = {
       lineNumbers: true,
-      theme: 'material',
       mode: 'hyperlambda',
       tabSize: 3,
       indentUnit: 3,
@@ -70,6 +69,7 @@ export class EvaluatorComponent implements OnInit {
       }
     };
     if (execute) {
+      result.theme = 'mbo';
       result.extraKeys.F5 = (cm: any) => {
         const element = document.getElementById('executeButton') as HTMLElement;
         element.click();
@@ -96,6 +96,9 @@ export class EvaluatorComponent implements OnInit {
         element.click();
       };
       result.autofocus = true;
+    } else {
+      result.theme = 'bespin';
+      result.readOnly = true;
     }
     return result;
   }

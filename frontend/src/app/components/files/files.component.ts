@@ -242,7 +242,7 @@ export class FilesComponent implements OnInit {
   getCodeMirrorOptions(el: any) {
     const result = {
       lineNumbers: true,
-      theme: 'material',
+      theme: 'mbo',
       mode: this.getMode(el),
       tabSize: 3,
       indentUnit: 3,
