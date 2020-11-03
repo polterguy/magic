@@ -32,8 +32,7 @@ slots.create:magic.authenticate
    /*
     * Opens up our database connection.
     */
-   config.get:"magic:auth:database"
-   mysql.connect:x:-
+   mysql.connect:magic
 
 
       /*

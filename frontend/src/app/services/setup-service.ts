@@ -34,14 +34,12 @@ export class SetupService {
 
   setup(
     databaseType: string,
-    authDatabase: string,
     rootUsername: string,
     rootPassword: string) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/setup/setup', {
         databaseType,
-        authDatabase,
         rootUsername,
         rootPassword,
         scheduler: true,

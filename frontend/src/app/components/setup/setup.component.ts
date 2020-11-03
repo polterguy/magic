@@ -15,7 +15,6 @@ export class SetupComponent implements OnInit {
   public config: any = null;
   public jwtSecret: string = null;
   public databaseType: string = null;
-  public authenticationDatabase: string = 'magic';
   public mssqlConnectionString: string = null;
   public mysqlConnectionString: string = null;
   public password: string = null;
@@ -103,7 +102,6 @@ export class SetupComponent implements OnInit {
             // Setting up authentication system and database.
             this.setupService.setup(
               this.databaseType,
-              this.authenticationDatabase,
               'root',
               this.password).subscribe(setupAuthResult => {
 
