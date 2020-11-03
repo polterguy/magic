@@ -94,6 +94,7 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 11. Click the _"locale.eq"_ button, and set its value to _"en"_. Evaluate the endpoint, and verify *only* _"English"_ is returned this time.
 12. Exchange the entire query parameter with _"order=locale&direction=asc&locale.like=e%"_ and re-evaluate the endpoint. Verify both Spanish and English is returned now.
 13. Select the _"post"_ endpoint, and invoke it with locale being `jp` and language being `Japanese`. Re-evaluate the read/get endpoint afterwards *without* query parameters, and verify it correctly inserted Japanese into your database.
+14. Create a _"Custom SQL"_ endpoint, and paste in the following SQL `select * from users u inner join users_roles ur on u.username = ur.user`. Remove all arguments, and make sure you configure it as a get verb type of endpoint. Name your endpoint foo, and click _"Create endpoint"_. Go to your endpoints, and evaluate the endpoint, and verify it returns one record with 4 columns. Make sure you _"Show system endpoints"_ as you try to find your endpoint.
 
 ## Scaffolder/Endpoints
 
@@ -155,3 +156,9 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 3. Create a new role, without a description, and verify it works.
 4. Create a new role *with* a description, and verify it works.
 5. Delete one of the newly created roles, and verify it works.
+
+## Create release
+
+Create NuGet packages of all sub-projects that have been modified, making sure you update their versions.
+Wait for the packages to be published by NuGet.org, and then create a release of _"magic.library"_. You can
+now create a release of the main Magic project, pasting in the changes parts for your current release.
