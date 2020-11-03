@@ -58,16 +58,6 @@ export class FileDialogComponent implements OnInit {
     }, 100);
   }
 
-  getCodeMirrorOptions() {
-    return {
-      lineNumbers: false,
-      theme: 'material',
-      mode: 'hyperlambda',
-      indentAuto: true,
-      readOnly: 'noCursor',
-    };
-  }
-
   getFilteredFiles() {
     if (this.name === '') {
       return this.files;
