@@ -69,7 +69,7 @@ io.file.save:/modules/system/crypto/keys/private-key.key
  */
 log.info
    .:"RSA key pair generated for server, fingerprint; '"
-   get-value:x:@crypto.rsa.create-key/*/fingeprint
+   get-value:x:@crypto.rsa.create-key/*/fingerprint
    .:"'"
 
 
