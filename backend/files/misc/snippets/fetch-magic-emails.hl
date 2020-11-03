@@ -1,3 +1,9 @@
+/*
+ * A small script that connects to a POP3 server,
+ * and retrieves all emails on the server, simply
+ * creating a log entry for each email found on POP3
+ * server.
+ */
 
 // Connecting to database.
 mysql.connect:magic_mail
@@ -6,33 +12,9 @@ mysql.connect:magic_mail
    mail.pop3.fetch
       .lambda
 
-         // Lambda object evaluated once for every email fetched from pop3.
-         unwrap:x:+/*
-         .content
-            from:x:@.message/*/from/0
-            subject:x:@.message/*/subject
-            body:x:@.message/**/entity/**/content/[0,1]
-
-         // Checking if contact exists, and if not, inserting new contact.
-         .sender-id
-         set-value:x:@.sender-id
-            mysql.scalar:select id from contacts where email = @email
-               @email:x:@.content/*/from
-         if
-            eq
-               get-value:x:@.sender-id
-               .
-            .lambda
-               set-value:x:@.sender-id
-                  mysql.scalar:insert into contacts (email) values (@email); select last_insert_id();
-                     @email:x:@.content/*/from
-
-         // Inserting into emails.
-         mysql.scalar:"insert into emails (subject, body, direction) values (@subject, @body, 'received'); select last_insert_id();"
-            @subject:x:@.content/*/subject
-            @body:x:@.content/*/body
-
-         // Associating email with sender (contacts).
-         mysql.execute:insert into emails_contacts (email_id, contact_id) values (@email, @contact)
-            @email:x:@mysql.scalar
-            @contact:x:@.sender-id
+         /*
+          * Lambda object evaluated once for every
+          * email fetched from POP3 server.
+          */
+         log.info
+            lambda2hyper:x:./.
