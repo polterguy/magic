@@ -5,6 +5,16 @@
 
 
 /*
+ * Creating our versioning table, to keep track of database version.
+ */
+create table magic_version (
+  db_version nvarchar(30) not null
+);
+
+go
+
+
+/*
  * Creates the authentication database in Microsoft SQL Server.
  */
 
