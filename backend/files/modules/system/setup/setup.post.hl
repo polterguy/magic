@@ -58,7 +58,7 @@ for-each:x:@signal/*/*
    if
       eq
          get-value:x:@.dp/#
-         get-value:magic
+         .:magic
       .lambda
          set-value:x:@.exists
             .:bool:true
