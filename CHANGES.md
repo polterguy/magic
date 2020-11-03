@@ -742,3 +742,30 @@ on main landing page of Magic now by default.
 
 Support for richer license keys, containing meta data, and also being asymmetrically and
 cryptographically signed by Server Garden's private RSA key.
+
+# Version 8.6.7
+
+## Magic (main)
+
+Removed the ability to configure which database to use for authentication and logging,
+since I suspect it's never used with anything but the default version anyways, and it
+only complicated the code and made it more difficult to understand.
+
+Created the ability to configure a public crypto key as _"enabled"_ or not, implying
+if it's not enabled, no invocations cyrptographically signed with that key will be
+accepted by the server.
+
+Fixed some minor errors in administrating your users that wouldn't propagate errors
+to the user, making errors invisible for the end user as he tries to administrate
+his users.
+
+**Breaking change** - Added some changes to the magic database script, specifically
+added the ability to have a boolean flag (enabled) for the crypto_keys database table.
+Either apply the changes for this specific column, or drop and re-create your magic database
+as you install this version.
+
+## magic.logging
+
+Removed the ability to configure which database to persist log entries into, since
+it only complicates the code, and I suspect it's never really actually used with anything
+but the default value.
