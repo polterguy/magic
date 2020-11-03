@@ -5,6 +5,13 @@ This document describes the process required to execute *before* every single re
 after all code changes have been applied. If a code change is required to fix a bug, the *entire*
 process should be restarted, to ensure the quality of Magic's release.
 
+## Prerequisites
+
+1. Check out [issues](https://github.com/polterguy/magic/issues) at GitHub to make sure no open tasks
+exists that should have been fixed for the current release.
+2. Open [travis](https://travis-ci.com/github/polterguy) and verify there are no bugs. If there are projects failing, make sure these projects will *not* fail as the production build is being release, which might occur if you've checked in code for sub-projects, relying upon other projects that has been changed.
+3. Open [SonarCloud](https://sonarcloud.io/organizations/polterguy/projects?sort=-coverage) and verify none of the projects have any code smells, bugs, vulnerabilities, or duplicated lines of code, etc.
+
 The way it is to be executed, is by following the steps below. These steps are to be performed *both*
 on an OS X system, and on a Windows system. Hence, the entire description of the process should be
 done twice. The Windows machine should have SQL Server and Visual Studio installed, and the OS X
@@ -22,6 +29,7 @@ relies upon the result from previously executed tests.
 4. Start Magic, both the frontend and the backend, using wither Visual Studio on Windows, or VS Code on OS X. Follow the main description of how to start Magic using [the following tutorial](https://polterguy.github.io/tutorials/getting-started/). This ensures that the getting started guide is accurate, according to the current release.
 5. Run through the setup process of Magic, by following the wizard you are given as you [open the URL](http://localhost:4200), which is where the frontend of Magic can be found after starting Magic.
 6. Go to the _"Crudify"_ menu item, and choose your _"magic"_ database, then choose _"All tables"_, and click the crudify button.
+7. Click the _"Home"_ menu item, and verify the _"backend version"_ number is correct according to the upcoming new release that is to be created.
 
 You have now setup Magic, and you can perform the user tests. These tests should also be performed with both
 a Windows machine, and an OS X machine, to ensure Magic is as portable as possible.
@@ -34,7 +42,7 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 4. Open the _"Evaluator"_ in another browser tab, and type in `log.info:foo bar`, evaluate, and go back to the logs tab, and verify the item you just logged shows up *without* having to refresh the page.
 5. Click the _"Delete all items"_ button, and verify that all log items are deleted.
 
-## Crypto tests
+## Crypto
 
 1. Open the _"Crypto"_ menu item, create a server key pair, by providing 2048 as strength. Make sure the server public key's fingerprint and public key itself is populated when it's done creating its server key pair.
 2. Copy the server public key, and scroll down - Click the _"Import ..."_ button, and paste in the public key into the _"Key"_ textarea. Ensure the fingerprint is automatically populated, and that it's the same value as the server's public key's fingerprint. Provide a name, an email address, and type `localhost:55247` into the _"Domain"_, and click _"Save"_.
@@ -57,7 +65,7 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 19. Click _"Clear filter"_ and verify the total number of invocations are now 4 - Not more, not fewer.
 20. Delete one of your keys, and make sure you're left with only *one* key and *two* invocations afterwards. Also make sure you *cannot* filter according to the key you just deleted.
 
-## SQL tests
+## SQL
 
 1. Open the _"SQL"_ menu item.
 2. Select the _"babelfish.sql"_ saved file, execute it, and verify there are no errors showing up during execution.
@@ -65,5 +73,82 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 4. Type in `select * from languages` into the CodeMirror SQL editor and execute the SQL. Verify you get 5 items in the result afterwards.
 5. Click the _"Save"_ button, supply a name, and make sure you find the filename in the _"Select saved file"_ afterwards. This ensures that users can create SQL snippets, that they store for later use.
 6. Select a database type you *do not have* on your current machine, make sure the Ajax spinner is showing, and that it takes a long time to execute, and that you get an error that makes sense when it finally finishes.
+7. Make sure you selected the _"magic"_ database in the _"Select database"_ dropdown, and paste in the following into the SQL CodeMirror editor `select * from magic_version`. Verify it returns one column, with one row, being the same value as the _"backend version"_ number you get on the main landing page of Magic, as you click the _"Home"_ menu item. This ensures that the database version is the same as the backend version, and will be used in future releases to create database migration scripts, etc.
 
+## License
 
+1. Open the _"Home"_ link, paste in a valid license key into the _"Licence"_ textarea, and click _"Save"_. After some few seconds, the main landing page should turn green, and display the correct license information.
+
+## Crudifier/Endpoints
+
+1. Open the _"Crudify"_ menu item.
+2. Select the _"babelfish"_ database, select _"All tables"_, and click _"Crudify all"_.
+3. Click _"Crudify all"_ once more, and verify you get an error about _"module already exists"_.
+4. Select the _"languages"_ table, and make sure you check of the _"overwrite"_ checkbox.
+5. Scroll down, and create a log entry for the _"get"_ verb, by adding `foo bar` into the textbox beneath the _"Log entry"_ column. *Remove* the _"Authorization"_ parts of the get/read endpoint. Scroll to the top, and click _"Crudify selected table"_.
+6. Open your _"Endpoints"_ menu item, and filter for _"languages".
+7. Select the _"get/read"_ endpoint, and click the invoke button (flash icon).
+8. Open your _"Logs"_ menu item, and make sure you can find _"foo bar"_ at the top.
+9. Repeat step 6, but add a _"limit"_ argument, and set its value to _"1"_. Reinvoke, and verify you can find another log item in your log - But this time containing the argument(s) you passed in as you invoked the endpoint.
+10. Repeat step 6, but add the following as query parameters `order=locale&direction=asc`. Invoke and exchange the _"asc"_ parts of your argument with _"desc"_ (descending) and re-evaluate the endpoint, and verify the ordering of the result is now changed.
+11. Click the _"locale.eq"_ button, and set its value to _"en"_. Evaluate the endpoint, and verify *only* _"English"_ is returned this time.
+12. Exchange the entire query parameter with _"order=locale&direction=asc&locale.like=e%"_ and re-evaluate the endpoint. Verify both Spanish and English is returned now.
+13. Select the _"post"_ endpoint, and invoke it with locale being `jp` and language being `Japanese`. Re-evaluate the read/get endpoint afterwards *without* query parameters, and verify it correctly inserted Japanese into your database.
+
+## Scaffolder/Endpoints
+
+1. Open the _"Endpoints"_ menu item.
+2. Type _"foo"_ into the _"Name of your app"_ textbox.
+3. Select the _"angular-dark"_ template, and click _"Generate"_. After some few seconds, you should be given a zip file named _"foo.zip"_.
+4. Unzip the zip file, and open the folder where you unzipped it in VS Code.
+5. Invoke `npm link` in a terminal window, and then `ng serve --port 4201` afterwards.
+6. Browse to [the following URL](http://localhost:4201).
+7. Verify you can find the _"Languages"_ menu item, *without* having to log in, and that it works and returns all languages in your database.
+8. Login with your root account, and verify you can immediately find several additional menu items.
+9. Click the _"Auth"_ menu item and create a user, then create a role and associate the newmly created user with the newly created role. Then delete the newly created user. Verify you do *not* get any errors in your browser console/developer-tools window.
+10. Verify you *cannot* delete the _"root"_ user, or in any ways edit it or modify it.
+11. Change your root user's password in the _"Profile"_ menu item. Log out and log in again, and make sure you can login with your new password.
+12. Repeat this entire section with the _"angular-default"_ template, and name your app _"foo2"_.
+
+## Tasks
+
+1. Open the _"Tasks"_ menu item.
+2. Create a new task, give it a name and a description, and add `log.info:Hello from task` as its Hyperlambda.
+3. Select the task, and click the _"Schedule"_ button. Choose a _"Repeat"_ type of pattern, and type in `5.seconds` as its value. Click _"Save"_ and wait some few seconds. Open the _"Logs"_ menu item in another browser, and verify you have at least one _"Hello from task"_ item there. Delete the schedule by clicking the trashcan icon, open your Logs menu item again, delete all log items, and wait some few seconds. Verify you *do not* have any _"Hello from task"_ items there now. Not even after 10-20 seconds.
+4. Click the _"Execute"_ button on the task, and verify you have *one* new log item.
+5. Update the task's log entry to become _"foo bar"_, save the task, execute the task, and verify you have the correct log item now created.
+6. Delete the task, verify you don't have any console errors, and that the editor for the task vanishes.
+
+## Files
+
+1. Open the _"Files"_ menu item.
+2. Click the _"misc"_ folder, and download the _"README.md"_ file. Open it in notepad, and verify it looks correct.
+3. Turn off _"Safe mode"_ and upload some file, use a file with _"funny filenames"_ containing e.g. `(` or something similar, to verify filenames are correctly handled by the files module. Download the file again, and verify it's not been corrupted in any ways. Make sure you upload a *binary* file, such as a PDF file etc - And make sure the file can be downloaded again, and has not been corrupted - And that you can open it using your default editor for the file type.
+4. Click _"New file"_  and give your file the name of _"foo.md"_. Click the newly created file, and verify you can edit it. Type in some text content, and click _"Save"_.
+5. Delete the file *without* closing the editor, and verify the file is deleted, and no console errors occurs.
+6. Create a new folder, open the folder, go back up again, and delete the folder. Make sure you don't get any console errors in the process.
+
+## Evaluator
+
+1. Open the _"Evaluator"_ menu item.
+2. Click the _"I"_ icon and try loading some few documentation snippets, by choosing a module in the _"Select module"_ dropdown.
+3. Make sure that *all* the keyboard shortcuts are working, in *both* operating systems.
+4. Load the snippet called _"http.get"_, execute it, and verify it's returning some JSON from the endpoint.
+
+## Users
+
+1. Open up the _"Users"_ menu item.
+2. Verify that the root user *cannot* be edited.
+3. Create a new user with an empty password, and verify that it *fails*.
+4. Create a new user with a password, and verify it works.
+5. Associate some roles with the newly created user, and verify it works.
+6. Delete one of the role associations, and verify it works.
+7. Delete the user and verify it works.
+
+## Roles
+
+1. Open up the _"Roles"_ menu item.
+2. Verify that the _"root"_ role *cannot* be deleted.
+3. Create a new role, without a description, and verify it works.
+4. Create a new role *with* a description, and verify it works.
+5. Delete one of the newly created roles, and verify it works.
