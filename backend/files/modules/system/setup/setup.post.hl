@@ -4,7 +4,6 @@
  */
 .arguments
    databaseType:string
-   authDatabase:string
    rootUsername:string
    rootPassword:string
    scheduler:bool
@@ -52,16 +51,14 @@ signal:x:-
 
 
 /*
- * Checking if authDatabase was returned from above invocation, and
- * system does not have a non-default authentication database declared
- * in its configuration.
+ * Checking if magic was returned from above invocation.
  */
 .exists:bool:false
 for-each:x:@signal/*/*
    if
       eq
          get-value:x:@.dp/#
-         get-value:x:@.arguments/*/authDatabase
+         get-value:magic
       .lambda
          set-value:x:@.exists
             .:bool:true
@@ -96,11 +93,7 @@ if
          case:mysql
             set-value:x:@io.file.load
                strings.concat
-                  .:"create database `"
-                  get-value:x:@.arguments/*/authDatabase
-                  .:"`;use `"
-                  get-value:x:@.arguments/*/authDatabase
-                  .:"`;"
+                  .:"create database `magic`;use `magic`;"
                   get-value:x:@io.file.load
 
          /*
@@ -110,13 +103,9 @@ if
             set-value:x:@io.file.load
                strings.concat
                   .:@"use master;
-create database ["
-                  get-value:x:@.arguments/*/authDatabase
-                  .:@"];
+create database [magic];
 GO
-use ["
-                  get-value:x:@.arguments/*/authDatabase
-                  .:@"];
+use [magic];
 "
                   get-value:x:@io.file.load
 

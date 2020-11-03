@@ -48,17 +48,6 @@
     </mat-form-field>
 
     <mat-form-field
-      style="min-width: 20rem;margin-left: 1rem;"
-      *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null">
-      <input
-        matInput
-        placeholder="Authentication database name to use"
-        disabled="true"
-        type="text"
-        [(ngModel)]="authenticationDatabase">
-    </mat-form-field>
-
-    <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType === 'mssql' && authenticationDatabase !== ''"
       class="fill-width">
       <input
