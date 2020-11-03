@@ -27,7 +27,6 @@ add:x:../*/xxx
  * Retrieves items from our database, according to which database is
  * the default database and database type in the system.
  */
-config.get:"magic:logging:database"
 config.get:"magic:databases:default"
 set-name:x:./*/xxx.connect
    strings.concat
@@ -61,7 +60,7 @@ if
  * Retrieving items from database.
  */
 unwrap:x:+
-xxx.connect:x:@config.get/@config.get
+xxx.connect:magic
    add:x:+
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/limit
