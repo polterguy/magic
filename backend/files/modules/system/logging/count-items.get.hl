@@ -17,7 +17,6 @@ auth.ticket.verify:root
  * Retrieves items from our database, according to which database is
  * the default database and database type in the system.
  */
-config.get:"magic:logging:database"
 config.get:"magic:databases:default"
 set-name:x:../**/xxx.connect
    strings.concat
@@ -50,8 +49,7 @@ if
 /*
  * Retrieving count from database.
  */
-unwrap:x:+
-xxx.connect:x:@config.get/@config.get
+xxx.connect:magic
    xxx.read
       table:log_entries
       columns
