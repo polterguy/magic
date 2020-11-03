@@ -11,7 +11,7 @@
   </mat-spinner>
 </div>
 
-<div class="database-type-selector">
+<mat-form-field class="database-type-selector">
 
   <mat-select
     placeholder="Select database type"
@@ -24,9 +24,9 @@
       
   </mat-select>
 
-</div>
+</mat-form-field>
 
-<div
+<mat-form-field
   *ngIf="databases !== null && hasConnection"
   class="database-selector">
 
@@ -41,9 +41,9 @@
       
   </mat-select>
 
-</div>
+</mat-form-field>
 
-<div class="file-selector" *ngIf="hasConnection">
+<mat-form-field class="file-selector" *ngIf="hasConnection">
 
   <mat-select
     placeholder="Select saved file"
@@ -54,7 +54,7 @@
       [value]="cur">{{cur}}</mat-option>
   </mat-select>
 
-</div>
+</mat-form-field>
 
 <div class="mat-elevation-z4 sql" *ngIf="hasConnection">
 
