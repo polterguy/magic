@@ -773,7 +773,7 @@ Removed the ability to configure which database to persist log entries into, sin
 it only complicates the code, and I suspect it's never really actually used with anything
 but the default value.
 
-## magic.strings
+## magic.lambda.strings
 
 Removing arguments after invocation to **[strings.concat]**.
 
