@@ -8,14 +8,6 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "magic/modules/system/ping",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "backend": {
       "commandName": "Project",
       "launchBrowser": true,
