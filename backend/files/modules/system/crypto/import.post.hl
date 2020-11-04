@@ -1,0 +1,37 @@
+
+/*
+ * Imports a public key into the system.
+ */
+.description:"Imports a public key into the system. Allows for anonymous access to allow clients to push their public keys to the server. Notice, key will not be enabled before explicitly enabled by an administrator of the server. The key itself needs to be an RSA key in base64 encoded DER format."
+.arguments
+   subject:string
+   email:string
+   domain:string
+   content:string
+
+
+/*
+ * Sanity checking invocation.
+ * Subject, email and content is mandatory.
+ * URL is optional.
+ */
+validators.mandatory:x:@.arguments/*/subject
+validators.mandatory:x:@.arguments/*/email
+validators.mandatory:x:@.arguments/*/content
+validators.url:x:@.arguments/*/domain
+validators.email:x:@.arguments/*/email
+
+
+/*
+ * Importing key.
+ */
+add:x:+
+   get-nodes:x:@.arguments/*
+signal:magic.crypto.import-key
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success
