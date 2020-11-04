@@ -2,7 +2,7 @@
 /*
  * Returns the public RSA key for the server.
  */
-.description:"Returns the server's public RSA key without its fingerprint."
+.description:"Returns the server's public key without its fingerprint."
 
 
 /*
