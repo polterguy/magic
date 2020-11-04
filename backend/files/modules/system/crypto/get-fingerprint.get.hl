@@ -5,6 +5,7 @@
 .description:"Returns the fingerprint for the specified key."
 .arguments
    key:string
+auth.ticket.verify:root
 
 /*
  * Creating fingerprint and returning to caller.
