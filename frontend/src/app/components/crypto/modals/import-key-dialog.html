@@ -1,5 +1,16 @@
 
-<h1 mat-dialog-title>{{data.id ? (data.readOnly ? 'Key ' + data.id : 'Edit key ' + data.id) : 'Import crypto key'}}</h1>
+<div mat-dialog-title>
+
+  {{data.id ? (data.readOnly ? 'Key ' + data.id : 'Edit key ' + data.id) : 'Import public key'}}
+
+  <span
+    class="imported"
+    [matTooltip]="getDate(data.imported)"
+    *ngIf="!data.readOnly && data.id">
+    Imported - {{data.imported | since}}
+</span>
+ 
+</div>
 
 <div mat-dialog-content class="dialog">
   
@@ -59,13 +70,6 @@
     [(ngModel)]="data.vocabulary"
     class="smaller"
     [options]="getCodeMirrorOptions()"></ngx-codemirror>
-
-  <div
-    class="imported"
-    matTooltip="Import date"
-    *ngIf="!data.readOnly && data.id">
-    {{getDate(data.imported)}}
-  </div>
   
 </div>
 
