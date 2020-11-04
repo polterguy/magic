@@ -6,9 +6,28 @@
  * wrapped in a [whitelist] invocation - For then to return
  * the results of the invocation back to the caller
  * cryptographically signed and encrypted.
+ *
+ * Notice, a request will only be executed if the request id
+ * has not been previously executed on the server.
  */
 signal:magic.crypto.http.eval
    url:"http://localhost:55247/magic/modules/system/crypto/eval-id"
    .lambda
+   
+      /*
+       * The request is needs to be a unique value, on a per
+       * request level
+       */
       .request-id:a-unique-id-here
-      log.info:Howdy world
+      vocabulary
+      slots.vocabulary
+      add:x:./*/return
+         get-nodes:x:@vocabulary/*
+         get-nodes:x:@slots.vocabulary/*
+      return
+      
+/*
+ * Transforming returned content to lambda,
+ * to make it easier to read.
+ */
+hyper2lambda:x:-/*/content
