@@ -82,7 +82,7 @@ You have now setup Magic, and you can perform the user tests.
 
 ## License
 
-1. Open the _"Home"_ link, paste in a valid license key into the _"Licence"_ textarea, and click _"Save"_. After some few seconds, the main landing page should turn green, and display the correct license information.
+1. Open the _"Home"_ link, paste in a valid license key into the _"Licence"_ textarea, and click _"Save"_. After some few seconds, the main landing page should turn green, and display the correct license information. You can find a valid test license in the _"magic.signals"_ project's repository.
 
 ## Crudifier/Endpoints
 
