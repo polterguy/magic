@@ -29,66 +29,76 @@ try
 
 
    /*
-    * Parametrising [whitelist] invocation, according to
-    * arguments supplied by caller.
+    * Creating a stack object containing the key's fingerprint,
+    * to allow the caller's code and referenced slots to retrieve
+    * the fingerprint to uniquely identifying the caller.
     */
-   add:x:./*/whitelist/*/.lambda
-      hyper2lambda:x:@crypto.verify
-   add:x:./*/whitelist/*/vocabulary
-      get-nodes:x:@signal/*/vocabulary/*
-
-
-   /*
-    * Invoking lambda object, now associated with a [vocabulary],
-    * restricting the caller's access rights on the server.
-    */
-   whitelist
-      vocabulary
+   context:fingerprint
+      value:x:@crypto.get-key
       .lambda
 
 
-   /*
-    * Figuring out how to return results to caller, defaulting to
-    * simply "success".
-    */
-   .result:success
-   if
-      not
-         eq
-            get-value:x:@whitelist
-            .
-      .lambda
-         set-value:x:@.result
-            get-value:x:@whitelist
-   else-if
-      exists:x:@whitelist/*
-      .lambda
-         set-value:x:@.result
-            lambda2hyper:x:@whitelist/*
+         /*
+          * Parametrising [whitelist] invocation, according to
+          * arguments supplied by caller.
+          */
+         add:x:./*/whitelist/*/.lambda
+            hyper2lambda:x:@crypto.verify
+         add:x:./*/whitelist/*/vocabulary
+            get-nodes:x:@signal/*/vocabulary/*
 
 
-   /*
-    * Making sure we apply the correct HTTP header.
-    */
-   response.headers.add
-      Content-Type:application/octet-stream
+         /*
+          * Invoking lambda object, now associated with a [vocabulary],
+          * restricting the caller's access rights on the server.
+          */
+         whitelist
+            vocabulary
+            .lambda
 
 
-   /*
-    * Signing result.
-    */
-   signal:magic.crypto.get-server-private-key
-   crypto.sign:x:@.result
-      raw:true
-      signing-key:x:@signal/*/private-key
-      signing-key-fingerprint:x:@signal/*/fingerprint
+         /*
+          * Figuring out how to return results to caller, defaulting to
+          * simply "success".
+          */
+         .result:success
+         if
+            not
+               eq
+                  get-value:x:@whitelist
+                  .
+            .lambda
+               set-value:x:@.result
+                  get-value:x:@whitelist
+         else-if
+            exists:x:@whitelist/*
+            .lambda
+               set-value:x:@.result
+                  lambda2hyper:x:@whitelist/*
 
 
-   /*
-    * Returning result of signing to caller, which will
-    * return it as byte[] as our response.
-    */
-   return:x:@crypto.sign
+         /*
+          * Making sure we apply the correct HTTP header.
+          */
+         response.headers.add
+            Content-Type:application/octet-stream
+
+
+         /*
+          * Signing result.
+          */
+         signal:magic.crypto.get-server-private-key
+         crypto.sign:x:@.result
+            raw:true
+            signing-key:x:@signal/*/private-key
+            signing-key-fingerprint:x:@signal/*/fingerprint
+
+
+         /*
+          * Returning result of signing to caller, which will
+          * return it as byte[] as our response.
+          */
+         return:x:@crypto.sign
 
 
 .catch
