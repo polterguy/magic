@@ -780,3 +780,9 @@ Removing arguments after invocation to **[strings.concat]**.
 ## magic.lambda
 
 Removing arguments after invocation to **[add]**, **[insert-before]** and **[insert-after]**.
+
+Added **[context]** slot, allowing Hyperlambda code to dynamically add values onto the stack.
+Also added **[get-context]** that retrieves dynamically added objects from the stack.
+Notice, a dynamically created stack object will *not* interfer with C# created stack objects,
+and Hyperlambda *cannot* retrieves C# created stack objects either. This is to make it impossible
+for Hyperlambda code to _"clash"_ with C# created stack objects, and/or manipulate such.
