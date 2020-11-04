@@ -19,6 +19,7 @@
     "backend": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "magic/modules/system/ping",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
