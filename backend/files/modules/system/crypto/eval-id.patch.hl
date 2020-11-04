@@ -2,7 +2,7 @@
 /*
  * Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database.
  */
-.description:"Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database."
+.description:"Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database. Requires a unique [.request-id] as a part of the Hyperlambda payload."
 .arguments
    body:string
 
