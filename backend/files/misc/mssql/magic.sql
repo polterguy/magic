@@ -15,6 +15,14 @@ go
 
 
 /*
+ * Inserting version into database version table.
+ */
+insert into crypto_keys(db_version) values ('8.6.7');
+
+go
+
+
+/*
  * Creates the authentication database in Microsoft SQL Server.
  */
 
