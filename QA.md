@@ -1,7 +1,7 @@
 
 # Quality Assurance Document
 
-This document describes the process required to execute *before* every single release of Magic,
+This document describes the process required to execute before *every single release of Magic*,
 after all code changes have been applied. If a code change is required to fix a bug, the *entire*
 process should be restarted, to ensure the quality of Magic's release.
 
