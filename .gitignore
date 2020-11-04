@@ -334,5 +334,5 @@ backend/tasks/**
 backend/files/modules/*
 !backend/files/modules/system
 !backend/files/modules/README.md
-backend/files/modules/system/crypto/keys/private-key.key
-backend/files/modules/system/crypto/keys/public-key.key
+backend/files/modules/system/crypto/keys/*
+!backend/files/modules/system/crypto/keys/README.md
