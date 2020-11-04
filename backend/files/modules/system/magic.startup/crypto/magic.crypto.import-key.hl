@@ -1,0 +1,48 @@
+
+/*
+ * Imports the specified public key.
+ */
+slots.create:magic.crypto.import-key
+
+
+   /*
+    * Making sure we use corrrect database type.
+    */
+   config.get:"magic:databases:default"
+   set-name:x:./*/xxx.connect
+      strings.concat
+         get-value:x:@config.get
+         .:.connect
+   set-name:x:./**/xxx.create
+      strings.concat
+         get-value:x:@config.get
+         .:.create
+
+
+   /*
+    * Figuring out key's fingerprint.
+    */
+   crypto.fingerprint:x:@.arguments/*/content
+
+
+   /*
+    * Importing key into database.
+    */
+   xxx.connect:magic
+      xxx.create
+         table:crypto_keys
+         values
+            subject:x:@.arguments/*/subject
+            email:x:@.arguments/*/email
+            domain:x:@.arguments/*/domain
+            type:RSA
+            fingerprint:x:@crypto.fingerprint
+            content:x:@.arguments/*/content
+            enabled:bool:false
+            vocabulary:@"add
+return
+get-nodes
+vocabulary
+slots.vocabulary
+"
+
