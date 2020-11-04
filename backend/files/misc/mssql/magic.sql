@@ -17,7 +17,7 @@ go
 /*
  * Inserting version into database version table.
  */
-insert into crypto_keys(db_version) values ('8.6.7');
+insert into crypto_keys(db_version) values ('008.006.007');
 
 go
 
