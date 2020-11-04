@@ -767,7 +767,7 @@ track of versioning in the future, and hopefully be able to create some sort of 
 migration script(s) logic in future releases - To avoid having to drop and re-create
 database every time users installs a new version.
 
-## magic.logging
+## magic.lambda.logging
 
 Removed the ability to configure which database to persist log entries into, since
 it only complicates the code, and I suspect it's never really actually used with anything
