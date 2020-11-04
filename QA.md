@@ -32,8 +32,9 @@ relies upon the result from previously executed tests.
 3. Unzip the file you are given.
 4. Start Magic, both the frontend and the backend, using either Visual Studio on Windows, or VS Code on OS X. Follow the main description of how to start Magic using [the following tutorial](https://polterguy.github.io/tutorials/getting-started/). This ensures that the getting started guide is accurate, according to the current release.
 5. Run through the setup process of Magic, by following the wizard you are given as you [open the URL](http://localhost:4200), which is where the frontend of Magic can be found after starting Magic.
-6. Go to the _"Crudify"_ menu item, and choose your _"magic"_ database, then choose _"All tables"_, and click the crudify button.
-7. Click the _"Home"_ menu item, and verify the _"backend version"_ number is correct according to the upcoming new release that is to be created.
+6. Verify the _"backend version"_ number is correct according to the upcoming new release that is to be created.
+7. Go to the _"Crudify"_ menu item, and choose your _"magic"_ database, then choose _"All tables"_, and click the crudify button.
+8. Go to _"Endpoints"_ menu item, show system endpoints, click the _"magic_version"_ endpoint, invoke its get, and verify the database version is the same as the backend version - Except, it should be in the format of `xxx.yyy.zzz`, with zeros prefixing the actual digits.
 
 You have now setup Magic, and you can perform the individual component tests.
 
@@ -49,10 +50,10 @@ You have now setup Magic, and you can perform the individual component tests.
 
 1. Open the _"Crypto"_ menu item, create a server key pair, by providing 2048 as strength. Make sure the server public key's fingerprint and public key itself is populated when it's done creating its server key pair.
 2. Copy the server public key, and scroll down - Click the _"Import ..."_ button, and paste in the public key into the _"Key"_ textarea. Ensure the fingerprint is automatically populated, and that it's the same value as the server's public key's fingerprint. Provide a name, an email address, and type `localhost:55247` into the _"Domain"_, and click _"Save"_.
-3. Open the _"Evaluator"_ and click the _"Load"_ button. Filter on _"magic"_ and choose the _"magic.crypto.http.eval.idempotent"_ snippet. Execute it, and verify that you get an *error* as you do this. This is because the `log.info` slot has not been enabled for the publick key. Open your logs, and verify that you have 4 new errors in your server log.
+3. Open the _"Evaluator"_ and click the _"Load"_ button. Filter on _"magic"_ and choose the _"magic.crypto.http.eval.idempotent"_ snippet. Add `log.info:Foo bar` to its lambda object, and execute it. Verify that you get an *error* as you do this. This is because the `log.info` slot has not been enabled for the publick key. Open your logs, and verify that you have 4 new errors in your server log.
 4. Go back to the _"Crypto"_ menu item, edit the public key entry you imported previously, and add `log.info` as a new line at the bottom, before you save the key entry.
 5. Repeat step 3, but verify that you did *not* get an error this time.
-6. Open your _"Logs"_ menu item, and verify you can find _"Howdy world"_ at the top, and not additional log entries.
+6. Open your _"Logs"_ menu item, and verify you can find _"Howdy world"_ at the top, and not any additional log entries.
 7. Open the _"Crypto"_ menu item again, and verify you can find *exactly one* crypttographically signed invocation, matching the public key you imported in the previous step(s).
 8. Click the _"a-unique-id-here"_ and verify you can see the base64 encoded signed payload instead of its Hyperlambda under the _"Payload"_ column.
 9. Click the _"Key"_ (subject) parts of your cryptographically signed invocation, and verify you get the key up in _"read only mode"_, not showing the vocabulary, and not allowing you to save or change any of the key's settings.
