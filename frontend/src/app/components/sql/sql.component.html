@@ -92,7 +92,7 @@
   *ngIf="result !== null && result.length > 0 && hasConnection"
   class="mat-elevation-z4 result">
   <table class="fill-width">
-    <caption>Result of your query</caption>
+    <caption>Result</caption>
     <tr>
       <th *ngFor="let idx of result[0] | dynamic" scope="col">
         {{idx.key}}

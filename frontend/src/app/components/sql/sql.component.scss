@@ -42,7 +42,7 @@
 }
 
 .sql {
-    margin:.5rem 4rem .5rem 4rem;
+    margin:1rem 4rem .5rem 4rem;
 }
 
 .execute-button {
@@ -53,6 +53,10 @@
 .result {
     margin:.5rem 4rem .5rem 4rem;
     padding: 3rem;
+    caption {
+        margin-bottom: 2rem;
+        font-weight: bold;
+    }
     table.fill-width {
         width: 100%;
         tr {
@@ -74,19 +78,19 @@
 }
 
 .database-type-selector {
-    margin:5rem 4rem .5rem 4rem;
+    margin:2rem 4rem .5rem 4rem;
     max-width: 15rem;
     display: inline-block;
 }
 
 .database-selector {
-    margin:5rem 4rem .5rem 1rem;
+    margin:2rem 4rem .5rem 1rem;
     max-width: 15rem;
     display: inline-block;
 }
 
 .file-selector {
-    margin:5rem 4rem .5rem 1rem;
+    margin:2rem 4rem .5rem 1rem;
     max-width: 15rem;
     display: inline-block;
 }

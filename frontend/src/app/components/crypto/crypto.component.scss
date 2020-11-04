@@ -1,27 +1,30 @@
 
-h1 {
-    text-align: center;
-    margin-top: 3rem;
-}
 .crypto-wrapper {
     padding:2rem 5rem 2rem 5rem;
+    .key-strength {
+        width: 300px;
+        margin-right: 1rem;
+    }
+    .seed {
+        width: 300px;
+        margin-right: 1rem;
+    }
+    .fingerprint {
+        color: #999;
+        font-size: .8rem;
+    }
     .crypto-key {
-        h2 {
-            text-align: center;
-        }
         margin-top: 2rem;
+        margin-bottom: 4rem;
         padding: 5rem;
-        .key-strength {
-            width: 300px;
-            margin-right: 1rem;
-        }
-        .seed {
-            width: 300px;
-            margin-right: 1rem;
-        }
-        .fingerprint {
-            color: #999;
-            font-size: .8rem;
+        position: relative;
+        .public-key-title {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: rgb(128, 128, 128);
+            font-size: .9rem;
+            font-style: italic;
         }
         .key {
             display: block;
@@ -55,7 +58,8 @@ h1 {
         }
     }
     .keys {
-        margin-top: 4rem;
+        margin-top: 2rem;
+        margin-bottom: 4rem;
         padding: 4rem;
         position: relative;
         width: 100%;
@@ -91,12 +95,12 @@ h1 {
         }
         .import-key-button {
             position: absolute;
-            top: .5rem;
-            right: .5rem;
+            top: 1rem;
+            right: 1rem;
         }
     }
     .invocations {
-        margin-top: 4rem;
+        margin-top: 2rem;
         padding: 4rem;
         position: relative;
         width: 100%;
@@ -104,7 +108,7 @@ h1 {
         .key-filter {
             position: absolute;
             top: 1rem;
-            right: 2rem;
+            right: 1rem;
             font-size: .7rem;
             mat-form-field {
                 margin-right: .5rem;
