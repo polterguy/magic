@@ -53,20 +53,20 @@ You have now setup Magic, and you can perform the individual component tests.
 3. Open the _"Evaluator"_ and click the _"Load"_ button. Filter on _"magic"_ and choose the _"magic.crypto.http.eval.idempotent"_ snippet. Add `log.info:Foo bar` to its lambda object, and execute it. Verify that you get an *error* as you do this. This is because the `log.info` slot has not been enabled for the publick key. Open your logs, and verify that you have 4 new errors in your server log.
 4. Go back to the _"Crypto"_ menu item, edit the public key entry you imported previously, and add `log.info` as a new line at the bottom, before you save the key entry.
 5. Repeat step 3, but verify that you did *not* get an error this time.
-6. Open your _"Logs"_ menu item, and verify you can find _"Howdy world"_ at the top, and not any additional log entries.
+6. Open your _"Logs"_ menu item, and verify you can find _"Foo bar"_ at the top, and not any additional log entries.
 7. Open the _"Crypto"_ menu item again, and verify you can find *exactly one* cryptographically signed invocation, matching the public key you imported in the previous step(s).
 8. Click the _"a-unique-id-here"_ and verify you can see the base64 encoded signed payload instead of its Hyperlambda under the _"Payload"_ column.
 9. Click the _"Key"_ (subject) parts of your cryptographically signed invocation, and verify you get the key up in _"read only mode"_, not showing the vocabulary, and not allowing you to save or change any of the key's settings.
-10. Click the key in the above table, in the same window as the _"Import ..."_ button, and disable the key by unchecking the _"Enabled"_ checkbox.
+10. Click the key in the above table, in the same window as the _"Import ..."_ button, and disable the key by unchecking the _"Enabled"_ checkbox, and save the public key.
 11. Repeat step 3, but change the **[.request-id]** value to for instance _"foo-bar"_ before you evaluate the Hyperlambda. This should *not* work because the key has now been disabled. Open the _"Crypto"_ menu item in a different browser tab, and enable the key again, by editing it, and checking the _"Enabled"_ checkbox.
 12. *Without* changing your Hyperlambda at all, simply re-evaluate it, and verify it's working now, returning 200 as status code in the bottom CodeMirror editor.
-13. Go back to the _"Crypto"_ menu item, and create a *new* key - This time with 4096 as your key strength. Verify the public key is roughly twice as large after it's done executing, and that it requires *more* time than creating a 2048 key, which you did in the above step.
-14. Open the _"Files"_ menu item, open the path _"/modules/system/crypto/keys/"_ and verify you have *4 files* in this folder. Two of the files should be your default key pair. The other files should have long names, containing the fingerprint of your key, and be your old backed up key pair. All files should end with the extension of _".key"_.
+13. Go back to the _"Crypto"_ menu item, and create a *new* server key - This time with 4096 as your key strength. Verify the public key is roughly twice as large after it's done executing, and that it requires *more* time than creating a 2048 key, which you did in the above step.
+14. Open the _"Files"_ menu item, open the path _"/modules/system/crypto/keys/"_ and verify you have *4 '.key' files* in this folder. Two of the files should be your default key pair. The other files should have long names, containing the fingerprint of your key, and be your old backed up key pair. All files should end with the extension of _".key"_.
 15. Repeat step 3 above, but provide a unique **[.request-id]** this time. Make sure it *fails* as you evaluate the Hyperlambda.
 16. Repeat step 2 from above, now with your newly created 4096 server public key, but open the _"Crypto"_ menu item in a different tab, to be able to keep your Hyperlambda in your existing _"Evaluator"_ menu item.
 17. Re-evaluate your Hyperlambda in your _"Evaluator"_ browser tab, and make sure it *works* now.
 18. Go back to your _"Crypto"_ menu item, and verify you have two different keys in your _"Cryptographically signed invocations"_ now, and that you can filter on different keys, which should only show invocations from the key you have filtered on.
-19. Click _"Clear filter"_ and verify the total number of invocations are now 4 - Not more, not fewer.
+19. Click _"Clear filter"_ and verify the total number of invocations are more than when you had the filter turned on.
 20. Delete one of your keys, and make sure you're left with only *one* key and *two* invocations afterwards. Also make sure you *cannot* filter according to the key you just deleted.
 21. Create a new server key, copy its content, and go to _"Endpoints"_ and show system endpoints. Filter for _"import"_ and paste in the public key and *remove* the _"domain"_ parts of the payload. Import the key, and verify it works.
 22. Go to the evaluator and evaluate the _"magic.crypto.http.eval"_ and verify that *it fails*. Go back to crypto and enable the key you just imported, set its domain to `localhost:55247` , execute the evaluator's Hyperlambda again, and verify *it works* now.
@@ -75,11 +75,12 @@ You have now setup Magic, and you can perform the individual component tests.
 
 1. Open the _"SQL"_ menu item.
 2. Select the _"babelfish.sql"_ saved file, execute it, and verify there are no errors showing up during execution.
-3. Verify that the _"babelfish"_ database automatically pops up in the _"Select database dropdown"_, *without* you having to refresh the page.
+3. Refresh the page, and verify you can find the _"babelfish"_ database in the _"Select database"_ dropdown.
 4. Type in `select * from languages` into the CodeMirror SQL editor and execute the SQL. Verify you get 5 items in the result afterwards.
-5. Click the _"Save"_ button, supply a name, and make sure you find the filename in the _"Select saved file"_ afterwards. This ensures that users can create SQL snippets, that they store for later use.
+5. Click the _"Save"_ button, supply a name, and make sure you find the filename in the _"Select saved file"_ afterwards. This ensures that users can create SQL snippets that they store for later use.
 6. Select a database type you *do not have* on your current machine, make sure the Ajax spinner is showing, and that it takes a long time to execute, and that you get an error that makes sense when it finally finishes.
-7. Make sure you selected the _"magic"_ database in the _"Select database"_ dropdown, and paste in the following into the SQL CodeMirror editor `select * from magic_version`. Verify it returns one column, with one row, being the same value as the _"backend version"_ number you get on the main landing page of Magic, as you click the _"Home"_ menu item. This ensures that the database version is the same as the backend version, and will be used in future releases to create database migration scripts, etc.
+7. Refresh the page.
+8. Make sure you selected the _"magic"_ database in the _"Select database"_ dropdown, and paste in the following into the SQL CodeMirror editor `select * from magic_version`. Verify it returns one column, with one row, being the same value as the _"backend version"_ number you get on the main landing page of Magic, as you click the _"Home"_ menu item. This ensures that the database version is the same as the backend version, and will be used in future releases to create database migration scripts, etc. Notice, the numbers will be prefixed in the SQL result with leading zeros, to ensure 3 digits for each version entity.
 
 ## License
 
@@ -89,7 +90,7 @@ You have now setup Magic, and you can perform the individual component tests.
 
 1. Open the _"Crudify"_ menu item.
 2. Select the _"babelfish"_ database, select _"All tables"_, and click _"Crudify all"_.
-3. Click _"Crudify all"_ once more, and verify you get an error about _"module already exists"_.
+3. Uncheck the _"Overwrite"_ checkboix, and click _"Crudify all"_ once more, and verify you get an error about _"module already exists"_.
 4. Select the _"languages"_ table, and make sure you check of the _"overwrite"_ checkbox.
 5. Scroll down, and create a log entry for the _"get"_ verb, by adding `foo bar` into the textbox beneath the _"Log entry"_ column. *Remove* the _"Authorization"_ parts of the get/read endpoint. Scroll to the top, and click _"Crudify selected table"_.
 6. Open your _"Endpoints"_ menu item, and filter for _"languages"_.
@@ -97,10 +98,10 @@ You have now setup Magic, and you can perform the individual component tests.
 8. Open your _"Logs"_ menu item, and make sure you can find _"foo bar"_ at the top.
 9. Repeat step 6, but add a _"limit"_ argument, and set its value to _"1"_. Reinvoke, and verify you can find another log item in your log - But this time containing the argument(s) you passed in as you invoked the endpoint.
 10. Repeat step 6, but add the following as query parameters `order=locale&direction=asc`. Invoke and exchange the _"asc"_ parts of your argument with _"desc"_ (descending) and re-evaluate the endpoint, and verify the ordering of the result is now changed.
-11. Click the _"locale.eq"_ button, and set its value to _"en"_. Evaluate the endpoint, and verify *only* _"English"_ is returned this time.
-12. Exchange the entire query parameter with _"order=locale&direction=asc&locale.like=e%"_ and re-evaluate the endpoint. Verify both Spanish and English is returned now.
+11. Clear the query parameters, and click the _"locale.eq"_ button, and set its value to _"en"_. Evaluate the endpoint, and verify *only* _"English"_ is returned this time.
+12. Exchange the entire query parameter with _"order=locale&direction=asc&locale.like=e%"_ and re-evaluate the endpoint. Verify both Spanish and English is returned now, an alphabetical order.
 13. Select the _"post"_ endpoint, and invoke it with locale being `jp` and language being `Japanese`. Re-evaluate the read/get endpoint afterwards *without* query parameters, and verify it correctly inserted Japanese into your database.
-14. Create a _"Custom SQL"_ endpoint, and paste in the following SQL `select * from users u inner join users_roles ur on u.username = ur.user`. Remove all arguments, and make sure you configure it as a get verb type of endpoint. Name your endpoint foo, and click _"Create endpoint"_. Go to your endpoints, and evaluate the endpoint, and verify it returns one record with 4 columns. Make sure you _"Show system endpoints"_ as you try to find your endpoint.
+14. Create a _"Custom SQL"_ endpoint, and paste in the following SQL `select * from users u inner join users_roles ur on u.username = ur.user`. Remove all arguments, and make sure you configure it as a get verb type of endpoint. Name your endpoint foo, and click _"Create endpoint"_. Go to your endpoints, show all system endpoints, and evaluate the _"foo"_ endpoint, and verify it returns one record with 4 columns.
 
 ## Scaffolder/Endpoints
 
@@ -109,15 +110,15 @@ You have now setup Magic, and you can perform the individual component tests.
 3. Select the _"angular-dark"_ template, and click _"Generate"_. After some few seconds, you should be given a zip file named _"foo.zip"_.
 4. Unzip the zip file, and open the folder where you unzipped it in VS Code.
 5. Invoke `npm link` in a terminal window, and then `ng serve --port 4201` afterwards.
-6. Browse to [the following URL](http://localhost:4201).
+6. Browse to [localhost:4201](http://localhost:4201).
 7. Verify you can find the _"Languages"_ menu item, *without* having to log in, and that it works and returns all languages in your database.
-8. Login with your root account, and verify you can immediately find several additional menu items.
-9. Click the _"Auth"_ menu item and create a user, then create a role and associate the newmly created user with the newly created role. Then delete the newly created user. Verify you do *not* get any errors in your browser console/developer-tools window.
+8. Login with your root account, and verify you can immediately find several additional menu items, and at least the _"translations"_ menu item.
+9. Click the _"Auth"_ menu item and create a user with a password, then create a role and associate the newly created user with the newly created role. Then delete the newly created user. Verify you do *not* get any errors in your browser console/developer-tools window.
 10. Verify you *cannot* delete the _"root"_ user, or in any ways edit it or modify it.
 11. Change your root user's password in the _"Profile"_ menu item. Log out and log in again, and make sure you can login with your new password.
 12. Repeat this entire section with the _"angular-default"_ template, and name your app _"foo2"_.
 13. Toggle the _"Show system endpoints"_ slider, and verify you get roughly 100 endpoints, contrary to roughly 10 previously.
-14. Filter on _"ping"_, click ping endpoint, and verify it's got a description in the top right corner.
+14. Filter on _"ping"_, click ping endpoint, and verify it's got a description.
 15. Filter on _"translations"_. Choose the post endpoint, and create a _"foo/en/howdy"_ entry. Make sure the entry can be found afterwards when invoking the get endpoint.
 
 ## Tasks
@@ -133,7 +134,7 @@ You have now setup Magic, and you can perform the individual component tests.
 
 1. Open the _"Files"_ menu item.
 2. Click the _"misc"_ folder, and download the _"README.md"_ file. Open it in notepad, and verify it looks correct.
-3. Turn off _"Safe mode"_ and upload some file, use a file with _"funny filenames"_ containing e.g. `(` or something similar, to verify filenames are correctly handled by the files module. Download the file again, and verify it's not been corrupted in any ways. Make sure you upload a *binary* file, such as a PDF file etc - And make sure the file can be downloaded again, and has not been corrupted - And that you can open it using your default editor for the file type.
+3. Turn off _"Safe mode"_ and upload some file. Download the file again, and verify it's not been corrupted in any ways.
 4. Click _"New file"_  and give your file the name of _"foo.md"_. Click the newly created file, and verify you can edit it. Type in some text content, and click _"Save"_.
 5. Delete the file *without* closing the editor, and verify the file is deleted, and no console errors occurs.
 6. Create a new folder, open the folder, go back up again, and delete the folder. Make sure you don't get any console errors in the process.
@@ -143,7 +144,7 @@ You have now setup Magic, and you can perform the individual component tests.
 1. Open the _"Evaluator"_ menu item.
 2. Click the _"I"_ icon and try loading some few documentation snippets, by choosing a module in the _"Select module"_ dropdown.
 3. Make sure that *all* the keyboard shortcuts are working, in *both* operating systems.
-4. Load the snippet called _"http.get"_, execute it, and verify it's returning some JSON from the endpoint.
+4. Load the snippet called _"http.get"_, execute it, and verify it's returning some JSON from the endpoint. Make sure you *cannot* edit the bottom CodeMirror editor, since it's supposed to be read only.
 
 ## Users
 
