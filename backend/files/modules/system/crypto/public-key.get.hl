@@ -10,7 +10,7 @@
  * and returns its content to caller.
  */
 if
-   io.file.exists:/modules/system/crypto/keys/public-key.key
+   io.file.exists:/modules/system/crypto/keys/public.key
    .lambda
 else
    return
@@ -20,7 +20,7 @@ else
 /*
  * Key exists, returning it to caller, in addition to its fingerprint.
  */
-io.file.load:/modules/system/crypto/keys/public-key.key
+io.file.load:/modules/system/crypto/keys/public.key
 crypto.fingerprint:x:@io.file.load
 unwrap:x:+/*
 return

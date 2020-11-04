@@ -12,9 +12,9 @@ slots.create:magic.crypto.get-server-private-key
       expiration-type:sliding
       .lambda
 
-         io.file.load:/modules/system/crypto/keys/public-key.key
+         io.file.load:/modules/system/crypto/keys/public.key
          crypto.fingerprint:x:@io.file.load
-         io.file.load:/modules/system/crypto/keys/private-key.key
+         io.file.load:/modules/system/crypto/keys/private.key
          unwrap:x:+/*
          return
             private-key:x:@io.file.load

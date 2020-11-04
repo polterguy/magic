@@ -10,7 +10,7 @@
  * and returns its content to caller.
  */
 if
-   io.file.exists:/modules/system/crypto/keys/public-key.key
+   io.file.exists:/modules/system/crypto/keys/public.key
    .lambda
 else
    return
@@ -22,5 +22,5 @@ else
  */
 response.headers.add
    Content-Type:text/plain
-io.file.load:/modules/system/crypto/keys/public-key.key
+io.file.load:/modules/system/crypto/keys/public.key
 return:x:@io.file.load
