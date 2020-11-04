@@ -786,3 +786,6 @@ Also added **[get-context]** that retrieves dynamically added objects from the s
 Notice, a dynamically created stack object will *not* interfer with C# created stack objects,
 and Hyperlambda *cannot* retrieves C# created stack objects either. This is to make it impossible
 for Hyperlambda code to _"clash"_ with C# created stack objects, and/or manipulate such.
+
+Added support for _"fromBase64"_ type in **[convert]**, which will assume the given value
+is a base64 encoded `byte[]`, and convert it back to such, and return to the caller.
