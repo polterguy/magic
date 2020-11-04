@@ -378,6 +378,7 @@ limit:long`;
       case 'dbo.crypto_keys':
       case 'dbo.crypto_invocations':
       case 'dbo.users_roles':
+      case 'dbo.magic_version':
         this.moduleUrl = value.substring(4);
         break;
       default:

@@ -759,6 +759,16 @@ Fixed some minor errors in administrating your users that wouldn't propagate err
 to the user, making errors invisible for the end user as he tries to administrate
 his users.
 
+Fixed *a lot* of cryptography errors related to SQL Server. Basically, the cryptographic
+signed invocations didn't work *at all* on SQL Server due to an erronously added _"dbo"_
+prefix in their endpoint URLs.
+
+Made it simpler to start Magic backend on Windows with Visual Studio by removing IIS
+profile entirely, and only relying upon kestrel.
+
+Fixed initial debugging of backend on Visual Studio such that it now shows (opens) the
+ping endpoint by default as you start the backend.
+
 **Breaking change** - Added some changes to the magic database script, specifically
 added the ability to have a boolean flag (enabled) for the crypto_keys database table.
 Either apply the changes for this specific column, or drop and re-create your magic database
