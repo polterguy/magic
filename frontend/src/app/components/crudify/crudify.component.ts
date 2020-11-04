@@ -372,6 +372,12 @@ limit:long`;
       case 'dbo.users':
       case 'dbo.roles':
       case 'dbo.users_roles':
+      case 'dbo.tasks':
+      case 'dbo.task_due':
+      case 'dbo.log_entries':
+      case 'dbo.crypto_keys':
+      case 'dbo.crypto_invocations':
+      case 'dbo.users_roles':
         this.moduleUrl = value.substring(4);
         break;
       default:
