@@ -92,7 +92,7 @@ You have now setup Magic, and you can perform the individual component tests.
 3. Click _"Crudify all"_ once more, and verify you get an error about _"module already exists"_.
 4. Select the _"languages"_ table, and make sure you check of the _"overwrite"_ checkbox.
 5. Scroll down, and create a log entry for the _"get"_ verb, by adding `foo bar` into the textbox beneath the _"Log entry"_ column. *Remove* the _"Authorization"_ parts of the get/read endpoint. Scroll to the top, and click _"Crudify selected table"_.
-6. Open your _"Endpoints"_ menu item, and filter for _"languages".
+6. Open your _"Endpoints"_ menu item, and filter for _"languages"_.
 7. Select the _"get/read"_ endpoint, and click the invoke button (flash icon).
 8. Open your _"Logs"_ menu item, and make sure you can find _"foo bar"_ at the top.
 9. Repeat step 6, but add a _"limit"_ argument, and set its value to _"1"_. Reinvoke, and verify you can find another log item in your log - But this time containing the argument(s) you passed in as you invoked the endpoint.
