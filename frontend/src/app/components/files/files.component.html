@@ -22,7 +22,7 @@
       mat-table
       multiTemplateDataRows
       [dataSource]="getFilteredDatasource()">
-      <caption>Files and folders in your installation</caption>
+      <caption>{{path}}</caption>
 
       <ng-container
         matColumnDef="path">

@@ -212,7 +212,7 @@
       mat-table
       class="columns"
       [dataSource]="columns">
-      <caption>What columns to crudify for what CRUD endpoint</caption>
+      <caption>Columns</caption>
 
       <ng-container matColumnDef="field">
         <th mat-header-cell *matHeaderCellDef scope="col">Name</th>
@@ -305,7 +305,7 @@
       mat-table
       class="endpoints"
       [dataSource]="endpoints">
-      <caption>Configure your specific CRUD endpoints</caption>
+      <caption>Endpoints</caption>
 
       <ng-container matColumnDef="generate">
         <th mat-header-cell *matHeaderCellDef scope="col">Generate</th>
@@ -371,7 +371,7 @@
     <div *ngIf="showTransformers()">
 
       <table mat-table class="validator-table" [dataSource]="validators">
-        <caption>Input reactors for your columns</caption>
+        <caption>Input reactors</caption>
 
         <ng-container matColumnDef="field">
           <th mat-header-cell *matHeaderCellDef scope="col">Field</th>

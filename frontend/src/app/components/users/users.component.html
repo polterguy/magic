@@ -34,7 +34,7 @@
       mat-button>New ...</button>
 
     <table mat-table [dataSource]="dataSource()">
-      <caption>Users in your system</caption>
+      <caption>Users</caption>
 
       <ng-container matColumnDef="username">
         <th mat-header-cell *matHeaderCellDef scope="col">Username</th>
@@ -70,7 +70,7 @@
     
     <table mat-table [dataSource]="selectedUserRoles">
 
-      <caption>Roles user belongs to</caption>
+      <caption>User's roles</caption>
 
       <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef scope="col">Role</th>
