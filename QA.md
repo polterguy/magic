@@ -54,7 +54,7 @@ You have now setup Magic, and you can perform the individual component tests.
 4. Go back to the _"Crypto"_ menu item, edit the public key entry you imported previously, and add `log.info` as a new line at the bottom, before you save the key entry.
 5. Repeat step 3, but verify that you did *not* get an error this time.
 6. Open your _"Logs"_ menu item, and verify you can find _"Howdy world"_ at the top, and not any additional log entries.
-7. Open the _"Crypto"_ menu item again, and verify you can find *exactly one* crypttographically signed invocation, matching the public key you imported in the previous step(s).
+7. Open the _"Crypto"_ menu item again, and verify you can find *exactly one* cryptographically signed invocation, matching the public key you imported in the previous step(s).
 8. Click the _"a-unique-id-here"_ and verify you can see the base64 encoded signed payload instead of its Hyperlambda under the _"Payload"_ column.
 9. Click the _"Key"_ (subject) parts of your cryptographically signed invocation, and verify you get the key up in _"read only mode"_, not showing the vocabulary, and not allowing you to save or change any of the key's settings.
 10. Click the key in the above table, in the same window as the _"Import ..."_ button, and disable the key by unchecking the _"Enabled"_ checkbox.

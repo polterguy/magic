@@ -161,9 +161,7 @@ create table crypto_keys (
   type nvarchar(20) not null,
   enabled bit not null,
   constraint pk_crypto_keys primary key clustered(id asc),
-  unique(fingerprint),
-  unique(email),
-  unique(domain)
+  unique(fingerprint)
 );
 
 go
