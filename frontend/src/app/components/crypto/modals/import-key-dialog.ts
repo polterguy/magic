@@ -51,11 +51,12 @@ export class ImportKeyDialogComponent implements OnInit {
  * are using to invoke endpoints in your server, if you should for some
  * reasons choose to update your server's key pair.
  */
+add
+return
+get-nodes
 vocabulary
 slots.vocabulary
 signal:magic.crypto.get-server-public-key
-add
-return
 `;
     }
   }
