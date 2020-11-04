@@ -11,7 +11,7 @@
 create table magic_version (
   db_version varchar(30) not null
 );
-insert into crypto_keys(db_version) values ('008.006.007');
+insert into magic_version(db_version) values ('008.006.007');
 
 
 /*
