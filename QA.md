@@ -164,4 +164,8 @@ You have now setup Magic, and you can perform the individual component tests.
 
 ## Create release
 
-You can now create a release of the main Magic project.
+You can now create a release of the main Magic project. Notice, you'll have to perform the following steps afterwards.
+
+1. Update download link at polterguy.github.io
+2. Update download link at servergardens.com
+
