@@ -17,7 +17,7 @@ on an OS X system, and on a Windows system. Hence, the entire description of the
 done twice. The Windows machine should have SQL Server and Visual Studio installed, and the OS X
 machine should use MySQL as its database adapter, and VS Code as its IDE. As you perform these tests,
 make sure you have your Google Chrome _"developer"_ tools running, such that you can see errors in
-the console, in case an error occurs that is for some reasons silently swallowed by the system.
+the console, in case an error occurs. No errors are to be tolerated.
 The tests must be performed in the order they're given in this document, since some of these tests,
 relies upon the result from previously executed tests.
 
@@ -31,8 +31,7 @@ relies upon the result from previously executed tests.
 6. Go to the _"Crudify"_ menu item, and choose your _"magic"_ database, then choose _"All tables"_, and click the crudify button.
 7. Click the _"Home"_ menu item, and verify the _"backend version"_ number is correct according to the upcoming new release that is to be created.
 
-You have now setup Magic, and you can perform the user tests. These tests should also be performed with both
-a Windows machine, and an OS X machine, to ensure Magic is as portable as possible.
+You have now setup Magic, and you can perform the user tests.
 
 ## Audit logging
 
@@ -64,6 +63,8 @@ a Windows machine, and an OS X machine, to ensure Magic is as portable as possib
 18. Go back to your _"Crypto"_ menu item, and verify you have two different keys in your _"Cryptographically signed invocations"_ now, and that you can filter on different keys, which should only show invocations from the key you have filtered on.
 19. Click _"Clear filter"_ and verify the total number of invocations are now 4 - Not more, not fewer.
 20. Delete one of your keys, and make sure you're left with only *one* key and *two* invocations afterwards. Also make sure you *cannot* filter according to the key you just deleted.
+21. Create a new server key, copy its content, and go to _"Endpoints"_ and show system endpoints. Filter for _"import"_ and paste in the public key and *remove* the _"domain"_ parts of the payload. Import the key, and verify it works.
+22. Go to the evaluator and evaluate the _"magic.crypto.http.eval"_ and verify that *it fails*. Go back to crypto and enable the key you just imported, set its domain to `localhost:55247` , execute the evaluator's Hyperlambda again, and verify *it works* now.
 
 ## SQL
 
