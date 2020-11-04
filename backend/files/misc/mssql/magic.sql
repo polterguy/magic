@@ -159,6 +159,7 @@ create table crypto_keys (
   fingerprint nvarchar(120) not null,
   imported datetime not null default getutcdate(),
   type nvarchar(20) not null,
+  enabled bit not null,
   constraint pk_crypto_keys primary key clustered(id asc),
   unique(fingerprint),
   unique(email),
@@ -180,7 +181,6 @@ create table crypto_invocations (
   request_raw text not null,
   response text not null,
   created datetime not null default getutcdate(),
-  enabled bit not null,
   constraint pk_crypto_invocations primary key clustered(id asc),
   unique(request_id),
 );
