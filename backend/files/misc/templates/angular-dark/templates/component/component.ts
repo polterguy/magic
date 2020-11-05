@@ -35,7 +35,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
 [[form-control-declarations]]
   // Constructor taking a bunch of services/helpers through dependency injection.
   constructor(
-    protected authService: AuthService,
+    public authService: AuthService,
     protected snackBar: MatSnackBar,
     private httpService: HttpService,
     private dialog: MatDialog) {
