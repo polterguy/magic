@@ -747,6 +747,12 @@ cryptographically signed by Server Garden's private RSA key.
 
 ## Magic (main)
 
+Significantly stablised Magic on Windows machines, by creating a QA document, I have
+been following to the last detail, exposing several severe errors, particularly with
+Visual Studio, SQL Server and Windows based development. If you previously had issues
+with testing Magic with SQL Server, Visual Studio, or on Windows - This release
+probably fixes your problems.
+
 Removed the ability to configure which database to use for authentication and logging,
 since I suspect it's never used with anything but the default version anyways, and it
 only complicated the code and made it more difficult to understand.
