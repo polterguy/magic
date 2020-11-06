@@ -805,3 +805,11 @@ for Hyperlambda code to _"clash"_ with C# created stack objects, and/or manipula
 
 Added support for _"fromBase64"_ type in **[convert]**, which will assume the given value
 is a base64 encoded `byte[]`, and convert it back to such, and return to the caller.
+
+# Version 8.6.8
+
+## Magic (main)
+
+Fixed scaffolder output such that it will build in production builds using for instance
+`ng build --prod --aot`, which allows for easily deploying results to Azure, and integrating
+scaffolded result into pipelines, etc - Without having to apply code changes before it builds.
