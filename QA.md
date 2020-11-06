@@ -116,10 +116,11 @@ You have now setup Magic, and you can perform the individual component tests.
 9. Click the _"Auth"_ menu item and create a user with a password, then create a role and associate the newly created user with the newly created role. Then delete the newly created user. Verify you do *not* get any errors in your browser console/developer-tools window.
 10. Verify you *cannot* delete the _"root"_ user, or in any ways edit it or modify it.
 11. Change your root user's password in the _"Profile"_ menu item. Log out and log in again, and make sure you can login with your new password.
-12. Repeat this entire section with the _"angular-default"_ template, and name your app _"foo2"_.
-13. Toggle the _"Show system endpoints"_ slider, and verify you get roughly 100 endpoints, contrary to roughly 10 previously.
-14. Filter on _"ping"_, click ping endpoint, and verify it's got a description.
-15. Filter on _"translations"_. Choose the post endpoint, and create a _"foo/en/howdy"_ entry. Make sure the entry can be found afterwards when invoking the get endpoint.
+12. Stop Angular and build the project with the following command `ng build --prod --aot` to verify it's working for production builds, and doesn't have production compiler errors.
+13. Repeat this entire section with the _"angular-default"_ template, and name your app _"foo2"_.
+14. Toggle the _"Show system endpoints"_ slider, and verify you get roughly 100 endpoints, contrary to roughly 10 previously.
+15. Filter on _"ping"_, click ping endpoint, and verify it's got a description.
+16. Filter on _"translations"_. Choose the post endpoint, and create a _"foo/en/howdy"_ entry. Make sure the entry can be found afterwards when invoking the get endpoint.
 
 ## Tasks
 
