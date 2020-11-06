@@ -30,7 +30,7 @@ export class ProfileComponent {
    */
   constructor(
     private snackBar: MatSnackBar,
-    private authService: AuthService)
+    public authService: AuthService)
   { }
 
   /**
