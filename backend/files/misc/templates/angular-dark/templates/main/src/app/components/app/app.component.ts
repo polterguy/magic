@@ -37,7 +37,7 @@ export class AppComponent {
    */
   constructor(
     private messages: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private snackBar: MatSnackBar,
     public loaderService: LoaderService,
     private dialog: MatDialog) { }

@@ -70,7 +70,7 @@ export class AuthComponent implements OnInit, OnDestroy {
    */
   constructor(
     private messages: MessageService,
-    private service: AuthService,
+    public service: AuthService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog) { }
 
