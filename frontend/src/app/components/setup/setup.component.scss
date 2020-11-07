@@ -3,7 +3,21 @@
     padding:2rem 5rem 2rem 5rem;
     .setup {
         margin-top: 4rem;
-        padding: 5rem;
+        padding: 2rem 5rem 3rem 5rem;
+        .database-type {
+            width: 20%;
+            margin-right: 1rem;
+        }
+        .connection-string {
+            width: calc(80% - 1rem);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        ol {
+            margin-bottom: 3rem;
+        }
         .fill-width {
             width: 100%;
         }

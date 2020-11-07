@@ -178,9 +178,8 @@ export class SetupComponent implements OnInit {
    * @param info Information text to show
    */
   showInfo(info: string) {
-    this.snackBar.open(info, 'Close', {
-      duration: 2000,
-      panelClass: ['info-snackbar'],
+    this.snackBar.open(info, null, {
+      duration: 2000
     });
   }
 }
