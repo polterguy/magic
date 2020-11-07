@@ -56,7 +56,7 @@
 
     <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
-      style="margin-right: 1rem;min-width: 20rem;">
+      style="margin-right: 1rem;width: 20%;">
       <input
         matInput
         placeholder="Root password"
@@ -66,7 +66,7 @@
 
     <mat-form-field
       *ngIf="jwtSecret !== null && jwtSecret.length >= 50 && databaseType !== null"
-      style="margin-right: 1rem;min-width: 20rem;">
+      style="margin-right: 1rem;width: 20%;">
       <input
         matInput
         placeholder="Repeat root password"
@@ -74,16 +74,14 @@
         [(ngModel)]="repeatPassword">
     </mat-form-field>
 
-    <div
+    <button
       *ngIf="checkConfig()"
-      class="right-align">
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="save()">
-        Save
-      </button>
-    </div>
+      mat-raised-button
+      style="min-width: 8rem;"
+      color="primary"
+      (click)="save()">
+      Save
+    </button>
 
   </div>
 
