@@ -59,7 +59,6 @@ if
 /*
  * Retrieving items from database.
  */
-unwrap:x:+
 xxx.connect:magic
    add:x:+
       get-nodes:x:@.arguments/*/offset

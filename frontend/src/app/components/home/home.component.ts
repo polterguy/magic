@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { PingService } from 'src/app/services/ping-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SetupService } from 'src/app/services/setup-service';
+import { LogService } from 'src/app/services/log-service';
 
 @Component({
   selector: 'app-home',
@@ -16,11 +17,13 @@ export class HomeComponent implements OnInit {
   public license = '';
   public isFetching = false;
   public status: any = null;
+  public locLog: any = null;
 
   constructor(
     private pingService: PingService,
     private snackBar: MatSnackBar,
-    private setupService: SetupService) { }
+    private setupService: SetupService,
+    private logService: LogService) { }
 
   ngOnInit() {
     this.pingService.version().subscribe(res => {
@@ -34,6 +37,11 @@ export class HomeComponent implements OnInit {
     this.setupService.getStatus().subscribe(res => {
       this.status = res;
       console.log(this.status);
+    });
+    this.logService.getLocLog().subscribe(res => {
+      if (res.backend !== 0 || res.frontend !== 0) {
+        this.locLog = res;
+      }
     });
   }
 
