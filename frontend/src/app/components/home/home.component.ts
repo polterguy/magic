@@ -1,5 +1,12 @@
 
 import { Component, OnInit } from '@angular/core';
+import { ChartType, ChartOptions } from 'chart.js';
+import {
+  SingleDataSet,
+  Label,
+  monkeyPatchChartJsLegend,
+  monkeyPatchChartJsTooltip
+} from 'ng2-charts';
 import { PingService } from 'src/app/services/ping-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SetupService } from 'src/app/services/setup-service';
@@ -19,29 +26,42 @@ export class HomeComponent implements OnInit {
   public status: any = null;
   public locLog: any = null;
 
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+  };
+  public pieChartLabels: Label[] = [['Backend', 'LOC'], ['Frontend', 'LOC']];
+  public pieChartData: SingleDataSet = null;
+  public pieChartType: ChartType = 'pie';
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
+
   constructor(
     private pingService: PingService,
     private snackBar: MatSnackBar,
     private setupService: SetupService,
-    private logService: LogService) { }
+    private logService: LogService) {
+    monkeyPatchChartJsTooltip();
+    monkeyPatchChartJsLegend();
+  }
 
   ngOnInit() {
     this.pingService.version().subscribe(res => {
       this.version = res.version;
+      this.pingService.license().subscribe(res => {
+        this.licenseInfo = res;
+      });
+      this.setupService.getStatus().subscribe(res => {
+        this.status = res;
+        console.log(this.status);
+      });
+      this.logService.getLocLog().subscribe(res => {
+        if (res.backend !== 0 || res.frontend !== 0) {
+          this.pieChartData = [res.backend, res.frontend];
+          this.locLog = res;
+        }
+      });
     }, error => {
       this.snackBar.open(error.error.message || 'Something went wrong when trying to ping backend', 'Close');
-    });
-    this.pingService.license().subscribe(res => {
-      this.licenseInfo = res;
-    });
-    this.setupService.getStatus().subscribe(res => {
-      this.status = res;
-      console.log(this.status);
-    });
-    this.logService.getLocLog().subscribe(res => {
-      if (res.backend !== 0 || res.frontend !== 0) {
-        this.locLog = res;
-      }
     });
   }
 
