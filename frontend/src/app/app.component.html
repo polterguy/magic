@@ -100,11 +100,12 @@
 </div>
 
 <div *ngIf="!isLoggedIn()" [ngClass]="connectedToBackend ? '' : 'warning'">
-  <mat-card class="login-card">
 
-    <div
-      class="setup-default-info">
-      The default username/password combination is <em>"root"/"root"</em>. Please change this after logging in.
+  <div class="login-card mat-elevation-z4">
+
+    <div class="help">
+      <mat-icon
+        (click)="showHelp()">help</mat-icon>
     </div>
 
     <mat-form-field class="fill-width">
@@ -134,14 +135,14 @@
         [(ngModel)]="password">
     </mat-form-field>
 
-    <div class="right-aligned">
-      <button
-        [disabled]="!connectedToBackend"
-        mat-raised-button
-        color="primary"
-        (click)="login()"
-        matTooltip="Login to your Magic installation">Login</button>
-    </div>
+    <button
+      [disabled]="!connectedToBackend"
+      mat-raised-button
+      color="primary"
+      class="login-button"
+      (click)="login()"
+      matTooltip="Login to your Magic installation">Login</button>
 
-  </mat-card>
+  </div>
+
 </div>

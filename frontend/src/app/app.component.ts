@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   private username = '';
   private password = '';
   private backendUrl = '';
-  private connectedToBackend = false;
+  public connectedToBackend = false;
 
   constructor(
     private ticketService: TicketService,
@@ -123,6 +123,12 @@ export class AppComponent implements OnInit {
     this.snackBar.open(warning, 'Close', {
       duration: 10000,
       panelClass: ['warning-system-snackbar'],
+    });
+  }
+
+  showHelp() {
+    this.snackBar.open('The default username and password is root/root', null, {
+      duration: 5000,
     });
   }
 }

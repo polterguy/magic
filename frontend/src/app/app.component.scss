@@ -8,18 +8,25 @@
 }
 
 .login-card {
-    max-width: 500px;
-    width: 100%;
+    max-width: 100%;
+    width: 400px;
     margin-left: auto;
     margin-right: auto;
-    padding: 5rem;
-    margin-top: 3rem;
-    .setup-default-info {
-        padding: 1rem;
-        border-radius: .5rem;
-        background-color: rgb(230,230,230);
-        margin-bottom: 2rem;
-        margin-top: -2rem;
+    padding: 4rem 4rem 6rem 4rem;
+    margin-top: 5rem;
+    position: relative;
+    .help {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        color: #555;
+    }
+
+    .login-button {
+        position: absolute;
+        bottom: 3rem;
+        right: 4rem;
     }
 }
 
@@ -29,10 +36,6 @@
 
 .fill-width {
     width: 100%;
-}
-
-.right-aligned {
-    text-align: right;
 }
 
 ::ng-deep .error-snackbar {
