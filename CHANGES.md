@@ -813,3 +813,10 @@ is a base64 encoded `byte[]`, and convert it back to such, and return to the cal
 Fixed scaffolder output such that it will build in production builds using for instance
 `ng build --prod --aot`, which allows for easily deploying results to Azure, and integrating
 scaffolded result into pipelines, etc - Without having to apply code changes before it builds.
+
+# Version 8.6.9
+
+## Magic (main)
+
+Showing the user a _"What's next"_ list of items after having followed the setup process, to
+help and guide him through generating a server key pair, and crudifying his magic database.

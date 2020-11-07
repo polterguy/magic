@@ -17,6 +17,15 @@
   *ngIf="!licenseInfo || licenseInfo.version === 'trial'"
   class="info-card">
 
+  <div
+    *ngIf="status && (status.magic_crudified === false || status.server_keypair === false)">
+    <h3 style="margin-top: -1rem;">What's next?</h3>
+    <ul>
+      <li *ngIf="status.magic_crudified === false">Crudify your Magic database</li>
+      <li *ngIf="status.server_keypair === false">Generate a server key pair</li>
+    </ul>
+  </div>
+
   <p>
     You seem to be using a trial version of Magic. This version will stop working after 47 hours.
     Click the button in the top right corner to obtain a license, and paste in your license

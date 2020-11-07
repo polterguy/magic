@@ -62,4 +62,11 @@ export class SetupService {
       }
     );
   }
+
+  getStatus() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() + 
+      'magic/modules/system/setup/status'
+    );
+  }
 }
