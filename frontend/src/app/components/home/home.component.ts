@@ -70,9 +70,9 @@ export class HomeComponent implements OnInit {
   getAllowanceOfLicense(licenseType: string) {
     switch (licenseType) {
       case 'enterprise':
-        return 'You can use this license key on any amount of servers in your corporation';
+        return 'You can use this license on any amount of servers in your corporation';
       case 'single-server':
-        return 'You can use this license key on a single production server, and as many developer machines as you wish';
+        return 'You can use this license on a single production server, and as many developer machines as you wish';
       default:
         return 'Unknown license type';
     }
