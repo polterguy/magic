@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   public licenseInfo: any = null;
   public license = '';
   public isFetching = false;
+  public status: any = null;
 
   constructor(
     private pingService: PingService,
@@ -29,6 +30,10 @@ export class HomeComponent implements OnInit {
     });
     this.pingService.license().subscribe(res => {
       this.licenseInfo = res;
+    });
+    this.setupService.getStatus().subscribe(res => {
+      this.status = res;
+      console.log(this.status);
     });
   }
 
