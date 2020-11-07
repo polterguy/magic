@@ -85,4 +85,28 @@ export class HomeComponent implements OnInit {
         return 'Unknown license type';
     }
   }
+
+  private getManDays() {
+    const locTotal = this.locLog.backend + this.locLog.frontend;
+    const locPerMonth = 562.5;
+    const locPerDay = locPerMonth / 22;
+    const totalDaysOfWork = locTotal / locPerDay;
+    return totalDaysOfWork;
+  }
+
+  getManDaysLocalString() {
+    return this.getManDays().toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    });
+  }
+
+  getROI() {
+    const totalManDays = this.getManDays();
+    const priceOfLicense = 346;
+    const priceOfDeveloperPerDay = 150;
+    const daysOfDevelopment = priceOfLicense / priceOfDeveloperPerDay;
+    return ((totalManDays / daysOfDevelopment) * 100).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    });
+  }
 }
