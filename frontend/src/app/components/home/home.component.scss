@@ -38,6 +38,15 @@ h1 {
     margin-left: auto;
     margin-right: auto;
     background-color: rgba(200,255,200,0.5);
+    position: relative;
+    .finished-setup {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        mat-icon {
+            font-size: 2rem;
+        }
+    }
     table {
         width: 100%;
         tr {
@@ -67,4 +76,13 @@ h1 {
     font-size: 0.9rem;
     color:#aaaaaa;
     clear: both;
+}
+
+.what-is-next {
+    h3 {
+        margin-top: -1rem;
+    }
+    ul {
+        margin-bottom: 3rem;
+    }
 }

@@ -18,8 +18,9 @@
   class="info-card">
 
   <div
+    class="what-is-next"
     *ngIf="status && (status.magic_crudified === false || status.server_keypair === false)">
-    <h3 style="margin-top: -1rem;">What's next?</h3>
+    <h3>What's next?</h3>
     <ul>
       <li *ngIf="status.magic_crudified === false">Crudify your Magic database in the "Crudify" menu item</li>
       <li *ngIf="status.server_keypair === false">Generate a server key pair in the "Crypto" menu item</li>
@@ -71,15 +72,25 @@
   class="license-card">
 
   <div
+    class="what-is-next"
     *ngIf="status && (status.magic_crudified === false || status.server_keypair === false)">
-    <h3 style="margin-top: -1rem;">What's next?</h3>
+    <h3>What's next?</h3>
     <ul>
       <li *ngIf="status.magic_crudified === false">Crudify your Magic database in the "Crudify" menu item</li>
       <li *ngIf="status.server_keypair === false">Generate a server key pair in the "Crypto" menu item</li>
     </ul>
   </div>
 
-  <table [matTooltip]="getAllowanceOfLicense(licenseInfo['license-type'])">
+  <div
+    *ngIf="status && (status.magic_crudified === true && status.server_keypair === true)"
+    class="finished-setup">
+    <mat-icon
+      matTooltip="Your server has been correctly setup and is properly licensed">check</mat-icon>
+  </div>
+
+  <table
+    *ngIf="status && (status.magic_crudified === true && status.server_keypair === true)"
+    [matTooltip]="getAllowanceOfLicense(licenseInfo['license-type'])">
     <caption>License information</caption>
     <tr>
       <th scope="col">Type</th>
