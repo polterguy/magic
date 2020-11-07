@@ -2,12 +2,6 @@
 h1 {
     text-align: center;
     margin-top: 3rem;
-    small {
-        font-size: .8rem;
-        color: #aaa;
-        font-weight: 300;
-        margin-left: 1rem;
-    }
 }
 
 .info-card {
@@ -71,11 +65,20 @@ h1 {
 }
 
 .copyright {
-    margin: 3rem auto 5rem auto;
+    margin: 2rem auto 0 auto;
     text-align: center;
     font-size: 0.9rem;
     color:#aaaaaa;
     clear: both;
+}
+
+.version {
+    font-size: .8rem;
+    color: #aaa;
+    font-weight: 300;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
 }
 
 .what-is-next {
