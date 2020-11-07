@@ -46,9 +46,12 @@ h1 {
                 padding-left: .25rem;
                 padding-right: .25rem;
             }
-            td:nth-child(1) {
+            td:nth-child(1),
+            th:nth-child(1), {
                 text-align: right;
-                font-weight: bold;
+            }
+            th:nth-child(2) {
+                text-align: left;
             }
         }
         caption {
