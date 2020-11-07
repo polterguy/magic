@@ -59,4 +59,10 @@ export class LogService {
         name,
       });
   }
+
+  public getLocLog() {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/logging/loc-generated');
+  }
 }
