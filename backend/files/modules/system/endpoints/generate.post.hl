@@ -43,7 +43,6 @@ io.file.execute:x:@strings.concat
 
 
 
-
 /*
  * Making sure we get the HTTP headers correctly applied before we return ZIP
  * file to caller.
@@ -56,6 +55,28 @@ response.headers.add
    Content-Type:application/zip
    Content-Disposition:x:@strings.concat
    Access-Control-Expose-Headers:Content-Disposition
+
+
+
+
+
+/*
+ * Creating a log entry with LOC that was generated.
+ */
+.no:int:0
+for-each:x:@io.file.execute/*
+   strings.split:x:@.dp/#/*
+      .:"\n"
+   math.increment:x:@.no
+      get-count:x:@strings.split/*
+strings.concat
+   .:"LOC generated '"
+   get-value:x:@.no
+   .:"' for type 'frontend'"
+   .:" with name '"
+   get-value:x:@.arguments/*/name
+   .:"'"
+log.info:x:@strings.concat
 
 
 
