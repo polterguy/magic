@@ -100,7 +100,8 @@ h1 {
     position: relative;
     background-color: rgba(200,255,200,0.2);
     table {
-        width: 100%;
+        width: 50%;
+        display: inline-block;
         tr {
             td {
                 width: 50%;
@@ -119,5 +120,9 @@ h1 {
             margin-bottom: 2rem;
             font-weight: bold;
         }
+    }
+    .chart {
+        width: 50%;
+        display: inline-block;
     }
 }

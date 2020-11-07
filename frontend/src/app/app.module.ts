@@ -28,6 +28,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angul
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { JwtModule } from '@auth0/angular-jwt';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { ChartsModule } from 'ng2-charts';
 import './extensions/hyperlambda.js';
 import 'codemirror/addon/hint/sql-hint.js';
 
@@ -139,6 +140,7 @@ export function tokenGetter() {
     MatRadioModule,
     MatMomentDateModule,
     CodemirrorModule,
+    ChartsModule,
   ],
   exports: [
     MatButtonModule,
