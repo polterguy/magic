@@ -11,7 +11,7 @@
   </mat-spinner>
 </div>
 
-<h1>Magic Dashboard <small>backend version {{getVersion()}}</small></h1>
+<h1>Magic Dashboard</h1>
 
 <mat-card
   *ngIf="!licenseInfo || licenseInfo.version === 'trial'"
@@ -24,7 +24,6 @@
     <ul>
       <li *ngIf="status.magic_crudified === false">Crudify your Magic database in the "Crudify" menu item</li>
       <li *ngIf="status.server_keypair === false">Generate a server key pair in the "Crypto" menu item</li>
-      <li>Obtain a license for magic</li>
     </ul>
   </div>
 
@@ -64,6 +63,8 @@
     Copyright © Thomas Hansen, info@servergardens.com, all rights reserved -
     <a rel="noopener noreferrer" href="https://polterguy.github.io" target="_blank">Read more about Magic</a>
   </div>
+
+  <small class="version">Version {{getVersion()}}</small>
 
 </mat-card>
 
@@ -126,5 +127,7 @@
     Copyright © Thomas Hansen, info@servergardens.com, all rights reserved -
     <a rel="noopener noreferrer" href="https://polterguy.github.io" target="_blank">Documentation</a>
   </div>
+
+  <small class="version">Version {{getVersion()}}</small>
 
 </mat-card>
