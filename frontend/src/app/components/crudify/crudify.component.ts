@@ -8,6 +8,7 @@ import { CrudifyResult } from 'src/app/models/endpoint-result-model';
 import { CreateValidatorDialogComponent } from './modals/create-validator-dialog';
 import { Column } from 'src/app/models/column';
 import { TicketService } from 'src/app/services/ticket-service';
+import { LogService } from 'src/app/services/log-service';
 
 // A single column, and its meta information.
 class ColumnModel {
@@ -136,7 +137,8 @@ export class CrudifyComponent implements OnInit {
     private crudService: CrudifyService,
     private snackBar: MatSnackBar,
     private ticketService: TicketService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private logService: LogService) { }
 
   ngOnInit() {
     this.databaseType = this.ticketService.getDefaultDatabaseType();
@@ -533,6 +535,9 @@ signal:transformers.hash-password
       this.columns = [];
       this.endpoints = [];
       this.overwrite = true;
+      this.logService.createLocLogItem(this.noLoc, 'backend', this.moduleName).subscribe(res => {
+        console.log('Loggged number of lines of code generated');
+      });
       this.showSuccess(`${this.noEndpointsCreated} endpoints with a total of ${this.noLoc} ` +
         `lines of code created successfully. You might want to overwrite individual table endpoints for special cases now.`);
       return;

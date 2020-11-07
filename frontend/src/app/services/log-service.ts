@@ -49,4 +49,14 @@ export class LogService {
       this.ticketService.getBackendUrl() +
       'magic/modules/system/logging/delete-all');
   }
+
+  public createLocLogItem(loc: number, type: string, name: string) {
+    return this.httpClient.post<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/logging/log-loc', {
+        loc,
+        type,
+        name,
+      });
+  }
 }
