@@ -34,6 +34,11 @@ export class HomeComponent implements OnInit {
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
   public pieChartPlugins = [];
+  public pieChartColors = [{
+    backgroundColor: [
+      'rgba(180,180,180,0.8)',
+      'rgba(120,120,120,0.8)',
+    ]}];
 
   constructor(
     private pingService: PingService,
@@ -108,8 +113,8 @@ export class HomeComponent implements OnInit {
 
   private getManDays() {
     const locTotal = this.locLog.backend + this.locLog.frontend;
-    const locPerMonth = 562.5;
-    const locPerDay = locPerMonth / 22;
+    const locPerMonth = 537; // Human productivity per month according to studies in the subject
+    const locPerDay = locPerMonth / 22; // Working days per month
     const totalDaysOfWork = locTotal / locPerDay;
     return totalDaysOfWork;
   }
@@ -120,10 +125,20 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  costOfDeveloperPerDay() {
+    return 3300 / 22; // Cost per month in EURO divided by working days in a month
+  }
+
+  createdValue() {
+    const costOfDeveloper = this.costOfDeveloperPerDay();
+    const locOfHumanPerDay = this.getManDays();
+    return locOfHumanPerDay * costOfDeveloper;
+  }
+
   getROI() {
     const totalManDays = this.getManDays();
-    const priceOfLicense = 346;
-    const priceOfDeveloperPerDay = 150;
+    const priceOfLicense = 346; // The average cost of a single server license
+    const priceOfDeveloperPerDay = this.costOfDeveloperPerDay();
     const daysOfDevelopment = priceOfLicense / priceOfDeveloperPerDay;
     return ((totalManDays / daysOfDevelopment) * 100).toLocaleString(undefined, {
       maximumFractionDigits: 2,

@@ -144,27 +144,31 @@
     </tr>
     <tr>
       <td>Total</td>
-      <td matTooltip="LOC created by Magic in total">{{locLog.backend + locLog.frontend}}</td>
+      <td matTooltip="LOC created by Magic in total">{{locLog.backend + locLog.frontend}} LOC</td>
     </tr>
     <tr>
       <td>Frontend</td>
-      <td matTooltip="Frontend LOC created by Magic">{{locLog.frontend}}</td>
+      <td matTooltip="Frontend LOC created by Magic">{{locLog.frontend}} LOC</td>
     </tr>
     <tr>
       <td>Backend</td>
-      <td matTooltip="Backend LOC created by Magic">{{locLog.backend}}</td>
+      <td matTooltip="Backend LOC created by Magic">{{locLog.backend}} LOC</td>
     </tr>
     <tr>
       <td>Man days of work</td>
-      <td matTooltip="Days a human would need to deliver the same">{{getManDaysLocalString()}}</td>
+      <td matTooltip="Days a human would need to deliver the same. Assumes productivity of 24.4 LOC per day for a human.">{{getManDaysLocalString()}}</td>
     </tr>
     <tr>
       <td>Man months of work</td>
-      <td matTooltip="Months a human would need to deliver the same">{{(getManDays() / 22).toLocaleString(undefined, { maximumFractionDigits: 2 })}}</td>
+      <td matTooltip="Months a human would need to deliver the same. Assumes 22 working days per month.">{{(getManDays() / 22).toLocaleString(undefined, { maximumFractionDigits: 2 })}}</td>
+    </tr>
+    <tr>
+      <td>Value created</td>
+      <td matTooltip="The value Magic has produced in EURO. Assumes a cost of €3300 per month for a human.">€{{(createdValue()).toLocaleString(undefined, { maximumFractionDigits: 2 })}}</td>
     </tr>
     <tr>
       <td>ROI</td>
-      <td matTooltip="Return of investment in percentage">{{getROI()}}%</td>
+      <td matTooltip="Return of investment in percentage. Assumes you paid €346 for licensing Magic.">{{getROI()}}%</td>
     </tr>
   </table>
 
@@ -176,7 +180,8 @@
       [chartType]="pieChartType"
       [options]="pieChartOptions"
       [plugins]="pieChartPlugins"
-      [legend]="pieChartLegend">
+      [legend]="pieChartLegend"
+      [colors]="pieChartColors">
     </canvas>
   </div>
 
