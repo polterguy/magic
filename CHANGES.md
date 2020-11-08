@@ -820,3 +820,8 @@ scaffolded result into pipelines, etc - Without having to apply code changes bef
 
 Showing the user a _"What's next"_ list of items after having followed the setup process, to
 help and guide him through generating a server key pair, and crudifying his magic database.
+
+Displaying statistics on ROI Magic generated on home components.
+
+Fixed production builds of the dashboard, such that the Magic frontend now should be possible
+to easily deploy to for instance Azure etc, without having to apply code changes.
