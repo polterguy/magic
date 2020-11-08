@@ -825,3 +825,7 @@ Displaying statistics on ROI Magic generated on home components.
 
 Fixed production builds of the dashboard, such that the Magic frontend now should be possible
 to easily deploy to for instance Azure etc, without having to apply code changes.
+
+## magic.node
+
+Allowing for creating string literals with *only* escaped `\n` characters.
