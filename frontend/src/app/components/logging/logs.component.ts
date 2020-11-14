@@ -188,11 +188,7 @@ export class LogsComponent implements OnInit {
 
   chartClicked(e: any) {
     if (e.active.length > 0) {
-      if (!this.filter || this.filter === '') {
-        this.filterFormControl.setValue(e.active[0]._model.label);
-      } else {
-        this.filterFormControl.setValue('');
-      }
+      this.filterFormControl.setValue(e.active[0]._model.label);
       this.getItems();
     }
   }
