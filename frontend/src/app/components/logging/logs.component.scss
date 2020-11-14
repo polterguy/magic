@@ -18,6 +18,22 @@
         top: 1rem;
         right: 1rem;
     }
+    .statistics {
+        margin-top: 2rem;
+        margin-bottom: 4rem;
+        padding: 3rem 5rem 5rem 5rem;
+        h3 {
+            margin-bottom: 2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .charts {
+            display: flex;
+            .chart {
+                flex:1;
+            }
+        }
+    }
     .logs {
         margin-top: 2rem;
         padding: 5rem;
@@ -59,21 +75,6 @@
                 td:nth-child(4) {
                     text-align: right;
                 }
-            }
-        }
-    }
-    .statistics {
-        margin-top: 2rem;
-        padding: 3rem 5rem 5rem 5rem;
-        h3 {
-            margin-bottom: 2rem;
-            font-weight: bold;
-            text-align: center;
-        }
-        .charts {
-            display: flex;
-            .chart {
-                flex:1;
             }
         }
     }
