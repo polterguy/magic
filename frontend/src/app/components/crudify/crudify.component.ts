@@ -53,6 +53,7 @@ export class CrudifyComponent implements OnInit {
     {name: 'MySQL', type: 'mysql'},
     {name: 'Microsoft SQL Server', type: 'mssql'},
   ];
+
   public publicCache = false;
   public moduleName = '';
   public defaultAuth = 'root';
@@ -172,13 +173,24 @@ export class CrudifyComponent implements OnInit {
     // Getting tables for his new database of choice
     this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
 
-      // Making sure we append "Custom SQL" as first option in select
+      // Sorting tables.
+      res = res.sort((lhs, rhs) => {
+        if (lhs.table < rhs.table) {
+          return -1;
+        }
+        if (lhs.table > rhs.table) {
+          return 1;
+        }
+        return 0;
+      });
+
+      // Making sure we append "All tables" and "Custom SQL" as first option in select
       const tables = [{table: 'All tables'}, {table: 'Custom SQL'}];
 
       // Appending all tables as option in select for selecting table
-      for (const iterator of res) {
+      for (const idx of res) {
         tables.push({
-          table: iterator[Object.keys(iterator)[0]],
+          table: idx[Object.keys(idx)[0]],
         });
       }
       this.tables = tables;
