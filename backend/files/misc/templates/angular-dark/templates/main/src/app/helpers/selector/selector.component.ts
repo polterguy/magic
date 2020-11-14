@@ -10,8 +10,9 @@ import { HttpService } from '../../services/http-service';
  * 
  * <app-selector
  *   key="locale"
- *   value="description"
+ *   value="language"
  *   [model]="data.entity"
+ *   [placeholder]="Choose a language"
  *   [getItems]="service.languages_Get({})">
  * </app-selector>
  * 
