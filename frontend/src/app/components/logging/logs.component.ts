@@ -105,4 +105,9 @@ export class LogsComponent implements OnInit {
       panelClass: ['error-snackbar'],
     });
   }
+
+  showOnlyErrors() {
+    this.filterFormControl.setValue('error');
+    this.getItems();
+  }
 }
