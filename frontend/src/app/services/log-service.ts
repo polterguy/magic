@@ -50,16 +50,24 @@ export class LogService {
       'magic/modules/system/logging/delete-all');
   }
 
-  public statistics() {
+  public statistics(filter: string) {
+    let query = '';
+    if (filter && filter.length > 0) {
+      query = '?filter=' + encodeURIComponent(filter);
+    }
     return this.httpClient.get<any[]>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/logging/log-statistics');
+      'magic/modules/system/logging/log-statistics' + query);
   }
 
-  public statisticsDays() {
+  public statisticsDays(filter: string) {
+    let query = '';
+    if (filter && filter.length > 0) {
+      query = '?filter=' + encodeURIComponent(filter);
+    }
     return this.httpClient.get<any[]>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/logging/log-statistics-days');
+      'magic/modules/system/logging/log-statistics-days' + query);
   }
 
   public createLocLogItem(loc: number, type: string, name: string) {

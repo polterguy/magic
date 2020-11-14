@@ -3,6 +3,8 @@
  * Returns log item count grouped by type of item.
  */
 .description:"Returns log item count grouped by type of item."
+.arguments
+   filter:string
 
 
 /*
@@ -24,6 +26,24 @@ set-name:x:./**/xxx.read
    strings.concat
       get-value:x:@config.get
       .:.read
+
+
+/*
+ * Adding filter argument, if given.
+ */
+if
+   exists:x:@.arguments/*/filter
+   .lambda
+      strings.concat
+         get-value:x:@.arguments/*/filter
+         .:%
+      unwrap:x:+/*/*/*/*
+      add:x:../**/table/.
+         .
+            where
+               or
+                  type.eq:x:@.arguments/*/filter
+                  content.like:x:@strings.concat
 
 
 /*
