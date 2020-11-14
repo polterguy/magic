@@ -829,3 +829,24 @@ to easily deploy to for instance Azure etc, without having to apply code changes
 ## magic.node
 
 Allowing for creating string literals with *only* escaped `\n` characters.
+
+# Version 8.7.0
+
+## Magic (main)
+
+Created a filter button for logs that allows the user to click it and filter on only errors.
+
+Changed crudifier such that it doesn't attempt to crudify tables that have no columns, and
+also allowing user to set a global checkbox value which if set, by default will allow the client
+to transmit column values with default values to PUT and POST endpoints. If the latter is set,
+the crudifier will create POST and PUT endpoints for tables that have only automatic columns,
+which previously wasn't the case.
+
+Implemented placeholder for `app-selector` component, to allow users to consume it and supply
+a placeholder (tooltip) when consuming it. Also this component now adds a limit filter of `-1`,
+which returns *all* items from table if consumed by default. Fixed type of model to _"any"_ type,
+which probably is a more correct type declaration.
+
+Sorting tables in crudifier, since Microsoft SQL Server doesn't necessarily return columns
+sorted alphabetically, which makes it easier to find the table you're looking for when you're
+looking through your tables.
