@@ -36,7 +36,7 @@ export class SelectorComponent implements OnInit {
   /**
    * Model you're databinding towards.
    */
-  @Input() public model: string;
+  @Input() public model: any;
 
   /**
    * Key in the model, that you want this particular object
@@ -49,6 +49,11 @@ export class SelectorComponent implements OnInit {
    * sees as he or she is editing the item.
    */
   @Input() public value: string;
+
+  /**
+   * Placeholder value (tooltip) of selector component.
+   */
+  @Input() public placeholder: string;
 
   /**
    * Observable callback for component to retrieve items
