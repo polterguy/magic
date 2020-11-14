@@ -9,6 +9,8 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChartOptions, ChartType } from 'chart.js';
+import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'app-logs',
@@ -26,6 +28,21 @@ export class LogsComponent implements OnInit {
   public filter: string = null;
   public filterFormControl: FormControl;
   public live: boolean;
+
+  // Statistics pie charts.
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+  };
+  public pieChartLabels: Label[] = [];
+  public pieChartData: SingleDataSet = null;
+  public pieChartType: ChartType = 'pie';
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
+  public pieChartColors = [{
+    backgroundColor: [
+      'rgba(180,180,180,0.8)',
+      'rgba(120,120,120,0.8)',
+    ]}];
 
   constructor(
     private logService: LogService,
@@ -76,6 +93,24 @@ export class LogsComponent implements OnInit {
       this.noErrors = res.result;
     }, error => {
       this.showHttpError(error);
+    });
+    this.logService.statistics().subscribe(res => {
+      this.pieChartData = res.map(x => x.count);
+      this.pieChartLabels = res.map(x => x.type);
+      this.pieChartColors = [{
+        backgroundColor: res.map(x => {
+          if (x.type === 'error') {
+            return 'rgba(255,180,180,0.8)';
+          } else if (x.type === 'fatal') {
+            return 'rgba(255,80,80,0.8)';
+          } else if (x.type === 'info') {
+            return 'rgba(120,120,120,0.8)';
+          } else if (x.type === 'debug') {
+            return 'rgba(80,180,80,0.8)';
+          }
+          throw 'Unknown log info type!';
+        })
+      }];
     });
   }
 

@@ -50,6 +50,12 @@ export class LogService {
       'magic/modules/system/logging/delete-all');
   }
 
+  public statistics() {
+    return this.httpClient.get<any[]>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/logging/log-statistics');
+  }
+
   public createLocLogItem(loc: number, type: string, name: string) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
