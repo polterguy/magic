@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
   public pieChartOptions: ChartOptions = {
     responsive: true,
   };
-  public pieChartLabels: Label[] = [['Backend', 'LOC'], ['Frontend', 'LOC']];
+  public pieChartLabels: Label[] = [['Backend LOC'], ['Frontend LOC']];
   public pieChartData: SingleDataSet = null;
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
       });
       this.setupService.getStatus().subscribe(res => {
         this.status = res;
-        console.log(this.status);
       });
       this.logService.getLocLog().subscribe(res => {
         if (res.backend !== 0 || res.frontend !== 0) {

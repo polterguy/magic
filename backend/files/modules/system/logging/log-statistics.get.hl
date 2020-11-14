@@ -1,0 +1,45 @@
+
+/*
+ * Returns log item count grouped by type of item.
+ */
+.description:"Returns log item count grouped by type of item."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves statistics from our database, according to which database is
+ * the default database and database type in the system.
+ */
+config.get:"magic:databases:default"
+set-name:x:./*/xxx.connect
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+set-name:x:./**/xxx.read
+   strings.concat
+      get-value:x:@config.get
+      .:.read
+
+
+/*
+ * Retrieving statistics from database.
+ */
+xxx.connect:magic
+   xxx.read
+      table:log_entries
+      limit:-1
+      columns
+         type
+         count(*) as count
+      group
+         type
+
+   /*
+    * Returning items to caller.
+    */
+   return-nodes:x:-/*
