@@ -44,6 +44,29 @@ export class LogsComponent implements OnInit {
       'rgba(120,120,120,0.8)',
     ]}];
 
+  // Statistics bar charts.
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+  };
+  public barChartLabels: Label[] = [];
+  public barChartData: SingleDataSet = null;
+  public barChartType: ChartType = 'bar';
+  public barChartLegend = false;
+  public barChartPlugins = [];
+  public barChartColors = [{
+    backgroundColor: [
+      'rgba(200,200,200,0.8)',
+      'rgba(190,190,190,0.8)',
+      'rgba(180,180,180,0.8)',
+      'rgba(170,170,170,0.8)',
+      'rgba(160,160,160,0.8)',
+      'rgba(150,150,150,0.8)',
+      'rgba(140,140,140,0.8)',
+      'rgba(130,130,130,0.8)',
+      'rgba(120,120,120,0.8)',
+      'rgba(110,110,110,0.8)',
+    ]}];
+
   constructor(
     private logService: LogService,
     private snackBar: MatSnackBar,
@@ -76,6 +99,8 @@ export class LogsComponent implements OnInit {
   }
 
   getItems() {
+
+    // Getting log items in raw format according to filter.
     this.logService.listLogItems(
       this.filter,
       this.offset,
@@ -84,16 +109,22 @@ export class LogsComponent implements OnInit {
     }, error => {
       this.showHttpError(error);
     });
+
+    // Getting count of log items according to filter.
     this.logService.countLogItems(this.filter).subscribe(res => {
       this.count = res.result;
     }, error => {
       this.showHttpError(error);
     });
+
+    // Counting number of errors in system.
     this.logService.countErrorItems().subscribe(res => {
       this.noErrors = res.result;
     }, error => {
       this.showHttpError(error);
     });
+
+    // Getting statistics for our pie chart (type of error).
     this.logService.statistics().subscribe(res => {
       this.pieChartData = res.map(x => x.count);
       this.pieChartLabels = res.map(x => x.type);
@@ -111,6 +142,12 @@ export class LogsComponent implements OnInit {
           throw 'Unknown log info type!';
         })
       }];
+    });
+
+    // Getting log items count according to date (10 last days).
+    this.logService.statisticsDays().subscribe(res => {
+      this.barChartData = res.map(x => x.count);
+      this.barChartLabels = res.map(x => x.date);
     });
   }
 

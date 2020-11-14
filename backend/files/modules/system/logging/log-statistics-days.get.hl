@@ -1,0 +1,92 @@
+
+/*
+ * Returns log item count grouped by type of item.
+ */
+.description:"Returns log item count grouped by type of item."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves statistics from our database, according to which database is
+ * the default database and database type in the system.
+ */
+config.get:"magic:databases:default"
+set-name:x:./*/xxx.connect
+   strings.concat
+      get-value:x:@config.get
+      .:.connect
+set-name:x:./**/xxx.read
+   strings.concat
+      get-value:x:@config.get
+      .:.read
+
+
+/*
+ * Retrieving statistics from database.
+ */
+xxx.connect:magic
+   xxx.read
+      table:log_entries
+      limit:10
+      columns
+         date_format(created, '%Y-%m-%d') as date
+         count(*) as count
+      group
+         date
+      order:date
+      direction:asc
+
+   /*
+    * Making sure we return empty dates.
+    */
+   .no:int:9
+   while
+      mte
+         get-value:x:@.no
+         .:int:0
+      .lambda
+         date.now
+         math.subtract:x:@date.now
+            time
+               days:x:@.no
+         date.format:x:-
+            format:yyyy-MM-dd
+
+         // Checking if SQL returned currently iterated date.
+         strings.concat
+            .:././././0/*/*/date/=
+            get-value:x:@date.format
+         set-x:x:./*/if/*/exists
+            convert:x:@strings.concat
+               type:x
+         if
+            exists
+            .lambda
+               strings.concat
+                  .:././././././0/*/*/date/=
+                  get-value:x:@date.format
+                  .:/.
+               set-x:x:+/*/get-nodes
+                  convert:x:@strings.concat
+                     type:x
+               add:x:../*/return
+                  get-nodes
+         else
+            unwrap:x:+/*/*/*
+            add:x:../*/return
+               .
+                  .
+                     date:x:@date.format
+                     count:long:0
+         math.decrement:x:@.no
+
+
+/*
+ * Returning items to caller.
+ */
+return
