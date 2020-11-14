@@ -13,7 +13,7 @@ import { HttpService } from '../../services/http-service';
  *   value="language"
  *   [model]="data.entity"
  *   [placeholder]="Choose a language"
- *   [getItems]="service.languages_Get({})">
+ *   [getItems]="service.languages_Get({limit:-1})">
  * </app-selector>
  * 
  * The above would create a select list for you, allowing you to
