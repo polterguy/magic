@@ -126,7 +126,7 @@ export class LogsComponent implements OnInit {
     });
 
     // Getting statistics for our pie chart (type of error).
-    this.logService.statistics().subscribe(res => {
+    this.logService.statistics(this.filter).subscribe(res => {
       this.pieChartData = res.map(x => x.count);
       this.pieChartLabels = res.map(x => x.type);
       this.pieChartColors = [{
@@ -146,7 +146,7 @@ export class LogsComponent implements OnInit {
     });
 
     // Getting log items count according to date (10 last days).
-    this.logService.statisticsDays().subscribe(res => {
+    this.logService.statisticsDays(this.filter).subscribe(res => {
       this.barChartData = res.map(x => x.count);
       this.barChartLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
