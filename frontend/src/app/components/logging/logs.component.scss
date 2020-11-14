@@ -70,8 +70,11 @@
             font-weight: bold;
             text-align: center;
         }
-        .chart {
-            width: 500px;
+        .charts {
+            display: flex;
+            .chart {
+                flex:1;
+            }
         }
     }
 }

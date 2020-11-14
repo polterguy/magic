@@ -87,23 +87,41 @@
   </div>
 
   <div
-    *ngIf="pieChartData"
+    *ngIf="pieChartData && barChartData"
     class="mat-elevation-z4 statistics">
 
     <h3>Statistics</h3>
 
-    <div
-      class="chart">
-      <canvas
-        baseChart 
-        [data]="pieChartData" 
-        [labels]="pieChartLabels" 
-        [chartType]="pieChartType"
-        [options]="pieChartOptions"
-        [plugins]="pieChartPlugins"
-        [legend]="pieChartLegend"
-        [colors]="pieChartColors">
-      </canvas>
+    <div class="charts">
+
+      <div
+        class="chart">
+        <canvas
+          baseChart 
+          [data]="pieChartData" 
+          [labels]="pieChartLabels" 
+          [chartType]="pieChartType"
+          [options]="pieChartOptions"
+          [plugins]="pieChartPlugins"
+          [legend]="pieChartLegend"
+          [colors]="pieChartColors">
+        </canvas>
+      </div>
+
+      <div
+        class="chart">
+        <canvas
+          baseChart 
+          [data]="barChartData" 
+          [labels]="barChartLabels" 
+          [chartType]="barChartType"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [colors]="barChartColors">
+        </canvas>
+      </div>
+
     </div>
 
   </div>

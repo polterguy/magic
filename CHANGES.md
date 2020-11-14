@@ -850,3 +850,11 @@ which probably is a more correct type declaration.
 Sorting tables in crudifier, since Microsoft SQL Server doesn't necessarily return columns
 sorted alphabetically, which makes it easier to find the table you're looking for when you're
 looking through your tables.
+
+Statistic charts on logs menu item, to display some basic statistical charts about log items
+created in the system over time.
+
+## magic.data.common
+
+Created the ability to group by aggregate columns, at which point no escaping of table names
+is done.
