@@ -71,6 +71,7 @@ export class CrudifyComponent implements OnInit {
   public noEndpointsCreated = 0;
   public noLoc = 0;
   public currentlyCrudifying = '';
+  public submitAutomatic = false;
 
   // Endpoints that will be created
   public endpoints: EndpointModel[] = [];
@@ -173,6 +174,9 @@ export class CrudifyComponent implements OnInit {
     // Getting tables for his new database of choice
     this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
 
+      // Avoiding null reference exception.
+      res = res || [];
+
       // Sorting tables.
       res = res.sort((lhs, rhs) => {
         if (lhs.table < rhs.table) {
@@ -256,9 +260,9 @@ limit:long`;
         primary: x.primary,
         automatic: x.automatic,
         hl: x.hl,
-        post: canCreate && !x.automatic,
+        post: canCreate && (this.submitAutomatic || !x.automatic),
         get: canView,
-        put: x.primary || (!x.automatic && canCreate),
+        put: x.primary || ((this.submitAutomatic || !x.automatic) && canCreate),
         delete: x.primary,
       };
     });
@@ -271,7 +275,7 @@ limit:long`;
 
     const createGet = true;
     const createDelete = hasPrimaryKeys;
-    const createPost = hasDataColumns || hasNonAutoPrimaryKeys;
+    const createPost = hasDataColumns && hasNonAutoPrimaryKeys;
     const createPut = hasPrimaryKeys && hasDataColumns && hasNonAutoDataColumns;
 
     this.endpoints = this.verbs.map(x => {
@@ -281,9 +285,9 @@ limit:long`;
         action: x.action,
         auth: this.defaultAuth,
         generate:
-          (x.verb === 'post' && createPost) ||
+          (x.verb === 'post' && (this.submitAutomatic || createPost)) ||
           (x.verb === 'get' && createGet) ||
-          (x.verb === 'put' && createPut) ||
+          (x.verb === 'put' && (this.submitAutomatic || createPut)) ||
           (x.verb === 'delete' && createDelete),
         log: '',
       };
@@ -534,6 +538,8 @@ signal:transformers.hash-password
     this.selectedTable = this.currentlyCrudifying;
     this.setModuleUrl(this.selectedTable);
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
+
+      // Binding data.
       this.columnsFetched(res);
 
       // Verifying table has columns. MS SQL can have tables without columns, which breaks the backend.

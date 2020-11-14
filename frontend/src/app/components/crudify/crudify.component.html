@@ -92,6 +92,12 @@
     matTooltip="Overwrite existing endpoints"
     [(ngModel)]="overwrite">Overwrite</mat-checkbox>
 
+  <mat-checkbox
+    *ngIf="selectedTable !== ''"
+    class="crudify-input crudify-checkbox"
+    matTooltip="If true, the create and update endpoints will allow the client to submit automatic columns"
+    [(ngModel)]="submitAutomatic">Create automatic</mat-checkbox>
+
   <button 
     *ngIf="selectedTable !== '' && selectedTable === 'All tables'"
     matTooltip="CRUDifies all tables in database"
