@@ -515,10 +515,13 @@ signal:transformers.hash-password
       return;
     }
 
-    // Avoiding CRUDifying magic/tasks and due_task
+    // Getting current table.
+    const current = tables[0];
+
+    // Avoiding CRUDifying magic/tasks and due_task, since these tables cannot be directly modified anyways.
     if (this.selectedDatabase === 'magic' && 
-      (tables[0].table === 'tasks' || tables[0].table === 'task_due' ||
-      tables[0].table === 'dbo.tasks' || tables[0].table === 'dbo.task_due')) {
+      (current.table === 'tasks' || current.table === 'task_due' ||
+      current.table === 'dbo.tasks' || current.table === 'dbo.task_due')) {
 
       // We don't crudify these tables (by default).
       this.crudifyTopTable(tables.slice(1));
@@ -527,20 +530,26 @@ signal:transformers.hash-password
     }
 
     // Not done yet, continuing until we've got no more tables.
-    const current = tables[0];
     this.currentlyCrudifying = current.table;
     this.selectedTable = this.currentlyCrudifying;
     this.setModuleUrl(this.selectedTable);
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
       this.columnsFetched(res);
-      const endpoints = this.endpoints.filter(x => x.generate).map(x => x.verb);
-      this.createHttpEndpoints(endpoints, () => {
-        this.noEndpointsCreated += endpoints.length;
-        if (endpoints.indexOf('get') > -1) {
-          this.noEndpointsCreated += 1;
-        }
-        this.crudifyTopTable(tables.splice(1));
-      });
+
+      // Verifying table has columns. MS SQL can have tables without columns, which breaks the backend.
+      if (res.length === 0) {
+        this.crudifyTopTable(tables.slice(1));
+        this.showSuccess(`'{this.currentlyCrudifying}' was not crudified since it had no columns`);
+      } else {
+        const endpoints = this.endpoints.filter(x => x.generate).map(x => x.verb);
+        this.createHttpEndpoints(endpoints, () => {
+          this.noEndpointsCreated += endpoints.length;
+          if (endpoints.indexOf('get') > -1) {
+            this.noEndpointsCreated += 1;
+          }
+          this.crudifyTopTable(tables.splice(1));
+        });
+      }
     }, (err) => {
       this.isCrudifying = false;
       this.showError(err.error.message);
