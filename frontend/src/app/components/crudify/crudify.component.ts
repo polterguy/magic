@@ -9,51 +9,11 @@ import { CreateValidatorDialogComponent } from './modals/create-validator-dialog
 import { Column } from 'src/app/models/column';
 import { TicketService } from 'src/app/services/ticket-service';
 import { LogService } from 'src/app/services/log-service';
-
-// A single column, and its meta information.
-class ColumnModel {
-  name: string;
-  db: string;
-  nullable: boolean;
-  primary: boolean;
-  automatic: boolean;
-  hl: string;
-  get: boolean;
-  put: boolean;
-  post: boolean;
-  delete: boolean;
-}
-
-// A single verb, and its associated CRUD method.
-class VerbModel {
-  verb: string;
-  action: string;
-}
-
-// A single validator, its field, and its content.
-class ValidatorModel {
-  field: string;
-  validator: string;
-}
-
-// A single endpoint, and its associated data to be used during generating endpoint.
-class EndpointModel {
-  endpoint: string;
-  verb: string;
-  action: string;
-  auth: string;
-  generate: boolean;
-  log: string;
-}
-
-class LogTables {
-  name: string;
-  columns: LogColumn[] = [];
-}
-
-class LogColumn {
-  name: string;
-}
+import { ColumnModel } from './models/column-model';
+import { VerbModel } from './models/verb-model';
+import { ValidatorModel } from './models/validator-model';
+import { EndpointModel } from './models/endpoint-model';
+import { LogTables } from './models/log-tables-model';
 
 @Component({
   selector: 'app-crudify',
