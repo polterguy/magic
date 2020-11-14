@@ -24,7 +24,12 @@
     <div
       *ngIf="noErrors !== 0"
       class="error-items">
-      {{noErrors}} errors
+      <button
+        mat-button
+        matTooltip="Shows only errors"
+        (click)="showOnlyErrors()">
+        {{noErrors}} errors
+      </button>
     </div>
 
     <div class="delete-items">
