@@ -11,6 +11,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-logs',
@@ -147,7 +148,7 @@ export class LogsComponent implements OnInit {
     // Getting log items count according to date (10 last days).
     this.logService.statisticsDays().subscribe(res => {
       this.barChartData = res.map(x => x.count);
-      this.barChartLabels = res.map(x => x.date);
+      this.barChartLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
   }
 
