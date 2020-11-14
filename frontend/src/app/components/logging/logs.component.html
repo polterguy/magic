@@ -21,7 +21,7 @@
     <div class="charts">
 
       <div
-        class="chart">
+        class="chart pie">
         <canvas
           baseChart 
           [data]="pieChartData" 
@@ -30,7 +30,8 @@
           [options]="pieChartOptions"
           [plugins]="pieChartPlugins"
           [legend]="pieChartLegend"
-          [colors]="pieChartColors">
+          [colors]="pieChartColors"
+          (chartClick)="chartClicked($event)">
         </canvas>
       </div>
 
@@ -83,7 +84,7 @@
       <ng-container matColumnDef="content">
         <th mat-header-cell *matHeaderCellDef scope="col">Content</th>
         <td mat-cell *matCellDef="let el">
-          <pre>{{el.content}}</pre>
+          <pre matTooltip="Show only these items" (click)="setFilter(el.content)">{{el.content}}</pre>
         </td>
       </ng-container>
 
@@ -114,14 +115,11 @@
     </mat-paginator>
 
     <div
-      *ngIf="noErrors !== 0"
-      class="error-items">
+      *ngIf="this.filter && this.filter !== ''"
+      class="clear-filter">
       <button
         mat-button
-        matTooltip="Shows only errors"
-        (click)="showOnlyErrors()">
-        {{noErrors}} errors
-      </button>
+        (click)="clearFilter()">Clear filter</button>
     </div>
   
   </div>

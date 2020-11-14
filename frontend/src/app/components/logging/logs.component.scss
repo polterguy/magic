@@ -7,15 +7,14 @@
         top: 2rem;
         left: 2rem;
     }
-    .error-items {
-        position: absolute;
-        bottom: 2rem;
-        right: 2rem;
-        color:rgb(255,128,128);
-    }
     .delete-items {
         position: absolute;
         top: 1rem;
+        right: 1rem;
+    }
+    .clear-filter {
+        position: absolute;
+        bottom: 1rem;
         right: 1rem;
     }
     .statistics {
@@ -32,6 +31,9 @@
             margin-top: 4rem;
             .chart {
                 flex:1;
+            }
+            .pie canvas {
+                cursor: pointer;
             }
         }
     }
@@ -68,6 +70,7 @@
                         max-height: 5.5rem;
                         overflow: hidden;
                         margin-right: 1rem;
+                        cursor: pointer;
                     }
                 }
                 th:nth-child(4) {
