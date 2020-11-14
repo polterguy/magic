@@ -49,6 +49,14 @@
         </canvas>
       </div>
 
+      <div
+        *ngIf="this.filter && this.filter !== ''"
+        class="clear-filter">
+        <button
+          mat-button
+          (click)="clearFilter()">Clear filter</button>
+      </div>
+
     </div>
 
   </div>
