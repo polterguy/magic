@@ -64,7 +64,7 @@ xxx.connect:magic
    /*
     * Making sure we return empty dates.
     */
-   .no:int:9
+   .no:int:13
    while
       mte
          get-value:x:@.no

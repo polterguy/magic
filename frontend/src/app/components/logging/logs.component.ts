@@ -24,7 +24,6 @@ export class LogsComponent implements OnInit {
   public limit = 10;
   public items: LogItem[] = null;
   public count: number;
-  public noErrors = 0;
   public displayedColumns: string[] = ['when', 'type', 'content', 'details'];
   public filter: string = null;
   public filterFormControl: FormControl;
@@ -56,16 +55,20 @@ export class LogsComponent implements OnInit {
   public barChartPlugins = [];
   public barChartColors = [{
     backgroundColor: [
-      'rgba(200,200,200,0.8)',
-      'rgba(190,190,190,0.8)',
-      'rgba(180,180,180,0.8)',
-      'rgba(170,170,170,0.8)',
-      'rgba(160,160,160,0.8)',
-      'rgba(150,150,150,0.8)',
-      'rgba(140,140,140,0.8)',
-      'rgba(130,130,130,0.8)',
-      'rgba(120,120,120,0.8)',
-      'rgba(110,110,110,0.8)',
+      'rgba(200,200,200,0.6)',
+      'rgba(190,190,190,0.6)',
+      'rgba(180,180,180,0.6)',
+      'rgba(170,170,170,0.6)',
+      'rgba(160,160,160,0.6)',
+      'rgba(150,150,150,0.6)',
+      'rgba(140,140,140,0.6)',
+      'rgba(130,130,130,0.6)',
+      'rgba(120,120,120,0.6)',
+      'rgba(110,110,110,0.6)',
+      'rgba(100,100,100,0.6)',
+      'rgba(90,90,90,0.6)',
+      'rgba(80,80,80,0.6)',
+      'rgba(70,70,70,0.6)',
     ]}];
 
   constructor(
@@ -118,13 +121,6 @@ export class LogsComponent implements OnInit {
       this.showHttpError(error);
     });
 
-    // Counting number of errors in system.
-    this.logService.countErrorItems().subscribe(res => {
-      this.noErrors = res.result;
-    }, error => {
-      this.showHttpError(error);
-    });
-
     // Getting statistics for our pie chart (type of error).
     this.logService.statistics(this.filter).subscribe(res => {
       this.pieChartData = res.map(x => x.count);
@@ -138,7 +134,7 @@ export class LogsComponent implements OnInit {
           } else if (x.type === 'info') {
             return 'rgba(120,120,120,0.8)';
           } else if (x.type === 'debug') {
-            return 'rgba(80,180,80,0.8)';
+            return 'rgba(180,180,180,0.8)';
           }
           throw 'Unknown log info type!';
         })
@@ -179,8 +175,25 @@ export class LogsComponent implements OnInit {
     });
   }
 
-  showOnlyErrors() {
-    this.filterFormControl.setValue('error');
+  setFilter(filter: string) {
+    this.filterFormControl.setValue(filter);
     this.getItems();
+  }
+
+  clearFilter() {
+    this.filter = '';
+    this.filterFormControl.setValue('');
+    this.getItems();
+  }
+
+  chartClicked(e: any) {
+    if (e.active.length > 0) {
+      if (!this.filter || this.filter === '') {
+        this.filterFormControl.setValue(e.active[0]._model.label);
+      } else {
+        this.filterFormControl.setValue('');
+      }
+      this.getItems();
+    }
   }
 }
