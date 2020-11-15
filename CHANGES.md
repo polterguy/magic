@@ -871,3 +871,11 @@ can exhaust the server by retrieving too many records. This feature is used in s
 both Microsoft SQL Server and MySQL. Its default value is -1 though, which will *not* safe guard
 at all. But if you provide a value here, then this is the maximum number of records that will be
 returned to the caller.
+
+Made the `AppendGroupBy` method virtual to allow specialised implementations of `SqlCrudReadBuilder`
+to override `AppendTail` and still call base implementation creating group by SQL segments.
+
+## magic.lambda.mssql
+
+Fixed a severe error that made it impossible to add **[group]** arguments to **[mssql.read]**
+invocations.
