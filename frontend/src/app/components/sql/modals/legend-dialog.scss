@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+h1 {
+    font: 500 20px/32px Roboto, "Helvetica Neue", sans-serif;
+}
+
 ::ng-deep pre {
     background-color: #f0f0f0;
     padding: 2rem 1rem 2rem 2rem;

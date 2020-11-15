@@ -205,7 +205,7 @@ export class SqlComponent implements OnInit {
 
   showLegend() {
     this.dialog.open(LegendDialogComponent, {
-      width: '80%',
+      width: '700px',
     });
   }
 }
