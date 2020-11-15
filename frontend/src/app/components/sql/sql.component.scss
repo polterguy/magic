@@ -66,10 +66,23 @@
     }
     table.fill-width {
         width: 100%;
+        table-layout:fixed;
+        border-collapse: collapse;
         tr {
             th {
                 text-align: left;
+                padding: .5rem .5rem .5rem .5rem;
             }
+            td {
+                overflow: hidden;
+                padding: .5rem .5rem .5rem .5rem;
+            }
+        }
+        tr:nth-child(odd) {
+            background-color: rgba(235,235,235,1);
+        }
+        tr:nth-child(even) {
+            background-color: rgba(255,255,255,1);
         }
     }
     .export-button {
