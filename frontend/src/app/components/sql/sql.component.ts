@@ -38,7 +38,7 @@ export class SqlComponent implements OnInit {
   public savedFiles = [];
   public selectedScript: string;
   public selectedFilename: string = null;
-  public result: any = null;
+  public result: any[] = null;
   public databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
   public selectedDatabaseType = 'mysql';
   public sqlText = '';

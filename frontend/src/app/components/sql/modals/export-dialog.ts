@@ -13,7 +13,7 @@ export interface ExportDialogData {
 })
 export class ExportDialogComponent implements OnInit {
 
-  public transformed: string = '';
+  public transformed = '';
   public csv = '';
   public done = false;
   public type = 'JSON';
@@ -24,12 +24,18 @@ export class ExportDialogComponent implements OnInit {
   { }
   
   ngOnInit() {
+
+    // Creating JSON result.
     this.transformed = JSON.stringify(this.data.result, null, 2);
+
+    // Creating CSV result.
     const csvCreator = new AngularCsv(this.data.result, 'CSV', {
       noDownload: true,
       useBom: false,
     });
     this.csv = csvCreator.getCsvData();
+
+    // Making sure we don't display CodeMirror editor before dialog has faded into view.
     setTimeout(() => {
       this.done = true;
     }, 250);
