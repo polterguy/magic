@@ -68,6 +68,10 @@
 
 </mat-form-field>
 
+<mat-checkbox
+  matTooltip="If true, no more than 1000 records will be returned from server to avoid exhausting server or client"
+  [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+
 <div
   class="mat-elevation-z4 sql"
   *ngIf="hasConnection">
@@ -89,6 +93,7 @@
     matTooltip="Saves your current SQL on the server"
     (click)="save()">Save</button>
   <button 
+    [disabled]="sqlText === ''"
     mat-raised-button
     color="primary"
     id="executeButton"

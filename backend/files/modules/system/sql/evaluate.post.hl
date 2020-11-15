@@ -7,6 +7,7 @@
    database:string
    sql:string
    batch:bool
+   safeMode:bool
 .description:"Evaluates the given SQL given for your specified databaseType, and returns the result to caller."
 
 
@@ -88,6 +89,11 @@ foo.connect
       /*
        * Executing SQL and returning results to caller.
        */
+      if
+         get-value:x:@.arguments/*/safeMode
+         .lambda
+            add:x:@if/./return-nodes/-
+               .
+                  max:1000
       foo.select:x:@.arguments/*/sql
-         max:1000
       return-nodes:x:-/*

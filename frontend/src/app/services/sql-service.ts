@@ -12,7 +12,11 @@ export class SqlService {
     private httpClient: HttpClient,
     private ticketService: TicketService) { }
 
-  public evaluate(sql: string, databaseType: string, database: string = null) {
+  public evaluate(
+    sql: string,
+    databaseType: string,
+    database: string = null,
+    safeMode: boolean = true) {
     return this.httpClient.post<any[]>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/sql/evaluate', {
@@ -20,6 +24,7 @@ export class SqlService {
         sql,
         database,
         batch: databaseType === 'mssql-batch' ? true : false,
+        safeMode,
       });
   }
 
