@@ -830,7 +830,7 @@ to easily deploy to for instance Azure etc, without having to apply code changes
 
 Allowing for creating string literals with *only* escaped `\n` characters.
 
-# Version 8.7.0
+# Version 8.7.1
 
 ## Magic (main)
 
