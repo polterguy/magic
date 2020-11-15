@@ -546,7 +546,7 @@ signal:transformers.hash-password
       // Verifying table has columns. MS SQL can have tables without columns, which breaks the backend.
       if (res.length === 0) {
         this.crudifyTopTable(tables.slice(1));
-        this.showSuccess(`'{this.currentlyCrudifying}' was not crudified since it had no columns`);
+        this.showSuccess(`'${this.currentlyCrudifying}' was not crudified since it had no columns`);
       } else {
         const endpoints = this.endpoints.filter(x => x.generate).map(x => x.verb);
         this.createHttpEndpoints(endpoints, () => {
