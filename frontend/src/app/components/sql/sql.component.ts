@@ -179,8 +179,12 @@ export class SqlComponent implements OnInit {
 
   evaluate() {
     this.sqlService.evaluate(this.sqlText, this.selectedDatabaseType, this.selectedDatabase.name).subscribe((res) => {
+      if (!res || res.length === 0) {
+        this.showHttpSuccess('SQL executed successfully, but there was no result');
+      } else {
+        this.showHttpSuccess('SQL executed successfully');
+      }
       this.result = res;
-      this.showHttpSuccess('SQL executed successfully');
     }, (error) => {
       this.showHttpError(error);
     });
