@@ -229,7 +229,7 @@ limit:long`;
       this.selectedTable = table;
       this.setModuleUrl(table);
       this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe(res => {
-        this.columnsFetched(res);
+        this.columnsFetched(res || []);
       }, (err) => {
         this.showError(err.error.message);
       });
@@ -540,6 +540,7 @@ signal:transformers.hash-password
     this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
 
       // Binding data.
+      res = res || [];
       this.columnsFetched(res);
 
       // Verifying table has columns. MS SQL can have tables without columns, which breaks the backend.
