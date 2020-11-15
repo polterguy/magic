@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { TicketService } from './services/ticket-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { interval } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { PingService } from './services/ping-service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { LoginHistoryDialogComponent } from './modals/login-history-dialog';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +19,13 @@ export class AppComponent implements OnInit {
   private password = '';
   private backendUrl = '';
   public connectedToBackend = false;
+  public hasHistoryUrls = false;
 
   constructor(
     private ticketService: TicketService,
     private snackBar: MatSnackBar,
     private pingService: PingService,
+    private dialog: MatDialog,
     private router: Router) { }
 
   ngOnInit() {
@@ -31,6 +34,11 @@ export class AppComponent implements OnInit {
     this.ping();
     if (!this.isLoggedIn() && this.router.url !== '') {
       this.router.navigate(['']);
+    }
+    const data = localStorage.getItem('urls');
+    if (data) {
+      const items = <string[]>JSON.parse(data);
+      this.hasHistoryUrls = items.length > 0;
     }
   }
 
@@ -63,6 +71,21 @@ export class AppComponent implements OnInit {
     return this.ticketService.hasTicket();
   }
 
+  showHistory() {
+    const dialogRef = this.dialog.open(LoginHistoryDialogComponent, {
+      width: '700px',
+      data: {
+        url: this.backendUrl,
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res !== undefined) {
+        this.backendUrl = res.url;
+        this.backendUrlChanged();
+      }
+    });
+  }
+
   // Logs out the user.
   logout() {
     this.ticketService.logout();
@@ -75,7 +98,20 @@ export class AppComponent implements OnInit {
     this.ticketService.authenticate(this.username, this.password).subscribe(res => {
       this.username = '';
       this.password = '';
-      if (this.hasDefaultPassword()) {
+
+        // Storing API url into history unless it's already there.
+        const data = localStorage.getItem('urls');
+        let toPush: string[] = [];
+        if (data) {
+          toPush = <string[]>JSON.parse(data);
+        }
+        if (toPush.filter(x => x === this.backendUrl).length === 0) {
+          toPush.push(this.backendUrl);
+          localStorage.setItem('urls', JSON.stringify(toPush));
+        }
+
+        // Checking if this is the first time root user logs in.
+        if (this.hasDefaultPassword()) {
         this.router.navigate(['/setup']);
       }
     }, (error) => {

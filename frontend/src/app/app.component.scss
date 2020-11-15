@@ -12,7 +12,7 @@
     width: 400px;
     margin-left: auto;
     margin-right: auto;
-    padding: 4rem 4rem 6rem 4rem;
+    padding: 4rem 4rem 3rem 4rem;
     margin-top: 5rem;
     position: relative;
     .help {
@@ -23,11 +23,14 @@
         color: #555;
     }
 
-    .login-button {
-        position: absolute;
-        bottom: 3rem;
-        right: 4rem;
-        min-width: 8rem;
+    .right-align {
+        text-align: right;
+        .history-button {
+            margin-right: 1rem;
+        }
+        .login-button {
+            min-width: 8rem;
+        }
     }
 }
 

@@ -65,6 +65,7 @@ import { DynamicPipe } from './pipes/dynamic-pipe';
 import { NewTaskDialogComponent } from './components/scheduler/modals/new-task-dialog';
 import { NewDueDialog } from './components/scheduler/modals/new-due-dialog';
 import { MarkedPipe } from './pipes/marked.pipe';
+import { LoginHistoryDialogComponent } from './modals/login-history-dialog';
 
 export function tokenGetter() {
   const token = localStorage.getItem('accessToken');
@@ -101,6 +102,7 @@ export function tokenGetter() {
     NewTaskDialogComponent,
     NewDueDialog,
     CreateValidatorDialogComponent,
+    LoginHistoryDialogComponent,
     AddRoleDialogComponent,
     CrudifyComponent,
     SqlComponent,
@@ -180,6 +182,7 @@ export function tokenGetter() {
     GetSaveFilenameDialogComponent,
     ConfirmDeletionTaskDialogComponent,
     CreateValidatorDialogComponent,
+    LoginHistoryDialogComponent,
     AddRoleDialogComponent]
 })
 export class AppModule { }

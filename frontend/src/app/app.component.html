@@ -135,13 +135,24 @@
         [(ngModel)]="password">
     </mat-form-field>
 
-    <button
-      [disabled]="!connectedToBackend"
-      mat-raised-button
-      color="primary"
-      class="login-button"
-      (click)="login()"
-      matTooltip="Login to your Magic installation">Login</button>
+    <div class="right-align">
+
+      <button
+        *ngIf="hasHistoryUrls"
+        mat-button
+        class="history-button"
+        (click)="showHistory()"
+        matTooltip="Backends you have previously connected to">History</button>
+
+      <button
+        [disabled]="!connectedToBackend"
+        mat-raised-button
+        color="primary"
+        class="login-button"
+        (click)="login()"
+        matTooltip="Login to your Magic installation">Login</button>
+
+    </div>
 
   </div>
 
