@@ -47,6 +47,21 @@ if
 
 
 /*
+ * Making sure we're adding the correct date conversion,
+ * according to what database type server is using.
+ */
+switch:x:@config.get
+   case:mysql
+      add:x:../**/columns
+         .
+            date_format(created, '%Y-%m-%d') as date
+   case:msql
+      add:x:../**/columns
+         .
+            convert(char(10), created, 126) as date
+
+
+/*
  * Retrieving statistics from database.
  */
 xxx.connect:magic
@@ -54,7 +69,6 @@ xxx.connect:magic
       table:log_entries
       limit:10
       columns
-         date_format(created, '%Y-%m-%d') as date
          count(*) as count
       group
          date
