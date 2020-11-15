@@ -1,18 +1,39 @@
 
-<h1 mat-dialog-title>Export</h1>
+<div mat-dialog-title>
+  Export
+</div>
+
 <div mat-dialog-content>
 
   <ngx-codemirror
-    *ngIf="done"
+    *ngIf="done && type === 'JSON'"
     [(ngModel)]="transformed" 
     class="smaller"
-    [options]="getCodeMirrorOptions()"></ngx-codemirror>
+    [options]="getCodeMirrorOptionsJson()"></ngx-codemirror>
+
+  <ngx-codemirror
+    *ngIf="done && type === 'CSV'"
+    [(ngModel)]="csv" 
+    class="smaller"
+    [options]="getCodeMirrorOptionsCsv()"></ngx-codemirror>
 
   <div class="right-align">
+
+    <mat-form-field>
+      <mat-select
+        [(ngModel)]="type"
+        placeholder="Type of result">
+        <mat-option value="JSON">JSON</mat-option>
+        <mat-option value="CSV">CSV</mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <button
-      mat-button>
+      mat-button
+      (click)="close()">
       Close
     </button>
+
   </div>
 
 </div>
