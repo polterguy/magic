@@ -1,0 +1,30 @@
+
+<h1 mat-dialog-title>Select API URL</h1>
+
+<div mat-dialog-content>
+
+  <ul class="urls">
+    <li *ngFor="let el of urls">
+      <button
+        mat-button
+        (click)="closeOk(el)">
+        {{el}}
+      </button>
+    </li>
+  </ul>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <div style="width:100%; text-align: right;">
+
+    <button
+      mat-button
+      (click)="close()">Close</button>
+
+  </div>
+
+</div>
+
+
