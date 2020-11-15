@@ -38,7 +38,8 @@
       <div
         class="chart">
         <canvas
-          baseChart 
+          baseChart
+          [matTooltip]="filter && filter !== '' ? filter : 'Items per day'"
           [data]="barChartData" 
           [labels]="barChartLabels" 
           [chartType]="barChartType"

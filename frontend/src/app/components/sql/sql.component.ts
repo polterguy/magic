@@ -2,7 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import { LegendDialogComponent } from './modals/legend-dialog';
+import { LegendSqlDialogComponent } from './modals/legend-sql-dialog';
+import { ExportDialogComponent } from './modals/export-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
@@ -204,8 +205,17 @@ export class SqlComponent implements OnInit {
   }
 
   showLegend() {
-    this.dialog.open(LegendDialogComponent, {
+    this.dialog.open(LegendSqlDialogComponent, {
       width: '700px',
+    });
+  }
+
+  export() {
+    this.dialog.open(ExportDialogComponent, {
+      width: '80%',
+      data: {
+        result: this.result,
+      }
     });
   }
 }

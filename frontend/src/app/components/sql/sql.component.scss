@@ -59,6 +59,7 @@
 .result {
     margin:.5rem 4rem .5rem 4rem;
     padding: 3rem;
+    position: relative;
     caption {
         margin-bottom: 2rem;
         font-weight: bold;
@@ -70,6 +71,11 @@
                 text-align: left;
             }
         }
+    }
+    .export-button {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
     }
 }
 

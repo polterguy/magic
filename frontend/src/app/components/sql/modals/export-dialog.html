@@ -1,0 +1,18 @@
+
+<h1 mat-dialog-title>Export</h1>
+<div mat-dialog-content>
+
+  <ngx-codemirror
+    *ngIf="done"
+    [(ngModel)]="transformed" 
+    class="smaller"
+    [options]="getCodeMirrorOptions()"></ngx-codemirror>
+
+  <div class="right-align">
+    <button
+      mat-button>
+      Close
+    </button>
+  </div>
+
+</div>
