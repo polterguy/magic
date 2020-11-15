@@ -858,7 +858,16 @@ Documented keyboard shortcuts, and implemented a couple of more shortcuts in the
 
 Allowing user to export SQL results to JSON and CSV.
 
+Avoid returning more than 250 records by default in SQL execution, to avoind exhausting server
+accidentally by selecting from a table with millions of records, or something.
+
 ## magic.data.common
 
 Created the ability to group by aggregate columns, at which point no escaping of table names
 is done.
+
+Implemented **[max]** argument on **[xxx.select]** slots, to safe guard against SQL commands that
+can exhaust the server by retrieving too many records. This feature is used in select slots for
+both Microsoft SQL Server and MySQL. Its default value is -1 though, which will *not* safe guard
+at all. But if you provide a value here, then this is the maximum number of records that will be
+returned to the caller.
