@@ -103,19 +103,25 @@
 }
 
 .database-type-selector {
-    margin:2rem 4rem .5rem 4rem;
+    margin:2rem 1rem .5rem 4rem;
     max-width: 15rem;
     display: inline-block;
 }
 
 .database-selector {
-    margin:2rem 4rem .5rem 1rem;
+    margin:2rem 1rem .5rem 1rem;
     max-width: 15rem;
     display: inline-block;
 }
 
 .file-selector {
-    margin:2rem 4rem .5rem 1rem;
+    margin:2rem 1rem .5rem 1rem;
+    max-width: 15rem;
+    display: inline-block;
+}
+
+.safe-mode {
+    margin:2rem 1rem .5rem 1rem;
     max-width: 15rem;
     display: inline-block;
 }

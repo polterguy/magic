@@ -46,6 +46,7 @@ export class SqlComponent implements OnInit {
   public selectedDatabase: Database = null;
   public hintOptions: any;
   public hasConnection = true;
+  public safeMode = true;
 
   constructor(
     private sqlService: SqlService,
@@ -179,7 +180,11 @@ export class SqlComponent implements OnInit {
   }
 
   evaluate() {
-    this.sqlService.evaluate(this.sqlText, this.selectedDatabaseType, this.selectedDatabase.name).subscribe((res) => {
+    this.sqlService.evaluate(
+      this.sqlText,
+      this.selectedDatabaseType,
+      this.selectedDatabase.name,
+      this.safeMode).subscribe((res) => {
       if (!res || res.length === 0) {
         this.showHttpSuccess('SQL executed successfully, but there was no result');
       } else if (res.length === 1000) {
