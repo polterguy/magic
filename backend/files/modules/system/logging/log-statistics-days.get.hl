@@ -76,7 +76,8 @@ xxx.connect:magic
       direction:asc
 
    /*
-    * Making sure we return empty dates.
+    * Making sure we return empty dates, as in dates without
+    * any log entries.
     */
    .no:int:13
    while
