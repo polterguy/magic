@@ -11,6 +11,16 @@
   </mat-spinner>
 </div>
 
+<button
+  mat-button
+  class="legend-button"
+  id="infoButton"
+  (click)="showLegend()">
+  <mat-icon
+    matTooltip="Shows legend for evaluator"
+    matSuffix>info</mat-icon>
+</button>
+
 <mat-form-field class="database-type-selector">
 
   <mat-select
@@ -43,7 +53,9 @@
 
 </mat-form-field>
 
-<mat-form-field class="file-selector" *ngIf="hasConnection">
+<mat-form-field
+  class="file-selector"
+  *ngIf="hasConnection">
 
   <mat-select
     placeholder="Select saved file"
@@ -56,7 +68,9 @@
 
 </mat-form-field>
 
-<div class="mat-elevation-z4 sql" *ngIf="hasConnection">
+<div
+  class="mat-elevation-z4 sql"
+  *ngIf="hasConnection">
 
   <ngx-codemirror
     *ngIf="selectedDatabase !== null"
@@ -66,7 +80,9 @@
 
 </div>
 
-<div class="execute-button" *ngIf="hasConnection">
+<div
+  class="execute-button"
+  *ngIf="hasConnection">
   <button 
     [disabled]="sqlText === ''"
     mat-button
@@ -75,6 +91,7 @@
   <button 
     mat-raised-button
     color="primary"
+    id="executeButton"
     matTooltip="Evaluates your SQL"
     (click)="evaluate()">Evaluate</button>
 </div>

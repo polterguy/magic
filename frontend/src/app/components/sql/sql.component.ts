@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { LegendDialogComponent } from './modals/legend-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
@@ -126,11 +127,27 @@ export class SqlComponent implements OnInit {
       mode: 'text/x-mysql',
       indentWithTabs: true,
       smartIndent: true,
+      tabSize: 3,
+      indentUnit: 3,
       lineNumbers: true,
       matchBrackets: true,
       autoFocus: true,
       extraKeys: {
-        'Ctrl-Space': 'autocomplete'
+        'Shift-Tab': 'indentLess',
+        Tab: 'indentMore',
+        'Ctrl-Space': 'autocomplete',
+        'Alt-M': (cm: any) => {
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        },
+        Esc: (cm: any) => {
+          if (cm.getOption('fullScreen')) {
+            cm.setOption('fullScreen', false);
+          }
+        },
+        F5: (cm: any) => {
+          const element = document.getElementById('executeButton') as HTMLElement;
+          element.click();
+        }
       },
       hintOptions: this.hintOptions,
       theme: 'mbo',
@@ -179,6 +196,12 @@ export class SqlComponent implements OnInit {
   showHttpSuccess(msg: string) {
     this.snackBar.open(msg, 'Close', {
       duration: 2000,
+    });
+  }
+
+  showLegend() {
+    this.dialog.open(LegendDialogComponent, {
+      width: '80%',
     });
   }
 }
