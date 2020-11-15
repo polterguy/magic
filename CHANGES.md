@@ -886,3 +886,6 @@ invocations.
 
 Keeping history of backends' the user has previously connected to in localStorage in the
 login form, allowing him to select the URL by clicking it.
+
+Better styling of results in SQL menu item, to avoid overflowing columns when selecting
+very large data.
