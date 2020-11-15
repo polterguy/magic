@@ -26,6 +26,7 @@
     "@auth0/angular-jwt": "^5.0.1",
     "@ctrl/ngx-codemirror": "^4.0.1",
     "@danielmoncada/angular-datetime-picker": "^10.0.0",
+    "angular-csv-ext": "^1.0.3",
     "angular-file-saver": "^1.1.3",
     "chart.js": "^2.9.4",
     "codemirror": "^5.58.1",

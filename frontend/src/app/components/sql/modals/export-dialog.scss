@@ -3,13 +3,12 @@
     width: 100%;
 }
 
-h1 {
-    font: 500 20px/32px Roboto, "Helvetica Neue", sans-serif;
-}
-
 .right-align {
     text-align: right;
     margin-top: 2rem;
+    mat-form-field {
+        margin-right: 1rem;
+    }
 }
 
 ::ng-deep pre {

@@ -854,6 +854,10 @@ looking through your tables.
 Statistic charts on logs menu item, to display some basic statistical charts about log items
 created in the system over time.
 
+Documented keyboard shortcuts, and implemented a couple of more shortcuts in the SQL menu item.
+
+Allowing user to export SQL results to JSON and CSV.
+
 ## magic.data.common
 
 Created the ability to group by aggregate columns, at which point no escaping of table names

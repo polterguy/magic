@@ -1,9 +1,10 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AngularCsv } from 'angular-csv-ext/dist/Angular-csv';
 
 export interface ExportDialogData {
-  result: string;
+  result: any[];
 }
 
 @Component({
@@ -13,7 +14,9 @@ export interface ExportDialogData {
 export class ExportDialogComponent implements OnInit {
 
   public transformed: string = '';
+  public csv = '';
   public done = false;
+  public type = 'JSON';
 
   constructor(
     public dialogRef: MatDialogRef<ExportDialogComponent>,
@@ -22,17 +25,35 @@ export class ExportDialogComponent implements OnInit {
   
   ngOnInit() {
     this.transformed = JSON.stringify(this.data.result, null, 2);
+    const csvCreator = new AngularCsv(this.data.result, 'CSV', {
+      noDownload: true,
+      useBom: false,
+    });
+    this.csv = csvCreator.getCsvData();
     setTimeout(() => {
       this.done = true;
     }, 250);
   }
 
-  getCodeMirrorOptions() {
+  getCodeMirrorOptionsJson() {
     return {
       lineNumbers: true,
       theme: 'mbo',
       mode: 'application/ld+json',
       readOnly: true,
     };
+  }
+
+  getCodeMirrorOptionsCsv() {
+    return {
+      lineNumbers: true,
+      theme: 'mbo',
+      mode: 'markdown',
+      readOnly: true,
+    };
+  }
+  
+  close() {
+    this.dialogRef.close();
   }
 }
