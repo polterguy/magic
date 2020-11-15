@@ -879,3 +879,10 @@ to override `AppendTail` and still call base implementation creating group by SQ
 
 Fixed a severe error that made it impossible to add **[group]** arguments to **[mssql.read]**
 invocations.
+
+# Version 8.7.2
+
+## Magic (main)
+
+Keeping history of backends' the user has previously connected to in localStorage in the
+login form, allowing him to select the URL by clicking it.
