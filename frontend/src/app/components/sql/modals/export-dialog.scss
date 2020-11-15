@@ -1,0 +1,22 @@
+
+.full-width {
+    width: 100%;
+}
+
+h1 {
+    font: 500 20px/32px Roboto, "Helvetica Neue", sans-serif;
+}
+
+.right-align {
+    text-align: right;
+    margin-top: 2rem;
+}
+
+::ng-deep pre {
+    background-color: #f0f0f0;
+    padding: 2rem 1rem 2rem 2rem;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    vertical-align: middle;
+    text-align: left;
+}

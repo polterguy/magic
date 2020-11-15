@@ -41,6 +41,8 @@ import { UsersComponent } from './components/users/users.component';
 import { RolesComponent } from './components/roles/roles.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { LegendDialogComponent } from './components/evaluator/modals/legend-dialog';
+import { ExportDialogComponent } from './components/sql/modals/export-dialog';
+import { LegendSqlDialogComponent } from './components/sql/modals/legend-sql-dialog';
 import { ViewLogDetails } from './components/logging/modals/view-log-details';
 import { FileDialogComponent } from './components/evaluator/modals/file-dialog';
 import { FilesComponent } from './components/files/files.component';
@@ -84,6 +86,8 @@ export function tokenGetter() {
     RolesComponent,
     EvaluatorComponent,
     LegendDialogComponent,
+    ExportDialogComponent,
+    LegendSqlDialogComponent,
     ViewLogDetails,
     FileDialogComponent,
     FilesComponent,
@@ -166,6 +170,8 @@ export function tokenGetter() {
     NewRoleDialogComponent,
     ImportKeyDialogComponent,
     LegendDialogComponent,
+    ExportDialogComponent,
+    LegendSqlDialogComponent,
     ViewLogDetails,
     FileDialogComponent,
     NewTaskDialogComponent,
