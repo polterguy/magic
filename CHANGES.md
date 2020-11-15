@@ -889,3 +889,5 @@ login form, allowing him to select the URL by clicking it.
 
 Better styling of results in SQL menu item, to avoid overflowing columns when selecting
 very large data.
+
+Created the ability to turn off safe mode in the SQL menu item.
