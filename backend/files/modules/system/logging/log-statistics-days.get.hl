@@ -55,10 +55,16 @@ switch:x:@config.get
       add:x:../**/columns
          .
             date_format(created, '%Y-%m-%d') as date
-   case:msql
+      add:x:../**/group
+         .
+            date
+   case:mssql
       add:x:../**/columns
          .
             convert(char(10), created, 126) as date
+      add:x:../**/group
+         .
+            convert(char(10), created, 126)
 
 
 /*
@@ -71,7 +77,6 @@ xxx.connect:magic
       columns
          count(*) as count
       group
-         date
       order:date
       direction:asc
 
