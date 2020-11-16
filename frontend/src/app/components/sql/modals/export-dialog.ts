@@ -13,10 +13,12 @@ export interface ExportDialogData {
 })
 export class ExportDialogComponent implements OnInit {
 
-  public transformed = '';
+  public json = '';
   public csv = '';
+  public sql = '';
   public done = false;
   public type = 'JSON';
+  public sqlTableName = 'xxx';
 
   constructor(
     public dialogRef: MatDialogRef<ExportDialogComponent>,
@@ -25,20 +27,80 @@ export class ExportDialogComponent implements OnInit {
   
   ngOnInit() {
 
-    // Creating JSON result.
-    this.transformed = JSON.stringify(this.data.result, null, 2);
-
-    // Creating CSV result.
-    const csvCreator = new AngularCsv(this.data.result, 'CSV', {
-      noDownload: true,
-      useBom: false,
-    });
-    this.csv = csvCreator.getCsvData();
-
     // Making sure we don't display CodeMirror editor before dialog has faded into view.
     setTimeout(() => {
+      this.parseResult();
       this.done = true;
     }, 250);
+  }
+
+  public parseResult() {
+
+    switch(this.type) {
+
+      case 'JSON':
+        // Creating JSON result.
+        this.json = JSON.stringify(this.data.result, null, 2);
+        break;
+
+      case 'CSV':
+        // Creating CSV result every time, since settings might have changed.
+        const csvCreator = new AngularCsv(this.data.result, 'CSV', {
+          noDownload: true,
+          useBom: false,
+        });
+        this.csv = csvCreator.getCsvData();
+        break;
+
+      case 'SQL':
+        // Creating SQL result every time, since settings might have changed.
+        let allSql = '';
+        for(var idx = 0; idx < this.data.result.length; idx++) {
+          let curSql = `insert into ${this.sqlTableName} (`;
+          let idxNo = 0;
+          for (var idxProp in this.data.result[0]) {
+            if (idxNo++ > 0) {
+              curSql += ', ';
+            }
+            curSql += idxProp;
+          }
+          curSql += ') values (';
+          idxNo = 0;
+          for (var idxProp in this.data.result[idx]) {
+            if (idxNo++ > 0) {
+              curSql += ', ';
+            }
+            const val = this.data.result[idx][idxProp];
+            if (!val) {
+              curSql += 'null';
+            } else {
+              switch (typeof val) {
+
+                case 'number':
+                  curSql += val;
+                  break;
+
+                case 'boolean':
+                  curSql += val;
+                  break;
+
+                default:
+                  curSql += '"';
+                  curSql += val.toString()
+                    .replaceAll('"', '""')
+                    .replaceAll('\n', '\\n')
+                    .replaceAll('\r', '\\r');
+                  curSql += '"';
+                  break;
+              }
+            }
+          }
+          curSql += ');\r\n';
+          allSql += curSql;
+        }
+        this.sql = allSql;
+        break;
+    }
   }
 
   getCodeMirrorOptionsJson() {
@@ -55,6 +117,15 @@ export class ExportDialogComponent implements OnInit {
       lineNumbers: true,
       theme: 'mbo',
       mode: 'markdown',
+      readOnly: true,
+    };
+  }
+
+  getCodeMirrorOptionsSql() {
+    return {
+      lineNumbers: true,
+      theme: 'mbo',
+      mode: 'text/x-mysql',
       readOnly: true,
     };
   }
