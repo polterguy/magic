@@ -7,7 +7,7 @@
 
   <ngx-codemirror
     *ngIf="done && type === 'JSON'"
-    [(ngModel)]="transformed" 
+    [(ngModel)]="json" 
     class="smaller"
     [options]="getCodeMirrorOptionsJson()"></ngx-codemirror>
 
@@ -17,14 +17,35 @@
     class="smaller"
     [options]="getCodeMirrorOptionsCsv()"></ngx-codemirror>
 
+  <ngx-codemirror
+    *ngIf="done && type === 'SQL'"
+    [(ngModel)]="sql" 
+    class="smaller"
+    [options]="getCodeMirrorOptionsSql()"></ngx-codemirror>
+
   <div class="right-align">
+
+    <mat-form-field
+      *ngIf="done && type === 'SQL'"
+      class="argument">
+      <input 
+        matInput 
+        autocomplete="off"
+        type="text"
+        (change)="parseResult()"
+        matTooltip="Table name to use for SQL insert statements"
+        placeholder="Table name"
+        [(ngModel)]="sqlTableName">
+    </mat-form-field>
 
     <mat-form-field>
       <mat-select
+        (selectionChange)="parseResult()"
         [(ngModel)]="type"
         placeholder="Type of result">
         <mat-option value="JSON">JSON</mat-option>
         <mat-option value="CSV">CSV</mat-option>
+        <mat-option value="SQL">SQL</mat-option>
       </mat-select>
     </mat-form-field>
 
