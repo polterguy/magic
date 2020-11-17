@@ -26,6 +26,17 @@
   <div class="right-align">
 
     <mat-form-field
+      *ngIf="done && type === 'SQL'">
+      <mat-select
+        (selectionChange)="changeDatabaseType()"
+        [(ngModel)]="databaseType"
+        placeholder="SQL dialect">
+        <mat-option value="mssql">Microsoft SQL Server</mat-option>
+        <mat-option value="mysql">MySQL</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
       *ngIf="done && type === 'SQL'"
       class="argument">
       <input 
