@@ -19,6 +19,7 @@ export class ExportDialogComponent implements OnInit {
   public done = false;
   public type = 'JSON';
   public sqlTableName = 'xxx';
+  public databaseType = 'mysql';
 
   constructor(
     public dialogRef: MatDialogRef<ExportDialogComponent>,
@@ -32,6 +33,10 @@ export class ExportDialogComponent implements OnInit {
       this.parseResult();
       this.done = true;
     }, 250);
+  }
+
+  public changeDatabaseType() {
+    this.parseResult();
   }
 
   public parseResult() {
@@ -62,7 +67,20 @@ export class ExportDialogComponent implements OnInit {
             if (idxNo++ > 0) {
               curSql += ', ';
             }
-            curSql += idxProp;
+            switch(this.databaseType) {
+
+              case 'mysql':
+                curSql += '`';
+                curSql += idxProp;
+                curSql += '`';
+                break;
+
+              case 'mssql':
+                curSql += '[';
+                curSql += idxProp;
+                curSql += ']';
+                break;
+            }
           }
           curSql += ') values (';
           idxNo = 0;

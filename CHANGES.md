@@ -891,3 +891,6 @@ Better styling of results in SQL menu item, to avoid overflowing columns when se
 very large data.
 
 Created the ability to turn off safe mode in the SQL menu item.
+
+Allowing user to export SQL result to insert SQL statements, in addition to CSV and JSON
+result.
