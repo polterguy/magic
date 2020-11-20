@@ -894,3 +894,13 @@ Created the ability to turn off safe mode in the SQL menu item.
 
 Allowing user to export SQL result to insert SQL statements, in addition to CSV and JSON
 result.
+
+# Version 8.7.3
+
+## magic.data
+
+Created **[xxx.yyy]** slots for transparently using the default database adapter, as
+configured in your appsettings.json file, to avoid having to dynamically create slot
+invocation names when evaluating some database specific slot. All of these have the
+form of **[data.xxx]**, where _"xxx"_ is the specialised implementation, such as _"mssql"_
+or _"mysql"_, etc.
