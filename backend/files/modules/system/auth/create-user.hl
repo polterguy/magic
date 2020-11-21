@@ -9,6 +9,7 @@
  * "users" table.
  */
 .arguments
+   database-type:string
 
 
 /*
@@ -20,12 +21,16 @@ crypto.password.hash:x:@.arguments/*/password
 /*
  * Opening up a database connection to magic.
  */
+add:x:+
+   get-nodes:x:@.arguments/*/database-type
 data.connect:magic
 
 
    /*
     * Inserting user.
     */
+   add:x:+
+      get-nodes:x:@.arguments/*/database-type
    data.execute:insert into users (username, password) values (@username, @password);
       @username:x:@.arguments/*/username
       @password:x:@crypto.password.hash
@@ -40,6 +45,8 @@ data.connect:magic
       /*
        * Then inserting into users_roles an association between user and role.
        */
+      add:x:+
+         get-nodes:x:@.arguments/*/database-type
       data.execute:insert into users_roles (role, user) values (@role, @user)
          @role:x:@.dp/#
          @user:x:@.arguments/*/username

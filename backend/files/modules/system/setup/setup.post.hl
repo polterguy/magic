@@ -195,9 +195,10 @@ try
     * that has been previously created.
     */
    unwrap:x:+/*
-   io.file.execute:/system/auth/create-user.hl
+   io.file.execute:/modules/system/auth/create-user.hl
       username:root
       password:x:@.arguments/*/password
+      database-type:x:@.arguments/*/databaseType
       roles
          .:root
 
