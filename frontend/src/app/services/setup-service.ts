@@ -28,13 +28,13 @@ export class SetupService {
 
   setup(
     databaseType: string,
-    rootPassword: string,
+    password: string,
     settings: string) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/setup/setup', {
         databaseType,
-        rootPassword,
+        password,
         settings,
       });
   }
