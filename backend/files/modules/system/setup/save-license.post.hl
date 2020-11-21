@@ -16,13 +16,13 @@ auth.ticket.verify:root
 /*
  * Loads the configuration, changes the current license, and saves it again.
  */
-load-app-settings
+config.load
 json2lambda:x:-
 set-value:x:@json2lambda/*/magic/*/license
    get-value:x:@.arguments/*/license
 lambda2json:x:@json2lambda/*
    format:true
-save-app-settings:x:@lambda2json
+config.save:x:@lambda2json
 
 
 /*
