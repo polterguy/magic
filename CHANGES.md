@@ -897,6 +897,10 @@ result.
 
 # Version 8.7.3
 
+## Magic (main)
+
+Significantly simplified the setup process code/logic.
+
 ## magic.data
 
 Created **[xxx.yyy]** slots for transparently using the default database adapter, as
