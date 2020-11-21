@@ -1,72 +1,156 @@
+
 /*
- * Authenticates the user in the system.
- *
- * Arguments
- *
- * - [username] - The username
- * - [password] - The password
+ * Authenticates the user with the specified [username] and [password] combination.
  *
  * NOTICE!
- * The default implementation of this slots.create checks the supplied [username]
- * and [password] towards the values of "root"/"root" - Obviously this should
- * be exchanged and go towards your own database structure somehow.
- *
- * However, to make sure the core installation of Magic is database agnostic,
- * I have consciously left this as an exercize for yourself to figure out.
- *
- * There does however exist helper code to accomplish this, both to create
- * your own "magic" database, and to strings.replace this slots.create's code with
- * a real slots.create checking usernames and password combination towards that
- * database.
- *
- * See the files "/misc/magic.sql", "/misc/authenticate.hl" and
- * "/misc/create-users.hl" for an example of how to implement a real
- * authentication system in your system.
+ * This is a "one size fits all" solution to the authentication issue in Magic,
+ * and unless the JWT secret has been explicitly changed, it will just check
+ * to see if the username/password combination is root/root. If the JWT secret
+ * has been changed, it will check the 'magic' database to see if the username/password
+ * combination is correct, using your default database type.
  */
 slots.create:magic.authenticate
 
 
    /*
-    * Notice, this is to allow for the core to check if the slot is
-    * the "default" authentication/authorization slot, or if it has been overridden.
+    * Checking if JWT secret has been changed, and
+    * if not, simply checking if username/password is
+    * root/root.
     */
-   .is-default-auth:bool:true
-
-
-   /*
-    * Statically checks the username/password combination towards the values
-    * "root"/"root". Exchange this part of the slots.create with your own
-    * custom lambda, looking up some username/password combination from
-    * your database to actually secure your installation.
-    */
+   config.get:"magic:auth:secret"
    if
-      or
-         not
-            eq
-               get-value:x:@.arguments/*/username
-               .:root
-         not
-            eq
-               get-value:x:@.arguments/*/password
-               .:root
+      eq
+         get-value:x:@config.get
+         .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
       .lambda
-         throw:Oops, wrong credentials!
+
+         /*
+          * System has not yet been setup.
+          */
+         if
+            and
+               eq
+                  get-value:x:@.arguments/*/username
+                  .:root
+               eq
+                  get-value:x:@.arguments/*/password
+                  .:root
+            .lambda
+
+               // Success!
+               auth.ticket.create
+                  username:root
+                  roles
+                     .:root
+               unwrap:x:+/*
+               return
+                  ticket:x:@auth.ticket.create
+         else
+
+            // Failure!
+            throw:Access denied
+               status:int:401
+               public:bool:true
 
 
    /*
-    * Creating a JWT token belonging to the username supplied, and the
-    * role of "root".
+    * If we came this far, the system has been setup,
+    * and we can check the 'magic' database to see if
+    * the credentials the caller provided is correct.
     */
-   unwrap:x:+/*/username
-   auth.ticket.create
-      username:x:@.arguments/*/username
-      roles
-         .:root
 
 
    /*
-    * Returning results back to caller.
+    * Logging the fact that user tries to login.
+    *
+    * Notice, if system has not been setup, we can't
+    * create log items yet.
     */
-   unwrap:x:+/*
-   return-nodes
-      ticket:x:@auth.ticket.create
+   log.info
+      .:"Trying to authenticate user '"
+      get-value:x:@.arguments/*/username
+      .:"'"
+
+
+   /*
+    * Opens up our database connection.
+    */
+   data.connect:magic
+
+
+      /*
+       * Selects the user with the given username from our table.
+       */
+      data.select:select password from users where username = @username
+         @username:x:@.arguments/*/username
+
+
+      /*
+       * Checking that user with specified [username] exists.
+       */
+      if
+         eq
+            get-count:x:@data.select/*
+            .:int:0
+         .lambda
+
+
+            /*
+             * No such user.
+             */
+            throw:Access denied
+               status:int:401
+               public:bool:true
+
+
+      /*
+       * Verify we have a password match.
+       */
+      if
+         crypto.password.verify:x:@.arguments/*/password
+            hash:x:@data.select/*/*/password
+         .lambda
+
+
+            /*
+             * Password is matching hashed value from database.
+             * Now we need to select all roles user belongs to.
+             */
+            data.select:select role from users_roles where user = @username
+               @username:x:@.arguments/*/username
+
+
+            /*
+             * Then we can create our JWT token/ticket.
+             */
+            add:x:+/*/roles
+               get-nodes:x:@data.select/*/*
+            auth.ticket.create
+               username:x:@.arguments/*/username
+               roles
+
+
+            /*
+             * Logging the fact that user successfully logged in.
+             */
+            log.info
+               .:"We successfully authenticated user '"
+               get-value:x:@.arguments/*/username
+               .:"'"
+
+
+            /*
+             * Returning results back to caller.
+             */
+            unwrap:x:+/*
+            return
+               ticket:x:@auth.ticket.create
+      else
+
+
+         /*
+          * Hash version of password didn't match.
+          */
+         throw:Access denied
+            status:int:401
+            public:bool:true

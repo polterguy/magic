@@ -16,31 +16,30 @@
 auth.ticket.verify:root
 
 
-/*
- * Verifying that system haven't already been setup with some secure
- * authentication scheme previously.
- */
-slots.get:magic.authenticate
-if
-   or
-      not
-         exists:x:@slots.get/*/.is-default-auth
+   /*
+    * Checking if JWT secret has been changed, and
+    * if is has, we throw an exception to prevent the
+    * system from being setup again, overriding the default
+    * setup configuration.
+    */
+   config.get:"magic:auth:secret"
+   if
       not
          eq
-            get-value:x:@slots.get/*/.is-default-auth
-            .:bool:true
-   .lambda
+            get-value:x:@config.get
+            .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      .lambda
 
-
-      /*
-       * This shouldn't really be possible, but for some reasons we ended
-       * up here none the less.
-       */
-      throw:Your system has already been configured to use a secure authentication scheme
+         // Already done!
+         throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your appsettings.json file."
 
 
 /*
- * Retrieving all database from specified database type.
+ * Retrieving all database from selected database type,
+ * to see if 'magic' database has previously been created.
+ *
+ * If not, we create the 'magic' database using the specialised
+ * schema declaration for the database type.
  */
 .database-exists:bool:false
 strings.concat
@@ -186,6 +185,11 @@ try
 
    /*
     * Inserting the root user according to arguments given.
+    *
+    * Notice, this will throw an exception if the user has
+    * been previously created, which might occur if the user
+    * sets up an instance of magic pointing towards a database
+    * that has been previously created.
     */
    unwrap:x:+/*
    io.file.execute:/system/auth/create-user.hl
@@ -198,7 +202,13 @@ try
 
 
    /*
-    * Need to store the fact that we need to change user's password further down in file.
+    * Need to store the fact that we need to
+    * change user's password further down in file.
+    *
+    * This is done since although database has been created
+    * previously, we still want to allow user to provide a
+    * new password if he is allowed to setup system again
+    * for some reasons.
     */
    if
       get-value:x:@.database-exists
@@ -212,28 +222,6 @@ try
           */
          set-value:x:@.user-exists
             .:bool:true
-
-
-/*
- * Now we have our auth database, and our initial root user, and we can start moving files around,
- * and modifying slots accordingly.
- *
- * First we start by moving our "authenticate" Hyperlambda file.
- */
-io.file.copy:/misc/magic.authenticate.hl
-   .:/modules/system/magic.startup/
-
-
-/*
- * Evaluating new authentication file, to update our slot.
- */
-io.file.execute:/modules/system/magic.startup/magic.authenticate.hl
-
-
-/*
- * Evaluating "change-password" file, to create our slot.
- */
-io.file.execute:/modules/system/magic.startup/magic.change-password.hl
 
 
 /*
@@ -267,7 +255,10 @@ if
 
 
 /*
- * Invoking slot responsible for applying license, if it was explicitly given.
+ * Invoking slot responsible for applying license.
+ *
+ * Notice, this will only apply the license if it's not
+ * the default version, which is 'TRIAL-VERSION'.
  */
 license.apply
 
