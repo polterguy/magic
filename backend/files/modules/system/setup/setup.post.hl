@@ -113,7 +113,7 @@ if
       set-name:x:./*/xxx.connect
          strings.concat
             get-value:x:@.arguments/*/databaseType
-         .:.connect
+            .:.connect
 
 
       /*
@@ -172,6 +172,10 @@ log.info:System was successfully setup
 
 /*
  * Saving settings to appsettings.json file.
+ *
+ * Notice, this is done as the final step, since it
+ * will invalidate user's JWT token, and hence user
+ * needs to authenticate again.
  */
 config.save:x:@.arguments/*/settings
 
