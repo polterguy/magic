@@ -12,9 +12,9 @@ using magic.signals.contracts;
 namespace magic.backend.slots
 {
     /// <summary>
-    /// [save-app-settings] slot saving its value to your "appsettings.json" file.
+    /// [config.save] slot saving its value to your "appsettings.json" file.
     /// </summary>
-    [Slot(Name = "save-app-settings")]
+    [Slot(Name = "config.save")]
     public class SaveAppSettings : ISlot
     {
         /// <summary>
