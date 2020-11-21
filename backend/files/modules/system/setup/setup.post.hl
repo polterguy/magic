@@ -45,9 +45,9 @@ if
  * to see if 'magic' database has previously been created.
  *
  * If not, we create the 'magic' database using the specialised
- * schema declaration SQL file for the database type.
+ * schema declaration SQL file for the database type, and we later
+ * insert a default user into its 'user' table.
  */
-.database-exists:bool:false
 strings.concat
    .:magic.db.
    get-value:x:@.arguments/*/databaseType
@@ -87,44 +87,33 @@ if
        * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
        * accommodate for "go" statements and such.
        */
-      .slot
-      if
-         eq
-            get-value:x:@.arguments/*/databaseType
-            .:mssql
-         .lambda
-
-
-            /*
-             * MS SQL "batch" execute slot needed.
-             */
-            set-value:x:@.slot
-               .:mssql.execute-batch
-
-
-      else
-
+      switch:x:@.arguments/*/databaseType
 
          /*
-          * Any other type of database.
+          * Special case for MS SQL, to execute "batch" slot.
           */
-         set-value:x:@.slot
-            strings.concat
-               get-value:x:@.arguments/*/databaseType
-               .:.execute
+         case:mssql
 
+            set-name:x:./././*/xxx.connect/*/xxx.execute
+               .:mssql.execute-batch
+
+         /*
+          * Anything but MS SQL.
+          */
+         default
+
+            set-name:x:./././*/xxx.connect/*/xxx.execute
+               strings.concat
+                  get-value:x:@.arguments/*/databaseType
+                  .:.execute
 
       /*
-       * Changing names of slots now according to which slot we should
-       * use to connect to database, and which slot we should use to 
-       * execute SQL schema script.
+       * Modifying the connect slot according to database type specified.
        */
-      set-name:x:./**/xxx.connect
+      set-name:x:./*/xxx.connect
          strings.concat
             get-value:x:@.arguments/*/databaseType
-            .:.connect
-      set-name:x:./**/xxx.execute
-         get-value:x:@.slot
+         .:.connect
 
 
       /*
@@ -134,84 +123,34 @@ if
          xxx.execute:x:@io.file.load
 
 
+      /*
+       * Inserting root user.
+       */
+      unwrap:x:+/*
+      io.file.execute:/modules/system/auth/create-user.hl
+         username:root
+         password:x:@.arguments/*/password
+         database-type:x:@.arguments/*/databaseType
+         roles
+            .:root
+
+
 else
 
 
    /*
-    * Database already exists.
-    */
-   set-value:x:@.database-exists
-      .:bool:true
-
-
-/*
- * Trying to insert our root user.
- */
-.user-exists:bool:false
-try
-
-
-   /*
-    * Inserting the root user according to arguments given.
-    *
-    * Notice, this will throw an exception if the user has
-    * been previously created, which might occur if the user
-    * sets up an instance of magic pointing towards a database
-    * that has been previously created.
+    * Database already exists, so we simply change root user's password
+    * according to arguments specified.
     */
    unwrap:x:+/*
-   io.file.execute:/modules/system/auth/create-user.hl
-      username:root
+   signal:magic.change-password
       password:x:@.arguments/*/password
-      database-type:x:@.arguments/*/databaseType
-      roles
-         .:root
-
-.catch
-
-
-   /*
-    * Need to store the fact that we need to
-    * change user's password further down in file.
-    *
-    * This is done since although database has been created
-    * previously, we still want to allow user to provide a
-    * new password if he is allowed to setup system again
-    * for some reasons.
-    */
-   if
-      get-value:x:@.database-exists
-      .lambda
-
-
-         /*
-          * Database already existed as we started out, implying
-          * there was (probably) already a root user account in it
-          * from before.
-          */
-         set-value:x:@.user-exists
-            .:bool:true
-
-
-/*
- * Notice, if user already existed as we started out,
- * we need to change the password of the root user.
- */
-if
-   get-value:x:@.user-exists
-   .lambda
-
-
-      /*
-       * Changing root user's password.
-       */
-      unwrap:x:+/*
-      signal:magic.change-password
-         password:x:@.arguments/*/password
 
 
 /*
  * Starting scheduler.
+ *
+ * This invocation will do nothing if no scheduled jobs exists.
  */
 scheduler.start
 
