@@ -187,20 +187,12 @@ try
    /*
     * Inserting the root user according to arguments given.
     */
-   strings.concat
-      .:/misc/
-      get-value:x:@.arguments/*/databaseType
-      .:/create-user.hl
-   io.file.load:x:@strings.concat
-   hyper2lambda:x:-
-   unwrap:x:+/*/*
-   add:x:@hyper2lambda/*/.arguments
-      .
-         username:x:@.arguments/*/rootUsername
-         password:x:@.arguments/*/rootPassword
-         roles
-            .:root
-   eval:x:@hyper2lambda
+   unwrap:x:+/*
+   io.file.execute:/system/auth/create-user.hl
+      username:x:@.arguments/*/rootUsername
+      password:x:@.arguments/*/rootPassword
+      roles
+         .:root
 
 .catch
 
