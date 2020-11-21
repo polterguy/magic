@@ -14,14 +14,14 @@
 
 
 /*
- * Invokes [magic.authenticate] that does the heavy lifting, and creates our JWT token,
+ * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  *
  * Notice, this slot depends upon your database type, and is created during the setup
  * process.
  */
 unwrap:x:+/*
-signal:magic.authenticate
+signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
 
