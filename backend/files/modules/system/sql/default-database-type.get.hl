@@ -2,6 +2,7 @@
 /*
  * Returns the default database type to use for crudification.
  */
+.description:"Returns the default database type the backend is using, which is the same as the database used during setup for auth purposes."
 
 
 /*
@@ -10,7 +11,9 @@
 auth.ticket.verify:root
 
 
-.description:"Returns the default database type the backend is using, which is the same as the database used during setup for auth purposes."
+/*
+ * Returning default database to caller.
+ */
 config.get:"magic:databases:default"
 unwrap:x:+/*
 return-nodes

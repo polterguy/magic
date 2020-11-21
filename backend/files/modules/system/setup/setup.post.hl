@@ -228,11 +228,7 @@ try
  *
  * First we start by moving our "authenticate" Hyperlambda file.
  */
-strings.concat
-   .:/misc/
-   get-value:x:@.arguments/*/databaseType
-   .:/magic.authenticate.hl
-io.file.copy:x:@strings.concat
+io.file.copy:x:/misc/magic.authenticate.hl
    .:/modules/system/magic.startup/
 
 
@@ -250,9 +246,7 @@ io.file.copy:x:-
 /*
  * Evaluating new authentication file, to update our slot.
  */
-io.file.load:/modules/system/magic.startup/magic.authenticate.hl
-hyper2lambda:x:-
-eval:x:@hyper2lambda
+io.file.execute:/modules/system/magic.startup/magic.authenticate.hl
 
 
 /*
