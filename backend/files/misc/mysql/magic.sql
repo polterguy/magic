@@ -3,6 +3,8 @@
  * This MySQL script creates a database for you, serving
  * as Magic's main database.
  */
+create database magic;
+use magic;
 
 
 /*
