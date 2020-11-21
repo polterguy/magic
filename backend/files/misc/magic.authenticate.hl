@@ -6,12 +6,14 @@
  * This is a "one size fits all" solution to the authentication issue in Magic,
  * and intended to in combination with the "magic.sql" script and
  * "create-user.hl" script strings.replace the existing authentication, that simply checks
- * to see if the username/password as root/root.
+ * to see if the username/password is root/root.
  *
  * It relies upon the existence of a "magic" database, with its "users",
  * "roles" and other tables to authenticate users.
  *
- * To use it, first create your "magic" database by executing "magic.sql".
+ * To use it, first create your "magic" database by executing "magic.sql", according
+ * to what database adapter you want to use as your default - Either MSSQL or MySQL.
+ *
  * Then insert at least one user using the "create-user.hl" file (remember your password).
  * Then copy and paste this entire file's content, and paste it into
  * "/modules/system/authenticate.get.hl", evaluate the file, and you can now login
@@ -32,13 +34,13 @@ slots.create:magic.authenticate
    /*
     * Opens up our database connection.
     */
-   mysql.connect:magic
+   data.connect:magic
 
 
       /*
        * Selects the user with the given username from our table.
        */
-      mysql.select:select password from users where username = @username
+      data.select:select password from users where username = @username
          @username:x:@.arguments/*/username
 
 
@@ -47,7 +49,7 @@ slots.create:magic.authenticate
        */
       if
          eq
-            get-count:x:@mysql.select/*
+            get-count:x:@data.select/*
             .:int:0
          .lambda
 
@@ -65,7 +67,7 @@ slots.create:magic.authenticate
        */
       if
          crypto.password.verify:x:@.arguments/*/password
-            hash:x:@mysql.select/*/*/password
+            hash:x:@data.select/*/*/password
          .lambda
 
 
@@ -73,7 +75,7 @@ slots.create:magic.authenticate
              * Password is matching hashed value from database.
              * Now we need to select all roles user belongs to.
              */
-            mysql.select:select role from users_roles where user = @username
+            data.select:select role from users_roles where user = @username
                @username:x:@.arguments/*/username
 
 
@@ -81,7 +83,7 @@ slots.create:magic.authenticate
              * Then we can create our JWT token/ticket.
              */
             add:x:+/*/roles
-               get-nodes:x:@mysql.select/*/*
+               get-nodes:x:@data.select/*/*
             auth.ticket.create
                username:x:@.arguments/*/username
                roles

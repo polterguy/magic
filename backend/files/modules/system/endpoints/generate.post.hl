@@ -11,17 +11,10 @@
    endpoints:*
 
 
-
-
-
-
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
-
-
-
 
 
 /*
@@ -40,9 +33,6 @@ io.file.execute:x:@strings.concat
    copyright:x:@.arguments/*/copyright
 
 
-
-
-
 /*
  * Making sure we get the HTTP headers correctly applied before we return ZIP
  * file to caller.
@@ -55,9 +45,6 @@ response.headers.add
    Content-Type:application/zip
    Content-Disposition:x:@strings.concat
    Access-Control-Expose-Headers:Content-Disposition
-
-
-
 
 
 /*
@@ -77,9 +64,6 @@ strings.concat
    get-value:x:@.arguments/*/name
    .:"'"
 log.info:x:@strings.concat
-
-
-
 
 
 /*
