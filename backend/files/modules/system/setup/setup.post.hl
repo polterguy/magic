@@ -97,6 +97,7 @@ if
             set-name:x:./././*/xxx.connect/*/xxx.execute
                .:mssql.execute-batch
 
+
          /*
           * Anything but MS SQL.
           */
@@ -106,6 +107,7 @@ if
                strings.concat
                   get-value:x:@.arguments/*/databaseType
                   .:.execute
+
 
       /*
        * Modifying the connect slot according to database type specified.
@@ -143,7 +145,7 @@ else
     * according to arguments specified.
     */
    unwrap:x:+/*
-   signal:magic.change-password
+   signal:magic.auth.change-password
       password:x:@.arguments/*/password
 
 

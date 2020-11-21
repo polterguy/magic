@@ -25,7 +25,6 @@ export class FilesComponent implements OnInit {
   public filter = '';
   public safeMode = true;
   public protectedFolders: string[] = [
-    '/static/',
     '/misc/',
     '/misc/mssql/',
     '/misc/mssql/templates/',
@@ -34,25 +33,15 @@ export class FilesComponent implements OnInit {
     '/misc/mysql/',
     '/misc/mysql/templates/',
     '/misc/templates/',
-    '/misc/templates/angular/',
-    '/misc/templates/angular-component/',
     '/modules/',
     '/modules/system/',
-    '/modules/system/*',
   ];
   public protectedFiles: string[] = [
-    '/static/README.md',
     '/misc/README.md',
     '/misc/templates/README.md',
-    '/misc/mssql/create-user.hl',
     '/misc/mssql/magic.sql',
-    '/misc/magic.authenticate.hl',
-    '/misc/mssql/magic.change-password.hl',
-    '/misc/mysql/create-user.hl',
     '/misc/mysql/magic.sql',
-    '/misc/mysql/magic.change-password.hl',
     '/modules/README.md',
-    '/modules/system/*',
   ];
 
   constructor(

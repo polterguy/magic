@@ -9,7 +9,7 @@
  * has been changed, it will check the 'magic' database to see if the username/password
  * combination is correct, using your default database type.
  */
-slots.create:magic.authenticate
+slots.create:magic.auth.authenticate
 
 
    /*
