@@ -14,21 +14,6 @@ auth.ticket.verify:root
 
 
 /*
- * Retrieves statistics from our database, according to which database is
- * the default database and database type in the system.
- */
-config.get:"magic:databases:default"
-set-name:x:./*/xxx.connect
-   strings.concat
-      get-value:x:@config.get
-      .:.connect
-set-name:x:./**/xxx.read
-   strings.concat
-      get-value:x:@config.get
-      .:.read
-
-
-/*
  * Adding filter argument, if given.
  */
 if
@@ -38,7 +23,7 @@ if
          get-value:x:@.arguments/*/filter
          .:%
       unwrap:x:+/*/*/*/*
-      add:x:../**/table/.
+      add:x:../*/data.connect/*/data.read
          .
             where
                or
@@ -50,6 +35,7 @@ if
  * Making sure we're adding the correct date conversion,
  * according to what database type server is using.
  */
+config.get:"magic:databases:default"
 switch:x:@config.get
    case:mysql
       add:x:../**/columns
@@ -70,8 +56,8 @@ switch:x:@config.get
 /*
  * Retrieving statistics from database.
  */
-xxx.connect:magic
-   xxx.read
+data.connect:magic
+   data.read
       table:log_entries
       limit:10
       columns

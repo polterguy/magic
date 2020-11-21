@@ -14,21 +14,6 @@ auth.ticket.verify:root
 
 
 /*
- * Retrieves items from our database, according to which database is
- * the default database and database type in the system.
- */
-config.get:"magic:databases:default"
-set-name:x:../**/xxx.connect
-   strings.concat
-      get-value:x:@config.get
-      .:.connect
-set-name:x:../**/xxx.read
-   strings.concat
-      get-value:x:@config.get
-      .:.read
-
-
-/*
  * Adding filter argument, if given.
  */
 if
@@ -38,7 +23,7 @@ if
          get-value:x:@.arguments/*/query
          .:%
       unwrap:x:+/*/*/*/*
-      add:x:../**/table/.
+      add:x:../*/data.connect/*/data.read
          .
             where
                or
@@ -49,8 +34,8 @@ if
 /*
  * Retrieving count from database.
  */
-xxx.connect:magic
-   xxx.read
+data.connect:magic
+   data.read
       table:log_entries
       columns
          count(*) as count
@@ -60,4 +45,4 @@ xxx.connect:magic
     */
    unwrap:x:+/*
    return
-      result:x:./-/-/*/*
+      result:x:@data.read/*/*
