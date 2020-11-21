@@ -12,27 +12,12 @@ auth.ticket.verify:root
 
 
 /*
- * Retrieves items from our database, according to which database is
- * the default database and database type in the system.
- */
-config.get:"magic:databases:default"
-set-name:x:./*/xxx.connect
-   strings.concat
-      get-value:x:@config.get
-      .:.connect
-set-name:x:./**/xxx.select
-   strings.concat
-      get-value:x:@config.get
-      .:.select
-
-
-/*
  * Retrieving items from database.
  */
 .total-backend:int:0
 .total-frontend:int:0
-xxx.connect:magic
-   xxx.select:"select content from log_entries where content like 'Loc generated %'"
+data.connect:magic
+   data.select:"select content from log_entries where content like 'Loc generated %'"
    for-each:x:-/*/*
       strings.split:x:@.dp/#
          .:"'"

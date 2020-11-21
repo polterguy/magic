@@ -16,29 +16,6 @@ auth.ticket.verify:root
 
 
 /*
- * Adding paging arguments.
- */
-add:x:../*/xxx
-   get-nodes:x:@.arguments/*/limit
-   get-nodes:x:@.arguments/*/offset
-
-
-/*
- * Retrieves items from our database, according to which database is
- * the default database and database type in the system.
- */
-config.get:"magic:databases:default"
-set-name:x:./*/xxx.connect
-   strings.concat
-      get-value:x:@config.get
-      .:.connect
-set-name:x:./**/xxx.read
-   strings.concat
-      get-value:x:@config.get
-      .:.read
-
-
-/*
  * Adding filter argument, if given.
  */
 if
@@ -48,7 +25,7 @@ if
          get-value:x:@.arguments/*/query
          .:%
       unwrap:x:+/*/*/*/*
-      add:x:../**/table/.
+      add:x:../*/data.connect/*/data.read
          .
             where
                or
@@ -59,11 +36,11 @@ if
 /*
  * Retrieving items from database.
  */
-xxx.connect:magic
+data.connect:magic
    add:x:+
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/limit
-   xxx.read
+   data.read
       table:log_entries
       order:id
       direction:desc

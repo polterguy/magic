@@ -15,17 +15,8 @@ auth.ticket.verify:root
  * Retrieves items from our database, according to which database is
  * the default database and database type in the system.
  */
-config.get:"magic:databases:default"
-set-name:x:../**/exe
-   strings.concat
-      get-value:x:@config.get
-      .:.execute
-set-name:x:../**/open
-   strings.concat
-      get-value:x:@config.get
-      .:.connect
-open:magic
-   exe:delete from log_entries
+data.connect:magic
+   data.execute:delete from log_entries
 
 /*
  * Returning log items to caller.
