@@ -86,7 +86,7 @@ export class SetupComponent implements OnInit {
     this.setupService.setup(
       this.databaseType,
       this.password,
-      this.config).subscribe(setupAuthResult => {
+      JSON.stringify(this.config)).subscribe(setupAuthResult => {
 
       if (setupAuthResult.result === 'success') {
 
