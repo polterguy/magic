@@ -252,9 +252,7 @@ io.file.execute:/modules/system/magic.startup/magic.authenticate.hl
 /*
  * Evaluating "change-password" file, to create our slot.
  */
-io.file.load:/modules/system/magic.startup/magic.change-password.hl
-hyper2lambda:x:-
-eval:x:@hyper2lambda
+io.file.execute:/modules/system/magic.startup/magic.change-password.hl
 
 
 /*
