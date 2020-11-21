@@ -1,0 +1,45 @@
+
+/*
+ * Creates a user and inserts into the "magic" database,
+ * with the username/password specified in the [.parameters] collection,
+ * and belonging to the specified [roles] from the [.parameters] collection.
+ *
+ * Password is cryptographically hashed using the blow fish hashing algorithm,
+ * and cryptographically and securely stored with a user provided salt in the
+ * "users" table.
+ */
+.arguments
+
+
+/*
+ * Hashing password.
+ */
+crypto.password.hash:x:@.arguments/*/password
+
+
+/*
+ * Opening up a database connection to magic.
+ */
+data.connect:magic
+
+
+   /*
+    * Inserting user.
+    */
+   data.execute:insert into users (username, password) values (@username, @password);
+      @username:x:@.arguments/*/username
+      @password:x:@crypto.password.hash
+
+
+   /*
+    * Inserting all roles.
+    */
+   for-each:x:@.arguments/*/roles/*
+
+
+      /*
+       * Then inserting into users_roles an association between user and role.
+       */
+      data.execute:insert into users_roles (role, user) values (@role, @user)
+         @role:x:@.dp/#
+         @user:x:@.arguments/*/username
