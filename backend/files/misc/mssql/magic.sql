@@ -2,6 +2,12 @@
  * This Microsoft SQL Server script creates a database for you, serving
  * as Magic's main database.
  */
+use master;
+create database magic;
+
+go
+
+use magic;
 
 
 /*

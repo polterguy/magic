@@ -1,7 +1,7 @@
 
 /*
  * This file will setup your system, changing its default JWT secret,
- * create the magic database, and inserting a root user - Unless the
+ * create the magic database, and insert a root user - Unless the
  * database, and/or root user exists from before.
  *
  * Notice, if the root user exists from before, this file will change
@@ -37,21 +37,15 @@ if
    .lambda
 
       // System has been setup before
-      throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your appsettings.json file."
+      throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your 'appsettings.json' file."
 
 
 /*
- * Saving settings to appsettings.json file.
- */
-config.save:x:@.arguments/*/settings
-
-
-/*
- * Retrieving all database from selected database type,
+ * Retrieving all databases from selected database type,
  * to see if 'magic' database has previously been created.
  *
  * If not, we create the 'magic' database using the specialised
- * schema declaration for the database type.
+ * schema declaration SQL file for the database type.
  */
 .database-exists:bool:false
 strings.concat
@@ -87,34 +81,11 @@ if
        * to which database type we're dealing with.
        */
       io.file.load:x:@strings.concat
-      switch:x:@.arguments/*/databaseType
-
-         /*
-          * MySQL data adapter.
-          */
-         case:mysql
-            set-value:x:@io.file.load
-               strings.concat
-                  .:"create database `magic`;use `magic`;"
-                  get-value:x:@io.file.load
-
-         /*
-          * Microsoft SQL Server data adapter.
-          */
-         case:mssql
-            set-value:x:@io.file.load
-               strings.concat
-                  .:@"use master;
-create database [magic];
-GO
-use [magic];
-"
-                  get-value:x:@io.file.load
 
 
       /*
        * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
-       * accommodate for "GO" statements and such.
+       * accommodate for "go" statements and such.
        */
       .slot
       if
@@ -148,20 +119,16 @@ use [magic];
        * use to connect to database, and which slot we should use to 
        * execute SQL schema script.
        */
-      set-name:x:../**/xxx.connect
+      set-name:x:./**/xxx.connect
          strings.concat
             get-value:x:@.arguments/*/databaseType
             .:.connect
-      set-name:x:../**/xxx.execute
+      set-name:x:./**/xxx.execute
          get-value:x:@.slot
 
 
       /*
        * Executing create database SQL script.
-       *
-       * Notice, we do not connect to a specific database schema,
-       * since we rely upon the default connection string, hooking us up to whatever
-       * is the default, for whatever type of database we're currently connecting to.
        */
       xxx.connect
          xxx.execute:x:@io.file.load
@@ -179,8 +146,6 @@ else
 
 /*
  * Trying to insert our root user.
- *
- * Notice, this will throw an exception if root user already exists.
  */
 .user-exists:bool:false
 try
@@ -261,8 +226,19 @@ license.apply
 
 
 /*
- * Returning success to caller.
+ * Logging the fact that system was setup.
  */
 log.info:System was successfully setup
+
+
+/*
+ * Saving settings to appsettings.json file.
+ */
+config.save:x:@.arguments/*/settings
+
+
+/*
+ * Returning success to caller.
+ */
 return-nodes
    result:success
