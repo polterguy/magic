@@ -97,26 +97,33 @@ export class SetupComponent implements OnInit {
           * 
           * Notice, this has to be done since the JWT secret was saved on the backend,
           * basically invalidating our existing JWT token.
+          * 
+          * Also notice that we'll need to wait for a while here, to allow the thread
+          * pool on the server to re-load the configuration settings now applied
+          * for our new appsettings.json file.
           */
-        this.ticketService.authenticate('root', this.password).subscribe(() => {
+        setTimeout(() => {
+          this.ticketService.authenticate('root', this.password).subscribe(() => {
 
-          // Success!
-          this.showInfo('You have successfully secured your system');
+            // Success!
+            this.showInfo('You have successfully secured your system');
 
-          // Navigating to "Home" screen, and making sure we signal that setup is done.
-          this.router.navigate(['']);
+            // Navigating to "Home" screen, and making sure we signal that setup is done.
+            this.router.navigate(['']);
 
-          // Hiding obscurer.
-          this.isFetching = false;
+            // Hiding obscurer.
+            this.isFetching = false;
+            
 
-        }, error => {
+          }, error => {
 
-          // Couldn't authenticate with new password
-          this.showError(error.error.message);
+            // Couldn't authenticate with new password
+            this.showError(error.error.message);
 
-          // Hiding obscurer.
-          this.isFetching = false;
-        });
+            // Hiding obscurer.
+            this.isFetching = false;
+          });
+        }, 500);
       }
     }, error => {
 
