@@ -899,7 +899,12 @@ result.
 
 ## Magic (main)
 
-Significantly simplified the setup process code/logic.
+Significantly simplified the setup process code/logic. Among other things, we've completely
+removed the fil copying/overwriting operations, allowing the end user to much more easily
+update, without having to keep files from one version to another, etc.
+
+Basically, if you want to upgrade an exsiting system, the only thing you'll need to
+keep now, is the `magic.auth.secret` parts from your _"appsettings.json"_ file.
 
 ## magic.data
 
