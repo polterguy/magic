@@ -6,16 +6,20 @@
 
 
 /*
- * Ensures user is authorized to access endpoint.
+ * Ensuring user is authorized to access endpoint.
  */
 auth.ticket.verify:root
 
 
 /*
- * Returns the "appsettings.json" file to caller, making sure we create
- * a random JWT secret before returning the file's content to caller.
+ * Loading the 'appsettings.json' file.
  */
 config.load
+
+
+/*
+ * Making sure we create a random JWT secret before returning the file.
+ */
 crypto.random
    min:50
    max:100
@@ -23,4 +27,9 @@ json2lambda:x:@config.load
 set-value:x:@json2lambda/*/magic/*/auth/*/secret
    get-value:x:@crypto.random
 lambda2json:x:@json2lambda/*
+
+
+/*
+ * Returning file to caller, now with a random JWT secret.
+ */
 return-value:x:@lambda2json
