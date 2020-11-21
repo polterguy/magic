@@ -12,7 +12,8 @@ auth.ticket.verify:root
 
 
 /*
- * Returns the "appsettings.json" file to caller
+ * Returns the "appsettings.json" file to caller, making sure we create
+ * a random JWT secret before returning the file's content to caller.
  */
 config.load
 crypto.random
