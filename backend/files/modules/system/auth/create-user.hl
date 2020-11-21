@@ -8,10 +8,6 @@
  * and cryptographically and securely stored with a per-record based salt in the
  * "users" table.
  */
-.arguments
-   database-type:string
-   username:string
-   password:string
 
 
 /*
