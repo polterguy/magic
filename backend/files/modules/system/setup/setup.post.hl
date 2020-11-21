@@ -1,6 +1,13 @@
 
 /*
- * Sets up authentication of system according to the arguments provided.
+ * This file will setup your system, changing its default JWT secret,
+ * create the magic database, and inserting a root user - Unless the
+ * database, and/or root user exists from before.
+ *
+ * Notice, if the root user exists from before, this file will change
+ * its password - However, you cannot setup the system twice, unless you
+ * manually change the JWT secret to its default value, which
+ * is 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT'.
  */
 .arguments
    databaseType:string
@@ -17,7 +24,7 @@ auth.ticket.verify:root
 
 /*
  * Checking if JWT secret has been changed, and
- * if is has, we throw an exception to prevent the
+ * if is has, we throw an exception, to prevent the
  * system from being setup again, overriding the default
  * setup configuration.
  */
@@ -29,7 +36,7 @@ if
          .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
    .lambda
 
-      // Already done!
+      // System has been setup before
       throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your appsettings.json file."
 
 
@@ -57,18 +64,9 @@ signal:x:-
 /*
  * Checking if magic was returned from above invocation.
  */
-.exists:bool:false
-for-each:x:@signal/*/*
-   if
-      eq
-         get-value:x:@.dp/#
-         .:magic
-      .lambda
-         set-value:x:@.exists
-            .:bool:true
 if
    not
-      get-value:x:@.exists
+      exists:x:@signal/*/*/=magic
    .lambda
 
 

@@ -94,16 +94,15 @@ export class SetupComponent implements OnInit {
       if (setupAuthResult.result === 'success') {
 
         /*
-          * If it was a success setting up auth database and authenticaiton slot,
-          * our new password should now function - Hence, trying to login again,
-          * but this time with the new password.
-          * 
-          * Notice, this has to be done since the JWT secret was saved on the backend,
+          * If we succeeded setting up the system, our new password should now
+          * work - Hence, we must login again, but this time with the new password.
+          * This has to be done since the JWT secret was saved on the backend,
           * basically invalidating our existing JWT token.
           * 
           * Also notice that we'll need to wait for a while here, to allow the thread
           * pool on the server to re-load the configuration settings now applied
-          * for our new appsettings.json file.
+          * for our new appsettings.json file, which was changed and updated with
+          * a new JWT secret.
           */
         setTimeout(() => {
           this.ticketService.authenticate('root', this.password).subscribe(() => {
