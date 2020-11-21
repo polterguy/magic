@@ -82,7 +82,10 @@ export class SetupComponent implements OnInit {
     this.config.magic.license = this.licenseFile;
     this.isFetching = true;
 
-    // Setting up authentication system and database.
+    /*
+     * This will setup our system, which implies applying the JWT secret, root password,
+     * setting the default database type, etc.
+     */
     this.setupService.setup(
       this.databaseType,
       this.password,
