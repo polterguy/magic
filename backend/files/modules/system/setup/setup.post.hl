@@ -220,7 +220,7 @@ try
  *
  * First we start by moving our "authenticate" Hyperlambda file.
  */
-io.file.copy:x:/misc/magic.authenticate.hl
+io.file.copy:/misc/magic.authenticate.hl
    .:/modules/system/magic.startup/
 
 
