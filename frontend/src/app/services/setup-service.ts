@@ -18,12 +18,6 @@ export class SetupService {
       'magic/modules/system/setup/load-config-file');
   }
 
-  saveAppSettingsJson(config: any) {
-    return this.httpClient.post<any>(
-      this.ticketService.getBackendUrl() +
-      'magic/modules/system/setup/save-config-file', config);
-  }
-
   saveLicense(license: string) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
@@ -34,15 +28,14 @@ export class SetupService {
 
   setup(
     databaseType: string,
-    rootUsername: string,
-    rootPassword: string) {
+    rootPassword: string,
+    settings: string) {
     return this.httpClient.post<any>(
       this.ticketService.getBackendUrl() +
       'magic/modules/system/setup/setup', {
         databaseType,
-        rootUsername,
         rootPassword,
-        scheduler: true,
+        settings,
       });
   }
 

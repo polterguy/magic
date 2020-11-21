@@ -82,77 +82,45 @@ export class SetupComponent implements OnInit {
     this.config.magic.license = this.licenseFile;
     this.isFetching = true;
 
-    // Saving appsettings.json file on server.
-    this.setupService.saveAppSettingsJson(this.config).subscribe(saveConfigResult => {
+    // Setting up authentication system and database.
+    this.setupService.setup(
+      this.databaseType,
+      this.password,
+      this.config).subscribe(setupAuthResult => {
 
-      if (saveConfigResult.result === 'success') {
+      if (setupAuthResult.result === 'success') {
 
         /*
-         * To make sure server gets the required time to update our IConfiguration
-         * object, we pause for 5 seconds here.
-         */
-        setTimeout(() => {
+          * If it was a success setting up auth database and authenticaiton slot,
+          * our new password should now function - Hence, trying to login again,
+          * but this time with the new password.
+          * 
+          * Notice, this has to be done since the JWT secret was saved on the backend,
+          * basically invalidating our existing JWT token.
+          */
+        this.ticketService.authenticate('root', this.password).subscribe(() => {
 
-          /*
-           * If settings are saved, our JWT token is no longer valid, since the JWT secret
-           * has now been changed - Hence, logging in again.
-           */
-          this.ticketService.authenticate('root', 'root').subscribe(() => {
+          // Success!
+          this.showInfo('You have successfully secured your system');
 
-            // Setting up authentication system and database.
-            this.setupService.setup(
-              this.databaseType,
-              'root',
-              this.password).subscribe(setupAuthResult => {
+          // Navigating to "Home" screen, and making sure we signal that setup is done.
+          this.router.navigate(['']);
 
-              if (setupAuthResult.result === 'success') {
+          // Hiding obscurer.
+          this.isFetching = false;
 
-                /*
-                 * If it was a success setting up auth database and authenticaiton slot,
-                 * our new password should now function - Hence, trying to login again,
-                 * but this time with the new password.
-                 */
-                this.ticketService.authenticate('root', this.password).subscribe(() => {
+        }, error => {
 
-                  // Success!
-                  this.showInfo('You have successfully secured your system');
+          // Couldn't authenticate with new password
+          this.showError(error.error.message);
 
-                  // Navigating to "Home" screen, and making sure we signal that setup is done.
-                  this.router.navigate(['']);
-
-                  // Hiding obscurer.
-                  this.isFetching = false;
-
-                }, error => {
-
-                  // Couldn't authenticate with new password
-                  this.showError(error.error.message);
-
-                  // Hiding obscurer.
-                  this.isFetching = false;
-                });
-              }
-            }, error => {
-
-              // Couldn't setup authentication.
-              this.showError(error.error.message);
-
-              // Hiding obscurer.
-              this.isFetching = false;
-            });
-          }, error => {
-
-            // Couldn't authenticate after saving config file.
-            this.showError(error.error.message);
-
-            // Hiding obscurer.
-            this.isFetching = false;
-          });
-        }, 5000);
+          // Hiding obscurer.
+          this.isFetching = false;
+        });
       }
     }, error => {
 
-      // Couldn't save config file.
+      // Couldn't setup authentication.
       this.showError(error.error.message);
 
       // Hiding obscurer.

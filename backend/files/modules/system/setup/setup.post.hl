@@ -4,9 +4,8 @@
  */
 .arguments
    databaseType:string
-   rootUsername:string
-   rootPassword:string
-   scheduler:bool
+   password:string
+   settings:string
 .description:"Sets up authentication and other parts of the system according to the arguments provided."
 
 
@@ -16,22 +15,28 @@
 auth.ticket.verify:root
 
 
-   /*
-    * Checking if JWT secret has been changed, and
-    * if is has, we throw an exception to prevent the
-    * system from being setup again, overriding the default
-    * setup configuration.
-    */
-   config.get:"magic:auth:secret"
-   if
-      not
-         eq
-            get-value:x:@config.get
-            .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
-      .lambda
+/*
+ * Checking if JWT secret has been changed, and
+ * if is has, we throw an exception to prevent the
+ * system from being setup again, overriding the default
+ * setup configuration.
+ */
+config.get:"magic:auth:secret"
+if
+   not
+      eq
+         get-value:x:@config.get
+         .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   .lambda
 
-         // Already done!
-         throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your appsettings.json file."
+      // Already done!
+      throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your appsettings.json file."
+
+
+/*
+ * Saving settings to appsettings.json file.
+ */
+config.save:x:@.arguments/*/settings
 
 
 /*
@@ -193,8 +198,8 @@ try
     */
    unwrap:x:+/*
    io.file.execute:/system/auth/create-user.hl
-      username:x:@.arguments/*/rootUsername
-      password:x:@.arguments/*/rootPassword
+      username:root
+      password:x:@.arguments/*/password
       roles
          .:root
 
@@ -238,20 +243,13 @@ if
        */
       unwrap:x:+/*
       signal:magic.change-password
-         password:x:@.arguments/*/rootPassword
+         password:x:@.arguments/*/password
 
 
 /*
- * Checking if we should initialize task scheduler.
+ * Starting scheduler.
  */
-if
-   get-value:x:@.arguments/*/scheduler
-   .lambda
-
-      /*
-       * Starting scheduler.
-       */
-      scheduler.start
+scheduler.start
 
 
 /*
