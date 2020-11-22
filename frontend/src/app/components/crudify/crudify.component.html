@@ -353,11 +353,12 @@
         <th mat-header-cell *matHeaderCellDef scope="col">Authorization</th>
         <td mat-cell *matCellDef="let el">
           <mat-form-field class="fill-width">
-              <input 
-              [disabled]="el.generate === false"
-              matInput 
+              <input
+                [disabled]="el.generate === false"
+                matInput
                 autocomplete="off"
-                type="text" 
+                matTooltip='Comma separated list of roles or "*" implying "authenticated"'
+                type="text"
                 [(ngModel)]="el.auth">
             </mat-form-field>
         </td>
