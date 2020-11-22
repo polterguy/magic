@@ -908,7 +908,7 @@ Renamed the auth dynamic slots, to correctly namespace them, into **[magic.auth.
 
 Simplified crudification process by taking advantage of the new **[data.xxx]** slots.
 
-## magic.data
+## magic.data.common
 
 Created **[xxx.yyy]** slots for transparently using the default database adapter, as
 configured in your appsettings.json file, to avoid having to dynamically create slot
@@ -933,6 +933,18 @@ only changes when a new table, database, etc have been created, or your database
 somehow changes, caching this endpoint's result should not be a problem. However, we only
 cache the result for 5 minutes. Its cache key is `sql-databases` in case you want to
 explicitly flush it.
+
+Allowing for providing multiple connection strings to connect to different servers, by
+separating the connection string and the database by pipe character (|). Example can
+be found below.
+
+```
+data.connect:[server|database]
+```
+
+The above will use the _"server"_ connection string, expected to be found under your
+database configuration like `databases:mysql:server`, and the database catalogue
+of `database`.
 
 ## magic.lambda.logging
 
