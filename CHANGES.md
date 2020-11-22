@@ -900,11 +900,13 @@ result.
 ## Magic (main)
 
 Significantly simplified the setup process code/logic. Among other things, we've completely
-removed the fil copying/overwriting operations, allowing the end user to much more easily
-update, without having to keep files from one version to another, etc.
+removed the file copying/overwriting operations, allowing the end user to much more easily
+update his current installation, without having to keep files from one version to another, etc.
+The *only* file that's now actually written to during setup is the _"appsettings.json"_ file.
 
-Basically, if you want to upgrade an exsiting system, the only thing you'll need to
-keep now, is the `magic.auth.secret` parts from your _"appsettings.json"_ file.
+Renamed the auth dynamic slots, to correctly namespace them, into **[magic.auth.xxx]** namespace.
+
+Simplified crudification process by taking advantage of the new **[data.xxx]** slots.
 
 ## magic.data
 
@@ -913,3 +915,8 @@ configured in your appsettings.json file, to avoid having to dynamically create 
 invocation names when evaluating some database specific slot. All of these have the
 form of **[data.xxx]**, where _"xxx"_ is the specialised implementation, such as _"mssql"_
 or _"mysql"_, etc.
+
+Also updated the documentation for this project extensively, and move parts of it from
+the MySQL and MS SQL documentation into this project, since we now have the common
+**[data.xxx]** slots, providing _"generic"_ documentation, that applies to all
+specialised data adapters.
