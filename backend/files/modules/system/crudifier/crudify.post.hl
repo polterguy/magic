@@ -19,18 +19,10 @@
 .description:"Creates an HTTP REST CRUD endpoint, wrapping your existing database, according to the arguments given."
 
 
-
-
-
-
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
-
-
-
-
 
 
 /*
@@ -43,6 +35,11 @@ if
       .:system
    .lambda
       throw:"You can't use the name 'system' as your module's name"
+
+
+/*
+ * Sanity checking module name, to make sure it has a name at all.
+ */
 if
    or
       eq
@@ -53,10 +50,6 @@ if
          .
    .lambda
       throw:"You can't use an empty string as your module's name. Your module must have a name."
-
-
-
-
 
 
 /*
@@ -74,10 +67,6 @@ log.info
    .:"'"
 
 
-
-
-
-
 /*
  * Making sure we create a valid filename.
  */
@@ -90,10 +79,6 @@ set-value:x:@.filename
    strings.to-lower:x:@.filename
 
 
-
-
-
-
 /*
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.
@@ -102,48 +87,11 @@ io.file.load:x:@.arguments/*/template
 hyper2lambda:x:-
 unwrap:x:+/*
 apply:x:@hyper2lambda
+   database-type:x:@.arguments/*/databaseType
    database:x:@.arguments/*/database
    table:x:@.arguments/*/table
    return-id:x:@.arguments/*/returnId
    args
-
-
-
-
-
-
-/*
- * Replacing generic slot invocations with actual database type.
- */
-for-each:x:@apply/**/xxx.connect
-   set-name:x:@.dp/#
-      strings.concat
-         get-value:x:@.arguments/*/databaseType
-         .:.connect
-for-each:x:@apply/**/xxx.delete
-   set-name:x:@.dp/#
-      strings.concat
-         get-value:x:@.arguments/*/databaseType
-         .:.delete
-for-each:x:@apply/**/xxx.create
-   set-name:x:@.dp/#
-      strings.concat
-         get-value:x:@.arguments/*/databaseType
-         .:.create
-for-each:x:@apply/**/xxx.read
-   set-name:x:@.dp/#
-      strings.concat
-         get-value:x:@.arguments/*/databaseType
-         .:.read
-for-each:x:@apply/**/xxx.update
-   set-name:x:@.dp/#
-      strings.concat
-         get-value:x:@.arguments/*/databaseType
-         .:.update
-
-
-
-
 
 
 /*
@@ -151,26 +99,29 @@ for-each:x:@apply/**/xxx.update
  * if the caller wants us to do such a thing.
  */
 if
-   not
-      eq
-         get-value:x:@.arguments/*/log
-         .:
+   and
+      not
+         eq
+            get-value:x:@.arguments/*/log
+            .:
+      not
+         eq
+            get-value:x:@.arguments/*/log
+            .
    .lambda
-      unwrap:x:+/*/*/*/.log
+      unwrap:x:+/*/*/0
       insert-after:x:@apply/*/.type
          .
             log.info
-               .log:x:@.arguments/*/log
+               .:x:@.arguments/*/log
                .:" - Arguments: \r\n"
                lambda2hyper:x:@.arguments/*
 
 
-
-
-
-
 /*
  * Making sure we append validators, if given by client.
+ *
+ * Notice, we only do this for PUT or POST verbs.
  */
 if
    and
@@ -194,28 +145,20 @@ if
          hyper2lambda:x:@.arguments/*/validators
 
 
-
-
-
-
 /*
- * Then ensuring we turn on authorization to our endpoints according
+ * Then ensuring we turn on authorization to our endpoint according
  * to caller's specifications, if caller supplied an [auth] value.
  */
 if
    not
       eq
          get-value:x:@.arguments/*/auth
-         .:
+         .
    .lambda
       unwrap:x:+/*/*
       insert-after:x:@apply/*/.type
          .
             auth.ticket.verify:x:@.arguments/*/auth
-
-
-
-
 
 
 /*
@@ -289,6 +232,7 @@ switch:x:@.arguments/*/verb
              */
             throw:There are no actual columns declared for your GET endpoint.
 
+
       /*
        * Checking if we have an [.arguments]/[args]/[cache] value.
        */
@@ -307,6 +251,7 @@ switch:x:@.arguments/*/verb
                   get-value:x:@.arguments/*/args/*/cache
                   .
          .lambda
+
 
             /*
              * Caller wants results of endpoint to be cached, figuring out
@@ -330,6 +275,7 @@ switch:x:@.arguments/*/verb
                   response.headers.add
                      Cache-Control:x:@strings.concat
 
+
       /*
        * Allowing for specifying operator to query.
        *
@@ -351,7 +297,7 @@ switch:x:@.arguments/*/verb
 
          /*
           * Checking if we should allow "like" filtering, which is only
-          * so if column is of type "string".
+          * true if column is of type "string".
           */
          if
             eq
@@ -456,7 +402,7 @@ switch:x:@.arguments/*/verb
       /*
        * Applying PUT arguments.
        * First our primary keys, which ends up becoming a [where] condition,
-       * to avoid allowing for updating all records, or something stupid.
+       * to avoid allowing for updating all records.
        *
        * This is done by making sure all specified primary keys becomes mandatory
        * arguments when invoking the endpoint.
@@ -523,10 +469,6 @@ switch:x:@.arguments/*/verb
                get-nodes
 
 
-
-
-
-
 /*
  * Then creating our folder if necessary.
  *
@@ -551,13 +493,9 @@ set-value:x:@.folder
 io.folder.create:x:@.folder
 
 
-
-
-
-
 /*
- * Transforming lambda to hyper, and saving it to the correct file, making sure
- * we give the filename the correct verb, extension, etc.
+ * Transforming lambda to Hyperlambda, and saving it to the correct file, making sure
+ * we give the filename the correct HTTP verb, extension, etc.
  */
 lambda2hyper:x:@apply/*
 unwrap:x:+
@@ -573,20 +511,12 @@ set-value:x:@.path
       .:.hl
 
 
-
-
-
-
 /*
  * Substituting illegal characters in our filename, such as spaces, etc.
  */
 strings.replace:x:@.path
    .:' '
    .:_
-
-
-
-
 
 
 /*
@@ -601,10 +531,6 @@ if
       throw:"That module already exists. If you want to re-create it, please explicitly inform me that this is your intention."
 
 
-
-
-
-
 /*
  * Saving file, now transformed according to arguments, database, table, columns etc -
  * And with the correct filename.
@@ -613,20 +539,12 @@ io.file.save:x:@strings.replace
    get-value:x:@lambda2hyper
 
 
-
-
-
-
 /*
  * Calculating how many lines of code we created.
  *
  * This is returned back to the caller after crudification is done.
  */
 get-count:x:@apply/**
-
-
-
-
 
 
 /*
@@ -644,9 +562,9 @@ if
 
 
       /*
-       * First removing [columns], adding [count(*) as count], and then transforming lambda
-       * to hyper, and saving it to the correct file - Which is the same filename as the
-       * plain get, except adding "-count" at its end.
+       * First removing [columns], adding [count(*) as count, and then transforming lambda
+       * to Hyperlambda, and saving it to the correct file - Which is the same filename as the
+       * plain get, except appending "-count" to it.
        */
       remove-nodes:x:@apply/**/columns/*
       remove-nodes:x:@apply/**/table/././*/remove-nodes
@@ -660,7 +578,8 @@ if
          .:crud-count
       add:x:@apply/**/columns
          .
-            count(*) as count
+            count(*)
+               as:count
       add:x:@apply/**/table/.
          .
             limit:long:1
@@ -715,16 +634,12 @@ if
 
 
       /*
-       * Adding count endpoint to LOC.
+       * Adding count endpoint LOC count to our above LOC value.
        */
       set-value:x:@get-count
          math.add
             get-value:x:@get-count
             get-count:x:@apply/**
-
-
-
-
 
 
 /*

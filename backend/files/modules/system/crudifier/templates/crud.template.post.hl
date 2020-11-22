@@ -9,10 +9,12 @@
 /*
  * Invoking create, making sure we add [values] to create.
  */
-xxx.connect:{database}
+data.connect:{database}
+   database-type:{database-type}
    add:x:+/*/values
       get-nodes:x:@.arguments/*
-   xxx.create
+   data.create
+      database-type:{database-type}
       table:{table}
       return-id:{return-id}
       values

@@ -9,10 +9,12 @@
 /*
  * Invoking delete, making sure we add any [where] conditions.
  */
-xxx.connect:{database}
+data.connect:{database}
+   database-type:{database-type}
    add:x:+/*/where/*/and
       get-nodes:x:@.arguments/*
-   xxx.delete
+   data.delete
+      database-type:{database-type}
       table:{table}
       where
          and

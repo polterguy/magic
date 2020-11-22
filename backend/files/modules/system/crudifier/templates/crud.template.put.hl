@@ -9,8 +9,10 @@
 /*
  * Invoking update, making sure we add [values] and any [where] conditions.
  */
-xxx.connect:{database}
-   xxx.update
+data.connect:{database}
+   database-type:{database-type}
+   data.update
+      database-type:{database-type}
       table:{table}
       values
       where
