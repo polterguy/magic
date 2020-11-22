@@ -927,6 +927,13 @@ and not requiring a specific role.
 Moved all startup files into sub-module folders, to group related code snippets together
 where they logically belong.
 
+Caching the result of sql/database.get.hl endpoint. This will *significantly* increase
+load time on the SQL menu item, on consecutive times. Since the result of this endpoint
+only changes when a new table, database, etc have been created, or your database schema
+somehow changes, caching this endpoint's result should not be a problem. However, we only
+cache the result for 5 minutes. Its cache key is `sql-databases` in case you want to
+explicitly flush it.
+
 ## magic.lambda.logging
 
 Taking advantage of the **[data.xxx]** slots, to simplify code to insert and read

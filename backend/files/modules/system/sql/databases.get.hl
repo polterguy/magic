@@ -4,7 +4,7 @@
  */
 .arguments
    databaseType:string
-.description:"Returns all databases in your installation, according to the databaseType specified."
+.description:"Returns all databases in your installation, according to the arguments specified."
 
 
 /*
@@ -14,66 +14,90 @@ auth.ticket.verify:root
 
 
 /*
- * Invokes slots.create responsible for returning our database names,
- * and returns results to caller.
+ * Since this endpoint is quite expensive to invoke, we cache its result
+ * for 5 minutes - Both on the server side, and on the client side.
  */
-strings.concat
-   .:magic.db.
-   get-value:x:@.arguments/*/databaseType
-   .:.databases
-signal:x:@strings.concat
+unwrap:x:+/**/.databaseType
+cache.try-get:sql-databases
+   expiration:300
+   expiration-type:absolute
+   .lambda
 
 
-/*
- * Creating our return value.
- */
-.result
-for-each:x:@signal/*/*
-   set-value:x:@.dp/#
-      strings.to-lower:x:@.dp/#
-   set-name:x:@.dp/#
-      .:database
-   unwrap:x:+/*/*/*
-   add:x:@.result
-      .
-         .
-            name:x:@.dp/#
-            tables
-for-each:x:@.result/*
-   strings.concat
-      .:magic.db.
-      get-value:x:@.arguments/*/databaseType
-      .:.tables
-   unwrap:x:+/*
-   signal:x:@strings.concat
-      database:x:@.dp/#/*/name
-   for-each:x:@signal/*
-      unwrap:x:+/*/*/*
-      add:x:@for-each/@.dp/#/*/tables
-         .
-            .
-               name:x:@.dp/#/*/table
-               columns
+      /*
+       * Invokes slots.create responsible for returning our database names,
+       * and returns results to caller.
+       */
+      .databaseType:x:@.arguments/*/databaseType
       strings.concat
          .:magic.db.
-         get-value:x:@.arguments/*/databaseType
-         .:.columns
-      unwrap:x:+/*
+         get-value:x:@.databaseType
+         .:.databases
       signal:x:@strings.concat
-         database:x:@for-each/@.dp/#/*/name
-         table:x:@.dp/#/*/table
-      for-each:x:@signal/*
+
+
+      /*
+       * Creating our return value.
+       */
+      .result
+      for-each:x:@signal/*/*
+         set-value:x:@.dp/#
+            strings.to-lower:x:@.dp/#
+         set-name:x:@.dp/#
+            .:database
          unwrap:x:+/*/*/*
-         add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+         add:x:@.result
             .
                .
-                  name:x:@.dp/#/*/name
+                  name:x:@.dp/#
+                  tables
+      for-each:x:@.result/*
+         strings.concat
+            .:magic.db.
+            get-value:x:@.databaseType
+            .:.tables
+         unwrap:x:+/*
+         signal:x:@strings.concat
+            database:x:@.dp/#/*/name
+         for-each:x:@signal/*
+            unwrap:x:+/*/*/*
+            add:x:@for-each/@.dp/#/*/tables
+               .
+                  .
+                     name:x:@.dp/#/*/table
+                     columns
+            strings.concat
+               .:magic.db.
+               get-value:x:@.databaseType
+               .:.columns
+            unwrap:x:+/*
+            signal:x:@strings.concat
+               database:x:@for-each/@.dp/#/*/name
+               table:x:@.dp/#/*/table
+            for-each:x:@signal/*
+               unwrap:x:+/*/*/*
+               add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+                  .
+                     .
+                        name:x:@.dp/#/*/name
+
+
+      /*
+       * Returning database to caller.
+       */
+      add:x:+/*
+         get-nodes:x:@.result/*
+      return
+         databases
 
 
 /*
- * Returning database to caller.
+ * Returning results to caller.
  */
-add:x:+/*
-   get-nodes:x:@.result/*
-return-nodes
-   databases
+response.headers.add
+   Cache-Control:private, max-age=300
+log.info
+   lambda2hyper:x:../*
+add:x:+
+   get-nodes:x:@cache.try-get/#/*
+return
