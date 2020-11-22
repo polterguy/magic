@@ -920,3 +920,16 @@ Also updated the documentation for this project extensively, and move parts of i
 the MySQL and MS SQL documentation into this project, since we now have the common
 **[data.xxx]** slots, providing _"generic"_ documentation, that applies to all
 specialised data adapters.
+
+Allowing to supply `*` as Authorization during crudification, simply meaning _"authenticated"_,
+and not requiring a specific role.
+
+## magic.lambda.logging
+
+Taking advantage of the **[data.xxx]** slots, to simplify code to insert and read
+log entries.
+
+## magic.lambda.scheduler
+
+Taking advantage of the **[data.xxx]** slots, to simplify code to insert and read
+tasks and due dates.
