@@ -924,6 +924,9 @@ specialised data adapters.
 Allowing to supply `*` as Authorization during crudification, simply meaning _"authenticated"_,
 and not requiring a specific role.
 
+Moved all startup files into sub-module folders, to group related code snippets together
+where they logically belong.
+
 ## magic.lambda.logging
 
 Taking advantage of the **[data.xxx]** slots, to simplify code to insert and read
@@ -933,3 +936,8 @@ log entries.
 
 Taking advantage of the **[data.xxx]** slots, to simplify code to insert and read
 tasks and due dates.
+
+## magic.library
+
+Support for sub-module startup folders, allowing to group relevant code snippets,
+where they belong, according to which sub-module they belong to.
