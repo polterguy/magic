@@ -11,7 +11,8 @@
 /*
  * Opening up a database connection
  */
-xxx.connect:{database}
+data.connect:{database}
+   database-type:{database-type}
 
 
    /*
@@ -24,7 +25,8 @@ xxx.connect:{database}
    /*
     * Evaluating [xxx.select] slot.
     */
-   xxx.select:{sql}
+   data.select:{sql}
+      database-type:{database-type}
 
 
    /*
