@@ -6,20 +6,6 @@ slots.create:magic.crypto.import-key
 
 
    /*
-    * Making sure we use corrrect database type.
-    */
-   config.get:"magic:databases:default"
-   set-name:x:./*/xxx.connect
-      strings.concat
-         get-value:x:@config.get
-         .:.connect
-   set-name:x:./**/xxx.create
-      strings.concat
-         get-value:x:@config.get
-         .:.create
-
-
-   /*
     * Figuring out key's fingerprint.
     */
    crypto.fingerprint:x:@.arguments/*/content
@@ -28,8 +14,8 @@ slots.create:magic.crypto.import-key
    /*
     * Importing key into database.
     */
-   xxx.connect:magic
-      xxx.create
+   data.connect:magic
+      data.create
          table:crypto_keys
          values
             subject:x:@.arguments/*/subject

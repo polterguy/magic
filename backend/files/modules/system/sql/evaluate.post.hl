@@ -52,8 +52,12 @@ set-name:x:./*/foo.connect
 
 /*
  * Creating our database connection.
+ *
  * Notice, at this point the below slot will have been changed by
  * the above logic.
+ *
+ * Notice, we can't use the [data.xxx] slots here, since we want to
+ * allow user to also use non-default database connections here.
  */
 foo.connect
 
