@@ -1,10 +1,10 @@
 
 /*
- * Verifies that the selected database is correctly configured.
+ * Verifies that the specified database is correctly configured.
  */
 .arguments
    databaseType:string
-.description:"Verifies that the selected database is correctly configured."
+.description:"Verifies that the specified database is correctly configured."
 
 
 /*

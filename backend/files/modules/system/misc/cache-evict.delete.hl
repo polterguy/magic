@@ -6,8 +6,16 @@
 .arguments
    id:string
 
+
+/*
+ * Ensuring only authorised users can access endpoint.
+ */
 auth.ticket.verify:root
 
+
+/*
+ * Evicting item from cache.
+ */
 cache.set:x:@.arguments/*/id
 return
    result:success

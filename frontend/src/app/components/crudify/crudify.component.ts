@@ -269,14 +269,12 @@ limit:long`;
 
     // Figuring out what types of endpoints we should create for current table.
     const hasPrimaryKeys = this.columns.filter(x => x.primary).length > 0;
-    const hasNonAutoPrimaryKeys = this.columns.filter(x => x.primary && !x.automatic).length > 0;
     const hasDataColumns = this.columns.filter(x => !x.primary).length > 0;
-    const hasNonAutoDataColumns = this.columns.filter(x => !x.primary && !x.automatic).length > 0;
 
-    const createGet = true;
+    const createGet = this.columns.length > 0;
     const createDelete = hasPrimaryKeys;
-    const createPost = hasDataColumns && hasNonAutoPrimaryKeys;
-    const createPut = hasPrimaryKeys && hasDataColumns && hasNonAutoDataColumns;
+    const createPut = hasPrimaryKeys && hasDataColumns;
+    const createPost = this.columns.length > 0;
 
     this.endpoints = this.verbs.map(x => {
       return {
@@ -285,9 +283,9 @@ limit:long`;
         action: x.action,
         auth: this.defaultAuth,
         generate:
-          (x.verb === 'post' && (this.submitAutomatic || createPost)) ||
+          (x.verb === 'post' && createPost) ||
           (x.verb === 'get' && createGet) ||
-          (x.verb === 'put' && (this.submitAutomatic || createPut)) ||
+          (x.verb === 'put' && createPut) ||
           (x.verb === 'delete' && createDelete),
         log: '',
       };

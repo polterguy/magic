@@ -29,26 +29,13 @@ slots.create:magic.crypto.get-public-key
          .fingerprint:x:@.arguments/*/fingerprint
 
          /*
-          * Making sure we use corrrect database type.
-          */
-         config.get:"magic:databases:default"
-         set-name:x:./*/xxx.connect
-            strings.concat
-               get-value:x:@config.get
-               .:.connect
-         set-name:x:./**/xxx.select
-            strings.concat
-               get-value:x:@config.get
-               .:.select
-
-         /*
           * Selecting key and vocabulary from database,
           * according to the specified fingerprint.
           *
           * Notice, key needs to be enabled in order to be returned.
           */
-         xxx.connect:magic
-            xxx.select:select id, content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint and enabled = @enabled
+         data.connect:magic
+            data.select:select id, content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint and enabled = @enabled
                @fingerprint:x:@.fingerprint
                @enabled:bool:true
             if
@@ -65,11 +52,11 @@ slots.create:magic.crypto.get-public-key
              * Returning result of database invocation to caller.
              */
             add:x:./*/return
-               get-nodes:x:././0/*/*/id
-               get-nodes:x:././0/*/*/public_key
-               get-nodes:x:././0/*/*/domain
+               get-nodes:x:@data.select/*/*/id
+               get-nodes:x:@data.select/*/*/public_key
+               get-nodes:x:@data.select/*/*/domain
             add:x:./*/return/*/vocabulary
-               hyper2lambda:x:././0/*/*/vocabulary
+               hyper2lambda:x:@data.select/*/*/vocabulary
             return
                vocabulary
 

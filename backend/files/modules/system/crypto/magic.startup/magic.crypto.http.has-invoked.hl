@@ -7,24 +7,10 @@ slots.create:magic.crypto.http.has-invoked
 
 
    /*
-    * Making sure we use corrrect database type.
-    */
-   config.get:"magic:databases:default"
-   set-name:x:./*/xxx.connect
-      strings.concat
-         get-value:x:@config.get
-         .:.connect
-   set-name:x:./**/xxx.select
-      strings.concat
-         get-value:x:@config.get
-         .:.select
-
-
-   /*
     * Selecting the record from database with specified request_id, if it exists.
     */
-   xxx.connect:magic
-      xxx.select:select id from crypto_invocations where request_id = @request_id
+   data.connect:magic
+      data.select:select id from crypto_invocations where request_id = @request_id
          @request_id:x:@.arguments/*/request-id
 
       /*
