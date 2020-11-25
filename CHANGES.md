@@ -908,6 +908,8 @@ Renamed the auth dynamic slots, to correctly namespace them, into **[magic.auth.
 
 Simplified crudification process by taking advantage of the new **[data.xxx]** slots.
 
+Implemented support for multiple connection strings in the SQL menu item.
+
 ## magic.data.common
 
 Created **[xxx.yyy]** slots for transparently using the default database adapter, as
@@ -955,6 +957,11 @@ log entries.
 
 Taking advantage of the **[data.xxx]** slots, to simplify code to insert and read
 tasks and due dates.
+
+## magic.lambda.config
+
+Created **[config.section]** that returns an entire section from your _"appsettings.json"_
+file, as a key/value pair.
 
 ## magic.library
 

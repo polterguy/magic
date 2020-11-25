@@ -9,7 +9,6 @@ import { SqlService } from 'src/app/services/sql-service';
 import { FileService } from 'src/app/services/file-service';
 import { TicketService } from 'src/app/services/ticket-service';
 import { GetSaveFilenameDialogComponent } from './modals/get-save-filename';
-import * as CodeMirror from 'codemirror';
 
 // Helper class for SQL autocomplete
 class Column {
@@ -44,6 +43,8 @@ export class SqlComponent implements OnInit {
   public sqlText = '';
   public databases: Database[] = null;
   public selectedDatabase: Database = null;
+  public connectionStrings: string[] = [];
+  public connectionString: string = null;
   public hintOptions: any;
   public hasConnection = true;
   public safeMode = true;
@@ -58,15 +59,34 @@ export class SqlComponent implements OnInit {
   ngOnInit() {
     this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
     if (this.selectedDatabaseType !== null) {
-      this.getDatabases();
+      this.getConnectionString();
     }
     this.getFiles();
+  }
+
+  getConnectionString() {
+    this.isFetching = true;
+    const databaseType = this.selectedDatabaseType === 'mssql-batch' ? 'mssql' : this.selectedDatabaseType;
+    this.sqlService.getConnectionStrings(databaseType).subscribe(res => {
+      const tmp: string[] = [];
+      for (var idx in res) {
+        tmp.push(idx);
+      }
+      this.connectionString = tmp[0];
+      this.connectionStrings = tmp;
+      this.isFetching = false;
+      this.getDatabases();
+    }, error => {
+      this.showHttpError(error);
+      this.isFetching = false;
+      this.hasConnection = false;
+    });
   }
 
   getDatabases() {
     this.isFetching = true;
     const databaseType = this.selectedDatabaseType === 'mssql-batch' ? 'mssql' : this.selectedDatabaseType;
-    this.sqlService.getDatabases(databaseType).subscribe(res => {
+    this.sqlService.getDatabases(databaseType, this.connectionString).subscribe(res => {
       this.databases = res.databases;
       if (this.databases.length > 0) {
         this.selectedDatabase = this.databases[0];
@@ -79,6 +99,10 @@ export class SqlComponent implements OnInit {
       this.isFetching = false;
       this.hasConnection = false;
     });
+  }
+
+  connectionStringChanged(e: MatSelectChange) {
+    this.getDatabases();
   }
 
   databaseChanged(e: MatSelectChange) {

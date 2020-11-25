@@ -4,6 +4,7 @@
  */
 .arguments
    databaseType:string
+   connectionString:string
 .description:"Returns all databases in your installation, according to the arguments specified."
 
 
@@ -17,8 +18,12 @@ auth.ticket.verify:root
  * Since this endpoint is quite expensive to invoke, we cache its result
  * for 5 minutes - Both on the server side, and on the client side.
  */
+strings.concat
+   .:sql.databases.
+   get-value:x:@.arguments/*/databaseType
+   get-value:x:@.arguments/*/connectionString
 unwrap:x:+/**/.databaseType
-cache.try-get:sql-databases
+cache.try-get:x:@strings.concat
    expiration:300
    expiration-type:absolute
    .lambda
@@ -29,11 +34,14 @@ cache.try-get:sql-databases
        * and returns results to caller.
        */
       .databaseType:x:@.arguments/*/databaseType
+      .connection-string:x:@.arguments/*/connectionString
       strings.concat
          .:magic.db.
          get-value:x:@.databaseType
          .:.databases
+      unwrap:x:+/*
       signal:x:@strings.concat
+         connection-string:x:@.connection-string
 
 
       /*
@@ -96,8 +104,6 @@ cache.try-get:sql-databases
  */
 response.headers.add
    Cache-Control:private, max-age=300
-log.info
-   lambda2hyper:x:../*
 add:x:+
    get-nodes:x:@cache.try-get/#/*
 return
