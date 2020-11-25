@@ -1,0 +1,26 @@
+
+/*
+ * Lists all connection strings in your installation according to
+ * the specified arguments.
+ */
+.arguments
+   databaseType:string
+.description:"Returns all connection strings in your installation, according to the specified arguments."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves all connection strings according to database type specified.
+ */
+strings.concat
+   .:"magic:databases:"
+   get-value:x:@.arguments/*/databaseType
+config.section:x:-
+add:x:+
+   get-nodes:x:@config.section/*
+return

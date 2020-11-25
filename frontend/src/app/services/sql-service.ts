@@ -34,10 +34,18 @@ export class SqlService {
       'magic/modules/system/sql/list-files?databaseType=' + encodeURIComponent(databaseType));
   }
 
-  public getDatabases(databaseType: string) {
+  public getConnectionStrings(databaseType: string) {
     return this.httpClient.get<any>(
       this.ticketService.getBackendUrl() +
-      'magic/modules/system/sql/databases?databaseType=' + encodeURIComponent(databaseType));
+      'magic/modules/system/sql/connection-strings?databaseType=' + encodeURIComponent(databaseType));
+  }
+
+  public getDatabases(databaseType: string, connectionString: string) {
+    return this.httpClient.get<any>(
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/sql/databases?databaseType=' +
+      encodeURIComponent(databaseType) +
+      '&connectionString=' + encodeURIComponent(connectionString));
   }
 
   public saveFile(databaseType: string, filename: string, content: string) {

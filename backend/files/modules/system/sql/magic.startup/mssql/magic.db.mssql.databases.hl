@@ -8,7 +8,25 @@ slots.create:magic.db.mssql.databases
    /*
     * Opens up our connection
     */
-   mssql.connect:[master]
+   .connection:[master]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               .:master]
+   mssql.connect:x:@.connection
 
 
       /*

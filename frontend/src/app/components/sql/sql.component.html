@@ -38,6 +38,23 @@
 
 <mat-form-field
   *ngIf="databases !== null && hasConnection"
+  class="connection-string-selector">
+
+  <mat-select
+    placeholder="Select connection string"
+    (selectionChange)="connectionStringChanged($event)"
+    [(ngModel)]="connectionString">
+
+    <mat-option
+      *ngFor="let cur of connectionStrings"
+      [value]="cur">{{cur}}</mat-option>
+      
+  </mat-select>
+
+</mat-form-field>
+
+<mat-form-field
+  *ngIf="databases !== null && hasConnection"
   class="database-selector">
 
   <mat-select
@@ -69,6 +86,7 @@
 </mat-form-field>
 
 <mat-checkbox
+  *ngIf="databases !== null && hasConnection"
   matTooltip="If true, no more than 1000 records will be returned from server to avoid exhausting server or client"
   [(ngModel)]="safeMode">Safe mode</mat-checkbox>
 
