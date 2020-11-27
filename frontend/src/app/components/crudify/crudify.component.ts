@@ -14,6 +14,7 @@ import { VerbModel } from './models/verb-model';
 import { ValidatorModel } from './models/validator-model';
 import { EndpointModel } from './models/endpoint-model';
 import { LogTables } from './models/log-tables-model';
+import { SqlService } from 'src/app/services/sql-service';
 
 @Component({
   selector: 'app-crudify',
@@ -60,6 +61,8 @@ export class CrudifyComponent implements OnInit {
   public moduleUrl = '';
   public databaseType = '';
   public databases: any[] = [];
+  public connectionStrings: string[] = [];
+  public connectionString: string = null;
   public tables: any[] = [];
   public selectedDatabase = '';
   public selectedTable = '';
@@ -100,12 +103,13 @@ export class CrudifyComponent implements OnInit {
     private snackBar: MatSnackBar,
     private ticketService: TicketService,
     private dialog: MatDialog,
+    private sqlService: SqlService,
     private logService: LogService) { }
 
   ngOnInit() {
     this.databaseType = this.ticketService.getDefaultDatabaseType();
     if (this.databaseType !== null) {
-      this.getDatabases();
+      this.getConnectionStrings();
     }
   }
 
@@ -115,21 +119,52 @@ export class CrudifyComponent implements OnInit {
     this.databaseType = e.value;
     this.selectedDatabase = '';
     this.databases = [];
+    this.connectionString = '';
+    this.connectionStrings = [];
     this.tables = [];
     this.columns = [];
     this.validators = [];
     this.endpoints = [];
     this.selectedTable = '';
+    this.getConnectionStrings();
+  }
+
+  getConnectionStrings() {
+    this.isCrudifying = true;
+    this.connectionString = '';
+    this.currentlyCrudifying = 'Fetching databases ...';
+    this.sqlService.getConnectionStrings(this.databaseType).subscribe(res => {
+      const tmp: string[] = [];
+      for (var idx in res) {
+        tmp.push(idx);
+      }
+      this.connectionStrings = tmp;
+      this.connectionString = this.connectionStrings[0];
+      this.getDatabases();
+    }, error => {
+      this.isCrudifying = false;
+      this.showError(error);
+    });
+  }
+
+  connectionStringChanged(e: MatSelectChange) {
+    this.selectedDatabase = '';
+    this.databases = [];
+    this.selectedTable = '';
+    this.tables = [];
     this.getDatabases();
   }
 
   getDatabases() {
     this.crudService.getDatabases(this.databaseType).subscribe((res) => {
       this.databases = res || [];
+      this.isCrudifying = false;
       if (this.databases.length === 0) {
         this.showError('You don\'t have any databases in your installation, please create one using e.g. the SQL menu');
       }
     }, (err) => {
+      this.connectionString = '';
+      this.isCrudifying = false;
       this.showError(err.error.message);
     });
   }
@@ -172,7 +207,9 @@ export class CrudifyComponent implements OnInit {
     this.moduleName = e.value;
 
     // Getting tables for his new database of choice
-    this.crudService.getTables(this.databaseType, this.selectedDatabase).subscribe((res) => {
+    this.crudService.getTables(
+      this.databaseType,
+      '[' + this.connectionString + '|' + this.selectedDatabase + ']').subscribe((res) => {
 
       // Avoiding null reference exception.
       res = res || [];
@@ -228,7 +265,10 @@ limit:long`;
       // User wants to crudify a single table.
       this.selectedTable = table;
       this.setModuleUrl(table);
-      this.crudService.getColumns(this.databaseType, this.selectedDatabase, this.selectedTable).subscribe(res => {
+      this.crudService.getColumns(
+        this.databaseType,
+        '[' + this.connectionString + '|' + this.selectedDatabase + ']',
+        this.selectedTable).subscribe(res => {
         this.columnsFetched(res || []);
       }, (err) => {
         this.showError(err.error.message);
@@ -456,7 +496,7 @@ signal:transformers.hash-password
     // Creating custom SQL endpoint
     this.crudService.createCustomSqlEndpoint({
       databaseType: this.databaseType,
-      database: this.selectedDatabase,
+      database: '[' + this.connectionString + '|' + this.selectedDatabase + ']',
       arguments: this.customSqlArguments,
       verb: this.customSqlEndpointVerb,
       endpointName: this.customSqlEndpointName,
@@ -535,7 +575,10 @@ signal:transformers.hash-password
     this.currentlyCrudifying = current.table;
     this.selectedTable = this.currentlyCrudifying;
     this.setModuleUrl(this.selectedTable);
-    this.crudService.getColumns(this.databaseType, this.selectedDatabase, current.table).subscribe((res) => {
+    this.crudService.getColumns(
+      this.databaseType,
+      '[' + this.connectionString + '|' + this.selectedDatabase + ']',
+      current.table).subscribe((res) => {
 
       // Binding data.
       res = res || [];
@@ -626,7 +669,7 @@ signal:transformers.hash-password
     this.crudService.generateCrudEndpoints(this.databaseType, {
       databaseType: this.databaseType,
       moduleName: this.moduleName,
-      database: this.selectedDatabase,
+      database: '[' + this.connectionString + '|' + this.selectedDatabase + ']',
       table: this.selectedTable,
       moduleUrl: this.moduleUrl,
       returnId,
