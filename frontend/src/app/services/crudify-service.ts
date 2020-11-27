@@ -45,7 +45,8 @@ export class CrudifyService {
 
   public createCustomSqlEndpoint(model: CustomSQLModel) {
     return this.httpClient.post<CrudifyResult>(
-      this.ticketService.getBackendUrl() + 'magic/modules/system/crudifier/custom-sql', model);
+      this.ticketService.getBackendUrl() +
+      'magic/modules/system/crudifier/custom-sql', model);
   }
 
   public getInputReactors() {
