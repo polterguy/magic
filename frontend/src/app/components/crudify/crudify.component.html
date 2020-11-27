@@ -2,8 +2,13 @@
 <div
   class="obscurer"
   *ngIf="isCrudifying">
-  <h3>Please wait while we CRUDify your database ...</h3>
+  <h3>Genius is thinking ...</h3>
   <h4>{{currentlyCrudifying}}</h4>
+  <mat-spinner
+    mode="indeterminate"
+    diameter="50"
+    class="ajax-wait">
+  </mat-spinner>
 </div>
 
 <div class="crudify-wrapper">
@@ -22,11 +27,25 @@
   </mat-form-field>
 
   <mat-form-field
+    *ngIf="connectionStrings.length > 0 && connectionString !== ''"
+    class="crudify-input">
+    <mat-select
+      placeholder="Select connection string"
+      (selectionChange)="connectionStringChanged($event)"
+      [(ngModel)]="connectionString">
+      <mat-option
+        *ngFor="let cur of connectionStrings"
+        [value]="cur">{{cur}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field
     *ngIf="databases.length > 0"
     class="crudify-input">
     <mat-select
       placeholder="Select database"
       matTooltip="Select which database schema you want to crudify"
+      [(ngModel)]="selectedDatabase"
       (selectionChange)="databaseChanged($event)">
       <mat-option
         *ngFor="let cur of databases"

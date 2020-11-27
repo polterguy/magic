@@ -910,6 +910,8 @@ Simplified crudification process by taking advantage of the new **[data.xxx]** s
 
 Implemented support for multiple connection strings in the SQL menu item.
 
+Implemented support for multiple connection strings in the Crudify menu item.
+
 ## magic.data.common
 
 Created **[xxx.yyy]** slots for transparently using the default database adapter, as
