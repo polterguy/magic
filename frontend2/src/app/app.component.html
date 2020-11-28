@@ -49,11 +49,21 @@
       <span class="spacer"></span>
 
       <button
+        *ngIf="!authService.isAuthenticated"
         mat-icon-button
         matTooltip="Login"
         aria-label="Login"
         (click)="login()">
         <mat-icon>vpn_key</mat-icon>
+      </button>
+
+      <button
+        *ngIf="authService.isAuthenticated"
+        mat-icon-button
+        matTooltip="Logout"
+        aria-label="Logout"
+        (click)="logout()">
+        <mat-icon>lock</mat-icon>
       </button>
 
     </mat-toolbar>
