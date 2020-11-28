@@ -14,13 +14,6 @@ auth.ticket.verify
 
 
 /*
- * Doing some basic caching, basically caching for 3 minutes.
- */
-response.headers.add
-   Cache-Control:private, max-age=180
-
-
-/*
  * Invokes [auth.ticket.refresh] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
