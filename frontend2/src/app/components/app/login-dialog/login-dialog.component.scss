@@ -1,4 +1,7 @@
 
 .mat-dialog-actions {
   float: right;
+  mat-checkbox {
+    margin-right: .5rem;
+  }
 }

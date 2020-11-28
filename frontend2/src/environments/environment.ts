@@ -7,6 +7,10 @@ import { Backend } from 'src/app/models/backend.model';
 export const environment = {
   production: false,
   defaultBackends: [
-    { url: 'http://localhost:55247' },
+    {
+      url: 'http://localhost:55247',
+      username: 'root',
+      password: 'root',
+     },
   ],
 };
