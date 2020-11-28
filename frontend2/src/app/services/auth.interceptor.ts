@@ -33,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
     } else {
       const token = this.authService.currentBackend.token;
       if (token && !this.authService.isTokenExpired(token)) {
-        const authReq = req.clone({headers: req.headers.set('Authorization', token)});
+        const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + token)});
         return next.handle(authReq);
       } else {
         return next.handle(req);

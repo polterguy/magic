@@ -49,14 +49,14 @@ export class AuthService {
    * Returns true if user is connected to a backend.
    */
   public get isConnected() {
-    return this.curBackend !== null;
+    return !!this.curBackend && this.endpoints.length > 0;
   }
 
   /**
    * Returns true if user is authenticated towards backend.
    */
   public get isAuthenticated() {
-    return this.isConnected && this.curBackend.token !== null;
+    return this.isConnected && this.curBackend.token;
   }
 
   /**
@@ -64,18 +64,6 @@ export class AuthService {
    */
   public get currentBackend() {
     return this.curBackend;
-  }
-
-  /*
-   * Returns when the JWT token for the current backend expires.
-   */
-  public get expires() {
-    if (!this.isConnected) {
-      return -1;
-    }
-    const exp = (JSON.parse(atob(this.curBackend.token.split('.')[1]))).exp;
-    const now = Math.floor(new Date().getTime() / 1000);
-    return exp - now;
   }
 
   /**
@@ -114,7 +102,8 @@ export class AuthService {
               token: auth.ticket,
               password: storePassword ? password : null,
             };
-            this.persistBackend(backend);
+            const el = this.persistBackend(backend);
+            this.createRefreshJWTTimer(el);
 
             // Retrieving endpoints for current backend.
             this.getEndpoints().subscribe(endpoints => {
@@ -163,21 +152,26 @@ export class AuthService {
     return now >= exp;
   }
 
+  // Private helper methods.
+
   /*
    * Persists specified backend into local storage.
    */
   private persistBackend(backend: Backend) {
     const existing = this.backends.filter(x => x.url === backend.url);
+    let el: Backend = null;
     if (existing.length === 0) {
       this.backends.push(backend);
+      el = backend;
     } else {
-      const el = existing[0];
+      el = existing[0];
       el.password = backend.password;
       el.username = backend.username;
       el.url = backend.url;
       el.token = backend.token;
     }
     this.persistBackends();
+    return el;
   }
 
   /*
@@ -195,7 +189,7 @@ export class AuthService {
   private removeInvalidTokens() {
     for (let idx = 0; idx < this.backends.length; idx++) {
       const el = this.backends[idx];
-      if (el.token !== null && this.isTokenExpired(el.token)) {
+      if (el.token && this.isTokenExpired(el.token)) {
         el.token = null;
       }
     }
@@ -208,15 +202,21 @@ export class AuthService {
    */
   private createRefreshJWTTimers() {
     for (let idx = 0; idx < this.backends.length; idx++) {
-      const el = this.backends[idx];
-      if (el.token !== null) {
-        const exp = (JSON.parse(atob(el.token.split('.')[1]))).exp;
-        const now = Math.floor(new Date().getTime() / 1000);
-        const delta = exp - now;
-        setTimeout(() => {
-          this.refreshJWTToken(el);
-        }, delta * 1000);
-      }
+      this.createRefreshJWTTimer(this.backends[idx]);
+    }
+  }
+
+  /*
+   * Creates a refresh timer for a single backend's JWT token.
+   */
+  private createRefreshJWTTimer(el: Backend) {
+    if (el.token && !this.isTokenExpired(el.token)) {
+      const exp = (JSON.parse(atob(el.token.split('.')[1]))).exp;
+      const now = Math.floor(new Date().getTime() / 1000);
+      const delta = (exp - now) - 60; // One minute before expiration.
+      setTimeout(() => {
+        this.refreshJWTToken(el);
+      }, Math.max(delta * 1000, 100));
     }
   }
 
@@ -224,13 +224,15 @@ export class AuthService {
    * Will refresh the JWT token for the specified backend.
    */
   private refreshJWTToken(backend: Backend) {
-    console.log(`Attempting to refresh JWT token for backend with URL of '${backend.url}'`);
-    this.httpClient.get<AuthenticateResponse>(backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
+    this.httpClient.get<AuthenticateResponse>(
+      backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
       backend.token = res.ticket;
-      console.log('JWT token was successfully refreshed');
       this.persistBackends();
-    }, error => {
-      console.error(error);
+      this.createRefreshJWTTimer(backend);
+    }, () => {
+      console.error('JWT token could not be refreshed');
+      backend.token = null;
+      this.persistBackends();
     });
   }
 }
