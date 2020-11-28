@@ -23,10 +23,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // App specific imports
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { HomeComponent } from './components/home/home.component';
-import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { LoaderInterceptor } from './services/loader-interceptor';
 import { LoaderService } from './services/loader-service';

@@ -3,10 +3,10 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
+import { AuthService } from 'src/app//services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
-import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
-import { LoaderService } from './services/loader-service';
+import { LoginDialogComponent } from './login-dialog/login-dialog.component';
+import { LoaderService } from 'src/app/services/loader-service';
 
 /**
  * Main wire frame application component.
