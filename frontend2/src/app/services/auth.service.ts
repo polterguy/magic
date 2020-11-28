@@ -18,7 +18,7 @@ import { Endpoint } from '../models/endpoint.model';
 })
 export class AuthService {
 
-  private backends: Backend[] = [];
+  private allBackends: Backend[] = [];
   private curBackend: Backend = null;
   private endpoints: Endpoint[] = [];
 
@@ -36,9 +36,9 @@ export class AuthService {
     } else {
       backends = <Backend[]>JSON.parse(storage);
     }
-    this.backends = backends;
-    if (this.backends.length > 0) {
-      this.curBackend = this.backends[0];
+    this.allBackends = backends;
+    if (this.allBackends.length > 0) {
+      this.curBackend = this.allBackends[0];
       this.removeInvalidTokens();
       this.createRefreshJWTTimers();
       this.persistBackends();
@@ -64,6 +64,10 @@ export class AuthService {
    */
   public get currentBackend() {
     return this.curBackend;
+  }
+
+  public get backends() {
+    return this.allBackends;
   }
 
   /**
@@ -104,6 +108,7 @@ export class AuthService {
             };
             const el = this.persistBackend(backend);
             this.createRefreshJWTTimer(el);
+            this.curBackend = el;
 
             // Retrieving endpoints for current backend.
             this.getEndpoints().subscribe(endpoints => {
@@ -166,10 +171,10 @@ export class AuthService {
    * Persists specified backend into local storage.
    */
   private persistBackend(backend: Backend) {
-    const existing = this.backends.filter(x => x.url === backend.url);
+    const existing = this.allBackends.filter(x => x.url === backend.url);
     let el: Backend = null;
     if (existing.length === 0) {
-      this.backends.push(backend);
+      this.allBackends.push(backend);
       el = backend;
     } else {
       el = existing[0];
@@ -186,7 +191,7 @@ export class AuthService {
    * Persists all backends into local storage.
    */
   private persistBackends() {
-    localStorage.setItem('backends', JSON.stringify(this.backends));
+    localStorage.setItem('backends', JSON.stringify(this.allBackends));
   }
 
   /*
@@ -195,8 +200,8 @@ export class AuthService {
    * the token expires.
    */
   private removeInvalidTokens() {
-    for (let idx = 0; idx < this.backends.length; idx++) {
-      const el = this.backends[idx];
+    for (let idx = 0; idx < this.allBackends.length; idx++) {
+      const el = this.allBackends[idx];
       if (el.token && this.isTokenExpired(el.token)) {
         el.token = null;
       }
@@ -209,8 +214,8 @@ export class AuthService {
    * expires.
    */
   private createRefreshJWTTimers() {
-    for (let idx = 0; idx < this.backends.length; idx++) {
-      this.createRefreshJWTTimer(this.backends[idx]);
+    for (let idx = 0; idx < this.allBackends.length; idx++) {
+      this.createRefreshJWTTimer(this.allBackends[idx]);
     }
   }
 

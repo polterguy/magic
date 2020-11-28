@@ -3,11 +3,29 @@
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width">
+    <input type="text"
+      placeholder="Backend"
+      aria-label="Choose backend"
+      matInput
+      [formControl]="backends"
+      [matAutocomplete]="auto">
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="backendChosen()">
+      <mat-option
+        *ngFor="let el of filteredBackends | async"
+        [value]="el">
+        {{el}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
     <mat-label>Username</mat-label>
     <input
       matInput
       [(ngModel)]="username"
-      autocomplete="username"
+      autocomplete="off"
       placeholder="Username">
   </mat-form-field>
 
@@ -17,7 +35,7 @@
       matInput
       [(ngModel)]="password"
       type="password"
-      autocomplete="current-password"
+      autocomplete="off"
       placeholder="Password">
   </mat-form-field>
 
@@ -26,6 +44,10 @@
 <div
   mat-dialog-actions
   class="mat-dialog-actions">
+
+  <mat-checkbox
+    aria-label="Save password"
+    [(ngModel)]="savePassword">Save</mat-checkbox>
 
   <button
     mat-button
