@@ -496,7 +496,7 @@ signal:transformers.hash-password
     // Creating custom SQL endpoint
     this.crudService.createCustomSqlEndpoint({
       databaseType: this.databaseType,
-      moduleName: this.selectedDatabase,
+      moduleName: this.moduleName,
       database: '[' + this.connectionString + '|' + this.selectedDatabase + ']',
       arguments: this.customSqlArguments,
       verb: this.customSqlEndpointVerb,
