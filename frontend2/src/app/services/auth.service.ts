@@ -19,7 +19,7 @@ import { Endpoint } from '../models/endpoint.model';
 export class AuthService {
 
   private backends: Backend[] = [];
-  private currentBackend: Backend = null;
+  private curBackend: Backend = null;
   private endpoints: Endpoint[] = [];
 
   /**
@@ -29,39 +29,62 @@ export class AuthService {
    */
   constructor(private httpClient: HttpClient) {
 
-    // Checking local storage if we've previously persisted backend API URLs.
     let backends: Backend[];
     const storage = localStorage.getItem('backends');
     if (storage === null) {
-      // No previously stored backends.
       backends = environment.defaultBackends;
     } else {
-      // Parsing previously stored backends from local storage.
       backends = <Backend[]>JSON.parse(storage);
     }
     this.backends = backends;
-    this.currentBackend = this.backends[0];
+    if (this.backends.length > 0) {
+      this.curBackend = this.backends[0];
+      this.removeInvalidTokens();
+      this.createRefreshJWTTimers();
+      this.persistBackends();
+    }
+  }
+
+  /**
+   * Returns true if user is connected to a backend.
+   */
+  public get isConnected() {
+    return this.curBackend !== null;
   }
 
   /**
    * Returns true if user is authenticated towards backend.
    */
-  get authenticated() {
-    return this.currentBackend.token !== null;
+  public get isAuthenticated() {
+    return this.isConnected && this.curBackend.token !== null;
   }
 
   /**
    * Returns the currently used backend API URL.
    */
-  get backendUrl() {
-    return this.currentBackend.url;
+  public get currentBackend() {
+    return this.curBackend;
+  }
+
+  /*
+   * Returns when the JWT token for the current backend expires.
+   */
+  public get expires() {
+    if (!this.isConnected) {
+      return -1;
+    }
+    const exp = (JSON.parse(atob(this.curBackend.token.split('.')[1]))).exp;
+    const now = Math.floor(new Date().getTime() / 1000);
+    return exp - now;
   }
 
   /**
    * Authenticates user towards backend.
    * 
+   * @param url Backend API URL
    * @param username Username
    * @param password Password
+   * @param storePassword Whether or not passsword should be persisted into local storage
    */
   authenticate(
     url: string,
@@ -72,43 +95,72 @@ export class AuthService {
     // Returning new observer, chaining authentication and retrieval of endpoints.
     return new Observable<AuthenticateResponse>(observer => {
 
-      // Authenticating user.
-      this.httpClient.get<AuthenticateResponse>(
-        url + '/magic/modules/system/auth/authenticate' +
-        '?username=' + encodeURI(username) +
-        '&password=' + encodeURI(password)).subscribe(auth => {
+      // Sanity checking invocation
+      if (!this.isConnected) {
+        observer.error('Not connected to any backend, please choose or configure a backend before trying to authenticate');
+        observer.complete();
+      } else {
 
-          // Persisting backend data.
-          let backend: Backend = {
-            url,
-            username,
-            token: auth.ticket,
-            password: storePassword ? password : null,
-          };
-          this.persistBackend(backend);
+        // Authenticating user.
+        this.httpClient.get<AuthenticateResponse>(
+          url + '/magic/modules/system/auth/authenticate' +
+          '?username=' + encodeURI(username) +
+          '&password=' + encodeURI(password)).subscribe(auth => {
 
-          // Retrieving endpoints for current backend.
-          this.getEndpoints().subscribe(endpoints => {
-            this.endpoints = endpoints;
-            observer.next(auth);
-            observer.complete();
+            // Persisting backend data.
+            let backend: Backend = {
+              url,
+              username,
+              token: auth.ticket,
+              password: storePassword ? password : null,
+            };
+            this.persistBackend(backend);
+
+            // Retrieving endpoints for current backend.
+            this.getEndpoints().subscribe(endpoints => {
+              observer.next(auth);
+              observer.complete();
+            }, (error: any) => {
+              observer.error(error);
+              observer.complete();
+            });
+
           }, (error: any) => {
             observer.error(error);
             observer.complete();
           });
-
-        }, (error: any) => {
-          observer.error(error);
-          observer.complete();
-        });
+        }
       });
   }
 
-  /*
-   * Private helper method to retrieve endpoints for currently selected backend.
+  /**
+   * Retrieves endpoints for currently selected backend.
    */
-  private getEndpoints() {
-    return this.httpClient.get<Endpoint[]>(this.backendUrl + '/magic/modules/system/endpoints/endpoints');
+  public getEndpoints() {
+
+    // Returning new observer, chaining retrieval of endpoints and storing them locally.
+    return new Observable<Endpoint[]>(observer => {
+      this.httpClient.get<Endpoint[]>(
+        this.currentBackend.url + '/magic/modules/system/endpoints/endpoints').subscribe(res => {
+        this.endpoints = res;
+        observer.next(res);
+        observer.complete();
+      }, error => {
+        observer.error(error);
+        observer.complete();
+      });
+    });
+  }
+
+  /**
+   * Returns true if specified JWT token is expired.
+   * 
+   * @param token JWT token to check.
+   */
+  public isTokenExpired(token: string) {
+    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
+    const now = Math.floor(new Date().getTime() / 1000);
+    return now >= exp;
   }
 
   /*
@@ -125,6 +177,60 @@ export class AuthService {
       el.url = backend.url;
       el.token = backend.token;
     }
+    this.persistBackends();
+  }
+
+  /*
+   * Persists all backends into local storage.
+   */
+  private persistBackends() {
     localStorage.setItem('backends', JSON.stringify(this.backends));
+  }
+
+  /*
+   * Removes all tokens from all backends that are expired, and
+   * makes sure all valid tokens invokes the refresh endpoint before
+   * the token expires.
+   */
+  private removeInvalidTokens() {
+    for (let idx = 0; idx < this.backends.length; idx++) {
+      const el = this.backends[idx];
+      if (el.token !== null && this.isTokenExpired(el.token)) {
+        el.token = null;
+      }
+    }
+  }
+
+  /*
+   * Creates a refresh JWT token timer, that invokes the
+   * refresh token endpoint to update it, just before it
+   * expires.
+   */
+  private createRefreshJWTTimers() {
+    for (let idx = 0; idx < this.backends.length; idx++) {
+      const el = this.backends[idx];
+      if (el.token !== null) {
+        const exp = (JSON.parse(atob(el.token.split('.')[1]))).exp;
+        const now = Math.floor(new Date().getTime() / 1000);
+        const delta = exp - now;
+        setTimeout(() => {
+          this.refreshJWTToken(el);
+        }, delta * 1000);
+      }
+    }
+  }
+
+  /*
+   * Will refresh the JWT token for the specified backend.
+   */
+  private refreshJWTToken(backend: Backend) {
+    console.log(`Attempting to refresh JWT token for backend with URL of '${backend.url}'`);
+    this.httpClient.get<AuthenticateResponse>(backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
+      backend.token = res.ticket;
+      console.log('JWT token was successfully refreshed');
+      this.persistBackends();
+    }, error => {
+      console.error(error);
+    });
   }
 }

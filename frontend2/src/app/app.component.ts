@@ -1,3 +1,7 @@
+
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,9 +19,14 @@ export class AppComponent implements OnInit {
 
   sidenavOpened = false;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService) { }
 
   ngOnInit() {
+    this.authService.getEndpoints().subscribe(res => {
+      console.log(res);
+    });
   }
 
   /**
