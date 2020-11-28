@@ -21,7 +21,7 @@ export class LoginDialogComponent implements OnInit {
 
   login() {
     this.authService.authenticate(
-      this.authService.backendUrl,
+      this.authService.currentBackend.url,
       this.username,
       this.password,
       false).subscribe(res => {

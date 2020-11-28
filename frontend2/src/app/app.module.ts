@@ -6,7 +6,8 @@
 // Angular imports.
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
 // Material imports
@@ -22,10 +23,10 @@ import { MatInputModule } from '@angular/material/input';
 // App specific imports
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SqlComponent } from './components/sql/sql.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,13 @@ import { LoginDialogComponent } from './components/login-dialog/login-dialog.com
     MatFormFieldModule,
     MatInputModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
