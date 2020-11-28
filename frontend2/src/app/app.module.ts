@@ -19,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // App specific imports
 import { AppRoutingModule } from './app-routing.module';
@@ -27,6 +28,8 @@ import { SqlComponent } from './components/sql/sql.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { LoaderInterceptor } from './services/loader-interceptor';
+import { LoaderService } from './services/loader-service';
 
 @NgModule({
   declarations: [
@@ -49,13 +52,19 @@ import { AuthInterceptor } from './services/auth.interceptor';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    }
+    },
+    LoaderService, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent],
 })

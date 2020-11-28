@@ -1,4 +1,11 @@
-  
+
+<mat-spinner
+  *ngIf="loaderService.isLoading | async"
+  mode="indeterminate"
+  diameter="50"
+  class="ajax-wait">
+</mat-spinner>
+
 <mat-sidenav-container
   class="navbar-container">
 
@@ -54,7 +61,7 @@
         matTooltip="Login"
         aria-label="Login"
         (click)="login()">
-        <mat-icon>vpn_key</mat-icon>
+        <mat-icon>lock_open</mat-icon>
       </button>
 
       <button
