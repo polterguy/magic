@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { LoaderService } from './services/loader-service';
 
 /**
  * Main wire frame application component.
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    public loaderService: LoaderService,
     public authService: AuthService) { }
 
   ngOnInit() {

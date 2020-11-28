@@ -138,7 +138,7 @@ export class AuthService {
     // Returning new observer, chaining retrieval of endpoints and storing them locally.
     return new Observable<Endpoint[]>(observer => {
       this.httpClient.get<Endpoint[]>(
-        this.currentBackend.url + '/magic/modules/system/endpoints/endpoints').subscribe(res => {
+        this.currentBackend.url + '/magic/modules/system/auth/endpoints').subscribe(res => {
         this.endpoints = res;
         observer.next(res);
         observer.complete();
