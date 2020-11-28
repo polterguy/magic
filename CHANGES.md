@@ -912,6 +912,8 @@ Implemented support for multiple connection strings in the SQL menu item.
 
 Implemented support for multiple connection strings in the Crudify menu item.
 
+Fixed a bug when crudifying SQL endpoint that didn't allow for overriding the module name.
+
 ## magic.data.common
 
 Created **[xxx.yyy]** slots for transparently using the default database adapter, as

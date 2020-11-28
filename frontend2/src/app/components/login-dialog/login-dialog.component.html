@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Login</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <mat-label>Username</mat-label>
+    <input
+      matInput
+      [(ngModel)]="username"
+      autocomplete="username"
+      placeholder="Username">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <mat-label>Password</mat-label>
+    <input
+      matInput
+      [(ngModel)]="password"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Password">
+  </mat-form-field>
+
+</div>
+
+<div
+  mat-dialog-actions
+  class="mat-dialog-actions">
+
+  <button
+    mat-button
+    aria-label="Login to the currently selected backend API"
+    (click)="login()">Login</button>
+
+</div>

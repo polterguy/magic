@@ -1,0 +1,65 @@
+  
+<mat-sidenav-container
+  class="navbar-container">
+
+  <mat-sidenav
+    mode="side"
+    [(opened)]="sidenavOpened">
+
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-link"
+      (click)="closeNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>home</mat-icon>
+      <span>Home</span>
+    </a>
+
+    <a
+      mat-button
+      routerLink="/sql"
+      routerLinkActive="active-link"
+      (click)="closeNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>home</mat-icon>
+      <span>SQL</span>
+    </a>
+
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+
+    <div
+      *ngIf="sidenavOpened"
+      (click)="closeNavbar()"
+      class="obscurer"></div>
+
+    <mat-toolbar>
+
+      <button
+        mat-icon-button
+        matTooltip="Show menu"
+        aria-label="Opens navbar"
+        (click)="openNavbar()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>Magic</span>
+
+      <span class="spacer"></span>
+
+      <button
+        mat-icon-button
+        matTooltip="Login"
+        aria-label="Login"
+        (click)="login()">
+        <mat-icon>vpn_key</mat-icon>
+      </button>
+
+    </mat-toolbar>
+
+    <router-outlet></router-outlet>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

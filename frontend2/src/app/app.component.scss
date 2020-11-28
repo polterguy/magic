@@ -1,0 +1,59 @@
+
+.navbar-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: rgb(245,245,245);
+  background-color: rgb(55,55,55);
+
+  mat-sidenav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    padding: 1rem;
+    background: rgb(29, 29, 29);
+    color: rgb(245,245,245);
+    z-index: 1000;
+    @media screen and (max-width: 500px) {
+      width: 100vw;
+    }
+    a {
+      width: 100%;
+      text-align: left;
+      margin-bottom: .5rem;
+      span {
+        margin-left: .5rem;
+      }
+    }
+  }
+
+  mat-sidenav-content {
+    margin-top: 64px;
+    padding: 2rem;
+    margin-left: 0 !important;
+
+    mat-toolbar {
+      background: rgb(45, 45, 45);
+      border-bottom: solid 1px rgba(0,0,0,.2);
+      color: rgb(245,245,245);
+      position: fixed;
+      top: 0;
+      left: 0;
+      .spacer {
+        flex: 1 1 auto;
+      }
+    }
+    .obscurer {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1001;
+      background-color: rgba(0,0,0,.4);
+    }
+  }
+}
