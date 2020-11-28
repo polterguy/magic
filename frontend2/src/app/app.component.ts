@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private authService: AuthService) { }
+    public authService: AuthService) { }
 
   ngOnInit() {
     this.authService.getEndpoints().subscribe(res => {
@@ -54,5 +54,12 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
+  }
+
+  /**
+   * Logs the user out from his current backend.
+   */
+  logout() {
+    this.authService.logout();
   }
 }

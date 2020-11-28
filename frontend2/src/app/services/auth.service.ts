@@ -123,6 +123,14 @@ export class AuthService {
   }
 
   /**
+   * Logs out the user from his current active backend.
+   */
+  public logout() {
+    this.curBackend.token = null;
+    this.persistBackend(this.curBackend);
+  }
+
+  /**
    * Retrieves endpoints for currently selected backend.
    */
   public getEndpoints() {
@@ -224,15 +232,17 @@ export class AuthService {
    * Will refresh the JWT token for the specified backend.
    */
   private refreshJWTToken(backend: Backend) {
-    this.httpClient.get<AuthenticateResponse>(
-      backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
-      backend.token = res.ticket;
-      this.persistBackends();
-      this.createRefreshJWTTimer(backend);
-    }, () => {
-      console.error('JWT token could not be refreshed');
-      backend.token = null;
-      this.persistBackends();
-    });
+    if (backend.token) {
+      this.httpClient.get<AuthenticateResponse>(
+        backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
+        backend.token = res.ticket;
+        this.persistBackends();
+        this.createRefreshJWTTimer(backend);
+      }, () => {
+        console.error('JWT token could not be refreshed');
+        backend.token = null;
+        this.persistBackends();
+      });
+    }
   }
 }
