@@ -60,7 +60,7 @@
     </a>
 
     <a
-      *ngIf="authService.hasAccess('crudifier')"
+      *ngIf="authService.hasAccess('magic/modules/system/crudifier')"
       mat-button
       routerLink="/crudifier"
       routerLinkActive="active-link"
@@ -71,7 +71,7 @@
     </a>
 
     <a
-      *ngIf="authService.hasAccess('endpoints')"
+      *ngIf="authService.hasAccess('magic/modules/system/endpoints')"
       mat-button
       routerLink="/endpoints"
       routerLinkActive="active-link"
@@ -82,7 +82,7 @@
     </a>
 
     <a
-      *ngIf="authService.hasAccess('sql')"
+      *ngIf="authService.hasAccess('magic/modules/system/sql')"
       mat-button
       routerLink="/sql"
       routerLinkActive="active-link"
@@ -93,68 +93,68 @@
     </a>
 
     <a
-      *ngIf="authService.hasAccess('scheduler')"
+      *ngIf="authService.hasAccess('magic/modules/system/tasks')"
       mat-button
       routerLink="/tasks"
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>cloud</mat-icon>
+      <mat-icon matSuffix>calendar_today</mat-icon>
       <span>Tasks</span>
     </a>
 
     <a
-      *ngIf="authService.hasAccess('files')"
+      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
       mat-button
-      routerLink="/files"
+      routerLink="/file-system"
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>cloud</mat-icon>
-      <span>Files</span>
+      <mat-icon matSuffix>file_copy</mat-icon>
+      <span>File system</span>
     </a>
 
     <a
-      *ngIf="authService.hasAccess('evaluator')"
+      *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
       mat-button
       routerLink="/evaluator"
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>cloud</mat-icon>
+      <mat-icon matSuffix>autorenew</mat-icon>
       <span>Evaluator</span>
     </a>
 
     <a
-      *ngIf="authService.hasAccess('auth')"
+      *ngIf="authService.hasAccess('magic/modules/system/auth')"
       mat-button
       routerLink="/auth"
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>cloud</mat-icon>
+      <mat-icon matSuffix>people</mat-icon>
       <span>Auth</span>
     </a>
 
     <a
-      *ngIf="authService.hasAccess('log')"
+      *ngIf="authService.hasAccess('magic/modules/system/log')"
       mat-button
       routerLink="/log"
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>cloud</mat-icon>
+      <mat-icon matSuffix>bar_chart</mat-icon>
       <span>Log</span>
     </a>
 
     <a
-      *ngIf="authService.hasAccess('crypto')"
+      *ngIf="authService.hasAccess('magic/modules/system/crypto')"
       mat-button
       routerLink="/crypto"
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>cloud</mat-icon>
+      <mat-icon matSuffix>security</mat-icon>
       <span>Crypto</span>
     </a>
 
@@ -169,9 +169,12 @@
 
     </div>
 
-    <router-outlet *ngIf="hasAccessToCurrentComponent()"></router-outlet>
+    <router-outlet
+      *ngIf="hasAccessToCurrentComponent()"></router-outlet>
 
-    <mat-card class="no-access" *ngIf="!hasAccessToCurrentComponent()">
+    <mat-card
+      *ngIf="!hasAccessToCurrentComponent()"
+      class="no-access">
       <h2>Access Denied</h2>
       <p>
         I am sorry but I can't grant you access to this component ...

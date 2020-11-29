@@ -62,7 +62,7 @@ export class LoginDialogComponent implements OnInit {
   public showSecurityWarning() {
     this.messageService.sendMessage({
       name: Messages.INFO,
-      content: 'Clicking the Login button will transmit your password in clear text since you are not connected to your backend over a secure connection'
+      content: 'Clicking the login button will transmit your password in clear text'
     });
   }
 

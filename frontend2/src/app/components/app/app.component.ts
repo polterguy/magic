@@ -153,10 +153,10 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public hasAccessToCurrentComponent() {
     const segments = this.router.url.split('/');
-    if (segments.length < 2) {
+    if (segments.filter(x => x === '').length === 2) {
       return true; // Home component
     }
-    return this.authService.hasAccess(segments[1]);
+    return this.authService.hasAccess('magic/modules/system/' + segments[1]);
   }
 
   /*
