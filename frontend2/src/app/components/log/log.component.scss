@@ -1,4 +1,16 @@
 
+.item-details {
+  padding: 2rem;
+  position: relative;
+  background-color: #ccc;
+  margin-bottom: 2rem;
+  .close {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
+}
+
 tr.display-details {
   background-color: rgba(255,255,255,.1);
   td {
@@ -10,13 +22,16 @@ tr.lighter {
   background-color: rgba(255,255,255,.05);
 }
 
-.details-sheet {
+.details-sheet, .item-details {
   .details-item {
     display: block;
     margin-bottom: .15rem;
     strong {
       display: inline-block;
       width: 5rem;
+    }
+    span {
+      padding-left: 1rem;
     }
   }
   .full-width {
@@ -26,6 +41,7 @@ tr.lighter {
     }
     span {
       display: block;
+      padding-left: 0;
     }
     width: 100%;
   }

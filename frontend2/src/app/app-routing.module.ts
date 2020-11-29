@@ -26,6 +26,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'sql', component: SqlComponent },
   { path: 'log', component: LogComponent },
+  { path: 'log/:id', component: LogComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
   { path: 'crypto', component: CryptoComponent },
