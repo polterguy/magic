@@ -74,7 +74,11 @@
 
   <mat-sidenav-content>
 
-    <router-outlet></router-outlet>
+    <router-outlet *ngIf="hasAccessToCurrentComponent()"></router-outlet>
+
+    <div *ngIf="!hasAccessToCurrentComponent()">
+      You don'd have access to this component. Try logging in ...
+    </div>
 
   </mat-sidenav-content>
 

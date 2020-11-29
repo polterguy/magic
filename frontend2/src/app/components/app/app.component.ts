@@ -15,6 +15,7 @@ import { AuthService } from 'src/app//services/auth.service';
 import { LoaderService } from 'src/app/services/loader-service';
 import { MessageService } from 'src/app/services/message-service';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
+import { Router } from '@angular/router';
 
 /**
  * Main wire frame application component.
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param snackBar Snack bar used to display feedback to user, such as error or information
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
+   * @param router Router service used to redirect user according to business logic flow
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
    * @param authService Authentication and authorisation service, used to authenticate user, etc
    */
@@ -42,6 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private messageService: MessageService,
+    private router: Router,
     public loaderService: LoaderService,
     public authService: AuthService) { }
 
@@ -53,6 +56,14 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
 
       switch(msg.name) {
+
+        case Messages.LOGGED_OUT:
+          this.showInfo('You were successfully logged out of your backend');
+          break;
+
+        case Messages.LOGGED_IN:
+          this.showInfo('You were successfully authenticated towards your backend');
+          break;
 
         case Messages.ERROR:
           this.showError(msg.content);
@@ -92,9 +103,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '550px',
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Authenticated');
     }, error => {
       this.showError(error);
     });
@@ -105,7 +115,9 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public logout() {
     this.authService.logout(false);
-    this.showInfo('You were successfully logged out of your backend');
+    this.messageService.sendMessage({
+      name: Messages.LOGGED_OUT,
+    });
   }
 
   /**
@@ -134,6 +146,17 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public getUserRoles() {
     return this.authService.roles().join(', ');
+  }
+
+  /**
+   * Returns true if user has access to currently loaded component.
+   */
+  public hasAccessToCurrentComponent() {
+    const segments = this.router.url.split('/');
+    if (segments.length < 2) {
+      return true; // Home component
+    }
+    return this.authService.hasAccess(segments[1]);
   }
 
   /*

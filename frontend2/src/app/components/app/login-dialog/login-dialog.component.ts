@@ -92,8 +92,7 @@ export class LoginDialogComponent implements OnInit {
       this.password,
       this.savePassword).subscribe(res => {
         this.messageService.sendMessage({
-          name: Messages.INFO,
-          content: 'You were successfully authenticated towards your backend'
+          name: Messages.LOGGED_IN,
         });
         this.dialogRef.close();
       }, error => {
