@@ -1,0 +1,83 @@
+
+<mat-form-field class="fill-width">
+  <mat-label>Filter ...</mat-label>
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    matTooltip="Clear filter"
+    (click)="clearFilter()">clear</mat-icon>
+</mat-form-field>
+
+<table mat-table [dataSource]="items">
+
+  <ng-container matColumnDef="when">
+    <th
+      class="minimalistic-col"
+      mat-header-cell
+      *matHeaderCellDef>When</th>
+    <td
+      class="minimalistic-col"
+      mat-cell
+      *matCellDef="let el">{{el.created | since}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="type">
+    <th
+      class="minimalistic-col"
+      mat-header-cell
+      *matHeaderCellDef>Type</th>
+    <td
+      (click)="setFilter(el.type)"
+      class="minimalistic-col clickable-col"
+      mat-cell
+      *matCellDef="let el">{{el.type}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="content">
+    <th
+      mat-header-cell
+      *matHeaderCellDef>Content</th>
+    <td
+      (click)="setFilter(el.content)"
+      class="clickable-col"
+      mat-cell
+      *matCellDef="let el">{{el.content}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="details">
+    <th
+      class="button-col"
+      mat-header-cell
+      *matHeaderCellDef>Details</th>
+    <td
+      class="button-col"
+      mat-cell
+      *matCellDef="let el">
+      <button
+        (click)="showDetails(el)"
+        mat-button>
+        Details
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+
+<mat-paginator
+  #paginator
+  [class]="count > 25 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="10"
+  (page)="paged($event)"
+  [pageSizeOptions]="[5,10,25,50]">
+</mat-paginator>

@@ -23,6 +23,11 @@ table.mat-table {
       color: rgb(245,245,245);
       padding-right: 1rem;
     }
+    td {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      vertical-align: top;
+    }
     th.button-col, td.button-col {
       width: 5px;
       text-align: center;
