@@ -24,10 +24,12 @@ import { LogService } from 'src/app/services/log-service';
 export class LogComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  public filterFormControl: FormControl;
   public displayedColumns: string[] = ['when', 'type', 'content', 'details'];
+  public filterFormControl: FormControl;
   public items: LogItem[] = [];
   public count: number = 0;
+  public showGrid = true;
+  private displayDetails: number[] = [];
 
   /**
    * Creates an instance of your component.
@@ -39,7 +41,7 @@ export class LogComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  ngOnInit() {
+  public ngOnInit() {
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
@@ -60,6 +62,7 @@ export class LogComponent implements OnInit {
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe(res => {
+      this.displayDetails = [];
       this.items = res;
       this.logService.count(this.filterFormControl.value).subscribe(res => {
         this.count = res.result;
@@ -88,9 +91,44 @@ export class LogComponent implements OnInit {
     this.getItems();
   }
 
-  clearFilter() {
+  /**
+   * Clears the current filter.
+   */
+  public clearFilter() {
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
     this.getItems();
+  }
+
+  /**
+   * Shows details about one specific log item.
+   * 
+   * @param el Log item to display details for
+   */
+  public toggleDetails(el: LogItem) {
+    const idx = this.displayDetails.indexOf(el.id);
+    if (idx >= 0) {
+      this.displayDetails.splice(idx, 1);
+    } else {
+      this.displayDetails.push(el.id);
+    }
+  }
+
+  /**
+   * Returns true if details for specified log item should be displayed.
+   * 
+   * @param el Log item to display details for
+   */
+  public shouldDisplayDetails(el: LogItem) {
+    return this.displayDetails.filter(x => x === el.id).length > 0;
+  }
+
+  /**
+   * Returns the CSS class for a details row.
+   * 
+   * @param el Log item to return CSS class for
+   */
+  public getClassForDetails(el: LogItem) {
+    return this.shouldDisplayDetails(el) ? 'lighter' : 'invisible';
   }
 }
