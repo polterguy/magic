@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 
 /**
- * Home component for Macgi Dashboard.
+ * Home component for Magic Dashboard.
  */
 @Component({
   selector: 'app-home',

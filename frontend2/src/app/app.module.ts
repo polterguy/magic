@@ -34,6 +34,8 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
 import { AuthInterceptor } from './services/interceptors/auth.interceptor';
 import { LoaderInterceptor } from './services/interceptors/loader-interceptor';
 import { LoaderService } from './services/loader-service';
+import { CrudifierComponent } from './components/crudifier/crudifier.component';
+import { EndpointsComponent } from './components/endpoints/endpoints.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import { LoaderService } from './services/loader-service';
     SqlComponent,
     HomeComponent,
     LoginDialogComponent,
+    CrudifierComponent,
+    EndpointsComponent,
   ],
   imports: [
     FormsModule,
