@@ -76,9 +76,12 @@
 
     <router-outlet *ngIf="hasAccessToCurrentComponent()"></router-outlet>
 
-    <div *ngIf="!hasAccessToCurrentComponent()">
-      You don'd have access to this component. Try logging in ...
-    </div>
+    <mat-card class="no-access" *ngIf="!hasAccessToCurrentComponent()">
+      <h2>Access Denied</h2>
+      <p>
+        I am sorry but I can't grant you access to this component ...
+      </p>
+    </mat-card>
 
   </mat-sidenav-content>
 

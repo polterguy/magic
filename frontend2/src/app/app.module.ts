@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -51,6 +52,7 @@ import { LoaderService } from './services/loader-service';
     MatSidenavModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatCardModule,
     MatIconModule,
     MatToolbarModule,
     MatTooltipModule,
