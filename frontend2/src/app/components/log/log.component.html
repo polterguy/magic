@@ -78,6 +78,7 @@
   [class]="count > 25 ? '' : 'invisible'"
   [length]="count"
   pageSize="10"
+  showFirstLastButtons="true"
   (page)="paged($event)"
   [pageSizeOptions]="[5,10,25,50]">
 </mat-paginator>
