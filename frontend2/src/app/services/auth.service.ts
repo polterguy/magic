@@ -2,13 +2,17 @@
 /*
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+
+// Angular and system imports.
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { AuthenticateResponse } from '../models/authenticate-response.model';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+// Application specific imports.
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
+import { environment } from 'src/environments/environment';
+import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
  * Authentication and authorisation HTTP service.
@@ -88,7 +92,7 @@ export class AuthService {
    * @param password Password
    * @param storePassword Whether or not passsword should be persisted into local storage
    */
-  login(
+  public login(
     url: string,
     username: string,
     password: string,
@@ -183,6 +187,29 @@ export class AuthService {
     const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
     const now = Math.floor(new Date().getTime() / 1000);
     return now >= exp;
+  }
+
+  /**
+   * Returns a list of all roles currently authenticated
+   * user belongs to, if any.
+   */
+  public roles() {
+    if (!this.authenticated) {
+      return [];
+    }
+    const roles = (<string>(JSON.parse(atob(this._current.token.split('.')[1]))).role).split(',');
+    return roles.map(x => x.trim());
+  }
+
+  /**
+   * Returns true if user has access to the specified component.
+   * 
+   * @param component Name of component to check if user has access to
+   */
+  public hasAccess(component: string) {
+    if (this._endpoints.length === 0) {
+      return false;
+    }
   }
 
   /*

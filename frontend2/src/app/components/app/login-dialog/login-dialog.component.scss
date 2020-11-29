@@ -3,6 +3,10 @@ h1 {
   .warning-button {
     float: right;
     color: #e55 !important;
+    margin-top: -.5rem;
+    mat-icon {
+      font-size: 2rem;
+    }
   }
 }
 
