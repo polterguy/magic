@@ -60,6 +60,7 @@
     </a>
 
     <a
+      *ngIf="authService.hasAccess('sql')"
       mat-button
       routerLink="/sql"
       routerLinkActive="active-link"
