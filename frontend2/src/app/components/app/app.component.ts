@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Subscription } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -24,7 +24,7 @@ import { LoginDialogComponent } from './login-dialog/login-dialog.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   private subscriber: Subscription;
   public sidenavOpened = false;
@@ -49,7 +49,9 @@ export class AppComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
+
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
+
       switch(msg.name) {
 
         case Messages.ERROR:
@@ -61,11 +63,19 @@ export class AppComponent implements OnInit {
           break;
         }
     });
+
     this.authService.getEndpoints().subscribe(res => {
       console.log('Endpoints authorisation objects retrieved');
     }, error => {
       this.showError(error);
     });
+  }
+
+  /**
+   * OnDestroy implementation.
+   */
+  public ngOnDestroy() {
+    this.subscriber.unsubscribe();
   }
 
   /**
@@ -85,6 +95,8 @@ export class AppComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+    }, error => {
+      this.showError(error);
     });
   }
 
@@ -95,25 +107,40 @@ export class AppComponent implements OnInit {
     this.authService.logout(false);
   }
 
+  /**
+   * Returns the user's status to caller.
+   */
+  public getUserStatus() {
+    if (this.authService.authenticated) {
+      return this.authService.current.username +
+        '@' +
+        this.authService.current.url.replace('http://', '').replace('https://', '');
+    } else if (this.authService.connected) {
+      return 'anonymous@' + this.authService.current.url.replace('http://', '').replace('https://', '');
+    } else {
+      return 'Not connected'
+    }
+  }
+
   /*
    * Private helper methods.
    */
 
-   /*
-    * Common method for displaying errors in the application.
-    */
-   private showError(error: any) {
+  /*
+   * Common method for displaying errors in the application.
+   */
+  private showError(error: any) {
     this.snackBar.open(error.error?.message || error, null, {
       duration: 5000,
     });
-   }
+  }
 
-   /*
-    * Common method for displaying information to the end user.
-    */
-   private showInfo(info: string) {
+  /*
+   * Common method for displaying information to the end user.
+   */
+  private showInfo(info: string) {
     this.snackBar.open(info, null, {
       duration: 5000,
     });
-   }
+  }
 }
