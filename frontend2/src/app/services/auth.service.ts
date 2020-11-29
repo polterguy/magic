@@ -49,7 +49,7 @@ export class AuthService {
    * Returns true if user is connected to a backend.
    */
   public get connected() {
-    return !!this._current && this._endpoints.length > 0;
+    return !!this._current;
   }
 
   /**
@@ -148,15 +148,22 @@ export class AuthService {
 
     // Returning new observer, chaining retrieval of endpoints and storing them locally.
     return new Observable<Endpoint[]>(observer => {
-      this.httpClient.get<Endpoint[]>(
-        this.current.url + '/magic/modules/system/auth/endpoints').subscribe(res => {
-        this._endpoints = res;
-        observer.next(res);
+
+      // Sanity checking invocation
+      if (!this.connected) {
+        observer.error('Not connected to any backend, please choose or configure a backend before trying to retrieve endpoints');
         observer.complete();
-      }, error => {
-        observer.error(error);
-        observer.complete();
-      });
+      } else {
+        this.httpClient.get<Endpoint[]>(
+          this.current.url + '/magic/modules/system/auth/endpoints').subscribe(res => {
+          this._endpoints = res;
+          observer.next(res);
+          observer.complete();
+        }, error => {
+          observer.error(error);
+          observer.complete();
+        });
+      }
     });
   }
 
@@ -171,7 +178,9 @@ export class AuthService {
     return now >= exp;
   }
 
-  // Private helper methods.
+  /*
+   * Private helper methods.
+   */
 
   /*
    * Persists specified backend into local storage.
