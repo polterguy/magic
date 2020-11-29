@@ -74,6 +74,13 @@
 
   <mat-sidenav-content>
 
+    <div
+      *ngIf="sidenavOpened"
+      class="obscurer"
+      (click)="toggleNavbar()">
+
+    </div>
+
     <router-outlet *ngIf="hasAccessToCurrentComponent()"></router-outlet>
 
     <mat-card class="no-access" *ngIf="!hasAccessToCurrentComponent()">

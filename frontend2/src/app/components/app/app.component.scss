@@ -72,6 +72,15 @@ mat-toolbar {
     padding: 3rem 5rem;
     margin-left: 0 !important;
     box-sizing: border-box;
+    position: relative;
+    .obscurer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,.3);
+    }
     .no-access {
       width: 80%;
       padding: 3rem;
