@@ -210,6 +210,17 @@ export class AuthService {
     if (this._endpoints.length === 0) {
       return false;
     }
+    const roles = this.roles();
+    const endpoints = this._endpoints.filter(x => x.path.indexOf('/' + component + '/') >= 0);
+    for (var idx of endpoints) {
+      if (idx.auth.length === 0) {
+        continue;
+      }
+      if (idx.auth.filter(x => roles.indexOf(x) >= 0).length === 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /*
