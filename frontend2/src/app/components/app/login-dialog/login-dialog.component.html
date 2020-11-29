@@ -21,7 +21,7 @@
       [matAutocomplete]="auto">
     <mat-autocomplete
       #auto="matAutocomplete"
-      (optionSelected)="backendChosen()">
+      (optionSelected)="backendSelected()">
       <mat-option
         *ngFor="let el of filteredBackends | async"
         [value]="el">

@@ -62,7 +62,7 @@ export class LoginDialogComponent implements OnInit {
   public showSecurityWarning() {
     this.messageService.sendMessage({
       name: Messages.INFO,
-      content: 'Clicking the Login button will transmit your password in clear text since you are not connected to your backend over a TLS connection'
+      content: 'Clicking the Login button will transmit your password in clear text since you are not connected to your backend over a secure connection'
     });
   }
 
@@ -70,7 +70,7 @@ export class LoginDialogComponent implements OnInit {
    * Invoked when a backend has been chosen from the
    * persisted backends.
    */
-  public backendChosen() {
+  public backendSelected() {
     if (this.username !== '' || this.password !== '') {
       return;
     }
