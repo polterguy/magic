@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -29,6 +30,7 @@ export class LogComponent implements OnInit {
   public items: LogItem[] = [];
   public count: number = 0;
   public showGrid = true;
+  public current: LogItem = null;
   private displayDetails: number[] = [];
 
   /**
@@ -36,12 +38,22 @@ export class LogComponent implements OnInit {
    * 
    * @param logService Log HTTP service to use for retrieving log items
    */
-  constructor(private logService: LogService) { }
+  constructor(
+    private logService: LogService,
+    private route: ActivatedRoute) { }
 
   /**
    * OnInit implementation.
    */
   public ngOnInit() {
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.logService.get(id).subscribe(res => {
+          this.current = res;
+        });
+      }
+    });
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges

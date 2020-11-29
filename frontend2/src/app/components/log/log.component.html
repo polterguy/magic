@@ -1,4 +1,42 @@
 
+<mat-card
+  *ngIf="current"
+  class="item-details">
+
+  <a
+    mat-icon-button
+    routerLink="/log"
+    class="close">
+    <mat-icon>close</mat-icon>
+  </a>
+
+  <span class="details-item">
+    <strong>ID</strong>
+    <span>{{current.id}}</span>
+  </span>
+
+  <span class="details-item">
+    <strong>Created</strong>
+    <span>{{current.created}}</span>
+  </span>
+
+  <span class="details-item">
+    <strong>Type</strong>
+    <span>{{current.type}}</span>
+  </span>
+
+  <span class="details-item full-width">
+    <strong>Content</strong>
+    <span>{{current.content}}</span>
+  </span>
+
+  <span *ngIf="current.exception" class="details-item full-width">
+    <strong>Exception</strong>
+    <span>{{current.exception}}</span>
+  </span>
+
+</mat-card>
+
 <mat-form-field class="fill-width">
 
   <mat-label>Filter ...</mat-label>
@@ -86,7 +124,9 @@
 
         <span class="details-item">
           <strong>ID</strong>
-          <span>{{el.id}}</span>
+          <a
+            mat-button
+            [routerLink]="'/log/' + el.id">{{el.id}}</a>
         </span>
 
         <span class="details-item">

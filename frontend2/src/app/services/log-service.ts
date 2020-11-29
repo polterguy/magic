@@ -55,6 +55,17 @@ export class LogService {
   }
 
   /**
+   * Retrieves one specific item, and returns to caller.
+   * 
+   * @param id ID of item to retrieve
+   */
+  public get(id: number) {
+    return this.httpClient.get<LogItem>(
+      this.authService.current.url +
+      '/magic/modules/system/log/log-item?id=' + id);
+  }
+
+  /**
    * Counts the number of log items in your backend.
    * 
    * @param filter Query filter for items to include in count
