@@ -1,0 +1,32 @@
+
+tr.display-details {
+  background-color: rgba(255,255,255,.1);
+  td {
+    border-bottom: none;
+  }
+}
+
+tr.lighter {
+  background-color: rgba(255,255,255,.05);
+}
+
+.details-sheet {
+  .details-item {
+    display: block;
+    margin-bottom: .15rem;
+    strong {
+      display: inline-block;
+      width: 5rem;
+    }
+  }
+  .full-width {
+    margin-top: 2rem;
+    strong {
+      display: block;
+    }
+    span {
+      display: block;
+    }
+    width: 100%;
+  }
+}
