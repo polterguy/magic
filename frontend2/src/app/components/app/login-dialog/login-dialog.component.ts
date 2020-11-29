@@ -57,6 +57,16 @@ export class LoginDialogComponent implements OnInit {
   }
 
   /**
+   * Shows a security warning about password to user.
+   */
+  public showSecurityWarning() {
+    this.messageService.sendMessage({
+      name: Messages.INFO,
+      content: 'Clicking the Login button will transmit your password in clear text since you are not connected to your backend over a TLS connection'
+    });
+  }
+
+  /**
    * Invoked when a backend has been chosen from the
    * persisted backends.
    */
