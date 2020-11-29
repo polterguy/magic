@@ -55,6 +55,6 @@ export class AppComponent implements OnInit {
    * Logs the user out from his current backend.
    */
   logout() {
-    this.authService.logout();
+    this.authService.logout(false);
   }
 }

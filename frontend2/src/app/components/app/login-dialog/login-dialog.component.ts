@@ -48,7 +48,7 @@ export class LoginDialogComponent implements OnInit {
   }
 
   public login() {
-    this.authService.authenticate(
+    this.authService.login(
       this.backends.value,
       this.username,
       this.password,

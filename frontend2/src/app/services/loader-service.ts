@@ -12,7 +12,9 @@ import { Injectable } from '@angular/core';
  * Combined with the LoaderInterceptor, this is the service that makes
  * sure the user sees an Ajax loader during invocations towards the backend.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LoaderService {
 
   /**

@@ -8,12 +8,14 @@ import {
   HttpHandler,
   HttpRequest
 } from '@angular/common/http';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthService) { }
@@ -31,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (req.headers.has('Authorization')) {
       return next.handle(req);
     } else {
-      const token = this.authService.currentBackend.token;
+      const token = this.authService.current.token;
       if (token && !this.authService.isTokenExpired(token)) {
         const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + token)});
         return next.handle(authReq);
