@@ -4,5 +4,44 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .fill-width {
-    width: 100%;
+  width: 100%;
+}
+
+.invisible {
+    display: none !important;
+}
+
+.button {
+    cursor: pointer;
+}
+
+table.mat-table {
+  width: 100%;
+  background-color: transparent;
+  tr {
+    th, td {
+      color: rgb(245,245,245);
+      padding-right: 1rem;
+    }
+    th.button-col, td.button-col {
+      width: 5px;
+      text-align: center;
+    }
+    th.minimalistic-col, td.minimalistic-col {
+      width: 5px;
+      white-space: nowrap;
+    }
+    td.clickable-col {
+      cursor: pointer;
+    }
+  }
+}
+
+mat-paginator.mat-paginator {
+  background-color: transparent;
+  color: rgb(245,245,245);
+}
+
+mat-label {
+  color: rgb(245,245,245);
 }

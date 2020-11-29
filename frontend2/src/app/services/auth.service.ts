@@ -209,6 +209,9 @@ export class AuthService {
   public hasAccess(component: string) {
     const roles = this.roles();
     const endpoints = this._endpoints.filter(x => x.path.indexOf(component) >= 0);
+    if (endpoints.length === 0) {
+      return false;
+    }
     for (var idx of endpoints) {
       if (!idx.auth || idx.auth.length === 0) {
         continue; // No authorisation required.
