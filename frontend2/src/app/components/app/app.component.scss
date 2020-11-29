@@ -71,14 +71,22 @@ mat-toolbar {
   mat-sidenav-content {
     padding: 3rem 5rem;
     margin-left: 0 !important;
+    box-sizing: border-box;
     .no-access {
-      width: 50%;
+      width: 80%;
       padding: 3rem;
+      margin-top: 3rem;
       margin-left: auto;
       margin-right: auto;
       h2, p {
         text-align: center;
       }
+    }
+    @media screen and (max-width: 800px) {
+      padding: 3rem;
+    }
+    @media screen and (max-width: 600px) {
+      padding: 2rem;
     }
   }
 }
