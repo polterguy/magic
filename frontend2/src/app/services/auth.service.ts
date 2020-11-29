@@ -46,6 +46,13 @@ export class AuthService {
   }
 
   /**
+   * Returns true if we are securely connected to a backend.
+   */
+  public get secure() {
+    return !!this._current && this._current.url.startsWith('https://');
+  }
+
+  /**
    * Returns true if user is connected to a backend.
    */
   public get connected() {

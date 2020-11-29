@@ -19,6 +19,10 @@
 
   <span class="spacer"></span>
 
+  <span
+    [matTooltip]="this.authService.secure ? 'secure' : 'not secured'"
+    [class]="this.authService.secure ? 'user' : 'user warning'">{{getUserStatus()}}</span>
+
   <button
     *ngIf="!authService.authenticated"
     mat-icon-button
