@@ -1,3 +1,7 @@
+
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 import { Injectable } from "@angular/core";
 import { tap, catchError } from 'rxjs/operators';
 import { LoaderService } from './loader-service';

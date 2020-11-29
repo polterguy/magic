@@ -132,6 +132,7 @@ export class AuthService {
    */
   public logout() {
     this.curBackend.token = null;
+    this.curBackend.password = null;
     this.persistBackend(this.curBackend);
   }
 

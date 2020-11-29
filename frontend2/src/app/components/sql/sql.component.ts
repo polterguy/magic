@@ -1,3 +1,7 @@
+
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -11,5 +15,4 @@ export class SqlComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }

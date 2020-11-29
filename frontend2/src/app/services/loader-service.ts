@@ -1,3 +1,7 @@
+
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 
