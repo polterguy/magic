@@ -92,6 +92,72 @@
       <span>SQL</span>
     </a>
 
+    <a
+      *ngIf="authService.hasAccess('scheduler')"
+      mat-button
+      routerLink="/tasks"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>cloud</mat-icon>
+      <span>Tasks</span>
+    </a>
+
+    <a
+      *ngIf="authService.hasAccess('files')"
+      mat-button
+      routerLink="/files"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>cloud</mat-icon>
+      <span>Files</span>
+    </a>
+
+    <a
+      *ngIf="authService.hasAccess('evaluator')"
+      mat-button
+      routerLink="/evaluator"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>cloud</mat-icon>
+      <span>Evaluator</span>
+    </a>
+
+    <a
+      *ngIf="authService.hasAccess('auth')"
+      mat-button
+      routerLink="/auth"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>cloud</mat-icon>
+      <span>Auth</span>
+    </a>
+
+    <a
+      *ngIf="authService.hasAccess('log')"
+      mat-button
+      routerLink="/log"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>cloud</mat-icon>
+      <span>Log</span>
+    </a>
+
+    <a
+      *ngIf="authService.hasAccess('crypto')"
+      mat-button
+      routerLink="/crypto"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>cloud</mat-icon>
+      <span>Crypto</span>
+    </a>
+
   </mat-sidenav>
 
   <mat-sidenav-content>

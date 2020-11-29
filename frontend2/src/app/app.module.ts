@@ -36,6 +36,12 @@ import { LoaderInterceptor } from './services/interceptors/loader-interceptor';
 import { LoaderService } from './services/loader-service';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
+import { TasksComponent } from './components/tasks/tasks.component';
+import { FilesComponent } from './components/files/files.component';
+import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { AuthComponent } from './components/auth/auth.component';
+import { LogComponent } from './components/log/log.component';
+import { CryptoComponent } from './components/crypto/crypto.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +51,12 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
     LoginDialogComponent,
     CrudifierComponent,
     EndpointsComponent,
+    TasksComponent,
+    FilesComponent,
+    EvaluatorComponent,
+    AuthComponent,
+    LogComponent,
+    CryptoComponent,
   ],
   imports: [
     FormsModule,
