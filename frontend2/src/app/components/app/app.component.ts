@@ -90,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public login() {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
-      width: '350px',
+      width: '550px',
     });
 
     dialogRef.afterClosed().subscribe(result => {

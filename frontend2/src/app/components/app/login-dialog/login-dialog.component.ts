@@ -27,8 +27,8 @@ export class LoginDialogComponent implements OnInit {
 
   public backends: FormControl = null;
   public filteredBackends: Observable<string[]>;
-  public username: string;
-  public password: string;
+  public username: string = '';
+  public password: string = '';
   public savePassword: boolean = false;
 
   /**
@@ -48,6 +48,7 @@ export class LoginDialogComponent implements OnInit {
    */
   public ngOnInit() {
     this.backends = new FormControl();
+    this.backends.setValue('');
     this.filteredBackends = this.backends.valueChanges
       .pipe(
         startWith(''),
@@ -60,6 +61,9 @@ export class LoginDialogComponent implements OnInit {
    * persisted backends.
    */
   public backendChosen() {
+    if (this.username !== '' || this.password !== '') {
+      return;
+    }
     const el = this.authService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
       this.username = el[0].username;

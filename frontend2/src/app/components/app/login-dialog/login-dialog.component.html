@@ -51,6 +51,7 @@
 
   <button
     mat-button
+    [disabled]="username === '' || password === '' || backends.value === ''"
     aria-label="Login to the currently selected backend API"
     (click)="login()">Login</button>
 
