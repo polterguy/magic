@@ -21,12 +21,16 @@ table.mat-table {
   tr {
     th, td {
       color: rgb(245,245,245);
-      padding-right: 1rem;
     }
     td {
       text-overflow: ellipsis;
       overflow: hidden;
       vertical-align: top;
+      padding: 1rem 1rem 1rem 0;
+      button {
+        margin-top:-.5rem;
+        margin-bottom:-.5rem;
+      }
     }
     th.button-col, td.button-col {
       width: 5px;
