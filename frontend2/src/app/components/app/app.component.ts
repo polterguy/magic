@@ -112,11 +112,17 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public getUserStatus() {
     if (this.authService.authenticated) {
-      return this.authService.current.username +
-        '@' +
-        this.authService.current.url.replace('http://', '').replace('https://', '');
+      let url = this.authService.current.url.replace('http://', '').replace('https://', '');
+      if (url.indexOf(':')) {
+        url = url.substr(0, url.indexOf(':'));
+      }
+      return this.authService.current.username + '@' + url;
     } else if (this.authService.connected) {
-      return 'anonymous@' + this.authService.current.url.replace('http://', '').replace('https://', '');
+      let url = this.authService.current.url.replace('http://', '').replace('https://', '');
+      if (url.indexOf(':')) {
+        url = url.substr(0, url.indexOf(':'));
+      }
+      return 'anonymous@' + url;
     } else {
       return 'Not connected'
     }

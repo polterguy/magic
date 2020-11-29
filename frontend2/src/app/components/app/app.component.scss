@@ -17,11 +17,18 @@ mat-toolbar {
   position: fixed;
   top: 0;
   left: 0;
+  button {
+    span {
+      display: inline-block;
+      font-size: 1.5rem;
+      padding-left: .5rem;
+    }
+  }
   .spacer {
     flex: 1 1 auto;
   }
   .user {
-    font-size: .7rem;
+    font-size: .9rem;
     color: #999;
     margin-right: 1rem;
     padding-top: .5rem;
@@ -36,6 +43,9 @@ mat-toolbar {
   right: 0;
   color: rgb(245,245,245);
   background-color: rgb(55,55,55);
+  @media screen and (max-width: 600px) {
+    top: 56px;
+  }
 
   mat-sidenav {
     position: absolute;
@@ -45,7 +55,7 @@ mat-toolbar {
     padding: 1rem;
     background: rgb(29, 29, 29);
     color: rgb(245,245,245);
-    @media screen and (max-width: 500px) {
+    @media screen and (max-width: 600px) {
       width: 100vw;
     }
     a {
