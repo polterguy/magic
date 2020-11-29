@@ -4,14 +4,16 @@
  */
 import { Injectable } from "@angular/core";
 import { tap, catchError } from 'rxjs/operators';
-import { LoaderService } from './loader-service';
+import { LoaderService } from 'src/app/services/loader-service';
 import { HttpRequest, HttpHandler, HttpInterceptor, HttpResponse } from '@angular/common/http';
 
 /**
  * Our HTTP interceptor that changes the LoaderService's state according to whether or not
  * an Ajax request is currently going towards your backend.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LoaderInterceptor implements HttpInterceptor {
 
   // Notice, to support multiple requests, we need to track how many "open" requests we currently have.

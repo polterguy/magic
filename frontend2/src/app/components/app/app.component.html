@@ -10,8 +10,8 @@
 
   <button
     mat-icon-button
-    matTooltip="Show menu"
-    aria-label="Opens navbar"
+    matTooltip="Toggle navbar"
+    aria-label="Toggles navbar"
     (click)="toggleNavbar()">
     <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
   </button>
@@ -20,7 +20,7 @@
   <span class="spacer"></span>
 
   <button
-    *ngIf="!authService.isAuthenticated"
+    *ngIf="!authService.authenticated"
     mat-icon-button
     matTooltip="Login"
     aria-label="Login"
@@ -29,7 +29,7 @@
   </button>
 
   <button
-    *ngIf="authService.isAuthenticated"
+    *ngIf="authService.authenticated"
     mat-icon-button
     matTooltip="Logout"
     aria-label="Logout"
