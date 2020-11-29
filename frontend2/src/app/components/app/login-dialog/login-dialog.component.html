@@ -1,4 +1,14 @@
-<h1 mat-dialog-title>Login</h1>
+<h1 mat-dialog-title>
+  Login
+  <button
+    *ngIf="this.authService.connected && backends.value.startsWith('http://')"
+    mat-icon-button
+    class="warning-button"
+    matTooltip="Not secured"
+    (click)="showSecurityWarning()">
+    <mat-icon aria-label="Warning this will submit your password in clear text">warning</mat-icon>
+  </button>
+</h1>
 
 <div mat-dialog-content>
 
