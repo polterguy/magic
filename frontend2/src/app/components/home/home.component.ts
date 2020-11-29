@@ -5,6 +5,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 
+/**
+ * Home component for Macgi Dashboard.
+ */
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -12,8 +15,16 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class HomeComponent implements OnInit {
 
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param authService Authentication and authorisation service
+   */
   constructor(public authService: AuthService) { }
 
-  ngOnInit(): void {
+  /**
+   * OnInit implementation.
+   */
+  ngOnInit() {
   }
 }

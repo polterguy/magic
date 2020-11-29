@@ -105,6 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public logout() {
     this.authService.logout(false);
+    this.showInfo('You were successfully logged out of your backend');
   }
 
   /**
@@ -126,6 +127,13 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       return 'Not connected'
     }
+  }
+
+  /**
+   * Returns all roles user belongs to.
+   */
+  public getUserRoles() {
+    return this.authService.roles().join(', ');
   }
 
   /*

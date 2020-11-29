@@ -20,8 +20,8 @@
   <span class="spacer"></span>
 
   <span
-    [matTooltip]="this.authService.secure ? 'Secure' : 'Not secured'"
-    [class]="this.authService.secure ? 'user' : 'user warning'">{{getUserStatus()}}</span>
+    [matTooltip]="authService.secure ? 'Secure' : 'Not secured'"
+    [class]="authService.secure ? 'user' : 'user warning'">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</span>
 
   <button
     *ngIf="!authService.authenticated"
@@ -65,7 +65,7 @@
       routerLinkActive="active-link"
       (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>home</mat-icon>
+      <mat-icon matSuffix>cloud</mat-icon>
       <span>SQL</span>
     </a>
 
