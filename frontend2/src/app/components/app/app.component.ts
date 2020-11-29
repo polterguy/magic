@@ -32,17 +32,10 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Closes navbar.
+   * Toggles the navbar.
    */
-  closeNavbar() {
-    this.sidenavOpened = false;
-  }
-
-  /**
-   * Opens navbar.
-   */
-  openNavbar() {
-    this.sidenavOpened = true;
+  toggleNavbar() {
+    this.sidenavOpened = !this.sidenavOpened;
   }
 
   /**

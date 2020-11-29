@@ -3,11 +3,43 @@
   *ngIf="loaderService.isLoading | async"
   mode="indeterminate"
   diameter="50"
-  class="ajax-wait">
+  class="spinner">
 </mat-spinner>
 
-<mat-sidenav-container
-  class="navbar-container">
+<mat-toolbar>
+
+  <button
+    mat-icon-button
+    matTooltip="Show menu"
+    aria-label="Opens navbar"
+    (click)="toggleNavbar()">
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  </button>
+  <span>Magic</span>
+
+  <span class="spacer"></span>
+
+  <button
+    *ngIf="!authService.isAuthenticated"
+    mat-icon-button
+    matTooltip="Login"
+    aria-label="Login"
+    (click)="login()">
+    <mat-icon>lock_open</mat-icon>
+  </button>
+
+  <button
+    *ngIf="authService.isAuthenticated"
+    mat-icon-button
+    matTooltip="Logout"
+    aria-label="Logout"
+    (click)="logout()">
+    <mat-icon>lock</mat-icon>
+  </button>
+
+</mat-toolbar>
+
+<mat-sidenav-container class="navbar-container">
 
   <mat-sidenav
     mode="side"
@@ -17,7 +49,7 @@
       mat-button
       routerLink="/"
       routerLinkActive="active-link"
-      (click)="closeNavbar()"
+      (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
       <mat-icon matSuffix>home</mat-icon>
       <span>Home</span>
@@ -27,7 +59,7 @@
       mat-button
       routerLink="/sql"
       routerLinkActive="active-link"
-      (click)="closeNavbar()"
+      (click)="toggleNavbar()"
       [routerLinkActiveOptions]="{exact:true}">
       <mat-icon matSuffix>home</mat-icon>
       <span>SQL</span>
@@ -36,44 +68,6 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-
-    <div
-      *ngIf="sidenavOpened"
-      (click)="closeNavbar()"
-      class="obscurer"></div>
-
-    <mat-toolbar>
-
-      <button
-        mat-icon-button
-        matTooltip="Show menu"
-        aria-label="Opens navbar"
-        (click)="openNavbar()">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span>Magic</span>
-
-      <span class="spacer"></span>
-
-      <button
-        *ngIf="!authService.isAuthenticated"
-        mat-icon-button
-        matTooltip="Login"
-        aria-label="Login"
-        (click)="login()">
-        <mat-icon>lock_open</mat-icon>
-      </button>
-
-      <button
-        *ngIf="authService.isAuthenticated"
-        mat-icon-button
-        matTooltip="Logout"
-        aria-label="Logout"
-        (click)="logout()">
-        <mat-icon>lock</mat-icon>
-      </button>
-
-    </mat-toolbar>
 
     <router-outlet></router-outlet>
 
