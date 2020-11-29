@@ -74,7 +74,6 @@ export class LogComponent implements OnInit {
    */
   public paged(e: PageEvent) {
     this.paginator.pageSize = e.pageSize;
-    console.log(e);
     this.getItems();
   }
 
