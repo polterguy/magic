@@ -21,6 +21,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // App specific imports
@@ -57,6 +58,7 @@ import { LoaderService } from './services/loader-service';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatSnackBarModule,
     MatProgressSpinnerModule,
   ],
   providers: [
