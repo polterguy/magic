@@ -9,18 +9,18 @@
 <mat-toolbar>
 
   <button
-    mat-icon-button
+    mat-button
     matTooltip="Toggle navbar"
     aria-label="Toggles navbar"
     (click)="toggleNavbar()">
     <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    <span>Magic</span>
   </button>
-  <span>Magic</span>
 
   <span class="spacer"></span>
 
   <span
-    [matTooltip]="this.authService.secure ? 'secure' : 'not secured'"
+    [matTooltip]="this.authService.secure ? 'Secure' : 'Not secured'"
     [class]="this.authService.secure ? 'user' : 'user warning'">{{getUserStatus()}}</span>
 
   <button
