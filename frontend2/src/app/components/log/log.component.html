@@ -132,6 +132,7 @@
         <span class="details-item">
           <strong>Type</strong>
           <span
+            role="button"
             [matTooltip]="'Show only ' + el.type + ' items'"
             class="clickable-element"
             (click)="setFilter(el.type)">
@@ -142,6 +143,7 @@
         <span class="details-item full-width">
           <strong>Content</strong>
           <span
+            role="button"
             matTooltip="Show only similar items"
             class="clickable-element"
             (click)="setFilter(el.content)">
