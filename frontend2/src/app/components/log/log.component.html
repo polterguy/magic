@@ -79,8 +79,7 @@
       mat-header-cell
       *matHeaderCellDef>Type</th>
     <td
-      (click)="setFilter(el.type)"
-      class="minimalistic-col clickable-col"
+      class="minimalistic-col"
       mat-cell
       *matCellDef="let el">{{el.type}}</td>
   </ng-container>
@@ -90,8 +89,6 @@
       mat-header-cell
       *matHeaderCellDef>Content</th>
     <td
-      (click)="setFilter(el.content)"
-      class="clickable-col"
       mat-cell
       *matCellDef="let el">{{el.content}}</td>
   </ng-container>
@@ -134,12 +131,22 @@
 
         <span class="details-item">
           <strong>Type</strong>
-          <span>{{el.type}}</span>
+          <span
+            [matTooltip]="'Show only ' + el.type + ' items'"
+            class="clickable-element"
+            (click)="setFilter(el.type)">
+            {{el.type}}
+          </span>
         </span>
 
         <span class="details-item full-width">
           <strong>Content</strong>
-          <span>{{el.content}}</span>
+          <span
+            matTooltip="Show only similar items"
+            class="clickable-element"
+            (click)="setFilter(el.content)">
+            {{el.content}}
+          </span>
         </span>
 
         <span *ngIf="el.exception" class="details-item full-width">
