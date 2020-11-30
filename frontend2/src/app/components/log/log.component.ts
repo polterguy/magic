@@ -55,6 +55,8 @@ export class LogComponent implements OnInit {
         this.logService.get(id).subscribe(res => {
           this.current = res;
         });
+      } else {
+        this.current = null;
       }
     });
     this.filterFormControl = new FormControl('');
