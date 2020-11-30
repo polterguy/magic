@@ -23,6 +23,7 @@ tr.lighter {
 }
 
 .details-sheet, .item-details {
+  position: relative;
   .details-item {
     display: block;
     margin-bottom: .15rem;
@@ -44,5 +45,10 @@ tr.lighter {
       padding-left: 0;
     }
     width: 100%;
+  }
+  .id-link {
+    position: absolute;
+    bottom: 0;
+    right: 0;
   }
 }

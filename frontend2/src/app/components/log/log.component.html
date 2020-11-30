@@ -124,9 +124,7 @@
 
         <span class="details-item">
           <strong>ID</strong>
-          <a
-            mat-button
-            [routerLink]="'/log/' + el.id">{{el.id}}</a>
+          <span>{{el.id}}</span>
         </span>
 
         <span class="details-item">
@@ -148,6 +146,14 @@
           <strong>Exception</strong>
           <span>{{el.exception}}</span>
         </span>
+
+        <a
+          mat-icon-button
+          class="id-link"
+          matTooltip="Link to item"
+          [routerLink]="'/log/' + el.id">
+          <mat-icon>link</mat-icon>
+        </a>
 
       </div>
     </td>
