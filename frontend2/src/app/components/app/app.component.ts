@@ -74,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
           break;
 
         case Messages.INFO_SHORT:
-          this.showInfoShort(msg.content);
+          this.showInfo(msg.content, 2000);
           break;
         }
     });
@@ -179,19 +179,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /*
    * Common method for displaying information to the end user.
    */
-  private showInfo(info: string) {
+  private showInfo(info: string, duration: number = 5000) {
     this.snackBar.open(info, null, {
-      duration: 5000,
-    });
-  }
-
-  /*
-   * Common method for displaying information to the end user,
-   * but only for a short whilte.
-   */
-  private showInfoShort(info: string) {
-    this.snackBar.open(info, null, {
-      duration: 2000,
+      duration,
     });
   }
 }

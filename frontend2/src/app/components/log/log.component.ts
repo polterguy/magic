@@ -150,7 +150,7 @@ export class LogComponent implements OnInit {
   public showLinkTip() {
     this.messageService.sendMessage({
       name: Messages.INFO_SHORT,
-      content: 'Scroll to the top of page to see item'
+      content: 'Scroll to the top of the page to see the item'
     });
   }
 }
