@@ -25,7 +25,7 @@ import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'sql', component: SqlComponent },
-  { path: 'log', component: LogComponent },
+  { path: 'log', redirectTo: 'log/' },
   { path: 'log/:id', component: LogComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
