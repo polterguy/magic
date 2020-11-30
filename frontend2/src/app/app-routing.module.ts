@@ -25,6 +25,8 @@ import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'sql', component: SqlComponent },
+
+  // Avoids re-initializing component as user opens and closes view details / URL link
   { path: 'log', redirectTo: 'log/' },
   { path: 'log/:id', component: LogComponent },
   { path: 'auth', component: AuthComponent },
