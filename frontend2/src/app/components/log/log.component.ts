@@ -12,7 +12,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { LogItem } from 'src/app/models/log-item';
+import { Messages } from 'src/app/models/message.model';
 import { LogService } from 'src/app/services/log-service';
+import { MessageService } from 'src/app/services/message-service';
 
 /**
  * Log component for reading backend's log.
@@ -40,6 +42,7 @@ export class LogComponent implements OnInit {
    */
   constructor(
     private logService: LogService,
+    private messageService: MessageService,
     private route: ActivatedRoute) { }
 
   /**
@@ -142,5 +145,12 @@ export class LogComponent implements OnInit {
    */
   public getClassForDetails(el: LogItem) {
     return this.shouldDisplayDetails(el) ? 'lighter' : 'invisible';
+  }
+
+  public showLinkTip() {
+    this.messageService.sendMessage({
+      name: Messages.INFO_SHORT,
+      content: 'Scroll to the top of page to see item'
+    });
   }
 }

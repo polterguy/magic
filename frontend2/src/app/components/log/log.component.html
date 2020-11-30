@@ -158,6 +158,7 @@
           mat-icon-button
           class="id-link"
           matTooltip="Link to item"
+          (click)="showLinkTip()"
           [routerLink]="'/log/' + el.id">
           <mat-icon>link</mat-icon>
         </a>
