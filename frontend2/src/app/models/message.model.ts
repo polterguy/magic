@@ -46,4 +46,10 @@ export class Messages {
    * to display information to the user.
    */
   static readonly INFO = 'app.info';
+
+  /**
+   * Message will be published by the system when a component needs
+   * to display information to the user, but only for a short while.
+   */
+  static readonly INFO_SHORT = 'app.info.short';
 }
