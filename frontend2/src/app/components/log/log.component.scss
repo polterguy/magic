@@ -48,7 +48,44 @@ tr.lighter {
   }
   .id-link {
     position: absolute;
-    bottom: 0;
+    top: 0;
     right: 0;
+  }
+}
+
+.word-break {
+  word-break: break-word;
+}
+
+table {
+  tr {
+    th:nth-child(1),
+    th:nth-child(2) {
+      display: none;
+    }
+    td:nth-child(3),
+    th:nth-child(3) {
+      padding-left: 1rem;
+    }
+  }
+  tr.log-row {
+    td:nth-child(1),
+    td:nth-child(2) {
+      display: none;
+    }
+  }
+  @media screen and (min-width: 800px) {
+    tr {
+      th:nth-child(1),
+      th:nth-child(2) {
+        display: table-cell;
+      }
+    }
+    tr.log-row {
+      td:nth-child(1),
+      td:nth-child(2) {
+        display: table-cell;
+      }
+    }
   }
 }

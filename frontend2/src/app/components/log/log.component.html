@@ -30,7 +30,7 @@
     <span>{{current.content}}</span>
   </span>
 
-  <span *ngIf="current.exception" class="details-item full-width">
+  <span *ngIf="current.exception" class="details-item full-width word-break">
     <strong>Exception</strong>
     <span>{{current.exception}}</span>
   </span>
@@ -151,7 +151,7 @@
 
         <span *ngIf="el.exception" class="details-item full-width">
           <strong>Exception</strong>
-          <span>{{el.exception}}</span>
+          <span class="word-break">{{el.exception}}</span>
         </span>
 
         <a
@@ -173,12 +173,12 @@
 
   <tr
     mat-row
-    [ngClass]="shouldDisplayDetails(el) ? 'display-details' : ''"
+    [ngClass]="shouldDisplayDetails(el) ? 'display-details log-row' : 'log-row'"
     *matRowDef="let el; columns: displayedColumns;"></tr>
 
   <tr
     mat-row
-    [ngClass]="getClassForDetails(el)"
+    [ngClass]="getClassForDetails(el) + ' details-column'"
     *matRowDef="let el; columns: ['show-details'];"></tr>
 
 </table>
