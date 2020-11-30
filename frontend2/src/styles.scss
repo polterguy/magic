@@ -40,10 +40,11 @@ table.mat-table {
       width: 5px;
       white-space: nowrap;
     }
-    td.clickable-col {
-      cursor: pointer;
-    }
   }
+}
+
+.clickable-element {
+  cursor: pointer;
 }
 
 mat-paginator.mat-paginator {
