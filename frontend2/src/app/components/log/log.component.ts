@@ -27,7 +27,7 @@ import { MessageService } from 'src/app/services/message-service';
 export class LogComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  public displayedColumns: string[] = ['when', 'type', 'content', 'details'];
+  public displayedColumns: string[] = ['content', 'type', 'when'];
   public filterFormControl: FormControl;
   public items: LogItem[] = [];
   public count: number = 0;
@@ -98,17 +98,6 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Invoked when filter is programmatically changed for some reasons
-   * 
-   * @param filter Query filter to use for displaying items
-   */
-  public setFilter(filter: string) {
-    this.paginator.pageIndex = 0;
-    this.filterFormControl.setValue(filter);
-    this.getItems();
-  }
-
-  /**
    * Clears the current filter.
    */
   public clearFilter() {
@@ -141,14 +130,8 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Returns the CSS class for a details row.
-   * 
-   * @param el Log item to return CSS class for
+   * Shows information about where to find currently viewed item.
    */
-  public getClassForDetails(el: LogItem) {
-    return this.shouldDisplayDetails(el) ? 'lighter' : 'invisible';
-  }
-
   public showLinkTip() {
     this.messageService.sendMessage({
       name: Messages.INFO_SHORT,

@@ -60,17 +60,16 @@
 <table
   mat-table
   [dataSource]="items"
+  class="log-items clickable"
   multiTemplateDataRows>
 
-  <ng-container matColumnDef="when">
+  <ng-container matColumnDef="content">
     <th
-      class="minimalistic-col"
       mat-header-cell
-      *matHeaderCellDef>When</th>
+      *matHeaderCellDef>Content</th>
     <td
-      class="minimalistic-col"
       mat-cell
-      *matCellDef="let el">{{el.created | since}}</td>
+      *matCellDef="let el">{{el.content}}</td>
   </ng-container>
 
   <ng-container matColumnDef="type">
@@ -84,37 +83,24 @@
       *matCellDef="let el">{{el.type}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="content">
+  <ng-container matColumnDef="when">
     <th
+      class="minimalistic-col"
       mat-header-cell
-      *matHeaderCellDef>Content</th>
+      *matHeaderCellDef>When</th>
     <td
+      class="minimalistic-col"
       mat-cell
-      *matCellDef="let el">{{el.content}}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="details">
-    <th
-      class="button-col"
-      mat-header-cell
-      *matHeaderCellDef>Details</th>
-    <td
-      class="button-col"
-      mat-cell
-      *matCellDef="let el">
-      <button
-        (click)="toggleDetails(el)"
-        mat-button>
-        Details
-      </button>
-    </td>
+      *matCellDef="let el">{{el.created | since}}</td>
   </ng-container>
 
   <ng-container matColumnDef="show-details">
+
     <td
       mat-cell
       *matCellDef="let el"
       colspan="4">
+
       <div
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
@@ -131,24 +117,12 @@
 
         <span class="details-item">
           <strong>Type</strong>
-          <span
-            role="button"
-            [matTooltip]="'Show only ' + el.type + ' items'"
-            class="clickable-element"
-            (click)="setFilter(el.type)">
-            {{el.type}}
-          </span>
+          <span>{{el.type}}</span>
         </span>
 
         <span class="details-item full-width">
           <strong>Content</strong>
-          <span
-            role="button"
-            matTooltip="Show only similar items"
-            class="clickable-element"
-            (click)="setFilter(el.content)">
-            {{el.content}}
-          </span>
+          <span>{{el.content}}</span>
         </span>
 
         <span *ngIf="el.exception" class="details-item full-width">
@@ -166,7 +140,9 @@
         </a>
 
       </div>
+
     </td>
+
   </ng-container>
 
   <tr
@@ -175,12 +151,13 @@
 
   <tr
     mat-row
-    [ngClass]="shouldDisplayDetails(el) ? 'display-details log-row' : 'log-row'"
+    [ngClass]="(shouldDisplayDetails(el) ? 'selected' : '') + ' log-row'"
+    (click)="toggleDetails(el)"
     *matRowDef="let el; columns: displayedColumns;"></tr>
 
   <tr
     mat-row
-    [ngClass]="getClassForDetails(el) + ' details-column'"
+    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
     *matRowDef="let el; columns: ['show-details'];"></tr>
 
 </table>
