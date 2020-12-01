@@ -98,6 +98,16 @@ export class LogComponent implements OnInit {
   }
 
   /**
+   * Invoked when filter is programmatically changed for some reasons
+   * 
+   * @param filter Query filter to use for displaying items
+   */
+  public setFilter(filter: string) {
+    this.paginator.pageIndex = 0;
+    this.filterFormControl.setValue(filter);
+  }
+
+  /**
    * Clears the current filter.
    */
   public clearFilter() {

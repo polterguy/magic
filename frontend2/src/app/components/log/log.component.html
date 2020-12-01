@@ -6,6 +6,7 @@
   <a
     mat-icon-button
     routerLink="/log"
+    matTooltip="Close"
     class="close">
     <mat-icon>close</mat-icon>
   </a>
@@ -130,8 +131,17 @@
           <span class="word-break">{{el.exception}}</span>
         </span>
 
+        <button
+          mat-icon-button
+          matTooltip="Show only similar items"
+          class="filter-button"
+          (click)="setFilter(el.content)">
+          <mat-icon>filter_list</mat-icon>
+        </button>
+
         <a
           mat-icon-button
+          role="button"
           class="id-link"
           matTooltip="Link to item"
           (click)="showLinkTip()"
