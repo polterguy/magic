@@ -15,6 +15,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   word-break: break-word;
 }
 
+.button {
+  cursor: pointer;
+}
+
 table.mat-table {
   width: 100%;
   background-color: transparent;
