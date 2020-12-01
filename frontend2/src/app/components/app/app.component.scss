@@ -53,7 +53,7 @@ mat-toolbar {
     left: 0;
     width: 300px;
     padding: 1rem;
-    background: rgb(29, 29, 29);
+    background: rgb(55, 55, 55);
     color: rgb(245,245,245);
     @media screen and (max-width: 600px) {
       width: 100vw;
@@ -74,12 +74,13 @@ mat-toolbar {
     box-sizing: border-box;
     position: relative;
     .obscurer {
-      position: absolute;
-      top: 0;
+      position: fixed;
+      top: 64px;
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(0,0,0,.3);
+      background-color: rgba(0,0,0,.5);
+      z-index: 1000;
     }
     .no-access {
       width: 80%;
