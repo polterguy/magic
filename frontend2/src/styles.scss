@@ -8,11 +8,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .invisible {
-    display: none !important;
+  display: none !important;
 }
 
-.button {
-    cursor: pointer;
+.word-break {
+  word-break: break-word;
 }
 
 table.mat-table {
@@ -23,18 +23,8 @@ table.mat-table {
       color: rgb(245,245,245);
     }
     td {
-      text-overflow: ellipsis;
-      overflow: hidden;
       vertical-align: top;
       padding: 1rem 1rem 1rem 0;
-      button {
-        margin-top:-.5rem;
-        margin-bottom:-.5rem;
-      }
-    }
-    th.button-col, td.button-col {
-      width: 5px;
-      text-align: center;
     }
     th.minimalistic-col, td.minimalistic-col {
       width: 5px;
@@ -42,9 +32,31 @@ table.mat-table {
     }
   }
 }
-
-.clickable-element {
-  cursor: pointer;
+table.mat-table.clickable {
+  tbody {
+    tr {
+      background-color: rgba(0,0,0,0);
+      transition: background-color .05s ease-in;
+      td {
+        cursor: pointer;
+        user-select: none;
+      }
+    }
+    tr:hover {
+      background-color: rgba(0,0,0,.1);
+      transition: background-color .05s ease-in;
+    }
+    tr.selected {
+      background-color: rgba(255,255,255,.1);
+    }
+    tr.details {
+      background-color: rgba(255,255,255,.05);
+      td {
+        cursor: default;
+        user-select: unset;
+      }
+    }
+  }
 }
 
 mat-paginator.mat-paginator {

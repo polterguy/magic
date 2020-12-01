@@ -156,10 +156,10 @@ export class AppComponent implements OnInit, OnDestroy {
    * Returns true if user has access to currently loaded component.
    */
   public hasAccessToCurrentComponent() {
-    const segments = this.router.url.split('/');
-    if (segments.filter(x => x === '').length === 2) {
+    if (this.router.url === '/') {
       return true; // Home component
     }
+    const segments = this.router.url.split('/');
     return this.authService.hasAccess('magic/modules/system/' + segments[1]);
   }
 
