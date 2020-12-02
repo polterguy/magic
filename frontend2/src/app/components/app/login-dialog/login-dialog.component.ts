@@ -61,7 +61,7 @@ export class LoginDialogComponent implements OnInit {
    */
   public showSecurityWarning() {
     this.messageService.sendMessage({
-      name: Messages.INFO,
+      name: Messages.SHOW_INFO,
       content: 'Clicking the login button will transmit your password in clear text'
     });
   }
@@ -92,12 +92,12 @@ export class LoginDialogComponent implements OnInit {
       this.password,
       this.savePassword).subscribe(res => {
         this.messageService.sendMessage({
-          name: Messages.LOGGED_IN,
+          name: Messages.USER_LOGGED_IN,
         });
         this.dialogRef.close();
       }, error => {
         this.messageService.sendMessage({
-          name: Messages.ERROR,
+          name: Messages.SHOW_ERROR,
           content: error,
         });
       });
