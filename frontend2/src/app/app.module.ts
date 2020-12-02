@@ -44,6 +44,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
+import { SetupComponent } from './components/setup/setup.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
@@ -72,6 +73,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     MarkedPipe,
     DateToPipe,
     DateFromPipe,
+    SetupComponent,
   ],
   imports: [
     FormsModule,

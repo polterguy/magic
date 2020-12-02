@@ -158,6 +158,17 @@
       <span>Crypto</span>
     </a>
 
+    <a
+      *ngIf="authService.hasAccess('magic/modules/system/setup')"
+      mat-button
+      routerLink="/setup"
+      routerLinkActive="active-link"
+      (click)="toggleNavbar()"
+      [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon matSuffix>settings</mat-icon>
+      <span>Setup</span>
+    </a>
+
   </mat-sidenav>
 
   <mat-sidenav-content>
