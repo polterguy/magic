@@ -53,6 +53,7 @@ import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
+import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -76,6 +77,7 @@ import { NavbarComponent } from './components/app/navbar/navbar.component';
     DateFromPipe,
     SetupComponent,
     NavbarComponent,
+    ToolbarComponent,
   ],
   imports: [
     FormsModule,
