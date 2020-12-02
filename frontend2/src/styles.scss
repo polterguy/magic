@@ -3,6 +3,17 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.spinner {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 1000;
+}
+
+.warning {
+  color: #c88 !important;
+}
+
 .fill-width {
   width: 100%;
 }
