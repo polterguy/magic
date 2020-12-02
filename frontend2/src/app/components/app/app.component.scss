@@ -1,15 +1,4 @@
 
-.spinner {
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  z-index: 1000;
-}
-
-.warning {
-  color: #c88 !important;
-}
-
 mat-toolbar {
   background: rgb(45, 45, 45);
   border-bottom: solid 1px rgba(0,0,0,.2);
@@ -57,14 +46,6 @@ mat-toolbar {
     color: rgb(245,245,245);
     @media screen and (max-width: 600px) {
       width: 100vw;
-    }
-    a {
-      width: 100%;
-      text-align: left;
-      margin-bottom: .5rem;
-      span {
-        margin-left: .5rem;
-      }
     }
   }
 

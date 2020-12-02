@@ -37,6 +37,11 @@ export class Messages {
   static readonly LOGGED_OUT = 'app.user.logged-out';
 
   /**
+   * Message will be published by the system navbar should be closed.
+   */
+  static readonly CLOSE_NAVBAR = 'app.navbar.close';
+
+  /**
    * Message will be published by the system when an error occurs.
    */
   static readonly ERROR = 'app.error';

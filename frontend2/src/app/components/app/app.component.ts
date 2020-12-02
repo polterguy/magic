@@ -76,7 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
         case Messages.INFO_SHORT:
           this.showInfo(msg.content, 2000);
           break;
-        }
+
+        case Messages.CLOSE_NAVBAR:
+          this.sidenavOpened = false;
+          break;
+      }
     });
 
     this.authService.getEndpoints().subscribe(res => {
