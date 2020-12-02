@@ -110,10 +110,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Toggles the navbar.
+   * Closes the navbar.
    */
-  public toggleNavbar() {
-    this.sidenavOpened = !this.sidenavOpened;
+  public closeNavbar() {
+    this.sidenavOpened = false;
   }
 
   /**
