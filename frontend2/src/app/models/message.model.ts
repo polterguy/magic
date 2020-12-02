@@ -37,7 +37,14 @@ export class Messages {
   static readonly LOGGED_OUT = 'app.user.logged-out';
 
   /**
-   * Message will be published by the system navbar should be closed.
+   * Message will be published by the system when the
+   * navbar should be toggled.
+   */
+  static readonly TOGGLE_NAVBAR = 'app.navbar.toggle';
+
+  /**
+   * Message will be published by the system when the
+   * navbar should be closed.
    */
   static readonly CLOSE_NAVBAR = 'app.navbar.close';
 

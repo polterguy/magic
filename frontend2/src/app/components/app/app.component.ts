@@ -77,6 +77,10 @@ export class AppComponent implements OnInit, OnDestroy {
           this.showInfo(msg.content, 2000);
           break;
 
+        case Messages.TOGGLE_NAVBAR:
+          this.sidenavOpened = !this.sidenavOpened;
+          break;
+
         case Messages.CLOSE_NAVBAR:
           this.sidenavOpened = false;
           break;
@@ -126,34 +130,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.messageService.sendMessage({
       name: Messages.LOGGED_OUT,
     });
-  }
-
-  /**
-   * Returns the user's status to caller.
-   */
-  public getUserStatus() {
-    if (this.authService.authenticated) {
-      let url = this.authService.current.url.replace('http://', '').replace('https://', '');
-      if (url.indexOf(':')) {
-        url = url.substr(0, url.indexOf(':'));
-      }
-      return this.authService.current.username + '@' + url;
-    } else if (this.authService.connected) {
-      let url = this.authService.current.url.replace('http://', '').replace('https://', '');
-      if (url.indexOf(':')) {
-        url = url.substr(0, url.indexOf(':'));
-      }
-      return 'anonymous@' + url;
-    } else {
-      return 'Not connected'
-    }
-  }
-
-  /**
-   * Returns all roles user belongs to.
-   */
-  public getUserRoles() {
-    return this.authService.roles().join(', ');
   }
 
   /**
