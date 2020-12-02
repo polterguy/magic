@@ -27,7 +27,8 @@ mat-sidenav-container {
 
   // Content wrapper containing the router-outlet and currently loaded component.
   mat-sidenav-content {
-    padding: 3rem 5rem;
+
+    padding: 2rem; // Default padding, only shows if width of viewport is less than 600px.
     margin-left: 0 !important;
     box-sizing: border-box;
     position: relative;
@@ -55,12 +56,14 @@ mat-sidenav-container {
       }
     }
 
-    // Adding more padding to side nav content when width is more than 800px
-    @media screen and (max-width: 800px) {
+    // Adding more padding to side nav content when width is more than 600px.
+    @media screen and (min-width: 600px) {
       padding: 3rem;
     }
-    @media screen and (max-width: 600px) {
-      padding: 2rem;
+
+    // Adding more padding to side nav content when width is more than 800px.
+    @media screen and (min-width: 800px) {
+      padding: 3rem 5rem;
     }
   }
 }
