@@ -4,12 +4,14 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
-import { Messages } from 'src/app/models/message.model';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
+import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message-service';
+import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 
 /**
  * Toolbar component for displaying toolbar that allow the
@@ -20,14 +22,19 @@ import { MessageService } from 'src/app/services/message-service';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent {
 
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param dialog Dialog reference necessary to show login dialog if user tries to login
+   * @param authService Authentication and authorisation HTTP service
+   * @param messageService Message service to send messages to other components using pub/sub
+   */
   constructor(
+    private dialog: MatDialog,
     public authService: AuthService,
     private messageService: MessageService) { }
-
-  ngOnInit() {
-  }
 
   /**
    * Toggles the navbar.
@@ -64,5 +71,32 @@ export class ToolbarComponent implements OnInit {
    */
   public getUserRoles() {
     return this.authService.roles().join(', ');
+  }
+
+  /**
+   * Allows user to login by showing a modal dialog.
+   */
+  public login() {
+    const dialogRef = this.dialog.open(LoginDialogComponent, {
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Authenticated');
+    }, error => {
+      this.messageService.sendMessage({
+        name: Messages.SHOW_ERROR,
+        content: error
+      });
+    });
+  }
+
+  /**
+   * Logs the user out from his current backend.
+   */
+  public logout() {
+    this.authService.logout(false);
+    this.messageService.sendMessage({
+      name: Messages.USER_LOGGED_OUT,
+    });
   }
 }

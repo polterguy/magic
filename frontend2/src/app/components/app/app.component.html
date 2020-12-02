@@ -13,9 +13,7 @@
   <mat-sidenav
     mode="side"
     [(opened)]="sidenavOpened">
-
     <app-navbar></app-navbar>
-
   </mat-sidenav>
 
   <mat-sidenav-content>
@@ -23,20 +21,16 @@
     <div
       *ngIf="sidenavOpened"
       class="obscurer"
-      (click)="toggleNavbar()">
-
-    </div>
+      (click)="toggleNavbar()"></div>
 
     <router-outlet
-      *ngIf="hasAccessToCurrentComponent()"></router-outlet>
+      *ngIf="hasAccess()"></router-outlet>
 
     <mat-card
-      *ngIf="!hasAccessToCurrentComponent()"
+      *ngIf="!hasAccess()"
       class="no-access">
       <h2>Access Denied</h2>
-      <p>
-        I am sorry but I can't grant you access to this component ...
-      </p>
+      <p>I am sorry but I can't grant you access to this component ...</p>
     </mat-card>
 
   </mat-sidenav-content>

@@ -5,17 +5,15 @@
 
 // Angular and system imports.
 import { Subscription } from 'rxjs';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Message, Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app//services/auth.service';
 import { LoaderService } from 'src/app/services/loader-service';
+import { Message, Messages } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message-service';
-import { LoginDialogComponent } from './login-dialog/login-dialog.component';
-import { Router } from '@angular/router';
 
 /**
  * Main wire frame application component.
@@ -33,7 +31,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
-   * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param snackBar Snack bar used to display feedback to user, such as error or information
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
    * @param router Router service used to redirect user according to business logic flow
@@ -41,52 +38,63 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param authService Authentication and authorisation service, used to authenticate user, etc
    */
   constructor(
-    private dialog: MatDialog,
+    private router: Router,
     private snackBar: MatSnackBar,
     private messageService: MessageService,
-    private router: Router,
-    public loaderService: LoaderService,
-    public authService: AuthService) { }
+    public authService: AuthService,
+    public loaderService: LoaderService) { }
 
   /**
    * OnInit implementation.
    */
   public ngOnInit() {
 
+    /*
+     * Subscribing to relevant messages published by other components
+     * when wire frame needs to react to events occurring other places in our app.
+     */
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
 
       switch(msg.name) {
 
-        case Messages.LOGGED_OUT:
+        // User was logged out
+        case Messages.USER_LOGGED_OUT:
           this.showInfo('You were successfully logged out of your backend');
           break;
 
-        case Messages.LOGGED_IN:
+        // User was logged in
+        case Messages.USER_LOGGED_IN:
           this.showInfo('You were successfully authenticated towards your backend');
           break;
 
-        case Messages.ERROR:
+        // Some error occurred and we need to display it to the user
+        case Messages.SHOW_ERROR:
           this.showError(msg.content);
           break;
 
-        case Messages.INFO:
+        // Some component wants to show user some information
+        case Messages.SHOW_INFO:
           this.showInfo(msg.content);
           break;
 
-        case Messages.INFO_SHORT:
+        // Some component wants to show user some 'short' information
+        case Messages.SHOW_INFO_SHORT:
           this.showInfo(msg.content, 2000);
           break;
 
+        // Some component wants to toggle the navbar
         case Messages.TOGGLE_NAVBAR:
           this.sidenavOpened = !this.sidenavOpened;
           break;
 
+        // Some component wants to close the navbar
         case Messages.CLOSE_NAVBAR:
           this.sidenavOpened = false;
           break;
       }
     });
 
+    // Retrieving all endpoints from backend
     this.authService.getEndpoints().subscribe(res => {
       console.log('Endpoints authorisation objects retrieved');
     }, error => {
@@ -109,33 +117,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Allows user to login by showing a modal dialog.
-   */
-  public login() {
-    const dialogRef = this.dialog.open(LoginDialogComponent, {
-      width: '550px',
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('Authenticated');
-    }, error => {
-      this.showError(error);
-    });
-  }
-
-  /**
-   * Logs the user out from his current backend.
-   */
-  public logout() {
-    this.authService.logout(false);
-    this.messageService.sendMessage({
-      name: Messages.LOGGED_OUT,
-    });
-  }
-
-  /**
    * Returns true if user has access to currently loaded component.
    */
-  public hasAccessToCurrentComponent() {
+  public hasAccess() {
     if (this.router.url === '/') {
       return true; // Home component
     }

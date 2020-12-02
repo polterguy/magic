@@ -29,18 +29,12 @@ export class Messages {
   /**
    * Message will be published by the system when the user logs in.
    */
-  static readonly LOGGED_IN = 'app.user.logged-in';
+  static readonly USER_LOGGED_IN = 'app.user.logged-in';
 
   /**
    * Message will be published by the system when the user logs out.
    */
-  static readonly LOGGED_OUT = 'app.user.logged-out';
-
-  /**
-   * Message will be published by the system when the
-   * navbar should be toggled.
-   */
-  static readonly TOGGLE_NAVBAR = 'app.navbar.toggle';
+  static readonly USER_LOGGED_OUT = 'app.user.logged-out';
 
   /**
    * Message will be published by the system when the
@@ -49,19 +43,25 @@ export class Messages {
   static readonly CLOSE_NAVBAR = 'app.navbar.close';
 
   /**
-   * Message will be published by the system when an error occurs.
+   * Message will be published by the system when the
+   * navbar should be toggled.
    */
-  static readonly ERROR = 'app.error';
+  static readonly TOGGLE_NAVBAR = 'app.navbar.toggle';
 
   /**
    * Message will be published by the system when a component needs
    * to display information to the user.
    */
-  static readonly INFO = 'app.info';
+  static readonly SHOW_INFO = 'app.info';
 
   /**
    * Message will be published by the system when a component needs
    * to display information to the user, but only for a short while.
    */
-  static readonly INFO_SHORT = 'app.info.short';
+  static readonly SHOW_INFO_SHORT = 'app.info.short';
+
+  /**
+   * Message will be published by the system when an error occurs.
+   */
+  static readonly SHOW_ERROR = 'app.error';
 }
