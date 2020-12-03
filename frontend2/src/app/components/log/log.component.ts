@@ -11,7 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
-import { LogItem } from 'src/app/models/log-item';
+import { LogItem } from 'src/app/models/log-item.model';
 import { Messages } from 'src/app/models/message.model';
 import { LogService } from 'src/app/services/log-service';
 import { MessageService } from 'src/app/services/message-service';

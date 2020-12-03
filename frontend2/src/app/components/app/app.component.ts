@@ -31,11 +31,11 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
+   * @param router Router service used to read currently loaded router URL
    * @param snackBar Snack bar used to display feedback to user, such as error or information
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
-   * @param router Router service used to redirect user according to business logic flow
-   * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
    * @param authService Authentication and authorisation service, used to authenticate user, etc
+   * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
    */
   constructor(
     private router: Router,
@@ -104,6 +104,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   /**
    * OnDestroy implementation.
+   * 
+   * Needed to unsubscribe to subscription registered in OnInit.
    */
   public ngOnDestroy() {
     this.subscriber.unsubscribe();
@@ -121,8 +123,13 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public hasAccess() {
     if (this.router.url === '/') {
-      return true; // Home component
+      return true; // Home component, everybody has access to this somehow.
     }
+
+    /*
+     * Assuming the component's router URL is equal to the backend URL(s)
+     * invoked when component's data is somehow read or modified.
+     */
     const segments = this.router.url.split('/');
     return this.authService.hasAccess('magic/modules/system/' + segments[1]);
   }

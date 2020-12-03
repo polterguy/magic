@@ -33,18 +33,22 @@ export class AuthService {
    */
   constructor(private httpClient: HttpClient) {
 
+    // Reading persisted backends, or defaulting to what's in environment.ts file.
     let backends: Backend[];
     const storage = localStorage.getItem('backends');
-    if (storage === null) {
-      backends = environment.defaultBackends;
-    } else {
+    backends = storage === null ?
+      environment.defaultBackends :
       backends = <Backend[]>JSON.parse(storage);
-    }
+
     this._backends = backends;
     if (this._backends.length > 0) {
-      this._current = this._backends[0];
       this.removeInvalidTokens();
-      this.createRefreshJWTTimers();
+
+      // Defaulting selected backend to whatever has a valid token, or the first backend in list.
+      const tmp = this._backends.filter(x => x.token !== null);
+      this._current = tmp.length > 0 ? tmp[0] : this._backends[0];
+
+      this.createRefreshJWTTimer(this._current);
       this.persistBackends();
     }
   }
@@ -145,11 +149,13 @@ export class AuthService {
    * Logs out the user from his current active backend.
    */
   public logout(destroyPassword: boolean) {
-    this._current.token = null;
-    if (destroyPassword){
-      this._current.password = null;
+    if (this.authenticated) {
+      this._current.token = null;
+      if (destroyPassword){
+        this._current.password = null;
+      }
+      this.persistBackend(this._current);
     }
-    this.persistBackend(this._current);
   }
 
   /**
@@ -257,9 +263,9 @@ export class AuthService {
   }
 
   /*
-   * Removes all tokens from all backends that are expired, and
-   * makes sure all valid tokens invokes the refresh endpoint before
-   * the token expires.
+   * Removes all tokens from all backends that are expired.
+   *
+   * Invoked as persisted backend are retrieved from local storage.
    */
   private removeInvalidTokens() {
     for (let idx = 0; idx < this._backends.length; idx++) {
@@ -267,17 +273,6 @@ export class AuthService {
       if (el.token && this.isTokenExpired(el.token)) {
         el.token = null;
       }
-    }
-  }
-
-  /*
-   * Creates a refresh JWT token timer, that invokes the
-   * refresh token endpoint to update it, just before it
-   * expires.
-   */
-  private createRefreshJWTTimers() {
-    for (let idx = 0; idx < this._backends.length; idx++) {
-      this.createRefreshJWTTimer(this._backends[idx]);
     }
   }
 

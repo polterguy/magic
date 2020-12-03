@@ -5,11 +5,11 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
-import { AuthService } from './auth.service';
-import { LogItem } from 'src/app/models/log-item';
+import { HttpService } from './http-service';
+import { Count } from '../models/count.model';
+import { LogItem } from 'src/app/models/log-item.model';
 
 /**
  * Log service, allows you to Read, Create, Update and Delete log items
@@ -23,12 +23,9 @@ export class LogService {
   /**
    * Creates an instance of your service.
    * 
-   * @param httpClient HTTP client to use for backend invocations
-   * @param authService Authentiction and authorisation service
+   * @param httpService HTTP service to use for backend invocations
    */
-  constructor(
-    private httpClient: HttpClient,
-    private authService: AuthService) { }
+  constructor(private httpService: HttpService) { }
 
     /**
      * Returns a list of log items from your backend.
@@ -41,12 +38,12 @@ export class LogService {
     filter: string,
     offset: number,
     limit: number) {
+
     let query = '';
     if (filter) {
       query += '&query=' + encodeURIComponent(filter);
     }
-    return this.httpClient.get<LogItem[]>(
-      this.authService.current.url +
+    return this.httpService.get<LogItem[]>(
       '/magic/modules/system/log/log-items?offset=' +
       offset +
       '&limit=' +
@@ -60,8 +57,7 @@ export class LogService {
    * @param id ID of item to retrieve
    */
   public get(id: number) {
-    return this.httpClient.get<LogItem>(
-      this.authService.current.url +
+    return this.httpService.get<LogItem>(
       '/magic/modules/system/log/log-item?id=' + id);
   }
 
@@ -75,8 +71,7 @@ export class LogService {
     if (filter) {
       query += '?query=' + encodeURIComponent(filter);
     }
-    return this.httpClient.get<any>(
-      this.authService.current.url +
+    return this.httpService.get<Count>(
       '/magic/modules/system/log/count-items' +
       query);
   }
@@ -92,8 +87,7 @@ export class LogService {
     if (filter && filter.length > 0) {
       query = '?filter=' + encodeURIComponent(filter);
     }
-    return this.httpClient.get<any[]>(
-      this.authService.current.url +
+    return this.httpService.get<any[]>(
       '/magic/modules/system/log/log-statistics' + query);
   }
 
@@ -109,8 +103,7 @@ export class LogService {
     if (filter && filter.length > 0) {
       query = '?filter=' + encodeURIComponent(filter);
     }
-    return this.httpClient.get<any[]>(
-      this.authService.current.url +
+    return this.httpService.get<any[]>(
       '/magic/modules/system/log/log-statistics-days' + query);
   }
 
@@ -122,8 +115,7 @@ export class LogService {
    * @param name Name of component that was created
    */
   public createLocItem(loc: number, type: string, name: string) {
-    return this.httpClient.post<any>(
-      this.authService.current.url +
+    return this.httpService.post<any, any>(
       '/magic/modules/system/log/log-loc', {
         loc,
         type,
@@ -136,8 +128,7 @@ export class LogService {
    * during system's existence.
    */
   public getLoc() {
-    return this.httpClient.get<any>(
-      this.authService.current.url +
+    return this.httpService.get<any>(
       '/magic/modules/system/log/loc-generated');
   }
 }

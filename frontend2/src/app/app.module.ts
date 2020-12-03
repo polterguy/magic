@@ -46,14 +46,14 @@ import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
+import { NavbarComponent } from './components/app/navbar/navbar.component';
+import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
-import { NavbarComponent } from './components/app/navbar/navbar.component';
-import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 
 /**
  * The main module for your Magic Dashboard application.
