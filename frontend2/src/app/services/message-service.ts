@@ -2,8 +2,8 @@
 /*
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
-import { Injectable } from '@angular/core';
 import { Subject} from 'rxjs';
+import { Injectable } from '@angular/core';
 import { Message } from 'src/app/models/message.model';
 
 /**
