@@ -31,8 +31,6 @@ export class HttpService {
      */
   public get<Response>(url: string) {
     return new Observable<Response>(observer => {
-
-      // Sanity checking invocation
       if (!this.authService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
         observer.complete();
@@ -55,8 +53,6 @@ export class HttpService {
    */
   public post<Request, Response>(url: string, req: Request) {
     return new Observable<Response>(observer => {
-
-      // Sanity checking invocation
       if (!this.authService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
         observer.complete();
@@ -79,8 +75,6 @@ export class HttpService {
    */
   public put<Request, Response>(url: string, req: Request) {
     return new Observable<Response>(observer => {
-
-      // Sanity checking invocation
       if (!this.authService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
         observer.complete();
@@ -101,8 +95,6 @@ export class HttpService {
      */
     public delete<Response>(url: string) {
       return new Observable<Response>(observer => {
-  
-        // Sanity checking invocation
         if (!this.authService.connected) {
           observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
           observer.complete();
