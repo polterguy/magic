@@ -34,7 +34,7 @@ import { DateFromPipe } from './pipes/date-from.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderService } from './services/loader.service';
 import { AuthInterceptor } from './services/interceptors/auth.interceptor';
-import { LoaderInterceptor } from './services/interceptors/loader-interceptor';
+import { LoaderInterceptor } from './services/interceptors/loader.interceptor';
 
 // Components.
 import { LogComponent } from './components/log/log.component';

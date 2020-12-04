@@ -5,7 +5,12 @@
 import { Injectable } from "@angular/core";
 import { tap, catchError } from 'rxjs/operators';
 import { LoaderService } from 'src/app/services/loader.service';
-import { HttpRequest, HttpHandler, HttpInterceptor, HttpResponse } from '@angular/common/http';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpInterceptor,
+  HttpResponse
+} from '@angular/common/http';
 
 /**
  * Our HTTP interceptor that changes the LoaderService's state according to whether or not
