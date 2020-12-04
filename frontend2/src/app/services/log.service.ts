@@ -27,22 +27,25 @@ export class LogService {
    */
   constructor(private httpService: HttpService) { }
 
-    /**
-     * Returns a list of log items from your backend.
-     * 
-     * @param filter Query filter deciding which items to return
-     * @param offset Number of items to skip
-     * @param limit Maximum number of items to return
-     */
+  /**
+   * Returns a list of log items from your backend.
+   * 
+   * @param filter Query filter deciding which items to return
+   * @param offset Number of items to skip
+   * @param limit Maximum number of items to return
+   */
   public list(
     filter: string,
     offset: number,
     limit: number) {
 
+    // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter) {
       query += '&query=' + encodeURIComponent(filter);
     }
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem[]>(
       '/magic/modules/system/log/log-items?offset=' +
       offset +
@@ -57,6 +60,8 @@ export class LogService {
    * @param id ID of item to retrieve
    */
   public get(id: number) {
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem>(
       '/magic/modules/system/log/log-item?id=' + id);
   }
@@ -67,10 +72,14 @@ export class LogService {
    * @param filter Query filter for items to include in count
    */
   public count(filter?: string) {
+
+    // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter) {
       query += '?query=' + encodeURIComponent(filter);
     }
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
       '/magic/modules/system/log/count-items' +
       query);
@@ -83,10 +92,14 @@ export class LogService {
    * @param filter Query filter for items to include in statistics
    */
   public statisticsType(filter: string) {
+
+    // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter && filter.length > 0) {
       query = '?filter=' + encodeURIComponent(filter);
     }
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<any[]>(
       '/magic/modules/system/log/log-statistics' + query);
   }
@@ -99,10 +112,14 @@ export class LogService {
    * @param filter Query filter for items to include in statistics
    */
   public statisticsDays(filter: string) {
+
+    // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter && filter.length > 0) {
       query = '?filter=' + encodeURIComponent(filter);
     }
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<any[]>(
       '/magic/modules/system/log/log-statistics-days' + query);
   }
@@ -115,6 +132,8 @@ export class LogService {
    * @param name Name of component that was created
    */
   public createLocItem(loc: number, type: string, name: string) {
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.post<any, any>(
       '/magic/modules/system/log/log-loc', {
         loc,
@@ -128,6 +147,8 @@ export class LogService {
    * during system's existence.
    */
   public getLoc() {
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<any>(
       '/magic/modules/system/log/loc-generated');
   }

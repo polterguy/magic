@@ -20,7 +20,7 @@ export class MessageService {
   /**
    * Sends a message to all subscribers.
    * 
-   * @param message Message to transmit to other listeners
+   * @param message Message to transmit to subscribers
    */
   sendMessage(message: Message) {
     this.subject.next(message);
