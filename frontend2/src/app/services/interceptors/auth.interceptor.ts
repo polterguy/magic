@@ -9,6 +9,7 @@ import {
   HttpRequest
 } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { BackendService } from '../backend.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
@@ -18,7 +19,9 @@ import { AuthService } from '../auth.service';
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private backendService: BackendService) { }
 
   /**
    * Intercepts all HTTP requests to associate an Authorization
@@ -33,8 +36,8 @@ export class AuthInterceptor implements HttpInterceptor {
     if (req.headers.has('Authorization')) {
       return next.handle(req);
     } else {
-      const token = this.authService.current.token;
-      if (token && !this.authService.isTokenExpired(token)) {
+      const token = this.backendService.current.token;
+      if (token) {
         const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + token)});
         return next.handle(authReq);
       } else {

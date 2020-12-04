@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>
   Login
   <button
-    *ngIf="this.authService.connected && backends.value.startsWith('http://')"
+    *ngIf="backendService.connected && backends.value.startsWith('http://')"
     mat-icon-button
     class="warning-button"
     matTooltip="Not secured"

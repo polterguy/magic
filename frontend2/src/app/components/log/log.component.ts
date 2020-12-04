@@ -13,8 +13,8 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 // Application specific imports.
 import { LogItem } from 'src/app/models/log-item.model';
 import { Messages } from 'src/app/models/message.model';
-import { LogService } from 'src/app/services/log-service';
-import { MessageService } from 'src/app/services/message-service';
+import { LogService } from 'src/app/services/log.service';
+import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Log component for reading backend's log.

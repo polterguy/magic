@@ -10,8 +10,8 @@ import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
+import { BackendService } from './backend.service';
 import { Endpoint } from '../models/endpoint.model';
-import { environment } from 'src/environments/environment';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
@@ -22,8 +22,6 @@ import { AuthenticateResponse } from '../models/authenticate-response.model';
 })
 export class AuthService {
 
-  private _backends: Backend[] = [];
-  private _current: Backend = null;
   private _endpoints: Endpoint[] = [];
 
   /**
@@ -31,61 +29,31 @@ export class AuthService {
    * 
    * @param httpClient Dependency injected HTTP client
    */
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private backendService: BackendService) {
 
-    // Reading persisted backends, or defaulting to what's in environment.ts file.
-    let backends: Backend[];
-    const storage = localStorage.getItem('backends');
-    backends = storage === null ?
-      environment.defaultBackends :
-      backends = <Backend[]>JSON.parse(storage);
+      // Checking if user has a token towards his current backend, and if the token is expired.
+      if (this.backendService.connected &&
+        this.backendService.current.token &&
+        this.isTokenExpired(this.backendService.current.token)) {
 
-    this._backends = backends;
-    if (this._backends.length > 0) {
-      this.removeInvalidTokens();
+        // Removing JWT token.
+        this.backendService.current.token = null;
+        this.backendService.persistBackends();
 
-      // Defaulting selected backend to whatever has a valid token, or the first backend in list.
-      const tmp = this._backends.filter(x => x.token !== null);
-      this._current = tmp.length > 0 ? tmp[0] : this._backends[0];
+      } else if (this.backendService.connected && this.backendService.current.token) {
 
-      this.createRefreshJWTTimer(this._current);
-      this.persistBackends();
+        // Token is not expired, need to create a refresh token timer.
+        this.createRefreshJWTTimer(this.backendService.current);
+      }
     }
-  }
-
-  /**
-   * Returns true if we are securely connected to a backend.
-   */
-  public get secure() {
-    return !!this._current && this._current.url.startsWith('https://');
-  }
-
-  /**
-   * Returns true if user is connected to a backend.
-   */
-  public get connected() {
-    return !!this._current;
-  }
 
   /**
    * Returns true if user is authenticated towards backend.
    */
   public get authenticated() {
-    return this.connected && this._current.token;
-  }
-
-  /**
-   * Returns the currently used backend API URL.
-   */
-  public get current() {
-    return this._current;
-  }
-
-  /**
-   * Returns all backends the system has persisted.
-   */
-  public get backends() {
-    return this._backends;
+    return this.backendService.connected && this.backendService.current.token;
   }
 
   /**
@@ -106,7 +74,7 @@ export class AuthService {
     return new Observable<AuthenticateResponse>(observer => {
 
       // Sanity checking invocation
-      if (!this.connected) {
+      if (!this.backendService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to authenticate');
         observer.complete();
       } else {
@@ -118,18 +86,16 @@ export class AuthService {
           '&password=' + encodeURI(password)).subscribe(auth => {
 
             // Persisting backend data.
-            let backend: Backend = {
+            this.backendService.current = {
               url,
               username,
-              token: auth.ticket,
               password: storePassword ? password : null,
+              token: auth.ticket,
             };
-            const el = this.persistBackend(backend);
-            this.createRefreshJWTTimer(el);
-            this._current = el;
+            this.createRefreshJWTTimer(this.backendService.current);
 
             // Retrieving endpoints for current backend.
-            this.getEndpoints().subscribe(endpoints => {
+            this.getEndpoints().subscribe(() => {
               observer.next(auth);
               observer.complete();
             }, (error: any) => {
@@ -146,15 +112,17 @@ export class AuthService {
   }
 
   /**
-   * Logs out the user from his current active backend.
+   * Logs out the user from his currently active backend.
+   * 
+   * @param destroyPassword Whether or not password should be removed before persisting backend
    */
   public logout(destroyPassword: boolean) {
     if (this.authenticated) {
-      this._current.token = null;
-      if (destroyPassword){
-        this._current.password = null;
+      this.backendService.current.token = null;
+      if (destroyPassword) {
+        this.backendService.current.password = null;
       }
-      this.persistBackend(this._current);
+      this.backendService.persistBackends();
     }
   }
 
@@ -167,12 +135,12 @@ export class AuthService {
     return new Observable<Endpoint[]>(observer => {
 
       // Sanity checking invocation
-      if (!this.connected) {
+      if (!this.backendService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to retrieve endpoints');
         observer.complete();
       } else {
         this.httpClient.get<Endpoint[]>(
-          this.current.url + '/magic/modules/system/auth/endpoints').subscribe(res => {
+          this.backendService.current.url + '/magic/modules/system/auth/endpoints').subscribe(res => {
           this._endpoints = res;
           observer.next(res);
           observer.complete();
@@ -185,49 +153,63 @@ export class AuthService {
   }
 
   /**
-   * Returns true if specified JWT token is expired.
-   * 
-   * @param token JWT token to check.
-   */
-  public isTokenExpired(token: string) {
-    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
-    const now = Math.floor(new Date().getTime() / 1000);
-    return now >= exp;
-  }
-
-  /**
    * Returns a list of all roles currently authenticated
    * user belongs to, if any.
    */
   public roles() {
+
+    // Verifying user is authenticated, and returning empty array if not.
     if (!this.authenticated) {
       return [];
     }
-    const roles = (<string>(JSON.parse(atob(this._current.token.split('.')[1]))).role).split(',');
-    return roles.map(x => x.trim());
+
+    // Parsing role field from JWT token, and splitting at ','.
+    const result = (<string>(JSON.parse(
+      atob(
+        this.backendService.current.token
+          .split('.')[1]))).role)
+      .split(',');
+
+    // Returning only non-empty roles, and trimming values before returning.
+    return result
+      .map(x => x.trim())
+      .filter(x => x !== '');
   }
 
   /**
    * Returns true if user has access to the specified component.
+   * In order to have access to a component, user has to have access to all component URLs.
    * 
    * @param component Name of component to check if user has access to
    */
   public hasAccess(component: string) {
-    const roles = this.roles();
-    const endpoints = this._endpoints.filter(x => x.path.indexOf(component) >= 0);
-    if (endpoints.length === 0) {
-      return false;
+
+    // Retrieving roles, and all endpoints matching path for specific component.
+    const userRoles = this.roles();
+    const componentEndpoints = this._endpoints.filter(x => x.path.indexOf(component) >= 0);
+    if (componentEndpoints.length === 0) {
+      return false; // No URL matching component's URL.
     }
-    for (var idx of endpoints) {
+
+    // Looping through all endpoints for component, and verifying user has access to all of them.
+    for (var idx of componentEndpoints) {
+
+      // Checking that component requires authorisation.
       if (!idx.auth || idx.auth.length === 0) {
-        continue; // No authorisation required.
+        continue;
       }
-      if (idx.auth.filter(x => roles.indexOf(x) >= 0).length === 0) {
-        return false; // No access to currently iterated endpoint.
+
+      // Verifying user belongs to at least one of the roles required to invoke endpoint.
+      if (idx.auth.filter(x => userRoles.indexOf(x) >= 0).length === 0) {
+        return false;
       }
     }
 
-    // User belongs to at least one of the roles required to invoke all endoints for specified component.
+    /*
+     * User belongs to at least one of the roles required to invoke all
+     * endoints for specified component, or component does not require authorisation
+     * to be invoked.
+     */
     return true;
   }
 
@@ -236,74 +218,59 @@ export class AuthService {
    */
 
   /*
-   * Persists specified backend into local storage.
+   * Returns true if specified JWT token is expired.
    */
-  private persistBackend(backend: Backend) {
-    const existing = this._backends.filter(x => x.url === backend.url);
-    let el: Backend = null;
-    if (existing.length === 0) {
-      this._backends.push(backend);
-      el = backend;
-    } else {
-      el = existing[0];
-      el.password = backend.password;
-      el.username = backend.username;
-      el.url = backend.url;
-      el.token = backend.token;
-    }
-    this.persistBackends();
-    return el;
-  }
+  private isTokenExpired(token: string) {
 
-  /*
-   * Persists all backends into local storage.
-   */
-  private persistBackends() {
-    localStorage.setItem('backends', JSON.stringify(this._backends));
-  }
-
-  /*
-   * Removes all tokens from all backends that are expired.
-   *
-   * Invoked as persisted backend are retrieved from local storage.
-   */
-  private removeInvalidTokens() {
-    for (let idx = 0; idx < this._backends.length; idx++) {
-      const el = this._backends[idx];
-      if (el.token && this.isTokenExpired(el.token)) {
-        el.token = null;
-      }
-    }
+    // Parsing expiration time from JWT token.
+    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
+    const now = Math.floor(new Date().getTime() / 1000);
+    return now >= exp;
   }
 
   /*
    * Creates a refresh timer for a single backend's JWT token.
    */
-  private createRefreshJWTTimer(el: Backend) {
-    if (el.token && !this.isTokenExpired(el.token)) {
-      const exp = (JSON.parse(atob(el.token.split('.')[1]))).exp;
-      const now = Math.floor(new Date().getTime() / 1000);
-      const delta = (exp - now) - 60; // One minute before expiration.
-      setTimeout(() => {
-        this.refreshJWTToken(el);
-      }, Math.max(delta * 1000, 100));
-    }
+  private createRefreshJWTTimer(backend: Backend) {
+
+    // Finding number of seconds until token expires.
+    const exp = (JSON.parse(atob(backend.token.split('.')[1]))).exp;
+    const now = Math.floor(new Date().getTime() / 1000);
+    const delta = (exp - now) - 60; // One minute before expiration.
+
+    // Creating a timer that kicks in 1 minute before token expires.
+    setTimeout(() => {
+
+      // Invoking the refresh token method for backend.
+      this.refreshJWTToken(backend);
+    }, Math.max(delta * 1000, 100));
   }
 
   /*
    * Will refresh the JWT token for the specified backend.
    */
   private refreshJWTToken(backend: Backend) {
+
+    // Verifying user has not explicitly logged out before timer kicked in.
     if (backend.token) {
+
+      // Invoking refresh JWT token endpoint.
       this.httpClient.get<AuthenticateResponse>(
         backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
+
+        // Saving JWT token, and presisting all backends.
         backend.token = res.ticket;
-        this.persistBackends();
+        this.backendService.persistBackends();
+
+        // Creating our next refresh JWT token timer.
         this.createRefreshJWTTimer(backend);
+
       }, () => {
+
+        // Token could not be refreshed, destroying the existing token, and persisting all backends.
         console.error('JWT token could not be refreshed');
         backend.token = null;
-        this.persistBackends();
+        this.backendService.persistBackends();
       });
     }
   }

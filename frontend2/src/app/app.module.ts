@@ -32,7 +32,7 @@ import { MarkedPipe } from './pipes/marked.pipe';
 import { DateToPipe } from './pipes/date-to.pipe';
 import { DateFromPipe } from './pipes/date-from.pipe';
 import { AppRoutingModule } from './app-routing.module';
-import { LoaderService } from './services/loader-service';
+import { LoaderService } from './services/loader.service';
 import { AuthInterceptor } from './services/interceptors/auth.interceptor';
 import { LoaderInterceptor } from './services/interceptors/loader-interceptor';
 

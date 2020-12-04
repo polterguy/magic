@@ -13,7 +13,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
-import { MessageService } from 'src/app/services/message-service';
+import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Login dialog allowing user to login to a backend of his choice.
@@ -34,13 +35,15 @@ export class LoginDialogComponent implements OnInit {
   /**
    * Creates an instance of your login dialog.
    * 
-   * @param messageService Dependency injected message service to publish information from component to subscribers.
-   * @param authService Dependency injected authentication and authorisation service.
+   * @param messageService Dependency injected message service to publish information from component to subscribers
+   * @param authService Dependency injected authentication and authorisation service
+   * @param backendService Service to keep track of currently selected backend
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    */
   constructor(
     private messageService: MessageService,
     public authService: AuthService,
+    public backendService: BackendService,
     public dialogRef: MatDialogRef<LoginDialogComponent>) { }
 
   /**
@@ -74,7 +77,7 @@ export class LoginDialogComponent implements OnInit {
     if (this.username !== '' || this.password !== '') {
       return;
     }
-    const el = this.authService.backends.filter(x => x.url === this.backends.value);
+    const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
       this.username = el[0].username;
       this.password = el[0].password;
@@ -112,7 +115,7 @@ export class LoginDialogComponent implements OnInit {
    * the auto completer.
    */
   private filter(value: string) {
-    return this.authService.backends
+    return this.backendService.backends
       .filter(x => x.url.includes(value))
       .map(x => x.url);
   }
