@@ -44,7 +44,7 @@ export class AuthService {
 
       } else if (this.backendService.connected && this.backendService.current.token) {
 
-        // Token is not expired, need to create a refresh token timer.
+        // Token is not expired, hence we need to create a refresh token timer.
         this.createRefreshJWTTimer(this.backendService.current);
       }
     }
