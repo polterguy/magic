@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
  * towards your backend or not. Used to display "Ajax wait spinner".
  * 
  * Combined with the LoaderInterceptor, this is the service that makes
- * sure the user sees an Ajax loader during invocations towards the backend.
+ * sure the user sees an animated Ajax loader during invocations towards the backend.
  */
 @Injectable({
   providedIn: 'root'
