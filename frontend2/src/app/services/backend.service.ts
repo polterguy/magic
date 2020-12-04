@@ -26,13 +26,15 @@ export class BackendService {
    */
   constructor() {
 
-    // Reading persisted backends, or defaulting to what's in environment.ts file.
+    // Reading persisted backends from local storage, or defaulting to whatever is in our environment.ts file.
     let backends: Backend[];
     const storage = localStorage.getItem('backends');
     backends = storage === null ?
       environment.defaultBackends :
       backends = <Backend[]>JSON.parse(storage);
     this._backends = backends;
+
+    // Checking we actually have any backends stored.
     if (this._backends.length > 0) {
 
       // Defaulting selected backend to whatever has a JWT token value, since this was the previously selected backend.

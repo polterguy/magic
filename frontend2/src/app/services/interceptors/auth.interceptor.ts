@@ -8,7 +8,6 @@ import {
   HttpHandler,
   HttpRequest
 } from '@angular/common/http';
-import { AuthService } from '../auth.service';
 import { BackendService } from '../backend.service';
 
 /**
@@ -20,7 +19,6 @@ import { BackendService } from '../backend.service';
 export class AuthInterceptor implements HttpInterceptor {
 
   constructor(
-    private authService: AuthService,
     private backendService: BackendService) { }
 
   /**
@@ -33,16 +31,19 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler) {
-    if (req.headers.has('Authorization')) {
-      return next.handle(req);
+
+    // Verifying we have a JWT token for current backend.
+    const token = this.backendService.current.token;
+    if (token) {
+
+      // Clonging HTTP request, adding Authorisation header, and invoking next interceptor.
+      const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + token)});
+      return next.handle(authReq);
+
     } else {
-      const token = this.backendService.current.token;
-      if (token) {
-        const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + token)});
-        return next.handle(authReq);
-      } else {
-        return next.handle(req);
-      }
+
+      // No token, hence simply invoking next interceptor without doing anything.
+      return next.handle(req);
     }
   }
 }
