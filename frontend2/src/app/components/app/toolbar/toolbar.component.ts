@@ -10,7 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
-import { MessageService } from 'src/app/services/message-service';
+import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 
 /**
@@ -29,11 +30,13 @@ export class ToolbarComponent {
    * 
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param authService Authentication and authorisation HTTP service
+   * @param backendService Service to keep track of currently selected backend
    * @param messageService Message service to send messages to other components using pub/sub
    */
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
+    public backendService: BackendService,
     private messageService: MessageService) { }
 
   /**
@@ -50,13 +53,13 @@ export class ToolbarComponent {
    */
   public getUserStatus() {
     if (this.authService.authenticated) {
-      let url = this.authService.current.url.replace('http://', '').replace('https://', '');
+      let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
       if (url.indexOf(':')) {
         url = url.substr(0, url.indexOf(':'));
       }
-      return this.authService.current.username + '@' + url;
-    } else if (this.authService.connected) {
-      let url = this.authService.current.url.replace('http://', '').replace('https://', '');
+      return this.backendService.current.username + '@' + url;
+    } else if (this.backendService.connected) {
+      let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
       if (url.indexOf(':')) {
         url = url.substr(0, url.indexOf(':'));
       }

@@ -4,7 +4,7 @@
  */
 import { Injectable } from "@angular/core";
 import { tap, catchError } from 'rxjs/operators';
-import { LoaderService } from 'src/app/services/loader-service';
+import { LoaderService } from 'src/app/services/loader.service';
 import { HttpRequest, HttpHandler, HttpInterceptor, HttpResponse } from '@angular/common/http';
 
 /**

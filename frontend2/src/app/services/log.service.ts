@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http-service';
+import { HttpService } from './http.service';
 import { Count } from '../models/count.model';
 import { LogItem } from 'src/app/models/log-item.model';
 

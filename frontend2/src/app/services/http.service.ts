@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
 import { AuthService } from './auth.service';
+import { BackendService } from './backend.service';
 
 /**
  * HTTP service for invoking endpoints towards your currently active backend.
@@ -21,7 +22,8 @@ export class HttpService {
 
   constructor(
     private httpClient: HttpClient,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private backendService: BackendService) { }
 
     /**
      * Invokes the HTTP GET verb towards your specified URL
@@ -31,11 +33,11 @@ export class HttpService {
      */
   public get<Response>(url: string) {
     return new Observable<Response>(observer => {
-      if (!this.authService.connected) {
+      if (!this.backendService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
         observer.complete();
       } else {
-        this.httpClient.get<Response>(this.authService.current.url + url).subscribe(res => {
+        this.httpClient.get<Response>(this.backendService.current.url + url).subscribe(res => {
           observer.next(res);
           observer.complete();
         });
@@ -53,11 +55,11 @@ export class HttpService {
    */
   public post<Request, Response>(url: string, req: Request) {
     return new Observable<Response>(observer => {
-      if (!this.authService.connected) {
+      if (!this.backendService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
         observer.complete();
       } else {
-        this.httpClient.post<Response>(this.authService.current.url + url, req).subscribe(res => {
+        this.httpClient.post<Response>(this.backendService.current.url + url, req).subscribe(res => {
           observer.next(res);
           observer.complete();
         });
@@ -75,11 +77,11 @@ export class HttpService {
    */
   public put<Request, Response>(url: string, req: Request) {
     return new Observable<Response>(observer => {
-      if (!this.authService.connected) {
+      if (!this.backendService.connected) {
         observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
         observer.complete();
       } else {
-        this.httpClient.put<Response>(this.authService.current.url + url, req).subscribe(res => {
+        this.httpClient.put<Response>(this.backendService.current.url + url, req).subscribe(res => {
           observer.next(res);
           observer.complete();
         });
@@ -95,11 +97,11 @@ export class HttpService {
      */
     public delete<Response>(url: string) {
       return new Observable<Response>(observer => {
-        if (!this.authService.connected) {
+        if (!this.backendService.connected) {
           observer.error('Not connected to any backend, please choose or configure a backend before trying to invoke your backend');
           observer.complete();
         } else {
-          this.httpClient.delete<Response>(this.authService.current.url + url).subscribe(res => {
+          this.httpClient.delete<Response>(this.backendService.current.url + url).subscribe(res => {
             observer.next(res);
             observer.complete();
           });

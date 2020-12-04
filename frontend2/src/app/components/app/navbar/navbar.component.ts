@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
-import { MessageService } from 'src/app/services/message-service';
+import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Component wrapping navbar for dashboard.
