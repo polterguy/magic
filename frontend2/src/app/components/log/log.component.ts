@@ -39,6 +39,8 @@ export class LogComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param logService Log HTTP service to use for retrieving log items
+   * @param messageService Message service to publish messages to other components, and subscribe to messages sent by other components
+   * @param route Activated route service to subscribe to router changed events
    */
   constructor(
     private logService: LogService,
@@ -49,6 +51,8 @@ export class LogComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
+
+    // Making sure we subscribe to router changed events.
     this.route.params.subscribe(params => {
       const id = params['id'];
       if (id) {
@@ -59,6 +63,8 @@ export class LogComponent implements OnInit {
         this.current = null;
       }
     });
+
+    // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
@@ -68,6 +74,8 @@ export class LogComponent implements OnInit {
         this.paginator.pageIndex = 0;
         this.getItems();
       });
+
+    // Getting log items initially, displaying the latest log items from the backend.
     this.getItems();
   }
 
@@ -75,12 +83,18 @@ export class LogComponent implements OnInit {
    * Returns log items from your backend.
    */
   public getItems() {
+
+    // Retrieves log items from the backend according to pagination and filter conditions.
     this.logService.list(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe(res => {
+
+      // Resetting details to avoid having 'hanging' details items, and changing internal model to result of invocation.
       this.displayDetails = [];
       this.items = res;
+
+      // Counting items with the same filter as we used to retrieve items with.
       this.logService.count(this.filterFormControl.value).subscribe(res => {
         this.count = res.result;
       })
@@ -93,6 +107,8 @@ export class LogComponent implements OnInit {
    * @param e Page event argument
    */
   public paged(e: PageEvent) {
+
+    // Changing pager's size according to arguments, and retrieving log items from backend.
     this.paginator.pageSize = e.pageSize;
     this.getItems();
   }
@@ -103,6 +119,8 @@ export class LogComponent implements OnInit {
    * @param filter Query filter to use for displaying items
    */
   public setFilter(filter: string) {
+
+    // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue(filter);
   }
@@ -111,9 +129,10 @@ export class LogComponent implements OnInit {
    * Clears the current filter.
    */
   public clearFilter() {
+
+    // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
-    this.getItems();
   }
 
   /**
@@ -122,10 +141,16 @@ export class LogComponent implements OnInit {
    * @param el Log item to display details for
    */
   public toggleDetails(el: LogItem) {
+
+    // Checking if we're already displaying details for current item.
     const idx = this.displayDetails.indexOf(el.id);
     if (idx >= 0) {
+
+      // Hiding item.
       this.displayDetails.splice(idx, 1);
     } else {
+
+      // Displaying item.
       this.displayDetails.push(el.id);
     }
   }
@@ -136,6 +161,8 @@ export class LogComponent implements OnInit {
    * @param el Log item to display details for
    */
   public shouldDisplayDetails(el: LogItem) {
+
+    // Returns true if we're currently displaying this particular item.
     return this.displayDetails.filter(x => x === el.id).length > 0;
   }
 
@@ -143,6 +170,8 @@ export class LogComponent implements OnInit {
    * Shows information about where to find currently viewed item.
    */
   public showLinkTip() {
+
+    // Publishing message to component responsible for displaying information feedback to user.
     this.messageService.sendMessage({
       name: Messages.SHOW_INFO_SHORT,
       content: 'Scroll to the top of the page to see the item'
