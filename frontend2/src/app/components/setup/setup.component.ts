@@ -20,7 +20,10 @@ import { SetupService } from 'src/app/services/setup.service';
 })
 export class SetupComponent implements OnInit {
 
-  public status: Status;
+  /**
+   * Status of setup process.
+   */
+  public status: Status = null;
 
   /**
    * Creates an instance of your component.

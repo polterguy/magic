@@ -51,6 +51,7 @@ import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { SetupStatusComponent } from './components/setup/setup-status/setup-status.component';
 
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
@@ -78,6 +79,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     SetupComponent,
     NavbarComponent,
     ToolbarComponent,
+    SetupStatusComponent,
   ],
   imports: [
     FormsModule,

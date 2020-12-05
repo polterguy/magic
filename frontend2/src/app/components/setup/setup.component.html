@@ -1,1 +1,5 @@
 
+<app-setup-status
+  *ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.setup_done)"
+  [status]="status">
+</app-setup-status>

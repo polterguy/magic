@@ -4,9 +4,14 @@
  */
 
 /**
- * Model returned from backend as user checks the status of his backend.
+ * Status of setup process.
  */
 export class Status {
+
+  /**
+   * Is true if the system has been setup.
+   */
+  setup_done: boolean;
 
   /**
    * Is true if your magic database has been crudified.
@@ -17,10 +22,5 @@ export class Status {
    * Is true if the server has a cryptography key pair.
    */
   server_keypair: boolean;
-
-  /**
-   * Is true if the system has been setup.
-   */
-  setup_done: boolean;
 }
   
