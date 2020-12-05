@@ -64,4 +64,9 @@ export class Messages {
    * Message will be published by the system when an error occurs.
    */
   static readonly SHOW_ERROR = 'app.error';
+
+  /**
+   * Message will be published by the system when an error occurs.
+   */
+  static readonly SETUP_STATE_CHANGED = 'app.setup.state-changed';
 }

@@ -89,7 +89,7 @@ export class LoginDialogComponent implements OnInit {
    * Invoked when user wants to login to currently selected backend.
    */
   public login() {
-    this.authService.login(
+    this.authService.loginToBackend(
       this.backends.value,
       this.username,
       this.password,
