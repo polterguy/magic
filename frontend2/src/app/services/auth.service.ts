@@ -57,14 +57,29 @@ export class AuthService {
   }
 
   /**
-   * Authenticates user towards backend.
+   * Authenticates user towards currently selected backend.
+   * 
+   * @param username Username
+   * @param password Password
+   * @param storePassword Whether or not passsword should be persisted into local storage
+   */
+  public login(username: string, password: string, storePassword: boolean) {
+    return this.loginToBackend(
+      this.backendService.current.url,
+      username,
+      password,
+      storePassword);
+  }
+
+  /**
+   * Authenticates user towards specified backend.
    * 
    * @param url Backend API URL
    * @param username Username
    * @param password Password
    * @param storePassword Whether or not passsword should be persisted into local storage
    */
-  public login(
+  public loginToBackend(
     url: string,
     username: string,
     password: string,
