@@ -74,7 +74,7 @@ export class HttpService {
    * @param url Backend URL of endpoint
    * @param req Request payload to post
    */
-  public post<Request, Response>(url: string, req: Request) {
+  public post<Response>(url: string, req: any) {
 
     // Creating a new observable, to be able to resolve 'not connected' types of errors.
     return new Observable<Response>(observer => {
@@ -113,7 +113,7 @@ export class HttpService {
    * @param url Backend URL of endpoint
    * @param req Request payload to post
    */
-  public put<Request, Response>(url: string, req: Request) {
+  public put<Response>(url: string, req: any) {
 
     // Creating a new observable, to be able to resolve 'not connected' types of errors.
     return new Observable<Response>(observer => {

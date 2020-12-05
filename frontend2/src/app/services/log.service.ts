@@ -134,7 +134,7 @@ export class LogService {
   public createLocItem(loc: number, type: string, name: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<any, any>(
+    return this.httpService.post<any>(
       '/magic/modules/system/log/log-loc', {
         loc,
         type,
