@@ -26,9 +26,26 @@ io.file.exists:/modules/system/crypto/keys/public.key
 
 
 /*
+ * Checking if JWT secret has been changed.
+ */
+.jwt-secret-changed:bool:true
+config.get:"magic:auth:secret"
+if
+   eq
+      get-value:x:@config.get
+      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   .lambda
+
+      // System has not been setup.
+      set-value:x:@.jwt-secret-changed
+         .:bool:false
+
+
+/*
  * Returns results of above invocations to caller.
  */
 unwrap:x:+/*
 return
    magic_crudified:x:@io.folder.exists
    server_keypair:x:@io.file.exists
+   setup_done:x:@.jwt-secret-changed

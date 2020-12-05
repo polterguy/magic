@@ -185,5 +185,5 @@ config.save:x:@.arguments/*/settings
 /*
  * Returning success to caller.
  */
-return-nodes
+return
    result:success

@@ -40,5 +40,5 @@ license.apply
 /*
  * Returning success to calller.
  */
-return-nodes
+return
    result:success
