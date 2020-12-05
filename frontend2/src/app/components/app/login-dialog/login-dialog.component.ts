@@ -79,7 +79,6 @@ export class LoginDialogComponent implements OnInit {
       this.username = el[0].username;
       this.password = el[0].password;
       this.savePassword = !!el[0].password && this.password !== 'root';
-      this.backendService.current = el[0];
     }
   }
 
@@ -87,15 +86,34 @@ export class LoginDialogComponent implements OnInit {
    * Invoked when user wants to login to currently selected backend.
    */
   public login() {
+
+    /*
+     * Storing currently selected backend.
+     * Notice, this has to be done before we authenticate, since
+     * the auth service depends upon user having already selected
+     * a current backend.
+     */
+    this.backendService.current = {
+      url: this.backends.value,
+      username: this.username,
+      password: this.savePassword ? this.password : null,
+    };
+
+    // Authenticating user.
     this.authService.login(
       this.username,
       this.password,
       this.savePassword).subscribe(res => {
+
+        // Success! Publishing user logged in message, and closing dialog.
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_IN,
         });
         this.dialogRef.close();
+
       }, error => {
+
+        // Oops, something went wrong.
         this.messageService.sendMessage({
           name: Messages.SHOW_ERROR,
           content: error,
