@@ -15,7 +15,7 @@ import { Endpoint } from '../models/endpoint.model';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
- * Authentication and authorisation HTTP service.
+ * Authentication and authorization HTTP service.
  */
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,8 @@ export class AuthService {
   /**
    * Creates an instance of your service.
    * 
-   * @param httpClient Dependency injected HTTP client
+   * @param httpService Dependency injected HTTP service to handle HTTP requests
+   * @param backendService Dependency injected backend service to handle currently selected backends
    */
   constructor(
     private httpService: HttpService,
