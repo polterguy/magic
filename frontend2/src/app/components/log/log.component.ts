@@ -26,14 +26,38 @@ import { MessageService } from 'src/app/services/message.service';
 })
 export class LogComponent implements OnInit {
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  public displayedColumns: string[] = ['content', 'type', 'when'];
-  public filterFormControl: FormControl;
-  public items: LogItem[] = [];
-  public count: number = 0;
-  public showGrid = true;
-  public current: LogItem = null;
+  // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
+
+  /**
+   * Paginator for paging table.
+   */
+  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+
+  /**
+   * Columns to display in table.
+   */
+  public displayedColumns: string[] = ['content', 'type', 'when'];
+
+  /**
+   * Filter form control for filtering log items to display.
+   */
+  public filterFormControl: FormControl;
+
+  /**
+   * Currently viewed log items.
+   */
+  public items: LogItem[] = [];
+
+  /**
+   * Number of log items in the backend matching the currently applied filter.
+   */
+  public count: number = 0;
+
+  /**
+   * Currently viewed log item. Basically the log item emphasized and displayed at the top of component.
+   */
+  public current: LogItem = null;
 
   /**
    * Creates an instance of your component.
