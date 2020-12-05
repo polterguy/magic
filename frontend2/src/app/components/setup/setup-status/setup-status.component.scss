@@ -6,15 +6,15 @@
     top: 0;
     right: 0;
     tr {
-      th {
-        text-align: left;
-      }
       td {
-        padding-right: 1rem;
+        padding: 0 1rem 0 0;
       }
-      td {
-        color: #777;
-      }
+    }
+    tr.todo {
+      color: #777;
+    }
+    tr.done {
+      color: inherit;
     }
   }
 }
