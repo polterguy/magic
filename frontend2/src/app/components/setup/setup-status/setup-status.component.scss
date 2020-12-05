@@ -1,0 +1,20 @@
+
+.status-todo {
+  position: relative;
+  table {
+    position: absolute;
+    top: 0;
+    right: 0;
+    tr {
+      th {
+        text-align: left;
+      }
+      td {
+        padding-right: 1rem;
+      }
+      td {
+        color: #777;
+      }
+    }
+  }
+}
