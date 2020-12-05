@@ -6,9 +6,9 @@
 // Angular and system imports.
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
+import { HttpService } from './http.service';
 import { Backend } from '../models/backend.model';
 import { BackendService } from './backend.service';
 import { Endpoint } from '../models/endpoint.model';
@@ -22,6 +22,7 @@ import { AuthenticateResponse } from '../models/authenticate-response.model';
 })
 export class AuthService {
 
+  // Used to figure out if user is authorised to access URLs or not.
   private _endpoints: Endpoint[] = [];
 
   /**
@@ -30,7 +31,7 @@ export class AuthService {
    * @param httpClient Dependency injected HTTP client
    */
   constructor(
-    private httpClient: HttpClient,
+    private httpService: HttpService,
     private backendService: BackendService) {
 
       // Checking if user has a token towards his current backend, and if the token is expired.
@@ -57,30 +58,13 @@ export class AuthService {
   }
 
   /**
-   * Authenticates user towards currently selected backend.
-   * 
-   * @param username Username
-   * @param password Password
-   * @param storePassword Whether or not passsword should be persisted into local storage
-   */
-  public login(username: string, password: string, storePassword: boolean) {
-    return this.loginToBackend(
-      this.backendService.current.url,
-      username,
-      password,
-      storePassword);
-  }
-
-  /**
    * Authenticates user towards specified backend.
    * 
-   * @param url Backend API URL
    * @param username Username
    * @param password Password
    * @param storePassword Whether or not passsword should be persisted into local storage
    */
-  public loginToBackend(
-    url: string,
+  public login(
     username: string,
     password: string,
     storePassword: boolean) {
@@ -88,42 +72,31 @@ export class AuthService {
     // Returning new observer, chaining authentication and retrieval of endpoints.
     return new Observable<AuthenticateResponse>(observer => {
 
-      // Sanity checking invocation
-      if (!this.backendService.connected) {
-        observer.error('Not connected to any backend, please choose or configure a backend before trying to authenticate');
-        observer.complete();
-      } else {
+      // Authenticating user.
+      this.httpService.get<AuthenticateResponse>(
+        '/magic/modules/system/auth/authenticate' +
+        '?username=' + encodeURI(username) +
+        '&password=' + encodeURI(password)).subscribe((auth: AuthenticateResponse) => {
 
-        // Authenticating user.
-        this.httpClient.get<AuthenticateResponse>(
-          url + '/magic/modules/system/auth/authenticate' +
-          '?username=' + encodeURI(username) +
-          '&password=' + encodeURI(password)).subscribe(auth => {
+          // Persisting backend data.
+          this.backendService.current = {
+            url: this.backendService.current.url,
+            username,
+            password: storePassword ? password : null,
+            token: auth.ticket,
+          };
+          this.createRefreshJWTTimer(this.backendService.current);
 
-            // Persisting backend data.
-            this.backendService.current = {
-              url,
-              username,
-              password: storePassword ? password : null,
-              token: auth.ticket,
-            };
-            this.createRefreshJWTTimer(this.backendService.current);
-
-            // Retrieving endpoints for current backend.
-            this.getEndpoints().subscribe(() => {
-              observer.next(auth);
-              observer.complete();
-            }, (error: any) => {
-              observer.error(error);
-              observer.complete();
-            });
-
+          // Retrieving endpoints for current backend.
+          this.getEndpoints().subscribe(() => {
+            observer.next(auth);
+            observer.complete();
           }, (error: any) => {
             observer.error(error);
             observer.complete();
           });
-        }
       });
+    });
   }
 
   /**
@@ -149,21 +122,15 @@ export class AuthService {
     // Returning new observer, chaining retrieval of endpoints and storing them locally.
     return new Observable<Endpoint[]>(observer => {
 
-      // Sanity checking invocation
-      if (!this.backendService.connected) {
-        observer.error('Not connected to any backend, please choose or configure a backend before trying to retrieve endpoints');
+      this.httpService.get<Endpoint[]>(
+        '/magic/modules/system/auth/endpoints').subscribe(res => {
+        this._endpoints = res;
+        observer.next(res);
         observer.complete();
-      } else {
-        this.httpClient.get<Endpoint[]>(
-          this.backendService.current.url + '/magic/modules/system/auth/endpoints').subscribe(res => {
-          this._endpoints = res;
-          observer.next(res);
-          observer.complete();
-        }, error => {
-          observer.error(error);
-          observer.complete();
-        });
-      }
+      }, error => {
+        observer.error(error);
+        observer.complete();
+      });
     });
   }
 
@@ -270,8 +237,8 @@ export class AuthService {
     if (backend.token) {
 
       // Invoking refresh JWT token endpoint.
-      this.httpClient.get<AuthenticateResponse>(
-        backend.url + '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
+      this.httpService.get<AuthenticateResponse>(
+        '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
 
         // Saving JWT token, and presisting all backends.
         backend.token = res.ticket;

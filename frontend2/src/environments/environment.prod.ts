@@ -8,6 +8,7 @@ export const environment = {
     {
       url: 'https://your-backend-api-here.com',
       username: 'root',
+      password: 'root',
      },
   ],
 };

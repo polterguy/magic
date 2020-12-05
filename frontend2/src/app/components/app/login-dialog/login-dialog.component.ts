@@ -74,14 +74,12 @@ export class LoginDialogComponent implements OnInit {
    * persisted backends.
    */
   public backendSelected() {
-    if (this.username !== '' || this.password !== '') {
-      return;
-    }
     const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
       this.username = el[0].username;
       this.password = el[0].password;
       this.savePassword = !!el[0].password && this.password !== 'root';
+      this.backendService.current = el[0];
     }
   }
 
@@ -89,8 +87,7 @@ export class LoginDialogComponent implements OnInit {
    * Invoked when user wants to login to currently selected backend.
    */
   public login() {
-    this.authService.loginToBackend(
-      this.backends.value,
+    this.authService.login(
       this.username,
       this.password,
       this.savePassword).subscribe(res => {
