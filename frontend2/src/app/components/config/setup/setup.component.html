@@ -1,0 +1,11 @@
+
+<mat-progress-bar
+  mode="determinate"
+  matTooltip="Remaining setup tasks"
+  [value]="getSetupProgress()">
+</mat-progress-bar>
+
+<app-setup-configuration
+  class="setup-component"
+  *ngIf="!status.setup_done">
+</app-setup-configuration>

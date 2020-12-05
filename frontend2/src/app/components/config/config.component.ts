@@ -8,17 +8,17 @@ import { Component, OnInit } from '@angular/core';
 import { Status } from 'src/app/models/status.model';
 
 // Application specific imports.
-import { SetupService } from 'src/app/services/setup.service';
+import { ConfigService } from 'src/app/services/config.service';
 
 /**
  * Setup component allowing you to setup and modify your system's configuration.
  */
 @Component({
-  selector: 'app-setup',
-  templateUrl: './setup.component.html',
-  styleUrls: ['./setup.component.scss']
+  selector: 'app-config',
+  templateUrl: './config.component.html',
+  styleUrls: ['./config.component.scss']
 })
-export class SetupComponent implements OnInit {
+export class ConfigComponent implements OnInit {
 
   /**
    * Status of setup process.
@@ -30,12 +30,12 @@ export class SetupComponent implements OnInit {
    * 
    * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
    */
-  constructor(private setupService: SetupService) { }
+  constructor(private setupService: ConfigService) { }
 
   /**
    * OnInit implementation.
    */
-  ngOnInit() {
+  public ngOnInit() {
 
     // Checking status of backend.
     this.setupService.status().subscribe(res => {
