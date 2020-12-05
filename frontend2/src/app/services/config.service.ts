@@ -18,7 +18,7 @@ import { Response } from '../models/response.model';
 @Injectable({
   providedIn: 'root'
 })
-export class SetupService {
+export class ConfigService {
 
   /**
    * Creates an instance of your service.
@@ -33,7 +33,7 @@ export class SetupService {
   public status() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Status>('/magic/modules/system/setup/status');
+    return this.httpService.get<Status>('/magic/modules/system/config/status');
   }
 
   /**
@@ -46,7 +46,7 @@ export class SetupService {
      * Notice, we can't use a strong type here, since configuration might
      * change as user adds his own settings to the configuration file.
      */
-    return this.httpService.get<any>('/magic/modules/system/setup/load-config-file');
+    return this.httpService.get<any>('/magic/modules/system/config/load-config-file');
   }
 
   /**
@@ -59,7 +59,7 @@ export class SetupService {
   public setup(databaseType: string, password: string, settings: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/setup/setup', {
+    return this.httpService.post<Response>('/magic/modules/system/config/setup', {
       databaseType,
       password,
       settings: JSON.stringify(settings),
@@ -74,7 +74,7 @@ export class SetupService {
   public saveLicense(license: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/setup/save-license', {
+    return this.httpService.post<Response>('/magic/modules/system/config/save-license', {
       license,
     });
   }

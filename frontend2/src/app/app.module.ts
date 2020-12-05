@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,6 +25,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -44,14 +46,15 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
-import { SetupComponent } from './components/setup/setup.component';
+import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
+import { SetupComponent } from './components/config/setup/setup.component';
 import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
-import { SetupStatusComponent } from './components/setup/setup-status/setup-status.component';
+import { SetupConfigurationComponent } from './components/config/setup/setup-configuration/setup-configuration.component';
 
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
@@ -76,10 +79,11 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     MarkedPipe,
     DateToPipe,
     DateFromPipe,
-    SetupComponent,
+    ConfigComponent,
     NavbarComponent,
     ToolbarComponent,
-    SetupStatusComponent,
+    SetupComponent,
+    SetupConfigurationComponent,
   ],
   imports: [
     FormsModule,
@@ -90,6 +94,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     BrowserAnimationsModule,
     MatSidenavModule,
     MatButtonModule,
+    MatSelectModule,
     MatCheckboxModule,
     MatCardModule,
     MatIconModule,
@@ -97,6 +102,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     MatTooltipModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatProgressBarModule,
     MatInputModule,
     MatTableModule,
     MatAutocompleteModule,

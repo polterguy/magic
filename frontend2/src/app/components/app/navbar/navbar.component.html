@@ -108,12 +108,12 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/setup')"
+  *ngIf="authService.hasAccess('magic/modules/system/config')"
   mat-button
-  routerLink="/setup"
+  routerLink="/config"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
   [routerLinkActiveOptions]="{exact:true}">
   <mat-icon matSuffix>settings</mat-icon>
-  <span>Setup</span>
+  <span>Config</span>
 </a>

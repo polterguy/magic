@@ -14,7 +14,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
-import { SetupComponent } from './components/setup/setup.component';
+import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
@@ -32,7 +32,7 @@ const routes: Routes = [
   { path: 'log/:id', component: LogComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
-  { path: 'setup', component: SetupComponent },
+  { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'file-system', component: FilesComponent },
   { path: 'endpoints', component: EndpointsComponent },
