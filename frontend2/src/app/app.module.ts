@@ -62,6 +62,7 @@ import { SetupConfigurationComponent } from './components/config/setup/setup-con
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
+import { SetupCryptoComponent } from './components/config/setup/setup-crypto/setup-crypto.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -89,6 +90,7 @@ import { SetupDatabaseComponent } from './components/config/setup/setup-database
     SetupComponent,
     SetupConfigurationComponent,
     SetupDatabaseComponent,
+    SetupCryptoComponent,
   ],
   imports: [
     FormsModule,
