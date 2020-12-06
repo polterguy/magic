@@ -14,6 +14,7 @@ import { BaseComponent } from '../../base.component';
 import { ConfigService } from 'src/app/services/config.service';
 import { Message, Messages } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
+import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Component responsible for allowing user to setup system.
@@ -59,11 +60,13 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
    * 
    * @param router Router service used to redirect user when setup process is finished
    * @param configService Service used to retrieve and save configuration settings, etc
+   * @param loaderInterceptor Used to explicitly turn on and off loader spinner animation
    * @param messageService Service used to publish messages to other components in the system
    */
   constructor(
     private router: Router,
     private configService: ConfigService,
+    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
       super(messageService);
     }
@@ -102,7 +105,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
           switch (msg.content) {
 
             // Triggered when setup of configuration is done.
-            case 'setup':
+            case 'config':
 
               // Animating component out of view.
               this.configurationCssClass = 'setup-component animate-out';
@@ -138,6 +141,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
                   this.process = 'done';
                   setTimeout(() => {
                     this.router.navigate(['/']);
+                    this.loaderInterceptor.decrement();
                   }, 500);
                 }, (error: any) => this.showError(error));
               }, 500);

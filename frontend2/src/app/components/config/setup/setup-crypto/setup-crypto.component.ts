@@ -11,6 +11,7 @@ import { Messages } from 'src/app/models/message.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { MessageService } from 'src/app/services/message.service';
+import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Component allowing user to setup a cryptography key pair.
@@ -35,10 +36,13 @@ export class SetupCryptoComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param configService Configuration service used to generate server key pair
+   * @param loaderInterceptor Used to explicitly turn on and off load spinner animation
    * @param messageService Message service used to publish messages to other components.
    */
   public constructor(
     private configService: ConfigService,
+    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
     super(messageService);
   }
@@ -51,7 +55,11 @@ export class SetupCryptoComponent extends BaseComponent implements OnInit {
     // Getting some initial random gibberish to use as seed when generating key pair.
     this.configService.getGibberish(40, 50).subscribe((res: any) => {
       this.seed = res.result;
-    }, (error: any) => this.showError(error));
+      this.loaderInterceptor.decrement();
+    }, (error: any) => {
+      this.showError(error);
+      this.loaderInterceptor.decrement();
+    });
   }
 
   /**
