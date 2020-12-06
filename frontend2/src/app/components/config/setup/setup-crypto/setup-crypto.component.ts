@@ -67,6 +67,7 @@ export class SetupCryptoComponent extends BaseComponent implements OnInit {
    */
   public generate() {
     this.configService.generateKeyPair(this.strength, this.seed).subscribe((res: any) => {
+      this.showInfo('Cryptography key pair successfully created');
       this.messageService.sendMessage({
         name: Messages.SETUP_STATE_CHANGED,
         content: 'crypto'
