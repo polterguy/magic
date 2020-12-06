@@ -83,7 +83,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
     if (!this.status.setup_done) {
       this.process = 'configuration';
     } else if (!this.status.magic_crudified) {
-      this.process = 'database';
+      this.process = 'endpoints';
     } else if (!this.status.server_keypair) {
       this.process = 'cryptography key pair';
     }
@@ -112,7 +112,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
-                  this.process = 'database';
+                  this.process = 'endpoints';
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
