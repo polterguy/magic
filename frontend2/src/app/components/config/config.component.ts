@@ -28,6 +28,11 @@ export class ConfigComponent extends BaseComponent implements OnInit {
   public status: Status = null;
 
   /**
+   * Raw configuration settings as returned from backend.
+   */
+  public config: string = null;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
@@ -47,6 +52,13 @@ export class ConfigComponent extends BaseComponent implements OnInit {
     // Checking status of backend.
     this.configService.status().subscribe((res: Status) => {
       this.status = res;
+      if (res.magic_crudified && res.server_keypair && res.setup_done) {
+
+        // Fetching raw config from backend.
+        this.configService.loadConfig().subscribe((res: any) => {
+          this.config = JSON.stringify(res, null, 2);
+        });
+      }
     }, (error: any) => {
       this.showError(error);
     });
