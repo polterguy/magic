@@ -11,8 +11,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
+import { BaseComponent } from '../base.component';
 import { LogItem } from 'src/app/models/log-item.model';
-import { Messages } from 'src/app/models/message.model';
 import { LogService } from 'src/app/services/log.service';
 import { MessageService } from 'src/app/services/message.service';
 
@@ -24,7 +24,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss']
 })
-export class LogComponent implements OnInit {
+export class LogComponent extends BaseComponent implements OnInit {
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
@@ -63,13 +63,15 @@ export class LogComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param logService Log HTTP service to use for retrieving log items
-   * @param messageService Message service to publish messages to other components, and subscribe to messages sent by other components
    * @param route Activated route service to subscribe to router changed events
+   * @param messageService Message service to publish messages to other components, and subscribe to messages sent by other components
    */
   constructor(
     private logService: LogService,
-    private messageService: MessageService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    protected messageService: MessageService) {
+      super(messageService);
+    }
 
   /**
    * OnInit implementation.
@@ -121,8 +123,8 @@ export class LogComponent implements OnInit {
       // Counting items with the same filter as we used to retrieve items with.
       this.logService.count(this.filterFormControl.value).subscribe(res => {
         this.count = res.result;
-      })
-    });
+      }, (error: any) => this.showError(error));
+    }, (error: any) => this.showError(error));
   }
 
   /**
@@ -194,11 +196,6 @@ export class LogComponent implements OnInit {
    * Shows information about where to find currently viewed item.
    */
   public showLinkTip() {
-
-    // Publishing message to component responsible for displaying information feedback to user.
-    this.messageService.sendMessage({
-      name: Messages.SHOW_INFO_SHORT,
-      content: 'Scroll to the top of the page to see the item'
-    });
+    this.showInfo('Scroll to the top of the page to see the item');
   }
 }

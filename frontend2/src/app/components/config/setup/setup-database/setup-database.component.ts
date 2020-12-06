@@ -12,6 +12,7 @@ import { Messages } from 'src/app/models/message.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { CrudifyService } from 'src/app/services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
+import { BaseComponent } from 'src/app/components/base.component';
 
 /**
  * Component that helps you crudify your magic database
@@ -22,7 +23,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './setup-database.component.html',
   styleUrls: ['./setup-database.component.scss']
 })
-export class SetupDatabaseComponent implements OnInit {
+export class SetupDatabaseComponent extends BaseComponent implements OnInit {
 
   /**
    * Database type we're using, e.g. 'mysql' or 'mssql'.
@@ -44,12 +45,15 @@ export class SetupDatabaseComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param crudifyService Crudify service to use for crudifying the magic database
+   * @param configService Configuration service used to read and write configuration settings, etc
    * @param messageService Message service used to publish messages informing parent component about change of state
    */
   public constructor(
     private crudifyService: CrudifyService,
-    private messageService: MessageService,
-    private configService: ConfigService) { }
+    private configService: ConfigService,
+    protected messageService: MessageService) {
+      super(messageService);
+    }
 
   /**
    * Implementation of OnInit.
@@ -91,10 +95,7 @@ export class SetupDatabaseComponent implements OnInit {
     if (endpoints.length === 0) {
 
       // Finished, showing some information to user.
-      this.messageService.sendMessage({
-        name: Messages.SHOW_INFO,
-        content: 'Your Magic database was successfully crudified',
-      });
+      this.showInfo('Your Magic database was successfully crudified');
 
       // Publishing message to inform parent component that we're done here.
       this.messageService.sendMessage({
@@ -112,13 +113,6 @@ export class SetupDatabaseComponent implements OnInit {
        * endpoints to crudify.
        */
       this.crudifyTopEndpoint(endpoints.slice(1, endpoints.length));
-    }, (error: any) => {
-
-      // Oops, error!
-      this.messageService.sendMessage({
-        name: Messages.SHOW_ERROR,
-        content: error
-      });
-    });
+    }, (error: any) => this.showError(error));
   }
 }

@@ -9,6 +9,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
+import { BaseComponent } from '../../base.component';
 import { ConfigService } from 'src/app/services/config.service';
 import { Message, Messages } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
@@ -21,7 +22,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './setup.component.html',
   styleUrls: ['./setup.component.scss']
 })
-export class SetupComponent implements OnInit, OnDestroy {
+export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
 
   // Used to subscribe to setup status changed messages.
   private subscriber: Subscription;
@@ -40,10 +41,15 @@ export class SetupComponent implements OnInit, OnDestroy {
 
   /**
    * Creates an instance of your component.
+   * 
+   * @param configService Service used to retrieve and save configuration settings, etc.
+   * @param messageService Service used to publish messages to other components in the system
    */
   constructor(
-    private messageService: MessageService,
-    private configService: ConfigService) { }
+    private configService: ConfigService,
+    protected messageService: MessageService) {
+      super(messageService);
+    }
 
   /**
    * Implementation of OnInit.
@@ -74,7 +80,7 @@ export class SetupComponent implements OnInit, OnDestroy {
                 setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
-                });
+                }, (error: any) => this.showError(error));
               }, 500);
               break;
 
@@ -86,7 +92,7 @@ export class SetupComponent implements OnInit, OnDestroy {
                 setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
-                });
+                }, (error: any) => this.showError(error));
               }, 500);
               break;
           }
