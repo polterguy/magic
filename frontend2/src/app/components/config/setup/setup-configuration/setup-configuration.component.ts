@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
+import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -60,11 +61,13 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
    * 
    * @param configService Configuration service used to read and save configuration settings
    * @param authService Used to authenticate user
+   * @param loaderInterceptor Used to explicitly turn on spinner animation
    * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
     private configService: ConfigService,
     private authService: AuthService,
+    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
       super(messageService);
     }
@@ -94,6 +97,7 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   public save() {
 
     // Invoking backend to save configuration as specified by user.
+    this.loaderInterceptor.increment();
     this.configService.setup(
       this.selectedDatabaseType,
       this.password,
@@ -117,15 +121,19 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
             false).subscribe(() => {
             this.messageService.sendMessage({
               name: Messages.SETUP_STATE_CHANGED,
-              content: 'setup'
+              content: 'config'
             });
           });
         }, 1500);
       } else {
 
         // Error of some undefined sort!
+        this.loaderInterceptor.decrement();
         this.showError('Something went wrong when trying to invoke your backend');
       }
-    }, (error: any) => this.showError(error));
+    }, (error: any) => {
+      this.showError(error);
+      this.loaderInterceptor.decrement();
+    });
   }
 }

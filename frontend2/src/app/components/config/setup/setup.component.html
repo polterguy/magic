@@ -19,5 +19,5 @@
 
 <app-setup-crypto
   [class]="cryptoCssClass"
-  *ngIf="status.magic_crudified && !status.server_keypair">
+  *ngIf="status.setup_done && status.magic_crudified && !status.server_keypair">
 </app-setup-crypto>

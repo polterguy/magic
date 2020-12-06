@@ -14,6 +14,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { CrudifyService } from 'src/app/services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
+import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Component that helps you crudify your magic database
@@ -45,13 +46,15 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param crudifyService Crudify service to use for crudifying the magic database
    * @param configService Configuration service used to read and write configuration settings, etc
+   * @param crudifyService Crudify service to use for crudifying the magic database
+   * @param loaderInterceptor Used to explicitly turn on and off the spinner animation
    * @param messageService Message service used to publish messages informing parent component about change of state
    */
   public constructor(
-    private crudifyService: CrudifyService,
     private configService: ConfigService,
+    private crudifyService: CrudifyService,
+    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
       super(messageService);
     }
@@ -75,6 +78,14 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
       this.crudifyContent = JSON.stringify(data, null, 2);
       this.count = data.length;
+
+      // Making sure we hide loader service that was explicitly shown in previous step.
+      this.loaderInterceptor.decrement();
+    }, (error: any) => {
+
+      // Oops ...!!
+      this.showError(error);
+      this.loaderInterceptor.decrement();
     });
   }
 
@@ -90,6 +101,7 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
     const forks = endpoints.map(x => this.crudifyService.crudify(x));
 
     // Awaiting all observables.
+    this.loaderInterceptor.increment();
     forkJoin(forks).subscribe((res: any[]) => {
 
       // Finished, showing some information to user.
