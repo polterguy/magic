@@ -1,4 +1,6 @@
 
+<h1>Setup Magic</h1>
+
 <mat-progress-bar
   mode="determinate"
   matTooltip="Remaining setup tasks"
@@ -15,3 +17,7 @@
   *ngIf="status.setup_done && !status.magic_crudified">
 </app-setup-database>
 
+<app-setup-crypto
+  [class]="cryptoCssClass"
+  *ngIf="status.magic_crudified && !status.server_keypair">
+</app-setup-crypto>

@@ -120,7 +120,7 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
               content: 'setup'
             });
           });
-        }, 500);
+        }, 1500);
       } else {
 
         // Error of some undefined sort!

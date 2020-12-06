@@ -1,0 +1,21 @@
+
+
+<div
+  *ngIf="seed"
+  class="centralized">
+
+  <mat-form-field class="form-field">
+    <mat-label>Seed</mat-label>
+    <input
+      matInput
+      autocomplete="off"
+      [ngModel]="seed">
+  </mat-form-field>
+
+  <button
+    mat-button
+    (click)="generate()">
+    Generate key pair
+  </button>
+
+</div>

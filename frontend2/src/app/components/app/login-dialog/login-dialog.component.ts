@@ -5,14 +5,17 @@
 
 // Angular and system imports.
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
+import { Status } from 'src/app/models/status.model';
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 
@@ -35,12 +38,15 @@ export class LoginDialogComponent implements OnInit {
   /**
    * Creates an instance of your login dialog.
    * 
+   * @param configService Configuration service used to determine if system has been setup if root user logs in
    * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    */
   constructor(
+    private router: Router,
+    private configService: ConfigService,
     private messageService: MessageService,
     public authService: AuthService,
     public backendService: BackendService,
@@ -105,7 +111,22 @@ export class LoginDialogComponent implements OnInit {
       this.password,
       this.savePassword).subscribe(res => {
 
-        // Success! Publishing user logged in message, and closing dialog.
+        /*
+         * Success!
+         * Checking if user is root, and system has not been setup quite yet,
+         * and if so, we redirect user to config component.
+         */
+        if (this.authService.roles().indexOf('root') !== -1) {
+          if (this.router.url !== '/config') {
+            this.configService.status().subscribe((res: Status) => {
+              if (!res.magic_crudified || !res.server_keypair || !res.setup_done) {
+                this.router.navigate(['/config']);
+              }
+            });
+          }
+        }
+
+        // Publishing user logged in message, and closing dialog.
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_IN,
         });

@@ -101,4 +101,19 @@ export class ConfigService {
       license,
     });
   }
+
+  /**
+   * Generates a cryptography key pair for your server.
+   * 
+   * @param strength Strength of key pair to generate, typically 2048, 4096, or some other exponent of 2
+   * @param seed 
+   */
+  public generateKeyPair(strength: number, seed: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<any>('/magic/modules/system/config/generate-keypair', {
+      strength,
+      seed,
+    });
+  }
 }

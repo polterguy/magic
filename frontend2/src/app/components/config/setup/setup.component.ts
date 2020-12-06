@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { Router } from '@angular/router';
 import { Status } from 'src/app/models/status.model';
 import { BaseComponent } from '../../base.component';
 import { ConfigService } from 'src/app/services/config.service';
@@ -33,6 +34,9 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
   // CSS class for magic crudify component.
   public databaseCssClass = 'setup-component';
 
+  // CSS class for crypto component.
+  public cryptoCssClass = 'setup-component';
+
   /**
    * Provided by parent component during creation of component.
    * Contains the status of setup process.
@@ -42,10 +46,12 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
-   * @param configService Service used to retrieve and save configuration settings, etc.
+   * @param router Router service used to redirect user when setup process is finished
+   * @param configService Service used to retrieve and save configuration settings, etc
    * @param messageService Service used to publish messages to other components in the system
    */
   constructor(
+    private router: Router,
     private configService: ConfigService,
     protected messageService: MessageService) {
       super(messageService);
@@ -77,7 +83,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
 
               // Animating component out of view.
               this.configurationCssClass = 'setup-component animate-out';
-                setTimeout(() => {
+              setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
                 }, (error: any) => this.showError(error));
@@ -89,9 +95,24 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
 
               // Animating component out of view.
               this.databaseCssClass = 'setup-component animate-out';
-                setTimeout(() => {
+              setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
+                }, (error: any) => this.showError(error));
+              }, 500);
+              break;
+
+            // Triggered when user has generated a cryptography key pair.
+            case 'crypto':
+
+              // Animating component out of view.
+              this.cryptoCssClass = 'setup-component animate-out';
+              setTimeout(() => {
+                this.configService.status().subscribe((res: Status) => {
+                  this.status = res;
+                  setTimeout(() => {
+                    this.router.navigate(['/']);
+                  }, 500);
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
