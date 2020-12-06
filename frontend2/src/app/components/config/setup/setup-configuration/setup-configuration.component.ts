@@ -11,6 +11,7 @@ import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
+import { BaseComponent } from 'src/app/components/base.component';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -21,7 +22,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './setup-configuration.component.html',
   styleUrls: ['./setup-configuration.component.scss']
 })
-export class SetupConfigurationComponent implements OnInit {
+export class SetupConfigurationComponent extends BaseComponent implements OnInit {
 
   // Configuration of Magic backend.
   private config: any = null;
@@ -59,12 +60,14 @@ export class SetupConfigurationComponent implements OnInit {
    * 
    * @param configService Configuration service used to read and save configuration settings
    * @param authService Used to authenticate user
-   * @param configService Used to publish event when status of setup process has changed
+   * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
     private configService: ConfigService,
     private authService: AuthService,
-    private messageService: MessageService) { }
+    protected messageService: MessageService) {
+      super(messageService);
+    }
 
   /**
    * Implementation of OnInit.
@@ -72,7 +75,7 @@ export class SetupConfigurationComponent implements OnInit {
   ngOnInit() {
     this.configService.loadConfig().subscribe(res => {
       this.config = res;
-    });
+    }, (error: any) => this.showError(error));
   }
 
   /**
@@ -117,19 +120,9 @@ export class SetupConfigurationComponent implements OnInit {
         }, 500);
       } else {
 
-        // Error of some sort!
-        this.messageService.sendMessage({
-          name: Messages.SHOW_ERROR,
-          content: 'Something went wrong when trying to invoke your backend',
-        });
+        // Error of some undefined sort!
+        this.showError('Something went wrong when trying to invoke your backend');
       }
-    }, error => {
-
-      // Oops, error!
-      this.messageService.sendMessage({
-        name: Messages.SHOW_ERROR,
-        content: error,
-      });
-    });
+    }, (error: any) => this.showError(error));
   }
 }
