@@ -76,6 +76,20 @@ export class ConfigService {
   }
 
   /**
+   * Generates a cryptographically secure piece of random text (gibberish)
+   * by invoking backend endpoint responsible for creating it.
+   * 
+   * @param min Minimum length of gibberish to return
+   * @param max Maximum length of gibberish to return
+   */
+  public getGibberish(min: number, max: number) {
+    return this.httpService.get<any>(
+      '/magic/modules/system/misc/gibberish?min=' +
+      min +
+      '&max=' + max);
+  }
+
+  /**
    * Applies a license to the system.
    * 
    * @param license License content

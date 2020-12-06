@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { forkJoin } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -81,18 +82,15 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
    * Crudifies your magic database.
    */
   public setup() {
+
+    // Parsing JSON to use as input for HTTP invocation to backend.
     const endpoints = <any[]>JSON.parse(this.crudifyContent);
-    this.crudifyTopEndpoint(endpoints);
-  }
 
-  /*
-   * Private helper methods.
-   */
+    // Creating an array of observables.
+    const forks = endpoints.map(x => this.crudifyService.crudify(x));
 
-  private crudifyTopEndpoint(endpoints: any[]) {
-
-    // Checking to see if we're done.
-    if (endpoints.length === 0) {
+    // Awaiting all observables.
+    forkJoin(forks).subscribe((res: any[]) => {
 
       // Finished, showing some information to user.
       this.showInfo('Your Magic database was successfully crudified');
@@ -102,17 +100,6 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
         name: Messages.SETUP_STATE_CHANGED,
         content: 'database'
       });
-      return;
-    }
-
-    // Not done yet, crudifying top endpoint.
-    this.crudifyService.crudify(endpoints[0]).subscribe((res: any) => {
-
-      /*
-       * Invoking self, removing recently crudified endpoint from list of
-       * endpoints to crudify.
-       */
-      this.crudifyTopEndpoint(endpoints.slice(1, endpoints.length));
     }, (error: any) => this.showError(error));
   }
 }

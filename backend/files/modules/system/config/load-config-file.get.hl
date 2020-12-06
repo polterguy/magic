@@ -18,18 +18,6 @@ config.load
 
 
 /*
- * Making sure we create a random JWT secret before returning the file.
+ * Returning file to caller.
  */
-crypto.random
-   min:50
-   max:100
-json2lambda:x:@config.load
-set-value:x:@json2lambda/*/magic/*/auth/*/secret
-   get-value:x:@crypto.random
-lambda2json:x:@json2lambda/*
-
-
-/*
- * Returning file to caller, now with a random JWT secret.
- */
-return-value:x:@lambda2json
+return-value:x:@config.load
