@@ -3,3 +3,19 @@
   display: block;
   margin-top: 2rem;
 }
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.setup-component.animate-out {
+  animation-name: fade-out;
+  animation-duration: .5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}

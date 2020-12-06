@@ -90,7 +90,7 @@ export class LoginDialogComponent implements OnInit {
     /*
      * Storing currently selected backend.
      * Notice, this has to be done before we authenticate, since
-     * the auth service depends upon user having already selected
+     * the auth service depends upon user already having selected
      * a current backend.
      */
     this.backendService.current = {

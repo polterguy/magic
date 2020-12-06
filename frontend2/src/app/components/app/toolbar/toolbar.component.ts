@@ -52,20 +52,23 @@ export class ToolbarComponent {
    * Returns the user's status to caller.
    */
   public getUserStatus() {
+
+    // Verifying user is connected to a backend.
+    if (!this.backendService.connected) {
+      return 'not connected';
+    }
+
+    // Removing schema and port from URL.
+    let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
+    if (url.indexOf(':')) {
+      url = url.substr(0, url.indexOf(':'));
+    }
+
+    // Checking if user is authenticated.
     if (this.authService.authenticated) {
-      let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
-      if (url.indexOf(':')) {
-        url = url.substr(0, url.indexOf(':'));
-      }
       return this.backendService.current.username + '@' + url;
     } else if (this.backendService.connected) {
-      let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
-      if (url.indexOf(':')) {
-        url = url.substr(0, url.indexOf(':'));
-      }
       return 'anonymous@' + url;
-    } else {
-      return 'Not connected'
     }
   }
 

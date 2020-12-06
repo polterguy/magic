@@ -23,8 +23,16 @@ import { MessageService } from 'src/app/services/message.service';
 })
 export class SetupComponent implements OnInit, OnDestroy {
 
+  // Used to subscribe to setup status changed messages.
   private subscriber: Subscription;
 
+  // CSS class for setup component.
+  public setupCssClass = 'setup-component';
+
+  /**
+   * Provided by parent component during creation of component.
+   * Contains the status of setup process.
+   */
   @Input() public status: Status;
 
   /**
@@ -38,6 +46,7 @@ export class SetupComponent implements OnInit, OnDestroy {
    * Implementation of OnInit.
    */
   ngOnInit() {
+
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
 
       switch(msg.name) {
@@ -48,9 +57,14 @@ export class SetupComponent implements OnInit, OnDestroy {
          * display to user.
          */
         case Messages.SETUP_STATE_CHANGED:
-          this.configService.status().subscribe(res => {
-            this.status = res;
-          });
+
+          // Animating component out of view.
+          this.setupCssClass = 'setup-component animate-out';
+            setTimeout(() => {
+            this.configService.status().subscribe((res: Status) => {
+              this.status = res;
+            });
+          }, 500);
           break;
       }
     });
@@ -78,6 +92,6 @@ export class SetupComponent implements OnInit, OnDestroy {
     if (this.status.server_keypair) {
       percentage += 33;
     }
-    return percentage;
+    return percentage === 99 ? 100 : percentage;
   }
 }

@@ -23,10 +23,8 @@ import { MessageService } from 'src/app/services/message.service';
 })
 export class SetupConfigurationComponent implements OnInit {
 
-  /**
-   * Configuration of Magic backend.
-   */
-  public config: any = null;
+  // Configuration of Magic backend.
+  private config: any = null;
 
   /**
    * Database types the user can select during configuration of system.

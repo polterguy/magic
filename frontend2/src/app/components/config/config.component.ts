@@ -30,7 +30,7 @@ export class ConfigComponent implements OnInit {
    * 
    * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
    */
-  constructor(private setupService: ConfigService) { }
+  constructor(private configService: ConfigService) { }
 
   /**
    * OnInit implementation.
@@ -38,7 +38,7 @@ export class ConfigComponent implements OnInit {
   public ngOnInit() {
 
     // Checking status of backend.
-    this.setupService.status().subscribe(res => {
+    this.configService.status().subscribe((res: Status) => {
       this.status = res;
     });
   }
