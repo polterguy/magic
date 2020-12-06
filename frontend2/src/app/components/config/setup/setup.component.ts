@@ -28,14 +28,25 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
   // Used to subscribe to setup status changed messages.
   private subscriber: Subscription;
 
-  // CSS class for configuration component.
+  /**
+   * CSS class for configuration component.
+   */
   public configurationCssClass = 'setup-component';
 
-  // CSS class for magic crudify component.
+  /**
+   * CSS class for magic crudify component.
+   */
   public databaseCssClass = 'setup-component';
 
-  // CSS class for crypto component.
+  /**
+   * CSS class for crypto component.
+   */
   public cryptoCssClass = 'setup-component';
+
+  /**
+   * Where we are in the setup process.
+   */
+  public process: string = null;
 
   /**
    * Provided by parent component during creation of component.
@@ -62,6 +73,18 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
 
+    /*
+     * Checking where we are in the setup process,
+     * and making sure we display the correct text to user.
+     */
+    if (!this.status.setup_done) {
+      this.process = 'configuration';
+    } else if (!this.status.magic_crudified) {
+      this.process = 'database';
+    } else if (!this.status.server_keypair) {
+      this.process = 'cryptography key pair';
+    }
+
     // Subscribing to messages sent by other components.
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
 
@@ -86,6 +109,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
+                  this.process = 'database';
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
@@ -98,6 +122,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
+                  this.process = 'cryptography key pair';
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
@@ -110,6 +135,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
+                  this.process = 'done';
                   setTimeout(() => {
                     this.router.navigate(['/']);
                   }, 500);
@@ -124,7 +150,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.subscriber.unsubscribe();
   }
 
