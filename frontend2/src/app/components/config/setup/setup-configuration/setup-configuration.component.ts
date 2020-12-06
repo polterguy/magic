@@ -75,6 +75,9 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   ngOnInit() {
     this.configService.loadConfig().subscribe(res => {
       this.config = res;
+      this.configService.getGibberish(50, 100).subscribe((res: any) => {
+        this.config.magic.auth.secret = res.result;
+      });
     }, (error: any) => this.showError(error));
   }
 
@@ -105,7 +108,7 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
          * object for its thread pool threads, we'll need to wait a bit
          * before we re-fetch the status object - Hence, we therefor wait
          * for 500 milliseconds before we login again, using the user's
-         * new root password, and publish our status changed event.
+         * new root password, before we publish our status changed event.
          */
         setTimeout(() => {
           this.authService.login(
