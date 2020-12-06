@@ -111,7 +111,7 @@ export class LoginDialogComponent implements OnInit {
         });
         this.dialogRef.close();
 
-      }, error => {
+      }, (error: any) => {
 
         // Oops, something went wrong.
         this.messageService.sendMessage({

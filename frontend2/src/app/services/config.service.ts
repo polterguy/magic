@@ -37,6 +37,15 @@ export class ConfigService {
   }
 
   /**
+   * Returns the type of database that is the default database used by backend.
+   */
+  public defaultDatabaseType() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<any>('/magic/modules/system/config/default-database-type');
+  }
+
+  /**
    * Loads your backend's configuration.
    */
   public loadConfig() {
@@ -62,7 +71,7 @@ export class ConfigService {
     return this.httpService.post<Response>('/magic/modules/system/config/setup', {
       databaseType,
       password,
-      settings: JSON.stringify(settings),
+      settings: JSON.stringify(settings, null, 2),
     });
   }
 

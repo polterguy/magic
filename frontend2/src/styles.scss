@@ -3,6 +3,10 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+@import '~codemirror/lib/codemirror';
+@import '~codemirror/theme/mbo';
+@import '~codemirror/theme/bespin';
+
 .spinner {
   position: fixed;
   bottom: 15px;

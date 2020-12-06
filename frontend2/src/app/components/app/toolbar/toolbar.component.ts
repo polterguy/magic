@@ -83,16 +83,8 @@ export class ToolbarComponent {
    * Allows user to login by showing a modal dialog.
    */
   public login() {
-    const dialogRef = this.dialog.open(LoginDialogComponent, {
+    this.dialog.open(LoginDialogComponent, {
       width: '550px',
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('Authenticated');
-    }, error => {
-      this.messageService.sendMessage({
-        name: Messages.SHOW_ERROR,
-        content: error
-      });
     });
   }
 

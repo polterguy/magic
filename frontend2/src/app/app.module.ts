@@ -29,6 +29,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+// Other external components.
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+
 // Application specific imports.
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DateToPipe } from './pipes/date-to.pipe';
@@ -58,6 +61,7 @@ import { SetupConfigurationComponent } from './components/config/setup/setup-con
 
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
+import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -84,6 +88,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     ToolbarComponent,
     SetupComponent,
     SetupConfigurationComponent,
+    SetupDatabaseComponent,
   ],
   imports: [
     FormsModule,
@@ -109,6 +114,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
     MatSnackBarModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    CodemirrorModule,
   ],
   providers: [
     {

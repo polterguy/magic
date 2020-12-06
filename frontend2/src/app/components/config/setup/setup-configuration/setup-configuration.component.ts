@@ -110,7 +110,8 @@ export class SetupConfigurationComponent implements OnInit {
             this.password,
             false).subscribe(() => {
             this.messageService.sendMessage({
-              name: Messages.SETUP_STATE_CHANGED
+              name: Messages.SETUP_STATE_CHANGED,
+              content: 'setup'
             });
           });
         }, 500);
