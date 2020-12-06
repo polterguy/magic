@@ -13,11 +13,14 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
+import { BaseComponent } from '../../base.component';
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
+import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Login dialog allowing user to login to a backend of his choice.
@@ -27,7 +30,7 @@ import { BackendService } from 'src/app/services/backend.service';
   templateUrl: './login-dialog.component.html',
   styleUrls: ['./login-dialog.component.scss']
 })
-export class LoginDialogComponent implements OnInit {
+export class LoginDialogComponent extends BaseComponent implements OnInit {
 
   public backends: FormControl = null;
   public filteredBackends: Observable<string[]>;
@@ -38,7 +41,9 @@ export class LoginDialogComponent implements OnInit {
   /**
    * Creates an instance of your login dialog.
    * 
+   * @param router Router service to redirect and check current route
    * @param configService Configuration service used to determine if system has been setup if root user logs in
+   * @param loaderInterceptor Used for explicitly turning on/off load spinner animation
    * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
@@ -47,10 +52,13 @@ export class LoginDialogComponent implements OnInit {
   constructor(
     private router: Router,
     private configService: ConfigService,
-    private messageService: MessageService,
+    private loaderInterceptor: LoaderInterceptor,
+    protected messageService: MessageService,
     public authService: AuthService,
     public backendService: BackendService,
-    public dialogRef: MatDialogRef<LoginDialogComponent>) { }
+    public dialogRef: MatDialogRef<LoginDialogComponent>) {
+      super(messageService);
+    }
 
   /**
    * OnInit implementation.
@@ -106,24 +114,31 @@ export class LoginDialogComponent implements OnInit {
     };
 
     // Authenticating user.
+    this.loaderInterceptor.increment();
     this.authService.login(
       this.username,
       this.password,
-      this.savePassword).subscribe(res => {
+      this.savePassword).subscribe((res: AuthenticateResponse) => {
 
         /*
          * Success!
          * Checking if user is root, and system has not been setup quite yet,
          * and if so, we redirect user to config component.
          */
-        if (this.authService.roles().indexOf('root') !== -1) {
-          if (this.router.url !== '/config') {
-            this.configService.status().subscribe((res: Status) => {
-              if (!res.magic_crudified || !res.server_keypair || !res.setup_done) {
-                this.router.navigate(['/config']);
-              }
-            });
-          }
+        if (this.authService.roles().indexOf('root') !== -1 && this.router.url !== '/config') {
+
+          // Checking status to see if we've setup system.
+          this.configService.status().subscribe((res: Status) => {
+            this.loaderInterceptor.decrement();
+            if (!res.magic_crudified || !res.server_keypair || !res.setup_done) {
+              this.router.navigate(['/config']);
+            }
+          }, (error: any) => {
+            this.showError(error);
+            this.loaderInterceptor.decrement();
+          });
+        } else {
+          this.loaderInterceptor.decrement();
         }
 
         // Publishing user logged in message, and closing dialog.
@@ -135,6 +150,7 @@ export class LoginDialogComponent implements OnInit {
       }, (error: any) => {
 
         // Oops, something went wrong.
+        this.loaderInterceptor.decrement();
         this.messageService.sendMessage({
           name: Messages.SHOW_ERROR,
           content: error,

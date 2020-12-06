@@ -96,6 +96,9 @@ export class AuthService {
             observer.error(error);
             observer.complete();
           });
+      }, (error: any) => {
+        observer.error(error);
+        observer.complete();
       });
     });
   }
