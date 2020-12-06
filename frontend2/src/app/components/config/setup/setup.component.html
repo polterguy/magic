@@ -6,6 +6,12 @@
 </mat-progress-bar>
 
 <app-setup-configuration
-  [class]="setupCssClass"
+  [class]="configurationCssClass"
   *ngIf="!status.setup_done">
 </app-setup-configuration>
+
+<app-setup-database
+  [class]="databaseCssClass"
+  *ngIf="status.setup_done && !status.magic_crudified">
+</app-setup-database>
+

@@ -100,14 +100,11 @@ apply:x:@hyper2lambda
  */
 if
    and
+      exists:x:@.arguments/*/log
       not
          eq
             get-value:x:@.arguments/*/log
             .:
-      not
-         eq
-            get-value:x:@.arguments/*/log
-            .
    .lambda
       unwrap:x:+/*/*/0
       insert-after:x:@apply/*/.type
@@ -125,6 +122,11 @@ if
  */
 if
    and
+      exists:x:@.arguments/*/validators
+      not
+         eq
+            get-value:x:@.arguments/*/validators
+            .:
       or
          eq
             get-value:x:@.arguments/*/verb
@@ -132,14 +134,6 @@ if
          eq
             get-value:x:@.arguments/*/verb
             .:put
-      not
-         and
-            eq
-               get-value:x:@.arguments/*/validators
-               .:
-            eq
-               get-value:x:@.arguments/*/validators
-               .
    .lambda
       insert-after:x:@apply/*/.type
          hyper2lambda:x:@.arguments/*/validators
@@ -150,15 +144,7 @@ if
  * to caller's specifications, if caller supplied an [auth] value.
  */
 if
-   and
-      not
-         eq
-            get-value:x:@.arguments/*/auth
-            .
-      not
-         eq
-            get-value:x:@.arguments/*/auth
-            .:
+   exists:x:@.arguments/*/auth
    .lambda
 
       /*
@@ -268,10 +254,7 @@ switch:x:@.arguments/*/verb
        */
       if
          and
-            not
-               eq
-                  get-value:x:@.arguments/*/args/*/cache
-                  .:0
+            exists:x:@.arguments/*/args/*/cache
             not
                eq
                   get-value:x:@.arguments/*/args/*/cache
@@ -279,7 +262,7 @@ switch:x:@.arguments/*/verb
             not
                eq
                   get-value:x:@.arguments/*/args/*/cache
-                  .
+                  .:0
          .lambda
 
 

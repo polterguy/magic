@@ -26,8 +26,11 @@ export class SetupComponent implements OnInit, OnDestroy {
   // Used to subscribe to setup status changed messages.
   private subscriber: Subscription;
 
-  // CSS class for setup component.
-  public setupCssClass = 'setup-component';
+  // CSS class for configuration component.
+  public configurationCssClass = 'setup-component';
+
+  // CSS class for magic crudify component.
+  public databaseCssClass = 'setup-component';
 
   /**
    * Provided by parent component during creation of component.
@@ -47,8 +50,10 @@ export class SetupComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
 
+    // Subscribing to messages sent by other components.
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
 
+      // Checking if we're interested in this message.
       switch(msg.name) {
 
         /*
@@ -58,14 +63,33 @@ export class SetupComponent implements OnInit, OnDestroy {
          */
         case Messages.SETUP_STATE_CHANGED:
 
-          // Animating component out of view.
-          this.setupCssClass = 'setup-component animate-out';
-            setTimeout(() => {
-            this.configService.status().subscribe((res: Status) => {
-              this.status = res;
-            });
-          }, 500);
-          break;
+          // Checking which component triggered a state change.
+          switch (msg.content) {
+
+            // Triggered when setup of configuration is done.
+            case 'setup':
+
+              // Animating component out of view.
+              this.configurationCssClass = 'setup-component animate-out';
+                setTimeout(() => {
+                this.configService.status().subscribe((res: Status) => {
+                  this.status = res;
+                });
+              }, 500);
+              break;
+
+            // Triggered when crudification of magic database is done.
+            case 'database':
+
+              // Animating component out of view.
+              this.databaseCssClass = 'setup-component animate-out';
+                setTimeout(() => {
+                this.configService.status().subscribe((res: Status) => {
+                  this.status = res;
+                });
+              }, 500);
+              break;
+          }
       }
     });
   }

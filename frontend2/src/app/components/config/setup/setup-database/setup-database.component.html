@@ -1,0 +1,21 @@
+
+<ngx-codemirror
+  *ngIf="crudifyContent"
+  [(ngModel)]="crudifyContent"
+  [options]="{
+    lineNumbers: true,
+    theme: 'mbo',
+    mode: 'application/ld+json'
+  }">
+</ngx-codemirror>
+
+<div
+  *ngIf="crudifyContent"
+  class="right">
+  <button
+    mat-button
+    [matTooltip]="'Clicking this button will crudify your magic database and generate ' + count + ' HTTP endpoints'"
+    (click)="setup()">
+    Setup
+  </button>
+</div>
