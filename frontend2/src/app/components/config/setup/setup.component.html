@@ -6,6 +6,6 @@
 </mat-progress-bar>
 
 <app-setup-configuration
-  class="setup-component"
+  [class]="setupCssClass"
   *ngIf="!status.setup_done">
 </app-setup-configuration>
