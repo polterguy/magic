@@ -61,7 +61,7 @@ export class SetupDatabaseComponent implements OnInit {
 
       // Making sure we apply the database type for every item in JSON file.
       for (const idx of data) {
-        idx['databaseType'] = res.type;
+        idx.databaseType = res.type;
       }
 
       // Setting the database type.
