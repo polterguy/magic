@@ -1,9 +1,7 @@
 
 
-<div
-  *ngIf="seed"
-  class="centralized">
-
+<div class="centralized">
+  
   <mat-form-field class="form-field">
     <mat-label>Seed</mat-label>
     <input
@@ -12,8 +10,22 @@
       [ngModel]="seed">
   </mat-form-field>
 
+  <mat-form-field class="form-field small">
+
+    <mat-label>Key strength</mat-label>
+    <mat-select [(ngModel)]="strength">
+      <mat-option value="1024">1024</mat-option>
+      <mat-option value="2048">2048</mat-option>
+      <mat-option value="4096">4096</mat-option>
+      <mat-option value="8192">8192</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
   <button
+    [disabled]="strength === -1 || seed === ''"
     mat-button
+    matTooltip="Generates a cryptography key pair for your Magic server"
     (click)="generate()">
     Generate key pair
   </button>

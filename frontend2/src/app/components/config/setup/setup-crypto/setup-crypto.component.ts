@@ -26,12 +26,12 @@ export class SetupCryptoComponent extends BaseComponent implements OnInit {
   /**
    * CSRNG seed used when generating cryptography key.
    */
-  public seed: string = null;
+  public seed = '';
 
   /**
    * Strength of key pair to generate.
    */
-  public strength = 4096;
+  public strength = -1;
 
   /**
    * Creates an instance of your component.
