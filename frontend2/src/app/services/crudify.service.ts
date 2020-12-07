@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { Crudify } from '../models/crudify.model';
 import { Database } from '../models/database.model';
 import { LocResult } from '../models/loc-result.model';
 
@@ -76,7 +77,7 @@ export class CrudifyService {
    * 
    * @param data Input for process
    */
-  public crudify(data: any) {
+  public crudify(data: Crudify) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<LocResult>('/magic/modules/system/crudifier/crudify', data);

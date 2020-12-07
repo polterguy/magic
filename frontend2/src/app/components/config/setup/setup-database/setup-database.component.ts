@@ -9,6 +9,7 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import data from './data/data.json';
+import { Crudify } from 'src/app/models/crudify.model';
 import { Messages } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { LocResult } from 'src/app/models/loc-result.model';
@@ -97,7 +98,7 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
   public setup() {
 
     // Parsing JSON to use as input for HTTP invocation to backend.
-    const endpoints = <any[]>JSON.parse(this.crudifyContent);
+    const endpoints = <Crudify[]>JSON.parse(this.crudifyContent);
 
     // Creating an array of observables.
     const forks = endpoints.map(x => this.crudifyService.crudify(x));
