@@ -90,6 +90,6 @@ export class CrudifyService {
   public generateSqlEndpoint(data: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<any>('/magic/modules/system/crudifier/custom-sql', data);
+    return this.httpService.post<Response>('/magic/modules/system/crudifier/custom-sql', data);
   }
 }
