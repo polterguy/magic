@@ -77,8 +77,8 @@ export class Crudify {
   args: any[];
 
   /**
-   * Input reactors such as validators, transformers, etc.
+   * Input reactors such as validators, transformers, injectables, etc.
    */
-  validators: string;
+  validators?: string;
 }
   
