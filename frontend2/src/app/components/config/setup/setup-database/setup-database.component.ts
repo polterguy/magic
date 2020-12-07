@@ -10,6 +10,8 @@ import { Component, OnInit } from '@angular/core';
 // Application specific imports.
 import data from './data/data.json';
 import { Messages } from 'src/app/models/message.model';
+import { Response } from 'src/app/models/response.model';
+import { LocResult } from 'src/app/models/loc-result.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { CrudifyService } from 'src/app/services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -65,15 +67,15 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
   public ngOnInit() {
 
     // Figuring out which database type the backend is using for its Magic database.
-    this.configService.defaultDatabaseType().subscribe(res => {
+    this.configService.defaultDatabaseType().subscribe((res: Response) => {
 
       // Making sure we apply the database type for every item in JSON file.
       for (const idx of data) {
-        idx.databaseType = res.type;
+        idx.databaseType = res.result;
       }
 
       // Setting the database type.
-      this.databaseType = res.type;
+      this.databaseType = res.result;
 
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
       this.crudifyContent = JSON.stringify(data, null, 2);
@@ -102,10 +104,11 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
 
     // Awaiting all observables.
     this.loaderInterceptor.increment();
-    forkJoin(forks).subscribe((res: any[]) => {
+    forkJoin(forks).subscribe((res: LocResult[]) => {
 
       // Finished, showing some information to user.
-      this.showInfo('Your Magic database was successfully crudified');
+      const loc = res.reduce((x,y) => x + y.loc, 0);
+      this.showInfo(`Your Magic database was successfully crudified. ${loc} LOC generated.`);
 
       // Publishing message to inform parent component that we're done here.
       this.messageService.sendMessage({

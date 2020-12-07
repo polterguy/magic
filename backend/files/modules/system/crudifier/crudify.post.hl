@@ -665,6 +665,6 @@ semaphore:crudifier
     * Returning success to caller.
     */
    unwrap:x:+/*
-   return-nodes
+   return
       result:success
       loc:x:@get-count

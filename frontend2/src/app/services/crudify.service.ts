@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { HttpService } from './http.service';
 import { Database } from '../models/database.model';
+import { LocResult } from '../models/loc-result.model';
 
 /**
  * Crudify service, allows you to crudify your databases.
@@ -78,7 +79,7 @@ export class CrudifyService {
   public crudify(data: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<any>('/magic/modules/system/crudifier/crudify', data);
+    return this.httpService.post<LocResult>('/magic/modules/system/crudifier/crudify', data);
   }
 
   /**

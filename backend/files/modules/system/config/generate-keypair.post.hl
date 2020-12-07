@@ -79,4 +79,4 @@ log.info
 unwrap:x:+/*
 return
    fingerprint:x:@crypto.rsa.create-key/*/fingerprint
-   public-key:x:@crypto.rsa.create-key/*/public
+   public_key:x:@crypto.rsa.create-key/*/public
