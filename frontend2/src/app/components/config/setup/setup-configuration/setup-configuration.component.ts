@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
+import { Response } from 'src/app/models/response.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -78,7 +79,7 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   ngOnInit() {
     this.configService.loadConfig().subscribe(res => {
       this.config = res;
-      this.configService.getGibberish(50, 100).subscribe((res: any) => {
+      this.configService.getGibberish(50, 100).subscribe((res: Response) => {
         this.config.magic.auth.secret = res.result;
       });
     }, (error: any) => this.showError(error));

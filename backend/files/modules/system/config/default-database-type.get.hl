@@ -16,5 +16,5 @@ auth.ticket.verify:root
  */
 config.get:"magic:databases:default"
 unwrap:x:+/*
-return-nodes
-   type:x:@config.get
+return
+   result:x:@config.get

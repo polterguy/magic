@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { HttpService } from './http.service';
 import { Status } from '../models/status.model';
+import { KeyPair } from '../models/key-pair.model';
 import { Response } from '../models/response.model';
 
 /**
@@ -42,7 +43,7 @@ export class ConfigService {
   public defaultDatabaseType() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/modules/system/config/default-database-type');
+    return this.httpService.get<Response>('/magic/modules/system/config/default-database-type');
   }
 
   /**
@@ -88,7 +89,7 @@ export class ConfigService {
    * @param max Maximum length of gibberish to return
    */
   public getGibberish(min: number, max: number) {
-    return this.httpService.get<any>(
+    return this.httpService.get<Response>(
       '/magic/modules/system/misc/gibberish?min=' +
       min +
       '&max=' + max);
@@ -116,7 +117,7 @@ export class ConfigService {
   public generateKeyPair(strength: number, seed: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<any>('/magic/modules/system/config/generate-keypair', {
+    return this.httpService.post<KeyPair>('/magic/modules/system/config/generate-keypair', {
       strength,
       seed,
     });
