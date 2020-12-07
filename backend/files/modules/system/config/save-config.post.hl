@@ -15,6 +15,7 @@ auth.ticket.verify:root
  * Converting input arguments to JSON.
  */
 lambda2json:x:@.arguments/*
+   format:true
 
 
 /*
