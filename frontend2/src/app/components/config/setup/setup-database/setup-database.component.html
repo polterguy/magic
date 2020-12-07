@@ -1,16 +1,8 @@
 
-<p>
-  Don't edit this JSON unless you know what you're doing!
-</p>
-
 <ngx-codemirror
   *ngIf="crudifyContent"
   [(ngModel)]="crudifyContent"
-  [options]="{
-    lineNumbers: true,
-    theme: 'mbo',
-    mode: 'application/ld+json'
-  }">
+  [options]="codemirror.json">
 </ngx-codemirror>
 
 <div
