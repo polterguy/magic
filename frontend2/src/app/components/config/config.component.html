@@ -8,11 +8,7 @@
 
   <ngx-codemirror
     [(ngModel)]="config"
-    [options]="{
-      lineNumbers: true,
-      theme: 'mbo',
-      mode: 'application/ld+json'
-    }">
+    [options]="codemirror.json">
   </ngx-codemirror>
 
   <div class="right-align">
