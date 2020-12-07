@@ -46,16 +46,21 @@ export class ConfigService {
   }
 
   /**
-   * Loads your backend's configuration.
+   * Loads your configuration.
    */
   public loadConfig() {
 
-    /*
-     * Invoking backend and returning observable to caller.
-     * Notice, we can't use a strong type here, since configuration might
-     * change as user adds his own settings to the configuration file.
-     */
-    return this.httpService.get<any>('/magic/modules/system/config/load-config-file');
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<any>('/magic/modules/system/config/load-config');
+  }
+
+  /**
+   * Saves your configuration.
+   */
+  public saveConfig(config: any) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<Response>('/magic/modules/system/config/save-config', config);
   }
 
   /**

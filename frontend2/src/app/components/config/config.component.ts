@@ -9,6 +9,7 @@ import { Status } from 'src/app/models/status.model';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
+import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 
@@ -61,6 +62,18 @@ export class ConfigComponent extends BaseComponent implements OnInit {
       }
     }, (error: any) => {
       this.showError(error);
+    });
+  }
+
+  /**
+   * Saves your configuration.
+   */
+  public save() {
+
+    // Converting configuration to JSON and invoking backend.
+    const config = JSON.parse(this.config);
+    this.configService.saveConfig(config).subscribe((res: Response) => {
+      this.showInfo('Configuration was successfully saved');
     });
   }
 }
