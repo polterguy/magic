@@ -19,8 +19,8 @@ import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
-// CodeMirror options files.
-import json from '../../../../settings/json.json';
+// CodeMirror options.
+import json from '../../../../codemirror/json.json';
 
 /**
  * Component that helps you crudify your magic database

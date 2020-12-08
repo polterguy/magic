@@ -32,6 +32,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 // Other external components.
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
+// Hyperlambda mode for CodeMirror.
+import './codemirror/hyperlambda.js';
+
 // Application specific imports.
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DateToPipe } from './pipes/date-to.pipe';
