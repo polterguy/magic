@@ -13,8 +13,8 @@ import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 
-// CodeMirror options files.
-import json from '../../settings/json.json';
+// CodeMirror options.
+import json from '../../codemirror/json.json';
 
 /**
  * Setup component allowing you to setup and modify your system's configuration.

@@ -10,8 +10,8 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base.component';
 import { MessageService } from 'src/app/services/message.service';
 
-// CodeMirror options files.
-import hyperlambda from '../../settings/hyperlambda.json';
+// CodeMirror options.
+import hyperlambda from '../../codemirror/hyperlambda.json';
 
 /**
  * Component allowing user to evaluate Hyperlambda snippets.
@@ -44,6 +44,10 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
     super(messageService);
   }
 
-  ngOnInit() {
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
+    this.cmOptions.hyperlambda.autofocus = true;
   }
 }
