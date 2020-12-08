@@ -13,6 +13,9 @@ import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 
+// CodeMirror options files.
+import json from '../../settings/json.json';
+
 /**
  * Setup component allowing you to setup and modify your system's configuration.
  */
@@ -27,6 +30,13 @@ export class ConfigComponent extends BaseComponent implements OnInit {
    * Status of setup process.
    */
   public status: Status = null;
+
+  /**
+   * CodeMirror options object, taken from common settings.
+   */
+  public cmOptions = {
+    json: json,
+  };
 
   /**
    * Raw configuration settings as returned from backend.

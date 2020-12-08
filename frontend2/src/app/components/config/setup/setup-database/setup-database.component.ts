@@ -19,6 +19,9 @@ import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
+// CodeMirror options files.
+import json from '../../../../settings/json.json';
+
 /**
  * Component that helps you crudify your magic database
  * during the setup process of Magic.
@@ -29,6 +32,13 @@ import { LoaderInterceptor } from 'src/app/services/interceptors/loader.intercep
   styleUrls: ['./setup-database.component.scss']
 })
 export class SetupDatabaseComponent extends BaseComponent implements OnInit {
+
+  /**
+   * CodeMirror options object, taken from common settings.
+   */
+  public cmOptions = {
+    json: json,
+  };
 
   /**
    * Database type we're using, e.g. 'mysql' or 'mssql'.

@@ -3,8 +3,8 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 
+// Application specifix imports.
 import { Messages } from '../models/message.model';
-import jsonOptions from '../settings/code.json.json';
 import { MessageService } from '../services/message.service';
 
  /**
@@ -15,13 +15,6 @@ import { MessageService } from '../services/message.service';
   * etc.
   */
 export abstract class BaseComponent {
-
-  /**
-   * Options for CodeMirror editors.
-   */
-  public codemirror = {
-    json: jsonOptions,
-  };
 
   /**
    * Creates an instance of your class

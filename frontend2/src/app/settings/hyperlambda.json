@@ -1,0 +1,12 @@
+{
+  "lineNumbers": true,
+  "theme": "mbo",
+  "mode": "hyperlambda",
+  "tabSize": 3,
+  "indentUnit": 3,
+  "indentAuto": true,
+  "extraKeys": {
+    "Shift-Tab": "indentLess",
+    "Tab": "indentMore"
+  }
+}
