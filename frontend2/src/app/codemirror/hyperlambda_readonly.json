@@ -1,6 +1,6 @@
 {
-  "autofocus": true,
-  "readonly": false,
+  "autofocus": false,
+  "readOnly": true,
   "lineNumbers": true,
   "theme": "mbo",
   "mode": "hyperlambda",
