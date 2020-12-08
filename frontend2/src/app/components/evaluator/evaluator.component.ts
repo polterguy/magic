@@ -4,14 +4,17 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
+import { Response } from '../../models/response.model';
 import { MessageService } from 'src/app/services/message.service';
+import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/hyperlambda.json';
+import hyperlambda_readonly from '../../codemirror/hyperlambda_readonly.json';
 
 /**
  * Component allowing user to evaluate Hyperlambda snippets.
@@ -21,18 +24,30 @@ import hyperlambda from '../../codemirror/hyperlambda.json';
   templateUrl: './evaluator.component.html',
   styleUrls: ['./evaluator.component.scss']
 })
-export class EvaluatorComponent extends BaseComponent implements OnInit {
+export class EvaluatorComponent extends BaseComponent {
 
   /**
-   * Input model.
+   * Input Hyperlambda model.
    */
   public input: string = '';
 
   /**
-   * CodeMirror options object, taken from common settings.
+   * Hyperlambda resulting from evaluation.
    */
-  public cmOptions = {
+  public result: string = '';
+
+  /**
+   * CodeMirror options object for input Hyperlambda.
+   */
+  public cmInputOptions = {
     hyperlambda: hyperlambda,
+  };
+
+  /**
+   * CodeMirror options object for resulting Hyperlambda.
+   */
+  public cmOutputOptions = {
+    hyperlambda: hyperlambda_readonly,
   };
 
   /**
@@ -40,14 +55,19 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    * 
    * @param messageService Service used to publish messages to other components
    */
-  constructor(protected messageService: MessageService) {
+  constructor(
+    protected messageService: MessageService,
+    private evaluatorService: EvaluatorService) {
     super(messageService);
   }
 
   /**
-   * Implementation of OnInit.
+   * Executes the Hyperlambda from the input CodeMirror component.
    */
-  public ngOnInit() {
-    this.cmOptions.hyperlambda.autofocus = true;
+  public execute() {
+    this.evaluatorService.execute(this.input).subscribe((res: Response) => {
+      this.result = res.result;
+      this.showInfo('Hyperlambda was successfully executed');
+    });
   }
 }
