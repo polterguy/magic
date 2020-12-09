@@ -19,21 +19,23 @@ auth.ticket.verify:root
 
 
 /*
- * Transforms the specified [hyperlambda] to a lambda object.
+ * Transforms the specified [hyperlambda] to a lambda object,
+ * making sure we correctly set the root node for the execution
+ * in the process. This looks a bit cheezy, but to make sure
+ * the root node for the execution object is the node containing
+ * the Hyperlambda as children, it is necessary.
  */
+.x:node:""
 hyper2lambda:x:@.arguments/*/hyperlambda
-
-
-/*
- * Evaluates the transformed [hyperlambda].
- */
-eval:x:@hyper2lambda
+add:x:@.x/#
+   get-nodes:x:@hyper2lambda/*
+eval:x:@.x/#
 
 
 /*
  * Returning the results of the evaluation to caller.
  */
-lambda2hyper:x:@hyper2lambda/*
+lambda2hyper:x:@.x/#/*
 unwrap:x:+/*
 return-nodes
    result:x:@lambda2hyper
