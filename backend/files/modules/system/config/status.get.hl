@@ -48,4 +48,4 @@ unwrap:x:+/*
 return
    magic_crudified:x:@io.folder.exists
    server_keypair:x:@io.file.exists
-   setup_done:x:@.jwt-secret-changed
+   config_done:x:@.jwt-secret-changed

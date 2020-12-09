@@ -1,10 +1,10 @@
 
 <app-setup
-  *ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.setup_done)"
+  *ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.config_done)"
   [status]="status">
 </app-setup>
 
-<div *ngIf="status && status.magic_crudified && status.server_keypair && status.setup_done && config">
+<div *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done && config">
 
   <ngx-codemirror
     [(ngModel)]="config"

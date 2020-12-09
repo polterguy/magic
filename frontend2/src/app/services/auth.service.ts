@@ -150,7 +150,6 @@ export class AuthService {
     }
 
     // Parsing role field from JWT token, and splitting at ','.
-    console.log(this.backendService.current.token);
     const result = (<string>(JSON.parse(
       atob(
         this.backendService.current.token
@@ -215,10 +214,12 @@ export class AuthService {
     return now >= exp;
   }
 
-  /*
+  /**
    * Creates a refresh timer for a single backend's JWT token.
+   * 
+   * @param backend Which backend to create a refresh timer for.
    */
-  private createRefreshJWTTimer(backend: Backend) {
+  public createRefreshJWTTimer(backend: Backend) {
 
     // Finding number of seconds until token expires.
     const exp = (JSON.parse(atob(backend.token.split('.')[1]))).exp;

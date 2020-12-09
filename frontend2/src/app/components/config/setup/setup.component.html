@@ -9,15 +9,15 @@
 
 <app-setup-configuration
   [class]="configurationCssClass"
-  *ngIf="!status.setup_done">
+  *ngIf="!status.config_done">
 </app-setup-configuration>
 
 <app-setup-database
   [class]="databaseCssClass"
-  *ngIf="status.setup_done && !status.magic_crudified">
+  *ngIf="status.config_done && !status.magic_crudified">
 </app-setup-database>
 
 <app-setup-crypto
   [class]="cryptoCssClass"
-  *ngIf="status.setup_done && status.magic_crudified && !status.server_keypair">
+  *ngIf="status.config_done && status.magic_crudified && !status.server_keypair">
 </app-setup-crypto>

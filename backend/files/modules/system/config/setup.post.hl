@@ -151,15 +151,6 @@ else
 
 
 /*
- * Invoking slot responsible for applying license.
- *
- * Notice, this will only apply the license if it's not
- * the default version, which is 'TRIAL-VERSION'.
- */
-license.apply
-
-
-/*
  * Saving settings to appsettings.json file.
  *
  * Notice, this is done as the final step, since it
@@ -175,9 +166,19 @@ config.save:x:-
 
 
 /*
- * Sleeping for 2 seconds to allow for config to kick in on thread pools.
+ * Sleeping for 2 seconds to allow configuration to kick
+ * in on thread pools threads.
  */
 sleep:2000
+
+
+/*
+ * Invoking slot responsible for applying license.
+ *
+ * Notice, this will only apply the license if it's not
+ * the default version, which is 'TRIAL-VERSION'.
+ */
+license.apply
 
 
 /*
@@ -193,7 +194,15 @@ scheduler.start
 
 
 /*
- * Returning success to caller.
+ * Authenticating user and returning new JWT token to client.
  */
-return
-   result:success
+unwrap:x:+/*
+signal:magic.auth.authenticate
+   username:root
+   password:x:@.arguments/*/password
+
+
+/*
+ * Returns the authentication JWT ticket created above to caller.
+ */
+return-nodes:x:@signal/*
