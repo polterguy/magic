@@ -7,9 +7,12 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-// Other external components.
+// CodeMirror imports, first modes
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
+
+// Then addons.
+import 'codemirror/addon/display/fullscreen';
 
 // Application specific imports.
 import { AppModule } from './app/app.module';
