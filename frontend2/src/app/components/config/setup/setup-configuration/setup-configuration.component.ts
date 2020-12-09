@@ -9,11 +9,10 @@ import { Component, OnInit } from '@angular/core';
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
-import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
-import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
+import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -61,14 +60,11 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
    * Creates an instance of your component.
    * 
    * @param configService Configuration service used to read and save configuration settings
-   * @param authService Used to authenticate user
    * @param loaderInterceptor Used to explicitly turn on spinner animation
    * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
     private configService: ConfigService,
-    private authService: AuthService,
-    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
       super(messageService);
     }
@@ -98,43 +94,14 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   public save() {
 
     // Invoking backend to save configuration as specified by user.
-    this.loaderInterceptor.increment();
     this.configService.setup(
       this.selectedDatabaseType,
       this.password,
-      this.config).subscribe(res => {
-
-      // Verifying we were successful.
-      if (res.result === 'success') {
-
-        /*
-         * Success!
-         * Notice, to give backend some time to change the configuration
-         * object for its thread pool threads, we'll need to wait a bit
-         * before we re-fetch the status object - Hence, we therefor wait
-         * for 5000 milliseconds before we login again, using the user's
-         * new root password, before we publish our status changed event.
-         */
-        setTimeout(() => {
-          this.authService.login(
-            'root',
-            this.password,
-            false).subscribe(() => {
-            this.messageService.sendMessage({
-              name: Messages.SETUP_STATE_CHANGED,
-              content: 'config'
-            });
-          });
-        }, 5000);
-      } else {
-
-        // Error of some undefined sort!
-        this.loaderInterceptor.decrement();
-        this.showError('Something went wrong when trying to invoke your backend');
-      }
-    }, (error: any) => {
-      this.showError(error);
-      this.loaderInterceptor.decrement();
-    });
+      this.config).subscribe((res: AuthenticateResponse) => {
+      this.messageService.sendMessage({
+        name: Messages.SETUP_STATE_CHANGED,
+        content: 'config'
+      });
+    }, (error: any) => this.showError(error));
   }
 }

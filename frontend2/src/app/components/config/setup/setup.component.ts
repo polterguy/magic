@@ -80,7 +80,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
      * Checking where we are in the setup process,
      * and making sure we display the correct text to user.
      */
-    if (!this.status.setup_done) {
+    if (!this.status.config_done) {
       this.process = 'configuration';
     } else if (!this.status.magic_crudified) {
       this.process = 'endpoints';
@@ -164,7 +164,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
    */
   public getSetupProgress() {
     let percentage = 0;
-    if (this.status.setup_done) {
+    if (this.status.config_done) {
       percentage += 33;
     }
     if (this.status.magic_crudified) {

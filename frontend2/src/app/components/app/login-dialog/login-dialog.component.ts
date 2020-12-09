@@ -130,7 +130,7 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
           // Checking status to see if we've setup system.
           this.configService.status().subscribe((res: Status) => {
             this.loaderInterceptor.decrement();
-            if (!res.magic_crudified || !res.server_keypair || !res.setup_done) {
+            if (!res.magic_crudified || !res.server_keypair || !res.config_done) {
               this.router.navigate(['/config']);
             }
           }, (error: any) => {

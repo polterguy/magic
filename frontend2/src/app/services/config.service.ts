@@ -4,13 +4,17 @@
  */
 
 // Angular and system imports.
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { AuthService } from './auth.service';
 import { Status } from '../models/status.model';
 import { KeyPair } from '../models/key-pair.model';
+import { BackendService } from './backend.service';
 import { Response } from '../models/response.model';
+import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -25,8 +29,13 @@ export class ConfigService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
+   * @param backendService Necessary to persist JWT token for client once setup process is done
+   * @param authService Necessary to create refresh JWT token timer once setup process is done
    */
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpService: HttpService,
+    private backendService: BackendService,
+    private authService: AuthService) { }
 
   /**
    * Returns the status of the backend.
@@ -74,10 +83,39 @@ export class ConfigService {
   public setup(databaseType: string, password: string, settings: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/config/setup', {
-      databaseType,
-      password,
-      settings: JSON.stringify(settings, null, 2),
+    return new Observable<AuthenticateResponse>((observer) => {
+
+      // Invoking backend to setup system.
+      this.httpService.post<AuthenticateResponse>('/magic/modules/system/config/setup', {
+        databaseType,
+        password,
+        settings: JSON.stringify(settings, null, 2),
+      }).subscribe((res: AuthenticateResponse) => {
+
+        /*
+        * Notice, when setup is done, the backend will return a new JWT token
+        * which we'll have to use for consecutive invocations towards the backend.
+        */
+        this.backendService.current = {
+          url: this.backendService.current.url,
+          username: 'root',
+          password: null,
+          token: res.ticket,
+        };
+
+        // Making sure we refresh JWT token before it expires.
+        this.authService.createRefreshJWTTimer(this.backendService.current);
+
+        // Finishing observable.
+        observer.next(res);
+        observer.complete();
+
+      }, (error: any) => {
+
+        // Passing error onwards, and completing observable.
+        observer.error(error);
+        observer.complete();
+      });
     });
   }
 

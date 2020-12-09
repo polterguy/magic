@@ -63,7 +63,7 @@ export class ConfigComponent extends BaseComponent implements OnInit {
     // Checking status of backend.
     this.configService.status().subscribe((res: Status) => {
       this.status = res;
-      if (res.magic_crudified && res.server_keypair && res.setup_done) {
+      if (res.magic_crudified && res.server_keypair && res.config_done) {
 
         // Fetching raw config from backend.
         this.configService.loadConfig().subscribe((res: any) => {
