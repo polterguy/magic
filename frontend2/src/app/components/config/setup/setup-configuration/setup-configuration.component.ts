@@ -42,11 +42,6 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   public selectedDatabaseType: string = null;
 
   /**
-   * Connection string to database.
-   */
-  public connectionString: string = null;
-
-  /**
    * Root user's password.
    */
   public password: string = null;
@@ -79,13 +74,6 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
         this.config.magic.auth.secret = res.result;
       });
     }, (error: any) => this.showError(error));
-  }
-
-  /**
-   * Invoked when selected database type is changed by user.
-   */
-  public databaseTypeChanged() {
-    this.connectionString = this.config.magic.databases[this.selectedDatabaseType].generic;
   }
 
   /**
