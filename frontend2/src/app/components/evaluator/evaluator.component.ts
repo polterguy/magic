@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
@@ -25,7 +25,7 @@ import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.jso
   templateUrl: './evaluator.component.html',
   styleUrls: ['./evaluator.component.scss']
 })
-export class EvaluatorComponent extends BaseComponent {
+export class EvaluatorComponent extends BaseComponent implements OnInit {
 
   /**
    * Input Hyperlambda component model and options.
@@ -52,6 +52,21 @@ export class EvaluatorComponent extends BaseComponent {
     protected messageService: MessageService,
     private evaluatorService: EvaluatorService) {
     super(messageService);
+  }
+
+  /**
+   * OnInit implementation.
+   */
+  ngOnInit() {
+
+    // Making sure we attach the F5 button to execute input Hyperlambda.
+    this.input.options.extraKeys.F5 = () => {
+      const element = document.getElementById('executeButton') as HTMLElement;
+      element.click();
+    };
+    this.input.options.extraKeys['Alt-M'] = (cm: any) => {
+      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+    };
   }
 
   /**
