@@ -3,7 +3,7 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 
-// Angular imports.
+// Angular and system imports.
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -44,7 +44,10 @@ import { LoaderService } from './services/loader.service';
 import { AuthInterceptor } from './services/interceptors/auth.interceptor';
 import { LoaderInterceptor } from './services/interceptors/loader.interceptor';
 
-// Components.
+// Reusable application specific components.
+import { HyperlambdaComponent } from './components/codemirror/hyperlambda.component';
+
+// Application specific components.
 import { LogComponent } from './components/log/log.component';
 import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/sql/sql.component';
@@ -94,6 +97,7 @@ import { SetupCryptoComponent } from './components/config/setup/setup-crypto/set
     SetupConfigurationComponent,
     SetupDatabaseComponent,
     SetupCryptoComponent,
+    HyperlambdaComponent,
   ],
   imports: [
     FormsModule,

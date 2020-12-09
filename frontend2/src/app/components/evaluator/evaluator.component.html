@@ -1,17 +1,11 @@
 
-<ngx-codemirror
-  [(ngModel)]="input"
-  [options]="cmInputOptions.hyperlambda">
-</ngx-codemirror>
+<app-hyperlambda [(model)]="inputModel"></app-hyperlambda>
 
-<div class="right-align">
+<div class="button-strip">
   <button
     mat-button
-    [disabled]="input.length === 0"
+    [disabled]="inputModel.hyperlambda.length === 0"
     (click)="execute()">Execute</button>
 </div>
 
-<ngx-codemirror
-  [(ngModel)]="result"
-  [options]="cmOutputOptions.hyperlambda">
-</ngx-codemirror>
+<app-hyperlambda [(model)]="outputModel"></app-hyperlambda>
