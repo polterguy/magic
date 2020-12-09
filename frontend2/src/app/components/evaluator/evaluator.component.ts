@@ -9,13 +9,13 @@ import { Component } from '@angular/core';
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Response } from '../../models/response.model';
-import { Model } from '../codemirror/hyperlambda.component';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
+import { Model } from '../codemirror/hyperlambda/hyperlambda.component';
 
 // CodeMirror options.
-import hyperlambda from '../../codemirror/hyperlambda.json';
-import hyperlambda_readonly from '../../codemirror/hyperlambda_readonly.json';
+import hyperlambda from '../codemirror/options/hyperlambda.json'
+import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.json';
 
 /**
  * Component allowing user to evaluate Hyperlambda snippets.
@@ -30,7 +30,7 @@ export class EvaluatorComponent extends BaseComponent {
   /**
    * Input Hyperlambda component model and options.
    */
-  public inputModel: Model = {
+  public input: Model = {
     hyperlambda: '',
     options: hyperlambda,
   };
@@ -38,7 +38,7 @@ export class EvaluatorComponent extends BaseComponent {
   /**
    * Output Hyperlambda component model and options.
    */
-  public outputModel: Model = {
+  public output: Model = {
     hyperlambda: '',
     options: hyperlambda_readonly,
   };
@@ -60,11 +60,11 @@ export class EvaluatorComponent extends BaseComponent {
   public execute() {
 
     // Invoking backend service responsible for executing Hyperlambda.
-    this.evaluatorService.execute(this.inputModel.hyperlambda).subscribe((res: Response) => {
+    this.evaluatorService.execute(this.input.hyperlambda).subscribe((res: Response) => {
 
       // Success, updating result editor.
-      this.outputModel.hyperlambda = res.result;
-      this.showInfo('Hyperlambda was successfully executed');
+      this.output.hyperlambda = res.result;
+      this.showInfoShort('Hyperlambda was successfully executed');
 
     }, (error: any) => this.showError(error));
   }

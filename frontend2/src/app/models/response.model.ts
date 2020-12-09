@@ -4,11 +4,8 @@
  */
 
 /**
- * Generic model for endpoints not returning anything but whether
- * or not the operation was a success or not.
- * 
- * Notice, if operation was a asuccess the result field will normally
- * have a value of 'success'.
+ * Generic model for endpoints not returning anything but
+ * a single string value.
  */
 export class Response {
   result: string;

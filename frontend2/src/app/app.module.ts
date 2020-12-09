@@ -45,7 +45,7 @@ import { AuthInterceptor } from './services/interceptors/auth.interceptor';
 import { LoaderInterceptor } from './services/interceptors/loader.interceptor';
 
 // Reusable application specific components.
-import { HyperlambdaComponent } from './components/codemirror/hyperlambda.component';
+import { HyperlambdaComponent } from './components/codemirror/hyperlambda/hyperlambda.component';
 
 // Application specific components.
 import { LogComponent } from './components/log/log.component';

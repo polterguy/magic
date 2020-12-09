@@ -14,7 +14,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 
 // CodeMirror options.
-import json from '../../codemirror/json.json';
+import json from '../codemirror/options/json.json'
 
 /**
  * Setup component allowing you to setup and modify your system's configuration.
