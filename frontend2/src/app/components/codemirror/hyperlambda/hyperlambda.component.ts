@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { BaseComponent } from '../../base.component';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 

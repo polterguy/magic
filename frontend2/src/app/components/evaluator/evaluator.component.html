@@ -1,11 +1,11 @@
 
-<app-hyperlambda [(model)]="inputModel"></app-hyperlambda>
+<app-hyperlambda [(model)]="input"></app-hyperlambda>
 
 <div class="button-strip">
   <button
     mat-button
-    [disabled]="inputModel.hyperlambda.length === 0"
+    [disabled]="input.hyperlambda.length === 0"
     (click)="execute()">Execute</button>
 </div>
 
-<app-hyperlambda [(model)]="outputModel"></app-hyperlambda>
+<app-hyperlambda [(model)]="output"></app-hyperlambda>
