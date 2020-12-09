@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Response } from '../../models/response.model';
+import { Model } from '../codemirror/hyperlambda.component';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
@@ -27,27 +28,19 @@ import hyperlambda_readonly from '../../codemirror/hyperlambda_readonly.json';
 export class EvaluatorComponent extends BaseComponent {
 
   /**
-   * Input Hyperlambda model.
+   * Input Hyperlambda component model and options.
    */
-  public input: string = '';
-
-  /**
-   * Hyperlambda resulting from evaluation.
-   */
-  public result: string = '';
-
-  /**
-   * CodeMirror options object for input Hyperlambda.
-   */
-  public cmInputOptions = {
-    hyperlambda: hyperlambda,
+  public inputModel: Model = {
+    hyperlambda: '',
+    options: hyperlambda,
   };
 
   /**
-   * CodeMirror options object for resulting Hyperlambda.
+   * Output Hyperlambda component model and options.
    */
-  public cmOutputOptions = {
-    hyperlambda: hyperlambda_readonly,
+  public outputModel: Model = {
+    hyperlambda: '',
+    options: hyperlambda_readonly,
   };
 
   /**
@@ -65,9 +58,14 @@ export class EvaluatorComponent extends BaseComponent {
    * Executes the Hyperlambda from the input CodeMirror component.
    */
   public execute() {
-    this.evaluatorService.execute(this.input).subscribe((res: Response) => {
-      this.result = res.result;
+
+    // Invoking backend service responsible for executing Hyperlambda.
+    this.evaluatorService.execute(this.inputModel.hyperlambda).subscribe((res: Response) => {
+
+      // Success, updating result editor.
+      this.outputModel.hyperlambda = res.result;
       this.showInfo('Hyperlambda was successfully executed');
-    });
+
+    }, (error: any) => this.showError(error));
   }
 }

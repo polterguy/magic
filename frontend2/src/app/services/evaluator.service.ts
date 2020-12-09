@@ -38,4 +38,13 @@ export class EvaluatorService {
       hyperlambda
     });
   }
+
+  /**
+   * Returns server's Hyperlambda vocabulary to caller.
+   */
+  public vocabulary() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<string[]>('/magic/modules/system/evaluator/vocabulary');
+  }
 }
