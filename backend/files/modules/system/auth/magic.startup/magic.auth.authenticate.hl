@@ -81,8 +81,13 @@ slots.create:magic.auth.authenticate
       /*
        * Selects the user with the given username from our table.
        */
-      data.select:select password from users where username = @username
-         @username:x:@.arguments/*/username
+      data.read
+         table:users
+         columns
+            password
+         where
+            and
+               username:x:@.arguments/*/username
 
 
       /*
@@ -90,7 +95,7 @@ slots.create:magic.auth.authenticate
        */
       if
          eq
-            get-count:x:@data.select/*
+            get-count:x:@data.read/*
             .:int:0
          .lambda
 
@@ -108,7 +113,7 @@ slots.create:magic.auth.authenticate
        */
       if
          crypto.password.verify:x:@.arguments/*/password
-            hash:x:@data.select/*/*/password
+            hash:x:@data.read/*/*/password
          .lambda
 
 
@@ -116,15 +121,20 @@ slots.create:magic.auth.authenticate
              * Password is matching hashed value from database.
              * Now we need to select all roles user belongs to.
              */
-            data.select:select role from users_roles where user = @username
-               @username:x:@.arguments/*/username
+            data.read
+               table:users_roles
+               columns
+                  role
+               where
+                  and
+                     user:x:@.arguments/*/username
 
 
             /*
              * Then we can create our JWT token/ticket.
              */
             add:x:+/*/roles
-               get-nodes:x:@data.select/*/*
+               get-nodes:x:@data.read/*/*
             auth.ticket.create
                username:x:@.arguments/*/username
                roles

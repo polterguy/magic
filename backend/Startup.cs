@@ -52,15 +52,11 @@ namespace magic.backend
             app.UseAuthentication();
             app.UseRouting().UseEndpoints(conf => conf.MapControllers());
 
-            // Creating a log entry for having started application.
-            try
+            // Creating a log entry for having started application, but only if system has beeen setup.
+            if (Configuration["magic:auth:secret"] != "THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT")
             {
                 var logger = app.ApplicationServices.GetService(typeof(ILogger)) as ILogger;
                 logger.Info("Magic was successfully started");
-            }
-            catch
-            {
-                // In case Magic has not yet been setup, the above will throw an exception.
             }
         }
     }
