@@ -24,11 +24,20 @@ auth.ticket.verify:root
  * in the process. This looks a bit cheezy, but to make sure
  * the root node for the execution object is the node containing
  * the Hyperlambda as children, it is necessary.
+ *
+ * It basically "unties" the execution object from the rest of this
+ * particular file, preventing caller to interfer with the file itself,
+ * as a consequence of his Hyperlambda.
  */
 .x:node:""
 hyper2lambda:x:@.arguments/*/hyperlambda
 add:x:@.x/#
    get-nodes:x:@hyper2lambda/*
+
+
+/*
+ * Evaluating Hyperlambda, now with the correct root node.
+ */
 eval:x:@.x/#
 
 
