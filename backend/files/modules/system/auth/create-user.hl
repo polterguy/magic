@@ -26,10 +26,12 @@ data.connect:magic
    /*
     * Inserting user.
     */
-   data.execute:insert into users (username, password) values (@username, @password);
-      @username:x:@.arguments/*/username
-      @password:x:@crypto.password.hash
+   data.create
       database-type:x:@.arguments/*/database-type
+      table:users
+      values
+         username:x:@.arguments/*/username
+         password:x:@crypto.password.hash
 
 
    /*
@@ -41,7 +43,9 @@ data.connect:magic
       /*
        * Then inserting into users_roles an association between user and role.
        */
-      data.execute:insert into users_roles (role, user) values (@role, @user)
-         @role:x:@.dp/#
-         @user:x:@.arguments/*/username
+      data.create
          database-type:x:@.arguments/*/database-type
+         table:users_roles
+         values
+            role:x:@.dp/#
+            user:x:@.arguments/*/username

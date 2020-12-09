@@ -112,7 +112,7 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
          * Notice, to give backend some time to change the configuration
          * object for its thread pool threads, we'll need to wait a bit
          * before we re-fetch the status object - Hence, we therefor wait
-         * for 500 milliseconds before we login again, using the user's
+         * for 5000 milliseconds before we login again, using the user's
          * new root password, before we publish our status changed event.
          */
         setTimeout(() => {
@@ -125,7 +125,7 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
               content: 'config'
             });
           });
-        }, 1500);
+        }, 5000);
       } else {
 
         // Error of some undefined sort!

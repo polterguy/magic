@@ -150,10 +150,11 @@ export class AuthService {
     }
 
     // Parsing role field from JWT token, and splitting at ','.
+    console.log(this.backendService.current.token);
     const result = (<string>(JSON.parse(
       atob(
         this.backendService.current.token
-          .split('.')[1]))).role)
+          .split('.')[1]))).role || '')
       .split(',');
 
     // Returning only non-empty roles, and trimming values before returning.

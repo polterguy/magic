@@ -147,14 +147,7 @@ else
    unwrap:x:+/*
    signal:magic.auth.change-password
       password:x:@.arguments/*/password
-
-
-/*
- * Starting scheduler.
- *
- * This invocation will do nothing if no scheduled jobs exists.
- */
-scheduler.start
+      database-type:x:@.arguments/*/databaseType
 
 
 /*
@@ -167,19 +160,36 @@ license.apply
 
 
 /*
- * Logging the fact that system was setup.
- */
-log.info:System was successfully setup
-
-
-/*
  * Saving settings to appsettings.json file.
  *
  * Notice, this is done as the final step, since it
  * will invalidate user's JWT token, and hence user
  * needs to authenticate again.
  */
-config.save:x:@.arguments/*/settings
+json2lambda:x:@.arguments/*/settings
+set-value:x:@json2lambda/*/magic/*/databases/*/default
+   get-value:x:@.arguments/*/databaseType
+lambda2json:x:@json2lambda/*
+   format:true
+config.save:x:-
+
+
+/*
+ * Sleeping for 2 seconds to allow for config to kick in on thread pools.
+ */
+sleep:2000
+
+
+/*
+ * Logging the fact that system was setup.
+ */
+log.info:System was successfully setup
+
+
+/*
+ * Starting scheduler.
+ */
+scheduler.start
 
 
 /*
