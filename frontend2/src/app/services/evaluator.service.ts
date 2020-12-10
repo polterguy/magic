@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { HttpService } from './http.service';
 import { Response } from '../models/response.model';
+import { Observable, of } from 'rxjs';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -18,6 +19,9 @@ import { Response } from '../models/response.model';
   providedIn: 'root'
 })
 export class EvaluatorService {
+
+  // Used to 'cache' the server's vocabulary.
+  private _vocabulary: string[] = [];
 
   /**
    * Creates an instance of your service.
@@ -44,7 +48,23 @@ export class EvaluatorService {
    */
   public vocabulary() {
 
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<string[]>('/magic/modules/system/evaluator/vocabulary');
+    // Checking if we've already got the server's vocabulary.
+    if (this._vocabulary.length > 0) {
+      of(this._vocabulary); // Returning 'cache' result.
+    }
+
+    // Creating a new observable such that we can store the vocabulary in a field.
+    return new Observable<string[]>((observer) => {
+
+      // Invoking backend.
+      this.httpService.get<string[]>('/magic/modules/system/evaluator/vocabulary').subscribe((vocabulary: string[]) => {
+        this._vocabulary = vocabulary;
+        observer.next(vocabulary);
+        observer.complete();
+      }, (error: any) => {
+        observer.error(error);
+        observer.complete();
+      });
+    });
   }
 }

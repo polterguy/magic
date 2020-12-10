@@ -825,12 +825,8 @@
     /*
      * Checking if there are any autocomplete keywords, and if not, returning early
      */
-    if (window._vocabulary === undefined || window._vocabulary === null) {
-      var vocabulary = localStorage.getItem('vocabulary');
-      if (vocabulary === null || vocabulary === undefined || vocabulary === '') {
-        return;
-      }
-      window._vocabulary = JSON.parse(vocabulary);
+    if (!!window._vocabulary === undefined) {
+      return [];
     }
   
     /*
