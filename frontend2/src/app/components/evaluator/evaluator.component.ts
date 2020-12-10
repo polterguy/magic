@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Response } from '../../models/response.model';
+import { FileService } from 'src/app/services/file.service';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { Model } from '../codemirror/hyperlambda/hyperlambda.component';
@@ -48,12 +49,15 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Material dialog used for opening up Load snippets modal dialog
+   * @param evaluatorService Used to execute Hyperlambda specified by user
    * @param messageService Service used to publish messages to other components
    */
   constructor(
-    protected messageService: MessageService,
     private dialog: MatDialog,
-    private evaluatorService: EvaluatorService) {
+    private fileService: FileService,
+    private evaluatorService: EvaluatorService,
+    protected messageService: MessageService) {
     super(messageService);
   }
 
@@ -82,8 +86,19 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    * Shows load snippet dialog.
    */
   public load() {
+
+    // Showing modal dialog.
     const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
       width: '550px',
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this.fileService.loadFile(filename).subscribe((content: string) => {
+          this.input.hyperlambda = content;
+        });
+      }
     });
   }
 

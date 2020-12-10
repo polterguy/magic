@@ -34,8 +34,9 @@ export class HttpService {
    * in your currently selected backend, and returns the result.
    * 
    * @param url Backend URL to endpoint
+   * @param requestOptions Request options for invocation
    */
-  public get<Response>(url: string) {
+  public get<Response>(url: string, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
     if (!this.backendService.connected) {
@@ -46,7 +47,11 @@ export class HttpService {
     } else {
 
       // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.get<Response>(this.backendService.current.url + url);
+      if (!requestOptions) {
+        return this.httpClient.get<Response>(this.backendService.current.url + url);
+      } else {
+        return this.httpClient.get<Response>(this.backendService.current.url + url, requestOptions);
+      }
     }
   }
 
