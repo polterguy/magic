@@ -57,8 +57,8 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
     public authService: AuthService,
     public backendService: BackendService,
     public dialogRef: MatDialogRef<LoginDialogComponent>) {
-      super(messageService);
-    }
+    super(messageService);
+  }
 
   /**
    * OnInit implementation.
