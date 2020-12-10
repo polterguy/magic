@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
@@ -12,6 +13,7 @@ import { Response } from '../../models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { Model } from '../codemirror/hyperlambda/hyperlambda.component';
+import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json'
@@ -50,6 +52,7 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    */
   constructor(
     protected messageService: MessageService,
+    private dialog: MatDialog,
     private evaluatorService: EvaluatorService) {
     super(messageService);
   }
@@ -57,18 +60,31 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  ngOnInit() {
+  public ngOnInit() {
 
     // Making sure we attach the F5 button to execute input Hyperlambda.
     this.input.options.extraKeys.F5 = () => {
-      const element = document.getElementById('executeButton') as HTMLElement;
-      element.click();
+      (document.getElementById('executeButton') as HTMLElement).click();
     };
 
     // Associating ALT+M with fullscreen toggling of the editor instance.
     this.input.options.extraKeys['Alt-M'] = (cm: any) => {
       cm.setOption('fullScreen', !cm.getOption('fullScreen'));
     };
+
+    // Associating ALT+L with load snippet button.
+    this.input.options.extraKeys['Alt-L'] = (cm: any) => {
+      (document.getElementById('loadButton') as HTMLElement).click();
+    };
+  }
+
+  /**
+   * Shows load snippet dialog.
+   */
+  public load() {
+    const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
+      width: '550px',
+    });
   }
 
   /**

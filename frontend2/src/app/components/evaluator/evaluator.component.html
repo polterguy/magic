@@ -2,11 +2,18 @@
 <app-hyperlambda [(model)]="input"></app-hyperlambda>
 
 <div class="button-strip">
+
+  <button
+    id="loadButton"
+    mat-button
+    (click)="load()">Load</button>
+
   <button
     id="executeButton"
     mat-button
     [disabled]="input.hyperlambda.length === 0"
     (click)="execute()">Execute</button>
+
 </div>
 
 <app-hyperlambda [(model)]="output"></app-hyperlambda>

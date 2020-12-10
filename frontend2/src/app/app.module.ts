@@ -63,12 +63,13 @@ import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { SetupCryptoComponent } from './components/config/setup/setup-crypto/setup-crypto.component';
+import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
 import { SetupConfigurationComponent } from './components/config/setup/setup-configuration/setup-configuration.component';
 
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
-import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
-import { SetupCryptoComponent } from './components/config/setup/setup-crypto/setup-crypto.component';
+import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -79,6 +80,7 @@ import { SetupCryptoComponent } from './components/config/setup/setup-crypto/set
     SqlComponent,
     HomeComponent,
     LoginDialogComponent,
+    LoadSnippetDialogComponent,
     CrudifierComponent,
     EndpointsComponent,
     TasksComponent,
