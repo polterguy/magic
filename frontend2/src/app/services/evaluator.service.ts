@@ -4,12 +4,13 @@
  */
 
 // Angular and system imports.
+import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { FileService } from './file.service';
 import { Response } from '../models/response.model';
-import { Observable, of } from 'rxjs';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -28,7 +29,9 @@ export class EvaluatorService {
    * 
    * @param httpService HTTP service to use for backend invocations
    */
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpService: HttpService,
+    private fileService: FileService) { }
 
   /**
    * Evaluates a piece of Hyperlambda and returns its result.
@@ -66,5 +69,12 @@ export class EvaluatorService {
         observer.complete();
       });
     });
+  }
+
+  /**
+   * Returns a list of all Hyperlambda snippets the backend has stored.
+   */
+  public snippets() {
+    return this.fileService.listFiles('/misc/snippets/');
   }
 }

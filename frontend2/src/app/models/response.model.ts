@@ -8,6 +8,10 @@
  * a single string value.
  */
 export class Response {
+
+  /**
+   * Value as returned from server.
+   */
   result: string;
 }
   

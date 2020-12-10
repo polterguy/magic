@@ -1,0 +1,18 @@
+
+.mat-dialog-actions {
+  float: right;
+  mat-checkbox {
+    margin-right: .5rem;
+  }
+}
+  
+.file-list {
+  padding-left: 0;
+  li {
+    list-style-type: none;
+    button {
+      text-align: left;
+      width: 100%;
+    }
+  }
+}

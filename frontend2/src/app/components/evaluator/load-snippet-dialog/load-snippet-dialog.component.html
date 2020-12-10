@@ -3,9 +3,32 @@
 </h1>
 
 <div mat-dialog-content>
-  Do stuff here ...
+
+  <mat-form-field class="fill-width">
+    <mat-label>Filter</mat-label>
+    <input
+      matInput
+      [(ngModel)]="filter"
+      autocomplete="off"
+      placeholder="Filter">
+  </mat-form-field>
+
+  <ul class="file-list">
+    <li *ngFor="let idx of getFiles()">
+      <button
+        mat-button
+        (click)="select(idx)">
+        {{getFilename(idx)}}
+      </button>
+    </li>
+  </ul>
+
 </div>
 
-<div mat-dialog-actions>
-  foo
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-button
+    (click)="select(null)">Close</button>
+
 </div>
