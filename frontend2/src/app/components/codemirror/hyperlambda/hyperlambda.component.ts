@@ -47,11 +47,6 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit {
   @Input() public model: Model;
 
   /**
-   * Server's Hyperlambda vocabulary
-   */
-  public vocabulary: string[] = [];
-
-  /**
    * Creates an instance of your component.
    * 
    * @param evaluatorService Evaluator service used to retrieve auto complete keywords (vocabulary)
@@ -67,10 +62,11 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Retrieving server vocabulary.
-    // TODO: Invoke only ONCE for all editors (store in localStorage).
-    this.evaluatorService.vocabulary().subscribe((res: string[]) => {
-      this.vocabulary = res;
-    }, error => this.showError(error));
+    // Retrieving server's vocabulary, but only if editor is not read only.
+    if (this.model.options.readonly !== false) {
+      this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
+        window['_vocabulary'] = vocabulary;
+      }, error => this.showError(error));
+    }
   }
 }

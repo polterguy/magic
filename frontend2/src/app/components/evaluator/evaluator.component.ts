@@ -64,6 +64,8 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
       const element = document.getElementById('executeButton') as HTMLElement;
       element.click();
     };
+
+    // Associating ALT+M with fullscreen toggling of the editor instance.
     this.input.options.extraKeys['Alt-M'] = (cm: any) => {
       cm.setOption('fullScreen', !cm.getOption('fullScreen'));
     };

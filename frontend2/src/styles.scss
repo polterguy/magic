@@ -7,6 +7,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @import '~codemirror/theme/mbo';
 @import "~codemirror/addon/display/fullscreen";
 
+/*
+ * Misc classes.
+ */
 .warning {
   color: #c88 !important;
 }
@@ -33,6 +36,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   cursor: pointer;
 }
 
+/*
+ * Material table styles.
+ */
 table.mat-table {
   width: 100%;
   background-color: transparent;
@@ -90,4 +96,38 @@ mat-select {
   .mat-select-value-text {
     color: rgb(245,245,245);
   }
+}
+
+// CodeMirror classes.
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 10000;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 2px;
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  border-radius: 3px;
+  color: rgb(245,245,245);
+  border: 1px solid rgb(0,0,0);
+  background-color: rgb(55,55,55);
+  font-size: 90%;
+  font-family: monospace;
+  max-height: 20em;
+  overflow-y: auto;
+}
+
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  cursor: pointer;
+}
+
+li.CodeMirror-hint-active {
+  background: #08f;
+  color: white;
 }
