@@ -1,18 +1,20 @@
 
-.mat-dialog-actions {
-  float: right;
-  mat-checkbox {
-    margin-right: .5rem;
-  }
+.mat-dialog-title {
+  font:inherit;
+  margin-bottom: 0;
 }
-  
-.file-list {
-  padding-left: 0;
-  li {
-    list-style-type: none;
-    button {
-      text-align: left;
-      width: 100%;
+
+.file-content {
+  min-height: 400px;
+  max-height: 400px;
+  .file-list {
+    padding-left: 0;
+    li {
+      list-style-type: none;
+      button {
+        text-align: left;
+        width: 100%;
+      }
     }
   }
 }

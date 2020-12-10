@@ -1,17 +1,17 @@
-<h1 mat-dialog-title>
-  Load snippet
-</h1>
+<div mat-dialog-title class="mat-dialog-title">
 
-<div mat-dialog-content>
-
-  <mat-form-field class="fill-width">
-    <mat-label>Filter</mat-label>
+  <mat-form-field class="fill-width no-padding">
+    <mat-label class="dark">Filter</mat-label>
     <input
       matInput
       [(ngModel)]="filter"
       autocomplete="off"
       placeholder="Filter">
   </mat-form-field>
+
+</div>
+
+<div mat-dialog-content class="file-content">
 
   <ul class="file-list">
     <li *ngFor="let idx of getFiles()">
@@ -22,13 +22,5 @@
       </button>
     </li>
   </ul>
-
-</div>
-
-<div mat-dialog-actions class="mat-dialog-actions">
-
-  <button
-    mat-button
-    (click)="select(null)">Close</button>
 
 </div>
