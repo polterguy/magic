@@ -6,7 +6,7 @@ table.roles {
     th:nth-child(2) {
       display: none;
     }
-    @media screen and (min-width: 800px) {
+    @media screen and (min-width: 600px) {
       td:nth-child(2),
       th:nth-child(2) {
         display: table-cell;
