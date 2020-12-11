@@ -25,15 +25,7 @@
       class="obscurer"
       (click)="closeNavbar()"></div>
 
-    <router-outlet
-      *ngIf="hasAccess()"></router-outlet>
-
-    <mat-card
-      *ngIf="!hasAccess()"
-      class="no-access">
-      <h2>Access Denied</h2>
-      <p>I am sorry but I can't grant you access to this component ...</p>
-    </mat-card>
+    <router-outlet></router-outlet>
 
   </mat-sidenav-content>
 
