@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { User } from '../models/user.model';
+import { Role } from '../models/role.model';
 import { HttpService } from './http.service';
 import { AuthFilter } from '../models/auth-filter.model';
 
@@ -17,7 +17,7 @@ import { AuthFilter } from '../models/auth-filter.model';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class RoleService {
 
   /**
    * Creates an instance of your service.
@@ -27,7 +27,7 @@ export class UserService {
   constructor(private httpService: HttpService) { }
 
   /**
-   * Returns a list of users from your backend.
+   * Returns a list of roles from your backend.
    * 
    * @param filter Optional query filter deciding which items to return
    */
@@ -43,11 +43,11 @@ export class UserService {
 
       // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
-        query += '&username.like=' + encodeURIComponent(filter.filter + '%');
+        query += '&name.like=' + encodeURIComponent(filter.filter + '%');
       }
     }
 
     // Invoking backend and returning observable.
-    return this.httpService.get<User[]>('/magic/modules/magic/users' + query);
+    return this.httpService.get<Role[]>('/magic/modules/magic/roles' + query);
   }
 }
