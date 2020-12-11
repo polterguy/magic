@@ -71,6 +71,8 @@ import { SetupConfigurationComponent } from './components/config/setup/setup-con
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
+import { UsersComponent } from './components/auth/users/users.component';
+import { RolesComponent } from './components/auth/roles/roles.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -102,6 +104,8 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     SetupDatabaseComponent,
     SetupCryptoComponent,
     HyperlambdaComponent,
+    UsersComponent,
+    RolesComponent,
   ],
   imports: [
     FormsModule,
