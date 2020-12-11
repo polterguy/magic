@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { User } from '../models/user.model';
 import { HttpService } from './http.service';
+import { AuthFilter } from '../models/auth-filter.model';
 
 /**
  * User service, allowing you to administrate the users in your backend.
@@ -32,7 +33,7 @@ export class UserService {
    * @param offset Number of items to skip
    * @param limit Maximum number of items to return
    */
-  public list(filter: any = null) {
+  public list(filter: AuthFilter = null) {
 
     // Dynamically building our query parameters.
     let query = '';
@@ -43,9 +44,7 @@ export class UserService {
       query += "&offset=" + filter.offset;
 
       // Applying filter parts, if given.
-      if (filter.filter !== null &&
-        filter.filter !== undefined &&
-        filter.filter != '') {
+      if (filter.filter && filter.filter !== '') {
         query += '&username.like=' + encodeURIComponent(filter.filter + '%');
       }
     }
