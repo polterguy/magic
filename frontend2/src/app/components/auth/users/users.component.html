@@ -19,7 +19,6 @@
 
 </mat-form-field>
 
-
 <table
   mat-table
   [dataSource]="users"
@@ -32,3 +31,10 @@
   <tr mat-row *matRowDef="let el; columns: displayedColumns;"></tr>
 
 </table>
+
+<button
+  mat-icon-button
+  matTooltip="Create new user"
+  class="create-button">
+  <mat-icon aria-label="Creates a new user">add_box</mat-icon>
+</button>

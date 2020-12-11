@@ -2,6 +2,7 @@
 .parts {
   .part {
     margin-bottom: 2rem;
+    position: relative;
   }
 }
 
@@ -12,6 +13,7 @@
       flex: 1;
       margin-right: 2rem;
       padding: 2rem;
+      min-height: 300px;;
     }
   }
 }

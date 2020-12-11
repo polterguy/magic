@@ -24,6 +24,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-bottom: .5rem;
 }
 
+button.create-button {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  display: block;
+  mat-icon {
+    font-size: 2rem;
+  }
+}
+
 .invisible {
   display: none !important;
 }
