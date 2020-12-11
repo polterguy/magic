@@ -45,10 +45,12 @@ export class FileService {
    */
   public loadFile(filename: string) {
 
-    // Invoking backend and returning observable to caller.
+    // Making sure we copmmunicate that we want to have text result.
     const requestOptions = {
       responseType: 'text'
     };
+
+    // Invoking backend and returning observable to caller.
     return this.httpService.get<string>(
       '/api/files?file=' +
       encodeURIComponent(filename),
@@ -62,6 +64,17 @@ export class FileService {
    * @param content Content of file
    */
   public saveFile(filename: string, content: string) {
-    alert('todo');
+
+    // Passing in file as form data.
+    const folder = filename.substr(0, filename.lastIndexOf('/') + 1);
+    const formData: FormData = new FormData();
+    const blob = new Blob([content], { type: 'text/plain'});
+    formData.append('file', blob, filename.substr(filename.lastIndexOf('/') + 1));
+
+    return this.httpService.put<any>(
+      '/api/files?folder=' + encodeURI(folder),
+      formData
+    );
+
   }
 }

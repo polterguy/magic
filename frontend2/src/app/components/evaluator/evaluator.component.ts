@@ -10,7 +10,6 @@ import { MatDialog } from '@angular/material/dialog';
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Response } from '../../models/response.model';
-import { FileService } from 'src/app/services/file.service';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { Model } from '../codemirror/hyperlambda/hyperlambda.component';
@@ -48,6 +47,11 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
   };
 
   /**
+   * Currently edited snippet.
+   */
+  public filename: string = null;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialog Material dialog used for opening up Load snippets modal dialog
@@ -56,7 +60,6 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    */
   constructor(
     private dialog: MatDialog,
-    private fileService: FileService,
     private evaluatorService: EvaluatorService,
     protected messageService: MessageService) {
     super(messageService);
@@ -101,9 +104,12 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
     // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
     dialogRef.afterClosed().subscribe((filename: string) => {
       if (filename) {
-        this.fileService.loadFile(filename).subscribe((content: string) => {
+
+        // User gave us a filename, hence we load file from backend snippet collection.
+        this.evaluatorService.loadSnippet(filename).subscribe((content: string) => {
           this.input.hyperlambda = content;
-        });
+          this.filename = filename;
+        }, (error: any) => this.showError(error));
       }
     });
   }
@@ -121,7 +127,11 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
     // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
     dialogRef.afterClosed().subscribe((filename: string) => {
       if (filename) {
-        this,this.evaluatorService.snippets
+
+        // User gave us a filename, hence saving file to backend snippet collection.
+        this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe((res: any) => {
+          this.showInfo('Snippet successfully saved');
+        }, (error: any) => this.showError(error));
       }
     });
   }
