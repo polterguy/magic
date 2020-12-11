@@ -1,7 +1,7 @@
 
 <mat-form-field class="fill-width">
 
-  <mat-label>Filter ...</mat-label>
+  <mat-label>Filter roles ...</mat-label>
 
   <input
     matInput
@@ -31,11 +31,8 @@
   </ng-container>
 
   <ng-container matColumnDef="description">
-    <th mat-header-cell *matHeaderCellDef>Description</th>
     <td mat-cell *matCellDef="let el">{{el.description}}</td>
   </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
   <tr mat-row *matRowDef="let el; columns: displayedColumns;"></tr>
 
