@@ -129,7 +129,7 @@ if
        * Inserting root user.
        */
       unwrap:x:+/*
-      io.file.execute:/modules/system/auth/create-user.hl
+      signal:magic.auth.create-user
          username:root
          password:x:@.arguments/*/password
          database-type:x:@.arguments/*/databaseType
