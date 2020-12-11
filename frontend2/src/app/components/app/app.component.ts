@@ -118,22 +118,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sidenavOpened = false;
   }
 
-  /**
-   * Returns true if user has access to currently loaded component.
-   */
-  public hasAccess() {
-    if (this.router.url === '/') {
-      return true; // Home component, everybody has access to this somehow.
-    }
-
-    /*
-     * Assuming the component's router URL is equal to the backend URL(s)
-     * invoked when component's data is somehow read or modified.
-     */
-    const segments = this.router.url.split('/');
-    return this.authService.hasAccess('magic/modules/system/' + segments[1]);
-  }
-
   /*
    * Private helper methods.
    */
