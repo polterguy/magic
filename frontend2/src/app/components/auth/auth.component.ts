@@ -7,7 +7,9 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { User } from 'src/app/models/user.model';
 import { BaseComponent } from '../base.component';
+import { UserService } from 'src/app/services/user.service';
 import { MessageService } from 'src/app/services/message.service';
 
 /**
@@ -22,14 +24,36 @@ import { MessageService } from 'src/app/services/message.service';
 export class AuthComponent extends BaseComponent implements OnInit {
 
   /**
+   * Data for users table.
+   */
+  public users: User[] = [];
+
+  /**
+   * What columns to display in table.
+   */
+  public displayedColumns: string[] = [
+    'username'
+  ];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param messageService Message service to subscribe and publish messages to and from other components
    */
-  constructor(protected messageService: MessageService) {
+  constructor(
+    private userService: UserService,
+    protected messageService: MessageService) {
     super(messageService);
   }
 
-  ngOnInit() {
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
+
+    // Retrieving users from backend.
+    this.userService.list().subscribe((users: User[]) => {
+      this.users = users;
+    }, (error: any) => this.showError(error));
   }
 }
