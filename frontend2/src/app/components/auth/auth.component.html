@@ -1,4 +1,24 @@
 
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    matTooltip="Clear filter"
+    (click)="clearUserFilter()">clear</mat-icon>
+
+</mat-form-field>
+
 
 <table
   mat-table
