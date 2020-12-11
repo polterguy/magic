@@ -3,20 +3,22 @@
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width">
+
     <input type="text"
       placeholder="Filename"
       aria-label="Please provide a filename"
       matInput
-      [(ngModel)]="filename"
+      [(ngModel)]="data"
       [matAutocomplete]="auto">
-    <mat-autocomplete
-      #auto="matAutocomplete">
+
+    <mat-autocomplete #auto="matAutocomplete">
       <mat-option
         *ngFor="let idx of getFiltered()"
         [value]="getFilename(idx)">
         {{getFilename(idx)}}
       </mat-option>
     </mat-autocomplete>
+
   </mat-form-field>
 
 </div>
@@ -27,8 +29,8 @@
 
   <button
     mat-button
-    [disabled]="!filenameValid(filename)"
+    [disabled]="!filenameValid()"
     aria-label="Saves your snippet"
-    (click)="save()">Save</button>
+    [mat-dialog-close]="data">Save</button>
 
 </div>

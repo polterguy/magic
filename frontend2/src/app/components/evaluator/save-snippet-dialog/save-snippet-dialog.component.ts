@@ -4,16 +4,16 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
-import { MatDialogRef } from '@angular/material/dialog';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
- * Save snippet dialog for saving snippet.
+ * Save snippet dialog for saving snippets to the backend for later.
  */
 @Component({
   selector: 'app-save-snippet-dialog',
@@ -24,24 +24,22 @@ export class SaveSnippetDialogComponent extends BaseComponent implements OnInit 
 
   /**
    * Existing snippet files as returned from backend.
+   * 
+   * Needed to make autocompleter working allowing user to overwrite previously saved snippet.
    */
   public files: string[] = [];
 
   /**
-   * Filename to save snippet as.
-   */
-  public filename = '';
-
-  /**
    * Creates an instance of your login dialog.
    * 
-   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
+   * @param messageService Dependency injected message service to publish information from component to subscribers
+   * @param data Filename to intially populate filename textbox with. Typically only supplied if you previously loaded a file.
    */
   constructor(
+    private evaluatorService: EvaluatorService,
     protected messageService: MessageService,
-    private dialogRef: MatDialogRef<SaveSnippetDialogComponent>,
-    private evaluatorService: EvaluatorService) {
+    @Inject(MAT_DIALOG_DATA) public data: string) {
     super(messageService);
   }
 
@@ -52,7 +50,10 @@ export class SaveSnippetDialogComponent extends BaseComponent implements OnInit 
 
     // Retrieving snippets from backend.
     this.evaluatorService.snippets().subscribe((files: string[]) => {
+
+      // Excluding all files that are not Hyperlambda files.
       this.files = files.filter(x => x.endsWith('.hl'));
+
     }, (error: any) => this.showError(error));
   }
 
@@ -62,6 +63,8 @@ export class SaveSnippetDialogComponent extends BaseComponent implements OnInit 
    * @param path Complete path of file
    */
   public getFilename(path: string) {
+
+    // Removing path and extension, returning only filename.
     const result = path.substr(path.lastIndexOf('/') + 1);
     return result.substr(0, result.lastIndexOf('.'));
   }
@@ -70,31 +73,24 @@ export class SaveSnippetDialogComponent extends BaseComponent implements OnInit 
    * Returns filtered files according to what user has typed.
    */
   public getFiltered() {
-    return this.files.filter((file: string)  => {
-      const result = file.substr(file.lastIndexOf('/') + 1);
-      const fileName = result.substr(0, result.lastIndexOf('.'));
-      return fileName.indexOf(this.filename) !== -1;
+
+    // Filtering files according such that only filtered files are returned.
+    return this.files.filter((idx: string)  => {
+      return this.getFilename(idx).indexOf(this.data) !== -1;
     });
   }
 
   /**
    * Returns true if filename is a valid filename for snippet.
-   * 
-   * @param filename Filename to check
    */
-  public filenameValid(filename: string) {
-    for (var idx of filename) {
+  public filenameValid() {
+
+    // A valid filename only contains [a-z], [0-9], '.' and '-'.
+    for (var idx of this.data) {
       if ('abcdefghijklmnopqrstuvwxyz0123456789.-'.indexOf(idx) === -1) {
         return false;
       }
     }
     return true;
-  }
-
-  /**
-   * Saves the snippet.
-   */
-  public save() {
-    this.dialogRef.close(this.filename);
   }
 }
