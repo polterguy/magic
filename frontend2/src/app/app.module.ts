@@ -70,6 +70,7 @@ import { SetupConfigurationComponent } from './components/config/setup/setup-con
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
+import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -81,6 +82,7 @@ import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-
     HomeComponent,
     LoginDialogComponent,
     LoadSnippetDialogComponent,
+    SaveSnippetDialogComponent,
     CrudifierComponent,
     EndpointsComponent,
     TasksComponent,

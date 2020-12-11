@@ -15,6 +15,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { Model } from '../codemirror/hyperlambda/hyperlambda.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
+import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-dialog.component';
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json'
@@ -66,11 +67,6 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Making sure we attach the F5 button to execute input Hyperlambda.
-    this.input.options.extraKeys.F5 = () => {
-      (document.getElementById('executeButton') as HTMLElement).click();
-    };
-
     // Associating ALT+M with fullscreen toggling of the editor instance.
     this.input.options.extraKeys['Alt-M'] = (cm: any) => {
       cm.setOption('fullScreen', !cm.getOption('fullScreen'));
@@ -79,6 +75,16 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
     // Associating ALT+L with load snippet button.
     this.input.options.extraKeys['Alt-L'] = (cm: any) => {
       (document.getElementById('loadButton') as HTMLElement).click();
+    };
+
+    // Associating ALT+L with load snippet button.
+    this.input.options.extraKeys['Alt-S'] = (cm: any) => {
+      (document.getElementById('saveButton') as HTMLElement).click();
+    };
+
+    // Making sure we attach the F5 button to execute input Hyperlambda.
+    this.input.options.extraKeys.F5 = () => {
+      (document.getElementById('executeButton') as HTMLElement).click();
     };
   }
 
@@ -98,6 +104,24 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
         this.fileService.loadFile(filename).subscribe((content: string) => {
           this.input.hyperlambda = content;
         });
+      }
+    });
+  }
+
+  /**
+   * Shows the save snippet dialog.
+   */
+  public save() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(SaveSnippetDialogComponent, {
+      width: '550px',
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+        this,this.evaluatorService.snippets
       }
     });
   }

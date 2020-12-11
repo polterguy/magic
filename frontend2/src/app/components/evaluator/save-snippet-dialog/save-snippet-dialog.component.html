@@ -1,0 +1,34 @@
+<h1 mat-dialog-title class="mat-dialog-title">Save snippet</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <input type="text"
+      placeholder="Filename"
+      aria-label="Please provide a filename"
+      matInput
+      [(ngModel)]="filename"
+      [matAutocomplete]="auto">
+    <mat-autocomplete
+      #auto="matAutocomplete">
+      <mat-option
+        *ngFor="let idx of getFiltered()"
+        [value]="getFilename(idx)">
+        {{getFilename(idx)}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+</div>
+
+<div
+  mat-dialog-actions
+  class="mat-dialog-actions">
+
+  <button
+    mat-button
+    [disabled]="!filenameValid(filename)"
+    aria-label="Saves your snippet"
+    (click)="save()">Save</button>
+
+</div>

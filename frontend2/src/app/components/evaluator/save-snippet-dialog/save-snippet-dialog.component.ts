@@ -13,24 +13,24 @@ import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
- * Load snippet dialog for loading saved snippets from the backend.
+ * Save snippet dialog for saving snippet.
  */
 @Component({
-  selector: 'app-load-snippet-dialog',
-  templateUrl: './load-snippet-dialog.component.html',
-  styleUrls: ['./load-snippet-dialog.component.scss']
+  selector: 'app-save-snippet-dialog',
+  templateUrl: './save-snippet-dialog.component.html',
+  styleUrls: ['./save-snippet-dialog.component.scss']
 })
-export class LoadSnippetDialogComponent extends BaseComponent implements OnInit {
+export class SaveSnippetDialogComponent extends BaseComponent implements OnInit {
 
   /**
-   * Snippet files as returned from backend.
+   * Existing snippet files as returned from backend.
    */
   public files: string[] = [];
 
   /**
-   * Filter for filtering files to display.
+   * Filename to save snippet as.
    */
-  public filter: string = '';
+  public filename = '';
 
   /**
    * Creates an instance of your login dialog.
@@ -40,7 +40,7 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
    */
   constructor(
     protected messageService: MessageService,
-    private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
+    private dialogRef: MatDialogRef<SaveSnippetDialogComponent>,
     private evaluatorService: EvaluatorService) {
     super(messageService);
   }
@@ -57,17 +57,6 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
   }
 
   /**
-   * Returns files that matches current filter, if any.
-   */
-  public getFiles() {
-    if (this.filter === '') {
-      return this.files;
-    } else {
-      return this.files.filter(x => this.getFilename(x).indexOf(this.filter) !== -1);
-    }
-  }
-
-  /**
    * Returns only the filename parts from the given full path and filename.
    * 
    * @param path Complete path of file
@@ -78,9 +67,34 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
   }
 
   /**
-   * Invoked when user selects a file.
+   * Returns filtered files according to what user has typed.
    */
-  public select(filename: string) {
-    this.dialogRef.close(filename);
+  public getFiltered() {
+    return this.files.filter((file: string)  => {
+      const result = file.substr(file.lastIndexOf('/') + 1);
+      const fileName = result.substr(0, result.lastIndexOf('.'));
+      return fileName.indexOf(this.filename) !== -1;
+    });
+  }
+
+  /**
+   * Returns true if filename is a valid filename for snippet.
+   * 
+   * @param filename Filename to check
+   */
+  public filenameValid(filename: string) {
+    for (var idx of filename) {
+      if ('abcdefghijklmnopqrstuvwxyz0123456789.-'.indexOf(idx) === -1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Saves the snippet.
+   */
+  public save() {
+    this.dialogRef.close(this.filename);
   }
 }

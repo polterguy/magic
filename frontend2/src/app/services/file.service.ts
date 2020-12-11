@@ -54,4 +54,14 @@ export class FileService {
       encodeURIComponent(filename),
       requestOptions);
   }
+
+  /**
+   * Saves the specified file with the given filename.
+   * 
+   * @param filename Filename to save file as
+   * @param content Content of file
+   */
+  public saveFile(filename: string, content: string) {
+    alert('todo');
+  }
 }
