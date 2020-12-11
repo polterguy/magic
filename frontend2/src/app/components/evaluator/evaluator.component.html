@@ -9,6 +9,12 @@
     (click)="load()">Load</button>
 
   <button
+    id="saveButton"
+    mat-button
+    [disabled]="input.hyperlambda.length === 0"
+    (click)="save()">Save</button>
+
+  <button
     id="executeButton"
     mat-button
     [disabled]="input.hyperlambda.length === 0"

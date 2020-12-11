@@ -77,4 +77,14 @@ export class EvaluatorService {
   public snippets() {
     return this.fileService.listFiles('/misc/snippets/');
   }
+
+  /**
+   * Saves the specified snippet according to the specified argument.
+   * 
+   * @param filename Filename to save snippet as
+   * @param content Content of snippet
+   */
+  public saveSnippet(filename: string, content: string) {
+    return this.fileService.saveFile(filename, content);
+  }
 }
