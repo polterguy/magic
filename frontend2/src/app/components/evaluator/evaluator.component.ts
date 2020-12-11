@@ -21,7 +21,8 @@ import hyperlambda from '../codemirror/options/hyperlambda.json'
 import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.json';
 
 /**
- * Component allowing user to evaluate Hyperlambda snippets.
+ * Component allowing user to evaluate Hyperlambda,
+ * and load/save snippets for later references to the backend snippet collection.
  */
 @Component({
   selector: 'app-evaluator',
@@ -107,8 +108,11 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
 
         // User gave us a filename, hence we load file from backend snippet collection.
         this.evaluatorService.loadSnippet(filename).subscribe((content: string) => {
+
+          // Success. storing filename for later, and applying the Hyperlambda to CodeMnirror editor as retrieved from backend.
           this.input.hyperlambda = content;
           this.filename = filename;
+
         }, (error: any) => this.showError(error));
       }
     });
@@ -119,19 +123,26 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    */
   public save() {
 
-    // Showing modal dialog.
+    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
     const dialogRef = this.dialog.open(SaveSnippetDialogComponent, {
       width: '550px',
+      data: this.filename || '',
     });
 
     // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
     dialogRef.afterClosed().subscribe((filename: string) => {
+
+      // Checking if user selected a file, at which point filename will be non-null.
       if (filename) {
 
         // User gave us a filename, hence saving file to backend snippet collection.
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe((res: any) => {
+
+          // Snippet saved!
           this.showInfo('Snippet successfully saved');
+          
         }, (error: any) => this.showError(error));
+
       }
     });
   }
