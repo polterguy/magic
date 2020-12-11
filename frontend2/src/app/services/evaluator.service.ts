@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
@@ -79,12 +79,47 @@ export class EvaluatorService {
   }
 
   /**
+   * Loads a snippet from the backend.
+   * 
+   * @param filename Filename (only, no extension or folder) of snippet to load
+   */
+  public loadSnippet(filename: string) {
+
+    // Sanity checking invocation.
+    if (filename.indexOf('/') !== -1) {
+      throw throwError('Please provide me with only the filename, and not the folder');
+    }
+
+    // Making sure we put our file into the correct folder.
+    filename = '/misc/snippets/' + filename;
+    if (!filename.endsWith('.hl')) {
+      filename += '.hl';
+    }
+
+    // Returning result of invocation to file service.
+    return this.fileService.loadFile(filename);
+  }
+
+  /**
    * Saves the specified snippet according to the specified argument.
    * 
-   * @param filename Filename to save snippet as
+   * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
    * @param content Content of snippet
    */
   public saveSnippet(filename: string, content: string) {
+
+    // Sanity checking invocation.
+    if (filename.indexOf('/') !== -1) {
+      throw throwError('Please provide me with only the filename, and not the folder');
+    }
+
+    // Making sure we put our file into the correct folder.
+    filename = '/misc/snippets/' + filename;
+    if (!filename.endsWith('.hl')) {
+      filename += '.hl';
+    }
+
+    // Returning result of invocation to file service.
     return this.fileService.saveFile(filename, content);
   }
 }

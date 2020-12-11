@@ -81,6 +81,6 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
    * Invoked when user selects a file.
    */
   public select(filename: string) {
-    this.dialogRef.close(filename);
+    this.dialogRef.close(this.getFilename(filename));
   }
 }
