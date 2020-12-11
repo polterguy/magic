@@ -1,1 +1,42 @@
-<p>roles works!</p>
+
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    matTooltip="Clear filter"
+    (click)="clearRoleFilter()">clear</mat-icon>
+
+</mat-form-field>
+
+
+<table
+  mat-table
+  [dataSource]="roles"
+  class="roles clickable">
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let el">{{el.name}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef>Description</th>
+    <td mat-cell *matCellDef="let el">{{el.description}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+  <tr mat-row *matRowDef="let el; columns: displayedColumns;"></tr>
+
+</table>

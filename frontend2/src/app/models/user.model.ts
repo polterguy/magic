@@ -4,7 +4,7 @@
  */
 
 /**
- * Username model for retrieving users from your backend.
+ * User model for retrieving users from your backend.
  */
 export class User {
 

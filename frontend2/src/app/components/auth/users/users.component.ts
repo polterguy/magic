@@ -30,6 +30,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
    */
   public users: User[] = [];
 
+  /**
+   * Filter for what items to display.
+   */
   public filter: AuthFilter = {
     limit: 20,
     offset: 0,
@@ -56,8 +59,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
   constructor(
     private userService: UserService,
     protected messageService: MessageService) {
-      super(messageService);
-    }
+    super(messageService);
+  }
 
   /**
    * Implementation of OnInit.
