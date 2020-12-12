@@ -11,10 +11,12 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Status } from 'src/app/models/status.model';
 import { BaseComponent } from '../../base.component';
+import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Message, Messages } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
 import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
+import { Endpoint } from 'src/app/models/endpoint.model';
 
 /**
  * Component responsible for allowing user to setup system.
@@ -59,12 +61,14 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param router Router service used to redirect user when setup process is finished
+   * @param authService Used for re-fetching endpoints after setup process is done
    * @param configService Service used to retrieve and save configuration settings, etc
    * @param loaderInterceptor Used to explicitly turn on and off loader spinner animation
    * @param messageService Service used to publish messages to other components in the system
    */
   constructor(
     private router: Router,
+    private authService: AuthService,
     private configService: ConfigService,
     private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
@@ -158,19 +162,36 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
   private showNextSetup() {
     if (this.status.config_done &&
       !this.status.magic_crudified) {
+
+      // Next step is to crudify Magic database.
       this.process = 'endpoints';
+
     } else if (this.status.config_done &&
       this.status.magic_crudified &&
       !this.status.server_keypair) {
+
+      // Next step is to create a cryptography key pair.
       this.process = 'cryptography key pair';
+
     } else if (this.status.config_done &&
       this.status.magic_crudified &&
       this.status.server_keypair) {
+
+      // And we're done with the entire setup process.
       this.process = 'done';
-      setTimeout(() => {
-        this.router.navigate(['/']);
-        this.loaderInterceptor.decrement();
-      }, 500);
+
+      /*
+       * Re-fetching endpoints now since crudifying Magic
+       * db has probably create more endpoints for us.
+       */
+      this.authService.getEndpoints().subscribe((endpoints: Endpoint[]) => {
+
+        // Navigating to home component.
+        setTimeout(() => {
+          this.router.navigate(['/']);
+          this.loaderInterceptor.decrement();
+        }, 500);
+      });
     }
   }
 
