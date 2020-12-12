@@ -39,18 +39,6 @@ cache.try-get:endpoints
 
 
 /*
- * Making sure we cache result such that HTTP clients won't try to retrieve
- * value from server, more frequently than our Cache-Control header declares
- * as feasable.
- */
-strings.concat
-   .:public, max-age=
-   get-value:x:@.cache-seconds
-response.headers.add
-   Cache-Control:x:@strings.concat
-
-
-/*
  * Returning results of above invocation to caller.
  */
 add:x:../*/return
