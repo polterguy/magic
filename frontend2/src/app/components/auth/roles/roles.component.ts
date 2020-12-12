@@ -34,7 +34,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
    * Filter for what items to display.
    */
   public filter: AuthFilter = {
-    limit: 20,
+    limit: 5,
     offset: 0,
     filter: '',
   };

@@ -50,4 +50,19 @@ export class UserService {
     // Invoking backend and returning observable.
     return this.httpService.get<User[]>('/magic/modules/magic/users' + query);
   }
+
+  /**
+   * Creates a new user in the system.
+   * 
+   * @param username Username for new user
+   * @param password Initial password for user
+   */
+  public create(username: string, password: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.post<any>('/magic/modules/magic/users', {
+      username,
+      password
+    });
+  }
 }

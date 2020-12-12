@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
@@ -14,6 +15,7 @@ import { BaseComponent } from '../../base.component';
 import { UserService } from 'src/app/services/user.service';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { MessageService } from 'src/app/services/message.service';
+import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 
 /**
  * Users component for administrating users in the system.
@@ -34,7 +36,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
    * Filter for what items to display.
    */
   public filter: AuthFilter = {
-    limit: 20,
+    limit: 5,
     offset: 0,
     filter: '',
   };
@@ -54,9 +56,12 @@ export class UsersComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Material dialog used for opening up Load snippets modal dialog
+   * @param userService Used to fetch, create, and modify users in the system
    * @param messageService Message service to subscribe and publish messages to and from other components
    */
   constructor(
+    private dialog: MatDialog,
     private userService: UserService,
     protected messageService: MessageService) {
     super(messageService);
@@ -73,20 +78,20 @@ export class UsersComponent extends BaseComponent implements OnInit {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => {
-        this.getUsers(query);
+        this.getUsers();
       });
 
     // Retrieving users from backend.
-    this.getUsers(this.filterFormControl.value);
+    this.getUsers();
   }
 
   /**
    * Retrieves users from your backend.
    */
-  public getUsers(filter: string) {
+  public getUsers() {
 
     // Updating filter value.
-    this.filter.filter = filter;
+    this.filter.filter = this.filterFormControl.value;
 
     // Invoking backend.
     this.userService.list(this.filter).subscribe((users: User[]) => {
@@ -102,5 +107,23 @@ export class UsersComponent extends BaseComponent implements OnInit {
    */
   public clearUserFilter() {
     this.filterFormControl.setValue('');
+  }
+
+  /**
+   * Shows the create new user modal dialog.
+   */
+  public createUser() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewUserDialogComponent, {
+      width: '550px',
+    });
+
+    dialogRef.afterClosed().subscribe((username: string) => {
+      if (username) {
+        this.filterFormControl.setValue(username);
+        this.getUsers();
+      }
+    });
   }
 }

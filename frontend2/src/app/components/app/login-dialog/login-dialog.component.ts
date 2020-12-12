@@ -44,19 +44,19 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
    * @param router Router service to redirect and check current route
    * @param configService Configuration service used to determine if system has been setup if root user logs in
    * @param loaderInterceptor Used for explicitly turning on/off load spinner animation
+   * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
-   * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    */
   constructor(
     private router: Router,
     private configService: ConfigService,
     private loaderInterceptor: LoaderInterceptor,
+    private dialogRef: MatDialogRef<LoginDialogComponent>,
     protected messageService: MessageService,
     public authService: AuthService,
-    public backendService: BackendService,
-    public dialogRef: MatDialogRef<LoginDialogComponent>) {
+    public backendService: BackendService) {
     super(messageService);
   }
 
