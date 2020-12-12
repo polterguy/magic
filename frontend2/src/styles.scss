@@ -113,6 +113,22 @@ mat-card.mat-card {
   background-color: rgb(45,45,45);
 }
 
+@media screen and (min-width: 1024px) {
+  mat-card.mat-card {
+    padding: 2rem;
+  }
+}
+
+input.mat-input-element {
+  color:#eee;
+}
+
+.mat-dialog-title, .mat-dialog-content {
+  input {
+    color: #000;
+  }
+}
+
 // CodeMirror classes.
 .CodeMirror-hints {
   position: absolute;
