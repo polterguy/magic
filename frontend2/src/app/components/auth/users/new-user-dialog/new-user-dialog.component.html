@@ -1,0 +1,33 @@
+
+<h1 mat-dialog-title>Create a new user</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <mat-label class="dark">Username</mat-label>
+    <input
+      matInput
+      [(ngModel)]="username"
+      autocomplete="off"
+      placeholder="Username">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <mat-label class="dark">Password</mat-label>
+    <input
+      matInput
+      [(ngModel)]="password"
+      autocomplete="off"
+      placeholder="Password">
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-button
+    [disabled]="username === '' || password === ''"
+    (click)="create()">Create</button>
+
+</div>

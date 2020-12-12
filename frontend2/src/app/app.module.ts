@@ -73,6 +73,7 @@ import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { UsersComponent } from './components/auth/users/users.component';
 import { RolesComponent } from './components/auth/roles/roles.component';
+import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -106,6 +107,7 @@ import { RolesComponent } from './components/auth/roles/roles.component';
     HyperlambdaComponent,
     UsersComponent,
     RolesComponent,
+    NewUserDialogComponent,
   ],
   imports: [
     FormsModule,
