@@ -112,7 +112,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
-                  this.process = 'endpoints';
+                  this.showNextSetup();
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
@@ -125,7 +125,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
-                  this.process = 'cryptography key pair';
+                  this.showNextSetup();
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
@@ -138,17 +138,40 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.configService.status().subscribe((res: Status) => {
                   this.status = res;
-                  this.process = 'done';
-                  setTimeout(() => {
-                    this.router.navigate(['/']);
-                    this.loaderInterceptor.decrement();
-                  }, 500);
+                  this.showNextSetup();
                 }, (error: any) => this.showError(error));
               }, 500);
               break;
           }
       }
     });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Invoked when status has changed, and we need to show the
+   * next setup component, or we're done.
+   */
+  private showNextSetup() {
+    if (this.status.config_done &&
+      !this.status.magic_crudified) {
+      this.process = 'endpoints';
+    } else if (this.status.config_done &&
+      this.status.magic_crudified &&
+      !this.status.server_keypair) {
+      this.process = 'cryptography key pair';
+    } else if (this.status.config_done &&
+      this.status.magic_crudified &&
+      this.status.server_keypair) {
+      this.process = 'done';
+      setTimeout(() => {
+        this.router.navigate(['/']);
+        this.loaderInterceptor.decrement();
+      }, 500);
+    }
   }
 
   /**
