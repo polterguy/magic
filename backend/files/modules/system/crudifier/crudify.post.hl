@@ -662,6 +662,12 @@ semaphore:crudifier
 
 
    /*
+    * Making sure we evict the cache entry for endpoints.
+    */
+   cache.set:endpoints
+
+
+   /*
     * Returning success to caller.
     */
    unwrap:x:+/*
