@@ -20,6 +20,7 @@ import { UserRoles } from 'src/app/models/user-roles.model';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { MessageService } from 'src/app/services/message.service';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../confirm/confirm-dialog.component';
 
 /**
  * Users component for administrating users in the system.
@@ -204,14 +205,31 @@ export class UsersComponent extends BaseComponent implements OnInit {
    */
   public delete(user: User) {
 
-    // Invoking backend to delete user.
-    this.userService.delete(user.username).subscribe((affected: Affected) => {
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '550px',
+      data: {
+        text: `Please confirm that you want to delete the '${user.username}' user`,
+        title: 'Please confirm operation'
+      }
+    });
 
-      // Success, makins sure we databind table again by invoking backend to retrieve current users.
-      this.showInfo('User deleted');
-      this.getUsers();
+    // Subscribing to close such that we can delete user if it's confirmed.
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
 
-    }, (error: any) => this.showError(error));
+      // Checking if modal dialog wants to create a user.
+      if (result.confirmed) {
+
+        // Invoking backend to delete user.
+        this.userService.delete(user.username).subscribe(() => {
+
+          // Success, makins sure we databind table again by invoking backend to retrieve current users.
+          this.showInfo(`'${user.username}' was successfully deleted`);
+          this.getUsers();
+
+        }, (error: any) => this.showError(error));
+      }
+    });
   }
 
   /**
