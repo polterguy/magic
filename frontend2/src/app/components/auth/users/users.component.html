@@ -32,6 +32,15 @@
 
 </table>
 
+<mat-paginator
+  #paginator
+  [class]="count > 5 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="5"
+  (page)="paged($event)"
+  [pageSizeOptions]="[5]">
+</mat-paginator>
+
 <button
   mat-icon-button
   matTooltip="Create new user"
