@@ -10,7 +10,9 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { HttpService } from './http.service';
 import { Count } from '../models/count.model';
+import { UserRoles } from '../models/user-roles.model';
 import { AuthFilter } from '../models/auth-filter.model';
+import { Affected } from '../models/affected.model';
 
 /**
  * User service, allowing you to administrate the users in your backend.
@@ -98,5 +100,47 @@ export class UserService {
     // Invoking backend and returning observable.
     return this.httpService.delete<any>('/magic/modules/magic/users?username=' +
       encodeURIComponent(username));
+  }
+
+  /**
+   * Returns all roles the specified user belongs to.
+   * 
+   * @param username Username of user to retrieve roles for
+   */
+  public getRoles(username: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.get<UserRoles[]>('/magic/modules/magic/users_roles?user.eq=' +
+      encodeURIComponent(username));
+  }
+
+  /**
+   * Adds the specified user to the specified role.
+   * 
+   * @param user Username of user to add to role
+   * @param role Name of role to add user to
+   */
+  public addRole(user: string, role: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.post<Affected>('/magic/modules/magic/users_roles', {
+      user,
+      role,
+    });
+  }
+
+  /**
+   * Removes the specified role from the specified user.
+   * 
+   * @param user Username of user to remove role from
+   * @param role Name of role to remove user from
+   */
+  public removeRole(user: string, role: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.delete<Affected>('/magic/modules/magic/users_roles?user=' +
+      encodeURIComponent(user) +
+      '&role=' +
+      encodeURIComponent(role));
   }
 }

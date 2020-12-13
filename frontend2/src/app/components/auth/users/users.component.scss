@@ -7,5 +7,9 @@ table.users {
       display: inline-block;
       width: 5rem;
     }
+    mat-chip-list {
+      display: block;
+      margin-top: 2rem;
+    }
   }
 }

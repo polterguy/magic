@@ -6,6 +6,9 @@
 // Angular and system imports.
 import { Component } from '@angular/core';
 
+// Application specific imports.
+import { User } from 'src/app/models/user.model';
+
 /**
  * Authentication and authorization component, allowing you to administrate and manage
  * your roles and users in your Magic backend.
@@ -16,4 +19,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent {
+
+  /**
+   * Users that are selected in the users component.
+   */
+  public selectedUsers: User[] = [];
 }
