@@ -1,11 +1,11 @@
 
 table.users {
   width: 100%;
-  margin-bottom: 2rem;
-}
-
-mat-paginator {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  .details-sheet {
+    position: relative;
+    strong {
+      display: inline-block;
+      width: 5rem;
+    }
+  }
 }

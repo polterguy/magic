@@ -12,5 +12,10 @@ export class User {
    * Username of user.
    */
   username: string;
+
+  /**
+   * Roles user belongs to.
+   */
+  roles?: string[];
 }
   

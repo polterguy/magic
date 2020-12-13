@@ -7,5 +7,9 @@
  * Encapsulates anything that returns number of items from your backend.
  */
 export class Count {
+
+  /**
+   * Number of items as returned from backend.
+   */
   count: number;
 }

@@ -65,7 +65,7 @@ export class UserService {
 
       // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
-        query += '&username.like=' + encodeURIComponent(filter.filter + '%');
+        query += '?username.like=' + encodeURIComponent(filter.filter + '%');
       }
     }
 
@@ -86,5 +86,17 @@ export class UserService {
       username,
       password
     });
+  }
+
+  /**
+   * Deletes the specified user from the backend.
+   * 
+   * @param username Username of user you want to delete
+   */
+  public delete(username: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.delete<any>('/magic/modules/magic/users?username=' +
+      encodeURIComponent(username));
   }
 }
