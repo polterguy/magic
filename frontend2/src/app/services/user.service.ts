@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { User } from '../models/user.model';
 import { HttpService } from './http.service';
+import { Count } from '../models/count.model';
 import { AuthFilter } from '../models/auth-filter.model';
 
 /**
@@ -49,6 +50,27 @@ export class UserService {
 
     // Invoking backend and returning observable.
     return this.httpService.get<User[]>('/magic/modules/magic/users' + query);
+  }
+
+  /**
+   * Counts users in your backend.
+   * 
+   * @param filter Optional queery filter deciding which items to count
+   */
+  public count(filter: AuthFilter = null) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null) {
+
+      // Applying filter parts, if given.
+      if (filter.filter && filter.filter !== '') {
+        query += '&username.like=' + encodeURIComponent(filter.filter + '%');
+      }
+    }
+
+    // Invoking backend and returning observable.
+    return this.httpService.get<Count>('/magic/modules/magic/users-count' + query);
   }
 
   /**
