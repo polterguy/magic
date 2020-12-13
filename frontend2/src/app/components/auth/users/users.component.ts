@@ -119,7 +119,14 @@ export class UsersComponent extends BaseComponent implements OnInit {
     // Invoking backend to retrieve users matching filter.
     this.userService.list(this.filter).subscribe((users: User[]) => {
       this.selectedUsers.splice(0, this.selectedUsers.length);
-      this.users = users;
+      if (users) {
+        this.users = users;
+        if (users.length === 1) {
+          this.selectedUsers.push(users[0]);
+        }
+      } else {
+        this.users = [];
+      }
     }, (error: any) => this.showError(error));
 
     // Invoking backend to retrieve count of user matching filter condition.
