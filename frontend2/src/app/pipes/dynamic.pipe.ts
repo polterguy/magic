@@ -17,10 +17,14 @@ export class DynamicPipe implements PipeTransform {
    * Transforms an object to a key/value pair
    * 
    * @param value Value to transform
+   * @param max Optional maximum number of items to return
    */
-  transform(value: any) : any {
-    let keys = [];
-    for (let key in value) {
+  transform(value: any, max: number = -1) : any {
+    const keys = [];
+    for (const key in value) {
+      if (keys.length === max) {
+        break;
+      }
       keys.push({key: key, value: value[key]});
     }
     return keys;
