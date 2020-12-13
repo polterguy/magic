@@ -194,6 +194,14 @@ export class RolesComponent extends BaseComponent implements OnInit {
               // Success! Informing user and retrieving roles again.
               this.getRoles();
               this.showInfo(`Role '${role.name}' successfully deleted`);
+
+              // Updating selected users, no need to invoke backend.
+              for (const idx of this.selectedUsers) {
+                const idxOfRole = idx.roles.indexOf(role.name);
+                if (idxOfRole !== -1) {
+                  idx.roles.splice(idxOfRole, 1);
+                }
+              }
             });
           }
         });
