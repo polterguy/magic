@@ -13,4 +13,17 @@ table.roles {
       }
     }
   }
+  .details-sheet {
+    position: relative;
+    .details-item {
+      display: block;
+      margin-bottom: 1rem;
+      strong {
+        display: block;
+      }
+      span {
+        display: block;
+      }
+    }
+  }
 }

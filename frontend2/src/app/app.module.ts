@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Material imports.
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,7 +33,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 // Other external components.
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
-// Hyperlambda mode for CodeMirror.
+// Hyperlambda mode for CodeMirror import.
 import './codemirror/hyperlambda.js';
 
 // Application specific imports.
@@ -120,6 +121,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     MatCheckboxModule,
     MatCardModule,
     MatIconModule,
+    MatChipsModule,
     MatToolbarModule,
     MatTooltipModule,
     MatDialogModule,

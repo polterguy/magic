@@ -6,9 +6,9 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
@@ -16,6 +16,7 @@ import { Count } from 'src/app/models/count.model';
 import { BaseComponent } from '../../base.component';
 import { Affected } from 'src/app/models/affected.model';
 import { UserService } from 'src/app/services/user.service';
+import { UserRoles } from 'src/app/models/user-roles.model';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { MessageService } from 'src/app/services/message.service';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
@@ -29,9 +30,6 @@ import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.compon
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent extends BaseComponent implements OnInit {
-
-  // List of usernames we're currently viewing details for.
-  private displayDetails: User[] = [];
 
   /**
    * Users matching filter as returned from backend.
@@ -63,6 +61,11 @@ export class UsersComponent extends BaseComponent implements OnInit {
    * Filter form control for filtering users to display.
    */
   public filterFormControl: FormControl;
+
+  /**
+   * Currently selected users.
+   */
+  @Input() public selectedUsers: User[];
 
   /**
    * Paginator for paging table.
@@ -111,7 +114,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
     // Invoking backend to retrieve users matching filter.
     this.userService.list(this.filter).subscribe((users: User[]) => {
-      this.displayDetails = [];
+      this.selectedUsers.splice(0, this.selectedUsers.length);
       this.users = users;
     }, (error: any) => this.showError(error));
 
@@ -145,15 +148,22 @@ export class UsersComponent extends BaseComponent implements OnInit {
   public toggleDetails(user: User) {
 
     // Checking if we're already displaying details for current item.
-    const idx = this.displayDetails.indexOf(user);
+    const idx = this.selectedUsers.indexOf(user);
     if (idx !== -1) {
 
       // Hiding item.
-      this.displayDetails.splice(idx, 1);
+      this.selectedUsers.splice(idx, 1);
     } else {
 
       // Displaying item.
-      this.displayDetails.push(user);
+      this.selectedUsers.push(user);
+
+      // Fetching roles for user.
+      this.userService.getRoles(user.username).subscribe((roles: UserRoles[]) => {
+
+        // Applying roles to user model
+        user.roles = (roles || []).map(x => x.role);
+      });
     }
   }
 
@@ -165,7 +175,26 @@ export class UsersComponent extends BaseComponent implements OnInit {
   public shouldDisplayDetails(user: User) {
 
     // Returns true if we're currently displaying this particular item.
-    return this.displayDetails.filter(x => x.username === user.username).length > 0;
+    return this.selectedUsers.filter(x => x.username === user.username).length > 0;
+  }
+
+  /**
+   * Removes a role from a user.
+   * 
+   * @param username Username of user to remove specified role from
+   * @param role Name of role to remove from user
+   */
+  public removeRole(user: User, role: string) {
+
+    // Invoking backend to remove role from user.
+    this.userService.removeRole(user.username, role).subscribe((affected: Affected) => {
+
+      // Success, informing user operation was successful.
+      this.showInfo(`'${role}' role was successfully removed from '${user.username}'`);
+
+      // No need to invoke backend.
+      user.roles.splice(user.roles.indexOf(role), 1);
+    });
   }
 
   /**
@@ -177,9 +206,12 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
     // Invoking backend to delete user.
     this.userService.delete(user.username).subscribe((affected: Affected) => {
+
+      // Success, makins sure we databind table again by invoking backend to retrieve current users.
       this.showInfo('User deleted');
       this.getUsers();
-    });
+
+    }, (error: any) => this.showError(error));
   }
 
   /**

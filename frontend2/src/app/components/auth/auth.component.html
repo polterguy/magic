@@ -2,11 +2,11 @@
 <div class="parts">
 
   <mat-card class="part">
-    <app-users></app-users>
+    <app-users [(selectedUsers)]="selectedUsers"></app-users>
   </mat-card>
 
   <mat-card class="part">
-    <app-roles></app-roles>
+    <app-roles [(selectedUsers)]="selectedUsers"></app-roles>
   </mat-card>
 
 </div>

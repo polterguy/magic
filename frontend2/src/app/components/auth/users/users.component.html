@@ -43,12 +43,30 @@
     <td
       mat-cell
       *matCellDef="let el">
+
       <div
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
-        <strong>Username</strong>
-        <span>{{el.username}}</span>
+
+        <strong>Username</strong><span>{{el.username}}</span>
+
+        <mat-chip-list
+          matTooltip="Roles user belongs to"
+          aria-label="Roles user belongs to">
+          <mat-chip
+            *ngFor="let role of el.roles"
+            selectable="false"
+            [disabled]="el.username === 'root' && role === 'root'"
+            (removed)="removeRole(el, role)">
+            {{role}}
+            <mat-icon
+              *ngIf="el.username !== 'root' || role !== 'root'"
+              matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+
         <div class="button-strip pull-down-05 pull-right-1">
+
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
@@ -56,8 +74,11 @@
             (click)="delete(el)">
             <mat-icon>delete</mat-icon>
           </button>
+
         </div>
+
       </div>
+
     </td>
   </ng-container>
 
