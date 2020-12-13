@@ -97,7 +97,10 @@ export class UsersComponent extends BaseComponent implements OnInit {
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe(() => this.getUsers());
+      .subscribe(() => {
+        this.paginator.pageIndex = 0;
+        this.getUsers();
+      });
 
     // Retrieving users from backend.
     this.getUsers();
@@ -129,13 +132,12 @@ export class UsersComponent extends BaseComponent implements OnInit {
    * Clears any filters user has applied for the users table.
    */
   public clearUserFilter() {
+    this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
   }
 
   /**
    * Invoked when users are paged.
-   * 
-   * @param e Paged event object
    */
   public paged() {
     this.getUsers();

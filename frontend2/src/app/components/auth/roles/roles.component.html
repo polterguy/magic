@@ -1,4 +1,12 @@
 
+<button
+  mat-icon-button
+  matTooltip="Create new role"
+  class="create-button"
+  (click)="createRole()">
+  <mat-icon aria-label="Creates a new role">add_box</mat-icon>
+</button>
+
 <mat-form-field class="fill-width">
 
   <mat-label>Filter roles ...</mat-label>
@@ -92,10 +100,11 @@
 
 </table>
 
-<button
-  mat-icon-button
-  matTooltip="Create new role"
-  class="create-button"
-  (click)="createRole()">
-  <mat-icon aria-label="Creates a new role">add_box</mat-icon>
-</button>
+<mat-paginator
+  #paginator
+  [class]="count > 5 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="5"
+  (page)="paged()"
+  [pageSizeOptions]="[5]">
+</mat-paginator>

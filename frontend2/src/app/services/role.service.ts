@@ -54,6 +54,27 @@ export class RoleService {
   }
 
   /**
+   * Counts roles in your backend.
+   * 
+   * @param filter Optional query filter deciding which items to count
+   */
+  public count(filter: AuthFilter = null) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null) {
+
+      // Applying filter parts, if given.
+      if (filter.filter && filter.filter !== '') {
+        query += '?name.like=' + encodeURIComponent(filter.filter + '%');
+      }
+    }
+
+    // Invoking backend and returning observable.
+    return this.httpService.get<Count>('/magic/modules/magic/roles-count' + query);
+  }
+
+  /**
    * Creates a new role in the system.
    * 
    * @param name Name of new role to create

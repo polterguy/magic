@@ -7,7 +7,8 @@
 import { forkJoin } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, Input, OnInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
@@ -42,6 +43,11 @@ export class RolesComponent extends BaseComponent implements OnInit {
   public roles: Role[] = [];
 
   /**
+   * Number of roles matching filter in the backend.
+   */
+  public count: number = 0;
+
+  /**
    * Filter for what items to display.
    */
   public filter: AuthFilter = {
@@ -67,6 +73,11 @@ export class RolesComponent extends BaseComponent implements OnInit {
    * Currently selected users.
    */
   @Input() public selectedUsers: User[];
+
+  /**
+   * Paginator for paging table.
+   */
+  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
   /**
    * Creates an instance of your component.
@@ -95,6 +106,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => {
+        this.paginator.pageIndex = 0;
         this.getRoles();
       });
 
@@ -109,6 +121,8 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
     // Updating filter value.
     this.filter.filter = this.filterFormControl.value;
+    this.filter.offset = this.paginator.pageIndex * this.paginator.pageSize;
+    this.filter.limit = this.paginator.pageSize;
 
     // Invoking backend.
     this.roleService.list(this.filter).subscribe((roles: Role[]) => {
@@ -120,13 +134,26 @@ export class RolesComponent extends BaseComponent implements OnInit {
       this.roles = roles;
 
     }, (error: any) => this.showError(error));
+
+    // Invoking backend to retrieve count of user matching filter condition.
+    this.roleService.count(this.filter).subscribe((res: Count) => {
+      this.count = res.count;
+    }, (error: any) => this.showError(error));
   }
 
   /**
    * Clears any filters user has applied for the users table.
    */
   public clearRoleFilter() {
+    this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
+  }
+
+  /**
+   * Invoked when roles are paged.
+   */
+  public paged() {
+    this.getRoles();
   }
 
   /**
