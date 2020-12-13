@@ -72,7 +72,11 @@ export class SqlComponent extends BaseComponent implements OnInit {
     this.sqlService.execute('mysql', 'magic', this.sql, true).subscribe((result: any[]) => {
 
       // Success!
-      this.showInfo('SQL successfully executed');
+      if (result.length === 200) {
+        this.showInfo('SQL successfully executed, 200 first records returned');
+      } else {
+        this.showInfo('SQL successfully executed');
+      }
       this.displayDetails = [];
       this.result = result;
     }, (error: any) => this.showError(error));
