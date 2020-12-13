@@ -60,9 +60,9 @@ create table `users_roles` (
 /*
  * Inserting some few roles into our roles table.
  */
-insert into roles (name, description) values ('root', 'This is a root account in your system, and it has complete access to do anything.');
-insert into roles (name, description) values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
-insert into roles (name, description) values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
+insert into roles (name, description) values ('root', 'This is a root account in your system');
+insert into roles (name, description) values ('user', 'This is a normal user in your system');
+insert into roles (name, description) values ('guest', 'This is a guest visitor to your system');
 
 
 /*
