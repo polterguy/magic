@@ -1,1 +1,13 @@
-<p>sql works!</p>
+
+<ngx-codemirror
+  [(ngModel)]="sql"
+  [options]="cmOptions.sql">
+</ngx-codemirror>
+
+<div class="button-strip">
+  <button
+    mat-button
+    (click)="execute()">
+    Execute
+  </button>
+</div>

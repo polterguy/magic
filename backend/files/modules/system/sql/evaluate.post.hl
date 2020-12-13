@@ -6,9 +6,8 @@
    databaseType:string
    database:string
    sql:string
-   batch:bool
    safeMode:bool
-.description:"Evaluates the given SQL given for your specified databaseType, and returns the result to caller."
+.description:"Evaluates the given SQL given for your specified database, and returns the result to caller."
 
 
 /*
@@ -18,86 +17,21 @@ auth.ticket.verify:root
 
 
 /*
- * Checking to see if an explicit database was specified, at which point we
- * connect to that database explicitly, instead of using the default database.
- */
-if
-   and
-      not
-         eq
-            get-value:x:@.arguments/*/database
-            .:
-      not
-         eq
-            get-value:x:@.arguments/*/database
-            .
-   .lambda
-
-
-      /*
-       * Explicit database was given.
-       */
-      set-value:x:../*/foo.connect
-         get-value:x:@.arguments/*/database
-
-
-/*
- * Making sure we connect to the correct database type.
- */
-set-name:x:./*/foo.connect
-   strings.concat
-      get-value:x:@.arguments/*/databaseType
-      .:.connect
-
-
-/*
  * Creating our database connection.
- *
- * Notice, at this point the below slot will have been changed by
- * the above logic.
- *
- * Notice, we can't use the [data.xxx] slots here, since we want to
- * allow user to also use non-default database connections here.
  */
-foo.connect
+data.connect:x:@.arguments/*/database
+   database-type:x:@.arguments/*/databaseType
 
 
    /*
-    * Checking if database type is "mssql" and [batch] is true, at which point
-    * we execute the script as a "batch" type of script (allowing for "GO" statements).
+    * Executing SQL and returning results to caller.
     */
    if
-      and
-         eq
-            get-value:x:@.arguments/*/batch
-            .:bool:true
-         eq
-            get-value:x:@.arguments/*/databaseType
-            .:mssql
+      get-value:x:@.arguments/*/safeMode
       .lambda
-         mssql.execute-batch:x:@.arguments/*/sql
-         return-nodes:x:-/*
-
-   else
-
-
-      /*
-       * Executing SQL, making sure we get slot name correct.
-       */
-      set-name:x:./*/foo.select
-         strings.concat
-            get-value:x:@.arguments/*/databaseType
-            .:.select
-
-
-      /*
-       * Executing SQL and returning results to caller.
-       */
-      if
-         get-value:x:@.arguments/*/safeMode
-         .lambda
-            add:x:@if/./return-nodes/-
-               .
-                  max:1000
-      foo.select:x:@.arguments/*/sql
-      return-nodes:x:-/*
+         add:x:@if/./return-nodes/-
+            .
+               max:1000
+   data.select:x:@.arguments/*/sql
+      database-type:x:@.arguments/*/databaseType
+   return-nodes:x:-/*
