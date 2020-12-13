@@ -272,6 +272,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
       // Success, updating list of roles for all affected users.
       // No need to invoke backend here.
+      this.showInfo(`Role '${role.name}' added to ${requests.length} users`)
       for (const idx of this.selectedUsers.filter(x => x.roles.indexOf(role.name) === -1)) {
         idx.roles.push(role.name);
       }
