@@ -44,9 +44,6 @@ import { LoaderService } from './services/loader.service';
 import { AuthInterceptor } from './services/interceptors/auth.interceptor';
 import { LoaderInterceptor } from './services/interceptors/loader.interceptor';
 
-// Reusable application specific components.
-import { HyperlambdaComponent } from './components/codemirror/hyperlambda/hyperlambda.component';
-
 // Application specific components.
 import { LogComponent } from './components/log/log.component';
 import { AppComponent } from './components/app/app.component';
@@ -57,23 +54,24 @@ import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
+import { UsersComponent } from './components/auth/users/users.component';
+import { RolesComponent } from './components/auth/roles/roles.component';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
 import { SetupComponent } from './components/config/setup/setup.component';
 import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { HyperlambdaComponent } from './components/codemirror/hyperlambda/hyperlambda.component';
 import { SetupCryptoComponent } from './components/config/setup/setup-crypto/setup-crypto.component';
 import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
 import { SetupConfigurationComponent } from './components/config/setup/setup-configuration/setup-configuration.component';
 
 // Modal dialogs.
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
+import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
-import { UsersComponent } from './components/auth/users/users.component';
-import { RolesComponent } from './components/auth/roles/roles.component';
-import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.

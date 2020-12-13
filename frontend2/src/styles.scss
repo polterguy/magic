@@ -43,6 +43,14 @@ button.create-button {
   cursor: pointer;
 }
 
+.pull-down-05 {
+  margin-bottom: -.5rem;
+}
+
+.pull-right-1 {
+  margin-right: -1rem;
+}
+
 /*
  * Material table styles.
  */
@@ -97,6 +105,9 @@ mat-label.dark {
 mat-paginator.mat-paginator {
   background-color: transparent;
   color: rgb(245,245,245);
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 mat-label {
@@ -113,10 +124,8 @@ mat-card.mat-card {
   background-color: rgb(45,45,45);
 }
 
-@media screen and (min-width: 1024px) {
-  mat-card.mat-card {
-    padding: 2rem;
-  }
+mat-card.mat-card {
+  padding: 3rem;
 }
 
 input.mat-input-element {

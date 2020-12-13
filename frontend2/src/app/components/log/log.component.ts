@@ -170,7 +170,7 @@ export class LogComponent extends BaseComponent implements OnInit {
 
     // Checking if we're already displaying details for current item.
     const idx = this.displayDetails.indexOf(el.id);
-    if (idx >= 0) {
+    if (idx !== -1) {
 
       // Hiding item.
       this.displayDetails.splice(idx, 1);
