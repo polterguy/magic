@@ -6,18 +6,22 @@
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, Input, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { Role } from 'src/app/models/role.model';
+import { Count } from 'src/app/models/count.model';
 import { BaseComponent } from '../../base.component';
 import { Affected } from 'src/app/models/affected.model';
 import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { MessageService } from 'src/app/services/message.service';
+import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../confirm/confirm-dialog.component';
 
 /**
  * Roles component for administrating roles in the system.
@@ -67,11 +71,13 @@ export class RolesComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Needed to open up create new role dialog
    * @param roleService Used to retrieve all roles from backend
    * @param userService Used to associate a user with a role
    * @param messageService Message service to subscribe and publish messages to and from other components
    */
   constructor(
+    private dialog: MatDialog,
     private roleService: RoleService,
     private userService: UserService,
     protected messageService: MessageService) {
@@ -89,23 +95,26 @@ export class RolesComponent extends BaseComponent implements OnInit {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => {
-        this.getRoles(query);
+        this.getRoles();
       });
 
     // Retrieving roles from backend.
-    this.getRoles(this.filterFormControl.value);
+    this.getRoles();
   }
 
   /**
    * Retrieves roles from your backend.
    */
-  public getRoles(filter: string) {
+  public getRoles() {
 
     // Updating filter value.
-    this.filter.filter = filter;
+    this.filter.filter = this.filterFormControl.value;
 
     // Invoking backend.
     this.roleService.list(this.filter).subscribe((roles: Role[]) => {
+
+      // Resetting selected roles.
+      this.selectedRoles = [];
 
       // Assigning roles, triggering a re-render operation of the material table.
       this.roles = roles;
@@ -118,6 +127,78 @@ export class RolesComponent extends BaseComponent implements OnInit {
    */
   public clearRoleFilter() {
     this.filterFormControl.setValue('');
+  }
+
+  /**
+   * Allows the user to create a new role in the system.
+   */
+  public createRole() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewRoleDialogComponent, {
+      width: '550px',
+    });
+
+    dialogRef.afterClosed().subscribe((name: string) => {
+
+      // Checking if modal dialog wants to create a user.
+      if (name) {
+
+        // User was created.
+        this.showInfo(`'${name}' successfully created`)
+        this.getRoles();
+      }
+    });
+  }
+
+  /**
+   * Deletes the specified role.
+   * 
+   * @param role Role to delete
+   */
+  public deleteRole(role: Role) {
+
+    // Invoking backend to check how many afffected users we'll have
+    this.roleService.countUsers(role.name).subscribe((count: Count) => {
+
+      if (count.count === 0) {
+
+        // If no users are affected by operation we delete role immediately.
+        this.roleService.delete(role.name).subscribe((affected: Affected) => {
+
+          // Success! Informing user and retrieving roles again.
+          this.getRoles();
+          this.showInfo(`Role '${role.name}' successfully deleted`);
+        });
+
+      } else {
+
+        // If one or more users are affected we warn user, and asks him to confirm operation.
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          width: '550px',
+          data: {
+            text: `Deleting the '${role.name}' role will affect ${count.count} users, you sure you want to delete this role?`,
+            title: 'Please confirm operation'
+          }
+        });
+
+        // Subscribing to close such that we can delete user if it's confirmed.
+        dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
+
+          // Checking if modal dialog wants to delete the role.
+          if (result.confirmed) {
+
+            // Role deletion was confirmed.
+            this.roleService.delete(role.name).subscribe((affected: Affected) => {
+
+              // Success! Informing user and retrieving roles again.
+              this.getRoles();
+              this.showInfo(`Role '${role.name}' successfully deleted`);
+            });
+          }
+        });
+      }
+    });
   }
 
   /**

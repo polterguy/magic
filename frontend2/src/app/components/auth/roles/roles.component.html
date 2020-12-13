@@ -44,6 +44,15 @@
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
 
+        <button
+          mat-icon-button
+          class="add-role"
+          [disabled]="getAffectedUsers(el) === 0"
+          [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
+          (click)="addRole(el)">
+          <mat-icon>add_box</mat-icon>
+        </button>
+
         <span class="details-item">
           <strong>Name</strong>
           <span>{{el.name}}</span>
@@ -57,10 +66,10 @@
 
           <button
             mat-icon-button
-            [disabled]="getAffectedUsers(el) === 0"
-            [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
-            (click)="addRole(el)">
-            <mat-icon>add_box</mat-icon>
+            [disabled]="el.name === 'root'"
+            matTooltip="Delete role"
+            (click)="deleteRole(el)">
+            <mat-icon>delete</mat-icon>
           </button>
 
         </div>
@@ -86,6 +95,7 @@
 <button
   mat-icon-button
   matTooltip="Create new role"
-  class="create-button">
+  class="create-button"
+  (click)="createRole()">
   <mat-icon aria-label="Creates a new role">add_box</mat-icon>
 </button>
