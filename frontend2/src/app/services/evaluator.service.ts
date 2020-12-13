@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Observable, of, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from './http.service';
@@ -28,6 +28,7 @@ export class EvaluatorService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
+   * @param fileService Used to retrieve and update snippets from your backend
    */
   constructor(
     private httpService: HttpService,

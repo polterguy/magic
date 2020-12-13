@@ -10,6 +10,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 // CodeMirror imports, first modes
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
+import 'codemirror/mode/sql/sql';
 
 // Then addons.
 import 'codemirror/addon/display/fullscreen';
