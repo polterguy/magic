@@ -63,7 +63,8 @@ export class SqlComponent extends BaseComponent implements OnInit {
    * Executes the current SQL towards your backend.
    */
   public execute() {
-    console.log(this.sql);
+
+    // Invoking backend.
     this.sqlService.execute('mysql', 'magic', this.sql, true).subscribe((result: any[]) => {
 
       // Success!
