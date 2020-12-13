@@ -58,7 +58,8 @@ button.create-button {
 /*
  * Material table styles.
  */
-table.mat-table {
+table.mat-table,
+table.clickable {
   width: 100%;
   background-color: transparent;
   tr {
@@ -75,7 +76,8 @@ table.mat-table {
     }
   }
 }
-table.mat-table.clickable {
+table.mat-table.clickable,
+table.clickable {
   tbody {
     tr {
       background-color: rgba(0,0,0,0);

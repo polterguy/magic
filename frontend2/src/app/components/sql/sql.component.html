@@ -16,19 +16,49 @@
 
 <mat-card *ngIf="result && result.length > 0">
 
-  <table class="fill-width result">
+  <table class="fill-width result clickable">
 
-    <tr>
-      <th *ngFor="let idx of result[0] | dynamic">
-        {{idx.key}}
-      </th>
-    </tr>
+    <thead>
+      <tr>
+        <th *ngFor="let idxCell of result[0] | dynamic: 5">
+          {{idxCell.key}}
+        </th>
+      </tr>
+    </thead>
 
-    <tr *ngFor="let row of result">
-      <td *ngFor="let idx of row | dynamic">
-        {{idx.value}}
-      </td>
-    </tr>
+    <tbody>
+      <tr
+        *ngFor="let idxRow of getRows()"
+        [class]="viewingDetails(idxRow) ? 'selected' : (idxRow._viewDetails === true ? 'details' : 'data-row')"
+        (click)="toggleDetails(idxRow)">
+
+        <td
+          *ngFor="let idxCell of (idxRow._viewDetails ? [] : (idxRow | dynamic: 5))">
+          {{idxCell.value}}
+        </td>
+
+        <td
+          *ngIf="idxRow._viewDetails === true && idxRow.data"
+          class="view-details"
+          colspan="5">
+
+          <div class="details-sheet">
+
+            <div
+              *ngFor="let idxDetails of idxRow.data | dynamic"
+              class="details-item">
+
+              <strong>{{idxDetails.key}}</strong>
+              <span>{{!idxDetails.value ? '[null]' : idxDetails.value}}</span>
+
+            </div>
+
+          </div>
+
+        </td>
+
+      </tr>
+    </tbody>
 
   </table>
 
