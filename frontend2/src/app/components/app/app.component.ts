@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
-   * @param router Router service used to read currently loaded router URL
+   * @param router Router service used to redirect user to main landing page if he logs out
    * @param snackBar Snack bar used to display feedback to user, such as error or information
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
    * @param authService Authentication and authorisation service, used to authenticate user, etc
@@ -60,6 +60,9 @@ export class AppComponent implements OnInit, OnDestroy {
         // User was logged out
         case Messages.USER_LOGGED_OUT:
           this.showInfo('You were successfully logged out of your backend');
+          if (this.router.url !== '/') {
+            this.router.navigate(['/']);
+          }
           break;
 
         // User was logged in
