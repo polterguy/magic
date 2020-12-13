@@ -1,5 +1,5 @@
 
-<h1 mat-dialog-title>Create a new role</h1>
+<h1 mat-dialog-title>{{data ? 'Edit role' : 'Create a new role'}}</h1>
 
 <div mat-dialog-content>
 
@@ -8,6 +8,7 @@
     <input
       matInput
       [(ngModel)]="name"
+      [disabled]="data"
       autocomplete="off"
       placeholder="Name">
   </mat-form-field>
@@ -26,8 +27,15 @@
 <div mat-dialog-actions class="mat-dialog-actions">
 
   <button
+    *ngIf="!data"
     mat-button
     [disabled]="name === '' || description === ''"
     (click)="create()">Create</button>
+
+  <button
+    *ngIf="data"
+    mat-button
+    [disabled]="description === ''"
+    (click)="update()">Update</button>
 
 </div>

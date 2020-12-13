@@ -201,6 +201,31 @@ export class UsersComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * Edits the specified user
+   * 
+   * @param user User to edit
+   */
+  public editUser(user: User) {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewUserDialogComponent, {
+      width: '550px',
+      data: user
+    });
+
+    dialogRef.afterClosed().subscribe((username: string) => {
+
+      // Checking if modal dialog wants to create a user.
+      if (username) {
+
+        // User was created.
+        this.showInfo(`'${username}' successfully updated`)
+        this.getUsers();
+      }
+    });
+  }
+
+  /**
    * Deletes the specified user from backend.
    * 
    * @param user User to delete

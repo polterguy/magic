@@ -3,6 +3,11 @@ table.users {
   width: 100%;
   .details-sheet {
     position: relative;
+    .edit-user {
+      position: absolute;
+      bottom: 0;
+      left: -1rem;
+    }
     strong {
       display: inline-block;
       width: 5rem;

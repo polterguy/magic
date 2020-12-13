@@ -305,4 +305,29 @@ export class RolesComponent extends BaseComponent implements OnInit {
       }
     }, (error: any) => this.showError(error));
   }
+
+  /**
+   * Invoked when user wants to edit a specific role.
+   * 
+   * @param role Role to edit
+   */
+  public editRole(role: Role) {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewRoleDialogComponent, {
+      width: '550px',
+      data: role
+    });
+
+    dialogRef.afterClosed().subscribe((name: string) => {
+
+      // Checking if modal dialog wants to create a user.
+      if (name) {
+
+        // User was created.
+        this.showInfo(`'${name}' successfully updated`)
+        this.getRoles();
+      }
+    });
+  }
 }

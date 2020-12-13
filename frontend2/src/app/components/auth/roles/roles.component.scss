@@ -15,6 +15,11 @@ table.roles {
   }
   .details-sheet {
     position: relative;
+    .edit-role {
+      position: absolute;
+      bottom: 0;
+      left: -1rem;
+    }
     .add-role {
       position: absolute;
       top: -1rem;

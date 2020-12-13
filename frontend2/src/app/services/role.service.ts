@@ -78,12 +78,27 @@ export class RoleService {
    * Creates a new role in the system.
    * 
    * @param name Name of new role to create
-   * @param description Description for rolw
+   * @param description Description for role
    */
   public create(name: string, description: string) {
 
     // Invoking backend and returning observable.
     return this.httpService.post<any>('/magic/modules/magic/roles', {
+      name,
+      description
+    });
+  }
+
+  /**
+   * Updates an existing role in the system.
+   * 
+   * @param name Name of role to update
+   * @param description Description for role
+   */
+  public update(name: string, description: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.put<any>('/magic/modules/magic/roles', {
       name,
       description
     });

@@ -61,6 +61,14 @@
           <mat-icon>add_box</mat-icon>
         </button>
 
+        <button
+          mat-icon-button
+          class="edit-role"
+          matTooltip="Edit role"
+          (click)="editRole(el)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
         <span class="details-item">
           <strong>Name</strong>
           <span>{{el.name}}</span>
