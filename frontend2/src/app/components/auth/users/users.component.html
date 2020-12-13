@@ -48,6 +48,15 @@
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
 
+        <button
+          mat-icon-button
+          [disabled]="el.username === 'root'"
+          class="edit-user"
+          matTooltip="Edit user"
+          (click)="editUser(el)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
         <strong>Username</strong><span>{{el.username}}</span>
 
         <mat-chip-list

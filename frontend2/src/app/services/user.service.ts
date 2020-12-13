@@ -91,6 +91,21 @@ export class UserService {
   }
 
   /**
+   * Updates new user in the system.
+   * 
+   * @param username Username of user to update
+   * @param password New password for user
+   */
+  public update(username: string, password: string) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.put<any>('/magic/modules/magic/users', {
+      username,
+      password
+    });
+  }
+
+  /**
    * Deletes the specified user from the backend.
    * 
    * @param username Username of user you want to delete

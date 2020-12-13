@@ -4,10 +4,11 @@
  */
 
 // Angular and system imports.
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
+import { User } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { MessageService } from 'src/app/services/message.service';
@@ -37,14 +38,19 @@ export class NewUserDialogComponent extends BaseComponent {
    * 
    * @param userService Used to create a new user
    * @param dialogRef Dialog reference used to close dialog
+   * @param data If updating user, this is the user we're updating
    * @param messageService Message service used to publish messages to other components
    */
   constructor(
     private userService: UserService,
     private dialogRef: MatDialogRef<NewUserDialogComponent>,
-    protected messageService: MessageService) {
-      super(messageService);
+    protected messageService: MessageService,
+    @Inject(MAT_DIALOG_DATA) public data: User) {
+    super(messageService);
+    if (this.data) {
+      this.username = data.username;
     }
+  }
 
   /**
    * Creates a new user.
@@ -53,6 +59,19 @@ export class NewUserDialogComponent extends BaseComponent {
 
     // Invoking backend to create the new user.
     this.userService.create(this.username, this.password).subscribe((res: any) => {
+
+      // Success! User created.
+      this.dialogRef.close(this.username);
+    }, (error: any) => this.showError(error));
+  }
+
+  /**
+   * Updates an existing user.
+   */
+  public update() {
+
+    // Invoking backend to create the new user.
+    this.userService.update(this.username, this.password).subscribe((res: any) => {
 
       // Success! User created.
       this.dialogRef.close(this.username);
