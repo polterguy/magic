@@ -69,11 +69,12 @@ import { SetupDatabaseComponent } from './components/config/setup/setup-database
 import { SetupConfigurationComponent } from './components/config/setup/setup-configuration/setup-configuration.component';
 
 // Modal dialogs.
+import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
+import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
-import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -109,6 +110,7 @@ import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.comp
     RolesComponent,
     NewUserDialogComponent,
     ConfirmDialogComponent,
+    NewRoleDialogComponent,
   ],
   imports: [
     FormsModule,
