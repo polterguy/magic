@@ -29,9 +29,9 @@ data.connect:x:@.arguments/*/database
    if
       get-value:x:@.arguments/*/safeMode
       .lambda
-         add:x:@if/./return-nodes/-
+         add:x:@data.connect/*/data.select
             .
-               max:1000
+               max:200
    data.select:x:@.arguments/*/sql
       database-type:x:@.arguments/*/databaseType
    return-nodes:x:-/*
