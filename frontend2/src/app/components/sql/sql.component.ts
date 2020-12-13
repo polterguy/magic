@@ -86,8 +86,12 @@ export class SqlComponent extends BaseComponent implements OnInit {
     for (const idx of this.result) {
       result.push(idx);
       if (this.displayDetails.indexOf(idx) !== -1) {
+        let colSpan = 0;
+        for (const idx in this.result[0]) {
+          colSpan += 1;
+        }
         result.push({
-          _viewDetails: true,
+          _detailsColSpan: Math.min(5, colSpan),
           data: idx,
         })
       }

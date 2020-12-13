@@ -29,18 +29,18 @@
     <tbody>
       <tr
         *ngFor="let idxRow of getRows()"
-        [class]="viewingDetails(idxRow) ? 'selected' : (idxRow._viewDetails === true ? 'details' : 'data-row')"
+        [class]="viewingDetails(idxRow) ? 'selected' : (idxRow._detailsColSpan > 0 ? 'details' : 'data-row')"
         (click)="toggleDetails(idxRow)">
 
         <td
-          *ngFor="let idxCell of (idxRow._viewDetails ? [] : (idxRow | dynamic: 5))">
+          *ngFor="let idxCell of (idxRow._detailsColSpan > 0 ? [] : (idxRow | dynamic: 5))">
           {{idxCell.value}}
         </td>
 
         <td
-          *ngIf="idxRow._viewDetails === true && idxRow.data"
+          *ngIf="idxRow._detailsColSpan > 0 && idxRow.data"
           class="view-details"
-          colspan="5">
+          [attr.colspan]="idxRow._detailsColSpan">
 
           <div class="details-sheet">
 
