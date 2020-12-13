@@ -1,0 +1,51 @@
+
+/*
+ * Returns log items in the database according to specified arguments.
+ */
+.arguments
+   offset:long
+   limit:long
+   query:string
+.description:"Returns log items according to the specified arguments."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Adding filter argument, if given.
+ */
+if
+   exists:x:@.arguments/*/query
+   .lambda
+      strings.concat
+         get-value:x:@.arguments/*/query
+         .:%
+      unwrap:x:+/*/*/*/*
+      add:x:../*/data.connect/*/data.read
+         .
+            where
+               or
+                  type.eq:x:@.arguments/*/query
+                  content.like:x:@strings.concat
+
+
+/*
+ * Retrieving items from database.
+ */
+data.connect:magic
+   add:x:+
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/limit
+   data.read
+      table:log_entries
+      order:id
+      direction:desc
+
+   /*
+    * Returning items to caller.
+    */
+   return-nodes:x:-/*

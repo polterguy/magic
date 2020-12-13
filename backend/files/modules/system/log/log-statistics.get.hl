@@ -1,0 +1,50 @@
+
+/*
+ * Returns log item count grouped by type of item.
+ */
+.description:"Returns log item count grouped by type of item."
+.arguments
+   filter:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Adding filter argument, if given.
+ */
+if
+   exists:x:@.arguments/*/filter
+   .lambda
+      strings.concat
+         get-value:x:@.arguments/*/filter
+         .:%
+      unwrap:x:+/*/*/*/*
+      add:x:../*/data.connect/*/data.read
+         .
+            where
+               or
+                  type.eq:x:@.arguments/*/filter
+                  content.like:x:@strings.concat
+
+
+/*
+ * Retrieving statistics from database.
+ */
+data.connect:magic
+   data.read
+      table:log_entries
+      limit:-1
+      columns
+         type
+         count(*) as count
+      group
+         type
+
+   /*
+    * Returning items to caller.
+    */
+   return-nodes:x:@data.read/*
