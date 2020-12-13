@@ -57,7 +57,7 @@ export class UserService {
   /**
    * Counts users in your backend.
    * 
-   * @param filter Optional queery filter deciding which items to count
+   * @param filter Optional query filter deciding which items to count
    */
   public count(filter: AuthFilter = null) {
 
