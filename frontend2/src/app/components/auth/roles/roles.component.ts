@@ -131,7 +131,10 @@ export class RolesComponent extends BaseComponent implements OnInit {
       this.selectedRoles = [];
 
       // Assigning roles, triggering a re-render operation of the material table.
-      this.roles = roles;
+      this.roles = roles || [];
+      if (this.roles.length === 1) {
+        this.selectedRoles.push(this.roles[0]);
+      }
 
     }, (error: any) => this.showError(error));
 

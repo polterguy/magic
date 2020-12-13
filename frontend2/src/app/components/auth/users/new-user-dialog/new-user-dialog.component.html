@@ -14,7 +14,7 @@
   </mat-form-field>
 
   <mat-form-field class="fill-width">
-    <mat-label class="dark">Password</mat-label>
+    <mat-label class="dark">{{this.data ? 'New password' : 'Password'}}</mat-label>
     <input
       matInput
       [(ngModel)]="password"
