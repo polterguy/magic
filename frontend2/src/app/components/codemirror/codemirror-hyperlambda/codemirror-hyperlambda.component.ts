@@ -35,9 +35,9 @@ export class Model {
  * CodeMirror Hyperlambda component for making it easy
  */
 @Component({
-  selector: 'app-hyperlambda',
-  templateUrl: './hyperlambda.component.html',
-  styleUrls: ['./hyperlambda.component.scss']
+  selector: 'app-codemirror-hyperlambda',
+  templateUrl: './codemirror-hyperlambda.component.html',
+  styleUrls: ['./codemirror-hyperlambda.component.scss']
 })
 export class HyperlambdaComponent extends BaseComponent implements OnInit {
 

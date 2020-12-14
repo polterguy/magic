@@ -12,7 +12,7 @@ import { BaseComponent } from '../base.component';
 import { Response } from '../../models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
-import { Model } from '../codemirror/hyperlambda/hyperlambda.component';
+import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-dialog.component';
 
