@@ -5,12 +5,10 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
 
 // Application specific imports.
 import { HttpService } from './http.service';
 import { FileService } from './file.service';
-import { Response } from '../models/response.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -48,5 +46,20 @@ export class SqlService {
       sql,
       safeMode,
     });
+  }
+
+  /**
+   * Returns SQL vocabulary auto complete object, such as table names, field names, etc.
+   * 
+   * @param databaseType Type of database, for instance 'mssql' or 'mysql'.
+   * @param connectionString Database connection string (reference to appsettings.json)
+   */
+  public vocabulary(databaseType: string, connectionString: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<any>('/magic/modules/system/sql/databases?databaseType=' +
+      encodeURIComponent(databaseType) +
+      '&connectionString=' +
+      connectionString);
   }
 }
