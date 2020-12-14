@@ -58,6 +58,8 @@ export class CodemirrorSqlComponent extends BaseComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
+
+    // Loading SQL hints, which are tables and fields according to selected database.
     this.loadHints();
   }
 
@@ -69,17 +71,18 @@ export class CodemirrorSqlComponent extends BaseComponent implements OnInit {
    * Loads SQL hints from backend.
    */
   private loadHints() {
-    this.sqlService.vocabulary('mysql', 'magic').subscribe((result: any) => {
-      const tmpHints = {};
-      for (const idxDb of result.databases) {
-        for (const idxTable of idxDb.tables) {
-          const name = idxTable.name;
-          const columns = idxTable.columns.map((x: any) => x.name);
-          tmpHints[name] = columns;
-        }
+
+    // Invoking backend passing in database type and database instance.
+    this.sqlService.vocabulary('mssql', 'magic').subscribe((result: any) => {
+
+      // Transforming from HTTP result to object(s) expected by CodeMirror.
+      const tables = {};
+      for (const idxTable of result.databases[0].tables) {
+        tables[idxTable.name] = idxTable.columns.map(x => x.name);
       }
-      this.model.options.hintOptions.tables = tmpHints;
-      console.log(this.model);
+      this.model.options.hintOptions = {
+        tables: tables
+      };
     });
   }
 }

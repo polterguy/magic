@@ -36,6 +36,9 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 // Hyperlambda mode for CodeMirror import.
 import './codemirror/hyperlambda.js';
 
+// SQL hints plugin for CodeMirror.
+import 'codemirror/addon/hint/sql-hint.js';
+
 // Application specific imports.
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DateToPipe } from './pipes/date-to.pipe';
