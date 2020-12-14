@@ -66,6 +66,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { HyperlambdaComponent } from './components/codemirror/hyperlambda/hyperlambda.component';
 import { SetupCryptoComponent } from './components/config/setup/setup-crypto/setup-crypto.component';
+import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
 import { SetupConfigurationComponent } from './components/config/setup/setup-configuration/setup-configuration.component';
 
@@ -107,6 +108,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     SetupConfigurationComponent,
     SetupDatabaseComponent,
     SetupCryptoComponent,
+    CodemirrorSqlComponent,
     HyperlambdaComponent,
     UsersComponent,
     RolesComponent,
