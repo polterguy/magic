@@ -1,10 +1,13 @@
 
-<app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+<app-codemirror-sql
+  *ngIf="input"
+  [(model)]="input"></app-codemirror-sql>
 
 <div class="button-strip">
 
   <button
     id="executeButton"
+    [disabled]="!input || input.sql === ''"
     mat-button
     (click)="execute()">
     Execute
