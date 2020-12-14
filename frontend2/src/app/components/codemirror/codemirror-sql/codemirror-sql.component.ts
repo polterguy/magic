@@ -58,8 +58,28 @@ export class CodemirrorSqlComponent extends BaseComponent implements OnInit {
    * Implementation of OnInit.
    */
   ngOnInit() {
+    this.loadHints();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Loads SQL hints from backend.
+   */
+  private loadHints() {
     this.sqlService.vocabulary('mysql', 'magic').subscribe((result: any) => {
-      console.log(result);
+      const tmpHints = {};
+      for (const idxDb of result.databases) {
+        for (const idxTable of idxDb.tables) {
+          const name = idxTable.name;
+          const columns = idxTable.columns.map((x: any) => x.name);
+          tmpHints[name] = columns;
+        }
+      }
+      this.model.options.hintOptions.tables = tmpHints;
+      console.log(this.model);
     });
   }
 }

@@ -5,6 +5,8 @@
   "autofocus": false,
   "extraKeys": {
     "Shift-Tab": "indentLess",
-    "Tab": "indentMore"
-  }
+    "Tab": "indentMore",
+    "Ctrl-Space": "autocomplete"
+  },
+  "hintOptions": {}
 }
