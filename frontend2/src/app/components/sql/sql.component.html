@@ -1,12 +1,10 @@
 
-<ngx-codemirror
-  [(ngModel)]="sql"
-  [options]="cmOptions.sql">
-</ngx-codemirror>
+<app-codemirror-sql [(model)]="input"></app-codemirror-sql>
 
 <div class="button-strip">
 
   <button
+    id="executeButton"
     mat-button
     (click)="execute()">
     Execute

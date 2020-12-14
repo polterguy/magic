@@ -2,5 +2,9 @@
   "lineNumbers": true,
   "theme": "mbo",
   "mode": "text/x-mysql",
-  "autofocus": false
+  "autofocus": false,
+  "extraKeys": {
+    "Shift-Tab": "indentLess",
+    "Tab": "indentMore"
+  }
 }

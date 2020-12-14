@@ -10,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base.component';
 import { SqlService } from 'src/app/services/sql.service';
 import { MessageService } from 'src/app/services/message.service';
+import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
@@ -28,15 +29,11 @@ export class SqlComponent extends BaseComponent implements OnInit {
   private displayDetails: any[] = [];
 
   /**
-   * SQL model for CodeMirror editor.
+   * Input SQL component model and options.
    */
-  public sql: string;
-
-  /**
-   * CodeMirror options object, taken from common settings.
-   */
-  public cmOptions = {
-    sql: sql,
+  public input: Model = {
+    sql: '',
+    options: sql,
   };
 
   /**
@@ -60,7 +57,19 @@ export class SqlComponent extends BaseComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
-    this.cmOptions.sql.autofocus = true;
+
+    // Turning on auto focus.
+    this.input.options.autofocus = true;
+
+    // Associating ALT+M with fullscreen toggling of the editor instance.
+    this.input.options.extraKeys['Alt-M'] = (cm: any) => {
+      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+    };
+
+    // Making sure we attach the F5 button to execute input Hyperlambda.
+    this.input.options.extraKeys.F5 = () => {
+      (document.getElementById('executeButton') as HTMLElement).click();
+    };
   }
 
   /**
@@ -69,7 +78,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
   public execute() {
 
     // Invoking backend.
-    this.sqlService.execute('mysql', 'magic', this.sql, true).subscribe((result: any[]) => {
+    this.sqlService.execute('mysql', 'magic', this.input.sql, true).subscribe((result: any[]) => {
 
       // Success!
       if (result.length === 200) {
