@@ -1,7 +1,8 @@
 {
-  "lineNumbers": true,
-  "theme": "mbo",
   "mode": "text/x-mysql",
+  "lineNumbers": true,
+  "matchBrackets": true,
+  "theme": "mbo",
   "autofocus": false,
   "extraKeys": {
     "Shift-Tab": "indentLess",
