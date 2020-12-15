@@ -134,9 +134,10 @@ export class SqlComponent extends BaseComponent implements OnInit {
   public databaseTypeChanged() {
 
     // Retrieving all connetion strings for selected database type.
-    this.getConnectionStrings(this.input.databaseType, () => {
+    this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
 
       // Resetting selected connection string and selected database.
+      this.connectionStrings = connectionStrings;
       this.input.connectionString = null;
       this.input.database = null;
       this.input.options.hintOptions.tables = [];
