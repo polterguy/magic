@@ -4,6 +4,7 @@
  *
  * Arguments
  *
+ * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
@@ -30,7 +31,8 @@ slots.create:magic.db.mysql.columns
                .:[
                get-value:x:@.arguments/*/connection-string
                .:|
-               .:information_schema]
+               get-value:x:@.arguments/*/database
+               .:]
    mysql.connect:x:@.connection
 
 
