@@ -161,6 +161,10 @@ export class SqlComponent extends BaseComponent implements OnInit {
         // Storing database declaration such that user can change active database without having to roundtrip to server.
         this.databaseDeclaration = databases;
 
+        // Resetting other information
+        this.input.database = null;
+        this.input.options.hintOptions.tables = [];
+  
       } else {
 
         // No databases in active connection string.
@@ -175,11 +179,12 @@ export class SqlComponent extends BaseComponent implements OnInit {
   public databaseChanged() {
 
     // Updating SQL hints according to selected database.
-    const tables = {};
-    for (const idxTable of this.databaseDeclaration.databases[0].tables) {
-      tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
+    const result = {};
+    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+    for (const idxTable of tables) {
+      result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
     }
-    this.input.options.hintOptions.tables = tables;
+    this.input.options.hintOptions.tables = result;
   }
 
   /**
@@ -190,7 +195,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
     // Invoking backend.
     this.sqlService.execute(
       this.input.databaseType,
-      this.input.database,
+      '[' + this.input.connectionString + '|' + this.input.database + ']',
       this.input.sql,
       true).subscribe((result: any[]) => {
 
