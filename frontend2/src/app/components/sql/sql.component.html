@@ -40,6 +40,7 @@
     <mat-label>Database</mat-label>
     <mat-select
       [(ngModel)]="input.database"
+      [disabled]="!databases || databases.length === 0"
       (selectionChange)="databaseChanged()"
       placeholder="Database">
       <mat-option
