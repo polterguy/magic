@@ -16,7 +16,7 @@ auth.ticket.verify:root
 
 /*
  * Since this endpoint is quite expensive to invoke, we cache its result
- * for 5 minutes - Both on the server side, and on the client side.
+ * for 20 minutes - Both on the server side, and on the client side.
  */
 strings.concat
    .:sql.databases.
@@ -25,7 +25,7 @@ strings.concat
 unwrap:x:../*/cache.try-get/**/.databaseType
 unwrap:x:../*/cache.try-get/**/.connection-string
 cache.try-get:x:@strings.concat
-   expiration:300
+   expiration:1200
    expiration-type:absolute
    .lambda
 
@@ -106,7 +106,7 @@ cache.try-get:x:@strings.concat
  * Returning results to caller.
  */
 response.headers.add
-   Cache-Control:private, max-age=300
+   Cache-Control:private, max-age=1200
 add:x:+
    get-nodes:x:@cache.try-get/#/*
 return
