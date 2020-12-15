@@ -37,7 +37,11 @@ export class SqlService {
    * @param sql SQL to evaluate
    * @param safeMode If true will only return the first 1.000 records
    */
-  public execute(databaseType: string, database: string, sql: string, safeMode: boolean) {
+  public execute(
+    databaseType: string,
+    database: string,
+    sql: string,
+    safeMode: boolean) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<any[]>('/magic/modules/system/sql/evaluate', {
