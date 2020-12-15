@@ -38,6 +38,9 @@ table.log-items {
       display: inline-block;
       width: 5rem;
     }
+    span.pre-formatted {
+      white-space: pre;
+    }
   }
   .full-width {
     margin-top: 2rem;
