@@ -22,7 +22,8 @@ strings.concat
    .:sql.databases.
    get-value:x:@.arguments/*/databaseType
    get-value:x:@.arguments/*/connectionString
-unwrap:x:+/**/.databaseType
+unwrap:x:../*/cache.try-get/**/.databaseType
+unwrap:x:../*/cache.try-get/**/.connection-string
 cache.try-get:x:@strings.concat
    expiration:300
    expiration-type:absolute
@@ -66,6 +67,7 @@ cache.try-get:x:@strings.concat
             .:.tables
          unwrap:x:+/*
          signal:x:@strings.concat
+            connection-string:x:@.connection-string
             database:x:@.dp/#/*/name
          for-each:x:@signal/*
             unwrap:x:+/*/*/*
@@ -80,6 +82,7 @@ cache.try-get:x:@strings.concat
                .:.columns
             unwrap:x:+/*
             signal:x:@strings.concat
+               connection-string:x:@.connection-string
                database:x:@for-each/@.dp/#/*/name
                table:x:@.dp/#/*/table
             for-each:x:@signal/*
