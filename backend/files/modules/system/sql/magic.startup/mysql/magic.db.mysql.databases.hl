@@ -1,6 +1,10 @@
 
 /*
  * Lists all database in your MySQL instance.
+ *
+ * Arguments
+ *
+ * - [connection-string] - What connection string to use
  */
 slots.create:magic.db.mysql.databases
 
