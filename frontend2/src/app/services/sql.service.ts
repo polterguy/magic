@@ -49,6 +49,17 @@ export class SqlService {
   }
 
   /**
+   * Returns all connection strings configured in your backend.
+   * 
+   * @param databaseType Database type to retrieve connection strings for
+   */
+  public connectionStrings(databaseType: string) {
+    return this.httpService.get<any>(
+      '/magic/modules/system/sql/connection-strings?databaseType=' +
+      encodeURIComponent(databaseType));
+  }
+
+  /**
    * Returns SQL vocabulary auto complete object, such as table names, field names, etc.
    * 
    * @param databaseType Type of database, for instance 'mssql' or 'mysql'.

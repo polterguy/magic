@@ -4,14 +4,7 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-
-// Application specific imports.
-import { BaseComponent } from '../../base.component';
-import { Message, Messages } from 'src/app/models/message.model';
-import { SqlService } from 'src/app/services/sql.service';
-import { MessageService } from 'src/app/services/message.service';
+import { Component, Input } from '@angular/core';
 
 /**
  * Model class for CodeMirror instance's SQL..
@@ -22,6 +15,12 @@ export class Model {
    * What database type to use (mssql or mysql for instance)
    */
   databaseType: string;
+
+  /**
+   * What connection string to use, typically for instance 'generic' or some other
+   * connection string that is configured in your backend.
+   */
+  connectionString: string;
 
   /**
    * What database connection string to use (e.g. '[generic|magic]').
@@ -47,10 +46,7 @@ export class Model {
   templateUrl: './codemirror-sql.component.html',
   styleUrls: ['./codemirror-sql.component.scss']
 })
-export class CodemirrorSqlComponent extends BaseComponent implements OnInit, OnDestroy {
-
-  // Subscription for refresh SQL hints events.
-  private subscription: Subscription;
+export class CodemirrorSqlComponent {
 
   /**
    * Model for component containing SQL that is displayed.
@@ -59,64 +55,6 @@ export class CodemirrorSqlComponent extends BaseComponent implements OnInit, OnD
 
   /**
    * Creates an instance of your component.
-   * 
-   * @param sqlService Necessary to retrieve auto complete object
-   * @param messageService Used to signal other components
    */
-  constructor(
-    private sqlService: SqlService,
-    protected messageService: MessageService) {
-      super(messageService);
-  }
-
-  /**
-   * Implementation of OnInit.
-   */
-  public ngOnInit() {
-
-    // Loading SQL hints, which are tables and fields according to selected database.
-    this.loadHints();
-
-    // Subscribing to refresh SQL hints message.
-    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      switch (msg.name) {
-
-        // Some module signaled we need to refresh SQL hints.
-        case Messages.SQL_DATABASE_CHANGED:
-          this.loadHints();
-          break;
-      }
-    });
-  }
-
-  /**
-   * Implementation of OnDestroy
-   */
-  public ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
-  /*
-   * Private helper methods.
-   */
-
-  /*
-   * Loads SQL hints from backend.
-   */
-  private loadHints() {
-
-    // Invoking backend passing in database type and database instance.
-    this.sqlService.vocabulary(this.model.databaseType, this.model.database).subscribe((result: any) => {
-
-      // Transforming from HTTP result to object(s) expected by CodeMirror.
-      const tables = {};
-      for (const idxTable of result.databases[0].tables) {
-        tables[idxTable.name] = idxTable.columns.map(x => x.name);
-      }
-      this.model.options.hintOptions = {
-        tables: tables
-      };
-    });
-  }
+  constructor() { }
 }

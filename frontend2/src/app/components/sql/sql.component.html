@@ -3,11 +3,55 @@
   *ngIf="input"
   [(model)]="input"></app-codemirror-sql>
 
-<div class="button-strip">
+<div
+  *ngIf="input"
+  class="button-strip">
 
+  <mat-form-field class="form-field">
+
+    <mat-label>Database type</mat-label>
+    <mat-select
+      [(ngModel)]="input.databaseType"
+      (selectionChange)="databaseTypeChanged()"
+      placeholder="Database type">
+      <mat-option
+        *ngFor="let idx of databaseTypes"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+
+    <mat-label>Connection string</mat-label>
+    <mat-select
+      [(ngModel)]="input.connectionString"
+      (selectionChange)="connectionStringChanged()"
+      placeholder="Connection string">
+      <mat-option
+        *ngFor="let idx of connectionStrings"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+
+    <mat-label>Database</mat-label>
+    <mat-select
+      [(ngModel)]="input.database"
+      (selectionChange)="databaseChanged()"
+      placeholder="Database">
+      <mat-option
+        *ngFor="let idx of databases"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+  
   <button
     id="executeButton"
-    [disabled]="!input || input.sql === ''"
+    [disabled]="!input || input.sql === '' || !input.database"
     mat-button
     (click)="execute()">
     Execute
