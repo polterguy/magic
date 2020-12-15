@@ -140,6 +140,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
       this.input.connectionString = null;
       this.input.database = null;
       this.input.options.hintOptions.tables = [];
+      this.databases = [];
     });
   }
 
