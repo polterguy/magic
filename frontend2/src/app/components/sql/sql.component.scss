@@ -1,4 +1,10 @@
 
+.button-strip {
+  button, mat-form-field {
+    margin-left: 1rem;
+  }
+}
+
 table.result {
   table-layout: fixed;
   border-collapse: collapse;
