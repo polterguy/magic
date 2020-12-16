@@ -77,6 +77,7 @@ import { SetupConfigurationComponent } from './components/config/setup/setup-con
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
+import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
@@ -92,6 +93,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     HomeComponent,
     LoginDialogComponent,
     LoadSqlDialogComponent,
+    SaveSqlDialogComponent,
     LoadSnippetDialogComponent,
     SaveSnippetDialogComponent,
     CrudifierComponent,

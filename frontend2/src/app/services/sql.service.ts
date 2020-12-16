@@ -110,4 +110,28 @@ export class SqlService {
     // Returning result of invocation to file service.
     return this.fileService.loadFile(filename);
   }
+
+  /**
+   * Saves the specified SQL snippet according to the specified argument.
+   * 
+   * @param databaseType Database type for snippet
+   * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
+   * @param content Content of snippet
+   */
+  public saveSnippet(databaseType: string, filename: string, content: string) {
+
+    // Sanity checking invocation.
+    if (filename.indexOf('/') !== -1) {
+      throw throwError('Please provide me with only the filename, and not the folder');
+    }
+
+    // Making sure we put our file into the correct folder.
+    filename = `/misc/${databaseType}/templates/` + filename;
+    if (!filename.endsWith('.sql')) {
+      filename += '.sql';
+    }
+
+    // Returning result of invocation to file service.
+    return this.fileService.saveFile(filename, content);
+  }
 }
