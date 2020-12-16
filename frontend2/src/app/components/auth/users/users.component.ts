@@ -123,6 +123,13 @@ export class UsersComponent extends BaseComponent implements OnInit {
         this.users = users;
         if (users.length === 1) {
           this.selectedUsers.push(users[0]);
+
+          // Fetching roles for user.
+          this.userService.getRoles(users[0].username).subscribe((roles: UserRoles[]) => {
+
+            // Applying roles to user model
+            users[0].roles = (roles || []).map(x => x.role);
+          });
         }
       } else {
         this.users = [];
