@@ -93,6 +93,9 @@ export class SqlComponent extends BaseComponent implements OnInit {
         // Retrieving databases existing in connection string instance.
         this.getDatabases(defaultDatabaseType.result, connectionStrings[0], (databases: any) => {
 
+          // Storing database declaration such that user can change active database without having to roundtrip to server.
+          this.databaseDeclaration = databases;
+
           // Transforming from HTTP result to object(s) expected by CodeMirror.
           const tables = {};
           for (const idxTable of databases.databases[0].tables) {
