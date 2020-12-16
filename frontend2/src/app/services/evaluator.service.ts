@@ -91,7 +91,7 @@ export class EvaluatorService {
       throw throwError('Please provide me with only the filename, and not the folder');
     }
 
-    // Making sure we put our file into the correct folder.
+    // Making sure we use the correct folder.
     filename = '/misc/snippets/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';

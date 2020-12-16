@@ -4,23 +4,23 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
-import { MatDialogRef } from '@angular/material/dialog';
+import { SqlService } from 'src/app/services/sql.service';
 import { MessageService } from 'src/app/services/message.service';
-import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
  * Load snippet dialog for loading saved snippets from the backend.
  */
 @Component({
-  selector: 'app-load-snippet-dialog',
-  templateUrl: './load-snippet-dialog.component.html',
-  styleUrls: ['./load-snippet-dialog.component.scss']
+  selector: 'app-load-sql-dialog',
+  templateUrl: './load-sql-dialog.component.html',
+  styleUrls: ['./load-sql-dialog.component.scss']
 })
-export class LoadSnippetDialogComponent extends BaseComponent implements OnInit {
+export class LoadSqlDialogComponent extends BaseComponent implements OnInit {
 
   /**
    * Snippet files as returned from backend.
@@ -35,14 +35,16 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
   /**
    * Creates an instance of your login dialog.
    * 
+   * @param sqlService Needed to retrieve snippets from backend
    * @param messageService Dependency injected message service to publish information from component to subscribers
-   * @param dialogRef Necessary to close dialog when user selects a snippet
-   * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
+   * @param data Input data, more specifically the database type the user is currently using
+   * @param dialogRef Needed to be able to close dialog as user selects a snippet
    */
   constructor(
+    private sqlService: SqlService,
     protected messageService: MessageService,
-    private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
-    private evaluatorService: EvaluatorService) {
+    @Inject(MAT_DIALOG_DATA) public data: string,
+    private dialogRef: MatDialogRef<LoadSqlDialogComponent>) {
     super(messageService);
   }
 
@@ -52,8 +54,8 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
   public ngOnInit() {
 
     // Retrieving snippets from backend.
-    this.evaluatorService.snippets().subscribe((files: string[]) => {
-      this.files = files.filter(x => x.endsWith('.hl'));
+    this.sqlService.snippets(this.data).subscribe((files: string[]) => {
+      this.files = files.filter(x => x.endsWith('.sql'));
     }, (error: any) => this.showError(error));
   }
 
