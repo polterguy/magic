@@ -58,6 +58,14 @@
   </button>
 
   <button
+    id="saveButton"
+    [disabled]="!input.sql"
+    mat-button
+    (click)="save()">
+    Save
+  </button>
+
+  <button
     id="executeButton"
     [disabled]="!input || input.sql === '' || !input.database"
     mat-button

@@ -18,6 +18,7 @@ import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.compon
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
+import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -31,6 +32,9 @@ export class SqlComponent extends BaseComponent implements OnInit {
 
   // List of items we're viewing details of.
   private displayDetails: any[] = [];
+
+  // Filename as chosen during load SQL snippet or save SQL snippet.
+  private filename: string;
 
   // Database declaration as returned from server
   private databaseDeclaration: any = null;
@@ -127,12 +131,17 @@ export class SqlComponent extends BaseComponent implements OnInit {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
           };
 
-          // Associating ALT+L with load snippet button.
+          // Associating ALT+L with the load snippet button.
           this.input.options.extraKeys['Alt-L'] = (cm: any) => {
             (document.getElementById('loadButton') as HTMLElement).click();
           };
 
-          // Making sure we attach the F5 button to execute input Hyperlambda.
+          // Associating ALT+S with the save snippet button.
+          this.input.options.extraKeys['Alt-S'] = (cm: any) => {
+            (document.getElementById('saveButton') as HTMLElement).click();
+          };
+
+          // Making sure we attach the F5 button to execute SQL.
           this.input.options.extraKeys.F5 = () => {
             (document.getElementById('executeButton') as HTMLElement).click();
           };
@@ -221,8 +230,45 @@ export class SqlComponent extends BaseComponent implements OnInit {
 
           // Success!
           this.input.sql = content;
+          this.filename = filename;
 
         }, (error: any) => this.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to save an SQL snippet.
+   */
+  public save() {
+
+    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
+    const dialogRef = this.dialog.open(SaveSqlDialogComponent, {
+      width: '550px',
+      data: {
+        filename: this.filename || '',
+        databaseType: this.input.databaseType,
+      }
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+
+      // Checking if user selected a file, at which point filename will be non-null.
+      if (filename) {
+
+        // User gave us a filename, hence saving file to backend snippet collection.
+        this.sqlService.saveSnippet(
+          this.input.databaseType,
+          filename,
+          this.input.sql).subscribe(() => {
+
+          // Success!
+          this.showInfo('SQL snippet successfully saved');
+          this.filename = filename;
+          
+        }, (error: any) => this.showError(error));
+
       }
     });
   }
