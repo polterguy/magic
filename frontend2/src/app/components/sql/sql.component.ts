@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
@@ -13,6 +14,7 @@ import { SqlService } from 'src/app/services/sql.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
+import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
@@ -64,12 +66,15 @@ export class SqlComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param configService Needed to read configuration settings, more specifically default database config setting
    * @param sqlService Needed to be able to execute SQL towards backend
+   * @param dialog Needed to be able to show Load SQL snippet dialog
    * @param messageService Message service used to message other components
    */
   constructor(
-    private sqlService: SqlService,
     private configService: ConfigService,
+    private sqlService: SqlService,
+    private dialog: MatDialog,
     protected messageService: MessageService) {
     super(messageService);
   }
@@ -117,6 +122,11 @@ export class SqlComponent extends BaseComponent implements OnInit {
           // Associating ALT+M with fullscreen toggling of the editor instance.
           this.input.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+          };
+
+          // Associating ALT+L with load snippet button.
+          this.input.options.extraKeys['Alt-L'] = (cm: any) => {
+            (document.getElementById('loadButton') as HTMLElement).click();
           };
 
           // Making sure we attach the F5 button to execute input Hyperlambda.
@@ -189,6 +199,32 @@ export class SqlComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * Opens the load snippet dialog, to allow user to select a previously saved snippet.
+   */
+  public load() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(LoadSqlDialogComponent, {
+      width: '550px',
+      data: this.input.databaseType,
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+
+        // User gave us a filename, hence we load file from backend snippet collection.
+        this.sqlService.loadSnippet(this.input.databaseType, filename).subscribe((content: string) => {
+
+          // Success!
+          this.input.sql = content;
+
+        }, (error: any) => this.showError(error));
+      }
+    });
+  }
+
+  /**
    * Executes the current SQL towards your backend.
    */
   public execute() {
@@ -201,7 +237,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
       true).subscribe((result: any[]) => {
 
       // Success!
-      if (result.length === 200) {
+      if (result && result.length === 200) {
         this.showInfo('SQL successfully executed, 200 first records returned');
       } else {
         this.showInfo('SQL successfully executed');

@@ -109,7 +109,7 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
         // User gave us a filename, hence we load file from backend snippet collection.
         this.evaluatorService.loadSnippet(filename).subscribe((content: string) => {
 
-          // Success. storing filename for later, and applying the Hyperlambda to CodeMnirror editor as retrieved from backend.
+          // Success! Storing filename for later, and applying the Hyperlambda to CodeMnirror editor as retrieved from backend.
           this.input.hyperlambda = content;
           this.filename = filename;
 

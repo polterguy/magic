@@ -49,7 +49,14 @@
     </mat-select>
 
   </mat-form-field>
-  
+
+  <button
+    id="loadButton"
+    mat-button
+    (click)="load()">
+    Load
+  </button>
+
   <button
     id="executeButton"
     [disabled]="!input || input.sql === '' || !input.database"

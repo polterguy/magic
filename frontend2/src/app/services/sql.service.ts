@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
@@ -76,5 +77,37 @@ export class SqlService {
       encodeURIComponent(databaseType) +
       '&connectionString=' +
       connectionString);
+  }
+
+  /**
+   * Returns a list of all SQL snippets the backend has stored.
+   * 
+   * @param databaseType Database type to retrieve snippets for
+   */
+  public snippets(databaseType: string) {
+    return this.fileService.listFiles(`/misc/${databaseType}/templates/`);
+  }
+
+  /**
+   * Loads a snippet from the backend.
+   * 
+   * @param databaseType Database type to load snippet for
+   * @param filename Filename (only, no extension or folder) of snippet to load
+   */
+  public loadSnippet(databaseType: string, filename: string) {
+
+    // Sanity checking invocation.
+    if (filename.indexOf('/') !== -1) {
+      throw throwError('Please provide me with only the filename, and not the folder');
+    }
+
+    // Making sure we use the correct folder.
+    filename = `/misc/${databaseType}/templates/` + filename;
+    if (!filename.endsWith('.sql')) {
+      filename += '.sql';
+    }
+
+    // Returning result of invocation to file service.
+    return this.fileService.loadFile(filename);
   }
 }
