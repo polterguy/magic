@@ -170,6 +170,11 @@ export class SqlComponent extends BaseComponent implements OnInit {
       this.input.database = null;
       this.input.options.hintOptions.tables = [];
       this.databases = [];
+
+      // Checking if this is anything but 'mssql', and if so, unchecking batch.
+      if (this.input.databaseType !== 'mssql') {
+        this.isBatch = false;
+      }
     });
   }
 
