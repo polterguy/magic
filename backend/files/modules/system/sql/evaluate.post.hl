@@ -36,7 +36,10 @@ data.connect:x:@.arguments/*/database
     * returning the first 200 records.
     */
    if
-      get-value:x:@.arguments/*/safeMode
+      and
+         get-value:x:@.arguments/*/safeMode
+         not
+            get-value:x:@.arguments/*/batch
       .lambda
          add:x:@data.connect/*/data.select
             .
@@ -66,4 +69,9 @@ data.connect:x:@.arguments/*/database
     * Executing SQL and returning results to caller.
     */
    data.select:x:@.arguments/*/sql
+
+
+   /*
+    * Returning result of invocation to caller.
+    */
    return-nodes:x:-/*
