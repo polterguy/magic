@@ -69,6 +69,12 @@ export class SqlComponent extends BaseComponent implements OnInit {
   public isBatch: boolean = false;
 
   /**
+   * If true prevents returning more than 200 records from backend to avoid
+   * exhausting server.
+   */
+  public safeMode: boolean = true;
+
+  /**
    * Result of invocation towards backend.
    */
   public result: any[] = null;
@@ -296,7 +302,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
       this.input.databaseType,
       '[' + this.input.connectionString + '|' + this.input.database + ']',
       this.input.sql,
-      true,
+      this.safeMode,
       this.isBatch).subscribe((result: any[]) => {
 
       // Success!
