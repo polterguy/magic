@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 
 /**
  * Model class for CodeMirror instance's SQL..
@@ -36,6 +36,11 @@ export class Model {
    * Options for editor.
    */
   options: any;
+
+  /**
+   * Actual CodeMirror instance, useful for determining selected text, etc.
+   */
+  editor?: any;
 }
 
 /**
@@ -46,7 +51,10 @@ export class Model {
   templateUrl: './codemirror-sql.component.html',
   styleUrls: ['./codemirror-sql.component.scss']
 })
-export class CodemirrorSqlComponent {
+export class CodemirrorSqlComponent implements AfterViewInit {
+
+  // Actual CodeMirror instance, needed to retrieve selected text.
+  @ViewChild('codeeditor') private _editor: { codeMirror: any; };
 
   /**
    * Model for component containing SQL that is displayed.
@@ -57,4 +65,11 @@ export class CodemirrorSqlComponent {
    * Creates an instance of your component.
    */
   constructor() { }
+
+  /**
+   * Implementation of AfterViewInit
+   */
+  public ngAfterViewInit() {
+    this.model.editor = this._editor.codeMirror;
+  }
 }

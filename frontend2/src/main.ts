@@ -7,7 +7,8 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-// CodeMirror imports, first modes
+// CodeMirror imports
+import 'codemirror/addon/selection/active-line';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/sql/sql';

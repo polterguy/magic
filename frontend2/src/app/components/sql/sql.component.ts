@@ -297,17 +297,25 @@ export class SqlComponent extends BaseComponent implements OnInit {
    */
   public execute() {
 
+    /*
+     * Retrieving selected text from CodeMirror instance, if any.
+     * This is done since by default we execute all SQL. However, if
+     * user has selected a part of the editor's conten, we only execute
+     * the selection.
+     */
+    const selectedText = this.input.editor.getSelection();
+
     // Invoking backend.
     this.sqlService.execute(
       this.input.databaseType,
       '[' + this.input.connectionString + '|' + this.input.database + ']',
-      this.input.sql,
+      selectedText == '' ? this.input.sql : selectedText,
       this.safeMode,
       this.isBatch).subscribe((result: any[]) => {
 
       // Success!
       if (result && result.length === 200) {
-        this.showInfo('SQL successfully executed, 200 first records returned');
+        this.showInfo('First 200 records returned');
       } else {
         this.showInfo('SQL successfully executed');
       }
