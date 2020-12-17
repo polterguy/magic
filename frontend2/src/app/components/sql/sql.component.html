@@ -50,6 +50,11 @@
 
   </mat-form-field>
 
+  <mat-checkbox
+    [disabled]="input.databaseType !== 'mssql'"
+    matTooltip="Executes SQL as a MS SQL batch operation, respecting 'go' keywords"
+    [(ngModel)]="isBatch">Batch</mat-checkbox>
+
   <button
     id="loadButton"
     mat-button

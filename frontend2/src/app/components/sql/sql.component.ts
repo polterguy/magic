@@ -63,6 +63,12 @@ export class SqlComponent extends BaseComponent implements OnInit {
   public input: Model = null;
 
   /**
+   * Only relevant for mssql database type, and if true, executes SQL
+   * as a batch execution.
+   */
+  public isBatch: boolean = false;
+
+  /**
    * Result of invocation towards backend.
    */
   public result: any[] = null;
@@ -285,7 +291,8 @@ export class SqlComponent extends BaseComponent implements OnInit {
       this.input.databaseType,
       '[' + this.input.connectionString + '|' + this.input.database + ']',
       this.input.sql,
-      true).subscribe((result: any[]) => {
+      true,
+      this.isBatch).subscribe((result: any[]) => {
 
       // Success!
       if (result && result.length === 200) {

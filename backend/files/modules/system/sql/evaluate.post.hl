@@ -1,12 +1,20 @@
 
 /*
  * Evaluates the given [sql] and returns results to caller.
+ *
+ * Arguments;
+ * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ * - [database] - Initial database to use in connection
+ * - [sql] - SQL to execute
+ * - [safeMode] - If true, will never return more than the first 200 records to avoid exhausting server
+ * - [batch] - If true, will execute SQL as a MS SQL batch operation. Only relevant for 'mssql' database type
  */
 .arguments
    databaseType:string
    database:string
    sql:string
    safeMode:bool
+   batch:bool
 .description:"Evaluates the given SQL given for your specified database, and returns the result to caller."
 
 
@@ -24,7 +32,8 @@ data.connect:x:@.arguments/*/database
 
 
    /*
-    * Executing SQL and returning results to caller.
+    * Checking if we're supposed to execute SQL in safe mode, only
+    * returning the first 200 records.
     */
    if
       get-value:x:@.arguments/*/safeMode
@@ -32,6 +41,29 @@ data.connect:x:@.arguments/*/database
          add:x:@data.connect/*/data.select
             .
                max:200
+
+
+   /*
+    * Checking if we're supposed to execute SQL as an MS SQL 'batch' operation,
+    * which implies respecting 'go' keywords, splitting SQL by each 'go' keyword.
+    */
+   if
+      and
+         eq
+            get-value:x:@.arguments/*/databaseType
+            .:mssql
+         get-value:x:@.arguments/*/batch
+      .lambda
+         set-name:x:@data.connect/*/data.select
+            .:mssql.execute-batch
+   else
+      add:x:@data.connect/*/data.select
+         .
+            database-type:x:@.arguments/*/databaseType
+
+
+   /*
+    * Executing SQL and returning results to caller.
+    */
    data.select:x:@.arguments/*/sql
-      database-type:x:@.arguments/*/databaseType
    return-nodes:x:-/*
