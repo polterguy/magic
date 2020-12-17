@@ -16,7 +16,7 @@
       placeholder="Database type">
       <mat-option
         *ngFor="let idx of databaseTypes"
-        [value]="idx">{{idx}}</mat-option>
+        [value]="idx.type">{{idx.name}}</mat-option>
     </mat-select>
 
   </mat-form-field>

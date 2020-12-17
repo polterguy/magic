@@ -42,9 +42,9 @@ export class SqlComponent extends BaseComponent implements OnInit {
   /**
    * Database types the user can select during configuration of system.
    */
-  public databaseTypes: string[] = [
-    'mysql',
-    'mssql',
+  public databaseTypes: any[] = [
+    {type: 'mysql', name: 'MySQL'},
+    {type: 'mssql', name: 'Microsoft SQL Server'},
   ];
 
   /**
