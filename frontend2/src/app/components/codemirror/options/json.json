@@ -1,5 +1,6 @@
 {
   "lineNumbers": true,
   "theme": "mbo",
-  "mode": "application/ld+json"
+  "mode": "application/ld+json",
+  "styleActiveLine": true
 }

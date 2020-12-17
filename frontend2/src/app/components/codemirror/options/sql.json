@@ -4,6 +4,7 @@
   "matchBrackets": true,
   "theme": "mbo",
   "autofocus": false,
+  "styleActiveLine": true,
   "extraKeys": {
     "Shift-Tab": "indentLess",
     "Tab": "indentMore",
