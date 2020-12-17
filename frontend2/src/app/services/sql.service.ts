@@ -37,12 +37,14 @@ export class SqlService {
    * @param database Database connection string (reference to appsettings.json)
    * @param sql SQL to evaluate
    * @param safeMode If true will only return the first 1.000 records
+   * @param batch If true will execute SQL as a batch operation, respecting 'go' keywords. Only relevant for MS SQL.
    */
   public execute(
     databaseType: string,
     database: string,
     sql: string,
-    safeMode: boolean) {
+    safeMode: boolean,
+    batch: boolean) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<any[]>('/magic/modules/system/sql/evaluate', {
@@ -50,6 +52,7 @@ export class SqlService {
       database,
       sql,
       safeMode,
+      batch
     });
   }
 
