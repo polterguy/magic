@@ -51,6 +51,10 @@
   </mat-form-field>
 
   <mat-checkbox
+    matTooltip="Whether or not you should only return the first 200 records or not"
+    [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+
+  <mat-checkbox
     [disabled]="input.databaseType !== 'mssql'"
     matTooltip="Executes SQL as a batch operation, respecting 'go' keywords. Only relevant for 'mssql' database type"
     [(ngModel)]="isBatch">Batch</mat-checkbox>
@@ -58,6 +62,7 @@
   <button
     id="loadButton"
     mat-button
+    matTooltip="Load a persisted SQL snippet from backend's snippet collection. Keyboard shortcut ALT+L"
     (click)="load()">
     Load
   </button>
@@ -66,6 +71,7 @@
     id="saveButton"
     [disabled]="!input.sql"
     mat-button
+    matTooltip="Save SQL snippet to backend's snippet collection. Keyboard shortcut ALT+S"
     (click)="save()">
     Save
   </button>
@@ -74,6 +80,7 @@
     id="executeButton"
     [disabled]="!input || input.sql === '' || !input.database"
     mat-button
+    matTooltip="Execute SQL. Keyboard shortcut F5"
     (click)="execute()">
     Execute
   </button>
