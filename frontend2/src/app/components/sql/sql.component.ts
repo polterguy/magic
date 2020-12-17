@@ -184,14 +184,16 @@ export class SqlComponent extends BaseComponent implements OnInit {
         // Storing database declaration such that user can change active database without having to roundtrip to server.
         this.databaseDeclaration = databases;
 
-        // Resetting other information
-        this.input.database = null;
-        this.input.options.hintOptions.tables = [];
+        // Resetting other information, selecting first database by default.
+        this.input.database = this.databases[0];
+        this.databaseChanged();
   
       } else {
 
         // No databases in active connection string.
         this.databases = [];
+        this.input.database = null;
+        this.input.options.hintOptions.tables = [];
       }
     });
   }
