@@ -69,6 +69,7 @@ data.connect:x:@.arguments/*/database
     * Executing SQL and returning results to caller.
     */
    data.select:x:@.arguments/*/sql
+      multiple-result-sets:true
 
 
    /*
