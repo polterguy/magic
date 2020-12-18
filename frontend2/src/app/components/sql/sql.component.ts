@@ -77,7 +77,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
   /**
    * Result of invocation towards backend.
    */
-  public result: any[] = null;
+  public result: any[][] = [];
 
   /**
    * Creates an instance of your component.
@@ -311,7 +311,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
       '[' + this.input.connectionString + '|' + this.input.database + ']',
       selectedText == '' ? this.input.sql : selectedText,
       this.safeMode,
-      this.isBatch).subscribe((result: any[]) => {
+      this.isBatch).subscribe((result: any[][]) => {
 
       // Success!
       if (result && result.length === 200) {
@@ -322,18 +322,20 @@ export class SqlComponent extends BaseComponent implements OnInit {
 
       // Making sure we remove all previously viewed detail records.
       this.displayDetails = [];
-      this.result = result;
+      this.result = result || [];
     }, (error: any) => this.showError(error));
   }
 
   /**
-   * Returns row declarations.
+   * Returns row declaration
+   * 
+   * @param currentResultSet Currently iterated list of rows
    */
-  public getRows() {
+  public getRows(currentResultSet: any[]) {
 
     // Braiding result with displayed details, such that HTML can create correct rows.
     const result = [];
-    for (const idx of this.result) {
+    for (const idx of currentResultSet) {
 
       // Pushing the plain result record.
       result.push(idx);
@@ -343,7 +345,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
 
         // Adding our view details record.
         let colSpan = 0;
-        for (const idx in this.result[0]) {
+        for (const idx in currentResultSet[0]) {
           colSpan += 1;
         }
         result.push({

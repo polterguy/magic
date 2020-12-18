@@ -87,13 +87,13 @@
 
 </div>
 
-<mat-card *ngIf="result && result.length > 0">
+<mat-card class="result-card" *ngFor="let idx of result">
 
   <table class="fill-width result clickable">
 
     <thead>
       <tr>
-        <th *ngFor="let idxCell of result[0] | dynamic: 5">
+        <th *ngFor="let idxCell of idx[0] | dynamic: 5">
           {{idxCell.key}}
         </th>
       </tr>
@@ -101,7 +101,7 @@
 
     <tbody>
       <tr
-        *ngFor="let idxRow of getRows()"
+        *ngFor="let idxRow of getRows(idx)"
         [class]="viewingDetails(idxRow) ? 'selected' : (idxRow._detailsColSpan > 0 ? 'details' : 'data-row')"
         (click)="toggleDetails(idxRow)">
 
