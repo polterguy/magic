@@ -26,7 +26,7 @@
 
 <button
   mat-button
-  [disabled]="!seed || seed === '' || strength === -1"
+  [disabled]="seed === ''"
   (click)="next()"
   class="next">
   Next

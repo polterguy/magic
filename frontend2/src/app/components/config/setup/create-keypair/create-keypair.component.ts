@@ -31,7 +31,7 @@ export class CreateKeypairComponent extends BaseComponent implements OnInit {
   /**
    * Strength of key pair to generate.
    */
-  public strength = -1;
+  public strength = '4096';
 
   /**
    * Creates an instance of your component.
@@ -65,7 +65,7 @@ export class CreateKeypairComponent extends BaseComponent implements OnInit {
   public next() {
 
     // Invoking backend to generate a key pair.
-    this.configService.generateKeyPair(this.strength, this.seed).subscribe(() => {
+    this.configService.generateKeyPair(+this.strength, this.seed).subscribe(() => {
 
       // Success, giving feedback to user.
       this.showInfo('Cryptography key pair successfully created');
