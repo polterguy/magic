@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
@@ -24,9 +24,21 @@ import { MessageService } from 'src/app/services/message.service';
 export class FilesComponent extends BaseComponent implements OnInit {
 
   /**
+   * Displayed columns in data table.
+   */
+  public displayedColumns: string[] = [
+    'path'
+  ];
+
+  /**
    * Current folder we're viewing contens of.
    */
   public currentFolder = '/';
+
+  /**
+   * Folders and files inside currently viewed folder.
+   */
+  public items: string[] = null;
 
   /**
    * Creates an instance of your component.
@@ -50,18 +62,32 @@ export class FilesComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * Returns filename or folder name of specified path.
+   * 
+   * @param path Path to return object name for
+   */
+  public getObjectName(path: string) {
+    const elements = path.split('/').filter(x => x !== '');
+    return elements[elements.length - 1];
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  /*
    * Retrieves the content of the currently viewed folder, and databinds UI.
    */
-  public getFolderContent() {
+  private getFolderContent() {
 
     // Retrieving files and folders from backend.
-    const filesObservable = this.fileService.listFiles(this.currentFolder);
     const foldersObservable = this.fileService.listFolders(this.currentFolder);
-    forkJoin([filesObservable, foldersObservable]).subscribe((res: string[][]) => {
+    const filesObservable = this.fileService.listFiles(this.currentFolder);
+    forkJoin([foldersObservable, filesObservable]).subscribe((res: string[][]) => {
 
-      const files = res[0];
-      const folders = res[1];
-      console.log(res);
+      // Assigning return values of above observers to related fields.
+      this.items = (res[0] || []).concat(res[1] || []);
+
     }, (error: any) => this.showError(error));
   }
 }

@@ -298,7 +298,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
     });
 
     // Waiting for all requests to finish.
-    forkJoin(requests).subscribe((affected: Affected[]) => {
+    forkJoin(requests).subscribe(() => {
 
       // Success, updating list of roles for all affected users.
       // No need to invoke backend here.
