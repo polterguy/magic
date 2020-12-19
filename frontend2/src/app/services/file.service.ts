@@ -39,6 +39,19 @@ export class FileService {
   }
 
   /**
+   * Returns a list of all folders existing within the specified folder.
+   * 
+   * @param folder Folder from where to retrieve list of folders from
+   */
+  public listFolders(folder: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<string[]>(
+      '/magic/modules/system/file-system/list-folders?folder=' +
+      encodeURIComponent(folder));
+  }
+
+  /**
    * Loads the specified file from backend.
    * 
    * @param filename Filename and full path of file to load.

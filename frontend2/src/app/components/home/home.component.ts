@@ -2,7 +2,11 @@
 /*
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
+
+// Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+
+// Application specific imports.
 import { AuthService } from 'src/app/services/auth.service';
 
 /**
