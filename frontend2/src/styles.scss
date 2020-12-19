@@ -132,6 +132,16 @@ mat-card.mat-card {
   padding: 3rem;
 }
 
+mat-horizontal-stepper.mat-stepper-horizontal,
+mat-horizontal-stepper.mat-stepper-vertical {
+  background-color: rgb(45,45,45);
+  mat-step-header {
+    .mat-step-text-label {
+      color: rgb(245, 245, 245);
+    }
+  }
+}
+
 input.mat-input-element {
   color:#eee;
 }

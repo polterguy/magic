@@ -4,23 +4,15 @@ h1 {
   text-align: center;
 }
 
-.setup-component {
-  display: block;
-  margin-top: 2rem;
-}
-
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
+mat-horizontal-stepper {
+  position: relative;
+  min-height: 500px;
+  app-setup-configuration {
+    display: block;
+    margin: 2rem 3rem 0 3rem;
   }
 }
 
-.setup-component.animate-out {
-  animation-name: fade-out;
-  animation-duration: .5s;
-  animation-timing-function: ease-out;
-  animation-fill-mode: forwards;
+::ng-deep .mat-horizontal-stepper-header{
+  pointer-events: none !important;
 }

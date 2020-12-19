@@ -8,30 +8,31 @@ import { forkJoin } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import data from './data/data.json';
 import { Crudify } from 'src/app/models/crudify.model';
 import { Messages } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { LocResult } from 'src/app/models/loc-result.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { CrudifyService } from 'src/app/services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
-import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
+import { CrudifyService } from 'src/app/services/crudify.service';
 
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'
+
+// Default configuration for crudifying database.
+import data from './data/data.json';
 
 /**
  * Component that helps you crudify your magic database
  * during the setup process of Magic.
  */
 @Component({
-  selector: 'app-setup-database',
-  templateUrl: './setup-database.component.html',
-  styleUrls: ['./setup-database.component.scss']
+  selector: 'app-crudify-database',
+  templateUrl: './crudify-database.component.html',
+  styleUrls: ['./crudify-database.component.scss']
 })
-export class SetupDatabaseComponent extends BaseComponent implements OnInit {
+export class CrudifyDatabaseComponent extends BaseComponent implements OnInit {
 
   /**
    * CodeMirror options object, taken from common settings.
@@ -52,22 +53,15 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
   public crudifyContent: string = null;
 
   /**
-   * Number of HTTP endpoints that will be generated as user clicks setup button.
-   */
-  public count: number;
-
-  /**
    * Creates an instance of your component.
    * 
    * @param configService Configuration service used to read and write configuration settings, etc
-   * @param crudifyService Crudify service to use for crudifying the magic database
-   * @param loaderInterceptor Used to explicitly turn on and off the spinner animation
+   * @param crudifyService Needed to crudify Magic database.
    * @param messageService Message service used to publish messages informing parent component about change of state
    */
   public constructor(
     private configService: ConfigService,
     private crudifyService: CrudifyService,
-    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
       super(messageService);
     }
@@ -90,22 +84,14 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
 
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
       this.crudifyContent = JSON.stringify(data, null, 2);
-      this.count = data.length;
 
-      // Making sure we hide loader service that was explicitly shown in previous step.
-      this.loaderInterceptor.decrement();
-    }, (error: any) => {
-
-      // Oops ...!!
-      this.showError(error);
-      this.loaderInterceptor.decrement();
-    });
+    }, (error: any) => this.showError(error));
   }
 
   /**
-   * Crudifies your magic database.
+   * Invoked when user clicks the next button.
    */
-  public setup() {
+  public next() {
 
     // Parsing JSON to use as input for HTTP invocation to backend.
     const endpoints = <Crudify[]>JSON.parse(this.crudifyContent);
@@ -114,7 +100,6 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
     const forks = endpoints.map(x => this.crudifyService.crudify(x));
 
     // Awaiting all observables.
-    this.loaderInterceptor.increment();
     forkJoin(forks).subscribe((res: LocResult[]) => {
 
       // Finished, showing some information to user.
@@ -123,9 +108,9 @@ export class SetupDatabaseComponent extends BaseComponent implements OnInit {
 
       // Publishing message to inform parent component that we're done here.
       this.messageService.sendMessage({
-        name: Messages.SETUP_STATE_CHANGED,
-        content: 'database'
+        name: Messages.SETUP_STATE_CHANGED
       });
+
     }, (error: any) => this.showError(error));
   }
 }

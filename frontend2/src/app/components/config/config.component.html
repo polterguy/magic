@@ -1,7 +1,7 @@
 
 <app-setup
   *ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.config_done)"
-  [status]="status">
+  [(status)]="status">
 </app-setup>
 
 <div *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done && config">
@@ -12,13 +12,11 @@
   </ngx-codemirror>
 
   <div class="button-strip">
-
     <button
       mat-button
       (click)="save()">
       Save
     </button>
-
   </div>
 
 </div>
