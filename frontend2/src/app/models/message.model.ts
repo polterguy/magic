@@ -66,12 +66,7 @@ export class Messages {
   static readonly SHOW_ERROR = 'app.error';
 
   /**
-   * Message will be published by the system when an error occurs.
+   * Message will be puvlished when the setup state of your system changes.
    */
-  static readonly SETUP_STATE_CHANGED = 'app.setup.state-changed';
-
-  /**
-   * Message will be published by the system when the active database changed.
-   */
-  static readonly SQL_DATABASE_CHANGED = 'app.sql.database-changed';
+  static readonly SETUP_STATE_CHANGED = 'app.setup.status-changed';
 }

@@ -19,14 +19,16 @@ import { AuthenticateResponse } from 'src/app/models/authenticate-response.model
  * backend initially.
  */
 @Component({
-  selector: 'app-setup-configuration',
-  templateUrl: './setup-configuration.component.html',
-  styleUrls: ['./setup-configuration.component.scss']
+  selector: 'app-setup-auth',
+  templateUrl: './setup-auth.component.html',
+  styleUrls: ['./setup-auth.component.scss']
 })
-export class SetupConfigurationComponent extends BaseComponent implements OnInit {
+export class SetupAuthComponent extends BaseComponent implements OnInit {
 
-  // Configuration of Magic backend.
-  private config: any = null;
+  /**
+   * Configuration as returned from backend.
+   */
+  public config: any = null;
 
   /**
    * Database types the user can select during configuration of system.
@@ -44,12 +46,12 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   /**
    * Root user's password.
    */
-  public password: string = null;
+  public password = '';
 
   /**
    * Repeat value of root user's password.
    */
-  public passwordRepeat: string = null;
+  public passwordRepeat = '';
 
   /**
    * Creates an instance of your component.
@@ -67,29 +69,47 @@ export class SetupConfigurationComponent extends BaseComponent implements OnInit
   /**
    * Implementation of OnInit.
    */
-  ngOnInit() {
+  public ngOnInit() {
+
+    // Retrieving backend's configuration.
     this.configService.loadConfig().subscribe(res => {
+
+      // Assigning config field to result of invocation.
       this.config = res;
+
+      // Creating some random gibberish to use as default JWT secret.
       this.configService.getGibberish(50, 100).subscribe((res: Response) => {
+
+        // Applying gibberish to relevant configuration section.
         this.config.magic.auth.secret = res.result;
       });
     }, (error: any) => this.showError(error));
   }
 
   /**
-   * Saves configuration, default database type, and root password.
+   * Invoked when user clicks the next button.
    */
-  public save() {
+  public next() {
+
+    // Sanity checking connection string.
+    if (this.config.magic.databases[this.selectedDatabaseType].generic.indexOf('{database}') === -1) {
+
+      // Not good!
+      this.showError('Connection string is not valid, it needs the {database} section');
+      return;
+    }
 
     // Invoking backend to save configuration as specified by user.
     this.configService.setup(
       this.selectedDatabaseType,
       this.password,
-      this.config).subscribe((res: AuthenticateResponse) => {
+      this.config).subscribe(() => {
+
+      // Signaling to other components we've updated setup state.
       this.messageService.sendMessage({
-        name: Messages.SETUP_STATE_CHANGED,
-        content: 'config'
+        name: Messages.SETUP_STATE_CHANGED
       });
+
     }, (error: any) => this.showError(error));
   }
 }

@@ -19,7 +19,7 @@
   <mat-label>Connection string</mat-label>
   <input
     matInput
-    [ngModel]="config.magic.databases[selectedDatabaseType].generic">
+    [(ngModel)]="config.magic.databases[selectedDatabaseType].generic">
 
 </mat-form-field>
 
@@ -50,7 +50,9 @@
 </mat-form-field>
 
 <button
-  *ngIf="selectedDatabaseType"
   mat-button
-  [disabled]="password === null || password === '' || password !== passwordRepeat"
-  (click)="save()">Save</button>
+  [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
+  (click)="next()"
+  class="next">
+  Next
+</button>

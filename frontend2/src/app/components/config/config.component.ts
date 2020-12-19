@@ -80,9 +80,13 @@ export class ConfigComponent extends BaseComponent implements OnInit {
    */
   public save() {
 
-    // Converting configuration to JSON and invoking backend.
+    // Converting configuration to JSON.
     const config = JSON.parse(this.config);
+
+    // Saving config by invoking backend.
     this.configService.saveConfig(config).subscribe((res: Response) => {
+
+      // Sanity checking result of invocation.
       if (res.result === 'success') {
         this.showInfo('Configuration was successfully saved');
       } else {

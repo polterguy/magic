@@ -1,0 +1,19 @@
+
+.centralized {
+  text-align: center;
+  .form-field {
+    width: 25rem;
+    margin-right: 1rem;
+  }
+  .form-field.small {
+    width: 15rem;
+  }
+}
+
+button.next {
+  display: block;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  min-width: 8rem;
+}

@@ -1,23 +1,24 @@
 
-<h1>Setup Magic {{process}}</h1>
+<h1>Setup Magic</h1>
 
-<mat-progress-bar
-  mode="determinate"
-  matTooltip="Remaining setup tasks"
-  [value]="getSetupProgress()">
-</mat-progress-bar>
+<mat-horizontal-stepper
+  #stepper
+  *ngIf="status"
+  [selectedIndex]="getStepperSelectedIndex()">
 
-<app-setup-configuration
-  [class]="configurationCssClass"
-  *ngIf="!status.config_done">
-</app-setup-configuration>
+  <mat-step>
+    <ng-template matStepLabel>Setup authentication</ng-template>
+    <app-setup-auth></app-setup-auth>
+  </mat-step>
 
-<app-setup-database
-  [class]="databaseCssClass"
-  *ngIf="status.config_done && !status.magic_crudified">
-</app-setup-database>
+  <mat-step>
+    <ng-template matStepLabel>Crudify database</ng-template>
+    <app-crudify-database></app-crudify-database>
+  </mat-step>
 
-<app-setup-crypto
-  [class]="cryptoCssClass"
-  *ngIf="status.config_done && status.magic_crudified && !status.server_keypair">
-</app-setup-crypto>
+  <mat-step>
+    <ng-template matStepLabel>Create key pair</ng-template>
+    <app-create-keypair></app-create-keypair>
+  </mat-step>
+
+</mat-horizontal-stepper>

@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -67,11 +68,11 @@ import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
-import { SetupCryptoComponent } from './components/config/setup/setup-crypto/setup-crypto.component';
+import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
-import { SetupDatabaseComponent } from './components/config/setup/setup-database/setup-database.component';
+import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
+import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
-import { SetupConfigurationComponent } from './components/config/setup/setup-configuration/setup-configuration.component';
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
@@ -112,9 +113,9 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     NavbarComponent,
     ToolbarComponent,
     SetupComponent,
-    SetupConfigurationComponent,
-    SetupDatabaseComponent,
-    SetupCryptoComponent,
+    SetupAuthComponent,
+    CrudifyDatabaseComponent,
+    CreateKeypairComponent,
     CodemirrorSqlComponent,
     HyperlambdaComponent,
     UsersComponent,
@@ -140,6 +141,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     MatToolbarModule,
     MatTooltipModule,
     MatDialogModule,
+    MatStepperModule,
     MatFormFieldModule,
     MatProgressBarModule,
     MatInputModule,

@@ -12,17 +12,16 @@ import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { MessageService } from 'src/app/services/message.service';
-import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Component allowing user to setup a cryptography key pair.
  */
 @Component({
-  selector: 'app-setup-crypto',
-  templateUrl: './setup-crypto.component.html',
-  styleUrls: ['./setup-crypto.component.scss']
+  selector: 'app-create-keypair',
+  templateUrl: './create-keypair.component.html',
+  styleUrls: ['./create-keypair.component.scss']
 })
-export class SetupCryptoComponent extends BaseComponent implements OnInit {
+export class CreateKeypairComponent extends BaseComponent implements OnInit {
 
   /**
    * CSRNG seed used when generating cryptography key.
@@ -38,12 +37,10 @@ export class SetupCryptoComponent extends BaseComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param configService Configuration service used to generate server key pair
-   * @param loaderInterceptor Used to explicitly turn on and off load spinner animation
    * @param messageService Message service used to publish messages to other components.
    */
   public constructor(
     private configService: ConfigService,
-    private loaderInterceptor: LoaderInterceptor,
     protected messageService: MessageService) {
     super(messageService);
   }
@@ -51,24 +48,29 @@ export class SetupCryptoComponent extends BaseComponent implements OnInit {
   /**
    * OnInit implementation.
    */
-  ngOnInit() {
+  public ngOnInit() {
 
     // Getting some initial random gibberish to use as seed when generating key pair.
     this.configService.getGibberish(40, 50).subscribe((res: Response) => {
+
+      // Applying seed.
       this.seed = res.result;
-      this.loaderInterceptor.decrement();
-    }, (error: any) => {
-      this.showError(error);
-      this.loaderInterceptor.decrement();
-    });
+
+    }, (error: any) => this.showError(error));
   }
 
   /**
-   * Generates a cryptography server key pair.
+   * Invoked when user clicks the next button.
    */
-  public generate() {
+  public next() {
+
+    // Invoking backend to generate a key pair.
     this.configService.generateKeyPair(this.strength, this.seed).subscribe(() => {
+
+      // Success, giving feedback to user.
       this.showInfo('Cryptography key pair successfully created');
+
+      // Publishing message informing other components that setup state was changed.
       this.messageService.sendMessage({
         name: Messages.SETUP_STATE_CHANGED,
         content: 'crypto'
