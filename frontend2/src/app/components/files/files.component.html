@@ -1,1 +1,21 @@
-<p>files works!</p>
+
+<mat-card *ngIf="items">
+
+  <table
+    mat-table
+    [dataSource]="items"
+    class="clickable">
+
+    <ng-container matColumnDef="path">
+      <td
+        mat-cell
+        *matCellDef="let el">{{getObjectName(el)}}</td>
+    </ng-container>
+
+    <tr
+      mat-row
+      *matRowDef="let el; columns: displayedColumns;"></tr>
+
+  </table>
+
+</mat-card>
