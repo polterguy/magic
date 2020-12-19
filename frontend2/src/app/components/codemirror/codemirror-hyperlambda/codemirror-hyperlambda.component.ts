@@ -5,9 +5,11 @@
 
 // Angular and system imports.
 import {
+  AfterViewInit,
   Component,
   Input,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 
 // Application specific imports.
@@ -29,6 +31,11 @@ export class Model {
    * Options for editor.
    */
   options: any;
+
+  /**
+   * Actual CodeMirror instance, useful for determining selected text, etc.
+   */
+  editor?: any;
 }
 
 /**
@@ -39,7 +46,10 @@ export class Model {
   templateUrl: './codemirror-hyperlambda.component.html',
   styleUrls: ['./codemirror-hyperlambda.component.scss']
 })
-export class HyperlambdaComponent extends BaseComponent implements OnInit {
+export class HyperlambdaComponent extends BaseComponent implements OnInit, AfterViewInit {
+
+  // Actual CodeMirror instance, needed to retrieve selected text.
+  @ViewChild('codeeditor') private _editor: { codeMirror: any; };
 
   /**
    * Model for component containing Hyperlambda that is displayed.
@@ -68,5 +78,12 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit {
         window['_vocabulary'] = vocabulary;
       }, error => this.showError(error));
     }
+  }
+
+  /**
+   * Implementation of AfterViewInit
+   */
+  public ngAfterViewInit() {
+    this.model.editor = this._editor.codeMirror;
   }
 }

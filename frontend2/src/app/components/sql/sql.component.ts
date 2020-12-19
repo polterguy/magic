@@ -297,12 +297,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
    */
   public execute() {
 
-    /*
-     * Retrieving selected text from CodeMirror instance, if any.
-     * This is done since by default we execute all SQL. However, if
-     * user has selected a part of the editor's conten, we only execute
-     * the selection.
-     */
+    // Retrieving selected text from CodeMirror instance.
     const selectedText = this.input.editor.getSelection();
 
     // Invoking backend.

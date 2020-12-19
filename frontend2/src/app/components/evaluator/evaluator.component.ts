@@ -152,8 +152,11 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    */
   public execute() {
 
+    // Retrieving selected text from CodeMirror instance.
+    const selectedText = this.input.editor.getSelection();
+
     // Invoking backend service responsible for executing Hyperlambda.
-    this.evaluatorService.execute(this.input.hyperlambda).subscribe((res: Response) => {
+    this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe((res: Response) => {
 
       // Success, updating result editor.
       this.output.hyperlambda = res.result;
