@@ -81,7 +81,7 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
       (document.getElementById('loadButton') as HTMLElement).click();
     };
 
-    // Associating ALT+L with load snippet button.
+    // Associating ALT+S with save snippet button.
     this.input.options.extraKeys['Alt-S'] = (cm: any) => {
       (document.getElementById('saveButton') as HTMLElement).click();
     };

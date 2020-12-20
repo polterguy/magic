@@ -1,0 +1,15 @@
+
+<ngx-codemirror
+  *ngIf="content"
+  [(ngModel)]="content"
+  [options]="options">
+</ngx-codemirror>
+
+<div class="button-strip">
+
+  <button
+    mat-button
+    class="save-button"
+    (click)="save()">Save</button>
+
+</div>

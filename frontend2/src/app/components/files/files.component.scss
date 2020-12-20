@@ -18,5 +18,10 @@ table.files {
       padding-bottom: 9px;
       width: 5px;
     }
+    td {
+      .file-details {
+        margin: 1rem .25rem .5rem .25rem;
+      }
+    }
   }
 }
