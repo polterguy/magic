@@ -1,0 +1,22 @@
+
+.current-folder {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.up-level {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+}
+
+table.files {
+  tr {
+    td:nth-child(1) {
+      padding-top: 14px;
+      padding-bottom: 9px;
+      width: 5px;
+    }
+  }
+}

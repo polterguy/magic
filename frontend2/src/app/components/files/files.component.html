@@ -1,19 +1,36 @@
 
 <mat-card *ngIf="items">
 
+  <div class="current-folder">{{currentFolder}}</div>
+
+  <div class="up-level">
+    <button
+      mat-icon-button
+      [disabled]="currentFolder === '/'"
+      (click)="up()">
+      <mat-icon>reply</mat-icon>
+    </button>
+  </div>
+
   <table
     mat-table
     [dataSource]="items"
-    class="clickable">
+    class="files clickable">
+
+    <ng-container matColumnDef="icon">
+      <td mat-cell *matCellDef="let el">
+        <mat-icon *ngIf="!isFolder(el)">insert_drive_file</mat-icon>
+        <mat-icon *ngIf="isFolder(el)">folder</mat-icon>
+      </td>
+    </ng-container>
 
     <ng-container matColumnDef="path">
-      <td
-        mat-cell
-        *matCellDef="let el">{{getObjectName(el)}}</td>
+      <td mat-cell *matCellDef="let el">{{getItemName(el)}}</td>
     </ng-container>
 
     <tr
       mat-row
+      (click)="itemClicked(el)"
       *matRowDef="let el; columns: displayedColumns;"></tr>
 
   </table>
