@@ -17,3 +17,10 @@ auth.ticket.verify:root
  * Deletes the specified file.
  */
 io.file.delete:x:@.arguments/*/file
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

@@ -29,6 +29,16 @@
       <td mat-cell *matCellDef="let el">{{getItemName(el)}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="delete">
+      <td mat-cell *matCellDef="let el">
+        <button
+          mat-icon-button
+          (click)="delete($event, el)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="edit-file">
       <td
         mat-cell
