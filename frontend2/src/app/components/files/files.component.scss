@@ -23,6 +23,11 @@ table.files {
         margin: 1rem .25rem .5rem .25rem;
       }
     }
+    td:nth-child(3) {
+      padding-top: 14px;
+      padding-bottom: 9px;
+      width: 5px;
+    }
   }
 }
 

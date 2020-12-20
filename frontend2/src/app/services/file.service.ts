@@ -92,6 +92,19 @@ export class FileService {
   }
 
   /**
+   * Deletes an existing file on the server.
+   * 
+   * @param file Path of file to delete
+   */
+  public deleteFile(folder: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/file-system/file?file=' +
+      encodeURIComponent(folder));
+  }
+
+  /**
    * Creates a new folder on the server.
    * 
    * @param folder Path for new folder
@@ -103,5 +116,18 @@ export class FileService {
       '/magic/modules/system/file-system/folder', {
         folder
     });
+  }
+
+  /**
+   * Deletes an existing folder on the server.
+   * 
+   * @param folder Path of folder to delete
+   */
+  public deleteFolder(folder: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/file-system/folder?folder=' +
+      encodeURIComponent(folder));
   }
 }
