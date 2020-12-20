@@ -216,7 +216,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
 
           // Checking if modal dialog wants to delete the role.
-          if (result.confirmed) {
+          if (result && result.confirmed) {
 
             // Role deletion was confirmed.
             this.roleService.delete(role.name).subscribe((affected: Affected) => {
