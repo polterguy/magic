@@ -151,6 +151,23 @@ export class FileService {
   }
 
   /**
+   * Uploads a file to your backend.
+   * 
+   * @param path Folder to upload file to
+   * @param file File you want to upload
+   */
+  public uploadFile(path: string, file: any) {
+
+    // Invoking backend with a form data object containing file.
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.httpService.put<any>(
+      '/api/files?folder=' + encodeURI(path),
+      formData
+    );
+  }
+
+  /**
    * Creates a new folder on the server.
    * 
    * @param folder Path for new folder

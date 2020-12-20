@@ -105,7 +105,7 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
 
       // Giving user some feedback.
       this.showInfoShort('File was saved');
-    });
+    }, (error: any) => this.showError(error));
   }
 
   /*

@@ -22,6 +22,9 @@ table.files {
       .file-details {
         margin: 1rem .25rem .5rem .25rem;
       }
+      .folder-icon {
+        color:rgb(189, 115, 18);
+      }
     }
     td:nth-child(3) {
       padding-top: 5px;
@@ -39,4 +42,24 @@ table.files {
 .button-strip {
   margin-top: 2rem;
   margin-bottom: -2rem !important;
+  position: relative;
+}
+
+.file-button {
+  position:absolute;
+  margin-left: -100px;
+}
+
+.invisible-file-element {
+  margin-left: -100px;
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  font-size: 0;
+  width: 80px;
+  height: 35px;
+}
+
+.invisible-file-element:hover {
+  cursor: pointer;
 }
