@@ -17,3 +17,6 @@ auth.ticket.verify:root
  * Creates the specified folder.
  */
 io.folder.create:x:@.arguments/*/folder
+
+return
+   result:success

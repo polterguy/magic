@@ -84,6 +84,7 @@ import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
+import { NewFileObjectComponent } from './components/files/new-file-object/new-file-object.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -125,6 +126,7 @@ import { FileEditorComponent } from './components/files/file-editor/file-editor.
     ConfirmDialogComponent,
     NewRoleDialogComponent,
     FileEditorComponent,
+    NewFileObjectComponent,
   ],
   imports: [
     FormsModule,
