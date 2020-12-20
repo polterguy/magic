@@ -89,7 +89,15 @@ export class FilesComponent implements OnInit {
   }
 
   downloadFile(path: string) {
-    this.fileService.downloadFile(path);
+    this.fileService.downloadFile(path).subscribe(res => {
+
+      // Retrieving the filename, as provided by the server.
+      const disp = res.headers.get('Content-Disposition');
+      let filename = disp.substr(disp.indexOf('=') + 1);
+      filename = filename.substr(0, filename.indexOf(';'));
+      const file = new Blob([res.body], { type: 'application/zip' });
+      saveAs(file, filename);
+    });
   }
 
   deletePath(el: any) {

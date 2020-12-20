@@ -29,10 +29,22 @@
       <td mat-cell *matCellDef="let el">{{getItemName(el)}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="download">
+      <td mat-cell *matCellDef="let el">
+        <button
+          mat-icon-button
+          matTooltip="Download file or folder"
+          (click)="download($event, el)">
+          <mat-icon>cloud_download</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="delete">
       <td mat-cell *matCellDef="let el">
         <button
           mat-icon-button
+          matTooltip="Delete file or folder"
           (click)="delete($event, el)">
           <mat-icon>delete</mat-icon>
         </button>
