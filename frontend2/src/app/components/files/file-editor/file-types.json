@@ -1,0 +1,42 @@
+[
+  {
+    "extensions": ["sql"],
+    "options": {
+      "mode": "text/x-mysql",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["md", "txt"],
+    "options": {
+      "mode": "markdown",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["hl"],
+    "options": {
+      "mode": "hyperlambda",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "tabSize": 3,
+      "indentUnit": 3,
+      "indentAuto": true,
+      "extraKeys": {
+        "Shift-Tab": "indentLess",
+        "Tab": "indentMore",
+        "Ctrl-Space": "autocomplete"
+      }
+    }
+  }
+]

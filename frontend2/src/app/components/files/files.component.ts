@@ -42,6 +42,11 @@ export class FilesComponent extends BaseComponent implements OnInit {
   public items: string[] = null;
 
   /**
+   * Files that are currently being edited.
+   */
+  public editedFiles: string[] = [];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param fileService File service used to retrieve files and folders from backend
@@ -97,8 +102,17 @@ export class FilesComponent extends BaseComponent implements OnInit {
 
     } else {
 
-      // Open the specified file.
-      this.editItem(path);
+      // Checking if we're already displaying details for current item.
+      const idx = this.editedFiles.indexOf(path);
+      if (idx !== -1) {
+
+        // Hiding item.
+        this.editedFiles.splice(idx, 1);
+      } else {
+
+        // Displaying item.
+        this.editedFiles.push(path);
+      }
     }
   }
 
@@ -123,6 +137,15 @@ export class FilesComponent extends BaseComponent implements OnInit {
     this.getFolderContent();
   }
 
+  /**
+   * Returns true if specified file is currently being edited.
+   * 
+   * @param file File to check
+   */
+  public isEditing(file: string) {
+    return this.editedFiles.indexOf(file) !== -1;
+  }
+
   /*
    * Private helper methods
    */
@@ -140,13 +163,9 @@ export class FilesComponent extends BaseComponent implements OnInit {
       // Assigning return values of above observers to related fields.
       this.items = (res[0] || []).concat(res[1] || []);
 
-    }, (error: any) => this.showError(error));
-  }
+      // Making sure we reset edited files.
+      this.editedFiles = [];
 
-  /*
-   * Invoked when user wants to edit an item
-   */
-  private editItem(path: string) {
-    console.log(path);
+    }, (error: any) => this.showError(error));
   }
 }
