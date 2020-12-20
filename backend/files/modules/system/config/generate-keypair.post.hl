@@ -10,7 +10,7 @@ auth.ticket.verify:root
 
 
 /*
- * Checks to see if a key pair already exists.
+ * Checking to see if a key pair already exists.
  */
 log.info:Attempting to generate an RSA key pair for server
 if
@@ -18,7 +18,7 @@ if
    .lambda
 
       /*
-       * Creates a backup of the old key pair.
+       * Creating a backup of the old key pair.
        */
       .public-key
       set-value:x:@.public-key
