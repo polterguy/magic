@@ -283,7 +283,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
         this.fileService.saveFile(this.currentFolder + path.path, '/* Initial content, please change */').subscribe(() => {
 
           // Success, re-retrieving folder's content.
-          this.getFolderContent();
+          this.getFolderContent(this.currentFolder + path.path);
 
         }, (error: any) => this.showError(error));
       }
@@ -315,7 +315,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
   /*
    * Retrieves the content of the currently viewed folder, and databinds UI.
    */
-  private getFolderContent() {
+  private getFolderContent(initialFile: string = null) {
 
     // Retrieving files and folders from backend.
     const foldersObservable = this.fileService.listFolders(this.currentFolder);
@@ -326,7 +326,11 @@ export class FilesComponent extends BaseComponent implements OnInit {
       this.items = (res[0] || []).concat(res[1] || []);
 
       // Making sure we reset edited files.
-      this.editedFiles = [];
+      if (initialFile) {
+        this.editedFiles = [initialFile];
+      } else {
+        this.editedFiles = [];
+      }
 
     }, (error: any) => this.showError(error));
   }
