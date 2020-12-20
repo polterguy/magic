@@ -11,9 +11,108 @@
     }
   },
   {
-    "extensions": ["md", "txt"],
+    "extensions": ["md", "txt", "log"],
     "options": {
       "mode": "markdown",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["yml", "yaml"],
+    "options": {
+      "mode": "text/x-yaml",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["xml", "html"],
+    "options": {
+      "mode": "application/xml",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["css"],
+    "options": {
+      "mode": "text/css",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["scss"],
+    "options": {
+      "mode": "text/x-scss",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["less"],
+    "options": {
+      "mode": "text/x-less",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["sass"],
+    "options": {
+      "mode": "text/x-sass",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["js"],
+    "options": {
+      "mode": "text/javascript",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["json"],
+    "options": {
+      "mode": "application/ld+json",
+      "lineNumbers": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["sh"],
+    "options": {
+      "mode": "application/x-sh",
       "lineNumbers": true,
       "theme": "mbo",
       "autofocus": true,
