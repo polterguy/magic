@@ -32,6 +32,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
   public displayedColumns: string[] = [
     'icon',
     'path',
+    'download',
     'delete',
   ];
 
@@ -123,8 +124,33 @@ export class FilesComponent extends BaseComponent implements OnInit {
   }
 
   /**
+   * Downloads a file or a folder from your backend.
+   * 
+   * @param event Click event
+   * @param path File or folder to download
+   */
+  public download(event: any, path: string) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Checking if this is a file or a folder, and acting accordingly.
+    if (this.isFolder(path)) {
+
+      // Downloading folder.
+      this.fileService.downloadFolder(path);
+
+    } else {
+
+      // Downloading file.
+      this.fileService.downloadFile(path);
+    }
+  }
+
+  /**
    * Deletes a file or a folder in your backend.
    * 
+   * @param event Click event
    * @param path File or folder to delete
    */
   public delete(event: any, path: string) {

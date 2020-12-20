@@ -6,6 +6,9 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 
+// Utility component imports.
+import { saveAs } from "file-saver";
+
 // Application specific imports.
 import { HttpService } from './http.service';
 import { Response } from '../models/response.model';
@@ -102,6 +105,49 @@ export class FileService {
     return this.httpService.delete<Response>(
       '/magic/modules/system/file-system/file?file=' +
       encodeURIComponent(folder));
+  }
+
+  /**
+   * Downloads a file from backend.
+   * 
+   * @param path File to download
+   */
+  public downloadFile(path: string) {
+
+    // Invoking backend to download file and opening up save-as dialog.
+    this.httpService.download(
+      '/api/files?file=' +
+      encodeURI(path)).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.substr(disp.indexOf('=') + 1);
+        filename = filename.substr(0, filename.indexOf(';'));
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      });
+  }
+
+  /**
+   * Downloads a file from backend.
+   * 
+   * @param path File to download
+   */
+  public downloadFolder(path: string) {
+
+    // Invoking backend to download file and opening up save-as dialog.
+    this.httpService.download(
+      '/magic/modules/system/file-system/download-folder?folder=' +
+      encodeURI(path)).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.substr(disp.indexOf('=') + 1);
+        filename = filename.substr(1, filename.lastIndexOf('"') - 1);
+        console.log(filename);
+        const file = new Blob([res.body], { type: 'application/zip' });
+        saveAs(file, filename);
+      });
   }
 
   /**

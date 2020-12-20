@@ -56,6 +56,31 @@ export class HttpService {
   }
 
   /**
+   * Invokes the HTTP GET verb towards your specified URL
+   * in your currently selected backend, and returns the result.
+   * 
+   * @param url Backend URL to endpoint
+   * @param requestOptions Request options for invocation
+   */
+  public download(url: string) {
+
+    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
+    if (!this.backendService.connected) {
+
+      // Oops, not connected to any backends.
+      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
+
+    } else {
+
+      // Invoking backend's URL and resolving to the next subscriber.
+      return this.httpClient.get(this.backendService.current.url + url, {
+        observe: 'response',
+        responseType: 'arraybuffer',
+      });
+    }
+  }
+
+  /**
    * Invokes the HTTP POST verb towards your specified URL
    * in your currently selected backend, passing in the specified
    * payload, and returns the result.
