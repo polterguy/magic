@@ -136,7 +136,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '550px',
       data: {
-        text: `Are you sure you want to delete the '${path}' ${this.isFolder(path) ? 'folder' : 'file'}?`,
+        text: `Are you sure you want to delete the '${this.getItemName(path)}' ${this.isFolder(path) ? 'folder' : 'file'}?`,
         title: 'Please confirm delete operation'
       }
     });
@@ -145,7 +145,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
 
       // Checking if user confirmed that he wants to delete the file object.
-      if (result.confirmed) {
+      if (result && result.confirmed) {
 
         // Checking if this is a file or a folder, and acting accordingly.
         if (this.isFolder(path)) {
