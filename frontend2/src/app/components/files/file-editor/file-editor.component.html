@@ -5,7 +5,15 @@
   [options]="options">
 </ngx-codemirror>
 
-<div class="button-strip">
+<div
+  *ngIf="!content"
+  class="no-editor">
+  You don't have a registered editor for files of this type. Download the file and edit it locally if you want to edit it.
+</div>
+
+<div
+  *ngIf="content"
+  class="button-strip">
 
   <button
     mat-button

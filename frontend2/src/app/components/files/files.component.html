@@ -21,7 +21,7 @@
     <ng-container matColumnDef="icon">
       <td mat-cell *matCellDef="let el">
         <mat-icon *ngIf="!isFolder(el)">insert_drive_file</mat-icon>
-        <mat-icon *ngIf="isFolder(el)">folder</mat-icon>
+        <mat-icon class="folder-icon" *ngIf="isFolder(el)">folder</mat-icon>
       </td>
     </ng-container>
 
@@ -55,7 +55,7 @@
       <td
         mat-cell
         *matCellDef="let el"
-        colspan="2">
+        colspan="4">
 
         <div *ngIf="isEditing(el)" class="file-details">
           <app-file-editor [file]="el"></app-file-editor>
@@ -81,11 +81,21 @@
 
     <button
       mat-button
-      (click)="newFolder()">New folder ...</button>
+      class="file-button">Upload ...</button>
+    <input
+      type="file"
+      id="file"
+      multiple
+      class="invisible-file-element"
+      (change)="upload($event.target.files)">
 
     <button
       mat-button
       (click)="newFile()">New file ...</button>
+
+    <button
+      mat-button
+      (click)="newFolder()">New folder ...</button>
   
   </div>
   

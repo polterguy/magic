@@ -290,6 +290,24 @@ export class FilesComponent extends BaseComponent implements OnInit {
     });
   }
 
+  /**
+   * Uploads one or more files to the currently active folder.
+   */
+  public upload(files: FileList) {
+
+    // Iterating through each file and uploading one file at the time.
+    for (let idx = 0; idx < files.length; idx++) {
+
+      // Invoking service method responsible for actually uploading file.
+      this.fileService.uploadFile(this.currentFolder, files.item(idx)).subscribe(res => {
+
+        // Showing some feedback to user, and re-databinding folder's content.
+        this.showInfo('File was successfully uploaded');
+        this.getFolderContent();
+      });
+    }
+  }
+
   /*
    * Private helper methods
    */
