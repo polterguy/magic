@@ -101,7 +101,7 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
   public save() {
 
     // Saving file by invoking backend.
-    this.fileService.saveFile(this.file, this.content).subscribe((res: any) => {
+    this.fileService.saveFile(this.file, this.content).subscribe(() => {
 
       // Giving user some feedback.
       this.showInfoShort('File was saved');

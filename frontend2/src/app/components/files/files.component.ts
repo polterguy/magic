@@ -6,11 +6,14 @@
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
+import { Response } from 'src/app/models/response.model';
 import { FileService } from 'src/app/services/file.service';
 import { MessageService } from 'src/app/services/message.service';
+import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-object.component';
 
 /**
  * Files component to allow user to browse his dynamic files folder,
@@ -49,10 +52,12 @@ export class FilesComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Used to open new file object dialog to create new folders or files
    * @param fileService File service used to retrieve files and folders from backend
    * @param messageService Used to send and retrieve messages from other components.
    */
   constructor(
+    private dialog: MatDialog,
     private fileService: FileService,
     protected messageService: MessageService) {
       super(messageService);
@@ -144,6 +149,68 @@ export class FilesComponent extends BaseComponent implements OnInit {
    */
   public isEditing(file: string) {
     return this.editedFiles.indexOf(file) !== -1;
+  }
+
+  /**
+   * Invoked when user wants to create a new folder.
+   */
+  public newFolder() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewFileObjectComponent, {
+      width: '550px',
+      data: {
+        isFolder: true,
+        path: null,
+      },
+    });
+
+    // Subscribing to closed event and creating a new folder if we're given a folder name.
+    dialogRef.afterClosed().subscribe((path: FileObject) => {
+
+      // Checking if we were given a new file object name, at which point the user wants to create a new folder.
+      if (path && path.path) {
+
+        // Creating a new folder with the specified name.
+        this.fileService.createFolder(this.currentFolder + path.path).subscribe(() => {
+
+          // Success, re-retrieving folder's content.
+          this.getFolderContent();
+
+        }, (error: any) => this.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to create a new file.
+   */
+  public newFile() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewFileObjectComponent, {
+      width: '550px',
+      data: {
+        isFolder: false,
+        path: null,
+      },
+    });
+
+    // Subscribing to closed event and creating a new file if we're given a file name.
+    dialogRef.afterClosed().subscribe((path: FileObject) => {
+
+      // Checking if we were given a new file object name, at which point the user wants to create a new file.
+      if (path && path.path) {
+
+        // Creating a new file with the specified name and some default content.
+        this.fileService.saveFile(this.currentFolder + path.path, '/* Initial content, please change */').subscribe(() => {
+
+          // Success, re-retrieving folder's content.
+          this.getFolderContent();
+
+        }, (error: any) => this.showError(error));
+      }
+    });
   }
 
   /*

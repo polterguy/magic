@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { Response } from '../models/response.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -88,6 +89,19 @@ export class FileService {
       '/api/files?folder=' + encodeURI(folder),
       formData
     );
+  }
 
+  /**
+   * Creates a new folder on the server.
+   * 
+   * @param folder Path for new folder
+   */
+  public createFolder(folder: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.put<Response>(
+      '/magic/modules/system/file-system/folder', {
+        folder
+    });
   }
 }
