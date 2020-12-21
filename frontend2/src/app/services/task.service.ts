@@ -82,7 +82,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/modules/system/tasks/count-tasks?query=' +
+      '/magic/modules/system/tasks/count-tasks' +
       query);
   }
 }
