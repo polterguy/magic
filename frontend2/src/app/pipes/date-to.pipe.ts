@@ -13,7 +13,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DateToPipe implements PipeTransform {
 
-  transform(value: any, args: string[]): any {
+  transform(value: any) {
     const due = new Date(value).getTime();
     const now = new Date().getTime();
     const deltaSeconds = Math.round((now - due) / 1000);

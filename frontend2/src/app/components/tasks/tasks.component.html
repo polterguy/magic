@@ -1,1 +1,56 @@
-<p>tasks works!</p>
+
+<mat-card>
+
+  <mat-form-field class="fill-width">
+
+    <mat-label>Filter ...</mat-label>
+
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      matTooltip="Clear filter"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
+
+  <table
+    mat-table
+    [dataSource]="tasks"
+    class="tasks clickable"
+    multiTemplateDataRows>
+
+    <ng-container matColumnDef="id">
+      <td mat-cell *matCellDef="let el">{{el.id}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="created">
+      <td mat-cell *matCellDef="let el" class="minimalistic-col">{{el.created | date}}</td>
+    </ng-container>
+
+    <tr
+      mat-row
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'tasks-row'"
+      (click)="toggleDetails(el)"
+      *matRowDef="let el; columns: displayedColumns;"></tr>
+
+  </table>
+
+  <mat-paginator
+    #paginator
+    [class]="count > 10 ? '' : 'invisible'"
+    [length]="count"
+    pageSize="10"
+    showFirstLastButtons="true"
+    (page)="paged($event)"
+    [pageSizeOptions]="[5,10,25,50]">
+  </mat-paginator>
+
+</mat-card>

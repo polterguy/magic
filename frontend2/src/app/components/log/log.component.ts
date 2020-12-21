@@ -162,9 +162,9 @@ export class LogComponent extends BaseComponent implements OnInit {
   }
 
   /**
-   * Shows details about one specific log item.
+   * Toggles details about one specific log item.
    * 
-   * @param el Log item to display details for
+   * @param el Log item to toggle details for
    */
   public toggleDetails(el: LogItem) {
 

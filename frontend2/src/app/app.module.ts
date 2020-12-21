@@ -44,6 +44,7 @@ import 'codemirror/addon/hint/sql-hint.js';
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DateToPipe } from './pipes/date-to.pipe';
 import { DynamicPipe } from './pipes/dynamic.pipe';
+import { DatePipe } from './pipes/date.pipe';
 import { DateFromPipe } from './pipes/date-from.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderService } from './services/loader.service';
@@ -110,6 +111,7 @@ import { NewFileObjectComponent } from './components/files/new-file-object/new-f
     MarkedPipe,
     DateToPipe,
     DynamicPipe,
+    DatePipe,
     DateFromPipe,
     ConfigComponent,
     NavbarComponent,

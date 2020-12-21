@@ -4,6 +4,7 @@
  */
 .arguments
    offset:long
+   limit:long
    query:string
 .description:"List 10 next tasks that have been registered in the system from the specified offset."
 
@@ -19,6 +20,7 @@ auth.ticket.verify:root
  */
 tasks.list:x:@.arguments/*/query
    offset:x:@.arguments/*/offset
+   limit:x:@.arguments/*/limit
 
 
 /*
