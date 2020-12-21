@@ -1,16 +1,4 @@
 
-.item-details {
-  position: relative;
-  background-color: #ccc;
-  color: #333;
-  margin-bottom: 2rem;
-  .close {
-    position: absolute;
-    top: .5rem;
-    right: .5rem;
-  }
-}
-
 table.log-items {
   margin-bottom: 3rem;
   tr {
@@ -30,7 +18,7 @@ table.log-items {
   }
 }
 
-.details-sheet, .item-details {
+.details-sheet, .emphasized {
   position: relative;
   .details-item {
     display: block;
