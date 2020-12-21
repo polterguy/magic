@@ -12,6 +12,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 // Application specific imports.
 import { Task } from 'src/app/models/task.model';
 import { BaseComponent } from '../base.component';
+import { Count } from 'src/app/models/count.model';
 import { TaskService } from 'src/app/services/task.service';
 import { MessageService } from 'src/app/services/message.service';
 
@@ -101,6 +102,11 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
       // Assigning return value to currently viewed items.
       this.tasks = tasks || [];
+
+      // Retrieving count of items from backend.
+      this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {
+        this.count = count.count;
+      });
     });
   }
 
