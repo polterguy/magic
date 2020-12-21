@@ -81,7 +81,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/modules/system/log/count-items?query=' +
+      '/magic/modules/system/log/count-items' +
       query);
   }
 

@@ -122,7 +122,10 @@ export class LogComponent extends BaseComponent implements OnInit {
 
       // Counting items with the same filter as we used to retrieve items with.
       this.logService.count(this.filterFormControl.value).subscribe(res => {
+
+        // Assigning count to returned value from server.
         this.count = res.count;
+
       }, (error: any) => this.showError(error));
     }, (error: any) => this.showError(error));
   }
