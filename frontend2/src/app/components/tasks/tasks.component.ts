@@ -105,9 +105,12 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
       // Retrieving count of items from backend.
       this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {
+
+        // Assigning count to returned value from server.
         this.count = count.count;
-      });
-    });
+
+      }, (error: any) => this.showError(error));
+    }, (error: any) => this.showError(error));
   }
 
   /**
