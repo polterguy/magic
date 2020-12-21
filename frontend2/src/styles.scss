@@ -132,6 +132,22 @@ mat-card.mat-card {
   padding: 3rem;
 }
 
+/*
+ * Emphasized Material card, to make important information "pop out".
+ */
+mat-card.emphasized {
+  position: relative;
+  background-color: #ccc;
+  color: #333;
+  margin-bottom: 2rem;
+  .close {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
+}
+
+
 mat-horizontal-stepper.mat-stepper-horizontal,
 mat-horizontal-stepper.mat-stepper-vertical {
   background-color: rgb(45,45,45);
