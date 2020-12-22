@@ -29,3 +29,10 @@ add:x:../*/tasks.create/*/.lambda
 tasks.create:x:@.arguments/*/id
    description:x:@.arguments/*/description
    .lambda
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

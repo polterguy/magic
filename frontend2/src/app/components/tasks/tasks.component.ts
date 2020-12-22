@@ -19,6 +19,7 @@ import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlamb
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
+import { Response } from 'src/app/models/response.model';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -187,5 +188,31 @@ export class TasksComponent extends BaseComponent implements OnInit {
         }
       });
     }
+  }
+
+  /**
+   * Invoked when user wants to save a task.
+   * 
+   * @param task Task caller wants to save
+   */
+  public update(task: TaskEx) {
+
+    // Invoking backend to save task.
+    this.taskService.update(
+      task.task.id,
+      task.model.hyperlambda,
+      task.task.description).subscribe(() => {
+
+      // Success!
+      this.showInfoShort('Task successfully updated');
+    });
+  }
+
+  /**
+   * Invoked when user wants to create a new task.
+   */
+  public create() {
+
+    // TODO: Create modal form to allow user to create a unique name for his task.
   }
 }

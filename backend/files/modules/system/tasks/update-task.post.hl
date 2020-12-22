@@ -37,3 +37,10 @@ if
          get-nodes:x:@.lambda/@.lambda
 tasks.update:x:@.arguments/*/id
    description:x:@.arguments/*/description
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

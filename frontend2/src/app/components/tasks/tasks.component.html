@@ -1,6 +1,14 @@
 
 <mat-card>
 
+  <button
+    mat-icon-button
+    matTooltip="Create new task"
+    class="create-button"
+    (click)="create()">
+    <mat-icon aria-label="Creates a new task">add_box</mat-icon>
+  </button>
+
   <mat-form-field class="fill-width">
 
     <mat-label>Filter ...</mat-label>
@@ -41,9 +49,33 @@
           class="task-details"
           *ngIf="el.model">
 
+          <mat-form-field class="fill-width">
+
+            <mat-label>Description ...</mat-label>
+
+            <input
+              matInput
+              placeholder="Description ..."
+              [(ngModel)]="el.task.description"
+              autocomplete="off">
+
+          </mat-form-field>
+        
           <app-codemirror-hyperlambda
             [(model)]="el.model"></app-codemirror-hyperlambda>
 
+          <div class="button-strip">
+          
+            <button
+              mat-icon-button
+              class="save-button"
+              matTooltip="Save task"
+              (click)="update(el)">
+              <mat-icon>save</mat-icon>
+            </button>
+          
+          </div>
+          
         </div>
 
       </td>
