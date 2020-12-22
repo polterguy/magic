@@ -2,3 +2,13 @@
 .task-details {
   margin: 1rem .25rem .5rem .25rem;
 }
+
+table.tasks {
+  tr {
+    td:nth-child(2) {
+      padding-top: 5px;
+      padding-bottom: 9px;
+      width: 5px;
+    }
+  }
+}

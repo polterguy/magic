@@ -190,13 +190,15 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
         // Making sure we add additional fields returned from server for completeness sake.
         el.task.hyperlambda = task.hyperlambda;
-        el.task.schedule = task.schedule.map(x => {
-          return {
-            id: x.id,
-            due: new Date(x.due),
-            repeats: x.repeats,
-          };
-        });
+        if (el.task.schedule) {
+          el.task.schedule = task.schedule.map(x => {
+            return {
+              id: x.id,
+              due: new Date(x.due),
+              repeats: x.repeats,
+            };
+          });
+        }
 
         // By adding these fields to instance, task will be edited in UI.
         el.model = {
@@ -282,6 +284,15 @@ export class TasksComponent extends BaseComponent implements OnInit {
         }, (error: any)=> this.showError(error));
       }
     });
+  }
+
+  /**
+   * Schedules task for execution in the future.
+   * 
+   * @param task Allows user to schedule task by showing a modal window allowing him to declare his schedule
+   */
+  public schedule(task: Task) {
+    console.log(task);
   }
 
   /**
