@@ -126,7 +126,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
       });
 
       // Checking if only one task was returned, and if so, we automatically set it into edit mode.
-      if (this.tasks.length === 1) {
+      if (this.tasks.length === 1 && this.paginator.pageIndex === 0) {
 
         // Invoking backend to get tasks details.
         this.toggleDetails(this.tasks[0]);
