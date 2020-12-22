@@ -25,6 +25,14 @@ export class Task {
    */
   hyperlambda?: string;
 
+  /**
+   * Description of task in friendly human readable text.
+   */
+  description?: string;
+
+  /**
+   * List of schedules for task.
+   */
   schedule?: Schedule[];
 }
 

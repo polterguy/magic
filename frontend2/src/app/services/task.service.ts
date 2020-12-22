@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
 import { Task } from '../models/task.model';
 import { HttpService } from './http.service';
 import { Count } from '../models/count.model';
+import { Response } from '../models/response.model';
 
 /**
  * Task service, allows you to Read, Create, Update and Delete tasks
@@ -84,5 +85,41 @@ export class TaskService {
     return this.httpService.get<Count>(
       '/magic/modules/system/tasks/count-tasks' +
       query);
+  }
+
+  /**
+   * Creates a new task according to the specified arguments.
+   * 
+   * @param id Unique name or ID of task to create
+   * @param hyperlambda Hyperlambda for task
+   * @param description Description for task as humanly readable text
+   */
+  public create(id: string, hyperlambda: string, description: string = null) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/tasks/create-task', {
+        id,
+        hyperlambda,
+        description,
+    });
+  }
+
+  /**
+   * Updates an existing task according to the specified arguments.
+   * 
+   * @param id Unique name or ID of task to update
+   * @param hyperlambda Hyperlambda for task
+   * @param description Description for task as humanly readable text
+   */
+  public update(id: string, hyperlambda: string, description: string = null) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/tasks/update-task', {
+        id,
+        hyperlambda,
+        description,
+    });
   }
 }
