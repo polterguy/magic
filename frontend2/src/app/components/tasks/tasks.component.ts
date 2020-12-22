@@ -292,13 +292,4 @@ export class TasksComponent extends BaseComponent implements OnInit {
   public removeSchedule(schedule: Schedule) {
     console.log(schedule);
   }
-
-  /**
-   * Returns tooltip for a schedule.
-   * 
-   * @param schedule Schedule to return tooltip for
-   */
-  public getTooltipForSchedule(schedule: Schedule) {
-    return schedule.due.toLocaleString();
-  }
 }
