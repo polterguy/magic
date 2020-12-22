@@ -73,13 +73,21 @@
           <app-codemirror-hyperlambda [(model)]="el.model"></app-codemirror-hyperlambda>
 
           <div class="button-strip">
+
             <button
               mat-icon-button
-              class="save-button"
+              matTooltip="Schedule task"
+              (click)="schedule(el)">
+              <mat-icon>schedule</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
               matTooltip="Save task"
               (click)="update(el)">
               <mat-icon>save</mat-icon>
             </button>
+
           </div>
 
           <div
