@@ -28,18 +28,38 @@
     multiTemplateDataRows>
 
     <ng-container matColumnDef="id">
-      <td mat-cell *matCellDef="let el">{{el.id}}</td>
+      <td mat-cell *matCellDef="let el">{{el.task.id}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="created">
-      <td mat-cell *matCellDef="let el" class="minimalistic-col">{{el.created | date}}</td>
+    <ng-container matColumnDef="show-details">
+
+      <td
+        mat-cell
+        *matCellDef="let el">
+
+        <div
+          class="task-details"
+          *ngIf="el.model">
+
+          <app-codemirror-hyperlambda
+            [(model)]="el.model"></app-codemirror-hyperlambda>
+
+        </div>
+
+      </td>
+
     </ng-container>
 
     <tr
       mat-row
-      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'tasks-row'"
+      [ngClass]="(el.model ? 'selected ' : '') + 'tasks-row'"
       (click)="toggleDetails(el)"
       *matRowDef="let el; columns: displayedColumns;"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="el.model ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
 
   </table>
 

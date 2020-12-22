@@ -15,6 +15,23 @@ import { BaseComponent } from '../base.component';
 import { Count } from 'src/app/models/count.model';
 import { TaskService } from 'src/app/services/task.service';
 import { MessageService } from 'src/app/services/message.service';
+import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+
+// CodeMirror options.
+import hyperlambda from '../codemirror/options/hyperlambda.json';
+
+/*
+ * Helper class to encapsulate a task and its details,
+ * in addition to its CodeMirror options and model.
+ */
+class TaskEx {
+
+  // Actual task as returned from backend.
+  task: Task;
+
+  // CodeMirror model for editing task's details.
+  model?: Model;
+}
 
 /**
  * Tasks component allowing you to administrate tasks, both scheduled tasks
@@ -27,21 +44,17 @@ import { MessageService } from 'src/app/services/message.service';
 })
 export class TasksComponent extends BaseComponent implements OnInit {
 
-  // List of task names that we're currently viewing details for.
-  private displayDetails: string[] = [];
+  /**
+   * Tasks that are currently being viewed.
+   */
+  public tasks: TaskEx[] = null;
 
   /**
    * Visible columns in data table.
    */
   public displayedColumns: string[] = [
     'id',
-    'created',
   ];
-
-  /**
-   * Tasks that are currently being viewed.
-   */
-  public tasks: Task[] = null;
 
   /**
    * Number of tasks in backend currently matching our filter.
@@ -100,8 +113,12 @@ export class TasksComponent extends BaseComponent implements OnInit {
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe((tasks: Task[]) => {
 
-      // Assigning return value to currently viewed items.
-      this.tasks = tasks || [];
+      // Assigning return values to currently viewed items by using our TaskEx class.
+      this.tasks = (tasks || []).map(idx => {
+        return {
+          task: idx
+        }
+      });
 
       // Retrieving count of items from backend.
       this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {
@@ -111,6 +128,16 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
       }, (error: any) => this.showError(error));
     }, (error: any) => this.showError(error));
+  }
+
+  /**
+   * Clears the current filter.
+   */
+  public clearFilter() {
+
+    // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
+    this.paginator.pageIndex = 0;
+    this.filterFormControl.setValue('');
   }
 
   /**
@@ -126,33 +153,35 @@ export class TasksComponent extends BaseComponent implements OnInit {
   }
 
   /**
-   * Returns true if details for specified task should be displayed.
-   * 
-   * @param el Task to display details for
-   */
-  public shouldDisplayDetails(el: Task) {
-
-    // Returns true if we're currently displaying this particular item.
-    return this.displayDetails.filter(x => x === el.id).length > 0;
-  }
-
-  /**
    * Toggles details about one specific task.
    * 
    * @param el Task to toggle details for
    */
-  public toggleDetails(el: Task) {
+  public toggleDetails(el: TaskEx) {
 
     // Checking if we're already displaying details for current item.
-    const idx = this.displayDetails.indexOf(el.id);
-    if (idx !== -1) {
+    if (el.model) {
 
       // Hiding item.
-      this.displayDetails.splice(idx, 1);
+      el.model = null;
+
     } else {
 
-      // Displaying item.
-      this.displayDetails.push(el.id);
+      // Retrieving task from backend.
+      this.taskService.get(el.task.id).subscribe((task: Task) => {
+
+        // Adding task to list of currently viewed items.
+        const hyp = hyperlambda;
+        hyp.extraKeys['Alt-M'] = (cm: any) => {
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        };
+
+        // By adding these fields to instance, task will be edited in UI.
+        el.model = {
+          hyperlambda: task.hyperlambda,
+          options: hyp
+        }
+      });
     }
   }
 }
