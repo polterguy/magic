@@ -85,6 +85,7 @@ import { NewFileObjectComponent } from './components/files/new-file-object/new-f
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
+import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 
@@ -128,6 +129,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     NewUserDialogComponent,
     ConfirmDialogComponent,
     NewRoleDialogComponent,
+    ScheduleTaskDialogComponent,
     NewTaskDialogComponent,
     FileEditorComponent,
     NewFileObjectComponent,

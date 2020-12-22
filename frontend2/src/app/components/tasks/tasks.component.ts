@@ -19,6 +19,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
+import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-task-dialog.component';
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
@@ -292,7 +293,22 @@ export class TasksComponent extends BaseComponent implements OnInit {
    * @param task Allows user to schedule task by showing a modal window allowing him to declare his schedule
    */
   public schedule(task: Task) {
-    console.log(task);
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(ScheduleTaskDialogComponent, {
+      width: '550px',
+      data: task
+    });
+
+    dialogRef.afterClosed().subscribe((result: Task) => {
+
+      // Checking if modal dialog wants to create a task.
+      if (result) {
+
+        // Task was successfully created.
+        this.showInfo('Task was successfully scheduled');
+      }
+    });
   }
 
   /**

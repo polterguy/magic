@@ -135,4 +135,22 @@ export class TaskService {
       '/magic/modules/system/tasks/delete-task?id=' +
       encodeURIComponent(id));
   }
+
+  /**
+   * Creates a new task according to the specified arguments.
+   * 
+   * @param id Unique name or ID of task to create
+   * @param hyperlambda Hyperlambda for task
+   * @param description Description for task as humanly readable text
+   */
+  public schedule(id: string, due?: Date, repeats?: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/tasks/add-due', {
+        id,
+        due,
+        repeats,
+    });
+  }
 }
