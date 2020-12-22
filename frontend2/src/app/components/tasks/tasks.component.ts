@@ -13,13 +13,15 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Task } from 'src/app/models/task.model';
 import { BaseComponent } from '../base.component';
 import { Count } from 'src/app/models/count.model';
+import { MatDialog } from '@angular/material/dialog';
 import { TaskService } from 'src/app/services/task.service';
 import { MessageService } from 'src/app/services/message.service';
+import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
-import { Response } from 'src/app/models/response.model';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -55,6 +57,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
    */
   public displayedColumns: string[] = [
     'id',
+    'delete',
   ];
 
   /**
@@ -78,6 +81,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
    * @param messageService Needed to send and subscribe to messages sent to and from other components
    */
   constructor(
+    private dialog: MatDialog,
     private taskService: TaskService,
     protected messageService: MessageService) {
     super(messageService);
@@ -120,6 +124,13 @@ export class TasksComponent extends BaseComponent implements OnInit {
           task: idx
         }
       });
+
+      // Checking if only one task was returned, and if so, we automatically set it into edit mode.
+      if (this.tasks.length === 1) {
+
+        // Invoking backend to get tasks details.
+        this.toggleDetails(this.tasks[0]);
+      }
 
       // Retrieving count of items from backend.
       this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {
@@ -213,6 +224,57 @@ export class TasksComponent extends BaseComponent implements OnInit {
    */
   public create() {
 
-    // TODO: Create modal form to allow user to create a unique name for his task.
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewTaskDialogComponent, {
+      width: '550px',
+    });
+
+    dialogRef.afterClosed().subscribe((name: string) => {
+
+      // Checking if modal dialog wants to create a task.
+      if (name) {
+
+        // Task was successfully created.
+        this.showInfo(`'${name}' task successfully created`);
+        this.filterFormControl.setValue(name);
+      }
+    });
+  }
+
+  /**
+   * Deletes a task in your backend.
+   * 
+   * @param event Click event, needed to stop propagation
+   * @param task Task to delete
+   */
+  public delete(event: any, task: TaskEx) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Asking user to confirm deletion of file object.
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '550px',
+      data: {
+        text: `Are you sure you want to delete the '${task.task.id}' task?`,
+        title: 'Please confirm delete operation'
+      }
+    });
+
+    // Subscribing to close such that we can delete user if it's confirmed.
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
+
+      // Checking if user confirmed that he wants to delete the file object.
+      if (result && result.confirmed) {
+
+        // Invoking backend to actually delete task.
+        this.taskService.delete(task.task.id).subscribe(() => {
+
+          // Success! Showing user some feedback and re-databinding table.
+          this.showInfoShort('Task successfully deleted');
+          this.getTasks();
+        }, (error: any)=> this.showError(error));
+      }
+    });
   }
 }

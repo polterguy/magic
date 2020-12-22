@@ -175,7 +175,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
       if (name) {
 
         // User was created.
-        this.showInfo(`'${name}' successfully created`)
+        this.showInfo(`'${name}' successfully created`);
         this.getRoles();
       }
     });

@@ -1,0 +1,25 @@
+
+<h1 mat-dialog-title>New task</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <mat-label class="dark">Name</mat-label>
+    <input
+      matInput
+      [(ngModel)]="name"
+      [disabled]="data"
+      autocomplete="off"
+      placeholder="Name">
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-button
+    [disabled]="name === ''"
+    (click)="create()">Create</button>
+
+</div>

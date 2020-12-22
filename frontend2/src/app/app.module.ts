@@ -77,15 +77,16 @@ import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperla
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
+import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
+import { NewFileObjectComponent } from './components/files/new-file-object/new-file-object.component';
+import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
-import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
-import { NewFileObjectComponent } from './components/files/new-file-object/new-file-object.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -127,6 +128,7 @@ import { NewFileObjectComponent } from './components/files/new-file-object/new-f
     NewUserDialogComponent,
     ConfirmDialogComponent,
     NewRoleDialogComponent,
+    NewTaskDialogComponent,
     FileEditorComponent,
     NewFileObjectComponent,
   ],
