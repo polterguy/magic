@@ -81,6 +81,24 @@
               <mat-icon>save</mat-icon>
             </button>
           </div>
+
+          <div
+            *ngIf="el.task.schedule"
+            class="schedules">
+
+            <mat-chip-list
+              aria-label="Schedules for task">
+              <mat-chip
+                *ngFor="let idxSchedule of el.task.schedule"
+                selectable="false"
+                [matTooltip]="getTooltipForSchedule(idxSchedule)"
+                (removed)="removeSchedule(idxSchedule)">
+                {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+
+          </div>
           
         </div>
 

@@ -10,18 +10,18 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
-import { Task } from 'src/app/models/task.model';
 import { BaseComponent } from '../base.component';
 import { Count } from 'src/app/models/count.model';
 import { MatDialog } from '@angular/material/dialog';
+import { Schedule, Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
 import { MessageService } from 'src/app/services/message.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
-import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -190,7 +190,13 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
         // Making sure we add additional fields returned from server for completeness sake.
         el.task.hyperlambda = task.hyperlambda;
-        el.task.schedule = task.schedule;
+        el.task.schedule = task.schedule.map(x => {
+          return {
+            id: x.id,
+            due: new Date(x.due),
+            repeats: x.repeats,
+          };
+        });
 
         // By adding these fields to instance, task will be edited in UI.
         el.model = {
@@ -276,5 +282,23 @@ export class TasksComponent extends BaseComponent implements OnInit {
         }, (error: any)=> this.showError(error));
       }
     });
+  }
+
+  /**
+   * Invoked when user wants to delete a schedule for a task.
+   * 
+   * @param schedule Schedule to remove from task
+   */
+  public removeSchedule(schedule: Schedule) {
+    console.log(schedule);
+  }
+
+  /**
+   * Returns tooltip for a schedule.
+   * 
+   * @param schedule Schedule to return tooltip for
+   */
+  public getTooltipForSchedule(schedule: Schedule) {
+    return schedule.due.toLocaleString();
   }
 }
