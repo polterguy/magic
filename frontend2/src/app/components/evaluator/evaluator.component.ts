@@ -17,7 +17,7 @@ import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-d
 import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-dialog.component';
 
 // CodeMirror options.
-import hyperlambda from '../codemirror/options/hyperlambda.json'
+import hyperlambda from '../codemirror/options/hyperlambda.json';
 import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.json';
 
 /**
