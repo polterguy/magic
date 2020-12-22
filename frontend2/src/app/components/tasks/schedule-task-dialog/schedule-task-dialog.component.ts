@@ -8,6 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
+import { Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { MessageService } from 'src/app/services/message.service';
@@ -16,16 +17,11 @@ import { MessageService } from 'src/app/services/message.service';
  * Modal dialog used to allow user to create a new role in the system.
  */
 @Component({
-  selector: 'app-new-task-dialog',
-  templateUrl: './new-task-dialog.component.html',
-  styleUrls: ['./new-task-dialog.component.scss']
+  selector: 'app-schedule-task-dialog',
+  templateUrl: './schedule-task-dialog.component.html',
+  styleUrls: ['./schedule-task-dialog.component.scss']
 })
-export class NewTaskDialogComponent extends BaseComponent {
-
-  /**
-   * Name of new task to create.
-   */
-  public name = '';
+export class ScheduleTaskDialogComponent extends BaseComponent {
 
   /**
    * Creates an instance of your component.
@@ -36,14 +32,11 @@ export class NewTaskDialogComponent extends BaseComponent {
    * @param data If updating role, this is the role we're updating
    */
   constructor(
-    private dialogRef: MatDialogRef<NewTaskDialogComponent>,
+    private dialogRef: MatDialogRef<ScheduleTaskDialogComponent>,
     private taskService: TaskService,
     protected messageService: MessageService,
-    @Inject(MAT_DIALOG_DATA) public data: string) {
+    @Inject(MAT_DIALOG_DATA) public data: Task) {
     super(messageService);
-    if (this.data) {
-      this.name = data;
-    }
   }
 
   /**
@@ -51,11 +44,12 @@ export class NewTaskDialogComponent extends BaseComponent {
    */
   public create() {
 
-    // Invoking backend to create a new task.
-    this.taskService.create(this.name, '.your-task-hyperlambda-here').subscribe(() => {
+    // Invoking backend to create a new schedule for task.
+    console.log(this.data);
+    this.taskService.schedule(this.data.id).subscribe(() => {
 
-      // Success! Closing dialog and informing the caller of the name of the new task.
-      this.dialogRef.close(this.name);
+      // Success! Closing dialog and giving caller the new task, now with an additional schedule declared in it.
+      this.dialogRef.close(this.data);
 
     }, (error: any) => this.showError(error));
   }

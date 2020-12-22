@@ -36,4 +36,4 @@ tasks.schedule:x:@.arguments/*/id
  * Returns success to caller.
  */
 return-nodes
-   result:Success
+   result:success
