@@ -73,7 +73,7 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit, After
   public ngOnInit() {
 
     // Retrieving server's vocabulary, but only if editor is not read only.
-    if (this.model.options.readonly !== false) {
+    if (this.model.options.readonly !== true) {
       this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
         window['_vocabulary'] = vocabulary;
       }, error => this.showError(error));

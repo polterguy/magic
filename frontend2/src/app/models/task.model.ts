@@ -42,4 +42,9 @@ export class Schedule {
    * Next due date for task.
    */
   due: Date;
+
+  /**
+   * Contains the repetition pattern of task, if task is repeating.
+   */
+  repeats?: string;
 }
