@@ -19,7 +19,27 @@ export class Task {
   created: Date;
 
   /**
-   * Hyperlambda task contains,
+   * Hyperlambda task contains.
+   * 
+   * Only returned from backend if we choose to retrieve task's details.
    */
-  hyperlambda: string;
+  hyperlambda?: string;
+
+  schedule?: Schedule[];
+}
+
+/**
+ * A schedule for a scheduled task.
+ */
+export class Schedule {
+
+  /**
+   * Unique ID for schedule instance.
+   */
+  id: number;
+
+  /**
+   * Next due date for task.
+   */
+  due: Date;
 }

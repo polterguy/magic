@@ -176,6 +176,10 @@ export class TasksComponent extends BaseComponent implements OnInit {
           cm.setOption('fullScreen', !cm.getOption('fullScreen'));
         };
 
+        // Making sure we add additional fields returned from server for completeness sake.
+        el.task.hyperlambda = task.hyperlambda;
+        el.task.schedule = task.schedule;
+
         // By adding these fields to instance, task will be edited in UI.
         el.model = {
           hyperlambda: task.hyperlambda,
