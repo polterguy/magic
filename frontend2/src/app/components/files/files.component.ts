@@ -150,7 +150,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
   /**
    * Deletes a file or a folder in your backend.
    * 
-   * @param event Click event
+   * @param event Click event, needed to stop propagation
    * @param path File or folder to delete
    */
   public delete(event: any, path: string) {

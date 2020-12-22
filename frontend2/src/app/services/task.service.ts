@@ -122,4 +122,17 @@ export class TaskService {
         description,
     });
   }
+
+  /**
+   * Deletes the specified id task.
+   * 
+   * @param id Unique name or ID of task to delete
+   */
+  public delete(id: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/tasks/delete-task?id=' +
+      encodeURIComponent(id));
+  }
 }
