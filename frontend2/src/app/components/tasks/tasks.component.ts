@@ -314,9 +314,19 @@ export class TasksComponent extends BaseComponent implements OnInit {
   /**
    * Invoked when user wants to delete a schedule for a task.
    * 
+   * @param task Task that contains schedule
    * @param schedule Schedule to remove from task
    */
-  public removeSchedule(schedule: Schedule) {
-    console.log(schedule);
+  public removeSchedule(task: Task, schedule: Schedule) {
+
+    // Invoking backend to delete schedule.
+    this.taskService.deleteSchedule(schedule.id).subscribe(() => {
+
+      // No reasons to invoke backend to retrieve items again.
+      task.schedule.splice(task.schedule.indexOf(schedule), 1);
+
+      // Giving user some feedback.
+      this.showInfoShort('Schedule deleted');
+    });
   }
 }

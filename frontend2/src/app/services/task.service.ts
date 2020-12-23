@@ -153,4 +153,16 @@ export class TaskService {
         repeats,
     });
   }
+
+  /**
+   * Deletes the specified schedule for task.
+   * 
+   * @param id ID of task schedule to delete
+   */
+  public deleteSchedule(id: number) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/tasks/delete-due?id=' + id);
+  }
 }
