@@ -90,12 +90,9 @@
 
           </div>
 
-          <div
-            *ngIf="el.task.schedule"
-            class="schedules">
+          <div *ngIf="el.task.schedule">
 
-            <mat-chip-list
-              aria-label="Schedules for task">
+            <mat-chip-list>
               <mat-chip
                 *ngFor="let idxSchedule of el.task.schedule"
                 selectable="false"
