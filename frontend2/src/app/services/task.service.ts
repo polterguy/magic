@@ -183,8 +183,7 @@ export class TaskService {
 
         // Retrieving the filename, as provided by the server.
         const disp = res.headers.get('Content-Disposition');
-        let filename = disp.substr(disp.indexOf('=') + 1);
-        filename = filename.substr(0, filename.indexOf(';'));
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
         const file = new Blob([res.body]);
         saveAs(file, filename);
       });
