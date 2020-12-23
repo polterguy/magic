@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,12 +28,18 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Other external components.
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import {
+  NgxMatDatetimePickerModule, 
+  NgxMatNativeDateModule, 
+  NgxMatTimepickerModule 
+} from '@angular-material-components/datetime-picker';
 
 // Hyperlambda mode for CodeMirror import.
 import './codemirror/hyperlambda.js';
@@ -161,6 +168,11 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     MatPaginatorModule,
     MatProgressSpinnerModule,
     CodemirrorModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
   ],
   providers: [
     {

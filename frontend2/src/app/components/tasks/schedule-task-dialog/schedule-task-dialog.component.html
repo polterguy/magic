@@ -3,7 +3,15 @@
 
 <div mat-dialog-content>
 
-  Scheduler here ...
+  <mat-form-field>
+    <input
+      matInput
+      [ngxMatDatetimePicker]="picker"
+      placeholder="Choose a date and time"
+      [(ngModel)]="date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+  </mat-form-field>
 
 </div>
 

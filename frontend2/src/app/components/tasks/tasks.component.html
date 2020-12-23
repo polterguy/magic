@@ -96,8 +96,8 @@
               <mat-chip
                 *ngFor="let idxSchedule of el.task.schedule"
                 selectable="false"
-                [matTooltip]="idxSchedule.due.toLocaleString()"
-                (removed)="removeSchedule(idxSchedule)">
+                [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
+                (removed)="removeSchedule(el.task, idxSchedule)">
                 {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
                 <mat-icon matChipRemove>cancel</mat-icon>
               </mat-chip>

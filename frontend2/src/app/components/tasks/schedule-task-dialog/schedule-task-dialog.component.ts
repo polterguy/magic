@@ -24,6 +24,11 @@ import { MessageService } from 'src/app/services/message.service';
 export class ScheduleTaskDialogComponent extends BaseComponent {
 
   /**
+   * Date user selects.
+   */
+  public date: Date;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
