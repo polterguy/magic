@@ -50,7 +50,6 @@ export class ScheduleTaskDialogComponent extends BaseComponent {
   public create() {
 
     // Invoking backend to create a new schedule for task.
-    console.log(this.data);
     this.taskService.schedule(this.data.id).subscribe(() => {
 
       // Success! Closing dialog and giving caller the new task, now with an additional schedule declared in it.
