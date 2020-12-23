@@ -23,9 +23,19 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 export class ScheduleTaskDialogComponent {
 
   /**
-   * Date user selects.
+   * Date user selects, if he selects an explicit due date.
    */
-  public date: Date;
+  public date: Date = null;
+
+  /**
+   * If true, user wants to provide a repeating pattern, and not an explicit due date.
+   */
+  public isRepeating = false;
+
+  /**
+   * Repetition pattern user selects.
+   */
+  public repeats: string = null;
 
   /**
    * Creates an instance of your component.
@@ -45,8 +55,12 @@ export class ScheduleTaskDialogComponent {
    */
   public create() {
 
+    // Figuring out what type of task user wants to create.
+    const date = this.isRepeating ? null : this.date;
+    const repeating = this.isRepeating ? this.repeats : null;
+
     // Invoking backend to create a new schedule for task.
-    this.taskService.schedule(this.data.id, this.date).subscribe(() => {
+    this.taskService.schedule(this.data.id, date, repeating).subscribe(() => {
 
       // Success! Closing dialog and giving caller the new task, now with an additional schedule declared in it.
       this.dialogRef.close(this.data);

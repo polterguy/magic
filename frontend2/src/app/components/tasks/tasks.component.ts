@@ -293,7 +293,7 @@ export class TasksComponent implements OnInit {
 
     // Showing modal dialog.
     const dialogRef = this.dialog.open(ScheduleTaskDialogComponent, {
-      width: '550px',
+      width: '350px',
       data: task
     });
 
