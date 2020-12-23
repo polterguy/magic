@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
@@ -46,7 +46,7 @@ export class Model {
   templateUrl: './codemirror-hyperlambda.component.html',
   styleUrls: ['./codemirror-hyperlambda.component.scss']
 })
-export class HyperlambdaComponent extends BaseComponent implements OnInit, AfterViewInit {
+export class HyperlambdaComponent implements OnInit, AfterViewInit {
 
   // Actual CodeMirror instance, needed to retrieve selected text.
   @ViewChild('codeeditor') private _editor: { codeMirror: any; };
@@ -63,8 +63,7 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit, After
    */
   constructor(
     private evaluatorService: EvaluatorService,
-    protected injector: Injector) {
-    super(injector);
+    private feedbackService: FeedbackService) {
   }
 
   /**
@@ -76,7 +75,7 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit, After
     if (this.model.options.readonly !== true) {
       this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
         window['_vocabulary'] = vocabulary;
-      }, error => this.showError(error));
+      }, error => this.feedbackService.showError(error));
     }
   }
 

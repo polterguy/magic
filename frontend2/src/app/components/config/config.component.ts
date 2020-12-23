@@ -7,7 +7,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { FeedbackService } from '../../services/feedback.service';
 import { Status } from 'src/app/models/status.model';
 import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
@@ -23,7 +23,7 @@ import json from '../codemirror/options/json.json'
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss']
 })
-export class ConfigComponent extends BaseComponent implements OnInit {
+export class ConfigComponent implements OnInit {
 
   /**
    * Status of setup process.
@@ -48,9 +48,8 @@ export class ConfigComponent extends BaseComponent implements OnInit {
    * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
    */
   constructor(
-    private configService: ConfigService,
-    protected injector: Injector) {
-    super(injector);
+    private feedbackService: FeedbackService,
+    private configService: ConfigService) {
   }
 
   /**
@@ -69,7 +68,7 @@ export class ConfigComponent extends BaseComponent implements OnInit {
         });
       }
     }, (error: any) => {
-      this.showError(error);
+      this.feedbackService.showError(error);
     });
   }
 
@@ -86,10 +85,10 @@ export class ConfigComponent extends BaseComponent implements OnInit {
 
       // Sanity checking result of invocation.
       if (res.result === 'success') {
-        this.showInfo('Configuration was successfully saved');
+        this.feedbackService.showInfo('Configuration was successfully saved');
       } else {
-        this.showError('Unspecified error when saving configuration');
+        this.feedbackService.showError('Unspecified error when saving configuration');
       }
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

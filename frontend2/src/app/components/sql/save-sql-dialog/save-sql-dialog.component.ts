@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { SqlService } from 'src/app/services/sql.service';
 
 /**
@@ -35,7 +35,7 @@ export class ModalData {
   templateUrl: './save-sql-dialog.component.html',
   styleUrls: ['./save-sql-dialog.component.scss']
 })
-export class SaveSqlDialogComponent extends BaseComponent implements OnInit {
+export class SaveSqlDialogComponent implements OnInit {
 
   /**
    * Existing snippet files as returned from backend.
@@ -51,11 +51,9 @@ export class SaveSqlDialogComponent extends BaseComponent implements OnInit {
    * @param data Filename to intially populate filename textbox with, and databaseType. Typically only supplied if you previously loaded a file.
    */
   constructor(
+    private feedbackService: FeedbackService,
     private sqlService: SqlService,
-    protected injector: Injector,
-    @Inject(MAT_DIALOG_DATA) public data: ModalData) {
-    super(injector);
-  }
+    @Inject(MAT_DIALOG_DATA) public data: ModalData) { }
 
   /**
    * OnInit implementation.
@@ -68,7 +66,7 @@ export class SaveSqlDialogComponent extends BaseComponent implements OnInit {
       // Excluding all files that are not SQL files.
       this.files = files.filter(x => x.endsWith('.sql'));
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

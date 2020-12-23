@@ -11,7 +11,7 @@ import { Messages } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -22,7 +22,7 @@ import { BaseComponent } from 'src/app/components/base.component';
   templateUrl: './setup-auth.component.html',
   styleUrls: ['./setup-auth.component.scss']
 })
-export class SetupAuthComponent extends BaseComponent implements OnInit {
+export class SetupAuthComponent implements OnInit {
 
   /**
    * Configuration as returned from backend.
@@ -59,10 +59,9 @@ export class SetupAuthComponent extends BaseComponent implements OnInit {
    * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
+    private feedbackService: FeedbackService,
     private configService: ConfigService,
-    protected injector: Injector,
     protected messageService: MessageService) {
-    super(injector);
   }
 
   /**
@@ -82,7 +81,7 @@ export class SetupAuthComponent extends BaseComponent implements OnInit {
         // Applying gibberish to relevant configuration section.
         this.config.magic.auth.secret = res.result;
       });
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -94,7 +93,7 @@ export class SetupAuthComponent extends BaseComponent implements OnInit {
     if (this.config.magic.databases[this.selectedDatabaseType].generic.indexOf('{database}') === -1) {
 
       // Not good!
-      this.showError('Connection string is not valid, it needs the {database} section');
+      this.feedbackService.showError('Connection string is not valid, it needs the {database} section');
       return;
     }
 
@@ -109,6 +108,6 @@ export class SetupAuthComponent extends BaseComponent implements OnInit {
         name: Messages.SETUP_STATE_CHANGED
       });
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

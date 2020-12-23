@@ -12,12 +12,13 @@ import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { Count } from 'src/app/models/count.model';
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { Affected } from 'src/app/models/affected.model';
 import { UserService } from 'src/app/services/user.service';
 import { UserRoles } from 'src/app/models/user-roles.model';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Users component for administrating users in the system.
@@ -27,7 +28,7 @@ import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.compon
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
-export class UsersComponent extends BaseComponent implements OnInit {
+export class UsersComponent implements OnInit {
 
   /**
    * Users matching filter as returned from backend.
@@ -76,9 +77,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
    * @param userService Used to fetch, create, and modify users in the system
    */
   constructor(
+    private feedbackService: FeedbackService,
     private userService: UserService,
-    protected injector: Injector) {
-    super(injector);
+    private dialog: MatDialog) {
   }
 
   /**
@@ -128,12 +129,12 @@ export class UsersComponent extends BaseComponent implements OnInit {
       } else {
         this.users = [];
       }
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
 
     // Invoking backend to retrieve count of user matching filter condition.
     this.userService.count(this.filter).subscribe((res: Count) => {
       this.count = res.count;
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -201,7 +202,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
     this.userService.removeRole(user.username, role).subscribe((affected: Affected) => {
 
       // Success, informing user operation was successful.
-      this.showInfo(`'${role}' role was successfully removed from '${user.username}'`);
+      this.feedbackService.showInfo(`'${role}' role was successfully removed from '${user.username}'`);
 
       // No need to invoke backend.
       user.roles.splice(user.roles.indexOf(role), 1);
@@ -227,7 +228,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
       if (username) {
 
         // User was created.
-        this.showInfo(`'${username}' successfully updated`)
+        this.feedbackService.showInfo(`'${username}' successfully updated`)
         this.getUsers();
       }
     });
@@ -241,7 +242,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
   public delete(user: User) {
 
     // Asking user to confirm deletion.
-    this.confirm(
+    this.feedbackService.confirm(
       'Please confirm operation',
       `Please confirm that you want to delete the '${user.username}' user`,
       () => {
@@ -250,10 +251,10 @@ export class UsersComponent extends BaseComponent implements OnInit {
         this.userService.delete(user.username).subscribe(() => {
 
           // Success, makins sure we databind table again by invoking backend to retrieve current users.
-          this.showInfo(`'${user.username}' was successfully deleted`);
+          this.feedbackService.showInfo(`'${user.username}' was successfully deleted`);
           this.getUsers();
 
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
     });
   }
 
@@ -273,7 +274,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
       if (username) {
 
         // User was created.
-        this.showInfo(`'${username}' successfully created`)
+        this.feedbackService.showInfo(`'${username}' successfully created`)
         this.getUsers();
       }
     });

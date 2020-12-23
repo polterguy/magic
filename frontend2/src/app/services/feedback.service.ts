@@ -4,48 +4,41 @@
  */
 
 // Angular and system imports.
-import { Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Application specific imports.
-import { ConfirmDialogComponent, ConfirmDialogData } from './confirm/confirm-dialog.component';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData
+} from '../components/confirm/confirm-dialog.component';
 
  /**
-  * Base component that most other components inherits from.
-  * 
-  * This class provides common functionality for other components,
-  * such as the ability to display information and errors to the user,
-  * etc.
+  * Feedback service allowing you to show feedback to users, such as
+  * information, confirmation modal dialogs, etc.
   */
-export abstract class BaseComponent {
-
-  /**
-   * Message service used to send messages and receive messages from other components.
-   */
-  protected snackBar: MatSnackBar;
-
-  /**
-   * Dialog reference used to create modal dialogs used by for instance the confirm method.
-   */
-  protected dialog: MatDialog;
+ @Injectable({
+  providedIn: 'root'
+})
+export abstract class FeedbackService {
 
   /**
    * Creates an instance of your class.
    * 
-   * @param injector Injector to use to resolve instances of types
+   * @param snackBar Used to provide feedback to user
+   * @param dialog Needed to create modal dialogs
    */
-  constructor(protected injector: Injector) {
-    this.snackBar = injector.get(MatSnackBar);
-    this.dialog = injector.get(MatDialog);
-  }
+  constructor(
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog) { }
 
   /**
    * Shows a message with some information to the user.
    * 
    * @param content Message to show
    */
-  protected showInfo(content: string) {
+  public showInfo(content: string) {
     this.snackBar.open(content, null, {
       duration: 5000,
     });
@@ -56,7 +49,7 @@ export abstract class BaseComponent {
    * 
    * @param content Message to show
    */
-  protected showInfoShort(content: string) {
+  public showInfoShort(content: string) {
     this.snackBar.open(content, null, {
       duration: 500,
     });
@@ -67,7 +60,7 @@ export abstract class BaseComponent {
    * 
    * @param content Error message to show, or object containing error message as returned from backend
    */
-  protected showError(content: any) {
+  public showError(content: any) {
     this.snackBar.open(content.error?.message || content, null, {
       duration: 5000,
     });
@@ -80,7 +73,7 @@ export abstract class BaseComponent {
    * @param text Content of modal dialog
    * @param confirmed Callback invoked if user confirms action
    */
-  protected confirm(title: string, text: string, confirmed: () => void) {
+  public confirm(title: string, text: string, confirmed: () => void) {
 
     // Asking user to confirm deletion of file object.
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

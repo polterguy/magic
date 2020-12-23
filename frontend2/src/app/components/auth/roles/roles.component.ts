@@ -14,12 +14,13 @@ import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { User } from 'src/app/models/user.model';
 import { Role } from 'src/app/models/role.model';
 import { Count } from 'src/app/models/count.model';
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { Affected } from 'src/app/models/affected.model';
 import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Roles component for administrating roles in the system.
@@ -29,7 +30,7 @@ import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.compon
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.scss']
 })
-export class RolesComponent extends BaseComponent implements OnInit {
+export class RolesComponent implements OnInit {
 
   // Roles we're currently viewing details for.
   private selectedRoles: Role[] = [];
@@ -83,10 +84,10 @@ export class RolesComponent extends BaseComponent implements OnInit {
    * @param userService Used to associate a user with a role
    */
   constructor(
+    private feedbackService: FeedbackService,
+    private dialog: MatDialog,
     private roleService: RoleService,
-    private userService: UserService,
-    protected injector: Injector) {
-    super(injector);
+    private userService: UserService) {
   }
 
   /**
@@ -99,7 +100,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((query: string) => {
+      .subscribe(() => {
         this.paginator.pageIndex = 0;
         this.getRoles();
       });
@@ -130,12 +131,12 @@ export class RolesComponent extends BaseComponent implements OnInit {
         this.selectedRoles.push(this.roles[0]);
       }
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
 
     // Invoking backend to retrieve count of user matching filter condition.
     this.roleService.count(this.filter).subscribe((res: Count) => {
       this.count = res.count;
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -169,7 +170,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
       if (name) {
 
         // User was created.
-        this.showInfo(`'${name}' successfully created`);
+        this.feedbackService.showInfo(`'${name}' successfully created`);
         this.getRoles();
       }
     });
@@ -192,13 +193,13 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
           // Success! Informing user and retrieving roles again.
           this.getRoles();
-          this.showInfo(`Role '${role.name}' successfully deleted`);
+          this.feedbackService.showInfo(`Role '${role.name}' successfully deleted`);
         });
 
       } else {
 
         // If one or more users are affected we warn user, and asks him to confirm operation.
-        this.confirm(
+        this.feedbackService.confirm(
           'Please confirm operation',
           `Deleting the '${role.name}' role will affect ${count.count} users, you sure you want to delete this role?`,
           () => {
@@ -208,7 +209,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
             // Success! Informing user and retrieving roles again.
             this.getRoles();
-            this.showInfo(`Role '${role.name}' successfully deleted`);
+            this.feedbackService.showInfo(`Role '${role.name}' successfully deleted`);
 
             // Updating selected users, no need to invoke backend.
             for (const idx of this.selectedUsers) {
@@ -217,7 +218,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
                 idx.roles.splice(idxOfRole, 1);
               }
             }
-          }, (error: any) => this.showError(error));
+          }, (error: any) => this.feedbackService.showError(error));
         });
       }
     });
@@ -286,11 +287,11 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
       // Success, updating list of roles for all affected users.
       // No need to invoke backend here.
-      this.showInfo(`Role '${role.name}' added to ${requests.length} users`)
+      this.feedbackService.showInfo(`Role '${role.name}' added to ${requests.length} users`)
       for (const idx of this.selectedUsers.filter(x => x.roles.indexOf(role.name) === -1)) {
         idx.roles.push(role.name);
       }
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -312,7 +313,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
       if (name) {
 
         // User was created.
-        this.showInfo(`'${name}' successfully updated`)
+        this.feedbackService.showInfo(`'${name}' successfully updated`)
         this.getRoles();
       }
     });

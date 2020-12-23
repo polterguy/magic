@@ -7,7 +7,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { FeedbackService } from '../../services/feedback.service';
 import { Response } from 'src/app/models/response.model';
 import { SqlService } from 'src/app/services/sql.service';
 import { ConfigService } from 'src/app/services/config.service';
@@ -17,6 +17,7 @@ import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.compon
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -26,7 +27,7 @@ import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.compon
   templateUrl: './sql.component.html',
   styleUrls: ['./sql.component.scss']
 })
-export class SqlComponent extends BaseComponent implements OnInit {
+export class SqlComponent implements OnInit {
 
   // List of items we're viewing details of.
   private displayDetails: any[] = [];
@@ -86,11 +87,10 @@ export class SqlComponent extends BaseComponent implements OnInit {
    * @param messageService Message service used to message other components
    */
   constructor(
+    private feedbackService: FeedbackService,
     private configService: ConfigService,
     private sqlService: SqlService,
-    protected injector: Injector) {
-    super(injector);
-  }
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
@@ -156,7 +156,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
           };
         });
       });
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -248,7 +248,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
           this.input.sql = content;
           this.filename = filename;
 
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
       }
     });
   }
@@ -280,10 +280,10 @@ export class SqlComponent extends BaseComponent implements OnInit {
           this.input.sql).subscribe(() => {
 
           // Success!
-          this.showInfo('SQL snippet successfully saved');
+          this.feedbackService.showInfo('SQL snippet successfully saved');
           this.filename = filename;
           
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
 
       }
     });
@@ -307,15 +307,15 @@ export class SqlComponent extends BaseComponent implements OnInit {
 
       // Success!
       if (result && result.length === 200) {
-        this.showInfo('First 200 records returned');
+        this.feedbackService.showInfo('First 200 records returned');
       } else {
-        this.showInfo('SQL successfully executed');
+        this.feedbackService.showInfo('SQL successfully executed');
       }
 
       // Making sure we remove all previously viewed detail records.
       this.displayDetails = [];
       this.result = result || [];
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -403,7 +403,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
       this.input.connectionString = null;
       this.input.database = null;
       this.input.options.hintOptions.tables = [];
-      this.showError(error);}
+      this.feedbackService.showError(error);}
     );
   }
 
@@ -429,7 +429,7 @@ export class SqlComponent extends BaseComponent implements OnInit {
       this.input.options.hintOptions.tables = [];
 
       // Notifying user
-      this.showError(error);
+      this.feedbackService.showError(error);
     });
   }
 }
