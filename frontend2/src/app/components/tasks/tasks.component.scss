@@ -5,7 +5,8 @@
 
 table.tasks {
   tr {
-    td:nth-child(2) {
+    td:nth-child(2),
+    td:nth-child(3) {
       padding-top: 5px;
       padding-bottom: 9px;
       width: 5px;

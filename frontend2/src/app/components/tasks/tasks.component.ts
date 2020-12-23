@@ -57,6 +57,7 @@ export class TasksComponent implements OnInit {
    */
   public displayedColumns: string[] = [
     'id',
+    'download',
     'delete',
   ];
 
@@ -337,5 +338,20 @@ export class TasksComponent implements OnInit {
           this.feedbackService.showInfoShort('Schedule deleted');
         });
     });
+  }
+
+  /**
+   * Downloads task from your backend.
+   * 
+   * @param event Click event
+   * @param path Task to download
+   */
+  public download(event: any, task: Task) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Downloading task from backend.
+    this.taskService.download(task.id);
   }
 }
