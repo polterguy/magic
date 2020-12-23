@@ -70,21 +70,6 @@ export class AppComponent implements OnInit, OnDestroy {
           this.showInfo('You were successfully authenticated towards your backend');
           break;
 
-        // Some error occurred and we need to display it to the user
-        case Messages.SHOW_ERROR:
-          this.showError(msg.content);
-          break;
-
-        // Some component wants to show user some information
-        case Messages.SHOW_INFO:
-          this.showInfo(msg.content);
-          break;
-
-        // Some component wants to show user some 'short' information
-        case Messages.SHOW_INFO_SHORT:
-          this.showInfo(msg.content, 2000);
-          break;
-
         // Some component wants to toggle the navbar
         case Messages.TOGGLE_NAVBAR:
           this.sidenavOpened = !this.sidenavOpened;

@@ -13,6 +13,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DatePipe implements PipeTransform {
 
+  /**
+   * Transforms a Date object to its locale string representation.
+   * 
+   * @param value Value to transform
+   */
   transform(value: any) {
     const date = new Date(value);
     return date.toLocaleString();

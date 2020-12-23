@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Component, Injector, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
@@ -20,7 +20,6 @@ import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
-import { LoaderInterceptor } from 'src/app/services/interceptors/loader.interceptor';
 
 /**
  * Login dialog allowing user to login to a backend of his choice.
@@ -76,10 +75,7 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
    * Shows a security warning about password to user.
    */
   public showSecurityWarning() {
-    this.messageService.sendMessage({
-      name: Messages.SHOW_INFO,
-      content: 'Clicking the login button will transmit your password in clear text'
-    });
+    this.showInfo('Clicking the login button will transmit your password in clear text');
   }
 
   /**

@@ -13,6 +13,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DateToPipe implements PipeTransform {
 
+  /**
+   * Transforms a date time past date to "xxx units ago".
+   * 
+   * @param value Value to transform
+   */
   transform(value: any) {
     const due = new Date(value).getTime();
     const now = new Date().getTime();

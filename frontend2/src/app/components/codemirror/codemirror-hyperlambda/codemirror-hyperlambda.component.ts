@@ -15,9 +15,7 @@ import {
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
-import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.

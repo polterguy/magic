@@ -15,7 +15,6 @@ import { Status } from 'src/app/models/status.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { Message, Messages } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component responsible for allowing user to setup system.

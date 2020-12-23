@@ -10,6 +10,10 @@ import { Response } from './response.model';
  * Model returned from backend when code is generated.
  */
 export class LocResult extends Response {
+
+  /**
+   * Lines of code generated during invocation to backend.
+   */
   loc: number;
 }
   

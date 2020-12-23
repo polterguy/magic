@@ -18,8 +18,7 @@ import { BackendService } from '../backend.service';
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(
-    private backendService: BackendService) { }
+  constructor(private backendService: BackendService) { }
 
   /**
    * Intercepts all HTTP requests to associate an Authorization

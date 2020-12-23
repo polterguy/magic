@@ -12,10 +12,8 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Count } from 'src/app/models/count.model';
-import { MatDialog } from '@angular/material/dialog';
 import { Schedule, Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
-import { MessageService } from 'src/app/services/message.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
