@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
@@ -13,6 +13,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -57,14 +58,14 @@ export class SetupAuthComponent extends BaseComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param configService Configuration service used to read and save configuration settings
-   * @param loaderInterceptor Used to explicitly turn on spinner animation
    * @param messageService Used to publish event when status of setup process has changed
    */
   constructor(
     private configService: ConfigService,
+    protected injector: Injector,
     protected messageService: MessageService) {
-      super(messageService);
-    }
+    super(injector);
+  }
 
   /**
    * Implementation of OnInit.

@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Injector } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Task } from 'src/app/models/task.model';
@@ -33,15 +33,14 @@ export class ScheduleTaskDialogComponent extends BaseComponent {
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param taskService Needed to be able to create our task
-   * @param messageService Message service used to communicate between components
-   * @param data If updating role, this is the role we're updating
+  * @param data If updating role, this is the role we're updating
    */
   constructor(
     private dialogRef: MatDialogRef<ScheduleTaskDialogComponent>,
     private taskService: TaskService,
-    protected messageService: MessageService,
+    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: Task) {
-    super(messageService);
+    super(injector);
   }
 
   /**
@@ -50,7 +49,7 @@ export class ScheduleTaskDialogComponent extends BaseComponent {
   public create() {
 
     // Invoking backend to create a new schedule for task.
-    this.taskService.schedule(this.data.id).subscribe(() => {
+    this.taskService.schedule(this.data.id, this.date).subscribe(() => {
 
       // Success! Closing dialog and giving caller the new task, now with an additional schedule declared in it.
       this.dialogRef.close(this.data);

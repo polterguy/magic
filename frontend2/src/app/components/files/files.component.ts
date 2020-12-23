@@ -5,14 +5,13 @@
 
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { FileService } from 'src/app/services/file.service';
 import { MessageService } from 'src/app/services/message.service';
-import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
 import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-object.component';
 
 /**
@@ -56,14 +55,12 @@ export class FilesComponent extends BaseComponent implements OnInit {
    * 
    * @param dialog Used to open new file object dialog to create new folders or files
    * @param fileService File service used to retrieve files and folders from backend
-   * @param messageService Used to send and retrieve messages from other components.
    */
   constructor(
-    private dialog: MatDialog,
     private fileService: FileService,
-    protected messageService: MessageService) {
-      super(messageService);
-    }
+    protected injector: Injector) {
+    super(injector);
+  }
 
   /**
    * Implementation of OnInit.
@@ -159,19 +156,10 @@ export class FilesComponent extends BaseComponent implements OnInit {
     event.stopPropagation();
 
     // Asking user to confirm deletion of file object.
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '550px',
-      data: {
-        text: `Are you sure you want to delete the '${this.getItemName(path)}' ${this.isFolder(path) ? 'folder' : 'file'}?`,
-        title: 'Please confirm delete operation'
-      }
-    });
-
-    // Subscribing to close such that we can delete user if it's confirmed.
-    dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
-
-      // Checking if user confirmed that he wants to delete the file object.
-      if (result && result.confirmed) {
+    this.confirm(
+      'Please confirm delete operation',
+      `Are you sure you want to delete the '${this.getItemName(path)}' ${this.isFolder(path) ? 'folder' : 'file'}?`,
+      () => {
 
         // Checking if this is a file or a folder, and acting accordingly.
         if (this.isFolder(path)) {
@@ -194,7 +182,6 @@ export class FilesComponent extends BaseComponent implements OnInit {
             this.getFolderContent();
           }, (error: any) => this.showError(error));
         }
-      }
     });
   }
 

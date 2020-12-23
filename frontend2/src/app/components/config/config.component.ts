@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Status } from 'src/app/models/status.model';
 
 // Application specific imports.
@@ -15,6 +15,7 @@ import { MessageService } from 'src/app/services/message.service';
 
 // CodeMirror options.
 import json from '../codemirror/options/json.json'
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Setup component allowing you to setup and modify your system's configuration.
@@ -47,13 +48,12 @@ export class ConfigComponent extends BaseComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
-   * @param messageService Message service used to publish messages to other components in the system
    */
   constructor(
     private configService: ConfigService,
-    protected messageService: MessageService) {
-      super(messageService);
-    }
+    protected injector: Injector) {
+    super(injector);
+  }
 
   /**
    * OnInit implementation.

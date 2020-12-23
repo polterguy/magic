@@ -7,6 +7,7 @@
 import {
   AfterViewInit,
   Component,
+  Injector,
   Input,
   OnInit,
   ViewChild,
@@ -16,6 +17,7 @@ import {
 import { BaseComponent } from '../../base.component';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.
@@ -63,9 +65,9 @@ export class HyperlambdaComponent extends BaseComponent implements OnInit, After
    */
   constructor(
     private evaluatorService: EvaluatorService,
-    protected messageService: MessageService) {
-      super(messageService);
-    }
+    protected injector: Injector) {
+    super(injector);
+  }
 
   /**
    * Implementation of OnInit.
