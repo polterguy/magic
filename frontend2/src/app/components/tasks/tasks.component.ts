@@ -191,7 +191,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
         // Making sure we add additional fields returned from server for completeness sake.
         el.task.hyperlambda = task.hyperlambda;
-        if (el.task.schedule) {
+        if (task.schedule) {
           el.task.schedule = task.schedule.map(x => {
             return {
               id: x.id,
