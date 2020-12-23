@@ -5,13 +5,12 @@
 
 // Angular and system imports.
 import { Component, Inject, Injector } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/components/base.component';
-import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Modal dialog component for creating a new user.

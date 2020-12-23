@@ -1,3 +1,9 @@
+
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
+
+// Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -9,7 +15,6 @@ export class EndpointsComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit() {
   }
-
 }

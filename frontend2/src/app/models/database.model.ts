@@ -8,6 +8,10 @@
  * for all databases in a specified database type.
  */
 export class Database {
+
+  /**
+   * Database name.
+   */
   db: string;
 }
   

@@ -10,9 +10,9 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { HttpService } from './http.service';
 import { Count } from '../models/count.model';
+import { Affected } from '../models/affected.model';
 import { UserRoles } from '../models/user-roles.model';
 import { AuthFilter } from '../models/auth-filter.model';
-import { Affected } from '../models/affected.model';
 
 /**
  * User service, allowing you to administrate the users in your backend.

@@ -5,12 +5,11 @@
 
 // Angular and system imports.
 import { Component, Inject, Injector, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
 import { SqlService } from 'src/app/services/sql.service';
-import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Load snippet dialog for loading saved snippets from the backend.

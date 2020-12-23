@@ -49,23 +49,6 @@ export class Messages {
   static readonly TOGGLE_NAVBAR = 'app.navbar.toggle';
 
   /**
-   * Message will be published by the system when a component needs
-   * to display information to the user.
-   */
-  static readonly SHOW_INFO = 'app.info';
-
-  /**
-   * Message will be published by the system when a component needs
-   * to display information to the user, but only for a short while.
-   */
-  static readonly SHOW_INFO_SHORT = 'app.info.short';
-
-  /**
-   * Message will be published by the system when an error occurs.
-   */
-  static readonly SHOW_ERROR = 'app.error';
-
-  /**
    * Message will be puvlished when the setup state of your system changes.
    */
   static readonly SETUP_STATE_CHANGED = 'app.setup.status-changed';

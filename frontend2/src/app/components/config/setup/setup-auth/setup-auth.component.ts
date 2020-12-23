@@ -12,8 +12,6 @@ import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BaseComponent } from 'src/app/components/base.component';
-import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Setup configuration component for allowing user to configure his Magic

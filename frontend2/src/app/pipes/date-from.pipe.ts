@@ -13,6 +13,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DateFromPipe implements PipeTransform {
 
+  /**
+   * Transforms a future date and time to its "xxx units from now" representation.
+   * 
+   * @param value Value to transform
+   */
   transform(value: any) {
     const dateWhen = new Date(value).getTime();
     const now = new Date().getTime();

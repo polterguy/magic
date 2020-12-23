@@ -12,7 +12,6 @@ import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { MessageService } from 'src/app/services/message.service';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component allowing user to setup a cryptography key pair.

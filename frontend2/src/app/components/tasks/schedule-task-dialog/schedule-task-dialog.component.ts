@@ -5,13 +5,12 @@
 
 // Angular and system imports.
 import { Component, Inject, Injector } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
 import { BaseComponent } from 'src/app/components/base.component';
-import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Modal dialog used to allow user to create a new role in the system.

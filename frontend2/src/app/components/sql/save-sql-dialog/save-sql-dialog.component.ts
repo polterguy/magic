@@ -4,12 +4,11 @@
  */
 
 // Angular and system imports.
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, Injector, OnInit } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
-import { MessageService } from 'src/app/services/message.service';
 import { SqlService } from 'src/app/services/sql.service';
 
 /**

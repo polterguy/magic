@@ -5,14 +5,12 @@
 
 // Angular and system imports.
 import { Component, Injector, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Response } from 'src/app/models/response.model';
 import { SqlService } from 'src/app/services/sql.service';
 import { ConfigService } from 'src/app/services/config.service';
-import { MessageService } from 'src/app/services/message.service';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 

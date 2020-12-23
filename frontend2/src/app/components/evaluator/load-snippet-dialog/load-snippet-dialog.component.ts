@@ -4,12 +4,11 @@
  */
 
 // Angular and system imports.
+import { MatDialogRef } from '@angular/material/dialog';
 import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**

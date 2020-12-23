@@ -9,7 +9,6 @@ import { Component, Injector, Input, OnInit } from '@angular/core';
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
 import { FileService } from 'src/app/services/file.service';
-import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 // CodeMirror options according to file extensions.

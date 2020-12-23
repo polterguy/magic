@@ -5,12 +5,10 @@
 
 // Angular and system imports.
 import { Component, Injector, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { Response } from '../../models/response.model';
-import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';

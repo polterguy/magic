@@ -6,12 +6,10 @@
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
 import { Component, Injector, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { FileService } from 'src/app/services/file.service';
-import { MessageService } from 'src/app/services/message.service';
 import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-object.component';
 
 /**

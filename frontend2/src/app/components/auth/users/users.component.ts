@@ -5,10 +5,9 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
@@ -18,9 +17,7 @@ import { Affected } from 'src/app/models/affected.model';
 import { UserService } from 'src/app/services/user.service';
 import { UserRoles } from 'src/app/models/user-roles.model';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
-import { MessageService } from 'src/app/services/message.service';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
-import { ConfirmDialogComponent, ConfirmDialogData } from '../../confirm/confirm-dialog.component';
 
 /**
  * Users component for administrating users in the system.

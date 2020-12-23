@@ -6,16 +6,14 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
 import { LogItem } from 'src/app/models/log-item.model';
 import { LogService } from 'src/app/services/log.service';
-import { MessageService } from 'src/app/services/message.service';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Log component for reading backend's log.

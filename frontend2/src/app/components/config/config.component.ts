@@ -5,17 +5,15 @@
 
 // Angular and system imports.
 import { Component, Injector, OnInit } from '@angular/core';
-import { Status } from 'src/app/models/status.model';
 
 // Application specific imports.
 import { BaseComponent } from '../base.component';
+import { Status } from 'src/app/models/status.model';
 import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { MessageService } from 'src/app/services/message.service';
 
 // CodeMirror options.
 import json from '../codemirror/options/json.json'
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Setup component allowing you to setup and modify your system's configuration.
