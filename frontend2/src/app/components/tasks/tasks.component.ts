@@ -307,6 +307,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
         // Task was successfully created.
         this.showInfo('Task was successfully scheduled');
+        task.schedule = result.schedule;
       }
     });
   }
