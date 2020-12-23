@@ -10,7 +10,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Modal dialog component for creating a new user.
@@ -20,7 +20,7 @@ import { BaseComponent } from 'src/app/components/base.component';
   templateUrl: './new-user-dialog.component.html',
   styleUrls: ['./new-user-dialog.component.scss']
 })
-export class NewUserDialogComponent extends BaseComponent {
+export class NewUserDialogComponent {
 
   /**
    * Username for new user.
@@ -40,11 +40,10 @@ export class NewUserDialogComponent extends BaseComponent {
    * @param data If updating user, this is the user we're updating
    */
   constructor(
-    private userService: UserService,
     private dialogRef: MatDialogRef<NewUserDialogComponent>,
-    protected injector: Injector,
+    private feedbackService: FeedbackService,
+    private userService: UserService,
     @Inject(MAT_DIALOG_DATA) public data: User) {
-    super(injector);
     if (this.data) {
       this.username = data.username;
     }
@@ -60,7 +59,7 @@ export class NewUserDialogComponent extends BaseComponent {
 
       // Success! User created.
       this.dialogRef.close(this.username);
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -73,6 +72,6 @@ export class NewUserDialogComponent extends BaseComponent {
 
       // Success! User created.
       this.dialogRef.close(this.username);
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

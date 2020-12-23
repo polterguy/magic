@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { TaskService } from 'src/app/services/task.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Modal dialog used to allow user to create a new role in the system.
@@ -19,7 +19,7 @@ import { BaseComponent } from 'src/app/components/base.component';
   templateUrl: './new-task-dialog.component.html',
   styleUrls: ['./new-task-dialog.component.scss']
 })
-export class NewTaskDialogComponent extends BaseComponent {
+export class NewTaskDialogComponent {
 
   /**
    * Name of new task to create.
@@ -35,10 +35,9 @@ export class NewTaskDialogComponent extends BaseComponent {
    */
   constructor(
     private dialogRef: MatDialogRef<NewTaskDialogComponent>,
+    private feedbackService: FeedbackService,
     private taskService: TaskService,
-    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: string) {
-    super(injector);
     if (this.data) {
       this.name = data;
     }
@@ -55,6 +54,6 @@ export class NewTaskDialogComponent extends BaseComponent {
       // Success! Closing dialog and informing the caller of the name of the new task.
       this.dialogRef.close(this.name);
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

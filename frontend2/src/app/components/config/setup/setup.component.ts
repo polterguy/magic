@@ -10,7 +10,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Component, Injector, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { Status } from 'src/app/models/status.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { Message, Messages } from 'src/app/models/message.model';
@@ -24,7 +24,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './setup.component.html',
   styleUrls: ['./setup.component.scss']
 })
-export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
+export class SetupComponent implements OnInit, OnDestroy {
 
   // Stepper instance.
   @ViewChild('stepper') stepper: MatStepper;
@@ -46,11 +46,10 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
    * @param messageService Service used to publish messages to other components in the system
    */
   constructor(
-    private router: Router,
+    private feedbackService: FeedbackService,
     private configService: ConfigService,
-    protected injector: Injector,
+    private router: Router,
     protected messageService: MessageService) {
-    super(injector);
   }
 
   /**
@@ -73,7 +72,7 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
             if (selectedIndex === -1) {
 
               // We're done, navigating to home component, and giving user some feedback.
-              this.showInfo('You have successfully setup Magic');
+              this.feedbackService.showInfo('You have successfully setup Magic');
               this.router.navigate(['/']);
             } else {
 

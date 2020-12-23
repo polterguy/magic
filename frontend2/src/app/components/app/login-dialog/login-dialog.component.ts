@@ -13,7 +13,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
@@ -29,7 +29,7 @@ import { AuthenticateResponse } from 'src/app/models/authenticate-response.model
   templateUrl: './login-dialog.component.html',
   styleUrls: ['./login-dialog.component.scss']
 })
-export class LoginDialogComponent extends BaseComponent implements OnInit {
+export class LoginDialogComponent implements OnInit {
 
   public backends: FormControl = null;
   public filteredBackends: Observable<string[]>;
@@ -51,11 +51,10 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
     private router: Router,
     private configService: ConfigService,
     private dialogRef: MatDialogRef<LoginDialogComponent>,
-    protected injector: Injector,
+    private feedbackService: FeedbackService,
     protected messageService: MessageService,
     public authService: AuthService,
     public backendService: BackendService) {
-    super(injector);
   }
 
   /**
@@ -75,7 +74,7 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
    * Shows a security warning about password to user.
    */
   public showSecurityWarning() {
-    this.showInfo('Clicking the login button will transmit your password in clear text');
+    this.feedbackService.showInfo('Clicking the login button will transmit your password in clear text');
   }
 
   /**
@@ -127,7 +126,7 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
               this.router.navigate(['/config']);
             }
           }, (error: any) => {
-            this.showError(error);
+            this.feedbackService.showError(error);
           });
         }
 
@@ -140,7 +139,7 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
       }, (error: any) => {
 
         // Oops, something went wrong.
-        this.showError(error);
+        this.feedbackService.showError(error);
       });
   }
 

@@ -10,7 +10,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { FeedbackService } from '../../services/feedback.service';
 import { Count } from 'src/app/models/count.model';
 import { Schedule, Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
@@ -21,6 +21,7 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
+import { MatDialog } from '@angular/material/dialog';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -44,7 +45,7 @@ class TaskEx {
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss']
 })
-export class TasksComponent extends BaseComponent implements OnInit {
+export class TasksComponent implements OnInit {
 
   /**
    * Tasks that are currently being viewed.
@@ -80,10 +81,9 @@ export class TasksComponent extends BaseComponent implements OnInit {
    * @param taskService Needed to retrieve, update, delete and modify tasks in our backend
    */
   constructor(
+    private feedbackService: FeedbackService,
     private taskService: TaskService,
-    protected injector: Injector) {
-    super(injector);
-  }
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
@@ -136,8 +136,8 @@ export class TasksComponent extends BaseComponent implements OnInit {
         // Assigning count to returned value from server.
         this.count = count.count;
 
-      }, (error: any) => this.showError(error));
-    }, (error: any) => this.showError(error));
+      }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -221,7 +221,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
       task.task.description).subscribe(() => {
 
       // Success!
-      this.showInfoShort('Task successfully updated');
+      this.feedbackService.showInfoShort('Task successfully updated');
     });
   }
 
@@ -241,7 +241,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
       if (name) {
 
         // Task was successfully created.
-        this.showInfo(`'${name}' task successfully created`);
+        this.feedbackService.showInfo(`'${name}' task successfully created`);
         this.filterFormControl.setValue(name);
       }
     });
@@ -277,9 +277,9 @@ export class TasksComponent extends BaseComponent implements OnInit {
         this.taskService.delete(task.task.id).subscribe(() => {
 
           // Success! Showing user some feedback and re-databinding table.
-          this.showInfoShort('Task successfully deleted');
+          this.feedbackService.showInfoShort('Task successfully deleted');
           this.getTasks();
-        }, (error: any)=> this.showError(error));
+        }, (error: any)=> this.feedbackService.showError(error));
       }
     });
   }
@@ -303,7 +303,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
       if (result) {
 
         // Task was successfully created.
-        this.showInfo('Task was successfully scheduled');
+        this.feedbackService.showInfo('Task was successfully scheduled');
 
         // Invoking backend to retrieve all schedules, now that they're changed.
         this.taskService.get(task.id).subscribe((nTask: Task) => {
@@ -322,7 +322,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
   public deleteSchedule(task: Task, schedule: Schedule) {
 
     // Asking user to confirm deletion of schedule.
-    this.confirm(
+    this.feedbackService.confirm(
       'Please confirm delete operation',
       'Are you sure you want to delete the schedule for the task?',
       () => {
@@ -334,7 +334,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
           task.schedule.splice(task.schedule.indexOf(schedule), 1);
 
           // Giving user some feedback.
-          this.showInfoShort('Schedule deleted');
+          this.feedbackService.showInfoShort('Schedule deleted');
         });
     });
   }

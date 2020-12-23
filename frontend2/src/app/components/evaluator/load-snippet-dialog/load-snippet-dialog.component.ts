@@ -8,7 +8,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
@@ -19,7 +19,7 @@ import { EvaluatorService } from 'src/app/services/evaluator.service';
   templateUrl: './load-snippet-dialog.component.html',
   styleUrls: ['./load-snippet-dialog.component.scss']
 })
-export class LoadSnippetDialogComponent extends BaseComponent implements OnInit {
+export class LoadSnippetDialogComponent implements OnInit {
 
   /**
    * Snippet files as returned from backend.
@@ -40,9 +40,7 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
   constructor(
     private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
     private evaluatorService: EvaluatorService,
-    protected injector: Injector) {
-    super(injector);
-  }
+    private feedbackService: FeedbackService) { }
 
   /**
    * OnInit implementation.
@@ -52,7 +50,7 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
     // Retrieving snippets from backend.
     this.evaluatorService.snippets().subscribe((files: string[]) => {
       this.files = files.filter(x => x.endsWith('.hl'));
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
@@ -19,7 +19,7 @@ import { EvaluatorService } from 'src/app/services/evaluator.service';
   templateUrl: './save-snippet-dialog.component.html',
   styleUrls: ['./save-snippet-dialog.component.scss']
 })
-export class SaveSnippetDialogComponent extends BaseComponent implements OnInit {
+export class SaveSnippetDialogComponent implements OnInit {
 
   /**
    * Existing snippet files as returned from backend.
@@ -36,10 +36,8 @@ export class SaveSnippetDialogComponent extends BaseComponent implements OnInit 
    */
   constructor(
     private evaluatorService: EvaluatorService,
-    protected injector: Injector,
-    @Inject(MAT_DIALOG_DATA) public data: string) {
-    super(injector);
-  }
+    private feedbackService: FeedbackService,
+    @Inject(MAT_DIALOG_DATA) public data: string) { }
 
   /**
    * OnInit implementation.
@@ -52,7 +50,7 @@ export class SaveSnippetDialogComponent extends BaseComponent implements OnInit 
       // Excluding all files that are not Hyperlambda files.
       this.files = files.filter(x => x.endsWith('.hl'));
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

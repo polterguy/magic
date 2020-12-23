@@ -8,7 +8,7 @@ import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { SqlService } from 'src/app/services/sql.service';
 
 /**
@@ -19,7 +19,7 @@ import { SqlService } from 'src/app/services/sql.service';
   templateUrl: './load-sql-dialog.component.html',
   styleUrls: ['./load-sql-dialog.component.scss']
 })
-export class LoadSqlDialogComponent extends BaseComponent implements OnInit {
+export class LoadSqlDialogComponent implements OnInit {
 
   /**
    * Snippet files as returned from backend.
@@ -39,12 +39,10 @@ export class LoadSqlDialogComponent extends BaseComponent implements OnInit {
    * @param dialogRef Needed to be able to close dialog as user selects a snippet
    */
   constructor(
+    private dialogRef: MatDialogRef<LoadSqlDialogComponent>,
+    private feedbackService: FeedbackService,
     private sqlService: SqlService,
-    protected injector: Injector,
-    @Inject(MAT_DIALOG_DATA) public data: string,
-    private dialogRef: MatDialogRef<LoadSqlDialogComponent>) {
-    super(injector);
-  }
+    @Inject(MAT_DIALOG_DATA) public data: string) { }
 
   /**
    * OnInit implementation.
@@ -54,7 +52,7 @@ export class LoadSqlDialogComponent extends BaseComponent implements OnInit {
     // Retrieving snippets from backend.
     this.sqlService.snippets(this.data).subscribe((files: string[]) => {
       this.files = files.filter(x => x.endsWith('.sql'));
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

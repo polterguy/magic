@@ -14,7 +14,7 @@ import { Response } from 'src/app/models/response.model';
 import { LocResult } from 'src/app/models/loc-result.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { CrudifyService } from 'src/app/services/crudify.service';
 
 // CodeMirror options.
@@ -33,7 +33,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './crudify-database.component.html',
   styleUrls: ['./crudify-database.component.scss']
 })
-export class CrudifyDatabaseComponent extends BaseComponent implements OnInit {
+export class CrudifyDatabaseComponent implements OnInit {
 
   /**
    * CodeMirror options object, taken from common settings.
@@ -61,11 +61,10 @@ export class CrudifyDatabaseComponent extends BaseComponent implements OnInit {
    * @param messageService Message service used to publish messages informing parent component about change of state
    */
   public constructor(
+    private feedbackService: FeedbackService,
     private configService: ConfigService,
     private crudifyService: CrudifyService,
-    protected injector: Injector,
     protected messageService: MessageService) {
-    super(injector);
   }
 
   /**
@@ -87,7 +86,7 @@ export class CrudifyDatabaseComponent extends BaseComponent implements OnInit {
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
       this.crudifyContent = JSON.stringify(data, null, 2);
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -106,13 +105,13 @@ export class CrudifyDatabaseComponent extends BaseComponent implements OnInit {
 
       // Finished, showing some information to user.
       const loc = res.reduce((x,y) => x + y.loc, 0);
-      this.showInfo(`Your Magic database was successfully crudified. ${loc} LOC generated.`);
+      this.feedbackService.showInfo(`Your Magic database was successfully crudified. ${loc} LOC generated.`);
 
       // Publishing message to inform parent component that we're done here.
       this.messageService.sendMessage({
         name: Messages.SETUP_STATE_CHANGED
       });
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

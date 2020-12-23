@@ -7,7 +7,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { FeedbackService } from '../../services/feedback.service';
 import { Response } from '../../models/response.model';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -17,6 +17,7 @@ import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-d
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
 import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.json';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component allowing user to evaluate Hyperlambda,
@@ -27,7 +28,7 @@ import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.jso
   templateUrl: './evaluator.component.html',
   styleUrls: ['./evaluator.component.scss']
 })
-export class EvaluatorComponent extends BaseComponent implements OnInit {
+export class EvaluatorComponent implements OnInit {
 
   /**
    * Input Hyperlambda component model and options.
@@ -57,8 +58,8 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
    */
   constructor(
     private evaluatorService: EvaluatorService,
-    protected injector: Injector) {
-    super(injector);
+    private feedbackService: FeedbackService,
+    private dialog: MatDialog) {
   }
 
   /**
@@ -108,7 +109,7 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
           this.input.hyperlambda = content;
           this.filename = filename;
 
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
       }
     });
   }
@@ -134,9 +135,9 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
         this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe((res: any) => {
 
           // Snippet saved!
-          this.showInfo('Snippet successfully saved');
+          this.feedbackService.showInfo('Snippet successfully saved');
           
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
 
       }
     });
@@ -155,8 +156,8 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
 
       // Success, updating result editor.
       this.output.hyperlambda = res.result;
-      this.showInfoShort('Hyperlambda was successfully executed');
+      this.feedbackService.showInfoShort('Hyperlambda was successfully executed');
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

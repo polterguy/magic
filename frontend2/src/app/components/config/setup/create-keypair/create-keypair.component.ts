@@ -10,7 +10,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { Messages } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { MessageService } from 'src/app/services/message.service';
 
 /**
@@ -21,7 +21,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './create-keypair.component.html',
   styleUrls: ['./create-keypair.component.scss']
 })
-export class CreateKeypairComponent extends BaseComponent implements OnInit {
+export class CreateKeypairComponent implements OnInit {
 
   /**
    * CSRNG seed used when generating cryptography key.
@@ -40,10 +40,9 @@ export class CreateKeypairComponent extends BaseComponent implements OnInit {
    * @param messageService Message service used to publish messages to other components.
    */
   public constructor(
+    private feedbackService: FeedbackService,
     private configService: ConfigService,
-    protected injector: Injector,
     protected messageService: MessageService) {
-    super(injector);
   }
 
   /**
@@ -57,7 +56,7 @@ export class CreateKeypairComponent extends BaseComponent implements OnInit {
       // Applying seed.
       this.seed = res.result;
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -69,7 +68,7 @@ export class CreateKeypairComponent extends BaseComponent implements OnInit {
     this.configService.generateKeyPair(+this.strength, this.seed).subscribe(() => {
 
       // Success, giving feedback to user.
-      this.showInfo('Cryptography key pair successfully created');
+      this.feedbackService.showInfo('Cryptography key pair successfully created');
 
       // Publishing message informing other components that setup state was changed.
       this.messageService.sendMessage({

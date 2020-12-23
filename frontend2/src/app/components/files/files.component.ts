@@ -8,9 +8,10 @@ import { forkJoin } from 'rxjs';
 import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { FeedbackService } from '../../services/feedback.service';
 import { FileService } from 'src/app/services/file.service';
 import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-object.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Files component to allow user to browse his dynamic files folder,
@@ -21,7 +22,7 @@ import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-o
   templateUrl: './files.component.html',
   styleUrls: ['./files.component.scss']
 })
-export class FilesComponent extends BaseComponent implements OnInit {
+export class FilesComponent implements OnInit {
 
   /**
    * Displayed columns in data table.
@@ -55,10 +56,9 @@ export class FilesComponent extends BaseComponent implements OnInit {
    * @param fileService File service used to retrieve files and folders from backend
    */
   constructor(
+    private feedbackService: FeedbackService,
     private fileService: FileService,
-    protected injector: Injector) {
-    super(injector);
-  }
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
@@ -154,7 +154,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
     event.stopPropagation();
 
     // Asking user to confirm deletion of file object.
-    this.confirm(
+    this.feedbackService.confirm(
       'Please confirm delete operation',
       `Are you sure you want to delete the '${this.getItemName(path)}' ${this.isFolder(path) ? 'folder' : 'file'}?`,
       () => {
@@ -166,9 +166,9 @@ export class FilesComponent extends BaseComponent implements OnInit {
           this.fileService.deleteFolder(path).subscribe(() => {
 
             // Giving feedback to user and re-retrieving folder's content.
-            this.showInfoShort('Folder deleted');
+            this.feedbackService.showInfoShort('Folder deleted');
             this.getFolderContent();
-          }, (error: any) => this.showError(error));
+          }, (error: any) => this.feedbackService.showError(error));
 
         } else {
 
@@ -176,9 +176,9 @@ export class FilesComponent extends BaseComponent implements OnInit {
           this.fileService.deleteFile(path).subscribe(() => {
 
             // Giving feedback to user and re-retrieving folder's content.
-            this.showInfoShort('File deleted');
+            this.feedbackService.showInfoShort('File deleted');
             this.getFolderContent();
-          }, (error: any) => this.showError(error));
+          }, (error: any) => this.feedbackService.showError(error));
         }
     });
   }
@@ -239,7 +239,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
           // Success, re-retrieving folder's content.
           this.getFolderContent();
 
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
       }
     });
   }
@@ -270,7 +270,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
           // Success, re-retrieving folder's content.
           this.getFolderContent(this.currentFolder + path.path);
 
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
       }
     });
   }
@@ -287,7 +287,7 @@ export class FilesComponent extends BaseComponent implements OnInit {
       this.fileService.uploadFile(this.currentFolder, files.item(idx)).subscribe(res => {
 
         // Showing some feedback to user, and re-databinding folder's content.
-        this.showInfo('File was successfully uploaded');
+        this.feedbackService.showInfo('File was successfully uploaded');
         this.getFolderContent();
       });
     }
@@ -317,6 +317,6 @@ export class FilesComponent extends BaseComponent implements OnInit {
         this.editedFiles = [];
       }
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

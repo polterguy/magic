@@ -10,7 +10,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 // Application specific imports.
 import { Role } from 'src/app/models/role.model';
 import { RoleService } from 'src/app/services/role.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { MessageService } from 'src/app/services/message.service';
 
 /**
@@ -21,7 +21,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './new-role-dialog.component.html',
   styleUrls: ['./new-role-dialog.component.scss']
 })
-export class NewRoleDialogComponent extends BaseComponent {
+export class NewRoleDialogComponent {
 
   /**
    * Name of new role to create.
@@ -42,10 +42,9 @@ export class NewRoleDialogComponent extends BaseComponent {
    */
   constructor(
     private dialogRef: MatDialogRef<NewRoleDialogComponent>,
+    private feedbackService: FeedbackService,
     private roleService: RoleService,
-    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: Role) {
-    super(injector);
     if (this.data) {
       this.name = data.name;
       this.description = data.description;
@@ -62,7 +61,7 @@ export class NewRoleDialogComponent extends BaseComponent {
 
       // Success! Closing dialog and informing the caller the name of the new role.
       this.dialogRef.close(this.name);
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -75,6 +74,6 @@ export class NewRoleDialogComponent extends BaseComponent {
 
       // Success! Closing dialog and informing the caller the name of the new role.
       this.dialogRef.close(this.name);
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

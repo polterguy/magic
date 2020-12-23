@@ -11,7 +11,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../base.component';
+import { FeedbackService } from '../../services/feedback.service';
 import { LogItem } from 'src/app/models/log-item.model';
 import { LogService } from 'src/app/services/log.service';
 
@@ -23,7 +23,7 @@ import { LogService } from 'src/app/services/log.service';
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss']
 })
-export class LogComponent extends BaseComponent implements OnInit {
+export class LogComponent implements OnInit {
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
@@ -65,11 +65,9 @@ export class LogComponent extends BaseComponent implements OnInit {
    * @param route Activated route service to subscribe to router changed events
    */
   constructor(
+    private feedbackService: FeedbackService,
     private logService: LogService,
-    private route: ActivatedRoute,
-    protected injector: Injector) {
-    super(injector);
-  }
+    private route: ActivatedRoute) { }
 
   /**
    * OnInit implementation.
@@ -124,8 +122,8 @@ export class LogComponent extends BaseComponent implements OnInit {
         // Assigning count to returned value from server.
         this.count = res.count;
 
-      }, (error: any) => this.showError(error));
-    }, (error: any) => this.showError(error));
+      }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -197,6 +195,6 @@ export class LogComponent extends BaseComponent implements OnInit {
    * Shows information about where to find currently viewed item.
    */
   public showLinkTip() {
-    this.showInfo('Scroll to the top of the page to see the item');
+    this.feedbackService.showInfo('Scroll to the top of the page to see the item');
   }
 }

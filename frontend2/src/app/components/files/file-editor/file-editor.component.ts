@@ -7,7 +7,7 @@
 import { Component, Injector, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { BaseComponent } from '../../base.component';
+import { FeedbackService } from '../../../services/feedback.service';
 import { FileService } from 'src/app/services/file.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
@@ -23,7 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './file-editor.component.html',
   styleUrls: ['./file-editor.component.scss']
 })
-export class FileEditorComponent extends BaseComponent implements OnInit {
+export class FileEditorComponent implements OnInit {
 
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
@@ -50,10 +50,9 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
    * @param evaluatorService Used to load Hyperlambda vocabulary from backend
    */
   public constructor(
-    private fileService: FileService,
     private evaluatorService: EvaluatorService,
-    protected injector: Injector) {
-    super(injector);
+    private feedbackService: FeedbackService,
+    private fileService: FileService) {
   }
 
   /**
@@ -84,7 +83,7 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
           window['_vocabulary'] = vocabulary;
           this.loadFile();
 
-        }, (error: any) => this.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
 
       } else {
 
@@ -103,8 +102,8 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
     this.fileService.saveFile(this.file, this.content).subscribe(() => {
 
       // Giving user some feedback.
-      this.showInfoShort('File was saved');
-    }, (error: any) => this.showError(error));
+      this.feedbackService.showInfoShort('File was saved');
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /*
@@ -118,6 +117,6 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
 
       // Assigning content to field, which will show CodeMirror instance for file type.
       this.content = content;
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

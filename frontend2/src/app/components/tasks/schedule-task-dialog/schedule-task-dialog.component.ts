@@ -10,7 +10,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // Application specific imports.
 import { Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
-import { BaseComponent } from 'src/app/components/base.component';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Modal dialog used to allow user to create a new role in the system.
@@ -20,7 +20,7 @@ import { BaseComponent } from 'src/app/components/base.component';
   templateUrl: './schedule-task-dialog.component.html',
   styleUrls: ['./schedule-task-dialog.component.scss']
 })
-export class ScheduleTaskDialogComponent extends BaseComponent {
+export class ScheduleTaskDialogComponent {
 
   /**
    * Date user selects.
@@ -32,15 +32,13 @@ export class ScheduleTaskDialogComponent extends BaseComponent {
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param taskService Needed to be able to create our task
-  * @param data If updating role, this is the role we're updating
+   * @param data If updating role, this is the role we're updating
    */
   constructor(
     private dialogRef: MatDialogRef<ScheduleTaskDialogComponent>,
+    private feedbackService: FeedbackService,
     private taskService: TaskService,
-    protected injector: Injector,
-    @Inject(MAT_DIALOG_DATA) public data: Task) {
-    super(injector);
-  }
+    @Inject(MAT_DIALOG_DATA) public data: Task) { }
 
   /**
    * Invoked when user clicks the create button to create a new role.
@@ -53,6 +51,6 @@ export class ScheduleTaskDialogComponent extends BaseComponent {
       // Success! Closing dialog and giving caller the new task, now with an additional schedule declared in it.
       this.dialogRef.close(this.data);
 
-    }, (error: any) => this.showError(error));
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
