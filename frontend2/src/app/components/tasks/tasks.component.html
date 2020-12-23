@@ -39,6 +39,17 @@
       <td mat-cell *matCellDef="let el">{{el.task.id}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="download">
+      <td mat-cell class="minimalistic-col" *matCellDef="let el">
+        <button
+          mat-icon-button
+          matTooltip="Download"
+          (click)="download($event, el.task)">
+          <mat-icon>cloud_download</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="delete">
       <td mat-cell class="minimalistic-col" *matCellDef="let el">
         <button
@@ -54,7 +65,7 @@
 
       <td
         mat-cell
-        colspan="2"
+        colspan="3"
         *matCellDef="let el">
 
         <div

@@ -1,0 +1,46 @@
+
+/*
+ * Returns the named task to caller.
+ */
+.arguments
+   name:string
+.description:"Returns the named task to caller."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves the specified task from the task scheduler.
+ */
+tasks.get:x:@.arguments/*/name
+
+
+/*
+ * Getting correct HTTP headers.
+ */
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@.arguments/*/name
+   .:".hl\""
+response.headers.add
+   Content-Type:application/x-hyperlambda
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+
+
+/*
+ * Returning the results of the evaluation to caller.
+ */
+remove-nodes:x:@tasks.get/*/created
+remove-nodes:x:@tasks.get/*/schedule/*/*/id
+remove-nodes:x:@tasks.get/*/schedule/*/*/repeats/./*/due
+set-value:x:@tasks.get
+   get-value:x:@.arguments/*/name
+set-name:x:@tasks.get
+   .:task.create
+lambda2hyper:x:@task.create
+return-value:x:-

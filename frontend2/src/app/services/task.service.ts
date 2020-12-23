@@ -6,6 +6,9 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 
+// Utility component imports.
+import { saveAs } from "file-saver";
+
 // Application specific imports.
 import { Task } from '../models/task.model';
 import { HttpService } from './http.service';
@@ -164,5 +167,26 @@ export class TaskService {
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
       '/magic/modules/system/tasks/delete-due?id=' + id);
+  }
+
+  /**
+   * Downloads a task by invoking backend.
+   * 
+   * @param ID Unique ID or name of task to download
+   */
+  public download(id: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.download(
+      '/magic/modules/system/tasks/download-task?name=' +
+      encodeURIComponent(id)).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.substr(disp.indexOf('=') + 1);
+        filename = filename.substr(0, filename.indexOf(';'));
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      });
   }
 }
