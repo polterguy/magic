@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
@@ -36,16 +36,15 @@ export class LoadSqlDialogComponent extends BaseComponent implements OnInit {
    * Creates an instance of your login dialog.
    * 
    * @param sqlService Needed to retrieve snippets from backend
-   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param data Input data, more specifically the database type the user is currently using
    * @param dialogRef Needed to be able to close dialog as user selects a snippet
    */
   constructor(
     private sqlService: SqlService,
-    protected messageService: MessageService,
+    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: string,
     private dialogRef: MatDialogRef<LoadSqlDialogComponent>) {
-    super(messageService);
+    super(injector);
   }
 
   /**

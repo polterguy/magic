@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
@@ -79,13 +79,12 @@ export class TasksComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param messageService Needed to send and subscribe to messages sent to and from other components
+   * @param taskService Needed to retrieve, update, delete and modify tasks in our backend
    */
   constructor(
-    private dialog: MatDialog,
     private taskService: TaskService,
-    protected messageService: MessageService) {
-    super(messageService);
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**
@@ -307,7 +306,11 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
         // Task was successfully created.
         this.showInfo('Task was successfully scheduled');
-        task.schedule = result.schedule;
+
+        // Invoking backend to retrieve all schedules, now that they're changed.
+        this.taskService.get(task.id).subscribe((nTask: Task) => {
+          task.schedule = nTask.schedule;
+        });
       }
     });
   }
@@ -318,16 +321,23 @@ export class TasksComponent extends BaseComponent implements OnInit {
    * @param task Task that contains schedule
    * @param schedule Schedule to remove from task
    */
-  public removeSchedule(task: Task, schedule: Schedule) {
+  public deleteSchedule(task: Task, schedule: Schedule) {
 
-    // Invoking backend to delete schedule.
-    this.taskService.deleteSchedule(schedule.id).subscribe(() => {
+    // Asking user to confirm deletion of schedule.
+    this.confirm(
+      'Please confirm delete operation',
+      'Are you sure you want to delete the schedule for the task?',
+      () => {
 
-      // No reasons to invoke backend to retrieve items again.
-      task.schedule.splice(task.schedule.indexOf(schedule), 1);
+        // Invoking backend to delete schedule.
+        this.taskService.deleteSchedule(schedule.id).subscribe(() => {
 
-      // Giving user some feedback.
-      this.showInfoShort('Schedule deleted');
+          // No reasons to invoke backend to retrieve items again.
+          task.schedule.splice(task.schedule.indexOf(schedule), 1);
+
+          // Giving user some feedback.
+          this.showInfoShort('Schedule deleted');
+        });
     });
   }
 }

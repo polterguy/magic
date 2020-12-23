@@ -4,11 +4,11 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MessageService } from 'src/app/services/message.service';
 import { EvaluatorService } from 'src/app/services/evaluator.service';
 
@@ -35,15 +35,14 @@ export class LoadSnippetDialogComponent extends BaseComponent implements OnInit 
   /**
    * Creates an instance of your login dialog.
    * 
-   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param dialogRef Necessary to close dialog when user selects a snippet
    * @param evaluatorService Evaluator service needed to retrieve snippet files from backend
    */
   constructor(
-    protected messageService: MessageService,
     private dialogRef: MatDialogRef<LoadSnippetDialogComponent>,
-    private evaluatorService: EvaluatorService) {
-    super(messageService);
+    private evaluatorService: EvaluatorService,
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**

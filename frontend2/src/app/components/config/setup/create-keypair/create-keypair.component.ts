@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/message.model';
@@ -12,6 +12,7 @@ import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { BaseComponent } from 'src/app/components/base.component';
 import { MessageService } from 'src/app/services/message.service';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component allowing user to setup a cryptography key pair.
@@ -41,8 +42,9 @@ export class CreateKeypairComponent extends BaseComponent implements OnInit {
    */
   public constructor(
     private configService: ConfigService,
+    protected injector: Injector,
     protected messageService: MessageService) {
-    super(messageService);
+    super(injector);
   }
 
   /**

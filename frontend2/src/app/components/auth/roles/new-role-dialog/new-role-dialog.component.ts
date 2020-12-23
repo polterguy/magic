@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Injector } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Role } from 'src/app/models/role.model';
@@ -38,15 +38,14 @@ export class NewRoleDialogComponent extends BaseComponent {
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param roleService Needed to be able to create or update a role
-   * @param messageService Message service used to communicate between components
    * @param data If updating role, this is the role we're updating
    */
   constructor(
     private dialogRef: MatDialogRef<NewRoleDialogComponent>,
     private roleService: RoleService,
-    protected messageService: MessageService,
+    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: Role) {
-    super(messageService);
+    super(injector);
     if (this.data) {
       this.name = data.name;
       this.description = data.description;

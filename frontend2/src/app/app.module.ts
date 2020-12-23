@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -35,11 +35,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Other external components.
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import {
-  NgxMatDatetimePickerModule, 
-  NgxMatNativeDateModule, 
-  NgxMatTimepickerModule 
-} from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
 // Hyperlambda mode for CodeMirror import.
 import './codemirror/hyperlambda.js';
@@ -48,10 +44,10 @@ import './codemirror/hyperlambda.js';
 import 'codemirror/addon/hint/sql-hint.js';
 
 // Application specific imports.
+import { DatePipe } from './pipes/date.pipe';
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DateToPipe } from './pipes/date-to.pipe';
 import { DynamicPipe } from './pipes/dynamic.pipe';
-import { DatePipe } from './pipes/date.pipe';
 import { DateFromPipe } from './pipes/date-from.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderService } from './services/loader.service';
@@ -188,4 +184,5 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {
+}

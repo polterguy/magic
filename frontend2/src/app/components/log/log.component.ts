@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
@@ -15,6 +15,7 @@ import { BaseComponent } from '../base.component';
 import { LogItem } from 'src/app/models/log-item.model';
 import { LogService } from 'src/app/services/log.service';
 import { MessageService } from 'src/app/services/message.service';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Log component for reading backend's log.
@@ -64,14 +65,13 @@ export class LogComponent extends BaseComponent implements OnInit {
    * 
    * @param logService Log HTTP service to use for retrieving log items
    * @param route Activated route service to subscribe to router changed events
-   * @param messageService Message service to publish messages to other components, and subscribe to messages sent by other components
    */
   constructor(
     private logService: LogService,
     private route: ActivatedRoute,
-    protected messageService: MessageService) {
-      super(messageService);
-    }
+    protected injector: Injector) {
+    super(injector);
+  }
 
   /**
    * OnInit implementation.

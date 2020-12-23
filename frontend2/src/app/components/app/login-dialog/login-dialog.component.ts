@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Injector, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
@@ -41,23 +41,22 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your login dialog.
    * 
+   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param router Router service to redirect and check current route
    * @param configService Configuration service used to determine if system has been setup if root user logs in
-   * @param loaderInterceptor Used for explicitly turning on/off load spinner animation
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
-   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
    */
   constructor(
     private router: Router,
     private configService: ConfigService,
-    private loaderInterceptor: LoaderInterceptor,
     private dialogRef: MatDialogRef<LoginDialogComponent>,
+    protected injector: Injector,
     protected messageService: MessageService,
     public authService: AuthService,
     public backendService: BackendService) {
-    super(messageService);
+    super(injector);
   }
 
   /**
@@ -114,7 +113,6 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
     };
 
     // Authenticating user.
-    this.loaderInterceptor.increment();
     this.authService.login(
       this.username,
       this.password,
@@ -129,16 +127,12 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
 
           // Checking status to see if we've setup system.
           this.configService.status().subscribe((res: Status) => {
-            this.loaderInterceptor.decrement();
             if (!res.magic_crudified || !res.server_keypair || !res.config_done) {
               this.router.navigate(['/config']);
             }
           }, (error: any) => {
             this.showError(error);
-            this.loaderInterceptor.decrement();
           });
-        } else {
-          this.loaderInterceptor.decrement();
         }
 
         // Publishing user logged in message, and closing dialog.
@@ -150,11 +144,7 @@ export class LoginDialogComponent extends BaseComponent implements OnInit {
       }, (error: any) => {
 
         // Oops, something went wrong.
-        this.loaderInterceptor.decrement();
-        this.messageService.sendMessage({
-          name: Messages.SHOW_ERROR,
-          content: error,
-        });
+        this.showError(error);
       });
   }
 

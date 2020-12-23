@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
@@ -55,15 +55,12 @@ export class EvaluatorComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param dialog Material dialog used for opening up Load snippets modal dialog
    * @param evaluatorService Used to execute Hyperlambda specified by user
-   * @param messageService Service used to publish messages to other components
    */
   constructor(
-    private dialog: MatDialog,
     private evaluatorService: EvaluatorService,
-    protected messageService: MessageService) {
-    super(messageService);
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**

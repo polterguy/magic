@@ -7,7 +7,7 @@
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
@@ -15,6 +15,7 @@ import { Status } from 'src/app/models/status.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { Message, Messages } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component responsible for allowing user to setup system.
@@ -41,13 +42,16 @@ export class SetupComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
+   * @param router Needed to be able to navigate user to home component after setup is complete
+   * @param configService Needed to be able to retrieve configuration settings and setup process status from backend
    * @param messageService Service used to publish messages to other components in the system
    */
   constructor(
     private router: Router,
     private configService: ConfigService,
+    protected injector: Injector,
     protected messageService: MessageService) {
-      super(messageService);
+    super(injector);
   }
 
   /**

@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Injector } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { TaskService } from 'src/app/services/task.service';
@@ -32,15 +32,14 @@ export class NewTaskDialogComponent extends BaseComponent {
    * 
    * @param dialogRef Needed to be able to close dialog when user clicks create button
    * @param taskService Needed to be able to create our task
-   * @param messageService Message service used to communicate between components
    * @param data If updating role, this is the role we're updating
    */
   constructor(
     private dialogRef: MatDialogRef<NewTaskDialogComponent>,
     private taskService: TaskService,
-    protected messageService: MessageService,
+    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: string) {
-    super(messageService);
+    super(injector);
     if (this.data) {
       this.name = data;
     }

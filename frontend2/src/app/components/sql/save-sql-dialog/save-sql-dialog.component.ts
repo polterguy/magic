@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
@@ -49,14 +49,13 @@ export class SaveSqlDialogComponent extends BaseComponent implements OnInit {
    * Creates an instance of your login dialog.
    * 
    * @param sqlService Evaluator service needed to retrieve snippet files from backend
-   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param data Filename to intially populate filename textbox with, and databaseType. Typically only supplied if you previously loaded a file.
    */
   constructor(
     private sqlService: SqlService,
-    protected messageService: MessageService,
+    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: ModalData) {
-    super(messageService);
+    super(injector);
   }
 
   /**

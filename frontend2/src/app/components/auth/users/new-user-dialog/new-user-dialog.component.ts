@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Injector } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
@@ -39,14 +39,13 @@ export class NewUserDialogComponent extends BaseComponent {
    * @param userService Used to create a new user
    * @param dialogRef Dialog reference used to close dialog
    * @param data If updating user, this is the user we're updating
-   * @param messageService Message service used to publish messages to other components
    */
   constructor(
     private userService: UserService,
     private dialogRef: MatDialogRef<NewUserDialogComponent>,
-    protected messageService: MessageService,
+    protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: User) {
-    super(messageService);
+    super(injector);
     if (this.data) {
       this.username = data.username;
     }

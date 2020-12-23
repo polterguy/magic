@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
@@ -90,9 +90,8 @@ export class SqlComponent extends BaseComponent implements OnInit {
   constructor(
     private configService: ConfigService,
     private sqlService: SqlService,
-    private dialog: MatDialog,
-    protected messageService: MessageService) {
-    super(messageService);
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**

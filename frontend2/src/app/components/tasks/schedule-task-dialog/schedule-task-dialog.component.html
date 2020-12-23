@@ -7,7 +7,8 @@
     <input
       matInput
       [ngxMatDatetimePicker]="picker"
-      placeholder="Choose a date and time"
+      autocomplete="off"
+      placeholder="Due date"
       [(ngModel)]="date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>

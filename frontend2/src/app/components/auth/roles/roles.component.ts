@@ -8,7 +8,7 @@ import { forkJoin } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
@@ -22,7 +22,6 @@ import { UserService } from 'src/app/services/user.service';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
 import { MessageService } from 'src/app/services/message.service';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
-import { ConfirmDialogComponent, ConfirmDialogData } from '../../confirm/confirm-dialog.component';
 
 /**
  * Roles component for administrating roles in the system.
@@ -82,17 +81,14 @@ export class RolesComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param dialog Needed to open up create new role dialog
    * @param roleService Used to retrieve all roles from backend
    * @param userService Used to associate a user with a role
-   * @param messageService Message service to subscribe and publish messages to and from other components
    */
   constructor(
-    private dialog: MatDialog,
     private roleService: RoleService,
     private userService: UserService,
-    protected messageService: MessageService) {
-    super(messageService);
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**
@@ -204,36 +200,26 @@ export class RolesComponent extends BaseComponent implements OnInit {
       } else {
 
         // If one or more users are affected we warn user, and asks him to confirm operation.
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-          width: '550px',
-          data: {
-            text: `Deleting the '${role.name}' role will affect ${count.count} users, you sure you want to delete this role?`,
-            title: 'Please confirm operation'
-          }
-        });
+        this.confirm(
+          'Please confirm operation',
+          `Deleting the '${role.name}' role will affect ${count.count} users, you sure you want to delete this role?`,
+          () => {
 
-        // Subscribing to close such that we can delete user if it's confirmed.
-        dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
+          // Role deletion was confirmed.
+          this.roleService.delete(role.name).subscribe((affected: Affected) => {
 
-          // Checking if modal dialog wants to delete the role.
-          if (result && result.confirmed) {
+            // Success! Informing user and retrieving roles again.
+            this.getRoles();
+            this.showInfo(`Role '${role.name}' successfully deleted`);
 
-            // Role deletion was confirmed.
-            this.roleService.delete(role.name).subscribe((affected: Affected) => {
-
-              // Success! Informing user and retrieving roles again.
-              this.getRoles();
-              this.showInfo(`Role '${role.name}' successfully deleted`);
-
-              // Updating selected users, no need to invoke backend.
-              for (const idx of this.selectedUsers) {
-                const idxOfRole = idx.roles.indexOf(role.name);
-                if (idxOfRole !== -1) {
-                  idx.roles.splice(idxOfRole, 1);
-                }
+            // Updating selected users, no need to invoke backend.
+            for (const idx of this.selectedUsers) {
+              const idxOfRole = idx.roles.indexOf(role.name);
+              if (idxOfRole !== -1) {
+                idx.roles.splice(idxOfRole, 1);
               }
-            });
-          }
+            }
+          }, (error: any) => this.showError(error));
         });
       }
     });

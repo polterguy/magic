@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Crudify } from 'src/app/models/crudify.model';
@@ -22,6 +22,7 @@ import json from '../../../codemirror/options/json.json'
 
 // Default configuration for crudifying database.
 import data from './data/data.json';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component that helps you crudify your magic database
@@ -62,9 +63,10 @@ export class CrudifyDatabaseComponent extends BaseComponent implements OnInit {
   public constructor(
     private configService: ConfigService,
     private crudifyService: CrudifyService,
+    protected injector: Injector,
     protected messageService: MessageService) {
-      super(messageService);
-    }
+    super(injector);
+  }
 
   /**
    * Implementation of OnInit.

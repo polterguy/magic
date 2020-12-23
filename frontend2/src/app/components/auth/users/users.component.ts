@@ -7,7 +7,7 @@
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
@@ -76,15 +76,12 @@ export class UsersComponent extends BaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param dialog Material dialog used for opening up Load snippets modal dialog
    * @param userService Used to fetch, create, and modify users in the system
-   * @param messageService Message service to subscribe and publish messages to and from other components
    */
   constructor(
-    private dialog: MatDialog,
     private userService: UserService,
-    protected messageService: MessageService) {
-    super(messageService);
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**
@@ -246,20 +243,11 @@ export class UsersComponent extends BaseComponent implements OnInit {
    */
   public delete(user: User) {
 
-    // Showing modal dialog.
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '550px',
-      data: {
-        text: `Please confirm that you want to delete the '${user.username}' user`,
-        title: 'Please confirm operation'
-      }
-    });
-
-    // Subscribing to close such that we can delete user if it's confirmed.
-    dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
-
-      // Checking if modal dialog wants to create a user.
-      if (result.confirmed) {
+    // Asking user to confirm deletion.
+    this.confirm(
+      'Please confirm operation',
+      `Please confirm that you want to delete the '${user.username}' user`,
+      () => {
 
         // Invoking backend to delete user.
         this.userService.delete(user.username).subscribe(() => {
@@ -269,7 +257,6 @@ export class UsersComponent extends BaseComponent implements OnInit {
           this.getUsers();
 
         }, (error: any) => this.showError(error));
-      }
     });
   }
 

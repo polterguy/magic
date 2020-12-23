@@ -3,9 +3,13 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 
-// Application specifix imports.
-import { Messages } from '../models/message.model';
-import { MessageService } from '../services/message.service';
+// Angular and system imports.
+import { Injector } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+// Application specific imports.
+import { ConfirmDialogComponent, ConfirmDialogData } from './confirm/confirm-dialog.component';
 
  /**
   * Base component that most other components inherits from.
@@ -17,11 +21,24 @@ import { MessageService } from '../services/message.service';
 export abstract class BaseComponent {
 
   /**
-   * Creates an instance of your class
-   * 
-   * @param messageService Message service used to publish messages for other components.
+   * Message service used to send messages and receive messages from other components.
    */
-  constructor(protected messageService: MessageService) { }
+  protected snackBar: MatSnackBar;
+
+  /**
+   * Dialog reference used to create modal dialogs used by for instance the confirm method.
+   */
+  protected dialog: MatDialog;
+
+  /**
+   * Creates an instance of your class.
+   * 
+   * @param injector Injector to use to resolve instances of types
+   */
+  constructor(protected injector: Injector) {
+    this.snackBar = injector.get(MatSnackBar);
+    this.dialog = injector.get(MatDialog);
+  }
 
   /**
    * Shows a message with some information to the user.
@@ -29,9 +46,8 @@ export abstract class BaseComponent {
    * @param content Message to show
    */
   protected showInfo(content: string) {
-    this.messageService.sendMessage({
-      name: Messages.SHOW_INFO,
-      content
+    this.snackBar.open(content, null, {
+      duration: 5000,
     });
   }
 
@@ -41,21 +57,49 @@ export abstract class BaseComponent {
    * @param content Message to show
    */
   protected showInfoShort(content: string) {
-    this.messageService.sendMessage({
-      name: Messages.SHOW_INFO_SHORT,
-      content
+    this.snackBar.open(content, null, {
+      duration: 500,
     });
   }
 
   /**
    * Shows an error message with some information to the user.
    * 
-   * @param content Message to show, or object containing error message as returned from backend
+   * @param content Error message to show, or object containing error message as returned from backend
    */
   protected showError(content: any) {
-    this.messageService.sendMessage({
-      name: Messages.SHOW_ERROR,
-      content
+    this.snackBar.open(content.error?.message || content, null, {
+      duration: 5000,
+    });
+  }
+
+  /**
+   * Creates a confirm action modal dialog, asking user to confirm action, invoking callback if confirmation is given.
+   * 
+   * @param title Title of modal dialog
+   * @param text Content of modal dialog
+   * @param confirmed Callback invoked if user confirms action
+   */
+  protected confirm(title: string, text: string, confirmed: () => void) {
+
+    // Asking user to confirm deletion of file object.
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '550px',
+      data: {
+        title,
+        text,
+      }
+    });
+
+    // Subscribing to close such that we can delete schedule if it's confirmed.
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
+
+      // Checking if user confirmed that he wants to delete the schedule.
+      if (result && result.confirmed) {
+
+        // Invoking callback provided by caller.
+        confirmed();
+      }
     });
   }
 }

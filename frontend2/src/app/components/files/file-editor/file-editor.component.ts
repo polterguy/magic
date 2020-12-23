@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { BaseComponent } from '../../base.component';
@@ -14,6 +14,7 @@ import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 // CodeMirror options according to file extensions.
 import fileTypes from './file-types.json'
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component for editing a file.
@@ -48,13 +49,12 @@ export class FileEditorComponent extends BaseComponent implements OnInit {
    * 
    * @param fileService File service needed to retrieve file's content from backend
    * @param evaluatorService Used to load Hyperlambda vocabulary from backend
-   * @param messageService Needed to send and retrieve messages from other components
    */
   public constructor(
     private fileService: FileService,
     private evaluatorService: EvaluatorService,
-    protected messageService: MessageService) {
-    super(messageService);
+    protected injector: Injector) {
+    super(injector);
   }
 
   /**
