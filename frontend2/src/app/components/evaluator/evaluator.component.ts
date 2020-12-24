@@ -4,7 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from '../../services/feedback.service';
@@ -17,7 +18,6 @@ import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-d
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
 import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.json';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component allowing user to evaluate Hyperlambda,
