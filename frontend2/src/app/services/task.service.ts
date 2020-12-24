@@ -168,24 +168,4 @@ export class TaskService {
     return this.httpService.delete<Response>(
       '/magic/modules/system/tasks/delete-due?id=' + id);
   }
-
-  /**
-   * Downloads a task by invoking backend.
-   * 
-   * @param ID Unique ID or name of task to download
-   */
-  public download(id: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.download(
-      '/magic/modules/system/tasks/download-task?name=' +
-      encodeURIComponent(id)).subscribe(res => {
-
-        // Retrieving the filename, as provided by the server.
-        const disp = res.headers.get('Content-Disposition');
-        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
-        const file = new Blob([res.body]);
-        saveAs(file, filename);
-      });
-  }
 }

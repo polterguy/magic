@@ -5,15 +5,16 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
-import { FeedbackService } from '../../services/feedback.service';
 import { Count } from 'src/app/models/count.model';
 import { Schedule, Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/services/task.service';
+import { FeedbackService } from '../../services/feedback.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
@@ -21,7 +22,6 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
-import { MatDialog } from '@angular/material/dialog';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -57,7 +57,6 @@ export class TasksComponent implements OnInit {
    */
   public displayedColumns: string[] = [
     'id',
-    'download',
     'delete',
   ];
 
@@ -338,20 +337,5 @@ export class TasksComponent implements OnInit {
           this.feedbackService.showInfoShort('Schedule deleted');
         });
     });
-  }
-
-  /**
-   * Downloads task from your backend.
-   * 
-   * @param event Click event
-   * @param path Task to download
-   */
-  public download(event: any, task: Task) {
-
-    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
-    event.stopPropagation();
-
-    // Downloading task from backend.
-    this.taskService.download(task.id);
   }
 }
