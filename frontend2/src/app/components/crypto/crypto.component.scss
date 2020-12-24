@@ -1,5 +1,6 @@
 
-.public-key {
+mat-card.public-key {
+  margin-bottom: 2rem;
   strong {
     margin-bottom: .25rem;
     width: 10rem;
@@ -12,5 +13,15 @@
     margin-top: 1rem;
     display: block;
     width: 100%;
+  }
+}
+
+table.keys {
+  tr {
+    td:nth-child(3) {
+      padding-top: 5px;
+      padding-bottom: 9px;
+      width: 5px;
+    }
   }
 }
