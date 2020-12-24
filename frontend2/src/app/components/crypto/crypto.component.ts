@@ -6,6 +6,13 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 
+// Application specific imports.
+import { CryptoService } from 'src/app/services/crypto.service';
+import { PublicKeyFull } from 'src/app/models/public-key-full.model';
+
+/**
+ * Crypto component allowing you to administrate your server's cryptography keys.
+ */
 @Component({
   selector: 'app-crypto',
   templateUrl: './crypto.component.html',
@@ -13,8 +20,35 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CryptoComponent implements OnInit {
 
-  constructor() { }
+  /**
+   * Server's public key information.
+   */
+  public publicKeyFull: PublicKeyFull;
 
-  ngOnInit() {
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param cryptoService Cryptography service needed to retrieve and update crypto items from your backend
+   */
+  constructor(private cryptoService: CryptoService) { }
+
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
+
+    // Retrieving server's public key.
+    this.getServerPublicKey();
+  }
+
+  /**
+   * Retrieves the server's public key.
+   */
+  public getServerPublicKey() {
+
+    // Invoking backend to retrieve key.
+    this.cryptoService.serverPublicKey().subscribe((key: PublicKeyFull) => {
+      this.publicKeyFull = key;
+    });
   }
 }

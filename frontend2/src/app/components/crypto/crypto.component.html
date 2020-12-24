@@ -1,1 +1,19 @@
-<p>crypto works!</p>
+
+<mat-card class="public-key" *ngIf="publicKeyFull">
+
+  <strong>Fingerprint</strong><span>{{publicKeyFull.fingerprint}}</span>
+  <br>
+  <strong>Fingerprint format</strong><span>{{publicKeyFull.fingerprintFormat}}</span>
+  <br>
+  <strong>Key format</strong><span>{{publicKeyFull.keyFormat}}</span>
+  <br>
+  <strong>Key type</strong><span>{{publicKeyFull.keyType}}</span>
+  <br>
+
+  <textarea
+    class="key"
+    matTooltip="Public key"
+    rows="10">{{publicKeyFull.publicKey}}</textarea>
+
+
+</mat-card>
