@@ -7,11 +7,30 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Affected } from 'src/app/models/affected.model';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { PublicKeyFull } from 'src/app/models/public-key-full.model';
+import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+
+// CodeMirror options.
+import hyperlambda from '../codemirror/options/hyperlambda.json';
+
+/*
+ * Helper class to encapsulate a key and its CodeMirror vocabulary options.
+ */
+class PublicKeyEx {
+
+  /*
+   * Public key as returned from server.
+   */
+  key: PublicKey;
+
+  /*
+   * CodeMirror options for editing vocabulary.
+   */
+  options: Model;
+}
 
 /**
  * Crypto component allowing you to administrate your server's cryptography keys.
@@ -34,7 +53,7 @@ export class CryptoComponent implements OnInit {
   /**
    * Public keys the table is currently databound towards.
    */
-  public publicKeys: PublicKey[] = [];
+  public publicKeys: PublicKeyEx[] = [];
 
   public displayedColumns: string[] = [
     'subject',
@@ -81,7 +100,15 @@ export class CryptoComponent implements OnInit {
 
     // Retrieving public keys from backend.
     this.cryptoService.publicKeys(null).subscribe((keys: PublicKey[]) => {
-      this.publicKeys = keys;
+      this.publicKeys = keys.map(x => {
+        return {
+          key: x,
+          options: {
+            hyperlambda: x.vocabulary,
+            options: hyperlambda,
+          }
+        }
+      });
     });
   }
 

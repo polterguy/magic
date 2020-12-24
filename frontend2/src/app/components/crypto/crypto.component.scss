@@ -1,18 +1,9 @@
 
 mat-card.public-key {
   margin-bottom: 2rem;
-  strong {
-    margin-bottom: .25rem;
-    width: 10rem;
-    display: inline-block;
-  }
-  span {
-    display: inline-block;
-  }
-  textarea {
-    margin-top: 1rem;
-    display: block;
-    width: 100%;
+  h3 {
+    text-align: center;
+    margin-top: -2rem;
   }
 }
 
@@ -23,5 +14,26 @@ table.keys {
       padding-bottom: 9px;
       width: 5px;
     }
+  }
+}
+
+.details-item {
+  display: block;
+  margin-bottom: .15rem;
+  strong {
+    width: 10rem;
+    display: inline-block;
+  }
+  strong.full-width {
+    display: block;
+  }
+  span {
+    display: inline-block;
+  }
+  textarea {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    display: block;
+    width: 100%;
   }
 }

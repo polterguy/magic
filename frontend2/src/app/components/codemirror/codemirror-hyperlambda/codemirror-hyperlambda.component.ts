@@ -7,9 +7,7 @@
 import {
   AfterViewInit,
   Component,
-  Injector,
   Input,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 
@@ -46,7 +44,7 @@ export class Model {
   templateUrl: './codemirror-hyperlambda.component.html',
   styleUrls: ['./codemirror-hyperlambda.component.scss']
 })
-export class HyperlambdaComponent implements OnInit, AfterViewInit {
+export class HyperlambdaComponent implements AfterViewInit {
 
   // Actual CodeMirror instance, needed to retrieve selected text.
   @ViewChild('codeeditor') private _editor: { codeMirror: any; };
@@ -55,6 +53,11 @@ export class HyperlambdaComponent implements OnInit, AfterViewInit {
    * Model for component containing Hyperlambda that is displayed.
    */
   @Input() public model: Model;
+  
+  /**
+   * If true, vocabulary has been loaded from server.
+   */
+  public vocabularyLoaded = false;
 
   /**
    * Creates an instance of your component.
@@ -67,22 +70,46 @@ export class HyperlambdaComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Implementation of OnInit.
-   */
-  public ngOnInit() {
-
-    // Retrieving server's vocabulary, but only if editor is not read only.
-    if (this.model.options.readonly !== true) {
-      this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
-        window['_vocabulary'] = vocabulary;
-      }, error => this.feedbackService.showError(error));
-    }
-  }
-
-  /**
    * Implementation of AfterViewInit
    */
   public ngAfterViewInit() {
-    this.model.editor = this._editor.codeMirror;
+
+    // Retrieving server's vocabulary.
+    if (window['_vocabulary']) {
+
+      /*
+       * Vocabulary has already been loaded previously.
+       *
+       * This looks a bit stupid, but is necessary to allow for editor to be rendered
+       * before we assign the editor instance to its field.
+       */
+      setTimeout(() => {
+        this.vocabularyLoaded = true;
+        setTimeout(() => {
+          this.model.editor = this._editor.codeMirror;
+        }, 1);
+      }, 1);
+
+    } else {
+
+      // Loading vocabulary from server.
+      this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
+
+        // Publishing vocabulary such that autocomplete component can reach it.
+        window['_vocabulary'] = vocabulary;
+
+        /*
+         * This looks a bit stupid, but is necessary to allow for editor to be rendered
+         * before we assign the editor instance to its field.
+         */
+        setTimeout(() => {
+          this.vocabularyLoaded = true;
+          setTimeout(() => {
+            this.model.editor = this._editor.codeMirror;
+          }, 1);
+        }, 1);
+
+      }, error => this.feedbackService.showError(error));
+    }
   }
 }
