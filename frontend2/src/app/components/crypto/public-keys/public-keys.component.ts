@@ -5,9 +5,9 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
@@ -23,6 +23,11 @@ import hyperlambda from '../../codemirror/options/hyperlambda.json';
  * Helper class to encapsulate a key and its CodeMirror vocabulary options.
  */
 class PublicKeyEx {
+
+  /**
+   * Helper field to combine subject and email into one field.
+   */
+  identity: string;
 
   /*
    * Public key as returned from server.
@@ -72,8 +77,7 @@ export class PublicKeysComponent implements OnInit {
    * Columns to display in table showing public keys.
    */
   public displayedColumns: string[] = [
-    'subject',
-    'email',
+    'identity',
     'delete',
   ];
 
@@ -116,6 +120,7 @@ export class PublicKeysComponent implements OnInit {
       // Mapping public keys to expected model.
       this.publicKeys = (keys || []).map(x => {
         return {
+          identity: x.subject + ' - ' + x.email,
           key: x,
           options: {
             hyperlambda: x.vocabulary,
@@ -231,8 +236,9 @@ export class PublicKeysComponent implements OnInit {
     // Invoking backend to save key.
     this.cryptoService.savePublicKey(key.key).subscribe(() => {
 
-      // Providing some feedback to user.
+      // Providing some feedback to user, and retrieving keys again to update grid.
       this.feedbackService.showInfoShort('Key was successfully updated');
+      this.getKeys();
 
     }, (error: any) => this.feedbackService.showError(error));
   }
