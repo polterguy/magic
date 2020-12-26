@@ -14,4 +14,4 @@ crypto.fingerprint:x:@.arguments/*/key
    format:fingerprint
 unwrap:x:+/*
 return
-   fingerprint:x:@crypto.fingerprint
+   result:x:@crypto.fingerprint
