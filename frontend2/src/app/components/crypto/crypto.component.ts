@@ -4,9 +4,13 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -46,6 +50,16 @@ export class CryptoComponent implements OnInit {
   private displayDetails: number[] = [];
 
   /**
+   * Filter form control for filtering log items to display.
+   */
+  public filterFormControl: FormControl;
+
+  /**
+   * Paginator for paging table.
+   */
+  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+
+  /**
    * Server's public key information.
    */
   public publicKeyFull: PublicKeyFull;
@@ -55,6 +69,14 @@ export class CryptoComponent implements OnInit {
    */
   public publicKeys: PublicKeyEx[] = [];
 
+  /**
+   * Number of log items in the backend matching the currently applied filter.
+   */
+  public count: number = 0;
+
+  /**
+   * Columns to display in table showing public keys.
+   */
   public displayedColumns: string[] = [
     'subject',
     'email',
@@ -74,6 +96,17 @@ export class CryptoComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
+
+    // Creating our filter form control, with debounce logic.
+    this.filterFormControl = new FormControl('');
+    this.filterFormControl.setValue('');
+    this.filterFormControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: any) => {
+        this.filterFormControl.setValue(query);
+        this.paginator.pageIndex = 0;
+        this.getKeys();
+      });
 
     // Retrieving server's public key.
     this.getServerPublicKey();
@@ -99,8 +132,14 @@ export class CryptoComponent implements OnInit {
   public getKeys() {
 
     // Retrieving public keys from backend.
-    this.cryptoService.publicKeys(null).subscribe((keys: PublicKey[]) => {
-      this.publicKeys = keys.map(x => {
+    this.cryptoService.publicKeys({
+      filter: this.filterFormControl.value,
+      offset: this.paginator.pageIndex * this.paginator.pageSize,
+      limit: this.paginator.pageSize
+    }).subscribe((keys: PublicKey[]) => {
+
+      // Mapping public keys to expected model.
+      this.publicKeys = (keys || []).map(x => {
         return {
           key: x,
           options: {
@@ -109,6 +148,14 @@ export class CryptoComponent implements OnInit {
           }
         }
       });
+
+      // Counting items with the same filter as we used to retrieve items with.
+      this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe(res => {
+
+        // Assigning count to returned value from server.
+        this.count = res.count;
+
+      }, (error: any) => this.feedbackService.showError(error));
     });
   }
 
@@ -134,6 +181,18 @@ export class CryptoComponent implements OnInit {
   }
 
   /**
+   * Invoked when paginator wants to page data table.
+   * 
+   * @param e Page event argument
+   */
+  public paged(e: PageEvent) {
+
+    // Changing pager's size according to arguments, and retrieving log items from backend.
+    this.paginator.pageSize = e.pageSize;
+    this.getKeys();
+  }
+
+  /**
    * Deletes a public cryptography key from your backend.
    * 
    * @param event Click event, needed to stop propagation
@@ -155,5 +214,41 @@ export class CryptoComponent implements OnInit {
           this.feedbackService.showInfoShort('Public key successfully deleted');
         });
     });
+  }
+
+  /**
+   * Invoked when the content of a public key changes.
+   * 
+   * @param key Key that triggered event
+   */
+  public publicKeyChanged(key: PublicKey) {
+
+    // Invoking backend to retrieve new fingerprint for key.
+    this.cryptoService.getFingerprint(key.content).subscribe((response: Response) => {
+
+      // Updating key's fingerprint, and providing user with some feedback.
+      this.feedbackService.showInfo('Fingerprint successfully updated to match key. Remember to save your key if you want the changes to take effect.');
+      key.fingerprint = response.result;
+
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when user wants to save a public key.
+   * 
+   * @param key Key user wants to save
+   */
+  public save(key: PublicKeyEx) {
+
+    // Updating Hyperlambda from CodeMirror options.
+    key.key.vocabulary = key.options.hyperlambda;
+
+    // Invoking backend to save key.
+    this.cryptoService.savePublicKey(key.key).subscribe(() => {
+
+      // Providing some feedback to user.
+      this.feedbackService.showInfoShort('Key was successfully updated');
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
