@@ -51,7 +51,7 @@ export abstract class FeedbackService {
    */
   public showInfoShort(content: string) {
     this.snackBar.open(content, null, {
-      duration: 500,
+      duration: 1000,
     });
   }
 

@@ -25,12 +25,8 @@
   class="keys clickable"
   multiTemplateDataRows>
 
-  <ng-container matColumnDef="subject">
-    <td mat-cell class="minimalistic-col" *matCellDef="let el">{{el.key.subject}}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="email">
-    <td mat-cell *matCellDef="let el">{{el.key.email}}</td>
+  <ng-container matColumnDef="identity">
+    <td mat-cell *matCellDef="let el">{{el.identity}}</td>
   </ng-container>
 
   <ng-container matColumnDef="delete">
@@ -49,7 +45,7 @@
     <td
       mat-cell
       *matCellDef="let el"
-      colspan="3">
+      colspan="2">
 
       <div *ngIf="shouldDisplayDetails(el)">
 
