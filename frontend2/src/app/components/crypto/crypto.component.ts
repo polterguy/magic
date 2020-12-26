@@ -174,6 +174,16 @@ export class CryptoComponent implements OnInit {
   }
 
   /**
+   * Clears the current filter.
+   */
+  public clearFilter() {
+
+    // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
+    this.paginator.pageIndex = 0;
+    this.filterFormControl.setValue('');
+  }
+
+  /**
    * Deletes a public cryptography key from your backend.
    * 
    * @param event Click event, needed to stop propagation
