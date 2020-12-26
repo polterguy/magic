@@ -1,0 +1,30 @@
+
+<div *ngIf="publicKeyFull">
+
+  <h3>Server key</h3>
+
+  <span class="details-item">
+    <strong>Fingerprint</strong><span>{{publicKeyFull.fingerprint}}</span>
+  </span>
+  
+  <span class="details-item">
+    <strong>Fingerprint format</strong><span>{{publicKeyFull.fingerprintFormat}}</span>
+  </span>
+  
+  <span class="details-item">
+    <strong>Key format</strong><span>{{publicKeyFull.keyFormat}}</span>
+  </span>
+  
+  <span class="details-item">
+    <strong>Key type</strong><span>{{publicKeyFull.keyType}}</span>
+  </span>
+  
+  <span class="details-item">
+    <textarea
+      class="crypto-key"
+      disabled="true"
+      matTooltip="Public key"
+      rows="10">{{publicKeyFull.publicKey}}</textarea>
+  </span>
+  
+</div>

@@ -60,11 +60,6 @@ export class CryptoComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
   /**
-   * Server's public key information.
-   */
-  public publicKeyFull: PublicKeyFull;
-
-  /**
    * Public keys the table is currently databound towards.
    */
   public publicKeys: PublicKeyEx[] = [];
@@ -108,22 +103,8 @@ export class CryptoComponent implements OnInit {
         this.getKeys();
       });
 
-    // Retrieving server's public key.
-    this.getServerPublicKey();
-
     // Retrieving initial keys to databind table towards.
     this.getKeys();
-  }
-
-  /**
-   * Retrieves the server's public key.
-   */
-  public getServerPublicKey() {
-
-    // Invoking backend to retrieve key.
-    this.cryptoService.serverPublicKey().subscribe((key: PublicKeyFull) => {
-      this.publicKeyFull = key;
-    });
   }
 
   /**

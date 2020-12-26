@@ -79,6 +79,7 @@ import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
+import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
@@ -140,6 +141,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     NewTaskDialogComponent,
     FileEditorComponent,
     NewFileObjectComponent,
+    ServerPublicKeyComponent,
   ],
   imports: [
     FormsModule,

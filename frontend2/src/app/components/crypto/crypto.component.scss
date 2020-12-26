@@ -18,21 +18,6 @@ table.keys {
   }
 }
 
-.details-item {
-  display: block;
-  margin-bottom: .15rem;
-  strong {
-    width: 10rem;
-    display: inline-block;
-  }
-  span {
-    display: inline-block;
-  }
-  textarea.crypto-key {
-    margin-top: 1.5rem;
-  }
-}
-
 textarea.crypto-key {
   margin-top: .5rem;
   display: block;
