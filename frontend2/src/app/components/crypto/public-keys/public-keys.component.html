@@ -1,0 +1,138 @@
+
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    matTooltip="Clear filter"
+    (click)="clearFilter()">clear</mat-icon>
+
+</mat-form-field>
+
+<table
+  mat-table
+  [dataSource]="publicKeys"
+  class="keys clickable"
+  multiTemplateDataRows>
+
+  <ng-container matColumnDef="subject">
+    <td mat-cell class="minimalistic-col" *matCellDef="let el">{{el.key.subject}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <td mat-cell *matCellDef="let el">{{el.key.email}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="delete">
+    <td mat-cell class="minimalistic-col" *matCellDef="let el">
+      <button
+        mat-icon-button
+        matTooltip="Delete"
+        (click)="delete($event, el.key)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="show-details">
+
+    <td
+      mat-cell
+      *matCellDef="let el"
+      colspan="3">
+
+      <div *ngIf="shouldDisplayDetails(el)">
+
+        <div class="crypto-form-fields">
+          <mat-form-field class="crypto-form-field">
+            <mat-label>Subject</mat-label>
+            <input
+              matInput
+              placeholder="Subject"
+              type="text"
+              [(ngModel)]="el.key.subject"
+              autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field class="crypto-form-field">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              placeholder="Email"
+              type="text"
+              [(ngModel)]="el.key.email"
+              autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field class="crypto-form-field">
+            <mat-label>Domain</mat-label>
+            <input
+              matInput
+              placeholder="Domain"
+              type="text"
+              [(ngModel)]="el.key.domain"
+              autocomplete="off">
+          </mat-form-field>
+      
+        </div>
+
+        <textarea
+          class="crypto-key"
+          [(ngModel)]="el.key.content"
+          (change)="publicKeyChanged(el.key)"
+          rows="10"></textarea>
+
+        <div class="fingerprint">{{el.key.fingerprint}}</div>
+
+        <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
+
+        <div class="button-strip">
+
+          <mat-checkbox
+            class="crypto-enabled"
+            [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
+
+          <button
+            mat-button
+            (click)="save(el)">Save</button>
+
+        </div>
+
+      </div>
+
+    </td>
+
+  </ng-container>
+
+  <tr
+    mat-row
+    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'key-row'"
+    (click)="toggleDetails(el)"
+    *matRowDef="let el; columns: displayedColumns;"></tr>
+
+  <tr
+    mat-row
+    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+    *matRowDef="let el; columns: ['show-details'];"></tr>
+
+</table>
+
+<mat-paginator
+  #paginator
+  [class]="count > 10 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="10"
+  showFirstLastButtons="true"
+  (page)="paged($event)"
+  [pageSizeOptions]="[5,10,25,50]">
+</mat-paginator>

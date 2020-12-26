@@ -76,6 +76,7 @@ import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
@@ -142,6 +143,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     FileEditorComponent,
     NewFileObjectComponent,
     ServerPublicKeyComponent,
+    PublicKeysComponent,
   ],
   imports: [
     FormsModule,
