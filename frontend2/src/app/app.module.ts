@@ -97,6 +97,7 @@ import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
+import { ImportPublicKeyComponent } from './components/crypto/public-keys/import-public-key/import-public-key-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -144,6 +145,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
     NewFileObjectComponent,
     ServerPublicKeyComponent,
     PublicKeysComponent,
+    ImportPublicKeyComponent,
   ],
   imports: [
     FormsModule,

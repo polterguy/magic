@@ -228,7 +228,7 @@ export class UsersComponent implements OnInit {
       if (username) {
 
         // User was created.
-        this.feedbackService.showInfo(`'${username}' successfully updated`)
+        this.feedbackService.showInfo(`'${username}' successfully updated`);
         this.getUsers();
       }
     });

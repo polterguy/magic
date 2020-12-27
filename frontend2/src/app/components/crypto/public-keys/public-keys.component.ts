@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -14,6 +15,7 @@ import { Response } from 'src/app/models/response.model';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { ImportPublicKeyComponent } from './import-public-key/import-public-key-dialog.component';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
@@ -82,6 +84,7 @@ export class PublicKeysComponent implements OnInit {
   ];
 
   constructor(
+    private dialog: MatDialog,
     private cryptoService: CryptoService,
     private feedbackService: FeedbackService) { }
 
@@ -237,9 +240,31 @@ export class PublicKeysComponent implements OnInit {
     this.cryptoService.savePublicKey(key.key).subscribe(() => {
 
       // Providing some feedback to user, and retrieving keys again to update grid.
-      this.feedbackService.showInfoShort('Key was successfully updated');
+      this.feedbackService.showInfoShort('Key was successfully saved');
       key.identity = key.key.subject + ' - ' + key.key.email;
 
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when user wants to import a public key.
+   */
+  public import() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(ImportPublicKeyComponent, {
+      width: '50%',
+    });
+
+    dialogRef.afterClosed().subscribe((key: PublicKey) => {
+
+      // Checking if modal dialog imported a key.
+      if (key) {
+
+        // User was created.
+        this.feedbackService.showInfo('Key successfully imported');
+        this.getKeys();
+      }
+    });
   }
 }
