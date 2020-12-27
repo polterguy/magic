@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, Injector } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
