@@ -44,9 +44,16 @@
     <input
       matInput
       [(ngModel)]="password"
-      type="password"
+      [type]="hide ? 'password' : 'text'"
       autocomplete="off"
       placeholder="Password">
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="hide = !hide"
+      [attr.aria-pressed]="hide">
+      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
   </mat-form-field>
 
 </div>
