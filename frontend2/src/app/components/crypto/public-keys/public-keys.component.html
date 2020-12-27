@@ -92,11 +92,12 @@
 
         <textarea
           class="crypto-key"
+          matTooltip="Public key content"
           [(ngModel)]="el.key.content"
           (change)="publicKeyChanged(el.key)"
           rows="10"></textarea>
 
-        <div class="fingerprint">{{el.key.fingerprint}}</div>
+        <div matTooltip="Fingerprint of key" class="fingerprint">{{el.key.fingerprint}}</div>
 
         <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
 

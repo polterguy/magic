@@ -57,8 +57,9 @@ export class CryptoService {
 
       // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
-        query += '&email.like=%' + encodeURIComponent(filter.filter + '%');
-        query += '&subject.like=%' + encodeURIComponent(filter.filter + '%');
+        query += '&email.like=' + encodeURIComponent('%' + filter.filter + '%');
+        query += '&subject.like=' + encodeURIComponent('%' + filter.filter + '%');
+        query += '&fingerprint.eq=' + encodeURIComponent(filter.filter);
       }
     }
 
@@ -77,9 +78,10 @@ export class CryptoService {
     let query = '';
     if (filter !== null && filter.filter && filter.filter !== '') {
       query += '?operator=or';
-      query += '&email.like=%' + encodeURIComponent(filter.filter + '%');
-      query += '&subject.like=%' + encodeURIComponent(filter.filter + '%');
-  }
+      query += '&email.like=' + encodeURIComponent('%' + filter.filter + '%');
+      query += '&subject.like=' + encodeURIComponent('%' + filter.filter + '%');
+      query += '&fingerprint.eq=' + encodeURIComponent(filter.filter);
+    }
 
     // Invoking backend and returning observable.
     return this.httpService.get<Count>('/magic/modules/magic/crypto_keys-count' + query);
@@ -93,7 +95,7 @@ export class CryptoService {
   public deletePublicKey(id: number) {
 
     // Invoking backend and returning observable.
-    return this.httpService.get<Affected>('/magic/modules/magic/crypto_keys?id=' + id);
+    return this.httpService.delete<Affected>('/magic/modules/magic/crypto_keys?id=' + id);
   }
 
   /**
@@ -104,6 +106,24 @@ export class CryptoService {
   public savePublicKey(key: PublicKey) {
     return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', {
       id: key.id,
+      subject: key.subject,
+      email: key.email,
+      domain: key.domain,
+      fingerprint: key.fingerprint,
+      content: key.content,
+      vocabulary: key.vocabulary,
+      enabled: key.enabled,
+    });
+  }
+
+  /**
+   * Imports a public key.
+   * 
+   * @param key Key caller wants to import
+   */
+  public importPublicKey(key: PublicKey) {
+    return this.httpService.post<Response>('/magic/modules/magic/crypto_keys', {
+      type: key.type,
       subject: key.subject,
       email: key.email,
       domain: key.domain,

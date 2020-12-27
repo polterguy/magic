@@ -139,7 +139,7 @@ export class PublicKeysComponent implements OnInit {
         this.count = res.count;
 
       }, (error: any) => this.feedbackService.showError(error));
-    });
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   public shouldDisplayDetails(key: PublicKey) {
@@ -204,7 +204,10 @@ export class PublicKeysComponent implements OnInit {
 
         // Invoking backend to delete public key.
         this.cryptoService.deletePublicKey(key.id).subscribe(() => {
+
+          // Providing feedback to caller, and reloading keys from backend.
           this.feedbackService.showInfoShort('Public key successfully deleted');
+          this.getKeys();
         });
     });
   }
@@ -256,14 +259,16 @@ export class PublicKeysComponent implements OnInit {
       width: '50%',
     });
 
+    // Subscribing to closed event to provide user with some feedback, if a key is imported.
     dialogRef.afterClosed().subscribe((key: PublicKey) => {
 
       // Checking if modal dialog imported a key.
       if (key) {
 
-        // User was created.
-        this.feedbackService.showInfo('Key successfully imported');
-        this.getKeys();
+        // Key was imported, displaying key for editing.
+        console.log(key);
+        this.filterFormControl.setValue(key.fingerprint);
+        this.feedbackService.showInfo('Key successfully imported, please edits its vocabulary and enable it');
       }
     });
   }
