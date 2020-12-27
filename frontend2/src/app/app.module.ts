@@ -11,6 +11,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Material imports.
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
@@ -158,6 +159,7 @@ import { ImportPublicKeyComponent } from './components/crypto/public-keys/import
     MatButtonModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatTabsModule,
     MatCardModule,
     MatIconModule,
     MatChipsModule,
