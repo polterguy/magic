@@ -238,7 +238,7 @@ export class PublicKeysComponent implements OnInit {
 
       // Providing some feedback to user, and retrieving keys again to update grid.
       this.feedbackService.showInfoShort('Key was successfully updated');
-      this.getKeys();
+      key.identity = key.key.subject + ' - ' + key.key.email;
 
     }, (error: any) => this.feedbackService.showError(error));
   }
