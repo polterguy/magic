@@ -13,12 +13,12 @@ import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
-import { FeedbackService } from '../../../services/feedback.service';
 import { Messages } from 'src/app/models/message.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from '../../../services/feedback.service';
 import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
 
 /**
@@ -31,6 +31,7 @@ import { AuthenticateResponse } from 'src/app/models/authenticate-response.model
 })
 export class LoginDialogComponent implements OnInit {
 
+  public hide = true;
   public backends: FormControl = null;
   public filteredBackends: Observable<string[]>;
   public username: string = '';
