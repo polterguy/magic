@@ -1,4 +1,10 @@
 
 mat-card {
   margin-bottom: 2rem;
+  min-height: 300px;
+}
+
+app-public-keys {
+  margin-top: 2rem;
+  display: block;
 }

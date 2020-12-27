@@ -108,6 +108,10 @@ mat-label.dark {
   color: rgb(55,55,55);
 }
 
+mat-tab-group .mat-tab-label .mat-tab-label-content {
+  color: #fff;
+}
+
 mat-paginator.mat-paginator {
   background-color: transparent;
   color: rgb(245,245,245);
