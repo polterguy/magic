@@ -52,11 +52,13 @@ export class CryptoService {
 
       // Applying limit and offset
       query += '?limit=' + filter.limit;
-      query += "&offset=" + filter.offset;
+      query += '&offset=' + filter.offset;
+      query += '&operator=or';
 
       // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
         query += '&email.like=%' + encodeURIComponent(filter.filter + '%');
+        query += '&subject.like=%' + encodeURIComponent(filter.filter + '%');
       }
     }
 
@@ -74,8 +76,10 @@ export class CryptoService {
     // Dynamically building our query parameters.
     let query = '';
     if (filter !== null && filter.filter && filter.filter !== '') {
-      query += '?email.like=%' + encodeURIComponent(filter.filter + '%');
-    }
+      query += '?operator=or';
+      query += '&email.like=%' + encodeURIComponent(filter.filter + '%');
+      query += '&subject.like=%' + encodeURIComponent(filter.filter + '%');
+  }
 
     // Invoking backend and returning observable.
     return this.httpService.get<Count>('/magic/modules/magic/crypto_keys-count' + query);
