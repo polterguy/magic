@@ -11,7 +11,7 @@ export class PublicKey {
   /**
    * Unique ID of key.
    */
-  id: number;
+  id?: number;
 
   /**
    * Content of public key.
@@ -46,7 +46,7 @@ export class PublicKey {
   /**
    * Date and time for when key was imported.
    */
-  imported: Date;
+  imported?: Date;
 
   /**
    * Type of key.
