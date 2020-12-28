@@ -1,0 +1,39 @@
+
+<h1 mat-dialog-title class="mat-dialog-title">Create new key pair</h1>
+
+<div mat-dialog-content class="file-content">
+
+  <mat-form-field class="fill-width">
+    <input
+      matInput
+      placeholder="Seed"
+      autocomplete="off"
+      [(ngModel)]="seed">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+
+    <mat-select
+      placeholder="Strength"
+      class="dark"
+      [(ngModel)]="strength">
+      <mat-option value="1024">1024</mat-option>
+      <mat-option value="2048">2048</mat-option>
+      <mat-option value="4096">4096</mat-option>
+      <mat-option value="8192">8192</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+</div>
+
+<div
+  mat-dialog-actions
+  class="mat-dialog-actions">
+
+  <button
+    mat-button
+    (click)="create()"
+    aria-label="Creates your key pair">Create</button>
+
+</div>

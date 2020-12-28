@@ -1,4 +1,12 @@
 
+<button
+  mat-icon-button
+  matTooltip="Create new public key for your server"
+  class="create-button"
+  (click)="create()">
+  <mat-icon aria-label="Imports a public key">add_box</mat-icon>
+</button>
+
 <div *ngIf="publicKeyFull">
 
   <span class="details-item">
