@@ -15,7 +15,7 @@ export class AuthFilter {
    * - username.like
    * - Etc
    */
-  filter?: string;
+  filter?: any;
 
   /**
    * Offset of where to start returning records.

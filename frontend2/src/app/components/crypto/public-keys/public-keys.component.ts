@@ -14,9 +14,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Response } from 'src/app/models/response.model';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/import-public-key-dialog.component';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/import-public-key-dialog.component';
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
@@ -93,6 +94,7 @@ export class PublicKeysComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private cryptoService: CryptoService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -149,6 +151,22 @@ export class PublicKeysComponent implements OnInit {
 
         // Assigning count to returned value from server.
         this.count = res.count;
+
+        /*
+         * Checking if filter yielded a single key, at which point we transmit message
+         * to make sure invocations component filters on only invocations belonging to
+         * specific key
+         */
+        let id = -1;
+        if (this.count === 1) {
+          id = this.publicKeys[0].key.id;
+        } else if (this.count === 0) {
+          id = 0;
+        }
+        this.messageService.sendMessage({
+          name: 'crypto.key-filter-changed',
+          content: id,
+        });
 
       }, (error: any) => this.feedbackService.showError(error));
     }, (error: any) => this.feedbackService.showError(error));
