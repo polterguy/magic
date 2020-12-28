@@ -268,6 +268,10 @@ export class PublicKeysComponent implements OnInit {
       this.feedbackService.showInfoShort('Key was successfully saved');
       key.identity = key.key.subject + ' - ' + key.key.email;
 
+      // Making sure we evict cache for public key.
+      this.cryptoService.evictCacheForPublicKey(key.key).subscribe(() => {
+      }, (error: any) => this.feedbackService.showError(error));
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 

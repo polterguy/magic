@@ -12,6 +12,7 @@ import { Count } from '../models/count.model';
 import { Affected } from '../models/affected.model';
 import { Response } from '../models/response.model';
 import { PublicKey } from '../models/public-key.model';
+import { AuthFilter } from '../models/auth-filter.model';
 import { PublicKeyFull } from '../models/public-key-full.model';
 
 /**
@@ -145,5 +146,41 @@ export class CryptoService {
     return this.httpService.get<Response>(
       '/magic/modules/system/crypto/get-fingerprint?key=' +
       encodeURIComponent(key));
+  }
+
+  /**
+   * Evicts cache for public key on server.
+   * 
+   * @param key Key to evict cache for on server
+   */
+  public evictCacheForPublicKey(key: PublicKey) {
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/misc/cache-evict?id=' +
+      encodeURIComponent('public-key.' + key.fingerprint));
+  }
+
+  /**
+   * Returns cryptographically signed invocations from backend to caller.
+   * 
+   * @param filter Filter for filtering which invocations to return
+   */
+  public invocations(filter: AuthFilter = null) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null) {
+
+      // Applying limit and offset
+      query += '?limit=' + filter.limit;
+      query += "&offset=" + filter.offset;
+
+      // Applying filter parts, if given.
+      if (filter.filter && filter.filter !== '') {
+        query += '&crypto_key.eq=' + encodeURIComponent(filter.filter);
+      }
+    }
+
+    // Invoking backend and returning observable.
+    return this.httpService.get<any[]>('/magic/modules/magic/crypto_invocations' + query);
   }
 }
