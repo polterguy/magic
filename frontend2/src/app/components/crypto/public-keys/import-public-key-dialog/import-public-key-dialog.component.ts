@@ -21,7 +21,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
   templateUrl: './import-public-key-dialog.component.html',
   styleUrls: ['./import-public-key-dialog.component.scss']
 })
-export class ImportPublicKeyComponent {
+export class ImportPublicKeyDialogComponent {
 
   /**
    * Default initial values for key user wants to import.
@@ -53,7 +53,7 @@ slots.vocabulary
    * @param feedbackService Needed to be able to display information to user
    */
   constructor(
-    private dialogRef: MatDialogRef<ImportPublicKeyComponent>,
+    private dialogRef: MatDialogRef<ImportPublicKeyDialogComponent>,
     private cryptoService: CryptoService,
     private feedbackService: FeedbackService) { }
 

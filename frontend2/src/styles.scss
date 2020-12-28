@@ -130,6 +130,12 @@ mat-select {
   }
 }
 
+mat-select.dark {
+  .mat-select-value-text {
+    color: rgb(55,55,55);
+  }
+}
+
 mat-card.mat-card {
   color: rgb(245, 245, 245);
   background-color: rgb(45,45,45);

@@ -15,7 +15,7 @@ import { Response } from 'src/app/models/response.model';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ImportPublicKeyComponent } from './import-public-key/import-public-key-dialog.component';
+import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/import-public-key-dialog.component';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
@@ -83,12 +83,22 @@ export class PublicKeysComponent implements OnInit {
     'delete',
   ];
 
+  /**
+   * Creates and instance of your component.
+   * 
+   * @param dialog Needed to create modal dialogs when importing public keys
+   * @param cryptoService Needed to retrieve public keys from backend
+   * @param feedbackService Needed to be able to display feedback to user
+   */
   constructor(
     private dialog: MatDialog,
     private cryptoService: CryptoService,
     private feedbackService: FeedbackService) { }
 
-  ngOnInit() {
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
 
     // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');
@@ -122,14 +132,16 @@ export class PublicKeysComponent implements OnInit {
 
       // Mapping public keys to expected model.
       this.publicKeys = (keys || []).map(x => {
-        return {
+        const result = {
           identity: x.subject + ' - ' + x.email,
           key: x,
           options: {
             hyperlambda: x.vocabulary,
             options: hyperlambda,
           }
-        }
+        };
+        result.options.options.autofocus = false;
+        return result;
       });
 
       // Counting items with the same filter as we used to retrieve items with.
@@ -142,12 +154,22 @@ export class PublicKeysComponent implements OnInit {
     }, (error: any) => this.feedbackService.showError(error));
   }
 
+  /**
+   * Returns true if specified key should be displayed details for.
+   * 
+   * @param key Key to check if we should display details for
+   */
   public shouldDisplayDetails(key: PublicKey) {
 
     // Returns true if we're currently displaying this particular item.
     return this.displayDetails.filter(x => x === key.id).length > 0;
   }
 
+  /**
+   * Invoked when detailed view is toggled for specified key.
+   * 
+   * @param key Key to toggle detailed view for
+   */
   public toggleDetails(key: PublicKey) {
 
     // Checking if we're already displaying details for current item.
@@ -255,7 +277,7 @@ export class PublicKeysComponent implements OnInit {
   public import() {
 
     // Showing modal dialog.
-    const dialogRef = this.dialog.open(ImportPublicKeyComponent, {
+    const dialogRef = this.dialog.open(ImportPublicKeyDialogComponent, {
       width: '50%',
     });
 
@@ -266,7 +288,6 @@ export class PublicKeysComponent implements OnInit {
       if (key) {
 
         // Key was imported, displaying key for editing.
-        console.log(key);
         this.filterFormControl.setValue(key.fingerprint);
         this.feedbackService.showInfo('Key successfully imported, please edits its vocabulary and enable it');
       }

@@ -55,7 +55,7 @@
       *matCellDef="let el"
       colspan="2">
 
-      <div *ngIf="shouldDisplayDetails(el)">
+      <div *ngIf="shouldDisplayDetails(el.key)">
 
         <div class="crypto-form-fields">
           <mat-form-field class="crypto-form-field">
@@ -121,13 +121,13 @@
 
   <tr
     mat-row
-    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'key-row'"
-    (click)="toggleDetails(el)"
+    [ngClass]="(shouldDisplayDetails(el.key) ? 'selected ' : '') + 'key-row'"
+    (click)="toggleDetails(el.key)"
     *matRowDef="let el; columns: displayedColumns;"></tr>
 
   <tr
     mat-row
-    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+    [ngClass]="shouldDisplayDetails(el.key) ? 'details' : 'invisible'"
     *matRowDef="let el; columns: ['show-details'];"></tr>
 
 </table>
