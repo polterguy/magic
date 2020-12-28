@@ -100,6 +100,7 @@ import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
+import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -149,6 +150,7 @@ import { CreateKeypairDialogComponent } from './components/crypto/server-public-
     PublicKeysComponent,
     ImportPublicKeyDialogComponent,
     CreateKeypairDialogComponent,
+    CryptoInvocationsComponent,
   ],
   imports: [
     FormsModule,
