@@ -1,1 +1,90 @@
-<p>crypto-invocations works!</p>
+
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    matTooltip="Clear filter"
+    (click)="clearFilter()">clear</mat-icon>
+
+</mat-form-field>
+
+<table
+  mat-table
+  [dataSource]="invocations"
+  class="invocations clickable"
+  multiTemplateDataRows>
+
+  <ng-container matColumnDef="request_id">
+    <td mat-cell *matCellDef="let el">{{el.request_id}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="created">
+    <td mat-cell *matCellDef="let el">{{el.created | since}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="show-details">
+
+    <td
+      mat-cell
+      *matCellDef="let el"
+      colspan="2">
+
+      <div *ngIf="shouldDisplayDetails(el)">
+
+        <div class="crypto-details">
+          <span class="item">
+            <strong>Created</strong><span>{{el.created}}</span>
+          </span>
+          <span class="item">
+            <strong>Crypto key</strong><span>{{el.crypto_key}}</span>
+          </span>
+          <span class="item">
+            <strong class="full-width">Request</strong><span class="code">{{el.request}}</span>
+          </span>
+          <span class="item">
+            <strong class="full-width">Request raw</strong><span class="no-overflow">{{el.request_raw}}</span>
+          </span>
+          <span class="item">
+            <strong class="full-width">Response</strong><span class="code">{{el.response}}</span>
+          </span>
+        </div>
+
+      </div>
+
+    </td>
+
+  </ng-container>
+
+  <tr
+    mat-row
+    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'invocation-row'"
+    (click)="toggleDetails(el)"
+    *matRowDef="let el; columns: displayedColumns;"></tr>
+
+  <tr
+    mat-row
+    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+    *matRowDef="let el; columns: ['show-details'];"></tr>
+
+</table>
+
+<mat-paginator
+  #paginator
+  [class]="count > 10 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="10"
+  showFirstLastButtons="true"
+  (page)="paged($event)"
+  [pageSizeOptions]="[5,10,25,50]">
+</mat-paginator>

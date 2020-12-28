@@ -14,6 +14,7 @@ import { Response } from '../models/response.model';
 import { PublicKey } from '../models/public-key.model';
 import { AuthFilter } from '../models/auth-filter.model';
 import { PublicKeyFull } from '../models/public-key-full.model';
+import { CryptoInvocation } from '../models/crypto-invocations.model';
 
 /**
  * Crypto service, allows you to administrate your cryptography keys.
@@ -181,6 +182,6 @@ export class CryptoService {
     }
 
     // Invoking backend and returning observable.
-    return this.httpService.get<any[]>('/magic/modules/magic/crypto_invocations' + query);
+    return this.httpService.get<CryptoInvocation[]>('/magic/modules/magic/crypto_invocations' + query);
   }
 }
