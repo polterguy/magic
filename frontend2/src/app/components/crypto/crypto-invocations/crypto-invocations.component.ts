@@ -4,13 +4,16 @@
  */
 
 // Angular and system imports.
+import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
+import { Message } from 'src/app/models/message.model';
 import { CryptoService } from 'src/app/services/crypto.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoInvocation } from 'src/app/models/crypto-invocations.model';
 
@@ -22,10 +25,21 @@ import { CryptoInvocation } from 'src/app/models/crypto-invocations.model';
   templateUrl: './crypto-invocations.component.html',
   styleUrls: ['./crypto-invocations.component.scss']
 })
-export class CryptoInvocationsComponent implements OnInit {
+export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
   // List of item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
+
+  /**
+   * Subscription for messages published by other components.
+   */
+  private _subscription: Subscription;
+
+  /**
+   * If this is not -1 it is a filter for a specific crypto_key, which we pass in
+   * as we retrieve invocations.
+   */
+  public keyId: number = -1;
 
   /**
    * Filter form control for filtering items to display.
@@ -63,6 +77,7 @@ export class CryptoInvocationsComponent implements OnInit {
    */
   constructor(
     private cryptoService: CryptoService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -81,8 +96,30 @@ export class CryptoInvocationsComponent implements OnInit {
         this.getInvocations();
       });
 
-    // Retrieving initial invocations.
-    this.getInvocations();
+    // Making sure we subscribe to messages related to component.
+    this._subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+
+      // Verifying this is the correct message.
+      if (msg.name === 'crypto.key-filter-changed') {
+
+        // Updating filter and retrieving invocations.
+        this.keyId = msg.content;
+        if (this.keyId === 0) {
+          this.invocations = [];
+        } else {
+          this.getInvocations();
+        }
+      }
+    });
+  }
+
+  /**
+   * Implementation of OnDestroy
+   */
+  ngOnDestroy() {
+
+    // Need to unsibscribe to messages published by other components.
+    this._subscription.unsubscribe();
   }
 
   /**
@@ -92,7 +129,7 @@ export class CryptoInvocationsComponent implements OnInit {
 
     // Invoking backend to retrieve invocations.
     this.cryptoService.invocations({
-      filter: this.filterFormControl.value,
+      filter: this.keyId === -1 ? null : this.keyId,
       offset: this.paginator.pageIndex * this.paginator.pageSize,
       limit: this.paginator.pageSize
     }).subscribe((invocations: CryptoInvocation[]) => {
@@ -104,7 +141,7 @@ export class CryptoInvocationsComponent implements OnInit {
       this.invocations = invocations || [];
 
       // Counting items with the same filter as we used to retrieve items with.
-      this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe(res => {
+      this.cryptoService.countInvocations({ filter: this.filterFormControl.value }).subscribe(res => {
 
         // Assigning count to returned value from server.
         this.count = res.count;

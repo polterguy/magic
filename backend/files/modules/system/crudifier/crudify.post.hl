@@ -604,7 +604,10 @@ semaphore:crudifier
                limit:long:1
          insert-before:x:@apply/**/table/.
             .
-               add:x:+/*/where/*/and
+               add:x:+/+/+
+                  get-nodes:x:@.arguments/*/operator
+               remove-nodes:x:@.arguments/*/operator
+               add:x:+/*/where/*
                   get-nodes:x:@.arguments/*
          insert-after:x:@apply/**/table/.
             .

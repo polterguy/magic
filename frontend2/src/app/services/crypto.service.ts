@@ -55,10 +55,10 @@ export class CryptoService {
       // Applying limit and offset
       query += '?limit=' + filter.limit;
       query += '&offset=' + filter.offset;
-      query += '&operator=or';
 
       // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
+        query += '&operator=or';
         query += '&email.like=' + encodeURIComponent('%' + filter.filter + '%');
         query += '&subject.like=' + encodeURIComponent('%' + filter.filter + '%');
         query += '&fingerprint.eq=' + encodeURIComponent(filter.filter);
@@ -150,17 +150,6 @@ export class CryptoService {
   }
 
   /**
-   * Evicts cache for public key on server.
-   * 
-   * @param key Key to evict cache for on server
-   */
-  public evictCacheForPublicKey(key: PublicKey) {
-    return this.httpService.delete<Response>(
-      '/magic/modules/system/misc/cache-evict?id=' +
-      encodeURIComponent('public-key.' + key.fingerprint));
-  }
-
-  /**
    * Returns cryptographically signed invocations from backend to caller.
    * 
    * @param filter Filter for filtering which invocations to return
@@ -183,5 +172,33 @@ export class CryptoService {
 
     // Invoking backend and returning observable.
     return this.httpService.get<CryptoInvocation[]>('/magic/modules/magic/crypto_invocations' + query);
+  }
+
+  /**
+   * Returns public keys from your backend.
+   * 
+   * @param filter Filter for which keys to return
+   */
+  public countInvocations(filter: any) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null && filter.filter && filter.filter !== '') {
+      query += '&crypto_key.eq=' + encodeURIComponent(filter.filter);
+    }
+
+    // Invoking backend and returning observable.
+    return this.httpService.get<Count>('/magic/modules/magic/crypto_invocations-count' + query);
+  }
+
+  /**
+   * Evicts cache for public key on server.
+   * 
+   * @param key Key to evict cache for on server
+   */
+  public evictCacheForPublicKey(key: PublicKey) {
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/misc/cache-evict?id=' +
+      encodeURIComponent('public-key.' + key.fingerprint));
   }
 }
