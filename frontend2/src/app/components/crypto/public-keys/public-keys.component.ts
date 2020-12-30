@@ -88,6 +88,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    */
   public displayedColumns: string[] = [
     'identity',
+    'imported',
     'invocations',
     'delete',
   ];
