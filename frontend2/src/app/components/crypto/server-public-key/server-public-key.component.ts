@@ -75,7 +75,7 @@ export class ServerPublicKeyComponent implements OnInit {
       if (result) {
 
         // Success! Giving user some feedback, and reloading server key data.
-        this.feedbackService.showInfo('A new server key pair was successfully generated');
+        this.feedbackService.showInfo('A new server key pair was successfully generated. Your old key was backed up.');
         this.getServerPublicKey();
       }
     });
