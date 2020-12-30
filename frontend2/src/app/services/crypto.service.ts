@@ -55,6 +55,8 @@ export class CryptoService {
       // Applying limit and offset
       query += '?limit=' + filter.limit;
       query += '&offset=' + filter.offset;
+      query += '&order=imported';
+      query += '&direction=desc';
 
       // Applying filter parts, if given.
       if (filter.filter && filter.filter !== '') {
