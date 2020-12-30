@@ -4,13 +4,15 @@
  */
 
 // Angular and system imports.
+import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
+import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
@@ -51,7 +53,12 @@ class PublicKeyEx {
   templateUrl: './public-keys.component.html',
   styleUrls: ['./public-keys.component.scss']
 })
-export class PublicKeysComponent implements OnInit {
+export class PublicKeysComponent implements OnInit, OnDestroy {
+
+  /**
+   * Subscription for messages published by other components.
+   */
+  private _subscription: Subscription;
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
@@ -116,6 +123,26 @@ export class PublicKeysComponent implements OnInit {
 
     // Retrieving initial keys to databind table towards.
     this.getKeys();
+
+    // Subscribing to the active tabe changed from parent component.
+    this._subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+      if (msg.name === 'crypto.active-tab-changed' && msg.content === 0) {
+
+        // Checking if we have a filter, and if so, resetting it.
+        if (this.filterFormControl.value !== '') {
+          this.filterFormControl.setValue(''); // This will re-retrieve keys from backend.
+        }
+      }
+    });
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  public ngOnDestroy() {
+
+    // House cleaning.
+    this._subscription.unsubscribe();
   }
 
   /**

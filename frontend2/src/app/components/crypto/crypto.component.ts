@@ -62,4 +62,16 @@ export class CryptoComponent implements OnInit, OnDestroy {
     // House cleaning.
     this._subscription.unsubscribe();
   }
+
+  /**
+   * Invoked when active tab changes.
+   */
+  public selectedTabChanged() {
+
+    // Publishing message to inform other components of that the active tab was changed.
+    this.messageService.sendMessage({
+      name: 'crypto.active-tab-changed',
+      content: this.tab.selectedIndex,
+    });
+  }
 }
