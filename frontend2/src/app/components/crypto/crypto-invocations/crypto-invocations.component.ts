@@ -109,6 +109,10 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
         } else {
           this.getInvocations();
         }
+      } else if (msg.name === 'crypto.active-tab-changed' && msg.content === 0) {
+
+        // Resetting filter.
+        this.filterFormControl.setValue('');
       }
     });
   }
