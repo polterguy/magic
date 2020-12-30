@@ -81,6 +81,7 @@ export class PublicKeysComponent implements OnInit {
    */
   public displayedColumns: string[] = [
     'identity',
+    'invocations',
     'delete',
   ];
 
@@ -154,8 +155,8 @@ export class PublicKeysComponent implements OnInit {
 
         /*
          * Checking if filter yielded a single key, at which point we transmit message
-         * to make sure invocations component filters on only invocations belonging to
-         * specific key
+         * to make sure invocations component filters only on invocations belonging to
+         * the specific key.
          */
         let id = -1;
         if (this.count === 1) {
@@ -165,7 +166,10 @@ export class PublicKeysComponent implements OnInit {
         }
         this.messageService.sendMessage({
           name: 'crypto.key-filter-changed',
-          content: id,
+          content: {
+            id,
+            identity: id > 0 ? this.publicKeys[0].identity : null,
+          },
         });
 
       }, (error: any) => this.feedbackService.showError(error));
@@ -253,20 +257,19 @@ export class PublicKeysComponent implements OnInit {
   }
 
   /**
-   * Invoked when the content of a public key changes.
+   * Invoked when user wants to see invocations for the specified key.
    * 
-   * @param key Key that triggered event
+   * @param key Key to view invocations for
    */
-  public publicKeyChanged(key: PublicKey) {
+  public invocations(key: PublicKeyEx) {
 
-    // Invoking backend to retrieve new fingerprint for key.
-    this.cryptoService.getFingerprint(key.content).subscribe((response: Response) => {
+    // Changing filter textbox' content to key's email address, which will retrieve keys again.
+    this.filterFormControl.setValue(key.key.email);
 
-      // Updating key's fingerprint, and providing user with some feedback.
-      this.feedbackService.showInfo('Fingerprint successfully updated to match key. Remember to save your key if you want the changes to take effect.');
-      key.fingerprint = response.result;
-
-    }, (error: any) => this.feedbackService.showError(error));
+    // Changing active tab in tab view.
+    this.messageService.sendMessage({
+      name: 'crypto.view-invocations',
+    })
   }
 
   /**
@@ -279,15 +282,26 @@ export class PublicKeysComponent implements OnInit {
     // Updating Hyperlambda from CodeMirror options.
     key.key.vocabulary = key.options.hyperlambda;
 
-    // Invoking backend to save key.
-    this.cryptoService.savePublicKey(key.key).subscribe(() => {
+    // Invoking backend to retrieve new fingerprint for key.
+    this.cryptoService.getFingerprint(key.key.content).subscribe((response: Response) => {
 
-      // Providing some feedback to user, and retrieving keys again to update grid.
-      this.feedbackService.showInfoShort('Key was successfully saved');
-      key.identity = key.key.subject + ' - ' + key.key.email;
+      // Updating key's fingerprint.
+      key.key.fingerprint = response.result;
 
-      // Making sure we evict cache for public key.
-      this.cryptoService.evictCacheForPublicKey(key.key).subscribe(() => {
+      // Invoking backend to save key.
+      this.cryptoService.savePublicKey(key.key).subscribe(() => {
+
+        // Providing some feedback to user, and retrieving keys again to update grid.
+        this.feedbackService.showInfoShort('Key was successfully saved');
+        key.identity = key.key.subject + ' - ' + key.key.email;
+
+        // Making sure we evict cache for public key.
+        this.cryptoService.evictCacheForPublicKey(key.key).subscribe(() => {
+
+          // Some simple logging.
+          console.info('Key evicted from cache');
+        }, (error: any) => this.feedbackService.showError(error));
+
       }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => this.feedbackService.showError(error));

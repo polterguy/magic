@@ -37,6 +37,17 @@
     <td mat-cell *matCellDef="let el">{{el.identity}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="invocations">
+    <td mat-cell class="minimalistic-col" *matCellDef="let el">
+      <button
+        mat-icon-button
+        matTooltip="Invocations signed by key"
+        (click)="invocations(el)">
+        <mat-icon>cached</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="delete">
     <td mat-cell class="minimalistic-col" *matCellDef="let el">
       <button
@@ -53,7 +64,7 @@
     <td
       mat-cell
       *matCellDef="let el"
-      colspan="2">
+      colspan="3">
 
       <div *ngIf="shouldDisplayDetails(el.key)">
 
@@ -94,7 +105,6 @@
           class="crypto-key"
           matTooltip="Public key content"
           [(ngModel)]="el.key.content"
-          (change)="publicKeyChanged(el.key)"
           rows="10"></textarea>
 
         <div matTooltip="Fingerprint of key" class="fingerprint">{{el.key.fingerprint}}</div>

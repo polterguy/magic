@@ -165,11 +165,16 @@ export class CryptoService {
       query += "&offset=" + filter.offset;
 
       // Applying filter parts, if given.
-      if (filter.filter && filter.filter !== '') {
-        query += '&crypto_key.eq=' + encodeURIComponent(filter.filter);
+      if (filter.filter) {
+        if (filter.filter.request_id && filter.filter.request_id !== '') {
+          query += '&request_id.like=' + encodeURIComponent('%' + filter.filter.request_id + '%');
+        }
+        if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
+          query += '&crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
+        }
       }
     }
-
+  
     // Invoking backend and returning observable.
     return this.httpService.get<CryptoInvocation[]>('/magic/modules/magic/crypto_invocations' + query);
   }
@@ -183,8 +188,17 @@ export class CryptoService {
 
     // Dynamically building our query parameters.
     let query = '';
-    if (filter !== null && filter.filter && filter.filter !== '') {
-      query += '&crypto_key.eq=' + encodeURIComponent(filter.filter);
+    if (filter.filter) {
+      if (filter.filter.request_id && filter.filter.request_id !== '') {
+        query += '?request_id.like=' + encodeURIComponent('%' + filter.filter.request_id + '%');
+        if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
+          query += '&crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
+        }
+      } else {
+        if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
+          query += '?crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
+        }
+      }
     }
 
     // Invoking backend and returning observable.
