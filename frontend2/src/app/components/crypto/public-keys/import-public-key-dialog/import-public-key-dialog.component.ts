@@ -42,6 +42,10 @@ export class ImportPublicKeyDialogComponent {
  */
 vocabulary
 slots.vocabulary
+log.info
+add
+get-nodes
+return
 `,
   };
 
