@@ -6,9 +6,9 @@
 // Angular and system imports.
 import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
@@ -39,7 +39,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
    * If this is not -1 it is a filter for a specific crypto_key, which we pass in
    * as we retrieve invocations.
    */
-  public keyId: number = -1;
+  public keyId: any = null;
 
   /**
    * Filter form control for filtering items to display.
@@ -104,7 +104,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
         // Updating filter and retrieving invocations.
         this.keyId = msg.content;
-        if (this.keyId === 0) {
+        if (this.keyId.id === 0) {
           this.invocations = [];
         } else {
           this.getInvocations();
@@ -116,10 +116,21 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy
    */
-  ngOnDestroy() {
+  public ngOnDestroy() {
 
     // Need to unsibscribe to messages published by other components.
     this._subscription.unsubscribe();
+  }
+
+  /**
+   * Returns filter placeholder to caller.
+   */
+  public getFilterPlaceholder() {
+    if (!this.keyId || this.keyId.id <= 0) {
+      return 'Filter ...';
+    } else {
+      return `Filter within '${this.keyId.identity}' ...`;
+    }
   }
 
   /**
@@ -128,8 +139,14 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
   public getInvocations() {
 
     // Invoking backend to retrieve invocations.
+    const filter: any = {
+      request_id: this.filterFormControl.value,
+    };
+    if (this.keyId || this.keyId.id > 0) {
+      filter.crypto_key = this.keyId.id;
+    }
     this.cryptoService.invocations({
-      filter: this.keyId === -1 ? null : this.keyId,
+      filter,
       offset: this.paginator.pageIndex * this.paginator.pageSize,
       limit: this.paginator.pageSize
     }).subscribe((invocations: CryptoInvocation[]) => {
