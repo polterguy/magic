@@ -37,8 +37,19 @@
     <td mat-cell *matCellDef="let el">{{el.identity}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="imported">
+    <td
+      mat-cell
+      class="minimalistic-col"
+      matTooltip="Key was imported"
+      *matCellDef="let el">{{el.key.imported | since}}</td>
+  </ng-container>
+
   <ng-container matColumnDef="invocations">
-    <td mat-cell class="minimalistic-col" *matCellDef="let el">
+    <td
+      mat-cell
+      class="minimalistic-col"
+      *matCellDef="let el">
       <button
         mat-icon-button
         matTooltip="Invocations signed by key"
@@ -64,7 +75,7 @@
     <td
       mat-cell
       *matCellDef="let el"
-      colspan="3">
+      colspan="4">
 
       <div *ngIf="shouldDisplayDetails(el.key)">
 
