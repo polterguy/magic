@@ -44,16 +44,19 @@
 
         <div class="crypto-details">
           <span class="item">
-            <strong>Created</strong><span>{{el.created}}</span>
+            <strong>Date</strong><span>{{el.created}}</span>
           </span>
           <span class="item">
-            <strong>Crypto key</strong><span>{{el.crypto_key}}</span>
+            <strong>Request ID</strong><span>{{el.request_id}}</span>
           </span>
           <span class="item">
-            <strong class="full-width">Request</strong><span class="code">{{el.request}}</span>
+            <strong>Key ID</strong><span>{{el.crypto_key}}</span>
           </span>
           <span class="item">
-            <strong class="full-width">Signed request</strong><span class="no-overflow">{{el.request_raw}}</span>
+            <strong class="full-width">Request payload</strong><span class="code">{{el.request}}</span>
+          </span>
+          <span class="item">
+            <strong class="full-width">Signed request payload</strong><span class="no-overflow">{{el.request_raw}}</span>
           </span>
           <span class="item">
             <strong class="full-width">Response</strong><span class="code">{{el.response}}</span>
