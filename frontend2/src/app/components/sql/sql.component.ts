@@ -306,8 +306,16 @@ export class SqlComponent implements OnInit {
       this.isBatch).subscribe((result: any[][]) => {
 
       // Success!
-      if (result && result.length === 200) {
-        this.feedbackService.showInfo('First 200 records returned');
+      if (result) {
+        let count = 0;
+        for (var idx of result) {
+          count += idx.length;
+        }
+        if (this.safeMode && count === 200) {
+          this.feedbackService.showInfo('First 200 records returned');
+        } else {
+          this.feedbackService.showInfo(`${count} records returned`);
+        }
       } else {
         this.feedbackService.showInfo('SQL successfully executed');
       }
