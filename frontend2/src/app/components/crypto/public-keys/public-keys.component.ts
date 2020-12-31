@@ -313,24 +313,29 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
     // Invoking backend to retrieve new fingerprint for key.
     this.cryptoService.getFingerprint(key.key.content).subscribe((response: Response) => {
 
+      // Checking if fingerprint was updated.
+      const fingerprintUpdated = key.key.fingerprint !== response.result;
+
       // Updating key's fingerprint.
       key.key.fingerprint = response.result;
 
-      // Invoking backend to save key.
-      this.cryptoService.savePublicKey(key.key).subscribe(() => {
+      // Checking if fingerprint was updated, at which point we warn user.
+      if (fingerprintUpdated) {
 
-        // Providing some feedback to user, and retrieving keys again to update grid.
-        this.feedbackService.showInfoShort('Key was successfully saved');
-        key.identity = key.key.subject + ' - ' + key.key.email;
+        // Asking user to confirm operation.
+        this.feedbackService.confirm(
+          'Warning',
+          'Warning! Changing the actual key content will make it impossible to cryptographically verify historic invocations. Are you sure you wish to proceed?',
+          () => {
 
-        // Making sure we evict cache for public key.
-        this.cryptoService.evictCacheForPublicKey(key.key).subscribe(() => {
+            // Invoking method responsible for saving the key.
+            this.saveKeyImplementation(key);
+          });
+      } else {
 
-          // Some simple logging.
-          console.info('Key evicted from cache');
-        }, (error: any) => this.feedbackService.showError(error));
-
-      }, (error: any) => this.feedbackService.showError(error));
+        // Invoking method responsible for saving the key.
+        this.saveKeyImplementation(key);
+      }
 
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -356,5 +361,32 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
         this.feedbackService.showInfo('Key successfully imported, please edits its vocabulary and enable it');
       }
     });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Saves the specified key, and evicts key from server's cache.
+   */
+  private saveKeyImplementation(key: PublicKeyEx) {
+
+    // Invoking backend to save key.
+    this.cryptoService.savePublicKey(key.key).subscribe(() => {
+
+      // Providing some feedback to user, and retrieving keys again to update grid.
+      this.feedbackService.showInfoShort('Key was successfully saved');
+      key.identity = key.key.subject + ' - ' + key.key.email;
+
+      // Making sure we evict cache for public key.
+      this.cryptoService.evictCacheForPublicKey(key.key).subscribe(() => {
+
+        // Some simple logging.
+        console.info('Key evicted from cache');
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
