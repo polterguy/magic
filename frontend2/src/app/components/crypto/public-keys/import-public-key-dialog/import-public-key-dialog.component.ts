@@ -35,17 +35,17 @@ export class ImportPublicKeyDialogComponent {
     content: '',
     enabled: false,
     vocabulary: `/*
- * In order for clients to intelligently communicate with your
- * server, at the very least you should whitelist [vocabulary]
- * and [slots.vocabulary] - Since this allows clients to query your
- * server for what slots they're allowed to invoke.
+ * This declares which vocabulary cryptographically signed invocations
+ * originating from the key is allowed to use when communicating with
+ * your server. Please edit it as you see fit. This default value only
+ * allows clients to query for which vocabulary to use, and nothing else
+ * really.
  */
+add
+return
+get-nodes
 vocabulary
 slots.vocabulary
-log.info
-add
-get-nodes
-return
 `,
   };
 
