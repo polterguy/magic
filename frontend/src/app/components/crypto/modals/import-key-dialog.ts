@@ -40,7 +40,13 @@ export class ImportKeyDialogComponent implements OnInit {
     });
     if (!this.data.id) {
       this.data.vocabulary = `/*
- * In order for clients to intelligently communicate with your
+ * This declares which vocabulary cryptographically signed invocations
+ * originating from the key is allowed to use when communicating with
+ * your server. Please edit it as you see fit. This default value only
+ * allows clients to query for which vocabulary to use, and nothing else
+ * of importance.
+ * 
+ * Notice! In order for clients to intelligently communicate with your
  * server, at the very least you should whitelist [vocabulary]
  * and [slots.vocabulary] - Since this allows clients to query your
  * server for what slots they're allowed to invoke.
