@@ -14,6 +14,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
+import { LogService } from 'src/app/services/log.service';
 import { PublicKey } from 'src/app/models/public-key.model';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -38,6 +39,11 @@ class PublicKeyEx {
    * Public key as returned from server.
    */
   key: PublicKey;
+
+  /*
+   * Original key content. Stored in case user updates a key, such that we can log the old key's content.
+   */
+  original_content: string;
 
   /*
    * CodeMirror options for editing vocabulary.
@@ -97,11 +103,14 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * Creates and instance of your component.
    * 
    * @param dialog Needed to create modal dialogs when importing public keys
+   * @param logService Needed to log changes done to key collection
    * @param cryptoService Needed to retrieve public keys from backend
+   * @param messageService Needed to transmit relevant messages to other component as state changes
    * @param feedbackService Needed to be able to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
+    private logService: LogService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
     private feedbackService: FeedbackService) { }
@@ -169,7 +178,8 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
           options: {
             hyperlambda: x.vocabulary,
             options: hyperlambda,
-          }
+          },
+          original_content: x.content,
         };
         result.options.options.autofocus = false;
         return result;
@@ -313,23 +323,37 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
     // Invoking backend to retrieve new fingerprint for key.
     this.cryptoService.getFingerprint(key.key.content).subscribe((response: Response) => {
 
-      // Checking if fingerprint was updated.
+      // Checking if fingerprint was updated, implying the key itself was updated.
       const fingerprintUpdated = key.key.fingerprint !== response.result;
 
-      // Updating key's fingerprint.
+      // Updating key's fingerprint, storing the old fingerprint for reference purposes such that we can log it.
+      const oldFingerprint = key.key.fingerprint;
       key.key.fingerprint = response.result;
 
-      // Checking if fingerprint was updated, at which point we warn user.
+      // Checking if fingerprint was updated, at which point we warn user that historic invocations will be impossible to verify.
       if (fingerprintUpdated) {
 
         // Asking user to confirm operation.
         this.feedbackService.confirm(
-          'Warning',
-          'Warning! Changing the actual key content will make it impossible to cryptographically verify historic invocations. Are you sure you wish to proceed?',
+          'Warning!',
+          'Changing the actual key content will make it impossible to easily verify historic cryptographic invocations. Are you sure you wish to proceed?',
           () => {
 
-            // Invoking method responsible for saving the key.
-            this.saveKeyImplementation(key);
+            // Making sure we create a log item, logging the key's old content and fingerprint.
+            let oldKey = '';
+            for (var idx of key.original_content) {
+              if (oldKey.length % 80 === 0 && oldKey.length !== 0) {
+                oldKey += '\r\n';
+              }
+              oldKey += idx;
+            }
+            this.logService.createLogEntry(
+              'info',
+              `.type:crypto.key_changed\r\n   new_fingerprint:${response.result}\r\n   old_fingerprint:${oldFingerprint}\r\n   old_key:@"${oldKey}"`).subscribe(() => {
+
+              // Invoking method responsible for saving the key.
+              this.saveKeyImplementation(key, 'The old key was backed up in your log.');
+            });
           });
       } else {
 
@@ -370,13 +394,21 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   /*
    * Saves the specified key, and evicts key from server's cache.
    */
-  private saveKeyImplementation(key: PublicKeyEx) {
+  private saveKeyImplementation(key: PublicKeyEx, extraInfo?: string) {
 
     // Invoking backend to save key.
     this.cryptoService.savePublicKey(key.key).subscribe(() => {
 
       // Providing some feedback to user, and retrieving keys again to update grid.
-      this.feedbackService.showInfoShort('Key was successfully saved');
+      let info = 'Key was successfully saved';
+      if (extraInfo) {
+        info += '. ' + extraInfo;
+      }
+      if (extraInfo) {
+        this.feedbackService.showInfo(info);
+      } else {
+        this.feedbackService.showInfoShort(info);
+      }
       key.identity = key.key.subject + ' - ' + key.key.email;
 
       // Making sure we evict cache for public key.
