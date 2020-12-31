@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 
 // Utility imports.
-import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
