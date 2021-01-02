@@ -79,6 +79,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
+import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
@@ -151,6 +152,7 @@ import { CryptoInvocationsComponent } from './components/crypto/crypto-invocatio
     ImportPublicKeyDialogComponent,
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
+    ConfigEditorComponent,
   ],
   imports: [
     FormsModule,
