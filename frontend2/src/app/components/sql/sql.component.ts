@@ -4,20 +4,23 @@
  */
 
 // Angular and system imports.
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
+
+// Utility imports.
+import { saveAs } from 'file-saver';
 
 // Application specific imports.
-import { FeedbackService } from '../../services/feedback.service';
 import { Response } from 'src/app/models/response.model';
 import { SqlService } from 'src/app/services/sql.service';
 import { ConfigService } from 'src/app/services/config.service';
+import { FeedbackService } from '../../services/feedback.service';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
-import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -306,8 +309,16 @@ export class SqlComponent implements OnInit {
       this.isBatch).subscribe((result: any[][]) => {
 
       // Success!
-      if (result && result.length === 200) {
-        this.feedbackService.showInfo('First 200 records returned');
+      if (result) {
+        let count = 0;
+        for (var idx of result) {
+          count += idx.length;
+        }
+        if (this.safeMode && count === 200) {
+          this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return more, or add paging.');
+        } else {
+          this.feedbackService.showInfo(`${count} records returned`);
+        }
       } else {
         this.feedbackService.showInfo('SQL successfully executed');
       }
@@ -374,9 +385,62 @@ export class SqlComponent implements OnInit {
     return this.displayDetails.indexOf(row) !== -1;
   }
 
+  /**
+   * Exports current result set as a CSV file, downloading it to the client.
+   * 
+   * @param result What result set to export
+   */
+  public exportAsCsv(result: any[]) {
+
+    // Building our CSV as a string.
+    let content = '';
+
+    // Iterating through each record in result set.
+    for (let idxRow of result) {
+
+      // Iterating through each property in currently iterated record.
+      let first = true;
+      for (let idxProperty in idxRow) {
+        if (first) {
+          first = false;
+        } else {
+          content += ',';
+        }
+
+        // Retrieving cell value.
+        const value = idxRow[idxProperty];
+        if (value) {
+
+          // Special handling of strings, to allow for double quotes and carriage returns.
+          if (typeof value === 'string') {
+            content += '"' + idxRow[idxProperty].replace('"', '""') + '"';
+          } else {
+            content += idxRow[idxProperty];
+          }
+        }
+      }
+      content += '\r\n';
+    }
+
+    // Invoking saveAsFile method to allow client to download file containing CSV data.
+    this.saveAsFile(content, 'sql-export.csv', 'text/csv');
+  }
+
   /*
    * Private helper methods.
    */
+
+  /**
+   * Saves the file using 'saveAs'.
+   *
+   * @param buffer The data that need to be saved.
+   * @param fileName File name to save as.
+   * @param fileType File type to save as.
+   */
+  private saveAsFile(buffer: any, fileName: string, fileType: string) {
+    const data: Blob = new Blob([buffer], { type: fileType });
+    saveAs(data, fileName);
+  }
 
   /*
    * Returns all connection strings for database type from backend.

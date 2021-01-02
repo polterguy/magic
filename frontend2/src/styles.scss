@@ -172,6 +172,10 @@ input.mat-input-element {
   color:#eee;
 }
 
+textarea {
+  box-sizing: border-box;
+}
+
 .mat-dialog-title, .mat-dialog-content {
   input {
     color: #000;
