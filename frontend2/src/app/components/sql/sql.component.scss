@@ -7,9 +7,11 @@
 
 .result-card {
   margin-bottom: 2rem;
+  padding-bottom: 1rem;
   table.result {
     table-layout: fixed;
     border-collapse: collapse;
+    margin-bottom: 2rem;
     tr {
       th {
         text-align: left;

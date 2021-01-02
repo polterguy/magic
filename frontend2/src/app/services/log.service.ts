@@ -152,4 +152,19 @@ export class LogService {
     return this.httpService.get<any>(
       '/magic/modules/system/log/loc-generated');
   }
+
+  /**
+   * Creates a server-side log entry given the specified parameters.
+   * 
+   * @param type Type of log entry, should be either 'info', 'debug', 'error' or 'fatal'.
+   * @param content Actual content of log item
+   */
+  public createLogEntry(type: string, content: string) {
+
+    // Invoking backend to persist log entry, returning observable to caller.
+    return this.httpService.post<Response>('/magic/modules/system/log/log', {
+      type,
+      content,
+    });
+  }
 }
