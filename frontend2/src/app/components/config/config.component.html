@@ -4,20 +4,18 @@
   [(status)]="status">
 </app-setup>
 
-<div *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done && config">
+<mat-card
+  *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done">
+  <mat-tab-group>
 
-  <ngx-codemirror
-    [(ngModel)]="config"
-    [options]="cmOptions.json">
-  </ngx-codemirror>
+    <mat-tab label="Configuration">
+      <app-config-editor></app-config-editor>
+    </mat-tab>
 
-  <div class="button-strip">
-    <button
-      mat-button
-      (click)="save()">
-      Save
-    </button>
-  </div>
+    <mat-tab label="License">
+      Foo
+    </mat-tab>
 
-</div>
+  </mat-tab-group>
+</mat-card>
 
