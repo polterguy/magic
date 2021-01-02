@@ -1,0 +1,56 @@
+
+<div
+  *ngIf="licenseInfo && licenseInfo.version === 'trial'"
+  class="apply-license">
+
+  <p>
+    You seem to be having a trial version of Magic. This version will stop working after a couple of days.
+    Please <a target="_blank" href="https://servergardens.com/buy">obtain a valid license</a> and apply
+    it to your installation.
+  </p>
+
+  <mat-form-field class="fill-width">
+    <textarea
+      matInput
+      class="fill-width"
+      [(ngModel)]="license"
+      rows="10"></textarea>
+  </mat-form-field>
+
+  <div
+    class="button-strip">
+    <button
+      mat-button
+      matTooltip="Applies your license to your current backend"
+      (click)="applyLicense()">
+      Apply
+    </button>
+  </div>
+
+</div>
+
+<div
+  *ngIf="licenseInfo && licenseInfo['license-type']"
+  class="license-info">
+
+  <span class="item">
+    <strong>Issued</strong>
+    <span>{{licenseInfo.issued | since}}</span>
+  </span>
+
+  <span class="item">
+    <strong>Issued to</strong>
+    <span>{{licenseInfo.name}} &lt;{{licenseInfo.email}}&gt;</span>
+  </span>
+
+  <span class="item">
+    <strong>License type</strong>
+    <span>{{licenseInfo['license-type']}}</span>
+  </span>
+
+  <span class="item">
+    <strong>Version</strong>
+    <span>{{licenseInfo['valid-version']}}</span>
+  </span>
+
+</div>

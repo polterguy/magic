@@ -29,13 +29,13 @@ export class ConfigService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
-   * @param backendService Necessary to persist JWT token for client once setup process is done
    * @param authService Necessary to create refresh JWT token timer once setup process is done
+   * @param backendService Necessary to persist JWT token for client once setup process is done
    */
   constructor(
     private httpService: HttpService,
-    private backendService: BackendService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private backendService: BackendService) { }
 
   /**
    * Returns the status of the backend.
@@ -43,7 +43,7 @@ export class ConfigService {
   public status() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Status>('/magic/modules/system/config/status');
+    return this.httpService.get<Status>('/magic/modules/system/config/setup-status');
   }
 
   /**
@@ -131,6 +131,15 @@ export class ConfigService {
       '/magic/modules/system/misc/gibberish?min=' +
       min +
       '&max=' + max);
+  }
+
+  /**
+   * Returns license information to caller.
+   */
+  public license() {
+
+    // Invoking backend and returns license information to caller.
+    return this.httpService.get<any>('/magic/modules/system/config/license');
   }
 
   /**

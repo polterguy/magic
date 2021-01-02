@@ -77,6 +77,7 @@ import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { LicenseComponent } from './components/config/license/license.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
@@ -153,6 +154,7 @@ import { CryptoInvocationsComponent } from './components/crypto/crypto-invocatio
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
     ConfigEditorComponent,
+    LicenseComponent,
   ],
   imports: [
     FormsModule,
