@@ -1,0 +1,15 @@
+
+.license-info, .apply-license {
+  margin-top: 1rem;
+}
+
+.license-info {
+  .item {
+    display: block;
+    margin-bottom: .5rem;
+    strong {
+      display: inline-block;
+      width: 8rem;
+    }
+  }
+}
