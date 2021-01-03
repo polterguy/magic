@@ -70,6 +70,9 @@ export class ConfigMetaComponent implements OnInit {
    */
   public locOptions: ChartOptions = {
     responsive: true,
+    legend: {
+      display: false
+    }
   };
 
   /**
