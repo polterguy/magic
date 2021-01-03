@@ -14,10 +14,12 @@ import { Label, SingleDataSet } from 'ng2-charts';
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { LogItem } from 'src/app/models/log-item.model';
+import { Endpoint } from 'src/app/models/endpoint.model';
 import { LogService } from 'src/app/services/log.service';
 import { UserService } from 'src/app/services/user.service';
 import { RoleService } from 'src/app/services/role.service';
 import { TaskService } from 'src/app/services/task.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
@@ -64,6 +66,11 @@ export class ConfigMetaComponent implements OnInit {
    * Total count of tasks in system
    */
   public taskCount: number = -1;
+
+  /**
+   * Total number of endpoints in the system.
+   */
+  public endpoints: number = -1;
 
   /**
    * Options for LOC pie chart.
@@ -177,6 +184,7 @@ export class ConfigMetaComponent implements OnInit {
     private userService: UserService,
     private roleService: RoleService,
     private taskService: TaskService,
+    private authService: AuthService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -231,6 +239,11 @@ export class ConfigMetaComponent implements OnInit {
     // Counting tasks in system.
     this.taskService.count().subscribe((count: Count) => {
       this.taskCount = count.count;
+    });
+
+    // Counting endpoints in system.
+    this.authService.getEndpoints().subscribe((endpoints: Endpoint[]) => {
+      this.endpoints = endpoints.length;
     });
   }
 }
