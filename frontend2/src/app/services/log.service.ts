@@ -91,7 +91,7 @@ export class LogService {
    * 
    * @param filter Query filter for items to include in statistics
    */
-  public statisticsType(filter: string) {
+  public statisticsType(filter?: string) {
 
     // Dynamically building our query according to arguments specificed.
     let query = '';
@@ -111,7 +111,7 @@ export class LogService {
    * 
    * @param filter Query filter for items to include in statistics
    */
-  public statisticsDays(filter: string) {
+  public statisticsDays(filter?: string) {
 
     // Dynamically building our query according to arguments specificed.
     let query = '';

@@ -59,22 +59,22 @@ switch:x:@config.get
 data.connect:magic
    data.read
       table:log_entries
-      limit:10
+      limit:14
       columns
          count(*) as count
       group
       order:date
-      direction:asc
+      direction:desc
 
    /*
     * Making sure we return empty dates, as in dates without
     * any log entries.
     */
-   .no:int:13
+   .no:int:0
    while
-      mte
+      lt
          get-value:x:@.no
-         .:int:0
+         .:int:14
       .lambda
          date.now
          math.subtract:x:@date.now
@@ -85,7 +85,7 @@ data.connect:magic
 
          // Checking if SQL returned currently iterated date.
          strings.concat
-            .:././././0/*/*/date/=
+            .:@data.read/*/*/date/=
             get-value:x:@date.format
          set-x:x:./*/if/*/exists
             convert:x:@strings.concat
@@ -94,7 +94,7 @@ data.connect:magic
             exists
             .lambda
                strings.concat
-                  .:././././././0/*/*/date/=
+                  .:@data.read/*/*/date/=
                   get-value:x:@date.format
                   .:/.
                set-x:x:+/*/get-nodes
@@ -109,7 +109,7 @@ data.connect:magic
                   .
                      date:x:@date.format
                      count:long:0
-         math.decrement:x:@.no
+         math.increment:x:@.no
 
 
 /*

@@ -1,0 +1,25 @@
+
+.meta-wrapper {
+  margin-top: 1rem;
+  display: flex;
+  .meta-info {
+    flex: 1;
+    .item {
+      display: block;
+      margin-bottom: .25rem;
+      strong {
+        display: inline-block;
+        width: 8rem;
+      }
+    }
+  }
+  .meta-statistics {
+    flex: 1;
+    strong {
+      text-align: center;
+      display: block;
+      margin-bottom: .5rem;
+      color: #aaa;
+    }
+  }
+}

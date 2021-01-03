@@ -35,6 +35,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Other external components.
+import { ChartsModule } from 'ng2-charts';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import {
   NgxMatDatetimePickerModule,
@@ -71,6 +72,7 @@ import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { UsersComponent } from './components/auth/users/users.component';
 import { RolesComponent } from './components/auth/roles/roles.component';
+import { ConfigMetaComponent } from './components/config/config-meta/config-meta.component';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
 import { SetupComponent } from './components/config/setup/setup.component';
 import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
@@ -84,6 +86,7 @@ import { ConfigEditorComponent } from './components/config/config-editor/config-
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
+import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
@@ -100,9 +103,8 @@ import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
-import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
-import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
+import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -155,6 +157,7 @@ import { CryptoInvocationsComponent } from './components/crypto/crypto-invocatio
     CryptoInvocationsComponent,
     ConfigEditorComponent,
     LicenseComponent,
+    ConfigMetaComponent,
   ],
   imports: [
     FormsModule,
@@ -183,6 +186,7 @@ import { CryptoInvocationsComponent } from './components/crypto/crypto-invocatio
     MatSnackBarModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    ChartsModule,
     CodemirrorModule,
     MatDatepickerModule,
     MatNativeDateModule,

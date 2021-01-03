@@ -24,8 +24,10 @@
     "@angular/router": "~10.2.0",
     "@ctrl/ngx-codemirror": "^4.1.0",
     "angular-marked": "^1.2.2",
+    "chart.js": "^2.9.4",
     "codemirror": "^5.58.3",
     "file-saver": "^2.0.5",
+    "ng2-charts": "^2.4.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
