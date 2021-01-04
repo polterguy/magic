@@ -320,7 +320,7 @@ export class SqlComponent implements OnInit {
           this.feedbackService.showInfo(`${count} records returned`);
         }
       } else {
-        this.feedbackService.showInfo('SQL successfully executed');
+        this.feedbackService.showInfo('SQL successfully executed, but returned no result');
       }
 
       // Making sure we remove all previously viewed detail records.

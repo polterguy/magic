@@ -83,6 +83,7 @@ import { LicenseComponent } from './components/config/license/license.component'
 import { HealthLogComponent } from './components/health/health-log/health-log.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
+import { ConfigCacheComponent } from './components/config/config-cache/config-cache.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
 import { HealthSecurityComponent } from './components/health/health-security/health-security.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
@@ -164,6 +165,7 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     HealthLogComponent,
     HealthComponent,
     HealthRestartsComponent,
+    ConfigCacheComponent,
   ],
   imports: [
     FormsModule,
