@@ -1,7 +1,6 @@
 
 /*
- * Returns the version of the backend to the client,
- * but only if user is authenticated as root.
+ * Returns the version of the backend to the caller.
  */
 .description:"Returns the backend version to the client."
 
@@ -15,7 +14,6 @@ auth.ticket.verify:root
 /*
  * Retrieves backend version, and returns to client.
  */
-version
-unwrap:x:+/*
+eval:x:+
 return-nodes
    version:x:@version

@@ -1,13 +1,6 @@
 
 /*
  * Authenticates the user with the specified [username] and [password] combination.
- *
- * NOTICE!
- * This is a "one size fits all" solution to the authentication issue in Magic,
- * and unless the JWT secret has been explicitly changed, it will just check
- * to see if the username/password combination is root/root. If the JWT secret
- * has been changed, it will check the 'magic' database to see if the username/password
- * combination is correct, using your default database type.
  */
 slots.create:magic.auth.authenticate
 
