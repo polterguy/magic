@@ -90,7 +90,7 @@ export class HealthLogComponent implements OnInit {
   public logTypeOptions: ChartOptions = {
     responsive: true,
     legend: {
-      display: false
+      display: true,
     }
   };
 
