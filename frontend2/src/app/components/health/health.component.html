@@ -3,11 +3,15 @@
   <mat-tab-group>
 
     <mat-tab label="Overview">
-      <app-health-log></app-health-log>
+      <ng-template matTabContent>
+        <app-health-log></app-health-log>
+      </ng-template>
     </mat-tab>
 
     <mat-tab label="Security">
-      <app-health-security></app-health-security>
+      <ng-template matTabContent>
+        <app-health-security></app-health-security>
+      </ng-template>
     </mat-tab>
 
   </mat-tab-group>
