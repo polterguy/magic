@@ -1,9 +1,7 @@
 
 <div class="meta-wrapper">
 
-  <div
-    *ngIf="userCount && logCount && age && loc"
-    class="meta-info">
+  <div class="meta-info">
 
     <span class="item">
       <strong>Installed</strong>
@@ -71,45 +69,6 @@
       [labels]="logTypeLabels" 
       [options]="logTypeOptions"
       [colors]="logTypeColors">
-    </canvas>
-  </div>
-
-  <div class="meta-statistics">
-    <strong matTooltip="Logins per day the last 2 weeks">Logins per day</strong>
-    <canvas
-      *ngIf="loginData"
-      baseChart
-      chartType="bar"
-      [data]="loginData" 
-      [labels]="loginLabels" 
-      [options]="loginOptions"
-      [colors]="loginColors">
-    </canvas>
-  </div>
-
-  <div class="meta-statistics">
-    <strong matTooltip="Failed logins per day the last 2 weeks">Failed logins per day</strong>
-    <canvas
-      *ngIf="failedLoginData"
-      baseChart
-      chartType="bar"
-      [data]="failedLoginData" 
-      [labels]="failedLoginLabels" 
-      [options]="failedLoginOptions"
-      [colors]="failedLoginColors">
-    </canvas>
-  </div>
-
-  <div class="meta-statistics">
-    <strong matTooltip="Access denied per day the last 2 weeks">Access denied per day</strong>
-    <canvas
-      *ngIf="accessDeniedData"
-      baseChart
-      chartType="bar"
-      [data]="accessDeniedData" 
-      [labels]="accessDeniedLabels" 
-      [options]="accessDeniedOptions"
-      [colors]="accessDeniedColors">
     </canvas>
   </div>
 

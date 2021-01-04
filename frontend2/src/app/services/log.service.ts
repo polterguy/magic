@@ -86,45 +86,6 @@ export class LogService {
   }
 
   /**
-   * Returns statistics from your backend about the number of
-   * log items that exists grouped by type of item.
-   * 
-   * @param filter Query filter for items to include in statistics
-   */
-  public statisticsType(filter?: string) {
-
-    // Dynamically building our query according to arguments specificed.
-    let query = '';
-    if (filter && filter.length > 0) {
-      query = '?filter=' + encodeURIComponent(filter);
-    }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>(
-      '/magic/modules/system/log/log-statistics' + query);
-  }
-
-  /**
-   * Returns statistics from your backend about the number of
-   * log items that exists grouped by day. Only returns statistics
-   * about the 2 last weeks.
-   * 
-   * @param filter Query filter for items to include in statistics
-   */
-  public statisticsDays(filter?: string) {
-
-    // Dynamically building our query according to arguments specificed.
-    let query = '';
-    if (filter && filter.length > 0) {
-      query = '?filter=' + encodeURIComponent(filter);
-    }
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>(
-      '/magic/modules/system/log/log-statistics-days' + query);
-  }
-
-  /**
    * Generates a new log entry about lines of code that was generated.
    * 
    * @param loc Number of lines of code that was created
@@ -140,17 +101,6 @@ export class LogService {
         type,
         name,
       });
-  }
-
-  /**
-   * Returns statistics about lines of code that has been generated
-   * during system's existence.
-   */
-  public getLoc() {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>(
-      '/magic/modules/system/log/loc-generated');
   }
 
   /**
