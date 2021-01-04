@@ -112,11 +112,14 @@
       
         </div>
 
+        <mat-form-field class="fill-width">
         <textarea
+          matInput
           class="crypto-key"
           matTooltip="Public key content"
           [(ngModel)]="el.key.content"
-          rows="10"></textarea>
+          rows="7"></textarea>
+        </mat-form-field>
 
         <div matTooltip="Fingerprint of key" class="fingerprint">{{el.key.fingerprint}}</div>
 
