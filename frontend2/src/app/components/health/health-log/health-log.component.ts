@@ -121,7 +121,7 @@ export class HealthLogComponent implements OnInit {
   public daysOptions: ChartOptions = {
     responsive: true,
     legend: {
-      display: false
+      display: false,
     }
   };
 
@@ -161,6 +161,11 @@ export class HealthLogComponent implements OnInit {
    * 
    * @param logService Needed to retrieve LOC statistics
    * @param userService Needed to count users in installation
+   * @param roleService Needed to count roles in system
+   * @param taskService Needed to count tasks in installation
+   * @param authService Needed to retrieve number of endpoints in installation
+   * @param healthService Needed to retrieve health data from backend
+   * @param feedbackService Needed to display errors to user if errors occurs
    */
   constructor(
     private logService: LogService,
@@ -213,6 +218,20 @@ export class HealthLogComponent implements OnInit {
     this.healthService.statisticsType().subscribe((res: any[]) => {
       this.logTypeLabels = res.map(x => x.type);
       this.logTypeData = res.map(x => x.count);
+      this.logTypeColors = [{
+        backgroundColor: res.map(x => {
+          switch (x.type) {
+            case 'info':
+              return 'rgba(180,180,180,0.8)';
+            case 'error':
+              return 'rgba(255,220,220,0.8)';
+            case 'fatal':
+              return 'rgba(255,120,120,0.8)';
+            case 'debug':
+              return 'rgba(245,245,245,0.8)';
+          }
+        })
+      }];
       this.errors = 0;
       for (const idx of res) {
         if (idx.type === 'error' || idx.type === 'fatal') {

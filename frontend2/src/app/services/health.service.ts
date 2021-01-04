@@ -28,21 +28,12 @@ export class HealthService {
 
   /**
    * Returns statistics from your backend about the number of
-   * log items that exists grouped by type of item.
-   * 
-   * @param filter Query filter for items to include in statistics
+   * log items that exists grouped by type of item for the last 2 weeks.
    */
-  public statisticsType(filter?: string) {
-
-    // Dynamically building our query according to arguments specificed.
-    let query = '';
-    if (filter && filter.length > 0) {
-      query = '?filter=' + encodeURIComponent(filter);
-    }
+  public statisticsType() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>(
-      '/magic/modules/system/health/log-statistics' + query);
+    return this.httpService.get<any[]>('/magic/modules/system/health/log-statistics');
   }
 
   /**
