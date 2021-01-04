@@ -1,28 +1,32 @@
 
 .meta-wrapper {
-  margin-top: 3rem;
+  margin-top: 5rem;
   min-height: 19rem;
   display: flex;
   flex-wrap: wrap;
+  max-width: 76rem;
+  margin-left: auto;
+  margin-right: auto;
   .meta-info {
     flex: 1;
     max-width: 16rem;
     margin-bottom: 2rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
     .item {
       display: block;
-      width: 16rem;
-      font-size: .8rem;
-      line-height: 1rem;
+      width: 20rem;
       strong {
         display: inline-block;
-        width: 8rem;
+        width: 10rem;
       }
     }
   }
   .meta-statistics {
     flex: 1;
-    max-width: 16rem;
+    max-width: 20rem;
     margin-bottom: 2rem;
+    margin-right: 4rem;
     strong {
       text-align: center;
       display: block;
