@@ -12,16 +12,7 @@ import { ChartOptions } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 
 // Application specific imports.
-import { Count } from 'src/app/models/count.model';
-import { LogItem } from 'src/app/models/log-item.model';
-import { Endpoint } from 'src/app/models/endpoint.model';
-import { LogService } from 'src/app/services/log.service';
-import { UserService } from 'src/app/services/user.service';
-import { RoleService } from 'src/app/services/role.service';
-import { TaskService } from 'src/app/services/task.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { HealthService } from 'src/app/services/health.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Component that allows user to view health meta information about his installation specific
@@ -37,7 +28,7 @@ export class HealthSecurityComponent implements OnInit {
   /**
    * Options for log items per day bar chart.
    */
-  public loginOptions: ChartOptions = {
+  public pieOptions: ChartOptions = {
     responsive: true,
     legend: {
       display: false
@@ -76,16 +67,6 @@ export class HealthSecurityComponent implements OnInit {
     ]}];
 
   /**
-   * Options for log items per day bar chart.
-   */
-  public failedLoginOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      display: false
-    }
-  };
-
-  /**
    * Labels for log items per day bar chart.
    */
   public failedLoginLabels: Label[] = [];
@@ -115,16 +96,6 @@ export class HealthSecurityComponent implements OnInit {
       'rgba(80,80,80,0.6)',
       'rgba(70,70,70,0.6)',
     ]}];
-
-  /**
-   * Options for log items per day bar chart.
-   */
-  public accessDeniedOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      display: false
-    }
-  };
 
   /**
    * Labels for log items per day bar chart.
@@ -160,17 +131,9 @@ export class HealthSecurityComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param logService Needed to retrieve LOC statistics
-   * @param userService Needed to count users in installation
+   * @param healthService Needed to retrieve health data from backend
    */
-  constructor(
-    private logService: LogService,
-    private userService: UserService,
-    private roleService: RoleService,
-    private taskService: TaskService,
-    private authService: AuthService,
-    private healthService: HealthService,
-    private feedbackService: FeedbackService) { }
+  constructor(private healthService: HealthService) { }
 
   /**
    * Implementation of OnInit.

@@ -2,9 +2,7 @@
 /*
  * Returns log item count grouped by type of item.
  */
-.description:"Returns log item count grouped by type of item."
-.arguments
-   filter:string
+.description:"Returns log item count grouped by type of item for the last 2 weeks."
 
 
 /*
@@ -14,21 +12,12 @@ auth.ticket.verify:root
 
 
 /*
- * Adding filter argument, if given.
+ * Finding date and time for 2 weeks ago.
  */
-if
-   exists:x:@.arguments/*/filter
-   .lambda
-      strings.concat
-         get-value:x:@.arguments/*/filter
-         .:%
-      unwrap:x:+/*/*/*/*
-      add:x:../*/data.connect/*/data.read
-         .
-            where
-               or
-                  type.eq:x:@.arguments/*/filter
-                  content.like:x:@strings.concat
+math.subtract
+   date.now
+   time
+      days:14
 
 
 /*
@@ -41,6 +30,9 @@ data.connect:magic
       columns
          type
          count(*) as count
+      where
+         and
+            created.mt:x:@math.subtract
       group
          type
 
