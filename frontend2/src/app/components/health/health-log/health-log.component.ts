@@ -85,6 +85,11 @@ export class HealthLogComponent implements OnInit {
   public endpoints: number = -1;
 
   /**
+   * Backend version as returned from server.
+   */
+  public version: string;
+
+  /**
    * Options for log type pie chart.
    */
   public logTypeOptions: ChartOptions = {
@@ -248,6 +253,10 @@ export class HealthLogComponent implements OnInit {
     // Counting endpoints in system.
     this.authService.getEndpoints().subscribe((endpoints: Endpoint[]) => {
       this.endpoints = endpoints.length;
+    });
+
+    this.healthService.version().subscribe((version: any) => {
+      this.version = version.version;
     });
   }
 

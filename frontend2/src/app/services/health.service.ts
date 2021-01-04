@@ -63,7 +63,15 @@ export class HealthService {
   public getLoc() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>(
-      '/magic/modules/system/health/loc-generated');
+    return this.httpService.get<any>('/magic/modules/system/health/loc-generated');
+  }
+
+  /**
+   * Returns backend version of Magic.
+   */
+  public version() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<any>('/magic/modules/system/version');
   }
 }

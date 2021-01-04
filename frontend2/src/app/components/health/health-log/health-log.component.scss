@@ -4,18 +4,18 @@
   min-height: 19rem;
   display: flex;
   flex-wrap: wrap;
-  max-width: 82rem;
+  max-width: 79rem;
   margin-left: auto;
   margin-right: auto;
   .meta-info {
     flex: 1;
-    max-width: 16rem;
+    max-width: 15rem;
     margin-bottom: 2rem;
-    margin-left: 4rem;
-    margin-right: 4rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
     .item {
       display: block;
-      width: 22rem;
+      width: 21rem;
       strong {
         display: inline-block;
         width: 10rem;
@@ -26,7 +26,7 @@
     flex: 1;
     max-width: 22rem;
     margin-bottom: 2rem;
-    margin-right: 4rem;
+    margin-right: 2rem;
     strong {
       text-align: center;
       display: block;
