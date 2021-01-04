@@ -12,7 +12,7 @@ auth.ticket.verify:root
 
 
 /*
- * Retrieves backend version, and returns to client.
+ * Retrieves backend license, and returns to client.
  */
 license
 if
