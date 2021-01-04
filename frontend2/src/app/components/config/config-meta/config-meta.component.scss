@@ -6,6 +6,7 @@
   flex-wrap: wrap;
   .meta-info {
     flex: 1;
+    max-width: 16rem;
     margin-bottom: 2rem;
     .item {
       display: block;
@@ -19,7 +20,7 @@
   }
   .meta-statistics {
     flex: 1;
-    width: 16rem;
+    max-width: 16rem;
     margin-bottom: 2rem;
     strong {
       text-align: center;
