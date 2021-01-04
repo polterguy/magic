@@ -85,10 +85,10 @@ import { PublicKeysComponent } from './components/crypto/public-keys/public-keys
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
 import { HealthSecurityComponent } from './components/health/health-security/health-security.component';
-import { HealthRestartsComponent } from './components/health/health-restarts/health-restarts.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
+import { HealthRestartsComponent } from './components/health/health-diagnostics/health-diagnostics.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';

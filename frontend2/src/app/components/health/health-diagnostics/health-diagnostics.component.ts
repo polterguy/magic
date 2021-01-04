@@ -18,9 +18,9 @@ import { HealthService } from 'src/app/services/health.service';
  * Component to show user when server has been restarted.
  */
 @Component({
-  selector: 'app-health-restarts',
-  templateUrl: './health-restarts.component.html',
-  styleUrls: ['./health-restarts.component.scss']
+  selector: 'app-health-diagnostics',
+  templateUrl: './health-diagnostics.component.html',
+  styleUrls: ['./health-diagnostics.component.scss']
 })
 export class HealthRestartsComponent implements OnInit {
 
