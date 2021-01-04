@@ -9,11 +9,21 @@
   <mat-tab-group>
 
     <mat-tab label="Configuration">
-      <app-config-editor></app-config-editor>
+      <ng-template matTabContent>
+        <app-config-editor></app-config-editor>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Cache">
+      <ng-template matTabContent>
+        <app-config-cache></app-config-cache>
+      </ng-template>
     </mat-tab>
 
     <mat-tab label="License">
-      <app-license></app-license>
+      <ng-template matTabContent>
+        <app-license></app-license>
+      </ng-template>
     </mat-tab>
 
   </mat-tab-group>

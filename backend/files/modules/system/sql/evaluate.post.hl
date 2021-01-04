@@ -75,4 +75,7 @@ data.connect:x:@.arguments/*/database
    /*
     * Returning result of invocation to caller.
     */
-   return-nodes:x:-/*
+   if
+      exists:x:@data.select/*/*
+      .lambda
+         return-nodes:x:@data.select/*

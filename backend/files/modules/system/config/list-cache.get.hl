@@ -1,0 +1,20 @@
+
+/*
+ * Returns license information to caller.
+ */
+.description:"Returns all cache items to caller. Be careful if you have a lot of items in your cache since method does not support paging."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves all cache items, and returns to caller.
+ */
+cache.list
+add:x:+
+   get-nodes:x:@cache.list/*
+return
