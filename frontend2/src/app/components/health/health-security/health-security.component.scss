@@ -1,0 +1,18 @@
+
+.meta-wrapper {
+  margin-top: 3rem;
+  min-height: 19rem;
+  display: flex;
+  flex-wrap: wrap;
+  .meta-statistics {
+    flex: 1;
+    max-width: 16rem;
+    margin-bottom: 2rem;
+    strong {
+      text-align: center;
+      display: block;
+      margin-bottom: .5rem;
+      color: #aaa;
+    }
+  }
+}

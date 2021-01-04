@@ -108,6 +108,17 @@
 </a>
 
 <a
+  *ngIf="authService.hasAccess('magic/modules/system/health')"
+  mat-button
+  routerLink="/health"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>local_hospital</mat-icon>
+  <span>Health</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/config')"
   mat-button
   routerLink="/config"

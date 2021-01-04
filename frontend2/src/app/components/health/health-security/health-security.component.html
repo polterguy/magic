@@ -1,0 +1,43 @@
+
+<div class="meta-wrapper">
+
+  <div class="meta-statistics">
+    <strong matTooltip="Logins per day the last 2 weeks">Logins</strong>
+    <canvas
+      *ngIf="loginData"
+      baseChart
+      chartType="bar"
+      [data]="loginData" 
+      [labels]="loginLabels" 
+      [options]="loginOptions"
+      [colors]="loginColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <strong matTooltip="Failed logins per day the last 2 weeks">Failed logins</strong>
+    <canvas
+      *ngIf="failedLoginData"
+      baseChart
+      chartType="bar"
+      [data]="failedLoginData" 
+      [labels]="failedLoginLabels" 
+      [options]="failedLoginOptions"
+      [colors]="failedLoginColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <strong matTooltip="Access denied per day the last 2 weeks">Access denied</strong>
+    <canvas
+      *ngIf="accessDeniedData"
+      baseChart
+      chartType="bar"
+      [data]="accessDeniedData" 
+      [labels]="accessDeniedLabels" 
+      [options]="accessDeniedOptions"
+      [colors]="accessDeniedColors">
+    </canvas>
+  </div>
+
+</div>

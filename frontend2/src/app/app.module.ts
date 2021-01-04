@@ -68,11 +68,11 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
+import { HealthComponent } from './components/health/health.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { UsersComponent } from './components/auth/users/users.component';
 import { RolesComponent } from './components/auth/roles/roles.component';
-import { ConfigMetaComponent } from './components/config/config-meta/config-meta.component';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
 import { SetupComponent } from './components/config/setup/setup.component';
 import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
@@ -80,9 +80,11 @@ import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { LicenseComponent } from './components/config/license/license.component';
+import { HealthLogComponent } from './components/health/health-log/health-log.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
+import { HealthSecurityComponent } from './components/health/health-security/health-security.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
@@ -156,8 +158,10 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
     ConfigEditorComponent,
+    HealthSecurityComponent,
     LicenseComponent,
-    ConfigMetaComponent,
+    HealthLogComponent,
+    HealthComponent,
   ],
   imports: [
     FormsModule,

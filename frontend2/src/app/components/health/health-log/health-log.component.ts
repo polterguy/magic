@@ -20,17 +20,19 @@ import { UserService } from 'src/app/services/user.service';
 import { RoleService } from 'src/app/services/role.service';
 import { TaskService } from 'src/app/services/task.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { HealthService } from 'src/app/services/health.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
- * Component that allows user to view meta information about his installation.
+ * Component that allows user to view health meta information about his installation specific
+ * to log.
  */
 @Component({
-  selector: 'app-config-meta',
-  templateUrl: './config-meta.component.html',
-  styleUrls: ['./config-meta.component.scss']
+  selector: 'app-health-log',
+  templateUrl: './health-log.component.html',
+  styleUrls: ['./health-log.component.scss']
 })
-export class ConfigMetaComponent implements OnInit {
+export class HealthLogComponent implements OnInit {
 
   /**
    * Number of users in installation.
@@ -155,129 +157,6 @@ export class ConfigMetaComponent implements OnInit {
     ]}];
 
   /**
-   * Options for log items per day bar chart.
-   */
-  public loginOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      display: false
-    }
-  };
-
-  /**
-   * Labels for log items per day bar chart.
-   */
-  public loginLabels: Label[] = [];
-
-  /**
-   * Dataset for log items per day bar chart.
-   */
-  public loginData: SingleDataSet = null;
-
-  /**
-   * Colors for log items per day bar chart.
-   */
-  public loginColors = [{
-    backgroundColor: [
-      'rgba(200,200,200,0.6)',
-      'rgba(190,190,190,0.6)',
-      'rgba(180,180,180,0.6)',
-      'rgba(170,170,170,0.6)',
-      'rgba(160,160,160,0.6)',
-      'rgba(150,150,150,0.6)',
-      'rgba(140,140,140,0.6)',
-      'rgba(130,130,130,0.6)',
-      'rgba(120,120,120,0.6)',
-      'rgba(110,110,110,0.6)',
-      'rgba(100,100,100,0.6)',
-      'rgba(90,90,90,0.6)',
-      'rgba(80,80,80,0.6)',
-      'rgba(70,70,70,0.6)',
-    ]}];
-
-  /**
-   * Options for log items per day bar chart.
-   */
-  public failedLoginOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      display: false
-    }
-  };
-
-  /**
-   * Labels for log items per day bar chart.
-   */
-  public failedLoginLabels: Label[] = [];
-
-  /**
-   * Dataset for log items per day bar chart.
-   */
-  public failedLoginData: SingleDataSet = null;
-
-  /**
-   * Colors for log items per day bar chart.
-   */
-  public failedLoginColors = [{
-    backgroundColor: [
-      'rgba(200,200,200,0.6)',
-      'rgba(190,190,190,0.6)',
-      'rgba(180,180,180,0.6)',
-      'rgba(170,170,170,0.6)',
-      'rgba(160,160,160,0.6)',
-      'rgba(150,150,150,0.6)',
-      'rgba(140,140,140,0.6)',
-      'rgba(130,130,130,0.6)',
-      'rgba(120,120,120,0.6)',
-      'rgba(110,110,110,0.6)',
-      'rgba(100,100,100,0.6)',
-      'rgba(90,90,90,0.6)',
-      'rgba(80,80,80,0.6)',
-      'rgba(70,70,70,0.6)',
-    ]}];
-
-  /**
-   * Options for log items per day bar chart.
-   */
-  public accessDeniedOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      display: false
-    }
-  };
-
-  /**
-   * Labels for log items per day bar chart.
-   */
-  public accessDeniedLabels: Label[] = [];
-
-  /**
-   * Dataset for log items per day bar chart.
-   */
-  public accessDeniedData: SingleDataSet = null;
-
-  /**
-   * Colors for log items per day bar chart.
-   */
-  public accessDeniedColors = [{
-    backgroundColor: [
-      'rgba(200,200,200,0.6)',
-      'rgba(190,190,190,0.6)',
-      'rgba(180,180,180,0.6)',
-      'rgba(170,170,170,0.6)',
-      'rgba(160,160,160,0.6)',
-      'rgba(150,150,150,0.6)',
-      'rgba(140,140,140,0.6)',
-      'rgba(130,130,130,0.6)',
-      'rgba(120,120,120,0.6)',
-      'rgba(110,110,110,0.6)',
-      'rgba(100,100,100,0.6)',
-      'rgba(90,90,90,0.6)',
-      'rgba(80,80,80,0.6)',
-      'rgba(70,70,70,0.6)',
-    ]}];
-
-  /**
    * Creates an instance of your component.
    * 
    * @param logService Needed to retrieve LOC statistics
@@ -289,6 +168,7 @@ export class ConfigMetaComponent implements OnInit {
     private roleService: RoleService,
     private taskService: TaskService,
     private authService: AuthService,
+    private healthService: HealthService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -317,38 +197,20 @@ export class ConfigMetaComponent implements OnInit {
     }, (error: any) => this.feedbackService.showError(error));
 
     // Retrieving LOC statistics.
-    this.logService.getLoc().subscribe((res: any) => {
+    this.healthService.getLoc().subscribe((res: any) => {
       this.loc = res.backend + res.frontend;
       this.frontend = res.frontend;
       this.backend = res.backend;
     });
 
     // Retrieving log items per day type of statistics.
-    this.logService.statisticsDays().subscribe((res: any[]) => {
+    this.healthService.statisticsDays().subscribe((res: any[]) => {
       this.daysData = res.map(x => x.count);
       this.daysLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
 
-    // Retrieving logins per day type of statistics.
-    this.logService.statisticsDays('We successfully authenticated user \'').subscribe((res: any[]) => {
-      this.loginData = res.map(x => x.count);
-      this.loginLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
-    });
-
-    // Retrieving failed logins per day type of statistics.
-    this.logService.statisticsDays('Unhandled exception occurred \'Access denied\' at \'/magic/modules/system/auth/authenticate\'').subscribe((res: any[]) => {
-      this.failedLoginData = res.map(x => x.count);
-      this.failedLoginLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
-    });
-
-    // Retrieving access denied per day type of statistics.
-    this.logService.statisticsDays('Unhandled exception occurred \'Access denied\' at ').subscribe((res: any[]) => {
-      this.accessDeniedData = res.map(x => x.count);
-      this.accessDeniedLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
-    });
-
     // Retrieving log items per type from backend.
-    this.logService.statisticsType().subscribe((res: any[]) => {
+    this.healthService.statisticsType().subscribe((res: any[]) => {
       this.logTypeLabels = res.map(x => x.type);
       this.logTypeData = res.map(x => x.count);
       this.errors = 0;
