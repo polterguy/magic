@@ -38,14 +38,14 @@ if
 config.get:"magic:databases:default"
 switch:x:@config.get
    case:mysql
-      add:x:../**/columns
+      insert-before:x:../**/columns/0
          .
             date_format(created, '%Y-%m-%d') as date
       add:x:../**/group
          .
             date
    case:mssql
-      add:x:../**/columns
+      insert-before:x:../**/columns/0
          .
             convert(char(10), created, 126) as date
       add:x:../**/group

@@ -1,6 +1,6 @@
 
 <div class="meta-wrapper">
-  
+
   <div class="meta-statistics">
     <strong matTooltip="When your server was restarted over the last 2 weeks">Restarts</strong>
     <canvas
@@ -11,6 +11,32 @@
       [labels]="restartLabels" 
       [options]="pieOptions"
       [colors]="restartColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <strong matTooltip="Unhandled exceptions over the last 2 weeks">Exceptions</strong>
+    <canvas
+      *ngIf="unhandledData"
+      baseChart
+      chartType="bar"
+      [data]="unhandledData" 
+      [labels]="unhandledLabels" 
+      [options]="pieOptions"
+      [colors]="unhandledColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <strong matTooltip="How many tasks that were executed over the last 2 weeks">Task executions</strong>
+    <canvas
+      *ngIf="taskData"
+      baseChart
+      chartType="bar"
+      [data]="taskData" 
+      [labels]="taskLabels" 
+      [options]="pieOptions"
+      [colors]="taskColors">
     </canvas>
   </div>
 
