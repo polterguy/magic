@@ -45,9 +45,7 @@ export class LicenseComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving license information from backend.
-    this.configService.license().subscribe((licenseInfo: any) => {
-      this.licenseInfo = licenseInfo;
-    }, (error: any) => this.feedbackService.showError(error));
+    this.getLicense();
   }
 
   /**
@@ -60,6 +58,20 @@ export class LicenseComponent implements OnInit {
 
       // Showing user some feedback that operation was successful.
       this.feedbackService.showInfo('License applied to backend');
+
+      // Retrieving license information.
+      this.getLicense();
     });
+  }
+
+  /**
+   * Invoked when the license information needs to be retrieved from the backend.
+   */
+  public getLicense() {
+
+    // Invoking backend to retrieve license information, if existing.
+    this.configService.license().subscribe((licenseInfo: any) => {
+      this.licenseInfo = licenseInfo;
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

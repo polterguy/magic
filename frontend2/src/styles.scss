@@ -181,6 +181,10 @@ textarea {
   box-sizing: border-box;
 }
 
+textarea.mat-input-element:disabled {
+  color: #aaa;
+}
+
 .mat-dialog-title, .mat-dialog-content {
   input {
     color: #000;
