@@ -9,7 +9,7 @@
   margin-right: auto;
   .meta-info {
     flex: 1;
-    max-width: 15rem;
+    max-width: 21rem;
     margin-bottom: 2rem;
     margin-left: 2rem;
     margin-right: 2rem;
@@ -19,12 +19,14 @@
       strong {
         display: inline-block;
         width: 10rem;
+        text-align: right;
+        margin-right: 1rem;
       }
     }
   }
   .meta-statistics {
     flex: 1;
-    max-width: 22rem;
+    max-width: 21rem;
     margin-bottom: 2rem;
     margin-right: 2rem;
     strong {
