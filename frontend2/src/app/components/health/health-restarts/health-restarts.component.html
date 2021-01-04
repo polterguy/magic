@@ -1,0 +1,17 @@
+
+<div class="meta-wrapper">
+  
+  <div class="meta-statistics">
+    <strong matTooltip="When your server was restarted over the last 2 weeks">Restarts</strong>
+    <canvas
+      *ngIf="restartData"
+      baseChart
+      chartType="bar"
+      [data]="restartData" 
+      [labels]="restartLabels" 
+      [options]="pieOptions"
+      [colors]="restartColors">
+    </canvas>
+  </div>
+
+</div>
