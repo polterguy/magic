@@ -119,6 +119,7 @@
 
             <div
               *ngFor="let idxDetails of idxRow.data | dynamic"
+              (click)="copyToClipBoard(idxDetails.value)"
               class="details-item">
 
               <strong>{{idxDetails.key}}</strong>
