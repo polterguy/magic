@@ -7,7 +7,6 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
@@ -15,11 +14,11 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  * Cache component for allowing user to inspect, remove and clear cache items.
  */
 @Component({
-  selector: 'app-config-cache',
-  templateUrl: './config-cache.component.html',
-  styleUrls: ['./config-cache.component.scss']
+  selector: 'app-health-cache',
+  templateUrl: './health-cache.component.html',
+  styleUrls: ['./health-cache.component.scss']
 })
-export class ConfigCacheComponent implements OnInit {
+export class HealthCacheComponent implements OnInit {
 
   /**
    * List of cache items as returned from backend.
