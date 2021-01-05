@@ -2,7 +2,8 @@
 <table
   mat-table
   [dataSource]="cacheItems"
-  class="cache-items hoverable">
+  class="cache-items clickable"
+  multiTemplateDataRows>
 
   <ng-container matColumnDef="key">
     <td
@@ -10,6 +11,21 @@
       *matCellDef="let el">{{el.key}}</td>
   </ng-container>
 
-  <tr mat-row *matRowDef="let el; columns: ['key'];"></tr>
+  <ng-container matColumnDef="show-details">
+    <td mat-cell *matCellDef="let el">
+      <pre>{{el.value}}</pre>
+    </td>
+  </ng-container>
+
+  <tr
+    mat-row
+    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'cache-item-row'"
+    (click)="toggleDetails(el)"
+    *matRowDef="let el; columns: ['key'];"></tr>
+
+  <tr
+    mat-row
+    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+    *matRowDef="let el; columns: ['show-details'];"></tr>
 
 </table>
