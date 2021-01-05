@@ -39,12 +39,14 @@
 
 </table>
 
-<div
-  *ngIf="cacheItems.length > 0"
-  class="button-strip">
-  <button
-    mat-button
-    (click)="deleteAll()">
-    Empty cache
-  </button>
+<button
+  mat-button
+  class="purge-button"
+  matTooltip="Empties your cache entirely"
+  (click)="deleteAll()">
+  Purge
+</button>
+
+<div *ngIf="cacheItems.length === 0">
+  <p>Your cache is empty ...</p>
 </div>
