@@ -21,6 +21,7 @@ auth.ticket.verify:root
 strings.concat
    .:sql.databases.
    get-value:x:@.arguments/*/databaseType
+   :.
    get-value:x:@.arguments/*/connectionString
 unwrap:x:../*/cache.try-get/**/.databaseType
 unwrap:x:../*/cache.try-get/**/.connection-string
@@ -105,8 +106,6 @@ cache.try-get:x:@strings.concat
 /*
  * Returning results to caller.
  */
-response.headers.add
-   Cache-Control:private, max-age=1200
 add:x:+
    get-nodes:x:@cache.try-get/#/*
 return
