@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 
@@ -93,6 +94,7 @@ export class SqlComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private sqlService: SqlService,
+    private clipboard: Clipboard,
     private dialog: MatDialog) { }
 
   /**
@@ -317,10 +319,10 @@ export class SqlComponent implements OnInit {
         if (this.safeMode && count === 200) {
           this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return more, or add paging.');
         } else {
-          this.feedbackService.showInfo(`${count} records returned`);
+          this.feedbackService.showInfoShort(`${count} records returned`);
         }
       } else {
-        this.feedbackService.showInfo('SQL successfully executed, but returned no result');
+        this.feedbackService.showInfoShort('SQL successfully executed, but returned no result');
       }
 
       // Making sure we remove all previously viewed detail records.
@@ -383,6 +385,18 @@ export class SqlComponent implements OnInit {
    */
   public viewingDetails(row: any[]) {
     return this.displayDetails.indexOf(row) !== -1;
+  }
+
+  /**
+   * Copies the specified text to clipboard.
+   * 
+   * @param value Value to copy to clipboard
+   */
+  public copyToClipBoard(value: string) {
+
+    // Using clipboard service to write specified text to clipboard.
+    this.clipboard.copy(value);
+    this.feedbackService.showInfoShort('Value was copied to your clipboard');
   }
 
   /**

@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { NgModule } from '@angular/core';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -172,6 +173,7 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     ReactiveFormsModule,
     HttpClientModule,
     BrowserModule,
+    ClipboardModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSidenavModule,
