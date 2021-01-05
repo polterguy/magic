@@ -6,8 +6,10 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 
-// Application specific components.
+// Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { CacheService } from 'src/app/services/cache.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Cache component for allowing user to inspect, remove and clear cache items.
@@ -34,12 +36,25 @@ export class ConfigCacheComponent implements OnInit {
    * 
    * @param cacheService Needed to read, remove and purge cache
    */
-  constructor(private cacheService: CacheService) { }
+  constructor(
+    private cacheService: CacheService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
    */
   public ngOnInit() {
+
+    // Retrieving initial items from backend.
+    this.getItems();
+  }
+
+  /**
+   * Retrieves items from backend and databinds table.
+   */
+  public getItems() {
+
+    // Invoking backend to retrieve cache items.
     this.cacheService.list().subscribe((items: any[]) => {
 
       // Dynamically building our dataset.
@@ -83,5 +98,39 @@ export class ConfigCacheComponent implements OnInit {
 
     // Returns true if we're currently displaying this particular item.
     return this.selectedCacheItems.filter(x => x === item.key).length > 0;
+  }
+
+
+  /**
+   * Deletes the specified cache item.
+   * 
+   * @param id ID or key of item to delete
+   */
+  public delete(event: any, id: string) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Invoking backend to delete item.
+    this.cacheService.delete(id).subscribe(() => {
+
+      // Showing some information to user, and re-databinding table.
+      this.feedbackService.showInfoShort('Cache item deleted');
+      this.getItems();
+    });
+  }
+
+  /**
+   * Purges cache completely, deleting all items from cache.
+   */
+  public deleteAll() {
+
+    // Invoking backend to delete all items.
+    this.cacheService.deleteAll().subscribe(() => {
+
+      // Showing some information to user, and re-databinding table.
+      this.feedbackService.showInfoShort('Cache purged');
+      this.getItems();
+    });
   }
 }
