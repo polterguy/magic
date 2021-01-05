@@ -11,8 +11,17 @@
       *matCellDef="let el">{{el.key}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="delete">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell class="minimalistic-col" *matCellDef="let el">
+      <button (click)="delete($event, el.key);" mat-button>
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="show-details">
-    <td mat-cell *matCellDef="let el">
+    <td colspan="2" mat-cell *matCellDef="let el">
       <pre>{{el.value}}</pre>
     </td>
   </ng-container>
@@ -21,7 +30,7 @@
     mat-row
     [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'cache-item-row'"
     (click)="toggleDetails(el)"
-    *matRowDef="let el; columns: ['key'];"></tr>
+    *matRowDef="let el; columns: ['key', 'delete'];"></tr>
 
   <tr
     mat-row
@@ -29,3 +38,13 @@
     *matRowDef="let el; columns: ['show-details'];"></tr>
 
 </table>
+
+<div
+  *ngIf="cacheItems.length > 0"
+  class="button-strip">
+  <button
+    mat-button
+    (click)="deleteAll()">
+    Empty cache
+  </button>
+</div>

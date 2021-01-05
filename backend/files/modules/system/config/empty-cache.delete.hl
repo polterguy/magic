@@ -1,0 +1,19 @@
+
+/*
+ * Deletes all cache items.
+ */
+.description:"Deletes all cache items."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Deletes all cache items and returns success to caller.
+ */
+cache.clear
+return
+   result:success

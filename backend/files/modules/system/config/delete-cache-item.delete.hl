@@ -1,0 +1,21 @@
+
+/*
+ * Deletes the cache item with the specified id.
+ */
+.description:"Deletes the specified cache item."
+.arguments
+   id:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Deletes cache item and returns success to caller.
+ */
+cache.set:x:@.arguments/*/id
+return
+   result:success
