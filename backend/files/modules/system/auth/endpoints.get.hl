@@ -10,7 +10,7 @@ Notice, this endpoint is cached for roughly 5 minutes since it's an expensive en
 /*
  * Declares how many seconds the operation should be cached.
  */
-.cache-seconds:int:3
+.cache-seconds:int:300
 
 /*
  * Invokes [endpoints.list], making sure we cache the results, since it's a
