@@ -74,15 +74,22 @@ export class ConfigEditorComponent implements OnInit {
    */
   public save() {
 
-    // Converting configuration to JSON.
-    const config = JSON.parse(this.config);
+    // In case conversion to JSON fails.
+    try {
 
-    // Saving config by invoking backend.
-    this.configService.saveConfig(config).subscribe((res: Response) => {
+      // Converting configuration to JSON.
+      const config = JSON.parse(this.config);
 
-      // Giving user feedback about operation.
-      this.feedbackService.showInfo('Configuration was successfully saved');
+      // Saving config by invoking backend.
+      this.configService.saveConfig(config).subscribe(() => {
+
+        // Giving user feedback about operation.
+        this.feedbackService.showInfo('Configuration was successfully saved');
 
     }, (error: any) => this.feedbackService.showError(error));
+    }
+    catch (error) {
+      this.feedbackService.showError(error);
+    }
   }
 }
