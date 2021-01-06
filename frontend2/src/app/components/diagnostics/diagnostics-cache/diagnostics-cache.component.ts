@@ -65,6 +65,14 @@ export class DiagnosticsCache implements OnInit {
         });
       }
       this.cacheItems = arr;
+
+      /*
+       * Checking if number of items returned was 200, and if so,
+       * informing user only parts of his cache was returned.
+       */
+      if (arr.length === 200) {
+        this.feedbackService.showInfo('To avoid exhausting your server and client, only the first 200 cache items was returned');
+      }
     });
   }
 
