@@ -20,12 +20,12 @@ import { UserService } from 'src/app/services/user.service';
 import { RoleService } from 'src/app/services/role.service';
 import { TaskService } from 'src/app/services/task.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 
 /**
- * Component that allows user to view health meta information about his installation specific
- * to log.
+ * Component that allows user to view diagnostics information
+ * about his installation specific.
  */
 @Component({
   selector: 'app-diagnostics-overview',
@@ -95,7 +95,7 @@ export class DiagnosticsOverviewComponent implements OnInit {
   public logTypeOptions: ChartOptions = {
     responsive: true,
     legend: {
-      display: true,
+      display: false,
     }
   };
 
