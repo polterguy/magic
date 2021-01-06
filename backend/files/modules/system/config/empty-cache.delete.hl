@@ -2,7 +2,9 @@
 /*
  * Deletes all cache items.
  */
-.description:"Deletes all cache items."
+.description:"Deletes all cache items matching optional filter."
+.arguments
+   filter:string
 
 
 /*
@@ -14,6 +16,8 @@ auth.ticket.verify:root
 /*
  * Deletes all cache items and returns success to caller.
  */
+add:x:../*/cache.clear
+   get-nodes:x:@.arguments/*
 cache.clear
 return
    result:success

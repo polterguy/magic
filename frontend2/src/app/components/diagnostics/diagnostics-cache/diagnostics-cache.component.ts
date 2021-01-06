@@ -187,15 +187,15 @@ export class DiagnosticsCache implements OnInit {
     // Getting confirmation from user that he really wants to purge cache.
     this.feedbackService.confirm(
       'Please confirm action',
-      `Are you sure you want to purge your cache? Purging your cache will delete ${this.cacheItems.length} items.`,
+      `Are you sure you want to purge your cache? Purging your cache will delete ${this.count} items.`,
       () => {
 
         // Invoking backend to delete all items.
-        this.cacheService.deleteAll().subscribe(() => {
+        this.cacheService.deleteAll(this.filterFormControl.value).subscribe(() => {
 
           // Showing some information to user, and re-databinding table.
-          this.feedbackService.showInfoShort('Cache purged');
-          this.getItems();
+          this.feedbackService.showInfoShort('Cache successfully purged');
+          this.filterFormControl.setValue('');
         });
       });
   }

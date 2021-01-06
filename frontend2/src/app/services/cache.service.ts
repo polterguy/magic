@@ -87,11 +87,21 @@ export class CacheService {
   }
 
   /**
-   * Deletes all cache items.
+   * Deletes all cache items matching the optional filter condition.
+   * 
+   * @param filter Optional query filter deciding which items to include when deleting items
    */
-  public deleteAll() {
+  public deleteAll(filter: string = null) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null && filter !== '') {
+      query += '?filter=' + encodeURIComponent(filter);
+    }
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.delete<Response>('/magic/modules/system/config/empty-cache');
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/config/empty-cache' +
+      query);
   }
 }
