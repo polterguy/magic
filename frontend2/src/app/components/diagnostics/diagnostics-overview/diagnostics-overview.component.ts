@@ -20,7 +20,7 @@ import { UserService } from 'src/app/services/user.service';
 import { RoleService } from 'src/app/services/role.service';
 import { TaskService } from 'src/app/services/task.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { HealthService } from 'src/app/services/health.service';
+import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
@@ -28,11 +28,11 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  * to log.
  */
 @Component({
-  selector: 'app-health-log',
-  templateUrl: './health-log.component.html',
-  styleUrls: ['./health-log.component.scss']
+  selector: 'app-diagnostics-overview',
+  templateUrl: './diagnostics-overview.component.html',
+  styleUrls: ['./diagnostics-overview.component.scss']
 })
-export class HealthLogComponent implements OnInit {
+export class DiagnosticsOverviewComponent implements OnInit {
 
   /**
    * Number of users in installation.
@@ -169,7 +169,7 @@ export class HealthLogComponent implements OnInit {
    * @param roleService Needed to count roles in system
    * @param taskService Needed to count tasks in installation
    * @param authService Needed to retrieve number of endpoints in installation
-   * @param healthService Needed to retrieve health data from backend
+   * @param diagnosticsService Needed to retrieve health data from backend
    * @param feedbackService Needed to display errors to user if errors occurs
    */
   constructor(
@@ -178,7 +178,7 @@ export class HealthLogComponent implements OnInit {
     private roleService: RoleService,
     private taskService: TaskService,
     private authService: AuthService,
-    private healthService: HealthService,
+    private diagnosticsService: DiagnosticsService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -207,20 +207,20 @@ export class HealthLogComponent implements OnInit {
     }, (error: any) => this.feedbackService.showError(error));
 
     // Retrieving LOC statistics.
-    this.healthService.getLoc().subscribe((res: any) => {
+    this.diagnosticsService.getLoc().subscribe((res: any) => {
       this.loc = res.backend + res.frontend;
       this.frontend = res.frontend;
       this.backend = res.backend;
     });
 
     // Retrieving log items per day type of statistics.
-    this.healthService.statisticsDays().subscribe((res: any[]) => {
+    this.diagnosticsService.statisticsDays().subscribe((res: any[]) => {
       this.daysData = res.map(x => x.count);
       this.daysLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
 
     // Retrieving log items per type from backend.
-    this.healthService.statisticsType().subscribe((res: any[]) => {
+    this.diagnosticsService.statisticsType().subscribe((res: any[]) => {
       this.logTypeLabels = res.map(x => x.type);
       this.logTypeData = res.map(x => x.count);
       this.logTypeColors = [{
@@ -255,7 +255,7 @@ export class HealthLogComponent implements OnInit {
       this.endpoints = endpoints.length;
     });
 
-    this.healthService.version().subscribe((version: any) => {
+    this.diagnosticsService.version().subscribe((version: any) => {
       this.version = version.version;
     });
   }

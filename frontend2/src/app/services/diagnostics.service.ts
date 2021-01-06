@@ -8,8 +8,6 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
-import { Count } from '../models/count.model';
-import { LogItem } from 'src/app/models/log-item.model';
 
 /**
  * Health service, allowing you to inspect backend for health issues, some basic statistics, etc.
@@ -17,7 +15,7 @@ import { LogItem } from 'src/app/models/log-item.model';
 @Injectable({
   providedIn: 'root'
 })
-export class HealthService {
+export class DiagnosticsService {
 
   /**
    * Creates an instance of your service.
@@ -33,7 +31,7 @@ export class HealthService {
   public statisticsType() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>('/magic/modules/system/health/log-statistics');
+    return this.httpService.get<any[]>('/magic/modules/system/diagnostics/log-statistics');
   }
 
   /**
@@ -53,7 +51,7 @@ export class HealthService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<any[]>(
-      '/magic/modules/system/health/log-statistics-days' + query);
+      '/magic/modules/system/diagnostics/log-statistics-days' + query);
   }
 
   /**
@@ -63,7 +61,7 @@ export class HealthService {
   public getLoc() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/modules/system/health/loc-generated');
+    return this.httpService.get<any>('/magic/modules/system/diagnostics/loc-generated');
   }
 
   /**

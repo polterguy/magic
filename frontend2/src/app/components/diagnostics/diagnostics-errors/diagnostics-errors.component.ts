@@ -6,24 +6,23 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 
-// Utility imports.
+// Utility component imports.
 import moment from 'moment';
 import { ChartOptions } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 
-// Application specific imports.
-import { HealthService } from 'src/app/services/health.service';
+// Application specific imports..
+import { DiagnosticsService } from 'src/app/services/diagnostics.service';
 
 /**
- * Component that allows user to view health meta information about his installation specific
- * to log.
+ * Component to show user when server has been restarted.
  */
 @Component({
-  selector: 'app-health-security',
-  templateUrl: './health-security.component.html',
-  styleUrls: ['./health-security.component.scss']
+  selector: 'app-diagnostics-errors',
+  templateUrl: './diagnostics-errors.component.html',
+  styleUrls: ['./diagnostics-errors.component.scss']
 })
-export class HealthSecurityComponent implements OnInit {
+export class DiagnosticsErrorsComponent implements OnInit {
 
   /**
    * Options for log items per day bar chart.
@@ -38,17 +37,17 @@ export class HealthSecurityComponent implements OnInit {
   /**
    * Labels for log items per day bar chart.
    */
-  public loginLabels: Label[] = [];
+  public restartLabels: Label[] = [];
 
   /**
    * Dataset for log items per day bar chart.
    */
-  public loginData: SingleDataSet = null;
+  public restartData: SingleDataSet = null;
 
   /**
    * Colors for log items per day bar chart.
    */
-  public loginColors = [{
+  public restartColors = [{
     backgroundColor: [
       'rgba(200,200,200,0.6)',
       'rgba(190,190,190,0.6)',
@@ -69,17 +68,17 @@ export class HealthSecurityComponent implements OnInit {
   /**
    * Labels for log items per day bar chart.
    */
-  public failedLoginLabels: Label[] = [];
+  public taskLabels: Label[] = [];
 
   /**
    * Dataset for log items per day bar chart.
    */
-  public failedLoginData: SingleDataSet = null;
+  public taskData: SingleDataSet = null;
 
   /**
    * Colors for log items per day bar chart.
    */
-  public failedLoginColors = [{
+  public taskColors = [{
     backgroundColor: [
       'rgba(200,200,200,0.6)',
       'rgba(190,190,190,0.6)',
@@ -100,17 +99,17 @@ export class HealthSecurityComponent implements OnInit {
   /**
    * Labels for log items per day bar chart.
    */
-  public accessDeniedLabels: Label[] = [];
+  public unhandledLabels: Label[] = [];
 
   /**
    * Dataset for log items per day bar chart.
    */
-  public accessDeniedData: SingleDataSet = null;
+  public unhandledData: SingleDataSet = null;
 
   /**
    * Colors for log items per day bar chart.
    */
-  public accessDeniedColors = [{
+  public unhandledColors = [{
     backgroundColor: [
       'rgba(200,200,200,0.6)',
       'rgba(190,190,190,0.6)',
@@ -131,31 +130,31 @@ export class HealthSecurityComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param healthService Needed to retrieve health data from backend
+   * @param diagnosticsService Needed to retrieve healt diagnostic data from backend
    */
-  constructor(private healthService: HealthService) { }
+  constructor(private diagnosticsService: DiagnosticsService) { }
 
   /**
    * Implementation of OnInit.
    */
   public ngOnInit() {
 
-    // Retrieving logins per day type of statistics.
-    this.healthService.statisticsDays('We successfully authenticated user \'').subscribe((res: any[]) => {
-      this.loginData = res.map(x => x.count);
-      this.loginLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
+    // Retrieving restarts per day type of statistics.
+    this.diagnosticsService.statisticsDays('Magic was successfully started').subscribe((res: any[]) => {
+      this.restartData = res.map(x => x.count);
+      this.restartLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
 
-    // Retrieving failed logins per day type of statistics.
-    this.healthService.statisticsDays('Unhandled exception occurred \'Access denied\' at \'/magic/modules/system/auth/authenticate\'').subscribe((res: any[]) => {
-      this.failedLoginData = res.map(x => x.count);
-      this.failedLoginLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
+    // Retrieving task executions per day type of statistics.
+    this.diagnosticsService.statisticsDays('Preparing to execute task with id of \'').subscribe((res: any[]) => {
+      this.taskData = res.map(x => x.count);
+      this.taskLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
 
-    // Retrieving access denied per day type of statistics.
-    this.healthService.statisticsDays('Unhandled exception occurred \'Access denied\' at ').subscribe((res: any[]) => {
-      this.accessDeniedData = res.map(x => x.count);
-      this.accessDeniedLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
+    // Retrieving unhandled exceptions per day type of statistics.
+    this.diagnosticsService.statisticsDays('Unhandled exception occurred \'').subscribe((res: any[]) => {
+      this.unhandledData = res.map(x => x.count);
+      this.unhandledLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
   }
 }

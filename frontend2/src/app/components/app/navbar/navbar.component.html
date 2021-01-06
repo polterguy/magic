@@ -108,14 +108,14 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/health')"
+  *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
   mat-button
-  routerLink="/health"
+  routerLink="/diagnostics"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
   [routerLinkActiveOptions]="{exact:true}">
   <mat-icon matSuffix>local_hospital</mat-icon>
-  <span>Health</span>
+  <span>Diagnostics</span>
 </a>
 
 <a
