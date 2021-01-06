@@ -16,5 +16,5 @@ auth.ticket.verify:root
  */
 cache.list
 add:x:+
-   get-nodes:x:@cache.list/*
+   get-nodes:x:@cache.list/*/[0,200]
 return
