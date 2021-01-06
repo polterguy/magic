@@ -19,7 +19,7 @@ auth.ticket.verify:root
  * for 20 minutes - Both on the server side, and on the client side.
  */
 strings.concat
-   .:sql.databases.
+   .:magic.sql.databases.
    get-value:x:@.arguments/*/databaseType
    :.
    get-value:x:@.arguments/*/connectionString
