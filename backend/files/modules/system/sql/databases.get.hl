@@ -27,7 +27,6 @@ unwrap:x:../*/cache.try-get/**/.databaseType
 unwrap:x:../*/cache.try-get/**/.connection-string
 cache.try-get:x:@strings.concat
    expiration:1200
-   expiration-type:absolute
    .lambda
 
 

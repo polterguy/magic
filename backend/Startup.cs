@@ -26,11 +26,6 @@ namespace magic.backend
             services.AddControllers().AddNewtonsoftJson();
 
             /*
-             * Notice, necessary for magic.lambda.caching to function.
-             */
-            services.AddMemoryCache();
-
-            /*
              * Initializing Magic.
              *
              * Notice, must be done AFTER you invoke "AddControllers".
