@@ -159,7 +159,7 @@
 
   <mat-paginator
     #paginator
-    [class]="count > 25 ? '' : 'invisible'"
+    [class]="count > paginator.pageSize ? '' : 'invisible'"
     [length]="count"
     pageSize="10"
     showFirstLastButtons="true"

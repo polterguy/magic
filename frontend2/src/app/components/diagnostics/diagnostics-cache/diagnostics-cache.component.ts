@@ -4,9 +4,13 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
+import { Count } from 'src/app/models/count.model';
 import { CacheService } from 'src/app/services/cache.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
@@ -21,14 +25,34 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 export class DiagnosticsCache implements OnInit {
 
   /**
+   * Filter for what items to display.
+   */
+  public filter: any = {};
+
+  /**
    * List of cache items as returned from backend.
    */
   public cacheItems: any[] = [];
 
   /**
+   * Number of users matching filter in the backend.
+   */
+  public count: number = 0;
+
+  /**
    * Currently selected items.
    */
   public selectedCacheItems: string[] = [];
+
+  /**
+   * Filter form control for filtering users to display.
+   */
+  public filterFormControl: FormControl;
+
+  /**
+   * Paginator for paging table.
+   */
+  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
   /**
    * Creates an instance of your component.
@@ -44,6 +68,16 @@ export class DiagnosticsCache implements OnInit {
    */
   public ngOnInit() {
 
+    // Creating our filtering control.
+    this.filterFormControl = new FormControl('');
+    this.filterFormControl.setValue('');
+    this.filterFormControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe(() => {
+        this.paginator.pageIndex = 0;
+        this.getItems();
+      });
+
     // Retrieving initial items from backend.
     this.getItems();
   }
@@ -53,8 +87,13 @@ export class DiagnosticsCache implements OnInit {
    */
   public getItems() {
 
+    // Updating filter value.
+    this.filter.filter = this.filterFormControl.value;
+    this.filter.offset = this.paginator.pageIndex * this.paginator.pageSize;
+    this.filter.limit = this.paginator.pageSize;
+
     // Invoking backend to retrieve cache items.
-    this.cacheService.list().subscribe((items: any[]) => {
+    this.cacheService.list(this.filter).subscribe((items: any[]) => {
 
       // Dynamically building our dataset.
       const arr = [];
@@ -66,14 +105,27 @@ export class DiagnosticsCache implements OnInit {
       }
       this.cacheItems = arr;
 
-      /*
-       * Checking if number of items returned was 200, and if so,
-       * informing user only parts of his cache was returned.
-       */
-      if (arr.length === 200) {
-        this.feedbackService.showInfo('To avoid exhausting your server and client, only the first 200 cache items was returned');
-      }
+      // Invoking backend to count items matching filter.
+      this.cacheService.count(this.filter.filter).subscribe((count: Count) => {
+        this.count = count.count;
+      });
     });
+  }
+
+  /**
+   * Invoked when cache items are paged.
+   */
+  public paged() {
+    this.getItems();
+  }
+
+  /**
+   * Invoked when user wants to clear current filter condition.
+   */
+  public clearFilter() {
+
+    // Setting value of form control will automatically retrieve items.
+    this.filterFormControl.setValue('');
   }
 
   /**

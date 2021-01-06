@@ -2,7 +2,11 @@
 /*
  * Returns all cache items to caller.
  */
-.description:"Returns all cache items to caller. Be careful if you have a lot of items in your cache since method does not support paging."
+.description:"Returns all cache items to caller."
+.arguments
+   limit:int
+   offset:int
+   filter:string
 
 
 /*
@@ -14,7 +18,9 @@ auth.ticket.verify:root
 /*
  * Retrieves all cache items, and returns to caller.
  */
+add:x:../*/cache.list
+   get-nodes:x:@.arguments/*
 cache.list
 add:x:+
-   get-nodes:x:@cache.list/*/[0,200]
+   get-nodes:x:@cache.list/*
 return
