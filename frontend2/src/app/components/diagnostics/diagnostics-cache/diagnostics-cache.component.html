@@ -40,6 +40,7 @@
 </table>
 
 <button
+  *ngIf="cacheItems.length > 0"
   mat-button
   class="purge-button"
   matTooltip="Empties your cache entirely"

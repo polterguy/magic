@@ -11,14 +11,14 @@ import { CacheService } from 'src/app/services/cache.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
- * Cache component for allowing user to inspect, remove and clear cache items.
+ * Cache component for allowing user to inspect, remove, and purge cache items.
  */
 @Component({
-  selector: 'app-health-cache',
-  templateUrl: './health-cache.component.html',
-  styleUrls: ['./health-cache.component.scss']
+  selector: 'app-diagnostics-cache',
+  templateUrl: './diagnostics-cache.component.html',
+  styleUrls: ['./diagnostics-cache.component.scss']
 })
-export class HealthCacheComponent implements OnInit {
+export class DiagnosticsCache implements OnInit {
 
   /**
    * List of cache items as returned from backend.
@@ -124,12 +124,19 @@ export class HealthCacheComponent implements OnInit {
    */
   public deleteAll() {
 
-    // Invoking backend to delete all items.
-    this.cacheService.deleteAll().subscribe(() => {
+    // Getting confirmation from user that he really wants to purge cache.
+    this.feedbackService.confirm(
+      'Please confirm action',
+      `Are you sure you want to purge your cache? Purging your cache will delete ${this.cacheItems.length} items.`,
+      () => {
 
-      // Showing some information to user, and re-databinding table.
-      this.feedbackService.showInfoShort('Cache purged');
-      this.getItems();
-    });
+        // Invoking backend to delete all items.
+        this.cacheService.deleteAll().subscribe(() => {
+
+          // Showing some information to user, and re-databinding table.
+          this.feedbackService.showInfoShort('Cache purged');
+          this.getItems();
+        });
+      });
   }
 }

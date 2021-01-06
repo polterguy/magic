@@ -16,7 +16,7 @@ import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
-import { HealthComponent } from './components/health/health.component';
+import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
@@ -34,12 +34,12 @@ const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
   { path: 'config', component: ConfigComponent },
-  { path: 'health', component: HealthComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'file-system', component: FilesComponent },
   { path: 'endpoints', component: EndpointsComponent },
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'crudifier', component: CrudifierComponent },
+  { path: 'diagnostics', component: DiagnosticsComponent },
 ];
 
 /**

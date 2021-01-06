@@ -69,7 +69,6 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
-import { HealthComponent } from './components/health/health.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { UsersComponent } from './components/auth/users/users.component';
@@ -81,19 +80,20 @@ import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { LicenseComponent } from './components/config/license/license.component';
-import { HealthLogComponent } from './components/health/health-log/health-log.component';
+import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
-import { HealthCacheComponent } from './components/health/health-cache/health-cache.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
-import { HealthSecurityComponent } from './components/health/health-security/health-security.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
+import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
-import { HealthRestartsComponent } from './components/health/health-diagnostics/health-diagnostics.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
+import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
+import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnostics-security/diagnostics-security.component';
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
@@ -161,12 +161,12 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
     ConfigEditorComponent,
-    HealthSecurityComponent,
+    DiagnosticsSecurityComponent,
     LicenseComponent,
-    HealthLogComponent,
-    HealthComponent,
-    HealthRestartsComponent,
-    HealthCacheComponent,
+    DiagnosticsOverviewComponent,
+    DiagnosticsComponent,
+    DiagnosticsErrorsComponent,
+    DiagnosticsCache,
   ],
   imports: [
     FormsModule,
