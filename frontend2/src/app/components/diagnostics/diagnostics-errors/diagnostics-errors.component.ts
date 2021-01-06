@@ -145,16 +145,16 @@ export class DiagnosticsErrorsComponent implements OnInit {
       this.restartLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
 
-    // Retrieving task executions per day type of statistics.
-    this.diagnosticsService.statisticsDays('Preparing to execute task with id of \'').subscribe((res: any[]) => {
-      this.taskData = res.map(x => x.count);
-      this.taskLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
-    });
-
     // Retrieving unhandled exceptions per day type of statistics.
     this.diagnosticsService.statisticsDays('Unhandled exception occurred \'').subscribe((res: any[]) => {
       this.unhandledData = res.map(x => x.count);
       this.unhandledLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
+    });
+
+    // Retrieving task executions per day type of statistics.
+    this.diagnosticsService.statisticsDays('Unhandled exception while executing scheduled task with id of \'').subscribe((res: any[]) => {
+      this.taskData = res.map(x => x.count);
+      this.taskLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });
   }
 }
