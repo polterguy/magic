@@ -1,16 +1,23 @@
 
-table.cache-items {
-  margin-top: 3rem;
-  tr {
-    td:nth-child(2) {
-      padding-top: 9px;
-      padding-bottom: 7px;
+.wrapper {
+  margin:2rem;
+  .fill-width {
+    margin-top: 1rem;
+  }
+
+  table.cache-items {
+    margin-bottom: 5rem;
+    tr {
+      td:nth-child(2) {
+        padding-top: 9px;
+        padding-bottom: 7px;
+      }
     }
   }
-}
 
-.purge-button {
-  position: absolute;
-  top: .5rem;
-  right: .5rem;
+  .purge-button {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
 }

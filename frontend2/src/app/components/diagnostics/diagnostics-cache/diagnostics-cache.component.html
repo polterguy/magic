@@ -1,4 +1,26 @@
 
+<div class="wrapper">
+
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    matTooltip="Clear filter"
+    (click)="clearFilter()">clear</mat-icon>
+
+</mat-form-field>
+
 <table
   mat-table
   [dataSource]="cacheItems"
@@ -39,6 +61,16 @@
 
 </table>
 
+<mat-paginator
+  #paginator
+  [class]="count > paginator.pageSize ? '' : 'invisible'"
+  [length]="count"
+  pageSize="5"
+  showFirstLastButtons="true"
+  (page)="paged()"
+  [pageSizeOptions]="[5, 10, 25, 50, 100]">
+</mat-paginator>
+
 <button
   *ngIf="cacheItems.length > 0"
   mat-button
@@ -50,4 +82,6 @@
 
 <div *ngIf="cacheItems.length === 0">
   <p>Your cache is empty ...</p>
+</div>
+
 </div>

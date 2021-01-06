@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { Count } from '../models/count.model';
 import { Response } from '../models/response.model';
 
 /**
@@ -27,13 +28,49 @@ export class CacheService {
   constructor(private httpService: HttpService) { }
 
   /**
-   * Returns all cache items from backend.
-   * Be careful with this method, it does not provide paging, and might return a *lot* of items.
+   * Returns all cache items from backend matching optional filter.
+   * 
+   * @param filter Optional query filter deciding which items to return
    */
-  public list() {
+  public list(filter: any = null) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null) {
+
+      // Applying limit and offset
+      query += '?limit=' + filter.limit;
+      query += "&offset=" + filter.offset;
+
+      // Applying filter parts, if given.
+      if (filter.filter && filter.filter !== '') {
+        query += '&filter=' + encodeURIComponent(filter.filter);
+      }
+    }
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>('/magic/modules/system/config/list-cache');
+    return this.httpService.get<any[]>(
+      '/magic/modules/system/config/list-cache' +
+      query);
+  }
+
+  /**
+   * Returns count of all cache items from backend matching optional filter.
+   * 
+   * @param filter Optional query filter deciding which items to include when counting
+   */
+  public count(filter: string = null) {
+
+    // Dynamically building our query parameters.
+    let query = '';
+    if (filter !== null && filter !== '') {
+      query += '?filter=' + encodeURIComponent(filter);
+    }
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<Count>(
+      '/magic/modules/system/config/list-cache-count' +
+      query);
   }
 
   /**
