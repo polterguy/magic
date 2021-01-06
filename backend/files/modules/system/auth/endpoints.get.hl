@@ -17,7 +17,7 @@ Notice, this endpoint is cached on the server for roughly 5 minutes since it's a
  * Invokes [endpoints.list], making sure we cache the results, since it's a
  * fairly expensive operation.
  */
-cache.try-get:auth.endpoints
+cache.try-get:magic.auth.endpoints
    expiration:x:@.cache-seconds
    .lambda
 
