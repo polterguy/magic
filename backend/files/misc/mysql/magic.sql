@@ -27,6 +27,7 @@ insert into magic_version(db_version) values ('008.006.007');
 create table `users` (
   `username` varchar(256) not null,
   `password` varchar(256) not null,
+  `locked` boolean not null default 0,
   primary key (`username`),
   unique key `username_UNIQUE` (`username`)
 );

@@ -58,8 +58,14 @@
         </button>
 
         <strong>Username</strong><span>{{el.username}}</span>
+        <mat-checkbox
+          *ngIf="el.username !== 'root'"
+          (change)="lockedChanged(el)"
+          labelPosition="before"
+          matTooltip="Change user's locked status"
+          [(ngModel)]="el.locked">Locked</mat-checkbox>
 
-        <mat-chip-list
+          <mat-chip-list
           aria-label="Roles user belongs to">
           <mat-chip
             *ngFor="let role of el.roles"

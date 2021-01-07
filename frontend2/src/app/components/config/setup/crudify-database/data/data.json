@@ -483,8 +483,11 @@
           },
           {
              "password":"string"
+          },
+          {
+            "locked":"bool"
           }
-       ]
+      ]
     },
     "validators": "eval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
   },
@@ -503,6 +506,9 @@
        "columns":[
           {
              "username":"string"
+          },
+          {
+            "locked":"bool"
           }
        ]
     }
@@ -526,7 +532,8 @@
        ],
        "columns":[
           {
-             "password":"string"
+             "password":"string",
+             "locked":"bool"
           }
        ]
     },

@@ -12,6 +12,11 @@ table.users {
       display: inline-block;
       width: 5rem;
     }
+    mat-checkbox {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
     mat-chip-list {
       display: block;
       margin-top: 2rem;

@@ -68,7 +68,10 @@ export class NewUserDialogComponent {
   public update() {
 
     // Invoking backend to create the new user.
-    this.userService.update(this.username, this.password).subscribe((res: any) => {
+    this.userService.update({
+      username: this.username,
+      password: this.password
+    }).subscribe((res: any) => {
 
       // Success! User created.
       this.dialogRef.close(this.username);

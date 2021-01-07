@@ -191,6 +191,19 @@ export class UsersComponent implements OnInit {
   }
 
   /**
+   * Invoked when user's locked status has changed.
+   * 
+   * @param user User to change lock status of
+   */
+  lockedChanged(user: User) {
+
+    // Invoking backend to update user's locked status.
+    this.userService.update(user).subscribe(() => {
+      this.feedbackService.showInfoShort('User successfully updated');
+    });
+  }
+
+  /**
    * Removes a role from a user.
    * 
    * @param username Username of user to remove specified role from
