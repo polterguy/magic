@@ -44,8 +44,14 @@
       mat-cell
       class="minimalistic-col"
       *matCellDef="let el">
-      <mat-icon *ngIf="el.locked">lock</mat-icon>
-      <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
+      <mat-icon
+        *ngIf="el.locked && el.username !== 'root'"
+        (click)="lockedChanged($event, el)"
+        matTooltip="Release user such that he can access Magic again">lock</mat-icon>
+      <mat-icon
+        *ngIf="!el.locked && el.username !== 'root'"
+        (click)="lockedChanged($event, el)"
+        matTooltip="Lock user preventing him from using Magic">lock_open</mat-icon>
     </td>
   </ng-container>
 
@@ -69,12 +75,6 @@
         </button>
 
         <strong>Username</strong><span>{{el.username}}</span>
-        <mat-checkbox
-          *ngIf="el.username !== 'root'"
-          (change)="lockedChanged(el)"
-          labelPosition="before"
-          [matTooltip]="el.locked ? 'Release user such that he can access Magic again' : 'Lockout user from being able to login'"
-          [(ngModel)]="el.locked">Locked</mat-checkbox>
 
           <mat-chip-list
           aria-label="Roles user belongs to">
