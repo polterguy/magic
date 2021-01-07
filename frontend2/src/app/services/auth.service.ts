@@ -86,16 +86,13 @@ export class AuthService {
             password: storePassword ? password : null,
             token: auth.ticket,
           };
+
+          // Making sure we refresh JWT token just before it expires.
           this.createRefreshJWTTimer(this.backendService.current);
 
-          // Retrieving endpoints for current backend.
-          this.getEndpoints().subscribe(() => {
-            observer.next(auth);
-            observer.complete();
-          }, (error: any) => {
-            observer.error(error);
-            observer.complete();
-          });
+          // Invoking next link in chain of observables.
+          observer.next(auth);
+          observer.complete();
       }, (error: any) => {
         observer.error(error);
         observer.complete();

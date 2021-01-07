@@ -93,15 +93,15 @@ export class UserService {
   /**
    * Updates new user in the system.
    * 
-   * @param username Username of user to update
-   * @param password New password for user
+   * @param user User to update
    */
-  public update(username: string, password: string) {
+  public update(user: User) {
 
     // Invoking backend and returning observable.
     return this.httpService.put<any>('/magic/modules/magic/users', {
-      username,
-      password
+      username: user.username,
+      password: user.password,
+      locked: user.locked,
     });
   }
 

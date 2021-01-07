@@ -14,6 +14,16 @@ export class User {
   username: string;
 
   /**
+   * Password of user.
+   */
+  password?: string;
+
+  /**
+   * Whether or not user has been locked out from site or not.
+   */
+  locked?: boolean;
+
+  /**
    * Roles user belongs to.
    */
   roles?: string[];

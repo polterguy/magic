@@ -81,6 +81,7 @@ slots.create:magic.auth.authenticate
          where
             and
                username:x:@.arguments/*/username
+               locked.neq:1
 
 
       /*

@@ -1,87 +1,83 @@
 
 <div class="wrapper">
 
-<mat-form-field class="fill-width">
+  <mat-form-field class="fill-width">
 
-  <mat-label>Filter ...</mat-label>
+    <mat-label>Filter ...</mat-label>
 
-  <input
-    matInput
-    placeholder="Filter ..."
-    type="text"
-    autocomplete="off"
-    [formControl]="filterFormControl">
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
 
-  <mat-icon
-    matSuffix
-    *ngIf="filterFormControl.value.trim() !== ''"
-    class="button"
-    matTooltip="Clear filter"
-    (click)="clearFilter()">clear</mat-icon>
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      matTooltip="Clear filter"
+      (click)="clearFilter()">clear</mat-icon>
 
-</mat-form-field>
+  </mat-form-field>
 
-<table
-  mat-table
-  [dataSource]="cacheItems"
-  class="cache-items clickable"
-  multiTemplateDataRows>
+  <table
+    mat-table
+    [dataSource]="cacheItems"
+    class="cache-items clickable"
+    multiTemplateDataRows>
 
-  <ng-container matColumnDef="key">
-    <td
-      mat-cell
-      *matCellDef="let el">{{el.key}}</td>
-  </ng-container>
+    <ng-container matColumnDef="key">
+      <td
+        mat-cell
+        *matCellDef="let el">{{el.key}}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="delete">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell class="minimalistic-col" *matCellDef="let el">
-      <button (click)="delete($event, el.key);" mat-button>
-        <mat-icon>delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell class="minimalistic-col" *matCellDef="let el">
+        <button (click)="delete($event, el.key);" mat-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="show-details">
-    <td colspan="2" mat-cell *matCellDef="let el">
-      <pre>{{el.value}}</pre>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="show-details">
+      <td colspan="2" mat-cell *matCellDef="let el">
+        <pre>{{el.value}}</pre>
+      </td>
+    </ng-container>
 
-  <tr
-    mat-row
-    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'cache-item-row'"
-    (click)="toggleDetails(el)"
-    *matRowDef="let el; columns: ['key', 'delete'];"></tr>
+    <tr
+      mat-row
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'cache-item-row'"
+      (click)="toggleDetails(el)"
+      *matRowDef="let el; columns: ['key', 'delete'];"></tr>
 
-  <tr
-    mat-row
-    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-    *matRowDef="let el; columns: ['show-details'];"></tr>
+    <tr
+      mat-row
+      [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
 
-</table>
+  </table>
 
-<mat-paginator
-  #paginator
-  [class]="count > paginator.pageSize ? '' : 'invisible'"
-  [length]="count"
-  pageSize="5"
-  showFirstLastButtons="true"
-  (page)="paged()"
-  [pageSizeOptions]="[5, 10, 25, 50, 100]">
-</mat-paginator>
+  <mat-paginator
+    #paginator
+    [class]="count > paginator.pageSize ? '' : 'invisible'"
+    [length]="count"
+    pageSize="5"
+    showFirstLastButtons="true"
+    (page)="paged()"
+    [pageSizeOptions]="[5, 10, 25, 50, 100]">
+  </mat-paginator>
 
-<button
-  *ngIf="cacheItems.length > 0"
-  mat-button
-  class="purge-button"
-  matTooltip="Empties your cache entirely"
-  (click)="deleteAll()">
-  Purge
-</button>
-
-<div *ngIf="cacheItems.length === 0">
-  <p>Your cache is empty ...</p>
-</div>
+  <button
+    *ngIf="cacheItems.length > 0"
+    mat-button
+    class="clear-button"
+    [matTooltip]="filterFormControl.value === '' ? 'Clear all items from cache' : 'Clear all filtered items from cache'"
+    (click)="deleteAll()">
+    Clear
+  </button>
 
 </div>

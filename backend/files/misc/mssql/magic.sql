@@ -39,6 +39,7 @@ go
 create table users (
   username nvarchar(128) not null,
   [password] nvarchar(128) not null,
+  [locked] bit not null default 0,
   constraint pk_users primary key clustered(username asc)
 );
 

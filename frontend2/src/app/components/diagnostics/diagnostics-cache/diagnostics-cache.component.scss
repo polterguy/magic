@@ -1,10 +1,10 @@
 
 .wrapper {
   margin:2rem;
+  min-height: 20rem;
   .fill-width {
     margin-top: 1rem;
   }
-
   table.cache-items {
     margin-bottom: 5rem;
     tr {
@@ -14,8 +14,7 @@
       }
     }
   }
-
-  .purge-button {
+  .clear-button {
     position: absolute;
     top: .5rem;
     right: .5rem;
