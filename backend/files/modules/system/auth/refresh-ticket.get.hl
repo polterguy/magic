@@ -14,6 +14,32 @@ auth.ticket.verify
 
 
 /*
+ * Verifying user has not been locked out since he logged in
+ * or refreshed his ticket earlier.
+ *
+ * Without this step, user could just login, and refresh his
+ * token for an eternity, without Magic having any capacity to
+ * lock user out from backend.
+ */
+auth.ticket.get
+data.connect:magic
+   data.read
+      table:users
+      columns
+         username
+      where
+         and
+            username:x:@auth.ticket.get
+            locked.neq:1
+   if
+      eq
+         get-count:x:@data.read/*
+         .:int:0
+      .lambda
+         throw:You've been locked out from Magic
+
+
+/*
  * Invokes [auth.ticket.refresh] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
