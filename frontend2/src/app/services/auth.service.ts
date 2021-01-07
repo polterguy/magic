@@ -93,6 +93,7 @@ export class AuthService {
           // Invoking next link in chain of observables.
           observer.next(auth);
           observer.complete();
+
       }, (error: any) => {
         observer.error(error);
         observer.complete();
@@ -233,7 +234,7 @@ export class AuthService {
   /*
    * Will refresh the JWT token for the specified backend.
    */
-  private refreshJWTToken(backend: Backend) {
+  public refreshJWTToken(backend: Backend) {
 
     // Verifying user has not explicitly logged out before timer kicked in.
     if (backend.token) {

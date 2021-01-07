@@ -199,7 +199,7 @@ export class UsersComponent implements OnInit {
 
     // Invoking backend to update user's locked status.
     this.userService.update(user).subscribe(() => {
-      this.feedbackService.showInfoShort('User successfully updated');
+      this.feedbackService.showInfo(`User was successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`);
     });
   }
 
