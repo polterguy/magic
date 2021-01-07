@@ -196,12 +196,27 @@ export class UsersComponent implements OnInit {
    * 
    * @param user User to change lock status of
    */
-  lockedChanged(user: User) {
+  lockedChanged(event: any, user: User) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    if (user.username === 'root') {
+      this.feedbackService.showInfo('You cannot lock the root account for obvious reasons');
+      return;
+    }
 
     // Invoking backend to update user's locked status.
-    this.userService.update(user).subscribe(() => {
+    this.userService.update({
+      username: user.username,
+      locked: !user.locked
+    }).subscribe(() => {
+
+      // Updating model and showing some information to user.
+      user.locked = !user.locked;
       this.feedbackService.showInfo(`User was successfully ${user.locked ? 'locked out of system' : 'released to access the system'}`);
-    });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
