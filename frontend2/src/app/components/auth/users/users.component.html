@@ -62,7 +62,7 @@
           *ngIf="el.username !== 'root'"
           (change)="lockedChanged(el)"
           labelPosition="before"
-          matTooltip="Change user's locked status"
+          matTooltip="Lockout user from being able to login"
           [(ngModel)]="el.locked">Locked</mat-checkbox>
 
           <mat-chip-list
