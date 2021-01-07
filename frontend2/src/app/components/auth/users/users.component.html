@@ -39,9 +39,20 @@
       *matCellDef="let el">{{el.username}}</td>
   </ng-container>
 
+  <ng-container matColumnDef="icon">
+    <td
+      mat-cell
+      class="minimalistic-col"
+      *matCellDef="let el">
+      <mat-icon *ngIf="el.locked">lock</mat-icon>
+      <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="show-details">
     <td
       mat-cell
+      colspan="2"
       *matCellDef="let el">
 
       <div
@@ -52,7 +63,7 @@
           mat-icon-button
           [disabled]="el.username === 'root'"
           class="edit-user"
-          matTooltip="Edit user"
+          matTooltip="Change user's password"
           (click)="editUser(el)">
           <mat-icon>edit</mat-icon>
         </button>
@@ -62,7 +73,7 @@
           *ngIf="el.username !== 'root'"
           (change)="lockedChanged(el)"
           labelPosition="before"
-          matTooltip="Lockout user from being able to login"
+          [matTooltip]="el.locked ? 'Release user such that he can access Magic again' : 'Lockout user from being able to login'"
           [(ngModel)]="el.locked">Locked</mat-checkbox>
 
           <mat-chip-list

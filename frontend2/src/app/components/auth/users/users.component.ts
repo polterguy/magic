@@ -7,18 +7,18 @@
 import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { Count } from 'src/app/models/count.model';
-import { FeedbackService } from '../../../services/feedback.service';
+import { MatDialog } from '@angular/material/dialog';
 import { Affected } from 'src/app/models/affected.model';
 import { UserService } from 'src/app/services/user.service';
 import { UserRoles } from 'src/app/models/user-roles.model';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
+import { FeedbackService } from '../../../services/feedback.service';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Users component for administrating users in the system.
@@ -53,7 +53,8 @@ export class UsersComponent implements OnInit {
    * What columns to display in table.
    */
   public displayedColumns: string[] = [
-    'username'
+    'username',
+    'icon',
   ];
 
   /**
