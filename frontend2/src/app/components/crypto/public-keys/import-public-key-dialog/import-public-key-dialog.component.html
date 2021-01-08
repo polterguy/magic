@@ -3,11 +3,15 @@
 
 <div mat-dialog-content>
 
-  <textarea
-    class="fill-width"
-    (change)="publicKeyChanged()"
-    [(ngModel)]="key.content"
-    rows="10"></textarea>
+  <mat-form-field class="fill-width">
+    <textarea
+      matInput
+      class="fill-width"
+      placeholder="Key content ..."
+      (change)="publicKeyChanged()"
+      [(ngModel)]="key.content"
+      rows="10"></textarea>
+  </mat-form-field>
 
   <mat-form-field class="fill-width">
     <mat-label class="dark">Subject</mat-label>

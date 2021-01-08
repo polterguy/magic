@@ -382,7 +382,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
         // Key was imported, displaying key for editing.
         this.filterFormControl.setValue(key.fingerprint);
-        this.feedbackService.showInfo('Key successfully imported, please edits its vocabulary and enable it');
+        this.feedbackService.showInfo('Key successfully imported, please edit its vocabulary and enable it');
       }
     });
   }
