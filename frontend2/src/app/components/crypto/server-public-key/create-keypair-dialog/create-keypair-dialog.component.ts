@@ -33,6 +33,16 @@ export class CreateKeypairDialogComponent implements OnInit {
   public strength: number;
 
   /**
+   * Options fo strength value when generating key.
+   */
+  public strengthValues: number[] = [
+    1024,
+    2048,
+    4096,
+    8192,
+  ]
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close self when key has been created
@@ -48,7 +58,10 @@ export class CreateKeypairDialogComponent implements OnInit {
 
     // Retrieving some default seed for key generating process.
     this.configService.getGibberish(25, 50).subscribe((result: Response) => {
+
+      // Assigning model to result of backend invocation.
       this.seed = result.result;
+      this.strength = this.strengthValues[2];
     });
   }
 
