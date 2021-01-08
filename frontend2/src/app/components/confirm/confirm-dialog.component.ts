@@ -34,8 +34,7 @@ export class ConfirmDialogData {
  */
 @Component({
   selector: 'app-confirm-dialog',
-  templateUrl: './confirm-dialog.component.html',
-  styleUrls: ['./confirm-dialog.component.scss']
+  templateUrl: './confirm-dialog.component.html'
 })
 export class ConfirmDialogComponent {
 

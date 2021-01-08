@@ -7,7 +7,6 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { FeedbackService } from '../../../services/feedback.service';
 
@@ -19,8 +18,7 @@ import json from '../../codemirror/options/json.json'
  */
 @Component({
   selector: 'app-config-editor',
-  templateUrl: './config-editor.component.html',
-  styleUrls: ['./config-editor.component.scss']
+  templateUrl: './config-editor.component.html'
 })
 export class ConfigEditorComponent implements OnInit {
 

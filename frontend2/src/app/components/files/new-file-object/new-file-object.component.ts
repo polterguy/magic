@@ -31,8 +31,7 @@ export class FileObject {
  */
 @Component({
   selector: 'app-new-file-object',
-  templateUrl: './new-file-object.component.html',
-  styleUrls: ['./new-file-object.component.scss']
+  templateUrl: './new-file-object.component.html'
 })
 export class NewFileObjectComponent {
 

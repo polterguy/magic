@@ -41,8 +41,7 @@ export class Model {
  */
 @Component({
   selector: 'app-codemirror-hyperlambda',
-  templateUrl: './codemirror-hyperlambda.component.html',
-  styleUrls: ['./codemirror-hyperlambda.component.scss']
+  templateUrl: './codemirror-hyperlambda.component.html'
 })
 export class HyperlambdaComponent implements AfterViewInit {
 
