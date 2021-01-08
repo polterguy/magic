@@ -3,6 +3,10 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 
+/**
+ * Column class containing meta information about
+ * a single column in a single table.
+ */
 export class Column {
 
   /**
@@ -11,6 +15,10 @@ export class Column {
   name: string;
 }
 
+/**
+ * Table class containing meta information about
+ * a single table in a single database.
+ */
 export class Table {
 
   /**
@@ -25,7 +33,8 @@ export class Table {
 }
 
 /**
- * Meta information for a single database.
+ * Database class containing meta information about
+ * a single database in a single database server instance.
  */
 export class Database {
 
@@ -48,7 +57,7 @@ export class Database {
 export class Databases {
 
   /**
-   * List of databases in current database server (connection string).
+   * List of all databases in a single database server.
    */
   databases: Database[];
 }
