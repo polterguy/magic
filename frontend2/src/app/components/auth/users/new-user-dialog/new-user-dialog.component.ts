@@ -17,8 +17,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  */
 @Component({
   selector: 'app-new-user',
-  templateUrl: './new-user-dialog.component.html',
-  styleUrls: ['./new-user-dialog.component.scss']
+  templateUrl: './new-user-dialog.component.html'
 })
 export class NewUserDialogComponent {
 

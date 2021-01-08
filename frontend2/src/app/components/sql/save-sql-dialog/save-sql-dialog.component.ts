@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Component, Inject, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
@@ -32,8 +32,7 @@ export class ModalData {
  */
 @Component({
   selector: 'app-save-sql-dialog',
-  templateUrl: './save-sql-dialog.component.html',
-  styleUrls: ['./save-sql-dialog.component.scss']
+  templateUrl: './save-sql-dialog.component.html'
 })
 export class SaveSqlDialogComponent implements OnInit {
 

@@ -25,8 +25,7 @@ import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.jso
  */
 @Component({
   selector: 'app-evaluator',
-  templateUrl: './evaluator.component.html',
-  styleUrls: ['./evaluator.component.scss']
+  templateUrl: './evaluator.component.html'
 })
 export class EvaluatorComponent implements OnInit {
 

@@ -16,8 +16,7 @@ import { EvaluatorService } from 'src/app/services/evaluator.service';
  */
 @Component({
   selector: 'app-save-snippet-dialog',
-  templateUrl: './save-snippet-dialog.component.html',
-  styleUrls: ['./save-snippet-dialog.component.scss']
+  templateUrl: './save-snippet-dialog.component.html'
 })
 export class SaveSnippetDialogComponent implements OnInit {
 

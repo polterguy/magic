@@ -49,7 +49,6 @@ export class Model {
 @Component({
   selector: 'app-codemirror-sql',
   templateUrl: './codemirror-sql.component.html',
-  styleUrls: ['./codemirror-sql.component.scss']
 })
 export class CodemirrorSqlComponent implements AfterViewInit {
 

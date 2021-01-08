@@ -16,8 +16,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  */
 @Component({
   selector: 'app-new-task-dialog',
-  templateUrl: './new-task-dialog.component.html',
-  styleUrls: ['./new-task-dialog.component.scss']
+  templateUrl: './new-task-dialog.component.html'
 })
 export class NewTaskDialogComponent {
 
