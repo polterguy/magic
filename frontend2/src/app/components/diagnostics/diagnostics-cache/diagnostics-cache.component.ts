@@ -12,8 +12,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { CacheService } from 'src/app/services/cache.service';
+import { CacheItem } from './models/cache-item.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.
@@ -97,17 +98,10 @@ export class DiagnosticsCache implements OnInit {
     this.filter.limit = this.paginator.pageSize;
 
     // Invoking backend to retrieve cache items.
-    this.cacheService.list(this.filter).subscribe((items: any[]) => {
+    this.cacheService.list(this.filter).subscribe((items: CacheItem[]) => {
 
-      // Dynamically building our dataset.
-      const arr = [];
-      for(const idx in items) {
-        arr.push({
-          key: idx,
-          value: items[idx]
-        });
-      }
-      this.cacheItems = arr;
+      // Assigning result of backend invocation to model.
+      this.cacheItems = items || [];
 
       // Invoking backend to count items matching filter.
       this.cacheService.count(this.filter.filter).subscribe((count: Count) => {
