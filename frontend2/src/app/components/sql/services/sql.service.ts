@@ -8,13 +8,13 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { FileService } from './file.service';
+import { HttpService } from '../../../services/http.service';
+import { FileService } from '../../files/services/file.service';
 import { Databases } from '../models/databases.model';
 
 /**
- * Setup service, allows you to setup, read, and manipulate your configuration
- * settings.
+ * SQL service allowing you to execute SQL and retrieve meta information about
+ * your database server(s).
  */
 @Injectable({
   providedIn: 'root'

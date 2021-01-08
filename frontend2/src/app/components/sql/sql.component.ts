@@ -14,9 +14,9 @@ import { saveAs } from 'file-saver';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
-import { SqlService } from 'src/app/services/sql.service';
-import { Databases } from 'src/app/models/databases.model';
-import { ConfigService } from 'src/app/services/config.service';
+import { SqlService } from 'src/app/components/sql/services/sql.service';
+import { Databases } from 'src/app/components/sql/models/databases.model';
+import { ConfigService } from 'src/app/components/config/services/config.service';
 import { FeedbackService } from '../../services/feedback.service';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';

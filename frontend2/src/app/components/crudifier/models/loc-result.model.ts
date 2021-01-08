@@ -4,7 +4,7 @@
  */
 
 // Application specific imports
-import { Response } from './response.model';
+import { Response } from '../../../models/response.model';
 
 /**
  * Model returned from backend when code is generated.

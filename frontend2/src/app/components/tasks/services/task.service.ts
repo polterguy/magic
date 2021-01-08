@@ -11,9 +11,9 @@ import { saveAs } from "file-saver";
 
 // Application specific imports.
 import { Task } from '../models/task.model';
-import { HttpService } from './http.service';
-import { Count } from '../models/count.model';
-import { Response } from '../models/response.model';
+import { HttpService } from '../../../services/http.service';
+import { Count } from '../../../models/count.model';
+import { Response } from '../../../models/response.model';
 
 /**
  * Task service, allows you to Read, Create, Update and Delete tasks

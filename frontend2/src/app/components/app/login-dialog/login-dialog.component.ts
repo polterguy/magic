@@ -8,18 +8,18 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
-import { Messages } from 'src/app/models/message.model';
-import { AuthService } from 'src/app/services/auth.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { AuthenticateResponse } from 'src/app/models/authenticate-response.model';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
+import { ConfigService } from 'src/app/components/config/services/config.service';
+import { AuthenticateResponse } from 'src/app/components/auth/models/authenticate-response.model';
 
 /**
  * Login dialog allowing user to login to a backend of his choice.

@@ -9,7 +9,7 @@ import { Component, Inject, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
-import { EvaluatorService } from 'src/app/services/evaluator.service';
+import { EvaluatorService } from 'src/app/components/evaluator/services/evaluator.service';
 
 /**
  * Save snippet dialog for saving snippets to the backend for later.

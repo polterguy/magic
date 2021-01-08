@@ -6,7 +6,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /**
- * From now pipe, displaying how many seconds/minutes/hours/etc from now a date is.
+ * From now pipe, displaying how many seconds/minutes/hours/etc from now a future date is.
  */
 @Pipe({
   name: 'from'

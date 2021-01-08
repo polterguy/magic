@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
+import { HttpService } from '../../../services/http.service';
 
 /**
  * Health service, allowing you to inspect backend for health issues, some basic statistics, etc.

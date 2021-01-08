@@ -12,7 +12,7 @@ import { ChartOptions } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 
 // Application specific imports.
-import { DiagnosticsService } from 'src/app/services/diagnostics.service';
+import { DiagnosticsService } from 'src/app/components/diagnostics/services/diagnostics.service';
 
 /**
  * Component that allows user to view health meta information about his installation specific

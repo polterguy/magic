@@ -8,7 +8,7 @@ import {
   HttpHandler,
   HttpRequest
 } from '@angular/common/http';
-import { BackendService } from '../backend.service';
+import { BackendService } from './backend.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.

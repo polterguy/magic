@@ -7,12 +7,11 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { Count } from '../models/count.model';
-import { Affected } from '../models/affected.model';
-import { Response } from '../models/response.model';
+import { Count } from '../../../models/count.model';
 import { PublicKey } from '../models/public-key.model';
-import { AuthFilter } from '../models/auth-filter.model';
+import { Affected } from '../../../models/affected.model';
+import { Response } from '../../../models/response.model';
+import { HttpService } from '../../../services/http.service';
 import { PublicKeyFull } from '../models/public-key-full.model';
 import { CryptoInvocation } from '../models/crypto-invocations.model';
 
@@ -156,7 +155,7 @@ export class CryptoService {
    * 
    * @param filter Filter for filtering which invocations to return
    */
-  public invocations(filter: AuthFilter = null) {
+  public invocations(filter: any = null) {
 
     // Dynamically building our query parameters.
     let query = '';

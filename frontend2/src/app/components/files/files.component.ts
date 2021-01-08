@@ -9,7 +9,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/components/files/services/file.service';
 import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-object.component';
 import { MatDialog } from '@angular/material/dialog';
 

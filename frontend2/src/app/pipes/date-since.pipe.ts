@@ -6,15 +6,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /**
- * Since now pipe, displaying how many seconds/minutes/hours/etc ago a date was.
+ * Date since pipe, displaying how many seconds/minutes/hours/etc ago a past date was.
  */
 @Pipe({
   name: 'since'
 })
-export class DateToPipe implements PipeTransform {
+export class DateSincePipe implements PipeTransform {
 
   /**
-   * Transforms a date time past date to "xxx units ago".
+   * Transforms a past date time date to its "xxx units ago" representation.
    * 
    * @param value Value to transform
    */

@@ -8,13 +8,13 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { FileService } from './file.service';
-import { Response } from '../models/response.model';
+import { HttpService } from '../../../services/http.service';
+import { FileService } from '../../files/services/file.service';
+import { Response } from '../../../models/response.model';
 
 /**
- * Setup service, allows you to setup, read, and manipulate your configuration
- * settings.
+ * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in
+ * your backend.
  */
 @Injectable({
   providedIn: 'root'

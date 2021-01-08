@@ -8,13 +8,13 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { AuthService } from './auth.service';
-import { Status } from '../models/status.model';
-import { KeyPair } from '../models/key-pair.model';
-import { BackendService } from './backend.service';
-import { Response } from '../models/response.model';
-import { AuthenticateResponse } from '../models/authenticate-response.model';
+import { Status } from '../../../models/status.model';
+import { Response } from '../../../models/response.model';
+import { KeyPair } from '../../crypto/models/key-pair.model';
+import { HttpService } from '../../../services/http.service';
+import { AuthService } from '../../auth/services/auth.service';
+import { BackendService } from '../../../services/backend.service';
+import { AuthenticateResponse } from '../../auth/models/authenticate-response.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration

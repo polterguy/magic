@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/components/config/services/config.service';
 import { FeedbackService } from '../../services/feedback.service';
 
 /**

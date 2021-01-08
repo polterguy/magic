@@ -8,10 +8,10 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/message.model';
-import { AuthService } from 'src/app/services/auth.service';
+import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 
 /**
