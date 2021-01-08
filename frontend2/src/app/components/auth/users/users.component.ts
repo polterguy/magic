@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
@@ -12,7 +13,6 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { Count } from 'src/app/models/count.model';
-import { MatDialog } from '@angular/material/dialog';
 import { Affected } from 'src/app/models/affected.model';
 import { UserService } from 'src/app/services/user.service';
 import { UserRoles } from 'src/app/models/user-roles.model';
@@ -114,27 +114,21 @@ export class UsersComponent implements OnInit {
 
     // Invoking backend to retrieve users matching filter.
     this.userService.list(this.filter).subscribe((users: User[]) => {
+
+      // Unselecting all selected users.
       this.selectedUsers.splice(0, this.selectedUsers.length);
-      if (users) {
-        this.users = users;
-        if (users.length === 1) {
-          this.selectedUsers.push(users[0]);
 
-          // Fetching roles for user.
-          this.userService.getRoles(users[0].username).subscribe((roles: UserRoles[]) => {
+      // Assigning model to results of backend invocation.
+      this.users = users || [];
 
-            // Applying roles to user model
-            users[0].roles = (roles || []).map(x => x.role);
-          });
-        }
-      } else {
-        this.users = [];
-      }
     }, (error: any) => this.feedbackService.showError(error));
 
     // Invoking backend to retrieve count of user matching filter condition.
     this.userService.count(this.filter).subscribe((res: Count) => {
+
+      // Assinging model to result of backend invocation.
       this.count = res.count;
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -200,11 +194,6 @@ export class UsersComponent implements OnInit {
 
     // Making sure the event doesn't propagate upwards, which would trigger the row click event.
     event.stopPropagation();
-
-    if (user.username === 'root') {
-      this.feedbackService.showInfo('You cannot lock the root account for obvious reasons');
-      return;
-    }
 
     // Invoking backend to update user's locked status.
     this.userService.update({

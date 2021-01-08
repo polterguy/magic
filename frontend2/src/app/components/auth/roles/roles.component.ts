@@ -6,21 +6,21 @@
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { User } from 'src/app/models/user.model';
 import { Role } from 'src/app/models/role.model';
 import { Count } from 'src/app/models/count.model';
-import { FeedbackService } from '../../../services/feedback.service';
 import { Affected } from 'src/app/models/affected.model';
 import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
 import { AuthFilter } from 'src/app/models/auth-filter.model';
+import { FeedbackService } from '../../../services/feedback.service';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Roles component for administrating roles in the system.
@@ -125,17 +125,17 @@ export class RolesComponent implements OnInit {
       // Resetting selected roles.
       this.selectedRoles = [];
 
-      // Assigning roles, triggering a re-render operation of the material table.
+      // Assigning model to result of backend invocation.
       this.roles = roles || [];
-      if (this.roles.length === 1) {
-        this.selectedRoles.push(this.roles[0]);
-      }
 
     }, (error: any) => this.feedbackService.showError(error));
 
     // Invoking backend to retrieve count of user matching filter condition.
     this.roleService.count(this.filter).subscribe((res: Count) => {
+
+      // Assinging model to result of backend invocation.
       this.count = res.count;
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 
