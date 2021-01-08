@@ -41,9 +41,10 @@ export class LoginDialogComponent implements OnInit {
   /**
    * Creates an instance of your login dialog.
    * 
-   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param router Router service to redirect and check current route
    * @param configService Configuration service used to determine if system has been setup if root user logs in
+   * @param dialogRef Needed to be able to close dialog after having logged in
+   * @param messageService Dependency injected message service to publish information from component to subscribers
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
@@ -62,20 +63,17 @@ export class LoginDialogComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
+
+    // Creating filter backends form control.
     this.backends = new FormControl();
     this.backends.setValue('');
+
+    // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges
       .pipe(
         startWith(''),
         map(value => this.filter(value))
       );
-  }
-
-  /**
-   * Shows a security warning about password to user.
-   */
-  public showSecurityWarning() {
-    this.feedbackService.showInfo('Clicking the login button will transmit your password in clear text');
   }
 
   /**

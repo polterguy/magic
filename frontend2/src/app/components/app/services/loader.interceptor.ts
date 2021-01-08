@@ -25,7 +25,10 @@ import { LoaderService } from 'src/app/components/app/services/loader.service';
 })
 export class LoaderInterceptor implements HttpInterceptor {
 
-  // Notice, to support multiple requests, we need to track how many "open" requests we currently have.
+  /*
+   * Notice, to support multiple requests,
+   * we need to track how many "open" requests we currently have.
+   */
   private static totalRequests = 0;
 
   /**

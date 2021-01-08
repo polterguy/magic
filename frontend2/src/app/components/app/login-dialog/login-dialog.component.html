@@ -1,13 +1,10 @@
+
 <h1 mat-dialog-title>
   Login
-  <button
+  <mat-icon
     *ngIf="backendService.connected && backends.value.startsWith('http://')"
-    mat-icon-button
-    class="warning-button"
-    matTooltip="Not secured"
-    (click)="showSecurityWarning()">
-    <mat-icon aria-label="Warning this will submit your password in clear text">warning</mat-icon>
-  </button>
+    aria-label="Warning this will submit your password in clear text"
+    matTooltip="Clicking the login button will transmit your password in clear text">warning</mat-icon>
 </h1>
 
 <div mat-dialog-content>
@@ -58,12 +55,11 @@
 
 </div>
 
-<div
-  mat-dialog-actions
-  class="mat-dialog-actions">
+<div mat-dialog-actions class="button-strip">
 
   <mat-checkbox
     aria-label="Save password"
+    matTooltip="Save password in local storage"
     [(ngModel)]="savePassword">Save</mat-checkbox>
 
   <button

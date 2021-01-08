@@ -15,8 +15,8 @@ import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 
 /**
- * Toolbar component for displaying toolbar that allow the
- * user to toggle the navbar.
+ * Toolbar component for displaying toolbar that allows the
+ * user to toggle the navbar, and login/logout of Magic.
  */
 @Component({
   selector: 'app-toolbar',
