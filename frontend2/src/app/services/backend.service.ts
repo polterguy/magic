@@ -114,4 +114,17 @@ export class BackendService {
   public persistBackends() {
     localStorage.setItem('backends', JSON.stringify(this._backends));
   }
+
+  /**
+   * Returns true if specified JWT token is expired.
+   * 
+   * @param token Token to check
+   */
+  public isTokenExpired(token: string) {
+
+    // Parsing expiration time from JWT token.
+    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
+    const now = Math.floor(new Date().getTime() / 1000);
+    return now >= exp;
+  }
 }

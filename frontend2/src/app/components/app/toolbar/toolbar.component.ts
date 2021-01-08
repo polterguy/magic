@@ -93,8 +93,5 @@ export class ToolbarComponent {
    */
   public logout() {
     this.authService.logout(false);
-    this.messageService.sendMessage({
-      name: Messages.USER_LOGGED_OUT,
-    });
   }
 }
