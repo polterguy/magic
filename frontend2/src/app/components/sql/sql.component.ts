@@ -116,7 +116,7 @@ export class SqlComponent implements OnInit {
 
           // Transforming from HTTP result to object(s) expected by CodeMirror.
           const tables = {};
-          for (const idxTable of databases.databases[0].tables) {
+          for (const idxTable of databases.databases.filter(x => x.name === 'magic')[0].tables) {
             tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
           }
 
@@ -128,8 +128,8 @@ export class SqlComponent implements OnInit {
           this.databases = databases.databases.map((x: any) => x.name);
           this.input = {
             databaseType: defaultDatabaseType.result,
-            connectionString: connectionStrings[0],
-            database: this.databases[0],
+            connectionString: connectionStrings.filter(x => x === 'generic')[0],
+            database: this.databases.filter(x => x === 'magic')[0],
             options: sql,
             sql: '',
           };
