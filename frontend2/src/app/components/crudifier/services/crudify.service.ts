@@ -7,9 +7,9 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
 import { Crudify } from '../models/crudify.model';
-import { Database } from '../models/database.model';
+import { Database } from '../../../models/database.model';
+import { HttpService } from '../../../services/http.service';
 import { LocResult } from '../models/loc-result.model';
 
 /**

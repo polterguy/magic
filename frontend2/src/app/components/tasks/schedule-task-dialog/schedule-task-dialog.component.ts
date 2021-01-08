@@ -8,8 +8,8 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Task } from 'src/app/models/task.model';
-import { TaskService } from 'src/app/services/task.service';
+import { Task } from 'src/app/components/tasks/models/task.model';
+import { TaskService } from 'src/app/components/tasks/services/task.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**

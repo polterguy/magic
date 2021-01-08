@@ -8,11 +8,11 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { User } from '../models/user.model';
-import { HttpService } from './http.service';
-import { Count } from '../models/count.model';
-import { Affected } from '../models/affected.model';
+import { Count } from '../../../models/count.model';
 import { UserRoles } from '../models/user-roles.model';
 import { AuthFilter } from '../models/auth-filter.model';
+import { Affected } from '../../../models/affected.model';
+import { HttpService } from '../../../services/http.service';
 
 /**
  * User service, allowing you to administrate the users in your backend.

@@ -53,13 +53,13 @@ import 'codemirror/addon/hint/sql-hint.js';
 // Application specific imports.
 import { DatePipe } from './pipes/date.pipe';
 import { MarkedPipe } from './pipes/marked.pipe';
-import { DateToPipe } from './pipes/date-to.pipe';
 import { DynamicPipe } from './pipes/dynamic.pipe';
 import { DateFromPipe } from './pipes/date-from.pipe';
+import { DateSincePipe } from './pipes/date-since.pipe';
 import { AppRoutingModule } from './app-routing.module';
-import { LoaderService } from './services/loader.service';
-import { AuthInterceptor } from './services/interceptors/auth.interceptor';
-import { LoaderInterceptor } from './services/interceptors/loader.interceptor';
+import { AuthInterceptor } from './services/auth.interceptor';
+import { LoaderService } from './components/app/services/loader.service';
+import { LoaderInterceptor } from './components/app/services/loader.interceptor';
 
 // Application specific components.
 import { LogComponent } from './components/log/log.component';
@@ -133,7 +133,7 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     LogComponent,
     CryptoComponent,
     MarkedPipe,
-    DateToPipe,
+    DateSincePipe,
     DynamicPipe,
     DatePipe,
     DateFromPipe,

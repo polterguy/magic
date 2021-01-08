@@ -8,9 +8,9 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Role } from '../models/role.model';
-import { HttpService } from './http.service';
-import { Count } from '../models/count.model';
-import { Affected } from '../models/affected.model';
+import { HttpService } from '../../../services/http.service';
+import { Count } from '../../../models/count.model';
+import { Affected } from '../../../models/affected.model';
 import { AuthFilter } from '../models/auth-filter.model';
 
 /**

@@ -12,10 +12,10 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
-import { CryptoService } from 'src/app/services/crypto.service';
+import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { CryptoInvocation } from 'src/app/models/crypto-invocations.model';
+import { CryptoInvocation } from 'src/app/components/crypto/models/crypto-invocations.model';
 
 /**
  * Displays all cryptographically signed invocations towards server.

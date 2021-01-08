@@ -12,8 +12,8 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../services/feedback.service';
-import { LogItem } from 'src/app/models/log-item.model';
-import { LogService } from 'src/app/services/log.service';
+import { LogItem } from 'src/app/components/log/models/log-item.model';
+import { LogService } from 'src/app/components/log/services/log.service';
 
 /**
  * Log component for reading backend's log.

@@ -4,14 +4,14 @@
  */
 
 // Angular and system imports.
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/message.model';
+import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
-import { ConfigService } from 'src/app/services/config.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { MessageService } from 'src/app/services/message.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { ConfigService } from 'src/app/components/config/services/config.service';
 
 /**
  * Component allowing user to setup a cryptography key pair.

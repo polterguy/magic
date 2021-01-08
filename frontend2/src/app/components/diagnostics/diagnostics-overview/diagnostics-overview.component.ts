@@ -13,15 +13,15 @@ import { Label, SingleDataSet } from 'ng2-charts';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { LogItem } from 'src/app/models/log-item.model';
+import { LogItem } from 'src/app/components/log/models/log-item.model';
 import { Endpoint } from 'src/app/models/endpoint.model';
-import { LogService } from 'src/app/services/log.service';
-import { UserService } from 'src/app/services/user.service';
-import { RoleService } from 'src/app/services/role.service';
-import { TaskService } from 'src/app/services/task.service';
-import { AuthService } from 'src/app/services/auth.service';
+import { LogService } from 'src/app/components/log/services/log.service';
+import { UserService } from 'src/app/components/auth/services/user.service';
+import { RoleService } from 'src/app/components/auth/services/role.service';
+import { TaskService } from 'src/app/components/tasks/services/task.service';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { DiagnosticsService } from 'src/app/services/diagnostics.service';
+import { DiagnosticsService } from 'src/app/components/diagnostics/services/diagnostics.service';
 
 /**
  * Component that allows user to view diagnostics information

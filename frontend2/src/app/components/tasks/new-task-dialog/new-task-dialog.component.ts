@@ -8,7 +8,7 @@ import { Component, Inject, Injector } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { TaskService } from 'src/app/services/task.service';
+import { TaskService } from 'src/app/components/tasks/services/task.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**

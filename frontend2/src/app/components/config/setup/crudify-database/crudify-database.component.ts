@@ -5,17 +5,17 @@
 
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Crudify } from 'src/app/models/crudify.model';
-import { Messages } from 'src/app/models/message.model';
+import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
-import { LocResult } from 'src/app/models/loc-result.model';
-import { ConfigService } from 'src/app/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { CrudifyService } from 'src/app/services/crudify.service';
+import { Crudify } from 'src/app/components/crudifier/models/crudify.model';
+import { LocResult } from 'src/app/components/crudifier/models/loc-result.model';
+import { ConfigService } from 'src/app/components/config/services/config.service';
+import { CrudifyService } from 'src/app/components/crudifier/services/crudify.service';
 
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'

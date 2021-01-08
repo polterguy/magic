@@ -12,13 +12,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { User } from 'src/app/models/user.model';
-import { Role } from 'src/app/models/role.model';
+import { User } from 'src/app/components/auth/models/user.model';
+import { Role } from 'src/app/components/auth/models/role.model';
 import { Count } from 'src/app/models/count.model';
 import { Affected } from 'src/app/models/affected.model';
-import { RoleService } from 'src/app/services/role.service';
-import { UserService } from 'src/app/services/user.service';
-import { AuthFilter } from 'src/app/models/auth-filter.model';
+import { RoleService } from 'src/app/components/auth/services/role.service';
+import { UserService } from 'src/app/components/auth/services/user.service';
+import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
 import { FeedbackService } from '../../../services/feedback.service';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
 

@@ -10,10 +10,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { AuthService } from 'src/app//services/auth.service';
-import { LoaderService } from 'src/app/services/loader.service';
-import { Message, Messages } from 'src/app/models/message.model';
+import { Message } from 'src/app/models/message.model';
+import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
+import { LoaderService } from 'src/app/components/app/services/loader.service';
 
 /**
  * Main wire frame application component.

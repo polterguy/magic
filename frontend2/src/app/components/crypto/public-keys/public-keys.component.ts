@@ -14,9 +14,9 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
-import { LogService } from 'src/app/services/log.service';
-import { PublicKey } from 'src/app/models/public-key.model';
-import { CryptoService } from 'src/app/services/crypto.service';
+import { LogService } from 'src/app/components/log/services/log.service';
+import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
+import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';

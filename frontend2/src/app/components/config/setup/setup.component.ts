@@ -7,14 +7,15 @@
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
-import { Component, Injector, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { FeedbackService } from '../../../services/feedback.service';
 import { Status } from 'src/app/models/status.model';
-import { ConfigService } from 'src/app/services/config.service';
-import { Message, Messages } from 'src/app/models/message.model';
+import { Message } from 'src/app/models/message.model';
+import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
+import { FeedbackService } from '../../../services/feedback.service';
+import { ConfigService } from 'src/app/components/config/services/config.service';
 
 /**
  * Component responsible for allowing user to setup system.

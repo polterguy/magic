@@ -8,10 +8,10 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { Backend } from '../models/backend.model';
-import { BackendService } from './backend.service';
-import { Endpoint } from '../models/endpoint.model';
+import { HttpService } from '../../../services/http.service';
+import { Backend } from '../../../models/backend.model';
+import { BackendService } from '../../../services/backend.service';
+import { Endpoint } from '../../../models/endpoint.model';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**

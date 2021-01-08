@@ -6,7 +6,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /**
- * Date pipe, displaying dates in a friendly format.
+ * Date pipe, displaying dates in a friendly format according to user's locale.
  */
 @Pipe({
   name: 'date'

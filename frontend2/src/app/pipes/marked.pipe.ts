@@ -3,7 +3,10 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 
+// Angular imports.
 import { Pipe, PipeTransform } from '@angular/core';
+
+// Utility 3rd party imports.
 import * as marked from "marked";
 
 /**

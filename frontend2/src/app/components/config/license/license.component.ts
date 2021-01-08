@@ -7,7 +7,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/components/config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**

@@ -9,7 +9,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
-import { SqlService } from 'src/app/services/sql.service';
+import { SqlService } from 'src/app/components/sql/services/sql.service';
 
 /**
  * Modal dialog data.
