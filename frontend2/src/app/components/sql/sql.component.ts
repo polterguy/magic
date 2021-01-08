@@ -15,6 +15,7 @@ import { saveAs } from 'file-saver';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { SqlService } from 'src/app/services/sql.service';
+import { Databases } from 'src/app/models/databases.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { FeedbackService } from '../../services/feedback.service';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
@@ -459,7 +460,7 @@ export class SqlComponent implements OnInit {
   /*
    * Returns all connection strings for database type from backend.
    */
-  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void = null) {
+  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
 
     // Retrieving connection strings for default database type from backend.
     this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
@@ -488,10 +489,10 @@ export class SqlComponent implements OnInit {
   /*
    * Returns all databases for database-type/connection-string from backend.
    */
-  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void = null) {
+  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
 
     // Retrieving databases that exists for database-type/connection-string combination in backend.
-    this.sqlService.vocabulary(databaseType, connectionString).subscribe((databases: any) => {
+    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
 
       // Checking if caller supplied a callback, and if so invoking it.
       if (onAfter) {
