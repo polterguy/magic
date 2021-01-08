@@ -8,10 +8,12 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../services/http.service';
 import { Backend } from '../../../models/backend.model';
-import { BackendService } from '../../../services/backend.service';
+import { Messages } from 'src/app/models/messages.model';
 import { Endpoint } from '../../../models/endpoint.model';
+import { HttpService } from '../../../services/http.service';
+import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from '../../../services/backend.service';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
@@ -29,16 +31,18 @@ export class AuthService {
    * Creates an instance of your service.
    * 
    * @param httpService Dependency injected HTTP service to handle HTTP requests
+   * @param messageService Needed to transmit message when user logs out
    * @param backendService Dependency injected backend service to handle currently selected backends
    */
   constructor(
     private httpService: HttpService,
+    private messageService: MessageService,
     private backendService: BackendService) {
 
       // Checking if user has a token towards his current backend, and if the token is expired.
       if (this.backendService.connected &&
         this.backendService.current.token &&
-        this.isTokenExpired(this.backendService.current.token)) {
+        this.backendService.isTokenExpired(this.backendService.current.token)) {
 
         // Removing JWT token.
         this.backendService.current.token = null;
@@ -113,6 +117,9 @@ export class AuthService {
         this.backendService.current.password = null;
       }
       this.backendService.persistBackends();
+      this.messageService.sendMessage({
+        name: Messages.USER_LOGGED_OUT,
+      });
     }
   }
 
@@ -199,17 +206,6 @@ export class AuthService {
   /*
    * Private helper methods.
    */
-
-  /*
-   * Returns true if specified JWT token is expired.
-   */
-  private isTokenExpired(token: string) {
-
-    // Parsing expiration time from JWT token.
-    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
-    const now = Math.floor(new Date().getTime() / 1000);
-    return now >= exp;
-  }
 
   /**
    * Creates a refresh timer for a single backend's JWT token.
