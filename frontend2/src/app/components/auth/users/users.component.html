@@ -22,6 +22,7 @@
     matSuffix
     *ngIf="filterFormControl.value.trim() !== ''"
     class="button"
+    role="button"
     matTooltip="Clear filter"
     (click)="clearUserFilter()">clear</mat-icon>
 
@@ -90,17 +91,14 @@
           </mat-chip>
         </mat-chip-list>
 
-        <div class="button-strip pull-down-05 pull-right-1">
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root'"
-            matTooltip="Delete user"
-            (click)="delete(el)">
-            <mat-icon>delete</mat-icon>
-          </button>
-
-        </div>
+        <button
+          mat-icon-button
+          [disabled]="el.username === 'root'"
+          matTooltip="Delete user"
+          class="delete-user"
+          (click)="delete(el)">
+          <mat-icon>delete</mat-icon>
+        </button>
 
       </div>
 

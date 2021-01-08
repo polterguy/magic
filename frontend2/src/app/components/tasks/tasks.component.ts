@@ -12,9 +12,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
+import { FeedbackService } from '../../services/feedback.service';
 import { Schedule, Task } from 'src/app/components/tasks/models/task.model';
 import { TaskService } from 'src/app/components/tasks/services/task.service';
-import { FeedbackService } from '../../services/feedback.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm/confirm-dialog.component';
@@ -122,13 +122,6 @@ export class TasksComponent implements OnInit {
           task: idx
         }
       });
-
-      // Checking if only one task was returned, and if so, we automatically set it into edit mode.
-      if (this.tasks.length === 1 && this.paginator.pageIndex === 0) {
-
-        // Invoking backend to get tasks details.
-        this.toggleDetails(this.tasks[0]);
-      }
 
       // Retrieving count of items from backend.
       this.taskService.count(this.filterFormControl.value).subscribe((count: Count) => {

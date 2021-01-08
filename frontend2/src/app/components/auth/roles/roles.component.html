@@ -19,9 +19,10 @@
     [formControl]="filterFormControl">
 
   <mat-icon
-    matSuffix
     *ngIf="filterFormControl.value.trim() !== ''"
+    matSuffix
     class="button"
+    role="button"
     matTooltip="Clear filter"
     (click)="clearRoleFilter()">clear</mat-icon>
 
@@ -78,17 +79,14 @@
           <span>{{el.description}}</span>
         </span>
 
-        <div class="button-strip pull-down-05 pull-right-1">
-
-          <button
-            mat-icon-button
-            [disabled]="el.name === 'root'"
-            matTooltip="Delete role"
-            (click)="deleteRole(el)">
-            <mat-icon>delete</mat-icon>
-          </button>
-
-        </div>
+        <button
+          mat-icon-button
+          [disabled]="el.name === 'root'"
+          matTooltip="Delete role"
+          class="delete-role"
+          (click)="deleteRole(el)">
+          <mat-icon>delete</mat-icon>
+        </button>
 
       </div>
 
