@@ -3,8 +3,8 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-@import '~codemirror/lib/codemirror';
 @import '~codemirror/theme/mbo';
+@import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
 
 /*
@@ -43,14 +43,6 @@ button.create-button {
   cursor: pointer;
 }
 
-.pull-down-05 {
-  margin-bottom: -.5rem;
-}
-
-.pull-right-1 {
-  margin-right: -1rem;
-}
-
 .mat-dialog-actions {
   float: right;
 }
@@ -63,19 +55,22 @@ a {
 /*
  * Material table styles.
  */
-table.mat-table,
 table.clickable {
   width: 100%;
   background-color: transparent;
-  tr {
-    th, td {
-      color: rgb(245,245,245);
+  tbody {
+    tr {
+      background-color: rgba(0,0,0,0);
+      transition: background-color .1s ease-in;
+      td {
+        vertical-align: top;
+        padding: 1rem 1rem 1rem 0;
+        color: rgb(245,245,245);
+        cursor: pointer;
+        user-select: none;
+      }
     }
-    td {
-      vertical-align: top;
-      padding: 1rem 1rem 1rem 0;
-    }
-    th.mini-col, td.mini-col {
+    td.mini-col {
       width: 5px;
       white-space: nowrap;
     }
@@ -87,22 +82,9 @@ table.clickable {
       padding-top: 5px;
       padding-bottom: 9px;
     }
-  }
-}
-table.mat-table.clickable,
-table.clickable {
-  tbody {
-    tr {
-      background-color: rgba(0,0,0,0);
-      transition: background-color .05s ease-in;
-      td {
-        cursor: pointer;
-        user-select: none;
-      }
-    }
     tr:hover {
       background-color: rgba(0,0,0,.1);
-      transition: background-color .05s ease-in;
+      transition: background-color .1s ease-in;
     }
     tr.selected {
       background-color: rgba(255,255,255,.1);
@@ -112,6 +94,20 @@ table.clickable {
       td {
         cursor: default;
         user-select: unset;
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+        div {
+          animation-name: fadeIn;
+          animation-duration: .2s;
+          animation-timing-function: ease-in;
+          animation-fill-mode: forwards;
+        }
       }
     }
   }
@@ -195,7 +191,7 @@ textarea.mat-input-element:disabled {
   }
 }
 
-// CodeMirror classes.
+// CodeMirror classes, specifically for autocomplete or hints plugin.
 .CodeMirror-hints {
   position: absolute;
   z-index: 10000;

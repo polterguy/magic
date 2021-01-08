@@ -15,10 +15,17 @@ table.roles {
   }
   .details-sheet {
     position: relative;
+    padding-bottom: 3rem;
     .edit-role {
       position: absolute;
       bottom: 0;
-      left: -1rem;
+      left: -.5rem;
+    }
+    .delete-role {
+      display: inline-block;
+      position: absolute;
+      bottom: 0;
+      right: -.5rem;
     }
     .add-role {
       position: absolute;
