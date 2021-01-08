@@ -1,13 +1,6 @@
 
 table.users {
   width: 100%;
-  tr {
-    td:nth-child(2) {
-      padding-top: 14px;
-      padding-bottom: 9px;
-      width: 5px;
-    }
-  }
   .details-sheet {
     position: relative;
     .edit-user {

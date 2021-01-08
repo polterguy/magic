@@ -4,17 +4,6 @@
   margin-right: -1rem;
 }
 
-table.keys {
-  margin-bottom: 3rem;
-  tr {
-    td:nth-child(3),
-    td:nth-child(4) {
-      padding-top: 5px;
-      padding-bottom: 9px;
-    }
-  }
-}
-
 textarea.crypto-key {
   margin-top: .5rem;
   display: block;

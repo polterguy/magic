@@ -40,10 +40,10 @@
     </ng-container>
 
     <ng-container matColumnDef="delete">
-      <td mat-cell class="minimalistic-col" *matCellDef="let el">
+      <td mat-cell class="mini-col button-col" *matCellDef="let el">
         <button
           mat-icon-button
-          matTooltip="Delete"
+          matTooltip="Delete task"
           (click)="delete($event, el)">
           <mat-icon>delete</mat-icon>
         </button>
