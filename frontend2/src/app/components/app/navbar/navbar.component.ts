@@ -12,7 +12,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 
 /**
- * Component wrapping navbar for dashboard.
+ * Component wrapping navbar.
  */
 @Component({
   selector: 'app-navbar',

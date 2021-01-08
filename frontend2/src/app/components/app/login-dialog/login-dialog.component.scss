@@ -1,17 +1,9 @@
 
 h1 {
-  .warning-button {
+  mat-icon {
     float: right;
     color: #e55 !important;
     margin-top: -.5rem;
-    mat-icon {
-      font-size: 2rem;
-    }
-  }
-}
-
-.mat-dialog-actions {
-  mat-checkbox {
-    margin-right: .5rem;
+    font-size: 2rem;
   }
 }
