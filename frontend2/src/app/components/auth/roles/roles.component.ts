@@ -12,14 +12,14 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { User } from 'src/app/components/auth/models/user.model';
-import { Role } from 'src/app/components/auth/models/role.model';
 import { Count } from 'src/app/models/count.model';
 import { Affected } from 'src/app/models/affected.model';
+import { User } from 'src/app/components/auth/models/user.model';
+import { Role } from 'src/app/components/auth/models/role.model';
+import { FeedbackService } from '../../../services/feedback.service';
 import { RoleService } from 'src/app/components/auth/services/role.service';
 import { UserService } from 'src/app/components/auth/services/user.service';
 import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
-import { FeedbackService } from '../../../services/feedback.service';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
 
 /**
@@ -80,6 +80,8 @@ export class RolesComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Used to provide feedback to user
+   * @param dialog Used to open the create new role dialog
    * @param roleService Used to retrieve all roles from backend
    * @param userService Used to associate a user with a role
    */
@@ -143,6 +145,8 @@ export class RolesComponent implements OnInit {
    * Clears any filters user has applied for the users table.
    */
   public clearRoleFilter() {
+
+    // Resetting the page index and the filter form control will re-databind our table.
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
   }
@@ -151,6 +155,8 @@ export class RolesComponent implements OnInit {
    * Invoked when roles are paged.
    */
   public paged() {
+
+    // Since the paginator's value is used directly when retrieving roles, we can simply retrieve the roles here.
     this.getRoles();
   }
 
@@ -273,25 +279,21 @@ export class RolesComponent implements OnInit {
   public addRole(role: Role) {
 
     /*
-     * Creating multiple HTTP requests towards the backend to add role
-     * to all users not belonging to the role from before.
+     * Checking if the role user tries to associate with the selected users is the root role,
+     * at which point we warn him before we complete his request.
      */
-    const requests = this.selectedUsers
-      .filter(x => x.roles.indexOf(role.name) === -1)
-      .map(x => {
-      return this.userService.addRole(x.username, role.name);
-    });
-
-    // Waiting for all requests to finish.
-    forkJoin(requests).subscribe(() => {
-
-      // Success, updating list of roles for all affected users.
-      // No need to invoke backend here.
-      this.feedbackService.showInfo(`Role '${role.name}' added to ${requests.length} users`)
-      for (const idx of this.selectedUsers.filter(x => x.roles.indexOf(role.name) === -1)) {
-        idx.roles.push(role.name);
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    if (role.name === 'root') {
+      
+      // Asking user to confirm action, since this is the root role.
+      this.feedbackService.confirm(
+        'Please confirm action',
+        `The root role is a special role in the system, and will give users complete access to do everything. Are you sure you want to associate the root role with ${this.getAffectedUsers(role)} users?`,
+        () => {
+          this.addRoleToSelectedUsers(role);
+        });
+    } else {
+      this.addRoleToSelectedUsers(role);
+    }
   }
 
   /**
@@ -318,4 +320,35 @@ export class RolesComponent implements OnInit {
       }
     });
   }
+
+  /*
+   * Private helper methods.
+   */
+
+   /*
+    * Adds the specified role to all selected users.
+    */
+   private addRoleToSelectedUsers(role: Role) {
+
+    /*
+     * Creating multiple HTTP requests towards the backend to add role
+     * to all users not belonging to the role from before.
+     */
+    const requests = this.selectedUsers
+      .filter(x => x.roles.indexOf(role.name) === -1)
+      .map(x => {
+      return this.userService.addRole(x.username, role.name);
+    });
+
+    // Waiting for all requests to finish.
+    forkJoin(requests).subscribe(() => {
+
+      // Success, updating list of roles for all affected users.
+      // No need to invoke backend here.
+      this.feedbackService.showInfo(`Role '${role.name}' added to ${requests.length} users`)
+      for (const idx of this.selectedUsers.filter(x => x.roles.indexOf(role.name) === -1)) {
+        idx.roles.push(role.name);
+      }
+    }, (error: any) => this.feedbackService.showError(error));
+   }
 }
