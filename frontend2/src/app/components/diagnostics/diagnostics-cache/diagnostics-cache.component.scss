@@ -7,6 +7,26 @@
   }
   table.cache-items {
     margin-bottom: 5rem;
+    table-layout: fixed;
+    td.mini-col {
+      width: 50px;
+    }
+    td.details {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      pre {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2rem;
+      }
+      button {
+        position: absolute;
+        bottom: .5rem;
+        right: .5rem;
+      }
+    }
   }
   .clear-button {
     position: absolute;

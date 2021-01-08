@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatPaginator } from '@angular/material/paginator';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -57,9 +58,12 @@ export class DiagnosticsCache implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param cacheService Needed to read, remove and purge cache
+   * @param clipboard Used to copy content of cache item to clipboard
+   * @param cacheService Needed to read, remove and clear cache
+   * @param feedbackService Needed to display feedback information to user
    */
   constructor(
+    private clipboard: Clipboard,
     private cacheService: CacheService,
     private feedbackService: FeedbackService) { }
 
@@ -159,6 +163,17 @@ export class DiagnosticsCache implements OnInit {
     return this.selectedCacheItems.filter(x => x === item.key).length > 0;
   }
 
+  /**
+   * Invoked when user wants to copy value of cache entry.
+   * 
+   * @param value Value to copy
+   */
+  public copyContent(value: string) {
+
+    // Copying specified string to clipboard and gives user some information.
+    this.clipboard.copy(value);
+    this.feedbackService.showInfoShort('Value was copied to your clipboard');
+  }
 
   /**
    * Deletes the specified cache item.

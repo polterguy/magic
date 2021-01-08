@@ -43,8 +43,14 @@
     </ng-container>
 
     <ng-container matColumnDef="show-details">
-      <td colspan="2" mat-cell *matCellDef="let el">
+      <td class="details" colspan="2" mat-cell *matCellDef="let el">
         <pre>{{el.value}}</pre>
+        <button
+          mat-icon-button
+          matTooltip="Copy value to clipboard"
+          (click)="copyContent(el.value)">
+          <mat-icon>edit</mat-icon>
+        </button>
       </td>
     </ng-container>
 
