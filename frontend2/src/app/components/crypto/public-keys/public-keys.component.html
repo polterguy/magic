@@ -40,7 +40,7 @@
   <ng-container matColumnDef="imported">
     <td
       mat-cell
-      class="minimalistic-col"
+      class="mini-col"
       matTooltip="Key was imported"
       *matCellDef="let el">{{el.key.imported | since}}</td>
   </ng-container>
@@ -48,7 +48,7 @@
   <ng-container matColumnDef="invocations">
     <td
       mat-cell
-      class="minimalistic-col"
+      class="mini-col button-col"
       *matCellDef="let el">
       <button
         mat-icon-button
@@ -60,7 +60,7 @@
   </ng-container>
 
   <ng-container matColumnDef="delete">
-    <td mat-cell class="minimalistic-col" *matCellDef="let el">
+    <td mat-cell class="mini-col button-col" *matCellDef="let el">
       <button
         mat-icon-button
         matTooltip="Delete"

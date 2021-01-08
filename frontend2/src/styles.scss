@@ -75,9 +75,17 @@ table.clickable {
       vertical-align: top;
       padding: 1rem 1rem 1rem 0;
     }
-    th.minimalistic-col, td.minimalistic-col {
+    th.mini-col, td.mini-col {
       width: 5px;
       white-space: nowrap;
+    }
+    td.icon-col {
+      padding-top: 14px;
+      padding-bottom: 9px;
+    }
+    td.button-col {
+      padding-top: 5px;
+      padding-bottom: 9px;
     }
   }
 }
