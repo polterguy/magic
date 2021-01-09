@@ -29,6 +29,7 @@
   </mat-form-field>
 
   <table
+    *ngIf="endpoints"
     mat-table
     [dataSource]="filteredItems()"
     class="endpoint-items clickable"
@@ -58,7 +59,7 @@
           class="details-sheet"
           *ngIf="shouldDisplayDetails(el)">
 
-          foo
+          <app-endpoint-details [endpoint]="el"></app-endpoint-details>
 
         </div>
 

@@ -88,6 +88,7 @@ import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/c
 import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
+import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
@@ -167,6 +168,7 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     DiagnosticsComponent,
     DiagnosticsErrorsComponent,
     DiagnosticsCache,
+    EndpointDetailsComponent,
   ],
   imports: [
     FormsModule,
