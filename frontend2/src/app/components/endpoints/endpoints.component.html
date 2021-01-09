@@ -1,6 +1,12 @@
 
 <mat-card>
 
+  <mat-checkbox
+    class="show-system"
+    labelPosition="before"
+    matTooltip="Show system endpoints"
+    [(ngModel)]="showSystemEndpoints">System</mat-checkbox>
+
   <mat-form-field class="fill-width">
 
     <mat-label>Filter ...</mat-label>
