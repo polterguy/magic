@@ -6,9 +6,9 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../services/feedback.service';
