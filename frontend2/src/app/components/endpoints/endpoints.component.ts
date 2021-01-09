@@ -29,6 +29,11 @@ export class EndpointsComponent implements OnInit {
   private filter: string = '';
 
   /**
+   * Whether or not system endpoints should be displayed.
+   */
+  public showSystemEndpoints: boolean;
+
+  /**
    * Columns to display in table.
    */
   public displayedColumns: string[] = ['path', 'verb'];
@@ -73,10 +78,14 @@ export class EndpointsComponent implements OnInit {
    * Returns items matching currently applied filter.
    */
   public filteredItems() {
+    const endpoints = this.showSystemEndpoints ?
+      this.endpoints :
+      this.endpoints.filter(x => !x.path.startsWith('magic/modules/system/'))
+
     if (this.filter === '') {
-      return this.endpoints;
+      return endpoints;
     } else {
-      return this.endpoints.filter(x => x.verb === this.filter || x.path.indexOf(this.filter) !== -1);
+      return endpoints.filter(x => x.verb === this.filter || x.path.indexOf(this.filter) !== -1);
     }
   }
 
