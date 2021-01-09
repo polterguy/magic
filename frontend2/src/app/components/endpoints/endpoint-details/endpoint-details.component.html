@@ -1,12 +1,12 @@
 
 <span class="item">
-  <strong class="label">Verb</strong>
-  <span class="description">{{endpoint.verb}}</span>
+  <strong class="label">URL</strong>
+  <span class="description">{{endpoint.path}}</span>
 </span>
 
 <span class="item">
-  <strong class="label">URL</strong>
-  <span class="description">{{endpoint.path}}</span>
+  <strong class="label">Verb</strong>
+  <span class="description">{{endpoint.verb}}</span>
 </span>
 
 <span class="item" *ngIf="endpoint.type">
@@ -21,11 +21,5 @@
 
 <span class="item" *ngIf="endpoint.auth">
   <strong class="label">Authorization</strong>
-  <span class="description">
-    <ul class="auth">
-      <li *ngFor="let el of endpoint.auth">
-        {{el}}
-      </li>
-    </ul>
-  </span>
+  <span class="description">{{getAuth(endpoint.auth)}}</span>
 </span>
