@@ -1,0 +1,29 @@
+
+.item {
+  display: block;
+  .label {
+    display: block;
+    margin-bottom: .15rem
+  }
+  .description {
+    display: block;
+    margin-bottom: 1rem;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .item {
+    display:flex;
+    margin-bottom: .25rem;
+    .label {
+      flex: .15;
+      min-width: 8rem;
+      display: inline-block;
+    }
+    .description {
+      flex: .85;
+      display: inline-block;
+      margin-bottom: 0;
+    }
+  }
+}
