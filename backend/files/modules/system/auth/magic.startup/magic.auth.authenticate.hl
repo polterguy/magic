@@ -54,18 +54,6 @@ slots.create:magic.auth.authenticate
 
 
    /*
-    * Logging the fact that user tries to login.
-    *
-    * Notice, if system has not been setup, we can't
-    * create log items yet.
-    */
-   log.info
-      .:"Trying to authenticate user '"
-      get-value:x:@.arguments/*/username
-      .:"'"
-
-
-   /*
     * Opens up our database connection.
     */
    data.connect:magic
