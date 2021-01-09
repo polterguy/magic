@@ -32,4 +32,13 @@ export class EndpointDetailsComponent {
    * @param endpointService Needed to be able to invoke endpoint
    */
   constructor(private endpointService: EndpointService) { }
+
+  /**
+   * Returns string representing authorization requirements for endpoint.
+   * 
+   * @param auth List of roles
+   */
+  public getAuth(auth: string[]) {
+    return auth.join(', ');
+  }
 }
