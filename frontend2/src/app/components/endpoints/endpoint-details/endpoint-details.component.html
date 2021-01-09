@@ -9,8 +9,23 @@
   <span class="description">{{endpoint.path}}</span>
 </span>
 
-<span class="item">
+<span class="item" *ngIf="endpoint.type">
+  <strong class="label">Type</strong>
+  <span class="description">{{endpoint.type}}</span>
+</span>
+
+<span class="item" *ngIf="endpoint.description">
   <strong class="label">Description</strong>
   <span class="description">{{endpoint.description}}</span>
 </span>
 
+<span class="item" *ngIf="endpoint.auth">
+  <strong class="label">Authorization</strong>
+  <span class="description">
+    <ul class="auth">
+      <li *ngFor="let el of endpoint.auth">
+        {{el}}
+      </li>
+    </ul>
+  </span>
+</span>

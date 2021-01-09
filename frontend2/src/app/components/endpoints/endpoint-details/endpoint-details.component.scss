@@ -8,6 +8,15 @@
   .description {
     display: block;
     margin-bottom: 1rem;
+    ul.auth {
+      margin-top: 0;
+      padding-left: 0;
+      li {
+        list-style-type: none;
+        float: left;
+        margin-right: .5rem;
+      }
+    }
   }
 }
 
