@@ -18,6 +18,26 @@
       margin-bottom: 1rem;
     }
   }
+  .item-full-width {
+    .label {
+      display: block;
+      margin-bottom: 1rem
+    }
+    .description {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    mat-chip {
+      padding-top: 2px;
+      cursor: pointer;
+      padding-bottom: 2px;
+      min-height: 25px;
+      min-width: 150px;
+    }
+    mat-chip.mat-chip-disabled {
+      cursor: default;
+    }
+  }
 
   @media screen and (min-width: 800px) {
     .item {
