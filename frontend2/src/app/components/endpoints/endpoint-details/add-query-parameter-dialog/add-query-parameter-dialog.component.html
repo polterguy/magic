@@ -3,7 +3,16 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field *ngIf="data.type === 'string'" class="fill-width">
+  <mat-form-field *ngIf="data.type === 'string' && data.name === 'operator'" class="fill-width">
+    <mat-select
+      [(ngModel)]="value"
+      class="dark"
+      placeholder="Logical comparison operator">
+      <mat-option *ngFor="let cur of operators" [value]="cur">{{cur}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="data.type === 'string' && data.name !== 'operator'" class="fill-width">
     <mat-label class="dark">Value</mat-label>
     <input
       matInput
