@@ -42,7 +42,25 @@
 
       <mat-chip-list>
         <mat-chip
-          *ngFor="let i of endpoint.input"
+          *ngFor="let i of getArguments(endpoint.input, true)"
+          [matTooltip]="i.type"
+          selectable="false"
+          [class]="hasQueryParam(i) ? 'query-disabled' : ''"
+          (removed)="removeQueryParameter(i)"
+          (click)="addQueryParameter(i)">
+          {{i.name}}
+          <mat-icon
+            *ngIf="hasQueryParam(i)"
+            matChipRemove>cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+
+    </span>
+    <span class="description">
+
+      <mat-chip-list>
+        <mat-chip
+          *ngFor="let i of getArguments(endpoint.input, false)"
           [matTooltip]="i.type"
           selectable="false"
           [class]="hasQueryParam(i) ? 'query-disabled' : ''"

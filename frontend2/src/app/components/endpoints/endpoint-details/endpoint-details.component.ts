@@ -130,6 +130,29 @@ export class EndpointDetailsComponent implements OnInit {
   }
 
   /**
+   * Returns arguments for endpoint.
+   * 
+   * @param args List of all arguments for endpoint
+   * @param controlArguments Whether or not to return control arguments or non-control arguments
+   */
+  public getArguments(args: Argument[], controlArguments: boolean) {
+
+    // filtering arguments according to caller's specifications.
+    return args.filter(x => {
+      switch (x.name) {
+        case 'operator':
+        case 'limit':
+        case 'offset':
+        case 'order':
+        case 'direction':
+          return controlArguments;
+        default:
+          return !controlArguments;
+      }
+    });
+  }
+
+  /**
    * Returns true if specified query parameter is already in invocation list.
    * 
    * @param arg Argument to check for
@@ -148,7 +171,10 @@ export class EndpointDetailsComponent implements OnInit {
     // Showing modal dialog allowing user to add a new query parameter to URL.
     const dialogRef = this.dialog.open(AddQueryParameterComponentDialog, {
       width: '550px',
-      data: arg
+      data: {
+        argument: arg,
+        all: this.endpoint.input,
+      }
     });
 
     dialogRef.afterClosed().subscribe((value: any) => {
