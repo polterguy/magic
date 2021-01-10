@@ -24,6 +24,11 @@ export class ArgumentModel {
    * All arguments for endpoint.
    */
   all: Argument[];
+
+  /**
+   * Old value for query argumant, if any.
+   */
+  old: any;
 }
 
 /**
@@ -76,17 +81,23 @@ export class AddQueryParameterComponentDialog {
 
       // Populating orders field.
       this.orders = this.data.all.filter(x => x.name.endsWith('.eq')).map(x => x.name.substr(0, x.name.length - 3));
-      this.value = this.orders[0];
+      this.value = this.data.old ?
+        this.orders.filter(x => x === this.data.old)[0] :
+        this.orders[0];
 
     } else if (data.argument.name === 'direction' && data.argument.type === 'string') {
 
       // Defaulting sort direction to 'asc' (ascending).
-      this.value = this.directions.filter(x => x === 'asc')[0];
+      this.value = this.data.old ?
+        this.directions.filter(x => x === this.data.old)[0] :
+        this.directions.filter(x => x === 'asc')[0];
 
     } else if (data.argument.name === 'operator' && data.argument.type === 'string') {
 
-      // Defaulting logical operator to 'or'
-      this.value = this.operators.filter(x => x === 'and')[0];
+      // Defaulting logical operator to 'or'.
+      this.value = this.data.old ? 
+        this.operators.filter(x => x === this.data.old)[0] :
+        this.operators.filter(x => x === 'and')[0];
 
     } else {
 
@@ -94,11 +105,11 @@ export class AddQueryParameterComponentDialog {
       switch (data.argument.type) {
 
         case 'bool':
-          this.value = true;
+          this.value = this.data.old || true;
           break;
 
         case 'string':
-          this.value = '';
+          this.value = this.data.old || '';
           break;
 
         case 'long':
@@ -106,11 +117,11 @@ export class AddQueryParameterComponentDialog {
         case 'uint':
         case 'short':
         case 'ushort':
-          this.value = 42;
+          this.value = this.data.old || 42;
           break;
 
         case 'date':
-          this.value = new Date().toISOString();
+          this.value = this.data.old || new Date().toISOString();
           break;
       }
     }
