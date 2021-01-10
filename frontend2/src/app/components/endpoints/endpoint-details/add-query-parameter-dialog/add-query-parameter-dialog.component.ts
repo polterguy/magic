@@ -26,6 +26,14 @@ export class AddQueryParameterComponentDialog {
   public value: any;
 
   /**
+   * Data model for operator types of arguments.
+   */
+  public operators: string[] = [
+    'or',
+    'and',
+  ];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close dialog
@@ -34,27 +42,37 @@ export class AddQueryParameterComponentDialog {
     private dialogRef: MatDialogRef<AddQueryParameterComponentDialog>,
     @Inject(MAT_DIALOG_DATA) public data: Argument)
   {
-    switch (data.type) {
+    // Checking if argument name is "operator" which has custom UI.
+    if (data.name === 'operator' && data.type === 'string') {
 
-      case 'bool':
-        this.value = true;
-        break;
+      // Conditional comparison logic operator argument type.
+      this.value = this.operators.filter(x => x === 'and')[0];
 
-      case 'string':
-        this.value = '';
-        break;
+    } else {
 
-      case 'long':
-      case 'int':
-      case 'uint':
-      case 'short':
-      case 'ushort':
-        this.value = 42;
-        break;
+      // Making sure we create a sane default value, according to type of argument.
+      switch (data.type) {
 
-      case 'date':
-        this.value = new Date().toISOString();
-        break;
+        case 'bool':
+          this.value = true;
+          break;
+
+        case 'string':
+          this.value = '';
+          break;
+
+        case 'long':
+        case 'int':
+        case 'uint':
+        case 'short':
+        case 'ushort':
+          this.value = 42;
+          break;
+
+        case 'date':
+          this.value = new Date().toISOString();
+          break;
+      }
     }
   }
 
