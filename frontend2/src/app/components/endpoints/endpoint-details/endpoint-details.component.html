@@ -42,12 +42,12 @@
   <span
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')"
     class="item-full-width">
-    <span class="description">
+    <span class="description" *ngIf="getArguments(endpoint.input, true).length > 0">
 
       <mat-chip-list>
         <mat-chip
           *ngFor="let i of getArguments(endpoint.input, true)"
-          [matTooltip]="i.type"
+          [matTooltip]="getChipTooltip(i)"
           selectable="false"
           [class]="hasQueryParam(i) ? 'query-disabled' : ''"
           (removed)="removeQueryParameter(i)"
@@ -65,7 +65,7 @@
       <mat-chip-list>
         <mat-chip
           *ngFor="let i of getArguments(endpoint.input, false)"
-          [matTooltip]="i.type"
+          [matTooltip]="getChipTooltip(i)"
           selectable="false"
           [class]="hasQueryParam(i) ? 'query-disabled' : ''"
           (removed)="removeQueryParameter(i)"

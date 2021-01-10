@@ -152,19 +152,164 @@ export class EndpointDetailsComponent implements OnInit {
    */
   public getArguments(args: Argument[], controlArguments: boolean) {
 
-    // filtering arguments according to caller's specifications.
-    return args.filter(x => {
-      switch (x.name) {
-        case 'operator':
-        case 'limit':
-        case 'offset':
-        case 'order':
-        case 'direction':
-          return controlArguments;
-        default:
-          return !controlArguments;
+    // Checking if this is not a CRUD read/count type of endpoint.
+    if (this.endpoint.type === 'crud-read' || this.endpoint.type === 'crud-count') {
+
+      // Read or count CRUD endpoint
+      return args.filter(x => {
+        switch (x.name) {
+          case 'operator':
+          case 'limit':
+          case 'offset':
+          case 'order':
+          case 'direction':
+            return controlArguments;
+          default:
+            return !controlArguments;
+        }
+      });
+    } else {
+
+      // Not a read or count CRUD endpoint.
+      if (controlArguments)
+        return [];
+      return args;
+    }
+  }
+
+  /**
+   * Returns tooltip information for specified argument.
+   * 
+   * @param arg Argument to retrieve tooltip for
+   */
+  public getChipTooltip(arg: Argument) {
+
+    // Checking if this is not a CRUD read/count type of endpoint.
+    if (this.endpoint.type === 'crud-read' || this.endpoint.type === 'crud-count') {
+
+      // Read or count CRUD endpoint.
+      const query = this.query.filter(x => x.name == arg.name);
+      if (query.length === 0) {
+  
+        // Argument has not been added to query paramaters for invocation.
+        switch (arg.name) {
+
+          case 'operator':
+            return 'Boolean operator to use for conditions';
+
+          case 'limit':
+            return 'Maximum number of items to return';
+
+          case 'offset':
+            return 'Offset from where to return items';
+
+          case 'order':
+            return 'Column to sort by';
+
+          case 'direction':
+            return 'Direction to sort by';
+
+          default:
+            if (arg.name.indexOf('.') !== -1) {
+  
+              // Highly likely a CRUD conditional argument, such as 'xxx.eq', 'xxx.mteq', etc.
+              const comparison = arg.name.substr(arg.name.lastIndexOf('.') + 1);
+              const field = arg.name.substr(0, arg.name.lastIndexOf('.'));
+              switch (comparison) {
+  
+                case 'eq':
+                  return `'${field}' equal to ${arg.type}`;
+  
+                case 'neq':
+                  return `'${field}' not equal to ${arg.type}`;
+  
+                case 'mteq':
+                  return `'${field}' more than or equal to ${arg.type}`;
+  
+                case 'lteq':
+                  return `'${field}' less than or equal to ${arg.type}`;
+  
+                case 'lt':
+                  return `'${field}' less than ${arg.type}`;
+  
+                case 'mt':
+                  return `'${field}' more than ${arg.type}`;
+  
+                case 'like':
+                  return `'${field}' contains ${arg.type}`;
+  
+                default:
+                  return query[0].value;
+              }
+            } else {
+              return arg.type;
+            }
+        }
+      } else {
+  
+        // Argument has been added to query paramaters for invocation.
+        switch (arg.name) {
+
+          case 'operator':
+            return query[0].value === 'or' ? 'or conditions together (union)' : 'and conditions together (intersection)';
+
+          case 'limit':
+            return `Return maximum ${query[0].value} records`;
+
+          case 'offset':
+            return `Return items from record number ${query[0].value}`;
+
+          case 'order':
+            return `Sort by '${query[0].value}' column`;
+
+          case 'direction':
+            return `Sort ${query[0].value === 'asc' ? 'ascending' : 'descending'}`;
+
+          default:
+            if (arg.name.indexOf('.') !== -1) {
+  
+              // Highly likely a CRUD conditional argument, such as 'xxx.eq', 'xxx.mteq', etc.
+              const comparison = arg.name.substr(arg.name.lastIndexOf('.') + 1);
+              const field = arg.name.substr(0, arg.name.lastIndexOf('.'));
+              switch (comparison) {
+  
+                case 'eq':
+                  return `'${field}' equal to ${query[0].value}`;
+  
+                case 'neq':
+                  return `'${field}' not equal to ${query[0].value}`;
+  
+                case 'mteq':
+                  return `'${field}' more than or equal to ${query[0].value}`;
+  
+                case 'lteq':
+                  return `'${field}' less than or equal to ${query[0].value}`;
+  
+                case 'lt':
+                  return `'${field}' less than ${query[0].value}`;
+  
+                case 'mt':
+                  return `'${field}' more than ${query[0].value}`;
+  
+                case 'like':
+                  return `'${field}' contains ${query[0].value}`;
+  
+                default:
+                  return query[0].value;
+              }
+            }
+            return query[0].value;
+          }
+        }
+      } else {
+
+      // Not a read or count CRUD endpoint.
+      const query = this.query.filter(x => x.name === arg.name);
+      if (query.length > 0) {
+        return `${arg.name} equals ${query[0].value}`;
       }
-    });
+      return arg.type;
+    }
   }
 
   /**
@@ -184,11 +329,13 @@ export class EndpointDetailsComponent implements OnInit {
   public addQueryParameter(arg: Argument) {
 
     // Showing modal dialog allowing user to add a new query parameter to URL.
+    const argValue = this.query.filter(x => x.name == arg.name);
     const dialogRef = this.dialog.open(AddQueryParameterComponentDialog, {
       width: '550px',
       data: {
         argument: arg,
         all: this.endpoint.input,
+        old: argValue.length > 0 ? argValue[0].value : null,
       }
     });
 
@@ -205,7 +352,7 @@ export class EndpointDetailsComponent implements OnInit {
         // Adding query parameter to list of args, and rebuilding URL.
         this.query.push({
           name: arg.name,
-          value: encodeURIComponent(value),
+          value: value,
         });
         this.buildUrl();
       }
@@ -259,6 +406,7 @@ export class EndpointDetailsComponent implements OnInit {
 
       // Binding result model to result of invocation.
       this.result = JSON.stringify(res || '{}', null, 2);
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 
