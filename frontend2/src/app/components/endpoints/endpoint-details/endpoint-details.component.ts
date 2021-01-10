@@ -19,6 +19,7 @@ import { AddQueryParameterComponentDialog } from './add-query-parameter-dialog/a
 
 // CodeMirror options.
 import json from '../../codemirror/options/json.json'
+import json_readonly from '../../codemirror/options/json_readonly.json'
 
 /**
  * Endpoint details component, showing information specific to a single
@@ -39,9 +40,21 @@ export class EndpointDetailsComponent implements OnInit {
   };
 
   /**
+   * CodeMirror options object, taken from common settings.
+   */
+  public cmOptionsReadonly = {
+    json: json_readonly,
+  };
+
+  /**
    * Payload example for JSON type of endpoints.
    */
   public payload: string = null;
+
+  /**
+   * Result of invocation.
+   */
+  public result: string = null;
 
   /**
    * URL model for invoking endpoint.
@@ -243,8 +256,10 @@ export class EndpointDetailsComponent implements OnInit {
 
     // Invoking backend now that we've got our observable.
     invocation.subscribe((res: any) => {
-      console.log(res);
-    });
+
+      // Binding result model to result of invocation.
+      this.result = JSON.stringify(res || '{}', null, 2);
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /*
