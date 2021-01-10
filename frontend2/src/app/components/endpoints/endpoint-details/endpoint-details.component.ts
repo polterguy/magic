@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { Observable } from 'rxjs';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, Input, OnInit } from '@angular/core';
@@ -60,6 +61,7 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Needed to be able to create add query value dialog
    * @param clipboard Needed to copy URL of endpoint
    * @param backendService Needed to retrieve base root URL for backend
    * @param feedbackService Needed to provide feedback to user
@@ -78,7 +80,7 @@ export class EndpointDetailsComponent implements OnInit {
   public ngOnInit() {
 
     // Model for URL that invokes endpoint.
-    this.url = this.backendService.current.url + '/' + this.endpoint.path;
+    this.url = '/' + this.endpoint.path;
 
     // Checking if this is a JSON payload or not.
     if (this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
@@ -126,7 +128,7 @@ export class EndpointDetailsComponent implements OnInit {
   public copyUrl() {
 
     // Copies the currently edited endpoint's URL prepended by backend root URL.
-    this.clipboard.copy(this.url);
+    this.clipboard.copy(this.backendService.current.url + this.url);
   }
 
   /**
@@ -179,13 +181,13 @@ export class EndpointDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((value: any) => {
 
-      // Verifying parameter is not already added, and if it is, we remove it first.
-      if (this.query.filter(x => x.name === arg.name).length > 0) {
-        this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
-      }
-
       // Checking if modal dialog wants to create a query parameter.
       if (value || value === false) {
+
+        // Verifying parameter is not already added, and if it is, we remove it first.
+        if (this.query.filter(x => x.name === arg.name).length > 0) {
+          this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
+        }
 
         // Adding query parameter to list of args, and rebuilding URL.
         this.query.push({
@@ -209,6 +211,42 @@ export class EndpointDetailsComponent implements OnInit {
     this.buildUrl();
   }
 
+  /**
+   * Invoked when user wants to invoke endpoint.
+   */
+  public invoke() {
+
+    // Dynamically building our request according to user's specifications, and endpoint type.
+    let invocation: Observable<any> = null;
+    switch (this.endpoint.verb) {
+
+      case 'get':
+        invocation = this.endpointService.get(this.url);
+        break;
+
+      case 'delete':
+        invocation = this.endpointService.delete(this.url);
+        break;
+
+      case 'post':
+        invocation = this.endpointService.post(this.url, JSON.parse(this.payload));
+        break;
+
+      case 'put':
+        invocation = this.endpointService.post(this.url, JSON.parse(this.payload));
+        break;
+
+      case 'patch':
+        invocation = this.endpointService.post(this.url, JSON.parse(this.payload));
+        break;
+    }
+
+    // Invoking backend now that we've got our observable.
+    invocation.subscribe((res: any) => {
+      console.log(res);
+    });
+  }
+
   /*
    * Private helper methods.
    */
@@ -217,7 +255,9 @@ export class EndpointDetailsComponent implements OnInit {
    * Creates URL with root URL and query parameters.
    */
   private buildUrl() {
-    let url = this.backendService.current.url + '/' + this.endpoint.path;
+
+    // Dynamically building our URL according to query parameters.
+    let url = '/' + this.endpoint.path;
     if (this.query.length === 0) {
       this.url = url;
       return;

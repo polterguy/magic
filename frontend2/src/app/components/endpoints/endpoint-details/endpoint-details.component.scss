@@ -17,15 +17,14 @@
       display: block;
       margin-bottom: 1rem;
     }
+    .description-break {
+      word-break: break-word;
+    }
   }
   .item-full-width {
-    .label {
-      display: block;
-      margin-bottom: 1rem
-    }
     .description {
       display: block;
-      margin-bottom: 1rem;
+      margin-top: 1rem;
     }
     mat-chip {
       padding-top: 2px;
