@@ -1,25 +1,37 @@
 
-<span class="item">
-  <strong class="label">URL</strong>
-  <span class="description">{{endpoint.path}}</span>
-</span>
+<div class="wrapper">
 
-<span class="item">
-  <strong class="label">Verb</strong>
-  <span class="description">{{endpoint.verb}}</span>
-</span>
+  <button
+    mat-icon-button
+    matTooltip="Copy full URL"
+    class="copy-button"
+    (click)="copyUrl()">
+    <mat-icon>link</mat-icon>
+  </button>
 
-<span class="item" *ngIf="endpoint.type">
-  <strong class="label">Type</strong>
-  <span class="description">{{endpoint.type}}</span>
-</span>
+  <span class="item">
+    <strong class="label">URL</strong>
+    <span class="description">{{endpoint.path}}</span>
+  </span>
 
-<span class="item" *ngIf="endpoint.description">
-  <strong class="label">Description</strong>
-  <span class="description">{{endpoint.description}}</span>
-</span>
+  <span class="item">
+    <strong class="label">Verb</strong>
+    <span class="description">{{endpoint.verb}}</span>
+  </span>
 
-<span class="item" *ngIf="endpoint.auth">
-  <strong class="label">Authorization</strong>
-  <span class="description">{{getAuth(endpoint.auth)}}</span>
-</span>
+  <span class="item" *ngIf="endpoint.type">
+    <strong class="label">Type</strong>
+    <span class="description">{{endpoint.type}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.description">
+    <strong class="label">Description</strong>
+    <span class="description">{{endpoint.description}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.auth">
+    <strong class="label">Authorization</strong>
+    <span class="description">{{getAuth(endpoint.auth)}}</span>
+  </span>
+
+</div>
