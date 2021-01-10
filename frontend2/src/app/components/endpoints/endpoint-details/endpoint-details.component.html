@@ -84,12 +84,10 @@
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb !== 'get' && endpoint.verb !== 'delete')"
     class="item-full-width">
     <span class="description">
-
       <ngx-codemirror
         [(ngModel)]="payload"
         [options]="cmOptions.json">
       </ngx-codemirror>
-
     </span>
   </span>
 
@@ -100,5 +98,16 @@
       Invoke
     </button>
   </div>
+
+  <span
+    *ngIf="result"
+    class="item-full-width">
+    <span class="description">
+      <ngx-codemirror
+        [(ngModel)]="result"
+        [options]="cmOptionsReadonly.json">
+      </ngx-codemirror>
+    </span>
+  </span>
 
 </div>
