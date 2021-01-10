@@ -1,0 +1,23 @@
+
+<h1 mat-dialog-title>Add query parameter</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <mat-label class="dark">Value</mat-label>
+    <input
+      matInput
+      [(ngModel)]="value"
+      autocomplete="off"
+      placeholder="Value">
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-button
+    (click)="create()">Add</button>
+
+</div>

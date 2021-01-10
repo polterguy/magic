@@ -10,7 +10,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 // Application specific imports.
 import { FeedbackService } from '../../services/feedback.service';
 import { FileService } from 'src/app/components/files/services/file.service';
-import { FileObject, NewFileObjectComponent } from './new-file-object/new-file-object.component';
+import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 /**
@@ -219,7 +219,7 @@ export class FilesComponent implements OnInit {
   public newFolder() {
 
     // Showing modal dialog.
-    const dialogRef = this.dialog.open(NewFileObjectComponent, {
+    const dialogRef = this.dialog.open(NewFileObjectDialogComponent, {
       width: '550px',
       data: {
         isFolder: true,
@@ -250,7 +250,7 @@ export class FilesComponent implements OnInit {
   public newFile() {
 
     // Showing modal dialog.
-    const dialogRef = this.dialog.open(NewFileObjectComponent, {
+    const dialogRef = this.dialog.open(NewFileObjectDialogComponent, {
       width: '550px',
       data: {
         isFolder: false,
