@@ -3,7 +3,7 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field *ngIf="data.type === 'string'" class="fill-width">
     <mat-label class="dark">Value</mat-label>
     <input
       matInput
@@ -11,6 +11,20 @@
       autocomplete="off"
       placeholder="Value">
   </mat-form-field>
+
+  <mat-form-field *ngIf="data.type === 'long'" class="fill-width">
+    <mat-label class="dark">Value</mat-label>
+    <input
+      matInput
+      [(ngModel)]="value"
+      type="number"
+      autocomplete="off"
+      placeholder="Value">
+  </mat-form-field>
+
+  <mat-checkbox
+    *ngIf="data.type === 'bool'"
+    [(ngModel)]="value">Value</mat-checkbox>
 
 </div>
 

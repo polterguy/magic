@@ -145,20 +145,21 @@ export class EndpointDetailsComponent implements OnInit {
    */
   public addQueryParameter(arg: Argument) {
 
-    // Verifying parameter is not already added.
-    if (this.query.filter(x => x.name === arg.name).length > 0) {
-      return;
-    }
-
     // Showing modal dialog allowing user to add a new query parameter to URL.
     const dialogRef = this.dialog.open(AddQueryParameterComponentDialog, {
       width: '550px',
+      data: arg
     });
 
-    dialogRef.afterClosed().subscribe((value: string) => {
+    dialogRef.afterClosed().subscribe((value: any) => {
+
+      // Verifying parameter is not already added, and if it is, we remove it first.
+      if (this.query.filter(x => x.name === arg.name).length > 0) {
+        this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
+      }
 
       // Checking if modal dialog wants to create a query parameter.
-      if (value) {
+      if (value || value === false) {
 
         // Adding query parameter to list of args, and rebuilding URL.
         this.query.push({

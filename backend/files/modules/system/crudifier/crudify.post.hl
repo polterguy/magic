@@ -315,14 +315,18 @@ semaphore:crudifier
          for-each:x:@.arguments/*/args/*/columns/*/*
 
             /*
-             * Checking if we should allow "like" filtering, which is only
-             * true if column is of type "string".
+             * Checking if argument needs a ".like" comparison type,
+             * which is true only for "string" type of arguments.
              */
             if
                eq
                   get-value:x:@.dp/#
                   .:string
                .lambda
+
+                  /*
+                   * String type of argument, appending ".like" to legal arguments.
+                   */
                   .buffer
                      .name:x:@.dp/#
                   unwrap:x:@.buffer/*
@@ -334,20 +338,44 @@ semaphore:crudifier
                      get-nodes:x:@.buffer/*
 
             /*
-             * Allowing for all other types of condition filtering for our
-             * endpoint.
+             * Checking if argument is boolean type of argument, at which
+             * point we ONLY add ".eq" type of argument to it.
              */
-            for-each:x:@.operators/*
-               .buffer
-                  .name:x:@.dp/@.dp/#
-               unwrap:x:@.buffer/*
-               set-name:x:@.buffer/*
-                  strings.concat
-                     get-name:x:@.dp/@.dp/#
-                     .:.
-                     get-name:x:@.dp/#
-               add:x:@apply/*/.arguments
-                  get-nodes:x:@.buffer/*
+            if
+               eq
+                  get-value:x:@.dp/#
+                  .:bool
+               .lambda
+
+                  /*
+                   * Boolean type of argument, removing everything but ".eq" type of arguments.
+                   */
+                  .buffer
+                     .name:x:@.dp/#
+                  unwrap:x:@.buffer/*
+                  set-name:x:@.buffer/*
+                     strings.concat
+                        get-name:x:@.dp/#
+                        .:.eq
+                  add:x:@apply/*/.arguments
+                     get-nodes:x:@.buffer/*
+            else
+
+               /*
+                * Not a boolean type of argument, hence looping through all of
+                * our default comparison operators.
+                */
+               for-each:x:@.operators/*
+                  .buffer
+                     .name:x:@.dp/@.dp/#
+                  unwrap:x:@.buffer/*
+                  set-name:x:@.buffer/*
+                     strings.concat
+                        get-name:x:@.dp/@.dp/#
+                        .:.
+                        get-name:x:@.dp/#
+                  add:x:@apply/*/.arguments
+                     get-nodes:x:@.buffer/*
 
 
          /*
