@@ -3,7 +3,7 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field *ngIf="data.type === 'string' && data.name === 'operator'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'operator'" class="fill-width">
     <mat-select
       [(ngModel)]="value"
       class="dark"
@@ -12,7 +12,25 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.type === 'string' && data.name !== 'operator'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'direction'" class="fill-width">
+    <mat-select
+      [(ngModel)]="value"
+      class="dark"
+      placeholder="Sort order direction">
+      <mat-option *ngFor="let cur of directions" [value]="cur">{{cur}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'order'" class="fill-width">
+    <mat-select
+      [(ngModel)]="value"
+      class="dark"
+      placeholder="Column to order result by">
+      <mat-option *ngFor="let cur of orders" [value]="cur">{{cur}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name !== 'operator' && data.argument.name !== 'direction' && data.argument.name !== 'order'" class="fill-width">
     <mat-label class="dark">Value</mat-label>
     <input
       matInput
@@ -21,7 +39,7 @@
       placeholder="Value">
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.type === 'long'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'long'" class="fill-width">
     <mat-label class="dark">Value</mat-label>
     <input
       matInput
@@ -32,7 +50,7 @@
   </mat-form-field>
 
   <mat-checkbox
-    *ngIf="data.type === 'bool'"
+    *ngIf="data.argument.type === 'bool'"
     [(ngModel)]="value">Value</mat-checkbox>
 
 </div>

@@ -11,6 +11,22 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Argument } from '../../models/argument.model';
 
 /**
+ * Model class for dialog.
+ */
+export class ArgumentModel {
+
+  /**
+   * Argument we're currently creating a value for.
+   */
+  argument: Argument;
+
+  /**
+   * All arguments for endpoint.
+   */
+  all: Argument[];
+}
+
+/**
  * Dialog component for adding a query parameter to the URL of endpoint.
  */
 @Component({
@@ -34,24 +50,47 @@ export class AddQueryParameterComponentDialog {
   ];
 
   /**
+   * Possible sort order directions for sorting result.
+   */
+  public directions: string[] = [
+    'asc',
+    'desc',
+  ];
+
+  /**
+   * Columns user can sort endpoint by.
+   */
+  public orders: string[] = [];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialogRef Needed to be able to close dialog
    */
   constructor(
     private dialogRef: MatDialogRef<AddQueryParameterComponentDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Argument)
+    @Inject(MAT_DIALOG_DATA) public data: ArgumentModel)
   {
-    // Checking if argument name is "operator" which has custom UI.
-    if (data.name === 'operator' && data.type === 'string') {
+    // Checking if argument has custom handler.
+    if (data.argument.name === 'order' && data.argument.type === 'string') {
 
-      // Conditional comparison logic operator argument type.
+      // Populating orders field.
+      this.orders = this.data.all.filter(x => x.name.endsWith('.eq')).map(x => x.name.substr(0, x.name.length - 3));
+
+    } else if (data.argument.name === 'direction' && data.argument.type === 'string') {
+
+      // Defaulting sort direction to 'asc' (ascending).
+      this.value = this.directions.filter(x => x === 'asc')[0];
+
+    } else if (data.argument.name === 'operator' && data.argument.type === 'string') {
+
+      // Defaulting logical operator to 'or'
       this.value = this.operators.filter(x => x === 'and')[0];
 
     } else {
 
       // Making sure we create a sane default value, according to type of argument.
-      switch (data.type) {
+      switch (data.argument.type) {
 
         case 'bool':
           this.value = true;
