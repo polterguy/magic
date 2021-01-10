@@ -110,4 +110,12 @@
     </span>
   </span>
 
+  <div *ngIf="result" class="button-strip">
+    <button
+      mat-button
+      (click)="close()">
+      Close
+    </button>
+  </div>
+
 </div>

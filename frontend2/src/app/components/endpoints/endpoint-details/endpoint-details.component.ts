@@ -407,7 +407,17 @@ export class EndpointDetailsComponent implements OnInit {
       // Binding result model to result of invocation.
       this.result = JSON.stringify(res || '{}', null, 2);
 
-    }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) => {
+      this.feedbackService.showError(error);
+      this.result = null;
+    });
+  }
+
+  /**
+   * Invoked when user wants to close the result view of an invocation.
+   */
+  public close() {
+    this.result = null;
   }
 
   /*
