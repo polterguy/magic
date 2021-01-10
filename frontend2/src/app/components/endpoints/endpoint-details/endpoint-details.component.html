@@ -34,4 +34,50 @@
     <span class="description">{{getAuth(endpoint.auth)}}</span>
   </span>
 
+  <span
+    *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')"
+    class="item-full-width">
+    <strong class="label">Input</strong>
+    <span class="description">
+
+      <mat-chip-list>
+        <mat-chip
+          *ngFor="let i of endpoint.input"
+          [matTooltip]="i.type"
+          selectable="false"
+          [disabled]="this.url.indexOf('?' + i.name + '=') !== -1 || this.url.indexOf('&' + i.name + '=') !== -1"
+          (click)="selectQueryParameter(i)">
+          {{i.name}}
+        </mat-chip>
+      </mat-chip-list>
+
+    </span>
+  </span>
+
+  <span
+    *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb !== 'get' && endpoint.verb !== 'delete')"
+    class="item-full-width">
+    <strong class="label">Input</strong>
+    <span class="description">
+
+      <ngx-codemirror
+        [(ngModel)]="payload"
+        [options]="cmOptions.json">
+      </ngx-codemirror>
+
+    </span>
+  </span>
+
+  <span
+    *ngIf="url"
+    class="item-full-width">
+    <mat-form-field class="fill-width">
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [ngModel]="url">
+    </mat-form-field>
+  </span>
+
 </div>
