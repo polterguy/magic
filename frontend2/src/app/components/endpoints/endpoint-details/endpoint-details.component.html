@@ -45,9 +45,13 @@
           *ngFor="let i of endpoint.input"
           [matTooltip]="i.type"
           selectable="false"
-          [disabled]="this.url.indexOf('?' + i.name + '=') !== -1 || this.url.indexOf('&' + i.name + '=') !== -1"
-          (click)="selectQueryParameter(i)">
+          [class]="hasQueryParam(i) ? 'query-disabled' : ''"
+          (removed)="removeQueryParameter(i)"
+          (click)="addQueryParameter(i)">
           {{i.name}}
+          <mat-icon
+            *ngIf="hasQueryParam(i)"
+            matChipRemove>cancel</mat-icon>
         </mat-chip>
       </mat-chip-list>
 
@@ -76,7 +80,7 @@
         matInput
         type="text"
         autocomplete="off"
-        [ngModel]="url">
+        [(ngModel)]="url">
     </mat-form-field>
   </span>
 

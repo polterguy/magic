@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Clipboard } from '@angular/cdk/clipboard';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -12,10 +13,11 @@ import { Endpoint } from '../models/endpoint.model';
 import { Argument } from '../models/argument.model';
 import { EndpointService } from '../services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { AddQueryParameterComponentDialog } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
 
 // CodeMirror options.
 import json from '../../codemirror/options/json.json'
-import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Endpoint details component, showing information specific to a single
@@ -46,6 +48,11 @@ export class EndpointDetailsComponent implements OnInit {
   public url: string = null;
 
   /**
+   * Query parameters added to URL.
+   */
+  public query: any[] = [];
+
+  /**
    * Model for instance.
    */
   @Input() public endpoint: Endpoint;
@@ -55,9 +62,11 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param clipboard Needed to copy URL of endpoint
    * @param backendService Needed to retrieve base root URL for backend
+   * @param feedbackService Needed to provide feedback to user
    * @param endpointService Needed to be able to invoke endpoint
    */
   constructor(
+    private dialog: MatDialog,
     private clipboard: Clipboard,
     private backendService: BackendService,
     private feedbackService: FeedbackService,
@@ -81,7 +90,7 @@ export class EndpointDetailsComponent implements OnInit {
         switch (type) {
 
           case "long":
-            type = 1;
+            type = 42;
             break;
 
           case "date":
@@ -93,7 +102,7 @@ export class EndpointDetailsComponent implements OnInit {
             break;
 
           case "string":
-            type = "foo bar";
+            type = "foo";
             break;
         }
         payload[idx.name] = type;
@@ -117,29 +126,79 @@ export class EndpointDetailsComponent implements OnInit {
   public copyUrl() {
 
     // Copies the currently edited endpoint's URL prepended by backend root URL.
-    this.clipboard.copy(this.backendService.current.url + '/' + this.endpoint.path);
+    this.clipboard.copy(this.url);
   }
 
   /**
-   * Invoked when a query parameter chip item is clicked.
+   * Returns true if specified query parameter is already in invocation list.
+   * 
+   * @param arg Argument to check for
    */
-  public selectQueryParameter(arg: Argument) {
+  public hasQueryParam(arg: Argument) {
+    return this.query.filter(x => x.name === arg.name).length > 0;
+  }
 
-    // Appending query parameter to URL.
-    if (this.url.indexOf('?') === -1) {
+  /**
+   * Invoked when user wants to add a query parameter to URL.
+   * 
+   * @param arg Argument to add
+   */
+  public addQueryParameter(arg: Argument) {
 
-      // First query parameter.
-      this.url += '?';
-    } else {
-
-      // Consecutive query parameters.
-      this.url += '&';
+    // Verifying parameter is not already added.
+    if (this.query.filter(x => x.name === arg.name).length > 0) {
+      return;
     }
 
-    // Appending actual argument.
-    this.url += arg.name + '=';
+    // Showing modal dialog allowing user to add a new query parameter to URL.
+    const dialogRef = this.dialog.open(AddQueryParameterComponentDialog, {
+      width: '550px',
+    });
 
-    // Creating a default value for argument.
-    //switch (arg.type)
+    dialogRef.afterClosed().subscribe((value: string) => {
+
+      // Checking if modal dialog wants to create a query parameter.
+      if (value) {
+
+        // Adding query parameter to list of args, and rebuilding URL.
+        this.query.push({
+          name: arg.name,
+          value: encodeURIComponent(value),
+        });
+        this.buildUrl();
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to remove a query parameter from URL.
+   * 
+   * @param arg Argument to remove
+   */
+  public removeQueryParameter(arg: Argument) {
+
+    // Removing query parameter from list of args, and rebuilding URL.
+    this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
+    this.buildUrl();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Creates URL with root URL and query parameters.
+   */
+  private buildUrl() {
+    let url = this.backendService.current.url + '/' + this.endpoint.path;
+    if (this.query.length === 0) {
+      this.url = url;
+      return;
+    }
+    url += '?';
+    for (let idx of this.query) {
+      url += idx.name + '=' + encodeURIComponent(idx.value) + '&';
+    }
+    this.url = url.substr(0, url.length - 1);
   }
 }

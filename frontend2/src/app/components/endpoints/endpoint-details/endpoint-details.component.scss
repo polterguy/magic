@@ -33,9 +33,15 @@
       padding-bottom: 2px;
       min-height: 25px;
       min-width: 150px;
+      position: relative;
+      mat-icon {
+        position: absolute;
+        right: .5rem;
+      }
     }
-    mat-chip.mat-chip-disabled {
+    mat-chip.query-disabled {
       cursor: default;
+      background-color: #7d7d7d;
     }
   }
 

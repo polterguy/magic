@@ -30,10 +30,10 @@ export class FileObject {
  * Component for creating a new file system object, either a folder or a file.
  */
 @Component({
-  selector: 'app-new-file-object',
-  templateUrl: './new-file-object.component.html'
+  selector: 'app-new-file-object-dialog',
+  templateUrl: './new-file-object-dialog.component.html'
 })
-export class NewFileObjectComponent {
+export class NewFileObjectDialogComponent {
 
   // Known file extensions we've got editors for.
   private extensions = fileTypes;

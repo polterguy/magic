@@ -281,7 +281,7 @@ export class UsersComponent implements OnInit {
    */
   public createUser() {
 
-    // Showing modal dialog.
+    // Showing modal dialog allowing user to create a new user.
     const dialogRef = this.dialog.open(NewUserDialogComponent, {
       width: '550px',
     });

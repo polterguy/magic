@@ -81,6 +81,7 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { LicenseComponent } from './components/config/license/license.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
+import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
@@ -98,19 +99,19 @@ import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnosti
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
-import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { LoginDialogComponent } from './components/app/login-dialog/login-dialog.component';
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
-import { NewFileObjectComponent } from './components/files/new-file-object/new-file-object.component';
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
+import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
+import { AddQueryParameterComponentDialog } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -155,7 +156,7 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     ScheduleTaskDialogComponent,
     NewTaskDialogComponent,
     FileEditorComponent,
-    NewFileObjectComponent,
+    NewFileObjectDialogComponent,
     ServerPublicKeyComponent,
     PublicKeysComponent,
     ImportPublicKeyDialogComponent,
@@ -169,6 +170,7 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
     DiagnosticsErrorsComponent,
     DiagnosticsCache,
     EndpointDetailsComponent,
+    AddQueryParameterComponentDialog,
   ],
   imports: [
     FormsModule,
