@@ -35,4 +35,52 @@ export class EndpointService {
     return this.httpService.get<Endpoint[]>(
       '/magic/modules/system/endpoints/endpoints');
   }
+
+  /**
+   * Invokes the HTTP GET verb towards the specified URL.
+   * 
+   * @param url URL to invoke
+   */
+  get(url: string) {
+    return this.httpService.get<any>(url);
+  }
+
+  /**
+   * Invokes the HTTP DELETE verb towards the specified URL.
+   * 
+   * @param url URL to invoke
+   */
+  delete(url: string) {
+    return this.httpService.delete<any>(url);
+  }
+
+  /**
+   * Invokes the HTTP POST verb towards the specified URL, passing
+   * in the specified payload.
+   * 
+   * @param url URL to invoke
+   */
+  post(url: string, args: any) {
+    return this.httpService.post<any>(url, args);
+  }
+
+  /**
+   * Invokes the HTTP PUT verb towards the specified URL, passing
+   * in the specified payload.
+   * 
+   * @param url URL to invoke
+   */
+  put(url: string, args: any) {
+    return this.httpService.put<any>(url, args);
+  }
+
+  /**
+   * Invokes the HTTP PATCH verb towards the specified URL, passing
+   * in the specified payload.
+   * 
+   * @param url URL to invoke
+   */
+  patch(url: string, args: any) {
+    return this.httpService.patch<any>(url, args);
+  }
 }

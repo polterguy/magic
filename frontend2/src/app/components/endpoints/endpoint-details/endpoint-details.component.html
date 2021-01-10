@@ -3,14 +3,14 @@
 
   <button
     mat-icon-button
-    matTooltip="Copy full URL"
+    matTooltip="Copy full invocation URL"
     class="copy-button"
     (click)="copyUrl()">
     <mat-icon>link</mat-icon>
   </button>
 
   <span class="item">
-    <strong class="label">URL</strong>
+    <strong class="label">Relative URL</strong>
     <span class="description">{{endpoint.path}}</span>
   </span>
 
@@ -34,10 +34,14 @@
     <span class="description">{{getAuth(endpoint.auth)}}</span>
   </span>
 
+  <span *ngIf="url" class="item">
+    <strong class="label">Absolute URL</strong>
+    <span class="description description-break">{{url}}</span>
+  </span>
+
   <span
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')"
     class="item-full-width">
-    <strong class="label">Input</strong>
     <span class="description">
 
       <mat-chip-list>
@@ -79,7 +83,6 @@
   <span
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb !== 'get' && endpoint.verb !== 'delete')"
     class="item-full-width">
-    <strong class="label">Input</strong>
     <span class="description">
 
       <ngx-codemirror
@@ -90,16 +93,12 @@
     </span>
   </span>
 
-  <span
-    *ngIf="url"
-    class="item-full-width">
-    <mat-form-field class="fill-width">
-      <input
-        matInput
-        type="text"
-        autocomplete="off"
-        [(ngModel)]="url">
-    </mat-form-field>
-  </span>
+  <div class="button-strip">
+    <button
+      mat-button
+      (click)="invoke()">
+      Invoke
+    </button>
+  </div>
 
 </div>

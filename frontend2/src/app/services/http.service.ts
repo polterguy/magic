@@ -127,6 +127,29 @@ export class HttpService {
   }
 
   /**
+   * Invokes the HTTP PATCH verb towards your specified URL
+   * in your currently selected backend, passing in the specified
+   * payload, and returns the result.
+   * 
+   * @param url Backend URL of endpoint
+   * @param req Request payload to post
+   */
+  public patch<Response>(url: string, req: any) {
+
+    // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
+    if (!this.backendService.connected) {
+
+      // Oops, not connected to any backends.
+      throw throwError('Not connected to any backend, please choose a backend before trying to invoke endpoints');
+
+    } else {
+
+      // Invoking backend's URL and resolving to the next subscriber.
+      return this.httpClient.patch<Response>(this.backendService.current.url + url, req);
+    }
+  }
+
+  /**
    * Invokes the HTTP DELETE verb towards your specified URL
    * in your currently selected backend, and returns the result.
    * 
