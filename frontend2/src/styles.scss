@@ -162,13 +162,16 @@ mat-card.emphasized {
   background-color: #ccc;
   color: #333;
   margin-bottom: 2rem;
-  .close {
-    position: absolute;
-    top: .5rem;
-    right: .5rem;
-  }
 }
 
+/*
+ * Generic close button style.
+ */
+.close {
+  position: absolute !important;
+  top: .5rem;
+  right: .5rem;
+}
 
 mat-horizontal-stepper.mat-stepper-horizontal,
 mat-horizontal-stepper.mat-stepper-vertical {

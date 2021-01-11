@@ -99,23 +99,32 @@
     </button>
   </div>
 
-  <span
-    *ngIf="result"
-    class="item-full-width">
-    <span class="description">
-      <ngx-codemirror
-        [(ngModel)]="result"
-        [options]="cmOptionsReadonly.json">
-      </ngx-codemirror>
-    </span>
-  </span>
+  <div *ngIf="result" class="mat-elevation-z4 response">
 
-  <div *ngIf="result" class="button-strip">
+    <span
+      class="item">
+      <strong class="label">Status</strong>
+      <span class="description">{{result.status + ' ' + result.statusText}}</span>
+    </span>
+
+    <span
+      class="item-full-width">
+      <span class="description">
+        <ngx-codemirror
+          [(ngModel)]="result.response"
+          [options]="cmOptionsReadonly.json">
+        </ngx-codemirror>
+      </span>
+    </span>
+
     <button
-      mat-button
+      mat-icon-button
+      class="close"
+      matTooltip="Close result"
       (click)="close()">
-      Close
+      <mat-icon>close</mat-icon>
     </button>
+
   </div>
 
 </div>

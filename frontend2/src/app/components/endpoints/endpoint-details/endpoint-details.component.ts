@@ -20,6 +20,7 @@ import { AddQueryParameterComponentDialog } from './add-query-parameter-dialog/a
 // CodeMirror options.
 import json from '../../codemirror/options/json.json'
 import json_readonly from '../../codemirror/options/json_readonly.json'
+import { ok } from 'assert';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
@@ -31,6 +32,21 @@ class QueryModel {
 
   // Value of query parameter.
   value: any;
+}
+
+/*
+ * Result of invocation.
+ */
+class InvocationResult {
+
+  // HTTP status code of invocation.
+  status: number;
+
+  // HTTP status text of invocation.
+  statusText: string;
+
+  // Actual payload returned by invocation.
+  response: any;
 }
 
 /**
@@ -66,7 +82,7 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Result of invocation.
    */
-  public result: string = null;
+  public result: InvocationResult = null;
 
   /**
    * URL model for invoking endpoint.
@@ -417,12 +433,35 @@ export class EndpointDetailsComponent implements OnInit {
     invocation.subscribe((res: any) => {
 
       // Binding result model to result of invocation.
-      this.result = JSON.stringify(res || '{}', null, 2);
+      this.result = {
+        status: 200,
+        statusText: 'OK',
+        response: JSON.stringify(res.body || '{}', null, 2),
+      };
 
     }, (error: any) => {
-      this.feedbackService.showError(error);
-      this.result = null;
+
+      // Assigning model to result of invocation.
+      this.result = {
+        status: error.status,
+        statusText: error.statusText,
+        response: JSON.stringify(error.error || '{}', null, 2),
+      };
     });
+  }
+
+  /**
+   * Returns whether or not the current invocation was successful or not.
+   */
+  public isSuccessResponse() {
+    return this.result && this.result.status >= 200 && this.result.status < 400;
+  }
+
+  /**
+   * Returns whether or not the current invocation failed or not.
+   */
+  public isFailedResponse() {
+    return this.result && this.result.status >= 400;
   }
 
   /**
