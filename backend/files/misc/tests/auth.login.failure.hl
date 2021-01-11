@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:"get"
+url:"/magic/modules/system/auth/authenticate?username=root&password=not-valid-password"
+status:int:401

@@ -12,12 +12,8 @@
 }
 
 table.files {
+  table-layout: fixed;
   tr {
-    td:nth-child(1) {
-      padding-top: 14px;
-      padding-bottom: 9px;
-      width: 5px;
-    }
     td {
       .file-details {
         margin: 1rem .25rem .5rem .25rem;
@@ -25,16 +21,6 @@ table.files {
       .folder-icon {
         color:rgb(189, 115, 18);
       }
-    }
-    td:nth-child(3) {
-      padding-top: 5px;
-      padding-bottom: 9px;
-      width: 5px;
-    }
-    td:nth-child(4) {
-      padding-top: 5px;
-      padding-bottom: 9px;
-      width: 5px;
     }
   }
 }

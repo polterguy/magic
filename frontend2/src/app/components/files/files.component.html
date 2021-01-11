@@ -20,7 +20,7 @@
     multiTemplateDataRows>
 
     <ng-container matColumnDef="icon">
-      <td mat-cell *matCellDef="let el">
+      <td class="mini-col icon-col" mat-cell *matCellDef="let el">
         <mat-icon *ngIf="!isFolder(el)">insert_drive_file</mat-icon>
         <mat-icon class="folder-icon" *ngIf="isFolder(el)">folder</mat-icon>
       </td>
@@ -31,7 +31,7 @@
     </ng-container>
 
     <ng-container matColumnDef="download">
-      <td mat-cell *matCellDef="let el">
+      <td class="mini-col button-col" mat-cell *matCellDef="let el">
         <button
           mat-icon-button
           matTooltip="Download"
@@ -42,7 +42,7 @@
     </ng-container>
 
     <ng-container matColumnDef="delete">
-      <td mat-cell *matCellDef="let el">
+      <td class="mini-col button-col" mat-cell *matCellDef="let el">
         <button
           mat-icon-button
           matTooltip="Delete"

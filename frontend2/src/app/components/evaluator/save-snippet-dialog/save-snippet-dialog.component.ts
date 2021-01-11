@@ -20,12 +20,12 @@ import { EvaluatorService } from 'src/app/components/evaluator/services/evaluato
 })
 export class SaveSnippetDialogComponent implements OnInit {
 
-  /**
+  /*
    * Existing snippet files as returned from backend.
    * 
    * Needed to make autocompleter working allowing user to overwrite previously saved snippet.
    */
-  public files: string[] = [];
+  private files: string[] = [];
 
   /**
    * Creates an instance of your login dialog.
@@ -86,6 +86,6 @@ export class SaveSnippetDialogComponent implements OnInit {
         return false;
       }
     }
-    return true;
+    return this.data.length > 0;
   }
 }
