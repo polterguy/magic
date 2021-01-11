@@ -48,7 +48,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
    */
   public data: TestModel = {
     filename: '',
-    matchResponse: true,
+    matchResponse: false,
   };
 
   /**
