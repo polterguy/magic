@@ -9,8 +9,10 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Endpoint } from '../models/endpoint.model';
+import { Response } from 'src/app/models/response.model';
 import { HttpService } from '../../../services/http.service';
 import { FileService } from '../../files/services/file.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -26,10 +28,12 @@ export class EndpointService {
    * 
    * @param httpService HTTP service to use for backend invocations
    * @param fileService Needed to create, query and load assumption/integration tests
+   * @param backendService Needed to extract root URL
    */
   constructor(
     private httpService: HttpService,
-    private fileService: FileService) { }
+    private fileService: FileService,
+    private backendService: BackendService) { }
 
   /**
    * Retrieves meta data about the endpoints in your installation.
@@ -122,5 +126,20 @@ export class EndpointService {
 
     // Returning result of invocation to file service.
     return this.fileService.saveFile(filename, content);
+  }
+
+  /**
+   * Executes the specified tests.
+   * 
+   * @param filename Full path of test to execute
+   */
+  public executeTest(filename: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<Response>(
+      '/magic/modules/system/diagnostics/execute-test?root_url=' +
+      encodeURIComponent(this.backendService.current.url) +
+      '&test_file=' +
+      encodeURIComponent(filename));
   }
 }

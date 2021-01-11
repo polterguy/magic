@@ -1,0 +1,130 @@
+
+/*
+ * Executes the specified test and returns result to caller.
+ */
+.description:"Executes the specified test and return results to caller."
+.arguments
+   root_url:string
+   test_file:string
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/root_url
+validators.mandatory:x:@.arguments/*/test_file
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Loading assumption/integration test Hyperlambda file,
+ * and converting to lambda.
+ */
+io.file.load:x:@.arguments/*/test_file
+hyper2lambda:x:-
+
+
+/*
+ * Retrieving Authorization header used to invoke current endpoint,
+ * and forwarding it into invocation towards assumption test.
+ */
+request.headers.get:Authorization
+
+
+/*
+ * Creating our HTTP invocation.
+ */
+strings.concat
+   get-value:x:@.arguments/*/root_url
+   get-value:x:@hyper2lambda/*/url
+set-name:x:+
+   strings.concat
+      .:http.
+      get-value:x:@hyper2lambda/*/verb
+http.xxx:x:@strings.concat
+   headers
+      Authorization:x:@request.headers.get
+.foo
+
+
+/*
+ * Making sure assumptions and reality overlaps.
+ */
+if
+   not
+      eq
+         get-value:x:@.foo/-
+         get-value:x:@hyper2lambda/*/status
+   .lambda
+
+      /*
+       * Status code was not as expected.
+       */
+      strings.concat
+         .:"Wrong status code returned, expected "
+         get-value:x:@hyper2lambda/*/status
+         .:" but got "
+         get-value:x:@if/-
+      unwrap:x:+/*
+      return
+         result:x:@strings.concat
+
+
+/*
+ * Checking if test assumes response equality, and if not, returning
+ * success early.
+ */
+if
+   not
+      exists:x:@hyper2lambda/*/response
+   .lambda
+      return
+         result:success
+
+
+/*
+ * Making sure JSON formatting becomes irrelevant.
+ */
+.response
+json2lambda:x:@.foo/-/*/content
+set-value:x:@.response
+   lambda2json:x:@json2lambda/*
+.assumption
+json2lambda:x:@hyper2lambda/*/response
+set-value:x:@.assumption
+   lambda2json:x:@json2lambda/*
+
+
+/*
+ * Making sure assumptions and reality overlaps.
+ */
+if
+   not
+      eq
+         get-value:x:@.response
+         get-value:x:@.assumption
+   .lambda
+
+      /*
+       * Response was assumed to be an exact match, and assumption failed.
+       */
+      strings.concat
+         .:"Wrong response returned, expected "
+         get-value:x:@hyper2lambda/*/response
+         .:" but got "
+         get-value:x:@if/-/*/content
+      unwrap:x:+/*
+      return
+         result:x:@strings.concat
+
+
+/*
+ * Returns success to caller.
+ */
+return
+   result:success

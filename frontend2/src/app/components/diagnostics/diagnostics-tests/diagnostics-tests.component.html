@@ -1,0 +1,24 @@
+
+<div class="wrapper">
+
+  <table
+    mat-table
+    [dataSource]="tests"
+    class="tests clickable">
+
+    <ng-container matColumnDef="name">
+      <td mat-cell *matCellDef="let el">{{getName(el.filename)}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="result">
+      <td mat-cell class="mini-col icon-col" *matCellDef="let el">
+        <mat-icon matTooltip="Success" *ngIf="el.success !== null && el.success">check_circle</mat-icon>
+        <mat-icon class="warning" matTooltip="Test failed!" *ngIf="el.success !== null && !el.success">warning</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr (click)="executeTest(el)" mat-row *matRowDef="let el; columns: ['name', 'result'];"></tr>
+
+  </table>
+
+</div>

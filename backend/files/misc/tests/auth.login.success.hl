@@ -2,6 +2,6 @@
 /*
  * Assumption/integration test.
  */
-verb:"get"
+verb:get
 url:"/magic/modules/system/auth/authenticate?username=root&password=admin"
 status:int:200
