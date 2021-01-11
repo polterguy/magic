@@ -38,7 +38,7 @@ export class ArgumentModel {
   selector: 'app-add-query-parameter-dialog',
   templateUrl: './add-query-parameter-dialog.component.html'
 })
-export class AddQueryParameterComponentDialog {
+export class AddQueryParameterDialogComponent {
 
   /**
    * Model for value of query parameter.
@@ -72,7 +72,7 @@ export class AddQueryParameterComponentDialog {
    * @param dialogRef Needed to be able to close dialog
    */
   constructor(
-    private dialogRef: MatDialogRef<AddQueryParameterComponentDialog>,
+    private dialogRef: MatDialogRef<AddQueryParameterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ArgumentModel)
   {
     // Checking if argument has custom handler.

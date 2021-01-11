@@ -15,7 +15,7 @@ import { Argument } from '../models/argument.model';
 import { EndpointService } from '../services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AddQueryParameterComponentDialog } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
+import { AddQueryParameterDialogComponent } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 // CodeMirror options.
@@ -357,7 +357,7 @@ export class EndpointDetailsComponent implements OnInit {
 
     // Showing modal dialog allowing user to add a new query parameter to URL.
     const argValue = this.query.filter(x => x.name == arg.name);
-    const dialogRef = this.dialog.open(AddQueryParameterComponentDialog, {
+    const dialogRef = this.dialog.open(AddQueryParameterDialogComponent, {
       width: '550px',
       data: {
         argument: arg,
@@ -524,7 +524,7 @@ export class EndpointDetailsComponent implements OnInit {
  * Assumption/integration test.
  */
 `;
-    result += `verb:"${this.endpoint.verb}"
+    result += `verb:${this.endpoint.verb}
 url:"${this.url}"
 `;
     if (this.payload) {
@@ -534,7 +534,8 @@ url:"${this.url}"
     result += `status:int:${this.result.status}
 `;
     if (matchResponse && this.result.response) {
-      result += `response:@"${this.result.response.split('"').join('""')}"`
+      let response = JSON.stringify(JSON.parse(this.result.response));
+      result += `response:@"${response.split('"').join('""')}"`
     }
     return result;
   }

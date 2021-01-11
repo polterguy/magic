@@ -92,6 +92,7 @@ import { ServerPublicKeyComponent } from './components/crypto/server-public-key/
 import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
+import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-tests/diagnostics-tests.component';
 import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
@@ -111,7 +112,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
-import { AddQueryParameterComponentDialog } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
+import { AddQueryParameterDialogComponent } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 /**
@@ -171,8 +172,9 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     DiagnosticsErrorsComponent,
     DiagnosticsCache,
     EndpointDetailsComponent,
-    AddQueryParameterComponentDialog,
+    AddQueryParameterDialogComponent,
     CreateAssumptionTestDialogComponent,
+    DiagnosticsTestsComponent,
   ],
   imports: [
     FormsModule,
