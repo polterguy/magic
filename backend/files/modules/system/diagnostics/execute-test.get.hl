@@ -70,6 +70,10 @@ if
          get-value:x:@hyper2lambda/*/status
          .:" but got "
          get-value:x:@if/-
+      log.info
+         strings.concat
+            .:"Assumption/integration test failed, error message was: "
+            get-value:x:@log.info/@strings.concat
       unwrap:x:+/*
       return
          result:x:@strings.concat
@@ -118,6 +122,10 @@ if
          get-value:x:@hyper2lambda/*/response
          .:" but got "
          get-value:x:@if/-/*/content
+      log.info
+         strings.concat
+            .:"Assumption/integration test failed, error message was: "
+            get-value:x:@log.info/@strings.concat
       unwrap:x:+/*
       return
          result:x:@strings.concat
