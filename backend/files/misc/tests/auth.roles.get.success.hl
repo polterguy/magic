@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/magic/roles?name.eq=root"
+status:int:200
+response:@"[{""name"":""root"",""description"":""This is a root account in your system""}]"

@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/evaluator/vocabulary"
+status:int:200

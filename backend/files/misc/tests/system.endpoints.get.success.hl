@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/endpoints/endpoints"
+status:int:200

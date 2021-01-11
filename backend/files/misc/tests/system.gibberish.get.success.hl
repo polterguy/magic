@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/misc/gibberish?min=50&max=100"
+status:int:200

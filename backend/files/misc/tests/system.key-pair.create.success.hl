@@ -1,0 +1,11 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:post
+url:"/magic/modules/system/config/generate-keypair"
+payload:@"{
+  ""strength"": ""1024"",
+  ""seed"": ""howdy-this-is-seed""
+}"
+status:int:200

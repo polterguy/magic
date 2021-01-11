@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:delete
+url:"/magic/modules/system/config/empty-cache"
+status:int:200

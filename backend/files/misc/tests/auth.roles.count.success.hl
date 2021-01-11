@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/magic/roles-count?name.eq=root"
+status:int:200
+response:@"{""count"":1}"

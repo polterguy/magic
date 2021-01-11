@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/crypto/public-key"
+status:int:200
