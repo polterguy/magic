@@ -122,7 +122,7 @@ export class DiagnosticsTestsComponent implements OnInit {
       if (hasErrors > 0) {
         this.feedbackService.showError(`${hasErrors} assumption tests failed`);
       } else {
-        this.feedbackService.showInfoShort('All tests executed successfully');
+        this.feedbackService.showInfoShort(`${idxNo} tests executed successfully`);
       }
     });
   }

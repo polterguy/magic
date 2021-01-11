@@ -1,0 +1,11 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:post
+url:"/magic/modules/magic/log_entries"
+payload:@"{
+  ""type"": ""info"",
+  ""content"": ""Assumption test""
+}"
+status:int:200

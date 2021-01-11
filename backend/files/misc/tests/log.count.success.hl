@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/magic/log_entries-count"
+status:int:200

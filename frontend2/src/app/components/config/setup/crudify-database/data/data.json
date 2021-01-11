@@ -296,7 +296,8 @@
              "exception":"string"
           }
        ]
-    }
+    },
+    "validators": "validators.enum:x:@.arguments/*/type\r\n   .:info\r\n   .:error\r\n   .:debug\r\n   .:fatal"
   },
   {
     "overwrite": true,
@@ -325,55 +326,6 @@
           },
           {
              "exception":"string"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"log_entries",
-    "moduleUrl":"log_entries",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.put.hl",
-    "verb":"put",
-    "auth":"root",
-    "args":{
-       "primary":[
-          {
-             "id":"long"
-          }
-       ],
-       "columns":[
-          {
-             "type":"string"
-          },
-          {
-             "content":"string"
-          },
-          {
-             "exception":"string"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"log_entries",
-    "moduleUrl":"log_entries",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.delete.hl",
-    "verb":"delete",
-    "auth":"root",
-    "args":{
-       "primary":[
-          {
-             "id":"long"
           }
        ]
     }

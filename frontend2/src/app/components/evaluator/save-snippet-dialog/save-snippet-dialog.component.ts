@@ -82,7 +82,7 @@ export class SaveSnippetDialogComponent implements OnInit {
 
     // A valid filename only contains [a-z], [0-9], '.' and '-'.
     for (var idx of this.data) {
-      if ('abcdefghijklmnopqrstuvwxyz0123456789.-'.indexOf(idx) === -1) {
+      if ('abcdefghijklmnopqrstuvwxyz0123456789.-_'.indexOf(idx) === -1) {
         return false;
       }
     }

@@ -39,7 +39,7 @@
       placeholder="Value">
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.argument.type === 'long'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'long' || data.argument.type === 'int' || data.argument.type === 'uint' || data.argument.type === 'ulong' || data.argument.type === 'shor' || data.argument.type === 'ushort'" class="fill-width">
     <mat-label class="dark">Value</mat-label>
     <input
       matInput

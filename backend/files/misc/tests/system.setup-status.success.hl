@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/config/setup-status"
+status:int:200
+response:@"{""magic_crudified"":true,""server_keypair"":true,""config_done"":true}"

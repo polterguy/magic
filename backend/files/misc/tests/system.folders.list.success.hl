@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/file-system/list-folders?folder=%2F"
+status:int:200
+response:@"[""/misc/"",""/modules/""]"

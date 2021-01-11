@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/evaluator/documentation?module=magic.lambda.http"
+status:int:200

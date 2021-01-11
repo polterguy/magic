@@ -1,0 +1,7 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/sql/connection-strings?databaseType=mssql"
+status:int:200
