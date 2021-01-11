@@ -46,7 +46,7 @@ export class HttpService {
 
     } else {
 
-      // Invoking backend's URL and resolving to the next subscriber.
+      // Invoking backend's URL.
       if (!requestOptions) {
         return this.httpClient.get<Response>(this.backendService.current.url + url);
       } else {
@@ -87,8 +87,9 @@ export class HttpService {
    * 
    * @param url Backend URL of endpoint
    * @param req Request payload to post
+   * @param requestOptions Request options for invocation
    */
-  public post<Response>(url: string, req: any) {
+  public post<Response>(url: string, req: any, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
     if (!this.backendService.connected) {
@@ -98,8 +99,12 @@ export class HttpService {
 
     } else {
 
-      // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.post<Response>(this.backendService.current.url + url, req);
+      // Invoking backend's URL.
+      if (!requestOptions) {
+        return this.httpClient.post<Response>(this.backendService.current.url + url, req);
+      } else {
+        return this.httpClient.post<Response>(this.backendService.current.url + url, req, requestOptions);
+      }
     }
   }
 
@@ -110,8 +115,9 @@ export class HttpService {
    * 
    * @param url Backend URL of endpoint
    * @param req Request payload to post
+   * @param requestOptions Request options for invocation
    */
-  public put<Response>(url: string, req: any) {
+  public put<Response>(url: string, req: any, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
     if (!this.backendService.connected) {
@@ -121,8 +127,12 @@ export class HttpService {
 
     } else {
 
-      // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.put<Response>(this.backendService.current.url + url, req);
+      // Invoking backend's URL.
+      if (!requestOptions) {
+        return this.httpClient.put<Response>(this.backendService.current.url + url, req);
+      } else {
+        return this.httpClient.put<Response>(this.backendService.current.url + url, req, requestOptions);
+      }
     }
   }
 
@@ -133,8 +143,9 @@ export class HttpService {
    * 
    * @param url Backend URL of endpoint
    * @param req Request payload to post
+   * @param requestOptions Request options for invocation
    */
-  public patch<Response>(url: string, req: any) {
+  public patch<Response>(url: string, req: any, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
     if (!this.backendService.connected) {
@@ -144,8 +155,12 @@ export class HttpService {
 
     } else {
 
-      // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.patch<Response>(this.backendService.current.url + url, req);
+      // Invoking backend's URL.
+      if (!requestOptions) {
+        return this.httpClient.patch<Response>(this.backendService.current.url + url, req);
+      } else {
+        return this.httpClient.patch<Response>(this.backendService.current.url + url, req, requestOptions);
+      }
     }
   }
 
@@ -154,8 +169,9 @@ export class HttpService {
    * in your currently selected backend, and returns the result.
    * 
    * @param url Backend URL to endpoint
+   * @param requestOptions Request options for invocation
    */
-  public delete<Response>(url: string) {
+  public delete<Response>(url: string, requestOptions: object = null) {
 
     // Making sure we're connected to a backend, and if not, resolving observable to its error callback.
     if (!this.backendService.connected) {
@@ -165,8 +181,12 @@ export class HttpService {
 
     } else {
 
-      // Invoking backend's URL and resolving to the next subscriber.
-      return this.httpClient.delete<Response>(this.backendService.current.url + url);
+      // Invoking backend's URL.
+      if (!requestOptions) {
+        return this.httpClient.delete<Response>(this.backendService.current.url + url);
+      } else {
+        return this.httpClient.delete<Response>(this.backendService.current.url + url, requestOptions);
+      }
     }
   }
 }

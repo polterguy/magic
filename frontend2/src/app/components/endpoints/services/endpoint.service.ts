@@ -42,7 +42,9 @@ export class EndpointService {
    * @param url URL to invoke
    */
   get(url: string) {
-    return this.httpService.get<any>(url);
+    return this.httpService.get<any>(url, {
+      observe: 'response',
+    });
   }
 
   /**
