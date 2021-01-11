@@ -421,11 +421,11 @@ export class EndpointDetailsComponent implements OnInit {
         break;
 
       case 'put':
-        invocation = this.endpointService.post(this.url, JSON.parse(this.payload));
+        invocation = this.endpointService.put(this.url, JSON.parse(this.payload));
         break;
 
       case 'patch':
-        invocation = this.endpointService.post(this.url, JSON.parse(this.payload));
+        invocation = this.endpointService.patch(this.url, JSON.parse(this.payload));
         break;
     }
 
@@ -453,15 +453,8 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Returns whether or not the current invocation was successful or not.
    */
-  public isSuccessResponse() {
+  public isSuccess() {
     return this.result && this.result.status >= 200 && this.result.status < 400;
-  }
-
-  /**
-   * Returns whether or not the current invocation failed or not.
-   */
-  public isFailedResponse() {
-    return this.result && this.result.status >= 400;
   }
 
   /**

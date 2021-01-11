@@ -101,10 +101,17 @@
 
   <div *ngIf="result" class="mat-elevation-z4 response">
 
+    <mat-icon
+      *ngIf="!isSuccess()"
+      matTooltip="Invocation failed!"
+      class="failed">warning</mat-icon>
+
     <span
       class="item">
       <strong class="label">Status</strong>
-      <span class="description">{{result.status + ' ' + result.statusText}}</span>
+      <span class="description">
+        {{result.status + ' ' + result.statusText}}
+      </span>
     </span>
 
     <span
@@ -117,13 +124,15 @@
       </span>
     </span>
 
-    <button
-      mat-icon-button
-      class="close"
-      matTooltip="Close result"
-      (click)="close()">
-      <mat-icon>close</mat-icon>
-    </button>
+    <div class="button-strip">
+      <button
+        mat-button
+        class="close-response"
+        matTooltip="Close result"
+        (click)="close()">
+        Close
+      </button>
+    </div>
 
   </div>
 
