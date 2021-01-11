@@ -21,6 +21,18 @@ import { AddQueryParameterComponentDialog } from './add-query-parameter-dialog/a
 import json from '../../codemirror/options/json.json'
 import json_readonly from '../../codemirror/options/json_readonly.json'
 
+/*
+ * Query model encapsulating a single query parameter added to the HTTP invocation.
+ */
+class QueryModel {
+
+  // Name of query parameter.
+  name: string;
+
+  // Value of query parameter.
+  value: any;
+}
+
 /**
  * Endpoint details component, showing information specific to a single
  * endpoint, and allowing user to invoke endpoint.
@@ -64,7 +76,7 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Query parameters added to URL.
    */
-  public query: any[] = [];
+  public query: QueryModel[] = [];
 
   /**
    * Model for instance.
@@ -195,10 +207,10 @@ export class EndpointDetailsComponent implements OnInit {
         switch (arg.name) {
 
           case 'operator':
-            return 'Boolean operator to use for conditions';
+            return 'Boolean operator to use for conditions, defaults to \'and\'';
 
           case 'limit':
-            return 'Maximum number of items to return';
+            return 'Maximum number of items to return, defaults to 25';
 
           case 'offset':
             return 'Offset from where to return items';
@@ -207,7 +219,7 @@ export class EndpointDetailsComponent implements OnInit {
             return 'Column to sort by';
 
           case 'direction':
-            return 'Direction to sort by';
+            return 'Direction to sort by, defaults to \'asc\'';
 
           default:
             if (arg.name.indexOf('.') !== -1) {
