@@ -458,6 +458,13 @@ export class EndpointDetailsComponent implements OnInit {
   }
 
   /**
+   * Allows the user to create an assumption/integration test for the current request/response.
+   */
+  public createTest() {
+    console.log('create test');
+  }
+
+  /**
    * Invoked when user wants to close the result view of an invocation.
    */
   public close() {

@@ -94,6 +94,7 @@
   <div class="button-strip">
     <button
       mat-button
+      matTooltip="Invokes endpoint with the specified arguments"
       (click)="invoke()">
       Invoke
     </button>
@@ -125,13 +126,21 @@
     </span>
 
     <div class="button-strip">
+
       <button
         mat-button
-        class="close-response"
+        matTooltip="Creates an assumption/integration test with the current request/response"
+        (click)="createTest()">
+        Create test
+      </button>
+
+      <button
+        mat-button
         matTooltip="Close result"
         (click)="close()">
         Close
       </button>
+
     </div>
 
   </div>
