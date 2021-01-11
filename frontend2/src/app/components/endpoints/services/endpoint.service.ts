@@ -4,11 +4,13 @@
  */
 
 // Angular and system imports.
+import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Endpoint } from '../models/endpoint.model';
 import { HttpService } from '../../../services/http.service';
+import { FileService } from '../../files/services/file.service';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -23,8 +25,11 @@ export class EndpointService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
+   * @param fileService Needed to create, query and load assumption/integration tests
    */
-  constructor(private httpService: HttpService) { }
+  constructor(
+    private httpService: HttpService,
+    private fileService: FileService) { }
 
   /**
    * Retrieves meta data about the endpoints in your installation.
@@ -41,7 +46,7 @@ export class EndpointService {
    * 
    * @param url URL to invoke
    */
-  get(url: string) {
+  public get(url: string) {
     return this.httpService.get<any>(url, {
       observe: 'response',
     });
@@ -52,7 +57,7 @@ export class EndpointService {
    * 
    * @param url URL to invoke
    */
-  delete(url: string) {
+  public delete(url: string) {
     return this.httpService.delete<any>(url);
   }
 
@@ -61,8 +66,9 @@ export class EndpointService {
    * in the specified payload.
    * 
    * @param url URL to invoke
+   * @param args Payload to transmit to backend
    */
-  post(url: string, args: any) {
+  public post(url: string, args: any) {
     return this.httpService.post<any>(url, args);
   }
 
@@ -71,8 +77,9 @@ export class EndpointService {
    * in the specified payload.
    * 
    * @param url URL to invoke
+   * @param args Payload to transmit to backend
    */
-  put(url: string, args: any) {
+  public put(url: string, args: any) {
     return this.httpService.put<any>(url, args);
   }
 
@@ -81,8 +88,39 @@ export class EndpointService {
    * in the specified payload.
    * 
    * @param url URL to invoke
+   * @param args Payload to transmit to backend
    */
-  patch(url: string, args: any) {
+  public patch(url: string, args: any) {
     return this.httpService.patch<any>(url, args);
+  }
+
+  /**
+   * Returns a list of all assumption/integration tests the backend has stored.
+   */
+  public tests() {
+    return this.fileService.listFiles('/misc/tests/');
+  }
+
+  /**
+   * Saves the specified assumption/integration test according to the specified argument.
+   * 
+   * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
+   * @param content Content of snippet
+   */
+  public saveTest(filename: string, content: string) {
+
+    // Sanity checking invocation.
+    if (filename.indexOf('/') !== -1) {
+      throw throwError('Please provide me with only the filename, and not the folder');
+    }
+
+    // Making sure we put our file into the correct folder.
+    filename = '/misc/tests/' + filename;
+    if (!filename.endsWith('.hl')) {
+      filename += '.hl';
+    }
+
+    // Returning result of invocation to file service.
+    return this.fileService.saveFile(filename, content);
   }
 }

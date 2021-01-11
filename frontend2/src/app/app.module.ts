@@ -112,6 +112,7 @@ import { NewFileObjectDialogComponent } from './components/files/new-file-object
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { AddQueryParameterComponentDialog } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
+import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -171,6 +172,7 @@ import { AddQueryParameterComponentDialog } from './components/endpoints/endpoin
     DiagnosticsCache,
     EndpointDetailsComponent,
     AddQueryParameterComponentDialog,
+    CreateAssumptionTestDialogComponent,
   ],
   imports: [
     FormsModule,

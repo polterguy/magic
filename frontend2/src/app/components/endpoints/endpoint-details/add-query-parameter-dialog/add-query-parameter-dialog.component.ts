@@ -36,8 +36,7 @@ export class ArgumentModel {
  */
 @Component({
   selector: 'app-add-query-parameter-dialog',
-  templateUrl: './add-query-parameter-dialog.component.html',
-  styleUrls: ['./add-query-parameter-dialog.component.scss']
+  templateUrl: './add-query-parameter-dialog.component.html'
 })
 export class AddQueryParameterComponentDialog {
 

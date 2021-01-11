@@ -16,11 +16,11 @@ import { EndpointService } from '../services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { AddQueryParameterComponentDialog } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
+import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 // CodeMirror options.
 import json from '../../codemirror/options/json.json'
 import json_readonly from '../../codemirror/options/json_readonly.json'
-import { ok } from 'assert';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
@@ -45,8 +45,8 @@ class InvocationResult {
   // HTTP status text of invocation.
   statusText: string;
 
-  // Actual payload returned by invocation.
-  response: any;
+  // Actual response returned by invocation.
+  response: string;
 }
 
 /**
@@ -105,7 +105,6 @@ export class EndpointDetailsComponent implements OnInit {
    * @param dialog Needed to be able to create add query value dialog
    * @param clipboard Needed to copy URL of endpoint
    * @param backendService Needed to retrieve base root URL for backend
-   * @param feedbackService Needed to provide feedback to user
    * @param endpointService Needed to be able to invoke endpoint
    */
   constructor(
@@ -461,7 +460,29 @@ export class EndpointDetailsComponent implements OnInit {
    * Allows the user to create an assumption/integration test for the current request/response.
    */
   public createTest() {
-    console.log('create test');
+
+    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
+    const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
+      width: '550px',
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((res: TestModel) => {
+
+      // Checking if user selected a file, at which point filename will be non-null.
+      if (res) {
+
+        // User gave us a filename, hence saving file to backend snippet collection.
+        let fileContent = this.createTestContent(res.matchResponse);
+        this.endpointService.saveTest(res.filename, fileContent).subscribe(() => {
+
+          // Snippet saved!
+          this.feedbackService.showInfo('Snippet successfully saved');
+          
+        }, (error: any) => this.feedbackService.showError(error));
+
+      }
+    });
   }
 
   /**
@@ -491,5 +512,30 @@ export class EndpointDetailsComponent implements OnInit {
       url += idx.name + '=' + encodeURIComponent(idx.value) + '&';
     }
     this.url = url.substr(0, url.length - 1);
+  }
+
+  /*
+   * Creates content of test file for current invocation,
+   * and returns to caller.
+   */
+  private createTestContent(matchResponse: boolean) {
+    let result = `
+/*
+ * Assumption/integration test.
+ */
+`;
+    result += `verb:"${this.endpoint.verb}"
+url:"${this.url}"
+`;
+    if (this.payload) {
+      result += `payload:@"${this.payload.split('"').join('""')}"
+`;
+    }
+    result += `status:int:${this.result.status}
+`;
+    if (matchResponse && this.result.response) {
+      result += `response:@"${this.result.response.split('"').join('""')}"`
+    }
+    return result;
   }
 }
