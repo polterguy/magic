@@ -1,6 +1,14 @@
 
 <div class="wrapper">
 
+  <button
+    mat-button
+    matTooltip="Runs all assumption tests"
+    class="run-all"
+    (click)="executeAll()">
+    Run all
+  </button>
+
   <table
     mat-table
     [dataSource]="tests"
@@ -12,8 +20,13 @@
 
     <ng-container matColumnDef="result">
       <td mat-cell class="mini-col icon-col" *matCellDef="let el">
-        <mat-icon matTooltip="Success" *ngIf="el.success !== null && el.success">check_circle</mat-icon>
-        <mat-icon class="warning" matTooltip="Test failed!" *ngIf="el.success !== null && !el.success">warning</mat-icon>
+        <mat-icon
+          *ngIf="el.success !== null && el.success"
+          matTooltip="Success">check_circle</mat-icon>
+        <mat-icon
+          *ngIf="el.success !== null && !el.success"
+          class="warning"
+          matTooltip="Test failed, see log for details">warning</mat-icon>
       </td>
     </ng-container>
 

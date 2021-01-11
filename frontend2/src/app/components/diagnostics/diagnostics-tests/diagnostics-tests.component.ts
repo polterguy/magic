@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { forkJoin } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -97,6 +98,32 @@ export class DiagnosticsTestsComponent implements OnInit {
       // Oops, test raised an exception (or something).
       test.success = false;
       this.feedbackService.showError(error);
+    });
+  }
+
+  /**
+   * Invoked when user wants to execute all tests.
+   */
+  public executeAll() {
+
+    // Creating invocations towards backend for each test we have in our test suite.
+    const all = this.tests.map(x => this.endpointService.executeTest(x.filename));
+    forkJoin(all).subscribe((res: Response[]) => {
+      let hasErrors = 0;
+      let idxNo = 0;
+      for (var idx of res) {
+        if (idx.result !== 'success') {
+          hasErrors += 1;
+          this.tests[idxNo++].success = false;
+        } else {
+          this.tests[idxNo++].success = true;
+        }
+      }
+      if (hasErrors > 0) {
+        this.feedbackService.showError(`${hasErrors} assumption tests failed`);
+      } else {
+        this.feedbackService.showInfoShort('All tests executed successfully');
+      }
     });
   }
 }

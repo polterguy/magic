@@ -2,4 +2,12 @@
 .wrapper {
   margin:2rem;
   min-height: 20rem;
+  .run-all {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
+  table {
+    margin-top: 3rem;
+  }
 }
