@@ -60,6 +60,9 @@ class Assumption {
 
   // Description of assumption.
   description: string
+
+  // If true, execution was a success.
+  success?: boolean;
 }
 
 /**
@@ -182,6 +185,7 @@ export class EndpointDetailsComponent implements OnInit {
             arr.push({
               name: assumptions[idxNo],
               description: description[idxNo].result,
+              success: null,
             });
           }
           this.assumptions = arr;
@@ -222,18 +226,22 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * Runs the specified assumption, and giving feedback to user if it was successfully assumed or not.
    * 
-   * @param name Name of assumption to run
+   * @param assumption What assumption to run
    */
-  public runAssumption(name: string) {
+  public runAssumption(assumption: Assumption) {
 
     // Invoking backend and running assumption.
-    this.endpointService.executeTest(name).subscribe((res: Response) => {
+    this.endpointService.executeTest(assumption.name).subscribe((res: Response) => {
       if (res.result === 'success') {
-        this.feedbackService.showInfoShort('Success');
+        assumption.success = true;
       } else {
         this.feedbackService.showInfo('Test failed, check log for details');
+        assumption.success = false;
       }
-    }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) =>{
+      this.feedbackService.showError(error);
+      assumption.success = false;
+    });
   }
 
   /**

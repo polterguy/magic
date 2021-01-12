@@ -51,6 +51,12 @@
   mat-chip.query-disabled {
     background-color: #7d7d7d;
   }
+  mat-chip.success {
+    background-color: rgba(200,255,200,.8)
+  }
+  mat-chip.failure {
+    background-color: rgba(255,200,200,.8)
+  }
   .response {
     padding: 2rem 2rem .5rem 2rem;
     margin: 1rem;
