@@ -9,6 +9,12 @@
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
  * Sanity checking invocation.
  */
 validators.mandatory:x:@.arguments/*/root_url
@@ -16,14 +22,8 @@ validators.mandatory:x:@.arguments/*/test_file
 
 
 /*
- * Ensures user is authorized to access endpoint.
- */
-auth.ticket.verify:root
-
-
-/*
- * Loading assumption/integration test Hyperlambda file,
- * and converting to lambda.
+ * Loading assumption test Hyperlambda file,
+ * and converting Hyperlambda to lambda.
  */
 io.file.load:x:@.arguments/*/test_file
 hyper2lambda:x:-
@@ -37,28 +37,35 @@ request.headers.get:Authorization
 
 
 /*
- * Adding [payload] if assumption test declares it.
+ * Adding [payload] if assumption test declares it, and
+ * making sure we declare the correct Content-Type HTTP header,
+ * if assumption test declares a payload.
  */
-add:x:../*/http.xxx
-   get-nodes:x:@hyper2lambda/*/payload
 if
    exists:x:@hyper2lambda/*/payload
    .lambda
+      add:x:../*/http.xxx
+         get-nodes:x:@hyper2lambda/*/payload
       add:x:../*/http.xxx/*/headers
          .
             Content-Type:application/json
 
 
 /*
- * Creating our HTTP invocation.
+ * Making sure we use the correct HTTP verb.
  */
 strings.concat
    get-value:x:@.arguments/*/root_url
    get-value:x:@hyper2lambda/*/url
-set-name:x:+
+set-name:x:../*/http.xxx
    strings.concat
       .:http.
       get-value:x:@hyper2lambda/*/verb
+
+
+/*
+ * Invoking assumption test.
+ */
 http.xxx:x:@strings.concat
    headers
       Authorization:x:@request.headers.get
@@ -67,6 +74,8 @@ http.xxx:x:@strings.concat
 
 /*
  * Making sure assumptions and reality overlaps.
+ *
+ * First we check HTTP status code, and verifies it's correct.
  */
 if
    not
@@ -76,72 +85,82 @@ if
    .lambda
 
       /*
-       * Status code was not as expected.
+       * Assumption failed!
+       *
+       * Status code was not as assumed.
        */
       strings.concat
-         .:"Wrong status code returned, expected "
+         .:"Assumption test failed. Test file: "
+         get-value:x:@.arguments/*/test_file
+         .:"\r\nWrong status code returned. Expected: "
          get-value:x:@hyper2lambda/*/status
-         .:" but got "
-         get-value:x:@if/-
-      log.info
-         strings.concat
-            .:"Assumption/integration test failed, error message was: "
-            get-value:x:@log.info/@strings.concat
+         .:"\r\nBut got: "
+         get-value:x:@.foo/-
+      log.error:x:@strings.concat
       unwrap:x:+/*
       return
          result:x:@strings.concat
 
 
 /*
- * Checking if test assumes response equality, and if not, returning
- * success early.
+ * Checking if test assumes response equality, and if it does,
+ * we make sure assumption about response value is correct.
  */
 if
-   not
-      exists:x:@hyper2lambda/*/response
+   exists:x:@hyper2lambda/*/response
    .lambda
-      return
-         result:success
 
-
-/*
- * Making sure JSON formatting becomes irrelevant.
- */
-.response
-json2lambda:x:@.foo/-/*/content
-set-value:x:@.response
-   lambda2json:x:@json2lambda/*
-.assumption
-json2lambda:x:@hyper2lambda/*/response
-set-value:x:@.assumption
-   lambda2json:x:@json2lambda/*
-
-
-/*
- * Making sure assumptions and reality overlaps.
- */
-if
-   not
-      eq
-         get-value:x:@.response
-         get-value:x:@.assumption
-   .lambda
 
       /*
-       * Response was assumed to be an exact match, and assumption failed.
+       * Making sure JSON formatting becomes irrelevant.
        */
-      strings.concat
-         .:"Wrong response returned, expected "
-         get-value:x:@hyper2lambda/*/response
-         .:" but got "
-         get-value:x:@if/-/*/content
-      log.info
-         strings.concat
-            .:"Assumption/integration test failed, error message was: "
-            get-value:x:@log.info/@strings.concat
-      unwrap:x:+/*
-      return
-         result:x:@strings.concat
+      .response
+      json2lambda:x:@.foo/-/*/content
+      set-value:x:@.response
+         lambda2json:x:@json2lambda/*
+            format:true
+      .assumption
+      json2lambda:x:@hyper2lambda/*/response
+      set-value:x:@.assumption
+         lambda2json:x:@json2lambda/*
+            format:true
+
+
+      /*
+       * Making sure assumptions and reality overlaps.
+       */
+      if
+         not
+            eq
+               get-value:x:@.response
+               get-value:x:@.assumption
+         .lambda
+
+            /*
+             * Assumption failed!
+             *
+             * Response was assumed to be an exact match, and it was not.
+             */
+            strings.concat
+               .:"Assumption test failed. Test file: "
+               get-value:x:@.arguments/*/test_file
+               .:"\r\nWrong response returned. Expected: "
+               get-value:x:@hyper2lambda/*/response
+               .:"\r\nBut got: "
+               get-value:x:@.foo/-/*/content
+            log.error:x:@strings.concat
+            unwrap:x:+/*
+            return
+               result:x:@strings.concat
+
+
+/*
+ * Logging the fact that test succeeded.
+ */
+strings.concat
+   .:"Assumption test succeeded. Test file: "
+   get-value:x:@.arguments/*/test_file
+log.info:x:@strings.concat
 
 
 /*
