@@ -22,25 +22,34 @@
     }
   }
   .item-full-width {
+    display: block;
+    margin-bottom: 2rem;
     .description {
       display: block;
       margin-top: 1rem;
     }
-    mat-chip {
-      padding-top: 2px;
-      cursor: pointer;
-      padding-bottom: 2px;
-      min-height: 25px;
-      min-width: 150px;
-      position: relative;
-      mat-icon {
-        position: absolute;
-        right: .5rem;
-      }
+  }
+  hr{
+    height: 1px;
+    background-color: #444;
+    border: none;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  mat-chip {
+    padding-top: 2px;
+    cursor: pointer;
+    padding-bottom: 2px;
+    min-height: 25px;
+    min-width: 150px;
+    position: relative;
+    mat-icon {
+      position: absolute;
+      right: .5rem;
     }
-    mat-chip.query-disabled {
-      background-color: #7d7d7d;
-    }
+  }
+  mat-chip.query-disabled {
+    background-color: #7d7d7d;
   }
   .response {
     padding: 2rem 2rem .5rem 2rem;
