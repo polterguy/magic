@@ -1,12 +1,12 @@
 
 /*
- * List all scheduled tasks that have been registered in the system.
+ * List all tasks that have been registered in the system.
  */
 .arguments
    offset:long
    limit:long
    query:string
-.description:"List 10 next tasks that have been registered in the system from the specified offset."
+.description:"List next tasks that have been created in the system, using the optional arguments supplied."
 
 
 /*
@@ -18,9 +18,10 @@ auth.ticket.verify:root
 /*
  * Retrieves all scheduled tasks in the system.
  */
+add:x:../*/tasks.list
+   get-nodes:x:@.arguments/*/offset
+   get-nodes:x:@.arguments/*/limit
 tasks.list:x:@.arguments/*/query
-   offset:x:@.arguments/*/offset
-   limit:x:@.arguments/*/limit
 
 
 /*
