@@ -139,9 +139,14 @@ export class DiagnosticsTestsComponent implements OnInit {
 
       // Checking if we had more than 0 errors, and if so, displaying error message to user.
       if (noErrors > 0) {
+
+        // At least one test failed.
         this.feedbackService.showError(`${noErrors} assumption tests out of ${idxNo} failed`);
         this.runAllText = `${noErrors} tests failed`;
+
       } else {
+
+        // All tests succeeded.
         this.feedbackService.showInfoShort(`${idxNo} tests executed successfully`);
         this.runAllText = 'Success';
       }
