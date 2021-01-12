@@ -22,6 +22,9 @@ class TestModel {
 
   // Whether or not execution was a success or not.
   success?: boolean;
+
+  // Descriptive text for assumption test.
+  description?: string;
 }
 
 /**
@@ -62,6 +65,16 @@ export class DiagnosticsTestsComponent implements OnInit {
         return {
           filename: x,
           success: null,
+        }
+      });
+
+      // Retrieving description for tests.
+      const all = this.tests.map(x => this.endpointService.getDescription(x.filename));
+      forkJoin(all).subscribe((result: Response[]) => {
+
+        // Looping through all tests and assigning description to them.
+        for (let idxNo = 0; idxNo < all.length; idxNo++) {
+          this.tests[idxNo].description = result[idxNo].result;
         }
       });
 
@@ -109,6 +122,8 @@ export class DiagnosticsTestsComponent implements OnInit {
     // Creating invocations towards backend for each test we have in our test suite.
     const all = this.tests.map(x => this.endpointService.executeTest(x.filename));
     forkJoin(all).subscribe((res: Response[]) => {
+
+      // Figuring out if we had any errors, and if so, making sure failed tests are marked as such.
       let hasErrors = 0;
       let idxNo = 0;
       for (var idx of res) {
@@ -119,8 +134,10 @@ export class DiagnosticsTestsComponent implements OnInit {
           this.tests[idxNo++].success = true;
         }
       }
+
+      // Checking if we had more than 0 errors, and if so, displaying error message to user.
       if (hasErrors > 0) {
-        this.feedbackService.showError(`${hasErrors} assumption tests failed`);
+        this.feedbackService.showError(`${hasErrors} assumption tests out of ${idxNo} failed`);
       } else {
         this.feedbackService.showInfoShort(`${idxNo} tests executed successfully`);
       }

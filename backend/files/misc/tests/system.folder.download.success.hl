@@ -5,3 +5,4 @@
 verb:get
 url:"/magic/modules/system/file-system/download-folder?folder=%2Fmisc%2Fmysql%2F"
 status:int:200
+.description:@"Assumes downloading a folder succeeds"

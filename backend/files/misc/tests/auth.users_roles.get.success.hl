@@ -6,3 +6,4 @@ verb:get
 url:"/magic/modules/magic/users_roles?role.eq=root&user.eq=root"
 status:int:200
 response:@"[{""role"":""root"",""user"":""root""}]"
+.description:@"Assumes 'root' exists and that it belongs to 'root' role"

@@ -5,3 +5,4 @@
 verb:get
 url:"/magic/modules/system/evaluator/documentation?module=magic.lambda.http"
 status:int:200
+.description:@"Assumes retrieving documentation for magic.lambda.http succeeds"
