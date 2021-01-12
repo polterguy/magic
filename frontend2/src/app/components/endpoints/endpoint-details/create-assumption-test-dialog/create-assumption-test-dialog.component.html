@@ -1,5 +1,5 @@
 
-<h1 mat-dialog-title class="mat-dialog-title">Create test</h1>
+<h1 mat-dialog-title class="mat-dialog-title">New assumption</h1>
 
 <div mat-dialog-content>
 
@@ -23,6 +23,14 @@
   </mat-form-field>
 
 </div>
+
+<mat-form-field class="fill-width">
+  <textarea
+    matInput
+    [(ngModel)]="data.description"
+    rows="5"
+    placeholder="Description"></textarea>
+</mat-form-field>
 
 <div mat-dialog-actions class="button-strip">
 

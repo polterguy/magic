@@ -473,7 +473,7 @@ export class EndpointDetailsComponent implements OnInit {
       if (res) {
 
         // User gave us a filename, hence saving file to backend snippet collection.
-        let fileContent = this.createTestContent(res.matchResponse);
+        let fileContent = this.createTestContent(res);
         this.endpointService.saveTest(res.filename, fileContent).subscribe(() => {
 
           // Snippet saved!
@@ -518,7 +518,7 @@ export class EndpointDetailsComponent implements OnInit {
    * Creates content of test file for current invocation,
    * and returns to caller.
    */
-  private createTestContent(matchResponse: boolean) {
+  private createTestContent(model: TestModel) {
     let result = `
 /*
  * Assumption/integration test.
@@ -533,9 +533,14 @@ url:"${this.url}"
     }
     result += `status:int:${this.result.status}
 `;
-    if (matchResponse && this.result.response) {
+    if (model.matchResponse && this.result.response) {
       let response = JSON.stringify(JSON.parse(this.result.response));
-      result += `response:@"${response.split('"').join('""')}"`
+      result += `response:@"${response.split('"').join('""')}"
+`
+    }
+    if (model.description) {
+      result += `.description:@"${model.description.split('"').join('""')}"
+`;
     }
     return result;
   }
