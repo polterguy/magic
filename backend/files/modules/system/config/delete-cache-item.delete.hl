@@ -14,6 +14,12 @@ auth.ticket.verify:root
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/id
+
+
+/*
  * Deletes cache item and returns success to caller.
  */
 cache.set:x:@.arguments/*/id
