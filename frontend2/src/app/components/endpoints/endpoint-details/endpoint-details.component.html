@@ -111,12 +111,18 @@
   <span
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb !== 'get' && endpoint.verb !== 'delete')"
     class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Payload</strong>
+
     <span class="description">
       <ngx-codemirror
         [(ngModel)]="payload"
         [options]="cmOptions.json">
       </ngx-codemirror>
     </span>
+
   </span>
 
   <div class="button-strip">

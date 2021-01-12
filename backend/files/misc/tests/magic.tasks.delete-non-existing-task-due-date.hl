@@ -4,5 +4,5 @@
  */
 verb:delete
 url:"/magic/modules/system/tasks/delete-due"
-status:int:500
+status:int:400
 .description:@"Verifies that trying to delete a non-existing task's due date fails, and returns the correct error"
