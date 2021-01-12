@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/diagnostics/loc-generated"
+status:int:200
+.description:@"Verifies that we can invoke get LOC (Lines Of Code generated) from backend"

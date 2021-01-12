@@ -1,0 +1,13 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:post
+url:"/magic/modules/system/tasks/add-due"
+payload:@"{
+  ""id"": ""non-existing-task"",
+  ""due"": ""2021-01-12T09:02:40.094Z"",
+  ""repeats"": ""5.seconds""
+}"
+status:int:500
+.description:@"Verifies that trying to create a due date for a non-existing task fails"

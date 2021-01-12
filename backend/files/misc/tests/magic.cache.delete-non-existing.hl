@@ -1,0 +1,9 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:delete
+url:"/magic/modules/system/config/empty-cache?filter=xxx.qqq.qwert.non-existing-cache-item"
+status:int:200
+response:@"{""result"":""success""}"
+.description:@"Verifies that trying to delete a non-existing cache item returns the correct result"

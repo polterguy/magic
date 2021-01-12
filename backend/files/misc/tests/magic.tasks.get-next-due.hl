@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/tasks/next-due"
+status:int:200
+.description:@"Verifies that retrieving next due date and time for a task succeeds"
