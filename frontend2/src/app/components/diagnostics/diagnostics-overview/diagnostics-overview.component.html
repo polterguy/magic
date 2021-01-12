@@ -64,16 +64,15 @@
   </div>
 
   <div class="meta-statistics">
-    <strong matTooltip="Type of log items over the last 2 weeks">Type</strong>
+    <strong matTooltip="Failed assumptions over the last 2 weeks">Assumption failures</strong>
     <canvas
-      *ngIf="logTypeData"
+      *ngIf="assumptionsData"
       baseChart 
-      legend="true"
-      chartType="pie"
-      [data]="logTypeData" 
-      [labels]="logTypeLabels" 
-      [options]="logTypeOptions"
-      [colors]="logTypeColors">
+      chartType="bar"
+      [data]="assumptionsData" 
+      [labels]="assumptionsLabels" 
+      [options]="assumptionsOptions"
+      [colors]="assumptionsColors">
     </canvas>
   </div>
 
