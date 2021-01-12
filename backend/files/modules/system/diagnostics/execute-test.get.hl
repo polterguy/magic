@@ -90,11 +90,11 @@ if
        * Status code was not as assumed.
        */
       strings.concat
-         .:"Assumption test failed. Test file: "
+         .:"Assumption test failed, test file: "
          get-value:x:@.arguments/*/test_file
-         .:"\r\nWrong status code returned. Expected: "
+         .:"\r\nError: Wrong status code returned.\r\n\r\nAssumption: "
          get-value:x:@hyper2lambda/*/status
-         .:"\r\nBut got: "
+         .:"\r\nActual: "
          get-value:x:@.foo/-
       log.error:x:@strings.concat
       unwrap:x:+/*
@@ -142,12 +142,12 @@ if
              * Response was assumed to be an exact match, and it was not.
              */
             strings.concat
-               .:"Assumption test failed. Test file: "
+               .:"Assumption test failed, test file: "
                get-value:x:@.arguments/*/test_file
-               .:"\r\nWrong response returned. Expected: "
-               get-value:x:@hyper2lambda/*/response
-               .:"\r\nBut got: "
-               get-value:x:@.foo/-/*/content
+               .:"\r\nError: Wrong response returned\r\n\r\nAssumption: "
+               get-value:x:@.assumption
+               .:"\r\nActual: "
+               get-value:x:@.response
             log.error:x:@strings.concat
             unwrap:x:+/*
             return
