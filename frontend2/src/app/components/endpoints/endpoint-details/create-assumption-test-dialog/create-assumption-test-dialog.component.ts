@@ -21,6 +21,11 @@ export class TestModel {
   filename: string;
 
   /**
+   * Description for test.
+   */
+  description: string;
+
+  /**
    * Whether or not response must match.
    */
   matchResponse: boolean;
@@ -48,6 +53,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
    */
   public data: TestModel = {
     filename: '',
+    description: '',
     matchResponse: false,
   };
 
