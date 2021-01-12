@@ -1,0 +1,8 @@
+
+/*
+ * Assumption/integration test.
+ */
+verb:get
+url:"/magic/modules/system/sql/connection-strings?databaseType=mysql"
+status:int:200
+.description:@"Assumes retrieving connection strings for MySQL databases succeeds"
