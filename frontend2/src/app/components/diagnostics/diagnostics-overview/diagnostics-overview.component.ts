@@ -92,7 +92,7 @@ export class DiagnosticsOverviewComponent implements OnInit {
   /**
    * Options for log type pie chart.
    */
-  public logTypeOptions: ChartOptions = {
+  public assumptionsOptions: ChartOptions = {
     responsive: true,
     legend: {
       display: false,
@@ -102,22 +102,32 @@ export class DiagnosticsOverviewComponent implements OnInit {
   /**
    * Labels for log type pie chart.
    */
-  public logTypeLabels: Label[] = null;
+  public assumptionsLabels: Label[] = null;
 
   /**
    * Data set for log type pie chart.
    */
-  public logTypeData: SingleDataSet = null;
+  public assumptionsData: SingleDataSet = null;
 
   /**
    * Colors for log type pie chart.
    */
-  public logTypeColors = [{
+  public assumptionsColors = [{
     backgroundColor: [
-      'rgba(220,220,220,0.8)',
-      'rgba(180,180,180,0.8)',
-      'rgba(120,120,120,0.8)',
-      'rgba(80,80,80,0.8)',
+      'rgba(255,70,70,0.6)',
+      'rgba(255,80,80,0.6)',
+      'rgba(255,90,90,0.6)',
+      'rgba(255,100,100,0.6)',
+      'rgba(255,110,110,0.6)',
+      'rgba(255,120,120,0.6)',
+      'rgba(255,130,130,0.6)',
+      'rgba(255,140,140,0.6)',
+      'rgba(255,150,150,0.6)',
+      'rgba(255,160,160,0.6)',
+      'rgba(255,170,170,0.6)',
+      'rgba(255,180,180,0.6)',
+      'rgba(255,190,190,0.6)',
+      'rgba(255,200,200,0.6)',
     ]}];
 
   /**
@@ -220,23 +230,13 @@ export class DiagnosticsOverviewComponent implements OnInit {
     });
 
     // Retrieving log items per type from backend.
+    this.diagnosticsService.statisticsDays('Assumption test failed, test file:').subscribe((res: any[]) => {
+      this.assumptionsData = res.map(x => x.count);
+      this.assumptionsLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
+    });
+
+    // Retrieving log items per type from backend.
     this.diagnosticsService.statisticsType().subscribe((res: any[]) => {
-      this.logTypeLabels = res.map(x => x.type);
-      this.logTypeData = res.map(x => x.count);
-      this.logTypeColors = [{
-        backgroundColor: res.map(x => {
-          switch (x.type) {
-            case 'info':
-              return 'rgba(180,180,180,0.8)';
-            case 'error':
-              return 'rgba(255,220,220,0.8)';
-            case 'fatal':
-              return 'rgba(255,120,120,0.8)';
-            case 'debug':
-              return 'rgba(245,245,245,0.8)';
-          }
-        })
-      }];
       this.errors = 0;
       for (const idx of res) {
         if (idx.type === 'error' || idx.type === 'fatal') {
