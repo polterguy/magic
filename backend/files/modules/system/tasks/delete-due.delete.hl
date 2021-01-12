@@ -5,6 +5,11 @@
 .arguments
    id:long
 .description:"Deletes the task due with the specified [id]."
+
+
+/*
+ * Sanity checking invocation.
+ */
 validators.mandatory:x:@.arguments/*/id
 
 
