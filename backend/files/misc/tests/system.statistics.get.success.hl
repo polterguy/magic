@@ -5,4 +5,3 @@
 verb:get
 url:"/magic/modules/system/diagnostics/log-statistics-days?filter=This%20filter%20does%20not%20exist"
 status:int:200
-response:@"[{""date"":""2021-01-11"",""count"":0},{""date"":""2021-01-10"",""count"":0},{""date"":""2021-01-09"",""count"":0},{""date"":""2021-01-08"",""count"":0},{""date"":""2021-01-07"",""count"":0},{""date"":""2021-01-06"",""count"":0},{""date"":""2021-01-05"",""count"":0},{""date"":""2021-01-04"",""count"":0},{""date"":""2021-01-03"",""count"":0},{""date"":""2021-01-02"",""count"":0},{""date"":""2021-01-01"",""count"":0},{""date"":""2020-12-31"",""count"":0},{""date"":""2020-12-30"",""count"":0},{""date"":""2020-12-29"",""count"":0}]"
