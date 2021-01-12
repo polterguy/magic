@@ -8,6 +8,12 @@
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/name
+
+
+/*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
