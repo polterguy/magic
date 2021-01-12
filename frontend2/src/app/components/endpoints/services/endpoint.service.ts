@@ -62,7 +62,9 @@ export class EndpointService {
    * @param url URL to invoke
    */
   public delete(url: string) {
-    return this.httpService.delete<any>(url);
+    return this.httpService.delete<any>(url, {
+      observe: 'response',
+    });
   }
 
   /**
@@ -73,7 +75,9 @@ export class EndpointService {
    * @param args Payload to transmit to backend
    */
   public post(url: string, args: any) {
-    return this.httpService.post<any>(url, args);
+    return this.httpService.post<any>(url, args, {
+      observe: 'response',
+    });
   }
 
   /**
@@ -84,7 +88,9 @@ export class EndpointService {
    * @param args Payload to transmit to backend
    */
   public put(url: string, args: any) {
-    return this.httpService.put<any>(url, args);
+    return this.httpService.put<any>(url, args, {
+      observe: 'response',
+    });
   }
 
   /**
@@ -95,7 +101,9 @@ export class EndpointService {
    * @param args Payload to transmit to backend
    */
   public patch(url: string, args: any) {
-    return this.httpService.patch<any>(url, args);
+    return this.httpService.patch<any>(url, args, {
+      observe: 'response',
+    });
   }
 
   /**
