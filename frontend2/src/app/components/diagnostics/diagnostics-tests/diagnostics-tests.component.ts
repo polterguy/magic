@@ -42,6 +42,8 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public tests: TestModel[] = [];
 
+  public runAllText: string = 'Run all';
+
   /**
    * Creates an instance of your component.
    * 
@@ -124,11 +126,11 @@ export class DiagnosticsTestsComponent implements OnInit {
     forkJoin(all).subscribe((res: Response[]) => {
 
       // Figuring out if we had any errors, and if so, making sure failed tests are marked as such.
-      let hasErrors = 0;
+      let noErrors = 0;
       let idxNo = 0;
       for (var idx of res) {
         if (idx.result !== 'success') {
-          hasErrors += 1;
+          noErrors += 1;
           this.tests[idxNo++].success = false;
         } else {
           this.tests[idxNo++].success = true;
@@ -136,10 +138,12 @@ export class DiagnosticsTestsComponent implements OnInit {
       }
 
       // Checking if we had more than 0 errors, and if so, displaying error message to user.
-      if (hasErrors > 0) {
-        this.feedbackService.showError(`${hasErrors} assumption tests out of ${idxNo} failed`);
+      if (noErrors > 0) {
+        this.feedbackService.showError(`${noErrors} assumption tests out of ${idxNo} failed`);
+        this.runAllText = `${noErrors} tests failed`;
       } else {
         this.feedbackService.showInfoShort(`${idxNo} tests executed successfully`);
+        this.runAllText = 'Success';
       }
     });
   }
