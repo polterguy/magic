@@ -108,9 +108,27 @@ export class EndpointService {
 
   /**
    * Returns a list of all assumption/integration tests the backend has stored.
+   * 
+   * @param endpointPath If specified only returns tests belonging to endpoint specified
+   * @param verb If specified only returns tests for specified path
    */
-  public tests() {
-    return this.fileService.listFiles('/misc/tests/');
+  public tests(endpointPath: string = null, verb: string = null) {
+
+    // Checking if we have a filter condition.
+    if (endpointPath) {
+
+      // Filtering tests, to return only tests matching endpoint specified.
+      return this.httpService.get<string[]>(
+        '/magic/modules/system/endpoints/assumptions?endpoint=' +
+        encodeURIComponent(endpointPath) +
+        '&verb=' +
+        encodeURIComponent(verb))
+
+    } else {
+
+      // Simple version, retrieving all files in assumption test folder.
+      return this.fileService.listFiles('/misc/tests/');
+    }
   }
 
   /**

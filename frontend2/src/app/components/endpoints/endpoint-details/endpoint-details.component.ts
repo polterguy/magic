@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, Input, OnInit } from '@angular/core';
@@ -12,6 +12,7 @@ import { Component, Input, OnInit } from '@angular/core';
 // Application specific imports.
 import { Endpoint } from '../models/endpoint.model';
 import { Argument } from '../models/argument.model';
+import { Response } from 'src/app/models/response.model';
 import { EndpointService } from '../services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -49,6 +50,18 @@ class InvocationResult {
   response: string;
 }
 
+/*
+ * Assumption model for existing tests endpoint has declared.
+ */
+class Assumption {
+
+  // Name of assumption (filename)
+  name: string;
+
+  // Description of assumption.
+  description: string
+}
+
 /**
  * Endpoint details component, showing information specific to a single
  * endpoint, and allowing user to invoke endpoint.
@@ -59,6 +72,11 @@ class InvocationResult {
   styleUrls: ['./endpoint-details.component.scss']
 })
 export class EndpointDetailsComponent implements OnInit {
+
+  /**
+   * Assumptions about endpoint.
+   */
+  public assumptions: Assumption[] = [];
 
   /**
    * CodeMirror options object, taken from common settings.
@@ -151,6 +169,27 @@ export class EndpointDetailsComponent implements OnInit {
       }
       this.payload = JSON.stringify(payload, null, 2);
     }
+
+    // Retrieving assumptions for endpoint.
+    this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: string[]) => {
+      if (assumptions && assumptions.length) {
+        const all = assumptions.map(x => this.endpointService.getDescription(x));
+        forkJoin(all).subscribe((description: Response[]) => {
+
+          // Creating model for assumptions.
+          const arr: Assumption[] = [];
+          for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
+            const name = assumptions[idxNo].substr(assumptions[idxNo].lastIndexOf('/') + 1);
+            arr.push({
+              name: name.substr(0, name.length - 3),
+              description: description[idxNo].result,
+            });
+          }
+          this.assumptions = arr;
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

@@ -40,8 +40,33 @@
   </span>
 
   <span
+    *ngIf="assumptions.length > 0"
+    class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Assumptions</strong>
+    <span class="description">
+
+      <mat-chip-list>
+        <mat-chip
+          *ngFor="let i of assumptions"
+          [matTooltip]="i.description"
+          selectable="false">
+          {{i.name}}
+        </mat-chip>
+      </mat-chip-list>
+
+    </span>
+  </span>
+
+  <span
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')"
     class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Query params</strong>
     <span class="description" *ngIf="getArguments(endpoint.input, true).length > 0">
 
       <mat-chip-list>
@@ -60,6 +85,7 @@
       </mat-chip-list>
 
     </span>
+
     <span class="description">
 
       <mat-chip-list>

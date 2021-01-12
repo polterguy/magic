@@ -32,13 +32,20 @@ export class FileService {
    * Returns a list of all files existing within the specified folder.
    * 
    * @param folder Folder from where to retrieve list of files from
+   * @param filter Filter for which files to return
    */
-  public listFiles(folder: string) {
+  public listFiles(folder: string, filter: string = null) {
+
+    // Dynamically building our query.
+    let query = '?folder=' + encodeURIComponent(folder);
+    if (filter) {
+      query += '&filter=' + encodeURIComponent(filter);
+    }
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
-      '/magic/modules/system/file-system/list-files?folder=' +
-      encodeURIComponent(folder));
+      '/magic/modules/system/file-system/list-files' +
+      query);
   }
 
   /**
