@@ -6,3 +6,4 @@ verb:get
 url:"/magic/modules/system/file-system/list-folders?folder=%2F"
 status:int:200
 response:@"[""/misc/"",""/modules/""]"
+.description:@"Assumes listing all folders in '/files/' returns the correct result"

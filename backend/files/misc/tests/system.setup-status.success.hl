@@ -6,3 +6,4 @@ verb:get
 url:"/magic/modules/system/config/setup-status"
 status:int:200
 response:@"{""magic_crudified"":true,""server_keypair"":true,""config_done"":true}"
+.description:@"Assumes retrieving system's setup status succeeds, and returns the correct result (that system has been setup)"

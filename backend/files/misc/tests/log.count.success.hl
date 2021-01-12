@@ -5,3 +5,4 @@
 verb:get
 url:"/magic/modules/magic/log_entries-count"
 status:int:200
+.description:@"Assumes we can count log items in the system"

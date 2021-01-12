@@ -9,3 +9,4 @@ payload:@"{
   ""seed"": ""howdy-this-is-seed""
 }"
 status:int:200
+.description:@"Assumes creating a cryptography key pair succeeds"

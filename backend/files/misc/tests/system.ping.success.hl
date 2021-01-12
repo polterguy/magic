@@ -6,3 +6,4 @@ verb:get
 url:"/magic/modules/system/ping"
 status:int:200
 response:@"{""result"":""success""}"
+.description:@"Assumes invoking ping endpoint succeeds and returns the correct result"
