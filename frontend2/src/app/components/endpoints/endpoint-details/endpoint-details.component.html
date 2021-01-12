@@ -52,8 +52,9 @@
         <mat-chip
           *ngFor="let i of assumptions"
           [matTooltip]="i.description"
+          (click)="runAssumption(i.name)"
           selectable="false">
-          {{i.name}}
+          {{getAssumptionName(i.name)}}
         </mat-chip>
       </mat-chip-list>
 

@@ -20,8 +20,8 @@ import { AddQueryParameterDialogComponent } from './add-query-parameter-dialog/a
 import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 // CodeMirror options.
-import json from '../../codemirror/options/json.json'
-import json_readonly from '../../codemirror/options/json_readonly.json'
+import json from '../../codemirror/options/json.json';
+import json_readonly from '../../codemirror/options/json_readonly.json';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
@@ -179,9 +179,8 @@ export class EndpointDetailsComponent implements OnInit {
           // Creating model for assumptions.
           const arr: Assumption[] = [];
           for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
-            const name = assumptions[idxNo].substr(assumptions[idxNo].lastIndexOf('/') + 1);
             arr.push({
-              name: name.substr(0, name.length - 3),
+              name: assumptions[idxNo],
               description: description[idxNo].result,
             });
           }
@@ -208,6 +207,33 @@ export class EndpointDetailsComponent implements OnInit {
 
     // Copies the currently edited endpoint's URL prepended by backend root URL.
     this.clipboard.copy(this.backendService.current.url + this.url);
+  }
+
+  /**
+   * Returns assumption name to caller.
+   * 
+   * @param path Full path of assumption
+   */
+  public getAssumptionName(path: string) {
+    const name = path.substr(path.lastIndexOf('/') + 1);
+    return name.substr(0, name.length - 3);
+  }
+
+  /**
+   * Runs the specified assumption, and giving feedback to user if it was successfully assumed or not.
+   * 
+   * @param name Name of assumption to run
+   */
+  public runAssumption(name: string) {
+
+    // Invoking backend and running assumption.
+    this.endpointService.executeTest(name).subscribe((res: Response) => {
+      if (res.result === 'success') {
+        this.feedbackService.showInfoShort('Success');
+      } else {
+        this.feedbackService.showInfo('Test failed, check log for details');
+      }
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -408,7 +434,7 @@ export class EndpointDetailsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((value: any) => {
 
       // Checking if modal dialog wants to create a query parameter.
-      if (value || value === false) {
+      if (value || value === false || value === 0 || value === '' /* Avoiding explicit conversions to false */) {
 
         // Verifying parameter is not already added, and if it is, we remove it first.
         if (this.query.filter(x => x.name === arg.name).length > 0) {
