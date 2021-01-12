@@ -3,7 +3,7 @@
 
   <button
     mat-button
-    matTooltip="Runs all assumption tests"
+    [matTooltip]="'Verify ' + tests.length + ' assumptions'"
     class="run-all"
     (click)="executeAll()">
     {{runAllText}}
