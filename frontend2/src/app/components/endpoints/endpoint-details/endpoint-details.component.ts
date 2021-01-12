@@ -477,7 +477,7 @@ export class EndpointDetailsComponent implements OnInit {
         this.endpointService.saveTest(res.filename, fileContent).subscribe(() => {
 
           // Snippet saved!
-          this.feedbackService.showInfo('Snippet successfully saved');
+          this.feedbackService.showInfo('Assumption successfully saved');
           
         }, (error: any) => this.feedbackService.showError(error));
 
