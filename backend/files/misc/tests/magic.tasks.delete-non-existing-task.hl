@@ -1,6 +1,6 @@
 
 /*
- * Assumption/integration test.
+ * Automatically generated assumption test.
  */
 verb:delete
 url:"/magic/modules/system/tasks/delete-task"

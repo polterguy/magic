@@ -12,7 +12,8 @@
   <table
     mat-table
     [dataSource]="tests"
-    class="tests clickable">
+    class="tests clickable"
+    multiTemplateDataRows>
 
     <ng-container matColumnDef="name">
       <td mat-cell [matTooltip]="el.description" *matCellDef="let el">{{getName(el.filename)}}</td>
@@ -30,7 +31,44 @@
       </td>
     </ng-container>
 
-    <tr (click)="executeTest(el)" mat-row *matRowDef="let el; columns: ['name', 'result'];"></tr>
+    <ng-container matColumnDef="show-details">
+      <td
+        mat-cell
+        colspan="2"
+        *matCellDef="let el">
+  
+        <div
+          class="details-sheet"
+          *ngIf="shouldDisplayDetails(el) && el.content">
+  
+          <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
+
+          <div class="button-strip">
+            <button
+              mat-button
+              (click)="executeTest(el)">
+              Run assumption
+            </button>
+            <button
+              mat-button
+              (click)="saveTest(el.filename, el.content.hyperlambda)">Save</button>
+          </div>
+  
+        </div>
+  
+      </td>
+    </ng-container>
+  
+    <tr
+      mat-row
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'test-row'"
+      (click)="toggleDetails(el)"
+      mat-row *matRowDef="let el; columns: ['name', 'result'];"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
 
   </table>
 

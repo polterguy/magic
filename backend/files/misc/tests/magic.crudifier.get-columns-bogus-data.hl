@@ -1,0 +1,9 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:"/magic/modules/system/crudifier/columns?databaseType=foo&database=foo"
+status:int:400
+response:@"{""message"":""Mandatory argument not given"",""field"":""table""}"
+.description:@"Assumes that invoking endpoint without a [table] results in an error"

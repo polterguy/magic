@@ -13,6 +13,14 @@
 
 
 /*
+ * Sanity checks invocation.
+ */
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/table
+
+
+/*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root

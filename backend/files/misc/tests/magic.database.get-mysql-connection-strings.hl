@@ -1,6 +1,6 @@
 
 /*
- * Assumption/integration test.
+ * Automatically generated assumption test.
  */
 verb:get
 url:"/magic/modules/system/sql/connection-strings?databaseType=mysql"

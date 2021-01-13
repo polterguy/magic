@@ -1,6 +1,6 @@
 
 /*
- * Assumption/integration test.
+ * Automatically generated assumption test.
  */
 verb:post
 url:"/magic/modules/system/evaluator/evaluate"

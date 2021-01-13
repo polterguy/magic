@@ -1,0 +1,13 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:"/magic/modules/system/config/generate-keypair"
+payload:@"{
+  ""strength"": 5,
+  ""seed"": ""foo""
+}"
+status:int:400
+response:@"{""message"":""'5' is not a valid enum of ['1024', '2048', '4096', '8192']"",""field"":""strength""}"
+.description:@"Assumes that generating a key pair with bogus strength results in an error"
