@@ -9,4 +9,4 @@ payload:@"{
   ""content"": ""Assumption test""
 }"
 status:int:200
-description:@"Assumes creating a log item of type 'info' succeeds"
+description:"Assumes that creating a log item of type 'info' succeeds"

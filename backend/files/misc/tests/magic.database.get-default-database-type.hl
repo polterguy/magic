@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/config/default-database-type"
 status:int:200
-description:@"Assumes retrieving default database type succeeds"
+description:Assumes that retrieving default database type succeeds

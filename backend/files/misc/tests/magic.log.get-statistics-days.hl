@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/diagnostics/log-statistics-days?filter=Trying%20to"
 status:int:200
-description:@"Assumes retrieving log statistics per day succeeds"
+description:Assumes that retrieving log statistics per day succeeds

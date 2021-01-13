@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/config/license"
 status:int:200
-description:@"Verifies that retrieving license information succeeds"
+description:Assumes that retrieving license information succeeds

@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/version"
 status:int:200
-description:@"Assumes retrieving backend version succeeds"
+description:Assumes that retrieving backend version succeeds

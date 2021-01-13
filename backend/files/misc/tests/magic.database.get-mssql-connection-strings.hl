@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/sql/connection-strings?databaseType=mssql"
 status:int:200
-description:@"Assumes retrieving connection strings for MS SQL databases succeeds"
+description:Assumes that retrieving connection strings for MS SQL databases succeeds

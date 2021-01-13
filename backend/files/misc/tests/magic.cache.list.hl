@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/config/list-cache"
 status:int:200
-description:@"Verifies that listing cache items succeeds"
+description:Assumes that listing cache items succeeds

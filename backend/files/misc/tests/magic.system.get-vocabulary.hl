@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/evaluator/vocabulary"
 status:int:200
-description:@"Assumes retrieving vocabulary succeeds"
+description:Assumes that retrieving server Hyperlambda vocabulary succeeds
