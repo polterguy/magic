@@ -5,4 +5,5 @@
 verb:delete
 url:"/magic/modules/system/config/delete-cache-item"
 status:int:400
-.description:@"Assumes that trying to delete a cache item without providing a key fails"
+response:@"{""message"":""Mandatory argument not given"",""field"":""id""}"
+.description:@"Assumes that invoking endpoint without a cache key results in an error"
