@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { forkJoin } from 'rxjs';
+import { FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -16,6 +17,7 @@ import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperl
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -36,11 +38,14 @@ class TestModel {
  * Assumption/integration test runner for verifying integrity of system.
  */
 @Component({
-  selector: 'app-diagnostics-tests',
-  templateUrl: './diagnostics-tests.component.html',
-  styleUrls: ['./diagnostics-tests.component.scss']
+  selector: 'app-diagnostics-assumptions',
+  templateUrl: './diagnostics-assumptions.component.html',
+  styleUrls: ['./diagnostics-assumptions.component.scss']
 })
 export class DiagnosticsTestsComponent implements OnInit {
+
+  // Filter for which items to display.
+  private filter: string = '';
 
   /**
    * List of all tests in system.
@@ -53,9 +58,9 @@ export class DiagnosticsTestsComponent implements OnInit {
   public selectedTests: string[] = [];
 
   /**
-   * Text of 'Run all' button.
+   * Filter form control for filtering users to display.
    */
-  public runAllText: string = 'Run all';
+  public filterFormControl: FormControl;
 
   /**
    * Creates an instance of your component.
@@ -74,6 +79,15 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public ngOnInit() {
 
+    // Creating our filtering control.
+    this.filterFormControl = new FormControl('');
+    this.filterFormControl.setValue('');
+    this.filterFormControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: string) => {
+        this.filter = query;
+      });
+
     // Retrieving all tests form backend.
     this.endpointService.tests().subscribe((tests: string[]) => {
 
@@ -87,6 +101,20 @@ export class DiagnosticsTestsComponent implements OnInit {
       });
 
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when user wants to clear filter.
+   */
+  public clearFilter() {
+    this.filterFormControl.setValue('');
+  }
+
+  /**
+   * Returns tests that should be display due to matching filter condition.
+   */
+  public getFilteredTests() {
+    return this.tests.filter(x => x.filename.indexOf(this.filter) !== -1);
   }
 
   /**
@@ -156,7 +184,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
       // Providing feedback to user.
       if (res.result === 'success') {
-        this.feedbackService.showInfoShort('Success');
+        this.feedbackService.showInfoShort('Assumption succeeded');
       } else {
         this.feedbackService.showError('Assumption failed, check your log to see why');
       }
@@ -243,13 +271,11 @@ export class DiagnosticsTestsComponent implements OnInit {
 
         // At least one test failed.
         this.feedbackService.showError(`${noErrors} assumption tests out of ${idxNo} failed`);
-        this.runAllText = `${noErrors} tests failed`;
 
       } else {
 
         // All tests succeeded.
-        this.feedbackService.showInfoShort(`${idxNo} tests executed successfully`);
-        this.runAllText = 'Success';
+        this.feedbackService.showInfoShort(`${idxNo} assumptions succeeded`);
       }
     });
   }

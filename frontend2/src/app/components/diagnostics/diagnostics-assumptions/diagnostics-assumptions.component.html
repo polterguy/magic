@@ -6,12 +6,33 @@
     [matTooltip]="'Verify ' + tests.length + ' assumptions'"
     class="run-all"
     (click)="executeAll()">
-    {{runAllText}}
+    Run all
   </button>
+
+  <mat-form-field class="fill-width">
+
+    <mat-label>Filter ...</mat-label>
+
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      role="button"
+      matTooltip="Clear filter"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
 
   <table
     mat-table
-    [dataSource]="tests"
+    [dataSource]="getFilteredTests()"
     class="tests clickable"
     multiTemplateDataRows>
 
