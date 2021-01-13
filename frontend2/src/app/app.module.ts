@@ -92,11 +92,11 @@ import { ServerPublicKeyComponent } from './components/crypto/server-public-key/
 import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
-import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-tests/diagnostics-tests.component';
 import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
 import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnostics-security/diagnostics-security.component';
+import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';

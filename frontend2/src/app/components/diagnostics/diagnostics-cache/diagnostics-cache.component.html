@@ -1,6 +1,15 @@
 
 <div class="wrapper">
 
+  <button
+    *ngIf="cacheItems.length > 0"
+    mat-button
+    class="clear-button"
+    [matTooltip]="filterFormControl.value === '' ? 'Clear all items from cache' : 'Clear all filtered items from cache'"
+    (click)="deleteAll()">
+    Clear
+  </button>
+
   <mat-form-field class="fill-width">
 
     <mat-label>Filter ...</mat-label>
@@ -77,14 +86,5 @@
     (page)="paged()"
     [pageSizeOptions]="[5, 10, 25, 50, 100]">
   </mat-paginator>
-
-  <button
-    *ngIf="cacheItems.length > 0"
-    mat-button
-    class="clear-button"
-    [matTooltip]="filterFormControl.value === '' ? 'Clear all items from cache' : 'Clear all filtered items from cache'"
-    (click)="deleteAll()">
-    Clear
-  </button>
 
 </div>
