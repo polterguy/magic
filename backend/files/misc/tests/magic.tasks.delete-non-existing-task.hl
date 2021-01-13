@@ -3,6 +3,6 @@
  * Automatically generated assumption test.
  */
 verb:delete
-url:"/magic/modules/system/tasks/delete-task"
+url:/magic/modules/system/tasks/delete-task
 status:int:500
 description:Assumes that trying to delete a non-existing task fails, and returns the correct error

@@ -3,7 +3,7 @@
  * Automatically created assumption test.
  */
 verb:delete
-url:"/magic/modules/magic/crypto_invocations"
+url:/magic/modules/magic/crypto_invocations
 status:int:400
 response:@"{""message"":""Mandatory argument not given"",""field"":""id""}"
 description:@"Assumes that deleting a cryptographic invocation without providing an id results in the correct status code and error being returned to caller"

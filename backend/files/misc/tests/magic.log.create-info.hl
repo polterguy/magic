@@ -3,7 +3,7 @@
  * Automatically generated assumption test.
  */
 verb:post
-url:"/magic/modules/magic/log_entries"
+url:/magic/modules/magic/log_entries
 payload:@"{
   ""type"": ""info"",
   ""content"": ""Assumption test""

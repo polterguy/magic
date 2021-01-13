@@ -3,6 +3,6 @@
  * Automatically generated assumption test.
  */
 verb:get
-url:"/magic/modules/magic/log_entries-count?type.eq=info&content.like=Trying%20to%25"
+url:/magic/modules/magic/log_entries-count?type.eq=info&content.like=Trying%20to%25
 status:int:200
 description:"Assumes that counting log items of type 'info' with content equal to 'Trying to%' succeeds"

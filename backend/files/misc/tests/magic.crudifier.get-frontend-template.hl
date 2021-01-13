@@ -3,6 +3,6 @@
  * Automatically generated assumption test.
  */
 verb:get
-url:"/magic/modules/system/endpoints/template?name=angular-dark"
+url:/magic/modules/system/endpoints/template?name=angular-dark
 status:int:200
 description:Assumes that retrieving the angular-dark frontend template succeeds

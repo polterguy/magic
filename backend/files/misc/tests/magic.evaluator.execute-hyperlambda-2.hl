@@ -3,7 +3,7 @@
  * Automatically created assumption test.
  */
 verb:post
-url:"/magic/modules/system/evaluator/evaluate"
+url:/magic/modules/system/evaluator/evaluate
 payload:@"{
   ""hyperlambda"": "".foo\r\nset-value:x:@.foo\r\n   .:howdy world""
 }"

@@ -3,6 +3,6 @@
  * Automatically generated assumption test.
  */
 verb:delete
-url:"/magic/modules/system/config/empty-cache"
+url:/magic/modules/system/config/empty-cache
 status:int:200
 description:Assumes purging cache (deleting all cache items) succeeds
