@@ -594,7 +594,7 @@ export class EndpointDetailsComponent implements OnInit {
   private createTestContent(model: TestModel) {
     let result = `
 /*
- * Assumption/integration test.
+ * Automatically created assumption test.
  */
 `;
     result += `verb:${this.endpoint.verb}

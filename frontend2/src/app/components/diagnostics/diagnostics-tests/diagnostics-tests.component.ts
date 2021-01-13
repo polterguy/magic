@@ -9,8 +9,13 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
+import { FileService } from '../../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
+import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+
+// CodeMirror options.
+import hyperlambda from '../../codemirror/options/hyperlambda.json';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -25,6 +30,9 @@ class TestModel {
 
   // Descriptive text for assumption test.
   description?: string;
+
+  // Content of test.
+  content?: Model;
 }
 
 /**
@@ -42,15 +50,25 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public tests: TestModel[] = [];
 
+  /**
+   * What tests are currently being edited and viewed.
+   */
+  public selectedTests: string[] = [];
+
+  /**
+   * Text of 'Run all' button.
+   */
   public runAllText: string = 'Run all';
 
   /**
    * Creates an instance of your component.
    * 
+   * @param fileService Needed to load test files from backend
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all tests from backend
    */
   constructor(
+    private fileService: FileService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
 
@@ -67,6 +85,7 @@ export class DiagnosticsTestsComponent implements OnInit {
         return {
           filename: x,
           success: null,
+          content: null,
         }
       });
 
@@ -96,6 +115,62 @@ export class DiagnosticsTestsComponent implements OnInit {
   }
 
   /**
+   * Toggles the details view for a single test.
+   * 
+   * @param test Test to toggle details for
+   */
+  public toggleDetails(test: TestModel) {
+
+    // Checking if we're already displaying details for current item.
+    const idx = this.selectedTests.indexOf(test.filename);
+    if (idx !== -1) {
+
+      // Hiding item.
+      this.selectedTests.splice(idx, 1);
+
+    } else {
+
+      // Displaying item.
+      this.selectedTests.push(test.filename);
+
+      // Retrieving test file from backend.
+      this.fileService.loadFile(test.filename).subscribe((file: string) => {
+        test.content = {
+          hyperlambda: file,
+          options: hyperlambda,
+        };
+      });
+    }
+  }
+
+  /**
+   * Returns true if we should display the details view for specified user.
+   * 
+   * @param user User to check if we should display details for
+   */
+  public shouldDisplayDetails(user: TestModel) {
+
+    // Returns true if we're currently displaying this particular item.
+    return this.selectedTests.filter(x => x === user.filename).length > 0;
+  }
+
+  /**
+   * Saves an assumption test.
+   * 
+   * @param filename Filename of test
+   * @param content Content of test
+   */
+  public saveTest(filename: string, content: string) {
+
+    // Invoking backend to save test.
+    this.fileService.saveFile(filename, content).subscribe(() => {
+
+      // Providing feedback to user.
+      this.feedbackService.showInfoShort('Assumption successfully saved');
+    });
+  }
+
+  /**
    * Runs the specified test.
    * 
    * @param el Full path to test
@@ -107,6 +182,13 @@ export class DiagnosticsTestsComponent implements OnInit {
 
       // Assigning result of test execution to model.
       test.success = res.result === 'success';
+
+      // Providing feedback to user.
+      if (res.result === 'success') {
+        this.feedbackService.showInfoShort('Success');
+      } else {
+        this.feedbackService.showError('Assumption failed, check your log to see why');
+      }
 
     }, (error: any) => {
 

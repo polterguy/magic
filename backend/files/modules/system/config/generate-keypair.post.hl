@@ -10,6 +10,16 @@ auth.ticket.verify:root
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.enum:x:@.arguments/*/strength
+   .:int:1024
+   .:int:2048
+   .:int:4096
+   .:int:8192
+
+
+/*
  * Checking to see if a key pair already exists.
  */
 log.info:Attempting to generate an RSA key pair for server
