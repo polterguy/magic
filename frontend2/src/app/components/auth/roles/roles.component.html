@@ -66,6 +66,7 @@
           mat-icon-button
           class="edit-role"
           matTooltip="Edit role"
+          [disabled]="el.name === 'root'"
           (click)="editRole(el)">
           <mat-icon>edit</mat-icon>
         </button>
