@@ -531,11 +531,11 @@ export class EndpointDetailsComponent implements OnInit {
         this.endpointService.createAssumption(
           res.filename,
           this.endpoint.verb,
-          this.endpoint.path,
+          '/' + this.endpoint.path,
           this.result.status,
-          res.description,
-          this.payload,
-          this.result.response).subscribe(() => {
+          res.description !== '' ? res.description : null,
+          this.payload !== '' ? this.payload : null,
+          res.matchResponse ? this.result.response : null).subscribe(() => {
 
           // Snippet saved, showing user some feedback, and reloading assumptions.
           this.feedbackService.showInfo('Assumption successfully saved');
