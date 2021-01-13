@@ -6,4 +6,4 @@ verb:get
 url:"/magic/modules/system/evaluator/documentation?module=non-existing"
 status:int:200
 response:@"{""result"":""404: Not Found""}"
-.description:@"Assumes retrieving non-existent documentation fails"
+description:@"Assumes retrieving non-existent documentation fails"

@@ -12,4 +12,4 @@ payload:@"{
   ""endpoints"": ""*""
 }"
 status:int:500
-.description:@"Verifies that trying to crudify an endpoint with bogus data fails"
+description:@"Verifies that trying to crudify an endpoint with bogus data fails"

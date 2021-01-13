@@ -9,4 +9,4 @@ payload:@"{
   ""content"": ""foo""
 }"
 status:int:400
-.description:@"Assumes trying to create a log item with bogus type fails"
+description:@"Assumes trying to create a log item with bogus type fails"

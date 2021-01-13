@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/tasks/get-task"
 status:int:400
-.description:@"Verifies that retrieving a non-existing task fails, and returns the correct result"
+description:@"Verifies that retrieving a non-existing task fails, and returns the correct result"

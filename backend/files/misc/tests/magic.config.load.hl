@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/config/load-config"
 status:int:200
-.description:@"Assumes loading configuration file (appSettings.json) succeeds"
+description:@"Assumes loading configuration file (appSettings.json) succeeds"

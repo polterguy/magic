@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/diagnostics/log-statistics"
 status:int:200
-.description:@"Assumes retrieving statistics from log succeeds"
+description:@"Assumes retrieving statistics from log succeeds"
