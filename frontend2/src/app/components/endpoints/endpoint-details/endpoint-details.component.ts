@@ -174,25 +174,7 @@ export class EndpointDetailsComponent implements OnInit {
     }
 
     // Retrieving assumptions for endpoint.
-    this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: string[]) => {
-      if (assumptions && assumptions.length) {
-        const all = assumptions.map(x => this.endpointService.getDescription(x));
-        forkJoin(all).subscribe((description: Response[]) => {
-
-          // Creating model for assumptions.
-          const arr: Assumption[] = [];
-          for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
-            arr.push({
-              name: assumptions[idxNo],
-              description: description[idxNo].result,
-              success: null,
-            });
-          }
-          this.assumptions = arr;
-
-        }, (error: any) => this.feedbackService.showError(error));
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+    this.getAssumptions();
   }
 
   /**
@@ -549,8 +531,9 @@ export class EndpointDetailsComponent implements OnInit {
         let fileContent = this.createTestContent(res);
         this.endpointService.saveTest(res.filename, fileContent).subscribe(() => {
 
-          // Snippet saved!
+          // Snippet saved, showing user some feedback, and reloading assumptions.
           this.feedbackService.showInfo('Assumption successfully saved');
+          this.getAssumptions();
           
         }, (error: any) => this.feedbackService.showError(error));
 
@@ -616,5 +599,32 @@ url:"${this.url}"
 `;
     }
     return result;
+  }
+
+  /*
+   * Retrieves assumptions for endpoint
+   */
+  private getAssumptions() {
+
+    // Retrieving assumptions for endpoint.
+    this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: string[]) => {
+      if (assumptions && assumptions.length) {
+        const all = assumptions.map(x => this.endpointService.getDescription(x));
+        forkJoin(all).subscribe((description: Response[]) => {
+
+          // Creating model for assumptions.
+          const arr: Assumption[] = [];
+          for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
+            arr.push({
+              name: assumptions[idxNo],
+              description: description[idxNo].result,
+              success: null,
+            });
+          }
+          this.assumptions = arr;
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
