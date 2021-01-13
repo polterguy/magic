@@ -15,6 +15,13 @@ that you can use in later requests to the backend to authorize your invocations 
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/password
+
+
+/*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
