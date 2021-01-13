@@ -73,6 +73,10 @@ table.clickable {
         user-select: none;
       }
     }
+    tr:hover {
+      background-color: rgba(0,0,0,.1);
+      transition: background-color .1s ease-in;
+    }
     td.mini-col {
       width: 5px;
       white-space: nowrap;
@@ -89,10 +93,6 @@ table.clickable {
       padding-top: 3px;
       padding-bottom: 0;
     }
-    tr:hover {
-      background-color: rgba(0,0,0,.1);
-      transition: background-color .1s ease-in;
-    }
     tr.selected {
       background-color: rgba(255,255,255,.1);
     }
@@ -101,20 +101,22 @@ table.clickable {
       td {
         cursor: default;
         user-select: unset;
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          margin-top: -50px;
         }
-        div {
-          animation-name: fadeIn;
-          animation-duration: .2s;
-          animation-timing-function: ease-in;
-          animation-fill-mode: forwards;
+        100% {
+          opacity: 1;
+          margin-top: inherit;
         }
+      }
+      td>div {
+        animation-name: fadeIn;
+        animation-duration: .2s;
+        animation-timing-function: ease-in;
+        animation-fill-mode: forwards;
       }
     }
   }
