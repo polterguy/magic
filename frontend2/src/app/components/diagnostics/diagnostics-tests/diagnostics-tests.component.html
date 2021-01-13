@@ -44,14 +44,28 @@
           <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
 
           <div class="button-strip">
+
             <button
               mat-button
+              matTooltip="Run assumption"
               (click)="executeTest(el)">
-              Run assumption
+              Run
             </button>
+
             <button
               mat-button
-              (click)="saveTest(el.filename, el.content.hyperlambda)">Save</button>
+              matTooltip="Delete assumption"
+              (click)="deleteTest(el)">
+              Delete
+            </button>
+
+            <button
+              mat-button
+              matTooltip="Save assumption"
+              (click)="saveTest(el.filename, el.content.hyperlambda)">
+              Save
+            </button>
+
           </div>
   
         </div>

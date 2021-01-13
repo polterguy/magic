@@ -155,22 +155,6 @@ export class DiagnosticsTestsComponent implements OnInit {
   }
 
   /**
-   * Saves an assumption test.
-   * 
-   * @param filename Filename of test
-   * @param content Content of test
-   */
-  public saveTest(filename: string, content: string) {
-
-    // Invoking backend to save test.
-    this.fileService.saveFile(filename, content).subscribe(() => {
-
-      // Providing feedback to user.
-      this.feedbackService.showInfoShort('Assumption successfully saved');
-    });
-  }
-
-  /**
    * Runs the specified test.
    * 
    * @param el Full path to test
@@ -195,6 +179,54 @@ export class DiagnosticsTestsComponent implements OnInit {
       // Oops, test raised an exception (or something).
       test.success = false;
       this.feedbackService.showError(error);
+    });
+  }
+
+  /**
+   * Deletes the specified assumption test.
+   * 
+   * @param test Test to delete
+   */
+  public deleteTest(test: TestModel) {
+
+    // Asking user to confirm action.
+    this.feedbackService.confirm(
+      'Please confirm action',
+      'Are you sure you want to delete the specified assumption?',
+      () => {
+
+        // Invoking backend to delete file.
+        this.fileService.deleteFile(test.filename).subscribe(() => {
+
+          // Showing user some feedback.
+          this.feedbackService.showInfo('Assumption successfully deleted');
+
+          // Making sure we no longer edit current test.
+          this.toggleDetails(test);
+
+          // Removing test from table's model.
+          this.tests.splice(this.tests.indexOf(test), 1);
+
+          // Ensuring table is re-rendered.
+          this.tests = this.tests.filter(x => true);
+        });
+      }
+    );
+  }
+
+  /**
+   * Saves an assumption test.
+   * 
+   * @param filename Filename of test
+   * @param content Content of test
+   */
+  public saveTest(filename: string, content: string) {
+
+    // Invoking backend to save test.
+    this.fileService.saveFile(filename, content).subscribe(() => {
+
+      // Providing feedback to user.
+      this.feedbackService.showInfoShort('Assumption successfully saved');
     });
   }
 
