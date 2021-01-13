@@ -531,7 +531,7 @@ export class EndpointDetailsComponent implements OnInit {
         this.endpointService.createAssumption(
           res.filename,
           this.endpoint.verb,
-          '/' + this.endpoint.path,
+          this.url,
           this.result.status,
           res.description !== '' ? res.description : null,
           this.payload !== '' ? this.payload : null,
