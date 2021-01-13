@@ -1,18 +1,26 @@
 
 table.log-items {
   margin-bottom: 3rem;
+  table-layout: fixed;
   tr {
+    td:nth-child(1) {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
     td:nth-child(2), td:nth-child(3) {
       display: none;
     }
     @media screen and (min-width: 600px) {
       td:nth-child(2) {
         display: table-cell;
+        width: 50px;
       }
     }
     @media screen and (min-width: 800px) {
       td:nth-child(3) {
         display: table-cell;
+        width: 80px;
       }
     }
   }
@@ -28,7 +36,7 @@ table.log-items {
       width: 5rem;
     }
     span.pre-formatted {
-      white-space: pre;
+      white-space: pre-wrap;
     }
   }
   .full-width {
