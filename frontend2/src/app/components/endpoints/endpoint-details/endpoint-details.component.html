@@ -53,9 +53,12 @@
           *ngFor="let i of assumptions"
           [matTooltip]="i.description"
           (click)="runAssumption(i)"
-          [class]="i.success !== null ? (i.success ? 'success' : 'failure') : ''"
+          class="assumption"
           selectable="false">
           {{getAssumptionName(i.name)}}
+          <mat-icon *ngIf="i.success === false">warning</mat-icon>
+          <mat-icon *ngIf="i.success === true">check</mat-icon>
+          <mat-icon *ngIf="i.success === null">help_outline</mat-icon>
         </mat-chip>
       </mat-chip-list>
 

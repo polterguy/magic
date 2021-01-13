@@ -28,9 +28,6 @@ class TestModel {
   // Whether or not execution was a success or not.
   success?: boolean;
 
-  // Descriptive text for assumption test.
-  description?: string;
-
   // Content of test.
   content?: Model;
 }
@@ -86,16 +83,6 @@ export class DiagnosticsTestsComponent implements OnInit {
           filename: x,
           success: null,
           content: null,
-        }
-      });
-
-      // Retrieving description for tests.
-      const all = this.tests.map(x => this.endpointService.getDescription(x.filename));
-      forkJoin(all).subscribe((result: Response[]) => {
-
-        // Looping through all tests and assigning description to them.
-        for (let idxNo = 0; idxNo < all.length; idxNo++) {
-          this.tests[idxNo].description = result[idxNo].result;
         }
       });
 
