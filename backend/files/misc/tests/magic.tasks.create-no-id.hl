@@ -9,4 +9,4 @@ payload:@"{
   ""hyperlambda"": "".foo""
 }"
 status:int:500
-description:@"Assumes trying to create a task without an [id] fails, and that it returns the correct result"
+description:Assumes that creating a task without an id fails, and that it returns the correct result

@@ -11,4 +11,4 @@ payload:@"{
   ""content"": ""foo""
 }"
 status:int:400
-description:@"Verifies that importing a bogus cryptography key fails"
+description:Assumes that importing a bogus cryptography key fails

@@ -10,4 +10,4 @@ payload:@"{
   ""repeats"": ""5.seconds""
 }"
 status:int:500
-description:@"Verifies that trying to create a due date for a non-existing task fails"
+description:Assumes that trying to create a due date for a non-existing task fails

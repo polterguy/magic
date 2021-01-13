@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/file-system/list-folders"
 status:int:500
-description:@"Verifies that trying to list folders results in an error unless a folder argument is specified"
+description:Assumes that trying to list folders results in an error unless a folder argument is specified

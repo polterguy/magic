@@ -6,4 +6,4 @@ verb:get
 url:"/magic/modules/system/file-system/list-files?folder=%2F"
 status:int:200
 response:@"[""/README.md""]"
-description:@"Assumes listing files from root folder results in '/README.md' being returned, and that it succeeds"
+description:"Assumes that listing files from root folder results in '/README.md' being returned, and that it succeeds"

@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/tasks/is-running"
 status:int:200
-description:@"Verifies that it's possible to check if scheduler is running or not"
+description:Assumes that it is possible to check if scheduler is running or not
