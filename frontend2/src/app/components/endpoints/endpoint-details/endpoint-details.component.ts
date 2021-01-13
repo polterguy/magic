@@ -528,8 +528,14 @@ export class EndpointDetailsComponent implements OnInit {
       if (res) {
 
         // User gave us a filename, hence saving file to backend snippet collection.
-        let fileContent = this.createTestContent(res);
-        this.endpointService.saveTest(res.filename, fileContent).subscribe(() => {
+        this.endpointService.createAssumption(
+          res.filename,
+          this.endpoint.verb,
+          this.endpoint.path,
+          this.result.status,
+          res.description,
+          this.payload,
+          this.result.response).subscribe(() => {
 
           // Snippet saved, showing user some feedback, and reloading assumptions.
           this.feedbackService.showInfo('Assumption successfully saved');
@@ -568,37 +574,6 @@ export class EndpointDetailsComponent implements OnInit {
       url += idx.name + '=' + encodeURIComponent(idx.value) + '&';
     }
     this.url = url.substr(0, url.length - 1);
-  }
-
-  /*
-   * Creates content of test file for current invocation,
-   * and returns to caller.
-   */
-  private createTestContent(model: TestModel) {
-    let result = `
-/*
- * Automatically created assumption test.
- */
-`;
-    result += `verb:${this.endpoint.verb}
-url:"${this.url}"
-`;
-    if (this.payload) {
-      result += `payload:@"${this.payload.split('"').join('""')}"
-`;
-    }
-    result += `status:int:${this.result.status}
-`;
-    if (model.matchResponse && this.result.response) {
-      let response = JSON.stringify(JSON.parse(this.result.response));
-      result += `response:@"${response.split('"').join('""')}"
-`
-    }
-    if (model.description) {
-      result += `description:@"${model.description.split('"').join('""')}"
-`;
-    }
-    return result;
   }
 
   /*

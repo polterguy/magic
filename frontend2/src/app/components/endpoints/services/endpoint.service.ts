@@ -135,9 +135,21 @@ export class EndpointService {
    * Saves the specified assumption/integration test according to the specified argument.
    * 
    * @param filename Filename to save snippet as. Notice, assumes we're only given the filename, and not the entire path. The service is responsible for prepending the folder.
-   * @param content Content of snippet
+   * @param verb HTTP verb assumption is using during invocation towards URL
+   * @param url HTTP URL assumption invokes
+   * @param status HTTP status code assumption assumes invocation returns
+   * @param description Descriptive text for assumption
+   * @param payload Payload for HTTP invocation towards URL
+   * @param response Response assumption assumes invocation towards URL will return
    */
-  public saveTest(filename: string, content: string) {
+  public createAssumption(
+    filename: string,
+    verb: string,
+    url: string,
+    status: number,
+    description: string = null,
+    payload: string = null,
+    response: string = null) {
 
     // Sanity checking invocation.
     if (filename.indexOf('/') !== -1) {
@@ -151,7 +163,24 @@ export class EndpointService {
     }
 
     // Returning result of invocation to file service.
-    return this.fileService.saveFile(filename, content);
+    const input: any = {
+      filename,
+      verb,
+      url,
+      status,
+    };
+
+    // Checking if optional arguments were supplied.
+    if (description) {
+      input.description = description;
+    }
+    if (payload) {
+      input.payload = payload;
+    }
+    if (response) {
+      input.response = response;
+    }
+    return this.httpService.post('/magic/modules/system/diagnostics/create-test', input);
   }
 
   /**
