@@ -105,12 +105,12 @@ export class FileService {
    * 
    * @param file Path of file to delete
    */
-  public deleteFile(folder: string) {
+  public deleteFile(file: string) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
       '/magic/modules/system/file-system/file?file=' +
-      encodeURIComponent(folder));
+      encodeURIComponent(file));
   }
 
   /**
