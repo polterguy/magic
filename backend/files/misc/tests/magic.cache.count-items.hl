@@ -3,6 +3,6 @@
  * Automatically generated assumption test.
  */
 verb:get
-url:"/magic/modules/system/config/list-cache-count"
+url:/magic/modules/system/config/list-cache-count
 status:int:200
 description:Assumes that counting cache items succeeds

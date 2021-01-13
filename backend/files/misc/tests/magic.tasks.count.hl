@@ -3,6 +3,6 @@
  * Automatically generated assumption test.
  */
 verb:get
-url:"/magic/modules/system/tasks/count-tasks"
+url:/magic/modules/system/tasks/count-tasks
 status:int:200
 description:Assumes that counting all tasks in the system succeeds

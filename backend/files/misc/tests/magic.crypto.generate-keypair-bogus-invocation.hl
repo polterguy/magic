@@ -3,7 +3,7 @@
  * Automatically generated assumption test.
  */
 verb:post
-url:"/magic/modules/system/config/generate-keypair"
+url:/magic/modules/system/config/generate-keypair
 payload:@"{
   ""strength"": 5,
   ""seed"": ""foo""

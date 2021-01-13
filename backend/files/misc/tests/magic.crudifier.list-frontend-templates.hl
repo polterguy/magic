@@ -3,7 +3,7 @@
  * Automatically generated assumption test.
  */
 verb:get
-url:"/magic/modules/system/endpoints/templates"
+url:/magic/modules/system/endpoints/templates
 status:int:200
 response:@"[""angular-dark"",""angular-default"",""angular-service""]"
 description:Assumes that listing all frontend templates succeeds, and returns the correct result
