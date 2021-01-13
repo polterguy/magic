@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/auth/endpoints"
 status:int:200
-.description:@"Assumes retrieving auth endpoints succeeds"
+description:@"Assumes retrieving auth endpoints succeeds"

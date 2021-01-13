@@ -9,4 +9,4 @@ payload:@"{
 }"
 status:int:200
 response:@"{""result"":"".foo:bar\r\n""}"
-.description:@"Verifies that executing a piece of Hyperlambda returns the correct result"
+description:@"Verifies that executing a piece of Hyperlambda returns the correct result"

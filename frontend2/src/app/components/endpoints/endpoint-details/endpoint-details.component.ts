@@ -612,7 +612,7 @@ url:"${this.url}"
 `
     }
     if (model.description) {
-      result += `.description:@"${model.description.split('"').join('""')}"
+      result += `description:@"${model.description.split('"').join('""')}"
 `;
     }
     return result;

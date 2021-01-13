@@ -32,4 +32,4 @@ hyper2lambda:x:-
  */
 unwrap:x:+/*
 return
-   result:x:@hyper2lambda/*/.description
+   result:x:@hyper2lambda/*/description

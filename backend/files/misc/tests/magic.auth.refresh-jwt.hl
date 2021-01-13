@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/auth/refresh-ticket"
 status:int:200
-.description:@"Assumes we can refresh our JWT token"
+description:@"Assumes we can refresh our JWT token"

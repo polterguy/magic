@@ -8,4 +8,4 @@ payload:@"{
   ""hyperlambda"": ""foo:bar""
 }"
 status:int:500
-.description:@"Verifies that executing bogus Hyperlambda fails"
+description:@"Verifies that executing bogus Hyperlambda fails"

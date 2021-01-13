@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/misc/gibberish?min=50&max=100"
 status:int:200
-.description:@"Assumes creating gibberish (CSRNG string) succeeds"
+description:@"Assumes creating gibberish (CSRNG string) succeeds"

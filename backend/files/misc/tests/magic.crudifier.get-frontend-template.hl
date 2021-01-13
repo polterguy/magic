@@ -5,4 +5,4 @@
 verb:get
 url:"/magic/modules/system/endpoints/template?name=angular-dark"
 status:int:200
-.description:@"Verifies that retrieving a frontend template succeeds"
+description:@"Verifies that retrieving a frontend template succeeds"

@@ -5,4 +5,4 @@
 verb:delete
 url:"/magic/modules/system/tasks/delete-task"
 status:int:500
-.description:@"Verifies that trying to delete a non-existing task fails, and returns the correct error"
+description:@"Verifies that trying to delete a non-existing task fails, and returns the correct error"
