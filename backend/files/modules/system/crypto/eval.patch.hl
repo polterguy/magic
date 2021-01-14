@@ -3,8 +3,6 @@
  * Evaluates a cryptographically signed HTTP REST invocation.
  */
 .description:"Evaluates a cryptographically signed HTTP REST invocation."
-.arguments
-   body:*
 
 
 /*
