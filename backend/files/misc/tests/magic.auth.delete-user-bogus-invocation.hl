@@ -1,0 +1,9 @@
+verb:delete
+url:/magic/modules/magic/users
+status:int:400
+description:Assumes that trying to delete a user without providing a username argument fails with the correct response and status code
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""username""
+}"
+produces:application/json
