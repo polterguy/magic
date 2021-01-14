@@ -3,6 +3,14 @@
  * Evaluates a cryptographically signed HTTP REST invocation.
  */
 .description:"Evaluates a cryptographically signed HTTP REST invocation."
+.arguments
+   body:*
+
+
+/*
+ * Making sure we communicate what type of content we can accept.
+ */
+.accept:application/octet-stream
 
 
 /*
