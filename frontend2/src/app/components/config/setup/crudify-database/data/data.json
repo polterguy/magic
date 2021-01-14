@@ -404,7 +404,7 @@
           }
        ]
     },
-    "validators": "eval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
+    "validators": "validators.mandatory:x:@.arguments/*/username\r\neval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
   },
   {
     "overwrite": true,
