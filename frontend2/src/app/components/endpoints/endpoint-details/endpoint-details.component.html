@@ -165,12 +165,21 @@
     </span>
 
     <span
+      *ngIf="!result.blob"
       class="item-full-width">
       <span class="description">
         <ngx-codemirror
           [(ngModel)]="result.response"
           [options]="cmOptionsReadonly.json">
         </ngx-codemirror>
+      </span>
+    </span>
+
+    <span
+      *ngIf="result.blob"
+      class="item-full-width">
+      <span class="description">
+        <img [src]="result.blob" alt="Image resulting from invocation">
       </span>
     </span>
 

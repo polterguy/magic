@@ -7,6 +7,7 @@
 import { forkJoin, Observable } from 'rxjs';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Component, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -48,6 +49,9 @@ class InvocationResult {
 
   // Actual response returned by invocation.
   response: string;
+
+  // If response returned a blob (image?), this will be its value.
+  blob: any;
 }
 
 /*
@@ -125,12 +129,15 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param dialog Needed to be able to create add query value dialog
    * @param clipboard Needed to copy URL of endpoint
+   * @param sanitizer Needed to display image results originating from invocations
    * @param backendService Needed to retrieve base root URL for backend
+   * @param feedbackService Needed to display feedback to user
    * @param endpointService Needed to be able to invoke endpoint
    */
   constructor(
     private dialog: MatDialog,
     private clipboard: Clipboard,
+    private sanitizer: DomSanitizer,
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
@@ -470,9 +477,18 @@ export class EndpointDetailsComponent implements OnInit {
    */
   public invoke() {
 
-    // Dynamically building our request according to user's specifications, and endpoint type.
+    // Figuring out what endpoint returns.
+    let responseType = '';
+    if (this.endpoint.produces === 'application/json') {
+      responseType = 'json';
+    } else if (this.endpoint.produces.startsWith('text')) {
+      responseType = 'text';
+    } else {
+      responseType = 'blob';
+    }
+
+    // Creating backend invocation.
     let invocation: Observable<any> = null;
-    const responseType = this.endpoint.produces === 'application/json' ? 'json' : 'text';
     switch (this.endpoint.verb) {
 
       case 'get':
@@ -502,10 +518,13 @@ export class EndpointDetailsComponent implements OnInit {
       // Binding result model to result of invocation.
       const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
       this.result = {
-        status: 200,
-        statusText: 'OK',
+        status: res.status,
+        statusText: res.statusText,
         response: response,
+        blob: null
       };
+      const objectUrl = URL.createObjectURL(response);
+      this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
 
     }, (error: any) => {
 
@@ -514,6 +533,7 @@ export class EndpointDetailsComponent implements OnInit {
         status: error.status,
         statusText: error.statusText,
         response: JSON.stringify(error.error || '{}', null, 2),
+        blob: null,
       };
     });
   }
@@ -549,13 +569,22 @@ export class EndpointDetailsComponent implements OnInit {
           this.result.status,
           res.description !== '' ? res.description : null,
           this.payload !== '' ? this.payload : null,
-          res.matchResponse ? this.result.response : null,
+          (res.matchResponse && !this.result.blob) ? this.result.response : null,
           this.endpoint.produces).subscribe(() => {
 
-          // Snippet saved, showing user some feedback, and reloading assumptions.
-          this.feedbackService.showInfo('Assumption successfully saved');
+          /*
+           * Snippet saved, showing user some feedback, and reloading assumptions.
+           *
+           * Checking if caller wants response to match, and response is blob,
+           * at which point we inform user this is not possible.
+           */
+          if (res.matchResponse && this.result.blob) {
+            this.feedbackService.showInfo('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.');
+          } else {
+            this.feedbackService.showInfo('Assumption successfully saved');
+          }
           this.getAssumptions();
-          
+
         }, (error: any) => this.feedbackService.showError(error));
 
       }
