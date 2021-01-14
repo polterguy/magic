@@ -49,10 +49,12 @@ export class EndpointService {
    * Invokes the HTTP GET verb towards the specified URL.
    * 
    * @param url URL to invoke
+   * @param responseType What response endpoint is assumed to return
    */
-  public get(url: string) {
+  public get(url: string, responseType: string = 'json') {
     return this.httpService.get<any>(url, {
       observe: 'response',
+      responseType,
     });
   }
 
@@ -60,10 +62,12 @@ export class EndpointService {
    * Invokes the HTTP DELETE verb towards the specified URL.
    * 
    * @param url URL to invoke
+   * @param responseType What response endpoint is assumed to return
    */
-  public delete(url: string) {
+  public delete(url: string, responseType: string = 'json') {
     return this.httpService.delete<any>(url, {
       observe: 'response',
+      responseType,
     });
   }
 
@@ -73,10 +77,12 @@ export class EndpointService {
    * 
    * @param url URL to invoke
    * @param args Payload to transmit to backend
+   * @param responseType What response endpoint is assumed to return
    */
-  public post(url: string, args: any) {
+  public post(url: string, args: any, responseType: string = 'json') {
     return this.httpService.post<any>(url, args, {
       observe: 'response',
+      responseType,
     });
   }
 
@@ -86,10 +92,12 @@ export class EndpointService {
    * 
    * @param url URL to invoke
    * @param args Payload to transmit to backend
+   * @param responseType What response endpoint is assumed to return
    */
-  public put(url: string, args: any) {
+  public put(url: string, args: any, responseType: string = 'json') {
     return this.httpService.put<any>(url, args, {
       observe: 'response',
+      responseType,
     });
   }
 
@@ -99,10 +107,12 @@ export class EndpointService {
    * 
    * @param url URL to invoke
    * @param args Payload to transmit to backend
+   * @param responseType What response endpoint is assumed to return
    */
-  public patch(url: string, args: any) {
+  public patch(url: string, args: any, responseType: string = 'json') {
     return this.httpService.patch<any>(url, args, {
       observe: 'response',
+      responseType,
     });
   }
 
@@ -149,7 +159,8 @@ export class EndpointService {
     status: number,
     description: string = null,
     payload: string = null,
-    response: string = null) {
+    response: string = null,
+    produces: string = 'application/json') {
 
     // Sanity checking invocation.
     if (filename.indexOf('/') !== -1) {
@@ -179,6 +190,9 @@ export class EndpointService {
     }
     if (response) {
       input.response = response;
+    }
+    if (produces) {
+      input.produces = produces;
     }
     return this.httpService.post('/magic/modules/system/diagnostics/create-test', input);
   }

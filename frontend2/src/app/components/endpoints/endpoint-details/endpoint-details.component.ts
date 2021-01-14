@@ -144,7 +144,7 @@ export class EndpointDetailsComponent implements OnInit {
     this.url = '/' + this.endpoint.path;
 
     // Checking if this is a JSON payload or not.
-    if (this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
+    if (this.endpoint.input && this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
 
       // JSON payload type.
       let payload = {};
@@ -175,6 +175,18 @@ export class EndpointDetailsComponent implements OnInit {
 
     // Retrieving assumptions for endpoint.
     this.getAssumptions();
+  }
+
+  /**
+   * Returns true if endpoint can be invoked.
+   * 
+   * Notice, we don't support invoking endpoints with for instance application/octet-stream types
+   * of input, since we don't have the means to supply the required input to these endpoints.
+   */
+  public canInvoke() {
+    return this.endpoint.verb === 'get' ||
+      this.endpoint.verb === 'delete' ||
+      this.endpoint.consumes === 'application/json';
   }
 
   /**
@@ -460,26 +472,27 @@ export class EndpointDetailsComponent implements OnInit {
 
     // Dynamically building our request according to user's specifications, and endpoint type.
     let invocation: Observable<any> = null;
+    const responseType = this.endpoint.produces === 'application/json' ? 'json' : 'text';
     switch (this.endpoint.verb) {
 
       case 'get':
-        invocation = this.endpointService.get(this.url);
+        invocation = this.endpointService.get(this.url, responseType);
         break;
 
       case 'delete':
-        invocation = this.endpointService.delete(this.url);
+        invocation = this.endpointService.delete(this.url, responseType);
         break;
 
       case 'post':
-        invocation = this.endpointService.post(this.url, JSON.parse(this.payload));
+        invocation = this.endpointService.post(this.url, JSON.parse(this.payload), responseType);
         break;
 
       case 'put':
-        invocation = this.endpointService.put(this.url, JSON.parse(this.payload));
+        invocation = this.endpointService.put(this.url, JSON.parse(this.payload), responseType);
         break;
 
       case 'patch':
-        invocation = this.endpointService.patch(this.url, JSON.parse(this.payload));
+        invocation = this.endpointService.patch(this.url, JSON.parse(this.payload), responseType);
         break;
     }
 
@@ -487,10 +500,11 @@ export class EndpointDetailsComponent implements OnInit {
     invocation.subscribe((res: any) => {
 
       // Binding result model to result of invocation.
+      const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
       this.result = {
         status: 200,
         statusText: 'OK',
-        response: JSON.stringify(res.body || '{}', null, 2),
+        response: response,
       };
 
     }, (error: any) => {
@@ -535,7 +549,8 @@ export class EndpointDetailsComponent implements OnInit {
           this.result.status,
           res.description !== '' ? res.description : null,
           this.payload !== '' ? this.payload : null,
-          res.matchResponse ? this.result.response : null).subscribe(() => {
+          res.matchResponse ? this.result.response : null,
+          this.endpoint.produces).subscribe(() => {
 
           // Snippet saved, showing user some feedback, and reloading assumptions.
           this.feedbackService.showInfo('Assumption successfully saved');

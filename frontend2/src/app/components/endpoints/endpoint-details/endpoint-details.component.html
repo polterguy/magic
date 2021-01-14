@@ -122,7 +122,7 @@
   </span>
 
   <span
-    *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb !== 'get' && endpoint.verb !== 'delete')"
+    *ngIf="payload"
     class="item-full-width">
 
     <hr>
@@ -138,7 +138,9 @@
 
   </span>
 
-  <div class="button-strip">
+  <div
+    *ngIf="canInvoke()"
+    class="button-strip">
     <button
       mat-button
       matTooltip="Invokes endpoint with the specified arguments"

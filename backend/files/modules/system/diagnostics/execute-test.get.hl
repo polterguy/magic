@@ -110,20 +110,50 @@ if
    exists:x:@hyper2lambda/*/response
    .lambda
 
-
       /*
-       * Making sure JSON formatting becomes irrelevant.
+       * Assumption and reality nodes, which are later compared to sanity
+       * check invocation.
        */
       .response
-      json2lambda:x:@.foo/-/*/content
-      set-value:x:@.response
-         lambda2json:x:@json2lambda/*
-            format:true
       .assumption
-      json2lambda:x:@hyper2lambda/*/response
-      set-value:x:@.assumption
-         lambda2json:x:@json2lambda/*
-            format:true
+
+      /*
+       * Checking if response type is assumed to be JSON, and if so,
+       * making sure we make formatting irrelevant before we compare assumption
+       * with reality.
+       *
+       * Notice, JSON is default assumption about Content-Type returned by
+       * invocation.
+       */
+      if
+         or
+            not
+               exists:x:@hyper2lambda/*/produces
+            eq
+               get-value:x:@hyper2lambda/*/produces
+               .:application/json
+         .lambda
+
+            /*
+             * Making sure JSON formatting becomes irrelevant.
+             */
+            json2lambda:x:@.foo/-/*/content
+            set-value:x:@.response
+               lambda2json:x:@json2lambda/*
+                  format:true
+            json2lambda:x:@hyper2lambda/*/response
+            set-value:x:@.assumption
+               lambda2json:x:@json2lambda/*
+                  format:true
+      else
+
+         /*
+          * Assigning reality and assumption to comparison values.
+          */
+         set-value:x:@.response
+            get-value:x:@.foo/-/*/content
+         set-value:x:@.assumption
+            get-value:x:@hyper2lambda/*/response
 
 
       /*

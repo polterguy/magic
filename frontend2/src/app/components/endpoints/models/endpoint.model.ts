@@ -23,16 +23,14 @@ export class Endpoint {
   verb: string;
 
   /**
-   * What type of payload your endpoint accepts as input.
-   * 
-   * Notice, GET and DELETE endpoints doesn't have any type of input.
+   * Accept HTTP header of endpoint, or what Content-Type it can consume.
    */
-  input_type?: string;
+  consumes?: string;
 
   /**
-   * What type of payload your endpoint returns.
+   * Content-Type HTTP header endpoint will produce.
    */
-  output_type?: string;
+  produces?: string;
 
   /**
    * Input arguments the endpoint can handle.
