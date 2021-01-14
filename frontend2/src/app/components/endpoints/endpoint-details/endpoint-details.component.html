@@ -24,6 +24,16 @@
     <span class="description">{{endpoint.type}}</span>
   </span>
 
+  <span class="item" *ngIf="endpoint.consumes">
+    <strong class="label">Consumes</strong>
+    <span class="description">{{endpoint.consumes}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.produces">
+    <strong class="label">Produces</strong>
+    <span class="description">{{endpoint.produces}}</span>
+  </span>
+
   <span class="item" *ngIf="endpoint.description">
     <strong class="label">Description</strong>
     <span class="description">{{endpoint.description}}</span>
