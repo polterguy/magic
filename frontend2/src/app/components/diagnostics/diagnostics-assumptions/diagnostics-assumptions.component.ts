@@ -277,6 +277,9 @@ export class DiagnosticsTestsComponent implements OnInit {
         // All tests succeeded.
         this.feedbackService.showInfoShort(`${idxNo} assumptions succeeded`);
       }
+
+      // Removing all succeeded tests, to give user accurate information.
+      this.tests = this.tests.filter(x => !x.success);
     });
   }
 }

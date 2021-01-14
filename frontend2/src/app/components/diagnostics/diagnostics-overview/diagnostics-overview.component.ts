@@ -13,14 +13,14 @@ import { Label, SingleDataSet } from 'ng2-charts';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { LogItem } from 'src/app/components/log/models/log-item.model';
 import { Endpoint } from 'src/app/models/endpoint.model';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { LogItem } from 'src/app/components/log/models/log-item.model';
 import { LogService } from 'src/app/components/log/services/log.service';
 import { UserService } from 'src/app/components/auth/services/user.service';
 import { RoleService } from 'src/app/components/auth/services/role.service';
-import { TaskService } from 'src/app/components/tasks/services/task.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { TaskService } from 'src/app/components/tasks/services/task.service';
 import { DiagnosticsService } from 'src/app/components/diagnostics/services/diagnostics.service';
 
 /**
@@ -114,20 +114,20 @@ export class DiagnosticsOverviewComponent implements OnInit {
    */
   public assumptionsColors = [{
     backgroundColor: [
-      'rgba(255,70,70,0.6)',
-      'rgba(255,80,80,0.6)',
-      'rgba(255,90,90,0.6)',
-      'rgba(255,100,100,0.6)',
-      'rgba(255,110,110,0.6)',
-      'rgba(255,120,120,0.6)',
-      'rgba(255,130,130,0.6)',
-      'rgba(255,140,140,0.6)',
-      'rgba(255,150,150,0.6)',
-      'rgba(255,160,160,0.6)',
-      'rgba(255,170,170,0.6)',
-      'rgba(255,180,180,0.6)',
-      'rgba(255,190,190,0.6)',
-      'rgba(255,200,200,0.6)',
+      'rgba(200,200,200,0.6)',
+      'rgba(190,190,190,0.6)',
+      'rgba(180,180,180,0.6)',
+      'rgba(170,170,170,0.6)',
+      'rgba(160,160,160,0.6)',
+      'rgba(150,150,150,0.6)',
+      'rgba(140,140,140,0.6)',
+      'rgba(130,130,130,0.6)',
+      'rgba(120,120,120,0.6)',
+      'rgba(110,110,110,0.6)',
+      'rgba(100,100,100,0.6)',
+      'rgba(90,90,90,0.6)',
+      'rgba(80,80,80,0.6)',
+      'rgba(70,70,70,0.6)',
     ]}];
 
   /**
