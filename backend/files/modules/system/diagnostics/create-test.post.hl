@@ -11,6 +11,7 @@
    description:string
    payload:string
    response:string
+   produces:string
 
 
 /*
