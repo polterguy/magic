@@ -1,0 +1,19 @@
+verb:post
+url:/magic/modules/magic/crypto_keys
+status:int:400
+description:Assumes that trying to post a cryptography key with email field not being email address results in the correct error code and response status code
+payload:@"{
+  ""subject"": ""foo"",
+  ""email"": ""foo"",
+  ""domain"": ""foo"",
+  ""type"": ""foo"",
+  ""fingerprint"": ""foo"",
+  ""content"": ""foo"",
+  ""vocabulary"": ""foo"",
+  ""enabled"": false
+}"
+response:@"{
+  ""message"": ""'foo' is not a valid email address"",
+  ""field"": ""email""
+}"
+produces:application/json
