@@ -29,6 +29,16 @@ export class Endpoint {
   description: string;
 
   /**
+   * Content-Type endpoint accepts.
+   */
+  consumes: string;
+
+  /**
+   * Content-Type endpoint produces.
+   */
+  produces: string;
+
+  /**
    * Type of endpoint (meta data), e.g. "crud-read" for CRUD read endpoints, etc.
    */
   type: string;
