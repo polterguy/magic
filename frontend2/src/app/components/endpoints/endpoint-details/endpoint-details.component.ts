@@ -445,6 +445,11 @@ export class EndpointDetailsComponent implements OnInit {
       // Checking if modal dialog wants to create a query parameter.
       if (value || value === false || value === 0 || value === '' /* Avoiding explicit conversions to false */) {
 
+        // Checking if type of argument is date, and if so, converting it appropriately.
+        if (arg.type === 'date') {
+          value = new Date(value).toISOString();
+        }
+
         // Verifying parameter is not already added, and if it is, we remove it first.
         if (this.query.filter(x => x.name === arg.name).length > 0) {
           this.query.splice(this.query.indexOf(this.query.filter(x => x.name === arg.name)[0]), 1);
