@@ -2,6 +2,13 @@
 .wrapper {
   margin:2rem;
   min-height: 20rem;
+  .success-for-all {
+    font-size: 7rem;
+    display: block;
+    margin-left: calc(50% - 3rem);
+    margin-top: 5rem;
+    color: lightgreen;
+  }
   .fill-width {
     margin-top: 1rem;
   }

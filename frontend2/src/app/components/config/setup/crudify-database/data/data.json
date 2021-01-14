@@ -6,37 +6,6 @@
     "database":"[generic|magic]",
     "table":"crypto_invocations",
     "moduleUrl":"crypto_invocations",
-    "returnId":true,
-    "template":"/modules/system/crudifier/templates/crud.template.post.hl",
-    "verb":"post",
-    "auth":"root",
-    "args":{
-       "columns":[
-          {
-             "crypto_key":"long"
-          },
-          {
-             "request_id":"string"
-          },
-          {
-             "request":"string"
-          },
-          {
-             "request_raw":"string"
-          },
-          {
-             "response":"string"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"crypto_invocations",
-    "moduleUrl":"crypto_invocations",
     "returnId":false,
     "template":"/modules/system/crudifier/templates/crud.template.get.hl",
     "verb":"get",
@@ -63,61 +32,6 @@
           },
           {
              "created":"date"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"crypto_invocations",
-    "moduleUrl":"crypto_invocations",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.put.hl",
-    "verb":"put",
-    "auth":"root",
-    "args":{
-       "primary":[
-          {
-             "id":"long"
-          }
-       ],
-       "columns":[
-          {
-             "crypto_key":"long"
-          },
-          {
-             "request_id":"string"
-          },
-          {
-             "request":"string"
-          },
-          {
-             "request_raw":"string"
-          },
-          {
-             "response":"string"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"crypto_invocations",
-    "moduleUrl":"crypto_invocations",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.delete.hl",
-    "verb":"delete",
-    "auth":"root",
-    "args":{
-       "primary":[
-          {
-             "id":"long"
           }
        ]
     }
