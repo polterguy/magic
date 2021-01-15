@@ -39,19 +39,22 @@ for-each:x:@io.file.list/*
           */
          io.file.load:x:@.dp/#
          hyper2lambda:x:@io.file.load
-         strings.split:x:@hyper2lambda/*/url
-            .:?
          if
-            and
-               eq
-                  get-value:x:@strings.split/0
-                  get-value:x:@.arguments/*/endpoint
-               eq
-                  get-value:x:@hyper2lambda/*/verb
-                  get-value:x:@.arguments/*/verb
+            exists:x:@hyper2lambda/*/url
             .lambda
-               add:x:../*/return-nodes
-                  get-nodes:x:@.dp/#
+               strings.split:x:@hyper2lambda/*/url
+                  .:?
+               if
+                  and
+                     eq
+                        get-value:x:@strings.split/0
+                        get-value:x:@.arguments/*/endpoint
+                     eq
+                        get-value:x:@hyper2lambda/*/verb
+                        get-value:x:@.arguments/*/verb
+                  .lambda
+                     add:x:../*/return-nodes
+                        get-nodes:x:@.dp/#
 
 
 
