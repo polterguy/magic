@@ -582,6 +582,18 @@ semaphore:crudifier
          .:/
    io.folder.create:x:@.folder
 
+   /*
+    * Applying the correct description to the file.
+    */
+   set-value:x:@apply/*/.description
+      strings.replace:x:@apply/*/.description
+         .:{database}
+         get-value:x:@.arguments/*/database
+   set-value:x:@apply/*/.description
+      strings.replace:x:@apply/*/.description
+         .:{table}
+         get-value:x:@.arguments/*/table
+
 
    /*
     * Transforming lambda to Hyperlambda, and saving it to the correct file, making sure
@@ -666,6 +678,10 @@ semaphore:crudifier
          remove-nodes:x:@apply/*/.arguments/*/direction
          set-value:x:@apply/*/.type
             .:crud-count
+         set-value:x:@apply/*/.description
+            strings.replace:x:@apply/*/.description
+               .:Returns
+               .:Counts
          add:x:@apply/**/columns
             .
                count(*)
