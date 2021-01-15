@@ -17,6 +17,14 @@
 
 
 /*
+ * Sanity checks invocation.
+ */
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
+
+
+/*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root

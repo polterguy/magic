@@ -5,7 +5,19 @@
 .description:"Returns the fingerprint for the specified key."
 .arguments
    key:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
 auth.ticket.verify:root
+
+
+/*
+ * Sanity checks invocation.
+ */
+validators.mandatory:x:@.arguments/*/key
+
 
 /*
  * Creating fingerprint and returning to caller.
