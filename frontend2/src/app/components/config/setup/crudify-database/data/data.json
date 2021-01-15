@@ -119,7 +119,7 @@
           }
        ]
     },
-    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA"
+    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79"
   },
   {
     "overwrite": true,
@@ -273,7 +273,7 @@
           }
        ]
     },
-    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA"
+    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79"
   },
   {
     "overwrite": true,
