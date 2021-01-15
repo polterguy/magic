@@ -1,7 +1,7 @@
 verb:post
 url:/magic/modules/magic/crypto_keys
 status:int:400
-description:Assumes that trying to create a cryptography key with its type not being a valid type results in the correct response and status code from backend
+description:Assumes that trying to create a cryptography key with its type not being a valid type results in the correct error response and status code from backend
 payload:@"{
   ""subject"": ""foo"",
   ""email"": ""foo@bar.com"",
