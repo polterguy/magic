@@ -30,6 +30,37 @@ hyper2lambda:x:-
 
 
 /*
+ * Checking if this is a lambda assumption, and if so,
+ * executing lambda, verifying no exceptions are thrown.
+ */
+if
+   exists:x:@hyper2lambda/*/.lambda
+   .lambda
+
+      /*
+       * Lambda assumption, making sure we catch exceptions, while
+       * getting root nodes to resolve correctly in the process.
+       */
+      try
+         .x:node:""
+         add:x:@.x/#
+            get-nodes:x:@hyper2lambda/*/.lambda/*
+         eval:x:@.x/#
+         return
+            result:success
+      .catch
+         strings.concat
+            .:"Assumption test failed, test file: "
+            get-value:x:../*/.arguments/*/test_file
+            .:"\r\nError: Unhandled exception occurred.\r\n\r\nException: "
+            get-value:x:@.arguments/*/message
+         log.error:x:@strings.concat
+         unwrap:x:+/*
+         return
+            result:x:@strings.concat
+
+
+/*
  * Retrieving Authorization header used to invoke current endpoint,
  * and forwarding it into invocation towards assumption test.
  */
