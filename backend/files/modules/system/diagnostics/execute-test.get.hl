@@ -216,15 +216,6 @@ if
 
 
 /*
- * Logging the fact that test succeeded.
- */
-strings.concat
-   .:"Assumption test succeeded. Test file: "
-   get-value:x:@.arguments/*/test_file
-log.info:x:@strings.concat
-
-
-/*
  * Returns success to caller.
  */
 return
