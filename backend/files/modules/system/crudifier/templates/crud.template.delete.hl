@@ -3,6 +3,7 @@
  * Template for HTTP DELETE CRUD requests.
  */
 .arguments
+.description:Deletes one item from your {table} table in your {database} database matching the specified argument(s)
 .type:crud-delete
 
 
