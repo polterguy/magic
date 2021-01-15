@@ -70,17 +70,21 @@ export class SetupComponent implements OnInit, OnDestroy {
 
             // Retrieving next step's selected index for stepper.
             const selectedIndex = this.getStepperSelectedIndex();
-            if (selectedIndex === -1) {
+            if (selectedIndex === 3) {
 
-              // We're done, navigating to home component, and giving user some feedback.
-              this.feedbackService.showInfo('You have successfully setup Magic');
-              this.router.navigate(['/']);
+              // We're done, giving user some feedback and encouraging him to run assumptions.
+              this.feedbackService.showInfo('You have successfully setup Magic, now please verify integrity by running assumptions');
+
             } else {
 
               // More steps to go.
               this.stepper.selectedIndex = selectedIndex;
             }
           });
+          break;
+
+        case 'app.assumptions.succeeded':
+          setTimeout(() => this.router.navigate(['/']), 1000);
           break;
       }
     });
@@ -109,6 +113,6 @@ export class SetupComponent implements OnInit, OnDestroy {
     } else if (!this.status.server_keypair) {
       return 2;
     }
-    return -1;
+    return 3;
   }
 }

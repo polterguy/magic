@@ -11,6 +11,11 @@ mat-horizontal-stepper {
     display: block;
     margin: 2rem 3rem 0 5rem;
   }
+  app-diagnostics-assumptions {
+    position: relative;
+    display: block;
+    padding-top: 2rem;
+  }
 }
 
 ::ng-deep .mat-horizontal-stepper-header{

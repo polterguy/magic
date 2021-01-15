@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { FileService } from '../../files/services/file.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -65,11 +66,13 @@ export class DiagnosticsTestsComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param fileService Needed to load test files from backend
+   * @param messageService Needed to publish message when all assumptions succeeds
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all tests from backend
    */
   constructor(
     private fileService: FileService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
 
@@ -113,6 +116,8 @@ export class DiagnosticsTestsComponent implements OnInit {
    * Returns tests that should be display due to matching filter condition.
    */
   public getFilteredTests() {
+
+    // Returning tests matching currently filter condition.
     return this.tests.filter(x => x.filename.indexOf(this.filter) !== -1);
   }
 
@@ -264,7 +269,10 @@ export class DiagnosticsTestsComponent implements OnInit {
 
       // Done, filtering out successful tests.
       if (this.tests.filter(x => x.success === false).length === 0) {
-        this.feedbackService.showInfo('All assumptions were successfully assumed');
+        this.feedbackService.showInfo('Your system has perfect health!');
+        this.messageService.sendMessage({
+          name: 'app.assumptions.succeeded',
+        });
       } else {
         this.feedbackService.showError('Oops, one or more tests failed!');
       }
