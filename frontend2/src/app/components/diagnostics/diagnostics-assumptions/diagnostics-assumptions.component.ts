@@ -4,15 +4,17 @@
  */
 
 // Angular and system imports.
+import { forkJoin, from } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { FileService } from '../../files/services/file.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
@@ -69,12 +71,14 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param messageService Needed to publish message when all assumptions succeeds
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all tests from backend
+   * @param loaderInterceptor Used to manually increment invocation count to avoid flickering as we execute all tests
    */
   constructor(
     private fileService: FileService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private loaderInterceptor: LoaderInterceptor) { }
 
   /**
    * Implementation of OnInit.
@@ -254,52 +258,40 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public executeAll() {
 
-    // Invoking method that executes all tests sequentially, making sure we clone array in process.
-    this.executeTopTest(this.tests.filter(x => true));
-  }
+    // Invoking backend once for every test in suite.
+    const parallellNo = 4;
+    let idxNo = 0;
+    this.loaderInterceptor.increment();
+    from(this.tests.map(x => this.endpointService.executeTest(x.filename)))
+      .pipe(
+        bufferCount(parallellNo),
+        concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
+          for (let idx of results) {
+            this.tests[idxNo].success = idx.result === 'success';
+            idxNo++;
+          }
+        }, (errors: any[]) => {
+          for (let idx of errors) {
+            this.tests[idxNo++].success = false;
+          }
+        }, () => {
 
-  /*
-   * Private helper methods.
-   */
+          // Done, checking if all tests succeeded.
+          this.loaderInterceptor.decrement();
+          if (this.tests.filter(x => x.success === false).length === 0) {
 
-  private executeTopTest(tests: TestModel[]) {
+            // Perfect health! Publishing succeeded message and showing user some feedback.
+            this.feedbackService.showInfo('Your system has perfect health!');
+            this.messageService.sendMessage({
+              name: 'app.assumptions.succeeded',
+            });
 
-    // Checking if we're done
-    if (tests.length === 0) {
+          } else {
 
-      // Done, filtering out successful tests.
-      if (this.tests.filter(x => x.success === false).length === 0) {
-        this.feedbackService.showInfo('Your system has perfect health!');
-        this.messageService.sendMessage({
-          name: 'app.assumptions.succeeded',
+            // One or more tests failed, removing all successful tests.
+            this.feedbackService.showError('Oops, one or more tests failed!');
+            this.tests = this.tests.filter(x => x.success === false);
+          }
         });
-      } else {
-        this.feedbackService.showError('Oops, one or more tests failed!');
-      }
-
-    } else {
-
-      // Invoking backend for top test.
-      this.endpointService.executeTest(tests[0].filename).subscribe((result: Response) => {
-        if (result.result === 'success') {
-          tests[0].success = true;
-        } else {
-          tests[0].success = false;
-        }
-
-        // Removing top test and executing next in chain.
-        tests.splice(0, 1);
-        this.executeTopTest(tests);
-
-      }, () =>  {
-
-        // Oops, not a successful response from server!
-        tests[0].success = false;
-
-        // Removing top test and executing next in chain.
-        tests.splice(0, 1);
-        this.executeTopTest(tests);
-      });
-    }
   }
 }
