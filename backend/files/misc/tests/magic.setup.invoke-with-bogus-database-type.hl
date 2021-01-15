@@ -1,0 +1,14 @@
+verb:post
+url:/magic/modules/system/config/setup
+status:int:400
+description:Assumes that invoking endpoint with a non-existent database type results in the correct error response and status code
+payload:@"{
+  ""databaseType"": ""non-existent-database-type"",
+  ""password"": ""foo"",
+  ""settings"": ""{}""
+}"
+response:@"{
+  ""message"": ""'non-existent-database-type' is not a valid enum of ['mysql', 'mssql']"",
+  ""field"": ""databaseType""
+}"
+produces:application/json

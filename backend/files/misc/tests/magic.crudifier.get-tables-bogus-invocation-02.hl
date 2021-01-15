@@ -1,0 +1,9 @@
+verb:get
+url:/magic/modules/system/crudifier/tables?databaseType=non-existent-database-type&database=foo
+status:int:400
+description:Assumes that invoking endpoint with a bogus database type results in the correct error response and status code from backend
+response:@"{
+  ""message"": ""'non-existent-database-type' is not a valid enum of ['mysql', 'mssql']"",
+  ""field"": ""databaseType""
+}"
+produces:application/json

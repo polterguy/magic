@@ -1,0 +1,9 @@
+verb:get
+url:/magic/modules/system/crudifier/tables?databaseType=mysql
+status:int:400
+description:Assumes that invoking endpoint without a database argument results in the correct error response and status code from backend
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""database""
+}"
+produces:application/json

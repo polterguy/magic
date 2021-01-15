@@ -1,0 +1,18 @@
+verb:post
+url:/magic/modules/system/crudifier/custom-sql
+status:int:400
+description:Assumes that invoking endpoint without an sql value results in the correct error response and status code from backend
+payload:@"{
+  ""databaseType"": ""mysql"",
+  ""moduleName"": ""foo"",
+  ""database"": ""foo"",
+  ""arguments"": ""foo"",
+  ""verb"": ""get"",
+  ""endpointName"": ""foo"",
+  ""overwrite"": true
+}"
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""sql""
+}"
+produces:application/json

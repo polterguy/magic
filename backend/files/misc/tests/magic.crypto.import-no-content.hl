@@ -1,0 +1,14 @@
+verb:post
+url:/magic/modules/system/crypto/import
+status:int:400
+description:Assumes that invoking endpoint without a content value results in the correct error response and status code from backend
+payload:@"{
+  ""subject"": ""foo"",
+  ""email"": ""foo"",
+  ""domain"": ""foo""
+}"
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""content""
+}"
+produces:application/json
