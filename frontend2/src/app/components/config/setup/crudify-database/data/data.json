@@ -34,7 +34,51 @@
              "created":"date"
           }
        ]
-    }
+    },
+    "conditions": [
+       {
+          "id.eq": "long"
+       },
+       {
+          "id.mt": "long"
+       },
+       {
+         "id.lt": "long"
+       },
+       {
+         "id.mteq": "long"
+       },
+       {
+         "id.lteq": "long"
+       },
+       {
+         "crypto_key.eq": "long"
+       },
+       {
+         "request_id.like": "string"
+       },
+       {
+         "request_id.eq": "string"
+       },
+       {
+         "request.like": "string"
+       },
+       {
+         "response.like": "string"
+       },
+       {
+         "created.mt": "date"
+       },
+       {
+         "created.lt": "date"
+       },
+       {
+         "created.mteq": "date"
+       },
+       {
+         "created.lteq": "date"
+       }
+    ]
   },
   {
     "overwrite": true,
@@ -121,7 +165,69 @@
              "enabled":"bool"
           }
        ]
-    }
+    },
+    "conditions": [
+       {
+          "id.eq":"long"
+       },
+       {
+          "id.lt":"long"
+       },
+       {
+          "id.mt":"long"
+       },
+       {
+          "id.lteq":"long"
+       },
+       {
+          "id.mteq":"long"
+       },
+       {
+          "subject.like":"string"
+       },
+       {
+          "subject.eq":"string"
+       },
+       {
+          "email.like":"string"
+       },
+       {
+          "email.eq":"string"
+       },
+       {
+          "domain.like":"string"
+       },
+       {
+          "domain.eq":"string"
+       },
+       {
+          "type.eq":"string"
+       },
+       {
+          "type.neq":"string"
+       },
+       {
+          "fingerprint.eq":"string"
+       },
+       {
+          "vocabulary.like":"string"
+       },
+       {
+          "imported.lt":"date"
+       },
+       {
+          "imported.mt":"date"
+       },
+       {
+          "imported.lteq":"date"
+       },
+       {
+          "imported.mteq":"date"
+       },
+       {
+          "enabled.eq":"bool"
+       }
+    ]
   },
   {
     "overwrite": true,
@@ -193,101 +299,52 @@
     "databaseType": null,
     "moduleName":"magic",
     "database":"[generic|magic]",
-    "table":"log_entries",
-    "moduleUrl":"log_entries",
-    "returnId":true,
+    "table":"roles",
+    "moduleUrl":"roles",
+    "returnId":false,
     "template":"/modules/system/crudifier/templates/crud.template.post.hl",
     "verb":"post",
     "auth":"root",
     "args":{
        "columns":[
           {
-             "type":"string"
+             "name":"string"
           },
           {
-             "content":"string"
+             "description":"string"
+          }
+       ]
+    }
+  },
+  {
+    "overwrite": true,
+    "databaseType": null,
+    "moduleName":"magic",
+    "database":"[generic|magic]",
+    "table":"roles",
+    "moduleUrl":"roles",
+    "returnId":false,
+    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
+    "verb":"get",
+    "auth":"root",
+    "args":{
+       "columns":[
+          {
+             "name":"string"
           },
           {
-             "exception":"string"
+             "description":"string"
           }
        ]
     },
-    "validators": "validators.enum:x:@.arguments/*/type\r\n   .:info\r\n   .:error\r\n   .:debug\r\n   .:fatal"
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"log_entries",
-    "moduleUrl":"log_entries",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
-    "verb":"get",
-    "auth":"root",
-    "args":{
-       "columns":[
-          {
-             "id":"long"
-          },
-          {
-             "created":"date"
-          },
-          {
-             "type":"string"
-          },
-          {
-             "content":"string"
-          },
-          {
-             "exception":"string"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"roles",
-    "moduleUrl":"roles",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.post.hl",
-    "verb":"post",
-    "auth":"root",
-    "args":{
-       "columns":[
-          {
-             "name":"string"
-          },
-          {
-             "description":"string"
-          }
-       ]
-    }
-  },
-  {
-    "overwrite": true,
-    "databaseType": null,
-    "moduleName":"magic",
-    "database":"[generic|magic]",
-    "table":"roles",
-    "moduleUrl":"roles",
-    "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
-    "verb":"get",
-    "auth":"root",
-    "args":{
-       "columns":[
-          {
-             "name":"string"
-          },
-          {
-             "description":"string"
-          }
-       ]
-    }
+    "conditions":[
+       {
+          "name.eq":"string"
+       },
+       {
+          "description.like":"string"
+       }
+    ]
   },
   {
     "overwrite": true,
@@ -378,7 +435,18 @@
             "locked":"bool"
           }
        ]
-    }
+    },
+    "conditions":[
+       {
+          "username.eq":"string"
+       },
+       {
+          "username.like":"string"
+       },
+       {
+          "locked.eq":"bool"
+       }
+    ]
   },
   {
     "overwrite": true,
@@ -467,7 +535,15 @@
              "user":"string"
           }
        ]
-    }
+    },
+    "conditions":[
+       {
+          "role.eq": "string"
+       },
+       {
+          "user.eq": "string"
+       }
+    ]
   },
   {
     "overwrite": true,
