@@ -273,7 +273,7 @@
           }
        ]
     },
-    "validators":"validators.email:x:@.arguments/*/email"
+    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA"
   },
   {
     "overwrite": true,
