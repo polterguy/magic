@@ -12,21 +12,28 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'order'" class="fill-width">
+    <input type="text"
+      matInput
+      placeholder="Value"
+      [(ngModel)]="value"
+      [matAutocomplete]="auto">
+    <mat-autocomplete
+      #auto="matAutocomplete">
+      <mat-option
+        *ngFor="let el of orders"
+        [value]="el">
+        {{el}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
   <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'direction'" class="fill-width">
     <mat-select
       [(ngModel)]="value"
       class="dark"
       placeholder="Sort order direction">
       <mat-option *ngFor="let cur of directions" [value]="cur">{{cur}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'order'" class="fill-width">
-    <mat-select
-      [(ngModel)]="value"
-      class="dark"
-      placeholder="Column to order result by">
-      <mat-option *ngFor="let cur of orders" [value]="cur">{{cur}}</mat-option>
     </mat-select>
   </mat-form-field>
 
