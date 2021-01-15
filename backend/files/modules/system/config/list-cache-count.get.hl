@@ -2,7 +2,7 @@
 /*
  * Returns count of all cache items matching optional filter to caller.
  */
-.description:"Returns count of all cache items matching optional filter to caller."
+.description:Returns the number of existing cache items in the system matching optional filter
 .arguments
    filter:string
 

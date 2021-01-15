@@ -4,7 +4,7 @@
  * more specifically if the user has crudified his Magic database,
  * and/or created a server key pair.
  */
-.description:"Returns whether or not server has a server key pair, and if Magic database has been crudified."
+.description:Returns the setup status of the system
 
 
 /*

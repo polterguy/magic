@@ -2,14 +2,10 @@
 /*
  * Evaluates the given [hyperlambda], and returns
  * the results of the evaluation.
- *
- * Arguments
- *
- * - [hyperlambda] - Mandatory, Hyperlambda you want to evaluate
  */
 .arguments
    hyperlambda:string
-.description:"Evaluates the given [hyperlambda], and returns the results of the evaluation."
+.description:Evaluates the given Hyperlambda and returns the results of the evaluation as Hyperlambda
 
 
 /*

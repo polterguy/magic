@@ -9,7 +9,7 @@
    databaseType:string
    database:string
    table:string
-.description:"Lists all columns in your databaseType/database/table combination."
+.description:Lists all columns in the specified database table
 
 
 /*

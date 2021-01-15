@@ -1,0 +1,14 @@
+verb:post
+url:/magic/modules/system/log/log-loc
+status:int:400
+description:Assumes that invoking endpoint with a non-existent type argument results in the correct error response and status code from backend
+payload:@"{
+  ""loc"": 42,
+  ""type"": ""bogus-type"",
+  ""name"": ""foo""
+}"
+response:@"{
+  ""message"": ""'bogus-type' is not a valid enum of ['backend', 'frontend']"",
+  ""field"": ""type""
+}"
+produces:application/json

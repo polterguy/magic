@@ -2,7 +2,7 @@
 /*
  * Creates a new RSA key pair, with the specified parameters
  */
-.description:"Creates a new server RSA key pair using the specified parameters. Notice, will backup any existing key pairs."
+.description:Generates a new server cryptography key pair using the specified arguments, creating a backup of any previously existing key pair
 .arguments
    strength:int
    seed:string

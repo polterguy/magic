@@ -13,7 +13,7 @@
    databaseType:string
    password:string
    settings:string
-.description:"Sets up authentication and other parts of the system according to the arguments provided."
+.description:Setup authentication and other parts of the system according to the arguments provided
 
 
 /*

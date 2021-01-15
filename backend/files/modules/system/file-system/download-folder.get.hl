@@ -4,7 +4,7 @@
  */
 .arguments
    folder:string
-.description:"Downloads a folder from the server by packaging it into a zip file."
+.description:Downloads a folder from the server by packaging it into a zip file
 
 
 /*

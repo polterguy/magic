@@ -2,7 +2,7 @@
 /*
  * Returns the default database type to use for crudification.
  */
-.description:"Returns the default database type the backend is using, which is the same as the database used during setup for auth purposes."
+.description:Returns the default database type the system is using
 
 
 /*

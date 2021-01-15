@@ -4,7 +4,7 @@
  */
 .arguments
    file:string
-.description:"Deletes the specified [file] file."
+.description:Deletes the specified file on the server
 
 
 /*

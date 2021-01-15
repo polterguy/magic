@@ -2,7 +2,7 @@
 /*
  * Returns all assumptions in system for specified endpoint.
  */
-.description:"Returns all assumptions in system for specified endpoint."
+.description:Returns all assumptions in the system for the specified endpoint/verb combination
 .arguments
    endpoint:string
    verb:string

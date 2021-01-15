@@ -2,7 +2,7 @@
 /*
  * Returns all endpoints in the system.
  */
-.description:"Returns all endpoints in the system, and their meta data."
+.description:Returns all endpoints in the system, and their associated meta information
 
 
 /*

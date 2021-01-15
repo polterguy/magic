@@ -5,7 +5,7 @@
 .arguments
    databaseType:string
    database:string
-.description:"Lists all tables in your specified [databaseType]/[database]."
+.description:Returns all tables in your specified database
 
 
 /*

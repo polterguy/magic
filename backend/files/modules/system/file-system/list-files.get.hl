@@ -5,7 +5,7 @@
 .arguments
    folder:string
    filter:string
-.description:"List all files in the specified [folder] argument, matching the (optional) [filter] argument."
+.description:List all files in the specified folder matching the (optional) filter argument
 
 
 /*

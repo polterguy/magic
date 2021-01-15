@@ -215,7 +215,7 @@ export class CryptoService {
    */
   public evictCacheForPublicKey(key: PublicKey) {
     return this.httpService.delete<Response>(
-      '/magic/modules/system/misc/cache-evict?id=' +
+      '/magic/modules/system/config/delete-cache-item?id=' +
       encodeURIComponent('public-key.' + key.fingerprint));
   }
 }

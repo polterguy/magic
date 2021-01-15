@@ -4,13 +4,19 @@
  */
 .arguments
    id:long
-.description:"Returns the specified log item tpo caller."
+.description:Returns the specified log item
 
 
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/id
 
 
 /*

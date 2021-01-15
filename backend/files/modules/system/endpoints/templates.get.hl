@@ -2,7 +2,7 @@
 /*
  * Returns all templates for generating "stuff" from endpoints.
  */
-.description:"Returns all templates you can use to create something out of a list of endpoints."
+.description:Returns all scaffolding templates registered in the system
 
 
 /*

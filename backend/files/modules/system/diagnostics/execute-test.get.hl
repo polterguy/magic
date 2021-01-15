@@ -2,7 +2,7 @@
 /*
  * Executes the specified test and returns result to caller.
  */
-.description:"Executes the specified test and return results to caller."
+.description:Executes the specified test and returns the result
 .arguments
    root_url:string
    test_file:string

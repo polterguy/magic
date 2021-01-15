@@ -6,7 +6,7 @@
    offset:long
    limit:long
    query:string
-.description:"Returns log items according to the specified arguments."
+.description:Returns log items matching the optional arguments
 
 
 /*
