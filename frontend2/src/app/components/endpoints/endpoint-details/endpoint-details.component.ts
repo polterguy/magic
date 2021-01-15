@@ -151,11 +151,11 @@ export class EndpointDetailsComponent implements OnInit {
     this.url = '/' + this.endpoint.path;
 
     // Checking if this is a JSON payload or not.
-    if (this.endpoint.input && this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
+    if (this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
 
       // JSON payload type.
       let payload = {};
-      for (var idx of this.endpoint.input) {
+      for (var idx of this.endpoint.input ?? []) {
         let type: any = idx.type;
         switch (type) {
 
