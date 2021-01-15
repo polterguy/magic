@@ -1,0 +1,20 @@
+verb:put
+url:/magic/modules/magic/crypto_keys
+status:int:400
+description:Assumes that trying to update a cryptography key with a type not being a valid type results in the correct error response and status code from backend
+payload:@"{
+  ""id"": 3,
+  ""subject"": ""foo"",
+  ""email"": ""foo@bar.com"",
+  ""domain"": ""http://foo"",
+  ""type"": ""foo"",
+  ""fingerprint"": ""foo"",
+  ""content"": ""foo"",
+  ""vocabulary"": ""foo"",
+  ""enabled"": true
+}"
+response:@"{
+  ""message"": ""'foo' is not a valid enum of ['RSA']"",
+  ""field"": ""type""
+}"
+produces:application/json
