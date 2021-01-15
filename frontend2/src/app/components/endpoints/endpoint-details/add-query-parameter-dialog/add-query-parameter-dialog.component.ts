@@ -81,9 +81,7 @@ export class AddQueryParameterDialogComponent {
 
       // Populating orders field.
       this.orders = this.data.all.filter(x => x.name.endsWith('.eq')).map(x => x.name.substr(0, x.name.length - 3));
-      this.value = this.data.old ?
-        this.orders.filter(x => x === this.data.old)[0] :
-        this.orders[0];
+      this.value = this.data.old ?? '';
 
     } else if (data.argument.name === 'direction' && data.argument.type === 'string') {
 
