@@ -153,31 +153,40 @@ export class EndpointDetailsComponent implements OnInit {
     // Checking if this is a JSON payload or not.
     if (this.endpoint.verb !== 'get' && this.endpoint.verb !== 'delete') {
 
-      // JSON payload type.
-      let payload = {};
-      for (var idx of this.endpoint.input ?? []) {
-        let type: any = idx.type;
-        switch (type) {
+      // Checking type of payload.
+      if (this.endpoint.consumes === 'application/json') {
 
-          case "long":
-            type = 42;
-            break;
+        // JSON payload type.
+        let payload = {};
+        for (var idx of this.endpoint.input ?? []) {
+          let type: any = idx.type;
+          switch (type) {
 
-          case "date":
-            type = new Date().toISOString();
-            break;
+            case "long":
+            case "ulong":
+            case "int":
+            case "uint":
+            case "short":
+            case "ushort":
+              type = 42;
+              break;
 
-          case "bool":
-            type = true;
-            break;
+            case "date":
+              type = new Date().toISOString();
+              break;
 
-          case "string":
-            type = "foo";
-            break;
+            case "bool":
+              type = true;
+              break;
+
+            case "string":
+              type = "foo";
+              break;
+          }
+          payload[idx.name] = type;
         }
-        payload[idx.name] = type;
+        this.payload = JSON.stringify(payload, null, 2);
       }
-      this.payload = JSON.stringify(payload, null, 2);
     }
 
     // Retrieving assumptions for endpoint.
