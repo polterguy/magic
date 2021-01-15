@@ -4,9 +4,9 @@
  */
 
 // Angular and system imports.
-import { forkJoin } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
@@ -17,7 +17,6 @@ import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperl
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -250,36 +249,49 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public executeAll() {
 
-    // Creating invocations towards backend for each test we have in our test suite.
-    const all = this.tests.map(x => this.endpointService.executeTest(x.filename));
-    forkJoin(all).subscribe((res: Response[]) => {
+    // Invoking method that executes all tests sequentially, making sure we clone array in process.
+    this.executeTopTest(this.tests.filter(x => true));
+  }
 
-      // Figuring out if we had any errors, and if so, making sure failed tests are marked as such.
-      let noErrors = 0;
-      let idxNo = 0;
-      for (var idx of res) {
-        if (idx.result !== 'success') {
-          noErrors += 1;
-          this.tests[idxNo++].success = false;
-        } else {
-          this.tests[idxNo++].success = true;
-        }
-      }
+  /*
+   * Private helper methods.
+   */
 
-      // Checking if we had more than 0 errors, and if so, displaying error message to user.
-      if (noErrors > 0) {
+  private executeTopTest(tests: TestModel[]) {
 
-        // At least one test failed.
-        this.feedbackService.showError(`${noErrors} assumption tests out of ${idxNo} failed`);
+    // Checking if we're done
+    if (tests.length === 0) {
 
+      // Done, filtering out successful tests.
+      if (this.tests.filter(x => x.success === false).length === 0) {
+        this.feedbackService.showInfo('All assumptions were successfully assumed');
       } else {
-
-        // All tests succeeded.
-        this.feedbackService.showInfoShort(`${idxNo} assumptions succeeded`);
+        this.feedbackService.showError('Oops, one or more tests failed!');
       }
 
-      // Removing all succeeded tests, to give user accurate information.
-      this.tests = this.tests.filter(x => !x.success);
-    });
+    } else {
+
+      // Invoking backend for top test.
+      this.endpointService.executeTest(tests[0].filename).subscribe((result: Response) => {
+        if (result.result === 'success') {
+          tests[0].success = true;
+        } else {
+          tests[0].success = false;
+        }
+
+        // Removing top test and executing next in chain.
+        tests.splice(0, 1);
+        this.executeTopTest(tests);
+
+      }, () =>  {
+
+        // Oops, not a successful response from server!
+        tests[0].success = false;
+
+        // Removing top test and executing next in chain.
+        tests.splice(0, 1);
+        this.executeTopTest(tests);
+      });
+    }
   }
 }
