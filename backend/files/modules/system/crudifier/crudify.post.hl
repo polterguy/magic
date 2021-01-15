@@ -14,8 +14,9 @@
    auth:string
    log:string
    overwrite:bool
-   args:*
    validators:string
+   args:*
+   conditions:*
 .description:"Creates an HTTP REST CRUD endpoint, wrapping your existing database, according to the arguments given."
 
 
@@ -294,88 +295,105 @@ semaphore:crudifier
                      response.headers.add
                         Cache-Control:x:@strings.concat
 
-
          /*
-          * Allowing for specifying operator to query.
-          *
-          * This is the part where we create our condition arguments, allowing
-          * for filtering result when endpoint is invoked.
-          *
-          * Making sure we legalize all the most common operators for all
-          * columns, in addition to "like" conditions for string types of
-          * endpoints.
+          * Checking if caller supplied an explicit conditions collection,
+          * and if not, applying the default logic - If caller supplied an
+          * explicit condition collection, we use that instead.
           */
-         .operators
-            mt
-            lt
-            mteq
-            lteq
-            neq
-            eq
-         for-each:x:@.arguments/*/args/*/columns/*/*
-
-            /*
-             * Checking if argument needs a ".like" comparison type,
-             * which is true only for "string" type of arguments.
-             */
-            if
-               eq
-                  get-value:x:@.dp/#
-                  .:string
-               .lambda
-
-                  /*
-                   * String type of argument, appending ".like" to legal arguments.
-                   */
-                  .buffer
-                     .name:x:@.dp/#
-                  unwrap:x:@.buffer/*
-                  set-name:x:@.buffer/*
-                     strings.concat
-                        get-name:x:@.dp/#
-                        .:.like
-                  add:x:@apply/*/.arguments
-                     get-nodes:x:@.buffer/*
-
-            /*
-             * Checking if argument is boolean type of argument, at which
-             * point we ONLY add ".eq" type of argument to it.
-             */
-            if
-               eq
-                  get-value:x:@.dp/#
-                  .:bool
-               .lambda
-
-                  /*
-                   * Boolean type of argument, removing everything but ".eq" type of arguments.
-                   */
-                  .buffer
-                     .name:x:@.dp/#
-                  unwrap:x:@.buffer/*
-                  set-name:x:@.buffer/*
-                     strings.concat
-                        get-name:x:@.dp/#
-                        .:.eq
-                  add:x:@apply/*/.arguments
-                     get-nodes:x:@.buffer/*
-            else
+         if
+            exists:x:@.arguments/*/conditions
+            .lambda
 
                /*
-                * Not a boolean type of argument, hence looping through all of
-                * our default comparison operators.
+                * Applying custom conditions to endpoint.
                 */
-               for-each:x:@.operators/*
-                  .buffer
-                     .name:x:@.dp/@.dp/#
-                  unwrap:x:@.buffer/*
-                  set-name:x:@.buffer/*
-                     strings.concat
-                        get-name:x:@.dp/@.dp/#
-                        .:.
-                        get-name:x:@.dp/#
-                  add:x:@apply/*/.arguments
-                     get-nodes:x:@.buffer/*
+               add:x:@apply/*/.arguments
+                  get-nodes:x:@.arguments/*/conditions/*/*
+               
+
+         else
+
+            /*
+             * Creating and applying default conditions to endpoint
+             *
+             * This is the part where we create our condition arguments, allowing
+             * for filtering result when endpoint is invoked.
+             *
+             * Making sure we legalize all the most common operators for all
+             * columns, in addition to "like" conditions for string types of
+             * endpoints.
+             */
+            .operators
+               mt
+               lt
+               mteq
+               lteq
+               neq
+               eq
+            for-each:x:@.arguments/*/args/*/columns/*/*
+
+               /*
+                * Checking if argument needs a ".like" comparison type,
+                * which is true only for "string" type of arguments.
+                */
+               if
+                  eq
+                     get-value:x:@.dp/#
+                     .:string
+                  .lambda
+
+                     /*
+                      * String type of argument, appending ".like" to legal arguments.
+                      */
+                     .buffer
+                        .name:x:@.dp/#
+                     unwrap:x:@.buffer/*
+                     set-name:x:@.buffer/*
+                        strings.concat
+                           get-name:x:@.dp/#
+                           .:.like
+                     add:x:@apply/*/.arguments
+                        get-nodes:x:@.buffer/*
+
+               /*
+                * Checking if argument is boolean type of argument, at which
+                * point we ONLY add ".eq" type of argument to it.
+                */
+               if
+                  eq
+                     get-value:x:@.dp/#
+                     .:bool
+                  .lambda
+
+                     /*
+                      * Boolean type of argument, removing everything but ".eq" type of arguments.
+                      */
+                     .buffer
+                        .name:x:@.dp/#
+                     unwrap:x:@.buffer/*
+                     set-name:x:@.buffer/*
+                        strings.concat
+                           get-name:x:@.dp/#
+                           .:.eq
+                     add:x:@apply/*/.arguments
+                        get-nodes:x:@.buffer/*
+               else
+
+                  /*
+                   * Not a boolean type of argument, hence looping through all of
+                   * our default comparison operators.
+                   */
+                  for-each:x:@.operators/*
+                     .buffer
+                        .name:x:@.dp/@.dp/#
+                     unwrap:x:@.buffer/*
+                     set-name:x:@.buffer/*
+                        strings.concat
+                           get-name:x:@.dp/@.dp/#
+                           .:.
+                           get-name:x:@.dp/#
+                     add:x:@apply/*/.arguments
+                        get-nodes:x:@.buffer/*
 
 
          /*
