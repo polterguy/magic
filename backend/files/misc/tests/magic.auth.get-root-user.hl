@@ -1,0 +1,11 @@
+verb:get
+url:/magic/modules/magic/users?locked.eq=false&username.like=%25oot
+status:int:200
+description:Assumes that we can retrieve root user, and that user is not locked
+response:@"[
+  {
+    ""username"": ""root"",
+    ""locked"": false
+  }
+]"
+produces:application/json
