@@ -1,5 +1,0 @@
-verb:get
-url:/magic/modules/magic/log_entries
-status:int:200
-description:Assumes that retrieving log items from backend succeeds
-produces:application/json
