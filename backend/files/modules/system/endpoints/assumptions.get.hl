@@ -39,9 +39,18 @@ for-each:x:@io.file.list/*
           */
          io.file.load:x:@.dp/#
          hyper2lambda:x:@io.file.load
+
+         /*
+          * Verifying this is an automatically generated assumption, before checking
+          * if it matches specified endpoint.
+          */
          if
             exists:x:@hyper2lambda/*/url
             .lambda
+
+               /*
+                * Automatically generated assumption, checking if it's for currently requested endpoint.
+                */
                strings.split:x:@hyper2lambda/*/url
                   .:?
                if

@@ -1,3 +1,7 @@
+
+/*
+ * Automatically generated assumption test.
+ */
 verb:delete
 url:/magic/modules/magic/crypto_keys?id=-1
 status:int:200

@@ -1,3 +1,7 @@
+
+/*
+ * Automatically generated assumption test.
+ */
 verb:get
 url:/magic/modules/magic/users-count
 status:int:200

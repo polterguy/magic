@@ -1,3 +1,7 @@
+
+/*
+ * Automatically generated assumption test.
+ */
 verb:put
 url:/magic/modules/magic/users
 status:int:400
