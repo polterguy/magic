@@ -18,6 +18,9 @@
 validators.mandatory:x:@.arguments/*/databaseType
 validators.mandatory:x:@.arguments/*/database
 validators.mandatory:x:@.arguments/*/table
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
 
 
 /*

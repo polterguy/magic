@@ -11,6 +11,9 @@
  * Sanity checks invocation.
  */
 validators.mandatory:x:@.arguments/*/databaseType
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
 
 
 /*

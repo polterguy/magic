@@ -21,6 +21,31 @@
 
 
 /*
+ * Sanity checks invocation.
+ */
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/table
+validators.mandatory:x:@.arguments/*/moduleUrl
+validators.mandatory:x:@.arguments/*/template
+validators.mandatory:x:@.arguments/*/verb
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
+validators.enum:x:@.arguments/*/verb
+   .:post
+   .:get
+   .:put
+   .:delete
+validators.enum:x:@.arguments/*/template
+   .:/modules/system/crudifier/templates/crud.template.post.hl
+   .:/modules/system/crudifier/templates/crud.template.get.hl
+   .:/modules/system/crudifier/templates/crud.template.put.hl
+   .:/modules/system/crudifier/templates/crud.template.delete.hl
+
+
+/*
  * Synchronising access to endpoint to avoid race condition.
  */
 semaphore:crudifier
