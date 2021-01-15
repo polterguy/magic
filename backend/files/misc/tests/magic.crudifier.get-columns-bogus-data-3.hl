@@ -1,3 +1,7 @@
+
+/*
+ * Automatically generated assumption test.
+ */
 verb:get
 url:/magic/modules/system/crudifier/columns?databaseType=non-existent-database-type&database=magic&table=users
 status:int:400
