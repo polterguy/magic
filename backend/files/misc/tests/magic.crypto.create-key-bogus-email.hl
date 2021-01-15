@@ -1,7 +1,7 @@
 verb:post
 url:/magic/modules/magic/crypto_keys
 status:int:400
-description:Assumes that trying to post a cryptography key with email field not being email address results in the correct error code and response status code
+description:Assumes that trying to post a cryptography key with email field not being email address results in the correct error response and status code from backend
 payload:@"{
   ""subject"": ""foo"",
   ""email"": ""foo"",
