@@ -2,10 +2,10 @@
 /*
  * Returns Cryptographically Secure random text (gibberish) to caller according to arguments specified.
  */
-.description:Returns some Cryptographically Secure randomly generated text to caller according to specified arguments
 .arguments
    min:long
    max:long
+.description:Returns some Cryptographically Secure randomly generated text to caller according to specified arguments
 
 
 /*
