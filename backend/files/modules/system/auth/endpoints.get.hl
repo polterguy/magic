@@ -1,10 +1,10 @@
 
 /*
- * Returns all endpoints in the system, with the associated authorization requirements,
- * as a list of roles.
+ * Returns all dynamic HTTP endpoints in the system,
+ * with their associated verb(s), and roles that are
+ * allowed to access the endpoint.
  */
-.description:@"Returns all HTTP endpoints in the system, with the associated authorization requirements, as a list of [roles].
-Notice, this endpoint is cached on the server for roughly 5 minutes since it's an expensive endpoint to invoke."
+.description:Returns all dynamic HTTP endpoints in the system, with their associated verb(s), and roles that are allowed to access the endpoint
 
 
 /*

@@ -17,7 +17,7 @@
    validators:string
    args:*
    conditions:*
-.description:"Creates an HTTP REST CRUD endpoint, wrapping your existing database, according to the arguments given."
+.description:Creates an HTTP REST CRUD endpoint, wrapping your existing database, according to the arguments given
 
 
 /*

@@ -2,7 +2,7 @@
 /*
  * Returns log item count grouped by type of item.
  */
-.description:"Returns log item count grouped by type of item."
+.description:Returns log item count grouped by type of item
 .arguments
    filter:string
 

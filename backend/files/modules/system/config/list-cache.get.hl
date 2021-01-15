@@ -2,7 +2,7 @@
 /*
  * Returns all cache items to caller.
  */
-.description:"Returns all cache items to caller."
+.description:Returns cache items to caller matching optional paging and filtering arguments
 .arguments
    limit:int
    offset:int

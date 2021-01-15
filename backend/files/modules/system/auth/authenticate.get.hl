@@ -1,17 +1,11 @@
 
 /*
- * Authenticates a user in the system.
- *
- * Arguments
- *
- * - [username] - The username
- * - [password] - The password
+ * Authenticates a user returning a JWT token if successful
  */
 .arguments
    username:string
    password:string
-.description:@"Allows you to authenticate a user with a username/password combination, returning a JWT token,
-that you can use in later requests to the backend to authorize your invocations to the backend."
+.description:Authenticates a user returning a JWT token if successful
 
 
 /*

@@ -2,7 +2,7 @@
 /*
  * Returns license information to caller.
  */
-.description:"Returns license information about current instance to caller."
+.description:Returns license information
 
 
 /*

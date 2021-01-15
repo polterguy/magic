@@ -2,7 +2,7 @@
 /*
  * Returns the fingerprint for the specified key.
  */
-.description:"Returns the fingerprint for the specified key."
+.description:Returns the fingerprint for the specified key
 .arguments
    key:string
 

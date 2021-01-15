@@ -2,7 +2,7 @@
 /*
  * Loads appsettings.json, and returns its content to caller.
  */
-.description:"Loads appsettings.json, and returns its content to caller."
+.description:"Returns the system's configuration"
 
 
 /*

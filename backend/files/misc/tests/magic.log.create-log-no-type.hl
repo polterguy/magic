@@ -1,0 +1,12 @@
+verb:post
+url:/magic/modules/system/log/log
+status:int:400
+description:Assumes that invoking endpoint without a type results in the correct error response and status code returned from the backend
+payload:@"{
+  ""content"": ""foo""
+}"
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""type""
+}"
+produces:application/json

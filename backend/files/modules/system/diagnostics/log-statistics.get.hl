@@ -2,7 +2,7 @@
 /*
  * Returns log item count grouped by type of item.
  */
-.description:"Returns log item count grouped by type of item for the last 2 weeks."
+.description:Returns log item count grouped by type of item for the last 2 weeks
 
 
 /*

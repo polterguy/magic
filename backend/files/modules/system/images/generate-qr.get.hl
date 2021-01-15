@@ -9,7 +9,7 @@
 .arguments
    content:string
    size:int
-.description:@"Generates a QR code using the specified arguments, and returns to caller."
+.description:Generates a QR code using the specified arguments and returns as a PNG image
 
 
 /*

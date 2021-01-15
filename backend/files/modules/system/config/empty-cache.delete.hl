@@ -2,7 +2,7 @@
 /*
  * Deletes all cache items.
  */
-.description:"Deletes all cache items matching optional filter."
+.description:Deletes all cache items matching optional filter condition
 .arguments
    filter:string
 

@@ -6,10 +6,13 @@
    loc:int
    type:string
    name:string
-.description:"Logs lines of code (LOC) generated."
+.description:Logs lines of code (LOC) generated
 validators.mandatory:x:@.arguments/*/loc
 validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/name
+validators.enum:x:@.arguments/*/type
+   .:backend
+   .:frontend
 
 
 /*

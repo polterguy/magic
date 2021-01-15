@@ -2,7 +2,7 @@
 /*
  * Saves a license specified by caller.
  */
-.description:"Saves a license as specified by caller."
+.description:Saves the specified license
 .arguments
    license:string
 

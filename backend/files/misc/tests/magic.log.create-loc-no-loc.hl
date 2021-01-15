@@ -1,0 +1,13 @@
+verb:post
+url:/magic/modules/system/log/log-loc
+status:int:400
+description:Assumes that invoking endpoint without a loc argument results in the correct error response and status code from the backend
+payload:@"{
+  ""type"": ""foo"",
+  ""name"": ""foo""
+}"
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""loc""
+}"
+produces:application/json

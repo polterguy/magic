@@ -17,6 +17,18 @@ auth.ticket.verify
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/content
+validators.enum:x:@.arguments/*/type
+   .:info
+   .:error
+   .:debug
+   .:fatal
+
+
+/*
  * Creating a log entry using the specified type of logger.
  */
 set-name:x:../*/log-invocation

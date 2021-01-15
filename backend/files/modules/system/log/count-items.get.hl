@@ -4,7 +4,7 @@
  */
 .arguments
    query:string
-.description:"Returns the number of log items in the log database."
+.description:Returns the number of log items in your database matching the optional filter
 
 
 /*

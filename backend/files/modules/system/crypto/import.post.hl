@@ -2,7 +2,7 @@
 /*
  * Imports a public key into the system.
  */
-.description:"Imports a public key into the system. Allows for anonymous access to allow clients to push their public keys to the server. Notice, key will not be enabled before explicitly enabled by an administrator of the server. The key itself needs to be an RSA key in base64 encoded DER format."
+.description:Imports a public key into the system
 .arguments
    subject:string
    email:string

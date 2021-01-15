@@ -537,7 +537,7 @@ export class EndpointDetailsComponent implements OnInit {
         response: response,
         blob: null
       };
-      if (response === 'blob') {
+      if (responseType === 'blob') {
         const objectUrl = URL.createObjectURL(response);
         this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
       }

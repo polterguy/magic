@@ -2,7 +2,7 @@
 /*
  * Deletes the cache item with the specified id.
  */
-.description:"Deletes the specified cache item."
+.description:Deletes the specified cache item
 .arguments
    id:string
 
