@@ -102,6 +102,19 @@ export class CryptoService {
   }
 
   /**
+   * Changes the enabled state of the specified key.
+   * 
+   * @param id Key caller wants to change enabled state of
+   * @param enabled Whether or not caller wants to enable or disable key
+   */
+  public setEnabled(id: number, enabled: boolean) {
+    return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', {
+      id,
+      enabled
+    });
+  }
+
+  /**
    * Saves the public key declaration by invoking backend.
    * 
    * @param key Key caller wants to save
