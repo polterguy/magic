@@ -67,7 +67,7 @@ export class AuthenticateComponent implements OnInit {
       // Waiting some few seconds before redirecting user.
       setTimeout(() => {
         this.router.navigate(['/']);
-      }, 3000);
+      }, 1000);
     });
   }
 }
