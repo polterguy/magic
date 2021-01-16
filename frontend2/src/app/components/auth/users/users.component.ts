@@ -5,8 +5,11 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { PlatformLocation } from '@angular/common';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { BackendService } from 'src/app/services/backend.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
@@ -17,6 +20,7 @@ import { User } from 'src/app/components/auth/models/user.model';
 import { FeedbackService } from '../../../services/feedback.service';
 import { UserService } from 'src/app/components/auth/services/user.service';
 import { UserRoles } from 'src/app/components/auth/models/user-roles.model';
+import { AuthenticateResponse } from '../models/authenticate-response.model';
 import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 
@@ -75,13 +79,20 @@ export class UsersComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param platformLocation Needed to create login link
+   * @param feedbackService Used to display feedback to user
+   * @param backendService Needed to create login link
    * @param userService Used to fetch, create, and modify users in the system
+   * @param clipboard Needed to put login link for users into clipboard
+   * @param dialog Needed to create modal dialogues
    */
   constructor(
+    private platformLocation: PlatformLocation,
     private feedbackService: FeedbackService,
+    private backendService: BackendService,
     private userService: UserService,
-    private dialog: MatDialog) {
-  }
+    private clipboard: Clipboard,
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
@@ -249,6 +260,29 @@ export class UsersComponent implements OnInit {
         this.feedbackService.showInfo(`'${username}' successfully updated`);
         this.getUsers();
       }
+    });
+  }
+
+  /**
+   * Invoked when user wants to create a login link for user.
+   */
+  public generateLoginLink(user: User) {
+
+    // Creates a login link by invoking backend.
+    this.userService.generateLoginLink(user.username).subscribe((result: AuthenticateResponse) => {
+
+      // Creating an authentication URL, and putting it on the clipboard, giving user some feedback in the process.
+      const location: any = this.platformLocation;
+      const url = location.location.origin.toString() +
+        '/authenticate?token=' +
+        encodeURIComponent(result.ticket) +
+        '&username=' +
+        encodeURIComponent(user.username) +
+        '&url=' +
+        encodeURIComponent(this.backendService.current.url);
+
+      this.clipboard.copy(url);
+      this.feedbackService.showInfo('Login link for user can be found on your clipboard');
     });
   }
 

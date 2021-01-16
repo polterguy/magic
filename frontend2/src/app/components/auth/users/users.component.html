@@ -75,6 +75,14 @@
           <mat-icon>edit</mat-icon>
         </button>
 
+        <button
+          mat-icon-button
+          class="create-login-link"
+          matTooltip="Create an authentication link for user"
+          (click)="generateLoginLink(el)">
+          <mat-icon>link</mat-icon>
+        </button>
+
         <strong>Username</strong><span>{{el.username}}</span>
 
         <mat-chip-list

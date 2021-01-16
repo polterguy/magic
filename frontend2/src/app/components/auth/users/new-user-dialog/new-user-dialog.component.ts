@@ -5,19 +5,16 @@
 
 // Angular and system imports.
 import { Component, Inject } from '@angular/core';
-import { PlatformLocation } from '@angular/common';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { User } from 'src/app/components/auth/models/user.model';
-import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { UserService } from 'src/app/components/auth/services/user.service';
-import { AuthenticateResponse } from '../../models/authenticate-response.model';
 
 /**
- * Modal dialog component for creating a new user.
+ * Modal dialog component for creating a new user and
+ * editing password of an existing user.
  */
 @Component({
   selector: 'app-new-user',
@@ -38,18 +35,13 @@ export class NewUserDialogComponent {
   /**
    * Creates an instance of your component.
    * 
-   * @param platformLocation Needed to create login link
-   * @param clipboard Needed to put login link for users into clipboard
    * @param userService Used to create a new user
    * @param feedbackService Used to display feedback to user
    * @param dialogRef Dialog reference used to close dialog
    * @param data If updating user, this is the user we're updating
    */
   constructor(
-    private platformLocation: PlatformLocation,
-    private clipboard: Clipboard,
     private userService: UserService,
-    private backendService: BackendService,
     private feedbackService: FeedbackService,
     private dialogRef: MatDialogRef<NewUserDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: User) {
@@ -69,30 +61,6 @@ export class NewUserDialogComponent {
       // Success! User created.
       this.dialogRef.close(this.username);
     }, (error: any) => this.feedbackService.showError(error));
-  }
-
-  /**
-   * Invoked when user wants to create a login link for user.
-   */
-  public generateLoginLink() {
-
-    // Creates a login link by invoking backend.
-    this.userService.generateLoginLink(this.username).subscribe((result: AuthenticateResponse) => {
-
-      // Creating an authentication URL, and putting it on the clipboard, giving user some feedback in the process.
-      const location: any = this.platformLocation;
-      const url = location.location.origin.toString() +
-        '/authenticate?token=' +
-        encodeURIComponent(result.ticket) +
-        '&username=' +
-        encodeURIComponent(this.username) +
-        '&url=' +
-        encodeURIComponent(this.backendService.current.url);
-
-      this.clipboard.copy(url);
-      this.feedbackService.showInfo('Login link for user can be found on your clipboard');
-      this.dialogRef.close();
-    });
   }
 
   /**
