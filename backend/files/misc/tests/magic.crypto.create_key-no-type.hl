@@ -1,0 +1,18 @@
+verb:post
+url:/magic/modules/magic/crypto_keys
+status:int:400
+description:Assumes that invoking endpoint without a type results in the correct error response and status code from backend
+payload:@"{
+  ""subject"": ""foo"",
+  ""email"": ""foo@foo.com"",
+  ""domain"": ""http://foo.com"",
+  ""fingerprint"": ""12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcd"",
+  ""content"": ""foo"",
+  ""vocabulary"": ""foo"",
+  ""enabled"": true
+}"
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""type""
+}"
+produces:application/json

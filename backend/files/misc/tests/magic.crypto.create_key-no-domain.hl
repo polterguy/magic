@@ -1,0 +1,18 @@
+verb:post
+url:/magic/modules/magic/crypto_keys
+status:int:400
+description:Assumes that invoking endpoint without a domain results in the correct error response and status code from backend
+payload:@"{
+  ""subject"": ""foo"",
+  ""email"": ""foo@foo.com"",
+  ""type"": ""RSA"",
+  ""fingerprint"": ""12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcd"",
+  ""content"": ""foo"",
+  ""vocabulary"": ""foo"",
+  ""enabled"": true
+}"
+response:@"{
+  ""message"": ""Mandatory argument not given"",
+  ""field"": ""domain""
+}"
+produces:application/json
