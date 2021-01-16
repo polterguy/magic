@@ -16,10 +16,11 @@ import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
-import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
+import { AuthenticateComponent } from './components/authenticate/authenticate.component';
 
 /**
  * Routes for application.
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'crudifier', component: CrudifierComponent },
   { path: 'diagnostics', component: DiagnosticsComponent },
+  { path: 'authenticate', component: AuthenticateComponent },
 ];
 
 /**

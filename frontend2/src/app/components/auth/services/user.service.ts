@@ -13,6 +13,7 @@ import { UserRoles } from '../models/user-roles.model';
 import { AuthFilter } from '../models/auth-filter.model';
 import { Affected } from '../../../models/affected.model';
 import { HttpService } from '../../../services/http.service';
+import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
  * User service, allowing you to administrate the users in your backend.
@@ -157,5 +158,16 @@ export class UserService {
       encodeURIComponent(user) +
       '&role=' +
       encodeURIComponent(role));
+  }
+
+  /**
+   * Creates a login link that can be used to authenticate as user.
+   * 
+   * @param username Username to generate login link on behalf of
+   */
+  public generateLoginLink(username: string) {
+    return this.httpService.get<AuthenticateResponse>(
+      '/magic/modules/system/auth/generate-token?username=' +
+      encodeURIComponent(username));
   }
 }

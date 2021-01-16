@@ -11,13 +11,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { User } from 'src/app/components/auth/models/user.model';
 import { Count } from 'src/app/models/count.model';
 import { Affected } from 'src/app/models/affected.model';
+import { User } from 'src/app/components/auth/models/user.model';
+import { FeedbackService } from '../../../services/feedback.service';
 import { UserService } from 'src/app/components/auth/services/user.service';
 import { UserRoles } from 'src/app/components/auth/models/user-roles.model';
 import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
-import { FeedbackService } from '../../../services/feedback.service';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 
 /**
