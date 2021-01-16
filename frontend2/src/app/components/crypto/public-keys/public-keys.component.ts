@@ -14,11 +14,11 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
+import { MessageService } from 'src/app/services/message.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from 'src/app/components/log/services/log.service';
 import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/import-public-key-dialog.component';
 
@@ -308,6 +308,21 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
     this.messageService.sendMessage({
       name: 'crypto.view-invocations',
     })
+  }
+
+  /**
+   * Changes the enabled state of the specified key.
+   * 
+   * @param key What key to modify
+   */
+  public enabledChanged(key: PublicKey) {
+
+    // Invoking backend to change enabled state of key.
+    this.cryptoService.setEnabled(key.id, key.enabled).subscribe(() => {
+
+      // Providing feedback to user.
+      this.feedbackService.showInfoShort(`Key was successfully ${key.enabled ? 'enabled' : 'disabled'}`);
+    });
   }
 
   /**

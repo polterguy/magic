@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { PublicKeyFull } from 'src/app/components/crypto/models/public-key-full.model';
 import { CreateKeypairDialogComponent } from './create-keypair-dialog/create-keypair-dialog.component';
 
