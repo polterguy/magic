@@ -283,7 +283,7 @@ export class UsersComponent implements OnInit {
 
       this.clipboard.copy(url);
       this.feedbackService.showInfo('Login link for user can be found on your clipboard');
-    });
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
