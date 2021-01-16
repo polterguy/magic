@@ -119,7 +119,7 @@
           }
        ]
     },
-    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79"
+    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79\r\nvalidators.mandatory:x:@.arguments/*/email\r\nvalidators.mandatory:x:@.arguments/*/domain\r\nvalidators.mandatory:x:@.arguments/*/type\r\nvalidators.mandatory:x:@.arguments/*/fingerprint\r\nvalidators.mandatory:x:@.arguments/*/content"
   },
   {
     "overwrite": true,
