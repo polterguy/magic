@@ -35,6 +35,12 @@
   <button
     *ngIf="data"
     mat-button
+    matTooltip="Generates a login link for user that can be used to authenticate user"
+    (click)="generateLoginLink()">Login link</button>
+
+  <button
+    *ngIf="data"
+    mat-button
     [disabled]="password === ''"
     (click)="update()">Update</button>
 

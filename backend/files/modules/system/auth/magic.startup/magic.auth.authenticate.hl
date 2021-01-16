@@ -91,16 +91,23 @@ slots.create:magic.auth.authenticate
 
 
       /*
-       * Verify we have a password match.
+       * Verify we have a password match, unless [check-password] was false,
+       * which might occur if a JWT token is generated on behalf of another user.
        */
       if
-         crypto.password.verify:x:@.arguments/*/password
-            hash:x:@data.read/*/*/password
+         or
+            eq
+               get-value:x:@.arguments/*/check-password
+               .:bool:false
+            crypto.password.verify:x:@.arguments/*/password
+               hash:x:@data.read/*/*/password
          .lambda
 
 
             /*
-             * Password is matching hashed value from database.
+             * Password is matching hashed value from database, or caller
+             * does not want to verify password.
+             *
              * Now we need to select all roles user belongs to.
              */
             data.read
