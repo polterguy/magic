@@ -18,13 +18,12 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
     *
     * First we create a unique request ID.
     */
-   crypto.random
-      min:50
-      max:50
    set-value:x:../*/signal/*/.lambda/*/.request-id
       strings.concat
          .:test.
-         get-value:x:@crypto.random
+         crypto.random
+            min:50
+            max:50
 
    /*
     * Then we invoke ourselves using a cryptographically signed invocation.
