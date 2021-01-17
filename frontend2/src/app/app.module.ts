@@ -81,7 +81,6 @@ import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { LicenseComponent } from './components/config/license/license.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
-import { AuthenticateComponent } from './components/authenticate/authenticate.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
@@ -176,7 +175,6 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     AddQueryParameterDialogComponent,
     CreateAssumptionTestDialogComponent,
     DiagnosticsTestsComponent,
-    AuthenticateComponent,
   ],
   imports: [
     FormsModule,
