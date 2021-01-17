@@ -270,7 +270,7 @@ export class UsersComponent implements OnInit {
       // Creating an authentication URL, and putting it on the clipboard, giving user some feedback in the process.
       const location: any = this.platformLocation;
       const url = location.location.origin.toString() +
-        '/authenticate?token=' +
+        '/?token=' +
         encodeURIComponent(result.ticket) +
         '&username=' +
         encodeURIComponent(user.username) +
@@ -278,7 +278,8 @@ export class UsersComponent implements OnInit {
         encodeURIComponent(this.backendService.current.url);
 
       this.clipboard.copy(url);
-      this.feedbackService.showInfo('Authentication link is on your clipboard');
+      this.feedbackService.showInfo('The authentication link can be found on your clipboard');
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 

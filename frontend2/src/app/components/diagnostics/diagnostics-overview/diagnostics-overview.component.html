@@ -51,7 +51,11 @@
   </div>
 
   <div class="meta-statistics">
-    <strong matTooltip="Log items per day the last 2 weeks">Log items</strong>
+    <a
+      matTooltip="Log items per day the last 2 weeks"
+      [routerLink]="['/log']">
+      Log items
+    </a>
     <canvas
       *ngIf="daysData"
       baseChart
