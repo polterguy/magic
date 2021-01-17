@@ -12,6 +12,7 @@ import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { LogService } from 'src/app/components/log/services/log.service';
 import { Crudify } from 'src/app/components/crudifier/models/crudify.model';
 import { LocResult } from 'src/app/components/crudifier/models/loc-result.model';
 import { ConfigService } from 'src/app/components/config/services/config.service';
@@ -22,7 +23,6 @@ import json from '../../../codemirror/options/json.json'
 
 // Default configuration for crudifying database.
 import data from './data/data.json';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Component that helps you crudify your magic database
@@ -58,12 +58,14 @@ export class CrudifyDatabaseComponent implements OnInit {
    * 
    * @param configService Configuration service used to read and write configuration settings, etc
    * @param crudifyService Needed to crudify Magic database.
+   * @param feedbackService Needed to display feedback to user
    * @param messageService Message service used to publish messages informing parent component about change of state
    */
   public constructor(
-    private feedbackService: FeedbackService,
+    private logService: LogService,
     private configService: ConfigService,
     private crudifyService: CrudifyService,
+    private feedbackService: FeedbackService,
     protected messageService: MessageService) {
   }
 
@@ -106,6 +108,14 @@ export class CrudifyDatabaseComponent implements OnInit {
       // Finished, showing some information to user.
       const loc = res.reduce((x,y) => x + y.loc, 0);
       this.feedbackService.showInfo(`Your Magic database was successfully crudified. ${loc} LOC generated.`);
+
+      // Logging to backend number of lines of code generated during cudification.
+      this.logService.createLocItem(loc, 'backend', 'setup').subscribe(() => {
+
+        // Success.
+        console.log('LOC logged to backend');
+
+      }, (error: any) => this.feedbackService.showError(error));
 
       // Publishing message to inform parent component that we're done here.
       this.messageService.sendMessage({
