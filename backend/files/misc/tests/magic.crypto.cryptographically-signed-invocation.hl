@@ -4,9 +4,11 @@
  * using a cryptographically signed invocation.
  *
  * Notice!
+ *
  * If this assumption fails, you'll need to manually import your server key
  * in the crypto menu, and enable it. If you don't care about cryptographically
- * signed invocations, you can also just delete the assumption.
+ * signed invocations, you can also just delete the assumption to avoid it cluttering
+ * your log.
  */
 description:Assumes that invoking a cryptographically signed endpoint (localhost) works as expected
 .lambda
