@@ -58,7 +58,6 @@ export class UsersComponent implements OnInit {
    */
   public displayedColumns: string[] = [
     'username',
-    'icon',
   ];
 
   /**
@@ -201,10 +200,7 @@ export class UsersComponent implements OnInit {
    * 
    * @param user User to change lock status of
    */
-  lockedChanged(event: any, user: User) {
-
-    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
-    event.stopPropagation();
+  lockedChanged(user: User) {
 
     // Invoking backend to update user's locked status.
     this.userService.update({

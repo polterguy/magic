@@ -35,53 +35,15 @@
   multiTemplateDataRows>
 
   <ng-container matColumnDef="username">
-    <td
-      mat-cell
-      *matCellDef="let el">{{el.username}}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="icon">
-    <td
-      mat-cell
-      class="mini-col icon-col"
-      *matCellDef="let el">
-      <mat-icon
-        *ngIf="el.locked && el.username !== 'root'"
-        (click)="lockedChanged($event, el)"
-        matTooltip="Release user such that he can access Magic again">lock</mat-icon>
-      <mat-icon
-        *ngIf="!el.locked && el.username !== 'root'"
-        (click)="lockedChanged($event, el)"
-        matTooltip="Lock user preventing him from using Magic">lock_open</mat-icon>
-    </td>
+    <td mat-cell *matCellDef="let el">{{el.username}}</td>
   </ng-container>
 
   <ng-container matColumnDef="show-details">
-    <td
-      mat-cell
-      colspan="2"
-      *matCellDef="let el">
+    <td mat-cell *matCellDef="let el">
 
       <div
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
-
-        <button
-          mat-icon-button
-          [disabled]="el.username === 'root'"
-          class="edit-user"
-          matTooltip="Change user's password"
-          (click)="editUser(el)">
-          <mat-icon>edit</mat-icon>
-        </button>
-
-        <button
-          mat-icon-button
-          class="create-login-link"
-          matTooltip="Create an authentication link for user"
-          (click)="generateLoginLink(el)">
-          <mat-icon>link</mat-icon>
-        </button>
 
         <strong>Username</strong><span>{{el.username}}</span>
 
@@ -95,18 +57,45 @@
             {{role}}
             <mat-icon
               *ngIf="el.username !== 'root' || role !== 'root'"
+              matTooltip="Remove role from user"
               matChipRemove>cancel</mat-icon>
           </mat-chip>
         </mat-chip-list>
 
-        <button
-          mat-icon-button
-          [disabled]="el.username === 'root'"
-          matTooltip="Delete user"
-          class="delete-user"
-          (click)="delete(el)">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <div class="button-strip">
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Change user's password"
+            (click)="editUser(el)">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            matTooltip="Create an authentication link for user"
+            (click)="generateLoginLink(el)">
+            <mat-icon>link</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            (click)="lockedChanged(el)"
+            [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock and prevent user from using Magic'">
+            <mat-icon *ngIf="el.locked && el.username !== 'root'">lock</mat-icon>
+            <mat-icon *ngIf="!el.locked && el.username !== 'root'">lock_open</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Delete user"
+            (click)="delete(el)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+        </div>
 
       </div>
 
