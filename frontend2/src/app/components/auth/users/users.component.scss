@@ -3,23 +3,6 @@ table.users {
   width: 100%;
   .details-sheet {
     position: relative;
-    padding-bottom: 3rem;
-    .edit-user {
-      position: absolute;
-      bottom: 0;
-      left: -.5rem;
-    }
-    .create-login-link {
-      position: absolute;
-      top: 0;
-      right: -.5rem;
-    }
-    .delete-user {
-      display: inline-block;
-      position: absolute;
-      bottom: 0;
-      right: -.5rem;
-    }
     strong {
       display: inline-block;
       width: 5rem;
@@ -27,6 +10,17 @@ table.users {
     mat-chip-list {
       display: block;
       margin-top: 1rem;
+      mat-chip {
+        padding-right: 2.5rem;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        min-height: 25px;
+        position: relative;
+        mat-icon {
+          position: absolute;
+          right: .5rem;
+        }
+      }
     }
   }
 }
