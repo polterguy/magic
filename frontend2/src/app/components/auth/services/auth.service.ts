@@ -253,4 +253,11 @@ export class AuthService {
       });
     }
   }
+
+  /**
+   * Verifies validity of token by invoking backend.
+   */
+  public verifyToken() {
+    return this.httpService.get<Response>('/magic/modules/system/auth/verify-ticket');
+  }
 }

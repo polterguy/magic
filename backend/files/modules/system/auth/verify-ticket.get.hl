@@ -1,0 +1,18 @@
+
+/*
+ * Will verify JWT token and return success if token is valid.
+ */
+.description:Will verify JWT token and return success if token is valid
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify
+
+
+/*
+ * Returning success.
+ */
+return
+   result:success

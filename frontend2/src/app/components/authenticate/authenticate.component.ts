@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
+import { AuthService } from '../auth/services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
@@ -31,12 +32,14 @@ export class AuthenticateComponent implements OnInit {
    * 
    * @param router Needed to redirect user after having verified his authentication token
    * @param activated Needed to retrieve query parameters
+   * @param authService Needed to verify user is authenticated
    * @param backendService Needed modify backend values according to query parameters given
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
     private router: Router,
     private activated: ActivatedRoute,
+    private authService: AuthService,
     private backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
@@ -60,14 +63,24 @@ export class AuthenticateComponent implements OnInit {
         token,
       };
 
-      // Signalling success to markup.
-      this.success = true;
-      this.feedbackService.showInfo('You were successfully authenticated, we will redirect you shortly');
+      // Verifying token is valid by invoking backend trying to refresh token.
+      this.authService.verifyToken().subscribe(res => {
 
-      // Waiting some few seconds before redirecting user.
-      setTimeout(() => {
-        this.router.navigate(['/']);
-      }, 1000);
+        // Signalling success to markup.
+        this.success = true;
+        this.feedbackService.showInfo('You were successfully authenticated');
+
+        // Waiting some few seconds before redirecting user.
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 2000);
+
+      }, (error: any) => {
+
+        // Oops, failure to verify token.
+        this.success = false;
+        this.feedbackService.showError(error);
+      });
     });
   }
 }
