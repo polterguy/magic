@@ -49,7 +49,7 @@ export class AuthenticateComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving relevant query parameters.
-    const token = this.activated.queryParams.subscribe((params: Params) => {
+    this.activated.queryParams.subscribe((params: Params) => {
 
       // Retrieving query parameters and making sure we correctly configure backend.
       const url = params['url'];

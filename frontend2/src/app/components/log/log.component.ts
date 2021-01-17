@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -97,8 +97,19 @@ export class LogComponent implements OnInit {
         this.getItems();
       });
 
-    // Getting log items initially, displaying the latest log items from the backend.
-    this.getItems();
+    // Retrieving relevant query parameters.
+    this.route.queryParams.subscribe((params: Params) => {
+
+      // Retrieving filter query param, and if given, applying filter for which items to retrieve.
+      const filter = params['filter'];
+      if (filter) {
+        this.filterFormControl.setValue(filter);
+      } else {
+
+        // Getting log items initially, displaying the latest log items from the backend.
+        this.getItems();
+      }
+    });
   }
 
   /**

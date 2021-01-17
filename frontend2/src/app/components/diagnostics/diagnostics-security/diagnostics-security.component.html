@@ -2,7 +2,12 @@
 <div class="meta-wrapper">
 
   <div class="meta-statistics">
-    <strong matTooltip="Logins per day the last 2 weeks">Logins</strong>
+    <a
+      matTooltip="Logins per day the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'We successfully authenticated user \''}">
+      Logins
+    </a>
     <canvas
       *ngIf="loginData"
       baseChart
@@ -15,7 +20,12 @@
   </div>
 
   <div class="meta-statistics">
-    <strong matTooltip="Failed logins per day the last 2 weeks">Failed logins</strong>
+    <a
+      matTooltip="Failed logins per day the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Unhandled exception occurred \'Access denied\' at \'/magic/modules/system/auth/authenticate\''}">
+      Failed logins
+    </a>
     <canvas
       *ngIf="failedLoginData"
       baseChart
@@ -28,7 +38,12 @@
   </div>
 
   <div class="meta-statistics">
-    <strong matTooltip="Access denied per day the last 2 weeks">Access denied</strong>
+    <a
+      matTooltip="Access denied per day the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Unhandled exception occurred \'Access denied\' at \''}">
+      Access denied
+    </a>
     <canvas
       *ngIf="accessDeniedData"
       baseChart
