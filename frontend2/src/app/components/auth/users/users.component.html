@@ -72,6 +72,7 @@
 
           <button
             mat-icon-button
+            [disabled]="el.username === 'root'"
             matTooltip="Create an authentication link for user"
             (click)="generateLoginLink(el)">
             <mat-icon>link</mat-icon>
@@ -79,10 +80,11 @@
 
           <button
             mat-icon-button
+            [disabled]="el.username === 'root'"
             (click)="lockedChanged(el)"
             [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock and prevent user from using Magic'">
-            <mat-icon *ngIf="el.locked && el.username !== 'root'">lock</mat-icon>
-            <mat-icon *ngIf="!el.locked && el.username !== 'root'">lock_open</mat-icon>
+            <mat-icon *ngIf="el.locked">lock</mat-icon>
+            <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
           </button>
 
           <button

@@ -2,7 +2,12 @@
 <div class="meta-wrapper">
 
   <div class="meta-statistics">
-    <strong matTooltip="Magic restarts over the last 2 weeks">Restarts</strong>
+    <a
+      matTooltip="Magic restarts over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Magic was successfully started'}">
+      Restarts
+    </a>
     <canvas
       *ngIf="restartData"
       baseChart
@@ -15,7 +20,12 @@
   </div>
 
   <div class="meta-statistics">
-    <strong matTooltip="Unhandled exceptions over the last 2 weeks">Exceptions</strong>
+    <a
+      matTooltip="Unhandled exceptions over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Unhandled exception occurred \''}">
+      Unhandled exceptions
+    </a>
     <canvas
       *ngIf="unhandledData"
       baseChart
@@ -28,7 +38,12 @@
   </div>
 
   <div class="meta-statistics">
-    <strong matTooltip="Failed task executions over the last 2 weeks">Task failures</strong>
+    <a
+      matTooltip="Failed task executions over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Unhandled exception while executing scheduled task with id of \''}">
+      Failed tasks
+    </a>
     <canvas
       *ngIf="taskData"
       baseChart

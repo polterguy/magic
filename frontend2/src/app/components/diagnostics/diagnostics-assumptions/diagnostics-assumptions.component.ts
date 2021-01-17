@@ -289,7 +289,7 @@ export class DiagnosticsTestsComponent implements OnInit {
           } else {
 
             // One or more tests failed, removing all successful tests.
-            this.feedbackService.showError('Oops, one or more tests failed!');
+            this.feedbackService.showError('Oops, one or more assumptions failed!');
             this.tests = this.tests.filter(x => x.success === false);
           }
         });
