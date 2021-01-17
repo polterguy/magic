@@ -282,7 +282,7 @@ export class UsersComponent implements OnInit {
         encodeURIComponent(this.backendService.current.url);
 
       this.clipboard.copy(url);
-      this.feedbackService.showInfo('Login link for user can be found on your clipboard');
+      this.feedbackService.showInfo('Authentication link is on your clipboard');
     }, (error: any) => this.feedbackService.showError(error));
   }
 
