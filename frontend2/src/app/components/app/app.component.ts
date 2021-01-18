@@ -60,7 +60,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // User was logged out
         case Messages.USER_LOGGED_OUT:
-          this.showInfo('You were successfully logged out of your backend');
+
+          // Verifying caller wants to display information to user or not.
+          if (msg.content !== false) {
+            this.showInfo('You were successfully logged out of your backend');
+          }
+
+          // Redirecting user to landing page.
           if (this.router.url !== '/') {
             this.router.navigate(['/']);
           }

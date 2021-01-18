@@ -73,9 +73,17 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
-            matTooltip="Create an authentication link for user"
+            matTooltip="Impersonate user"
             (click)="generateLoginLink(el)">
-            <mat-icon>link</mat-icon>
+            <mat-icon>account_circle</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Create a reset password link for user"
+            (click)="generateResetPasswordLink(el)">
+            <mat-icon>perm_identity</mat-icon>
           </button>
 
           <button

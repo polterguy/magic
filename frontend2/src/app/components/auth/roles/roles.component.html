@@ -56,7 +56,7 @@
         <button
           mat-icon-button
           class="add-role"
-          [disabled]="getAffectedUsers(el) === 0"
+          [disabled]="el.name === 'reset-password' || getAffectedUsers(el) === 0"
           [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
           (click)="addRole(el)">
           <mat-icon>add_box</mat-icon>
@@ -82,7 +82,7 @@
 
         <button
           mat-icon-button
-          [disabled]="el.name === 'root'"
+          [disabled]="el.name === 'root' || el.name === 'reset-password'"
           matTooltip="Delete role"
           class="delete-role"
           (click)="deleteRole(el)">

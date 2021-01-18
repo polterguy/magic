@@ -73,8 +73,17 @@ export class HomeComponent implements OnInit {
           // Signalling success to user.
           this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
-          // Redirecting user to avoid displaying JWT token in plain sight.
-          this.router.navigate(['/']);
+          // Checking if token is a 'reset-password' type of token.
+          if (this.authService.roles().filter(x => x === 'reset-password')) {
+
+            // Redirecting user to change-password route.
+            this.router.navigate(['/change-password']);
+
+          } else {
+
+            // Redirecting user to avoid displaying JWT token in plain sight.
+            this.router.navigate(['/']);
+          }
 
         }, (error: any) => {
 

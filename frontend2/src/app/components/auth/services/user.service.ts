@@ -170,4 +170,16 @@ export class UserService {
       '/magic/modules/system/auth/generate-token?username=' +
       encodeURIComponent(username));
   }
+
+  /**
+   * Creates a login link that can be used by user to reset his or her password (only!).
+   * 
+   * @param username Username to generate login link on behalf of
+   */
+  public generateResetPasswordLink(username: string) {
+    return this.httpService.get<AuthenticateResponse>(
+      '/magic/modules/system/auth/generate-token?username=' +
+      encodeURIComponent(username) +
+      '&reset-password=true');
+  }
 }

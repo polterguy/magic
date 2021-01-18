@@ -38,6 +38,7 @@ slots.create:magic.auth.authenticate
                unwrap:x:+/*
                return
                   ticket:x:@auth.ticket.create
+
          else
 
             // Failure!
@@ -73,7 +74,7 @@ slots.create:magic.auth.authenticate
 
 
       /*
-       * Checking that user with specified [username] exists.
+       * Checking if user with specified [username] exists.
        */
       if
          eq
@@ -108,42 +109,96 @@ slots.create:magic.auth.authenticate
              * Password is matching hashed value from database, or caller
              * does not want to verify password.
              *
-             * Now we need to select all roles user belongs to.
+             * Now checking if this is a request for a "change password link".
              */
-            data.read
-               table:users_roles
-               columns
-                  role
-               where
-                  and
-                     user:x:@.arguments/*/username
+            if
+               eq
+                  get-value:x:@.arguments/*/reset-password
+                  .:bool:true
+               .lambda
 
 
-            /*
-             * Then we can create our JWT token/ticket.
-             */
-            add:x:+/*/roles
-               get-nodes:x:@data.read/*/*
-            auth.ticket.create
-               username:x:@.arguments/*/username
-               roles
+                  /*
+                   * Caller requested a "reset password link", hence the only
+                   * role we add user to is the "reset-password" role, and we
+                   * also add the [old-password] claim, which we check when user
+                   * actually attempts to change his password, to make sure one
+                   * reset password link can only be used once.
+                   *
+                   * Hashing the password might be a bit overkill here, since
+                   * it's already hashed in the database - However, we can't be
+                   * too cautious.
+                   */
+                  crypto.hash:x:@data.read/*/*
+                  unwrap:x:+/*/*
+                  add:x:+
+                     .
+                        old-password:x:@crypto.hash
+                  auth.ticket.create
+                     username:x:@.arguments/*/username
+                     roles
+                        .:reset-password
 
 
-            /*
-             * Logging the fact that user successfully logged in.
-             */
-            log.info
-               .:"We successfully authenticated user '"
-               get-value:x:@.arguments/*/username
-               .:"'"
+                  /*
+                   * Logging the fact that we generated a reset-password token.
+                   */
+                  log.info
+                     .:"Reset password token successfully generated for user '"
+                     get-value:x:@.arguments/*/username
+                     .:"'"
 
 
-            /*
-             * Returning results back to caller.
-             */
-            unwrap:x:+/*
-            return
-               ticket:x:@auth.ticket.create
+                  /*
+                   * Returning results back to caller.
+                   */
+                  unwrap:x:+/*
+                  return
+                     ticket:x:@auth.ticket.create
+
+
+            else
+
+
+               /*
+                * Now we need to select all roles user belongs to.
+                */
+               data.read
+                  table:users_roles
+                  columns
+                     role
+                  where
+                     and
+                        user:x:@.arguments/*/username
+
+
+               /*
+                * Then we can create our JWT token/ticket.
+                */
+               add:x:+/*/roles
+                  get-nodes:x:@data.read/*/*
+               auth.ticket.create
+                  username:x:@.arguments/*/username
+                  roles
+
+
+               /*
+                * Logging the fact that user successfully logged in.
+                */
+               log.info
+                  .:"We successfully authenticated user '"
+                  get-value:x:@.arguments/*/username
+                  .:"'"
+
+
+               /*
+                * Returning results back to caller.
+                */
+               unwrap:x:+/*
+               return
+                  ticket:x:@auth.ticket.create
+
+
       else
 
 

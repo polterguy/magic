@@ -278,7 +278,33 @@ export class UsersComponent implements OnInit {
         encodeURIComponent(this.backendService.current.url);
 
       this.clipboard.copy(url);
-      this.feedbackService.showInfo('The authentication link can be found on your clipboard');
+      this.feedbackService.showInfo('The impersonation link can be found on your clipboard');
+
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when user wants to create a reset password link for a specific user.
+   * 
+   * @param user User to create link for
+   */
+  public generateResetPasswordLink(user: User) {
+
+    // Creates a login link by invoking backend.
+    this.userService.generateResetPasswordLink(user.username).subscribe((result: AuthenticateResponse) => {
+
+      // Creating an authentication URL, and putting it on the clipboard, giving user some feedback in the process.
+      const location: any = this.platformLocation;
+      const url = location.location.origin.toString() +
+        '/?token=' +
+        encodeURIComponent(result.ticket) +
+        '&username=' +
+        encodeURIComponent(user.username) +
+        '&url=' +
+        encodeURIComponent(this.backendService.current.url);
+
+      this.clipboard.copy(url);
+      this.feedbackService.showInfo('The reset password link can be found on your clipboard');
 
     }, (error: any) => this.feedbackService.showError(error));
   }

@@ -20,6 +20,7 @@ import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
+import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 
 /**
  * Routes for application.
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'crudifier', component: CrudifierComponent },
   { path: 'diagnostics', component: DiagnosticsComponent },
+  { path: 'change-password', component: ChangePasswordComponent },
 ];
 
 /**
