@@ -53,24 +53,6 @@
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
 
-        <button
-          mat-icon-button
-          class="add-role"
-          [disabled]="el.name === 'reset-password' || getAffectedUsers(el) === 0"
-          [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
-          (click)="addRole(el)">
-          <mat-icon>add_box</mat-icon>
-        </button>
-
-        <button
-          mat-icon-button
-          class="edit-role"
-          matTooltip="Edit role"
-          [disabled]="el.name === 'root'"
-          (click)="editRole(el)">
-          <mat-icon>edit</mat-icon>
-        </button>
-
         <span class="details-item">
           <strong>Name</strong>
           <span>{{el.name}}</span>
@@ -80,14 +62,33 @@
           <span>{{el.description}}</span>
         </span>
 
-        <button
-          mat-icon-button
-          [disabled]="el.name === 'root' || el.name === 'reset-password'"
-          matTooltip="Delete role"
-          class="delete-role"
-          (click)="deleteRole(el)">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <div class="button-strip">
+
+          <button
+            mat-icon-button
+            [disabled]="el.name === 'reset-password' || getAffectedUsers(el) === 0"
+            [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
+            (click)="addRole(el)">
+            <mat-icon>add_box</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            matTooltip="Edit role"
+            [disabled]="el.name === 'reset-password' || el.name === 'root'"
+            (click)="editRole(el)">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.name === 'root' || el.name === 'reset-password'"
+            matTooltip="Delete role"
+            (click)="deleteRole(el)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+        </div>
 
       </div>
 
