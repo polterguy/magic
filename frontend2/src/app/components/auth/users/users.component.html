@@ -90,7 +90,7 @@
             mat-icon-button
             [disabled]="el.username === 'root'"
             (click)="lockedChanged(el)"
-            [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock and prevent user from using Magic'">
+            [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock user out from using Magic'">
             <mat-icon *ngIf="el.locked">lock</mat-icon>
             <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
           </button>
