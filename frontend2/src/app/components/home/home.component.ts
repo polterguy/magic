@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
           this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
           // Checking if token is a 'reset-password' type of token.
-          if (this.authService.roles().filter(x => x === 'reset-password')) {
+          if (this.authService.roles().filter(x => x === 'reset-password').length > 0) {
 
             // Redirecting user to change-password route.
             this.router.navigate(['/change-password']);
