@@ -2,13 +2,14 @@
 table.roles {
   width: 100%;
   tr {
-    td:nth-child(2),
-    th:nth-child(2) {
+    td:nth-child(1) {
+      white-space: nowrap;
+    }
+    td:nth-child(2) {
       display: none;
     }
     @media screen and (min-width: 600px) {
-      td:nth-child(2),
-      th:nth-child(2) {
+      td:nth-child(2) {
         display: table-cell;
       }
     }

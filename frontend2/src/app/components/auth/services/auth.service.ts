@@ -109,8 +109,9 @@ export class AuthService {
    * Logs out the user from his currently active backend.
    * 
    * @param destroyPassword Whether or not password should be removed before persisting backend
+   * @param showInfo Whether or not user should be shown information telling him he was successfully logged out or not
    */
-  public logout(destroyPassword: boolean) {
+  public logout(destroyPassword: boolean, showInfo: boolean = true) {
     if (this.authenticated) {
       this.backendService.current.token = null;
       if (destroyPassword) {
@@ -119,6 +120,7 @@ export class AuthService {
       this.backendService.persistBackends();
       this.messageService.sendMessage({
         name: Messages.USER_LOGGED_OUT,
+        content: showInfo,
       });
     }
   }
@@ -152,16 +154,16 @@ export class AuthService {
 
     // Verifying user is authenticated, and returning empty array if not.
     if (!this.authenticated) {
-      return [];
+      return <string[]>[];
     }
 
     // Parsing role field from JWT token, and splitting at ','.
     const payload = <string>atob(this.backendService.current.token.split('.')[1]);
     const roles = JSON.parse(payload).role;
     if (Array.isArray(roles)) {
-      return roles;
+      return <string[]>roles;
     }
-    return [roles];
+    return <string[]>[roles];
   }
 
   /**
@@ -227,6 +229,8 @@ export class AuthService {
 
   /*
    * Will refresh the JWT token for the specified backend.
+   * 
+   * @param backend Which backend to create a refresh timer for.
    */
   public refreshJWTToken(backend: Backend) {
 
@@ -255,9 +259,24 @@ export class AuthService {
   }
 
   /**
+   * Changes currently logged in user's password.
+   * 
+   * @param password New password for user
+   */
+  public changePassword(password: string) {
+
+    // Invoking backend returning observable to caller.
+    return this.httpService.put<Response>('/magic/modules/system/auth/change-password', {
+      password
+    });
+  }
+
+  /**
    * Verifies validity of token by invoking backend.
    */
   public verifyToken() {
+
+    // Invokes backend and returns observable to caller.
     return this.httpService.get<Response>('/magic/modules/system/auth/verify-ticket');
   }
 }

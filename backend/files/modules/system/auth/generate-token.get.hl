@@ -4,6 +4,7 @@
  */
 .arguments
    username:string
+   reset-password:bool
 .description:Generates a JWT token for the specified user
 
 
@@ -27,6 +28,7 @@ unwrap:x:+/*
 signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    check-password:bool:false
+   reset-password:x:@.arguments/*/reset-password
 
 
 /*

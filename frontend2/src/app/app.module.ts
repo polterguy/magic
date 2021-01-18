@@ -85,6 +85,7 @@ import { FileEditorComponent } from './components/files/file-editor/file-editor.
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
+import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
@@ -175,6 +176,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     AddQueryParameterDialogComponent,
     CreateAssumptionTestDialogComponent,
     DiagnosticsTestsComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     FormsModule,

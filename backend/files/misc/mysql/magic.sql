@@ -64,6 +64,7 @@ create table `users_roles` (
 insert into roles (name, description) values ('root', 'This is a root account in your system');
 insert into roles (name, description) values ('user', 'This is a normal user in your system');
 insert into roles (name, description) values ('guest', 'This is a guest visitor to your system');
+insert into roles (name, description) values ('reset-password', 'A special role that only allows the user to change his password');
 
 
 /*
