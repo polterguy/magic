@@ -433,6 +433,9 @@
           },
           {
             "locked":"bool"
+          },
+          {
+            "created":"date"
           }
        ]
     },
@@ -445,8 +448,20 @@
        },
        {
           "locked.eq":"bool"
+       },
+       {
+         "created.mt":"date"
+       },
+       {
+         "created.lt":"date"
+       },
+       {
+         "created.mteq":"date"
+       },
+       {
+         "created.lteq":"date"
        }
-    ]
+   ]
   },
   {
     "overwrite": true,

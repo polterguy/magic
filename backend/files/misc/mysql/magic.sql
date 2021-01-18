@@ -28,6 +28,7 @@ create table `users` (
   `username` varchar(256) not null,
   `password` varchar(256) not null,
   `locked` boolean not null default 0,
+  `created` datetime not null default current_timestamp,
   primary key (`username`),
   unique key `username_UNIQUE` (`username`)
 );

@@ -45,6 +45,11 @@
         class="details-sheet"
         *ngIf="shouldDisplayDetails(el)">
 
+        <span class="details-item">
+          <strong>Created</strong>
+          <span [matTooltip]="el.created">{{el.created | since}}</span>
+        </span>
+
         <mat-chip-list
           aria-label="Roles user belongs to">
           <mat-chip
