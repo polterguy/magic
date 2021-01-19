@@ -89,4 +89,12 @@ export class LoaderInterceptor implements HttpInterceptor {
       this.loadingService.hide();
     }
   }
+
+  /**
+   * Forces the Ajax loader to become invisible.
+   */
+  public forceEmpty() {
+    LoaderInterceptor.totalRequests = 0;
+    this.loadingService.hide();
+  }
 }

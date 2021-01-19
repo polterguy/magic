@@ -258,10 +258,13 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public executeAll() {
 
-    // Invoking backend once for every test in suite.
     const parallellNo = 4;
     let idxNo = 0;
+
+    // Avoid filckering in Ajax wait gif bugger.
     this.loaderInterceptor.increment();
+
+    // Invoking backend once for every test in suite.
     from(this.tests.map(x => this.endpointService.executeTest(x.filename)))
       .pipe(
         bufferCount(parallellNo),
@@ -270,28 +273,52 @@ export class DiagnosticsTestsComponent implements OnInit {
             this.tests[idxNo].success = idx.result === 'success';
             idxNo++;
           }
-        }, (errors: any[]) => {
-          for (let idx of errors) {
-            this.tests[idxNo++].success = false;
+        }, (error: any) => {
+
+          // If one invocation results in non-successful status code returned from backend, this will not be an array.
+          if (Array.isArray(error)) {
+            for (const idx of error) {
+              this.tests[idxNo++].success = false;
+            }
+          } else {
+            this.feedbackService.showError(error);
           }
+
+          // Filtering out tests according to result, and making sure Ajax loader is hidden again.
+          this.loaderInterceptor.forceEmpty();
+          this.filterTests();
+
         }, () => {
 
-          // Done, checking if all tests succeeded.
+          // Filtering out tests according to result, and making sure Ajax loader is hidden again.
           this.loaderInterceptor.decrement();
-          if (this.tests.filter(x => x.success === false).length === 0) {
-
-            // Perfect health! Publishing succeeded message and showing user some feedback.
-            this.feedbackService.showInfo('Your system has perfect health!');
-            this.messageService.sendMessage({
-              name: 'app.assumptions.succeeded',
-            });
-
-          } else {
-
-            // One or more tests failed, removing all successful tests.
-            this.feedbackService.showError('Oops, one or more assumptions failed!');
-            this.tests = this.tests.filter(x => x.success === false);
-          }
+          this.filterTests();
         });
   }
+
+  /*
+   * Private helper methods
+   */
+
+   /*
+    * Filters tests according to result.
+    */
+   private filterTests() {
+
+    // Checking if all tests succeeded, and if so, avoid filtering.
+    if (this.tests.filter(x => x.success !== true).length === 0) {
+
+      // Perfect health! Publishing succeeded message and showing user some feedback.
+      this.feedbackService.showInfo('Your system has perfect health!');
+      this.messageService.sendMessage({
+        name: 'app.assumptions.succeeded',
+      });
+
+    } else {
+
+      // One or more tests failed, removing all successful tests.
+      this.feedbackService.showError('Oops, one or more assumptions failed!');
+      this.tests = this.tests.filter(x => x.success !== true);
+    }
+}
 }
