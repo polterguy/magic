@@ -90,9 +90,9 @@ go
 /*
  * Inserting a couple of default roles. Most importantly, the "root" role, which is "special".
  */
-insert into roles ("name", "description") values ('root', 'This is a root account in your system');
-insert into roles ("name", "description") values ('user', 'This is a normal user in your system');
-insert into roles ("name", "description") values ('guest', 'This is a guest visitor to your system');
+insert into roles ("name", "description") values ('root', 'A user that has complete access to everything in the system');
+insert into roles ("name", "description") values ('unconfirmed', 'An unconfirmed user that has severely restricted rights');
+insert into roles ("name", "description") values ('guest', 'A confirmed user with some elevated rights');
 insert into roles ("name", "description") values ('reset-password', 'A special role that only allows the user to change his password');
 
 go

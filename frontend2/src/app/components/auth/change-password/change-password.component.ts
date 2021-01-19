@@ -4,7 +4,6 @@
  */
 
 // Angular and system imports.
-import { Router } from '@angular/router';
 import { Component } from '@angular/core';
 
 // Application specific imports.
@@ -35,9 +34,9 @@ export class ChangePasswordComponent {
    * Creates an instance of your component.
    * 
    * @param authService Needed to invoke backend to actually perform the password change
+   * @param feedbackService Needed to provide feedback to user
    */
   constructor(
-    private router: Router,
     private authService: AuthService,
     private feedbackService: FeedbackService) { }
 

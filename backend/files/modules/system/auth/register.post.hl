@@ -1,0 +1,147 @@
+
+/*
+ * Registers a new user in the backend.
+ */
+.arguments
+   username:string
+   password:string
+   frontendUrl:string
+   backendUrl:string
+.description:Registers a new user in the system
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/password
+validators.mandatory:x:@.arguments/*/frontendUrl
+validators.mandatory:x:@.arguments/*/backendUrl
+validators.email:x:@.arguments/*/username
+validators.url:x:@.arguments/*/frontendUrl
+validators.url:x:@.arguments/*/backendUrl
+
+
+/*
+ * Hashing user's passsword.
+ */
+crypto.password.hash:x:@.arguments/*/password
+
+
+/*
+ * Inserts user into database.
+ */
+data.connect:magic
+
+   /*
+    * Inserting user into database.
+    */
+   data.create
+      table:users
+      values
+         username:x:@.arguments/*/username
+         password:x:@crypto.password.hash
+
+   /*
+    * Associating user with correct role.
+    */
+   data.create
+      table:users_roles
+      values
+         user:x:@.arguments/*/username
+         role:unconfirmed
+
+
+/*
+ * Making sure we return a JWT token for the user, such that he
+ * doesn't need to authenticate again.
+ */
+unwrap:x:+/*
+signal:magic.auth.authenticate
+   username:x:@.arguments/*/username
+   password:x:@.arguments/*/password
+
+
+/*
+ * Sends an email to user asking him or her to confirm their email address.
+ *
+ * Notice, we only do this if we can find SMTP settings in our configuration.
+ */
+config.get:"magic:smtp:host"
+if
+   not
+      eq
+         get-value:x:@config.get
+         .
+   .lambda
+
+      /*
+       * We have some sort of SMTP settings section in our configuration.
+       * Loading up email template, which is modified and parametrized
+       * according to input arguments.
+       */
+      io.file.load:/modules/system/auth/templates/register.html
+
+      /*
+       * Hashing the JWT secret combined with the user's selected username,
+       * making sure we use the result as a 'secret' URL query
+       * parameter for the user's 'confirm email address' link.
+       */
+      .token
+      strings.concat
+         get-value:x:@.arguments/*/
+         config.get:"magic:auth.secret"
+      set-value:x:@.token
+         crypto.hash:x:@strings.concat
+
+      /*
+       * Dynamically building our reset password URL.
+       */
+      .url
+      set-value:x:@.url
+         strings.concat
+            get-value:x:@.arguments/*/frontendUrl
+            .:?token=
+            get-value:x:@.token
+            .:&username=
+            strings.url-encode:x:@.arguments/*/username
+            .:&url=
+            strings.url-encode:x:@.arguments/*/backendUrl
+
+      /*
+       * Performing substitution in email template.
+       */
+      .body
+      set-value:x:@.body
+         strings.replace:x:@io.file.load
+            .:{{url}}
+            get-value:x:@.url
+
+      /*
+       * Now we can send an email to user.
+       */
+      unwrap:x:+/**
+      mail.smtp.send
+         message
+            to
+               .:x:@.arguments/*/username
+            subject:Thank you for registering
+            entity:text/html
+               content:x:@.body
+
+
+/*
+ * Logging the fact that we registered a new user.
+ */
+log.info
+   strings.concat
+      .:"Successfully registered a new user with username '"
+      get-value:x:@.arguments/*/username
+      .:"'"
+
+
+/*
+ * Returns success to caller.
+ */
+return-nodes
+   result:success

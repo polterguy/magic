@@ -279,4 +279,21 @@ export class AuthService {
     // Invokes backend and returns observable to caller.
     return this.httpService.get<Response>('/magic/modules/system/auth/verify-ticket');
   }
+
+  /**
+   * Verifies validity of email address supplied during
+   * registration by invoking backend.
+   * 
+   * @param username Username of user which is email address user supplied during registration
+   * @param token Security token system generated for user to avoid user's registering other users' email addresses
+   */
+  public verifyEmail(username: string, token: string) {
+
+    // Invokes backend and returns observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/auth/verify-email', {
+        username,
+        token,
+      });
+  }
 }
