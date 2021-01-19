@@ -11,6 +11,7 @@ import { User } from '../models/user.model';
 import { Count } from '../../../models/count.model';
 import { UserRoles } from '../models/user-roles.model';
 import { AuthFilter } from '../models/auth-filter.model';
+import { Response } from 'src/app/models/response.model';
 import { Affected } from '../../../models/affected.model';
 import { HttpService } from '../../../services/http.service';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
@@ -111,6 +112,23 @@ export class UserService {
       username: user.username,
       password: user.password,
       locked: user.locked,
+    });
+  }
+
+  /**
+   * Imprisons the specified user until the specified date, at
+   * which point the user will be automatically unlocked, and given
+   * back his usual access to Magic.
+   * 
+   * @param username Username of user you want to imprison
+   * @param releaseDate Date and time for when user can access Magic again
+   */
+  public imprison(username: string, releaseDate: Date) {
+
+    // Invoking backend and returning observable.
+    return this.httpService.put<Response>('/magic/modules/system/auth/imprison', {
+      username,
+      releaseDate,
     });
   }
 

@@ -6,7 +6,7 @@
    id:string
    due:date
    repeats:string
-.description:"Schedules the task with the specified [id] for execution according to the specified parameters."
+.description:Schedules the task with the specified id for execution
 
 
 /*
@@ -16,7 +16,8 @@ auth.ticket.verify:root
 
 
 /*
- * Deletes task due instance.
+ * Adds either a [repeats] or [due] argument to invocation below,
+ * depending upon what argument was supplied by caller.
  */
 if
    not
@@ -29,6 +30,11 @@ if
 else
    add:x:../*/tasks.schedule
       get-nodes:x:@.arguments/*/due
+
+
+/*
+ * Performs actual scheduling of task.
+ */
 tasks.schedule:x:@.arguments/*/id
 
 

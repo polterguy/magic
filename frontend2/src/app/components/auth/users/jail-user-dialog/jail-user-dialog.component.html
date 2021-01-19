@@ -1,0 +1,28 @@
+
+<h1 mat-dialog-title>Imprison user until?</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+
+    <input
+      matInput
+      [ngxMatDatetimePicker]="picker"
+      autocomplete="off"
+      placeholder="Release date"
+      [(ngModel)]="releaseDate">
+
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-button
+    (click)="imprison()">Imprison</button>
+
+</div>
