@@ -51,6 +51,8 @@ export class UsersComponent implements OnInit {
     limit: 5,
     offset: 0,
     filter: '',
+    order: 'created',
+    direction: 'desc',
   };
 
   /**

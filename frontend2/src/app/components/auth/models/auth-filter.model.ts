@@ -18,6 +18,17 @@ export class AuthFilter {
   filter?: any;
 
   /**
+   * What column to order results by.
+   */
+  order?: string
+
+  /**
+   * What direction to order results by,
+   * possible values being 'asc' or 'desc'.
+   */
+  direction?: string;
+
+  /**
    * Offset of where to start returning records.
    */
   offset: number;
