@@ -275,17 +275,10 @@ export class DiagnosticsTestsComponent implements OnInit {
           }
         }, (error: any) => {
 
-          // If one invocation results in non-successful status code returned from backend, this will not be an array.
-          if (Array.isArray(error)) {
-            for (const idx of error) {
-              this.tests[idxNo++].success = false;
-            }
-          } else {
-            this.feedbackService.showError(error);
-          }
+          this.feedbackService.showError(error);
 
           // Filtering out tests according to result, and making sure Ajax loader is hidden again.
-          this.loaderInterceptor.forceEmpty();
+          this.loaderInterceptor.forceHide();
           this.filterTests();
 
         }, () => {
@@ -320,5 +313,5 @@ export class DiagnosticsTestsComponent implements OnInit {
       this.feedbackService.showError('Oops, one or more assumptions failed!');
       this.tests = this.tests.filter(x => x.success !== true);
     }
-}
+  }
 }
