@@ -14,6 +14,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
 import { Messages } from 'src/app/models/messages.model';
+import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
@@ -83,10 +84,47 @@ export class LoginDialogComponent implements OnInit {
   public backendSelected() {
     const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
-      this.username = el[0].username;
-      this.password = el[0].password;
+      this.username = el[0].username || '';
+      this.password = el[0].password || '';
       this.savePassword = !!el[0].password && this.password !== 'root';
     }
+  }
+
+  /**
+   * Invoked when user requests a reset password link to be generated
+   * and sent to him on email.
+   * 
+   * Notice, assumes username is a valid email address.
+   */
+  public resetPassword() {
+
+    /*
+     * Storing currently selected backend.
+     */
+    this.backendService.current = {
+      url: this.backends.value,
+    };
+
+    // Invoking backend to request a reset password link to be sent as an email.
+    const url = location.origin;
+    this.authService.sendResetPasswordEmail(
+      this.username,
+      url,
+      this.backendService.current.url).subscribe((res: Response) => {
+
+        // Verifying request was a success.
+        if (res.result === 'success') {
+
+          // Showing some information to user.
+          this.feedbackService.showInfo('Pease check your email to reset your password');
+
+        } else {
+
+          // Showing response from invocation to user.
+          this.feedbackService.showInfo(res.result);
+        }
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

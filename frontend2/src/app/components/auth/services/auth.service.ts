@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Backend } from '../../../models/backend.model';
 import { Messages } from 'src/app/models/messages.model';
+import { Response } from 'src/app/models/response.model';
 import { Endpoint } from '../../../models/endpoint.model';
 import { HttpService } from '../../../services/http.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -203,10 +204,6 @@ export class AuthService {
     return true;
   }
 
-  /*
-   * Private helper methods.
-   */
-
   /**
    * Creates a refresh timer for a single backend's JWT token.
    * 
@@ -295,5 +292,22 @@ export class AuthService {
         username,
         token,
       });
+  }
+
+  /**
+   * Invokes the backend to have a reset password email being sent to user.
+   * 
+   * @param username Username of user to generate the email for
+   * @param frontendUrl URL of frontend to use to build reset-password email from
+   * @param backendUrl URL of backend to use to build reset-password email from
+   */
+  public sendResetPasswordEmail(username: string, frontendUrl: string, backendUrl: string) {
+
+    // Invoking backend returning observable to caller.
+    return this.httpService.post<Response>('/magic/modules/system/auth/send-reset-password-link', {
+      username,
+      frontendUrl,
+      backendUrl,
+    });
   }
 }
