@@ -269,6 +269,11 @@ export class DiagnosticsTestsComponent implements OnInit {
       .pipe(
         bufferCount(parallellNo),
         concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
+
+          /*
+           * Marking test as either failure or success,
+           * depending upon return value from backend.
+           */
           for (let idx of results) {
             this.tests[idxNo].success = idx.result === 'success';
             idxNo++;
@@ -277,7 +282,14 @@ export class DiagnosticsTestsComponent implements OnInit {
 
           this.feedbackService.showError(error);
 
-          // Filtering out tests according to result, and making sure Ajax loader is hidden again.
+          /*
+           * Filtering out tests according to result,
+           * and making sure Ajax loader is hidden again.
+           * 
+           * Notice, we can't use decrement here, because as one of our
+           * requests results in an error, all callbacks for all
+           * consecutive requests stops being invoked.
+           */
           this.loaderInterceptor.forceHide();
           this.filterTests();
 
