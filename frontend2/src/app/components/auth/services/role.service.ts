@@ -47,6 +47,14 @@ export class RoleService {
       if (filter.filter && filter.filter !== '') {
         query += '&name.like=' + encodeURIComponent(filter.filter + '%');
       }
+
+      // Applying sorting, if given.
+      if (filter.order && filter.order !== '') {
+        query += '&order=' + encodeURIComponent(filter.order);
+      }
+      if (filter.direction && filter.direction !== '') {
+        query += '&direction=' + encodeURIComponent(filter.direction);
+      }
     }
 
     // Invoking backend and returning observable.
