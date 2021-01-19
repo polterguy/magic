@@ -23,6 +23,30 @@ validators.url:x:@.arguments/*/backendUrl
 
 
 /*
+ * Verifying that Magic is configured to allow for users to register.
+ */
+config.get:"magic:auth:registration:allow"
+if
+   not
+      eq
+         get-value:x:@config.get
+         .:bool:true
+   .lambda
+
+      /*
+       * Doing some basic logging and returning failure to caller.
+       */
+      log.error
+         string.concat
+            .:"User tried to register at site, but registrations are turned OFF. Username was '"
+            get-value:x:@.arguments/*/username
+            .:"'. Please turn on registrations if you want to allow for this by setting 'allow-registrations' to true."
+      throw:Access denied
+         public:bool:true
+         status:int:401
+
+
+/*
  * Hashing user's passsword.
  */
 crypto.password.hash:x:@.arguments/*/password
@@ -50,16 +74,6 @@ data.connect:magic
       values
          user:x:@.arguments/*/username
          role:unconfirmed
-
-
-/*
- * Making sure we return a JWT token for the user, such that he
- * doesn't need to authenticate again.
- */
-unwrap:x:+/*
-signal:magic.auth.authenticate
-   username:x:@.arguments/*/username
-   password:x:@.arguments/*/password
 
 
 /*
@@ -118,13 +132,41 @@ if
             get-value:x:@.url
 
       /*
+       * Checking if site is configured such that users needs to
+       * be manually enabled, at which point we send the "confirm registration email"
+       * to the "confirm-email" value from the configuration settings,
+       * instead of the user's registered email address.
+       *
+       * Notice, by default this email is sent to registered user, but if
+       * overridden in the configuration to an explicit email, the explicit email
+       * address is used instead. Which allows for a specific user to manually
+       * having to enable users that are registering at the site for all practical
+       * concerns.
+       */
+      .recipient
+      set-value:x:@.recipient
+         config.get:"magic:auth:registration:confirm-email"
+      if
+         eq
+            get-value:x:@.recipient
+            .
+         .lambda
+
+            /*
+             * No "confirm-email" value found in configuration, hence sending
+             * "confirm user email" to user himself.
+             */
+            set-value:x:@.recipient
+               get-value:x:@.arguments/*/username
+
+      /*
        * Now we can send an email to user.
        */
       unwrap:x:+/**
       mail.smtp.send
          message
             to
-               .:x:@.arguments/*/username
+               .:x:@.recipient
             subject:Thank you for registering
             entity:text/html
                content:x:@.body
