@@ -52,6 +52,8 @@ export class RolesComponent implements OnInit {
     limit: 5,
     offset: 0,
     filter: '',
+    order: 'name',
+    direction: 'asc'
   };
 
   /**
