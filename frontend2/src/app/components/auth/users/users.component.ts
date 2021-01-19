@@ -23,6 +23,7 @@ import { UserRoles } from 'src/app/components/auth/models/user-roles.model';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
+import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
 
 /**
  * Users component for administrating users in the system.
@@ -195,6 +196,40 @@ export class UsersComponent implements OnInit {
 
     // Returns true if we're currently displaying this particular item.
     return this.selectedUsers.filter(x => x.username === user.username).length > 0;
+  }
+
+  /**
+   * Put user in jail for some time, preventing him or her to access Magic
+   * for some specified amount of time.
+   * 
+   * @param user What user to put in jail
+   */
+  public jailUser(user: User) {
+
+    // Creating modal dialogue that asks user for how much time the specified user should be imprisoned.
+    const dialogRef = this.dialog.open(JailUserDialogComponent, {
+      width: '550px',
+      data: user
+    });
+
+    dialogRef.afterClosed().subscribe((releaseDate: Date) => {
+
+      // Checking if modal dialog wants to jail the user.
+      if (releaseDate) {
+
+        /*
+         * User was jailed, invoking backend to make sure user
+         * cannot access Magic before release date.
+         */
+        this.userService.imprison(user.username, releaseDate).subscribe(() => {
+
+          // Giving user feedback, and re-fetching all users again.
+          this.feedbackService.showInfoShort('User successfully imprisoned');
+          this.getUsers();
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
   }
 
   /**

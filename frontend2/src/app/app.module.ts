@@ -108,6 +108,7 @@ import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sq
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
+import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
@@ -179,6 +180,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     DiagnosticsTestsComponent,
     ChangePasswordComponent,
     ConfirmEmailComponent,
+    JailUserDialogComponent,
   ],
   imports: [
     FormsModule,

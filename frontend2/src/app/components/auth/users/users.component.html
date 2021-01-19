@@ -93,6 +93,14 @@
 
           <button
             mat-icon-button
+            [disabled]="el.username === 'root' || el.locked"
+            (click)="jailUser(el)"
+            matTooltip="Imprison user for a specific amount of time">
+            <mat-icon>gavel</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
             [disabled]="el.username === 'root'"
             (click)="lockedChanged(el)"
             [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock user out from using Magic'">
