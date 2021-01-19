@@ -63,7 +63,7 @@ create table `users_roles` (
  * Inserting some few roles into our roles table.
  */
 insert into roles (name, description) values ('root', 'A user that has complete access to everything in the system');
-insert into roles (name, description) values ('unconfirmed', 'An unconfirmed user that has severely restricted rights');
+insert into roles (name, description) values ('unconfirmed', 'An unconfirmed user that has severely restricted access');
 insert into roles (name, description) values ('guest', 'A confirmed user with some elevated rights');
 insert into roles (name, description) values ('reset-password', 'A special role that only allows the user to change his password');
 
