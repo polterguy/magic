@@ -129,6 +129,15 @@ if
             entity:text/html
                content:x:@.body
 
+else
+
+   /*
+    * Creating a log entry explaining to root user that
+    * he or she needs to create some SMTP settings in order
+    * to fully take advantage of the system.
+    */
+   log.info:"Cannot send newly registered user an email asking him or her to confirm their email address, since no SMTP configuration settings was found. Please edit your configuration file according to how it's explained at https://github.com/polterguy/magic.lambda.mail to take fully advantage of these features."
+
 
 /*
  * Logging the fact that we registered a new user.
