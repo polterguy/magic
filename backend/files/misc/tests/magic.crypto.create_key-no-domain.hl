@@ -12,7 +12,7 @@ payload:@"{
   ""enabled"": true
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'domain' not given"",
   ""field"": ""domain""
 }"
 produces:application/json

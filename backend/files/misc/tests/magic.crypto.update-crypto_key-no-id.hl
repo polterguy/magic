@@ -13,7 +13,7 @@ payload:@"{
   ""enabled"": true
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'id' not given"",
   ""field"": ""id""
 }"
 produces:application/json

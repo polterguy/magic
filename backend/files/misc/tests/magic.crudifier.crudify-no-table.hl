@@ -20,7 +20,7 @@ payload:@"{
   ""validators"": ""foo""
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'table' not given"",
   ""field"": ""table""
 }"
 produces:application/json

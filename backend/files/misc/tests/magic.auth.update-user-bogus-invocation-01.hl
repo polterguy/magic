@@ -11,7 +11,7 @@ payload:@"{
   ""locked"": true
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'username' not given"",
   ""field"": ""username""
 }"
 produces:application/json

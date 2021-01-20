@@ -41,6 +41,7 @@ strings.concat
 unwrap:x:+/**/.username
 tasks.create:x:@strings.concat
    due:x:@.arguments/*/releaseDate
+   description:Releases specified user from imprisonment
    .lambda
 
       /*

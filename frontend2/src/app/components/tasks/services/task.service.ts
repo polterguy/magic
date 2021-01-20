@@ -149,12 +149,17 @@ export class TaskService {
   public schedule(id: string, due?: Date, repeats?: string) {
 
     // Invoking backend and returning observable to caller.
+    const payload: any = {
+      id
+    };
+    if (due) {
+      payload.due = due;
+    }
+    if (repeats) {
+      payload.repeats = repeats;
+    }
     return this.httpService.post<Response>(
-      '/magic/modules/system/tasks/add-due', {
-        id,
-        due,
-        repeats,
-    });
+      '/magic/modules/system/tasks/add-due', payload);
   }
 
   /**

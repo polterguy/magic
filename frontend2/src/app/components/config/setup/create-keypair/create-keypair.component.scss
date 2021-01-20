@@ -2,12 +2,13 @@
 .centralized {
   text-align: center;
   margin-top: 3rem;
-  .form-field {
-    width: 25rem;
+  .form-field-half {
+    width: 20rem;
     margin-right: 1rem;
   }
-  .form-field.small {
-    width: 15rem;
+  .form-field-full {
+    width: 41rem;
+    margin-right: 1rem;
   }
 }
 
