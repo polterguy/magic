@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { AuthService } from '../services/auth.service';
@@ -20,7 +20,18 @@ import { FeedbackService } from 'src/app/services/feedback.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+
+  /**
+   * Status of component, allowing us to display different types of UI,
+   * depending upon whether or not user is authenticated, already registered, etc.
+   */
+  public status = '';
+
+  /**
+   * Whether or not password should be displayed or hidden as the user types it.
+   */
+  public hide = true;
 
   /**
    * Email address of user.
@@ -50,12 +61,31 @@ export class RegisterComponent {
     private feedbackService: FeedbackService) { }
 
   /**
+   * Implementation of OnInit.
+   */
+  ngOnInit() {
+
+    // Checking status of user.
+    if (this.authService.authenticated) {
+      this.status = 'already-logged-in';
+    } else {
+      this.status = 'ok-to-register';
+    }
+  }
+
+  /**
    * Invoked when user clicks the register button.
    */
   public register() {
 
     // Verifying user correctly typed his password.
-    if (this.password !== this.repeatPassword) {
+    if (this.password === '') {
+
+      // Providing user with some basic feedback.
+      this.feedbackService.showError('Please supply a password');
+      return;
+
+    } else if (this.password !== this.repeatPassword) {
 
       // Providing user with some basic feedback.
       this.feedbackService.showError('Passwords are not matching');
@@ -70,8 +100,24 @@ export class RegisterComponent {
       this.backendService.current.url,
     ).subscribe((result: Response) => {
 
-      // Providing feedback to user
-      this.feedbackService.showInfo('You have been successfully registered at the site');
+      // Checking result of invocation.
+      if (result.result === 'already-registered') {
+
+        // Providing feedback to user.
+        this.feedbackService.showError('You are already registered in backend');
+      } else if (result.result === 'confirm-email-address-email-sent') {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfo('You have been successfully registered at the site, please verify your email address by clicking the link in the email we just sent you');
+      } else if (result.result === 'email-sent-to-moderator') {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfo('You have been successfully registered at the site, please wait for a moderator to accept you as a user');
+      } else {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfo('You have been successfully registered at the site');
+      }
 
     }, (error: any) => this.feedbackService.showError(error));
   }
