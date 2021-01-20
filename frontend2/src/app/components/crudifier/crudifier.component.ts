@@ -132,11 +132,24 @@ export class CrudifierComponent {
   private createDefaultOptionsForDatabase(database: DatabaseEx) {
 
     // Looping through each table in database.
-    for (const idx of database.tables) {
+    for (const idxTable of database.tables) {
 
       // Creating defaults for currently iterated table.
-      idx.moduleName = database.name;
-      idx.moduleUrl = idx.name;
+      idxTable.moduleName = database.name;
+      idxTable.moduleUrl = idxTable.name;
+      idxTable.verbs = [
+        { name: 'post', generate: true },
+        { name: 'get', generate: true },
+        { name: 'put', generate: true },
+        { name: 'delete', generate: true },
+      ];
+
+      // Creating defaults for fields in table.
+      for (const idxColumn of idxTable.columns) {
+
+        // Defaulting expanded to false.
+        idxColumn.expanded = false;
+      }
     }
   }
 }

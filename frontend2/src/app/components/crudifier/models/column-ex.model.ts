@@ -13,4 +13,9 @@ export class ColumnEx {
    * Name of column.
    */
   name: string;
+
+  /**
+   * Whether or not column is expanded or not (viewing details).
+   */
+  expanded: boolean;
 }

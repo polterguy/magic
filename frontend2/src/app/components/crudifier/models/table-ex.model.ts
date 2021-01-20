@@ -4,6 +4,7 @@
  */
 
 // Application specific imports.
+import { Verb } from "./verb.model";
 import { ColumnEx } from "./column-ex.model";
 
 /**
@@ -43,4 +44,9 @@ export class TableEx {
    * Columns in table.
    */
   columns: ColumnEx[];
+
+  /**
+   * HTTP verbs to generate for table.
+   */
+  verbs: Verb[];
 }
