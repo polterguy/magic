@@ -61,6 +61,13 @@ a {
 table.clickable {
   width: 100%;
   background-color: transparent;
+  thead {
+    tr {
+      th {
+        color: rgb(125,125,125);
+      }
+    }
+  }
   tbody {
     tr {
       background-color: rgba(0,0,0,0);

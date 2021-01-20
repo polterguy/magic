@@ -118,13 +118,4 @@ export class CrudifierComponent {
     // Resetting currently selected models for fields.
     this.table = null;
   }
-
-  /**
-   * Invoked when user selects a table.
-   */
-  public tableChanged() {
-
-    // Invoking backend to retrieve tables and columns for database.
-    console.log(this.table);
-  }
 }

@@ -91,6 +91,11 @@ cache.try-get:x:@strings.concat
                   .
                      .
                         name:x:@.dp/#/*/name
+                        db:x:@.dp/#/*/db
+                        nullable:x:@.dp/#/*/nullable
+                        primary:x:@.dp/#/*/primary
+                        automatic:x:@.dp/#/*/automatic
+                        hl:x:@.dp/#/*/hl
 
 
       /*
