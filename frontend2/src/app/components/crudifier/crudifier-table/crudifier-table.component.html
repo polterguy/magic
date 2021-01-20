@@ -57,11 +57,49 @@
     <tr
       mat-header-row
       *matHeaderRowDef="displayedColumns"></tr>
+
     <tr
       mat-row
       *matRowDef="let el; columns: displayedColumns;"></tr>
 
   </table>
+
+  <mat-form-field class="field-input">
+    <mat-label>Module name ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      matTooltip="First part of relative URL to use for table"
+      [(ngModel)]="table.moduleName">
+  </mat-form-field>
+
+  <mat-form-field class="field-input">
+    <mat-label>Module URL ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      matTooltip="Second part of relative URL to use for table"
+      [(ngModel)]="table.moduleUrl">
+  </mat-form-field>
+
+  <mat-form-field class="field-input">
+    <mat-label>Caching ...</mat-label>
+    <input
+      matInput
+      type="number"
+      min="0"
+      max="300"
+      autocomplete="off"
+      matTooltip="Seconds to cache read and count"
+      [(ngModel)]="table.cache">
+  </mat-form-field>
+
+  <mat-checkbox
+    [disabled]="!table.cache || table.cache === 0"
+    [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
+
 
 
 </mat-card>

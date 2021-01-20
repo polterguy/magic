@@ -117,5 +117,26 @@ export class CrudifierComponent {
 
     // Resetting currently selected models for fields.
     this.table = null;
+
+    // Creating default values for database.
+    this.createDefaultOptionsForDatabase(this.database);
+  }
+
+  /*
+   * Private methods.
+   */
+
+  /*
+   * Creates default crudify options for current database.
+   */
+  private createDefaultOptionsForDatabase(database: DatabaseEx) {
+
+    // Looping through each table in database.
+    for (const idx of database.tables) {
+
+      // Creating defaults for currently iterated table.
+      idx.moduleName = database.name;
+      idx.moduleUrl = idx.name;
+    }
   }
 }

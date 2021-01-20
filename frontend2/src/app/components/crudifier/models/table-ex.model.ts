@@ -18,6 +18,28 @@ export class TableEx {
   name: string;
 
   /**
+   * Name of module to generate.
+   */
+  moduleName?: string;
+
+  /**
+   * Name of module to generate.
+   */
+  moduleUrl?: string;
+
+  /**
+   * Number of seconds to cache results of
+   * read and count endpoint.
+   */
+  cache?: number;
+
+  /**
+   * Whether or not cache should be public or not, implying
+   * proxies can cache result.
+   */
+  publicCache?: boolean;
+
+  /**
    * Columns in table.
    */
   columns: ColumnEx[];
