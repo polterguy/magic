@@ -120,6 +120,16 @@
 </a>
 
 <a
+  mat-button
+  routerLink="/register"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>face</mat-icon>
+  <span>Register</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/config')"
   mat-button
   routerLink="/config"
