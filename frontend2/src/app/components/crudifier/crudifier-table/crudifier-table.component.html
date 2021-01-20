@@ -1,10 +1,19 @@
 
 <mat-card>
 
+  <ul class="verbs">
+    <li *ngFor="let idx of table.verbs">
+      <mat-checkbox
+        [matTooltip]="'Whether or not the HTTP ' + idx.name + ' verb should be generated'"
+        [(ngModel)]="idx.generate">{{idx.name}}</mat-checkbox>
+    </li>
+  </ul>
+
   <table
     mat-table
     [dataSource]="table.columns"
-    class="table-items clickable">
+    class="table-items clickable"
+    multiTemplateDataRows>
 
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Column name</th>
@@ -54,13 +63,33 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="show-details">
+      <td
+        mat-cell
+        *matCellDef="let el"
+        colspan="6">
+        <div
+          class="details-sheet"
+          *ngIf="el.expanded">
+          foo
+        </div>
+      </td>
+    </ng-container>
+
     <tr
       mat-header-row
       *matHeaderRowDef="displayedColumns"></tr>
 
     <tr
       mat-row
+      [ngClass]="(el.expanded ? 'selected ' : '') + 'crudify-row'"
+      (click)="el.expanded = !el.expanded"
       *matRowDef="let el; columns: displayedColumns;"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="el.expanded ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
 
   </table>
 
@@ -92,14 +121,14 @@
       min="0"
       max="300"
       autocomplete="off"
-      matTooltip="Seconds to cache read and count"
+      matTooltip="Seconds to cache read and count endpoints"
+      [disabled]="!isGetIncluded()"
       [(ngModel)]="table.cache">
   </mat-form-field>
 
   <mat-checkbox
-    [disabled]="!table.cache || table.cache === 0"
+    matTooltip="Whether or not proxies should be allowed to cache"
+    [disabled]="!table.cache || table.cache === 0 || !isGetIncluded()"
     [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
-
-
 
 </mat-card>
