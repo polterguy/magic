@@ -37,7 +37,7 @@ if
        * Doing some basic logging and returning failure to caller.
        */
       log.error
-         string.concat
+         strings.concat
             .:"User tried to register at site, but registrations are turned OFF. Username was '"
             get-value:x:@.arguments/*/username
             .:"'. Please turn on registrations if you want to allow for this by setting 'allow-registrations' to true."

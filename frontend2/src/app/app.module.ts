@@ -80,6 +80,7 @@ import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { LicenseComponent } from './components/config/license/license.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
@@ -181,6 +182,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     ChangePasswordComponent,
     ConfirmEmailComponent,
     JailUserDialogComponent,
+    RegisterComponent,
   ],
   imports: [
     FormsModule,

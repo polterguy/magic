@@ -19,6 +19,7 @@ import { CryptoComponent } from './components/crypto/crypto.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
@@ -38,6 +39,7 @@ const routes: Routes = [
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'file-system', component: FilesComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'endpoints', component: EndpointsComponent },
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'crudifier', component: CrudifierComponent },

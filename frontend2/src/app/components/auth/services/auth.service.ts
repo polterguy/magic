@@ -278,6 +278,30 @@ export class AuthService {
   }
 
   /**
+   * Registers a new user in the backend.
+   * 
+   * @param username User's email address
+   * @param password Password user selected
+   * @param frontendUrl Frontend's URL to use as root URL for confirming email address
+   * @param backendUrl Backend's URL to associate the user with
+   */
+  public register(
+    username: string,
+    password: string,
+    frontendUrl: string,
+    backendUrl: string) {
+
+    // Invokes backend and returns observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/auth/register', {
+        username,
+        password,
+        frontendUrl,
+        backendUrl,
+      });
+  }
+
+  /**
    * Verifies validity of email address supplied during
    * registration by invoking backend.
    * 
