@@ -21,5 +21,19 @@ mat-card {
   table.table-items {
     margin-top: 2rem;
     margin-bottom: 2rem;
+    tr {
+      td {
+        .details-sheet {
+          strong {
+            display: block;
+          }
+          ul.verbs {
+            position: relative;
+            top: unset;
+            right: unset;
+          }
+        }
+      }
+    }
   }
 }

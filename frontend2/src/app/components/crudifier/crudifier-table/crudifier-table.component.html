@@ -71,7 +71,15 @@
         <div
           class="details-sheet"
           *ngIf="el.expanded">
-          foo
+          <strong>Include column in</strong>
+          <ul class="verbs">
+            <li *ngFor="let idx of getEnabledVerbs()">
+              <mat-checkbox
+                [matTooltip]="'Include the column on the HTTP ' + idx.name + ' verb'"
+                [(ngModel)]="el[idx.name]">{{idx.name}}</mat-checkbox>
+            </li>
+          </ul>
+
         </div>
       </td>
     </ng-container>

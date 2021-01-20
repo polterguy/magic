@@ -42,4 +42,11 @@ export class CrudifierTableComponent {
   public isGetIncluded() {
     return this.table.verbs.filter(x => x.name === 'get')[0].generate;
   }
+
+  /**
+   * Returns all verbs that are enabled for table as a whole.
+   */
+  public getEnabledVerbs() {
+    return this.table.verbs.filter(x => x.generate);
+  }
 }
