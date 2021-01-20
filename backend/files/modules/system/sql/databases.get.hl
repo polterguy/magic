@@ -15,6 +15,16 @@ auth.ticket.verify:root
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/connectionString
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
+
+
+/*
  * Since this endpoint is quite expensive to invoke, we cache its result
  * for 20 minutes - Both on the server side, and on the client side.
  */
@@ -61,41 +71,46 @@ cache.try-get:x:@strings.concat
                   name:x:@.dp/#
                   tables
       for-each:x:@.result/*
-         strings.concat
-            .:magic.db.
-            get-value:x:@.databaseType
-            .:.tables
-         unwrap:x:+/*
-         signal:x:@strings.concat
-            connection-string:x:@.connection-string
-            database:x:@.dp/#/*/name
-         for-each:x:@signal/*
-            unwrap:x:+/*/*/*
-            add:x:@for-each/@.dp/#/*/tables
-               .
-                  .
-                     name:x:@.dp/#/*/table
-                     columns
+         try
             strings.concat
                .:magic.db.
                get-value:x:@.databaseType
-               .:.columns
+               .:.tables
             unwrap:x:+/*
             signal:x:@strings.concat
                connection-string:x:@.connection-string
-               database:x:@for-each/@.dp/#/*/name
-               table:x:@.dp/#/*/table
+               database:x:@.dp/#/*/name
             for-each:x:@signal/*
                unwrap:x:+/*/*/*
-               add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+               add:x:@for-each/@.dp/#/*/tables
                   .
                      .
-                        name:x:@.dp/#/*/name
-                        db:x:@.dp/#/*/db
-                        nullable:x:@.dp/#/*/nullable
-                        primary:x:@.dp/#/*/primary
-                        automatic:x:@.dp/#/*/automatic
-                        hl:x:@.dp/#/*/hl
+                        name:x:@.dp/#/*/table
+                        columns
+               strings.concat
+                  .:magic.db.
+                  get-value:x:@.databaseType
+                  .:.columns
+               unwrap:x:+/*
+               signal:x:@strings.concat
+                  connection-string:x:@.connection-string
+                  database:x:@for-each/@.dp/#/*/name
+                  table:x:@.dp/#/*/table
+               for-each:x:@signal/*
+                  unwrap:x:+/*/*/*
+                  add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+                     .
+                        .
+                           name:x:@.dp/#/*/name
+                           db:x:@.dp/#/*/db
+                           nullable:x:@.dp/#/*/nullable
+                           primary:x:@.dp/#/*/primary
+                           automatic:x:@.dp/#/*/automatic
+                           hl:x:@.dp/#/*/hl
+         .catch
+
+            // Silently ignoring, after logging, probably don't have access to database.
+            log.info:x:@.arguments/*/message
 
 
       /*
