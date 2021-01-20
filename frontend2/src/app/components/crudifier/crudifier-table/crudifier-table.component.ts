@@ -18,10 +18,17 @@ import { TableEx } from '../models/table-ex.model';
 })
 export class CrudifierTableComponent {
 
+  public displayedColumns: string[] = [
+    'name',
+    'db',
+    'hl',
+    'nullable',
+    'primary',
+    'automatic',
+  ];
+
   /**
    * Model for component.
    */
   @Input() public table: TableEx;
-
-  constructor() { }
 }

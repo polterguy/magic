@@ -41,7 +41,6 @@
     <mat-label>Table</mat-label>
     <mat-select
       [(ngModel)]="table"
-      (selectionChange)="tableChanged()"
       placeholder="Database">
       <mat-option
         *ngFor="let idx of database.tables"
@@ -51,4 +50,4 @@
 
 </mat-card>
 
-<app-crudifier-table *ngIf="table" table="table"></app-crudifier-table>
+<app-crudifier-table *ngIf="table" [table]="table"></app-crudifier-table>
