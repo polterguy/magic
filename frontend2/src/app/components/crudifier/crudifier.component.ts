@@ -149,6 +149,10 @@ export class CrudifierComponent {
 
         // Defaulting expanded to false.
         idxColumn.expanded = false;
+        idxColumn.post = true;
+        idxColumn.get = true;
+        idxColumn.put = true;
+        idxColumn.delete = true;
       }
     }
   }

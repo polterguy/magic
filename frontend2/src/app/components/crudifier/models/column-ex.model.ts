@@ -18,4 +18,24 @@ export class ColumnEx {
    * Whether or not column is expanded or not (viewing details).
    */
   expanded: boolean;
+
+  /**
+   * Whether or not column should be included in HTTP POST invocations or not.
+   */
+  post: boolean;
+
+  /**
+   * Whether or not column should be included in HTTP GET invocations or not.
+   */
+  get: boolean;
+
+  /**
+   * Whether or not column should be included in HTTP PUT invocations or not.
+   */
+  put: boolean;
+
+  /**
+   * Whether or not column should be included in HTTP DELETE invocations or not.
+   */
+  delete: boolean;
 }
