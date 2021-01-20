@@ -1,9 +1,0 @@
-
-/*
- * Automatically generated assumption test.
- */
-verb:get
-url:/magic/modules/system/crudifier/databases
-status:int:400
-response:@"{""message"":""Mandatory argument 'databaseType' not given"",""field"":""databaseType""}"
-description:Assumes that invoking endpoint without a databaseType argument results in the correct error and status code
