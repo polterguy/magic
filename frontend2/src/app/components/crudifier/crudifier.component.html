@@ -1,1 +1,54 @@
-<p>crudifier works!</p>
+
+<mat-card>
+
+  <mat-form-field class="form-field">
+    <mat-label>Database type</mat-label>
+    <mat-select
+      [(ngModel)]="databaseType"
+      (selectionChange)="databaseTypeChanged()"
+      placeholder="Database type">
+      <mat-option
+        *ngFor="let idx of databaseTypes"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="databaseType && connectionStrings.length > 0" class="form-field">
+    <mat-label>Connection string</mat-label>
+    <mat-select
+      [(ngModel)]="connectionString"
+      (selectionChange)="connectionStringChanged()"
+      placeholder="Connection string">
+      <mat-option
+        *ngFor="let idx of connectionStrings"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="connectionString && databases && databases.databases.length > 0" class="form-field">
+    <mat-label>Database</mat-label>
+    <mat-select
+      [(ngModel)]="database"
+      (selectionChange)="databaseChanged()"
+      placeholder="Database">
+      <mat-option
+        *ngFor="let idx of databases.databases"
+        [value]="idx">{{idx.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="database && database.tables && database.tables.length > 0" class="form-field">
+    <mat-label>Table</mat-label>
+    <mat-select
+      [(ngModel)]="table"
+      (selectionChange)="tableChanged()"
+      placeholder="Database">
+      <mat-option
+        *ngFor="let idx of database.tables"
+        [value]="idx">{{idx.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</mat-card>
+
+<app-crudifier-table *ngIf="table" table="table"></app-crudifier-table>

@@ -4,7 +4,7 @@
  */
 
 // Application specific imports.
-import { Database } from "src/app/models/database.model";
+import { Database } from "./database.model";
 
 /**
  * Database meta information type, describing all databases in

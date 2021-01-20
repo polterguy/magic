@@ -28,42 +28,6 @@ export class CrudifyService {
   constructor(private httpService: HttpService) { }
 
   /**
-   * Returns all databases from backend from your specified database type,
-   * that can be e.g. mysql or mssql.
-   * 
-   * @param databaseType Database type to return tables from
-   */
-  public getDatabases(databaseType: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Database[]>(
-      '/magic/modules/system/crudifier/databases?databaseType=' + encodeURIComponent(databaseType));
-  }
-
-  /**
-   * Returns all tables from specified database.
-   * 
-   * @param database Database to return tables from
-   */
-  public getTables(database: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>('/magic/modules/system/crudifier/tables');
-  }
-
-  /**
-   * Returns all columns from specified table in specified database.
-   * 
-   * @param database Database to return columns from
-   * @param table Table to return columns from
-   */
-  public getColumns(database: string, table: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>('/magic/modules/system/crudifier/columns');
-  }
-
-  /**
    * Returns all available input reactors from backend.
    */
   public getInputReactor() {
