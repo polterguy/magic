@@ -58,13 +58,31 @@ crypto.password.hash:x:@.arguments/*/password
 data.connect:magic
 
    /*
-    * Inserting user into database.
+    * Making sure we catch primary key violations,
+    * and returns something sane to caller.
     */
-   data.create
-      table:users
-      values
-         username:x:@.arguments/*/username
-         password:x:@crypto.password.hash
+   try
+
+      /*
+       * Inserting user into database.
+       */
+      data.create
+         table:users
+         values
+            username:x:@.arguments/*/username
+            password:x:@crypto.password.hash
+   .catch
+
+      /*
+       * Doing some basic logging, and returning result to caller.
+       */
+      log.info
+         strings.concat
+            .:"User tried to register consecutive times, username was '"
+            get-value:x:@.arguments/*/username
+            .:"'"
+      return
+         result:already-registered
 
    /*
     * Associating user with correct role.
@@ -74,6 +92,13 @@ data.connect:magic
       values
          user:x:@.arguments/*/username
          role:unconfirmed
+
+
+/*
+ * Response result to return to user, which varies according
+ * to whether or not an email was sent, etc.
+ */
+.result:success
 
 
 /*
@@ -158,6 +183,22 @@ if
              */
             set-value:x:@.recipient
                get-value:x:@.arguments/*/username
+
+            /*
+             * Making sure we communicate to caller that a
+             * confirm email address email was sent.
+             */
+            set-value:x:@.result
+               .:confirm-email-address-email-sent
+
+      else
+
+         /*
+          * Making sure we communicate to caller that a
+          * confirm email address email was sent.
+          */
+         set-value:x:@.result
+            .:email-sent-to-moderator
 
       /*
        * Now we can send an email to user.

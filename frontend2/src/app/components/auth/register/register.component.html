@@ -1,7 +1,9 @@
 
 <mat-card>
 
-  <div class="wrapper">
+  <div
+    *ngIf="status === 'ok-to-register'"
+    class="wrapper">
 
     <mat-form-field class="fill-width">
       <mat-label>Email address ...</mat-label>
@@ -16,16 +18,24 @@
       <mat-label>Password ...</mat-label>
       <input
         matInput
-        type="password"
+        [type]="hide ? 'password' : 'text'"
         autocomplete="new-password"
         [(ngModel)]="password">
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-pressed]="hide"
+        tabindex="-1">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
     </mat-form-field>
 
     <mat-form-field class="fill-width">
       <mat-label>Repeat password ...</mat-label>
       <input
         matInput
-        type="password"
+        [type]="hide ? 'password' : 'text'"
         autocomplete="new-password"
         [(ngModel)]="repeatPassword">
     </mat-form-field>
@@ -38,6 +48,12 @@
       </button>
     </div>
 
+  </div>
+
+  <div
+    *ngIf="status === 'already-logged-in'"
+    class="wrapper">
+    You are already registered and logged into system.
   </div>
 
 </mat-card>
