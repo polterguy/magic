@@ -90,6 +90,7 @@ import { ConfigEditorComponent } from './components/config/config-editor/config-
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
+import { CrudifierTableComponent } from './components/crudifier/crudifier-table/crudifier-table.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
 import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
@@ -183,6 +184,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     ConfirmEmailComponent,
     JailUserDialogComponent,
     RegisterComponent,
+    CrudifierTableComponent,
   ],
   imports: [
     FormsModule,
