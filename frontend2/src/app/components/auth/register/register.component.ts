@@ -100,6 +100,9 @@ export class RegisterComponent implements OnInit {
       this.backendService.current.url,
     ).subscribe((result: Response) => {
 
+      // Assigning status to result of invocation.
+      this.status = result.result;
+
       // Checking result of invocation.
       if (result.result === 'already-registered') {
 
