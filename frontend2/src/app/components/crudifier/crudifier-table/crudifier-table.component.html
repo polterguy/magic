@@ -7,14 +7,14 @@
     class="table-items clickable">
 
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <th mat-header-cell *matHeaderCellDef>Column name</th>
       <td
         mat-cell
         *matCellDef="let el">{{el.name}}</td>
     </ng-container>
 
     <ng-container matColumnDef="db">
-      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <th mat-header-cell *matHeaderCellDef>Database type</th>
       <td
         mat-cell
         *matCellDef="let el">{{el.db}}</td>
@@ -38,14 +38,20 @@
       <th mat-header-cell *matHeaderCellDef>Primary key</th>
       <td
         mat-cell
-        *matCellDef="let el">{{el.primary}}</td>
+        class="icon-col"
+        *matCellDef="let el">
+        <mat-icon matTooltip="Column is a part of the table's primary key collection" *ngIf="el.primary === true">check</mat-icon>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="automatic">
       <th mat-header-cell *matHeaderCellDef>Has default</th>
       <td
         mat-cell
-        *matCellDef="let el">{{el.automatic}}</td>
+        class="icon-col"
+        *matCellDef="let el">
+        <mat-icon matTooltip="Column has a default value" *ngIf="el.automatic === true">check</mat-icon>
+      </td>
     </ng-container>
 
     <tr

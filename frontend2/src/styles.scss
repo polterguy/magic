@@ -65,6 +65,9 @@ table.clickable {
     tr {
       th {
         color: rgb(125,125,125);
+        font-weight: bold;
+        white-space: nowrap;
+        padding-right: 1rem;
       }
     }
   }
