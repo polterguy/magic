@@ -12,7 +12,7 @@ payload:@"{
   ""enabled"": true
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'fingerprint' not given"",
   ""field"": ""fingerprint""
 }"
 produces:application/json

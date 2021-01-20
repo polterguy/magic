@@ -23,6 +23,21 @@ import { ConfigService } from 'src/app/components/config/services/config.service
 export class CreateKeypairDialogComponent implements OnInit {
 
   /**
+   * Identity for the key.
+   */
+  public subject: string;
+
+  /**
+   * Email address you want to associate with your key.
+   */
+  public email: string;
+
+  /**
+   * Base URL for your key.
+   */
+  public domain = '';
+
+  /**
    * Seed for CSRNG generator.
    */
   public seed: string;
@@ -72,7 +87,12 @@ export class CreateKeypairDialogComponent implements OnInit {
   public create() {
 
     // Invoking backend to generate key pair.
-    this.configService.generateKeyPair(this.strength, this.seed).subscribe((result: KeyPair) => {
+    this.configService.generateKeyPair(
+      +this.strength,
+      this.seed,
+      this.subject,
+      this.email,
+      this.domain).subscribe((result: KeyPair) => {
 
       // Success, closing dialog.
       this.dialogRef.close(true);

@@ -7,7 +7,7 @@ url:/magic/modules/system/crypto/get-fingerprint
 status:int:400
 description:Assumes that invoking endpoint without a key argument results in the correct error response and status code from backend
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'key' not given"",
   ""field"": ""key""
 }"
 produces:application/json

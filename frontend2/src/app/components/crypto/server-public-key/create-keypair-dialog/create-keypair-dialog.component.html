@@ -4,22 +4,51 @@
 <div mat-dialog-content class="file-content">
 
   <mat-form-field class="fill-width">
+    <mat-label>Subject</mat-label>
     <input
       matInput
-      placeholder="Seed"
       autocomplete="off"
-      [(ngModel)]="seed">
+      matTooltip="Subject for key, typically your full name"
+      [(ngModel)]="subject">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <mat-label>Email</mat-label>
+    <input
+      matInput
+      autocomplete="off"
+      matTooltip="Typically your email address"
+      [(ngModel)]="email">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <mat-label>Domain</mat-label>
+    <input
+      matInput
+      autocomplete="off"
+      matTooltip="Domain to associate key with, typically your Magic installation's backend root URL"
+      [(ngModel)]="domain">
   </mat-form-field>
 
   <mat-form-field class="fill-width">
 
     <mat-select
-      placeholder="Strength"
+      placeholder="Key strength to use for your key pair"
       class="dark"
       [(ngModel)]="strength">
       <mat-option *ngFor="let el of strengthValues" [value]="el">{{el}}</mat-option>
     </mat-select>
 
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <textarea
+      matInput
+      placeholder="Seed"
+      rows="5"
+      autocomplete="off"
+      [(ngModel)]="seed">
+    </textarea>
   </mat-form-field>
 
 </div>

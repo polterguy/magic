@@ -16,7 +16,7 @@ payload:@"{
   ""overwrite"": true
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'moduleName' not given"",
   ""field"": ""moduleName""
 }"
 produces:application/json

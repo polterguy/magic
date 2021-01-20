@@ -10,7 +10,7 @@ payload:@"{
   ""type"": ""foo""
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'content' not given"",
   ""field"": ""content""
 }"
 produces:application/json

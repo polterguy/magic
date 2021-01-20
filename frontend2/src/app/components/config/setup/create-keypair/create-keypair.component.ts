@@ -10,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from 'src/app/components/config/services/config.service';
 
@@ -24,9 +25,19 @@ import { ConfigService } from 'src/app/components/config/services/config.service
 export class CreateKeypairComponent implements OnInit {
 
   /**
-   * CSRNG seed used when generating cryptography key.
+   * Identity for the key.
    */
-  public seed = '';
+  public subject: string;
+
+  /**
+   * Email address you want to associate with your key.
+   */
+  public email: string;
+
+  /**
+   * Base URL for your key.
+   */
+  public domain = '';
 
   /**
    * Strength of key pair to generate.
@@ -34,12 +45,20 @@ export class CreateKeypairComponent implements OnInit {
   public strength = '4096';
 
   /**
+   * CSRNG seed used when generating cryptography key.
+   */
+  public seed = '';
+
+  /**
    * Creates an instance of your component.
    * 
+   * @param backendService Needed to retrieve the root URL for the current backend
+   * @param feedbackService Needed to provide feedback to user
    * @param configService Configuration service used to generate server key pair
    * @param messageService Message service used to publish messages to other components.
    */
   public constructor(
+    private backendService: BackendService,
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     protected messageService: MessageService) {
@@ -50,8 +69,11 @@ export class CreateKeypairComponent implements OnInit {
    */
   public ngOnInit() {
 
+    // Defaulting URL parts to current backend's URL.
+    this.domain = this.backendService.current.url;
+
     // Getting some initial random gibberish to use as seed when generating key pair.
-    this.configService.getGibberish(40, 50).subscribe((res: Response) => {
+    this.configService.getGibberish(200, 300).subscribe((res: Response) => {
 
       // Applying seed.
       this.seed = res.result;
@@ -65,7 +87,12 @@ export class CreateKeypairComponent implements OnInit {
   public next() {
 
     // Invoking backend to generate a key pair.
-    this.configService.generateKeyPair(+this.strength, this.seed).subscribe(() => {
+    this.configService.generateKeyPair(
+      +this.strength,
+      this.seed,
+      this.subject,
+      this.email,
+      this.domain).subscribe(() => {
 
       // Success, giving feedback to user.
       this.feedbackService.showInfo('Cryptography key pair successfully created');
@@ -75,6 +102,6 @@ export class CreateKeypairComponent implements OnInit {
         name: Messages.SETUP_STATE_CHANGED,
         content: 'crypto'
       });
-    });
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

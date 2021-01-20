@@ -160,13 +160,24 @@ export class ConfigService {
    * 
    * @param strength Strength of key pair to generate, typically 2048, 4096, or some other exponent of 2
    * @param seed Used to seed the CSRNG object
+   * @param subject Identity to use for key, typically owner's full name
+   * @param email Email address of key's owner
+   * @param domain URL to associate the key with, typically the backend's root URL
    */
-  public generateKeyPair(strength: number, seed: string) {
+  public generateKeyPair(
+    strength: number,
+    seed: string,
+    subject: string,
+    email: string,
+    domain: string) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<KeyPair>('/magic/modules/system/config/generate-keypair', {
       strength,
       seed,
+      subject,
+      email,
+      domain
     });
   }
 }

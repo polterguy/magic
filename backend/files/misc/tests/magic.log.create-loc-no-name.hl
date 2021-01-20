@@ -11,7 +11,7 @@ payload:@"{
   ""type"": ""foo""
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'name' not given"",
   ""field"": ""name""
 }"
 produces:application/json

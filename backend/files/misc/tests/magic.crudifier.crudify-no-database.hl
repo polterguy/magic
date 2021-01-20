@@ -20,7 +20,7 @@ payload:@"{
   ""validators"": ""foo""
 }"
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'database' not given"",
   ""field"": ""database""
 }"
 produces:application/json

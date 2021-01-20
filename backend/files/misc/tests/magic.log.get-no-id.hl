@@ -7,7 +7,7 @@ url:/magic/modules/system/log/log-item
 status:int:400
 description:Assumes that trying to retrieve a log item without supplying an id results in the correct error response and status code from backend
 response:@"{
-  ""message"": ""Mandatory argument not given"",
+  ""message"": ""Mandatory argument 'id' not given"",
   ""field"": ""id""
 }"
 produces:application/json
