@@ -81,6 +81,16 @@ export class Crudify {
   log?: string;
 
   /**
+   * Number of seconds to cache GET invocations.
+   */
+  cache?: number;
+
+  /**
+   * Whether or not above cache should be available for proxies or not.
+   */
+  publicCache?: boolean;
+
+  /**
    * Whether or not the crudify process should overwrite existing
    * endpoints or not. If false, the process will throw an exception
    * instead of overwriting previously generated endpoint files.
