@@ -48,6 +48,21 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-checkbox
+    *ngIf="database && database.tables && database.tables.length > 0"
+    matTooltip="Overwriting existing endpoints"
+    [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
+
+  <div class="button-strip">
+    <button
+      *ngIf="database"
+      mat-button
+      matTooltip="Crudifies all tables in selected database"
+      (click)="crudifyAll()">
+      Crudify all
+    </button>
+  </div>
+
 </mat-card>
 
 <app-crudifier-table

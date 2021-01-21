@@ -6,13 +6,14 @@ import { forkJoin } from 'rxjs';
 import { Component, Input } from '@angular/core';
 
 // Application specific imports.
-import { Crudify } from '../models/crudify.model';
 import { TableEx } from '../models/table-ex.model';
 import { ColumnEx } from '../models/column-ex.model';
 import { LocResult } from '../models/loc-result.model';
 import { LogService } from '../../log/services/log.service';
 import { CrudifyService } from '../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { LoaderInterceptor } from '../../app/services/loader.interceptor';
+import { TransformModelService } from '../services/transform-model.service';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -58,11 +59,15 @@ export class CrudifierTableComponent {
    * @param logService Needed to be able to log LOC generated
    * @param crudifyService Needed to be able to actually crudify selected table
    * @param feedbackService Needed to display feedback to user
+   * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
+   * @param transformService Needed to transform model to type required by crudify service
    */
   constructor(
     private logService: LogService,
     private crudifyService: CrudifyService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private loaderInterceptor: LoaderInterceptor,
+    private transformService: TransformModelService) { }
 
   /**
    * Returns true of HTTP verb GET is included for crudification.
@@ -168,7 +173,12 @@ export class CrudifierTableComponent {
 
     // Creating observables for each enabled HTTP verb.
     const subscribers = this.table.verbs.filter(x => x.generate).map(x => {
-      return this.crudifyService.crudify(this.getCrudifyData(x.name));
+      return this.crudifyService.crudify(
+        this.transformService.transform(
+          this.databaseType,
+          this.database,
+          this.table,
+          x.name));
     });
 
     // Invoking backend for each above created observable.
@@ -176,125 +186,15 @@ export class CrudifierTableComponent {
 
       // Providing feedback to user.
       const loc = results.reduce((x,y) => x + y.loc, 0);
-      this.feedbackService.showInfo(`${loc} LOC generated`);
-      this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(() => {
 
-        console.log('Logged LOC to backend');
+      // Logging items to backend, and once done, showing user some feedback information.
+      this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(
+        () => this.feedbackService.showInfo(`${loc} LOC generated`),
+        (error: any) => this.feedbackService.showError(error));
 
-      }, (error: any) => this.feedbackService.showError(error));
-
-    }, (error: any) => this.feedbackService.showError(error));
-  }
-
-  /*
-   * Private helper methods.
-   */
-
-  /*
-   * Returns crudification configuration for specified HTTP verb.
-   */
-  private getCrudifyData(verb: string) {
-
-    // Creating arguments for crudification process.
-    const result = new Crudify();
-    result.databaseType = this.databaseType;
-    result.database = this.database;
-    result.moduleName = this.table.moduleName;
-    result.moduleUrl = this.table.moduleUrl;
-    result.table = this.table.name;
-    result.verb = verb;
-    result.returnId = this.table.columns.filter(x => x.primary && !x.automatic).length === 0;
-    result.overwrite = true;
-
-    // Checking if user configured endpoint to use cache or not.
-    if (this.table.cache && this.table.cache > 0) {
-      result.cache = this.table.cache;
-      result.publicCache = this.table.publicCache;
-    }
-
-    // Checking if this is delete invocation, and delete invocations should be logged.
-    if (verb === 'delete' && this.table.logDelete) {
-      result.log = `${this.database}.${this.table.name} entry deleted`;
-    }
-
-    // Checking if this is put invocation, and put invocations should be logged.
-    if (verb === 'delete' && this.table.logPut) {
-      result.log = `${this.database}.${this.table.name} entry updated`;
-    }
-
-    // Figuring out template to use according to specified HTTP verb.
-    switch (verb) {
-
-      case 'post':
-        result.template = '/modules/system/crudifier/templates/crud.template.post.hl';
-        break;
-
-      case 'get':
-        result.template = '/modules/system/crudifier/templates/crud.template.get.hl';
-        break;
-
-      case 'put':
-        result.template = '/modules/system/crudifier/templates/crud.template.put.hl';
-        break;
-
-      case 'delete':
-        result.template = '/modules/system/crudifier/templates/crud.template.delete.hl';
-        break;
-
-      default:
-        throw 'Oops, unknown verb';
-    }
-
-    // Figuring out args to use for invocation.
-    result.args = {
-      columns: [],
-      primary: [],
-    };
-    for (const idxColumn of this.table.columns) {
-      switch (verb) {
-
-        case 'post':
-          if (idxColumn.post) {
-            result.args.columns.push({
-              [idxColumn.name]: idxColumn.hl
-            });
-          }
-          break;
-
-        case 'get':
-          if (idxColumn.get) {
-            result.args.columns.push({
-              [idxColumn.name]: idxColumn.hl
-            });
-          }
-          break;
-
-        case 'put':
-          if (idxColumn.put) {
-            if (idxColumn.primary) {
-              result.args.primary.push({
-                [idxColumn.name]: idxColumn.hl
-              });
-            } else {
-              result.args.columns.push({
-                [idxColumn.name]: idxColumn.hl
-              });
-            }
-          }
-          break;
-
-        case 'delete':
-          if (idxColumn.delete) {
-            if (idxColumn.primary) {
-              result.args.primary.push({
-                [idxColumn.name]: idxColumn.hl
-              });
-            }
-          }
-          break;
-      }
-    }
-
-    return result;
+    }, (error: any) => {
+      this.loaderInterceptor.forceHide();
+      this.feedbackService.showError(error);
+    });
   }
 }

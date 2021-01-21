@@ -8,9 +8,8 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Crudify } from '../models/crudify.model';
-import { Database } from '../../../models/database.model';
-import { HttpService } from '../../../services/http.service';
 import { LocResult } from '../models/loc-result.model';
+import { HttpService } from '../../../services/http.service';
 
 /**
  * Crudify service, allows you to crudify your databases.
