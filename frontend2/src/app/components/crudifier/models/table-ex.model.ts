@@ -49,4 +49,14 @@ export class TableEx {
    * HTTP verbs to generate for table.
    */
   verbs: Verb[];
+
+  /**
+   * Whether or not delete invocations should be logged.
+   */
+  logDelete: boolean;
+
+  /**
+   * Whether or not put invocations should be logged.
+   */
+  logPut: boolean;
 }

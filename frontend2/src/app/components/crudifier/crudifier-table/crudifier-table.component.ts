@@ -13,7 +13,6 @@ import { LocResult } from '../models/loc-result.model';
 import { LogService } from '../../log/services/log.service';
 import { CrudifyService } from '../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -69,7 +68,44 @@ export class CrudifierTableComponent {
    * Returns true of HTTP verb GET is included for crudification.
    */
   public isGetIncluded() {
-    return this.table.verbs.filter(x => x.name === 'get')[0].generate;
+    const verbs = this.table.verbs.filter(x => x.name === 'get');
+    if (verbs.length === 0) {
+      return false;
+    }
+    return verbs[0].generate;
+  }
+
+  /**
+   * Returns true of HTTP verb DELETE is included for crudification.
+   */
+  public isDeleteIncluded() {
+    const verbs = this.table.verbs.filter(x => x.name === 'delete');
+    if (verbs.length === 0) {
+      return false;
+    }
+    return verbs[0].generate;
+  }
+
+  /**
+   * Returns true of HTTP verb PUT is included for crudification.
+   */
+  public isPutIncluded() {
+    const verbs = this.table.verbs.filter(x => x.name === 'put');
+    if (verbs.length === 0) {
+      return false;
+    }
+    return verbs[0].generate;
+  }
+
+  /**
+   * Returns true of HTTP verb POST is included for crudification.
+   */
+  public isPostIncluded() {
+    const verbs = this.table.verbs.filter(x => x.name === 'post');
+    if (verbs.length === 0) {
+      return false;
+    }
+    return verbs[0].generate;
   }
 
   /**
@@ -174,6 +210,16 @@ export class CrudifierTableComponent {
     if (this.table.cache && this.table.cache > 0) {
       result.cache = this.table.cache;
       result.publicCache = this.table.publicCache;
+    }
+
+    // Checking if this is delete invocation, and delete invocations should be logged.
+    if (verb === 'delete' && this.table.logDelete) {
+      result.log = `${this.database}.${this.table.name} entry deleted`;
+    }
+
+    // Checking if this is put invocation, and put invocations should be logged.
+    if (verb === 'delete' && this.table.logPut) {
+      result.log = `${this.database}.${this.table.name} entry updated`;
     }
 
     // Figuring out template to use according to specified HTTP verb.

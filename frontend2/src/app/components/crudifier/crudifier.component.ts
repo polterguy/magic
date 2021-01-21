@@ -143,7 +143,7 @@ export class CrudifierComponent {
       ];
       if (idxTable.columns.filter(x => !x.primary).length > 0 &&
         idxTable.columns.filter(x => x.primary).length > 0) {
-        idxTable.verbs.push({ name: 'put', generate: true });
+        idxTable.verbs.push({ name: 'put', generate: idxTable.columns.filter(x => !x.primary && !x.automatic).length > 0 });
       }
       if (idxTable.columns.filter(x => x.primary).length > 0) {
         idxTable.verbs.push({ name: 'delete', generate: true });
