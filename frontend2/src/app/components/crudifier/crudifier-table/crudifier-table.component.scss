@@ -11,11 +11,18 @@ mat-checkbox {
 mat-card {
   position: relative;
   padding-bottom: 1rem;
+  .table-name {
+    position: absolute;
+    top: 2rem;
+    left: 4rem;
+    color: #999;
+    font-style: italic;
+  }
   .verbs {
     padding-left: 0;
     position: absolute;
-    top: 2rem;
-    right: 2rem;
+    top: 1.5rem;
+    right: 1rem;
     li {
       list-style-type: none;
       float: left;
@@ -29,8 +36,6 @@ mat-card {
     tr {
       td {
         .details-sheet {
-          padding-top: 1rem;
-          padding-bottom: 3rem;
           ul.verbs {
             position: relative;
             top: unset;
