@@ -163,10 +163,10 @@ export class CrudifierBackendComponent {
 
       // Providing feedback to user.
       const loc = results.reduce((x,y) => x + y.loc, 0);
-      this.feedbackService.showInfo(`${loc} LOC generated`);
       this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe(() => {
 
-        console.log('Logged LOC to backend');
+        // Showing user some feedback information.
+        this.feedbackService.showInfo(`${loc} LOC generated`);
 
       }, (error: any) => this.feedbackService.showError(error));
 

@@ -8,6 +8,7 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
+import { Template } from '../models/template.model';
 import { Endpoint } from '../models/endpoint.model';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from '../../../services/http.service';
@@ -223,5 +224,27 @@ export class EndpointService {
     return this.httpService.get<Response>(
       '/magic/modules/system/diagnostics/assumption-test-description?test_file=' +
       encodeURIComponent(filename));
+  }
+
+  /**
+   * Returns a list of all templates the backend has stored.
+   */
+  public templates() {
+
+    // Filtering tests, to return only tests matching endpoint specified.
+    return this.httpService.get<string[]>('/magic/modules/system/endpoints/templates');
+  }
+
+  /**
+   * Returns the documentation/README.md file for the specified template..
+   * 
+   * @param name Name of template to retrieve README file for
+   */
+  public template(name: string) {
+
+    // Filtering tests, to return only tests matching endpoint specified.
+    return this.httpService.get<Template>(
+      '/magic/modules/system/endpoints/template?name=' +
+      encodeURIComponent(name));
   }
 }
