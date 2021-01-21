@@ -62,6 +62,20 @@ export class TransformModelService {
       result.log = `${database}.${table.name} entry updated`;
     }
 
+    // Creating authentication requirements for endpoint(s).
+    if (verb === 'post' && table.authPost) {
+      result.auth = table.authPost;
+    }
+    if (verb === 'get' && table.authGet) {
+      result.auth = table.authGet;
+    }
+    if (verb === 'put' && table.authPut) {
+      result.auth = table.authPut;
+    }
+    if (verb === 'delete' && table.authDelete) {
+      result.auth = table.authDelete;
+    }
+
     // Figuring out template to use according to specified HTTP verb.
     switch (verb) {
 
