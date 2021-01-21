@@ -4,7 +4,7 @@
   <ul class="verbs">
     <li *ngFor="let idx of table.verbs">
       <mat-checkbox
-        [matTooltip]="'Whether or not the HTTP ' + idx.name + ' verb should be generated'"
+        [matTooltip]="'Generate endpoints for the HTTP ' + idx.name + ' verb'"
         [(ngModel)]="idx.generate">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
     </li>
   </ul>
@@ -40,13 +40,14 @@
       <th mat-header-cell *matHeaderCellDef>Nullable</th>
       <td
         mat-cell
+        class="icon-col"
         *matCellDef="let el">
         <mat-icon matTooltip="Column can accept null values" *ngIf="el.nullable === true">check</mat-icon>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="primary">
-      <th mat-header-cell *matHeaderCellDef>Primary key</th>
+      <th mat-header-cell *matHeaderCellDef>Key</th>
       <td
         mat-cell
         class="icon-col"
@@ -56,7 +57,7 @@
     </ng-container>
 
     <ng-container matColumnDef="automatic">
-      <th mat-header-cell *matHeaderCellDef>Has default</th>
+      <th mat-header-cell *matHeaderCellDef>Default</th>
       <td
         mat-cell
         class="icon-col"
@@ -73,7 +74,6 @@
         <div
           class="details-sheet"
           *ngIf="el.expanded">
-          <strong>Include column in</strong>
           <ul class="verbs">
             <li *ngFor="let idx of getEnabledVerbs()">
               <mat-checkbox
@@ -108,6 +108,7 @@
     <mat-label>Module name ...</mat-label>
     <input
       matInput
+      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
       type="text"
       autocomplete="off"
       matTooltip="First part of relative URL to use for table"
@@ -118,13 +119,14 @@
     <mat-label>Module URL ...</mat-label>
     <input
       matInput
+      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
       type="text"
       autocomplete="off"
       matTooltip="Second part of relative URL to use for table"
       [(ngModel)]="table.moduleUrl">
   </mat-form-field>
 
-  <mat-form-field class="field-input">
+  <mat-form-field *ngIf="isGetIncluded()" class="field-input">
     <mat-label>Caching ...</mat-label>
     <input
       matInput
@@ -138,12 +140,24 @@
   </mat-form-field>
 
   <mat-checkbox
+    *ngIf="isGetIncluded()"
     matTooltip="Whether or not proxies should be allowed to cache"
-    [disabled]="!table.cache || table.cache === 0 || !isGetIncluded()"
+    [disabled]="!table.cache || table.cache === 0"
     [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
+
+  <mat-checkbox
+    matTooltip="Log delete invocations"
+    *ngIf="isDeleteIncluded()"
+    [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
+
+  <mat-checkbox
+    matTooltip="Log update invocations"
+    *ngIf="isPutIncluded()"
+    [(ngModel)]="table.logPut">Log update</mat-checkbox>
 
   <div class="button-strip">
     <button
+      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
       mat-button
       (click)="crudifyTable()">
       Crudify

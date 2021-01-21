@@ -4,6 +4,10 @@
   margin-right: 1rem;
 }
 
+mat-checkbox {
+  margin-right: 1rem;
+}
+
 mat-card {
   position: relative;
   padding-bottom: 1rem;
@@ -25,9 +29,8 @@ mat-card {
     tr {
       td {
         .details-sheet {
-          strong {
-            display: block;
-          }
+          padding-top: 1rem;
+          padding-bottom: 3rem;
           ul.verbs {
             position: relative;
             top: unset;
