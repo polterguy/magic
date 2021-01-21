@@ -1,0 +1,43 @@
+
+.field-input {
+  width: 10rem;
+  margin-right: 1rem;
+}
+
+mat-checkbox {
+  margin-right: 1rem;
+}
+
+.verbs {
+  padding-left: 0;
+  float: right;
+  li {
+    list-style-type: none;
+    float: left;
+    margin-right: 1rem;
+    width: 4rem;
+  }
+}
+
+table.table-items {
+  margin-top: 2rem;
+  margin-bottom: 5rem;
+  tr {
+    td {
+      .details-sheet {
+        ul.verbs {
+          position: relative;
+          top: unset;
+          right: unset;
+        }
+      }
+    }
+  }
+}
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0));
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
