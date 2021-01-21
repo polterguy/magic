@@ -10,8 +10,10 @@ import { Crudify } from '../models/crudify.model';
 import { TableEx } from '../models/table-ex.model';
 import { ColumnEx } from '../models/column-ex.model';
 import { LocResult } from '../models/loc-result.model';
+import { LogService } from '../../log/services/log.service';
 import { CrudifyService } from '../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -54,9 +56,12 @@ export class CrudifierTableComponent {
   /**
    * Creates an instance of your component.
    * 
+   * @param logService Needed to be able to log LOC generated
    * @param crudifyService Needed to be able to actually crudify selected table
+   * @param feedbackService Needed to display feedback to user
    */
   constructor(
+    private logService: LogService,
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService) { }
 
@@ -83,12 +88,16 @@ export class CrudifierTableComponent {
    */
   public verbForColumnIsDisabled(verb: string, column: ColumnEx) {
     switch (verb) {
+
       case 'post':
         return column.postDisabled;
+
       case 'get':
         return column.getDisabled;
+
       case 'put':
         return column.putDisabled;
+
       case 'delete':
         return column.deleteDisabled;
     }
@@ -101,12 +110,16 @@ export class CrudifierTableComponent {
    */
   public getCrudNameForVerb(verb: string) {
     switch (verb) {
+
       case 'post':
         return 'Create';
+
       case 'get':
         return 'Read';
+
       case 'put':
         return 'Update';
+
       case 'delete':
         return 'Delete';
     }
@@ -126,7 +139,13 @@ export class CrudifierTableComponent {
     forkJoin(subscribers).subscribe((results: LocResult[]) => {
 
       // Providing feedback to user.
-      console.log(results);
+      const loc = results.reduce((x,y) => x + y.loc, 0);
+      this.feedbackService.showInfo(`${loc} LOC generated`);
+      this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(() => {
+
+        console.log('Logged LOC to backend');
+
+      }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -150,6 +169,12 @@ export class CrudifierTableComponent {
     result.verb = verb;
     result.returnId = this.table.columns.filter(x => x.primary && !x.automatic).length === 0;
     result.overwrite = true;
+
+    // Checking if user configured endpoint to use cache or not.
+    if (this.table.cache && this.table.cache > 0) {
+      result.cache = this.table.cache;
+      result.publicCache = this.table.publicCache;
+    }
 
     // Figuring out template to use according to specified HTTP verb.
     switch (verb) {
