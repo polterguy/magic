@@ -6,14 +6,14 @@ import { forkJoin } from 'rxjs';
 import { Component, Input } from '@angular/core';
 
 // Application specific imports.
-import { TableEx } from '../models/table-ex.model';
-import { ColumnEx } from '../models/column-ex.model';
-import { LocResult } from '../models/loc-result.model';
-import { LogService } from '../../log/services/log.service';
-import { CrudifyService } from '../services/crudify.service';
+import { TableEx } from '../../models/table-ex.model';
+import { ColumnEx } from '../../models/column-ex.model';
+import { LocResult } from '../../models/loc-result.model';
+import { LogService } from '../../../log/services/log.service';
+import { CrudifyService } from '../../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LoaderInterceptor } from '../../app/services/loader.interceptor';
-import { TransformModelService } from '../services/transform-model.service';
+import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
+import { TransformModelService } from '../../services/transform-model.service';
 
 /**
  * Crudifier component for supplying settings and configuration

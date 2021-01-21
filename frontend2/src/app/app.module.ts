@@ -90,16 +90,18 @@ import { ConfigEditorComponent } from './components/config/config-editor/config-
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
-import { CrudifierTableComponent } from './components/crudifier/crudifier-table/crudifier-table.component';
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
 import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
+import { CrudifierBackendComponent } from './components/crudifier/crudifier-backend/crudifier-backend.component';
+import { CrudifierFrontendComponent } from './components/crudifier/crudifier-frontend/crudifier-frontend.component';
 import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
 import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnostics-security/diagnostics-security.component';
+import { CrudifierTableComponent } from './components/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
 import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
 
 // Modal dialogs.
@@ -185,6 +187,8 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     JailUserDialogComponent,
     RegisterComponent,
     CrudifierTableComponent,
+    CrudifierBackendComponent,
+    CrudifierFrontendComponent,
   ],
   imports: [
     FormsModule,
