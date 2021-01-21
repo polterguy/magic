@@ -15,6 +15,31 @@ export class ColumnEx {
   name: string;
 
   /**
+   * Database type for column.
+   */
+  db: string;
+
+  /**
+   * Hyperlambda type for column.
+   */
+  hl: string;
+
+  /**
+   * Whether or not the column can accept null values.
+   */
+  nullable: boolean;
+
+  /**
+   * Whether or not column is a part of the primary key or not.
+   */
+  primary: boolean;
+
+  /**
+   * Whether or not the column has a default value.
+   */
+  automatic: boolean;
+
+  /**
    * Whether or not column is expanded or not (viewing details).
    */
   expanded: boolean;
@@ -38,4 +63,24 @@ export class ColumnEx {
    * Whether or not column should be included in HTTP DELETE invocations or not.
    */
   delete: boolean;
+
+  /**
+   * Whether or not user can change if column should be submitted to post invocations.
+   */
+  postDisabled: boolean;
+
+  /**
+   * Whether or not user can change if column should be submitted to get invocations.
+   */
+  getDisabled: boolean;
+
+  /**
+   * Whether or not user can change if column should be submitted to put invocations.
+   */
+  putDisabled: boolean;
+
+  /**
+   * Whether or not user can change if column should be submitted to delete invocations.
+   */
+  deleteDisabled: boolean;
 }
