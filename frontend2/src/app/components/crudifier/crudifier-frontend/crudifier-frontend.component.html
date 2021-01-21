@@ -1,1 +1,23 @@
-<p>crudifier-frontend works!</p>
+
+<mat-form-field class="form-field">
+  <mat-label>Select template</mat-label>
+  <mat-select
+    [(ngModel)]="template"
+    (selectionChange)="templateChanged()"
+    placeholder="Select template">
+    <mat-option
+      *ngFor="let idx of templates"
+      [value]="idx">{{idx}}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button
+  mat-button
+  [disabled]="!template">
+  Generate
+</button>
+
+<div
+  *ngIf="documentation"
+  class="documentation"
+  [innerHtml]="documentation | marked"></div>
