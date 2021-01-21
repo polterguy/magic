@@ -140,19 +140,32 @@ export class CrudifierComponent {
       idxTable.verbs = [
         { name: 'post', generate: true },
         { name: 'get', generate: true },
-        { name: 'put', generate: true },
-        { name: 'delete', generate: true },
       ];
+      if (idxTable.columns.filter(x => !x.primary).length > 0 &&
+        idxTable.columns.filter(x => x.primary).length > 0) {
+        idxTable.verbs.push({ name: 'put', generate: true });
+      }
+      if (idxTable.columns.filter(x => x.primary).length > 0) {
+        idxTable.verbs.push({ name: 'delete', generate: true });
+      }
 
       // Creating defaults for fields in table.
       for (const idxColumn of idxTable.columns) {
 
         // Defaulting expanded to false.
         idxColumn.expanded = false;
-        idxColumn.post = true;
+
+        // Defaulting whether or not columns should be included to verb invocations.
+        idxColumn.post = !idxColumn.automatic;
         idxColumn.get = true;
-        idxColumn.put = true;
-        idxColumn.delete = true;
+        idxColumn.put = !idxColumn.automatic || idxColumn.primary;
+        idxColumn.delete = idxColumn.primary;
+
+        // Settings whether or not column can be added/removed from verb invocations.
+        idxColumn.postDisabled = idxColumn.primary && !idxColumn.automatic;
+        idxColumn.getDisabled = false;
+        idxColumn.putDisabled = idxColumn.primary;
+        idxColumn.deleteDisabled = true;
       }
     }
   }

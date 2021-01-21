@@ -49,4 +49,42 @@ export class CrudifierTableComponent {
   public getEnabledVerbs() {
     return this.table.verbs.filter(x => x.generate);
   }
+
+  /**
+   * Returns whether or not the specified HTTP verb is disabled
+   * for the specified column.
+   * 
+   * @param verb HTTP verb to check
+   * @param column Column to check.
+   */
+  public verbForColumnIsDisabled(verb: string, column: ColumnEx) {
+    switch (verb) {
+      case 'post':
+        return column.postDisabled;
+      case 'get':
+        return column.getDisabled;
+      case 'put':
+        return column.putDisabled;
+      case 'delete':
+        return column.deleteDisabled;
+    }
+  }
+
+  /**
+   * Returns CRUD name for specified verb.
+   * 
+   * @param verb HTTP verb to return CRUD name for
+   */
+  public getCrudNameForVerb(verb: string) {
+    switch (verb) {
+      case 'post':
+        return 'Create';
+      case 'get':
+        return 'Read';
+      case 'put':
+        return 'Update';
+      case 'delete':
+        return 'Delete';
+    }
+  }
 }

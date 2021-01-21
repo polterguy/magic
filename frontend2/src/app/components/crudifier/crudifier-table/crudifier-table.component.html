@@ -5,7 +5,7 @@
     <li *ngFor="let idx of table.verbs">
       <mat-checkbox
         [matTooltip]="'Whether or not the HTTP ' + idx.name + ' verb should be generated'"
-        [(ngModel)]="idx.generate">{{idx.name}}</mat-checkbox>
+        [(ngModel)]="idx.generate">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
     </li>
   </ul>
 
@@ -75,8 +75,9 @@
           <ul class="verbs">
             <li *ngFor="let idx of getEnabledVerbs()">
               <mat-checkbox
-                [matTooltip]="'Include the column on the HTTP ' + idx.name + ' verb'"
-                [(ngModel)]="el[idx.name]">{{idx.name}}</mat-checkbox>
+                [disabled]="verbForColumnIsDisabled(idx.name, el)"
+                [matTooltip]="'Include the column on the HTTP ' + idx.name + ' verb invocation'"
+                [(ngModel)]="el[idx.name]">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
             </li>
           </ul>
 
