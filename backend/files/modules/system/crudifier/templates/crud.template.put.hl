@@ -20,4 +20,4 @@ data.connect:{database}
          and
    unwrap:x:+/*
    return
-      affected:x:./-/-
+      affected:x:@data.update

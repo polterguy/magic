@@ -50,4 +50,8 @@
 
 </mat-card>
 
-<app-crudifier-table *ngIf="table" [table]="table"></app-crudifier-table>
+<app-crudifier-table
+  *ngIf="table"
+  [database]="'[' + connectionString + '|' + database.name + ']'"
+  [databaseType]="databaseType"
+  [table]="table"></app-crudifier-table>

@@ -64,4 +64,4 @@ data.connect:{database}
       columns
       where
          and
-   return-nodes:x:-/*
+   return-nodes:x:@data.read/*

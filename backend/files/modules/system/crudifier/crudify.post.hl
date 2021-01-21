@@ -461,6 +461,19 @@ semaphore:crudifier
          add:x:@apply/*/.arguments
             get-nodes:x:@.arguments/*/args/*/columns/*/*
 
+         /*
+          * Checking if caller specified he wanted to have ID of item returned,
+          * and if not, only returning success.
+          */
+         if
+            not
+               get-value:x:@.arguments/*/returnId
+            .lambda
+               remove-nodes:x:@apply/**/return/*
+               add:x:@apply/**/return
+                  .
+                     result:success
+
 
       /*
        * HTTP PUT special cases
@@ -626,8 +639,11 @@ semaphore:crudifier
     */
    if
       and
-         not
-            get-value:x:@.arguments/*/overwrite
+         or
+            not
+               exists:x:@.arguments/*/overwrite
+            not
+               get-value:x:@.arguments/*/overwrite
          io.file.exists:x:@strings.replace
       .lambda
          throw:"That module already exists. If you want to re-create it, please explicitly inform me that this is your intention."
@@ -727,8 +743,11 @@ semaphore:crudifier
           */
          if
             and
-               not
-                  get-value:x:@.arguments/*/overwrite
+               or
+                  not
+                     exists:x:@.arguments/*/overwrite
+                  not
+                     get-value:x:@.arguments/*/overwrite
                io.file.exists:x:@strings.replace
             .lambda
                throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."

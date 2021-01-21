@@ -21,4 +21,4 @@ data.connect:{database}
       values
    unwrap:x:+/*
    return
-      id:x:./-/-
+      id:x:@data.create
