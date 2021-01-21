@@ -40,7 +40,9 @@
       <th mat-header-cell *matHeaderCellDef>Nullable</th>
       <td
         mat-cell
-        *matCellDef="let el">{{el.nullable}}</td>
+        *matCellDef="let el">
+        <mat-icon matTooltip="Column can accept null values" *ngIf="el.nullable === true">check</mat-icon>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="primary">
