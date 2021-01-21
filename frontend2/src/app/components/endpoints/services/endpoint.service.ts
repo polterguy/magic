@@ -7,6 +7,9 @@
 import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
+// Utility component imports.
+import { saveAs } from "file-saver";
+
 // Application specific imports.
 import { Template } from '../models/template.model';
 import { Endpoint } from '../models/endpoint.model';
@@ -247,4 +250,38 @@ export class EndpointService {
       '/magic/modules/system/endpoints/template?name=' +
       encodeURIComponent(name));
   }
+
+  /**
+   * Generates a frontend and downloads to client as a ZIP file.
+   * 
+   * @param templateName Name of template to use
+   * @param apiUrl API root URL to use when generating template
+   * @param name Name of application
+   * @param copyright Copyright notice to put at top of all files
+   * @param endpoints Endpoints you want to embed into your result
+   */
+  public generate(
+    templateName: string,
+    apiUrl: string,
+    name: string,
+    copyright: string,
+    endpoints: any[]) {
+
+      // Invoking backend and returning the re
+      this.httpService.downloadPost(
+        '/magic/modules/system/endpoints/generate', {
+          templateName,
+          apiUrl,
+          name,
+          copyright,
+          endpoints,
+      }).subscribe(res => {
+  
+          // Retrieving the filename, as provided by the server.
+          const disp = res.headers.get('Content-Disposition');
+          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
+          const file = new Blob([res.body]);
+          saveAs(file, filename);
+        });
+    }
 }

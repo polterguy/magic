@@ -3,10 +3,24 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 import { Component, OnInit } from '@angular/core';
+import { BackendService } from 'src/app/services/backend.service';
 
 // Application specific imports.
+import { Endpoint } from '../../endpoints/models/endpoint.model';
 import { Template } from '../../endpoints/models/template.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
+
+/**
+ * Endpoint model class, for allowing user to select which endpoints
+ * he or she wants to include in the generated frontend.
+ */
+class EndpointEx extends Endpoint {
+
+  /**
+   * Whether or not endpoint has been selected.
+   */
+  selected: boolean;
+}
 
 /**
  * Crudifier component for generating a frontend from
@@ -18,6 +32,15 @@ import { EndpointService } from '../../endpoints/services/endpoint.service';
   styleUrls: ['./crudifier-frontend.component.scss']
 })
 export class CrudifierFrontendComponent implements OnInit {
+
+  /**
+   * Columns to display in endpoints table.
+   */
+  public displayedColumns: string[] = [
+    'selected',
+    'path',
+    'verb',
+  ];
 
   /**
    * Available templates user can select.
@@ -35,11 +58,19 @@ export class CrudifierFrontendComponent implements OnInit {
   public documentation: string = null;
 
   /**
+   * Endpoints as retrieved from backend.
+   */
+  public endpoints: EndpointEx[];
+
+  /**
    * Creates an instance of your component.
    * 
+   * @param backendService Needed to retrieve root URL for current backend
    * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
    */
-  constructor(private endpointService: EndpointService) { }
+  constructor(
+    private backendService: BackendService,
+    private endpointService: EndpointService) { }
 
   /**
    * Implementation of OnInit.
@@ -51,6 +82,27 @@ export class CrudifierFrontendComponent implements OnInit {
 
       // Assigning result of invocation to model.
       this.templates = result;
+    });
+
+    // Retrieving endpoints from backend.
+    this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
+      this.endpoints = endpoints
+        .filter(x => !x.path.startsWith('magic/modules/system/'))
+        .map(x => {
+          return {
+            path: x.path,
+            verb: x.verb,
+            consumes: x.consumes,
+            produces: x.produces,
+            input: x.input,
+            output: x.output,
+            array: x.array,
+            auth: x.auth,
+            type: x.type,
+            description: x.description,
+            selected: true
+          };
+        });
     });
   }
 
@@ -65,5 +117,19 @@ export class CrudifierFrontendComponent implements OnInit {
       // Assigning result of invocation to model.
       this.documentation = result.markdown;
     });
+  }
+
+  /**
+   * Invoked when user wants to generate a frontend of some sort.
+   */
+  public generate() {
+
+    // Invoking backend to actually generate the specified frontend.
+    this.endpointService.generate(
+      this.template,
+      this.backendService.current.url,
+      'Foo',
+      'Copyright foo bar AS',
+      []);
   }
 }
