@@ -4,6 +4,22 @@
  */
 
 /**
+ * Argument type for crudify class.
+ */
+export class ArgType {
+
+  /**
+   * Columns to include.
+   */
+  columns?: any[];
+
+  /**
+   * Primary keys to include.
+   */
+  primary?: any[];
+}
+
+/**
  * Crudify model used as input when user wants to crudify a database table,
  * to create a CRUD endpoint wrapping it.
  */
@@ -74,7 +90,7 @@ export class Crudify {
   /**
    * Arguments for endpoint. Basically primary keys and input arguments.
    */
-  args: any[];
+  args: ArgType;
 
   /**
    * Input reactors such as validators, transformers, injectables, etc.

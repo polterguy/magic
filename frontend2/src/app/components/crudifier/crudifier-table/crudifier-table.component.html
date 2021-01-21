@@ -142,4 +142,12 @@
     [disabled]="!table.cache || table.cache === 0 || !isGetIncluded()"
     [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
 
+  <div class="button-strip">
+    <button
+      mat-button
+      (click)="crudifyTable()">
+      Crudify
+    </button>
+  </div>
+
 </mat-card>
