@@ -106,8 +106,56 @@
 
   </table>
 
+  <hr>
+
   <mat-form-field class="field-input">
-    <mat-label>Module name ...</mat-label>
+    <mat-label>Create authentication ...</mat-label>
+    <input
+      matInput
+      [disabled]="!isPostIncluded()"
+      type="text"
+      autocomplete="off"
+      matTooltip="Comma separated list of roles allowed to invoke endpoint"
+      [(ngModel)]="table.authPost">
+  </mat-form-field>
+
+  <mat-form-field class="field-input">
+    <mat-label>Read authentication ...</mat-label>
+    <input
+      matInput
+      [disabled]="!isGetIncluded()"
+      type="text"
+      autocomplete="off"
+      matTooltip="Comma separated list of roles allowed to invoke endpoint"
+      [(ngModel)]="table.authGet">
+  </mat-form-field>
+
+  <mat-form-field class="field-input">
+    <mat-label>Update authentication ...</mat-label>
+    <input
+      matInput
+      [disabled]="!isPutIncluded()"
+      type="text"
+      autocomplete="off"
+      matTooltip="Comma separated list of roles allowed to invoke endpoint"
+      [(ngModel)]="table.authPut">
+  </mat-form-field>
+
+  <mat-form-field class="field-input">
+    <mat-label>Delete authentication ...</mat-label>
+    <input
+      matInput
+      [disabled]="!isDeleteIncluded()"
+      type="text"
+      autocomplete="off"
+      matTooltip="Comma separated list of roles allowed to invoke endpoint"
+      [(ngModel)]="table.authDelete">
+  </mat-form-field>
+
+  <hr>
+
+  <mat-form-field class="field-input">
+    <mat-label>Module URL1 ...</mat-label>
     <input
       matInput
       [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
@@ -118,7 +166,7 @@
   </mat-form-field>
 
   <mat-form-field class="field-input">
-    <mat-label>Module URL ...</mat-label>
+    <mat-label>Module URL2 ...</mat-label>
     <input
       matInput
       [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
@@ -127,6 +175,8 @@
       matTooltip="Second part of relative URL to use for table"
       [(ngModel)]="table.moduleUrl">
   </mat-form-field>
+
+  <hr>
 
   <mat-form-field *ngIf="isGetIncluded()" class="field-input">
     <mat-label>Caching ...</mat-label>
@@ -147,6 +197,8 @@
     [disabled]="!table.cache || table.cache === 0"
     [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
 
+  <hr>
+
   <mat-checkbox
     matTooltip="Log delete invocations"
     *ngIf="isDeleteIncluded()"
@@ -156,6 +208,8 @@
     matTooltip="Log update invocations"
     *ngIf="isPutIncluded()"
     [(ngModel)]="table.logPut">Log update</mat-checkbox>
+
+  <hr>
 
   <div class="button-strip">
     <button

@@ -59,4 +59,24 @@ export class TableEx {
    * Whether or not put invocations should be logged.
    */
   logPut: boolean;
+
+  /**
+   * Authentication requirements for invoking POST endpoint.
+   */
+  authPost: string;
+
+  /**
+   * Authentication requirements for invoking GET endpoint.
+   */
+  authGet: string;
+
+  /**
+   * Authentication requirements for invoking PUT endpoint.
+   */
+  authPut: string;
+
+  /**
+   * Authentication requirements for invoking DELETE endpoint.
+   */
+  authDelete: string;
 }

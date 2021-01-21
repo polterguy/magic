@@ -202,6 +202,12 @@ export class CrudifierComponent {
         idxTable.verbs.push({ name: 'delete', generate: true });
       }
 
+      // Creating default authentication requirements to invoke endpoint(s).
+      idxTable.authPost = 'root';
+      idxTable.authGet = 'root';
+      idxTable.authPut = 'root';
+      idxTable.authDelete = 'root';
+
       // Creating defaults for fields in table.
       for (const idxColumn of idxTable.columns) {
 
