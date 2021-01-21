@@ -3,13 +3,19 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 import { Component } from '@angular/core';
+import { forkJoin, Observable } from 'rxjs';
 
 // Application specific imports.
 import { TableEx } from './models/table-ex.model';
+import { LocResult } from './models/loc-result.model';
 import { DatabaseEx } from './models/database-ex.model';
 import { SqlService } from '../sql/services/sql.service';
+import { LogService } from '../log/services/log.service';
 import { Databases } from '../sql/models/databases.model';
 import { CrudifyService } from './services/crudify.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { LoaderInterceptor } from '../app/services/loader.interceptor';
+import { TransformModelService } from './services/transform-model.service';
 
 /**
  * Crudifier component for crudifying database tables.
@@ -62,12 +68,20 @@ export class CrudifierComponent {
   /**
    * Creates an instance of your component.
    * 
+   * @param logService Needed to be able to log LOC generated
    * @param sqlService Needed to retrieve meta information about databases from backend
    * @param crudifyService Needed to actually crudify endpoints
+   * @param feedbackService Needed to display feedback to user
+   * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
+   * @param transformService Needed to transform from UI model to required backend model
    */
   constructor(
+    private logService: LogService,
     private sqlService: SqlService,
-    private crudifyService: CrudifyService) { }
+    private crudifyService: CrudifyService,
+    private feedbackService: FeedbackService,
+    private loaderInterceptor: LoaderInterceptor,
+    private transformService: TransformModelService) { }
 
   /**
    * Invoked when user selects a database type.
@@ -120,6 +134,45 @@ export class CrudifierComponent {
 
     // Creating default values for database.
     this.createDefaultOptionsForDatabase(this.database);
+  }
+
+  /**
+   * Invoked when user wants to crudify all tables in currently selected database.
+   */
+  public crudifyAll() {
+
+    // Creating an array of observables from each table/verb combination we've got.
+    const subscribers: Observable<LocResult>[] = [];
+    for (const idxTable of this.database.tables) {
+      const tmp = idxTable.verbs.filter(x => x.generate).map(x => {
+        return this.crudifyService.crudify(
+          this.transformService.transform(
+            this.databaseType,
+            this.database.name,
+            idxTable,
+            x.name));
+      });
+      for (const tmpIdx of tmp) {
+        subscribers.push(tmpIdx);
+      }
+    }
+
+    // Invoking backend for each above created observable.
+    forkJoin(subscribers).subscribe((results: LocResult[]) => {
+
+      // Providing feedback to user.
+      const loc = results.reduce((x,y) => x + y.loc, 0);
+      this.feedbackService.showInfo(`${loc} LOC generated`);
+      this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe(() => {
+
+        console.log('Logged LOC to backend');
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => {
+      this.loaderInterceptor.forceHide();
+      this.feedbackService.showError(error);
+    });
   }
 
   /*

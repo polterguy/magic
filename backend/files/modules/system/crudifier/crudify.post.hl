@@ -648,7 +648,9 @@ semaphore:crudifier
                get-value:x:@.arguments/*/overwrite
          io.file.exists:x:@strings.replace
       .lambda
-         throw:"That module already exists. If you want to re-create it, please explicitly inform me that this is your intention."
+         throw:Module already exists
+            status:int:401
+            public:bool:true
 
 
    /*
@@ -752,7 +754,9 @@ semaphore:crudifier
                      get-value:x:@.arguments/*/overwrite
                io.file.exists:x:@strings.replace
             .lambda
-               throw:"That module already exists. If you wish to re-create it, you'll first have to delete the existing folder with that name, inside of '/modules/'."
+               throw:Module already exists
+                  status:int:401
+                  public:bool:true
 
 
          /*
