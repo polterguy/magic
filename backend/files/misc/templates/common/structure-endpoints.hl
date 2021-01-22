@@ -129,7 +129,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
             add:x:./**/input
                get-nodes:x:@.dp/#/*/input/*
             add:x:./**/output
-               get-nodes:x:@.dp/#/*/returns/*
+               get-nodes:x:@.dp/#/*/output/*
 
 
             /*

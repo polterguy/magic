@@ -130,6 +130,46 @@ export class CrudifierFrontendComponent implements OnInit {
       this.backendService.current.url,
       'Foo',
       'Copyright foo bar AS',
-      []);
+      this.createServiceModel(this.endpoints));
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Creates the requires HTTP service model for generating frontend
+   * from frontend data model.
+   */
+  private createServiceModel(endpoints: EndpointEx[]) {
+    const result: any[] = [];
+    for (const idx of endpoints) {
+      const tmp = {
+        array: idx.array,
+        auth: idx.auth,
+        description: idx.description,
+        path: idx.path,
+        type: idx.type,
+        verb: idx.verb,
+        input: [],
+        output: [],
+      };
+      if (idx.input && idx.input.length > 0) {
+        for (const idxInput of idx.input) {
+          tmp.input.push({
+            [idxInput.name]: idxInput.type
+          })
+        }
+      }
+      if (idx.output && idx.output.length > 0) {
+        for (const idxOutput of idx.output) {
+          tmp.output.push({
+            [idxOutput.name]: idxOutput.type
+          })
+        }
+      }
+      result.push(tmp);
+    }
+    return result;
   }
 }
