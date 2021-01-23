@@ -151,21 +151,17 @@ export class CrudifierFrontendComponent implements OnInit {
         path: idx.path,
         type: idx.type,
         verb: idx.verb,
-        input: [],
-        output: [],
+        input: {},
+        output: {},
       };
       if (idx.input && idx.input.length > 0) {
         for (const idxInput of idx.input) {
-          tmp.input.push({
-            [idxInput.name]: idxInput.type
-          })
+          tmp.input[idxInput.name] = idxInput.type;
         }
       }
       if (idx.output && idx.output.length > 0) {
         for (const idxOutput of idx.output) {
-          tmp.output.push({
-            [idxOutput.name]: idxOutput.type
-          })
+          tmp.output[idxOutput.name] = idxOutput.type;
         }
       }
       result.push(tmp);
