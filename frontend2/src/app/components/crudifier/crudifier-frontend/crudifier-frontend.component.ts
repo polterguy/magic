@@ -127,7 +127,7 @@ export class CrudifierFrontendComponent implements OnInit {
     // Invoking backend to actually generate the specified frontend.
     this.endpointService.generate(
       this.template,
-      this.backendService.current.url,
+      this.backendService.current.url + '/',
       'Foo',
       'Copyright foo bar AS',
       this.createServiceModel(this.endpoints));
