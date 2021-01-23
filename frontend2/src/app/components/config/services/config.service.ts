@@ -14,6 +14,7 @@ import { KeyPair } from '../../crypto/models/key-pair.model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { BackendService } from '../../../services/backend.service';
+import { DefaultDatabaseType } from '../models/default-database-type.model';
 import { AuthenticateResponse } from '../../auth/models/authenticate-response.model';
 
 /**
@@ -52,7 +53,7 @@ export class ConfigService {
   public defaultDatabaseType() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Response>('/magic/modules/system/config/default-database-type');
+    return this.httpService.get<DefaultDatabaseType>('/magic/modules/system/config/default-database-type');
   }
 
   /**

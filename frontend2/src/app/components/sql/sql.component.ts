@@ -13,12 +13,12 @@ import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.compon
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
+import { FeedbackService } from '../../services/feedback.service';
 import { SqlService } from 'src/app/components/sql/services/sql.service';
 import { Databases } from 'src/app/components/sql/models/databases.model';
-import { ConfigService } from 'src/app/components/config/services/config.service';
-import { FeedbackService } from '../../services/feedback.service';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
+import { ConfigService } from 'src/app/components/config/services/config.service';
+import { DefaultDatabaseType } from '../config/models/default-database-type.model';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 
 // CodeMirror options.
@@ -104,20 +104,20 @@ export class SqlComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving default database type from backend.
-    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: Response) => {
+    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
 
       // Retrieving connection strings for default database type.
-      this.getConnectionStrings(defaultDatabaseType.result, (connectionStrings: string[]) => {
+      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
 
         // Retrieving databases existing in connection string instance.
-        this.getDatabases(defaultDatabaseType.result, connectionStrings[0], (databases: any) => {
+        this.getDatabases(defaultDatabaseType.default, connectionStrings[0], (databases: any) => {
 
           // Storing database declaration such that user can change active database without having to roundtrip to server.
           this.databaseDeclaration = databases;
 
           // Transforming from HTTP result to object(s) expected by CodeMirror.
           const tables = {};
-          for (const idxTable of databases.databases.filter(x => x.name === 'magic')[0].tables) {
+          for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
             tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
           }
 
@@ -128,7 +128,7 @@ export class SqlComponent implements OnInit {
           this.connectionStrings = connectionStrings;
           this.databases = databases.databases.map((x: any) => x.name);
           this.input = {
-            databaseType: defaultDatabaseType.result,
+            databaseType: defaultDatabaseType.default,
             connectionString: connectionStrings.filter(x => x === 'generic')[0],
             database: this.databases.filter(x => x === 'magic')[0],
             options: sql,

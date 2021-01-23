@@ -12,9 +12,18 @@ auth.ticket.verify:root
 
 
 /*
- * Returning default database to caller.
+ * Returning default database to caller, and optional types user
+ * can select.
  */
-config.get:"magic:databases:default"
-unwrap:x:+/*
+config.section:"magic:databases"
+add:x:../*/return
+   get-nodes:x:@config.section/*/default
+remove-nodes:x:@config.section/*/default
+for-each:x:@config.section/*
+   set-value:x:+/*/*
+      get-name:x:@.dp/#
+   add:x:../*/return/*/options
+      .
+         .
 return
-   result:x:@config.get
+   options

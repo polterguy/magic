@@ -9,11 +9,11 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
-import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from 'src/app/components/log/services/log.service';
 import { Crudify } from 'src/app/components/crudifier/models/crudify.model';
+import { DefaultDatabaseType } from '../../models/default-database-type.model';
 import { LocResult } from 'src/app/components/crudifier/models/loc-result.model';
 import { ConfigService } from 'src/app/components/config/services/config.service';
 import { CrudifyService } from 'src/app/components/crudifier/services/crudify.service';
@@ -75,15 +75,15 @@ export class CrudifyDatabaseComponent implements OnInit {
   public ngOnInit() {
 
     // Figuring out which database type the backend is using for its Magic database.
-    this.configService.defaultDatabaseType().subscribe((res: Response) => {
+    this.configService.defaultDatabaseType().subscribe((res: DefaultDatabaseType) => {
 
       // Making sure we apply the database type for every item in JSON file.
       for (const idx of data) {
-        idx.databaseType = res.result;
+        idx.databaseType = res.default;
       }
 
       // Setting the database type.
-      this.databaseType = res.result;
+      this.databaseType = res.default;
 
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
       this.crudifyContent = JSON.stringify(data, null, 2);
