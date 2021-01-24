@@ -96,4 +96,11 @@ export class AppComponent {
   public closeNavigator() {
     this.sidenavOpened = false;
   }
+
+  /**
+   * Invoked when side navigation menu should be toggled.
+   */
+  public toggleNavbar() {
+    this.sidenavOpened = !this.sidenavOpened;
+  }
 }

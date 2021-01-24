@@ -1,18 +1,41 @@
 
-<mat-spinner
+<div
   *ngIf="loaderService.isLoading | async"
-  mode="indeterminate"
-  diameter="50"
-  class="ajax-wait">
-</mat-spinner>
+  class="obscurer">
+  <mat-spinner
+    mode="indeterminate"
+    diameter="50">
+  </mat-spinner>
+</div>
 
-<mat-sidenav-container
-  mode="side"
-  class="sidenav-container">
+<mat-toolbar>
+  <button
+    mat-button
+    matTooltip="Toggle navbar"
+    (click)="toggleNavbar()">
+    <mat-icon>menu</mat-icon>
+    <span>[[name]]</span>
+  </button>
+  <span class="spacer"></span>
+  <button
+    *ngIf="!authService.me.isLoggedIn()"
+    mat-icon-button
+    matTooltip="Login"
+    (click)="login()">
+    <mat-icon>lock_open</mat-icon>
+  </button>
+  <button
+    *ngIf="authService.me.isLoggedIn()"
+    mat-icon-button
+    matTooltip="Logout"
+    (click)="logout()">
+    <mat-icon>lock</mat-icon>
+  </button>
+</mat-toolbar>
 
-  <mat-sidenav
-    class="sidenav-menu"
-    [(opened)]="sidenavOpened">
+<mat-sidenav-container mode="side">
+
+  <mat-sidenav [(opened)]="sidenavOpened">
     <a
       mat-button
       routerLink="/"
@@ -26,28 +49,8 @@
 [[router-links]]
   </mat-sidenav>
 
-  <mat-sidenav-content
-    class="sidenav-content">
-
-    <button
-      (click)="openSideNavigation()"
-      class="sidenav-button"
-      mat-button>Menu</button>
-
-    <button
-      mat-button
-      class="logout-button"
-      *ngIf="!authService.me.isLoggedIn()"
-      (click)="login()">Login</button>
-
-    <button
-      mat-button
-      class="login-button"
-      *ngIf="authService.me.isLoggedIn()"
-      (click)="logout()">Logout</button>
-
+  <mat-sidenav-content class="sidenav-content">
     <router-outlet *ngIf="authService.hasEndpoints()"></router-outlet>
-
   </mat-sidenav-content>
 
 <mat-sidenav-container>

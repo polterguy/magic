@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -72,6 +73,7 @@ import { SelectorComponent } from './helpers/selector/selector.component';
     MatInputModule,
     MatTableModule,
     MatButtonModule,
+    MatToolbarModule,
     MatSelectModule,
     MatDialogModule,
     MatSidenavModule,
