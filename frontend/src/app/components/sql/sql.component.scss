@@ -1,133 +1,55 @@
 
-@keyframes fadeInOpacity {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
+.button-strip {
+  button, mat-form-field, mat-checkbox {
+    margin-left: 1rem;
+  }
 }
 
-.obscurer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.85);
-    z-index: 5;
-    animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: .5s;
-    h3 {
-        margin-top: 10rem;
-        font-size: 2rem;
-    }
-    h4 {
-        margin-top: 2rem;
-        font-size: 1.5rem;
-    }
-    h3, h4 {
-        text-align: center;
-        color: whitesmoke;
-    }
-}
-
-.ajax-wait {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1000;
-}
-
-.legend-button {
-    position: absolute;
-    right: 4rem;
-    top: 6rem;
-}
-
-.sql {
-    margin:1rem 4rem .5rem 4rem;
-}
-
-.execute-button {
-    margin:1rem 4rem 1rem 4rem;
-    text-align: right;
-}
-
-.result {
-    margin:.5rem 4rem 2rem 4rem;
-    padding: 3rem 3rem 5rem 3rem;
-    position: relative;
-    caption {
-        margin-bottom: 2rem;
-        font-weight: bold;
-    }
-    table.fill-width {
-        width: 100%;
-        table-layout:fixed;
-        border-collapse: collapse;
-        tr {
-            th {
-                text-align: left;
-                padding: .5rem .5rem .5rem .5rem;
+.result-card {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  table.result {
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    tr {
+      th {
+        text-align: left;
+        padding: .5rem;
+      }
+      td {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding-left: 1rem;
+      }
+      td.view-details {
+        .details-sheet {
+          position: relative;
+          padding: 1rem;
+          .details-item {
+            display: block;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            strong {
+              display: block;
             }
-            td {
-                overflow: hidden;
-                padding: .5rem .5rem .5rem .5rem;
+            span {
+              display: block;
+              white-space: break-spaces;
             }
+          }
         }
-        tr:nth-child(odd) {
-            background-color: rgba(235,235,235,1);
-        }
-        tr:nth-child(even) {
-            background-color: rgba(255,255,255,1);
-        }
+      }
     }
-    .export-button {
-        position: absolute;
-        bottom: 1rem;
-        right: 1rem;
+    tr.data-row {
+      cursor: pointer;
+      background-color: rgba(0,0,0,0);
+      transition: background-color .05s ease-in;
     }
-}
-
-.error {
-    margin:.5rem 4rem .5rem 4rem;
-    padding: 2rem 3rem 2rem 3rem;
-}
-
-::ng-deep .error-snackbar {
-    background:rgb(255,100,100);
-    color:rgb(0,0,0);
-}
-
-.database-type-selector {
-    margin:2rem 1rem .5rem 4rem;
-    max-width: 15rem;
-    display: inline-block;
-}
-
-.connection-string-selector {
-    margin:2rem 1rem .5rem 1rem;
-    max-width: 15rem;
-    display: inline-block;
-}
-
-.database-selector {
-    margin:2rem 1rem .5rem 1rem;
-    max-width: 15rem;
-    display: inline-block;
-}
-
-.file-selector {
-    margin:2rem 1rem .5rem 1rem;
-    max-width: 15rem;
-    display: inline-block;
-}
-
-.safe-mode {
-    margin:2rem 1rem .5rem 1rem;
-    max-width: 15rem;
-    display: inline-block;
+    tr.data-row:hover {
+      background-color: rgba(0,0,0,.1);
+      transition: background-color .05s ease-in;
+    }
+  }
 }

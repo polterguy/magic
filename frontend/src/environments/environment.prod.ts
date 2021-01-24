@@ -1,5 +1,14 @@
+
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 export const environment = {
   production: true,
-  apiURL: 'http://localhost:55247/',
-  whitelistedDomains: ['localhost:55247'],
+  defaultBackends: [
+    {
+      url: 'https://your-backend-api-here.com',
+      username: 'root',
+      password: 'root',
+     },
+  ],
 };
