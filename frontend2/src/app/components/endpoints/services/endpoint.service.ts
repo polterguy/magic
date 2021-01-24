@@ -275,7 +275,6 @@ export class EndpointService {
         copyright,
         endpoints,
       };
-      console.log(payload);
       this.httpService.downloadPost(
         '/magic/modules/system/endpoints/generate', payload).subscribe(res => {
   
