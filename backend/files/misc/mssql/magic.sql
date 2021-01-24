@@ -39,6 +39,8 @@ go
 create table users (
   username nvarchar(128) not null,
   [password] nvarchar(128) not null,
+  [locked] bit not null default 0,
+  created datetime not null default getutcdate(),
   constraint pk_users primary key clustered(username asc)
 );
 
@@ -86,11 +88,13 @@ go
 
 
 /*
- * Inserting a couple of default roles. Most importantly, the "root" role, which is "special".
+ * Inserting some roles into our roles table.
  */
-insert into roles ("name", "description") values ('root', 'This is a root account in your system, and it has complete access to do anything.');
-insert into roles ("name", "description") values ('user', 'This is a normal user in your system, and it does not have elevated rights in general.');
-insert into roles ("name", "description") values ('guest', 'This is just a guest visitor to your system, and does not have elevated rights in general.');
+insert into roles ("name", "description") values ('root', 'A user that has complete access to everything in the system');
+insert into roles ("name", "description") values ('unconfirmed', 'An unconfirmed user that has severely restricted access');
+insert into roles ("name", "description") values ('guest', 'A confirmed user with some elevated rights');
+insert into roles ("name", "description") values ('reset-password', 'A special role that only allows the user to change his password');
+insert into roles ("name", "description") values ('moderator', 'A moderator in your system that can moderate other users');
 
 go
 

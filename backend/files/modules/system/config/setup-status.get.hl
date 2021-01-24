@@ -1,0 +1,51 @@
+
+/*
+ * Returns the status of the setup procesds back to caller,
+ * more specifically if the user has crudified his Magic database,
+ * and/or created a server key pair.
+ */
+.description:Returns the setup status of the system
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Checks to see magic database has been crudified.
+ */
+io.folder.exists:/modules/magic/
+
+
+/*
+ * Checks to see if server has a key pair
+ */
+io.file.exists:/modules/system/crypto/keys/public.key
+
+
+/*
+ * Checking if JWT secret has been changed.
+ */
+.jwt-secret-changed:bool:true
+config.get:"magic:auth:secret"
+if
+   eq
+      get-value:x:@config.get
+      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   .lambda
+
+      // System has not been setup.
+      set-value:x:@.jwt-secret-changed
+         .:bool:false
+
+
+/*
+ * Returns results of above invocations to caller.
+ */
+unwrap:x:+/*
+return
+   magic_crudified:x:@io.folder.exists
+   server_keypair:x:@io.file.exists
+   config_done:x:@.jwt-secret-changed

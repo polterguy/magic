@@ -1,0 +1,36 @@
+
+<button
+  mat-icon-button
+  matTooltip="Create a new key pair for your server"
+  class="create-button"
+  (click)="create()">
+  <mat-icon aria-label="Imports a public key">add_box</mat-icon>
+</button>
+
+<div *ngIf="publicKeyFull">
+
+  <span class="details-item">
+    <strong>Fingerprint</strong><span>{{publicKeyFull.fingerprint}}</span>
+  </span>
+  
+  <span class="details-item">
+    <strong>Fingerprint format</strong><span>{{publicKeyFull.fingerprintFormat}}</span>
+  </span>
+  
+  <span class="details-item">
+    <strong>Key format</strong><span>{{publicKeyFull.keyFormat}}</span>
+  </span>
+  
+  <span class="details-item">
+    <strong>Key type</strong><span>{{publicKeyFull.keyType}}</span>
+  </span>
+  
+  <mat-form-field class="fill-width">
+    <textarea
+      matInput
+      disabled="true"
+      matTooltip="Public key"
+      rows="7">{{publicKeyFull.publicKey}}</textarea>
+  </mat-form-field>
+  
+</div>

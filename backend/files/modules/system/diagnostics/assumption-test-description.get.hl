@@ -1,0 +1,35 @@
+
+/*
+ * Returns the description for the specified assumption test.
+ */
+.description:"Returns the description for the specified assumption test"
+.arguments
+   test_file:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/test_file
+
+
+/*
+ * Loading assumption test Hyperlambda file,
+ * and converting Hyperlambda to lambda.
+ */
+io.file.load:x:@.arguments/*/test_file
+hyper2lambda:x:-
+
+
+/*
+ * Returns result to caller.
+ */
+unwrap:x:+/*
+return
+   result:x:@hyper2lambda/*/description

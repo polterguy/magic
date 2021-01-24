@@ -4,6 +4,7 @@
  *
  * Arguments
  *
+ * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
@@ -13,7 +14,26 @@ slots.create:magic.db.mssql.columns
    /*
     * Opens up our connection
     */
-   mssql.connect:x:@.arguments/*/database
+   .connection:[master]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   mssql.connect:x:@.connection
 
 
       /*

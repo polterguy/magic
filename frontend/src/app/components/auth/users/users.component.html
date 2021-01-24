@@ -1,0 +1,145 @@
+
+<button
+  mat-icon-button
+  matTooltip="Create new user"
+  class="create-button"
+  (click)="createUser()">
+  <mat-icon aria-label="Creates a new user">add_box</mat-icon>
+</button>
+
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter users ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    role="button"
+    matTooltip="Clear filter"
+    (click)="clearUserFilter()">clear</mat-icon>
+
+</mat-form-field>
+
+<table
+  mat-table
+  [dataSource]="users"
+  class="users clickable"
+  multiTemplateDataRows>
+
+  <ng-container matColumnDef="username">
+    <td mat-cell *matCellDef="let el">{{el.username}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="show-details">
+    <td mat-cell *matCellDef="let el">
+
+      <div
+        class="details-sheet"
+        *ngIf="shouldDisplayDetails(el)">
+
+        <span class="details-item">
+          <strong>Created</strong>
+          <span [matTooltip]="el.created">{{el.created | since}}</span>
+        </span>
+
+        <mat-chip-list>
+          <mat-chip
+            *ngFor="let role of el.roles"
+            selectable="false"
+            [disabled]="el.username === 'root' && role === 'root'"
+            (removed)="removeRole(el, role)">
+            {{role}}
+            <mat-icon
+              *ngIf="el.username !== 'root' || role !== 'root'"
+              matTooltip="Remove role from user"
+              matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+
+        <div class="button-strip">
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Change user's password"
+            (click)="editUser(el)">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Impersonate user"
+            (click)="generateLoginLink(el)">
+            <mat-icon>account_circle</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Create a reset password link for user"
+            (click)="generateResetPasswordLink(el)">
+            <mat-icon>perm_identity</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root' || el.locked"
+            (click)="jailUser(el)"
+            matTooltip="Imprison user for a specific amount of time">
+            <mat-icon>gavel</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            (click)="lockedChanged(el)"
+            [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock user out from using Magic'">
+            <mat-icon *ngIf="el.locked">lock</mat-icon>
+            <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
+            matTooltip="Delete user"
+            (click)="delete(el)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+        </div>
+
+      </div>
+
+    </td>
+  </ng-container>
+
+  <tr
+    mat-row
+    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'user-row'"
+    (click)="toggleDetails(el)"
+    *matRowDef="let el; columns: displayedColumns;"></tr>
+
+  <tr
+    mat-row
+    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+    *matRowDef="let el; columns: ['show-details'];"></tr>
+
+</table>
+
+<mat-paginator
+  #paginator
+  [class]="count > 5 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="5"
+  (page)="paged()"
+  [pageSizeOptions]="[5]">
+</mat-paginator>

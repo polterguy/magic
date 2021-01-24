@@ -3,6 +3,7 @@
  * Template for HTTP PUT CRUD requests.
  */
 .arguments
+.description:Updates an existing item in your {table} table in your {database} database according to the specified arguments
 .type:crud-update
 
 
@@ -19,4 +20,4 @@ data.connect:{database}
          and
    unwrap:x:+/*
    return
-      affected:x:./-/-
+      affected:x:@data.update

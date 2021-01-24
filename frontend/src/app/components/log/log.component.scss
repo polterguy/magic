@@ -1,0 +1,62 @@
+
+table.log-items {
+  margin-bottom: 3rem;
+  table-layout: fixed;
+  tr {
+    td:nth-child(1) {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+    td:nth-child(2), td:nth-child(3) {
+      display: none;
+    }
+    @media screen and (min-width: 600px) {
+      td:nth-child(2) {
+        display: table-cell;
+        width: 50px;
+      }
+    }
+    @media screen and (min-width: 800px) {
+      td:nth-child(3) {
+        display: table-cell;
+        width: 80px;
+      }
+    }
+  }
+}
+
+.details-sheet, .emphasized {
+  position: relative;
+  .details-item {
+    display: block;
+    margin-bottom: .15rem;
+    strong {
+      display: inline-block;
+      width: 5rem;
+    }
+    span.pre-formatted {
+      white-space: pre-wrap;
+    }
+  }
+  .full-width {
+    margin-top: 2rem;
+    strong {
+      display: block;
+    }
+    span {
+      display: block;
+      padding-left: 0;
+    }
+  }
+  .id-link {
+    position: absolute;
+    top: -.5rem;
+    right: -.5rem;
+  }
+  .filter-button {
+    position: absolute;
+    bottom: -.5rem;
+    right: -.5rem;
+  }
+}

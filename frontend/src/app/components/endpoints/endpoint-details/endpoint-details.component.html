@@ -1,0 +1,206 @@
+
+<div class="wrapper">
+
+  <button
+    mat-icon-button
+    matTooltip="Copy full invocation URL"
+    class="copy-button"
+    (click)="copyUrl()">
+    <mat-icon>link</mat-icon>
+  </button>
+
+  <span class="item">
+    <strong class="label">Relative URL</strong>
+    <span class="description">{{endpoint.path}}</span>
+  </span>
+
+  <span class="item">
+    <strong class="label">Verb</strong>
+    <span class="description">{{endpoint.verb}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.type">
+    <strong class="label">Type</strong>
+    <span class="description">{{endpoint.type}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.consumes">
+    <strong class="label">Consumes</strong>
+    <span class="description">{{endpoint.consumes}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.produces">
+    <strong class="label">Produces</strong>
+    <span class="description">{{endpoint.produces}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.description">
+    <strong class="label">Description</strong>
+    <span class="description">{{endpoint.description}}</span>
+  </span>
+
+  <span class="item" *ngIf="endpoint.auth">
+    <strong class="label">Authorization</strong>
+    <span class="description">{{getAuth(endpoint.auth)}}</span>
+  </span>
+
+  <span *ngIf="url" class="item">
+    <strong class="label">Absolute URL</strong>
+    <span class="description description-break">{{url}}</span>
+  </span>
+
+  <span
+    *ngIf="assumptions.length > 0"
+    class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Assumptions</strong>
+    <span class="description">
+
+      <mat-chip-list>
+        <mat-chip
+          *ngFor="let i of assumptions"
+          [matTooltip]="i.description"
+          (click)="runAssumption(i)"
+          class="assumption"
+          selectable="false">
+          {{getAssumptionName(i.name)}}
+          <mat-icon *ngIf="i.success === false">warning</mat-icon>
+          <mat-icon *ngIf="i.success === true">check</mat-icon>
+          <mat-icon *ngIf="i.success === null">help_outline</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+
+    </span>
+  </span>
+
+  <span
+    *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')"
+    class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Query params</strong>
+    <span class="description" *ngIf="getArguments(endpoint.input, true).length > 0">
+
+      <mat-chip-list>
+        <mat-chip
+          *ngFor="let i of getArguments(endpoint.input, true)"
+          [matTooltip]="getChipTooltip(i)"
+          selectable="false"
+          [class]="hasQueryParam(i) ? 'query-disabled' : ''"
+          (removed)="removeQueryParameter(i)"
+          (click)="addQueryParameter(i)">
+          {{i.name}}
+          <mat-icon
+            *ngIf="hasQueryParam(i)"
+            matChipRemove>cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+
+    </span>
+
+    <span class="description">
+
+      <mat-chip-list>
+        <mat-chip
+          *ngFor="let i of getArguments(endpoint.input, false)"
+          [matTooltip]="getChipTooltip(i)"
+          selectable="false"
+          [class]="hasQueryParam(i) ? 'query-disabled' : ''"
+          (removed)="removeQueryParameter(i)"
+          (click)="addQueryParameter(i)">
+          {{i.name}}
+          <mat-icon
+            *ngIf="hasQueryParam(i)"
+            matChipRemove>cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+
+    </span>
+  </span>
+
+  <span
+    *ngIf="payload"
+    class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Payload</strong>
+
+    <span class="description">
+      <ngx-codemirror
+        [(ngModel)]="payload"
+        [options]="cmOptions.json">
+      </ngx-codemirror>
+    </span>
+
+  </span>
+
+  <div
+    *ngIf="canInvoke()"
+    class="button-strip">
+    <button
+      mat-button
+      matTooltip="Invokes endpoint with the specified arguments"
+      (click)="invoke()">
+      Invoke
+    </button>
+  </div>
+
+  <div *ngIf="result" class="mat-elevation-z4 response">
+
+    <mat-icon
+      *ngIf="!isSuccess()"
+      matTooltip="Invocation failed!"
+      class="failed">warning</mat-icon>
+
+    <span
+      class="item">
+      <strong class="label">Status</strong>
+      <span class="description">
+        {{result.status + ' ' + result.statusText}}
+      </span>
+    </span>
+
+    <span
+      *ngIf="!result.blob"
+      class="item-full-width">
+      <span class="description">
+        <ngx-codemirror
+          [(ngModel)]="result.response"
+          [options]="cmOptionsReadonly.json">
+        </ngx-codemirror>
+      </span>
+    </span>
+
+    <span
+      *ngIf="result.blob"
+      class="item-full-width">
+      <span class="description">
+        <img [src]="result.blob" alt="Image resulting from invocation">
+      </span>
+    </span>
+
+    <div class="button-strip">
+
+      <button
+        mat-button
+        matTooltip="Creates an assumption wrapping the current invocation"
+        (click)="createTest()">
+        New assumption
+      </button>
+
+      <button
+        mat-button
+        matTooltip="Close result"
+        (click)="close()">
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

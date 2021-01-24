@@ -1,0 +1,41 @@
+
+<h1 mat-dialog-title>{{data ? 'Edit role' : 'Create a new role'}}</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+    <mat-label class="dark">Name</mat-label>
+    <input
+      matInput
+      [(ngModel)]="name"
+      [disabled]="data"
+      autocomplete="off"
+      placeholder="Name">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width">
+    <mat-label class="dark">Description</mat-label>
+    <input
+      matInput
+      [(ngModel)]="description"
+      autocomplete="off"
+      placeholder="Description">
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    *ngIf="!data"
+    mat-button
+    [disabled]="name === '' || description === ''"
+    (click)="create()">Create</button>
+
+  <button
+    *ngIf="data"
+    mat-button
+    [disabled]="description === ''"
+    (click)="update()">Update</button>
+
+</div>

@@ -1,0 +1,45 @@
+
+/*
+ * Returns the default database type to use for crudification.
+ */
+.description:Returns the default database type the system is using and your options for alternative database types
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieving database section from configuration.
+ */
+config.section:"magic:databases"
+
+
+/*
+ * Adding default database type to return value.
+ */
+add:x:../*/return
+   get-nodes:x:@config.section/*/default
+
+
+/*
+ * Iterating through each optional database type,
+ * and making sure we return those too, making sure
+ * we remove 'default' parts before iterating.
+ */
+remove-nodes:x:@config.section/*/default
+for-each:x:@config.section/*
+   set-value:x:+/*/*
+      get-name:x:@.dp/#
+   add:x:../*/return/*/options
+      .
+         .
+
+
+/*
+ * Returning result of above to caller.
+ */
+return
+   options

@@ -1,0 +1,13 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:delete
+url:/magic/modules/magic/users_roles
+status:int:400
+description:Assumes that trying to delete an entry from users_roles without providing a user argument fails with the correct status code and response returned from server
+response:@"{
+  ""message"": ""Mandatory argument 'user' not given"",
+  ""field"": ""user""
+}"
+produces:application/json

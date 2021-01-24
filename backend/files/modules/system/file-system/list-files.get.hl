@@ -4,7 +4,8 @@
  */
 .arguments
    folder:string
-.description:"List all files in the specified [folder] argument."
+   filter:string
+.description:List all files in the specified folder matching the (optional) filter argument
 
 
 /*
@@ -20,6 +21,26 @@ io.file.list:x:@.arguments/*/folder
 
 
 /*
- * Returning results of above invocation to caller.
+ * Checking if we have a filter, and if so, only return files matching filter.
  */
-return-nodes:x:@io.file.list/*
+if
+   exists:x:@.arguments/*/filter
+   .lambda
+
+      /*
+       * Filtering out files not matching filter condition.
+       */
+      for-each:x:@io.file.list/*
+         if
+            strings.contains:x:@.dp/#
+               get-value:x:@.arguments/*/filter
+            .lambda
+               add:x:@for-each/./return-nodes
+                  get-nodes:x:@.dp/#
+      return-nodes
+else
+
+   /*
+    * Returning all files from above invocation to caller.
+    */
+   return-nodes:x:@io.file.list/*

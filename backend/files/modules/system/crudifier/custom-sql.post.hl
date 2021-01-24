@@ -12,7 +12,26 @@
    endpointName:string
    sql:string
    overwrite:bool
-.description:"Creates a custom SQL HTTP REST endpoint according to the instructions given in the arguments."
+.description:Creates a custom SQL HTTP endpoint according to the specified arguments
+
+
+/*
+ * Sanity checks invocation.
+ */
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/verb
+validators.mandatory:x:@.arguments/*/endpointName
+validators.mandatory:x:@.arguments/*/sql
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
+validators.enum:x:@.arguments/*/verb
+   .:post
+   .:get
+   .:put
+   .:delete
 
 
 /*

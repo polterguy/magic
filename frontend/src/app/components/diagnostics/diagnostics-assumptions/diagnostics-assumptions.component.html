@@ -1,0 +1,111 @@
+
+<div class="wrapper">
+
+  <button
+    *ngIf="tests.length > 0"
+    mat-button
+    [matTooltip]="'Verify ' + tests.length + ' assumptions'"
+    class="run-all"
+    (click)="executeAll()">
+    Run all
+  </button>
+
+  <mat-form-field [class]="tests.length > 0 ? 'fill-width' : 'invisible'">
+
+    <mat-label>Filter ...</mat-label>
+
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      role="button"
+      matTooltip="Clear filter"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
+
+  <table
+    mat-table
+    [dataSource]="getFilteredTests()"
+    class="tests clickable"
+    multiTemplateDataRows>
+
+    <ng-container matColumnDef="name">
+      <td mat-cell *matCellDef="let el">{{getName(el.filename)}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="result">
+      <td mat-cell class="mini-col icon-col" *matCellDef="let el">
+        <mat-icon
+          *ngIf="el.success !== null && el.success"
+          matTooltip="Success">favorite</mat-icon>
+        <mat-icon
+          *ngIf="el.success !== null && !el.success"
+          class="warning"
+          matTooltip="Test failed, see log for details">warning</mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="show-details">
+      <td
+        mat-cell
+        colspan="2"
+        *matCellDef="let el">
+  
+        <div
+          class="details-sheet"
+          *ngIf="shouldDisplayDetails(el) && el.content">
+  
+          <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
+
+          <div class="button-strip">
+
+            <button
+              mat-button
+              matTooltip="Run assumption"
+              (click)="executeTest(el)">
+              Run
+            </button>
+
+            <button
+              mat-button
+              matTooltip="Delete assumption"
+              (click)="deleteTest(el)">
+              Delete
+            </button>
+
+            <button
+              mat-button
+              matTooltip="Save assumption"
+              (click)="saveTest(el.filename, el.content.hyperlambda)">
+              Save
+            </button>
+
+          </div>
+  
+        </div>
+  
+      </td>
+    </ng-container>
+  
+    <tr
+      mat-row
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'test-row'"
+      (click)="toggleDetails(el)"
+      mat-row *matRowDef="let el; columns: ['name', 'result'];"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
+
+  </table>
+
+</div>

@@ -1,0 +1,74 @@
+
+/*
+ * Returns all assumptions in system for specified endpoint.
+ */
+.description:Returns all assumptions in the system for the specified endpoint/verb combination
+.arguments
+   endpoint:string
+   verb:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Listing all files in assumption test folder.
+ */
+io.file.list:/misc/tests/
+
+
+/*
+ * Iterates through result from above invocation and returns only resulting files
+ * that are for specified endpoint.
+ */
+for-each:x:@io.file.list/*
+
+   /*
+    * Verifying currently iterated file is a Hyperlambda file.
+    */
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         /*
+          * File is Hyperlambda, loading it and checking if URL and verb is a match.
+          */
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:@io.file.load
+
+         /*
+          * Verifying this is an automatically generated assumption, before checking
+          * if it matches specified endpoint.
+          */
+         if
+            exists:x:@hyper2lambda/*/url
+            .lambda
+
+               /*
+                * Automatically generated assumption, checking if it's for currently requested endpoint.
+                */
+               strings.split:x:@hyper2lambda/*/url
+                  .:?
+               if
+                  and
+                     eq
+                        get-value:x:@strings.split/0
+                        get-value:x:@.arguments/*/endpoint
+                     eq
+                        get-value:x:@hyper2lambda/*/verb
+                        get-value:x:@.arguments/*/verb
+                  .lambda
+                     add:x:../*/return-nodes
+                        get-nodes:x:@.dp/#
+
+
+
+
+/*
+ * Returns result to caller.
+ */
+return-nodes

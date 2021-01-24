@@ -1,0 +1,9 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/magic/users
+status:int:200
+description:Assumes we can retrieve users from backend
+produces:application/json

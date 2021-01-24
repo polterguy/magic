@@ -3,6 +3,6 @@
  * Pings backend, allowing the client side to verify the
  * backend is up running.
  */
-.description:"Pings server. Returns success if server could be reached."
+.description:Allows you to ping serve to verify you are connected to your backend
 return-nodes
    result:success

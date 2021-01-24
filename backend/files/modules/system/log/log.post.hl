@@ -1,0 +1,45 @@
+
+/*
+ * Creates a log item using the specified arguments.
+ */
+.arguments
+   type:string
+   content:string
+.description:"Creates a log item using the specified arguments."
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ * Notice, we only allow authenticated users to access this endpoint.
+ * What roles they belong to is not important, as long as they're authenticated.
+ */
+auth.ticket.verify
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/content
+validators.enum:x:@.arguments/*/type
+   .:info
+   .:error
+   .:debug
+   .:fatal
+
+
+/*
+ * Creating a log entry using the specified type of logger.
+ */
+set-name:x:../*/log-invocation
+   strings.concat
+      .:log.
+      get-value:x:@.arguments/*/type
+log-invocation:x:@.arguments/*/content
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

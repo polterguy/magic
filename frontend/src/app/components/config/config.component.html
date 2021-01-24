@@ -1,0 +1,25 @@
+
+<app-setup
+  *ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.config_done)"
+  [(status)]="status">
+</app-setup>
+
+<mat-card
+  *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done">
+  <mat-tab-group>
+
+    <mat-tab label="Configuration">
+      <ng-template matTabContent>
+        <app-config-editor></app-config-editor>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="License">
+      <ng-template matTabContent>
+        <app-license></app-license>
+      </ng-template>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-card>
+

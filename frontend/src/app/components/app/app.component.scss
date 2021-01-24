@@ -1,0 +1,97 @@
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.obscurer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,.5);
+  z-index: 1001;
+  animation-name: fade-in;
+  animation-fill-mode: forwards;
+  animation-duration: .5s;
+  .mat-spinner {
+    position: absolute;
+    z-index: 1002;
+    left: calc(50% - 25px);
+    top: calc(50% - 25px);
+  }
+}
+
+mat-sidenav-container {
+  position: absolute;
+  top: 64px; // Making room for toolbar at the top of page.
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: rgb(245,245,245);
+  background-color: rgb(55,55,55);
+  @media screen and (max-width: 600px) {
+    top: 56px; // Toolbar's height shrinks at 600px
+  }
+
+  // Side navigation wrappper containing the navbar with buttons linking to components.
+  mat-sidenav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px; // Width of navbar when opened
+    padding: 1rem;
+    background: rgb(55, 55, 55);
+    color: rgb(245,245,245);
+    @media screen and (max-width: 600px) {
+      width: 100vw; // Width of navbar when opened on devices with small resolution
+    }
+  }
+
+  // Content wrapper containing the router-outlet and currently loaded component.
+  mat-sidenav-content {
+
+    padding: 2rem; // Default padding, only shows if width of viewport is less than 600px.
+    margin-left: 0 !important;
+    box-sizing: border-box;
+    position: relative;
+
+    // Makes sure currently loaded component is obscured when navbar is expanded.
+    .obscurer {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,.5);
+      z-index: 1000;
+    }
+
+    // Shown if user don't have access to currently loaded component.
+    .no-access {
+      width: 80%;
+      padding: 3rem;
+      margin-top: 3rem;
+      margin-left: auto;
+      margin-right: auto;
+      h2, p {
+        text-align: center;
+      }
+    }
+
+    // Adding more padding to side nav content when width is more than 600px.
+    @media screen and (min-width: 600px) {
+      padding: 3rem;
+    }
+
+    // Adding more padding to side nav content when width is more than 800px.
+    @media screen and (min-width: 800px) {
+      padding: 3rem 5rem;
+    }
+  }
+}

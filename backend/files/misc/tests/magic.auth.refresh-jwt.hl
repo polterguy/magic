@@ -1,0 +1,8 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/system/auth/refresh-ticket
+status:int:200
+description:Assumes we can successfully refresh our JWT token

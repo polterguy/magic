@@ -3,6 +3,7 @@
  * Template for HTTP POST CRUD requests.
  */
 .arguments
+.description:Creates an item in your {table} table in your {database} database according to the specified arguments
 .type:crud-create
 
 
@@ -20,4 +21,4 @@ data.connect:{database}
       values
    unwrap:x:+/*
    return
-      id:x:./-/-
+      id:x:@data.create

@@ -1,3 +1,4 @@
+import { throwError } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 import { HttpService } from 'src/app/services/http-service';
@@ -41,7 +42,7 @@ export class Edit[[component-name]] extends DialogComponent {
    * Returns a reference to the create method, to create new entities.
    */
   protected getCreateMethod() {
-    return this.service.[[service-create-method]](this.data.entity);
+    [[service-create-method]]
   }
 
   /**

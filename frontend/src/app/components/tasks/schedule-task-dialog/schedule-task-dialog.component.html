@@ -1,0 +1,36 @@
+
+<h1 mat-dialog-title>Schedule task</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width" *ngIf="!isRepeating">
+    <input
+      matInput
+      [ngxMatDatetimePicker]="picker"
+      autocomplete="off"
+      placeholder="Due date"
+      [(ngModel)]="date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+  </mat-form-field>
+
+  <mat-form-field class="fill-width" *ngIf="isRepeating">
+    <input
+      matInput
+      autocomplete="off"
+      placeholder="Repetition pattern"
+      [(ngModel)]="repeats">
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <mat-checkbox [(ngModel)]="isRepeating">Repeating</mat-checkbox>
+
+  <button
+    mat-button
+    [disabled]="isRepeating ? !repeats : !date"
+    (click)="create()">Create</button>
+
+</div>

@@ -1,0 +1,138 @@
+
+<mat-card>
+
+  <button
+    mat-icon-button
+    matTooltip="Create new task"
+    class="create-button"
+    (click)="create()">
+    <mat-icon aria-label="Creates a new task">add_box</mat-icon>
+  </button>
+
+  <mat-form-field class="fill-width">
+
+    <mat-label>Filter ...</mat-label>
+
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      role="button"
+      matTooltip="Clear filter"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
+
+  <table
+    mat-table
+    [dataSource]="tasks"
+    class="tasks clickable"
+    multiTemplateDataRows>
+
+    <ng-container matColumnDef="id">
+      <td mat-cell *matCellDef="let el">{{el.task.id}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="delete">
+      <td mat-cell class="mini-col button-col" *matCellDef="let el">
+        <button
+          mat-icon-button
+          matTooltip="Delete task"
+          (click)="delete($event, el)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="show-details">
+
+      <td
+        mat-cell
+        colspan="2"
+        *matCellDef="let el">
+
+        <div
+          class="task-details"
+          *ngIf="el.model">
+
+          <mat-form-field class="fill-width">
+            <mat-label>Description ...</mat-label>
+            <input
+              matInput
+              placeholder="Description ..."
+              [(ngModel)]="el.task.description"
+              autocomplete="off">
+          </mat-form-field>
+        
+          <app-codemirror-hyperlambda [(model)]="el.model"></app-codemirror-hyperlambda>
+
+          <div class="button-strip">
+
+            <button
+              mat-icon-button
+              matTooltip="Schedule task"
+              (click)="schedule(el.task)">
+              <mat-icon>schedule</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              matTooltip="Save task"
+              (click)="update(el)">
+              <mat-icon>save</mat-icon>
+            </button>
+
+          </div>
+
+          <div *ngIf="el.task.schedule">
+
+            <mat-chip-list>
+              <mat-chip
+                *ngFor="let idxSchedule of el.task.schedule"
+                selectable="false"
+                [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
+                (removed)="deleteSchedule(el.task, idxSchedule)">
+                {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+
+          </div>
+          
+        </div>
+
+      </td>
+
+    </ng-container>
+
+    <tr
+      mat-row
+      [ngClass]="(el.model ? 'selected ' : '') + 'tasks-row'"
+      (click)="toggleDetails(el)"
+      *matRowDef="let el; columns: displayedColumns;"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="el.model ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
+
+  </table>
+
+  <mat-paginator
+    #paginator
+    [class]="count > 10 ? '' : 'invisible'"
+    [length]="count"
+    pageSize="10"
+    showFirstLastButtons="true"
+    (page)="paged($event)"
+    [pageSizeOptions]="[5,10,25,50]">
+  </mat-paginator>
+
+</mat-card>

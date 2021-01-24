@@ -2,12 +2,10 @@
 /*
  * Authenticates the user with the specified [username] and [password] combination.
  *
- * NOTICE!
- * This is a "one size fits all" solution to the authentication issue in Magic,
- * and unless the JWT secret has been explicitly changed, it will just check
- * to see if the username/password combination is root/root. If the JWT secret
- * has been changed, it will check the 'magic' database to see if the username/password
- * combination is correct, using your default database type.
+ * Notice, if [check-password] is false, we don't check the user's password, and
+ * if [reset-password] is true, we generate a JWT token that can only be used to
+ * change the user's password. The latter allows us to generated "change password links"
+ * in the frontend, and similar type of logic.
  */
 slots.create:magic.auth.authenticate
 
@@ -45,6 +43,7 @@ slots.create:magic.auth.authenticate
                unwrap:x:+/*
                return
                   ticket:x:@auth.ticket.create
+
          else
 
             // Failure!
@@ -61,18 +60,6 @@ slots.create:magic.auth.authenticate
 
 
    /*
-    * Logging the fact that user tries to login.
-    *
-    * Notice, if system has not been setup, we can't
-    * create log items yet.
-    */
-   log.info
-      .:"Trying to authenticate user '"
-      get-value:x:@.arguments/*/username
-      .:"'"
-
-
-   /*
     * Opens up our database connection.
     */
    data.connect:magic
@@ -81,16 +68,22 @@ slots.create:magic.auth.authenticate
       /*
        * Selects the user with the given username from our table.
        */
-      data.select:select password from users where username = @username
-         @username:x:@.arguments/*/username
+      data.read
+         table:users
+         columns
+            password
+         where
+            and
+               username:x:@.arguments/*/username
+               locked.neq:1
 
 
       /*
-       * Checking that user with specified [username] exists.
+       * Checking if user with specified [username] exists.
        */
       if
          eq
-            get-count:x:@data.select/*
+            get-count:x:@data.read/*
             .:int:0
          .lambda
 
@@ -104,47 +97,113 @@ slots.create:magic.auth.authenticate
 
 
       /*
-       * Verify we have a password match.
+       * Verify we have a password match, unless [check-password] was false,
+       * which might occur if a JWT token is generated on behalf of another user.
        */
       if
-         crypto.password.verify:x:@.arguments/*/password
-            hash:x:@data.select/*/*/password
+         or
+            eq
+               get-value:x:@.arguments/*/check-password
+               .:bool:false
+            crypto.password.verify:x:@.arguments/*/password
+               hash:x:@data.read/*/*/password
          .lambda
 
 
             /*
-             * Password is matching hashed value from database.
-             * Now we need to select all roles user belongs to.
+             * Password is matching hashed value from database, or caller
+             * does not want to verify password.
+             *
+             * Now checking if this is a request for a "change password link".
              */
-            data.select:select role from users_roles where user = @username
-               @username:x:@.arguments/*/username
+            if
+               eq
+                  get-value:x:@.arguments/*/reset-password
+                  .:bool:true
+               .lambda
 
 
-            /*
-             * Then we can create our JWT token/ticket.
-             */
-            add:x:+/*/roles
-               get-nodes:x:@data.select/*/*
-            auth.ticket.create
-               username:x:@.arguments/*/username
-               roles
+                  /*
+                   * Caller requested a "reset password link", hence the only
+                   * role we add user to is the "reset-password" role, and we
+                   * also add the [old-password] claim, which we check when user
+                   * actually attempts to change his password, to make sure one
+                   * reset password link can only be used once.
+                   *
+                   * Hashing the password might be a bit overkill here, since
+                   * it's already hashed in the database - However, we can't be
+                   * too cautious.
+                   */
+                  crypto.hash:x:@data.read/*/*
+                  unwrap:x:+/*/*
+                  add:x:+
+                     .
+                        old-password:x:@crypto.hash
+                  auth.ticket.create
+                     username:x:@.arguments/*/username
+                     roles
+                        .:reset-password
 
 
-            /*
-             * Logging the fact that user successfully logged in.
-             */
-            log.info
-               .:"We successfully authenticated user '"
-               get-value:x:@.arguments/*/username
-               .:"'"
+                  /*
+                   * Logging the fact that we generated a reset-password token.
+                   */
+                  log.info
+                     .:"Reset password token successfully generated for user '"
+                     get-value:x:@.arguments/*/username
+                     .:"'"
 
 
-            /*
-             * Returning results back to caller.
-             */
-            unwrap:x:+/*
-            return
-               ticket:x:@auth.ticket.create
+                  /*
+                   * Returning results back to caller.
+                   */
+                  unwrap:x:+/*
+                  return
+                     ticket:x:@auth.ticket.create
+
+
+            else
+
+
+               /*
+                * Now we need to select all roles user belongs to.
+                */
+               data.read
+                  table:users_roles
+                  columns
+                     role
+                  where
+                     and
+                        user:x:@.arguments/*/username
+
+
+               /*
+                * Then we can create our JWT token/ticket.
+                */
+               add:x:+/*/roles
+                  get-nodes:x:@data.read/*/*
+               auth.ticket.create
+                  username:x:@.arguments/*/username
+                  roles
+
+
+               /*
+                * Logging the fact that user successfully logged in.
+                */
+               log.info
+                  .:"We successfully authenticated user '"
+                  get-value:x:@.arguments/*/username
+                  .:"'"
+
+
+               /*
+                * Returning results back to caller.
+                */
+               unwrap:x:+/*
+               return
+                  ticket:x:@auth.ticket.create
+
+
       else
 
 

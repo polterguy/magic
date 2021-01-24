@@ -1,146 +1,96 @@
 
-import { Component, OnInit } from '@angular/core';
-import { ChartType, ChartOptions } from 'chart.js';
-import {
-  SingleDataSet,
-  Label,
-  monkeyPatchChartJsLegend,
-  monkeyPatchChartJsTooltip
-} from 'ng2-charts';
-import { PingService } from 'src/app/services/ping-service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SetupService } from 'src/app/services/setup-service';
-import { LogService } from 'src/app/services/log-service';
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 
+// Angular and system imports.
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+
+// Application specific imports.
+import { AuthService } from '../auth/services/auth.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+
+/**
+ * Home component for Magic Dashboard.
+ */
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
 
-  public version: string;
-  public licenseInfo: any = null;
-  public license = '';
-  public isFetching = false;
-  public status: any = null;
-  public locLog: any = null;
-
-  public pieChartOptions: ChartOptions = {
-    responsive: true,
-  };
-  public pieChartLabels: Label[] = [['Backend LOC'], ['Frontend LOC']];
-  public pieChartData: SingleDataSet = null;
-  public pieChartType: ChartType = 'pie';
-  public pieChartLegend = true;
-  public pieChartPlugins = [];
-  public pieChartColors = [{
-    backgroundColor: [
-      'rgba(180,180,180,0.8)',
-      'rgba(120,120,120,0.8)',
-    ]}];
-
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param router Needed to redirect user after having verified his authentication token
+   * @param activated Needed to retrieve query parameters
+   * @param authService Needed to verify user is authenticated
+   * @param backendService Needed modify backend values according to query parameters given
+   * @param feedbackService Needed to provide feedback to user
+   */
   constructor(
-    private pingService: PingService,
-    private snackBar: MatSnackBar,
-    private setupService: SetupService,
-    private logService: LogService) {
-    monkeyPatchChartJsTooltip();
-    monkeyPatchChartJsLegend();
-  }
+    private router: Router,
+    private activated: ActivatedRoute,
+    private authService: AuthService,
+    private backendService: BackendService,
+    private feedbackService: FeedbackService) { }
 
-  ngOnInit() {
-    this.pingService.version().subscribe(res => {
-      this.version = res.version;
-      this.pingService.license().subscribe(res => {
-        this.licenseInfo = res;
-      });
-      this.setupService.getStatus().subscribe(res => {
-        this.status = res;
-      });
-      this.logService.getLocLog().subscribe(res => {
-        if (res.backend !== 0 || res.frontend !== 0) {
-          this.pieChartData = [res.backend, res.frontend];
-          this.locLog = res;
-        }
-      });
-    }, error => {
-      this.snackBar.open(error.error.message || 'Something went wrong when trying to ping backend', 'Close');
-    });
-  }
+  /*
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
 
-  getVersion() {
-    return this.version;
-  }
+    /*
+     * Checking if we have an authentication token.
+     */
+    this.activated.queryParams.subscribe((params: Params) => {
 
-  getLocalDate(date: string) {
-    return new Date(date).toLocaleString();
-  }
+      /*
+       * Checking if user accessed system with an authentication link.
+       */
+      const token = params['token'];
+      if (token) {
 
-  saveLicense() {
-    this.isFetching = true;
-    this.setupService.saveLicense(this.license).subscribe(res => {
-      this.snackBar.open('License was successfully saved', 'ok', {
-        duration: 5000,
-      });
-      this.pingService.license().subscribe(res => {
-        this.licenseInfo = res;
-        this.isFetching = false;
-      }, error => {
-        this.snackBar.open(error.error.message, 'ok', {
-          duration: 10000,
+        /*
+         * Authentication request, authenticating using specified link,
+         * and redirecting user to hide URL.
+         */
+        const url = params['url'];
+        const username = params['username'];
+
+        // Updating current backend.
+        this.backendService.current = {
+          url,
+          username,
+          token,
+        };
+
+        // Verifying token is valid by invoking backend trying to refresh token.
+        this.authService.verifyToken().subscribe(() => {
+
+          // Signalling success to user.
+          this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+
+          // Checking if token is a 'reset-password' type of token.
+          if (this.authService.roles().filter(x => x === 'reset-password').length > 0) {
+
+            // Redirecting user to change-password route.
+            this.router.navigate(['/change-password']);
+
+          } else {
+
+            // Redirecting user to avoid displaying JWT token in plain sight.
+            this.router.navigate(['/']);
+          }
+
+        }, (error: any) => {
+
+          // Oops, failure to verify token.
+          this.feedbackService.showError(error);
         });
-        this.isFetching = true;
-      });
-    }, error => {
-      this.snackBar.open(error.error.message, 'ok', {
-        duration: 10000,
-      });
-    });
-  }
-
-  getAllowanceOfLicense(licenseType: string) {
-    switch (licenseType) {
-      case 'enterprise':
-        return 'You can use this license on any amount of servers in your corporation';
-      case 'single-server':
-        return 'You can use this license on a single production server, and as many developer machines as you wish';
-      default:
-        return 'Unknown license type';
-    }
-  }
-
-  private getManDays() {
-    const locTotal = this.locLog.backend + this.locLog.frontend;
-    const locPerMonth = 537; // Human productivity per month according to studies in the subject
-    const locPerDay = locPerMonth / 22; // Working days per month
-    const totalDaysOfWork = locTotal / locPerDay;
-    return totalDaysOfWork;
-  }
-
-  getManDaysLocalString() {
-    return this.getManDays().toLocaleString(undefined, {
-      maximumFractionDigits: 2,
-    });
-  }
-
-  costOfDeveloperPerDay() {
-    return 3300 / 22; // Cost per month in EURO divided by working days in a month
-  }
-
-  createdValue() {
-    const costOfDeveloper = this.costOfDeveloperPerDay();
-    const locOfHumanPerDay = this.getManDays();
-    return locOfHumanPerDay * costOfDeveloper;
-  }
-
-  getROI() {
-    const totalManDays = this.getManDays();
-    const priceOfLicense = 346; // The average cost of a single server license
-    const priceOfDeveloperPerDay = this.costOfDeveloperPerDay();
-    const daysOfDevelopment = priceOfLicense / priceOfDeveloperPerDay;
-    return ((totalManDays / daysOfDevelopment) * 100).toLocaleString(undefined, {
-      maximumFractionDigits: 2,
+      }
     });
   }
 }

@@ -1,0 +1,88 @@
+
+<div class="meta-wrapper">
+
+  <div class="meta-info">
+
+    <span class="item">
+      <strong>Installed</strong>
+      <span matTooltip="When Magic was installed">{{age | since}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Users</strong>
+      <span matTooltip="Total number of users in Magic">{{userCount}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Roles</strong>
+      <span matTooltip="Total number of roles in Magic">{{roleCount}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Tasks</strong>
+      <span matTooltip="Total number of tasks in system">{{taskCount}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Endpoints</strong>
+      <span matTooltip="Total number of endpoints in system">{{endpoints}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Log items</strong>
+      <span matTooltip="Total count of log items in Magic">{{logCount}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Errors</strong>
+      <span matTooltip="Total errors during lifetime">{{errors}}</span>
+    </span>
+
+    <span class="item">
+      <strong>LOC generated</strong>
+      <span [matTooltip]="getLocTooltip()">{{loc}}</span>
+    </span>
+
+    <span class="item">
+      <strong>Version</strong>
+      <span matTooltip="Backend version of Magic">{{version}}</span>
+    </span>
+
+  </div>
+
+  <div class="meta-statistics">
+    <a
+      matTooltip="Log items per day the last 2 weeks"
+      [routerLink]="['/log']">
+      Log items
+    </a>
+    <canvas
+      *ngIf="daysData"
+      baseChart
+      chartType="bar"
+      [data]="daysData" 
+      [labels]="daysLabels" 
+      [options]="daysOptions"
+      [colors]="daysColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <a
+      matTooltip="Failed assumptions over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Assumption test failed, test file:'}">
+      Assumption failures
+    </a>
+    <canvas
+      *ngIf="assumptionsData"
+      baseChart 
+      chartType="bar"
+      [data]="assumptionsData" 
+      [labels]="assumptionsLabels" 
+      [options]="assumptionsOptions"
+      [colors]="assumptionsColors">
+    </canvas>
+  </div>
+
+</div>

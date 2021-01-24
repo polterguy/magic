@@ -1,0 +1,9 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/system/log/log-items
+status:int:200
+description:Assumes it is possible to retrieve log items from the backend
+produces:application/json

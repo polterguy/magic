@@ -1,0 +1,12 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:/magic/modules/system/tasks/create-task
+payload:@"{
+  ""description"": ""This should fail"",
+  ""hyperlambda"": "".foo""
+}"
+status:int:500
+description:Assumes that creating a task without an id fails, and that it returns the correct result

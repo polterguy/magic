@@ -1,0 +1,30 @@
+
+<div
+  *ngIf="loaderService.isLoading | async"
+  class="obscurer">
+  <mat-spinner
+    mode="indeterminate"
+    diameter="50">
+  </mat-spinner>
+</div>
+
+<app-toolbar></app-toolbar>
+
+<mat-sidenav-container>
+
+  <mat-sidenav mode="side" [(opened)]="sidenavOpened">
+    <app-navbar></app-navbar>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+
+    <div
+      *ngIf="sidenavOpened"
+      class="obscurer"
+      (click)="closeNavbar()"></div>
+
+    <router-outlet></router-outlet>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

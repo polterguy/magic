@@ -1,0 +1,12 @@
+
+a {
+  width: 100%;
+  text-align: left;
+  margin-bottom: .5rem;
+  span {
+    margin-left: .5rem;
+  }
+}
+a.active-link {
+  background-color: #555;
+}

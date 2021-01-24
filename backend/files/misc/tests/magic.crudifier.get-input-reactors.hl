@@ -1,0 +1,9 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/system/crudifier/input-reactors
+status:int:200
+response:@"{""native"":[""validators.date"",""validators.email"",""validators.enum"",""validators.integer"",""validators.mandatory"",""validators.regex"",""validators.string"",""validators.url""],""dynamic"":[""transformers.hash-password""]}"
+description:Assumes that retrieving input reactors returns the correct result
