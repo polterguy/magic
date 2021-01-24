@@ -32,12 +32,11 @@ data.connect:magic
  * Creating a scheduled task that automatically releases user
  * at the specified release date and time.
  */
-crypto.random
-   min:40
-   max:40
+guid.new
 strings.concat
    .:user.imprisoned.released.
-   strings.to-lower:x:@crypto.random
+   convert:x:@guid.new
+      type:string
 unwrap:x:+/**/.username
 tasks.create:x:@strings.concat
    due:x:@.arguments/*/releaseDate
