@@ -267,15 +267,17 @@ export class EndpointService {
     copyright: string,
     endpoints: any[]) {
 
-      // Invoking backend and returning the re
+      // Invoking backend and returning the returns an observable to caller.
+      const payload = {
+        templateName,
+        apiUrl,
+        name,
+        copyright,
+        endpoints,
+      };
+      console.log(payload);
       this.httpService.downloadPost(
-        '/magic/modules/system/endpoints/generate', {
-          templateName,
-          apiUrl,
-          name,
-          copyright,
-          endpoints,
-      }).subscribe(res => {
+        '/magic/modules/system/endpoints/generate', payload).subscribe(res => {
   
           // Retrieving the filename, as provided by the server.
           const disp = res.headers.get('Content-Disposition');

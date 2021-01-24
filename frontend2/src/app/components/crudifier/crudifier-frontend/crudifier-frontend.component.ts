@@ -205,7 +205,6 @@ export class CrudifierFrontendComponent implements OnInit {
     const result: any[] = [];
     for (const idx of endpoints) {
       const tmp = {
-        array: idx.array,
         auth: idx.auth,
         description: idx.description,
         path: idx.path,
