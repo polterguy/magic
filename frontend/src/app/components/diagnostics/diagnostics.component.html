@@ -1,0 +1,37 @@
+
+<mat-card>
+  <mat-tab-group>
+
+    <mat-tab label="Overview">
+      <ng-template matTabContent>
+        <app-diagnostics-overview></app-diagnostics-overview>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Security">
+      <ng-template matTabContent>
+        <app-diagnostics-security></app-diagnostics-security>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Errors">
+      <ng-template matTabContent>
+        <app-diagnostics-errors></app-diagnostics-errors>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Assumptions">
+      <ng-template matTabContent>
+        <app-diagnostics-assumptions></app-diagnostics-assumptions>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Cache">
+      <ng-template matTabContent>
+        <app-diagnostics-cache></app-diagnostics-cache>
+      </ng-template>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-card>
+

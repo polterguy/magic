@@ -20,7 +20,6 @@ slots.create:magic.crypto.get-public-key
     */
    cache.try-get:x:@strings.concat
       expiration:300
-      expiration-type:absolute
       .lambda
 
          /*

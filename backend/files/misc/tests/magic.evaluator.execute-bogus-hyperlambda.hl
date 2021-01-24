@@ -1,0 +1,11 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:/magic/modules/system/evaluator/evaluate
+payload:@"{
+  ""hyperlambda"": ""foo:bar""
+}"
+status:int:500
+description:Assumes that executing bogus Hyperlambda fails

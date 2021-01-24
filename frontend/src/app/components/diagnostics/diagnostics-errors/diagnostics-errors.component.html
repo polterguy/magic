@@ -1,0 +1,58 @@
+
+<div class="meta-wrapper">
+
+  <div class="meta-statistics">
+    <a
+      matTooltip="Magic restarts over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Magic was successfully started'}">
+      Restarts
+    </a>
+    <canvas
+      *ngIf="restartData"
+      baseChart
+      chartType="bar"
+      [data]="restartData" 
+      [labels]="restartLabels" 
+      [options]="pieOptions"
+      [colors]="restartColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <a
+      matTooltip="Unhandled exceptions over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Unhandled exception occurred \''}">
+      Unhandled exceptions
+    </a>
+    <canvas
+      *ngIf="unhandledData"
+      baseChart
+      chartType="bar"
+      [data]="unhandledData" 
+      [labels]="unhandledLabels" 
+      [options]="pieOptions"
+      [colors]="unhandledColors">
+    </canvas>
+  </div>
+
+  <div class="meta-statistics">
+    <a
+      matTooltip="Failed task executions over the last 2 weeks"
+      [routerLink]="['/log']"
+      [queryParams]="{filter: 'Unhandled exception while executing scheduled task with id of \''}">
+      Failed tasks
+    </a>
+    <canvas
+      *ngIf="taskData"
+      baseChart
+      chartType="bar"
+      [data]="taskData" 
+      [labels]="taskLabels" 
+      [options]="pieOptions"
+      [colors]="taskColors">
+    </canvas>
+  </div>
+
+</div>

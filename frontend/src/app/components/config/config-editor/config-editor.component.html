@@ -1,0 +1,16 @@
+
+<ngx-codemirror
+  *ngIf="config"
+  [(ngModel)]="config"
+  [options]="cmOptions.json">
+</ngx-codemirror>
+
+<div
+  *ngIf="config"
+  class="button-strip">
+  <button
+    mat-button
+    (click)="save()">
+    Save
+  </button>
+</div>

@@ -1,160 +1,149 @@
 
-<div
-  class="obscurer"
-  *ngIf="isFetching">
-  <h3>Please wait ...</h3>
-  <h4>Genius is thinking ...</h4>
-  <mat-spinner
-    mode="indeterminate"
-    diameter="50"
-    class="ajax-wait">
-  </mat-spinner>
-</div>
-
-<button
-  mat-button
-  class="legend-button"
-  id="infoButton"
-  (click)="showLegend()">
-  <mat-icon
-    matTooltip="Shows legend for evaluator"
-    matSuffix>info</mat-icon>
-</button>
-
-<mat-form-field class="database-type-selector">
-
-  <mat-select
-    placeholder="Select database type"
-    (selectionChange)="databaseTypeChanged($event)"
-    [(ngModel)]="selectedDatabaseType">
-
-    <mat-option
-      *ngFor="let cur of databaseTypes"
-      [value]="cur">{{cur}}</mat-option>
-      
-  </mat-select>
-
-</mat-form-field>
-
-<mat-form-field
-  *ngIf="databases !== null && hasConnection"
-  class="connection-string-selector">
-
-  <mat-select
-    placeholder="Select connection string"
-    (selectionChange)="connectionStringChanged($event)"
-    [(ngModel)]="connectionString">
-
-    <mat-option
-      *ngFor="let cur of connectionStrings"
-      [value]="cur">{{cur}}</mat-option>
-
-  </mat-select>
-
-</mat-form-field>
-
-<mat-form-field
-  *ngIf="databases !== null && hasConnection"
-  class="database-selector">
-
-  <mat-select
-    placeholder="Select database"
-    (selectionChange)="databaseChanged($event)"
-    [(ngModel)]="selectedDatabase">
-
-    <mat-option
-      *ngFor="let cur of databases"
-      [value]="cur">{{cur.name}}</mat-option>
-      
-  </mat-select>
-
-</mat-form-field>
-
-<mat-form-field
-  class="file-selector"
-  *ngIf="hasConnection">
-
-  <mat-select
-    placeholder="Select saved file"
-    (selectionChange)="fileChanged($event)"
-    [(value)]="selectedScript">
-    <mat-option
-      *ngFor="let cur of savedFiles"
-      [value]="cur">{{cur}}</mat-option>
-  </mat-select>
-
-</mat-form-field>
-
-<mat-checkbox
-  *ngIf="databases !== null && hasConnection"
-  matTooltip="If true, no more than 1000 records will be returned from server to avoid exhausting server or client"
-  [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+<app-codemirror-sql
+  *ngIf="input"
+  [(model)]="input"></app-codemirror-sql>
 
 <div
-  class="mat-elevation-z4 sql"
-  *ngIf="hasConnection">
+  *ngIf="input"
+  class="button-strip">
 
-  <ngx-codemirror
-    *ngIf="selectedDatabase !== null"
-    [(ngModel)]="sqlText" 
-    class="smaller"
-    [options]="getCodeMirrorOptions()"></ngx-codemirror>
+  <mat-form-field class="form-field">
 
-</div>
+    <mat-label>Database type</mat-label>
+    <mat-select
+      [(ngModel)]="input.databaseType"
+      (selectionChange)="databaseTypeChanged()"
+      placeholder="Database type">
+      <mat-option
+        *ngFor="let idx of databaseTypes"
+        [value]="idx.type">{{idx.name}}</mat-option>
+    </mat-select>
 
-<div
-  class="execute-button"
-  *ngIf="hasConnection">
-  <button 
-    [disabled]="sqlText === ''"
-    mat-button
-    matTooltip="Saves your current SQL on the server"
-    (click)="save()">Save</button>
-  <button 
-    [disabled]="sqlText === ''"
-    mat-raised-button
-    color="primary"
-    id="executeButton"
-    matTooltip="Evaluates your SQL"
-    (click)="evaluate()">Evaluate</button>
-</div>
+  </mat-form-field>
 
-<div
-  class="mat-elevation-z4 error"
-  *ngIf="!hasConnection">
-  <p>
-    I couldn't find a valid {{selectedDatabaseType}} database using your existing appsettings.json connection string.
-    Maybe try a different database type ...?
-  </p>
-</div>
-  
-<div
-  *ngIf="result !== null && result.length > 0 && hasConnection"
-  class="mat-elevation-z4 result">
+  <mat-form-field class="form-field">
 
-  <table class="fill-width">
+    <mat-label>Connection string</mat-label>
+    <mat-select
+      [(ngModel)]="input.connectionString"
+      (selectionChange)="connectionStringChanged()"
+      placeholder="Connection string">
+      <mat-option
+        *ngFor="let idx of connectionStrings"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
 
-    <caption>Result</caption>
+  </mat-form-field>
 
-    <tr>
-      <th *ngFor="let idx of result[0] | dynamic" scope="col">
-        {{idx.key}}
-      </th>
-    </tr>
+  <mat-form-field class="form-field">
 
-    <tr *ngFor="let row of result">
-      <td *ngFor="let idx of row | dynamic">
-        {{idx.value}}
-      </td>
-    </tr>
+    <mat-label>Database</mat-label>
+    <mat-select
+      [(ngModel)]="input.database"
+      [disabled]="!databases || databases.length === 0"
+      (selectionChange)="databaseChanged()"
+      placeholder="Database">
+      <mat-option
+        *ngFor="let idx of databases"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
 
-  </table>
+  </mat-form-field>
+
+  <mat-checkbox
+    matTooltip="Whether or not you should only return the first 200 records or not"
+    [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+
+  <mat-checkbox
+    [disabled]="input.databaseType !== 'mssql'"
+    matTooltip="Executes SQL as a batch operation, respecting 'go' keywords. Only relevant for 'mssql' database type"
+    [(ngModel)]="isBatch">Batch</mat-checkbox>
 
   <button
+    id="loadButton"
     mat-button
-    (click)="export()"
-    class="export-button">
-    Export
+    matTooltip="Load a persisted SQL snippet from backend's snippet collection. Keyboard shortcut ALT+L"
+    (click)="load()">
+    Load
+  </button>
+
+  <button
+    id="saveButton"
+    [disabled]="!input.sql"
+    mat-button
+    matTooltip="Save SQL snippet to backend's snippet collection. Keyboard shortcut ALT+S"
+    (click)="save()">
+    Save
+  </button>
+
+  <button
+    id="executeButton"
+    [disabled]="!input || input.sql === '' || !input.database"
+    mat-button
+    matTooltip="Execute SQL. Keyboard shortcut F5"
+    (click)="execute()">
+    Execute
   </button>
 
 </div>
+
+<mat-card class="result-card" *ngFor="let idx of result">
+
+  <table class="fill-width result clickable">
+
+    <thead>
+      <tr>
+        <th *ngFor="let idxCell of idx[0] | dynamic: 5">
+          {{idxCell.key}}
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr
+        *ngFor="let idxRow of getRows(idx)"
+        [class]="viewingDetails(idxRow) ? 'selected' : (idxRow._detailsColSpan > 0 ? 'details' : 'data-row')"
+        (click)="toggleDetails(idxRow)">
+
+        <td
+          *ngFor="let idxCell of (idxRow._detailsColSpan > 0 ? [] : (idxRow | dynamic: 5))">
+          {{idxCell.value}}
+        </td>
+
+        <td
+          *ngIf="idxRow._detailsColSpan > 0 && idxRow.data"
+          class="view-details"
+          [attr.colspan]="idxRow._detailsColSpan">
+
+          <div class="details-sheet">
+
+            <div
+              *ngFor="let idxDetails of idxRow.data | dynamic"
+              (click)="copyToClipBoard(idxDetails.value)"
+              class="details-item">
+
+              <strong>{{idxDetails.key}}</strong>
+              <span>{{!idxDetails.value ? '[null]' : idxDetails.value}}</span>
+
+            </div>
+
+          </div>
+
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+
+  <div class="button-strip">
+
+    <button
+      mat-button
+      (click)="exportAsCsv(idx)">
+      Export as CSV
+    </button>
+
+  </div>
+
+</mat-card>

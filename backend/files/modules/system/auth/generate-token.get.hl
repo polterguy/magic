@@ -1,0 +1,37 @@
+
+/*
+ * Generates a JWT token for the specified user
+ */
+.arguments
+   username:string
+   reset-password:bool
+.description:Generates a JWT token for the specified user
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/username
+
+
+/*
+ * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
+ * making sure we return that token to caller.
+ */
+unwrap:x:+/*
+signal:magic.auth.authenticate
+   username:x:@.arguments/*/username
+   check-password:bool:false
+   reset-password:x:@.arguments/*/reset-password
+
+
+/*
+ * Returns the authentication JWT ticket created above to caller.
+ */
+return-nodes:x:@signal/*

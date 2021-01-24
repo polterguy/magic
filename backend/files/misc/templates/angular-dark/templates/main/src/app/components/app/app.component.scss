@@ -1,27 +1,86 @@
-.sidenav-button {
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.obscurer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,.5);
+  z-index: 1001;
+  animation-name: fade-in;
+  animation-fill-mode: forwards;
+  animation-duration: .5s;
+  mat-spinner {
+    position: absolute;
+    z-index: 1002;
+    left: calc(50% - 25px);
+    top: calc(50% - 25px);
+  }
+}
+
+mat-toolbar {
+  background: rgb(45, 45, 45);
+  border-bottom: solid 1px rgba(0,0,0,.2);
+  color: rgb(245,245,245);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  button {
+    span {
+      display: inline-block;
+      font-size: 1.5rem;
+      padding-left: .5rem;
+    }
+  }
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+mat-sidenav-container {
+  position: absolute;
+  top: 64px; // Making room for toolbar at the top of page.
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: rgb(245,245,245);
+  background-color: rgb(55,55,55);
+  @media screen and (max-width: 600px) {
+    top: 56px; // Toolbar's height shrinks at 600px
+  }
+
+  // Side navigation wrappper containing the navbar with buttons linking to components.
+  mat-sidenav {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1000;
-    font-size: 1.2rem;
-}
+    width: 300px; // Width of navbar when opened
+    padding: 1rem;
+    background: rgb(55, 55, 55);
+    color: rgb(245,245,245);
+    @media screen and (max-width: 600px) {
+      width: 100vw; // Width of navbar when opened on devices with small resolution
+    }
+    .active-link {
+      background-color: rgba(150,150,150,.5);
+    }
+  }
 
-.login-button,
-.logout-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1000;
-    font-size: 1.2rem;
-}
+  // Content wrapper containing the router-outlet and currently loaded component.
+  mat-sidenav-content {
 
-.ajax-wait {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1000;
-}
-
-.sidenav-content {
-    min-height: 100vh;
+    padding: 0; // Default padding, only shows if width of viewport is less than 1024px.
+    margin-left: 0 !important;
+    box-sizing: border-box;
+    position: relative;
+  }
 }

@@ -1,0 +1,8 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/system/tasks/get-task
+status:int:400
+description:Assumes that retrieving a non-existing task fails, and returns the correct status code

@@ -1,14 +1,21 @@
 
 /*
  * Evaluates the given [sql] and returns results to caller.
+ *
+ * Arguments;
+ * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
+ * - [database] - Initial database to use in connection
+ * - [sql] - SQL to execute
+ * - [safeMode] - If true, will never return more than the first 200 records to avoid exhausting server
+ * - [batch] - If true, will execute SQL as a MS SQL batch operation. Only relevant for 'mssql' database type
  */
 .arguments
    databaseType:string
    database:string
    sql:string
-   batch:bool
    safeMode:bool
-.description:"Evaluates the given SQL given for your specified databaseType, and returns the result to caller."
+   batch:bool
+.description:"Evaluates the given SQL given for your specified database, and returns the result to caller."
 
 
 /*
@@ -18,86 +25,57 @@ auth.ticket.verify:root
 
 
 /*
- * Checking to see if an explicit database was specified, at which point we
- * connect to that database explicitly, instead of using the default database.
- */
-if
-   and
-      not
-         eq
-            get-value:x:@.arguments/*/database
-            .:
-      not
-         eq
-            get-value:x:@.arguments/*/database
-            .
-   .lambda
-
-
-      /*
-       * Explicit database was given.
-       */
-      set-value:x:../*/foo.connect
-         get-value:x:@.arguments/*/database
-
-
-/*
- * Making sure we connect to the correct database type.
- */
-set-name:x:./*/foo.connect
-   strings.concat
-      get-value:x:@.arguments/*/databaseType
-      .:.connect
-
-
-/*
  * Creating our database connection.
- *
- * Notice, at this point the below slot will have been changed by
- * the above logic.
- *
- * Notice, we can't use the [data.xxx] slots here, since we want to
- * allow user to also use non-default database connections here.
  */
-foo.connect
+data.connect:x:@.arguments/*/database
+   database-type:x:@.arguments/*/databaseType
 
 
    /*
-    * Checking if database type is "mssql" and [batch] is true, at which point
-    * we execute the script as a "batch" type of script (allowing for "GO" statements).
+    * Checking if we're supposed to execute SQL in safe mode, only
+    * returning the first 200 records.
+    */
+   if
+      and
+         get-value:x:@.arguments/*/safeMode
+         not
+            get-value:x:@.arguments/*/batch
+      .lambda
+         add:x:@data.connect/*/data.select
+            .
+               max:200
+
+
+   /*
+    * Checking if we're supposed to execute SQL as an MS SQL 'batch' operation,
+    * which implies respecting 'go' keywords, splitting SQL by each 'go' keyword.
     */
    if
       and
          eq
-            get-value:x:@.arguments/*/batch
-            .:bool:true
-         eq
             get-value:x:@.arguments/*/databaseType
             .:mssql
+         get-value:x:@.arguments/*/batch
       .lambda
-         mssql.execute-batch:x:@.arguments/*/sql
-         return-nodes:x:-/*
-
+         set-name:x:@data.connect/*/data.select
+            .:mssql.execute-batch
    else
+      add:x:@data.connect/*/data.select
+         .
+            database-type:x:@.arguments/*/databaseType
 
 
-      /*
-       * Executing SQL, making sure we get slot name correct.
-       */
-      set-name:x:./*/foo.select
-         strings.concat
-            get-value:x:@.arguments/*/databaseType
-            .:.select
+   /*
+    * Executing SQL and returning results to caller.
+    */
+   data.select:x:@.arguments/*/sql
+      multiple-result-sets:true
 
 
-      /*
-       * Executing SQL and returning results to caller.
-       */
-      if
-         get-value:x:@.arguments/*/safeMode
-         .lambda
-            add:x:@if/./return-nodes/-
-               .
-                  max:1000
-      foo.select:x:@.arguments/*/sql
-      return-nodes:x:-/*
+   /*
+    * Returning result of invocation to caller.
+    */
+   if
+      exists:x:@data.select/*/*
+      .lambda
+         return-nodes:x:@data.select/*

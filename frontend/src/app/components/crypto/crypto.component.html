@@ -1,193 +1,20 @@
 
-<div
-  class="obscurer"
-  *ngIf="isFetching">
-  <h3>Please wait ...</h3>
-  <h4>Genius is thinking ...</h4>
-  <mat-spinner
-    mode="indeterminate"
-    diameter="50"
-    class="ajax-wait">
-  </mat-spinner>
-</div>
+<mat-card>
+  <app-server-public-key></app-server-public-key>
+</mat-card>
 
-<div class="crypto-wrapper">
+<mat-card>
+  <mat-tab-group
+    #tab
+    (selectedTabChange)="selectedTabChanged()">
 
-  <mat-form-field
-    class="key-strength">
-    <mat-select
-      placeholder="Select key strength"
-      [(ngModel)]="strength"
-      matTooltip="Select your key strength">
-      <mat-option
-        *ngFor="let cur of strengthOptions"
-        [value]="cur">{{cur}}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-tab label="Keys">
+      <app-public-keys></app-public-keys>
+    </mat-tab>
 
-  <mat-form-field
-    class="seed">
-    <input 
-      matInput 
-      autocomplete="off"
-      type="text"
-      matTooltip="Some random seed for your keey"
-      placeholder="Provide a seed"
-      [(ngModel)]="seed">
-  </mat-form-field>
+    <mat-tab label="Invocations">
+      <app-crypto-invocations></app-crypto-invocations>
+    </mat-tab>
 
-  <button
-    [disabled]="!strength"
-    color="primary"
-    mat-raised-button
-    (click)="generate()">
-    {{keyExists ? 'Generate new key pair' : 'Generate key pair'}}
-  </button>
-
-  <div
-    *ngIf="keyExists"
-    class="mat-elevation-z4 crypto-key">
-
-    <span class="public-key-title">Server public key</span>
-
-    <div
-      class="fingerprint"
-      matTooltip="Key fingerprint">
-      {{fingerprint}}
-    </div>
-
-    <textarea
-      class="key"
-      matTooltip="Public key, base64/DER encoded"
-      rows="10">{{publicKey}}</textarea>
-
-    <div class="qr-code">
-      <img
-        matTooltip="Public key, base64/DER encoded"
-        src="{{getQrCodeKeyFingerprintURL()}}"
-        alt="Your public key's fingerprint" />
-      <span class="txt">Download public key</span>
-
-      <mat-form-field>
-        <input
-          matInput 
-          type="text"
-          value="{{getQrCodeKeyFingerprintURL()}}">
-      </mat-form-field>
-
-    </div>
-
-  </div>
-
-  <div *ngIf="keyExists" class="mat-elevation-z4 keys">
-
-    <button
-      class="import-key-button"
-      matTooltip="Import a new key"
-      (click)="importKey()"
-      mat-button>Import ...</button>
-
-    <table mat-table [dataSource]="keys">
-      <caption>Public keys</caption>
-
-      <ng-container matColumnDef="subject">
-        <th mat-header-cell *matHeaderCellDef scope="col">Subject</th>
-        <td mat-cell *matCellDef="let el" (click)="editKey(el, false)">{{el.subject}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef scope="col">Email</th>
-        <td mat-cell *matCellDef="let el" (click)="editKey(el, false)">{{el.email}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="domain">
-        <th mat-header-cell *matHeaderCellDef scope="col">Domain</th>
-        <td mat-cell *matCellDef="let el" (click)="editKey(el, false)">{{el.domain}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef scope="col">Delete</th>
-        <td mat-cell *matCellDef="let el">
-          <button
-            matTooltip="Delete this keu"
-            (click)="deleteKey(el.id)"
-            mat-button>Delete</button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [matTooltip]="'Key was imported ' + (row.imported | since) + ' on the ' + getLocaleDate(row.imported)"></tr>
-
-    </table>
-
-  </div>
-
-  <div *ngIf="keyExists" class="mat-elevation-z4 invocations">
-
-    <div class="key-filter">
-      <mat-form-field>
-        <mat-select
-          placeholder="Filter by client"
-          [(ngModel)]="keyFilter"
-          (selectionChange)="filterChanged()"
-          matTooltip="Filter requests by client">
-          <mat-option
-            *ngFor="let cur of allKeys"
-            [value]="cur.id">{{cur.subject + ' - ' + cur.email}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button
-        mat-button
-        matTooltip="Clears filter"
-        (click)="clearFilter()">Clear filter</button>
-    </div>
-
-    <table mat-table [dataSource]="invocations">
-      <caption>Signed invocations</caption>
-
-      <ng-container matColumnDef="crypto_key">
-        <th mat-header-cell *matHeaderCellDef scope="col">Key</th>
-        <td mat-cell *matCellDef="let el" [matTooltip]="getCryptoKey(el.crypto_key, true)" (click)="editKeyFromReceipt(el)">{{getCryptoKey(el.crypto_key, false)}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="request_id">
-        <th mat-header-cell *matHeaderCellDef scope="col">Request ID</th>
-        <td mat-cell *matCellDef="let el" [matTooltip]="el.request_id" (click)="viewReceipt(el)">{{el.request_id}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="created">
-        <th mat-header-cell *matHeaderCellDef scope="col">Created</th>
-        <td mat-cell *matCellDef="let el" [matTooltip]="getLocaleDate(el.created)" (click)="viewReceipt(el)">{{el.created | since}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="request">
-        <th mat-header-cell *matHeaderCellDef scope="col">Payload</th>
-        <td mat-cell *matCellDef="let el">
-          <pre *ngIf="!el.viewReceipt || el.viewReceipt === false" class="request" matTooltip="Request">{{el.request}}</pre>
-          <div *ngIf="el.viewReceipt === true" class="request-raw" matTooltip="Cryptographically signed request">
-            {{el.request_raw}}
-          </div>
-          <div class="response" matTooltip="Response">
-            {{el.response}}
-          </div>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsInvocations"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsInvocations;"></tr>
-
-    </table>
-  
-    <mat-paginator
-      hidePageSize="true"
-      showFirstLastButtons="true"
-      [pageIndex]="invocationsFilter.offset / 10"
-      [length]="invocationsCount"
-      pageSize="10"
-      (page)="paged($event)"
-      [pageSizeOptions]="[10]">
-    </mat-paginator>
-
-  </div>
-
-</div>
+  </mat-tab-group>
+</mat-card>

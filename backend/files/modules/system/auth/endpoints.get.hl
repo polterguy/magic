@@ -1,9 +1,10 @@
 
 /*
- * Returns all endpoints in the system, with the associated authorization requirements,
- * as a list of roles.
+ * Returns all dynamic HTTP endpoints in the system,
+ * with their associated verb(s), and roles that are
+ * allowed to access the endpoint.
  */
-.description:"Returns all HTTP endpoints in the system, with the associated authorization requirements, as a list of [roles]."
+.description:Returns all dynamic HTTP endpoints in the system, with their associated verb(s), and roles that are allowed to access the endpoint
 
 
 /*
@@ -16,9 +17,8 @@
  * Invokes [endpoints.list], making sure we cache the results, since it's a
  * fairly expensive operation.
  */
-cache.try-get:endpoints
+cache.try-get:magic.auth.endpoints
    expiration:x:@.cache-seconds
-   expiration-type:absolute
    .lambda
 
       /*
@@ -37,18 +37,6 @@ cache.try-get:endpoints
                   verb:x:@.dp/#/*/verb
                   auth
       return:x:@.result/*
-
-
-/*
- * Making sure we cache result such that HTTP clients won't try to retrieve
- * value from server, more frequently than our Cache-Control header declares
- * as feasable.
- */
-strings.concat
-   .:public, max-age=
-   get-value:x:@.cache-seconds
-response.headers.add
-   Cache-Control:x:@strings.concat
 
 
 /*

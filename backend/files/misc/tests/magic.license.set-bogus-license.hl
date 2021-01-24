@@ -1,0 +1,15 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:/magic/modules/system/config/save-license
+status:int:400
+description:Assumes that trying to set license to some bogus data results in the correct error response and status code
+payload:@"{
+  ""license"": ""foo""
+}"
+response:@"{
+  ""result"": ""Failure! License is not a valid license!""
+}"
+produces:application/json

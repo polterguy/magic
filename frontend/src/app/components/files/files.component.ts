@@ -1,14 +1,22 @@
 
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { FileService } from '../../services/file-service';
-import { EvaluatorService } from '../../services/evaluator-service';
-import { MatDialog } from '@angular/material/dialog';
-import { SqlService } from 'src/app/services/sql-service';
-import { NewFileDialogComponent } from './modals/new-file-dialog';
-import { ConfirmDeletionDialogComponent } from './modals/confirm-deletion-dialog';
-import { TicketService } from 'src/app/services/ticket-service';
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 
+// Angular and system imports.
+import { forkJoin } from 'rxjs';
+import { Component, Injector, OnInit } from '@angular/core';
+
+// Application specific imports.
+import { FeedbackService } from '../../services/feedback.service';
+import { FileService } from 'src/app/components/files/services/file.service';
+import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+
+/**
+ * Files component to allow user to browse his dynamic files folder,
+ * and edit and modify its content.
+ */
 @Component({
   selector: 'app-files',
   templateUrl: './files.component.html',
@@ -16,390 +24,299 @@ import { TicketService } from 'src/app/services/ticket-service';
 })
 export class FilesComponent implements OnInit {
 
-  public dataSource: any[] = [];
-  public displayedColumns: string[] = ['path', 'download', 'delete'];
-  public displayedSecondRowColumns: string[] = ['details'];
-  public path = '/';
-  public databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
-  public selectedDatabaseType = 'mysql';
-  public filter = '';
-  public safeMode = true;
-  public protectedFolders: string[] = [
-    '/misc/',
-    '/misc/mssql/',
-    '/misc/mssql/templates/',
-    '/misc/mssql-batch/',
-    '/misc/mssql-batch/templates/',
-    '/misc/mysql/',
-    '/misc/mysql/templates/',
-    '/misc/templates/',
-    '/modules/',
-    '/modules/system/',
-  ];
-  public protectedFiles: string[] = [
-    '/misc/README.md',
-    '/misc/templates/README.md',
-    '/misc/mssql/magic.sql',
-    '/misc/mysql/magic.sql',
-    '/modules/README.md',
+  /**
+   * Displayed columns in data table.
+   */
+  public displayedColumns: string[] = [
+    'icon',
+    'path',
+    'download',
+    'delete',
   ];
 
+  /**
+   * Current folder we're viewing contens of.
+   */
+  public currentFolder = '/';
+
+  /**
+   * Folders and files inside currently viewed folder.
+   */
+  public items: string[] = null;
+
+  /**
+   * Files that are currently being edited.
+   */
+  public editedFiles: string[] = [];
+
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param dialog Used to open new file object dialog to create new folders or files
+   * @param fileService File service used to retrieve files and folders from backend
+   */
   constructor(
+    private feedbackService: FeedbackService,
     private fileService: FileService,
-    private evaluateService: EvaluatorService,
-    private sqlService: SqlService,
-    private snackBar: MatSnackBar,
-    private ticketService: TicketService,
     private dialog: MatDialog) { }
 
-  ngOnInit() {
-    this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
-    this.evaluateService.vocabulary().subscribe((res) => {
-      localStorage.setItem('vocabulary', JSON.stringify(res));
-    });
-    this.getPath();
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
+
+    // Retrieving files from backend to initially display to user.
+    this.getFolderContent();
   }
 
-  getPath() {
-    this.fileService.listFiles(this.path).subscribe(files => {
-      this.fileService.listFolders(this.path).subscribe(folders => {
-        this.dataSource = (folders || []).concat(files || []).map(x => {
-          return {
-            path: x,
-            extra: null,
-          };
-        });
-      });
-    });
+  /**
+   * Returns filename or folder name of specified path.
+   * 
+   * @param path Path to return object name for
+   */
+  public getItemName(path: string) {
+    const elements = path.split('/').filter(x => x !== '');
+    return elements[elements.length - 1];
   }
 
-  getFilterPlaceholderText() {
-    return `Filter '${this.path}' for files ...`;
-  }
-
-  getFilteredDatasource() {
-    if (this.filter === '') {
-      return this.dataSource;
-    }
-    return this.dataSource.filter(x => {
-      const entities = x.path.split('/');
-      const filename = entities[entities.length - 1];
-      return filename.indexOf(this.filter) !== -1;
-    });
-  }
-
-  downloadFile(path: string) {
-    this.fileService.downloadFile(path);
-  }
-
-  deletePath(el: any) {
-    const dialogRef = this.dialog.open(ConfirmDeletionDialogComponent, {
-      width: '500px',
-      data: {
-        file: el.path
-      }
-    });
-    dialogRef.afterClosed().subscribe(res => {
-      if (res !== undefined) {
-        if (el.path.endsWith('/')) {
-          this.fileService.deleteFolder(el.path).subscribe(res2 => {
-            this.showInfo('Folder was successfully deleted');
-            this.getPath();
-          });
-        } else {
-          this.fileService.deleteFile(el.path).subscribe(res2 => {
-            this.showInfo('File was successfully deleted');
-            el.extra = null;
-            this.getPath();
-          });
-        }
-      }
-    });
-  }
-
-  getFileName(el: string) {
-    if (el.endsWith('/')) {
-      const result = el.substr(0, el.length - 1);
-      return result.substr(result.lastIndexOf('/') + 1);
-    }
-    return el.substr(el.lastIndexOf('/') + 1);
-  }
-
-  selectPath(el: any) {
-    if (el.path.endsWith('/')) {
-      this.path = el.path;
-      this.getPath();
-    } else {
-      if (el.extra !== null) {
-        el.extra = null; // Toggling visibility ...
-        return;
-      }
-      const mode = this.getMode(el);
-      if (mode == null) {
-        this.showError('No editor registered for file. Download and edit locally.');
-      } else {
-        this.openFile(el);
-      }
-    }
-  }
-
-  createNewFile() {
-    const dialogRef = this.dialog.open(NewFileDialogComponent, {
-      width: '500px',
-      data: {
-        path: '',
-        header: 'New file'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(res => {
-      if (res !== undefined) {
-        this.createFile(res);
-      }
-    });
-  }
-
-  createNewFolder() {
-    const dialogRef = this.dialog.open(NewFileDialogComponent, {
-      width: '500px',
-      data: {
-        path: '',
-        header: 'New folder'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res !== undefined) {
-        this.createFolder(res);
-      }
-    });
-  }
-
-  createFile(filename: string) {
-    if (filename === '') {
-      this.showError('You have to give your filename a name');
-    } else if (filename.indexOf('.') === -1) {
-      this.showError('Your file needs an extension, such as ".hl" or something');
-    } else {
-      this.fileService.saveFile(this.path + filename, '/* Initial content */').subscribe((res) => {
-        this.showInfo('File successfully created');
-        this.getPath();
-      }, (error) => {
-        this.showError(error.error.message);
-      });
-    }
-  }
-
-  createFolder(foldername: string) {
-    if (foldername === '') {
-      this.showError('You have to give your folder a name');
-    } else {
-      const letters = /^[0-9a-z]+$/;
-      if (!letters.test(foldername)) {
-        this.showError('A Folder can only have the characters [a-z] and [0-1] in its name');
-      } else {
-        this.fileService.createFolder(this.path + foldername).subscribe((res) => {
-          this.showInfo('Folder successfully created');
-          this.getPath();
-        }, (error) => {
-          this.showError(error.error.message);
-        });
-      }
-    }
-  }
-
-  upOneFolder() {
-    const splits = this.path.split('/');
-    splits.splice(-2, 1);
-    this.path = splits.join('/');
-    this.getPath();
-    this.filter = '';
-    return false;
-  }
-
-  openFile(el: any) {
-    this.fileService.getFileContent(el.path).subscribe(res => {
-      el.extra = {
-        fileContent: res,
-      };
-    }, error => {
-      this.showError(error.error.message);
-    });
-  }
-
-  getCodeMirrorOptions(el: any) {
-    const result = {
-      lineNumbers: true,
-      theme: 'mbo',
-      mode: this.getMode(el),
-      tabSize: 3,
-      indentUnit: 3,
-      indentAuto: true,
-      extraKeys: {
-        'Shift-Tab': 'indentLess',
-        Tab: 'indentMore',
-      }
-    };
-    if (this.getMode(el) === 'hyperlambda') {
-      result.extraKeys['Ctrl-Space'] = 'autocomplete';
-    }
-    return result;
-  }
-
-  getMode(el: any) {
-    const fileEnding = el.path.substr(el.path.lastIndexOf('.') + 1);
-    switch (fileEnding.toLowerCase()) {
-      case 'hl':
-        return 'hyperlambda';
-      case 'md':
-        return 'markdown';
-      case 'js':
-        return 'application/jsx';
-      case 'css':
-        return 'text/css';
-      case 'sql':
-        return 'text/x-mysql';
-      case 'json':
-        return 'application/ld+json';
-      case 'ts':
-        return 'text/typescript';
-      case 'htm':
-      case 'html':
-        return 'text/html';
-      case 'scss':
-        return 'text/x-scss';
-      default:
-        return null;
-    }
-  }
-
-  evaluate(el: any) {
-    this.evaluateService.evaluate(el.extra.fileContent).subscribe(res => {
-      this.showInfo('File successfully evaluated');
-    }, (error) => {
-      this.showError(error.error.message);
-    });
-    return false;
-  }
-
-  evaluateSql(el: any) {
-    this.sqlService.evaluate(el.extra.fileContent, this.selectedDatabaseType).subscribe((res) => {
-      this.showInfo('SQL was successfully evaluate');
-    }, (err) => {
-      this.showError(err.error.message);
-    });
-  }
-
-  handleFileInput(files: FileList) {
-    for (let idx = 0; idx < files.length; idx++) {
-      this.fileService.uploadFile(this.path, files.item(idx)).subscribe(res => {
-        this.showInfo('File was successfully uploaded');
-        this.getPath();
-      });
-    }
-  }
-
-  save(el: any) {
-    this.fileService.saveFile(el.path, el.extra.fileContent).subscribe(res => {
-      this.showInfo('File successfully saved');
-    }, (error) => {
-      this.showError(error.error.message);
-    });
-    return false;
-  }
-
-  close(el: any) {
-    el.extra = null;
-  }
-
-  canModify(path: string) {
-    if (this.safeMode === false) {
-      return true;
-    }
-    return !this.isProtected(path);
-  }
-
-  isProtected(path: string) {
-    const entities = path.split('/').filter(x => x !== '');
-    if (entities.length === 0) {
-      return false;
-    }
-    if (path.endsWith('/')) {
-
-      // Folder
-      const isProtected = this.protectedFolders.indexOf(path) !== -1;
-      if (isProtected) {
-        return true;
-      }
-      let incremental = '/';
-      for (const idx of entities) {
-        incremental += idx + '/';
-        if (this.protectedFolders.indexOf(incremental + '*') !== -1) {
-          return true;
-        }
-      }
-      return false; // No recursively protected folders matching current folder.
-    } else {
-
-      // File
-      const isProtected = this.protectedFiles.indexOf(path) !== -1;
-      if (isProtected) {
-        return true;
-      }
-      let incremental = '/';
-      for (const idx of entities) {
-        incremental += idx + '/';
-        if (this.protectedFiles.indexOf(incremental + '*') !== -1) {
-          return true;
-        }
-      }
-      return false; // No recursively protected folders matching current folder.
-    }
-  }
-
-  isFolder(path: string) {
+  /**
+   * Returns true if given path is a folder
+   * 
+   * @param path What path to check
+   */
+  public isFolder(path: string) {
     return path.endsWith('/');
   }
 
-  getRowClass(el: any) {
-    let additionalCss = '';
-    if (this.isProtected(el.path)) {
-      if (this.safeMode) {
-        additionalCss = 'danger ';
+  /**
+   * Invoked when a path item, such as a file or folder is clicked.
+   * 
+   * @param path Item that was clicked
+   */
+  public itemClicked(path: string) {
+
+    // Checking what type of item that was clicked.
+    if (this.isFolder(path)) {
+
+      // Open the specified folder.
+      this.currentFolder = path;
+      this.getFolderContent();
+
+    } else {
+
+      // Checking if we're already displaying details for current item.
+      const idx = this.editedFiles.indexOf(path);
+      if (idx !== -1) {
+
+        // Hiding item.
+        this.editedFiles.splice(idx, 1);
       } else {
-        additionalCss = 'semi-danger ';
+
+        // Displaying item.
+        this.editedFiles.push(path);
       }
     }
-    if (el.extra !== null) {
-      additionalCss += 'selected-file';
-    }
-    if (el.path.endsWith('/')) {
-      additionalCss += 'folder-row';
-    }
-    return additionalCss;
   }
 
-  getClassForDetails(el: any) {
-    if (el.extra === null || el.extra.fileContent === null) {
-      return 'invisible';
+  /**
+   * Downloads a file or a folder from your backend.
+   * 
+   * @param event Click event
+   * @param path File or folder to download
+   */
+  public download(event: any, path: string) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Checking if this is a file or a folder, and acting accordingly.
+    if (this.isFolder(path)) {
+
+      // Downloading folder.
+      this.fileService.downloadFolder(path);
+
+    } else {
+
+      // Downloading file.
+      this.fileService.downloadFile(path);
     }
-    return 'editor-visible';
   }
 
-  atRoot() {
-    return this.path === '/';
-  }
+  /**
+   * Deletes a file or a folder in your backend.
+   * 
+   * @param event Click event, needed to stop propagation
+   * @param path File or folder to delete
+   */
+  public delete(event: any, path: string) {
 
-  showInfo(info: string) {
-    this.snackBar.open(info, 'Close', {
-      duration: 2000
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Asking user to confirm deletion of file object.
+    this.feedbackService.confirm(
+      'Please confirm delete operation',
+      `Are you sure you want to delete the '${this.getItemName(path)}' ${this.isFolder(path) ? 'folder' : 'file'}?`,
+      () => {
+
+        // Checking if this is a file or a folder, and acting accordingly.
+        if (this.isFolder(path)) {
+
+          // Deleting specified folder.
+          this.fileService.deleteFolder(path).subscribe(() => {
+
+            // Giving feedback to user and re-retrieving folder's content.
+            this.feedbackService.showInfoShort('Folder deleted');
+            this.getFolderContent();
+          }, (error: any) => this.feedbackService.showError(error));
+
+        } else {
+
+          // Deleting specified file.
+          this.fileService.deleteFile(path).subscribe(() => {
+
+            // Giving feedback to user and re-retrieving folder's content.
+            this.feedbackService.showInfoShort('File deleted');
+            this.getFolderContent();
+          }, (error: any) => this.feedbackService.showError(error));
+        }
     });
   }
 
-  showError(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
+  /**
+   * Invoked when user wants to go up one level from his current folder.
+   */
+  public up() {
+
+    // Fiding all folders we're inside of.
+    const elements = this.currentFolder.split('/').filter(x => x !== '');
+
+    // Removing last folder, and prepending '/'.
+    let newFolder = '/' + elements.slice(0, elements.length - 1).join('/');
+
+    // Checking if this is not root folder, at which point we append another '/' at the end.
+    if (newFolder !== '/') {
+      newFolder += '/';
+    }
+
+    // Updating current folder, and re-retrieving items for folder.
+    this.currentFolder = newFolder;
+    this.getFolderContent();
+  }
+
+  /**
+   * Returns true if specified file is currently being edited.
+   * 
+   * @param file File to check
+   */
+  public isEditing(file: string) {
+    return this.editedFiles.indexOf(file) !== -1;
+  }
+
+  /**
+   * Invoked when user wants to create a new folder.
+   */
+  public newFolder() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewFileObjectDialogComponent, {
+      width: '550px',
+      data: {
+        isFolder: true,
+        path: null,
+      },
     });
+
+    // Subscribing to closed event and creating a new folder if we're given a folder name.
+    dialogRef.afterClosed().subscribe((path: FileObject) => {
+
+      // Checking if we were given a new file object name, at which point the user wants to create a new folder.
+      if (path && path.path) {
+
+        // Creating a new folder with the specified name.
+        this.fileService.createFolder(this.currentFolder + path.path).subscribe(() => {
+
+          // Success, re-retrieving folder's content.
+          this.getFolderContent();
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to create a new file.
+   */
+  public newFile() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(NewFileObjectDialogComponent, {
+      width: '550px',
+      data: {
+        isFolder: false,
+        path: null,
+      },
+    });
+
+    // Subscribing to closed event and creating a new file if we're given a file name.
+    dialogRef.afterClosed().subscribe((path: FileObject) => {
+
+      // Checking if we were given a new file object name, at which point the user wants to create a new file.
+      if (path && path.path) {
+
+        // Creating a new file with the specified name and some default content.
+        this.fileService.saveFile(this.currentFolder + path.path, '/* Initial content, please change */').subscribe(() => {
+
+          // Success, re-retrieving folder's content.
+          this.getFolderContent(this.currentFolder + path.path);
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Uploads one or more files to the currently active folder.
+   */
+  public upload(files: FileList) {
+
+    // Iterating through each file and uploading one file at the time.
+    for (let idx = 0; idx < files.length; idx++) {
+
+      // Invoking service method responsible for actually uploading file.
+      this.fileService.uploadFile(this.currentFolder, files.item(idx)).subscribe(res => {
+
+        // Showing some feedback to user, and re-databinding folder's content.
+        this.feedbackService.showInfo('File was successfully uploaded');
+        this.getFolderContent();
+      });
+    }
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  /*
+   * Retrieves the content of the currently viewed folder, and databinds UI.
+   */
+  private getFolderContent(initialFile: string = null) {
+
+    // Retrieving files and folders from backend.
+    const foldersObservable = this.fileService.listFolders(this.currentFolder);
+    const filesObservable = this.fileService.listFiles(this.currentFolder);
+    forkJoin([foldersObservable, filesObservable]).subscribe((res: string[][]) => {
+
+      // Assigning return values of above observers to related fields.
+      this.items = (res[0] || []).concat(res[1] || []);
+
+      // Making sure we reset edited files.
+      if (initialFile) {
+        this.editedFiles = [initialFile];
+      } else {
+        this.editedFiles = [];
+      }
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

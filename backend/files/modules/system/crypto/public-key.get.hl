@@ -2,7 +2,7 @@
 /*
  * Returns the public RSA key for the server.
  */
-.description:"Returns the server's public RSA key."
+.description:"Returns the server's public RSA key and meta data for the key as Hyperlambda"
 
 
 /*
@@ -25,8 +25,8 @@ crypto.fingerprint:x:@io.file.load
 unwrap:x:+/*
 return
    fingerprint:x:@crypto.fingerprint
-   public-key:x:@io.file.load
-   key-format:base64/DER
-   fingerprint-format:SHA256-fingerprint
-   key-type:RSA
+   publicKey:x:@io.file.load
+   keyFormat:base64/DER
+   fingerprintFormat:SHA256-fingerprint
+   keyType:RSA
 

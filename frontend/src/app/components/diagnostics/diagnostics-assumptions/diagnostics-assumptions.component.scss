@@ -1,0 +1,22 @@
+
+.wrapper {
+  margin:2rem;
+  min-height: 20rem;
+  .fill-width {
+    margin-top: 1rem;
+  }
+  .run-all {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
+  table {
+    tr {
+      td {
+        .details-sheet {
+          margin: 2rem 1rem 0 1rem;
+        }
+      }
+    }
+  }
+}

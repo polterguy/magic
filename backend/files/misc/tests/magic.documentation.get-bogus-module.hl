@@ -1,0 +1,9 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/system/evaluator/documentation?module=non-existing
+status:int:200
+response:@"{""result"":""404: Not Found""}"
+description:Assumes that retrieving documentation for non-existent module fails

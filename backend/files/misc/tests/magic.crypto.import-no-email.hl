@@ -1,0 +1,18 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:/magic/modules/system/crypto/import
+status:int:400
+description:Assumes that invoking endpoint without an email results in the correct error response and status code from backend
+payload:@"{
+  ""subject"": ""foo"",
+  ""domain"": ""foo"",
+  ""content"": ""foo""
+}"
+response:@"{
+  ""message"": ""Mandatory argument 'email' not given"",
+  ""field"": ""email""
+}"
+produces:application/json

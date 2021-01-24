@@ -1,0 +1,90 @@
+
+<div class="wrapper">
+
+  <button
+    *ngIf="cacheItems.length > 0"
+    mat-button
+    class="clear-button"
+    [matTooltip]="filterFormControl.value === '' ? 'Clear all items from cache' : 'Clear all filtered items from cache'"
+    (click)="deleteAll()">
+    Clear
+  </button>
+
+  <mat-form-field class="fill-width">
+
+    <mat-label>Filter ...</mat-label>
+
+    <input
+      matInput
+      placeholder="Filter ..."
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      role="button"
+      matTooltip="Clear filter"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
+
+  <table
+    mat-table
+    [dataSource]="cacheItems"
+    class="cache-items clickable"
+    multiTemplateDataRows>
+
+    <ng-container matColumnDef="key">
+      <td
+        mat-cell
+        *matCellDef="let el">{{el.key}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell class="mini-col button-col" *matCellDef="let el">
+        <button (click)="delete($event, el.key);" mat-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="show-details">
+      <td class="details" colspan="2" mat-cell *matCellDef="let el">
+        <pre>{{el.value}}</pre>
+        <button
+          mat-icon-button
+          matTooltip="Copy value to clipboard"
+          (click)="copyContent(el.value)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr
+      mat-row
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'cache-item-row'"
+      (click)="toggleDetails(el)"
+      *matRowDef="let el; columns: ['key', 'delete'];"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
+
+  </table>
+
+  <mat-paginator
+    #paginator
+    [class]="count > paginator.pageSize ? '' : 'invisible'"
+    [length]="count"
+    pageSize="5"
+    showFirstLastButtons="true"
+    (page)="paged()"
+    [pageSizeOptions]="[5, 10, 25, 50, 100]">
+  </mat-paginator>
+
+</div>

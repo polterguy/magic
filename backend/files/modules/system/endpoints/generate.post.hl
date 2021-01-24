@@ -2,7 +2,7 @@
 /*
  * Generates a frontend for you.
  */
-.description:"Generates a frontend for you, according to the given arguments. Notice, the [templateName] becomes a reference to which template/generator to use."
+.description:Generates a frontend for you according to the given arguments
 .arguments
    templateName:string
    apiUrl:string

@@ -1,0 +1,57 @@
+
+/*
+ * Downloads a folder from the server by packaging it into a zip file.
+ */
+.arguments
+   folder:string
+.description:Downloads a folder from the server by packaging it into a zip file
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Getting correct HTTP headers.
+ */
+strings.split:x:@.arguments/*/folder
+   .:/
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@strings.split/0/-
+   .:".zip\""
+response.headers.add
+   Content-Type:application/zip
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+
+
+/*
+ * Loading all files in specified folder recursively.
+ */
+unwrap:x:+/*
+signal:magic.io.file.load-recursively
+   .folder:x:@.arguments/*/folder
+
+
+/*
+ * Making sure we remove root parts of folders and files to get items
+ * in zip file having the correct relative path.
+ */
+for-each:x:@signal/*
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         get-value:x:@.arguments/*/folder
+         .:
+
+
+/*
+ * Creating a ZIP stream from return value of above load-recursively invocation,
+ * and returning to caller as raw stream object.
+ */
+add:x:+
+   get-nodes:x:@signal/*
+io.content.zip-stream
+return-value:x:-

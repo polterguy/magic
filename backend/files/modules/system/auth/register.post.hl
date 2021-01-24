@@ -1,0 +1,239 @@
+
+/*
+ * Registers a new user in the backend.
+ */
+.arguments
+   username:string
+   password:string
+   frontendUrl:string
+   backendUrl:string
+.description:Registers a new user in the system
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/password
+validators.mandatory:x:@.arguments/*/frontendUrl
+validators.mandatory:x:@.arguments/*/backendUrl
+validators.email:x:@.arguments/*/username
+validators.url:x:@.arguments/*/frontendUrl
+validators.url:x:@.arguments/*/backendUrl
+
+
+/*
+ * Verifying that Magic is configured to allow for users to register.
+ */
+config.get:"magic:auth:registration:allow"
+if
+   not
+      eq
+         get-value:x:@config.get
+         .:True
+   .lambda
+
+      /*
+       * Doing some basic logging and returning failure to caller.
+       */
+      log.error
+         strings.concat
+            .:"User tried to register at site, but registrations are turned OFF. Username was '"
+            get-value:x:@.arguments/*/username
+            .:"'. Please turn on registrations if you want to allow for this by setting 'allow-registrations' to true."
+      throw:Access denied
+         public:bool:true
+         status:int:401
+
+
+/*
+ * Hashing user's passsword.
+ */
+crypto.password.hash:x:@.arguments/*/password
+
+
+/*
+ * Inserts user into database.
+ */
+data.connect:magic
+
+   /*
+    * Making sure we catch primary key violations,
+    * and returns something sane to caller.
+    */
+   try
+
+      /*
+       * Inserting user into database.
+       */
+      data.create
+         table:users
+         values
+            username:x:@.arguments/*/username
+            password:x:@crypto.password.hash
+   .catch
+
+      /*
+       * Doing some basic logging, and returning result to caller.
+       */
+      log.info
+         strings.concat
+            .:"User tried to register consecutive times, username was '"
+            get-value:x:@.arguments/*/username
+            .:"'"
+      return
+         result:already-registered
+
+   /*
+    * Associating user with correct role.
+    */
+   data.create
+      table:users_roles
+      values
+         user:x:@.arguments/*/username
+         role:unconfirmed
+
+
+/*
+ * Response result to return to user, which varies according
+ * to whether or not an email was sent, etc.
+ */
+.result:success
+
+
+/*
+ * Sends an email to user asking him or her to confirm their email address.
+ *
+ * Notice, we only do this if we can find SMTP settings in our configuration.
+ */
+config.get:"magic:smtp:host"
+if
+   not
+      eq
+         get-value:x:@config.get
+         .
+   .lambda
+
+      /*
+       * We have some sort of SMTP settings section in our configuration.
+       * Loading up email template, which is modified and parametrized
+       * according to input arguments.
+       */
+      io.file.load:/modules/system/auth/templates/register.html
+
+      /*
+       * Hashing the JWT secret combined with the user's selected username,
+       * making sure we use the result as a 'secret' URL query
+       * parameter for the user's 'confirm email address' link.
+       */
+      .token
+      strings.concat
+         get-value:x:@.arguments/*/
+         config.get:"magic:auth.secret"
+      set-value:x:@.token
+         crypto.hash:x:@strings.concat
+
+      /*
+       * Dynamically building our reset password URL.
+       */
+      .url
+      set-value:x:@.url
+         strings.concat
+            get-value:x:@.arguments/*/frontendUrl
+            .:?token=
+            get-value:x:@.token
+            .:&username=
+            strings.url-encode:x:@.arguments/*/username
+            .:&url=
+            strings.url-encode:x:@.arguments/*/backendUrl
+
+      /*
+       * Performing substitution in email template.
+       */
+      .body
+      set-value:x:@.body
+         strings.replace:x:@io.file.load
+            .:{{url}}
+            get-value:x:@.url
+
+      /*
+       * Checking if site is configured such that users needs to
+       * be manually enabled, at which point we send the "confirm registration email"
+       * to the "confirm-email" value from the configuration settings,
+       * instead of the user's registered email address.
+       *
+       * Notice, by default this email is sent to registered user, but if
+       * overridden in the configuration to an explicit email, the explicit email
+       * address is used instead. Which allows for a specific user to manually
+       * having to enable users that are registering at the site for all practical
+       * concerns.
+       */
+      .recipient
+      set-value:x:@.recipient
+         config.get:"magic:auth:registration:confirm-email"
+      if
+         eq
+            get-value:x:@.recipient
+            .
+         .lambda
+
+            /*
+             * No "confirm-email" value found in configuration, hence sending
+             * "confirm user email" to user himself.
+             */
+            set-value:x:@.recipient
+               get-value:x:@.arguments/*/username
+
+            /*
+             * Making sure we communicate to caller that a
+             * confirm email address email was sent.
+             */
+            set-value:x:@.result
+               .:confirm-email-address-email-sent
+
+      else
+
+         /*
+          * Making sure we communicate to caller that a
+          * confirm email address email was sent.
+          */
+         set-value:x:@.result
+            .:email-sent-to-moderator
+
+      /*
+       * Now we can send an email to user.
+       */
+      unwrap:x:+/**
+      mail.smtp.send
+         message
+            to
+               .:x:@.recipient
+            subject:Thank you for registering
+            entity:text/html
+               content:x:@.body
+
+else
+
+   /*
+    * Creating a log entry explaining to root user that
+    * he or she needs to create some SMTP settings in order
+    * to fully take advantage of the system.
+    */
+   log.info:"Cannot send newly registered user an email asking him or her to confirm their email address, since no SMTP configuration settings was found. Please edit your configuration file according to how it's explained at https://github.com/polterguy/magic.lambda.mail to take fully advantage of these features."
+
+
+/*
+ * Logging the fact that we registered a new user.
+ */
+log.info
+   strings.concat
+      .:"Successfully registered a new user with username '"
+      get-value:x:@.arguments/*/username
+      .:"'"
+
+
+/*
+ * Returns success to caller.
+ */
+return-nodes
+   result:success

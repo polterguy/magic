@@ -1,0 +1,83 @@
+
+<mat-card>
+
+  <div
+    *ngIf="status === 'ok-to-register'"
+    class="wrapper">
+
+    <mat-form-field class="fill-width">
+      <mat-label>Email address ...</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [(ngModel)]="email">
+    </mat-form-field>
+
+    <mat-form-field class="fill-width">
+      <mat-label>Password ...</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        autocomplete="new-password"
+        [(ngModel)]="password">
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-pressed]="hide"
+        tabindex="-1">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field class="fill-width">
+      <mat-label>Repeat password ...</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        autocomplete="new-password"
+        [(ngModel)]="repeatPassword">
+    </mat-form-field>
+
+    <div class="button-strip">
+      <button
+        mat-button
+        (click)="register()">
+        Submit
+      </button>
+    </div>
+
+  </div>
+
+  <div
+    *ngIf="status === 'already-logged-in'"
+    class="feedback">
+    You are already registered and logged into system.
+  </div>
+
+  <div
+    *ngIf="status === 'already-registered'"
+    class="feedback">
+    This email address has already been registered in the system. Why not try to login?
+  </div>
+
+  <div
+    *ngIf="status === 'confirm-email-address-email-sent'"
+    class="feedback">
+    Please check your email inbox to verify your email address.
+  </div>
+
+  <div
+    *ngIf="status === 'email-sent-to-moderator'"
+    class="feedback">
+    Please wait for a moderator to accept you as a user in the system.
+  </div>
+
+  <div
+    *ngIf="status === 'success'"
+    class="feedback">
+    You have been successfully registered in the system.
+  </div>
+
+</mat-card>

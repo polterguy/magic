@@ -1,0 +1,12 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:/magic/modules/system/evaluator/evaluate
+payload:@"{
+  ""hyperlambda"": "".foo\r\nset-value:x:@.foo\r\n   .:howdy world""
+}"
+status:int:200
+response:@"{""result"":"".foo:howdy world\r\nset-value:x:@.foo\r\n   .:howdy world\r\n""}"
+description:Assumes that invoking a piece of Hyperlambda correctly executes the Hyperlambda

@@ -1,0 +1,29 @@
+
+<h1>Setup Magic</h1>
+
+<mat-horizontal-stepper
+  #stepper
+  *ngIf="status"
+  [selectedIndex]="getStepperSelectedIndex()">
+
+  <mat-step>
+    <ng-template matStepLabel>Setup authentication</ng-template>
+    <app-setup-auth></app-setup-auth>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Crudify Magic database</ng-template>
+    <app-crudify-database></app-crudify-database>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Create key pair</ng-template>
+    <app-create-keypair></app-create-keypair>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Run assumptions</ng-template>
+    <app-diagnostics-assumptions></app-diagnostics-assumptions>
+  </mat-step>
+
+</mat-horizontal-stepper>

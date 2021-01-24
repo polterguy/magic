@@ -1,0 +1,24 @@
+
+/*
+ * Returns count of all cache items matching optional filter to caller.
+ */
+.description:Returns the number of existing cache items in the system matching optional filter
+.arguments
+   filter:string
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Retrieves all cache items, and returns to caller.
+ */
+add:x:../*/cache.count
+   get-nodes:x:@.arguments/*
+cache.count
+unwrap:x:+/*
+return
+   count:x:@cache.count

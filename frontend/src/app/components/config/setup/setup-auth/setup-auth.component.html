@@ -1,0 +1,58 @@
+
+<mat-form-field class="form-field">
+
+  <mat-label>Database type</mat-label>
+  <mat-select
+    [(ngModel)]="selectedDatabaseType"
+    placeholder="Database type">
+    <mat-option
+      *ngFor="let idx of databaseTypes"
+      [value]="idx">{{idx}}</mat-option>
+  </mat-select>
+
+</mat-form-field>
+
+<mat-form-field
+  *ngIf="selectedDatabaseType"
+  class="form-field wide">
+
+  <mat-label>Connection string</mat-label>
+  <input
+    matInput
+    [(ngModel)]="config.magic.databases[selectedDatabaseType].generic">
+
+</mat-form-field>
+
+<br>
+
+<mat-form-field
+  *ngIf="selectedDatabaseType"
+  class="form-field">
+
+  <mat-label>Root password</mat-label>
+  <input
+    matInput
+    type="password"
+    [(ngModel)]="password">
+
+</mat-form-field>
+
+<mat-form-field
+  *ngIf="selectedDatabaseType"
+  class="form-field">
+
+  <mat-label>Repeat password</mat-label>
+  <input
+    matInput
+    type="password"
+    [(ngModel)]="passwordRepeat">
+
+</mat-form-field>
+
+<button
+  mat-button
+  [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
+  (click)="next()"
+  class="next">
+  Next
+</button>

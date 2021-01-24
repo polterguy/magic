@@ -3,49 +3,217 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-@import "~codemirror/lib/codemirror";
-@import "~codemirror/theme/mbo";
-@import "~codemirror/theme/bespin";
+@import '~codemirror/theme/mbo';
+@import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
-@import "~@danielmoncada/angular-datetime-picker/assets/style/picker.min.css";
 
-.content {
-  margin-bottom: 5rem;
+/*
+ * Misc classes.
+ */
+.warning {
+  color: #c88 !important;
 }
 
-.CodeMirror.cm-s-material {
-  height: 500px;
-  .cm-variable-2 {
-    color: #e7c2f5;
+.fill-width {
+  width: 100%;
+}
+
+.button-strip {
+  text-align: right;
+  margin-top: .5rem;
+  margin-bottom: .5rem;
+  mat-checkbox {
+    margin-right: .5rem;
   }
 }
 
-.image-container {
-  text-align: center;
-  margin-top: 4rem;
-  margin-bottom: 4rem;
+button.create-button {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  display: block;
+}
+
+.invisible {
+  display: none !important;
+}
+
+.word-break {
+  word-break: break-word;
+}
+
+.button {
+  cursor: pointer;
+}
+
+.mat-dialog-actions {
+  float: right;
+}
+
+a {
+  color: rgb(128, 128, 255);
+  text-decoration: none;
+}
+
+/*
+ * Material table styles.
+ */
+table.clickable {
+  width: 100%;
+  background-color: transparent;
+  thead {
+    tr {
+      th {
+        color: rgb(125,125,125);
+        font-weight: bold;
+        white-space: nowrap;
+        padding-right: 1rem;
+      }
+    }
+  }
+  tbody {
+    tr {
+      background-color: rgba(0,0,0,0);
+      transition: background-color .1s ease-in;
+      td {
+        vertical-align: top;
+        padding: 1rem 1rem 1rem 0;
+        color: rgb(245,245,245);
+        cursor: pointer;
+        user-select: none;
+      }
+    }
+    tr:hover {
+      background-color: rgba(0,0,0,.1);
+      transition: background-color .1s ease-in;
+    }
+    td.mini-col {
+      width: 5px;
+      white-space: nowrap;
+    }
+    td.icon-col {
+      width: 20px;
+      height: 20px;
+      padding-top: 3px;
+      padding-bottom: 0;
+      vertical-align: middle;
+    }
+    td.button-col {
+      width: 30px;
+      padding-top: 3px;
+      padding-bottom: 0;
+    }
+    tr.selected {
+      background-color: rgba(255,255,255,.1);
+    }
+    tr.details {
+      background-color: rgba(255,255,255,.05);
+      td {
+        cursor: default;
+        user-select: unset;
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          margin-top: -50px;
+        }
+        100% {
+          opacity: 1;
+          margin-top: inherit;
+        }
+      }
+      td>div {
+        animation-name: fadeIn;
+        animation-duration: .2s;
+        animation-timing-function: ease-in;
+        animation-fill-mode: forwards;
+      }
+    }
+  }
+}
+
+mat-label.dark {
+  color: rgb(55,55,55);
+}
+
+mat-tab-group .mat-tab-label .mat-tab-label-content {
+  color: #fff;
+}
+
+mat-paginator.mat-paginator {
+  background-color: transparent;
+  color: rgb(245,245,245);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+mat-label {
+  color: rgb(245,245,245);
+}
+
+mat-select {
+  .mat-select-value-text {
+    color: rgb(245,245,245);
+  }
+}
+
+mat-select.dark {
+  .mat-select-value-text {
+    color: rgb(55,55,55);
+  }
+}
+
+mat-card.mat-card {
+  color: rgb(245, 245, 245);
+  background-color: rgb(45,45,45);
   padding: 3rem;
-  border-radius: .5rem;
-  box-shadow: 3px 3px 5px rgba(0,0,0,.7);
-  box-sizing: border-box;
-  img {
-    max-width: 100%;
-    width: 100%;
+}
+
+/*
+ * Emphasized Material card, to make important information "pop out".
+ */
+mat-card.emphasized {
+  position: relative;
+  background-color: #ccc;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+/*
+ * Generic close button style.
+ */
+.close {
+  position: absolute !important;
+  top: .5rem;
+  right: .5rem;
+}
+
+mat-horizontal-stepper.mat-stepper-horizontal,
+mat-horizontal-stepper.mat-stepper-vertical {
+  background-color: rgb(45,45,45);
+  mat-step-header {
+    .mat-step-text-label {
+      color: rgb(245, 245, 245);
+    }
   }
 }
 
-.large .CodeMirror {
-  height: 500px;
+input.mat-input-element {
+  color:#eee;
 }
 
-.smaller .CodeMirror {
-  height: 300px;
+textarea.mat-input-element:disabled {
+  color: #aaa;
 }
 
-.reactor .CodeMirror {
-  height: 150px;
+.mat-dialog-title, .mat-dialog-content {
+  input {
+    color: #000;
+  }
 }
 
+// CodeMirror classes, specifically for autocomplete or hints plugin.
 .CodeMirror-hints {
   position: absolute;
   z-index: 10000;
@@ -57,8 +225,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
   box-shadow: 2px 3px 5px rgba(0,0,0,.2);
   border-radius: 3px;
-  border: 1px solid silver;
-  background: white;
+  color: rgb(245,245,245);
+  border: 1px solid rgb(0,0,0);
+  background-color: rgb(55,55,55);
   font-size: 90%;
   font-family: monospace;
   max-height: 20em;
@@ -70,52 +239,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   padding: 0 4px;
   border-radius: 2px;
   white-space: pre;
-  color: black;
   cursor: pointer;
 }
 
 li.CodeMirror-hint-active {
   background: #08f;
   color: white;
-}
-
-@keyframes fadeInOpacity {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-
-.obscurer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,.85);
-  z-index: 5;
-  animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: .5s;
-  h3 {
-    margin-top: 10rem;
-    font-size: 2rem;
-  }
-  h4 {
-    margin-top: 2rem;
-    font-size: 1.5rem;
-  }
-  h3, h4 {
-    text-align: center;
-    color: whitesmoke;
-  }
-  .ajax-wait {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1000;
-  }
 }

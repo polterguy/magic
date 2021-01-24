@@ -1,0 +1,31 @@
+
+/*
+ * Saves the specified configuration object to appsettings.json.
+ */
+.description:Saves the specified configuration, overwriting existing configuration
+
+
+/*
+ * Ensuring user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Converting input arguments to JSON.
+ */
+lambda2json:x:@.arguments/*
+   format:true
+
+
+/*
+ * Saving the specified config object to the 'appsettings.json' file.
+ */
+config.save:x:@lambda2json
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

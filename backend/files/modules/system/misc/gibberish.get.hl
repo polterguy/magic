@@ -1,0 +1,24 @@
+
+/*
+ * Returns Cryptographically Secure random text (gibberish) to caller according to arguments specified.
+ */
+.arguments
+   min:long
+   max:long
+.description:Returns some Cryptographically Secure randomly generated text to caller according to specified arguments
+
+
+/*
+ * Generating gibberish text.
+ */
+crypto.random
+   min:x:@.arguments/*/min
+   max:x:@.arguments/*/max
+
+
+/*
+ * Generating gibberish text.
+ */
+unwrap:x:+/*
+return
+   result:x:@crypto.random

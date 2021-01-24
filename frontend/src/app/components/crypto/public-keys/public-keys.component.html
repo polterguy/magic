@@ -1,0 +1,170 @@
+
+<button
+  mat-icon-button
+  matTooltip="Import key"
+  class="create-button"
+  (click)="import()">
+  <mat-icon aria-label="Imports a public key">add_box</mat-icon>
+</button>
+
+<mat-form-field class="fill-width">
+
+  <mat-label>Filter ...</mat-label>
+
+  <input
+    matInput
+    placeholder="Filter ..."
+    type="text"
+    autocomplete="off"
+    [formControl]="filterFormControl">
+
+  <mat-icon
+    matSuffix
+    *ngIf="filterFormControl.value.trim() !== ''"
+    class="button"
+    role="button"
+    matTooltip="Clear filter"
+    (click)="clearFilter()">clear</mat-icon>
+
+</mat-form-field>
+
+<table
+  mat-table
+  [dataSource]="publicKeys"
+  class="keys clickable"
+  multiTemplateDataRows>
+
+  <ng-container matColumnDef="identity">
+    <td mat-cell *matCellDef="let el">{{el.identity}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="imported">
+    <td
+      mat-cell
+      class="mini-col"
+      matTooltip="Key was imported"
+      *matCellDef="let el">{{el.key.imported | since}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="invocations">
+    <td
+      mat-cell
+      class="mini-col button-col"
+      *matCellDef="let el">
+      <button
+        mat-icon-button
+        matTooltip="Invocations signed by key"
+        (click)="invocations(el)">
+        <mat-icon>cached</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="delete">
+    <td mat-cell class="mini-col button-col" *matCellDef="let el">
+      <button
+        mat-icon-button
+        matTooltip="Delete"
+        (click)="delete($event, el.key)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="show-details">
+
+    <td
+      mat-cell
+      *matCellDef="let el"
+      colspan="4">
+
+      <div *ngIf="shouldDisplayDetails(el.key)">
+
+        <div class="crypto-form-fields">
+          <mat-form-field class="crypto-form-field">
+            <mat-label>Subject</mat-label>
+            <input
+              matInput
+              placeholder="Subject"
+              type="text"
+              [(ngModel)]="el.key.subject"
+              autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field class="crypto-form-field">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              placeholder="Email"
+              type="text"
+              [(ngModel)]="el.key.email"
+              autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field class="crypto-form-field">
+            <mat-label>Domain</mat-label>
+            <input
+              matInput
+              placeholder="Domain"
+              type="text"
+              [(ngModel)]="el.key.domain"
+              autocomplete="off">
+          </mat-form-field>
+      
+        </div>
+
+        <mat-form-field class="fill-width">
+        <textarea
+          matInput
+          class="crypto-key"
+          matTooltip="Public key content"
+          [(ngModel)]="el.key.content"
+          rows="7"></textarea>
+        </mat-form-field>
+
+        <div matTooltip="Fingerprint of key" class="fingerprint">{{el.key.fingerprint}}</div>
+
+        <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
+
+        <div class="button-strip">
+
+          <mat-checkbox
+            class="crypto-enabled"
+            matTooltip="Whether or not the key can invoke your server"
+            (change)="enabledChanged(el.key)"
+            [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
+
+          <button
+            mat-button
+            (click)="save(el)">Save</button>
+
+        </div>
+
+      </div>
+
+    </td>
+
+  </ng-container>
+
+  <tr
+    mat-row
+    [ngClass]="(shouldDisplayDetails(el.key) ? 'selected ' : '') + 'key-row'"
+    (click)="toggleDetails(el.key)"
+    *matRowDef="let el; columns: displayedColumns;"></tr>
+
+  <tr
+    mat-row
+    [ngClass]="shouldDisplayDetails(el.key) ? 'details' : 'invisible'"
+    *matRowDef="let el; columns: ['show-details'];"></tr>
+
+</table>
+
+<mat-paginator
+  #paginator
+  [class]="count > 10 ? '' : 'invisible'"
+  [length]="count"
+  pageSize="10"
+  showFirstLastButtons="true"
+  (page)="paged($event)"
+  [pageSizeOptions]="[5,10,25,50]">
+</mat-paginator>

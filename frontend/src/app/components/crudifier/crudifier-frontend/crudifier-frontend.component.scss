@@ -1,0 +1,39 @@
+
+.form-wrapper {
+  margin-bottom: 1rem;
+  .form-field {
+    width: 10rem;
+    margin-right: 1rem;
+  }
+  .form-field-double {
+    width: 20rem;
+  }
+  mat-form-field {
+    margin-right: 1rem;
+  }
+  .documentation {
+    margin-top: 3rem;
+  }
+  mat-chip-list {
+    display: block;
+    margin-top: 1rem;
+    mat-chip {
+      padding-right: 2.5rem;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      min-height: 25px;
+    }
+  }
+}
+
+table {
+  margin-bottom: 2rem;
+}
+
+::ng-deep.image-container {
+  img {
+    width: auto;
+    max-width: 100%;
+    display: block;
+  }
+}

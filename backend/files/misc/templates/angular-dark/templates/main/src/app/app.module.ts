@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -36,13 +37,8 @@ import { LoaderInterceptor } from './services/loader-interceptor';
 
 // Custom common components.
 import { HomeComponent } from './components/home/home.component';
-import { AuthComponent } from './components/auth/auth.component';
 import { LoginComponent } from './components/app/modals/login.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { SelectorComponent } from './helpers/selector/selector.component';
-import { EditUserDialogComponent } from './components/auth/modals/edit-user-dialog';
-import { CreateRoleDialogComponent } from './components/auth/modals/create-role-dialog';
-import { CreateUserDialogComponent } from './components/auth/modals/create-user-dialog';
 
 // Generated CRUD components here.
 [[imports]]
@@ -52,14 +48,9 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
   declarations: [
     AppComponent,
     HomeComponent,
-    AuthComponent,
     LoginComponent,
     FormatDatePipe,
-    ProfileComponent,
     SelectorComponent,
-    EditUserDialogComponent,
-    CreateRoleDialogComponent,
-    CreateUserDialogComponent,
 
 // Generated CRUD components here.
 [[module-declarations]]  ],
@@ -82,6 +73,7 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
     MatInputModule,
     MatTableModule,
     MatButtonModule,
+    MatToolbarModule,
     MatSelectModule,
     MatDialogModule,
     MatSidenavModule,
@@ -109,9 +101,6 @@ import { CreateUserDialogComponent } from './components/auth/modals/create-user-
   bootstrap: [AppComponent],
   entryComponents: [
     LoginComponent,
-    EditUserDialogComponent,
-    CreateRoleDialogComponent,
-    CreateUserDialogComponent,
 
 // Generated edit/create modal dialogues here.
 [[entry-components]]  ]

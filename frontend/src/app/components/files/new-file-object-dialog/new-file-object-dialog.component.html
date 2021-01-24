@@ -1,0 +1,25 @@
+
+<h1 mat-dialog-title>{{data.isFolder ? 'New folder' : 'New file'}}</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+
+    <input
+      type="text"
+      [placeholder]="data.isFolder ? 'Folder name' : 'File name'"
+      matInput
+      autocomplete="off"
+      [(ngModel)]="data.path">
+    </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <button
+    mat-button
+    [disabled]="!pathValid()"
+    [mat-dialog-close]="data">Create</button>
+
+</div>

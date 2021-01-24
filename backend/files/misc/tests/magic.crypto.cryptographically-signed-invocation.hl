@@ -1,0 +1,58 @@
+
+/*
+ * Manually created assumption that verifies we can invoke 'self'
+ * using a cryptographically signed invocation.
+ *
+ * Notice!
+ *
+ * If this assumption fails, you'll need to manually import your server key
+ * in the crypto menu, and enable it. If you don't care about cryptographically
+ * signed invocations, you can also just delete the assumption to avoid it cluttering
+ * your log.
+ */
+description:Assumes that invoking a cryptographically signed endpoint (localhost) works as expected
+.lambda
+
+   /*
+    * Invoking self as a cryptographically signed invocation, to
+    * make sure cryptographically signed invocations works, and that
+    * we have imported our own server key as a 'client key'.
+    *
+    * First we create a unique request ID.
+    */
+   set-value:x:../*/signal/*/.lambda/*/.request-id
+      strings.concat
+         .:test.
+         crypto.random
+            min:50
+            max:50
+
+   /*
+    * Then we invoke ourselves using a cryptographically signed invocation.
+    */
+   signal:magic.crypto.http.eval
+      url:"http://localhost:55247/magic/modules/system/crypto/eval-id"
+      .lambda
+
+         /*
+          * The request is needs to be a unique value, on a per
+          * request level
+          */
+         .request-id
+         return:success
+
+   /*
+    * Assuming result of above invocation is success.
+    */
+   if
+      or
+         not
+            eq
+               get-value:x:@signal
+               .:int:200
+         not
+            eq
+               get-value:x:@signal/*/content
+               .:success
+      .lambda
+         throw:Invocation did not return the assumed result

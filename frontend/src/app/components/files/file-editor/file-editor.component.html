@@ -1,0 +1,26 @@
+
+<ngx-codemirror
+  *ngIf="content"
+  [(ngModel)]="content"
+  [options]="options">
+</ngx-codemirror>
+
+<div
+  *ngIf="!content"
+  class="no-editor">
+  You don't have a registered editor for files of this type. Download the file and edit it locally if you want to edit it.
+</div>
+
+<div
+  *ngIf="content"
+  class="button-strip">
+
+  <button
+    mat-icon-button
+    class="save-button"
+    matTooltip="Save file"
+    (click)="save()">
+    <mat-icon>save</mat-icon>
+  </button>
+
+</div>

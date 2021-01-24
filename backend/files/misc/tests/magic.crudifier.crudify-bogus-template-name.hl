@@ -1,0 +1,27 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:post
+url:/magic/modules/system/crudifier/crudify
+status:int:400
+description:Assumes that invoking endpoint with a bogus template value results in the correct error response and status code from backend
+payload:@"{
+  ""databaseType"": ""mysql"",
+  ""moduleName"": ""foo"",
+  ""database"": ""foo"",
+  ""table"": ""foo"",
+  ""moduleUrl"": ""foo"",
+  ""returnId"": true,
+  ""template"": ""non-existent-template"",
+  ""verb"": ""get"",
+  ""auth"": ""foo"",
+  ""log"": ""foo"",
+  ""overwrite"": true,
+  ""validators"": ""foo""
+}"
+response:@"{
+  ""message"": ""'non-existent-template' is not a valid enum of ['/modules/system/crudifier/templates/crud.template.post.hl', '/modules/system/crudifier/templates/crud.template.get.hl', '/modules/system/crudifier/templates/crud.template.put.hl', '/modules/system/crudifier/templates/crud.template.delete.hl']"",
+  ""field"": ""template""
+}"
+produces:application/json

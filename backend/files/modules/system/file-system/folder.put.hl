@@ -4,7 +4,7 @@
  */
 .arguments
    folder:string
-.description:"Creates the specified [folder] folder."
+.description:Creates the specified folder on the server
 
 
 /*
@@ -17,3 +17,6 @@ auth.ticket.verify:root
  * Creates the specified folder.
  */
 io.folder.create:x:@.arguments/*/folder
+
+return
+   result:success

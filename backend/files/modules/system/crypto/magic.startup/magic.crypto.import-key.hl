@@ -12,6 +12,19 @@ slots.create:magic.crypto.import-key
 
 
    /*
+    * Checking if caller supplied en enabled argument,
+    * at which point we use it, instead of defaulting its
+    * value to false.
+    */
+   .enabled:bool:false
+   if
+      exists:x:@.arguments/*/enabled
+      .lambda
+         set-value:x:@.enabled
+            get-value:x:@.arguments/*/enabled
+
+
+   /*
     * Importing key into database.
     */
    data.connect:magic
@@ -24,7 +37,7 @@ slots.create:magic.crypto.import-key
             type:RSA
             fingerprint:x:@crypto.fingerprint
             content:x:@.arguments/*/content
-            enabled:bool:false
+            enabled:x:@.enabled
             vocabulary:@"add
 return
 get-nodes

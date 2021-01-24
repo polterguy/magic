@@ -1,0 +1,8 @@
+
+/*
+ * Automatically generated assumption test.
+ */
+verb:get
+url:/magic/modules/system/config/list-cache
+status:int:200
+description:Assumes that listing cache items succeeds

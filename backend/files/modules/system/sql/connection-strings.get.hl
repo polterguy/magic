@@ -5,7 +5,7 @@
  */
 .arguments
    databaseType:string
-.description:"Returns all connection strings in your installation, according to the specified arguments."
+.description:Returns all connection strings in your installation for the specified database type
 
 
 /*

@@ -4,6 +4,7 @@
  *
  * Arguments
  *
+ * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
@@ -13,7 +14,26 @@ slots.create:magic.db.mysql.columns
    /*
     * Opens up our connection
     */
-   mysql.connect:x:@.arguments/*/database
+   .connection:[information_schema]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   mysql.connect:x:@.connection
 
 
       /*

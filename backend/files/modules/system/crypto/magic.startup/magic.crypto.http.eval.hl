@@ -91,13 +91,21 @@ slots.create:magic.crypto.http.eval
    /*
     * Making sure the response was signed with the key
     * associated with the domain we sent the request to.
+    *
+    * Notice, this little bugger makes sure the HTTP scheme also matches,
+    * to prevent successful invocations towards insecure endpoint, with a key
+    * configrued for only being used towards TLS secured endpoints.
     */
    strings.split:x:@.arguments/*/url
       .:/
+   strings.concat
+      get-value:x:@strings.split/0
+      .:"//"
+      get-value:x:@strings.split/1
    if
       not
          eq
-            get-value:x:@strings.split/1
+            get-value:x:@strings.concat
             get-value:x:@signal/*/domain
       .lambda
 
