@@ -1,124 +1,51 @@
 
-.files-wrapper {
-    h3 {
-        margin-bottom: 3rem;
+.current-folder {
+  position: absolute;
+  top: 1rem;
+  left: 3rem;
+}
+
+.up-level {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+}
+
+table.files {
+  table-layout: fixed;
+  tr {
+    td {
+      .file-details {
+        margin: 1rem .25rem .5rem .25rem;
+      }
+      .folder-icon {
+        color:rgb(189, 115, 18);
+      }
     }
-    padding:2rem 5rem 2rem 5rem;
-    position: relative;
-    .files-grid-wrapper {
-        position: relative;
-        padding: 5rem;
-        margin-top: 2rem;
-        .safe-mode-button {
-            position: absolute;
-            top:2rem;
-            left: 2rem;
-        }
-        .up-one-level-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-        }
-        .bottom-toolbar {
-            position: absolute;
-            bottom: .5rem;
-            right: .5rem;
-        }
-        table {
-            table-layout: fixed;
-            width: 100%;
-            caption {
-                margin-bottom: 2rem;
-                font-weight: bold;
-            }
-            tr:not(.editor-visible) {
-                td {
-                    user-select: none;
-                }
-                td:nth-child(1), th:nth-child(1) {
-                    width: auto;
-                }
-                td:nth-child(1):hover {
-                    cursor: pointer;
-                }
-                td:nth-child(2), th:nth-child(2) {
-                    width: 80px;
-                }
-                td:nth-child(3), th:nth-child(3) {
-                    width: 80px;
-                    text-align: right;
-                }
-            }
-            tr.mat-row:hover:not(.editor-visible) {
-                background-color: rgba(0,0,0,.1);
-            }
-            tr.editor-visible {
-                td {
-                    width: auto;
-                    .edit-file {
-                        padding: 2rem 0 2rem 0;
-                    }
-                }
-            }
-            tr.folder-row {
-                font-weight: bold;
-            }
-            tr.selected-file {
-                font-style: italic;
-                td {
-                    border-bottom-color: transparent;
-                }
-            }
-            tr.danger td {
-                color: rgb(128,128,128);
-                button:not([disabled]) {
-                    color: rgb(0,0,0);
-                }
-            }
-            tr.semi-danger td {
-                color: inherit;
-            }
-            tr.invisible {
-                display: none;
-            }
-        }
-    }
+  }
 }
 
-.fill-width {
-    width: 100%;
-}
-
-::ng-deep .error-snackbar {
-    background:rgb(255,100,100);
-    color:rgb(0,0,0);
-}
-
-.file-toolbar {
-    text-align: right;
+.button-strip {
+  margin-top: 2rem;
+  margin-bottom: -2rem !important;
+  position: relative;
 }
 
 .file-button {
-    float:left;
-    position:absolute;
-    z-index:-1;
-    margin-left: -100px;
+  position:absolute;
+  margin-left: -45px;
 }
 
 .invisible-file-element {
-    opacity: 0;
-    font-size: 0;
-    width: 90px;
-    height: 37px;
-    float: left; 
+  margin-left: -45px;
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  font-size: 0;
+  width: 40px;
+  height: 40px;
 }
 
 .invisible-file-element:hover {
-    cursor: pointer;
-}
-
-.safe-mode-checkbox {
-    position: absolute;
-    top: 3rem;
-    left: 3rem;
+  cursor: pointer;
 }

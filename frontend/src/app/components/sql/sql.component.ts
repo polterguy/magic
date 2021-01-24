@@ -1,31 +1,32 @@
 
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
+
+// Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { LegendSqlDialogComponent } from './modals/legend-sql-dialog';
-import { ExportDialogComponent } from './modals/export-dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SqlService } from 'src/app/services/sql-service';
-import { FileService } from 'src/app/services/file-service';
-import { TicketService } from 'src/app/services/ticket-service';
-import { GetSaveFilenameDialogComponent } from './modals/get-save-filename';
+import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 
-// Helper class for SQL autocomplete
-class Column {
-  name: string;
-}
+// Utility imports.
+import { saveAs } from 'file-saver';
 
-// Helper class for SQL autocomplete
-class Table {
-  name: string;
-  columns: Column[];
-}
+// Application specific imports.
+import { FeedbackService } from '../../services/feedback.service';
+import { SqlService } from 'src/app/components/sql/services/sql.service';
+import { Databases } from 'src/app/components/sql/models/databases.model';
+import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
+import { ConfigService } from 'src/app/components/config/services/config.service';
+import { DefaultDatabaseType } from '../config/models/default-database-type.model';
+import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 
-class Database {
-  name: string;
-  tables: Table[];
-}
+// CodeMirror options.
+import sql from '../codemirror/options/sql.json'
 
+/**
+ * SQL component allowing user to execute arbitrary SQL statements towards his database.
+ */
 @Component({
   selector: 'app-sql',
   templateUrl: './sql.component.html',
@@ -33,220 +34,481 @@ class Database {
 })
 export class SqlComponent implements OnInit {
 
-  public isFetching = false;
-  public savedFiles = [];
-  public selectedScript: string;
-  public selectedFilename: string = null;
-  public result: any[] = null;
-  public databaseTypes = ['mysql', 'mssql', 'mssql-batch'];
-  public selectedDatabaseType = 'mysql';
-  public sqlText = '';
-  public databases: Database[] = null;
-  public selectedDatabase: Database = null;
-  public connectionStrings: string[] = [];
-  public connectionString: string = null;
-  public hintOptions: any;
-  public hasConnection = true;
-  public safeMode = true;
+  // List of items we're viewing details of.
+  private displayDetails: any[] = [];
 
+  // Filename as chosen during load SQL snippet or save SQL snippet.
+  private filename: string;
+
+  // Database declaration as returned from server
+  private databaseDeclaration: any = null;
+
+  /**
+   * Database types the user can select during configuration of system.
+   */
+  public databaseTypes: any[] = [
+    {type: 'mysql', name: 'MySQL'},
+    {type: 'mssql', name: 'Microsoft SQL Server'},
+  ];
+
+  /**
+   * All existing connection strings for selected database type.
+   */
+  public connectionStrings: string[] = [];
+
+  /**
+   * Databases that exists in database type/connection string instance.
+   */
+  public databases: string[] = [];
+
+  /**
+   * Input SQL component model and options.
+   */
+  public input: Model = null;
+
+  /**
+   * Only relevant for mssql database type, and if true, executes SQL
+   * as a batch execution.
+   */
+  public isBatch: boolean = false;
+
+  /**
+   * If true prevents returning more than 200 records from backend to avoid
+   * exhausting server.
+   */
+  public safeMode: boolean = true;
+
+  /**
+   * Result of invocation towards backend.
+   */
+  public result: any[][] = [];
+
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param configService Needed to read configuration settings, more specifically default database config setting
+   * @param sqlService Needed to be able to execute SQL towards backend
+   * @param dialog Needed to be able to show Load SQL snippet dialog
+   * @param messageService Message service used to message other components
+   */
   constructor(
+    private feedbackService: FeedbackService,
+    private configService: ConfigService,
     private sqlService: SqlService,
-    private fileService: FileService,
-    private ticketService: TicketService,
-    private snackBar: MatSnackBar,
+    private clipboard: Clipboard,
     private dialog: MatDialog) { }
 
-  ngOnInit() {
-    this.selectedDatabaseType = this.ticketService.getDefaultDatabaseType();
-    if (this.selectedDatabaseType !== null) {
-      this.getConnectionString();
-    }
-    this.getFiles();
-  }
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
 
-  getConnectionString() {
-    this.isFetching = true;
-    const databaseType = this.selectedDatabaseType === 'mssql-batch' ? 'mssql' : this.selectedDatabaseType;
-    this.sqlService.getConnectionStrings(databaseType).subscribe(res => {
-      const tmp: string[] = [];
-      for (var idx in res) {
-        tmp.push(idx);
-      }
-      this.connectionString = tmp[0];
-      this.connectionStrings = tmp;
-      this.isFetching = false;
-      this.getDatabases();
-    }, error => {
-      this.showHttpError(error);
-      this.isFetching = false;
-      this.hasConnection = false;
-    });
-  }
+    // Retrieving default database type from backend.
+    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
 
-  getDatabases() {
-    this.isFetching = true;
-    const databaseType = this.selectedDatabaseType === 'mssql-batch' ? 'mssql' : this.selectedDatabaseType;
-    this.sqlService.getDatabases(databaseType, this.connectionString).subscribe(res => {
-      this.databases = res.databases;
-      if (this.databases.length > 0) {
-        this.selectedDatabase = this.databases[0];
-        this.initializeSqlHints();
-      }
-      this.isFetching = false;
-      this.hasConnection = true;
-    }, error => {
-      this.showHttpError(error);
-      this.isFetching = false;
-      this.hasConnection = false;
-    });
-  }
+      // Retrieving connection strings for default database type.
+      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
 
-  connectionStringChanged(e: MatSelectChange) {
-    this.getDatabases();
-  }
+        // Retrieving databases existing in connection string instance.
+        this.getDatabases(defaultDatabaseType.default, connectionStrings[0], (databases: any) => {
 
-  databaseChanged(e: MatSelectChange) {
-    this.initializeSqlHints();
-  }
+          // Storing database declaration such that user can change active database without having to roundtrip to server.
+          this.databaseDeclaration = databases;
 
-  initializeSqlHints() {
-    const tmpHints = {};
-    this.selectedDatabase.tables.forEach(idx => {
-      const columns = idx.columns.map(x => {
-        return x.name;
-      });
-      tmpHints[idx.name] = columns;
-    });
-    this.hintOptions = {
-      tables: tmpHints
-    };
-  }
-
-  getFiles() {
-    this.sqlService.getSavedFiles(this.selectedDatabaseType).subscribe(res => {
-      if (res === null || res.length === 0) {
-        this.savedFiles = [];
-        return;
-      }
-      this.savedFiles = res
-        .filter(x => x.endsWith('.sql'))
-        .map(x => x.substr(x.lastIndexOf('/') + 1));
-    });
-  }
-
-  databaseTypeChanged(e: MatSelectChange) {
-    this.isFetching = true;
-    this.getFiles();
-    this.getDatabases();
-  }
-
-  fileChanged(e: MatSelectChange) {
-    this.selectedFilename = this.selectedScript;
-    this.fileService.getFileContent(`/misc/${this.selectedDatabaseType}/templates/${e.value}`).subscribe(res => {
-      this.sqlText = res;
-      this.selectedScript = null;
-    });
-  }
-
-  getCodeMirrorOptions() {
-    return {
-      mode: 'text/x-mysql',
-      indentWithTabs: true,
-      smartIndent: true,
-      tabSize: 3,
-      indentUnit: 3,
-      lineNumbers: true,
-      matchBrackets: true,
-      autoFocus: true,
-      extraKeys: {
-        'Shift-Tab': 'indentLess',
-        Tab: 'indentMore',
-        'Ctrl-Space': 'autocomplete',
-        'Alt-M': (cm: any) => {
-          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-        },
-        Esc: (cm: any) => {
-          if (cm.getOption('fullScreen')) {
-            cm.setOption('fullScreen', false);
+          // Transforming from HTTP result to object(s) expected by CodeMirror.
+          const tables = {};
+          for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
+            tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
           }
-        },
-        F5: (cm: any) => {
-          const element = document.getElementById('executeButton') as HTMLElement;
-          element.click();
-        }
-      },
-      hintOptions: this.hintOptions,
-      theme: 'mbo',
-      height: '250px',
-    };
-  }
 
-  save() {
-    const dialogRef = this.dialog.open(GetSaveFilenameDialogComponent, {
-      width: '500px',
-      data: {
-        filename: this.selectedFilename,
-        existingFiles: this.savedFiles,
-      }
-    });
+          /*
+           * Initialising input now that we know the default database type, connection string,
+           * and databases that exists in connection string.
+           */
+          this.connectionStrings = connectionStrings;
+          this.databases = databases.databases.map((x: any) => x.name);
+          this.input = {
+            databaseType: defaultDatabaseType.default,
+            connectionString: connectionStrings.filter(x => x === 'generic')[0],
+            database: this.databases.filter(x => x === 'magic')[0],
+            options: sql,
+            sql: '',
+          };
+          this.input.options.hintOptions = {
+            tables: tables,
+          };
 
-    dialogRef.afterClosed().subscribe(filename => {
-      if (filename !== undefined) {
-        if (filename.indexOf('.') === -1) {
-          filename = filename + '.sql';
-        }
-        this.sqlService.saveFile(this.selectedDatabaseType, filename, this.sqlText).subscribe(res => {
-          this.showHttpSuccess('File successfully saved');
-          this.getFiles();
+          // Turning on auto focus.
+          this.input.options.autofocus = true;
+
+          // Associating ALT+M with fullscreen toggling of the editor instance.
+          this.input.options.extraKeys['Alt-M'] = (cm: any) => {
+            cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+          };
+
+          // Associating ALT+L with the load snippet button.
+          this.input.options.extraKeys['Alt-L'] = (cm: any) => {
+            (document.getElementById('loadButton') as HTMLElement).click();
+          };
+
+          // Associating ALT+S with the save snippet button.
+          this.input.options.extraKeys['Alt-S'] = (cm: any) => {
+            (document.getElementById('saveButton') as HTMLElement).click();
+          };
+
+          // Making sure we attach the F5 button to execute SQL.
+          this.input.options.extraKeys.F5 = () => {
+            (document.getElementById('executeButton') as HTMLElement).click();
+          };
         });
+      });
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when database type is changed.
+   */
+  public databaseTypeChanged() {
+
+    // Retrieving all connetion strings for selected database type.
+    this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
+
+      // Resetting selected connection string and selected database.
+      this.connectionStrings = connectionStrings;
+      this.input.connectionString = null;
+      this.input.database = null;
+      this.input.options.hintOptions.tables = [];
+      this.databases = [];
+
+      // Checking if this is anything but 'mssql', and if so, unchecking batch.
+      if (this.input.databaseType !== 'mssql') {
+        this.isBatch = false;
       }
     });
   }
 
-  evaluate() {
-    this.sqlService.evaluate(
-      this.sqlText,
-      this.selectedDatabaseType,
-      this.selectedDatabase.name,
-      this.safeMode).subscribe((res) => {
-      if (!res || res.length === 0) {
-        this.showHttpSuccess('SQL executed successfully, but there was no result');
-      } else if (res.length === 200) {
-        this.showHttpSuccess('Only 1000 items were returned to avoid exhausting server');
+  /**
+   * Invoked when connection string is changed.
+   */
+  public connectionStringChanged() {
+
+    // Retrieving all databases for selected database type and connection string.
+    this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+
+      // Making sure connection string has at least one database.
+      if (databases.databases && databases.databases.length > 0) {
+
+        // Setting databases and hint options.
+        this.databases = databases.databases.map((x: any) => x.name);
+
+        // Storing database declaration such that user can change active database without having to roundtrip to server.
+        this.databaseDeclaration = databases;
+
+        // Resetting other information, selecting first database by default.
+        this.input.database = this.databases[0];
+        this.databaseChanged();
+  
       } else {
-        this.showHttpSuccess('SQL executed successfully');
+
+        // No databases in active connection string.
+        this.databases = [];
+        this.input.database = null;
+        this.input.options.hintOptions.tables = [];
       }
-      this.result = res;
-    }, (error) => {
-      this.showHttpError(error);
     });
   }
 
-  showHttpError(error: any) {
-    this.snackBar.open(error.error.message, 'Close', {
-      duration: 10000,
-      panelClass: ['error-snackbar'],
+  /**
+   * Invoked when active database changes.
+   */
+  public databaseChanged() {
+
+    // Updating SQL hints according to selected database.
+    const result = {};
+    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+    for (const idxTable of tables) {
+      result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
+    }
+    this.input.options.hintOptions.tables = result;
+  }
+
+  /**
+   * Opens the load snippet dialog, to allow user to select a previously saved snippet.
+   */
+  public load() {
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(LoadSqlDialogComponent, {
+      width: '550px',
+      data: this.input.databaseType,
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+
+        // User gave us a filename, hence we load file from backend snippet collection.
+        this.sqlService.loadSnippet(this.input.databaseType, filename).subscribe((content: string) => {
+
+          // Success!
+          this.input.sql = content;
+          this.filename = filename;
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
     });
   }
 
-  showHttpSuccess(msg: string) {
-    this.snackBar.open(msg, 'Close', {
-      duration: 2000,
-    });
-  }
+  /**
+   * Invoked when user wants to save an SQL snippet.
+   */
+  public save() {
 
-  showLegend() {
-    this.dialog.open(LegendSqlDialogComponent, {
-      width: '700px',
-    });
-  }
-
-  export() {
-    this.dialog.open(ExportDialogComponent, {
-      width: '80%',
+    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
+    const dialogRef = this.dialog.open(SaveSqlDialogComponent, {
+      width: '550px',
       data: {
-        result: this.result,
+        filename: this.filename || '',
+        databaseType: this.input.databaseType,
       }
+    });
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+
+      // Checking if user selected a file, at which point filename will be non-null.
+      if (filename) {
+
+        // User gave us a filename, hence saving file to backend snippet collection.
+        this.sqlService.saveSnippet(
+          this.input.databaseType,
+          filename,
+          this.input.sql).subscribe(() => {
+
+          // Success!
+          this.feedbackService.showInfo('SQL snippet successfully saved');
+          this.filename = filename;
+          
+        }, (error: any) => this.feedbackService.showError(error));
+
+      }
+    });
+  }
+
+  /**
+   * Executes the current SQL towards your backend.
+   */
+  public execute() {
+
+    // Retrieving selected text from CodeMirror instance.
+    const selectedText = this.input.editor.getSelection();
+
+    // Invoking backend.
+    this.sqlService.execute(
+      this.input.databaseType,
+      '[' + this.input.connectionString + '|' + this.input.database + ']',
+      selectedText == '' ? this.input.sql : selectedText,
+      this.safeMode,
+      this.isBatch).subscribe((result: any[][]) => {
+
+      // Success!
+      if (result) {
+        let count = 0;
+        for (var idx of result) {
+          count += idx.length;
+        }
+        if (this.safeMode && count === 200) {
+          this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return more, or add paging.');
+        } else {
+          this.feedbackService.showInfoShort(`${count} records returned`);
+        }
+      } else {
+        this.feedbackService.showInfoShort('SQL successfully executed, but returned no result');
+      }
+
+      // Making sure we remove all previously viewed detail records.
+      this.displayDetails = [];
+      this.result = result || [];
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Returns row declaration
+   * 
+   * @param currentResultSet Currently iterated list of rows
+   */
+  public getRows(currentResultSet: any[]) {
+
+    // Braiding result with displayed details, such that HTML can create correct rows.
+    const result = [];
+    for (const idx of currentResultSet) {
+
+      // Pushing the plain result record.
+      result.push(idx);
+
+      // Checking if we are displaying details for this guy.
+      if (this.displayDetails.indexOf(idx) !== -1) {
+
+        // Adding our view details record.
+        let colSpan = 0;
+        for (const idx in currentResultSet[0]) {
+          colSpan += 1;
+        }
+        result.push({
+          _detailsColSpan: Math.min(5, colSpan),
+          data: idx,
+        })
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Invoked when user wants to toggle details for a row
+   * 
+   * @param row Row to toggle details for
+   */
+  public toggleDetails(row: any[]) {
+
+    // Pushing or popping (toggling) details record on/off list of records to view details for.
+    const index = this.displayDetails.indexOf(row);
+    if (index === -1) {
+      this.displayDetails.push(row);
+    } else {
+      this.displayDetails.splice(index, 1);
+    }
+  }
+
+  /**
+   * Returns true if we're currently viewing details of the specified row.
+   * 
+   * @param row Row to check
+   */
+  public viewingDetails(row: any[]) {
+    return this.displayDetails.indexOf(row) !== -1;
+  }
+
+  /**
+   * Copies the specified text to clipboard.
+   * 
+   * @param value Value to copy to clipboard
+   */
+  public copyToClipBoard(value: string) {
+
+    // Using clipboard service to write specified text to clipboard.
+    this.clipboard.copy(value);
+    this.feedbackService.showInfoShort('Value was copied to your clipboard');
+  }
+
+  /**
+   * Exports current result set as a CSV file, downloading it to the client.
+   * 
+   * @param result What result set to export
+   */
+  public exportAsCsv(result: any[]) {
+
+    // Building our CSV as a string.
+    let content = '';
+
+    // Iterating through each record in result set.
+    for (let idxRow of result) {
+
+      // Iterating through each property in currently iterated record.
+      let first = true;
+      for (let idxProperty in idxRow) {
+        if (first) {
+          first = false;
+        } else {
+          content += ',';
+        }
+
+        // Retrieving cell value.
+        const value = idxRow[idxProperty];
+        if (value) {
+
+          // Special handling of strings, to allow for double quotes and carriage returns.
+          if (typeof value === 'string') {
+            content += '"' + idxRow[idxProperty].replace('"', '""') + '"';
+          } else {
+            content += idxRow[idxProperty];
+          }
+        }
+      }
+      content += '\r\n';
+    }
+
+    // Invoking saveAsFile method to allow client to download file containing CSV data.
+    this.saveAsFile(content, 'sql-export.csv', 'text/csv');
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /**
+   * Saves the file using 'saveAs'.
+   *
+   * @param buffer The data that need to be saved.
+   * @param fileName File name to save as.
+   * @param fileType File type to save as.
+   */
+  private saveAsFile(buffer: any, fileName: string, fileType: string) {
+    const data: Blob = new Blob([buffer], { type: fileType });
+    saveAs(data, fileName);
+  }
+
+  /*
+   * Returns all connection strings for database type from backend.
+   */
+  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
+
+    // Retrieving connection strings for default database type from backend.
+    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
+
+      // Checking if caller supplied a callback, and if so, invoking it.
+      if (onAfter) {
+
+        // Transforming backend's result to a list of strings.
+        const tmp: string[] = [];
+        for (var idx in connectionStrings) {
+          tmp.push(idx);
+        }
+        onAfter(tmp);
+      }
+
+    }, (error: any) => {
+
+      // Oops, making sure we remove all selected values, and shows an error to user.
+      this.input.connectionString = null;
+      this.input.database = null;
+      this.input.options.hintOptions.tables = [];
+      this.feedbackService.showError(error);}
+    );
+  }
+
+  /*
+   * Returns all databases for database-type/connection-string from backend.
+   */
+  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
+
+    // Retrieving databases that exists for database-type/connection-string combination in backend.
+    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
+
+      // Checking if caller supplied a callback, and if so invoking it.
+      if (onAfter) {
+
+        // Invoking callback.
+        onAfter(databases);
+      }
+    }, (error: any) => {
+
+      // Resetting selected connection string and selected database.
+      this.input.connectionString = null;
+      this.input.database = null;
+      this.input.options.hintOptions.tables = [];
+
+      // Notifying user
+      this.feedbackService.showError(error);
     });
   }
 }

@@ -1,231 +1,162 @@
 
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { EvaluatorService } from '../../services/evaluator-service';
-import { LegendDialogComponent } from './modals/legend-dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { FileDialogComponent } from './modals/file-dialog';
-import { FileService } from 'src/app/services/file-service';
+/*
+ * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ */
 
+// Angular and system imports.
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+
+// Application specific imports.
+import { Response } from '../../models/response.model';
+import { FeedbackService } from '../../services/feedback.service';
+import { EvaluatorService } from 'src/app/components/evaluator/services/evaluator.service';
+import { Model } from '../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { LoadSnippetDialogComponent } from './load-snippet-dialog/load-snippet-dialog.component';
+import { SaveSnippetDialogComponent } from './save-snippet-dialog/save-snippet-dialog.component';
+
+// CodeMirror options.
+import hyperlambda from '../codemirror/options/hyperlambda.json';
+import hyperlambda_readonly from '../codemirror/options/hyperlambda_readonly.json';
+
+/**
+ * Component allowing user to evaluate Hyperlambda,
+ * and load/save snippets for later references to the backend snippet collection.
+ */
 @Component({
   selector: 'app-evaluator',
-  templateUrl: './evaluator.component.html',
-  styleUrls: ['./evaluator.component.scss']
+  templateUrl: './evaluator.component.html'
 })
 export class EvaluatorComponent implements OnInit {
 
-  public hyperlambda = '';
-  public filename: string;
-  public result: string = null;
-  public editor: any;
-  public files: string[] = [];
+  /**
+   * Input Hyperlambda component model and options.
+   */
+  public input: Model = {
+    hyperlambda: '',
+    options: hyperlambda,
+  };
 
+  /**
+   * Output Hyperlambda component model and options.
+   */
+  public output: Model = {
+    hyperlambda: '',
+    options: hyperlambda_readonly,
+  };
+
+  /**
+   * Currently edited snippet.
+   */
+  public filename: string = null;
+
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param evaluatorService Used to execute Hyperlambda specified by user
+   */
   constructor(
-    private service: EvaluatorService,
-    private fileService: FileService,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog) { }
-
-  ngOnInit() {
-    this.service.vocabulary().subscribe((res) => {
-      localStorage.setItem('vocabulary', JSON.stringify(res));
-    });
-    this.fileService.listFiles('/misc/snippets/').subscribe(res => {
-      this.files = res.filter(x => x.endsWith('.hl')).map(x => {
-        const result = x.substr(x.lastIndexOf('/') + 1);
-        return result.substr(0, result.lastIndexOf('.'));
-        });
-    });
+    private evaluatorService: EvaluatorService,
+    private feedbackService: FeedbackService,
+    private dialog: MatDialog) {
   }
 
-  evaluate() {
-    this.service.evaluate(this.hyperlambda).subscribe((res) => {
-      this.result = res.result;
-    }, (error) => {
-      this.showHttpError(error);
-    });
-    return false;
-  }
+  /**
+   * OnInit implementation.
+   */
+  public ngOnInit() {
 
-  getCodeMirrorOptions(execute = false) {
-    const result: any = {
-      lineNumbers: true,
-      mode: 'hyperlambda',
-      tabSize: 3,
-      indentUnit: 3,
-      indentAuto: true,
-      extraKeys: {
-        'Shift-Tab': 'indentLess',
-        Tab: 'indentMore',
-        'Ctrl-Space': 'autocomplete',
-        'Alt-M': (cm: any) => {
-          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-        },
-        Esc: (cm: any) => {
-          if (cm.getOption('fullScreen')) {
-            cm.setOption('fullScreen', false);
-          }
-        },
-      }
+    // Associating ALT+M with fullscreen toggling of the editor instance.
+    this.input.options.extraKeys['Alt-M'] = (cm: any) => {
+      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
     };
-    if (execute) {
-      result.theme = 'mbo';
-      result.extraKeys.F5 = (cm: any) => {
-        const element = document.getElementById('executeButton') as HTMLElement;
-        element.click();
-      };
-      result.extraKeys['Alt-L'] = (cm: any) => {
-        const element = document.getElementById('loadButton') as HTMLElement;
-        element.click();
-      };
-      result.extraKeys['Alt-S'] = (cm: any) => {
-        const element = document.getElementById('saveButton') as HTMLElement;
-        element.click();
-      };
-      result.extraKeys['Alt-A'] = (cm: any) => {
-        const element = document.getElementById('saveAsButton') as HTMLElement;
-        element.click();
-      };
-      result.extraKeys['Alt-Q'] = (cm: any) => {
-        const element = document.getElementById('infoButton') as HTMLElement;
-        element.click();
-      };
-      result.extraKeys['Alt-P'] = (cm: any) => {
-        this.editor = cm;
-        const element = document.getElementById('insertButton') as HTMLElement;
-        element.click();
-      };
-      result.autofocus = true;
-    } else {
-      result.theme = 'bespin';
-      result.readOnly = true;
-    }
-    return result;
+
+    // Associating ALT+L with load snippet button.
+    this.input.options.extraKeys['Alt-L'] = (cm: any) => {
+      (document.getElementById('loadButton') as HTMLElement).click();
+    };
+
+    // Associating ALT+S with save snippet button.
+    this.input.options.extraKeys['Alt-S'] = (cm: any) => {
+      (document.getElementById('saveButton') as HTMLElement).click();
+    };
+
+    // Making sure we attach the F5 button to execute input Hyperlambda.
+    this.input.options.extraKeys.F5 = () => {
+      (document.getElementById('executeButton') as HTMLElement).click();
+    };
   }
 
-  insertSnippet() {
+  /**
+   * Shows load snippet dialog.
+   */
+  public load() {
 
-    // Checking if user have something selected
-    const selection = this.editor.getSelection();
-    if (selection && selection !== '' && this.files.indexOf(selection) !== -1) {
-
-      // Loading file directly, and inserting.
-      this.fileService.getFileContent('/misc/snippets/' + selection + '.hl').subscribe(res => {
-        this.replaceSelection(res);
-      });
-
-    } else {
-
-      this.dialog.open(FileDialogComponent, {
-        width: '80%',
-        data: {
-          path: '',
-          content: '',
-          select: true,
-          header: 'Insert snippet',
-          filename: selection && selection.length < 20 ? selection : null,
-        }
-      }).afterClosed().subscribe(res => {
-        if (res) {
-          this.replaceSelection(res.content);
-        }
-      });
-
-    }
-  }
-
-  replaceSelection(content: string) {
-
-    // Making sure we append correct number of spaces in front of the thing.
-    const start = this.editor.getCursor(true).ch as number;
-    const lines = content.split('\n');
-    content = '';
-    for (const idx of lines) {
-      if (content !== '') {
-        content += ' '.repeat(start);
-      }
-      content += idx + '\n';
-    }
-    this.editor.replaceSelection(content, 'around');
-  }
-
-  load() {
-    const dialogRef = this.dialog.open(FileDialogComponent, {
-      width: '700px',
-      data: {
-        path: '',
-        content: '',
-        select: true,
-        header: 'Load snippet',
-      }
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(LoadSnippetDialogComponent, {
+      width: '550px',
     });
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        this.hyperlambda = res.content;
-        this.filename = res.path;
+
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
+      if (filename) {
+
+        // User gave us a filename, hence we load file from backend snippet collection.
+        this.evaluatorService.loadSnippet(filename).subscribe((content: string) => {
+
+          // Success! Storing filename for later, and applying the Hyperlambda to CodeMnirror editor as retrieved from backend.
+          this.input.hyperlambda = content;
+          this.filename = filename;
+
+        }, (error: any) => this.feedbackService.showError(error));
       }
     });
   }
 
-  save() {
-    if (this.filename) {
+  /**
+   * Shows the save snippet dialog.
+   */
+  public save() {
 
-      // Saving assuming user simply wants to save file as is, with existing filename.
-      this.fileService.saveFile(this.filename, this.hyperlambda).subscribe(res => {
-        this.showInfo('File was successfully saved');
-      });
+    // Showing modal dialog, passing in existing filename if any, defaulting to ''.
+    const dialogRef = this.dialog.open(SaveSnippetDialogComponent, {
+      width: '550px',
+      data: this.filename || '',
+    });
 
-    } else {
+    // Subscribing to closed event, and if given a filename, loads it and displays it in the Hyperlambda editor.
+    dialogRef.afterClosed().subscribe((filename: string) => {
 
-      // Opening up "Save as" dialog.
-      this.saveAs();
+      // Checking if user selected a file, at which point filename will be non-null.
+      if (filename) {
 
-    }
-  }
+        // User gave us a filename, hence saving file to backend snippet collection.
+        this.evaluatorService.saveSnippet(filename, this.input.hyperlambda).subscribe((res: any) => {
 
-  saveAs() {
+          // Snippet saved!
+          this.feedbackService.showInfo('Snippet successfully saved');
+          
+        }, (error: any) => this.feedbackService.showError(error));
 
-    // Figuring out filename only, minus folder and extension.
-    let filename: string = null;
-    if (this.filename) {
-      filename = this.filename.substr(this.filename.lastIndexOf('/') + 1);
-      filename = filename.substr(0, filename.lastIndexOf('.'));
-    }
-
-    // Opening up FileDialog passing in filename.
-    this.dialog.open(FileDialogComponent, {
-      width: '700px',
-      data: {
-        path: '',
-        content: '',
-        select: false,
-        header: 'Save snippet as',
-        filename,
-      }
-    }).afterClosed().subscribe(res => {
-      if (res) {
-        this.filename = res.path;
-        this.save();
       }
     });
   }
 
-  showHttpError(error: any) {
-    this.snackBar.open(error.error.message, 'Close', {
-      duration: 10000,
-      panelClass: ['error-snackbar'],
-    });
-  }
+  /**
+   * Executes the Hyperlambda from the input CodeMirror component.
+   */
+  public execute() {
 
-  showInfo(text: string) {
-    this.snackBar.open(text, 'Close', {
-      duration: 1000,
-    });
-  }
+    // Retrieving selected text from CodeMirror instance.
+    const selectedText = this.input.editor.getSelection();
 
-  public showLegend() {
-    this.dialog.open(LegendDialogComponent, {
-      width: '80%',
-    });
+    // Invoking backend service responsible for executing Hyperlambda.
+    this.evaluatorService.execute(selectedText == '' ? this.input.hyperlambda : selectedText).subscribe((res: Response) => {
+
+      // Success, updating result editor.
+      this.output.hyperlambda = res.result;
+      this.feedbackService.showInfoShort('Hyperlambda was successfully executed');
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
