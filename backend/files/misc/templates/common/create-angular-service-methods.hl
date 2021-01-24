@@ -21,11 +21,34 @@ for-each:x:@.arguments/*
     */
    .interface:ICrudEntity
    if
-      not
-         exists:x:@.dp/#/*/verbs/*/put
+      and
+         not
+            exists:x:@.dp/#/*/verbs/*/put
+         exists:x:@.dp/#/*/verbs/*/delete
       .lambda
          set-value:x:@.interface
             .:ICrdEntity
+   else-if
+      and
+         not
+            exists:x:@.dp/#/*/verbs/*/put
+         not
+            exists:x:@.dp/#/*/verbs/*/delete
+         exists:x:@.dp/#/*/verbs/*/post
+      .lambda
+         set-value:x:@.interface
+            .:ICrEntity
+   else-if
+      and
+         not
+            exists:x:@.dp/#/*/verbs/*/put
+         not
+            exists:x:@.dp/#/*/verbs/*/delete
+         not
+            exists:x:@.dp/#/*/verbs/*/post
+      .lambda
+         set-value:x:@.interface
+            .:IREntity
    .method
    set-value:x:@.method
       strings.concat

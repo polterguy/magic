@@ -33,13 +33,19 @@
 
   <button
     mat-button
-    [disabled]="!template"
+    [disabled]="!template || name === '' || selectedEndpoints() === 0"
     (click)="generate()">
     Generate
   </button>
 
+  <mat-chip-list selectable="true">
+    <mat-chip *ngFor="let idx of modules" (click)="clicked(idx)">
+      {{idx}}
+    </mat-chip>
+  </mat-chip-list>
+
   <div
-    *ngIf="documentation"
+    *ngIf="documentation && showDocumentation"
     class="documentation"
     [innerHtml]="documentation | marked"></div>
 

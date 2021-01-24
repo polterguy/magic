@@ -8,15 +8,13 @@
  * In addition, the generated frontend will also contain some helper components,
  * for managing users, changing password of currently logged in user, etc.
  */
-.description:@"Generates an Angular frontend client side according to the given arguments.
-The frontend will have one datagrid component and router link/navbar menu item for each
-CRUD endpoint method group in your backend endpoints."
+.description:Generates a dark Angular frontend and returns to client as a ZIP file
 
 
 /*
  * Doing some logging.
  */
-log.info:Creating an Angular dark frontend for you
+log.info:Generating an Angular dark frontend
 
 
 /*
@@ -88,7 +86,7 @@ add:x:@.component-files
 
 
 /*
- * Removing "root" parts of our folder names in [.main-files], to make a
+ * Removing "root" parts of our folder names in [.main-files], to create a
  * more friendly folder structure that we return to caller.
  */
 strings.trim-start:x:@io.path.get-folder
@@ -376,10 +374,11 @@ for-each:x:@.components/*
 
 /*
  * Iterating through each [.main-files] and doing substitutions
- * according to specifications and META data.
+ * according to specifications and meta information.
  *
- * Notice, this is not completely optimal approach, since according to the
+ * Notice, this is not a completely optimal approach, since according to the
  * way our template files are looking, we could further have optimised things slightly.
+ *
  * However, to accommodate for future changes, such as for instance having the
  * name of the app in *any* file we wish, we do things this way, to make sure
  * we have a substitution process that is as flexible and generic as we possibly can.

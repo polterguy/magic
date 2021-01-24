@@ -1,3 +1,4 @@
+import { throwError } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GridComponent } from '../../base/grid.component';
@@ -71,7 +72,7 @@ export class [[component-name]] extends GridComponent implements OnInit {
    * necessary to actually delete items in backend.
    */
   protected delete(ids: any) {
-    return this.httpService.[[service-delete-method]](ids);
+    [[service-delete-method]]
   }
 
   /**
