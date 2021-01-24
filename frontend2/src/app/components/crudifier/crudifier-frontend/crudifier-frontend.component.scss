@@ -1,16 +1,19 @@
 
-.form-field {
-  width: 10rem;
-  margin-right: 1rem;
-}
-
-mat-form-field {
-  margin-right: 1rem;
-}
-
-.documentation {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+.form-wrapper {
+  .form-field {
+    width: 10rem;
+    margin-right: 1rem;
+  }
+  .form-field-double {
+    width: 20rem;
+  }
+  mat-form-field {
+    margin-right: 1rem;
+  }
+  .documentation {
+    margin-top: 3rem;
+  }
+  margin-bottom: 1rem;
 }
 
 table {

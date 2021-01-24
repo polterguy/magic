@@ -63,6 +63,16 @@ export class CrudifierFrontendComponent implements OnInit {
   public endpoints: EndpointEx[];
 
   /**
+   * Name user wants to use for his app.
+   */
+  public name = '';
+
+  /**
+   * Copyright notice to use for generated files.
+   */
+  public copyright = '';
+
+  /**
    * Creates an instance of your component.
    * 
    * @param backendService Needed to retrieve root URL for current backend
@@ -128,8 +138,8 @@ export class CrudifierFrontendComponent implements OnInit {
     this.endpointService.generate(
       this.template,
       this.backendService.current.url + '/',
-      'Foo',
-      'Copyright foo bar AS',
+      this.name,
+      this.copyright,
       this.createServiceModel(this.endpoints));
   }
 

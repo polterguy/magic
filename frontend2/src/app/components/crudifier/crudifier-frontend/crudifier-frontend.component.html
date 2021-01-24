@@ -1,4 +1,50 @@
 
+<div class="form-wrapper">
+
+  <mat-form-field class="form-field">
+    <mat-label>Select template</mat-label>
+    <mat-select
+      [(ngModel)]="template"
+      (selectionChange)="templateChanged()"
+      placeholder="Select template">
+      <mat-option
+        *ngFor="let idx of templates"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+    <mat-label>Name ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="name">
+  </mat-form-field>
+
+  <mat-form-field class="form-field form-field-double">
+    <mat-label>Copyright notice ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="copyright">
+  </mat-form-field>
+
+  <button
+    mat-button
+    [disabled]="!template"
+    (click)="generate()">
+    Generate
+  </button>
+
+  <div
+    *ngIf="documentation"
+    class="documentation"
+    [innerHtml]="documentation | marked"></div>
+
+</div>
+
 <table
   *ngIf="endpoints"
   mat-table
@@ -33,27 +79,3 @@
     *matRowDef="let el; columns: displayedColumns;"></tr>
 
 </table>
-
-<mat-form-field class="form-field">
-  <mat-label>Select template</mat-label>
-  <mat-select
-    [(ngModel)]="template"
-    (selectionChange)="templateChanged()"
-    placeholder="Select template">
-    <mat-option
-      *ngFor="let idx of templates"
-      [value]="idx">{{idx}}</mat-option>
-  </mat-select>
-</mat-form-field>
-
-<button
-  mat-button
-  [disabled]="!template"
-  (click)="generate()">
-  Generate
-</button>
-
-<div
-  *ngIf="documentation"
-  class="documentation"
-  [innerHtml]="documentation | marked"></div>
