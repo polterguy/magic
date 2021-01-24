@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { AuthenticateToken } from '../models/authenticate-token';
-import { StatusResponse } from '../models/status-response';
 
  /**
   * Service interface for methods somehow related to the current user,
@@ -48,12 +47,4 @@ import { StatusResponse } from '../models/status-response';
    * logging out the user from the backend.
    */
   logout() : void;
-
-  /**
-   * Changes the currently authenticated user's password, by invoking the backend
-   * endpoint responsible for updating the user's password.
-   * 
-   * @param password New password for user
-   */
-  changePassword(password: string) : Observable<StatusResponse>;
 }
