@@ -23,28 +23,7 @@
       <mat-icon matSuffix>home</mat-icon>
       <span class="menu-item-text">Home</span>
     </a>
-[[router-links]]    <a
-      *ngIf="authService.me.inRole(['root','admin'])"
-      mat-button
-      routerLink="/auth"
-      routerLinkActive="active-link"
-      class="menu-item"
-      (click)="closeNavigator()"
-      [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>supervisor_account</mat-icon>
-      <span class="menu-item-text">Auth</span>
-    </a>
-    <a
-      *ngIf="authService.me.isLoggedIn()"
-      mat-button
-      routerLink="/profile"
-      routerLinkActive="active-link"
-      class="menu-item"
-      (click)="closeNavigator()"
-      [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>account_circle</mat-icon>
-      <span class="menu-item-text">Profile</span>
-    </a>
+[[router-links]]
   </mat-sidenav>
 
   <mat-sidenav-content
