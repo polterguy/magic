@@ -10,10 +10,6 @@
 .result
 
 
-
-
-
-
 /*
  * Iterating through each CRUD endpoint.
  *
@@ -197,4 +193,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
 /*
  * Returning results to caller.
  */
+log.info
+   lambda2hyper:x:../*/.result
 return-nodes:x:@.result/*

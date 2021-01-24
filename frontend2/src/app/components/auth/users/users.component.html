@@ -50,8 +50,7 @@
           <span [matTooltip]="el.created">{{el.created | since}}</span>
         </span>
 
-        <mat-chip-list
-          aria-label="Roles user belongs to">
+        <mat-chip-list>
           <mat-chip
             *ngFor="let role of el.roles"
             selectable="false"
