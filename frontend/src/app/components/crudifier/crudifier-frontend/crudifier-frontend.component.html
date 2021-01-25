@@ -34,6 +34,7 @@
   <button
     mat-button
     [disabled]="!template || name === '' || selectedEndpoints() === 0"
+    [matTooltip]="getGenerateTooltip()"
     (click)="generate()">
     Generate
   </button>
