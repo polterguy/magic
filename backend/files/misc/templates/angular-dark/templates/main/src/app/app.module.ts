@@ -25,7 +25,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { OWL_MOMENT_DATE_TIME_ADAPTER_OPTIONS } from 'ng-pick-datetime-moment';
 
 // Application specifics Routing, services, etc, type of imports.
 import { AppRoutingModule } from './app-routing.module';
@@ -93,10 +92,6 @@ import { SelectorComponent } from './helpers/selector/selector.component';
       useClass: LoaderInterceptor,
       multi: true
     },
-    {
-      provide: OWL_MOMENT_DATE_TIME_ADAPTER_OPTIONS,
-      useValue: { useUtc: true }
-    }
   ],
   bootstrap: [AppComponent],
   entryComponents: [
