@@ -22,6 +22,8 @@ slots.create:magic.io.file.load-recursively
    /*
     * Lists all files in current [folder], and adds up the result to return value.
     */
+   add:x:+/+
+      get-nodes:x:@.arguments/*/.hidden-files
    unwrap:x:+/*
    signal:magic.io.file.list-recursively
       .:x:@.arguments/0

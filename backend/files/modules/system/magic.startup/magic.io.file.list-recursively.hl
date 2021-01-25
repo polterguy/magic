@@ -23,6 +23,7 @@ slots.create:magic.io.file.list-recursively
     * Lists all files in current [folder], and adds up the result to return value.
     */
    io.file.list:x:@.arguments/0
+      display-hidden:x:@.arguments/*/.hidden-files
    add:x:../*/return-nodes
       get-nodes:x:@io.file.list/*
 

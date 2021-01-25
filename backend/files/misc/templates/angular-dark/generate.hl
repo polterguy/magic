@@ -72,6 +72,7 @@ add:x:@.main-files
       strings.concat
          .:x:@io.path.get-folder
          .:templates/main/
+      .hidden-files:bool:true
 
 
 /*
@@ -83,6 +84,7 @@ add:x:@.component-files
       strings.concat
          .:x:@io.path.get-folder
          .:templates/component/
+      .hidden-files:bool:true
 
 
 /*
