@@ -2,8 +2,8 @@ import { throwError } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GridComponent } from '../../base/grid.component';
-import { MatPaginator } from '@angular/material';
-import { MatDialog } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 
 import { Edit[[component-name]] } from './modals/edit.[[component-filename]]';
