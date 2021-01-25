@@ -22,10 +22,17 @@
       padding-top: 2px;
       padding-bottom: 2px;
       min-height: 25px;
+      cursor: pointer;
       mat-icon {
         position: absolute;
         right: .5rem;
       }
+    }
+  }
+  mat-chip-list.no-icon {
+    mat-chip {
+      padding-right: 1rem;
+      cursor: default;
     }
   }
 }
@@ -39,5 +46,12 @@ table {
     width: auto;
     max-width: 100%;
     display: block;
+  }
+}
+
+.module-declarations {
+  strong {
+    display: block;
+    margin-top: 1rem;
   }
 }

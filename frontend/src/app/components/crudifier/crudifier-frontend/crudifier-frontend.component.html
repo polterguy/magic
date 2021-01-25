@@ -39,14 +39,28 @@
     Generate
   </button>
 
-  <mat-chip-list>
-    <mat-chip *ngFor="let idx of modules" (click)="moduleClicked(idx)">
-      {{idx}}
-      <mat-icon
-        *ngIf="moduleSelected(idx)"
-        matChipRemove>check</mat-icon>
-    </mat-chip>
-  </mat-chip-list>
+  <div class="module-declarations" *ngIf="template && endpoints && name !== ''">
+
+    <strong>Modules</strong>
+
+    <mat-chip-list>
+      <mat-chip *ngFor="let idx of modules" (click)="moduleClicked(idx)">
+        {{idx}}
+        <mat-icon
+          *ngIf="moduleSelected(idx)"
+          matChipRemove>check</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+
+    <strong *ngIf="template && getComponents().length > 0">Components</strong>
+
+    <mat-chip-list class="no-icon" *ngIf="endpoints">
+      <mat-chip *ngFor="let idx of getComponents()">
+        {{idx}}
+      </mat-chip>
+    </mat-chip-list>
+
+  </div>
 
   <div
     *ngIf="documentation && showDocumentation"
