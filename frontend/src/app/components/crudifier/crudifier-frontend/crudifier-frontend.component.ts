@@ -110,6 +110,11 @@ export class CrudifierFrontendComponent implements OnInit {
       // Assigning result to model.
       this.endpoints = endpoints
         .filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
+        .filter(x => x.type === 'crud-count' ||
+          x.type === 'crud-delete' ||
+          x.type === 'crud-read' ||
+           x.type === 'crud-create' ||
+            x.type === 'crud-update')
         .map(x => {
           return {
             path: x.path,
@@ -137,6 +142,15 @@ export class CrudifierFrontendComponent implements OnInit {
         }
         this.modules = modules;
     });
+  }
+
+  /**
+   * Returns tooltip for generate button.
+   */
+  public getGenerateTooltip() {
+    let moduleCount = this.endpoints.filter(x => x.selected && x.path.endsWith('-count')).length;
+    let endpointCount = this.endpoints.filter(x => x.selected).length;
+    return `Generate ${moduleCount} components wrapping ${endpointCount} HTTP endpoints`;
   }
 
   /**
