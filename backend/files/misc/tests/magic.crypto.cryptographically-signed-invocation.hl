@@ -20,12 +20,12 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
     *
     * First we create a unique request ID.
     */
+   guid.new
    set-value:x:../*/signal/*/.lambda/*/.request-id
       strings.concat
          .:test.
-         crypto.random
-            min:50
-            max:50
+         convert:x:@guid.new
+            type:string
 
    /*
     * Then we invoke ourselves using a cryptographically signed invocation.
