@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Material imports and other library imports.
 import { ChartsModule } from 'ng2-charts';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';

@@ -1,6 +1,6 @@
 // Angular imports.
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Custom services and models your app depends upon.

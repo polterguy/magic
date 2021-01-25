@@ -1,6 +1,7 @@
 import { throwError } from 'rxjs';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpService } from 'src/app/services/http-service';
 import { DialogComponent, DialogData } from '../../../base/dialog.component';
 
