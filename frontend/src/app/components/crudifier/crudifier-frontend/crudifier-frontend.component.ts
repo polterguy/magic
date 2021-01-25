@@ -148,9 +148,24 @@ export class CrudifierFrontendComponent implements OnInit {
    * Returns tooltip for generate button.
    */
   public getGenerateTooltip() {
-    let moduleCount = this.endpoints.filter(x => x.selected && x.path.endsWith('-count')).length;
+    if (!this.endpoints) {
+      return '';
+    }
+    let componentCount = this.endpoints.filter(x => x.selected && x.path.endsWith('-count')).length;
     let endpointCount = this.endpoints.filter(x => x.selected).length;
-    return `Generate ${moduleCount} components wrapping ${endpointCount} HTTP endpoints`;
+    return `Generate ${componentCount} components wrapping ${endpointCount} HTTP endpoints`;
+  }
+
+  /**
+   * Returns the names of all component that will be generated.
+   */
+  public getComponents() {
+    return this.endpoints
+      .filter(x => x.selected && x.path.endsWith('-count'))
+      .map(x => {
+        const componentName = x.path.substr(x.path.lastIndexOf('/') + 1);
+        return componentName.substr(0, componentName.length - 6);
+      });
   }
 
   /**
