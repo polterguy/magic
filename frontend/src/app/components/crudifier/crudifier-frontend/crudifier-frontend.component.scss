@@ -18,6 +18,7 @@
     display: block;
     margin-top: 1rem;
     mat-chip {
+      margin-bottom: 1rem;
       padding-right: 2.5rem;
       padding-top: 2px;
       padding-bottom: 2px;
@@ -30,15 +31,18 @@
     }
   }
   mat-chip-list.no-icon {
+    margin-bottom: 2rem;
     mat-chip {
       padding-right: 1rem;
       cursor: default;
+      background-color: #777;
     }
   }
 }
 
 table {
   margin-bottom: 2rem;
+  margin-top: 0;
 }
 
 ::ng-deep.image-container {
@@ -52,6 +56,5 @@ table {
 .module-declarations {
   strong {
     display: block;
-    margin-top: 1rem;
   }
 }
