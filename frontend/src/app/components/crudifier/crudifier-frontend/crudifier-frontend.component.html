@@ -38,9 +38,12 @@
     Generate
   </button>
 
-  <mat-chip-list selectable="true">
-    <mat-chip *ngFor="let idx of modules" (click)="clicked(idx)">
+  <mat-chip-list>
+    <mat-chip *ngFor="let idx of modules" (click)="moduleClicked(idx)">
       {{idx}}
+      <mat-icon
+        *ngIf="moduleSelected(idx)"
+        matChipRemove>check</mat-icon>
     </mat-chip>
   </mat-chip-list>
 

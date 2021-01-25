@@ -164,7 +164,7 @@ export class CrudifierFrontendComponent implements OnInit {
    * 
    * @param module Name of module
    */
-  public clicked(module: string) {
+  public moduleClicked(module: string) {
 
     // Toggling the selected value of all endpoints encapsulated by module.
     const moduleEndpoints = this.endpoints.filter(x => x.path.startsWith('magic/modules/' + module + '/'));
@@ -176,6 +176,21 @@ export class CrudifierFrontendComponent implements OnInit {
       for (const idx of moduleEndpoints) {
         idx.selected = true;
       }
+    }
+  }
+
+  /**
+   * Invoked to check if the specified module to selected or not, as
+   * in all endpoints have been selected for crudification.
+   * 
+   * @param module What module to check for
+   */
+  public moduleSelected(module: string) {
+    const moduleEndpoints = this.endpoints.filter(x => x.path.startsWith('magic/modules/' + module + '/'));
+    if (moduleEndpoints.filter(x => x.selected).length === moduleEndpoints.length) {
+      return true;
+    } else {
+      return false;
     }
   }
 
