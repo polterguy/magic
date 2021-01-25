@@ -23,8 +23,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 
 // Application specifics Routing, services, etc, type of imports.
 import { AppRoutingModule } from './app-routing.module';
@@ -54,6 +54,8 @@ import { SelectorComponent } from './helpers/selector/selector.component';
 // Generated CRUD components here.
 [[module-declarations]]  ],
   imports: [
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
     FormsModule,
     BrowserModule,
     AppRoutingModule,
@@ -78,12 +80,10 @@ import { SelectorComponent } from './helpers/selector/selector.component';
     MatSidenavModule,
     MatCheckboxModule,
     MatSnackBarModule,
-    OwlDateTimeModule,
     MatFormFieldModule,
     MatPaginatorModule,
     MatDatepickerModule,
     MatMomentDateModule,
-    OwlNativeDateTimeModule,
     MatProgressSpinnerModule,
   ],
   providers: [
