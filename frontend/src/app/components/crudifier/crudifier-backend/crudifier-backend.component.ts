@@ -2,8 +2,10 @@
 /*
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
-import { Component } from '@angular/core';
+
+// Angular specific imports.
 import { forkJoin, Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { TableEx } from '../models/table-ex.model';
@@ -14,8 +16,10 @@ import { LogService } from '../../log/services/log.service';
 import { Databases } from '../../sql/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { ConfigService } from '../../config/services/config.service';
 import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { TransformModelService } from '../services/transform-model.service';
+import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
 
 /**
  * Crudifier component for crudifying database
@@ -26,7 +30,7 @@ import { TransformModelService } from '../services/transform-model.service';
   templateUrl: './crudifier-backend.component.html',
   styleUrls: ['./crudifier-backend.component.scss']
 })
-export class CrudifierBackendComponent {
+export class CrudifierBackendComponent implements OnInit {
 
   /**
    * Options user has for selecting database types.
@@ -71,6 +75,7 @@ export class CrudifierBackendComponent {
    * 
    * @param logService Needed to be able to log LOC generated
    * @param sqlService Needed to retrieve meta information about databases from backend
+   * @param configService Needed to retrieve meta information about connection strings from backend
    * @param crudifyService Needed to actually crudify endpoints
    * @param feedbackService Needed to display feedback to user
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
@@ -79,10 +84,34 @@ export class CrudifierBackendComponent {
   constructor(
     private logService: LogService,
     private sqlService: SqlService,
+    private configService: ConfigService,
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService,
     private loaderInterceptor: LoaderInterceptor,
     private transformService: TransformModelService) { }
+
+  /**
+   * Implementation of OnInit.
+   */
+  ngOnInit() {
+
+    // Retrieving default database type from backend.
+    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
+
+      // Assigning database types to model.
+      this.databaseTypes = defaultDatabaseType.options;
+      this.databaseType = this.databaseTypes.filter(x => x === defaultDatabaseType.default)[0];
+
+      // Retrieving connection strings for default database type.
+      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
+
+        // Assigning default model options
+        this.connectionStrings = connectionStrings;
+        this.connectionString = this.connectionStrings.filter(x => x === 'generic')[0];
+        this.connectionStringChanged();
+      });
+    }, (error: any) => this.feedbackService.showError(error));
+  }
 
   /**
    * Invoked when user selects a database type.
@@ -228,5 +257,57 @@ export class CrudifierBackendComponent {
         idxColumn.deleteDisabled = true;
       }
     }
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Returns all connection strings for database type from backend.
+   */
+  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
+
+    // Retrieving connection strings for default database type from backend.
+    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
+
+      // Checking if caller supplied a callback, and if so, invoking it.
+      if (onAfter) {
+
+        // Transforming backend's result to a list of strings.
+        const tmp: string[] = [];
+        for (var idx in connectionStrings) {
+          tmp.push(idx);
+        }
+        onAfter(tmp);
+      }
+
+    }, (error: any) => {
+
+      // Oops, showing user some feedback
+      this.feedbackService.showError(error);}
+    );
+  }
+
+  /*
+   * Returns all databases for database-type/connection-string
+   * combination from backend.
+   */
+  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
+
+    // Retrieving databases that exists for database-type/connection-string combination in backend.
+    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
+
+      // Checking if caller supplied a callback, and if so invoking it.
+      if (onAfter) {
+
+        // Invoking callback.
+        onAfter(databases);
+      }
+    }, (error: any) => {
+
+      // Notifying user
+      this.feedbackService.showError(error);
+    });
   }
 }
