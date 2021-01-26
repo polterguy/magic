@@ -161,7 +161,7 @@ export class CrudifierFrontendComponent implements OnInit {
    */
   public getComponents() {
     return this.endpoints
-      .filter(x => x.selected && x.path.endsWith('-count'))
+      .filter(x => x.path.endsWith('-count'))
       .map(x => {
         const componentName = x.path.substr(x.path.lastIndexOf('/') + 1);
         return componentName.substr(0, componentName.length - 6);
@@ -209,6 +209,26 @@ export class CrudifierFrontendComponent implements OnInit {
   }
 
   /**
+   * Invoked when a component is selected or de-selected for being generated.
+   * 
+   * @param component Name of component that was clicked
+   */
+  public componentClicked(component: string) {
+
+    // Finding all relevant components.
+    const components = this.endpoints
+      .filter(x => x.path.endsWith('/' + component) || x.path.endsWith('/' + component + '-count'));
+
+    // Figuring out if we should select or de-select component.
+    const shouldSelect = components.filter(x => !x.selected).length > 0;
+
+    // Looping through all components and changing their selected state according to above logic.
+    for (const idx of components) {
+      idx.selected = shouldSelect;
+    }
+  }
+
+  /**
    * Invoked to check if the specified module to selected or not, as
    * in all endpoints have been selected for crudification.
    * 
@@ -221,6 +241,17 @@ export class CrudifierFrontendComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  /**
+   * Returns true if component is selected.
+   * 
+   * @param component Name of component to check for
+   */
+  public componentSelected(component: string) {
+    return this.endpoints
+      .filter(x => x.selected)
+      .filter(x => x.verb === 'get' && (x.path.endsWith('/' + component) || x.path.endsWith('/' + component + '-count'))).length === 2;
   }
 
   /**

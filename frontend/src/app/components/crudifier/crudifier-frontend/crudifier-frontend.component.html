@@ -44,7 +44,10 @@
     <strong>Modules</strong>
 
     <mat-chip-list>
-      <mat-chip *ngFor="let idx of modules" (click)="moduleClicked(idx)">
+      <mat-chip
+        [class]="moduleSelected(idx) ? 'selected' : 'not-selected'"
+        *ngFor="let idx of modules"
+        (click)="moduleClicked(idx)">
         {{idx}}
         <mat-icon
           *ngIf="moduleSelected(idx)"
@@ -54,9 +57,15 @@
 
     <strong *ngIf="template && getComponents().length > 0">Components</strong>
 
-    <mat-chip-list class="no-icon" *ngIf="endpoints">
-      <mat-chip *ngFor="let idx of getComponents()">
+    <mat-chip-list *ngIf="endpoints">
+      <mat-chip
+        [class]="componentSelected(idx) ? 'selected' : 'not-selected'"
+        *ngFor="let idx of getComponents()"
+        (click)="componentClicked(idx)">
         {{idx}}
+        <mat-icon
+          *ngIf="componentSelected(idx)"
+          matChipRemove>check</mat-icon>
       </mat-chip>
     </mat-chip-list>
 
