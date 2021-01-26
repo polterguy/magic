@@ -45,6 +45,11 @@ export class CustomSql {
   sql: string;
 
   /**
+   * Hyperlambda declaration of arguments endpoint can handle.
+   */
+  arguments: string;
+
+  /**
    * Whether or not existing endpoints with the same verb/moduleName/endpointName
    * combination should be overwritten or not.
    */

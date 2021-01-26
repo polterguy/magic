@@ -75,7 +75,12 @@ export class CrudifierSqlComponent implements OnInit {
   /**
    * Comma separated list of roles allowed to invoke endpoint.
    */
-  public authorization: string;
+  public authorization = 'root, admin';
+
+  /**
+   * Arguments endpoint can handle.
+   */
+  public arguments = '';
 
   /**
    * Input SQL component model and options.
@@ -228,6 +233,7 @@ export class CrudifierSqlComponent implements OnInit {
       endpointName: this.endpointName,
       verb: this.verb,
       sql: this.input.sql,
+      arguments: this.arguments,
       overwrite: true}).subscribe(() => {
 
         // Providing feedback to user.
