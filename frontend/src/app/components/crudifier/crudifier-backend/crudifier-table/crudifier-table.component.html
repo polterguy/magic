@@ -111,7 +111,7 @@
     [disabled]="!isPostIncluded()"
     type="text"
     autocomplete="off"
-    matTooltip="Comma separated list of roles allowed to invoke endpoint"
+    matTooltip="Comma separated list of roles allowed to invoke POST endpoint"
     [(ngModel)]="table.authPost">
 </mat-form-field>
 
@@ -121,7 +121,7 @@
     matInput
     type="text"
     autocomplete="off"
-    matTooltip="Comma separated list of roles allowed to invoke endpoint"
+    matTooltip="Comma separated list of roles allowed to invoke GET endpoint(s)"
     [(ngModel)]="table.authGet">
 </mat-form-field>
 
@@ -131,7 +131,7 @@
     matInput
     type="text"
     autocomplete="off"
-    matTooltip="Comma separated list of roles allowed to invoke endpoint"
+    matTooltip="Comma separated list of roles allowed to invoke PUT endpoint"
     [(ngModel)]="table.authPut">
 </mat-form-field>
 
@@ -141,7 +141,7 @@
     matInput
     type="text"
     autocomplete="off"
-    matTooltip="Comma separated list of roles allowed to invoke endpoint"
+    matTooltip="Comma separated list of roles allowed to invoke DELETE endpoint"
     [(ngModel)]="table.authDelete">
 </mat-form-field>
 
@@ -179,26 +179,26 @@
     min="0"
     max="300"
     autocomplete="off"
-    matTooltip="Seconds to cache read and count endpoints"
+    matTooltip="Seconds to cache GET endpoint(s)"
     [disabled]="!isGetIncluded()"
     [(ngModel)]="table.cache">
 </mat-form-field>
 
 <mat-checkbox
   *ngIf="isGetIncluded()"
-  matTooltip="Whether or not proxies should be allowed to cache"
+  matTooltip="Whether or not proxies should be allowed to cache GET endpoint(s)"
   [disabled]="!table.cache || table.cache === 0"
   [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
 
 <hr>
 
 <mat-checkbox
-  matTooltip="Log delete invocations"
+  matTooltip="Log DELETE invocations"
   *ngIf="isDeleteIncluded()"
   [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
 
 <mat-checkbox
-  matTooltip="Log update invocations"
+  matTooltip="Log PUT invocations"
   *ngIf="isPutIncluded()"
   [(ngModel)]="table.logPut">Log update</mat-checkbox>
 

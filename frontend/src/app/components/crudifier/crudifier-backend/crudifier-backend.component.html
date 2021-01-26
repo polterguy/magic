@@ -3,6 +3,7 @@
   <mat-label>Database type</mat-label>
   <mat-select
     [(ngModel)]="databaseType"
+    matTooltip="Type of database to wrap in CRUD endpoints"
     (selectionChange)="databaseTypeChanged()"
     placeholder="Database type">
     <mat-option
@@ -15,6 +16,7 @@
   <mat-label>Connection string</mat-label>
   <mat-select
     [(ngModel)]="connectionString"
+    matTooltip="Connection string to wrap in CRUD endpoints"
     (selectionChange)="connectionStringChanged()"
     placeholder="Connection string">
     <mat-option
@@ -27,6 +29,7 @@
   <mat-label>Database</mat-label>
   <mat-select
     [(ngModel)]="database"
+    matTooltip="Database to wrap in CRUD endpoints"
     (selectionChange)="databaseChanged()"
     placeholder="Database">
     <mat-option
@@ -39,6 +42,7 @@
   <mat-label>Table</mat-label>
   <mat-select
     [(ngModel)]="table"
+    matTooltip="Table to wrap in CRUD endpoints"
     placeholder="Database">
     <mat-option
       *ngFor="let idx of database.tables"
@@ -48,7 +52,7 @@
 
 <mat-checkbox
   *ngIf="database && database.tables && database.tables.length > 0"
-  matTooltip="Overwriting existing endpoints"
+  matTooltip="Overwrite existing endpoints"
   [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
 
 <div class="button-strip">
