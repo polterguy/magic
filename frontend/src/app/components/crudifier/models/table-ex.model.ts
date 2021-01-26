@@ -79,4 +79,9 @@ export class TableEx {
    * Authentication requirements for invoking DELETE endpoint.
    */
   authDelete: string;
+
+  /**
+   * Additional validators, injectables and transformers for endpoint.
+   */
+  validators: string;
 }

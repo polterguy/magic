@@ -204,6 +204,8 @@
 
 <hr>
 
+<app-codemirror-hyperlambda [(model)]="input"></app-codemirror-hyperlambda>
+
 <div class="button-strip">
   <button
     [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
