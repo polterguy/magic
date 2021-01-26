@@ -87,6 +87,7 @@ import { PublicKeysComponent } from './components/crypto/public-keys/public-keys
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
+import { CrudifierSqlComponent } from './components/crudifier/crudifier-sql/crudifier-sql.component';
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
 import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
@@ -189,6 +190,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     CrudifierTableComponent,
     CrudifierBackendComponent,
     CrudifierFrontendComponent,
+    CrudifierSqlComponent,
   ],
   imports: [
     FormsModule,

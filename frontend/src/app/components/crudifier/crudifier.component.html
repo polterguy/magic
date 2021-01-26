@@ -2,8 +2,16 @@
 <mat-card>
   <mat-tab-group>
 
-    <mat-tab label="Backend">
-      <app-crudifier-backend></app-crudifier-backend>
+    <mat-tab label="Backend CRUD">
+      <ng-template matTabContent>
+        <app-crudifier-backend></app-crudifier-backend>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Backend SQL">
+      <ng-template matTabContent>
+        <app-crudifier-sql></app-crudifier-sql>
+      </ng-template>
     </mat-tab>
 
     <mat-tab label="Frontend">

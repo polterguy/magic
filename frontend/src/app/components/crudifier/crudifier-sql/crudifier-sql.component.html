@@ -1,0 +1,69 @@
+
+<div class="wrapper" *ngIf="input">
+
+  <mat-form-field class="form-field">
+
+    <mat-label>Database type</mat-label>
+    <mat-select
+      [(ngModel)]="input.databaseType"
+      (selectionChange)="databaseTypeChanged()"
+      placeholder="Database type">
+      <mat-option
+        *ngFor="let idx of databaseTypes"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+
+    <mat-label>Connection string</mat-label>
+    <mat-select
+      [(ngModel)]="input.connectionString"
+      (selectionChange)="connectionStringChanged()"
+      placeholder="Connection string">
+      <mat-option
+        *ngFor="let idx of connectionStrings"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+
+    <mat-label>Database</mat-label>
+    <mat-select
+      [(ngModel)]="input.database"
+      [disabled]="!databases || databases.length === 0"
+      (selectionChange)="databaseChanged()"
+      placeholder="Database">
+      <mat-option
+        *ngFor="let idx of databases"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+    <mat-label>HTTP verb</mat-label>
+    <mat-select
+      [(ngModel)]="verb">
+      <mat-option
+        *ngFor="let idx of verbs"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+    <mat-label>Name ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="name">
+  </mat-form-field>
+
+  <app-codemirror-sql
+    [(model)]="input"></app-codemirror-sql>
+
+</div>
