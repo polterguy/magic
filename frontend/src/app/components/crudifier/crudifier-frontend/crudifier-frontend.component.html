@@ -39,7 +39,7 @@
     Generate
   </button>
 
-  <div class="module-declarations" *ngIf="template && endpoints && name !== ''">
+  <div class="module-declarations" *ngIf="template && endpoints">
 
     <strong>Modules</strong>
 
@@ -70,7 +70,7 @@
 </div>
 
 <table
-  *ngIf="endpoints && template && name"
+  *ngIf="endpoints && template"
   mat-table
   [dataSource]="endpoints"
   class="endpoints-items clickable">
