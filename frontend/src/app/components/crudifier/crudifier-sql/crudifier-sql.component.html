@@ -55,15 +55,42 @@
   </mat-form-field>
 
   <mat-form-field class="form-field">
-    <mat-label>Name ...</mat-label>
+    <mat-label>Module name ...</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      [(ngModel)]="name">
+      [(ngModel)]="moduleName">
   </mat-form-field>
 
-  <app-codemirror-sql
-    [(model)]="input"></app-codemirror-sql>
+  <mat-form-field class="form-field">
+    <mat-label>Endpoint name ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="endpointName">
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+    <mat-label>Authorization ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="authorization">
+  </mat-form-field>
+
+  <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+
+  <div class="button-strip">
+    <button
+      mat-button
+      [disabled]="name === '' || input.sql === '' || !input.connectionString || !input.database"
+      matTooltip="Generates your SQL endpoint"
+      (click)="generate()">
+      Generate
+    </button>
+  </div>
 
 </div>

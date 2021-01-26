@@ -9,6 +9,8 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Crudify } from '../models/crudify.model';
 import { LocResult } from '../models/loc-result.model';
+import { CustomSql } from '../models/custom-sql.model';
+import { Response } from 'src/app/models/response.model';
 import { HttpService } from '../../../services/http.service';
 
 /**
@@ -51,7 +53,7 @@ export class CrudifyService {
    * 
    * @param data Input for process
    */
-  public generateSqlEndpoint(data: any) {
+  public generateSqlEndpoint(data: CustomSql) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>('/magic/modules/system/crudifier/custom-sql', data);
