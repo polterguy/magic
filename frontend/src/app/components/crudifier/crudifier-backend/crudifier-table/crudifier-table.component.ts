@@ -14,6 +14,10 @@ import { CrudifyService } from '../../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
 import { TransformModelService } from '../../services/transform-model.service';
+import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+
+// CodeMirror options.
+import hyperlambda from '../../../codemirror/options/hyperlambda.json';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -25,6 +29,14 @@ import { TransformModelService } from '../../services/transform-model.service';
   styleUrls: ['./crudifier-table.component.scss']
 })
 export class CrudifierTableComponent {
+
+  /**
+   * Input Hyperlambda component model and options.
+   */
+  public input: Model = {
+    hyperlambda: '',
+    options: hyperlambda,
+  };
 
   /**
    * Columns for our field/columns table.
@@ -67,7 +79,9 @@ export class CrudifierTableComponent {
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService,
     private loaderInterceptor: LoaderInterceptor,
-    private transformService: TransformModelService) { }
+    private transformService: TransformModelService) {
+      this.input.options.autofocus = false;
+    }
 
   /**
    * Returns true of HTTP verb GET is included for crudification.
@@ -172,6 +186,7 @@ export class CrudifierTableComponent {
   public crudifyTable() {
 
     // Creating observables for each enabled HTTP verb.
+    this.table.validators = this.input.hyperlambda;
     const subscribers = this.table.verbs.filter(x => x.generate).map(x => {
       return this.crudifyService.crudify(
         this.transformService.transform(
