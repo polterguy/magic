@@ -171,7 +171,7 @@ export class SqlComponent implements OnInit {
    */
   public databaseTypeChanged() {
 
-    // Retrieving all connetion strings for selected database type.
+    // Retrieving all connection strings for selected database type.
     this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
 
       // Resetting selected connection string and selected database.

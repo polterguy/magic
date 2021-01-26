@@ -135,11 +135,6 @@ export class CrudifierSqlComponent implements OnInit {
           this.input.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
           };
-
-          // Making sure we attach the F5 button to execute SQL.
-          this.input.options.extraKeys.F5 = () => {
-            (document.getElementById('executeButton') as HTMLElement).click();
-          };
         });
       });
     }, (error: any) => this.feedbackService.showError(error));
@@ -150,7 +145,7 @@ export class CrudifierSqlComponent implements OnInit {
    */
   public databaseTypeChanged() {
 
-    // Retrieving all connetion strings for selected database type.
+    // Retrieving all connection strings for selected database type.
     this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
 
       // Resetting selected connection string and selected database.
@@ -241,7 +236,8 @@ export class CrudifierSqlComponent implements OnInit {
   }
 
   /*
-   * Returns all databases for database-type/connection-string from backend.
+   * Returns all databases for database-type/connection-string
+   * combination from backend.
    */
   private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
 
