@@ -6,6 +6,7 @@
     <mat-label>Database type</mat-label>
     <mat-select
       [(ngModel)]="input.databaseType"
+      matTooltip="Type of database endpoint encapsulates"
       (selectionChange)="databaseTypeChanged()"
       placeholder="Database type">
       <mat-option
@@ -20,6 +21,7 @@
     <mat-label>Connection string</mat-label>
     <mat-select
       [(ngModel)]="input.connectionString"
+      matTooltip="Connection string endpoint encapsulates"
       (selectionChange)="connectionStringChanged()"
       placeholder="Connection string">
       <mat-option
@@ -34,6 +36,7 @@
     <mat-label>Database</mat-label>
     <mat-select
       [(ngModel)]="input.database"
+      matTooltip="Database endpoint wraps"
       [disabled]="!databases || databases.length === 0"
       (selectionChange)="databaseChanged()"
       placeholder="Database">
@@ -44,9 +47,12 @@
 
   </mat-form-field>
 
+  <br>
+
   <mat-form-field class="form-field">
     <mat-label>HTTP verb</mat-label>
     <mat-select
+      matTooltip="HTTP verb endpoint encapsulates"
       [(ngModel)]="verb">
       <mat-option
         *ngFor="let idx of verbs"
@@ -60,6 +66,7 @@
       matInput
       type="text"
       autocomplete="off"
+      matTooltip="Second last parts of URL of endpoint"
       [(ngModel)]="moduleName">
   </mat-form-field>
 
@@ -69,6 +76,7 @@
       matInput
       type="text"
       autocomplete="off"
+      matTooltip="Last parts of URL of endpoint"
       [(ngModel)]="endpointName">
   </mat-form-field>
 
@@ -78,7 +86,16 @@
       matInput
       type="text"
       autocomplete="off"
+      matTooltip="Comma separated list of roles users must belong to in order to invoke endpoint"
       [(ngModel)]="authorization">
+  </mat-form-field>
+
+  <mat-form-field class="form-field full-width">
+    <mat-label>Arguments ...</mat-label>
+    <textarea
+      matInput
+      rows="5"
+      [(ngModel)]="arguments"></textarea>
   </mat-form-field>
 
   <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
@@ -86,7 +103,7 @@
   <div class="button-strip">
     <button
       mat-button
-      [disabled]="name === '' || input.sql === '' || !input.connectionString || !input.database"
+      [disabled]="moduleName === '' || endpointName === '' || input.sql === '' || !input.connectionString || !input.database"
       matTooltip="Generates your SQL endpoint"
       (click)="generate()">
       Generate

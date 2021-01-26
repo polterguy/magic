@@ -5,4 +5,10 @@
     width: 10rem;
     margin-right: 1rem;
   }
+  .form-field.full-width {
+    width: 100%;
+    textarea {
+      display: block;
+    }
+  }
 }
