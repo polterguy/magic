@@ -47,9 +47,9 @@
 
   </mat-form-field>
 
-  <br>
+  <br *ngIf="input.database">
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" *ngIf="input.database">
     <mat-label>HTTP verb</mat-label>
     <mat-select
       matTooltip="HTTP verb endpoint encapsulates"
@@ -60,7 +60,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" *ngIf="input.database">
     <mat-label>Module name ...</mat-label>
     <input
       matInput
@@ -70,7 +70,7 @@
       [(ngModel)]="moduleName">
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" *ngIf="input.database">
     <mat-label>Endpoint name ...</mat-label>
     <input
       matInput
@@ -80,7 +80,7 @@
       [(ngModel)]="endpointName">
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" *ngIf="input.database">
     <mat-label>Authorization ...</mat-label>
     <input
       matInput
@@ -90,7 +90,7 @@
       [(ngModel)]="authorization">
   </mat-form-field>
 
-  <mat-form-field class="form-field full-width">
+  <mat-form-field class="form-field full-width" *ngIf="input.database">
     <mat-label>Arguments ...</mat-label>
     <textarea
       matInput
@@ -98,12 +98,12 @@
       [(ngModel)]="arguments"></textarea>
   </mat-form-field>
 
-  <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
+  <app-codemirror-sql *ngIf="input.database" [(model)]="input"></app-codemirror-sql>
 
-  <div class="button-strip">
+  <div class="button-strip" *ngIf="input.database">
     <button
       mat-button
-      [disabled]="moduleName === '' || endpointName === '' || input.sql === '' || !input.connectionString || !input.database"
+      [disabled]="moduleName === '' || endpointName === '' || input.sql === ''"
       matTooltip="Generates your SQL endpoint"
       (click)="generate()">
       Generate

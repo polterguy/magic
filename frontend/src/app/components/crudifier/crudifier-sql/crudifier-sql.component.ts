@@ -7,7 +7,6 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
 import { SqlService } from '../../sql/services/sql.service';
 import { Databases } from '../../sql/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
@@ -139,7 +138,7 @@ export class CrudifierSqlComponent implements OnInit {
           this.input = {
             databaseType: defaultDatabaseType.default,
             connectionString: connectionStrings.filter(x => x === 'generic')[0],
-            database: this.databases.filter(x => x === 'magic')[0],
+            database: null,
             options: sql,
             sql: '',
           };
