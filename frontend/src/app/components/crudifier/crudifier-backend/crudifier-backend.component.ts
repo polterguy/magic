@@ -204,10 +204,10 @@ export class CrudifierBackendComponent {
       }
 
       // Creating default authentication requirements to invoke endpoint(s).
-      idxTable.authPost = 'root';
-      idxTable.authGet = 'root';
-      idxTable.authPut = 'root';
-      idxTable.authDelete = 'root';
+      idxTable.authPost = 'root, admin';
+      idxTable.authGet = 'root, admin';
+      idxTable.authPut = 'root, admin';
+      idxTable.authDelete = 'root, admin';
 
       // Creating defaults for fields in table.
       for (const idxColumn of idxTable.columns) {

@@ -104,8 +104,8 @@
 
 </table>
 
-<mat-form-field class="field-input">
-  <mat-label>Create authentication ...</mat-label>
+<mat-form-field *ngIf="isPostIncluded()" class="field-input">
+  <mat-label>Create authorization ...</mat-label>
   <input
     matInput
     [disabled]="!isPostIncluded()"
@@ -115,33 +115,30 @@
     [(ngModel)]="table.authPost">
 </mat-form-field>
 
-<mat-form-field class="field-input">
-  <mat-label>Read authentication ...</mat-label>
+<mat-form-field *ngIf="isGetIncluded()" class="field-input">
+  <mat-label>Read authorization ...</mat-label>
   <input
     matInput
-    [disabled]="!isGetIncluded()"
     type="text"
     autocomplete="off"
     matTooltip="Comma separated list of roles allowed to invoke endpoint"
     [(ngModel)]="table.authGet">
 </mat-form-field>
 
-<mat-form-field class="field-input">
-  <mat-label>Update authentication ...</mat-label>
+<mat-form-field *ngIf="isPutIncluded()" class="field-input">
+  <mat-label>Update authorization ...</mat-label>
   <input
     matInput
-    [disabled]="!isPutIncluded()"
     type="text"
     autocomplete="off"
     matTooltip="Comma separated list of roles allowed to invoke endpoint"
     [(ngModel)]="table.authPut">
 </mat-form-field>
 
-<mat-form-field class="field-input">
-  <mat-label>Delete authentication ...</mat-label>
+<mat-form-field *ngIf="isDeleteIncluded()" class="field-input">
+  <mat-label>Delete authorization ...</mat-label>
   <input
     matInput
-    [disabled]="!isDeleteIncluded()"
     type="text"
     autocomplete="off"
     matTooltip="Comma separated list of roles allowed to invoke endpoint"
@@ -151,7 +148,7 @@
 <hr>
 
 <mat-form-field class="field-input">
-  <mat-label>Module URL1 ...</mat-label>
+  <mat-label>Module URL ...</mat-label>
   <input
     matInput
     [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
@@ -162,7 +159,7 @@
 </mat-form-field>
 
 <mat-form-field class="field-input">
-  <mat-label>Module URL2 ...</mat-label>
+  <mat-label>Component URL ...</mat-label>
   <input
     matInput
     [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"

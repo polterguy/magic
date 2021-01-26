@@ -46,10 +46,7 @@ export class SqlComponent implements OnInit {
   /**
    * Database types the user can select during configuration of system.
    */
-  public databaseTypes: any[] = [
-    {type: 'mysql', name: 'MySQL'},
-    {type: 'mssql', name: 'Microsoft SQL Server'},
-  ];
+  public databaseTypes: string[] = [];
 
   /**
    * All existing connection strings for selected database type.
@@ -86,6 +83,7 @@ export class SqlComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Needed to show user feedback
    * @param configService Needed to read configuration settings, more specifically default database config setting
    * @param sqlService Needed to be able to execute SQL towards backend
    * @param dialog Needed to be able to show Load SQL snippet dialog
@@ -105,6 +103,9 @@ export class SqlComponent implements OnInit {
 
     // Retrieving default database type from backend.
     this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
+
+      // Assigning database types to model.
+      this.databaseTypes = defaultDatabaseType.options;
 
       // Retrieving connection strings for default database type.
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
