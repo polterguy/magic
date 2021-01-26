@@ -56,9 +56,24 @@ apply:x:@hyper2lambda
 /*
  * Making sure we add arguments to the above lambda.
  */
-hyper2lambda:x:@.arguments/*/arguments
-add:x:@apply/*/.arguments
-   get-nodes:x:@hyper2lambda/*
+if
+   and
+      exists:x:@.arguments/*/arguments
+      not
+         eq
+            get-value:x:@.arguments/*/arguments
+            .:
+      not
+         eq
+            get-value:x:@.arguments/*/arguments
+            .
+   .lambda
+
+      /*
+       * Argument collection was specified, hence applying arguments to lambda.
+       */
+      add:x:@apply/*/.arguments
+         hyper2lambda:x:@.arguments/*/arguments
 
 
 /*
@@ -123,7 +138,7 @@ if
          get-value:x:@.arguments/*/overwrite
       io.file.exists:x:@.filename
    .lambda
-      throw:"That endpoint already exists. If you want to overwrite it, you'll have to explicitly tell me so."
+      throw:Endpoint already exists
 
 
 /*

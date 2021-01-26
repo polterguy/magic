@@ -7,8 +7,10 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { SqlService } from '../../sql/services/sql.service';
 import { Databases } from '../../sql/models/databases.model';
+import { CrudifyService } from '../services/crudify.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
 import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
@@ -61,9 +63,19 @@ export class CrudifierSqlComponent implements OnInit {
   public verb: string;
 
   /**
-   * Name of endpoint, that becomes its relative URL.
+   * Module name that becomes its second last relative URL.
    */
-  public name: string = '';
+  public moduleName: string = '';
+
+  /**
+   * Endpoint name that becomes its very last relative URL.
+   */
+  public endpointName: string = '';
+
+  /**
+   * Comma separated list of roles allowed to invoke endpoint.
+   */
+  public authorization: string;
 
   /**
    * Input SQL component model and options.
@@ -74,11 +86,13 @@ export class CrudifierSqlComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to show user feedback
+   * @param crudifyService Needed to crudify endpoint
    * @param configService Needed to read configuration settings, more specifically default database config setting
    * @param sqlService Needed to be able to retrieve meta information from backend
    */
   constructor(
     private feedbackService: FeedbackService,
+    private crudifyService: CrudifyService,
     private configService: ConfigService,
     private sqlService: SqlService) { }
 
@@ -200,6 +214,25 @@ export class CrudifierSqlComponent implements OnInit {
       result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
     }
     this.input.options.hintOptions.tables = result;
+  }
+
+  /**
+   * Generates your SQL endpoint.
+   */
+  public generate() {
+    this.crudifyService.generateSqlEndpoint({
+      databaseType: this.input.databaseType,
+      database: this.input.database,
+      authorization: this.authorization,
+      moduleName: this.moduleName,
+      endpointName: this.endpointName,
+      verb: this.verb,
+      sql: this.input.sql,
+      overwrite: true}).subscribe(() => {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfo('Endpoint successfully created');
+      });
   }
 
   /*
