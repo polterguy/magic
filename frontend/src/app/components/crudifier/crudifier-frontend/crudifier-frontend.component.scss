@@ -19,7 +19,7 @@
     margin-top: 1rem;
     mat-chip {
       margin-bottom: 1rem;
-      padding-right: 2.5rem;
+      padding-right: 2rem;
       padding-top: 2px;
       padding-bottom: 2px;
       min-height: 25px;
@@ -29,13 +29,11 @@
         right: .5rem;
       }
     }
-  }
-  mat-chip-list.no-icon {
-    margin-bottom: 2rem;
-    mat-chip {
-      padding-right: 1rem;
-      cursor: default;
-      background-color: #777;
+    mat-chip.selected {
+      background-color: #eee;
+    }
+    mat-chip.not-selected {
+      background-color: #555;
     }
   }
 }
