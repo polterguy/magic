@@ -7,6 +7,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from '../../../services/feedback.service';
 import { FileService } from 'src/app/components/files/services/file.service';
 import { EvaluatorService } from 'src/app/components/evaluator/services/evaluator.service';
@@ -106,10 +107,13 @@ export class FileEditorComponent implements OnInit {
   public execute() {
 
     // Notice! Executing *content* of file editor, and not file itself!
-    this.evaluatorService.execute(this.content).subscribe(() => {
+    this.evaluatorService.execute(this.content).subscribe((result: Response) => {
 
       // Providing feedback to user.
       this.feedbackService.showInfoShort('File successfully executed');
+
+      // Simply logging result of invocation to console.
+      console.log(result.result);
 
     }, (error: any) => this.feedbackService.showError(error));
   }
