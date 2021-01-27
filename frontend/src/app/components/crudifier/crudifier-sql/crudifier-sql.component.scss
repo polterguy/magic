@@ -11,4 +11,33 @@
       display: block;
     }
   }
+  .arguments-declaration {
+    margin-bottom: 1rem;
+    width: 100%;
+    button {
+      float: left;
+    }
+    mat-chip-list {
+      float: left;
+      margin-bottom: 1rem;
+      margin-top: .5rem;
+      mat-chip {
+        padding-right: 2.5rem;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        min-height: 25px;
+        position: relative;
+        cursor: pointer;
+        mat-icon {
+          position: absolute;
+          right: .5rem;
+        }
+      }
+    }
+  }
+  .arguments-declaration:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
 }
