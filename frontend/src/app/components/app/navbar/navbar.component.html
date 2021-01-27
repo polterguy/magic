@@ -10,6 +10,28 @@
 </a>
 
 <a
+  *ngIf="authService.hasAccess('magic/modules/magic')"
+  mat-button
+  routerLink="/auth"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>people</mat-icon>
+  <span>Auth</span>
+</a>
+
+<a
+  *ngIf="authService.hasAccess('magic/modules/system/sql')"
+  mat-button
+  routerLink="/sql"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>language</mat-icon>
+  <span>SQL</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/crudifier')"
   mat-button
   routerLink="/crudifier"
@@ -29,28 +51,6 @@
   [routerLinkActiveOptions]="{exact:true}">
   <mat-icon matSuffix>compare_arrows</mat-icon>
   <span>Endpoints</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/sql')"
-  mat-button
-  routerLink="/sql"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>language</mat-icon>
-  <span>SQL</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/tasks')"
-  mat-button
-  routerLink="/tasks"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>calendar_today</mat-icon>
-  <span>Tasks</span>
 </a>
 
 <a
@@ -76,25 +76,14 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/magic')"
+  *ngIf="authService.hasAccess('magic/modules/system/tasks')"
   mat-button
-  routerLink="/auth"
+  routerLink="/tasks"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
   [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>people</mat-icon>
-  <span>Auth</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/log')"
-  mat-button
-  routerLink="/log"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:false}">
-  <mat-icon matSuffix>bar_chart</mat-icon>
-  <span>Log</span>
+  <mat-icon matSuffix>calendar_today</mat-icon>
+  <span>Tasks</span>
 </a>
 
 <a
@@ -109,6 +98,16 @@
 </a>
 
 <a
+  mat-button
+  routerLink="/register"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>face</mat-icon>
+  <span>Register</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
   mat-button
   routerLink="/diagnostics"
@@ -120,13 +119,14 @@
 </a>
 
 <a
+  *ngIf="authService.hasAccess('magic/modules/system/log')"
   mat-button
-  routerLink="/register"
+  routerLink="/log"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>face</mat-icon>
-  <span>Register</span>
+  [routerLinkActiveOptions]="{exact:false}">
+  <mat-icon matSuffix>bar_chart</mat-icon>
+  <span>Log</span>
 </a>
 
 <a
