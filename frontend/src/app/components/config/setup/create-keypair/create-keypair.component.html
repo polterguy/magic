@@ -60,7 +60,7 @@
 
 <button
   mat-button
-  [disabled]="seed === ''"
+  [disabled]="seed === '' || subject === '' || email === ''"
   (click)="next()"
   class="next">
   Next
