@@ -80,6 +80,11 @@ export class CrudifierSqlComponent implements OnInit {
   public authorization = 'root, admin';
 
   /**
+   * Whether or not endpoint returns a list of items or a single item.
+   */
+  public isList = true;
+
+  /**
    * List of arguments endpoint can handle.
    */
   public arguments: Argument[] = [];
@@ -238,7 +243,8 @@ export class CrudifierSqlComponent implements OnInit {
       verb: this.verb,
       sql: this.input.sql,
       arguments: this.getArguments(),
-      overwrite: true}).subscribe(() => {
+      overwrite: true,
+      isList: this.isList}).subscribe(() => {
 
         // Providing feedback to user.
         this.feedbackService.showInfo('Endpoint successfully created');
@@ -286,7 +292,14 @@ export class CrudifierSqlComponent implements OnInit {
     this.arguments.splice(this.arguments.indexOf(argument), 1);
   }
 
+  /**
+   * Adds an argument as a reference into your SQL editor.
+   * 
+   * @param argument Argument to add as a reference into your SQL
+   */
   public addArgumentIntoSql(argument: Argument) {
+
+    // Simply concatenating argument into SQL.
     this.input.sql += '@' + argument.name;
   }
 

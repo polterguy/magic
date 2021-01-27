@@ -12,6 +12,7 @@
    endpointName:string
    sql:string
    overwrite:bool
+   isList:bool
 .description:Creates a custom SQL HTTP endpoint according to the specified arguments
 
 
@@ -51,6 +52,7 @@ apply:x:@hyper2lambda
    database-type:x:@.arguments/*/databaseType
    database:x:@.arguments/*/database
    sql:x:@.arguments/*/sql
+   isList:x:@.arguments/*/isList
 
 
 /*
