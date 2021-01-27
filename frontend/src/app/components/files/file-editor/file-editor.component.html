@@ -16,8 +16,15 @@
   class="button-strip">
 
   <button
+    *ngIf="isHyperlambdaFile()"
     mat-icon-button
-    class="save-button"
+    matTooltip="Execute content"
+    (click)="execute()">
+    <mat-icon>offline_bolt</mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
     matTooltip="Save file"
     (click)="save()">
     <mat-icon>save</mat-icon>

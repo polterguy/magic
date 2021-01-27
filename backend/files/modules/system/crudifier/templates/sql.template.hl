@@ -30,6 +30,20 @@ data.connect:{database}
 
 
    /*
-    * Returning results to caller.
+    * Checking if we should return a list of items, or only a
+    * single item.
     */
-   return-nodes:x:-/*
+   if
+      .is-list:{isList}
+      .lambda
+
+         /*
+          * Returning a list of items to caller.
+          */
+         return-nodes:x:@data.select/*
+
+
+   /*
+    * Returning a single result to caller.
+    */
+   return-nodes:x:@data.select/*/*
