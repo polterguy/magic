@@ -54,5 +54,11 @@ export class CustomSql {
    * combination should be overwritten or not.
    */
   overwrite: boolean;
+
+  /**
+   * Whether or not endpoint should return a list of items,
+   * or a single item (scalar value, or a single record).
+   */
+  isList: boolean;
 }
   

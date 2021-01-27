@@ -27,12 +27,12 @@ export class CreateKeypairComponent implements OnInit {
   /**
    * Identity for the key.
    */
-  public subject: string;
+  public subject = '';
 
   /**
    * Email address you want to associate with your key.
    */
-  public email: string;
+  public email = '';
 
   /**
    * Base URL for your key.

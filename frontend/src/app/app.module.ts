@@ -122,6 +122,7 @@ import { CreateKeypairDialogComponent } from './components/crypto/server-public-
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { AddQueryParameterDialogComponent } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
+import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -191,6 +192,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
     CrudifierBackendComponent,
     CrudifierFrontendComponent,
     CrudifierSqlComponent,
+    CrudifierSqlAddArgumentDialogComponent,
   ],
   imports: [
     FormsModule,
