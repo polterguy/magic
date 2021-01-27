@@ -90,6 +90,10 @@
       [(ngModel)]="authorization">
   </mat-form-field>
 
+  <mat-checkbox
+    matTooltip="If endpoint should return a list of items or a single item"
+    [(ngModel)]="isList">List</mat-checkbox>
+
   <div class="arguments-declaration">
     <button
       *ngIf="input.database"
