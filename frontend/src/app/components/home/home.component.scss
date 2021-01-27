@@ -7,11 +7,9 @@ mat-card {
   h1 {
     text-align: center;
   }
-  blockquote {
-    font-size: 1.2rem;
-    font-style: italic;
-    color: #aaa;
-    margin-left: 0;
-    margin-top: 2rem;
+  .copyright {
+    display: block;
+    text-align: center;
+    color:#ccc;
   }
 }
