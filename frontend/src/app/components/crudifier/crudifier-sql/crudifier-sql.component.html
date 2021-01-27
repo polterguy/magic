@@ -91,6 +91,7 @@
   </mat-form-field>
 
   <mat-checkbox
+    *ngIf="input.database"
     matTooltip="If endpoint should return a list of items or a single item"
     [(ngModel)]="isList">List</mat-checkbox>
 
@@ -120,7 +121,7 @@
   <div class="button-strip" *ngIf="input.database">
     <button
       mat-button
-      [disabled]="moduleName === '' || endpointName === '' || input.sql === ''"
+      [disabled]="moduleName === '' || endpointName === '' || input.sql === '' || !validModuleComponentName()"
       matTooltip="Generates your SQL endpoint"
       (click)="generate()">
       Generate
