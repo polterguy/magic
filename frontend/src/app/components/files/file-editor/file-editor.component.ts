@@ -98,6 +98,8 @@ export class FileEditorComponent implements OnInit {
    * we allow for user to execute it.
    */
   public isHyperlambdaFile() {
+
+    // Simply returning true if file ends with Hyperlambda extension.
     return this.file.endsWith('.hl');
   }
 
