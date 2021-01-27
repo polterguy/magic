@@ -46,9 +46,18 @@ if
          add:x:@.x/#
             get-nodes:x:@hyper2lambda/*/.lambda/*
          eval:x:@.x/#
+
+         /*
+          * Success, returning such to caller.
+          */
          return
             result:success
+
       .catch
+
+         /*
+          * Oops, exception occurred, logging before returning failure to caller.
+          */
          strings.concat
             .:"Assumption test failed, test file: "
             get-value:x:../*/.arguments/*/test_file
@@ -167,15 +176,42 @@ if
 
             /*
              * Making sure JSON formatting becomes irrelevant.
+             * First verifying endpoint returned anything at all.
              */
-            json2lambda:x:@.foo/-/*/content
+            .content:{}
+            if
+               and
+                  exists:x:@.foo/-/*/content
+                  not
+                     eq
+                        get-value:x:@.foo/-/*/content
+                        .:
+                  not
+                     eq
+                        get-value:x:@.foo/-/*/content
+                        .
+               .lambda
+
+                  // HTTP invocation returned something ...
+                  set-value:x:@.content
+                     get-value:x:@.foo/-/*/content
+
+            /*
+             * Transforming response JSON back and forth to eliminate formatting issues.
+             */
+            json2lambda:x:@.content
             set-value:x:@.response
                lambda2json:x:@json2lambda/*
                   format:true
+
+            /*
+             * Transforming assumed JSON back and forth to eliminate formatting issues.
+             */
             json2lambda:x:@hyper2lambda/*/response
             set-value:x:@.assumption
                lambda2json:x:@json2lambda/*
                   format:true
+
       else
 
          /*
