@@ -20,13 +20,13 @@ export class CrudifierSqlAddArgumentDialogComponent {
    * Types of argument user can add.
    */
   public types: string[] = [
-    'int',
-    'uint',
+    'string',
     'long',
     'ulong',
     'date',
     'bool',
-    'string',
+    'int',
+    'uint',
     'short',
     'ushort',
   ];
@@ -52,7 +52,7 @@ export class CrudifierSqlAddArgumentDialogComponent {
    * Returns true if argument name is valid.
    */
   public argumentValid() {
-    return /^[a-z0-9]+$/i.test(this.name);
+    return /^[a-z0-9_]+$/i.test(this.name);
   }
 
   /**
