@@ -219,7 +219,7 @@ export class CrudifierBackendComponent implements OnInit {
 
       // Creating defaults for currently iterated table.
       idxTable.moduleName = database.name;
-      idxTable.moduleUrl = idxTable.name;
+      idxTable.moduleUrl = idxTable.name.replace('.', '/').replace('dbo/', '');
       idxTable.verbs = [
         { name: 'post', generate: true },
         { name: 'get', generate: true },
