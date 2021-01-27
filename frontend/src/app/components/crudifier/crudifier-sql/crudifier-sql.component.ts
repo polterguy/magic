@@ -234,6 +234,8 @@ export class CrudifierSqlComponent implements OnInit {
    * Generates your SQL endpoint.
    */
   public generate() {
+
+    // Invoking backend through service instance.
     this.crudifyService.generateSqlEndpoint({
       databaseType: this.input.databaseType,
       database: this.input.database,
