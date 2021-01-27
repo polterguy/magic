@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, Injector, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
@@ -12,8 +12,7 @@ import { FileService } from 'src/app/components/files/services/file.service';
 import { EvaluatorService } from 'src/app/components/evaluator/services/evaluator.service';
 
 // CodeMirror options according to file extensions.
-import fileTypes from './file-types.json'
-import { MatDialog } from '@angular/material/dialog';
+import fileTypes from './file-types.json';
 
 /**
  * Component for editing a file.
@@ -46,14 +45,14 @@ export class FileEditorComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param fileService File service needed to retrieve file's content from backend
    * @param evaluatorService Used to load Hyperlambda vocabulary from backend
+   * @param feedbackService Needed to supply feedback to user
+   * @param fileService File service needed to retrieve file's content from backend
    */
   public constructor(
     private evaluatorService: EvaluatorService,
     private feedbackService: FeedbackService,
-    private fileService: FileService) {
-  }
+    private fileService: FileService) { }
 
   /**
    * Implementation of OnInit.
@@ -91,6 +90,28 @@ export class FileEditorComponent implements OnInit {
         this.loadFile();
       }
     }
+  }
+
+  /**
+   * Returns true if file is a Hyperlambda file, at which point
+   * we allow for user to execute it.
+   */
+  public isHyperlambdaFile() {
+    return this.file.endsWith('.hl');
+  }
+
+  /**
+   * Invoked when user wants to execute the current Hyperlambda file's content.
+   */
+  public execute() {
+
+    // Notice! Executing *content* of file editor, and not file itself!
+    this.evaluatorService.execute(this.content).subscribe(() => {
+
+      // Providing feedback to user.
+      this.feedbackService.showInfoShort('File successfully executed');
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
