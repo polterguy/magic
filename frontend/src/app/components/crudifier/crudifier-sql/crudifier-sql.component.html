@@ -90,13 +90,26 @@
       [(ngModel)]="authorization">
   </mat-form-field>
 
-  <mat-form-field class="form-field full-width" *ngIf="input.database">
-    <mat-label>Arguments ...</mat-label>
-    <textarea
-      matInput
-      rows="5"
-      [(ngModel)]="arguments"></textarea>
-  </mat-form-field>
+  <div class="arguments-declaration">
+    <button
+      *ngIf="input.database"
+      mat-icon-button
+      matTooltip="Add an argument to your endpoint declaration"
+      (click)="addArgument()">
+      <mat-icon>add</mat-icon>
+    </button>
+
+    <mat-chip-list *ngIf="input.database">
+      <mat-chip
+        *ngFor="let arg of arguments"
+        (click)="addArgumentIntoSql(arg)"
+        (removed)="removeArgument(arg)"
+        [matTooltip]="arg.name + ' as ' + arg.type + ' - Click to add to SQL'">
+        {{arg.name}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+  </div>
 
   <app-codemirror-sql *ngIf="input.database" [(model)]="input"></app-codemirror-sql>
 

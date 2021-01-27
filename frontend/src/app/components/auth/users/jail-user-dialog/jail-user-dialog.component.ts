@@ -36,7 +36,7 @@ export class JailUserDialogComponent {
    */
   public imprison() {
 
-    // Closing dialogue, passing in release deate to caller.
+    // Closing dialogue, passing in release date to caller.
     this.dialogRef.close(this.releaseDate);
   }
 }
