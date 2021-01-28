@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
@@ -31,12 +32,14 @@ export class ToolbarComponent {
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param authService Authentication and authorisation HTTP service
    * @param backendService Service to keep track of currently selected backend
+   * @param router Needed to be able to display context sensitive help
    * @param messageService Message service to send messages to other components using pub/sub
    */
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
     public backendService: BackendService,
+    private router: Router,
     private messageService: MessageService) { }
 
   /**
@@ -93,5 +96,15 @@ export class ToolbarComponent {
    */
   public logout() {
     this.authService.logout(false);
+  }
+
+  /**
+   * Invoked when usert clicks the help icon.
+   */
+  public help() {
+
+    // Retrieving currently activated route, which is component.
+    const route = this.router.url.split('/')[1];
+    console.log(route);
   }
 }
