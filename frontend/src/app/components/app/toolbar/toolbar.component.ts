@@ -110,16 +110,23 @@ export class ToolbarComponent {
     // Retrieving currently activated route, which is component.
     const route = this.router.url.split('/')[1];
     let video = '';
+    let url = '';
+
+    // Figuribng out what video to display.
     switch (route) {
+
+      // Home, configuring Magic video.
       case '':
         video = 'https://www.youtube.com/embed/rtK_Ie9E-cI';
+        url = 'https://www.youtube.com/watch?v=rtK_Ie9E-cI';
         break;
     }
 
     // Warning user about YouTube's lack of privacy.
     this.feedbackService.confirm(
       'Privacy Warning!',
-      `This will open YouTube in an iframe. YouTube is notoriously known for violating your individual privacy. Make sure you understand the implications of this before proceeding. Do you wish to proceed anyway?`,
+      `This will open YouTube in an iframe. YouTube is notoriously known for violating your individual privacy. Make sure you understand the implications of this before proceeding. Do you wish to proceed anyway? ` +
+      `Alternatively, you might want to open the video directly in an anonymous browser window, or using Tor Browser - The URL for the video is ${url} in case you want to watch it in privacy.`,
       () => {
 
         // Showing modal dialog with video.
