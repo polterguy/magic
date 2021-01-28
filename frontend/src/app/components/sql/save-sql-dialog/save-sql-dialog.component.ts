@@ -87,7 +87,8 @@ export class SaveSqlDialogComponent implements OnInit {
 
     // Filtering files according such that only filtered files are returned.
     return this.files.filter((idx: string)  => {
-      return this.getFilename(idx).indexOf(this.data.filename) !== -1;
+      return this.getFilename(idx).indexOf(this.data.filename) !== -1 &&
+        this.getFilename(idx) !== this.data.filename;
     });
   }
 
