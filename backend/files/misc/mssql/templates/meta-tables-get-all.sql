@@ -4,4 +4,4 @@
  *
  * Exchange "magic" below to select tables from a different database.
  */
-select table_name from magic.INFORMATION_SCHEMA.TABLES where table_type = 'BASE TABLE'
+select table_name from magic.information_schema.tables where table_type = 'base table'
