@@ -1,4 +1,8 @@
 
+/*
+ * A stripped down version of the BaseballData dataset,
+ * with mostly records from the pre 1890 era.
+ */
 USE [master]
 GO
 
