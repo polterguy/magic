@@ -15,32 +15,47 @@ auth.ticket.verify:root
 
 
 /*
- * Transforms the specified [hyperlambda] to a lambda object,
- * making sure we correctly set the root node for the execution
- * in the process. This looks a bit cheezy, but to make sure
- * the root node for the execution object is the node containing
- * the Hyperlambda as children, it is necessary.
- *
- * It basically "unties" the execution object from the rest of this
- * particular file, preventing caller to interfer with the file itself,
- * as a consequence of his Hyperlambda.
+ * To be able to return intelligent error messages to caller,
+ * we catch all exceptions, and returns the exception message
+ * publicly back to caller.
  */
-.x:node:""
-hyper2lambda:x:@.arguments/*/hyperlambda
-add:x:@.x/#
-   get-nodes:x:@hyper2lambda/*
+try
 
+   /*
+    * Transforms the specified [hyperlambda] to a lambda object,
+    * making sure we correctly set the root node for the execution
+    * in the process. This looks a bit cheezy, but to make sure
+    * the root node for the execution object is the node containing
+    * the Hyperlambda as children, it is necessary.
+    *
+    * It basically "unties" the execution object from the rest of this
+    * particular file, preventing caller to interfer with the file itself,
+    * as a consequence of his Hyperlambda.
+    */
+   .x:node:""
+   hyper2lambda:x:@.arguments/*/hyperlambda
+   add:x:@.x/#
+      get-nodes:x:@hyper2lambda/*
 
-/*
- * Evaluating Hyperlambda, now with the correct root node.
- */
-eval:x:@.x/#
+   /*
+    * Evaluating Hyperlambda, now with the correct root node.
+    */
+   eval:x:@.x/#
 
+   /*
+    * Returning the results of the evaluation to caller.
+    */
+   lambda2hyper:x:@.x/#/*
+   unwrap:x:+/*
+   return-nodes
+      result:x:@lambda2hyper
 
-/*
- * Returning the results of the evaluation to caller.
- */
-lambda2hyper:x:@.x/#/*
-unwrap:x:+/*
-return-nodes
-   result:x:@lambda2hyper
+.catch
+
+   /*
+    * Throwing a new exception, wrapping message,
+    * this time as a publicly visible exception.
+    */
+   throw:x:@.arguments/*/message
+      status:400
+      public:true
