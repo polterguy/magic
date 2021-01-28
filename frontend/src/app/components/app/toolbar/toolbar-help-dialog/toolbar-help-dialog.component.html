@@ -1,0 +1,22 @@
+
+<h1 mat-dialog-title>YouTube help video</h1>
+
+<div mat-dialog-content class="content">
+
+  <iframe
+    width="560"
+    height="315"
+    [src]="getVideoUrl()"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>
+
+</div>
+
+<div mat-dialog-actions class="button-strip">
+
+  <button
+    mat-button
+    (click)="close()">Close</button>
+
+</div>
