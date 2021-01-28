@@ -66,16 +66,27 @@ data.connect:x:@.arguments/*/database
 
 
    /*
-    * Executing SQL and returning results to caller.
+    * Executing SQL and returning results to caller, making sure we're
+    * able to return exceptions to caller.
     */
-   data.select:x:@.arguments/*/sql
-      multiple-result-sets:true
+   try
+      data.select:x:@.arguments/*/sql
+         multiple-result-sets:true
 
 
-   /*
-    * Returning result of invocation to caller.
-    */
-   if
-      exists:x:@data.select/*/*
-      .lambda
-         return-nodes:x:@data.select/*
+      /*
+       * Returning result of invocation to caller.
+       */
+      if
+         exists:x:@data.select/*/*
+         .lambda
+            return-nodes:x:@data.select/*
+
+   .catch
+
+      /*
+       * Notice, throwing exceptions as public now.
+       */
+      throw:x:@.arguments/*/message
+         public:bool:true
+         status:int:401
