@@ -14,6 +14,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
+import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-dialog.component';
 
 /**
  * Toolbar component for displaying toolbar that allows the
@@ -105,6 +106,19 @@ export class ToolbarComponent {
 
     // Retrieving currently activated route, which is component.
     const route = this.router.url.split('/')[1];
-    console.log(route);
+    let video = '';
+    switch (route) {
+      case '':
+        video = 'https://www.youtube.com/embed/rtK_Ie9E-cI';
+        break;
+    }
+
+    // Showing modal dialog with video.
+    this.dialog.open(ToolbarHelpDialogComponent, {
+      width: '625px',
+      data: {
+        video: video
+      }
+    });
   }
 }

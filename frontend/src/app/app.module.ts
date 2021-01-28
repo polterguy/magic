@@ -117,6 +117,7 @@ import { JailUserDialogComponent } from './components/auth/users/jail-user-dialo
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
+import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
@@ -193,6 +194,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     CrudifierFrontendComponent,
     CrudifierSqlComponent,
     CrudifierSqlAddArgumentDialogComponent,
+    ToolbarHelpDialogComponent,
   ],
   imports: [
     FormsModule,
