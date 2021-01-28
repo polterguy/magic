@@ -41,7 +41,7 @@ data.connect:x:@.arguments/*/database
          not
             get-value:x:@.arguments/*/batch
       .lambda
-         add:x:@data.connect/*/data.select
+         add:x:@data.connect/**/data.select
             .
                max:200
 
@@ -57,10 +57,10 @@ data.connect:x:@.arguments/*/database
             .:mssql
          get-value:x:@.arguments/*/batch
       .lambda
-         set-name:x:@data.connect/*/data.select
+         set-name:x:@data.connect/**/data.select
             .:mssql.execute-batch
    else
-      add:x:@data.connect/*/data.select
+      add:x:@data.connect/**/data.select
          .
             database-type:x:@.arguments/*/databaseType
 
