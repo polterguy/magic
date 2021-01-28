@@ -126,7 +126,7 @@ export class ToolbarComponent {
     this.feedbackService.confirm(
       'Privacy Warning!',
       `<p>This will open YouTube in an iframe. YouTube is notoriously known for violating your individual privacy. Make sure you understand the implications of this before proceeding. Do you wish to proceed anyway?</p>` +
-      `<p>Alternatively, you might want to open the video directly in an anonymous browser window - The URL for the video is <a href="${url}">${url}</a> in case you want to watch it in privacy.</p>`,
+      `<p>Alternatively, you might want to open the video directly in an anonymous browser window. The URL for the video is <a href="${url}">${url}</a> in case you want to watch it in privacy.</p>`,
       () => {
 
         // Showing modal dialog with video.
