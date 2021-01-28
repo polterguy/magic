@@ -330,7 +330,16 @@ export class SqlComponent implements OnInit {
       // Making sure we remove all previously viewed detail records.
       this.displayDetails = [];
       this.result = result || [];
-    }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) => {
+      if (error.error &&
+        error.error.message &&
+        error.error.message &&
+        (<string>error.error.message).toLowerCase().indexOf('incorrect syntax near \'go\'') !== -1) {
+          this.feedbackService.showError('Turn ON batch mode to execute this SQL');
+          return;
+        }
+      this.feedbackService.showError(error);
+    });
   }
 
   /**
