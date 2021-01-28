@@ -4,14 +4,15 @@
  */
 
 // Angular and system imports.
-import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-dialog.component';
@@ -30,18 +31,20 @@ export class ToolbarComponent {
   /**
    * Creates an instance of your component.
    * 
+   * @param router Needed to be able to display context sensitive help
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param authService Authentication and authorisation HTTP service
    * @param backendService Service to keep track of currently selected backend
-   * @param router Needed to be able to display context sensitive help
    * @param messageService Message service to send messages to other components using pub/sub
+   * @param feedbackService Needed to show confirm dialog.
    */
   constructor(
+    private router: Router,
     private dialog: MatDialog,
     public authService: AuthService,
     public backendService: BackendService,
-    private router: Router,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Toggles the navbar.
@@ -113,12 +116,19 @@ export class ToolbarComponent {
         break;
     }
 
-    // Showing modal dialog with video.
-    this.dialog.open(ToolbarHelpDialogComponent, {
-      width: '625px',
-      data: {
-        video: video
-      }
+    // Warning user about YouTube's lack of privacy.
+    this.feedbackService.confirm(
+      'Privacy Warning!',
+      `This will open YouTube in an iframe. YouTube is notoriously known for violating your individual privacy. Make sure you understand the implications of this before proceeding. Do you wish to proceed anyway?`,
+      () => {
+
+        // Showing modal dialog with video.
+        this.dialog.open(ToolbarHelpDialogComponent, {
+          width: '625px',
+          data: {
+            video: video
+          }
+        });
     });
   }
 }
