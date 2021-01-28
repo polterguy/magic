@@ -82,10 +82,6 @@ export class SetupComponent implements OnInit, OnDestroy {
             }
           });
           break;
-
-        case 'app.assumptions.succeeded':
-          setTimeout(() => this.router.navigate(['/']), 1000);
-          break;
       }
     });
   }
