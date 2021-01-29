@@ -13,7 +13,7 @@ use magic;
 create table magic_version (
   db_version varchar(30) not null
 );
-insert into magic_version(db_version) values ('008.006.007');
+insert into magic_version(db_version) values ('008.009.002');
 
 
 /*
