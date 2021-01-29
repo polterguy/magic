@@ -72,7 +72,7 @@ export class CreateKeypairDialogComponent implements OnInit {
   ngOnInit() {
 
     // Retrieving some default seed for key generating process.
-    this.configService.getGibberish(25, 50).subscribe((result: Response) => {
+    this.configService.getGibberish(100, 200).subscribe((result: Response) => {
 
       // Assigning model to result of backend invocation.
       this.seed = result.result;
