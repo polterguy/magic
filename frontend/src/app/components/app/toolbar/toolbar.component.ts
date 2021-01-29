@@ -120,22 +120,46 @@ export class ToolbarComponent {
         video = 'https://www.youtube.com/embed/rtK_Ie9E-cI';
         url = 'https://www.youtube.com/watch?v=rtK_Ie9E-cI';
         break;
+
+      // Auth, administrating users and roles.
+      case 'auth':
+        video = 'https://www.youtube.com/embed/I91IpNnqk8g';
+        url = 'https://www.youtube.com/watch?v=I91IpNnqk8g';
+        break;
     }
 
-    // Warning user about YouTube's lack of privacy.
-    this.feedbackService.confirm(
-      'Privacy Warning!',
-      `<p>This will open YouTube in an iframe. YouTube is notoriously known for violating your individual privacy. Make sure you understand the implications of this before proceeding. Do you wish to proceed anyway?</p>` +
-      `<p>Alternatively, you might want to open the video directly in an anonymous browser window. The URL for the video is <a href="${url}">${url}</a> in case you want to watch it in privacy.</p>`,
-      () => {
+    const dismiss = localStorage.getItem('dismiss-warning');
+    if (dismiss === 'true') {
 
-        // Showing modal dialog with video.
-        this.dialog.open(ToolbarHelpDialogComponent, {
-          width: '625px',
-          data: {
-            video: video
-          }
-        });
-    });
+      // Showing modal dialog with video.
+      this.dialog.open(ToolbarHelpDialogComponent, {
+        width: '625px',
+        data: {
+          video: video
+        }
+      });
+
+    } else {
+
+      // Warning user about YouTube's lack of privacy.
+      this.feedbackService.confirm(
+        'Privacy Warning!',
+        `<p>This will open YouTube in an iframe. YouTube is known for violating your privacy. Make sure you understand the implications of this before proceeding.</p>` +
+        `<p>Alternatively, you might want to open the video directly in an anonymous browser window. The URL for the video is <a href="${url}">${url}</a> in case you want to watch it in privacy.</p>` +
+        '<p>Do you wish to proceed anyway?</p>',
+        () => {
+
+          // Storing preferences for displaying warning.
+          localStorage.setItem('dismiss-warning', 'true');
+
+          // Showing modal dialog with video.
+          this.dialog.open(ToolbarHelpDialogComponent, {
+            width: '625px',
+            data: {
+              video: video
+            }
+          });
+      });
+    }
   }
 }
