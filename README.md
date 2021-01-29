@@ -15,7 +15,7 @@ Magic is a super extendible DSL and a scaffolding CRUD generator for .Net Core, 
 The simplest way to get started, is to [download its latest release](https://github.com/polterguy/magic/releases),
 and use it as a _"starter kit"_. You will need.
 
-1. [.Net 5 CLI](https://dotnet.microsoft.com/download)
+1. [.Net 5 CLI and SDK](https://dotnet.microsoft.com/download)
 2. Some sort of database server [MySql](https://dev.mysql.com/downloads/mysql/) or [MS SQL](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
 3. [NodeJS](https://nodejs.org/en/download/), required to serve Angular frontend
 4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window with `npm install -g @angular/cli`
