@@ -5,63 +5,33 @@
 slots.create:magic.crypto.get-public-key
 
    /*
-    * Making sure we cache result, to avoid having to hit database
-    * on every single invocation. Notice, we cache invocation for
-    * 5 minutes only. First we create a cache key though.
+    * Selecting key and vocabulary from database,
+    * according to the specified fingerprint.
+    *
+    * Notice, key needs to be enabled in order to be returned.
     */
-   strings.concat
-      .:public-key.
-      get-value:x:@.arguments/*/fingerprint
-   unwrap:x:./*/cache.try-get/*/.lambda/*/.fingerprint
-
-   /*
-    * Then we retrieve result from cache, possibly invoking [.lambda]
-    * if item doesn't exist in cache.
-    */
-   cache.try-get:x:@strings.concat
-      expiration:300
-      .lambda
-
-         /*
-          * Forward evaluated above.
-          */
-         .fingerprint:x:@.arguments/*/fingerprint
-
-         /*
-          * Selecting key and vocabulary from database,
-          * according to the specified fingerprint.
-          *
-          * Notice, key needs to be enabled in order to be returned.
-          */
-         data.connect:magic
-            data.select:select id, content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint and enabled = @enabled
-               @fingerprint:x:@.fingerprint
-               @enabled:bool:true
-            if
-               not
-                  exists:x:./././0/0
-               .lambda
-
-                  /*
-                   * Public key doesn't exist in database.
-                   */
-                  throw:Public key doesn't exist, or is not enabled
+   data.connect:magic
+      data.select:select id, content as public_key, domain, vocabulary from crypto_keys where fingerprint = @fingerprint and enabled = @enabled
+         @fingerprint:x:@.arguments/*/fingerprint
+         @enabled:bool:true
+      if
+         not
+            exists:x:./././0/0
+         .lambda
 
             /*
-             * Returning result of database invocation to caller.
+             * Public key doesn't exist in database.
              */
-            add:x:./*/return
-               get-nodes:x:@data.select/*/*/id
-               get-nodes:x:@data.select/*/*/public_key
-               get-nodes:x:@data.select/*/*/domain
-            add:x:./*/return/*/vocabulary
-               hyper2lambda:x:@data.select/*/*/vocabulary
-            return
-               vocabulary
+            throw:Public key doesn't exist, or is not enabled
 
-   /*
-    * Returning results of above invocation to caller.
-    */
-   add:x:./*/return
-      get-nodes:x:@cache.try-get/#/*
-   return
+      /*
+       * Returning result of database invocation to caller.
+       */
+      add:x:./*/return
+         get-nodes:x:@data.select/*/*/id
+         get-nodes:x:@data.select/*/*/public_key
+         get-nodes:x:@data.select/*/*/domain
+      add:x:./*/return/*/vocabulary
+         hyper2lambda:x:@data.select/*/*/vocabulary
+      return
+         vocabulary
