@@ -25,9 +25,3 @@ signal:magic.crypto.http.eval
          get-nodes:x:@vocabulary/*
          get-nodes:x:@slots.vocabulary/*
       return
-      
-/*
- * Transforming returned content to lambda,
- * to make it easier to read.
- */
-hyper2lambda:x:-/*/content
