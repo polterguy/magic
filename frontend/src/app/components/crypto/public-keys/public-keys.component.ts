@@ -197,7 +197,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
          * the specific key.
          */
         let id = -1;
-        if (this.count === 1) {
+        if (this.count === 1 && this.filterFormControl.value !== '') {
           id = this.publicKeys[0].key.id;
         } else if (this.count === 0) {
           id = 0;
