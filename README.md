@@ -6,7 +6,7 @@ Magic is a super extendible DSL and a scaffolding CRUD generator for .Net Core, 
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=afzxchk82nY">
-<img alt="Create a CRUD Web app in seconds" title="Create a CRUD Web app in seconds" src="https://servergardens.files.wordpress.com/2020/01/magic-video-screenshot.png" />
+<img alt="Create a CRUD Web app in seconds" title="Create a CRUD Web app in seconds" src="https://servergardens.files.wordpress.com/2021/01/youtube-video.png" />
 </a>
 </p>
 
