@@ -46,7 +46,10 @@
     <ng-container matColumnDef="delete">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell class="mini-col button-col" *matCellDef="let el">
-        <button (click)="delete($event, el.key);" mat-button>
+        <button
+          (click)="delete($event, el.key);"
+          matTooltip="Delete item from cache"
+          mat-button>
           <mat-icon>delete</mat-icon>
         </button>
       </td>
