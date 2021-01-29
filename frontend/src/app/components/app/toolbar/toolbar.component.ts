@@ -138,6 +138,54 @@ export class ToolbarComponent {
         video = 'https://www.youtube.com/embed/PMETvIk_EKg';
         url = 'https://www.youtube.com/watch?v=PMETvIk_EKg';
         break;
+
+      // Endpoints menu item.
+      case 'endpoints':
+        video = 'https://www.youtube.com/embed/jwN32Ji6MVE';
+        url = 'https://www.youtube.com/watch?v=jwN32Ji6MVE';
+        break;
+
+      // Files menu item.
+      case 'file-system':
+        video = 'https://www.youtube.com/embed/x2_2Uzb7h84';
+        url = 'https://www.youtube.com/watch?v=x2_2Uzb7h84';
+        break;
+
+      // Evaluator menu item.
+      case 'evaluator':
+        video = 'https://www.youtube.com/embed/S83qWxBAaNM';
+        url = 'https://www.youtube.com/watch?v=S83qWxBAaNM';
+        break;
+
+      // Tasks menu item.
+      case 'tasks':
+        video = 'https://www.youtube.com/embed/BnYr3s69_r0';
+        url = 'https://www.youtube.com/watch?v=BnYr3s69_r0';
+        break;
+
+      // Crypto menu item.
+      case 'crypto':
+        video = 'https://www.youtube.com/embed/mfQOTq7rMv4';
+        url = 'https://www.youtube.com/watch?v=mfQOTq7rMv4';
+        break;
+
+      // Diagnostics menu item.
+      case 'diagnostics':
+        video = 'https://www.youtube.com/embed/nZ_yrw3MRS4';
+        url = 'https://www.youtube.com/watch?v=nZ_yrw3MRS4';
+        break;
+
+      // Diagnostics menu item.
+      case 'log':
+        video = 'https://www.youtube.com/embed/mjqvjy-lqnY';
+        url = 'https://www.youtube.com/watch?v=mjqvjy-lqnY';
+        break;
+
+      // Diagnostics menu item.
+      case 'config':
+        video = 'https://www.youtube.com/embed/KkVUQk5eAPg';
+        url = 'https://www.youtube.com/watch?v=KkVUQk5eAPg';
+        break;
     }
 
     const dismiss = localStorage.getItem('dismiss-warning');
