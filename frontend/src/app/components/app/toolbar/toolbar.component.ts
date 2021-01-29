@@ -126,6 +126,18 @@ export class ToolbarComponent {
         video = 'https://www.youtube.com/embed/I91IpNnqk8g';
         url = 'https://www.youtube.com/watch?v=I91IpNnqk8g';
         break;
+
+      // SQL, administrating your databases.
+      case 'sql':
+        video = 'https://www.youtube.com/embed/NMH87k7Dv6c';
+        url = 'https://www.youtube.com/watch?v=NMH87k7Dv6c';
+        break;
+
+      // Generator menu item.
+      case 'crudifier':
+        video = 'https://www.youtube.com/embed/PMETvIk_EKg';
+        url = 'https://www.youtube.com/watch?v=PMETvIk_EKg';
+        break;
     }
 
     const dismiss = localStorage.getItem('dismiss-warning');
@@ -133,7 +145,7 @@ export class ToolbarComponent {
 
       // Showing modal dialog with video.
       this.dialog.open(ToolbarHelpDialogComponent, {
-        width: '625px',
+        width: '617px',
         data: {
           video: video
         }
