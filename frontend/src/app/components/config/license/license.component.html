@@ -23,6 +23,7 @@
     class="button-strip">
     <button
       mat-button
+      [disabled]="license === ''"
       matTooltip="Applies your license to your current backend"
       (click)="applyLicense()">
       Apply
