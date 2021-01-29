@@ -316,7 +316,7 @@ export class SqlComponent implements OnInit {
       if (result) {
         let count = 0;
         for (var idx of result) {
-          count += idx.length;
+          count += (idx || []).length;
         }
         if (this.safeMode && count === 200) {
           this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return more, or add paging.');
