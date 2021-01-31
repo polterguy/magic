@@ -426,14 +426,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
       }
       key.identity = key.key.subject + ' - ' + key.key.email;
 
-      // Making sure we evict cache for public key.
-      this.cryptoService.evictCacheForPublicKey(key.key).subscribe(() => {
-
-        // Some simple logging.
-        console.info('Key evicted from cache');
-
-      }, (error: any) => this.feedbackService.showError(error));
-
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

@@ -220,15 +220,4 @@ export class CryptoService {
     // Invoking backend and returning observable.
     return this.httpService.get<Count>('/magic/modules/magic/crypto_invocations-count' + query);
   }
-
-  /**
-   * Evicts cache for public key on server.
-   * 
-   * @param key Key to evict cache for on server
-   */
-  public evictCacheForPublicKey(key: PublicKey) {
-    return this.httpService.delete<Response>(
-      '/magic/modules/system/config/delete-cache-item?id=' +
-      encodeURIComponent('public-key.' + key.fingerprint));
-  }
 }
