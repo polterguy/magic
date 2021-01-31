@@ -211,7 +211,7 @@
 
 <div class="button-strip">
   <button
-    [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
+    [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded())"
     mat-button
     [matTooltip]="'Crudify only your \'' + table.name + '\' table'"
     (click)="crudifyTable()">

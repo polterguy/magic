@@ -58,6 +58,7 @@
 <div class="button-strip">
   <button
     *ngIf="database"
+    [disabled]="database && database.name === 'magic'"
     mat-button
     matTooltip="Crudifies all tables in selected database"
     (click)="crudifyAll()">
