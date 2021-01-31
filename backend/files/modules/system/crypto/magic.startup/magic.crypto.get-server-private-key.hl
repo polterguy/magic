@@ -5,17 +5,13 @@
 slots.create:magic.crypto.get-server-private-key
 
    /*
-    * Caching the results for minor optimisations.
+    * Loading files, creating fingerprint,
+    * and returning private key to caller.
     */
-   cache.try-get:magic.crypto.get-server-private-key
-      expiration:300
-      .lambda
-
-         io.file.load:/modules/system/crypto/keys/public.key
-         crypto.fingerprint:x:@io.file.load
-         io.file.load:/modules/system/crypto/keys/private.key
-         unwrap:x:+/*
-         return
-            private-key:x:@io.file.load
-            fingerprint:x:@crypto.fingerprint
-   return:x:@cache.try-get/#/*
+   io.file.load:/modules/system/crypto/keys/public.key
+   crypto.fingerprint:x:@io.file.load
+   io.file.load:/modules/system/crypto/keys/private.key
+   unwrap:x:+/*
+   return-nodes
+      private-key:x:@io.file.load
+      fingerprint:x:@crypto.fingerprint

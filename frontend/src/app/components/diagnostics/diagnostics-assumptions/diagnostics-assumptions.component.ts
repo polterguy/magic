@@ -258,7 +258,7 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public executeAll() {
 
-    const parallellNo = 4;
+    const parallellNo = 2;
     let idxNo = 0;
 
     // Avoid filckering in Ajax wait gif bugger.
