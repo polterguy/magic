@@ -319,7 +319,7 @@ export class SqlComponent implements OnInit {
           count += (idx || []).length;
         }
         if (this.safeMode && count === 200) {
-          this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return more, or add paging.');
+          this.feedbackService.showInfo('First 200 records returned. Turn off safe mode to return all records.');
         } else {
           this.feedbackService.showInfoShort(`${count} records returned`);
         }
