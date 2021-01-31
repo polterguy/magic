@@ -84,6 +84,13 @@ export class CrudifierTableComponent {
     }
 
   /**
+   * Returns true if this is the generic/magic database
+   */
+  public isMagicDatabase() {
+    return this.database === '[generic|magic]';
+  }
+
+  /**
    * Returns true of HTTP verb GET is included for crudification.
    */
   public isGetIncluded() {
