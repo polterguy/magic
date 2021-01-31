@@ -87,9 +87,14 @@
 
 </div>
 
-<mat-card class="result-card" *ngFor="let idx of result">
+<mat-card
+  class="result-card"
+  [class]="idx && idx.length && idx.length > 0 ? '' : 'invisible'"
+  *ngFor="let idx of result">
 
-  <table class="fill-width result clickable">
+  <table
+    *ngIf="idx && idx.length > 0"
+    class="fill-width result clickable">
 
     <thead>
       <tr>
