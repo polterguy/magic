@@ -173,12 +173,12 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Creating an array of observables from each table/verb combination we've got.
     const subscribers: Observable<LocResult>[] = [];
-    for (const idxTable of this.database.tables) {
-      const tmp = idxTable.verbs.filter(x => x.generate).map(x => {
+    for (const idxTable of this.database.tables || []) {
+      const tmp = idxTable.verbs.filter(x => x.generate && (idxTable.columns.length > 0 && (x.name !== 'post' && x.name !== 'put'))).map(x => {
         return this.crudifyService.crudify(
           this.transformService.transform(
             this.databaseType,
-            this.database.name,
+            '[' + this.connectionString + '|' + this.database.name + ']',
             idxTable,
             x.name));
       });
@@ -215,20 +215,21 @@ export class CrudifierBackendComponent implements OnInit {
   private createDefaultOptionsForDatabase(database: DatabaseEx) {
 
     // Looping through each table in database.
-    for (const idxTable of database.tables) {
+    for (const idxTable of database.tables || []) {
 
       // Creating defaults for currently iterated table.
       idxTable.moduleName = database.name;
       idxTable.moduleUrl = idxTable.name.replace('.', '/').replace('dbo/', '');
+      const columns = (idxTable.columns || []);
       idxTable.verbs = [
-        { name: 'post', generate: true },
-        { name: 'get', generate: true },
+        { name: 'post', generate: columns.length > 0 },
+        { name: 'get', generate: columns.length > 0 },
       ];
-      if (idxTable.columns.filter(x => !x.primary).length > 0 &&
-        idxTable.columns.filter(x => x.primary).length > 0) {
-        idxTable.verbs.push({ name: 'put', generate: idxTable.columns.filter(x => !x.primary && !x.automatic).length > 0 });
+      if (columns.filter(x => !x.primary).length > 0 &&
+        columns.filter(x => x.primary).length > 0) {
+        idxTable.verbs.push({ name: 'put', generate: columns.filter(x => !x.primary && !x.automatic).length > 0 });
       }
-      if (idxTable.columns.filter(x => x.primary).length > 0) {
+      if (columns.filter(x => x.primary).length > 0) {
         idxTable.verbs.push({ name: 'delete', generate: true });
       }
 
@@ -239,7 +240,7 @@ export class CrudifierBackendComponent implements OnInit {
       idxTable.authDelete = 'root, admin';
 
       // Creating defaults for fields in table.
-      for (const idxColumn of idxTable.columns) {
+      for (const idxColumn of columns) {
 
         // Defaulting expanded to false.
         idxColumn.expanded = false;
@@ -287,27 +288,5 @@ export class CrudifierBackendComponent implements OnInit {
       // Oops, showing user some feedback
       this.feedbackService.showError(error);}
     );
-  }
-
-  /*
-   * Returns all databases for database-type/connection-string
-   * combination from backend.
-   */
-  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
-
-    // Retrieving databases that exists for database-type/connection-string combination in backend.
-    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
-
-      // Checking if caller supplied a callback, and if so invoking it.
-      if (onAfter) {
-
-        // Invoking callback.
-        onAfter(databases);
-      }
-    }, (error: any) => {
-
-      // Notifying user
-      this.feedbackService.showError(error);
-    });
   }
 }

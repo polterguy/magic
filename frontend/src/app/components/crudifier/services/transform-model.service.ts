@@ -43,7 +43,7 @@ export class TransformModelService {
     result.moduleUrl = table.moduleUrl;
     result.table = table.name;
     result.verb = verb;
-    result.returnId = table.columns.filter(x => x.primary && !x.automatic).length === 0;
+    result.returnId = (table.columns || []).filter(x => x.primary && !x.automatic).length === 0;
     result.overwrite = this.overwrite;
     result.validators = table.validators;
 
@@ -105,7 +105,7 @@ export class TransformModelService {
       columns: [],
       primary: [],
     };
-    for (const idxColumn of table.columns) {
+    for (const idxColumn of (table.columns || [])) {
       switch (verb) {
 
         case 'post':
