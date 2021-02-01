@@ -203,7 +203,15 @@ export class CrudifierFrontendComponent implements OnInit {
       }
     } else {
       for (const idx of moduleEndpoints) {
-        idx.selected = true;
+        let toBeSelected = true;
+        for (var idx2 of moduleEndpoints.filter(x => x.selected && x.verb === idx.verb)) {
+          const split1 = idx2.path.split('/');
+          const split2 = idx.path.split('/');
+          if (split1[split1.length - 1] === split2[split2.length - 1]) {
+            toBeSelected = false;
+          }
+        }
+        idx.selected = toBeSelected;
       }
     }
   }
