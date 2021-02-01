@@ -174,7 +174,7 @@ export class CrudifierBackendComponent implements OnInit {
     // Creating an array of observables from each table/verb combination we've got.
     const subscribers: Observable<LocResult>[] = [];
     for (const idxTable of this.database.tables || []) {
-      const tmp = idxTable.verbs.filter(x => x.generate && (idxTable.columns.length > 0 && (x.name !== 'post' && x.name !== 'put'))).map(x => {
+      const tmp = idxTable.verbs.filter(x => x.generate).map(x => {
         return this.crudifyService.crudify(
           this.transformService.transform(
             this.databaseType,
