@@ -29,6 +29,22 @@ export interface IREntity {
 }
 
 /**
+ * Entity method group containing Read and Delete, but not Update or Create.
+ * 
+ * This interface is implemented on method groups not containing update or create,
+ * which might happen if a table have only automatic columns.
+ */
+export interface IRdEntity extends IREntity {
+
+  /**
+   * Deletes one entity from your backend.
+   *
+   * @param args Filter condition for item to delete, implying primary key(s) for entity
+   */
+  delete(args: any) : Observable<DeleteResponse>;
+}
+
+/**
  * Entity method group containing Create and Read, but not Update or Delete.
  * 
  * This interface is implemented on method groups not containing update or delete,
@@ -51,7 +67,14 @@ export interface ICrEntity extends IREntity {
  * which might happen, if a table have no updateable columns, such as
  * link tables, with only primary keys, etc.
  */
-export interface ICrdEntity extends ICrEntity {
+export interface ICrdEntity extends IREntity {
+
+  /**
+   * Creates a new entity.
+   *
+   * @param args Initial values for your entity
+   */
+  create(args: any) : Observable<CreateResponse>;
 
   /**
    * Deletes one entity from your backend.
