@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
@@ -12,7 +13,6 @@ import { LocResult } from '../models/loc-result.model';
 import { CustomSql } from '../models/custom-sql.model';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from '../../../services/http.service';
-import { of } from 'rxjs';
 
 /**
  * Crudify service, allows you to crudify your databases.
