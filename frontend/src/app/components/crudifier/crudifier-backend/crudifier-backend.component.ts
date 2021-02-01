@@ -173,7 +173,7 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Creating an array of observables from each table/verb combination we've got.
     const subscribers: Observable<LocResult>[] = [];
-    for (const idxTable of this.database.tables) {
+    for (const idxTable of this.database.tables || []) {
       const tmp = idxTable.verbs.filter(x => x.generate && (idxTable.columns.length > 0 && (x.name !== 'post' && x.name !== 'put'))).map(x => {
         return this.crudifyService.crudify(
           this.transformService.transform(
@@ -215,7 +215,7 @@ export class CrudifierBackendComponent implements OnInit {
   private createDefaultOptionsForDatabase(database: DatabaseEx) {
 
     // Looping through each table in database.
-    for (const idxTable of database.tables) {
+    for (const idxTable of database.tables || []) {
 
       // Creating defaults for currently iterated table.
       idxTable.moduleName = database.name;
