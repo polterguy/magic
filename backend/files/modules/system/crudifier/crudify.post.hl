@@ -69,6 +69,8 @@ semaphore:crudifier
          .:system
       .lambda
          throw:"You can't use the name 'system' as your module's name"
+            public:true
+            status:401
 
 
    /*
@@ -84,6 +86,8 @@ semaphore:crudifier
             .
       .lambda
          throw:"You can't use an empty string as your module's name. Your module must have a name."
+            public:true
+            status:401
 
 
    /*
@@ -238,6 +242,8 @@ semaphore:crudifier
                 * Cannot have a DELETE endpoint without primary keys.
                 */
                throw:There are no actual primary keys declared for your DELETE endpoint.
+                  public:true
+                  status:401
 
 
          /*
@@ -281,6 +287,8 @@ semaphore:crudifier
                 * Cannot have a GET endpoint returning no actual columns.
                 */
                throw:There are no actual columns declared for your GET endpoint.
+                  public:true
+                  status:401
 
 
          /*
@@ -453,6 +461,8 @@ semaphore:crudifier
                 * Cannot have a POST endpoint without any actual data to POST.
                 */
                throw:There are no actual columns declared for your POST endpoint.
+                  public:true
+                  status:401
 
 
          /*
@@ -502,6 +512,8 @@ semaphore:crudifier
                 * [where] statements to declare which records to modify.
                 */
                throw:There are no actual columns, and/or primary keys declared for your PUT endpoint.
+                  public:true
+                  status:401
 
 
          /*
