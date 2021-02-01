@@ -89,6 +89,25 @@ export class FilesComponent implements OnInit {
   }
 
   /**
+   * Returns true if user can delete item.
+   * 
+   * @param path Item to check
+   */
+  public canDeleteItem(path: string) {
+
+    // Preventing deletion of important system modules.
+    switch (path) {
+      case '/misc/':
+      case '/modules/':
+      case '/modules/magic/':
+      case '/modules/system/':
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  /**
    * Invoked when a path item, such as a file or folder is clicked.
    * 
    * @param path Item that was clicked

@@ -26,7 +26,7 @@ validators.enum:x:@.arguments/*/databaseType
 
 /*
  * Since this endpoint is quite expensive to invoke, we cache its result
- * for 20 minutes - Both on the server side, and on the client side.
+ * for 10 hours on the server side.
  */
 strings.concat
    .:magic.sql.databases.
@@ -36,7 +36,7 @@ strings.concat
 unwrap:x:../*/cache.try-get/**/.databaseType
 unwrap:x:../*/cache.try-get/**/.connection-string
 cache.try-get:x:@strings.concat
-   expiration:1200
+   expiration:36000
    .lambda
 
 
