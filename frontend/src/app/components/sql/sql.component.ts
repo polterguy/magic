@@ -200,7 +200,9 @@ export class SqlComponent implements OnInit {
       if (databases.databases && databases.databases.length > 0) {
 
         // Setting databases and hint options.
-        this.databases = databases.databases.map((x: any) => x.name);
+        this.databases = databases.databases.map((x: any) => x.name).sort((lhs: string, rhs: string) => {
+          return lhs > rhs ? 1 : (rhs > lhs ? -1 : 0);
+        });
 
         // Storing database declaration such that user can change active database without having to roundtrip to server.
         this.databaseDeclaration = databases;
@@ -226,9 +228,10 @@ export class SqlComponent implements OnInit {
 
     // Updating SQL hints according to selected database.
     const result = {};
-    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+    const tables = this.databaseDeclaration.databases
+      .filter((x: any) => x.name === this.input.database)[0].tables;
     for (const idxTable of tables) {
-      result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
+      result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
     this.input.options.hintOptions.tables = result;
   }
