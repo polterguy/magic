@@ -44,6 +44,7 @@
     <ng-container matColumnDef="delete">
       <td class="mini-col button-col" mat-cell *matCellDef="let el">
         <button
+          [disabled]="!canDeleteItem(el)"
           mat-icon-button
           matTooltip="Delete"
           (click)="delete($event, el)">
