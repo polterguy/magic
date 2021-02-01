@@ -12,6 +12,7 @@ import { LocResult } from '../models/loc-result.model';
 import { CustomSql } from '../models/custom-sql.model';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from '../../../services/http.service';
+import { of } from 'rxjs';
 
 /**
  * Crudify service, allows you to crudify your databases.
@@ -43,6 +44,24 @@ export class CrudifyService {
    * @param data Input for process
    */
   public crudify(data: Crudify) {
+
+    // Sanity checking invocation, returning early if we cannot generate endpoint.
+    let generate = true;
+    if (data.verb === 'post' && data.args.columns.length === 0 && data.args.primary.length === 0) {
+      generate = false;
+    }
+    if (data.verb === 'put' && data.args.columns.length === 0) {
+      generate = false;
+    }
+    if (data.verb === 'delete' && data.args.primary.length === 0) {
+      generate = false;
+    }
+    if (!generate) {
+      return of<LocResult>({
+        loc: 0,
+        result: 'Endpoint not created'
+      });
+    }
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<LocResult>('/magic/modules/system/crudifier/crudify', data);
