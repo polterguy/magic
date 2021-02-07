@@ -45,7 +45,60 @@ if
    .lambda
 
       // System has been setup before
-      throw:"Your system has already been setup. If you wish to set it up again, please set your 'magic:auth:secret' key to 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT' manually in your 'appsettings.json' file."
+      throw:"Your system has already been setup"
+         status:401
+         public:true
+
+
+/*
+ * Saving settings to appsettings.json file.
+ *
+ * Notice, this has to be done before we check if database exists,
+ * otherwise it'll not be possible to login to database to check
+ * if magic database already exists.
+ *
+ * Notice, without this, there is no way to use for instance a MySQL
+ * instance that doesn't have the same root password as the default password
+ * from the appSettings.json file.
+ */
+json2lambda:x:@.arguments/*/settings
+
+
+/*
+ * Testing connection string before we save it, to make sure
+ * it is functioning. This part will throw if connection string is
+ * not valid.
+ */
+switch:x:@.arguments/*/databaseType
+
+   case:mssql
+      mssql.connect:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
+
+   case:mysql
+      mysql.connect:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
+
+   default
+      throw:Unsupported database type
+         public:true
+         status:400
+
+
+/*
+ * Connection string is valid and able to connect to a database,
+ * hence we can safely save it now.
+ */
+set-value:x:@json2lambda/*/magic/*/databases/*/default
+   get-value:x:@.arguments/*/databaseType
+lambda2json:x:@json2lambda/*
+   format:true
+config.save:x:-
+
+
+/*
+ * Sleeping for 5 seconds to allow configuration to kick
+ * in on thread pools threads.
+ */
+sleep:5000
 
 
 /*
@@ -156,28 +209,6 @@ else
    signal:magic.auth.change-password
       password:x:@.arguments/*/password
       database-type:x:@.arguments/*/databaseType
-
-
-/*
- * Saving settings to appsettings.json file.
- *
- * Notice, this is done as the final step, since it
- * will invalidate user's JWT token, and hence user
- * needs to authenticate again.
- */
-json2lambda:x:@.arguments/*/settings
-set-value:x:@json2lambda/*/magic/*/databases/*/default
-   get-value:x:@.arguments/*/databaseType
-lambda2json:x:@json2lambda/*
-   format:true
-config.save:x:-
-
-
-/*
- * Sleeping for 2 seconds to allow configuration to kick
- * in on thread pools threads.
- */
-sleep:2000
 
 
 /*
