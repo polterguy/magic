@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+
+   db:
+     image: mysql:8.0.23
+     environment:
+       MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     ports:
+       - 3333:3306
+
+   backend:
+     depends_on:
+       - db
+     image: servergardens/magic-backend:latest
+     restart: always
+     ports:
+       - "4444:4444"
+
+   frontend:
+     depends_on:
+       - backend
+     image: servergardens/magic-frontend:latest
+     restart: always
+     ports:
+       - "80:80"
+
+volumes:
+    db_data: {}
