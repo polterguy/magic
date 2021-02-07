@@ -73,17 +73,18 @@ try
    switch:x:@.arguments/*/databaseType
 
       case:mssql
-         mssql.connect:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
+         strings.replace:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
+            .:{database}
+            .:master
+         mssql.connect:x:@strings.replace
             mssql.select:select name from master.dbo.sysdatabases
 
       case:mysql
-         mysql.connect:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
+         strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
+            .:{database}
+            .:information_schema
+         mysql.connect:x:@strings.replace
             mysql.select:show databases
-
-      default
-         throw:Unsupported database type
-            public:true
-            status:400
 
 .catch
    throw:Could not connect to database, please double check your connection string
