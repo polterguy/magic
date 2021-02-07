@@ -57,7 +57,7 @@ if
  * otherwise it'll not be possible to login to database to check
  * if magic database already exists.
  *
- * Notice, without this, there is no way to use for instance a MySQL
+ * Hence, without this step first, there is no way to use for instance a MySQL
  * instance that doesn't have the same root password as the default password
  * from the appSettings.json file.
  */
@@ -80,7 +80,7 @@ switch:x:@.arguments/*/databaseType
 
 /*
  * Connection string is valid and able to connect to a database,
- * hence we can safely save it now.
+ * hence we can safely save the appsettings.json file now.
  */
 set-value:x:@json2lambda/*/magic/*/databases/*/default
    get-value:x:@.arguments/*/databaseType
@@ -94,6 +94,14 @@ config.save:x:-
  * in on thread pools threads.
  */
 sleep:5000
+
+
+/*
+ * We now have a new JWT/AUTH secret, and a database connection string
+ * that we know we can use to connect to either a MySQL server or an
+ * MS SQL server. Hence, now we can start the setup process, creating the
+ * magic database, and inserting a root user, etc ...
+ */
 
 
 /*
