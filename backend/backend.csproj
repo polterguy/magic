@@ -5,6 +5,12 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup> 
+    <Content Include="files\**"> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    </Content> 
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Remove="files\misc\templates\**" />
     <Content Remove="files\misc\templates\**" />
