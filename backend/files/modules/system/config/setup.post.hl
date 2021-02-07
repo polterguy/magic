@@ -77,11 +77,6 @@ switch:x:@.arguments/*/databaseType
    case:mysql
       mysql.connect:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
 
-   default
-      throw:Unsupported database type
-         public:true
-         status:400
-
 
 /*
  * Connection string is valid and able to connect to a database,
