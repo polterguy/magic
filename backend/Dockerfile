@@ -16,4 +16,6 @@ RUN dotnet publish backend.csproj -c release -o /magic
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /magic
 COPY --from=build /magic ./
+EXPOSE 4444
+ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
