@@ -69,13 +69,26 @@ json2lambda:x:@.arguments/*/settings
  * it is functioning. This part will throw if connection string is
  * not valid.
  */
-switch:x:@.arguments/*/databaseType
+try
+   switch:x:@.arguments/*/databaseType
 
-   case:mssql
-      mssql.connect:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
+      case:mssql
+         mssql.connect:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
+            mssql.select:select name from master.dbo.sysdatabases
 
-   case:mysql
-      mysql.connect:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
+      case:mysql
+         mysql.connect:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
+            mysql.select:show databases
+
+      default
+         throw:Unsupported database type
+            public:true
+            status:400
+
+.catch
+   throw:Could not connect to database, please double check your connection string
+      public:true
+      status:400
 
 
 /*
