@@ -92,12 +92,20 @@ export class AuthService {
             token: auth.ticket,
           };
 
-          // Making sure we refresh JWT token just before it expires.
-          this.createRefreshJWTTimer(this.backendService.current);
+          // In case backend URL changed, we need to retrieve endpoints again.
+          this.getEndpoints().subscribe((endpoints: Endpoint[]) => {
 
-          // Invoking next link in chain of observables.
-          observer.next(auth);
-          observer.complete();
+            // Assigning endpoints.
+            this._endpoints = endpoints;
+
+            // Making sure we refresh JWT token just before it expires.
+            this.createRefreshJWTTimer(this.backendService.current);
+
+            // Invoking next link in chain of observables.
+            observer.next(auth);
+            observer.complete();
+
+          });
 
       }, (error: any) => {
         observer.error(error);
