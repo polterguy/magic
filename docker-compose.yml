@@ -27,7 +27,7 @@ services:
       - backend
     restart: always
     ports:
-      - "80:80"
+      - "5555:80"
 
 #volumes:
 #  database: {}
