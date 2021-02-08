@@ -10,12 +10,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
-    volumes:
-      - database:/var/lib/mysql
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
+    #volumes:
+    #  - database:/var/lib/mysql
 
   backend:
     image: servergardens/magic-backend:latest
@@ -33,5 +29,5 @@ services:
     ports:
       - "80:80"
 
-volumes:
-  database: {}
+#volumes:
+#  database: {}
