@@ -6,16 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup> 
-    <Content Include="files\**"> 
+    <None Include="files\**"> 
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
-    </Content> 
+    </None> 
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="files\misc\templates\**" />
-    <Content Remove="files\misc\templates\**" />
-    <EmbeddedResource Remove="files\misc\templates\**" />
-    <None Remove="files\misc\templates\**" />
   </ItemGroup>
 
   <ItemGroup>
