@@ -31,7 +31,7 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
     * Then we invoke ourselves using a cryptographically signed invocation.
     */
    signal:magic.crypto.http.eval
-      url:"http://localhost:55247/magic/modules/system/crypto/eval-id"
+      url:"http://localhost:4444/magic/modules/system/crypto/eval-id"
       .lambda
 
          /*
