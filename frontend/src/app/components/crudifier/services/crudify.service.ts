@@ -7,6 +7,9 @@
 import { of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
+// Utility component imports.
+import { saveAs } from "file-saver";
+
 // Application specific imports.
 import { Crudify } from '../models/crudify.model';
 import { LocResult } from '../models/loc-result.model';
@@ -76,5 +79,29 @@ export class CrudifyService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>('/magic/modules/system/crudifier/custom-sql', data);
+  }
+
+  /**
+   * 
+   * 
+   * @param domain Frontend/dashboard domain
+   * @param apiDomain Backend/API domain - Typically api.xxx.domain
+   */
+  public generateDockerComposeFile(domain: string, apiDomain: string) {
+
+    // Invoking backend such that we download results of invocation to client.
+    const payload = {
+      domain,
+      apiDomain,
+    };
+    this.httpService.downloadPost(
+      '/magic/modules/system/crudifier/generate-docker-compose', payload).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      });
   }
 }

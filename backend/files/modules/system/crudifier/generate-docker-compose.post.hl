@@ -1,0 +1,48 @@
+
+/*
+ * Generates a docker-compose.yml file, and returns as downloadable file to client.
+ */
+.arguments
+   domain:string
+   apiDomain:string
+.description:Generates a docker-compose.yml file, and returns as downloadable file to client
+
+
+/*
+ * Sanity checks invocation.
+ */
+validators.mandatory:x:@.arguments/*/domain
+validators.mandatory:x:@.arguments/*/apiDomain
+
+
+/*
+ * Making sure we get the HTTP headers correctly applied before we return YML
+ * file to caller.
+ */
+response.headers.add
+   Content-Type:text/plain
+   Content-Disposition:@"attachment; filename=""docker-compose.yml"""
+   Access-Control-Expose-Headers:Content-Disposition
+
+
+/*
+ * Loading up file, transforming the file, and returning it to caller.
+ */
+io.file.load:/misc/docker-compose-template.yml
+
+
+/*
+ * Doing substitutions in YAML file according to arguments specified by caller.
+ */
+strings.replace:x:@io.file.load
+   .:{{domain}}
+   get-value:x:@.arguments/*/domain
+strings.replace:x:@strings.replace
+   .:{{api-domain}}
+   get-value:x:@.arguments/*/apiDomain
+
+
+/*
+ * Returning file's content to caller.
+ */
+return-value:x:@strings.replace

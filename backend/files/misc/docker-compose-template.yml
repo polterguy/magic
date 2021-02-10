@@ -1,0 +1,66 @@
+
+# Docker template file to couple frontend, backend, and MySQL database instance into one.
+# This file is intended as a template, allowing the user to generate his own custom
+# docker-compose.yml file, that generates a LetsEncrypt/certbot/acme certificate and key for
+# his domain and API-domain of choice.
+# {{domain}} and {{api-domain}} should be replaced by respectyively frontend's domain and API backend domain
+# These are typically example.com and api.example.com
+
+# This file assumes you create two DNS records, one for each of the following domains
+# 1. {{domain}} - Which will be your Magic Dashboard / Frontend URL, pointing to your main Magic dashboard
+# 2. {{api-domain}} - Which will be your Magic API / Backend URL, pointing to your Magic backend parts
+
+# This is typically done as you deploy this docker-compose file, at which point you deploy it to a server some where,
+# which have an IP address. You will need to copy this IP address, and use your domain provider to create typically
+# two DNS A records, pointing to the IP address of where you deployed your containers.
+
+# Once you've done this, and the DNS record has gone through, which might take up to 24 hours, depending upon
+# your domain provider - You can access the frontend URL, and a LetsEncrypt HTTPS certificate and key will
+# be automatically generated and installed in your nginx server, giving you HTTPS access to your site.
+
+version: "3.9"
+
+services:
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
+    volumes:
+      - database:/var/lib/mysql
+
+  backend:
+    image: servergardens/magic-backend:latest
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "4444:4444"
+    volumes:
+      - files:/files
+      - settings:/appsettings.json
+
+  frontend:
+    image: servergardens/magic-frontend:latest
+    depends_on:
+      - backend
+    restart: always
+
+  nginx:
+    image: valian/docker-nginx-auto-ssl
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: '{{domain}}, {{api-domain}}'
+      SITES: '{{domain}}=frontend:80;{{api-domain}}=backend:80'
+
+volumes:
+  database:
+  files:
+  settings: 
+  ssl_data: 

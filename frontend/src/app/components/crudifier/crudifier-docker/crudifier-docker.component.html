@@ -1,0 +1,37 @@
+
+<div class="form-wrapper">
+
+  <mat-form-field class="form-field">
+    <mat-label>Domain ...</mat-label>
+    <input
+      matInput
+      type="text"
+      matTooltip="Main domain for your Magic dashboard frontend parts"
+      autocomplete="off"
+      [(ngModel)]="domain">
+  </mat-form-field>
+
+  <mat-form-field class="form-field">
+    <mat-label>API domain ...</mat-label>
+    <input
+      matInput
+      type="text"
+      matTooltip="API domain for your Magic dashboard backend parts, typically api.xxx.com"
+      autocomplete="off"
+      [(ngModel)]="apiDomain">
+  </mat-form-field>
+
+  <button
+    mat-button
+    [disabled]="domain === '' || apiDomain === ''"
+    (click)="generate()">
+    Generate
+  </button>
+
+  <p class="description">
+    This will generate a docker-compose file for you, with the specified dashboard/frontend domain, and the specified
+    backend API URL. Notice, you'll have to actually setup a DNS record for both of these domains with your chosen domain
+    provider, and point them to the IP address of whatever server you intend to install your Docker containers unto.
+  </p>
+
+</div>
