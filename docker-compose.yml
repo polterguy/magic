@@ -29,10 +29,21 @@ services:
     depends_on:
       - backend
     restart: always
+
+  nginx:
+    image: valian/docker-nginx-auto-ssl
+    restart: always
     ports:
-      - "5555:80"
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: 'magic.servergardens.com'
+      SITES: 'magic.servergardens.com=frontend:80'
 
 volumes:
   database:
   files:
   settings: 
+  ssl_data: 
