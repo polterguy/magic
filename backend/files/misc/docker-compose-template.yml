@@ -18,7 +18,7 @@
 # your domain provider - You can access the frontend URL, and a LetsEncrypt HTTPS certificate and key will
 # be automatically generated and installed in your nginx server, giving you HTTPS access to your site.
 
-version: "3.9"
+version: "3.3"
 
 services:
 
@@ -36,7 +36,7 @@ services:
       - db
     restart: always
     ports:
-      - "4444:4444"
+      - 4444:80
     volumes:
       - files:/files
       - settings:/appsettings.json
@@ -56,8 +56,8 @@ services:
     volumes:
       - ssl_data:/etc/resty-auto-ssl
     environment:
-      ALLOWED_DOMAINS: '{{domain}}, {{api-domain}}'
-      SITES: '{{domain}}=frontend:80;{{api-domain}}=backend:80'
+      ALLOWED_DOMAINS: '({{domain}}|{{api-domain}})'
+      SITES: '{{domain}}=frontend:80;{{api-domain}}=backend:4444'
 
 volumes:
   database:
