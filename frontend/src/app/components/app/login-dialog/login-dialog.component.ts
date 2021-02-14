@@ -137,8 +137,12 @@ export class LoginDialogComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
+    let url = this.backends.value;
+    while(url.charAt(url.length - 1) === '/') {
+      url = url.substring(0, url.length - 1);
+    }
     this.backendService.current = {
-      url: this.backends.value,
+      url: url,
       username: this.username,
       password: this.savePassword ? this.password : null,
     };
