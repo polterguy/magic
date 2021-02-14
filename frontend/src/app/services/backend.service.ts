@@ -87,6 +87,22 @@ export class BackendService {
     }
 
     /*
+     * Making sure we sort backends such that the current backend
+     * becomes the first in our list of backends, which makes sure
+     * that if the user refreshes the browser, this is the backend
+     * that will be used.
+     */
+    this._backends = this._backends.sort((lhs: Backend, rhs: Backend) => {
+      if (lhs.token) {
+        return -1;
+      }
+      if (rhs.token) {
+        return 1;
+      }
+      return 0;
+    });
+
+    /*
      * Persisting all backends to local storage object,
      * and updating the currently selected backend.
      */
