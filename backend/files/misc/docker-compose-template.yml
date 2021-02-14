@@ -1,0 +1,76 @@
+
+# Docker template file to couple frontend, backend, and MySQL database instance into one.
+# This file is intended as a template, allowing the user to generate his own custom
+# docker-compose.yml file, that generates a LetsEncrypt/certbot/acme certificate and key for
+# his domain and API-domain of choice.
+# {{domain}} and {{api-domain}} should be replaced by respectively frontend's domain and API backend domain
+
+# This file assumes you create two DNS records, one for each of the following domains
+# 1. {{domain}} - Which will be your Magic Dashboard / Frontend URL, pointing to your main Magic dashboard
+# 2. {{api-domain}} - Which will be your Magic API / Backend URL, pointing to your Magic backend parts
+
+# For instance, if you want to run Magic on example.com, with the frontend running at admin.example.com
+# and the backend running at api.example.com, you will have to create two DNS A records and point these
+# to your server's public IP address, such as for instance
+
+# 1. DNS A record - admin.example.com  ==> 123.123.123.123
+# 2. DNS A record - api.example.com    ==> 123.123.123.123
+
+# Then you'll have to replace {{domain}} in this file with admin.example.com and {{api-domain}} with api.example.com
+
+# Once you've done this, and the DNS record has gone through, which might take some few 24 hours, depending upon
+# your domain provider - You can access the frontend URL, and a LetsEncrypt HTTPS certificate and key will
+# be automatically generated and installed in your server, giving you HTTPS access to your site, allowing
+# you to access your website through admin.example.com and configure your Magic's root password, connection
+# string, etc, and start using Magic.
+
+# Notice, only the nGinx server is actually exposed outside of your docker environment, so the MySQL
+# password is not important, unless you explicitly choose to expose your MySQL server instance publicly,
+# at which point you should choose a secure password for your MySQL instance.
+
+version: "3.3"
+
+services:
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
+    volumes:
+      - database:/var/lib/mysql
+
+  backend:
+    image: servergardens/magic-backend:latest
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - 4444:80
+    volumes:
+      - files:/files
+      - settings:/appsettings.json
+
+  frontend:
+    image: servergardens/magic-frontend:latest
+    depends_on:
+      - backend
+    restart: always
+
+  nginx:
+    image: valian/docker-nginx-auto-ssl
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: '({{domain}}|{{api-domain}})'
+      SITES: '{{domain}}=frontend:80;{{api-domain}}=backend:4444'
+
+volumes:
+  database:
+  files:
+  settings: 
+  ssl_data: 

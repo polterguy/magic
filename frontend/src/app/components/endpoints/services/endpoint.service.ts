@@ -267,7 +267,7 @@ export class EndpointService {
     copyright: string,
     endpoints: any[]) {
 
-      // Invoking backend and returning the returns an observable to caller.
+      // Invoking backend such that we download the result of invocation to client as a ZIP file.
       const payload = {
         templateName,
         apiUrl,
