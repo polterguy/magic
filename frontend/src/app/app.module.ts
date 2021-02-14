@@ -94,6 +94,7 @@ import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/dia
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
 import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
+import { CrudifierDockerComponent } from './components/crudifier/crudifier-docker/crudifier-docker.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { CrudifierBackendComponent } from './components/crudifier/crudifier-backend/crudifier-backend.component';
@@ -195,6 +196,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     CrudifierSqlComponent,
     CrudifierSqlAddArgumentDialogComponent,
     ToolbarHelpDialogComponent,
+    CrudifierDockerComponent,
   ],
   imports: [
     FormsModule,
