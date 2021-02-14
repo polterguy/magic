@@ -60,7 +60,7 @@ export class AuthService {
    * Returns true if user is authenticated towards backend.
    */
   public get authenticated() {
-    return this.backendService.connected && this.backendService.current.token;
+    return this.backendService.connected && !!this.backendService.current.token;
   }
 
   /**
