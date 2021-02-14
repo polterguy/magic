@@ -67,7 +67,7 @@ export class ToolbarComponent {
 
     // Removing schema and port from URL.
     let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
-    if (url.indexOf(':')) {
+    if (url.indexOf(':') !== -1) {
       url = url.substr(0, url.indexOf(':'));
     }
 
