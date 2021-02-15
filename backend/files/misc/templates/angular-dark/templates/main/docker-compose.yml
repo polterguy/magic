@@ -1,0 +1,35 @@
+
+# Helper file to deploy your frontend Angular application to a Docker container enabled server.
+# Use Docker to first build the "Dockerfile" found in the same folder as this file, then make
+# sure you upload your Docker image to for instance Docker HUB, or some other place that allows
+# you to share Docker images.
+
+# As you upload your image, it's important you use [[docker-image]] as its organisation/name.
+# When your image is uploaded, you can use this file to deploy your frontend, for then to setup a
+# DNS A record for [[frontend-domain]] and point it to the public IP address of your server.
+
+# This file will automatically generate an SSL certificate for you, and secure your website,
+# using whatever backend you used when you crudified your frontend.
+
+version: "3.3"
+
+services:
+
+  frontend:
+    image: [[docker-image]]:latest
+    restart: always
+
+  nginx:
+    image: valian/docker-nginx-auto-ssl
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: '([[frontend-domain]])'
+      SITES: '[[frontend-domain]]=frontend:80'
+
+volumes:
+  ssl_data: 

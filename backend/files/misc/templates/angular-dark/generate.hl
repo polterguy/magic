@@ -309,6 +309,24 @@ for-each:x:@.main-files/*
 
 
    /*
+    * Replacing [[docker-image]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[docker-image]]
+         get-value:x:@.arguments/*/docker-image
+
+
+   /*
+    * Replacing [[frontend-domain]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[frontend-domain]]
+         get-value:x:@.arguments/*/frontend-domain
+
+
+   /*
     * Replacing [[router-links]]
     */
    set-value:x:@.dp/#/*
