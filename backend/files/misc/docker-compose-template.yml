@@ -1,32 +1,23 @@
 
 # Docker template file to couple frontend, backend, and MySQL database instance into one.
-# This file is intended as a template, allowing the user to generate his own custom
+# This file is a template, allowing you to generate your own custom
 # docker-compose.yml file, that generates a LetsEncrypt/certbot/acme certificate and key for
-# his domain and API-domain of choice.
-# {{domain}} and {{api-domain}} should be replaced by respectively frontend's domain and API backend domain
+# your domain and API-domain of choice, in addition to also installing Magic, both the
+# backend and the frontend as docker containers.
 
 # This file assumes you create two DNS records, one for each of the following domains
 # 1. {{domain}} - Which will be your Magic Dashboard / Frontend URL, pointing to your main Magic dashboard
 # 2. {{api-domain}} - Which will be your Magic API / Backend URL, pointing to your Magic backend parts
 
-# For instance, if you want to run Magic on example.com, with the frontend running at admin.example.com
-# and the backend running at api.example.com, you will have to create two DNS A records and point these
-# to your server's public IP address, such as for instance
+# For instance, if your server's public IP address is 123.123.123.123, you have to create two DNS a
+# records pointing the following domains to your IP address.
 
-# 1. DNS A record - admin.example.com  ==> 123.123.123.123
-# 2. DNS A record - api.example.com    ==> 123.123.123.123
+# 1. DNS A record - {{domain}}        ==> 123.123.123.123
+# 2. DNS A record - {{api-domain}}    ==> 123.123.123.123
 
-# Then you'll have to replace {{domain}} in this file with admin.example.com and {{api-domain}} with api.example.com
-
-# Once you've done this, and the DNS record has gone through, which might take some few 24 hours, depending upon
-# your domain provider - You can access the frontend URL, and a LetsEncrypt HTTPS certificate and key will
+# Once you've done this, you can access the frontend URL, and a LetsEncrypt HTTPS certificate and key will
 # be automatically generated and installed in your server, giving you HTTPS access to your site, allowing
-# you to access your website through admin.example.com and configure your Magic's root password, connection
-# string, etc, and start using Magic.
-
-# Notice, only the nGinx server is actually exposed outside of your docker environment, so the MySQL
-# password is not important, unless you explicitly choose to expose your MySQL server instance publicly,
-# at which point you should choose a secure password for your MySQL instance.
+# you to access your Magic dashboard securely.
 
 version: "3.3"
 
