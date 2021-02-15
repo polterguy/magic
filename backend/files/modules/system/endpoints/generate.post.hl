@@ -9,6 +9,8 @@
    name:string
    copyright:string
    endpoints:*
+   dockerImage:string
+   frontendDomain:string
 
 
 /*
@@ -31,6 +33,8 @@ io.file.execute:x:@strings.concat
    apiUrl:x:@.arguments/*/apiUrl
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
+   docker-image:x:@.arguments/*/dockerImage
+   frontend-domain:x:@.arguments/*/frontendDomain
 
 
 /*

@@ -6,6 +6,7 @@
     <mat-select
       [(ngModel)]="template"
       (selectionChange)="templateChanged()"
+      matTooltip="Template to generate frontend from"
       placeholder="Select template">
       <mat-option
         *ngFor="let idx of templates"
@@ -18,8 +19,29 @@
     <input
       matInput
       type="text"
+      matTooltip="Name of your app"
       autocomplete="off"
       [(ngModel)]="name">
+  </mat-form-field>
+
+  <mat-form-field class="form-field-double">
+    <mat-label>Docker image name ...</mat-label>
+    <input
+      matInput
+      type="text"
+      matTooltip="Docker image name, complete with organisation name, as you intend to upload to Docker HUB"
+      autocomplete="off"
+      [(ngModel)]="dockerImage">
+  </mat-form-field>
+
+  <mat-form-field class="form-field-double">
+    <mat-label>Deployment URL ...</mat-label>
+    <input
+      matInput
+      type="text"
+      matTooltip="Frontend URL you intend to resolve application to using a DNS A record later"
+      autocomplete="off"
+      [(ngModel)]="deploymentUrl">
   </mat-form-field>
 
   <mat-form-field class="form-field form-field-double">
