@@ -57,7 +57,7 @@ export class NewFileObjectDialogComponent {
 
     // Verifying path doesn't contain invalid characters.
     for (const idx of this.data.path) {
-      if ('abcdefghijklmnopqrstuvwxyz0123456789_-.'.indexOf(idx) === -1) {
+      if ('abcdefghijklmnopqrstuvwxyz0123456789_-.'.indexOf(idx.toLowerCase()) === -1) {
         return false;
       }
     }
