@@ -184,6 +184,7 @@ slots.create:magic.auth.authenticate
                   get-nodes:x:@data.read/*/*
                auth.ticket.create
                   username:x:@.arguments/*/username
+                  expires:x:@.arguments/*/expires
                   roles
 
 
