@@ -228,6 +228,27 @@ export class FilesComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Returns true if this is a module folder.
+   */
+  public isModuleFolder() {
+    const elements = this.currentFolder.split('/');
+    return elements.length === 4 && elements[1] === 'modules';
+  }
+
+  /**
+   * Re-installs module by running startup Hyperlambda files.
+   */
+  public installModule() {
+
+    // Invoking backend to install the folder.
+    this.fileService.install(this.currentFolder).subscribe(() => {
+
+      // Showing user some feedback.
+      this.feedbackService.showInfo('Module was successfully installed');
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
    * Invoked when user wants to go up one level from his current folder.
    */
   public up() {
