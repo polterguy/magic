@@ -127,6 +127,19 @@ export class FileService {
   }
 
   /**
+   * Re-installs a module
+   * 
+   * @param folder Path of folder to re-install
+   */
+  public install(folder: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.put<Response>('/magic/modules/system/file-system/install', {
+      folder
+    });
+  }
+
+  /**
    * Downloads a file from backend.
    * 
    * @param path File to download

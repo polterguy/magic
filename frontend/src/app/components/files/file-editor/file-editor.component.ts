@@ -158,7 +158,7 @@ export class FileEditorComponent implements OnInit {
       this.messageService.sendMessage({
         name: 'files.folder.changed'
       });
-    });
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /*

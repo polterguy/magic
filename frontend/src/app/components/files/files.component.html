@@ -82,10 +82,20 @@
   <div class="button-strip">
 
     <button
+      *ngIf="isModuleFolder()"
+      mat-icon-button
+      matTooltip="(Re)-install module"
+      class="install-button"
+      (click)="installModule()">
+      <mat-icon>touch_app</mat-icon>
+    </button>
+
+    <button
       mat-icon-button
       class="file-button">
       <mat-icon>cloud_upload</mat-icon>
     </button>
+
     <input
       type="file"
       id="file"
