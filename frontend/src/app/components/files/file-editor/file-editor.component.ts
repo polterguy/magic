@@ -14,6 +14,7 @@ import { EvaluatorService } from 'src/app/components/evaluator/services/evaluato
 
 // CodeMirror options according to file extensions.
 import fileTypes from './file-types.json';
+import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Component for editing a file.
@@ -48,11 +49,13 @@ export class FileEditorComponent implements OnInit {
    * 
    * @param evaluatorService Used to load Hyperlambda vocabulary from backend
    * @param feedbackService Needed to supply feedback to user
+   * @param messageService Needed to signal changes to the parent folder
    * @param fileService File service needed to retrieve file's content from backend
    */
   public constructor(
     private evaluatorService: EvaluatorService,
     private feedbackService: FeedbackService,
+    protected messageService: MessageService,
     private fileService: FileService) { }
 
   /**
@@ -94,6 +97,13 @@ export class FileEditorComponent implements OnInit {
   }
 
   /**
+   * Returns true if file is a module that can be unzipped and installed on the system.
+   */
+  public isZipFile() {
+    return this.file.toLocaleLowerCase().endsWith('.zip');
+  }
+
+  /**
    * Returns true if file is a Hyperlambda file, at which point
    * we allow for user to execute it.
    */
@@ -131,6 +141,24 @@ export class FileEditorComponent implements OnInit {
       // Giving user some feedback.
       this.feedbackService.showInfoShort('File was saved');
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Unzips the current file in the current folder.
+   */
+  public unzip() {
+
+    // Invoking backend to unzip file.
+    this.fileService.unzipFile(this.file).subscribe(() => {
+
+      // Giving user some feedback.
+      this.feedbackService.showInfoShort('File was successfully extracted');
+
+      // Signalking changes in the current folder to subscribers.
+      this.messageService.sendMessage({
+        name: 'files.folder.changed'
+      });
+    });
   }
 
   /*

@@ -4,14 +4,16 @@
  */
 
 // Angular and system imports.
-import { forkJoin } from 'rxjs';
-import { Component, Injector, OnInit } from '@angular/core';
+import { forkJoin, Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
+import { Message } from 'src/app/models/message.model';
 import { FeedbackService } from '../../services/feedback.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FileService } from 'src/app/components/files/services/file.service';
 import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Files component to allow user to browse his dynamic files folder,
@@ -22,7 +24,9 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './files.component.html',
   styleUrls: ['./files.component.scss']
 })
-export class FilesComponent implements OnInit {
+export class FilesComponent implements OnInit, OnDestroy {
+
+  private subscriber: Subscription;
 
   /**
    * Displayed columns in data table.
@@ -52,11 +56,14 @@ export class FilesComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Needed to display messages to user
+   * @param messageService Needed to signal changes to the parent folder
    * @param dialog Used to open new file object dialog to create new folders or files
    * @param fileService File service used to retrieve files and folders from backend
    */
   constructor(
     private feedbackService: FeedbackService,
+    protected messageService: MessageService,
     private fileService: FileService,
     private dialog: MatDialog) { }
 
@@ -67,6 +74,24 @@ export class FilesComponent implements OnInit {
 
     // Retrieving files from backend to initially display to user.
     this.getFolderContent();
+
+    // Making sure we subscribe to changes in current folder.
+    this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
+      switch (msg.name) {
+        case 'files.folder.changed':
+          this.getFolderContent();
+          break;
+      }
+    });
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  public ngOnDestroy() {
+    
+    // Making sure we unsubscribe to subscriber.
+    this.subscriber.unsubscribe();
   }
 
   /**
@@ -303,7 +328,7 @@ export class FilesComponent implements OnInit {
     for (let idx = 0; idx < files.length; idx++) {
 
       // Invoking service method responsible for actually uploading file.
-      this.fileService.uploadFile(this.currentFolder, files.item(idx)).subscribe(res => {
+      this.fileService.uploadFile(this.currentFolder, files.item(idx)).subscribe(() => {
 
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');

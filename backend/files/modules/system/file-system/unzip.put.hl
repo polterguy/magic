@@ -1,0 +1,26 @@
+
+/*
+ * Unzips the specified file in its current folder.
+ */
+.arguments
+   file:string
+.description:Unzips the specified file in its current folder
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Unzipping file.
+ */
+io.file.unzip:x:@.arguments/*/file
+
+
+/*
+ * Returning success to caller.
+ */
+return-nodes
+   result:success

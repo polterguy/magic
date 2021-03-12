@@ -114,6 +114,19 @@ export class FileService {
   }
 
   /**
+   * Unzips an existing file on the server in its current folder.
+   * 
+   * @param file Path of file to unzip
+   */
+  public unzipFile(file: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.put<Response>('/magic/modules/system/file-system/unzip', {
+      file
+    });
+  }
+
+  /**
    * Downloads a file from backend.
    * 
    * @param path File to download
