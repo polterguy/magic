@@ -8,7 +8,21 @@
 <div
   *ngIf="!content"
   class="no-editor">
-  You don't have a registered editor for files of this type. Download the file and edit it locally if you want to edit it.
+  <span *ngIf="isZipFile()">
+    <p>
+      This seems to be a zip file, click the extract button to unzip it in the current folder.
+    </p>
+    <div class="button-strip">
+      <button
+        mat-button
+        (click)="unzip()">
+        Extract
+      </button>
+    </div>
+  </span>
+  <span *ngIf="!isZipFile()">
+    You don't have a registered editor for files of this type. Download the file and edit it locally if you want to edit it.
+  </span>
 </div>
 
 <div
