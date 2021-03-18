@@ -95,6 +95,7 @@ insert into roles ("name", "description") values ('unconfirmed', 'An unconfirmed
 insert into roles ("name", "description") values ('guest', 'A confirmed user with some elevated rights');
 insert into roles ("name", "description") values ('reset-password', 'A special role that only allows the user to change his password');
 insert into roles ("name", "description") values ('moderator', 'A moderator in your system that can moderate other users');
+insert into roles ("name", "description") values ('blocked', 'A user that has been blocked from site entirely');
 
 go
 
