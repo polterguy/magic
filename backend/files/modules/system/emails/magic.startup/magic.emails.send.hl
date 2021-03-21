@@ -36,8 +36,6 @@ slots.create:magic.emails.send
    /*
     * Verifying there exists valid SMTP configuration settings.
     */
-   log.info
-      lambda2hyper:x:../*
    config.get:"magic:smtp:host"
    if
       eq
@@ -58,7 +56,7 @@ slots.create:magic.emails.send
     */
    if
       not
-         io.file.exists:x:@.arguments/template-file
+         io.file.exists:x:@.arguments/*/template-file
       .lambda
 
 
@@ -77,8 +75,8 @@ slots.create:magic.emails.send
     */
    .body
    set-value:x:@.body
-      io.file.load:x:@.arguments/template-file
-   for-each:x:@.arguments/*/substitutes
+      io.file.load:x:@.arguments/*/template-file
+   for-each:x:@.arguments/*/substitutes/*
       set-value:x:@.body
          strings.replace:x:@.body
             strings.concat
