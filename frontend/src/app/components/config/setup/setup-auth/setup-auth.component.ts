@@ -4,13 +4,14 @@
  */
 
 // Angular and system imports.
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { ConfigService } from 'src/app/components/config/services/config.service';
 
 /**
@@ -23,6 +24,17 @@ import { ConfigService } from 'src/app/components/config/services/config.service
   styleUrls: ['./setup-auth.component.scss']
 })
 export class SetupAuthComponent implements OnInit {
+
+  /**
+   * If true, allows user to paste in an existing appSettings.json file
+   * into a textarea editor.
+   */
+  public showAdvanced: boolean = false;
+
+  /**
+   * Contains config file in its entirety.
+   */
+  public json: string = '';
 
   /**
    * Configuration as returned from backend.
@@ -61,6 +73,7 @@ export class SetupAuthComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
+    private authService: AuthService,
     protected messageService: MessageService) {
   }
 
@@ -80,6 +93,9 @@ export class SetupAuthComponent implements OnInit {
 
         // Applying gibberish to relevant configuration section.
         this.config.magic.auth.secret = res.result;
+
+        // Making sure we create JSON string value for advanced configuration.
+        this.json = JSON.stringify(this.config, null, 2);
       });
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -109,5 +125,19 @@ export class SetupAuthComponent implements OnInit {
       });
 
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when appSettings.json file should be saved directly.
+   */
+  public saveAdvanced() {
+
+    // Saving raw appSettings.json file by invoking backend.
+    this.configService.saveConfig(JSON.parse(this.json)).subscribe((result: Response) => {
+
+      // Success!
+      this.authService.logout(true, false);
+      this.feedbackService.showInfo('You will need to login again');
+    });
   }
 }

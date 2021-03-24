@@ -1,5 +1,7 @@
 
-<mat-form-field class="form-field">
+<mat-form-field
+  *ngIf="!showAdvanced"
+  class="form-field">
 
   <mat-label>Database type</mat-label>
   <mat-select
@@ -13,7 +15,7 @@
 </mat-form-field>
 
 <mat-form-field
-  *ngIf="selectedDatabaseType"
+  *ngIf="!showAdvanced && selectedDatabaseType"
   class="form-field wide">
 
   <mat-label>Connection string</mat-label>
@@ -26,7 +28,7 @@
 <br>
 
 <mat-form-field
-  *ngIf="selectedDatabaseType"
+  *ngIf="!showAdvanced && selectedDatabaseType"
   class="form-field">
 
   <mat-label>Root password</mat-label>
@@ -38,7 +40,7 @@
 </mat-form-field>
 
 <mat-form-field
-  *ngIf="selectedDatabaseType"
+  *ngIf="!showAdvanced && selectedDatabaseType"
   class="form-field">
 
   <mat-label>Repeat password</mat-label>
@@ -49,10 +51,35 @@
 
 </mat-form-field>
 
+<mat-slide-toggle [(ngModel)]="showAdvanced">Advanced</mat-slide-toggle>
+
 <button
+  *ngIf="!showAdvanced"
   mat-button
   [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
   (click)="next()"
   class="next">
   Next
 </button>
+
+<div *ngIf="showAdvanced">
+
+  <mat-form-field class="fill-width" appearance="outline">
+    <mat-label>appSetting.json file ...</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="json"
+      rows="10"></textarea>
+  </mat-form-field>
+
+  <div class="button-strip">
+
+    <button
+      mat-button
+      (click)="saveAdvanced()">
+      Save
+    </button>
+
+  </div>
+
+</div>

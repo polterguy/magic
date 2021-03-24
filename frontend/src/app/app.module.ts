@@ -31,6 +31,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -229,6 +230,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     ChartsModule,
     CodemirrorModule,
     MatDatepickerModule,
+    MatSlideToggleModule,
     MatNativeDateModule,
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
