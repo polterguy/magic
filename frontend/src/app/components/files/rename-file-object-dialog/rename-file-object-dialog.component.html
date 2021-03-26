@@ -18,6 +18,7 @@
 <div mat-dialog-actions>
 
   <button
+    [disabled]="!isValid()"
     mat-button
     [mat-dialog-close]="data">Rename</button>
 

@@ -52,4 +52,11 @@ export class RenameFileObjectDialogComponent implements OnInit {
     const entities = this.data.path.split('/').filter(x => x !== '');
     this.data.newName = entities[entities.length - 1];
   }
+
+  /**
+   * Returns true if new filename or foldername is valid.
+   */
+  public isValid() {
+    return this.data.newName.indexOf('/') === -1;
+  }
 }
