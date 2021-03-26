@@ -45,7 +45,7 @@ else
    /*
     * File object is a file, renaming it.
     */
-   io.folder.move:x:@.arguments/*/oldName
+   io.file.move:x:@.arguments/*/oldName
       get-value:x:@.arguments/*/newName
 
 
