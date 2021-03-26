@@ -81,6 +81,22 @@ export class FileService {
   }
 
   /**
+   * Renames the specified file or folder in the backend.
+   * 
+   * @param oldName File or folder to rename.
+   * @param newName New name for file or folder.
+   */
+   public rename(oldName: string, newName: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/file-system/rename', {
+        oldName,
+        newName,
+      });
+  }
+
+  /**
    * Saves the specified file with the given filename.
    * 
    * @param filename Filename to save file as

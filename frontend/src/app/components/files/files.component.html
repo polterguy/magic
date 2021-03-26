@@ -30,6 +30,17 @@
       <td mat-cell *matCellDef="let el">{{getItemName(el)}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="rename">
+      <td class="mini-col button-col" mat-cell *matCellDef="let el">
+        <button
+          mat-icon-button
+          matTooltip="Rename"
+          (click)="rename($event, el)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="download">
       <td class="mini-col button-col" mat-cell *matCellDef="let el">
         <button

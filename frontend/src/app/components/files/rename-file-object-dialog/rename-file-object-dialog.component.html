@@ -1,0 +1,24 @@
+
+<h1 mat-dialog-title>{{data.isFolder ? 'Rename folder' : 'Rename file'}}</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width">
+
+    <input
+      type="text"
+      [placeholder]="data.isFolder ? 'Folder name' : 'File name'"
+      matInput
+      autocomplete="off"
+      [(ngModel)]="data.newName">
+    </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <button
+    mat-button
+    [mat-dialog-close]="data">Rename</button>
+
+</div>
