@@ -26,6 +26,16 @@ log.info
 
 
 /*
+ * Finding complete new path of file.
+ */
+.newPath
+set-value:x:@.newPath
+   strings.concat
+      io.path.get-folder:x:@.arguments/*/oldName
+      get-value:x:@.arguments/*/newName
+
+
+/*
  * Checking if specified object is a file or a folder.
  */
 if
@@ -37,7 +47,9 @@ if
        * File object is a folder, renaming it.
        */
       io.folder.move:x:@.arguments/*/oldName
-         get-value:x:@.arguments/*/newName
+         strings.concat
+            get-value:x:@.newPath
+            .:/
 
 else
 
@@ -46,7 +58,7 @@ else
     * File object is a file, renaming it.
     */
    io.file.move:x:@.arguments/*/oldName
-      get-value:x:@.arguments/*/newName
+      get-value:x:@.newPath
 
 
 /*
