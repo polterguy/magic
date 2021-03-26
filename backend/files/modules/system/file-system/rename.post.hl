@@ -1,0 +1,45 @@
+
+/*
+ * Renames the specified file or folder.
+ */
+.arguments
+   oldName:string
+   newName:string
+.description:Renames the specified file or folder
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Basic logging.
+ */
+log.info
+   .:"Renaming '"
+   get-value:x:@.arguments/*/oldName
+   .:"' to '"
+   get-value:x:@.arguments/*/newName
+   .:"'"
+
+
+/*
+ * Checking if specified object is a file or a folder.
+ */
+if
+   io.folder.exists:x:@.arguments/*/oldName
+   .lambda
+
+
+      /*
+       * File object is a folder, renaming it.
+       */
+
+
+/*
+ * Returning result to caller.
+ */
+return-nodes
+   result:success

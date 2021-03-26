@@ -14,6 +14,7 @@ import { FeedbackService } from '../../services/feedback.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FileService } from 'src/app/components/files/services/file.service';
 import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
+import { RenameFileObject, RenameFileObjectDialogComponent } from './rename-file-object-dialog/rename-file-object-dialog.component';
 
 /**
  * Files component to allow user to browse his dynamic files folder,
@@ -34,6 +35,7 @@ export class FilesComponent implements OnInit, OnDestroy {
   public displayedColumns: string[] = [
     'icon',
     'path',
+    'rename',
     'download',
     'delete',
   ];
@@ -160,6 +162,39 @@ export class FilesComponent implements OnInit, OnDestroy {
         this.editedFiles.push(path);
       }
     }
+  }
+
+  /**
+   * Invoked when user wants to rename a folder or a file.
+   * 
+   * @param event Click event
+   * @param path Folder or file to rename
+   */
+  public rename(event: any, path: string) {
+
+    // Making sure the event doesn't propagate upwards, which would trigger the row click event.
+    event.stopPropagation();
+
+    // Showing modal dialog.
+    const dialogRef = this.dialog.open(RenameFileObjectDialogComponent, {
+      width: '550px',
+      data: {
+        isFolder: this.isFolder(path),
+        path: path,
+      },
+    });
+
+    // Subscribing to closed event and creating a new folder if we're given a folder name.
+    dialogRef.afterClosed().subscribe((result: RenameFileObject) => {
+
+      // Incoking backend to rename file or folder.
+      this.fileService.rename(result.path, result.newName).subscribe(() => {
+
+        // Showing user some information and retrieving items again.
+        this.feedbackService.showInfo((result.isFolder ? 'Folder' : 'File') + ' was renamed');
+        this.getFolderContent();
+      });
+    });
   }
 
   /**
