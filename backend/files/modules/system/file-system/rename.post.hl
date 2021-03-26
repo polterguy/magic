@@ -36,6 +36,17 @@ if
       /*
        * File object is a folder, renaming it.
        */
+      io.folder.move:x:@.arguments/*/oldName
+         get-value:x:@.arguments/*/newName
+
+else
+
+
+   /*
+    * File object is a file, renaming it.
+    */
+   io.folder.move:x:@.arguments/*/oldName
+      get-value:x:@.arguments/*/newName
 
 
 /*
