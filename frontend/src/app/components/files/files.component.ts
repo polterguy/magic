@@ -193,6 +193,11 @@ export class FilesComponent implements OnInit, OnDestroy {
         // Showing user some information and retrieving items again.
         this.feedbackService.showInfo((result.isFolder ? 'Folder' : 'File') + ' was renamed');
         this.getFolderContent();
+
+      }, (error: any) => {
+
+        // Oops ...!!
+        this.feedbackService.showError(error);
       });
     });
   }
