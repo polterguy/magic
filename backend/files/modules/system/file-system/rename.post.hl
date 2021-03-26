@@ -46,9 +46,15 @@ if
       /*
        * File object is a folder, renaming it.
        */
+      strings.split:x:@.newPath
+         .:/
+      remove-nodes:x:-/0/-
+      strings.join:x:@strings.split/*
+         .:/
       io.folder.move:x:@.arguments/*/oldName
          strings.concat
-            get-value:x:@.newPath
+            .:/
+            get-value:x:@strings.join
             .:/
 
 else
