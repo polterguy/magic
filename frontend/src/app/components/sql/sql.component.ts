@@ -13,6 +13,7 @@ import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.compon
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from '../../services/feedback.service';
 import { SqlService } from 'src/app/components/sql/services/sql.service';
 import { Databases } from 'src/app/components/sql/models/databases.model';
@@ -23,6 +24,7 @@ import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.compon
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
+import { FileService } from '../files/services/file.service';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -85,6 +87,7 @@ export class SqlComponent implements OnInit {
    * 
    * @param feedbackService Needed to show user feedback
    * @param configService Needed to read configuration settings, more specifically default database config setting
+   * @param fileService Needed to be able to restore backups
    * @param sqlService Needed to be able to execute SQL towards backend
    * @param dialog Needed to be able to show Load SQL snippet dialog
    * @param messageService Message service used to message other components
@@ -92,6 +95,7 @@ export class SqlComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
+    private fileService: FileService,
     private sqlService: SqlService,
     private clipboard: Clipboard,
     private dialog: MatDialog) { }
@@ -258,6 +262,30 @@ export class SqlComponent implements OnInit {
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
           const file = new Blob([res.body]);
           saveAs(file, filename);
+        });
+    });
+  }
+
+  /**
+   * Invoked when user wants to restore a previously created backup.
+   */
+  restore(file: FileList) {
+
+    // Invoking service method responsible for actually uploading file.
+    this.fileService.uploadFile('/temp/', file.item(0)).subscribe(() => {
+
+      // Showing some feedback to user, and re-databinding folder's content.
+      this.feedbackService.showInfo('File was successfully uploaded, now restoring backup');
+
+      // Doing actually restoration of backup file.
+      this.sqlService.restore(
+        this.input.databaseType,
+        this.input.connectionString,
+        this.input.database,
+        '/temp/' + file.item(0).name).subscribe((result: Response) => {
+
+          // Providing user with some feedback.
+          this.feedbackService.showInfo('Backup was successfully restored');
         });
     });
   }

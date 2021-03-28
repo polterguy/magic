@@ -53,3 +53,25 @@
     }
   }
 }
+
+.file-button {
+  position: absolute;
+  margin-top: 7px;
+}
+
+.invisible-file-element {
+  margin-right: 100px;
+  position: absolute;
+  opacity: 0;
+  font-size: 0;
+  width: 100px;
+  height: 40px;
+}
+
+.invisible-file-element:hover {
+  cursor: pointer;
+}
+
+.safe-mode {
+  margin-left: 100px !important;
+}

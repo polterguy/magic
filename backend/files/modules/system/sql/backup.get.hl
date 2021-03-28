@@ -50,6 +50,14 @@ signal
 
 
 /*
+ * Creating a nice filename for our backup.
+ */
+date.now
+date.format:x:-
+   format:"yyyy-MM-dd-HH-mm-ss"
+
+
+/*
  * Opening up our database connection.
  */
 strings.concat
@@ -87,6 +95,11 @@ data.connect:x:@.arguments/*/database
        * Adding result to returned ZIP stream invocation below.
        */
       strings.concat
+         .:/backup-
+         get-value:x:@.arguments/*/database
+         .:-
+         get-value:x:@date.format
+         .:/
          get-value:x:@.dp/#
          .:.csv
       unwrap:x:+/*/**
@@ -99,13 +112,10 @@ data.connect:x:@.arguments/*/database
 /*
  * Making sure we get HTTP header applied correctly.
  */
-date.now
-date.format:x:-
-   format:"yyyy-MM-dd-HH-mm-ss"
 strings.concat
    .:"attachment; filename=\"backup-"
    get-value:x:@.arguments/*/database
-   .:"-"
+   .:-
    get-value:x:@date.format
    .:".zip\""
 response.headers.add

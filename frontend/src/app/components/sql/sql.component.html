@@ -57,7 +57,23 @@
     Backup
   </button>
 
+  <button
+    [disabled]="safeMode && input.database === 'magic'"
+    mat-button
+    class="file-button">
+    Restore
+  </button>
+
+  <input
+    [disabled]="safeMode && input.database === 'magic'"
+    type="file"
+    accept=".zip"
+    class="invisible-file-element"
+    matTooltip="Restore a previously created backup of database"
+    (change)="restore($event.target.files)">
+
   <mat-checkbox
+    class="safe-mode"
     matTooltip="Whether or not you should only return the first 200 records or not"
     [(ngModel)]="safeMode">Safe mode</mat-checkbox>
 
