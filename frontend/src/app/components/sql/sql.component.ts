@@ -237,6 +237,25 @@ export class SqlComponent implements OnInit {
   }
 
   /**
+   * Creates a backup of your currently selected database.
+   */
+  public backup() {
+
+    // Invoking backend to create a backup ZIP file of selected database.
+    this.sqlService.backup(
+      this.input.databaseType,
+      this.input.connectionString,
+      this.input.database).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      });
+  }
+
+  /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
   public load() {
