@@ -338,3 +338,5 @@ backend/files/modules/system/crypto/keys/*
 !backend/files/modules/system/crypto/keys/README.md
 !frontend/src/app/components/log/
 !**/log/
+backend/files/temp/**
+!backend/files/temp/.gitignore

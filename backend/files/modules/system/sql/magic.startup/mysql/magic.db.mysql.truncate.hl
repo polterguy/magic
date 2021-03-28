@@ -1,0 +1,84 @@
+
+/*
+ * Truncates all tables in specified database.
+ *
+ * Arguments
+ *
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to execute towards
+ */
+slots.create:magic.db.mysql.truncate
+
+
+   /*
+    * Retrieving all tables from database.
+    */
+   add:x:+
+      get-nodes:x:@.arguments/*/connection-string
+      get-nodes:x:@.arguments/*/database
+   signal:magic.db.mysql.tables
+
+
+   /*
+    * Opens up our connection
+    */
+   .connection:[information_schema]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   mysql.connect:x:@.connection
+
+
+      /*
+       * Creating our SQL to truncate all tables in database.
+       */
+      .sql
+      set-value:x:@.sql
+         strings.concat
+            .:"use `"
+            get-value:x:@.arguments/*/database
+            .:"`;"
+            .:"set foreign_key_checks = 0;"
+
+
+      /*
+       * Running through each table in database and dynamically building our SQL.
+       */
+      for-each:x:@signal/*
+         set-value:x:@.sql
+            strings.concat
+               get-value:x:@.sql
+               .:"truncate `"
+               get-value:x:@.dp/#/*/table
+               .:"`;"
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:"set foreign_key_checks = 1;"
+
+
+      /*
+       * Executing SQL.
+       */
+      mysql.execute:x:@.sql
+
+
+      /*
+       * Returning success to caller.
+       */
+      return-value:bool:true

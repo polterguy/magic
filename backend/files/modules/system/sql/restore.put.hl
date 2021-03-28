@@ -1,0 +1,79 @@
+
+/*
+ * Restores a previously created backup of the specified database.
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+   database:string
+   backupFile:string
+.description:Restores a previously created backup of the specified database
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/connectionString
+validators.mandatory:x:@.arguments/*/backupFile
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
+
+
+/*
+ * Logging invocation.
+ */
+log.info
+   .:"Restoring a backup of database '"
+   get-value:x:@.arguments/*/database
+   .:"' from file '"
+   get-value:x:@.arguments/*/backupFile
+   .:"'"
+
+
+/*
+ * Unzipping file.
+ */
+io.file.unzip:x:@.arguments/*/backupFile
+
+
+/*
+ * Emptying database for all its existing content.
+ */
+set-value:x:../*/signal
+   strings.concat
+      .:magic.db.
+      get-value:x:@.arguments/*/databaseType
+      :.truncate
+unwrap:x:+/*
+signal
+   connection-string:x:@.arguments/*/connectionString
+   database:x:@.arguments/*/database
+
+
+/*
+ * Looping through each CSV file.
+ */
+strings.split:x:@.arguments/*/backupFile
+   .:.zip
+strings.concat
+   get-value:x:@strings.split/0
+   .:/
+log.info
+   lambda2hyper:x:../*
+io.folder.list:x:@strings.concat
+
+
+/*
+ * Returning success to caller.
+ */
+return-nodes
+   result:success
