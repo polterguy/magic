@@ -241,18 +241,25 @@ export class SqlComponent implements OnInit {
    */
   public backup() {
 
-    // Invoking backend to create a backup ZIP file of selected database.
-    this.sqlService.backup(
-      this.input.databaseType,
-      this.input.connectionString,
-      this.input.database).subscribe(res => {
+    // Warning user that this might take a very long time.
+    this.feedbackService.confirm(
+      'Warning!',
+      'This might take a very long time if your database is huge, are you sure you want to continue?',
+      () => {
 
-        // Retrieving the filename, as provided by the server.
-        const disp = res.headers.get('Content-Disposition');
-        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
-        const file = new Blob([res.body]);
-        saveAs(file, filename);
-      });
+      // Invoking backend to create a backup ZIP file of selected database.
+      this.sqlService.backup(
+        this.input.databaseType,
+        this.input.connectionString,
+        this.input.database).subscribe(res => {
+
+          // Retrieving the filename, as provided by the server.
+          const disp = res.headers.get('Content-Disposition');
+          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
+          const file = new Blob([res.body]);
+          saveAs(file, filename);
+        });
+    });
   }
 
   /**
