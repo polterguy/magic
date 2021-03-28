@@ -50,6 +50,13 @@
 
   </mat-form-field>
 
+  <button
+    mat-button
+    matTooltip="Creates a backup of your currently selected database"
+    (click)="backup()">
+    Backup
+  </button>
+
   <mat-checkbox
     matTooltip="Whether or not you should only return the first 200 records or not"
     [(ngModel)]="safeMode">Safe mode</mat-checkbox>
