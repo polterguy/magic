@@ -60,16 +60,65 @@ signal
 
 
 /*
- * Looping through each CSV file.
+ * Listing all files in unzipped folder.
  */
 strings.split:x:@.arguments/*/backupFile
    .:.zip
 strings.concat
    get-value:x:@strings.split/0
    .:/
-log.info
-   lambda2hyper:x:../*
-io.folder.list:x:@strings.concat
+io.file.list:x:@strings.concat
+
+
+/*
+ * Opening up our database connection.
+ */
+strings.concat
+   .:[
+   get-value:x:@.arguments/*/connectionString
+   .:|
+   get-value:x:@.arguments/*/database
+   .:]
+data.connect:x:@.arguments/*/database
+   database-type:x:@.arguments/*/databaseType
+
+
+   /*
+    * Iterating through each unzipped file in folder.
+    */
+   for-each:x:@io.file.list/*
+
+
+      /*
+       * Converting file from CSV to lambda.
+       */
+      io.file.load:x:@.dp/#
+      csv2lambda:x:@io.file.load
+
+
+      /*
+       * Figuring out file name.
+       */
+      strings.split:x:@.dp/#
+         .:/
+      strings.split:x:-/0/-
+         .:.csv
+
+
+      /*
+       * Looping through each CSV record from above, and inserting into table.
+       */
+      for-each:x:@csv2lambda/*
+
+
+         /*
+          * Inserting currrently iterated record into table.
+          */
+         add:x:./*/data.create/*/values
+            get-nodes:x:@.dp/#/*
+         data.create
+            table:x:@strings.split/0
+            values
 
 
 /*
