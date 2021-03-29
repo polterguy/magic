@@ -1,84 +1,67 @@
 
 /*
- * Truncates all tables in specified database.
+ * Truncates all tables in the currently open database connection.
  *
- * Arguments
+ * Assumes an open database connection to the database you want to
+ * truncate all tables in.
  *
- * - [connection-string] - What connection string to use
- * - [database] - What database you want to execute towards
+ * This allows you to create a database transaction, for things such
+ * restoring backups, truncating old records, ensuring no changes are
+ * done, unless backup is successfully restored, etc.
  */
 slots.create:magic.db.mysql.truncate
 
 
    /*
-    * Retrieving all tables from database.
+    * Listing all tables in currently open database connection.
     */
-   add:x:+
-      get-nodes:x:@.arguments/*/connection-string
-      get-nodes:x:@.arguments/*/database
-   signal:magic.db.mysql.tables
+   mysql.select:"show full tables where Table_Type = 'BASE TABLE'"
+
+   /*
+    * Making sure we end up with sane children node names, such that
+    * we can easily traverse nodes further down.
+    */
+   remove-nodes:x:@mysql.select/*/*/Table_type
+   set-name:x:@mysql.select/*/*
+      .:table
 
 
    /*
-    * Opens up our connection
+    * Creating our SQL to truncate all tables in database.
+    *
+    * Turning OFF foreign key checks as the first part of our SQL.
     */
-   .connection:[information_schema]
-   if
-      and
-         not
-            eq
-               get-value:x:@.arguments/*/connection-string
-               .
-         not
-            eq
-               get-value:x:@.arguments/*/connection-string
-               .:
-      .lambda
-         set-value:x:@.connection
-            strings.concat
-               .:[
-               get-value:x:@.arguments/*/connection-string
-               .:|
-               get-value:x:@.arguments/*/database
-               .:]
-   mysql.connect:x:@.connection
+   .sql:"set foreign_key_checks = 0;"
 
 
-      /*
-       * Creating our SQL to truncate all tables in database.
-       */
-      .sql
-      set-value:x:@.sql
-         strings.concat
-            .:"use `"
-            get-value:x:@.arguments/*/database
-            .:"`;"
-            .:"set foreign_key_checks = 0;"
-
-
-      /*
-       * Running through each table in database and dynamically building our SQL.
-       */
-      for-each:x:@signal/*
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:"truncate `"
-               get-value:x:@.dp/#/*/table
-               .:"`;"
+   /*
+    * Running through each table in database and dynamically building our SQL.
+    */
+   for-each:x:@mysql.select/*/*/table
       set-value:x:@.sql
          strings.concat
             get-value:x:@.sql
-            .:"set foreign_key_checks = 1;"
+            .:"truncate `"
+            get-value:x:@.dp/#
+            .:"`;"
 
 
-      /*
-       * Executing SQL.
-       */
-      mysql.execute:x:@.sql
+   /*
+    * Turning ON foreign key checks again.
+    */
+   set-value:x:@.sql
+      strings.concat
+         get-value:x:@.sql
+         .:"set foreign_key_checks = 1;"
 
 
-      /*
-       * Returning success to caller.
-       */
-      return-value:bool:true
+   /*
+    * Executing SQL.
+    */
+   mysql.execute:x:@.sql
+
+
+   /*
+    * Returning success to caller.
+    */
+   return-value:bool:true
