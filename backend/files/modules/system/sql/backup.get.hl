@@ -92,7 +92,7 @@ data.connect:x:@.arguments/*/database
 
 
       /*
-       * Adding result to returned ZIP stream invocation below.
+       * Adding resulting CSV to returned ZIP stream invocation below.
        */
       strings.concat
          .:/backup-
@@ -107,6 +107,26 @@ data.connect:x:@.arguments/*/database
          .
             .:x:@strings.concat
                .:x:@lambda2csv
+
+
+      /*
+       * Adding resulting Hyperlambda type information file to returned
+       * ZIP stream invocation below.
+       */
+      strings.concat
+         .:/backup-
+         get-value:x:@.arguments/*/database
+         .:-
+         get-value:x:@date.format
+         .:/
+         get-value:x:@.dp/#
+         .:.hl
+      lambda2hyper:x:@lambda2csv/*
+      unwrap:x:+/*/**
+      add:x:../*/io.content.zip-stream
+         .
+            .:x:@strings.concat
+               .:x:@lambda2hyper
 
 
 /*

@@ -101,43 +101,72 @@ data.connect:x:@strings.concat
 
 
             /*
-             * Iterating through each unzipped file in folder.
+             * Holds all files from ZIP file.
              */
             .files
+
+
+            /*
+             * Iterating through each unzipped CSV file in folder.
+             */
             for-each:x:@.files/*
 
 
                /*
-                * Converting file from CSV to lambda.
+                * Verifying file is a CSV file, at which point it's
+                * a content file for some table.
                 */
-               io.file.load:x:@.dp/#
-               csv2lambda:x:@io.file.load
+               if
+                  strings.ends-with:x:@.dp/#
+                     .:.csv
+                  .lambda
 
 
-               /*
-                * Figuring out table name.
-                */
-               strings.split:x:@.dp/#
-                  .:/
-               strings.split:x:@strings.split/0/-
-                  .:.csv
+                     /*
+                      * Loading Hyperlambda type declaration file associated with
+                      * CSV file, to pass types into [csv2lambda] invocation.
+                      */
+                     strings.replace:x:@.dp/#
+                        .:.csv
+                        .:.hl
+                     io.file.load:x:@strings.replace
+                     add:x:./*/csv2lambda
+                        hyper2lambda:x:@io.file.load
 
 
-               /*
-                * Looping through each CSV record from above, and inserting into table.
-                */
-               for-each:x:@csv2lambda/*
+                     /*
+                      * Loading CSV file and converting its content to lambda objects.
+                      *
+                      * Now with type information from associated Hyperlambda type declaration file.
+                      */
+                     io.file.load:x:@.dp/#
+                     csv2lambda:x:@io.file.load
 
 
-                  /*
-                   * Inserting currrently iterated record into table.
-                   */
-                  add:x:./*/data.create/*/values
-                     get-nodes:x:@.dp/#/*
-                  data.create
-                     database-type:x:@.arguments/*/databaseType
-                     table:x:@strings.split/0
-                     values
+                     /*
+                      * Figuring out table name for [data.create] invocation.
+                      */
+                     strings.split:x:@.dp/#
+                        .:/
+                     strings.split:x:@strings.split/0/-
+                        .:.csv
+
+
+                     /*
+                      * Looping through each CSV record from above, and inserting into table.
+                      */
+                     for-each:x:@csv2lambda/*
+
+
+                        /*
+                         * Inserting currrently iterated record into table.
+                         */
+                        add:x:./*/data.create/*/values
+                           get-nodes:x:@.dp/#/*
+                        data.create
+                           database-type:x:@.arguments/*/databaseType
+                           table:x:@strings.split/0
+                           values
 
 
       /*
