@@ -32,9 +32,11 @@ validators.enum:x:@.arguments/*/databaseType
  * Logging invocation.
  */
 log.info
-   .:"Restoring a backup of database '"
+   .:"Restoring a backup of database ["
+   get-value:x:@.arguments/*/connectionString
+   .:|
    get-value:x:@.arguments/*/database
-   .:"' from file '"
+   .:"] from file '"
    get-value:x:@.arguments/*/backupFile
    .:"'"
 
@@ -43,20 +45,6 @@ log.info
  * Unzipping file.
  */
 io.file.unzip:x:@.arguments/*/backupFile
-
-
-/*
- * Emptying database for all its existing content.
- */
-set-value:x:../*/signal
-   strings.concat
-      .:magic.db.
-      get-value:x:@.arguments/*/databaseType
-      :.truncate
-unwrap:x:+/*
-signal
-   connection-string:x:@.arguments/*/connectionString
-   database:x:@.arguments/*/database
 
 
 /*
@@ -79,46 +67,68 @@ strings.concat
    .:|
    get-value:x:@.arguments/*/database
    .:]
-data.connect:x:@.arguments/*/database
+data.connect:x:@strings.concat
    database-type:x:@.arguments/*/databaseType
 
 
    /*
-    * Iterating through each unzipped file in folder.
+    * Creating a database transaction, to make sure that unless backup is
+    * restored completely, no changes are done to the database.
     */
-   for-each:x:@io.file.list/*
+   data.transaction.create
+      database-type:x:@.arguments/*/databaseType
 
 
       /*
-       * Converting file from CSV to lambda.
+       * Deleting all records in all tables in currently open database.
        */
-      io.file.load:x:@.dp/#
-      csv2lambda:x:@io.file.load
+      signal:magic.db.mysql.truncate
 
 
       /*
-       * Figuring out file name.
+       * Iterating through each unzipped file in folder.
        */
-      strings.split:x:@.dp/#
-         .:/
-      strings.split:x:-/0/-
-         .:.csv
-
-
-      /*
-       * Looping through each CSV record from above, and inserting into table.
-       */
-      for-each:x:@csv2lambda/*
+      for-each:x:@io.file.list/*
 
 
          /*
-          * Inserting currrently iterated record into table.
+          * Converting file from CSV to lambda.
           */
-         add:x:./*/data.create/*/values
-            get-nodes:x:@.dp/#/*
-         data.create
-            table:x:@strings.split/0
-            values
+         io.file.load:x:@.dp/#
+         csv2lambda:x:@io.file.load
+
+
+         /*
+          * Figuring out table name.
+          */
+         strings.split:x:@.dp/#
+            .:/
+         strings.split:x:-/0/-
+            .:.csv
+
+
+         /*
+          * Looping through each CSV record from above, and inserting into table.
+          */
+         for-each:x:@csv2lambda/*
+
+
+            /*
+             * Inserting currrently iterated record into table.
+             */
+            add:x:./*/data.create/*/values
+               get-nodes:x:@.dp/#/*
+            data.create
+               database-type:x:@.arguments/*/databaseType
+               table:x:@strings.split/0
+               values
+
+
+      /*
+       * Committing transation.
+       */
+      data.transaction.commit
+         database-type:x:@.arguments/*/databaseType
 
 
 /*
