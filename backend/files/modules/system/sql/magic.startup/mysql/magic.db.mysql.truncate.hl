@@ -8,6 +8,9 @@
  * This allows you to create a database transaction, for things such
  * restoring backups, truncating old records, ensuring no changes are
  * done, unless backup is successfully restored, etc.
+ *
+ * Arguments
+ * - [.lambda] - Lambda object to execute in between dropping and re-creating foreign key checks
  */
 slots.create:magic.db.mysql.truncate
 
@@ -47,18 +50,21 @@ slots.create:magic.db.mysql.truncate
 
 
    /*
-    * Turning ON foreign key checks again.
-    */
-   set-value:x:@.sql
-      strings.concat
-         get-value:x:@.sql
-         .:"set foreign_key_checks = 1;"
-
-
-   /*
     * Executing SQL.
     */
    mysql.execute:x:@.sql
+
+
+   /*
+    * Executing [.lambda] object passed in, if any.
+    */
+   eval:x:@.arguments/*/.lambda
+
+
+   /*
+    * Turning on foreign key checks again.
+    */
+   mysql.execute:"set foreign_key_checks = 1;"
 
 
    /*
