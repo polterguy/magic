@@ -56,6 +56,11 @@ export class FilesComponent implements OnInit, OnDestroy {
   public editedFiles: string[] = [];
 
   /**
+   * Model for file uploader.
+   */
+   public fileInput: string[];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to display messages to user
@@ -393,6 +398,7 @@ export class FilesComponent implements OnInit, OnDestroy {
 
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');
+        this.fileInput = null;
         this.getFolderContent();
       });
     }
