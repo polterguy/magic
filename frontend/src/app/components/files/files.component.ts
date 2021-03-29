@@ -129,6 +129,7 @@ export class FilesComponent implements OnInit, OnDestroy {
 
     // Preventing deletion of important system modules.
     switch (path) {
+      case '/temp/':
       case '/misc/':
       case '/modules/':
       case '/modules/magic/':
