@@ -67,6 +67,7 @@
   <input
     [disabled]="safeMode && input.database === 'magic'"
     type="file"
+    [(ngModel)]="fileInput"
     accept=".zip"
     class="invisible-file-element"
     matTooltip="Restore a previously created backup of database"

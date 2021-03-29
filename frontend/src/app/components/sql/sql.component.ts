@@ -83,6 +83,11 @@ export class SqlComponent implements OnInit {
   public result: any[][] = [];
 
   /**
+   * Model for file uploader.
+   */
+  public fileInput: string;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to show user feedback
@@ -274,9 +279,6 @@ export class SqlComponent implements OnInit {
     // Invoking service method responsible for actually uploading file.
     this.fileService.uploadFile('/temp/', file.item(0)).subscribe(() => {
 
-      // Showing some feedback to user, and re-databinding folder's content.
-      this.feedbackService.showInfo('File was successfully uploaded, now restoring backup');
-
       // Doing actually restoration of backup file.
       this.sqlService.restore(
         this.input.databaseType,
@@ -286,6 +288,7 @@ export class SqlComponent implements OnInit {
 
           // Providing user with some feedback.
           this.feedbackService.showInfo('Backup was successfully restored');
+          this.fileInput = null;
         });
     });
   }
