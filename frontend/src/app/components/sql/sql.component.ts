@@ -253,7 +253,7 @@ export class SqlComponent implements OnInit {
     // Warning user that this might take a very long time.
     this.feedbackService.confirm(
       'Warning!',
-      'This might take a very long time if your database is huge, are you sure you want to continue?',
+      'This might take a very long time if your database is large, as in containing hundreds of thousands of records in total. Are you sure you want to continue? Notice, you might want to use your faster RDBMS backup system with larger databases ...',
       () => {
 
       // Invoking backend to create a backup ZIP file of selected database.
@@ -267,6 +267,10 @@ export class SqlComponent implements OnInit {
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
           const file = new Blob([res.body]);
           saveAs(file, filename);
+        }, (error: any) => {
+
+          // Oops ...!!
+          this.feedbackService.showError(error);
         });
     });
   }
@@ -289,7 +293,15 @@ export class SqlComponent implements OnInit {
           // Providing user with some feedback.
           this.feedbackService.showInfo('Backup was successfully restored');
           this.fileInput = null;
+        }, (error: any) => {
+
+          // Oops ...!!
+          this.feedbackService.showError(error);
         });
+    }, (error: any) => {
+
+      // Oops ...!!
+      this.feedbackService.showError(error);
     });
   }
 
