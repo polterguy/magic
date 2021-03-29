@@ -80,48 +80,64 @@ data.connect:x:@strings.concat
 
 
       /*
-       * Deleting all records in all tables in currently open database.
+       * Making sure we add all files into [.lambda] object below.
        */
-      signal:magic.db.mysql.truncate
+      add:x:./*/signal/**/.files
+         get-nodes:x:@io.file.list/*
 
 
       /*
-       * Iterating through each unzipped file in folder.
+       * Deleting all records in all tables in currently open database.
+       *
+       * Passing in lambda object to be executed in between dropping and
+       * re-creating foreign key checks.
        */
-      for-each:x:@io.file.list/*
-
-
-         /*
-          * Converting file from CSV to lambda.
-          */
-         io.file.load:x:@.dp/#
-         csv2lambda:x:@io.file.load
-
-
-         /*
-          * Figuring out table name.
-          */
-         strings.split:x:@.dp/#
-            .:/
-         strings.split:x:-/0/-
-            .:.csv
-
-
-         /*
-          * Looping through each CSV record from above, and inserting into table.
-          */
-         for-each:x:@csv2lambda/*
+      strings.concat
+         .:magic.db.
+         get-value:x:@.arguments/*/databaseType
+         .:.truncate
+      signal:x:-
+         .lambda
 
 
             /*
-             * Inserting currrently iterated record into table.
+             * Iterating through each unzipped file in folder.
              */
-            add:x:./*/data.create/*/values
-               get-nodes:x:@.dp/#/*
-            data.create
-               database-type:x:@.arguments/*/databaseType
-               table:x:@strings.split/0
-               values
+            .files
+            for-each:x:@.files/*
+
+
+               /*
+                * Converting file from CSV to lambda.
+                */
+               io.file.load:x:@.dp/#
+               csv2lambda:x:@io.file.load
+
+
+               /*
+                * Figuring out table name.
+                */
+               strings.split:x:@.dp/#
+                  .:/
+               strings.split:x:@strings.split/0/-
+                  .:.csv
+
+
+               /*
+                * Looping through each CSV record from above, and inserting into table.
+                */
+               for-each:x:@csv2lambda/*
+
+
+                  /*
+                   * Inserting currrently iterated record into table.
+                   */
+                  add:x:./*/data.create/*/values
+                     get-nodes:x:@.dp/#/*
+                  data.create
+                     database-type:x:@.arguments/*/databaseType
+                     table:x:@strings.split/0
+                     values
 
 
       /*
