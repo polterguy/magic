@@ -9,10 +9,9 @@ process should be restarted, to ensure the quality of Magic's release.
 
 1. Check out [issues](https://github.com/polterguy/magic/issues) at GitHub to make sure no open tasks
 exists that should have been fixed for the current release.
-2. Open [travis](https://travis-ci.com/github/polterguy) and verify there are no bugs. If there are projects failing, make sure these projects will *not* fail as the production build is being released, which might occur if you've checked in code for sub-projects, relying upon other projects that has been changed.
-3. Open [SonarCloud](https://sonarcloud.io/organizations/polterguy/projects?sort=-coverage) and verify none of the projects have any code smells, bugs, vulnerabilities, or duplicated lines of code, etc.
-4. Create releases of all NuGet packages, make sure you release _"magic.library"_ after all other packages have been released and published by NuGet.Org. Make sure you bump the versions of all NuGet packages before building/publishing.
-5. Update the _"magic.library"_ version the _"magic.csproj"_ file is referencing to the latest library version. Make sure the _"Version.cs"_ file is using the same version as the library version, and commit all changes to master branch.
+2. Open [SonarCloud](https://sonarcloud.io/organizations/polterguy/projects?sort=-coverage) and verify none of the projects have any code smells, bugs, vulnerabilities, or duplicated lines of code, etc.
+3. Create releases of all NuGet packages, make sure you release _"magic.library"_ after all other packages have been released and published by NuGet.Org. Make sure you bump the versions of all NuGet packages before building/publishing.
+4. Update the _"magic.library"_ version the _"magic.csproj"_ file is referencing to the latest library version. Make sure the _"Version.cs"_ file is using the same version as the library version, and commit all changes to master branch.
 
 The way this document is to be executed, is by following the steps below. These steps are to be performed *both*
 on an OS X system, and on a Windows system. Hence, the entire description of the process should be
