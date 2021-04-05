@@ -6,13 +6,12 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Material imports and other library imports.
-import { ChartsModule } from 'ng2-charts';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -68,7 +67,6 @@ import { SelectorComponent } from './helpers/selector/selector.component';
         whitelistedDomains: [environment.apiDomain],
       }
     }),
-    ChartsModule,
     MatIconModule,
     MatCardModule,
     MatInputModule,
