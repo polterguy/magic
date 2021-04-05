@@ -31,11 +31,25 @@ You can find [the project's documentation here](https://polterguy.github.io).
 
 ## License
 
-Although most of Magic's source code is Open Source, you will need a license key to use it.
-[You can obtain a license key here](https://servergardens.com/buy/).
-Notice, 47 hours after you put Magic into production, it will stop working, unless you have a valid
-license.
+Magic is 100% Open Source as of version 9.0.0, which implies that all plugins are licensed under the terms of
+the LGPL license version 3, as published by the Free Software Foundation. The frontend dashboard is licensed
+under the terms of the GPL version 3, as published by the Free Software Foundation, while the backend is
+licensed under the terms of the MIT license. What this implies, is that you can freely use Magic as you see fit,
+also in your own proprietary and closed source applications - However, if you modify any of its plugins, and
+or the dashboard frontend, you'll have to publish your changes to anyone requesting the code. To sum up
+what this implies in a _"dumbed down"_ explanation, just remember the following.
 
-* [Get licensed](https://servergardens.com/buy/)
+* You can use Magic to create closed source applications, and extend it with custom C# code, without having to publish your extensions
+* You can use Magic to scaffold frontend applications that are closed source
+* If you improve upon Magic's plugins, or the frontend dashboard, you'll need to publish your changes
+* [However, I still accept donations](https://servergardens.com/buy/)
+
+To sum up each license.
+
+* All NuGet packages are LGPL3
+* The `backend` folder is MIT
+* The `frontend` folder is GPL3
+
+See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
 
 Copyright(c) Thomas Hansen 2019 - 2021, Thomas Hansen - thomas@servergardens.com
