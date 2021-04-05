@@ -23,7 +23,7 @@ namespace magic.backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(Configuration);
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
             /*
              * Initializing Magic.
