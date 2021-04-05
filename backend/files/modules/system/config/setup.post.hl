@@ -229,15 +229,6 @@ else
 
 
 /*
- * Invoking slot responsible for applying license.
- *
- * Notice, this will only apply the license if it's not
- * the default version, which is 'TRIAL-VERSION'.
- */
-license.apply
-
-
-/*
  * Logging the fact that system was setup.
  */
 log.info:System was successfully setup
