@@ -1,5 +1,5 @@
 ﻿/*
- * Magic, Copyright(c) Thomas Hansen 2019 - 2020, thomas@servergardens.com, all rights reserved.
+ * Magic, Copyright(c) Thomas Hansen 2019 - 2021, thomas@servergardens.com, all rights reserved.
  * See the enclosed LICENSE file for details.
  */
 
@@ -21,7 +21,7 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Value = "8.9.9";
+            input.Value = "9.0.0";
         }
     }
 }

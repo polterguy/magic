@@ -12,6 +12,19 @@
 
 
 /*
+ * Body here is the raw request stream.
+ */
+.arguments
+   body:*
+
+
+/*
+ * Loading stream.
+ */
+io.stream.read:x:@.arguments/*/body
+
+
+/*
  * Sanity checking invocation.
  */
 validators.mandatory:x:@.arguments/*/body
@@ -21,7 +34,7 @@ validators.mandatory:x:@.arguments/*/body
  * Retrieving signing key's fingerprint, for then to retrieve
  * the public key associated with the fingerprint.
  */
-crypto.get-key:x:@.arguments/*/body
+crypto.get-key:x:@io.stream.read
 unwrap:x:+/*
 signal:magic.crypto.get-public-key
    fingerprint:x:@crypto.get-key
@@ -36,7 +49,7 @@ try
    /*
     * Verifies signature, and also chops up payload.
     */
-   crypto.verify:x:@.arguments/*/body
+   crypto.verify:x:@io.stream.read
       public-key:x:@signal/*/public_key
 
 
@@ -71,7 +84,7 @@ try
          set-value:x:@.request-id
             get-value:x:@hyper2lambda/*/.request-id
          set-value:x:@.request-raw
-            convert:x:@.arguments/*/body
+            convert:x:@io.stream.read
                type:base64
 
 

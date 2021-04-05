@@ -80,7 +80,6 @@ import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
-import { LicenseComponent } from './components/config/license/license.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
@@ -180,7 +179,6 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     CryptoInvocationsComponent,
     ConfigEditorComponent,
     DiagnosticsSecurityComponent,
-    LicenseComponent,
     DiagnosticsOverviewComponent,
     DiagnosticsComponent,
     DiagnosticsErrorsComponent,

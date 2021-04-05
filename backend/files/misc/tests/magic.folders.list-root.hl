@@ -5,5 +5,5 @@
 verb:get
 url:/magic/modules/system/file-system/list-folders?folder=%2F
 status:int:200
-response:@"[""/misc/"",""/modules/""]"
+response:@"[""/misc/"",""/modules/"",""/temp/""]"
 description:"Assumes that listing all folders in '/' returns the correct result"

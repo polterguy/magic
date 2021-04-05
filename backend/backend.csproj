@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <AssemblyName>backend</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup> 
@@ -16,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.library" Version="8.9.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.2" />
+    <PackageReference Include="magic.library" Version="9.0.0" />
   </ItemGroup>
 
 </Project>
