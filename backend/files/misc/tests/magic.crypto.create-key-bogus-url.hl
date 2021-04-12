@@ -17,7 +17,7 @@ payload:@"{
   ""enabled"": true
 }"
 response:@"{
-  ""message"": ""'foo' is not a valid URL"",
+  ""message"": ""'foo' is not a valid URL for [domain]"",
   ""field"": ""domain""
 }"
 produces:application/json

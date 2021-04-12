@@ -21,7 +21,7 @@ payload:@"{
   ""validators"": ""foo""
 }"
 response:@"{
-  ""message"": ""'non-existent-database-type' is not a valid enum of ['mysql', 'mssql']"",
+  ""message"": ""'non-existent-database-type' is not a valid enum of ['mysql', 'mssql'] for [databaseType]"",
   ""field"": ""databaseType""
 }"
 produces:application/json

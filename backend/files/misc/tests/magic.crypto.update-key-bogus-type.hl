@@ -18,7 +18,7 @@ payload:@"{
   ""enabled"": true
 }"
 response:@"{
-  ""message"": ""'foo' is not a valid enum of ['RSA']"",
+  ""message"": ""'foo' is not a valid enum of ['RSA'] for [type]"",
   ""field"": ""type""
 }"
 produces:application/json
