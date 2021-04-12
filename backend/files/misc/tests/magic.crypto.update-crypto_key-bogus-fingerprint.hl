@@ -14,7 +14,7 @@ payload:@"{
   ""enabled"": true
 }"
 response:@"{
-  ""message"": ""'bogus' is not a valid string between 79 and 79 in length"",
+  ""message"": ""'bogus' is not a valid string between 79 and 79 in length for [fingerprint]"",
   ""field"": ""fingerprint""
 }"
 produces:application/json

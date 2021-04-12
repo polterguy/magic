@@ -11,7 +11,7 @@ payload:@"{
   ""content"": ""foo""
 }"
 response:@"{
-  ""message"": ""'foo' is not a valid enum of ['info', 'error', 'debug', 'fatal']"",
+  ""message"": ""'foo' is not a valid enum of ['info', 'error', 'debug', 'fatal'] for [type]"",
   ""field"": ""type""
 }"
 produces:application/json

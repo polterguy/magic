@@ -12,7 +12,7 @@ payload:@"{
   ""name"": ""foo""
 }"
 response:@"{
-  ""message"": ""'bogus-type' is not a valid enum of ['backend', 'frontend']"",
+  ""message"": ""'bogus-type' is not a valid enum of ['backend', 'frontend'] for [type]"",
   ""field"": ""type""
 }"
 produces:application/json

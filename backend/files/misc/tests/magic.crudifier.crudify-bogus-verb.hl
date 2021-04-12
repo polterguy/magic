@@ -21,7 +21,7 @@ payload:@"{
   ""validators"": ""foo""
 }"
 response:@"{
-  ""message"": ""'non-existent-verb' is not a valid enum of ['post', 'get', 'put', 'delete']"",
+  ""message"": ""'non-existent-verb' is not a valid enum of ['post', 'get', 'put', 'delete'] for [verb]"",
   ""field"": ""verb""
 }"
 produces:application/json
