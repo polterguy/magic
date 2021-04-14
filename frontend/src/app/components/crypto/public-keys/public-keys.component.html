@@ -7,17 +7,14 @@
   <mat-icon aria-label="Imports a public key">add_box</mat-icon>
 </button>
 
-<mat-form-field class="fill-width">
+<mat-form-field class="fill-width" appearance="outline">
 
-  <mat-label>Filter ...</mat-label>
-
+  <mat-label>Filter</mat-label>
   <input
     matInput
-    placeholder="Filter ..."
     type="text"
     autocomplete="off"
     [formControl]="filterFormControl">
-
   <mat-icon
     matSuffix
     *ngIf="filterFormControl.value.trim() !== ''"

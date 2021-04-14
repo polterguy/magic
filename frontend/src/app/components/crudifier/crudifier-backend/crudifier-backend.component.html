@@ -1,49 +1,45 @@
 
-<mat-form-field class="form-field">
+<mat-form-field class="form-field" appearance="outline">
   <mat-label>Database type</mat-label>
   <mat-select
     [(ngModel)]="databaseType"
     matTooltip="Type of database to wrap in CRUD endpoints"
-    (selectionChange)="databaseTypeChanged()"
-    placeholder="Database type">
+    (selectionChange)="databaseTypeChanged()">
     <mat-option
       *ngFor="let idx of databaseTypes"
       [value]="idx">{{idx}}</mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-form-field *ngIf="databaseType && connectionStrings.length > 0" class="form-field">
+<mat-form-field *ngIf="databaseType && connectionStrings.length > 0" class="form-field" appearance="outline">
   <mat-label>Connection string</mat-label>
   <mat-select
     [(ngModel)]="connectionString"
     matTooltip="Connection string to wrap in CRUD endpoints"
-    (selectionChange)="connectionStringChanged()"
-    placeholder="Connection string">
+    (selectionChange)="connectionStringChanged()">
     <mat-option
       *ngFor="let idx of connectionStrings"
       [value]="idx">{{idx}}</mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-form-field *ngIf="connectionString && databases && databases.databases.length > 0" class="form-field">
+<mat-form-field *ngIf="connectionString && databases && databases.databases.length > 0" class="form-field" appearance="outline">
   <mat-label>Database</mat-label>
   <mat-select
     [(ngModel)]="database"
     matTooltip="Database to wrap in CRUD endpoints"
-    (selectionChange)="databaseChanged()"
-    placeholder="Database">
+    (selectionChange)="databaseChanged()">
     <mat-option
       *ngFor="let idx of databases.databases"
       [value]="idx">{{idx.name}}</mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-form-field *ngIf="database && database.tables && database.tables.length > 0" class="form-field">
+<mat-form-field *ngIf="database && database.tables && database.tables.length > 0" class="form-field" appearance="outline">
   <mat-label>Table</mat-label>
   <mat-select
     [(ngModel)]="table"
-    matTooltip="Table to wrap in CRUD endpoints"
-    placeholder="Database">
+    matTooltip="Table to wrap in CRUD endpoints">
     <mat-option
       *ngFor="let idx of database.tables"
       [value]="idx">{{idx.name}}</mat-option>
@@ -59,7 +55,8 @@
   <button
     *ngIf="database"
     [disabled]="database && database.name === 'magic' || (database.tables || []).length === 0"
-    mat-button
+    mat-raised-button
+    color="primary"
     matTooltip="Crudifies all tables in selected database"
     (click)="crudifyAll()">
     Crudify all tables

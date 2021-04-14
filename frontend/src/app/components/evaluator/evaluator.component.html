@@ -5,18 +5,19 @@
 
   <button
     id="loadButton"
-    mat-button
+    mat-raised-button
     (click)="load()">Load</button>
 
   <button
     id="saveButton"
-    mat-button
+    mat-raised-button
     [disabled]="input.hyperlambda.length === 0"
     (click)="save()">Save</button>
 
   <button
     id="executeButton"
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="input.hyperlambda.length === 0"
     (click)="execute()">Execute</button>
 

@@ -25,12 +25,14 @@
     <strong>Key type</strong><span>{{publicKeyFull.keyType}}</span>
   </span>
   
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label>Key content</mat-label>
     <textarea
       matInput
       disabled="true"
-      matTooltip="Public key"
       rows="7">{{publicKeyFull.publicKey}}</textarea>
+
   </mat-form-field>
   
 </div>

@@ -7,13 +7,12 @@
   *ngIf="input"
   class="button-strip">
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
 
     <mat-label>Database type</mat-label>
     <mat-select
       [(ngModel)]="input.databaseType"
-      (selectionChange)="databaseTypeChanged()"
-      placeholder="Database type">
+      (selectionChange)="databaseTypeChanged()">
       <mat-option
         *ngFor="let idx of databaseTypes"
         [value]="idx">{{idx}}</mat-option>
@@ -21,13 +20,12 @@
 
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
 
     <mat-label>Connection string</mat-label>
     <mat-select
       [(ngModel)]="input.connectionString"
-      (selectionChange)="connectionStringChanged()"
-      placeholder="Connection string">
+      (selectionChange)="connectionStringChanged()">
       <mat-option
         *ngFor="let idx of connectionStrings"
         [value]="idx">{{idx}}</mat-option>
@@ -35,14 +33,13 @@
 
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
 
     <mat-label>Database</mat-label>
     <mat-select
       [(ngModel)]="input.database"
       [disabled]="!databases || databases.length === 0"
-      (selectionChange)="databaseChanged()"
-      placeholder="Database">
+      (selectionChange)="databaseChanged()">
       <mat-option
         *ngFor="let idx of databases"
         [value]="idx">{{idx}}</mat-option>
@@ -87,8 +84,18 @@
     [(ngModel)]="isBatch">Batch</mat-checkbox>
 
   <button
+    id="executeButton"
+    [disabled]="!input || input.sql === '' || !input.database"
+    mat-raised-button
+    color="primary"
+    matTooltip="Execute SQL. Keyboard shortcut F5"
+    (click)="execute()">
+    Execute
+  </button>
+
+  <button
     id="loadButton"
-    mat-button
+    mat-raised-button
     matTooltip="Load a persisted SQL snippet from backend's snippet collection. Keyboard shortcut ALT+L"
     (click)="load()">
     Load
@@ -97,19 +104,10 @@
   <button
     id="saveButton"
     [disabled]="!input.sql"
-    mat-button
+    mat-raised-button
     matTooltip="Save SQL snippet to backend's snippet collection. Keyboard shortcut ALT+S"
     (click)="save()">
     Save
-  </button>
-
-  <button
-    id="executeButton"
-    [disabled]="!input || input.sql === '' || !input.database"
-    mat-button
-    matTooltip="Execute SQL. Keyboard shortcut F5"
-    (click)="execute()">
-    Execute
   </button>
 
 </div>
