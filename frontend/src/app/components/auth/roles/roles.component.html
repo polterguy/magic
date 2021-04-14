@@ -7,17 +7,14 @@
   <mat-icon aria-label="Creates a new role">add_box</mat-icon>
 </button>
 
-<mat-form-field class="fill-width">
+<mat-form-field class="fill-width" appearance="outline">
 
-  <mat-label>Filter roles ...</mat-label>
-
+  <mat-label>Filter roles</mat-label>
   <input
     matInput
-    placeholder="Filter ..."
     type="text"
     autocomplete="off"
     [formControl]="filterFormControl">
-
   <mat-icon
     *ngIf="filterFormControl.value.trim() !== ''"
     matSuffix
