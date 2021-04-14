@@ -73,7 +73,18 @@ export class FileEditorComponent implements OnInit {
 
       // Associating ALT+M with fullscreen toggling of the editor instance.
       this.options.extraKeys['Alt-M'] = (cm: any) => {
-        cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+
+        /*
+         * Notice, we need to signal other components that we're
+        * entering/leaving fullscreen mode, to make sure other components
+        * can handle this somehow.
+        */
+        var newValue = !cm.getOption('fullScreen');
+        cm.setOption('fullScreen', newValue);
+        this.messageService.sendMessage({
+          name: 'codemirror.fullscreen-toggled',
+          content: newValue,
+        });
       };
 
       // Checking if this is a Hyperlambda file, at which point we load vocabulary before we load file.

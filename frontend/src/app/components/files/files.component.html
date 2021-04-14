@@ -16,7 +16,7 @@
   <table
     mat-table
     [dataSource]="items"
-    class="files clickable"
+    [(class)]="tableCssClass"
     multiTemplateDataRows>
 
     <ng-container matColumnDef="icon">
@@ -90,7 +90,7 @@
 
   </table>
 
-  <div class="button-strip">
+  <div *ngIf="codeMirrorIsFullscreen === false" class="button-strip">
 
     <button
       *ngIf="isModuleFolder()"
