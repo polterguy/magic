@@ -3,15 +3,14 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
 
+    <mat-label class="dark">Name</mat-label>
     <input
       type="text"
-      placeholder="Name"
       matInput
       [(ngModel)]="data.filename"
       [matAutocomplete]="auto">
-
     <mat-autocomplete #auto="matAutocomplete">
       <mat-option
         *ngFor="let idx of getFiltered()"
@@ -24,12 +23,14 @@
 
 </div>
 
-<mat-form-field class="fill-width">
+<mat-form-field class="fill-width" appearance="outline">
+
+  <mat-label class="dark">Description</mat-label>
   <textarea
     matInput
     [(ngModel)]="data.description"
-    rows="5"
-    placeholder="Description"></textarea>
+    rows="5"></textarea>
+
 </mat-form-field>
 
 <div mat-dialog-actions class="button-strip">
@@ -39,9 +40,9 @@
     [(ngModel)]="data.matchResponse">Match response</mat-checkbox>
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="!filenameValid()"
-    aria-label="Saves your snippet"
     [mat-dialog-close]="data">Save</button>
 
 </div>
