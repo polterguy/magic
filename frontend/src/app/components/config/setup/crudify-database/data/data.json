@@ -342,6 +342,9 @@
           "name.eq":"string"
        },
        {
+          "name.like":"string"
+       },
+       {
           "description.like":"string"
        }
     ]
