@@ -193,7 +193,7 @@ export class LoginDialogComponent implements OnInit {
    */
   private filter(value: string) {
     return this.backendService.backends
-      .filter(x => x.url.includes(value))
+      .filter(x => x.url.includes(value) && x.url !== value)
       .map(x => x.url);
   }
 }

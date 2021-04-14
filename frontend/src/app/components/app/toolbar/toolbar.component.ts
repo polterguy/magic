@@ -91,7 +91,7 @@ export class ToolbarComponent {
    */
   public login() {
     this.dialog.open(LoginDialogComponent, {
-      width: '400px',
+      width: '550px',
     });
   }
 
