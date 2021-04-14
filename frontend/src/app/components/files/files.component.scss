@@ -25,6 +25,17 @@ table.files {
   }
 }
 
+table.code-mirror-fullscreen {
+  tr {
+    td {
+      display: none;
+    }
+    td:nth-child(1) {
+      display: table-cell;
+    }
+  }
+}
+
 .button-strip {
   margin-top: 2rem;
   margin-bottom: -2rem !important;

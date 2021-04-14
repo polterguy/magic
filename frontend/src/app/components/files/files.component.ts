@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { forkJoin, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ApplicationRef, Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
@@ -58,7 +58,17 @@ export class FilesComponent implements OnInit, OnDestroy {
   /**
    * Model for file uploader.
    */
-   public fileInput: string[];
+  public fileInput: string[];
+
+  /*
+   * If this one is true, CodeMirror is in fullscreen mode.
+   */
+  public codeMirrorIsFullscreen = false;
+
+  /*
+   * CSS class to use for files table.
+   */
+  public tableCssClass = 'files clickable';
 
   /**
    * Creates an instance of your component.
@@ -72,6 +82,7 @@ export class FilesComponent implements OnInit, OnDestroy {
     private feedbackService: FeedbackService,
     protected messageService: MessageService,
     private fileService: FileService,
+    private applicationRef: ApplicationRef,
     private dialog: MatDialog) { }
 
   /**
@@ -85,8 +96,22 @@ export class FilesComponent implements OnInit, OnDestroy {
     // Making sure we subscribe to changes in current folder.
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
       switch (msg.name) {
+
         case 'files.folder.changed':
           this.getFolderContent();
+          break;
+
+        case 'codemirror.fullscreen-toggled':
+
+          // Tiny trick to make sure toolbar buttons doesn't obstruct CodeMirror editor.
+          if (msg.content === true) {
+            this.codeMirrorIsFullscreen = true;
+            this.tableCssClass = 'files clickable code-mirror-fullscreen';
+          } else {
+            this.codeMirrorIsFullscreen = false;
+            this.tableCssClass = 'files clickable';
+          }
+          this.applicationRef.tick();
           break;
       }
     });
