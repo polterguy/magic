@@ -2,38 +2,42 @@
 
 <div class="centralized">
 
-  <mat-form-field class="form-field-half">
+  <mat-form-field class="form-field-half" appearance="outline">
+
     <mat-label>Subject</mat-label>
     <input
       matInput
       autocomplete="off"
       matTooltip="Subject for key, typically your full name"
       [(ngModel)]="subject">
+
   </mat-form-field>
 
-  <mat-form-field class="form-field-half">
+  <mat-form-field class="form-field-half" appearance="outline">
+
     <mat-label>Email</mat-label>
     <input
       matInput
       autocomplete="off"
       matTooltip="Typically your email address"
       [(ngModel)]="email">
+
   </mat-form-field>
 
   <br>
 
-  <mat-form-field class="form-field-half">
+  <mat-form-field class="form-field-half" appearance="outline">
+
     <mat-label>Domain</mat-label>
     <input
       matInput
       autocomplete="off"
       matTooltip="Domain to associate key with, typically your Magic installation's backend root URL"
       [(ngModel)]="domain">
+
   </mat-form-field>
 
-  <mat-form-field
-    class="form-field-half"
-    matTooltip="Key strength to use for your key pair">
+  <mat-form-field class="form-field-half" matTooltip="Key strength to use for your key pair" appearance="outline">
 
     <mat-label>Key strength</mat-label>
     <mat-select [(ngModel)]="strength">
@@ -47,19 +51,22 @@
 
   <br>
 
-  <mat-form-field class="form-field-full">
+  <mat-form-field class="form-field-full" appearance="outline">
+
     <mat-label>Seed</mat-label>
     <textarea
       matInput
       rows="5"
       matTooltip="Seed for the cryptographically secure random number generator"
       [(ngModel)]="seed"></textarea>
+
   </mat-form-field>
 
 </div>
 
 <button
-  mat-button
+  mat-raised-button
+  color="primary"
   [disabled]="seed === '' || subject === '' || email === ''"
   (click)="next()"
   class="next">
