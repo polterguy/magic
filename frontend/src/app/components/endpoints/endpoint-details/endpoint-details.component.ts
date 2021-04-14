@@ -607,13 +607,6 @@ export class EndpointDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Invoked when user wants to close the result view of an invocation.
-   */
-  public close() {
-    this.result = null;
-  }
-
   /*
    * Private helper methods.
    */

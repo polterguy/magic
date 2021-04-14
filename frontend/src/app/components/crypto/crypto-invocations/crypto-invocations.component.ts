@@ -127,11 +127,11 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns filter placeholder to caller.
+   * Returns filter label to caller.
    */
   public getFilterPlaceholder() {
     if (!this.keyId || this.keyId.id <= 0) {
-      return 'Filter ...';
+      return 'Filter';
     } else {
       return `Filter within '${this.keyId.identity}' ...`;
     }

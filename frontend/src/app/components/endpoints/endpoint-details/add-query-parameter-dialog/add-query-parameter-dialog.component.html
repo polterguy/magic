@@ -3,19 +3,22 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'operator'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'operator'" class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Logical comparison operator</mat-label>
     <mat-select
       [(ngModel)]="value"
-      class="dark"
-      placeholder="Logical comparison operator">
+      class="dark">
       <mat-option *ngFor="let cur of operators" [value]="cur">{{cur}}</mat-option>
     </mat-select>
+
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'order'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'order'" class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Order</mat-label>
     <input type="text"
       matInput
-      placeholder="Value"
       [(ngModel)]="value"
       [matAutocomplete]="auto">
     <mat-autocomplete
@@ -26,45 +29,52 @@
         {{el}}
       </mat-option>
     </mat-autocomplete>
+
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'direction'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name === 'direction'" class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Direction</mat-label>
     <mat-select
       [(ngModel)]="value"
-      class="dark"
-      placeholder="Sort order direction">
+      class="dark">
       <mat-option *ngFor="let cur of directions" [value]="cur">{{cur}}</mat-option>
     </mat-select>
+
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name !== 'operator' && data.argument.name !== 'direction' && data.argument.name !== 'order'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'string' && data.argument.name !== 'operator' && data.argument.name !== 'direction' && data.argument.name !== 'order'" class="fill-width" appearance="outline">
+
     <mat-label class="dark">Value</mat-label>
     <input
       matInput
       [(ngModel)]="value"
-      autocomplete="off"
-      placeholder="Value">
+      autocomplete="off">
+
   </mat-form-field>
 
-  <mat-form-field class="fill-width" *ngIf="data.argument.type === 'date'">
+  <mat-form-field class="fill-width" *ngIf="data.argument.type === 'date'" appearance="outline">
+
+    <mat-label class="dark">Date</mat-label>
     <input
       matInput
       [ngxMatDatetimePicker]="picker"
       autocomplete="off"
-      placeholder="Vate"
       [(ngModel)]="value">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.argument.type === 'long' || data.argument.type === 'int' || data.argument.type === 'uint' || data.argument.type === 'ulong' || data.argument.type === 'shor' || data.argument.type === 'ushort'" class="fill-width">
+  <mat-form-field *ngIf="data.argument.type === 'long' || data.argument.type === 'int' || data.argument.type === 'uint' || data.argument.type === 'ulong' || data.argument.type === 'shor' || data.argument.type === 'ushort'" class="fill-width" appearance="outline">
+
     <mat-label class="dark">Value</mat-label>
     <input
       matInput
       [(ngModel)]="value"
       type="number"
-      autocomplete="off"
-      placeholder="Value">
+      autocomplete="off">
+
   </mat-form-field>
 
   <mat-checkbox
@@ -76,7 +86,8 @@
 <div mat-dialog-actions class="mat-dialog-actions">
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     (click)="create()">Add</button>
 
 </div>

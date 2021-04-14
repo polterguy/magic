@@ -138,15 +138,16 @@
 
   </span>
 
-  <div
-    *ngIf="canInvoke()"
-    class="button-strip">
+  <div *ngIf="canInvoke()" class="button-strip">
+
     <button
-      mat-button
+      mat-raised-button
+      color="primary"
       matTooltip="Invokes endpoint with the specified arguments"
       (click)="invoke()">
       Invoke
     </button>
+
   </div>
 
   <div *ngIf="result" class="mat-elevation-z4 response">
@@ -186,17 +187,10 @@
     <div class="button-strip">
 
       <button
-        mat-button
+        mat-raised-button
         matTooltip="Creates an assumption wrapping the current invocation"
         (click)="createTest()">
         New assumption
-      </button>
-
-      <button
-        mat-button
-        matTooltip="Close result"
-        (click)="close()">
-        Close
       </button>
 
     </div>

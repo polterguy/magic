@@ -78,45 +78,51 @@
       <div *ngIf="shouldDisplayDetails(el.key)">
 
         <div class="crypto-form-fields">
-          <mat-form-field class="crypto-form-field">
+
+          <mat-form-field class="crypto-form-field" appearance="outline">
+
             <mat-label>Subject</mat-label>
             <input
               matInput
-              placeholder="Subject"
               type="text"
               [(ngModel)]="el.key.subject"
               autocomplete="off">
+
           </mat-form-field>
 
-          <mat-form-field class="crypto-form-field">
+          <mat-form-field class="crypto-form-field" appearance="outline">
+
             <mat-label>Email</mat-label>
             <input
               matInput
-              placeholder="Email"
               type="text"
               [(ngModel)]="el.key.email"
               autocomplete="off">
+
           </mat-form-field>
 
-          <mat-form-field class="crypto-form-field">
+          <mat-form-field class="crypto-form-field" appearance="outline">
+
             <mat-label>Domain</mat-label>
             <input
               matInput
-              placeholder="Domain"
               type="text"
               [(ngModel)]="el.key.domain"
               autocomplete="off">
+
           </mat-form-field>
       
         </div>
 
-        <mat-form-field class="fill-width">
-        <textarea
-          matInput
-          class="crypto-key"
-          matTooltip="Public key content"
-          [(ngModel)]="el.key.content"
-          rows="7"></textarea>
+        <mat-form-field class="fill-width" appearance="outline">
+
+          <textarea
+            matInput
+            class="crypto-key"
+            matTooltip="Public key content"
+            [(ngModel)]="el.key.content"
+            rows="7"></textarea>
+
         </mat-form-field>
 
         <div matTooltip="Fingerprint of key" class="fingerprint">{{el.key.fingerprint}}</div>
@@ -132,7 +138,8 @@
             [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
 
           <button
-            mat-button
+            mat-raised-button
+            color="primary"
             (click)="save(el)">Save</button>
 
         </div>
