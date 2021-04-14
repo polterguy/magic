@@ -1,25 +1,27 @@
 
-<h1 mat-dialog-title>{{data ? 'Change user\'s password' : 'Create a new user'}}</h1>
+<h1 mat-dialog-title>{{data ? 'Change user\'s password' : 'Create new user'}}</h1>
 
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Username</mat-label>
     <input
       matInput
       [(ngModel)]="username"
       [disabled]="data"
-      autocomplete="off"
-      placeholder="Username">
+      autocomplete="off">
+
   </mat-form-field>
 
   <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">{{this.data ? 'New password' : 'Password'}}</mat-label>
     <input
       matInput
       [(ngModel)]="password"
-      autocomplete="off"
-      [placeholder]="this.data ? 'New password' : 'Password'">
+      autocomplete="off">
+
   </mat-form-field>
 
 </div>

@@ -10,8 +10,9 @@
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Backend</mat-label>
     <input type="text"
-      placeholder="Backend"
       matInput
       [formControl]="backends"
       [matAutocomplete]="auto">
@@ -24,25 +25,27 @@
         {{el}}
       </mat-option>
     </mat-autocomplete>
+
   </mat-form-field>
 
   <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Username</mat-label>
     <input
       matInput
       [(ngModel)]="username"
-      autocomplete="off"
-      placeholder="Username">
+      autocomplete="off">
+
   </mat-form-field>
 
   <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Password</mat-label>
     <input
       matInput
       [(ngModel)]="password"
       [type]="hide ? 'password' : 'text'"
-      autocomplete="off"
-      placeholder="Password">
+      autocomplete="off">
     <button
       mat-icon-button
       matSuffix
@@ -50,6 +53,7 @@
       [attr.aria-pressed]="hide">
       <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
     </button>
+
   </mat-form-field>
 
 </div>
@@ -57,7 +61,7 @@
 <div mat-dialog-actions class="button-strip">
 
   <mat-checkbox
-    aria-label="Save password"
+    [disabled]="username === '' || password === '' || backends.value === ''"
     matTooltip="Save password in local storage"
     [(ngModel)]="savePassword">Save</mat-checkbox>
 
@@ -72,6 +76,6 @@
     mat-raised-button
     [disabled]="username === '' || password !== '' || backends.value === ''"
     matTooltip="Send me a reset password link"
-    (click)="resetPassword()">Reset</button>
+    (click)="resetPassword()">Forgot?</button>
 
 </div>
