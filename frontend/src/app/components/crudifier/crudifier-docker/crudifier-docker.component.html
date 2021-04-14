@@ -1,7 +1,8 @@
 
 <div class="form-wrapper">
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
+
     <mat-label>Domain ...</mat-label>
     <input
       matInput
@@ -9,9 +10,11 @@
       matTooltip="Main domain for your Magic dashboard frontend parts"
       autocomplete="off"
       [(ngModel)]="domain">
+
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
+
     <mat-label>API domain ...</mat-label>
     <input
       matInput
@@ -19,10 +22,12 @@
       matTooltip="API domain for your Magic dashboard backend parts, typically api.xxx.com"
       autocomplete="off"
       [(ngModel)]="apiDomain">
+
   </mat-form-field>
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="domain === '' || apiDomain === ''"
     (click)="generate()">
     Generate

@@ -9,17 +9,14 @@
     <mat-icon aria-label="Creates a new task">add_box</mat-icon>
   </button>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
 
-    <mat-label>Filter ...</mat-label>
-
+    <mat-label>Filter</mat-label>
     <input
       matInput
-      placeholder="Filter ..."
       type="text"
       autocomplete="off"
       [formControl]="filterFormControl">
-
     <mat-icon
       matSuffix
       *ngIf="filterFormControl.value.trim() !== ''"
@@ -62,13 +59,14 @@
           class="task-details"
           *ngIf="el.model">
 
-          <mat-form-field class="fill-width">
-            <mat-label>Description ...</mat-label>
+          <mat-form-field class="fill-width" appearance="outline">
+
+            <mat-label>Description</mat-label>
             <input
               matInput
-              placeholder="Description ..."
               [(ngModel)]="el.task.description"
               autocomplete="off">
+
           </mat-form-field>
         
           <app-codemirror-hyperlambda [(model)]="el.model"></app-codemirror-hyperlambda>

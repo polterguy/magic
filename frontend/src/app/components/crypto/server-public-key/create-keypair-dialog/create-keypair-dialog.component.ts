@@ -98,4 +98,14 @@ export class CreateKeypairDialogComponent implements OnInit {
       this.dialogRef.close(true);
     });
   }
+
+  /**
+   * Returns true if the form can be submitted.
+   */
+  public valid() {
+    return this.seed && this.seed.length > 0 &&
+      this.subject && this.subject.length > 0 &&
+      this.email && this.email.length > 0 &&
+      this.domain && this.domain.length > 0;
+  }
 }

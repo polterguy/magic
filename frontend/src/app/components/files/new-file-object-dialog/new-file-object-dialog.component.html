@@ -3,11 +3,11 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
 
+    <mat-label class="dark">{{data.isFolder ? 'Folder name' : 'File name'}}</mat-label>
     <input
       type="text"
-      [placeholder]="data.isFolder ? 'Folder name' : 'File name'"
       matInput
       autocomplete="off"
       [(ngModel)]="data.path">
@@ -18,7 +18,8 @@
 <div mat-dialog-actions>
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="!pathValid()"
     [mat-dialog-close]="data">Create</button>
 

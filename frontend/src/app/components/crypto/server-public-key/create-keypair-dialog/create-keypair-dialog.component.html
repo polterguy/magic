@@ -3,38 +3,44 @@
 
 <div mat-dialog-content class="file-content">
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Subject</mat-label>
     <input
       matInput
       autocomplete="off"
       matTooltip="Subject for key, typically your full name"
       [(ngModel)]="subject">
+
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Email</mat-label>
     <input
       matInput
       autocomplete="off"
       matTooltip="Typically your email address"
       [(ngModel)]="email">
+
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Domain</mat-label>
     <input
       matInput
       autocomplete="off"
       matTooltip="Domain to associate key with, typically your Magic installation's backend root URL"
       [(ngModel)]="domain">
+
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
 
+    <mat-label class="dark">Key strength</mat-label>
     <mat-select
       class="dark"
-      placeholder="Key strength to use for your key pair"
       class="dark"
       [(ngModel)]="strength">
       <mat-option *ngFor="let el of strengthValues" [value]="el">{{el}}</mat-option>
@@ -42,15 +48,17 @@
 
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Seed</mat-label>
     <textarea
       class="dark"
       matInput
-      placeholder="Seed"
       rows="5"
       autocomplete="off"
       [(ngModel)]="seed">
     </textarea>
+
   </mat-form-field>
 
 </div>
@@ -60,8 +68,9 @@
   class="mat-dialog-actions">
 
   <button
-    mat-button
-    (click)="create()"
-    aria-label="Creates your key pair">Create</button>
+    [disabled]="!valid()"
+    mat-raised-button
+    color="primary"
+    (click)="create()">Create</button>
 
 </div>

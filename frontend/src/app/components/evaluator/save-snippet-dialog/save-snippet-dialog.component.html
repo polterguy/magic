@@ -2,12 +2,11 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
 
+    <mat-label class="dark">Filename</mat-label>
     <input
       type="text"
-      placeholder="Filename"
-      aria-label="Please provide a filename"
       matInput
       [(ngModel)]="data"
       [matAutocomplete]="auto">
@@ -29,9 +28,9 @@
   class="mat-dialog-actions">
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="!filenameValid()"
-    aria-label="Saves your snippet"
     [mat-dialog-close]="data">Save</button>
 
 </div>

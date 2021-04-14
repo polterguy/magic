@@ -3,24 +3,22 @@
 
   <button
     *ngIf="tests.length > 0"
-    mat-button
+    mat-raised-button
+    color="primary"
     [matTooltip]="'Verify ' + tests.length + ' assumptions'"
     class="run-all"
     (click)="executeAll()">
     Run all
   </button>
 
-  <mat-form-field [class]="tests.length > 0 ? 'fill-width' : 'invisible'">
+  <mat-form-field [class]="tests.length > 0 ? 'fill-width' : 'invisible'" appearance="outline">
 
-    <mat-label>Filter ...</mat-label>
-
+    <mat-label>Filter</mat-label>
     <input
       matInput
-      placeholder="Filter ..."
       type="text"
       autocomplete="off"
       [formControl]="filterFormControl">
-
     <mat-icon
       matSuffix
       *ngIf="filterFormControl.value.trim() !== ''"
@@ -68,21 +66,22 @@
           <div class="button-strip">
 
             <button
-              mat-button
+              mat-raised-button
+              color="primary"
               matTooltip="Run assumption"
               (click)="executeTest(el)">
               Run
             </button>
 
             <button
-              mat-button
+              mat-raised-button
               matTooltip="Delete assumption"
               (click)="deleteTest(el)">
               Delete
             </button>
 
             <button
-              mat-button
+              mat-raised-button
               matTooltip="Save assumption"
               (click)="saveTest(el.filename, el.content.hyperlambda)">
               Save

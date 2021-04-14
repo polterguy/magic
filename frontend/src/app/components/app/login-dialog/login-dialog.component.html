@@ -9,7 +9,7 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
     <input type="text"
       placeholder="Backend"
       matInput
@@ -26,7 +26,7 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
     <mat-label class="dark">Username</mat-label>
     <input
       matInput
@@ -35,7 +35,7 @@
       placeholder="Username">
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
     <mat-label class="dark">Password</mat-label>
     <input
       matInput
@@ -62,15 +62,16 @@
     [(ngModel)]="savePassword">Save</mat-checkbox>
 
   <button
-    mat-button
-    [disabled]="username === '' || password !== '' || backends.value === ''"
-    matTooltip="Send me a reset password link"
-    (click)="resetPassword()">Reset</button>
-
-  <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="username === '' || password === '' || backends.value === ''"
     matTooltip="Login to the currently selected backend API"
     (click)="login()">Login</button>
+
+  <button
+    mat-raised-button
+    [disabled]="username === '' || password !== '' || backends.value === ''"
+    matTooltip="Send me a reset password link"
+    (click)="resetPassword()">Reset</button>
 
 </div>

@@ -3,7 +3,7 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
     <mat-label class="dark">Name</mat-label>
     <input
       matInput
@@ -13,7 +13,7 @@
       placeholder="Name">
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
     <mat-label class="dark">Description</mat-label>
     <input
       matInput
@@ -28,13 +28,15 @@
 
   <button
     *ngIf="!data"
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="name === '' || description === ''"
     (click)="create()">Create</button>
 
   <button
     *ngIf="data"
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="description === ''"
     (click)="update()">Update</button>
 

@@ -22,8 +22,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   text-align: right;
   margin-top: .5rem;
   margin-bottom: .5rem;
-  mat-checkbox {
-    margin-right: .5rem;
+  mat-checkbox, button {
+    margin-right: 1rem;
   }
 }
 

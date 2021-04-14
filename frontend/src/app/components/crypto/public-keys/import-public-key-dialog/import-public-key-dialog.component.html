@@ -3,44 +3,48 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Key content</mat-label>
     <textarea
       matInput
       class="fill-width"
-      placeholder="Key content ..."
       (change)="publicKeyChanged()"
       [(ngModel)]="key.content"
       rows="10"></textarea>
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Subject</mat-label>
     <input
       matInput
-      placeholder="Subject"
       type="text"
       [(ngModel)]="key.subject"
       autocomplete="off">
+
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Email</mat-label>
     <input
       matInput
-      placeholder="Email"
       type="text"
       [(ngModel)]="key.email"
       autocomplete="off">
+
   </mat-form-field>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Domain</mat-label>
     <input
       matInput
-      placeholder="Domain"
       type="text"
       [(ngModel)]="key.domain"
       autocomplete="off">
+
   </mat-form-field>
 
 </div>
@@ -48,7 +52,8 @@
 <div mat-dialog-actions class="mat-dialog-actions">
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="key.fingerprint === '' || key.email === '' || key.subject === ''"
     (click)="import()">Import</button>
 

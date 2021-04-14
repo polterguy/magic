@@ -3,14 +3,15 @@
 
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width">
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Name</mat-label>
     <input
       matInput
       [(ngModel)]="name"
       [disabled]="data"
-      autocomplete="off"
-      placeholder="Name">
+      autocomplete="off">
+
   </mat-form-field>
 
 </div>
@@ -18,7 +19,8 @@
 <div mat-dialog-actions class="mat-dialog-actions">
 
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [disabled]="name === ''"
     (click)="create()">Create</button>
 

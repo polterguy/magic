@@ -1,14 +1,13 @@
 
 <div class="wrapper" *ngIf="input">
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
 
     <mat-label>Database type</mat-label>
     <mat-select
       [(ngModel)]="input.databaseType"
       matTooltip="Type of database endpoint encapsulates"
-      (selectionChange)="databaseTypeChanged()"
-      placeholder="Database type">
+      (selectionChange)="databaseTypeChanged()">
       <mat-option
         *ngFor="let idx of databaseTypes"
         [value]="idx">{{idx}}</mat-option>
@@ -16,14 +15,13 @@
 
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
 
     <mat-label>Connection string</mat-label>
     <mat-select
       [(ngModel)]="input.connectionString"
       matTooltip="Connection string endpoint encapsulates"
-      (selectionChange)="connectionStringChanged()"
-      placeholder="Connection string">
+      (selectionChange)="connectionStringChanged()">
       <mat-option
         *ngFor="let idx of connectionStrings"
         [value]="idx">{{idx}}</mat-option>
@@ -31,15 +29,14 @@
 
   </mat-form-field>
 
-  <mat-form-field class="form-field">
+  <mat-form-field class="form-field" appearance="outline">
 
     <mat-label>Database</mat-label>
     <mat-select
       [(ngModel)]="input.database"
       matTooltip="Database endpoint wraps"
       [disabled]="!databases || databases.length === 0"
-      (selectionChange)="databaseChanged()"
-      placeholder="Database">
+      (selectionChange)="databaseChanged()">
       <mat-option
         *ngFor="let idx of databases"
         [value]="idx">{{idx}}</mat-option>
@@ -49,7 +46,7 @@
 
   <br *ngIf="input.database">
 
-  <mat-form-field class="form-field" *ngIf="input.database">
+  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
     <mat-label>HTTP verb</mat-label>
     <mat-select
       matTooltip="HTTP verb endpoint encapsulates"
@@ -60,8 +57,8 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field class="form-field" *ngIf="input.database">
-    <mat-label>Module name ...</mat-label>
+  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
+    <mat-label>Module name</mat-label>
     <input
       matInput
       type="text"
@@ -70,8 +67,8 @@
       [(ngModel)]="moduleName">
   </mat-form-field>
 
-  <mat-form-field class="form-field" *ngIf="input.database">
-    <mat-label>Endpoint name ...</mat-label>
+  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
+    <mat-label>Endpoint name</mat-label>
     <input
       matInput
       type="text"
@@ -80,8 +77,8 @@
       [(ngModel)]="endpointName">
   </mat-form-field>
 
-  <mat-form-field class="form-field" *ngIf="input.database">
-    <mat-label>Authorization ...</mat-label>
+  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
+    <mat-label>Authorization</mat-label>
     <input
       matInput
       type="text"
@@ -120,7 +117,8 @@
 
   <div class="button-strip" *ngIf="input.database">
     <button
-      mat-button
+      mat-raised-button
+      color="primary"
       [disabled]="moduleName === '' || endpointName === '' || input.sql === '' || !validModuleComponentName()"
       matTooltip="Generates your SQL endpoint"
       (click)="generate()">

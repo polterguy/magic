@@ -5,12 +5,13 @@
   [options]="cmOptions.json">
 </ngx-codemirror>
 
-<div
-  *ngIf="config"
-  class="button-strip">
+<div *ngIf="config" class="button-strip">
+
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     (click)="save()">
     Save
   </button>
+
 </div>
