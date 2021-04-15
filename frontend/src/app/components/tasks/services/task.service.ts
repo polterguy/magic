@@ -6,9 +6,6 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 
-// Utility component imports.
-import { saveAs } from "file-saver";
-
 // Application specific imports.
 import { Task } from '../models/task.model';
 import { HttpService } from '../../../services/http.service';
