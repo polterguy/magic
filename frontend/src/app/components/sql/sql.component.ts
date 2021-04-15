@@ -444,7 +444,7 @@ export class SqlComponent implements OnInit {
 
   /**
    * Invoked when user wants to toggle details for a row
-   * 
+   *
    * @param row Row to toggle details for
    */
   public toggleDetails(row: any[]) {
