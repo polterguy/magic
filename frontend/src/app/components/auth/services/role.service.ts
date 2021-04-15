@@ -8,10 +8,10 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Role } from '../models/role.model';
-import { HttpService } from '../../../services/http.service';
 import { Count } from '../../../models/count.model';
 import { Affected } from '../../../models/affected.model';
-import { AuthFilter } from '../models/auth-filter.model';
+import { HttpService } from '../../../services/http.service';
+import { AuthFilter, createAuthQuery } from '../models/auth-filter.model';
 
 /**
  * User service, allowing you to administrate the users in your backend.
@@ -35,30 +35,8 @@ export class RoleService {
    */
   public list(filter: AuthFilter = null) {
 
-    // Dynamically building our query parameters.
-    let query = '';
-    if (filter !== null) {
-
-      // Applying limit and offset
-      query += '?limit=' + filter.limit;
-      query += "&offset=" + filter.offset;
-
-      // Applying filter parts, if given.
-      if (filter.filter && filter.filter !== '') {
-        query += '&name.like=' + encodeURIComponent(filter.filter + '%');
-      }
-
-      // Applying sorting, if given.
-      if (filter.order && filter.order !== '') {
-        query += '&order=' + encodeURIComponent(filter.order);
-      }
-      if (filter.direction && filter.direction !== '') {
-        query += '&direction=' + encodeURIComponent(filter.direction);
-      }
-    }
-
     // Invoking backend and returning observable.
-    return this.httpService.get<Role[]>('/magic/modules/magic/roles' + query);
+    return this.httpService.get<Role[]>('/magic/modules/magic/roles' + createAuthQuery(filter, 'name'));
   }
 
   /**

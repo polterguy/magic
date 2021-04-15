@@ -38,3 +38,33 @@ export class AuthFilter {
    */
   limit: number;
 }
+
+/**
+ * Creates the query argument from the current object.
+ * 
+ * @param filter Auth filter to create query parameters from
+ */
+export function createAuthQuery(filter: AuthFilter, name: string) {
+  let query = '';
+  if (!filter) {
+    return query;
+  }
+
+  // Applying limit and offset
+  query += '?limit=' + filter.limit;
+  query += "&offset=" + filter.offset;
+
+  // Applying filter parts, if given.
+  if (filter.filter && filter.filter !== '') {
+    query += `&${name}.like=` + encodeURIComponent(filter.filter + '%');
+  }
+
+  // Applying sorting, if given.
+  if (filter.order && filter.order !== '') {
+    query += '&order=' + encodeURIComponent(filter.order);
+  }
+  if (filter.direction && filter.direction !== '') {
+    query += '&direction=' + encodeURIComponent(filter.direction);
+  }
+  return query;
+}

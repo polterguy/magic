@@ -28,6 +28,24 @@ import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-d
 })
 export class ToolbarComponent {
 
+  /*
+   * Help videos displayed when user clicks help.
+   */
+  private videos = [
+    {name: '', url: 'rtK_Ie9E-cI'},
+    {name: 'auth', url: 'I91IpNnqk8g'},
+    {name: 'sql', url: 'NMH87k7Dv6c'},
+    {name: 'crudifier', url: 'PMETvIk_EKg'},
+    {name: 'endpoints', url: 'jwN32Ji6MVE'},
+    {name: 'file-system', url: 'x2_2Uzb7h84'},
+    {name: 'evaluator', url: 'S83qWxBAaNM'},
+    {name: 'tasks', url: 'BnYr3s69_r0'},
+    {name: 'crypto', url: 'mfQOTq7rMv4'},
+    {name: 'diagnostics', url: 'nZ_yrw3MRS4'},
+    {name: 'log', url: 'mjqvjy-lqnY'},
+    {name:'config', url: 'KkVUQk5eAPg'},
+  ];
+
   /**
    * Creates an instance of your component.
    * 
@@ -109,84 +127,12 @@ export class ToolbarComponent {
 
     // Retrieving currently activated route, which is component.
     const route = this.router.url.split('/')[1];
-    let video = '';
-    let url = '';
-
-    // Figuribng out what video to display.
-    switch (route) {
-
-      // Home, configuring Magic video.
-      case '':
-        video = 'https://www.youtube.com/embed/rtK_Ie9E-cI';
-        url = 'https://www.youtube.com/watch?v=rtK_Ie9E-cI';
-        break;
-
-      // Auth, administrating users and roles.
-      case 'auth':
-        video = 'https://www.youtube.com/embed/I91IpNnqk8g';
-        url = 'https://www.youtube.com/watch?v=I91IpNnqk8g';
-        break;
-
-      // SQL, administrating your databases.
-      case 'sql':
-        video = 'https://www.youtube.com/embed/NMH87k7Dv6c';
-        url = 'https://www.youtube.com/watch?v=NMH87k7Dv6c';
-        break;
-
-      // Generator menu item.
-      case 'crudifier':
-        video = 'https://www.youtube.com/embed/PMETvIk_EKg';
-        url = 'https://www.youtube.com/watch?v=PMETvIk_EKg';
-        break;
-
-      // Endpoints menu item.
-      case 'endpoints':
-        video = 'https://www.youtube.com/embed/jwN32Ji6MVE';
-        url = 'https://www.youtube.com/watch?v=jwN32Ji6MVE';
-        break;
-
-      // Files menu item.
-      case 'file-system':
-        video = 'https://www.youtube.com/embed/x2_2Uzb7h84';
-        url = 'https://www.youtube.com/watch?v=x2_2Uzb7h84';
-        break;
-
-      // Evaluator menu item.
-      case 'evaluator':
-        video = 'https://www.youtube.com/embed/S83qWxBAaNM';
-        url = 'https://www.youtube.com/watch?v=S83qWxBAaNM';
-        break;
-
-      // Tasks menu item.
-      case 'tasks':
-        video = 'https://www.youtube.com/embed/BnYr3s69_r0';
-        url = 'https://www.youtube.com/watch?v=BnYr3s69_r0';
-        break;
-
-      // Crypto menu item.
-      case 'crypto':
-        video = 'https://www.youtube.com/embed/mfQOTq7rMv4';
-        url = 'https://www.youtube.com/watch?v=mfQOTq7rMv4';
-        break;
-
-      // Diagnostics menu item.
-      case 'diagnostics':
-        video = 'https://www.youtube.com/embed/nZ_yrw3MRS4';
-        url = 'https://www.youtube.com/watch?v=nZ_yrw3MRS4';
-        break;
-
-      // Diagnostics menu item.
-      case 'log':
-        video = 'https://www.youtube.com/embed/mjqvjy-lqnY';
-        url = 'https://www.youtube.com/watch?v=mjqvjy-lqnY';
-        break;
-
-      // Diagnostics menu item.
-      case 'config':
-        video = 'https://www.youtube.com/embed/KkVUQk5eAPg';
-        url = 'https://www.youtube.com/watch?v=KkVUQk5eAPg';
-        break;
+    const videos = this.videos.filter(x => x.name === route);
+    if (videos.length === 0) {
+      this.feedbackService.showInfoShort('No help video for this component');
+      return;
     }
+    const video = videos[0];
 
     const dismiss = localStorage.getItem('dismiss-warning');
     if (dismiss === 'true') {
@@ -195,7 +141,7 @@ export class ToolbarComponent {
       this.dialog.open(ToolbarHelpDialogComponent, {
         width: '617px',
         data: {
-          video: video
+          video: `https://www.youtube.com/embed/${video.url}`
         }
       });
 
@@ -205,7 +151,7 @@ export class ToolbarComponent {
       this.feedbackService.confirm(
         'Privacy Warning!',
         `<p>This will open YouTube in an iframe. YouTube is known for violating your privacy. Make sure you understand the implications of this before proceeding.</p>` +
-        `<p>Alternatively, you might want to open the video directly in an anonymous browser window. The URL for the video is <a href="${url}">${url}</a> in case you want to watch it in privacy.</p>` +
+        `<p>Alternatively, you might want to open the video directly in an anonymous browser window. The URL for the video is <a href="https://www.youtube.com/watch?${video.url}">https://www.youtube.com/watch?${video.url}</a> in case you want to watch it in privacy.</p>` +
         '<p>Do you wish to proceed anyway?</p>',
         () => {
 
