@@ -432,14 +432,11 @@ export class SqlComponent implements OnInit {
       if (this.displayDetails.indexOf(idx) !== -1) {
 
         // Adding our view details record.
-        let colSpan = 0;
-        for (const idx in currentResultSet[0]) {
-          colSpan += 1;
-        }
+        let colSpan = currentResultSet[0].length;
         result.push({
           _detailsColSpan: Math.min(5, colSpan),
           data: idx,
-        })
+        });
       }
     }
     return result;
@@ -561,11 +558,8 @@ export class SqlComponent implements OnInit {
     }, (error: any) => {
 
       // Oops, making sure we remove all selected values, and shows an error to user.
-      this.input.connectionString = null;
-      this.input.database = null;
-      this.input.options.hintOptions.tables = [];
-      this.feedbackService.showError(error);}
-    );
+      this.nullifyAllSelectors(error);
+    });
   }
 
   /*
@@ -585,12 +579,19 @@ export class SqlComponent implements OnInit {
     }, (error: any) => {
 
       // Resetting selected connection string and selected database.
-      this.input.connectionString = null;
-      this.input.database = null;
-      this.input.options.hintOptions.tables = [];
-
-      // Notifying user
-      this.feedbackService.showError(error);
+      this.nullifyAllSelectors(error);
     });
+  }
+
+  /*
+   *
+   */
+  private nullifyAllSelectors(error: any) {
+    this.input.connectionString = null;
+    this.input.database = null;
+    this.input.options.hintOptions.tables = [];
+
+    // Notifying user
+    this.feedbackService.showError(error);
   }
 }

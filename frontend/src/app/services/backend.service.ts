@@ -32,7 +32,7 @@ export class BackendService {
     // Reading persisted backends from local storage, or defaulting to whatever is in our environment.ts file.
     let backends: Backend[];
     const storage = localStorage.getItem('backends');
-    backends = storage === null ? environment.defaultBackends : backends = <Backend[]>JSON.parse(storage);
+    backends = storage === null ? environment.defaultBackends : <Backend[]>JSON.parse(storage);
     this._backends = backends;
 
     // Checking we actually have any backends stored.
