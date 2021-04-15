@@ -158,17 +158,17 @@ export class SqlComponent implements OnInit {
 
           // Associating ALT+L with the load snippet button.
           this.input.options.extraKeys['Alt-L'] = (cm: any) => {
-            (document.getElementById('loadButton') as HTMLElement).click();
+            document.getElementById('loadButton').click();
           };
 
           // Associating ALT+S with the save snippet button.
           this.input.options.extraKeys['Alt-S'] = (cm: any) => {
-            (document.getElementById('saveButton') as HTMLElement).click();
+            document.getElementById('saveButton').click();
           };
 
           // Making sure we attach the F5 button to execute SQL.
           this.input.options.extraKeys.F5 = () => {
-            (document.getElementById('executeButton') as HTMLElement).click();
+            document.getElementById('executeButton').click();
           };
         });
       });
@@ -264,7 +264,7 @@ export class SqlComponent implements OnInit {
 
           // Retrieving the filename, as provided by the server.
           const disp = res.headers.get('Content-Disposition');
-          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');;
+          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
           const file = new Blob([res.body]);
           saveAs(file, filename);
         }, (error: any) => {

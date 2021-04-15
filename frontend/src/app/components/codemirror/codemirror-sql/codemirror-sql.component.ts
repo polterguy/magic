@@ -61,11 +61,6 @@ export class CodemirrorSqlComponent implements AfterViewInit {
   @Input() public model: Model;
 
   /**
-   * Creates an instance of your component.
-   */
-  constructor() { }
-
-  /**
    * Implementation of AfterViewInit
    */
   public ngAfterViewInit() {

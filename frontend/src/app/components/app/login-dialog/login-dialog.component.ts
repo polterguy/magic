@@ -161,8 +161,8 @@ export class LoginDialogComponent implements OnInit {
         if (this.authService.roles().indexOf('root') !== -1 && this.router.url !== '/config') {
 
           // Checking status to see if we've setup system.
-          this.configService.status().subscribe((res: Status) => {
-            if (!res.magic_crudified || !res.server_keypair || !res.config_done) {
+          this.configService.status().subscribe((status: Status) => {
+            if (!status.magic_crudified || !status.server_keypair || !status.config_done) {
               this.router.navigate(['/config']);
             }
           }, (error: any) => {

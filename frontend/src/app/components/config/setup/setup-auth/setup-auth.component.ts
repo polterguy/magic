@@ -83,16 +83,16 @@ export class SetupAuthComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving backend's configuration.
-    this.configService.loadConfig().subscribe(res => {
+    this.configService.loadConfig().subscribe(config => {
 
       // Assigning config field to result of invocation.
-      this.config = res;
+      this.config = config;
 
       // Creating some random gibberish to use as default JWT secret.
-      this.configService.getGibberish(50, 100).subscribe((res: Response) => {
+      this.configService.getGibberish(50, 100).subscribe((gibberish: Response) => {
 
         // Applying gibberish to relevant configuration section.
-        this.config.magic.auth.secret = res.result;
+        this.config.magic.auth.secret = gibberish.result;
 
         // Making sure we create JSON string value for advanced configuration.
         this.json = JSON.stringify(this.config, null, 2);

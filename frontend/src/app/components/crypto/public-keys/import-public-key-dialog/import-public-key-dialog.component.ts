@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Response } from 'src/app/models/response.model';
 import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
@@ -18,8 +18,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  */
 @Component({
   selector: 'app-import-public-key-dialog',
-  templateUrl: './import-public-key-dialog.component.html',
-  styleUrls: ['./import-public-key-dialog.component.scss']
+  templateUrl: './import-public-key-dialog.component.html'
 })
 export class ImportPublicKeyDialogComponent {
 

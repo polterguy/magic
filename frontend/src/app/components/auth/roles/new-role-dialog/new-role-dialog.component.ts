@@ -17,8 +17,7 @@ import { RoleService } from 'src/app/components/auth/services/role.service';
  */
 @Component({
   selector: 'app-new-role-dialog',
-  templateUrl: './new-role-dialog.component.html',
-  styleUrls: ['./new-role-dialog.component.scss']
+  templateUrl: './new-role-dialog.component.html'
 })
 export class NewRoleDialogComponent {
 

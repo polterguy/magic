@@ -17,8 +17,7 @@ import { ConfigService } from 'src/app/components/config/services/config.service
  */
 @Component({
   selector: 'app-create-keypair-dialog',
-  templateUrl: './create-keypair-dialog.component.html',
-  styleUrls: ['./create-keypair-dialog.component.scss']
+  templateUrl: './create-keypair-dialog.component.html'
 })
 export class CreateKeypairDialogComponent implements OnInit {
 

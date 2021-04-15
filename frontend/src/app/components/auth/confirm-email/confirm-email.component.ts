@@ -18,8 +18,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  */
 @Component({
   selector: 'app-confirm-email',
-  templateUrl: './confirm-email.component.html',
-  styleUrls: ['./confirm-email.component.scss']
+  templateUrl: './confirm-email.component.html'
 })
 export class ConfirmEmailComponent implements OnInit {
 

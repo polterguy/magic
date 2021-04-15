@@ -73,17 +73,17 @@ export class EvaluatorComponent implements OnInit {
 
     // Associating ALT+L with load snippet button.
     this.input.options.extraKeys['Alt-L'] = (cm: any) => {
-      (document.getElementById('loadButton') as HTMLElement).click();
+      document.getElementById('loadButton').click();
     };
 
     // Associating ALT+S with save snippet button.
     this.input.options.extraKeys['Alt-S'] = (cm: any) => {
-      (document.getElementById('saveButton') as HTMLElement).click();
+      document.getElementById('saveButton').click();
     };
 
     // Making sure we attach the F5 button to execute input Hyperlambda.
     this.input.options.extraKeys.F5 = () => {
-      (document.getElementById('executeButton') as HTMLElement).click();
+      document.getElementById('executeButton').click();
     };
   }
 

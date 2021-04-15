@@ -167,7 +167,7 @@ export class AuthService {
     }
 
     // Parsing role field from JWT token, and splitting at ','.
-    const payload = <string>atob(this.backendService.current.token.split('.')[1]);
+    const payload = atob(this.backendService.current.token.split('.')[1]);
     const roles = JSON.parse(payload).role;
     if (Array.isArray(roles)) {
       return <string[]>roles;
