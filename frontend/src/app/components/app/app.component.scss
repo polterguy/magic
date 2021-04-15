@@ -61,6 +61,18 @@ mat-sidenav-container {
     box-sizing: border-box;
     position: relative;
 
+    .img-wrapper {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(/assets/bg.jpg);
+      background-repeat: repeat;
+      background-size: 300px 300px;
+      opacity: .3;
+    }
+
     // Makes sure currently loaded component is obscured when navbar is expanded.
     .obscurer {
       position: fixed;

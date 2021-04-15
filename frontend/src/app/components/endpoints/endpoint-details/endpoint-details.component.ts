@@ -221,6 +221,9 @@ export class EndpointDetailsComponent implements OnInit {
 
     // Copies the currently edited endpoint's URL prepended by backend root URL.
     this.clipboard.copy(this.backendService.current.url + this.url);
+
+    // Informing user that URL can be found on clipboard.
+    this.feedbackService.showInfoShort('URL was copied to your clipboard');
   }
 
   /**
