@@ -713,7 +713,6 @@
        */
       parseLambdaExpression: function (stream, state) {
   
-        // TODO: implement support for multiline expressions here ...
         stream.skipToEnd();
         return this.styles.expression;
       },

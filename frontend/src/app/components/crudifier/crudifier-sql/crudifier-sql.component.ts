@@ -347,11 +347,8 @@ export class CrudifierSqlComponent implements OnInit {
     }, (error: any) => {
 
       // Oops, making sure we remove all selected values, and shows an error to user.
-      this.input.connectionString = null;
-      this.input.database = null;
-      this.input.options.hintOptions.tables = [];
-      this.feedbackService.showError(error);}
-    );
+      this.nullifySelectors(error);
+    });
   }
 
   /*
@@ -372,12 +369,19 @@ export class CrudifierSqlComponent implements OnInit {
     }, (error: any) => {
 
       // Resetting selected connection string and selected database.
-      this.input.connectionString = null;
-      this.input.database = null;
-      this.input.options.hintOptions.tables = [];
-
-      // Notifying user
-      this.feedbackService.showError(error);
+      this.nullifySelectors(error);
     });
+  }
+
+  /*
+   * Nullify all selectors.
+   */
+  private nullifySelectors(error: any) {
+    this.input.connectionString = null;
+    this.input.database = null;
+    this.input.options.hintOptions.tables = [];
+
+    // Notifying user
+    this.feedbackService.showError(error);
   }
 }
