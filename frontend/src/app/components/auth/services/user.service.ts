@@ -10,10 +10,10 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { Count } from '../../../models/count.model';
 import { UserRoles } from '../models/user-roles.model';
-import { AuthFilter } from '../models/auth-filter.model';
 import { Response } from 'src/app/models/response.model';
 import { Affected } from '../../../models/affected.model';
 import { HttpService } from '../../../services/http.service';
+import { AuthFilter, createAuthQuery } from '../models/auth-filter.model';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
@@ -38,30 +38,8 @@ export class UserService {
    */
   public list(filter: AuthFilter = null) {
 
-    // Dynamically building our query parameters.
-    let query = '';
-    if (filter !== null) {
-
-      // Applying limit and offset
-      query += '?limit=' + filter.limit;
-      query += "&offset=" + filter.offset;
-
-      // Applying filter parts, if given.
-      if (filter.filter && filter.filter !== '') {
-        query += '&username.like=' + encodeURIComponent(filter.filter + '%');
-      }
-
-      // Applying sorting, if given.
-      if (filter.order && filter.order !== '') {
-        query += '&order=' + encodeURIComponent(filter.order);
-      }
-      if (filter.direction && filter.direction !== '') {
-        query += '&direction=' + encodeURIComponent(filter.direction);
-      }
-    }
-
     // Invoking backend and returning observable.
-    return this.httpService.get<User[]>('/magic/modules/magic/users' + query);
+    return this.httpService.get<User[]>('/magic/modules/magic/users' + createAuthQuery(filter, 'username'));
   }
 
   /**
