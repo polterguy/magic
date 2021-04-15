@@ -47,7 +47,7 @@ export class CrudifierDockerComponent {
 
     // Sanity checking domain and api-domain before invoking backend.
     for (let idxDomain of [this.domain, this.apiDomain]) {
-      for (let idx = 0; idx < idxDomain.length; idx++) {
+      for (let idx of idxDomain) {
         if ("abcdefghijklmnopqrstuvwxyz-_.1234567890".indexOf(idxDomain[idx]) === -1) {
           this.feedbackService.showError("Only alphanumeric characters in lowercase and '.', '-' or '_' are allowed");
           return;

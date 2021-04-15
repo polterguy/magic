@@ -92,7 +92,7 @@ export class BackendService {
      * that if the user refreshes the browser, this is the backend
      * that will be used.
      */
-    this._backends = this._backends.sort((lhs: Backend, rhs: Backend) => {
+    this._backends.sort((lhs: Backend, rhs: Backend) => {
       if (lhs.token) {
         return -1;
       }
