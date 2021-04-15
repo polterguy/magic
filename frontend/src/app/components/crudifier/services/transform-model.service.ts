@@ -97,7 +97,7 @@ export class TransformModelService {
         break;
 
       default:
-        throw 'Oops, unknown verb';
+        throw new Error('Oops, unknown verb');
     }
 
     // Figuring out args to use for invocation.

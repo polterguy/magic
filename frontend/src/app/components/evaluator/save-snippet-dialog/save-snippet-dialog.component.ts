@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';

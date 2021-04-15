@@ -76,39 +76,40 @@ export class HyperlambdaComponent implements AfterViewInit {
     // Retrieving server's vocabulary.
     if (window['_vocabulary']) {
 
-      /*
-       * Vocabulary has already been loaded previously.
-       *
-       * This looks a bit stupid, but is necessary to allow for editor to be rendered
-       * before we assign the editor instance to its field.
-       */
-      setTimeout(() => {
-        this.vocabularyLoaded = true;
-        setTimeout(() => {
-          this.model.editor = this._editor.codeMirror;
-        }, 1);
-      }, 1);
+      // Vocabulary already loaded, initializing editor immediately.
+      this.init();
 
     } else {
 
-      // Loading vocabulary from server.
+      // Loading vocabulary from server before initializing editor.
       this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
 
         // Publishing vocabulary such that autocomplete component can reach it.
         window['_vocabulary'] = vocabulary;
-
-        /*
-         * This looks a bit stupid, but is necessary to allow for editor to be rendered
-         * before we assign the editor instance to its field.
-         */
-        setTimeout(() => {
-          this.vocabularyLoaded = true;
-          setTimeout(() => {
-            this.model.editor = this._editor.codeMirror;
-          }, 1);
-        }, 1);
+        this.init();
 
       }, error => this.feedbackService.showError(error));
     }
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Initializes editor.
+   */
+  private init() {
+
+    /*
+     * This looks a bit stupid, but is necessary to allow for editor to be rendered
+     * before we assign the editor instance to its field.
+     */
+    setTimeout(() => {
+      this.vocabularyLoaded = true;
+      setTimeout(() => {
+        this.model.editor = this._editor.codeMirror;
+      }, 1);
+    }, 1);
   }
 }

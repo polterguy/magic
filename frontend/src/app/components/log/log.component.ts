@@ -121,17 +121,17 @@ export class LogComponent implements OnInit {
     this.logService.list(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
-      this.paginator.pageSize).subscribe(res => {
+      this.paginator.pageSize).subscribe(logitems => {
 
       // Resetting details to avoid having 'hanging' details items, and changing internal model to result of invocation.
       this.displayDetails = [];
-      this.items = res;
+      this.items = logitems;
 
       // Counting items with the same filter as we used to retrieve items with.
-      this.logService.count(this.filterFormControl.value).subscribe(res => {
+      this.logService.count(this.filterFormControl.value).subscribe(count => {
 
         // Assigning count to returned value from server.
-        this.count = res.count;
+        this.count = count.count;
 
       }, (error: any) => this.feedbackService.showError(error));
     }, (error: any) => this.feedbackService.showError(error));

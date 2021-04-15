@@ -62,26 +62,24 @@ export class SetupComponent implements OnInit, OnDestroy {
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
 
       // Checking if this is an interesting message.
-      switch (msg.name) {
+      if (msg.name === Messages.SETUP_STATE_CHANGED) {
 
-        case Messages.SETUP_STATE_CHANGED:
-          this.configService.status().subscribe((status: Status) => {
-            this.status = status;
+        this.configService.status().subscribe((status: Status) => {
+          this.status = status;
 
-            // Retrieving next step's selected index for stepper.
-            const selectedIndex = this.getStepperSelectedIndex();
-            if (selectedIndex === 3) {
+          // Retrieving next step's selected index for stepper.
+          const selectedIndex = this.getStepperSelectedIndex();
+          if (selectedIndex === 3) {
 
-              // We're done, giving user some feedback and encouraging him to run assumptions.
-              this.feedbackService.showInfo('You have successfully setup Magic, now please verify integrity by running assumptions');
+            // We're done, giving user some feedback and encouraging him to run assumptions.
+            this.feedbackService.showInfo('You have successfully setup Magic, now please verify integrity by running assumptions');
 
-            } else {
+          } else {
 
-              // More steps to go.
-              this.stepper.selectedIndex = selectedIndex;
-            }
-          });
-          break;
+            // More steps to go.
+            this.stepper.selectedIndex = selectedIndex;
+          }
+        });
       }
     });
   }
