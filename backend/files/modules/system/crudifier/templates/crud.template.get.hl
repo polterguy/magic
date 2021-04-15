@@ -13,6 +13,14 @@
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+
+/*
  * Checking if user supplied an operator, and if so,
  * changing the boolean operator for comparison operations.
  */
@@ -23,21 +31,8 @@ if
       /*
        * User provided a boolean comparison operator.
        */
-      switch:x:@.arguments/*/operator
-
-         /*
-          * Checking if [operator] value is aceptable.
-          */
-         case:and
-         case:or
-            set-name:x:../*/data.connect/*/data.read/*/where/*
-               get-value:x:@.arguments/*/operator
-
-         /*
-          * Only 'and' and 'or' is accepted.
-          */
-         default
-            throw:"Unsupported operator, only 'and' and 'or' supported"
+      set-name:x:../*/data.connect/*/data.read/*/where/*
+         get-value:x:@.arguments/*/operator
 
 
 /*
@@ -46,7 +41,7 @@ if
  */
 data.connect:{database}
    database-type:{database-type}
-   add:x:+/+/+/+/+/+/+
+   add:x:./*/data.read
       get-nodes:x:@.arguments/*/limit
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
