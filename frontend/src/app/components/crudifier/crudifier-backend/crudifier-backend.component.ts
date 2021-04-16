@@ -5,21 +5,24 @@
 
 // Angular specific imports.
 import { forkJoin, Observable } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { TableEx } from '../models/table-ex.model';
 import { LocResult } from '../models/loc-result.model';
+import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
 import { SqlService } from '../../sql/services/sql.service';
 import { LogService } from '../../log/services/log.service';
 import { Databases } from '../../sql/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
 import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { TransformModelService } from '../services/transform-model.service';
 import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
+import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
 
 /**
  * Crudifier component for crudifying database
@@ -77,7 +80,9 @@ export class CrudifierBackendComponent implements OnInit {
    * @param sqlService Needed to retrieve meta information about databases from backend
    * @param configService Needed to retrieve meta information about connection strings from backend
    * @param crudifyService Needed to actually crudify endpoints
+   * @param messageServive Needed to signal other components that we've create an additional info type of component that needs to be injected
    * @param feedbackService Needed to display feedback to user
+   * @param resolver Needed to be able to dynamically create additional components
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
    * @param transformService Needed to transform from UI model to required backend model
    */
@@ -86,7 +91,9 @@ export class CrudifierBackendComponent implements OnInit {
     private sqlService: SqlService,
     private configService: ConfigService,
     private crudifyService: CrudifyService,
+    private messageServive: MessageService,
     private feedbackService: FeedbackService,
+    private resolver: ComponentFactoryResolver,
     private loaderInterceptor: LoaderInterceptor,
     private transformService: TransformModelService) { }
 
@@ -164,6 +171,28 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Creating default values for database.
     this.createDefaultOptionsForDatabase(this.database);
+  }
+
+  /**
+   * Invoked when table is changed.
+   */
+  public tableChanged() {
+
+    // Creating our component.
+    const componentFactory = this.resolver.resolveComponentFactory(CrudifierTableComponent);
+
+    // Signaling listener, passing in component as data.
+    this.messageServive.sendMessage({
+      name: Messages.INJECT_COMPONENT,
+      content: {
+        componentFactory,
+        data: {
+          table: this.table,
+          database: '[' + this.connectionString + '|' + this.database.name + ']',
+          databaseType: this.databaseType,
+        }
+      }
+    });
   }
 
   /**
