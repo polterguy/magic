@@ -140,6 +140,11 @@ export class CrudifierBackendComponent implements OnInit {
       }
       this.connectionStrings = connectionStrings;
     });
+
+    // Making sure parent clears it dynamic container.
+    this.messageServive.sendMessage({
+      name: Messages.REMOVE_COMPONENT,
+    });
   }
 
   /**
@@ -158,7 +163,12 @@ export class CrudifierBackendComponent implements OnInit {
 
         // Assigning result from invocation to model.
         this.databases = databases;
-      });
+    });
+
+    // Making sure parent clears it dynamic container.
+    this.messageServive.sendMessage({
+      name: Messages.REMOVE_COMPONENT,
+    });
   }
 
   /**
@@ -171,6 +181,11 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Creating default values for database.
     this.createDefaultOptionsForDatabase(this.database);
+
+    // Making sure parent clears it dynamic container.
+    this.messageServive.sendMessage({
+      name: Messages.REMOVE_COMPONENT,
+    });
   }
 
   /**

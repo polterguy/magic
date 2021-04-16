@@ -83,6 +83,7 @@ export class CrudifierComponent implements OnInit, OnDestroy {
         /*
          * Somebody wants us to remove our dynamically injected component.
          */
+        this.hasComponent = false;
         this.injectComp.viewContainerRef.clear();
       }
     });
