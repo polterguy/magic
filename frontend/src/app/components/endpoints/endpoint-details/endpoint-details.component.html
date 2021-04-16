@@ -150,7 +150,7 @@
 
   </div>
 
-  <div *ngIf="result" class="mat-elevation-z4 response">
+  <div *ngIf="result" class="response">
 
     <mat-icon
       *ngIf="!isSuccess()"
@@ -167,7 +167,7 @@
 
     <span
       *ngIf="!result.blob"
-      class="item-full-width">
+      class="item-full-width no-bottom-margin">
       <span class="description">
         <ngx-codemirror
           [(ngModel)]="result.response"
