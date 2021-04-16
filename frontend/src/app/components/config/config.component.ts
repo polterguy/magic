@@ -16,7 +16,8 @@ import { FeedbackService } from '../../services/feedback.service';
  */
 @Component({
   selector: 'app-config',
-  templateUrl: './config.component.html'
+  templateUrl: './config.component.html',
+  styleUrls: ['./config.component.scss']
 })
 export class ConfigComponent implements OnInit {
 

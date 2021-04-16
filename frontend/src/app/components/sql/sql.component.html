@@ -1,8 +1,7 @@
 
-<mat-card>
+<mat-card *ngIf="input">
 
   <app-codemirror-sql
-    *ngIf="input"
     [(model)]="input"></app-codemirror-sql>
 
   <div

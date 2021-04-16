@@ -4,13 +4,18 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
 import { AuthService } from '../auth/services/auth.service';
+import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
+import { Message } from 'src/app/models/message.model';
+import { Messages } from 'src/app/models/messages.model';
 
 /**
  * Home component for Magic Dashboard.
@@ -20,7 +25,14 @@ import { FeedbackService } from 'src/app/services/feedback.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription;
+
+  /**
+   * Backend version as returned from server if authenticated.
+   */
+   public version: string;
 
   /**
    * Creates an instance of your component.
@@ -29,6 +41,7 @@ export class HomeComponent implements OnInit {
    * @param activated Needed to retrieve query parameters
    * @param authService Needed to verify user is authenticated
    * @param backendService Needed modify backend values according to query parameters given
+   * @param diagnosticsService Needed to retrieve backend version
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
@@ -36,12 +49,24 @@ export class HomeComponent implements OnInit {
     private activated: ActivatedRoute,
     private authService: AuthService,
     private backendService: BackendService,
+    private messageService: MessageService,
+    private diagnosticsService: DiagnosticsService,
     private feedbackService: FeedbackService) { }
 
   /*
    * Implementation of OnInit.
    */
   public ngOnInit() {
+
+    // Attempting to retrieve backend version.
+    this.retrieveBackendVersion();
+
+    // Need to dubscriber to login/logout to be able to retrieve backend version.
+    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+      if (msg.name === Messages.USER_LOGGED_IN || msg.name === Messages.USER_LOGGED_OUT) {
+        this.retrieveBackendVersion();
+      }
+    });
 
     /*
      * Checking if we have an authentication token.
@@ -93,5 +118,37 @@ export class HomeComponent implements OnInit {
         });
       }
     });
+  }
+
+  /**
+   * OnDestroy implementation.
+   */
+  ngOnDestroy() {
+
+    // Making sure we unsibscribe to subscription.
+    this.subscription.unsubscribe();
+  }
+
+  /*
+   * Private helepr methods.
+   */
+
+  /*
+   * Retrieves backend version.
+   */
+  private retrieveBackendVersion() {
+
+    // Retrieving backend version if we're authenticated.
+    if (this.authService.authenticated) {
+
+      // Invoking backend to retrieve version.
+      this.diagnosticsService.version().subscribe((version: any) => {
+        this.version = ' - ' + version.version;
+      });
+    } else {
+
+      // Unknown backend version since we're obviously not connected to any backend.
+      this.version = '';
+    }
   }
 }
