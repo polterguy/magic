@@ -193,6 +193,11 @@ export class CrudifierBackendComponent implements OnInit {
    */
   public tableChanged() {
 
+    // Making sure parent clears it dynamic container in case it's already got another container.
+    this.messageServive.sendMessage({
+      name: Messages.REMOVE_COMPONENT,
+    });
+
     // Creating our component.
     const componentFactory = this.resolver.resolveComponentFactory(CrudifierTableComponent);
 
