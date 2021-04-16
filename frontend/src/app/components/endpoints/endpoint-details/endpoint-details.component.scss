@@ -60,8 +60,7 @@
     background-color: #7d7d7d;
   }
   .response {
-    padding: 2rem 2rem .5rem 2rem;
-    margin: 1rem;
+    padding: 0 0 .5rem 0;
     position: relative;
     .failed {
       position: absolute;
@@ -69,6 +68,10 @@
       right: 1rem;
       color: #c88 !important;
     }
+  }
+
+  .no-bottom-margin {
+    margin-bottom: .5rem;
   }
 
   @media screen and (min-width: 800px) {
