@@ -74,6 +74,7 @@ import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { UsersComponent } from './components/auth/users/users.component';
 import { RolesComponent } from './components/auth/roles/roles.component';
+import { InjectDirective } from './components/crudifier/inject.directive';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
 import { SetupComponent } from './components/config/setup/setup.component';
 import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
@@ -183,6 +184,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     DiagnosticsComponent,
     DiagnosticsErrorsComponent,
     DiagnosticsCache,
+    InjectDirective,
     EndpointDetailsComponent,
     AddQueryParameterDialogComponent,
     CreateAssumptionTestDialogComponent,

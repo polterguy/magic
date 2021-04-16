@@ -33,7 +33,17 @@ export class Messages {
   static readonly TOGGLE_NAVBAR = 'app.navbar.toggle';
 
   /**
-   * Message will be puvlished when the setup state of your system changes.
+   * Message will be published when the setup state of your system changes.
    */
   static readonly SETUP_STATE_CHANGED = 'app.setup.status-changed';
+
+  /**
+   * Message will be published when a component needs to be dynamically injected somewhere.
+   */
+   static readonly INJECT_COMPONENT = 'app.ui.inject-component';
+
+  /**
+   * Message will be published when any dynamically injected components needs to be removed.
+   */
+   static readonly REMOVE_COMPONENT = 'app.ui.remove-component';
 }

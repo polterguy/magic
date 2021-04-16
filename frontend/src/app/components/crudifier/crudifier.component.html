@@ -1,6 +1,7 @@
 
 <mat-card>
-  <mat-tab-group>
+
+  <mat-tab-group (selectedTabChange)="selectedTabChanged()">
 
     <mat-tab label="Backend CRUD">
       <ng-template matTabContent>
@@ -27,5 +28,11 @@
     </mat-tab>
 
   </mat-tab-group>
+
 </mat-card>
 
+<mat-card [class]="hasComponent ? '' : 'invisible'">
+
+  <ng-template appInject></ng-template>
+
+</mat-card>
