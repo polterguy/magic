@@ -36,9 +36,6 @@ import { FileService } from '../files/services/file.service';
 })
 export class SqlComponent implements OnInit {
 
-  // List of items we're viewing details of.
-  private displayDetails: any[] = [];
-
   // Filename as chosen during load SQL snippet or save SQL snippet.
   private filename: string;
 
@@ -80,7 +77,7 @@ export class SqlComponent implements OnInit {
   /**
    * Result of invocation towards backend.
    */
-  public result: any[][] = [];
+  public result: any[] = [];
 
   /**
    * Model for file uploader.
@@ -400,8 +397,7 @@ export class SqlComponent implements OnInit {
       }
 
       // Making sure we remove all previously viewed detail records.
-      this.displayDetails = [];
-      this.result = result || [];
+      this.result = this.buildResult(result || []);
 
     }, (error: any) => {
 
@@ -418,59 +414,18 @@ export class SqlComponent implements OnInit {
   }
 
   /**
-   * Returns row declaration
-   * 
-   * @param currentResultSet Currently iterated list of rows
-   */
-  public getRows(currentResultSet: any[]) {
-
-    // Braiding result with displayed details, such that HTML can create correct rows.
-    const result = [];
-    for (const idx of currentResultSet) {
-
-      // Pushing the plain result record.
-      result.push(idx);
-
-      // Checking if we are displaying details for this guy.
-      if (this.displayDetails.indexOf(idx) !== -1) {
-
-        // Adding our view details record.
-        let colSpan = 0;
-        for (const idx in currentResultSet[0]) {
-          colSpan += 1;
-        }
-        result.push({
-          _detailsColSpan: Math.min(5, colSpan),
-          data: idx,
-        });
-      }
-    }
-    return result;
-  }
-
-  /**
    * Invoked when user wants to toggle details for a row
    *
    * @param row Row to toggle details for
    */
-  public toggleDetails(row: any[]) {
+  public toggleDetails(row: any, result: any) {
 
-    // Pushing or popping (toggling) details record on/off list of records to view details for.
-    const index = this.displayDetails.indexOf(row);
-    if (index === -1) {
-      this.displayDetails.push(row);
-    } else {
-      this.displayDetails.splice(index, 1);
+    // Checking if this is not a details row, and if so toggling its display field value.
+    if (row.details === false) {
+      const index = result.rows.indexOf(row) + 1;
+      result.rows[index].display = !result.rows[index].display;
+      row.display = !row.display;
     }
-  }
-
-  /**
-   * Returns true if we're currently viewing details of the specified row.
-   * 
-   * @param row Row to check
-   */
-  public viewingDetails(row: any[]) {
-    return this.displayDetails.indexOf(row) !== -1;
   }
 
   /**
@@ -526,16 +481,27 @@ export class SqlComponent implements OnInit {
     this.saveAsFile(content, 'sql-export.csv', 'text/csv');
   }
 
+  /**
+   * Returns the CSS class for a row in the data table.
+   */
+  public getRowCssClass(row: any) {
+    if (row.details === false) {
+      if (row.display === true) {
+        return 'selected';
+      } else {
+        return 'data-row';
+      }
+    } else {
+      return 'details';
+    }
+  }
+
   /*
    * Private helper methods.
    */
 
-  /**
+  /*
    * Saves the file using 'saveAs'.
-   *
-   * @param buffer The data that need to be saved.
-   * @param fileName File name to save as.
-   * @param fileType File type to save as.
    */
   private saveAsFile(buffer: any, fileName: string, fileType: string) {
     const data: Blob = new Blob([buffer], { type: fileType });
@@ -590,7 +556,8 @@ export class SqlComponent implements OnInit {
   }
 
   /*
-   *
+   * Nullifies all relevant models to ensure select dropdown
+  * lists no longer displays selected values.
    */
   private nullifyAllSelectors(error: any) {
     this.input.connectionString = null;
@@ -599,5 +566,32 @@ export class SqlComponent implements OnInit {
 
     // Notifying user
     this.feedbackService.showError(error);
+  }
+
+  /*
+   * Creates our view model based from result of invoking backend.
+   */
+  private buildResult(result: any[][]) {
+    const retValue: any[] = [];
+    for (const idx of result) {
+      const rows = [];
+      for (const inner of idx) {
+        rows.push({
+          data: inner,
+          details: false,
+          display: false,
+        });
+        rows.push({
+          data: inner,
+          details: true,
+          display: false,
+        });
+      }
+      retValue.push({
+        columns: Object.keys(idx[0]).slice(0, 5),
+        rows,
+      });
+    }
+    return retValue;
   }
 }
