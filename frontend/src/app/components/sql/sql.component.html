@@ -118,35 +118,35 @@
 
 <mat-card
   class="result-card"
-  *ngFor="let idx of result">
+  *ngFor="let idxResult of result">
 
   <table
-    *ngIf="idx && idx.length > 0"
+    *ngIf="idxResult.rows.length > 0"
     class="fill-width result clickable">
 
     <thead>
       <tr>
-        <th *ngFor="let idxCell of idx[0] | dynamic: 5">
-          {{idxCell.key}}
+        <th *ngFor="let idxColumn of idxResult.columns">
+          {{idxColumn}}
         </th>
       </tr>
     </thead>
 
     <tbody>
       <tr
-        *ngFor="let idxRow of getRows(idx)"
-        [class]="viewingDetails(idxRow) ? 'selected' : (idxRow._detailsColSpan > 0 ? 'details' : 'data-row')"
-        (click)="toggleDetails(idxRow)">
+        *ngFor="let idxRow of idxResult.rows"
+        [class]="getRowCssClass(idxRow)"
+        (click)="toggleDetails(idxRow, idxResult)">
 
         <td
-          *ngFor="let idxCell of (idxRow._detailsColSpan > 0 ? [] : (idxRow | dynamic: 5))">
+          *ngFor="let idxCell of (idxRow.details === true ? [] : (idxRow.data | dynamic: 5))">
           {{idxCell.value}}
         </td>
 
         <td
-          *ngIf="idxRow._detailsColSpan > 0 && idxRow.data"
+          *ngIf="idxRow.details === true && idxRow.display === true"
           class="view-details"
-          [attr.colspan]="idxRow._detailsColSpan">
+          [attr.colspan]="idxResult.columns.length">
 
           <div class="details-sheet">
 
@@ -173,7 +173,7 @@
 
     <button
       mat-raised-button
-      (click)="exportAsCsv(idx)">
+      (click)="exportAsCsv(idxResult)">
       Export as CSV
     </button>
 
