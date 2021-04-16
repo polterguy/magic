@@ -445,17 +445,32 @@ export class SqlComponent implements OnInit {
    * 
    * @param result What result set to export
    */
-  public exportAsCsv(result: any[]) {
+  public exportAsCsv(result: any) {
 
     // Building our CSV as a string.
     let content = '';
 
     // Iterating through each record in result set.
-    for (let idxRow of result) {
+    let isFirst = true;
+    for (let idxRow of result.rows.filter((x: any) => x.details === true)) {
+
+      if (isFirst) {
+        isFirst = false;
+        let firstHeader = true;
+        for (let idxHeader in idxRow.data) {
+          if (firstHeader) {
+            firstHeader = false;
+          } else {
+            content += ',';
+          }
+            content += idxHeader;
+        }
+        content += '\r\n';
+      }
 
       // Iterating through each property in currently iterated record.
       let first = true;
-      for (let idxProperty in idxRow) {
+      for (let idxProperty in idxRow.data) {
         if (first) {
           first = false;
         } else {
@@ -463,14 +478,14 @@ export class SqlComponent implements OnInit {
         }
 
         // Retrieving cell value.
-        const value = idxRow[idxProperty];
+        const value = idxRow.data[idxProperty];
         if (value) {
 
           // Special handling of strings, to allow for double quotes and carriage returns.
           if (typeof value === 'string') {
-            content += '"' + idxRow[idxProperty].replace('"', '""') + '"';
+            content += '"' + idxRow.data[idxProperty].replace('"', '""') + '"';
           } else {
-            content += idxRow[idxProperty];
+            content += idxRow.data[idxProperty];
           }
         }
       }
@@ -581,6 +596,7 @@ export class SqlComponent implements OnInit {
     const retValue: any[] = [];
     for (const idx of result) {
 
+      // Making sure current result set actually returned something.
       if (idx) {
 
         // Duplicating rows, making twice as many rows as there actually are.
