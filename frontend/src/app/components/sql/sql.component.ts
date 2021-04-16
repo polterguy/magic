@@ -569,28 +569,39 @@ export class SqlComponent implements OnInit {
   }
 
   /*
-   * Creates our view model based from result of invoking backend.
+   * Creates our view model from the result of invoking backend.
+   *
+   * The reason we need this, is to allow for tracking which records are currently
+   * being viewed, in addition that we need to duplicate rows, to allow for viewing
+   * a single record, in addition to viewing the details of it.
    */
   private buildResult(result: any[][]) {
+
+    // Result array returned to caller.
     const retValue: any[] = [];
     for (const idx of result) {
-      const rows = [];
-      for (const inner of idx) {
-        rows.push({
-          data: inner,
-          details: false,
-          display: false,
-        });
-        rows.push({
-          data: inner,
-          details: true,
-          display: false,
+
+      if (idx) {
+
+        // Duplicating rows, making twice as many rows as there actually are.
+        const rows = [];
+        for (const inner of idx) {
+          rows.push({
+            data: inner,
+            details: false, // Overview row's record
+            display: false, // False since details are by default not displayed
+          });
+          rows.push({
+            data: inner,
+            details: true, // Detailed view's record
+            display: false, // False since details are by default not displayed
+          });
+        }
+        retValue.push({
+          columns: Object.keys(idx[0]).slice(0, 5), // Making sure we never display more than 5 columns in main table
+          rows,
         });
       }
-      retValue.push({
-        columns: Object.keys(idx[0]).slice(0, 5),
-        rows,
-      });
     }
     return retValue;
   }
