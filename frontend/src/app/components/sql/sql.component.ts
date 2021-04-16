@@ -402,7 +402,10 @@ export class SqlComponent implements OnInit {
       // Making sure we remove all previously viewed detail records.
       this.displayDetails = [];
       this.result = result || [];
+
     }, (error: any) => {
+
+      // Checking if user needs to turn on batch mode to execute his SQL.
       if (error.error &&
         error.error.message &&
         error.error.message &&
