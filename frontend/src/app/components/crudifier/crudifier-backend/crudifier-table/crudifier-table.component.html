@@ -1,11 +1,12 @@
 
 <div *ngIf="table && database && databaseType">
 
+  <h2>Table {{table.name}}</h2>
+
+
   <ul class="verbs">
     <li *ngFor="let idx of table.verbs">
-      <mat-checkbox
-        [matTooltip]="'Generate endpoints for the HTTP ' + idx.name + ' verb'"
-        [(ngModel)]="idx.generate">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
+      <mat-checkbox [(ngModel)]="idx.generate">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
     </li>
   </ul>
 
@@ -78,7 +79,6 @@
             <li *ngFor="let idx of getEnabledVerbs()">
               <mat-checkbox
                 [disabled]="verbForColumnIsDisabled(idx.name, el)"
-                [matTooltip]="'Include the column on the HTTP ' + idx.name + ' verb invocation'"
                 [(ngModel)]="el[idx.name]">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
             </li>
           </ul>
@@ -104,84 +104,80 @@
 
   </table>
 
+  <h3>Authorization requirements</h3>
+
   <mat-form-field *ngIf="isPostIncluded()" class="field-input" appearance="outline">
 
-    <mat-label>Create authorization</mat-label>
+    <mat-label>Create</mat-label>
     <input
       matInput
       [disabled]="!isPostIncluded()"
       type="text"
       autocomplete="off"
-      matTooltip="Comma separated list of roles allowed to invoke POST endpoint"
       [(ngModel)]="table.authPost">
 
   </mat-form-field>
 
   <mat-form-field *ngIf="isGetIncluded()" class="field-input" appearance="outline">
 
-    <mat-label>Read authorization</mat-label>
+    <mat-label>Read</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      matTooltip="Comma separated list of roles allowed to invoke GET endpoint(s)"
       [(ngModel)]="table.authGet">
 
   </mat-form-field>
 
   <mat-form-field *ngIf="isPutIncluded()" class="field-input" appearance="outline">
 
-    <mat-label>Update authorization</mat-label>
+    <mat-label>Update</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      matTooltip="Comma separated list of roles allowed to invoke PUT endpoint"
       [(ngModel)]="table.authPut">
 
   </mat-form-field>
 
   <mat-form-field *ngIf="isDeleteIncluded()" class="field-input" appearance="outline">
 
-    <mat-label>Delete authorization</mat-label>
+    <mat-label>Delete</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      matTooltip="Comma separated list of roles allowed to invoke DELETE endpoint"
       [(ngModel)]="table.authDelete">
 
   </mat-form-field>
 
-  <hr>
+  <h3>Endpoint URLs</h3>
 
   <mat-form-field class="field-input" appearance="outline">
 
-    <mat-label>Module URL</mat-label>
+    <mat-label>Main</mat-label>
     <input
       matInput
       [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
       type="text"
       autocomplete="off"
-      matTooltip="First part of relative URL to use for table"
       [(ngModel)]="table.moduleName">
 
   </mat-form-field>
 
   <mat-form-field class="field-input" appearance="outline">
 
-    <mat-label>Component URL</mat-label>
+    <mat-label>Secondary</mat-label>
     <input
       matInput
       [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
       type="text"
       autocomplete="off"
-      matTooltip="Second part of relative URL to use for table"
       [(ngModel)]="table.moduleUrl">
 
   </mat-form-field>
 
-  <hr>
+  <h3>Miscelanous</h3>
 
   <mat-form-field *ngIf="isGetIncluded()" class="field-input" appearance="outline">
 
@@ -192,7 +188,6 @@
       min="0"
       max="300"
       autocomplete="off"
-      matTooltip="Seconds to cache GET endpoint(s)"
       [disabled]="!isGetIncluded()"
       [(ngModel)]="table.cache">
 
@@ -200,25 +195,18 @@
 
   <mat-checkbox
     *ngIf="isGetIncluded()"
-    matTooltip="Whether or not proxies should be allowed to cache GET endpoint(s)"
     [disabled]="!table.cache || table.cache === 0"
     [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
 
-  <hr>
-
   <mat-checkbox
-    matTooltip="Log DELETE invocations"
     *ngIf="isDeleteIncluded()"
     [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
 
   <mat-checkbox
-    matTooltip="Log PUT invocations"
     *ngIf="isPutIncluded()"
     [(ngModel)]="table.logPut">Log update</mat-checkbox>
 
-  <hr>
-
-  <strong matTooltip="Typically validators, transformers or injectables">Injected custom Hyperlambda</strong>
+  <h3>Injectables</h3>
 
   <app-codemirror-hyperlambda [(model)]="input"></app-codemirror-hyperlambda>
 

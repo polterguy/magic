@@ -10,6 +10,9 @@ mat-checkbox {
 
 .verbs {
   padding-left: 0;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   li {
     list-style-type: none;
     float: left;
@@ -25,7 +28,6 @@ strong {
 
 table.table-items {
   margin-top: 2rem;
-  margin-bottom: 5rem;
   tr {
     td {
       .details-sheet {
@@ -38,10 +40,7 @@ table.table-items {
     }
   }
 }
-hr {
-  border: 0;
-  height: 1px;
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0));
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+
+h3 {
+  margin-top: 3rem;
 }
