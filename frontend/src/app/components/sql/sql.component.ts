@@ -432,7 +432,10 @@ export class SqlComponent implements OnInit {
       if (this.displayDetails.indexOf(idx) !== -1) {
 
         // Adding our view details record.
-        let colSpan = currentResultSet[0].length;
+        let colSpan = 0;
+        for (const idx in currentResultSet[0]) {
+          colSpan += 1;
+        }
         result.push({
           _detailsColSpan: Math.min(5, colSpan),
           data: idx,

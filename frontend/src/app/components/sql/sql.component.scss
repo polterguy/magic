@@ -5,9 +5,12 @@
   }
 }
 
+mat-card {
+  padding-bottom: .5rem;
+}
+
 .result-card {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  padding-bottom: 2rem;
   table.result {
     table-layout: fixed;
     border-collapse: collapse;

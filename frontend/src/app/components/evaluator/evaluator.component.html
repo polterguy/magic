@@ -1,26 +1,32 @@
 
-<app-codemirror-hyperlambda [(model)]="input"></app-codemirror-hyperlambda>
+<mat-card>
 
-<div class="button-strip">
+  <app-codemirror-hyperlambda [(model)]="input"></app-codemirror-hyperlambda>
 
-  <button
-    id="loadButton"
-    mat-raised-button
-    (click)="load()">Load</button>
+  <div class="button-strip">
 
-  <button
-    id="saveButton"
-    mat-raised-button
-    [disabled]="input.hyperlambda.length === 0"
-    (click)="save()">Save</button>
+    <button
+      id="loadButton"
+      mat-raised-button
+      (click)="load()">Load</button>
 
-  <button
-    id="executeButton"
-    mat-raised-button
-    color="primary"
-    [disabled]="input.hyperlambda.length === 0"
-    (click)="execute()">Execute</button>
+    <button
+      id="saveButton"
+      mat-raised-button
+      [disabled]="input.hyperlambda.length === 0"
+      (click)="save()">Save</button>
 
-</div>
+    <button
+      id="executeButton"
+      mat-raised-button
+      color="primary"
+      [disabled]="input.hyperlambda.length === 0"
+      (click)="execute()">Execute</button>
 
-<app-codemirror-hyperlambda [(model)]="output"></app-codemirror-hyperlambda>
+  </div>
+
+</mat-card>
+
+<mat-card *ngIf="output.hyperlambda && output.hyperlambda.length > 0">
+  <app-codemirror-hyperlambda [(model)]="output"></app-codemirror-hyperlambda>
+</mat-card>
