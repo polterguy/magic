@@ -197,6 +197,15 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
   color: whitesmoke;
 }
 
+::ng-deep ngx-mat-timepicker {
+  mat-icon {
+    color: #555;
+  }
+  tr {
+    background-color: transparent !important;
+  }
+}
+
 ::ng-deep mat-dialog-container {
   ::ng-deep input.mat-input-element {
     color: #555;
@@ -204,6 +213,16 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
   ::ng-deep textarea.mat-input-element:disabled {
     color: #555;
   }
+}
+
+::ng-deep .form-field {
+  margin-right: 1rem;
+  width: 10rem;
+  max-width: 100%;
+}
+
+::ng-deep .form-field-double {
+  width: 20rem;
 }
 
 /*
@@ -217,7 +236,7 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
     color: #555;
   }
   mat-toolbar {
-    background: rgb(225, 225, 225) !important;
+    background-color: rgb(245, 245, 245) !important;
     color: rgb(45,45,45) !important;
   }
   mat-label.dark {

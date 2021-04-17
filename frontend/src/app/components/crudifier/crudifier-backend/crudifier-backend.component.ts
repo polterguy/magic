@@ -30,8 +30,7 @@ import { CrudifierTableComponent } from './crudifier-table/crudifier-table.compo
  */
 @Component({
   selector: 'app-crudifier-backend',
-  templateUrl: './crudifier-backend.component.html',
-  styleUrls: ['./crudifier-backend.component.scss']
+  templateUrl: './crudifier-backend.component.html'
 })
 export class CrudifierBackendComponent implements OnInit {
 
