@@ -8,6 +8,7 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
+import { Database } from '../../sql/models/database.model';
 import { SqlService } from '../../sql/services/sql.service';
 import { Databases } from '../../sql/models/databases.model';
 import { MessageService } from 'src/app/services/message.service';
@@ -18,7 +19,7 @@ import { DefaultDatabaseType } from '../../config/models/default-database-type.m
 import { CrudifierSqlExtraComponent } from './crudifier-sql-extra/crudifier-sql-extra.component';
 
 // CodeMirror options.
-import sql from '../../codemirror/options/sql.json'
+import sqlOptions from '../../codemirror/options/sql.json'
 
 /**
  * Component allowing user to generate an SQL based endpoint.
@@ -30,7 +31,7 @@ import sql from '../../codemirror/options/sql.json'
 export class CrudifierSqlComponent implements OnInit {
 
   // Database declaration as returned from server
-  private databaseDeclaration: any = null;
+  private databaseDeclaration: Databases = null;
 
   /**
    * Database types the user can select during configuration of system.
@@ -83,7 +84,7 @@ export class CrudifierSqlComponent implements OnInit {
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
 
         // Retrieving databases existing in connection string instance.
-        this.getDatabases(defaultDatabaseType.default, connectionStrings[0], (databases: any) => {
+        this.getDatabases(defaultDatabaseType.default, connectionStrings[0], (databases: Databases) => {
 
           // Storing database declaration such that user can change active database without having to roundtrip to server.
           this.databaseDeclaration = databases;
@@ -104,7 +105,7 @@ export class CrudifierSqlComponent implements OnInit {
             databaseType: defaultDatabaseType.default,
             connectionString: connectionStrings.filter(x => x === 'generic')[0],
             database: null,
-            options: sql,
+            options: sqlOptions,
             sql: '',
           };
           this.input.options.hintOptions = {
@@ -146,13 +147,13 @@ export class CrudifierSqlComponent implements OnInit {
   public connectionStringChanged() {
 
     // Retrieving all databases for selected database type and connection string.
-    this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
+    this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: Databases) => {
 
       // Making sure connection string has at least one database.
       if (databases.databases && databases.databases.length > 0) {
 
         // Setting databases and hint options.
-        this.databases = databases.databases.map((x: any) => x.name);
+        this.databases = databases.databases.map((x: Database) => x.name);
 
         // Storing database declaration such that user can change active database without having to roundtrip to server.
         this.databaseDeclaration = databases;
@@ -178,7 +179,7 @@ export class CrudifierSqlComponent implements OnInit {
 
     // Updating SQL hints according to selected database.
     const result = {};
-    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables;
+    const tables = this.databaseDeclaration.databases.filter((x: Database) => x.name === this.input.database)[0].tables;
     for (const idxTable of tables) {
       result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
     }
@@ -186,13 +187,16 @@ export class CrudifierSqlComponent implements OnInit {
 
     // Making sure parent clears it dynamic container in case it's already got another container.
     this.messageServive.sendMessage({
-      name: Messages.REMOVE_COMPONENT,
+      name: Messages.CLEAR_COMPONENTS,
     });
 
     // Creating our component.
     const componentFactory = this.resolver.resolveComponentFactory(CrudifierSqlExtraComponent);
 
-    // Signaling listener, passing in component as data.
+    /*
+     * Signaling listener, passing in component as data, which will dynamically inject our
+     * newly created component into the "additional information werapper".
+     */
     this.messageServive.sendMessage({
       name: Messages.INJECT_COMPONENT,
       content: {
@@ -226,7 +230,7 @@ export class CrudifierSqlComponent implements OnInit {
     }, (error: any) => {
 
       // Oops, making sure we remove all selected values, and shows an error to user.
-      this.nullifySelectors(error);
+      this.handleError(error);
     });
   }
 
@@ -234,7 +238,7 @@ export class CrudifierSqlComponent implements OnInit {
    * Returns all databases for database-type/connection-string
    * combination from backend.
    */
-  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
+  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: Databases) => void) {
 
     // Retrieving databases that exists for database-type/connection-string combination in backend.
     this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
@@ -248,14 +252,16 @@ export class CrudifierSqlComponent implements OnInit {
     }, (error: any) => {
 
       // Resetting selected connection string and selected database.
-      this.nullifySelectors(error);
+      this.handleError(error);
     });
   }
 
   /*
-   * Nullify all selectors.
+   * Invoked when an error occurs for some reasons.
    */
-  private nullifySelectors(error: any) {
+  private handleError(error: any) {
+
+    // Nullifying all relevant models.
     this.input.connectionString = null;
     this.input.database = null;
     this.input.options.hintOptions.tables = [];

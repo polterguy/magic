@@ -76,7 +76,7 @@ export class CrudifierComponent implements OnInit, OnDestroy {
         for (const idx in msg.content.data) {
           componentRef.instance[idx] = msg.content.data[idx];
         }
-      } else if (msg.name === Messages.REMOVE_COMPONENT) {
+      } else if (msg.name === Messages.CLEAR_COMPONENTS) {
 
         /*
          * Somebody wants us to remove our dynamically injected component.
