@@ -219,11 +219,7 @@ export class CrudifierSqlComponent implements OnInit {
         onAfter(tmp);
       }
 
-    }, (error: any) => {
-
-      // Oops, making sure we remove all selected values, and shows an error to user.
-      this.handleError(error);
-    });
+    }, (error: any) => this.handleError(error));
   }
 
   /*
@@ -241,11 +237,7 @@ export class CrudifierSqlComponent implements OnInit {
         // Invoking callback.
         onAfter(databases);
       }
-    }, (error: any) => {
-
-      // Resetting selected connection string and selected database.
-      this.handleError(error);
-    });
+    }, (error: any) => this.handleError(error));
   }
 
   /*

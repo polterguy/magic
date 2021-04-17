@@ -133,7 +133,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
 
         // Providing feedback to user.
         this.feedbackService.showInfo('Endpoint successfully created');
-      });
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -155,7 +155,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
         if (this.arguments.filter(x => x.name === argument.name).length > 0) {
 
           // Oops, argument already declared.
-          this.feedbackService.showError('Argument already declared, please delete the previous declaration before trying to add it again');
+          this.feedbackService.showError('Argument already exists');
           return;
         }
 
