@@ -72,9 +72,7 @@ export class CrudifierComponent implements OnInit, OnDestroy {
          * card, create component, and decorate component according to inputs specified.
          */
         this.hasComponent = true;
-        this.injectComp.viewContainerRef.createComponent(msg.content.componentFactory);
-        const viewContainerRef = this.injectComp.viewContainerRef;
-        const componentRef = viewContainerRef.createComponent(msg.content.componentFactory);
+        const componentRef = this.injectComp.viewContainerRef.createComponent(msg.content.componentFactory);
         for (const idx in msg.content.data) {
           componentRef.instance[idx] = msg.content.data[idx];
         }
