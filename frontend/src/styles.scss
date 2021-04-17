@@ -129,36 +129,10 @@ table.clickable {
   }
 }
 
-mat-label.dark {
-  color: rgb(55,55,55);
-}
-
-mat-tab-group .mat-tab-label .mat-tab-label-content {
-  color: #fff;
-}
-
 mat-paginator.mat-paginator {
-  background-color: transparent;
-  color: rgb(245,245,245);
   position: absolute;
   bottom: 0;
   right: 0;
-}
-
-mat-label {
-  color: rgb(245,245,245);
-}
-
-mat-select {
-  .mat-select-value-text {
-    color: rgb(245,245,245);
-  }
-}
-
-mat-select.dark {
-  .mat-select-value-text {
-    color: rgb(55,55,55);
-  }
 }
 
 /*
@@ -178,14 +152,6 @@ mat-horizontal-stepper.mat-stepper-vertical {
       color: rgb(245, 245, 245);
     }
   }
-}
-
-input.mat-input-element {
-  color:#eee;
-}
-
-textarea.mat-input-element:disabled {
-  color: #aaa;
 }
 
 .mat-dialog-title, .mat-dialog-content {
