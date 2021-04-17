@@ -8,11 +8,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { SqlService } from '../../../sql/services/sql.service';
 import { CrudifyService } from '../../services/crudify.service';
 import { Argument } from '../../../endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../config/services/config.service';
 import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 
@@ -44,12 +42,12 @@ export class CrudifierSqlExtraComponent implements OnInit {
   /**
    * Module name that becomes its second last relative URL.
    */
-  public moduleName: string = '';
+  public moduleName: string;
 
   /**
    * Endpoint name that becomes its very last relative URL.
    */
-  public endpointName: string = '';
+  public endpointName = '';
 
   /**
    * Comma separated list of roles allowed to invoke endpoint.
@@ -81,15 +79,11 @@ export class CrudifierSqlExtraComponent implements OnInit {
    * 
    * @param feedbackService Needed to show user feedback
    * @param crudifyService Needed to crudify endpoint
-   * @param configService Needed to read configuration settings, more specifically default database config setting
-   * @param sqlService Needed to be able to retrieve meta information from backend
    * @param dialog Needed to show modal dialog to user allowing him to add a new argument to argument collection of endpoint
    */
   constructor(
     private feedbackService: FeedbackService,
     private crudifyService: CrudifyService,
-    private configService: ConfigService,
-    private sqlService: SqlService,
     private dialog: MatDialog) { }
 
   /**
@@ -102,6 +96,14 @@ export class CrudifierSqlExtraComponent implements OnInit {
 
     // Turning off auto focus.
     this.input.options.autofocus = false;
+
+    // Defaulting primary URL to database name.
+    this.moduleName = this.input.database;
+
+    // Associating ALT+M with fullscreen toggling of the editor instance.
+    this.input.options.extraKeys['Alt-M'] = (cm: any) => {
+      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+    };
   }
 
   /**
