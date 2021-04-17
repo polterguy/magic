@@ -106,6 +106,7 @@ import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnosti
 import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnostics-security/diagnostics-security.component';
 import { CrudifierTableComponent } from './components/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
 import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
+import { CrudifierSqlExtraComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
@@ -126,7 +127,7 @@ import { CreateKeypairDialogComponent } from './components/crypto/server-public-
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { AddQueryParameterDialogComponent } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
+import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -189,6 +190,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     AddQueryParameterDialogComponent,
     CreateAssumptionTestDialogComponent,
     DiagnosticsTestsComponent,
+    CrudifierSqlExtraComponent,
     ChangePasswordComponent,
     ConfirmEmailComponent,
     JailUserDialogComponent,

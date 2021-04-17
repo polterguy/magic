@@ -4,30 +4,32 @@
  */
 
 // Angular and system imports.
-import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Messages } from 'src/app/models/messages.model';
-import { SqlService } from '../../sql/services/sql.service';
-import { Databases } from '../../sql/models/databases.model';
-import { MessageService } from 'src/app/services/message.service';
+import { SqlService } from '../../../sql/services/sql.service';
+import { Databases } from '../../../sql/models/databases.model';
+import { CrudifyService } from '../../services/crudify.service';
+import { Argument } from '../../../endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../config/services/config.service';
-import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
-import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
-import { CrudifierSqlExtraComponent } from './crudifier-sql-extra/crudifier-sql-extra.component';
+import { ConfigService } from '../../../config/services/config.service';
+import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
+import { DefaultDatabaseType } from '../../../config/models/default-database-type.model';
+import { CrudifierSqlAddArgumentDialogComponent } from './crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 
 // CodeMirror options.
-import sql from '../../codemirror/options/sql.json'
+import sql from '../../../codemirror/options/sql.json'
 
 /**
  * Component allowing user to generate an SQL based endpoint.
  */
 @Component({
-  selector: 'app-crudifier-sql',
-  templateUrl: './crudifier-sql.component.html'
+  selector: 'app-crudifier-sql-extra',
+  templateUrl: './crudifier-sql-extra.component.html',
+  styleUrls: ['./crudifier-sql-extra.component.scss']
 })
-export class CrudifierSqlComponent implements OnInit {
+export class CrudifierSqlExtraComponent implements OnInit {
 
   // Database declaration as returned from server
   private databaseDeclaration: any = null;
@@ -48,6 +50,46 @@ export class CrudifierSqlComponent implements OnInit {
   public databases: string[] = [];
 
   /**
+   * Verbs user can select from.
+   */
+  public verbs: string[] = [
+    'post',
+    'get',
+    'put',
+    'delete',
+  ];
+
+  /**
+   * Currently selected verb.
+   */
+  public verb: string;
+
+  /**
+   * Module name that becomes its second last relative URL.
+   */
+  public moduleName: string = '';
+
+  /**
+   * Endpoint name that becomes its very last relative URL.
+   */
+  public endpointName: string = '';
+
+  /**
+   * Comma separated list of roles allowed to invoke endpoint.
+   */
+  public authorization = 'root, admin';
+
+  /**
+   * Whether or not endpoint returns a list of items or a single item.
+   */
+  public isList = true;
+
+  /**
+   * List of arguments endpoint can handle.
+   */
+  public arguments: Argument[] = [];
+
+  /**
    * Input SQL component model and options.
    */
   public input: Model = null;
@@ -55,72 +97,36 @@ export class CrudifierSqlComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param resolver Needed to be able to dynamically create the additional information component
    * @param feedbackService Needed to show user feedback
-   * @param messageServive Needed to publish message as we want to create additional information component
+   * @param crudifyService Needed to crudify endpoint
    * @param configService Needed to read configuration settings, more specifically default database config setting
    * @param sqlService Needed to be able to retrieve meta information from backend
+   * @param dialog Needed to show modal dialog to user allowing him to add a new argument to argument collection of endpoint
    */
   constructor(
-    private resolver: ComponentFactoryResolver,
     private feedbackService: FeedbackService,
-    private messageServive: MessageService,
+    private crudifyService: CrudifyService,
     private configService: ConfigService,
-    private sqlService: SqlService) { }
+    private sqlService: SqlService,
+    private dialog: MatDialog) { }
 
   /**
    * Implementation of OnInit.
    */
   public ngOnInit() {
 
-    // Retrieving default database type from backend.
-    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
+    // Defaulting verb to GET.
+    this.verb = this.verbs.filter(x => x === 'get')[0];
 
-      // Assigning database types to model.
-      this.databaseTypes = defaultDatabaseType.options;
+    // Turning off auto focus.
+    this.input.options.autofocus = false;
+  }
 
-      // Retrieving connection strings for default database type.
-      this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
-
-        // Retrieving databases existing in connection string instance.
-        this.getDatabases(defaultDatabaseType.default, connectionStrings[0], (databases: any) => {
-
-          // Storing database declaration such that user can change active database without having to roundtrip to server.
-          this.databaseDeclaration = databases;
-
-          // Transforming from HTTP result to object(s) expected by CodeMirror.
-          const tables = {};
-          for (const idxTable of databases.databases.filter((x: any) => x.name === 'magic')[0].tables) {
-            tables[idxTable.name] = idxTable.columns.map((x: any) => x.name);
-          }
-
-          /*
-           * Initialising input now that we know the default database type, connection string,
-           * and databases that exists in connection string.
-           */
-          this.connectionStrings = connectionStrings;
-          this.databases = databases.databases.map((x: any) => x.name);
-          this.input = {
-            databaseType: defaultDatabaseType.default,
-            connectionString: connectionStrings.filter(x => x === 'generic')[0],
-            database: null,
-            options: sql,
-            sql: '',
-          };
-          this.input.options.hintOptions = {
-            tables: tables,
-          };
-
-          // Turning on auto focus.
-          this.input.options.autofocus = true;
-
-          // Associating ALT+M with fullscreen toggling of the editor instance.
-          this.input.options.extraKeys['Alt-M'] = (cm: any) => {
-            cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-          };
-        });
-      });
-    }, (error: any) => this.feedbackService.showError(error));
+  /**
+   * Returns true if endpoint name and module name is valid.
+   */
+  public validModuleComponentName() {
+    return /^[a-z0-9_]+$/i.test(this.endpointName) && /^[a-z0-9_]+$/i.test(this.moduleName);
   }
 
   /**
@@ -183,25 +189,94 @@ export class CrudifierSqlComponent implements OnInit {
       result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
     }
     this.input.options.hintOptions.tables = result;
+  }
 
-    // Making sure parent clears it dynamic container in case it's already got another container.
-    this.messageServive.sendMessage({
-      name: Messages.REMOVE_COMPONENT,
+  /**
+   * Generates your SQL endpoint.
+   */
+  public generate() {
+
+    // Invoking backend through service instance.
+    this.crudifyService.generateSqlEndpoint({
+      databaseType: this.input.databaseType,
+      database: this.input.database,
+      authorization: this.authorization,
+      moduleName: this.moduleName,
+      endpointName: this.endpointName,
+      verb: this.verb,
+      sql: this.input.sql,
+      arguments: this.getArguments(),
+      overwrite: true,
+      isList: this.isList}).subscribe(() => {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfo('Endpoint successfully created');
+      });
+  }
+
+  /**
+   * Invoked when user wants to add an argument to argument declaration of endpoint.
+   */
+  public addArgument() {
+
+    // Creating modal dialogue that asks user what name and type he wants to use for his argument.
+    const dialogRef = this.dialog.open(CrudifierSqlAddArgumentDialogComponent, {
+      width: '550px',
     });
 
-    // Creating our component.
-    const componentFactory = this.resolver.resolveComponentFactory(CrudifierSqlExtraComponent);
+    dialogRef.afterClosed().subscribe((argument: Argument) => {
 
-    // Signaling listener, passing in component as data.
-    this.messageServive.sendMessage({
-      name: Messages.INJECT_COMPONENT,
-      content: {
-        componentFactory,
-        data: {
-          input: this.input,
+      // Checking if modal dialog wants to jail the user.
+      if (argument) {
+
+        // Checking if argument already exists.
+        if (this.arguments.filter(x => x.name === argument.name).length > 0) {
+
+          // Oops, argument already declared.
+          this.feedbackService.showError('Argument already declared, please delete the previous declaration before trying to add it again');
+          return;
         }
+
+        // Adding argument to argument declaration.
+        this.arguments.push(argument);
       }
     });
+  }
+
+  /**
+   * Invoked when user wants to remove an argument from collection of arguments
+   * endpoint can handle.
+   * 
+   * @param argument Argument to remove
+   */
+  public removeArgument(argument: Argument) {
+
+    // Removing argument from collection.
+    this.arguments.splice(this.arguments.indexOf(argument), 1);
+  }
+
+  /**
+   * Adds an argument as a reference into your SQL editor.
+   * 
+   * @param argument Argument to add as a reference into your SQL
+   */
+  public addArgumentIntoSql(argument: Argument) {
+
+    // Simply concatenating argument into SQL.
+    this.input.sql += '@' + argument.name;
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /**
+   * Returns the string (Hyperlambda) representation of declared arguments.
+   */
+  private getArguments() {
+
+    // Transforming list of arguments to Hyperlambda declaration.
+    return this.arguments.map(x => x.name + ':' + x.type).join('\r\n');
   }
 
   /*

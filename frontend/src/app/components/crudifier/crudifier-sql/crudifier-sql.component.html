@@ -1,5 +1,5 @@
 
-<div class="wrapper" *ngIf="input">
+<div *ngIf="input">
 
   <mat-form-field class="form-field" appearance="outline">
 
@@ -43,87 +43,5 @@
     </mat-select>
 
   </mat-form-field>
-
-  <br *ngIf="input.database">
-
-  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
-    <mat-label>HTTP verb</mat-label>
-    <mat-select
-      matTooltip="HTTP verb endpoint encapsulates"
-      [(ngModel)]="verb">
-      <mat-option
-        *ngFor="let idx of verbs"
-        [value]="idx">{{idx}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
-    <mat-label>Module name</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      matTooltip="Second last parts of URL of endpoint"
-      [(ngModel)]="moduleName">
-  </mat-form-field>
-
-  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
-    <mat-label>Endpoint name</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      matTooltip="Last parts of URL of endpoint"
-      [(ngModel)]="endpointName">
-  </mat-form-field>
-
-  <mat-form-field class="form-field" *ngIf="input.database" appearance="outline">
-    <mat-label>Authorization</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      matTooltip="Comma separated list of roles users must belong to in order to invoke endpoint"
-      [(ngModel)]="authorization">
-  </mat-form-field>
-
-  <mat-checkbox
-    *ngIf="input.database"
-    matTooltip="If endpoint should return a list of items or a single item"
-    [(ngModel)]="isList">List</mat-checkbox>
-
-  <div class="arguments-declaration">
-    <button
-      *ngIf="input.database"
-      mat-icon-button
-      matTooltip="Add an argument to your endpoint declaration"
-      (click)="addArgument()">
-      <mat-icon>add</mat-icon>
-    </button>
-
-    <mat-chip-list *ngIf="input.database">
-      <mat-chip
-        *ngFor="let arg of arguments"
-        (click)="addArgumentIntoSql(arg)"
-        (removed)="removeArgument(arg)"
-        [matTooltip]="arg.name + ' as ' + arg.type + ' - Click to add to SQL'">
-        {{arg.name}}
-        <mat-icon matChipRemove>cancel</mat-icon>
-      </mat-chip>
-    </mat-chip-list>
-  </div>
-
-  <app-codemirror-sql *ngIf="input.database" [(model)]="input"></app-codemirror-sql>
-
-  <div class="button-strip" *ngIf="input.database">
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="moduleName === '' || endpointName === '' || input.sql === '' || !validModuleComponentName()"
-      matTooltip="Generates your SQL endpoint"
-      (click)="generate()">
-      Generate
-    </button>
-  </div>
 
 </div>

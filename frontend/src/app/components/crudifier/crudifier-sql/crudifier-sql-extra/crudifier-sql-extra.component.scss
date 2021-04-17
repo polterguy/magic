@@ -1,0 +1,46 @@
+
+.field-input {
+  width: 10rem;
+  margin-right: 1rem;
+}
+
+mat-checkbox {
+  margin-right: 1rem;
+}
+
+.verbs {
+  padding-left: 0;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  li {
+    list-style-type: none;
+    float: left;
+    margin-right: 1rem;
+    width: 4rem;
+  }
+}
+
+strong {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+table.table-items {
+  margin-top: 2rem;
+  tr {
+    td {
+      .details-sheet {
+        ul.verbs {
+          position: relative;
+          top: unset;
+          right: unset;
+        }
+      }
+    }
+  }
+}
+
+h3 {
+  margin-top: 3rem;
+}
