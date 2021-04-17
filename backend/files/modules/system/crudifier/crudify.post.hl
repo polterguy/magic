@@ -560,9 +560,9 @@ semaphore:crudifier
          set-x:x:+/*/*/*
             convert:x:@.x
                type:x
-         insert-before:x:@apply/**/table/././0
+         insert-before:x:@apply/**/table/././1
             .
-               add:x:+/+/*/where/*/and
+               add:x:./*/data.update/*/where/*/and
                   get-nodes
 
          /*
@@ -582,7 +582,7 @@ semaphore:crudifier
                type:x
          insert-before:x:@apply/**/table/././1
             .
-               add:x:+/*/values
+               add:x:./*/data.update/*/values
                   get-nodes
 
 

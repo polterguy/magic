@@ -72,27 +72,23 @@ export class CrudifierFrontendComponent implements OnInit {
    */
    public templateChanged() {
 
-    // Invoking backend to retrieve README.md file for template.
-    this.endpointService.template(this.template).subscribe((result: Template) => {
+    // Creating our dynamically injected extra component.
+    // Making sure parent clears it dynamic container in case it's already got another container.
+    this.messageService.sendMessage({
+      name: Messages.CLEAR_COMPONENTS,
+    });
 
-      // Creating our dynamically injected extra component.
-      // Making sure parent clears it dynamic container in case it's already got another container.
-      this.messageService.sendMessage({
-        name: Messages.CLEAR_COMPONENTS,
-      });
+    // Creating our component.
+    const componentFactory = this.resolver.resolveComponentFactory(CrudifierFrontendExtraComponent);
 
-      // Creating our component.
-      const componentFactory = this.resolver.resolveComponentFactory(CrudifierFrontendExtraComponent);
-
-      // Signaling listener, passing in component as data.
-      this.messageService.sendMessage({
-        name: Messages.INJECT_COMPONENT,
-        content: {
-          componentFactory,
-          data: {
-          }
+    // Signaling listener, passing in component as data.
+    this.messageService.sendMessage({
+      name: Messages.INJECT_COMPONENT,
+      content: {
+        componentFactory,
+        data: {
         }
-      });
+      }
     });
   }
 
