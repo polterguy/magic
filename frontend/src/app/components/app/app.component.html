@@ -8,25 +8,29 @@
   </mat-spinner>
 </div>
 
-<app-toolbar></app-toolbar>
+<div [class]="theme">
 
-<mat-sidenav-container>
+  <app-toolbar></app-toolbar>
 
-  <mat-sidenav mode="side" [(opened)]="sidenavOpened">
-    <app-navbar></app-navbar>
-  </mat-sidenav>
+  <mat-sidenav-container>
 
-  <mat-sidenav-content>
+    <mat-sidenav mode="side" [(opened)]="sidenavOpened">
+      <app-navbar></app-navbar>
+    </mat-sidenav>
 
-    <div class="img-wrapper"></div>
+    <mat-sidenav-content>
 
-    <div
-      *ngIf="sidenavOpened"
-      class="obscurer"
-      (click)="closeNavbar()"></div>
+      <div class="img-wrapper"></div>
 
-    <router-outlet></router-outlet>
+      <div
+        *ngIf="sidenavOpened"
+        class="obscurer"
+        (click)="closeNavbar()"></div>
 
-  </mat-sidenav-content>
+      <router-outlet></router-outlet>
 
-</mat-sidenav-container>
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+
+</div>

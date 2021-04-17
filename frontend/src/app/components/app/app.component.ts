@@ -26,8 +26,20 @@ import { LoaderService } from 'src/app/components/app/services/loader.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+  // Needed to subscribe to messages published by other componentsd.
   private subscriber: Subscription;
+
+  /**
+   * True if navigation menu is expanded.
+   */
   public sidenavOpened = false;
+
+  /**
+   * CSS class wrapping entire application.
+   * 
+   * Used to change theme dynamically, and invert colors between 'light' and 'dark' themes.
+   */
+  public theme: string;
 
   /**
    * Creates an instance of your component.
@@ -58,7 +70,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
       switch(msg.name) {
 
-        // User was logged out
+        // User was logged out.
         case Messages.USER_LOGGED_OUT:
 
           // Verifying caller wants to display information to user or not.
@@ -72,9 +84,14 @@ export class AppComponent implements OnInit, OnDestroy {
           }
           break;
 
-        // User was logged in
+        // User was logged in.
         case Messages.USER_LOGGED_IN:
           this.showInfo('You were successfully authenticated towards your backend');
+          break;
+
+        // Theme was changed.
+        case Messages.THEME_CHANGED:
+          this.theme = msg.content;
           break;
 
         // Some component wants to toggle the navbar

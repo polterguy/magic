@@ -20,6 +20,16 @@ mat-toolbar {
     font-size: .9rem;
     color: #999;
     margin-right: 1rem;
-    padding-top: .5rem;
+    padding-top: 3px;
+  }
+  @media screen and (max-width: 800px) {
+    .user {
+      display: none;
+    }
+  }
+  mat-slide-toggle {
+    font-size: .8rem;
+    display: block;
+    margin-top: 3px;
   }
 }

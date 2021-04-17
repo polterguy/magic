@@ -107,3 +107,69 @@ mat-sidenav-container {
     }
   }
 }
+
+::ng-deep mat-card.mat-card {
+  color: rgb(245, 245, 245);
+  background-color: rgb(45,45,45);
+  padding: 3rem;
+  margin-bottom: 2rem;
+}
+
+::ng-deep table {
+  tbody {
+    tr {
+      transition: background-color .1s ease-in;
+      background-color: rgba(0,0,0,0);
+      td, td.mat-cell {
+        color: rgb(245,245,245);
+      }
+    }
+    tr:hover {
+      background-color: rgba(0,0,0,.1);
+      transition: background-color .1s ease-in;
+    }
+    tr.selected {
+      background-color: rgba(255,255,255,.1);
+    }
+    tr.details {
+      background-color: rgba(255,255,255,.05);
+    }
+  }
+}
+
+/*
+ * Light theme overrides.
+ */
+ ::ng-deep .light {
+  table {
+    tbody {
+      tr {
+        background-color: rgba(245,245,245,0);
+        td {
+          color: rgb(55,55,55);
+        }
+      }
+      tr:hover {
+        background-color: rgba(25,25,25,.1);
+      }
+      tr.selected {
+        background-color: rgba(0,0,0,.1);
+      }
+      tr.details {
+        background-color: rgba(75,75,75,.05);
+      }
+    }
+  }
+  mat-card.mat-card {
+    background-color: rgb(245, 245, 245);
+    color: rgb(45,45,45);
+  }
+  mat-sidenav-container {
+    background-color: rgb(55,55,55);
+    color: rgb(55,55,55);
+    mat-sidenav {
+      color: rgb(55, 55, 55);
+      background-color: rgb(245,245,245);
+    }
+  }
+}

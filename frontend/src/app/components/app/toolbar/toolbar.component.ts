@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Router } from '@angular/router';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
@@ -26,7 +26,7 @@ import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-d
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements OnInit {
 
   /*
    * Help videos displayed when user clicks help.
@@ -47,6 +47,11 @@ export class ToolbarComponent {
   ];
 
   /**
+   * True if user wants to use light theme, otherwise false.
+   */
+  public lightTheme = false;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param router Needed to be able to display context sensitive help
@@ -65,9 +70,29 @@ export class ToolbarComponent {
     private feedbackService: FeedbackService) { }
 
   /**
+   * Implementation of OnInit.
+   */
+  ngOnInit() {
+
+    // Checking if user has stored a theme in his local storage.
+    var theme = localStorage.getItem('theme') ?? 'dark';
+
+    // Storing whether or not user is using light theme.
+    this.lightTheme = theme === 'light';
+
+    // Publishing the message that will apply the currently selected theme.
+    this.messageService.sendMessage({
+      name: Messages.THEME_CHANGED,
+      content: theme,
+    });
+  }
+
+  /**
    * Toggles the navbar.
    */
   public toggleNavbar() {
+
+    // Publishing message to inform other components that navbar was toggled.
     this.messageService.sendMessage({
       name: Messages.TOGGLE_NAVBAR
     });
@@ -118,6 +143,22 @@ export class ToolbarComponent {
    */
   public logout() {
     this.authService.logout(false);
+  }
+
+  /**
+   * Invoked when theme is changed.
+   */
+  public themeChanged() {
+
+    // Publishing message informing other components that active theme was changed.
+    const theme = this.lightTheme ? 'light' : 'dark';
+    this.messageService.sendMessage({
+      name: Messages.THEME_CHANGED,
+      content: theme,
+    });
+
+    // Persisting active theme to local storage.
+    localStorage.setItem('theme', theme);
   }
 
   /**

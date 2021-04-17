@@ -47,4 +47,9 @@ export class Messages {
    * for any dynamically injected components.
    */
    static readonly CLEAR_COMPONENTS = 'app.ui.clear-dynamic-components';
+
+  /**
+   * Message will be published when theme changes.
+   */
+   static readonly THEME_CHANGED = 'app.ui.theme-changed';
 }
