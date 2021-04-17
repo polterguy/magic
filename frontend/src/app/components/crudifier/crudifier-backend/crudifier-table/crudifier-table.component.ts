@@ -51,6 +51,11 @@ export class CrudifierTableComponent {
   ];
 
   /**
+   * Whether or not advanced options should be shown or not.
+   */
+  public advanced = false;
+
+  /**
    * Model for component wrapping table.
    */
   @Input() public table: TableEx;
