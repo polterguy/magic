@@ -107,6 +107,7 @@ import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnosti
 import { CrudifierTableComponent } from './components/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
 import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
 import { CrudifierSqlExtraComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
+import { CrudifierFrontendExtraComponent } from './components/crudifier/crudifier-frontend/crudifier-frontend-extra/crudifier-frontend-extra.component';
 
 // Modal dialogs.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
@@ -191,6 +192,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     CreateAssumptionTestDialogComponent,
     DiagnosticsTestsComponent,
     CrudifierSqlExtraComponent,
+    CrudifierFrontendExtraComponent,
     ChangePasswordComponent,
     ConfirmEmailComponent,
     JailUserDialogComponent,
