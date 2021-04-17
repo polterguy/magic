@@ -1,7 +1,13 @@
 
-.field-input {
-  width: 10rem;
-  margin-right: 1rem;
+.arguments-declaration {
+  button {
+    float: left;
+  }
+}
+.arguments-declaration:after {
+  display: table;
+  content: '';
+  clear: both;
 }
 
 mat-checkbox {
