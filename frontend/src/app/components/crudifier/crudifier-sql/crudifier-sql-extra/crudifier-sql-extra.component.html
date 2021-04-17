@@ -1,26 +1,30 @@
 
 <div *ngIf="input">
 
+  <h2>Database {{input.database}}</h2>
+
   <h3>Endpoint URLs</h3>
 
   <mat-form-field class="form-field" appearance="outline">
+
     <mat-label>Primary</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      matTooltip="Second last parts of URL of endpoint"
       [(ngModel)]="moduleName">
+
   </mat-form-field>
 
   <mat-form-field class="form-field" appearance="outline">
+
     <mat-label>Secondary</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      matTooltip="Last parts of URL of endpoint"
       [(ngModel)]="endpointName">
+
   </mat-form-field>
 
   <h3>Arguments</h3>
@@ -29,7 +33,6 @@
 
     <button
       mat-icon-button
-      matTooltip="Add an argument to your endpoint declaration"
       (click)="addArgument()">
       <mat-icon>add</mat-icon>
     </button>
@@ -37,9 +40,8 @@
     <mat-chip-list>
       <mat-chip
         *ngFor="let arg of arguments"
-        (click)="addArgumentIntoSql(arg)"
         (removed)="removeArgument(arg)"
-        [matTooltip]="arg.name + ' as ' + arg.type + ' - Click to add to SQL'">
+        [matTooltip]="arg.name + ' as ' + arg.type">
         {{arg.name}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
@@ -50,41 +52,44 @@
   <h3>Miscelanous</h3>
 
   <mat-form-field class="form-field" appearance="outline">
+
     <mat-label>HTTP verb</mat-label>
     <mat-select
-      matTooltip="HTTP verb endpoint encapsulates"
       [(ngModel)]="verb">
       <mat-option
         *ngFor="let idx of verbs"
         [value]="idx">{{idx}}</mat-option>
     </mat-select>
+
   </mat-form-field>
 
   <mat-form-field class="form-field" appearance="outline">
+
     <mat-label>Authorization</mat-label>
     <input
       matInput
       type="text"
       autocomplete="off"
-      matTooltip="Comma separated list of roles users must belong to in order to invoke endpoint"
       [(ngModel)]="authorization">
+
   </mat-form-field>
 
-  <mat-checkbox
-    matTooltip="If endpoint should return a list of items or a single item"
-    [(ngModel)]="isList">List</mat-checkbox>
+  <mat-checkbox [(ngModel)]="isList">Scalar</mat-checkbox>
+
+  <h3>SQL</h3>
 
   <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
 
   <div class="button-strip">
+
     <button
       mat-raised-button
       color="primary"
       [disabled]="moduleName === '' || endpointName === '' || input.sql === '' || !validModuleComponentName()"
-      matTooltip="Generates your SQL endpoint"
       (click)="generate()">
       Generate
     </button>
+
   </div>
 
 </div>
