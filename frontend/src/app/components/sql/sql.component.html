@@ -87,7 +87,6 @@
     <button
       id="loadButton"
       mat-raised-button
-      matTooltip="Load a persisted SQL snippet from backend's snippet collection. Keyboard shortcut ALT+L"
       (click)="load()">
       Load
     </button>
@@ -96,7 +95,6 @@
       id="saveButton"
       [disabled]="!input.sql"
       mat-raised-button
-      matTooltip="Save SQL snippet to backend's snippet collection. Keyboard shortcut ALT+S"
       (click)="save()">
       Save
     </button>
@@ -106,7 +104,6 @@
       [disabled]="!input || input.sql === '' || !input.database"
       mat-raised-button
       color="primary"
-      matTooltip="Execute SQL. Keyboard shortcut F5"
       (click)="execute()">
       Execute
     </button>

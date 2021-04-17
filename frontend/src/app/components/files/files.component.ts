@@ -218,18 +218,22 @@ export class FilesComponent implements OnInit, OnDestroy {
     // Subscribing to closed event and creating a new folder if we're given a folder name.
     dialogRef.afterClosed().subscribe((result: RenameFileObject) => {
 
-      // Incoking backend to rename file or folder.
-      this.fileService.rename(result.path, result.newName).subscribe(() => {
+      // Verifying user clicked rename button
+      if (result) {
 
-        // Showing user some information and retrieving items again.
-        this.feedbackService.showInfo((result.isFolder ? 'Folder' : 'File') + ' was renamed');
-        this.getFolderContent();
+        // Invoking backend to rename file or folder.
+        this.fileService.rename(result.path, result.newName).subscribe(() => {
 
-      }, (error: any) => {
+          // Showing user some information and retrieving items again.
+          this.feedbackService.showInfo((result.isFolder ? 'Folder' : 'File') + ' was renamed');
+          this.getFolderContent();
 
-        // Oops ...!!
-        this.feedbackService.showError(error);
-      });
+        }, (error: any) => {
+
+          // Oops ...!!
+          this.feedbackService.showError(error);
+        });
+      }
     });
   }
 

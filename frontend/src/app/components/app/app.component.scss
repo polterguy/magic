@@ -137,7 +137,7 @@ mat-sidenav-container {
   }
 }
 
-mat-label.dark {
+::ng-deep mat-label.dark {
   color: rgb(55,55,55);
 }
 
@@ -145,7 +145,7 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
   color: #fff;
 }
 
-mat-paginator.mat-paginator {
+::ng-deep mat-paginator.mat-paginator {
   background-color: transparent;
   color: rgb(245,245,245);
   position: absolute;
@@ -190,11 +190,20 @@ mat-paginator.mat-paginator {
 }
 
 ::ng-deep input.mat-input-element {
-  color:#eee;
+  color: whitesmoke;
 }
 
 ::ng-deep textarea.mat-input-element:disabled {
-  color: #aaa;
+  color: whitesmoke;
+}
+
+::ng-deep mat-dialog-container {
+  ::ng-deep input.mat-input-element {
+    color: #555;
+  }
+  ::ng-deep textarea.mat-input-element:disabled {
+    color: #555;
+  }
 }
 
 /*
@@ -211,7 +220,7 @@ mat-paginator.mat-paginator {
     background: rgb(225, 225, 225) !important;
     color: rgb(45,45,45) !important;
   }
-    mat-label.dark {
+  mat-label.dark {
     color: rgb(250,250,250);
   }
   mat-tab-group .mat-tab-label .mat-tab-label-content {

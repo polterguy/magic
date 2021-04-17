@@ -81,10 +81,12 @@ export class ToolbarComponent implements OnInit {
     this.lightTheme = theme === 'light';
 
     // Publishing the message that will apply the currently selected theme.
-    this.messageService.sendMessage({
-      name: Messages.THEME_CHANGED,
-      content: theme,
-    });
+    setTimeout(() => {
+      this.messageService.sendMessage({
+        name: Messages.THEME_CHANGED,
+        content: theme,
+      });
+    }, 1);
   }
 
   /**
