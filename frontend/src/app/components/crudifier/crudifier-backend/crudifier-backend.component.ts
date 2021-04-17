@@ -143,7 +143,7 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Making sure parent clears it dynamic container.
     this.messageServive.sendMessage({
-      name: Messages.REMOVE_COMPONENT,
+      name: Messages.CLEAR_COMPONENTS,
     });
   }
 
@@ -167,7 +167,7 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Making sure parent clears it dynamic container.
     this.messageServive.sendMessage({
-      name: Messages.REMOVE_COMPONENT,
+      name: Messages.CLEAR_COMPONENTS,
     });
   }
 
@@ -184,7 +184,7 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Making sure parent clears it dynamic container.
     this.messageServive.sendMessage({
-      name: Messages.REMOVE_COMPONENT,
+      name: Messages.CLEAR_COMPONENTS,
     });
   }
 
@@ -195,7 +195,7 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Making sure parent clears it dynamic container in case it's already got another container.
     this.messageServive.sendMessage({
-      name: Messages.REMOVE_COMPONENT,
+      name: Messages.CLEAR_COMPONENTS,
     });
 
     // Creating our component.

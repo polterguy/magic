@@ -43,7 +43,8 @@ export class Messages {
    static readonly INJECT_COMPONENT = 'app.ui.inject-component';
 
   /**
-   * Message will be published when any dynamically injected components needs to be removed.
+   * Message will be published when dynamically injected component wrapper needs to be cleared
+   * for any dynamically injected components.
    */
-   static readonly REMOVE_COMPONENT = 'app.ui.remove-component';
+   static readonly CLEAR_COMPONENTS = 'app.ui.clear-dynamic-components';
 }
