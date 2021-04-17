@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { SqlService } from '../../../sql/services/sql.service';
-import { Databases } from '../../../sql/models/databases.model';
 import { CrudifyService } from '../../services/crudify.service';
 import { Argument } from '../../../endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -61,6 +60,11 @@ export class CrudifierSqlExtraComponent implements OnInit {
    * Whether or not endpoint returns a list of items or a single item.
    */
   public isScalar = false;
+
+  /**
+   * Whether or not existing endpoints should be overwritten or not.
+   */
+  public overwrite = false;
 
   /**
    * List of arguments endpoint can handle.
@@ -122,7 +126,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
       verb: this.verb,
       sql: this.input.sql,
       arguments: this.getArguments(),
-      overwrite: true,
+      overwrite: this.overwrite,
       isList: !this.isScalar}).subscribe(() => {
 
         // Providing feedback to user.
