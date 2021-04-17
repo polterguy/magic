@@ -26,7 +26,8 @@ import sqlOptions from '../../codemirror/options/sql.json'
  */
 @Component({
   selector: 'app-crudifier-sql',
-  templateUrl: './crudifier-sql.component.html'
+  templateUrl: './crudifier-sql.component.html',
+  styleUrls: ['./crudifier-sql.component.scss']
 })
 export class CrudifierSqlComponent implements OnInit {
 
