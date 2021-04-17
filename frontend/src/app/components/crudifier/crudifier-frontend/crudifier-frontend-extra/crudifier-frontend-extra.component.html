@@ -1,0 +1,91 @@
+
+<mat-form-field class="form-field-double" appearance="outline">
+
+  <mat-label>Docker image name</mat-label>
+  <input
+    matInput
+    type="text"
+    matTooltip="Docker image name, complete with organisation name, as you intend to upload to Docker HUB"
+    autocomplete="off"
+    [(ngModel)]="dockerImage">
+
+</mat-form-field>
+
+<mat-form-field class="form-field-double" appearance="outline">
+
+  <mat-label>Deployment URL</mat-label>
+  <input
+    matInput
+    type="text"
+    matTooltip="Frontend URL you intend to resolve application to using a DNS A record later"
+    autocomplete="off"
+    [(ngModel)]="deploymentUrl">
+
+</mat-form-field>
+
+<div class="module-declarations">
+
+  <strong>Modules</strong>
+
+  <mat-chip-list>
+    <mat-chip
+      [class]="moduleSelected(idx) ? 'selected' : 'not-selected'"
+      *ngFor="let idx of modules"
+      (click)="moduleClicked(idx)">
+      {{idx}}
+      <mat-icon
+        *ngIf="moduleSelected(idx)"
+        matChipRemove>check</mat-icon>
+    </mat-chip>
+  </mat-chip-list>
+
+  <strong *ngIf="endpoints && getComponents().length > 0">Components</strong>
+
+  <mat-chip-list *ngIf="endpoints">
+    <mat-chip
+      [class]="componentSelected(idx) ? 'selected' : 'not-selected'"
+      *ngFor="let idx of getComponents()"
+      (click)="componentClicked(idx)">
+      {{idx}}
+      <mat-icon
+        *ngIf="componentSelected(idx)"
+        matChipRemove>check</mat-icon>
+    </mat-chip>
+  </mat-chip-list>
+
+</div>
+
+<table
+  *ngIf="endpoints"
+  mat-table
+  [dataSource]="endpoints"
+  class="endpoints-items clickable">
+
+  <ng-container matColumnDef="path">
+    <td
+      mat-cell
+      *matCellDef="let el">{{el.path}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="verb">
+    <td
+      mat-cell
+      class="mini-col"
+      *matCellDef="let el">{{el.verb}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="selected">
+    <td
+      mat-cell
+      class="mini-col"
+      *matCellDef="let el">
+      <mat-checkbox matTooltip="Include endpoint in application" [(ngModel)]="el.selected"></mat-checkbox>
+    </td>
+  </ng-container>
+
+  <tr
+    mat-row
+    (click)="el.selected = !el.selected"
+    *matRowDef="let el; columns: displayedColumns;"></tr>
+
+</table>

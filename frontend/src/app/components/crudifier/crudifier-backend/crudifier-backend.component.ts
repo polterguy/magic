@@ -79,7 +79,7 @@ export class CrudifierBackendComponent implements OnInit {
    * @param sqlService Needed to retrieve meta information about databases from backend
    * @param configService Needed to retrieve meta information about connection strings from backend
    * @param crudifyService Needed to actually crudify endpoints
-   * @param messageServive Needed to signal other components that we've create an additional info type of component that needs to be injected
+   * @param messageService Needed to signal other components that we've create an additional info type of component that needs to be injected
    * @param feedbackService Needed to display feedback to user
    * @param resolver Needed to be able to dynamically create additional components
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
@@ -90,7 +90,7 @@ export class CrudifierBackendComponent implements OnInit {
     private sqlService: SqlService,
     private configService: ConfigService,
     private crudifyService: CrudifyService,
-    private messageServive: MessageService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService,
     private resolver: ComponentFactoryResolver,
     private loaderInterceptor: LoaderInterceptor,
@@ -141,7 +141,7 @@ export class CrudifierBackendComponent implements OnInit {
     });
 
     // Making sure parent clears it dynamic container.
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
   }
@@ -165,7 +165,7 @@ export class CrudifierBackendComponent implements OnInit {
     });
 
     // Making sure parent clears it dynamic container.
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
   }
@@ -182,7 +182,7 @@ export class CrudifierBackendComponent implements OnInit {
     this.createDefaultOptionsForDatabase(this.database);
 
     // Making sure parent clears it dynamic container.
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
   }
@@ -193,7 +193,7 @@ export class CrudifierBackendComponent implements OnInit {
   public tableChanged() {
 
     // Making sure parent clears it dynamic container in case it's already got another container.
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
 
@@ -201,7 +201,7 @@ export class CrudifierBackendComponent implements OnInit {
     const componentFactory = this.resolver.resolveComponentFactory(CrudifierTableComponent);
 
     // Signaling listener, passing in component as data.
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.INJECT_COMPONENT,
       content: {
         componentFactory,

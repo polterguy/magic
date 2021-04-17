@@ -56,12 +56,13 @@
   [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
 
 <div class="button-strip">
+
   <button
-    *ngIf="database"
-    [disabled]="database && database.name === 'magic' || (database.tables || []).length === 0"
+    [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
     mat-raised-button
     color="primary"
     (click)="crudifyAll()">
     Crudify all tables
   </button>
+
 </div>

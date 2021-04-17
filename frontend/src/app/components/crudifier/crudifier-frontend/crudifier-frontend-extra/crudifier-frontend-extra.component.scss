@@ -1,4 +1,10 @@
 
+mat-form-field {
+  margin-right: 1rem;
+}
+.documentation {
+  margin-top: 3rem;
+}
 mat-chip-list {
   display: block;
   margin-top: 1rem;
@@ -25,6 +31,14 @@ mat-chip-list {
 table {
   margin-bottom: 2rem;
   margin-top: 0;
+}
+
+::ng-deep.image-container {
+  img {
+    width: auto;
+    max-width: 100%;
+    display: block;
+  }
 }
 
 .module-declarations {
