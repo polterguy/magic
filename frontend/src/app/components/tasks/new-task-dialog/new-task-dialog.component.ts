@@ -48,7 +48,7 @@ export class NewTaskDialogComponent {
   public create() {
 
     // Invoking backend to create a new task.
-    this.taskService.create(this.name, '.your-task-hyperlambda-here').subscribe(() => {
+    this.taskService.create(this.name, 'log.info:Task is being executed').subscribe(() => {
 
       // Success! Closing dialog and informing the caller of the name of the new task.
       this.dialogRef.close(this.name);
