@@ -16,6 +16,11 @@
     [matTooltip]="backendService.secure ? 'Secure' : 'Not secured'"
     [class]="backendService.secure ? 'user' : 'user warning'">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</span>
 
+  <mat-slide-toggle
+    [(ngModel)]="lightTheme"
+    labelPosition="before"
+    (change)="themeChanged()">Lights</mat-slide-toggle>
+
   <button
     *ngIf="!authService.authenticated"
     mat-icon-button
