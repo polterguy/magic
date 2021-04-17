@@ -15,11 +15,7 @@ import { Argument } from '../../../endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../../config/services/config.service';
 import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
-import { DefaultDatabaseType } from '../../../config/models/default-database-type.model';
 import { CrudifierSqlAddArgumentDialogComponent } from './crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
-
-// CodeMirror options.
-import sql from '../../../codemirror/options/sql.json'
 
 /**
  * Component allowing user to generate an SQL based endpoint.
@@ -30,24 +26,6 @@ import sql from '../../../codemirror/options/sql.json'
   styleUrls: ['./crudifier-sql-extra.component.scss']
 })
 export class CrudifierSqlExtraComponent implements OnInit {
-
-  // Database declaration as returned from server
-  private databaseDeclaration: any = null;
-
-  /**
-   * Database types the user can select during configuration of system.
-   */
-  public databaseTypes: string[] = [];
-
-  /**
-   * All existing connection strings for selected database type.
-   */
-  public connectionStrings: string[] = [];
-
-  /**
-   * Databases that exists in database type/connection string instance.
-   */
-  public databases: string[] = [];
 
   /**
    * Verbs user can select from.
@@ -82,7 +60,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
   /**
    * Whether or not endpoint returns a list of items or a single item.
    */
-  public isList = true;
+  public isScalar = false;
 
   /**
    * List of arguments endpoint can handle.
@@ -130,68 +108,6 @@ export class CrudifierSqlExtraComponent implements OnInit {
   }
 
   /**
-   * Invoked when database type is changed.
-   */
-  public databaseTypeChanged() {
-
-    // Retrieving all connection strings for selected database type.
-    this.getConnectionStrings(this.input.databaseType, (connectionStrings: string[]) => {
-
-      // Resetting selected connection string and selected database.
-      this.connectionStrings = connectionStrings;
-      this.input.connectionString = null;
-      this.input.database = null;
-      this.input.options.hintOptions.tables = [];
-      this.databases = [];
-    });
-  }
-
-  /**
-   * Invoked when connection string is changed.
-   */
-  public connectionStringChanged() {
-
-    // Retrieving all databases for selected database type and connection string.
-    this.getDatabases(this.input.databaseType, this.input.connectionString, (databases: any) => {
-
-      // Making sure connection string has at least one database.
-      if (databases.databases && databases.databases.length > 0) {
-
-        // Setting databases and hint options.
-        this.databases = databases.databases.map((x: any) => x.name);
-
-        // Storing database declaration such that user can change active database without having to roundtrip to server.
-        this.databaseDeclaration = databases;
-
-        // Resetting other information, selecting first database by default.
-        this.input.database = this.databases[0];
-        this.databaseChanged();
-  
-      } else {
-
-        // No databases in active connection string.
-        this.databases = [];
-        this.input.database = null;
-        this.input.options.hintOptions.tables = [];
-      }
-    });
-  }
-
-  /**
-   * Invoked when active database changes.
-   */
-  public databaseChanged() {
-
-    // Updating SQL hints according to selected database.
-    const result = {};
-    const tables = this.databaseDeclaration.databases.filter((x: any) => x.name === this.input.database)[0].tables;
-    for (const idxTable of tables) {
-      result[idxTable.name] = idxTable.columns?.map((x: any) => x.name) || [];
-    }
-    this.input.options.hintOptions.tables = result;
-  }
-
-  /**
    * Generates your SQL endpoint.
    */
   public generate() {
@@ -207,7 +123,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
       sql: this.input.sql,
       arguments: this.getArguments(),
       overwrite: true,
-      isList: this.isList}).subscribe(() => {
+      isList: !this.isScalar}).subscribe(() => {
 
         // Providing feedback to user.
         this.feedbackService.showInfo('Endpoint successfully created');
@@ -255,17 +171,6 @@ export class CrudifierSqlExtraComponent implements OnInit {
     this.arguments.splice(this.arguments.indexOf(argument), 1);
   }
 
-  /**
-   * Adds an argument as a reference into your SQL editor.
-   * 
-   * @param argument Argument to add as a reference into your SQL
-   */
-  public addArgumentIntoSql(argument: Argument) {
-
-    // Simply concatenating argument into SQL.
-    this.input.sql += '@' + argument.name;
-  }
-
   /*
    * Private helper methods.
    */
@@ -277,65 +182,5 @@ export class CrudifierSqlExtraComponent implements OnInit {
 
     // Transforming list of arguments to Hyperlambda declaration.
     return this.arguments.map(x => x.name + ':' + x.type).join('\r\n');
-  }
-
-  /*
-   * Returns all connection strings for database type from backend.
-   */
-  private getConnectionStrings(databaseType: string, onAfter: (connectionStrings: string[]) => void) {
-
-    // Retrieving connection strings for default database type from backend.
-    this.sqlService.connectionStrings(databaseType).subscribe((connectionStrings: any) => {
-
-      // Checking if caller supplied a callback, and if so, invoking it.
-      if (onAfter) {
-
-        // Transforming backend's result to a list of strings.
-        const tmp: string[] = [];
-        for (var idx in connectionStrings) {
-          tmp.push(idx);
-        }
-        onAfter(tmp);
-      }
-
-    }, (error: any) => {
-
-      // Oops, making sure we remove all selected values, and shows an error to user.
-      this.nullifySelectors(error);
-    });
-  }
-
-  /*
-   * Returns all databases for database-type/connection-string
-   * combination from backend.
-   */
-  private getDatabases(databaseType: string, connectionString: string, onAfter: (databases: any) => void) {
-
-    // Retrieving databases that exists for database-type/connection-string combination in backend.
-    this.sqlService.getDatabaseMetaInfo(databaseType, connectionString).subscribe((databases: Databases) => {
-
-      // Checking if caller supplied a callback, and if so invoking it.
-      if (onAfter) {
-
-        // Invoking callback.
-        onAfter(databases);
-      }
-    }, (error: any) => {
-
-      // Resetting selected connection string and selected database.
-      this.nullifySelectors(error);
-    });
-  }
-
-  /*
-   * Nullify all selectors.
-   */
-  private nullifySelectors(error: any) {
-    this.input.connectionString = null;
-    this.input.database = null;
-    this.input.options.hintOptions.tables = [];
-
-    // Notifying user
-    this.feedbackService.showError(error);
   }
 }

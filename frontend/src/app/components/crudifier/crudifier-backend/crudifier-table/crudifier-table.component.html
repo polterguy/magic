@@ -3,7 +3,6 @@
 
   <h2>Table {{table.name}}</h2>
 
-
   <ul class="verbs">
     <li *ngFor="let idx of table.verbs">
       <mat-checkbox [(ngModel)]="idx.generate">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
@@ -104,6 +103,32 @@
 
   </table>
 
+  <h3>Endpoint URLs</h3>
+
+  <mat-form-field class="field-input" appearance="outline">
+
+    <mat-label>Primary</mat-label>
+    <input
+      matInput
+      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="table.moduleName">
+
+  </mat-form-field>
+
+  <mat-form-field class="field-input" appearance="outline">
+
+    <mat-label>Secondary</mat-label>
+    <input
+      matInput
+      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="table.moduleUrl">
+
+  </mat-form-field>
+
   <h3>Authorization requirements</h3>
 
   <mat-form-field *ngIf="isPostIncluded()" class="field-input" appearance="outline">
@@ -148,32 +173,6 @@
       type="text"
       autocomplete="off"
       [(ngModel)]="table.authDelete">
-
-  </mat-form-field>
-
-  <h3>Endpoint URLs</h3>
-
-  <mat-form-field class="field-input" appearance="outline">
-
-    <mat-label>Primary</mat-label>
-    <input
-      matInput
-      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.moduleName">
-
-  </mat-form-field>
-
-  <mat-form-field class="field-input" appearance="outline">
-
-    <mat-label>Secondary</mat-label>
-    <input
-      matInput
-      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.moduleUrl">
 
   </mat-form-field>
 
