@@ -111,14 +111,6 @@ export class CrudifierSqlComponent implements OnInit {
           this.input.options.hintOptions = {
             tables: tables,
           };
-
-          // Turning on auto focus.
-          this.input.options.autofocus = true;
-
-          // Associating ALT+M with fullscreen toggling of the editor instance.
-          this.input.options.extraKeys['Alt-M'] = (cm: any) => {
-            cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-          };
         });
       });
     }, (error: any) => this.feedbackService.showError(error));
