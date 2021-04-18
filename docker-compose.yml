@@ -21,8 +21,8 @@ services:
     ports:
       - "4444:4444"
     volumes:
-      - cryptokeys:/magic/files/modules/system/crypto/keys
-      - magiccrud:/magic/files/modules/magic
+      - crypto_keys:/magic/files/modules/system/crypto/keys
+      - magic_crud:/magic/files/modules/magic
 
   frontend:
     image: servergardens/magic-frontend:latest
@@ -34,5 +34,5 @@ services:
 
 volumes:
   database:
-  cryptokeys:
-  magiccrud:
+  crypto_keys:
+  magic_crud:
