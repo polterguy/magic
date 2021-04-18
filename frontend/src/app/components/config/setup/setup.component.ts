@@ -109,4 +109,11 @@ export class SetupComponent implements OnInit, OnDestroy {
     }
     return 3;
   }
+
+  /**
+   * Invoked when user wants to close setup component.
+   */
+  public close() {
+    this.router.navigate(['/']);
+  }
 }
