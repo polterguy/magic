@@ -140,7 +140,9 @@ if
          get-value:x:@.arguments/*/overwrite
       io.file.exists:x:@.filename
    .lambda
-      throw:Endpoint already exists
+      throw:Endpoint already exists, choose a new name or enable overwrite
+         status:400
+         public:true
 
 
 /*
