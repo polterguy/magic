@@ -190,6 +190,8 @@
     [disabled]="!table.cache || table.cache === 0"
     [(ngModel)]="table.publicCache">Public</mat-checkbox>
 
+  <br>
+
   <mat-checkbox
     *ngIf="isDeleteIncluded()"
     [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
@@ -197,6 +199,9 @@
   <mat-checkbox
     *ngIf="isPutIncluded()"
     [(ngModel)]="table.logPut">Log update</mat-checkbox>
+
+  <br>
+  <br>
 
   <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
 
