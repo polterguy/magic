@@ -1,33 +1,37 @@
 
 <div class="wrapper">
 
-  <button
-    *ngIf="tests.length > 0"
-    mat-raised-button
-    color="primary"
-    [matTooltip]="'Verify ' + tests.length + ' assumptions'"
-    class="run-all"
-    (click)="executeAll()">
-    Run all
-  </button>
+  <div class="button-strip">
 
-  <mat-form-field [class]="tests.length > 0 ? 'fill-width' : 'invisible'" appearance="outline">
+    <mat-form-field [class]="tests.length > 0 ? 'fill-width' : 'invisible'" appearance="outline">
 
-    <mat-label>Filter</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [formControl]="filterFormControl">
-    <mat-icon
-      matSuffix
-      *ngIf="filterFormControl.value.trim() !== ''"
-      class="button"
-      role="button"
-      matTooltip="Clear filter"
-      (click)="clearFilter()">clear</mat-icon>
+      <mat-label>Filter</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [formControl]="filterFormControl">
+      <mat-icon
+        matSuffix
+        *ngIf="filterFormControl.value.trim() !== ''"
+        class="button"
+        role="button"
+        matTooltip="Clear filter"
+        (click)="clearFilter()">clear</mat-icon>
 
-  </mat-form-field>
+    </mat-form-field>
+
+    <button
+      *ngIf="tests.length > 0"
+      mat-raised-button
+      color="primary"
+      [matTooltip]="'Verify ' + getFilteredTests().length + ' assumptions'"
+      class="run-all"
+      (click)="executeFiltered()">
+      Run
+    </button>
+
+  </div>
 
   <table
     mat-table

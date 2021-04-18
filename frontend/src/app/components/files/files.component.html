@@ -7,7 +7,6 @@
     <button
       mat-icon-button
       [disabled]="currentFolder === '/'"
-      matTooltip="Up one level"
       (click)="up()">
       <mat-icon>reply</mat-icon>
     </button>
@@ -34,7 +33,6 @@
       <td class="mini-col button-col" mat-cell *matCellDef="let el">
         <button
           mat-icon-button
-          matTooltip="Rename"
           (click)="rename($event, el)">
           <mat-icon>edit</mat-icon>
         </button>
@@ -45,7 +43,6 @@
       <td class="mini-col button-col" mat-cell *matCellDef="let el">
         <button
           mat-icon-button
-          matTooltip="Download"
           (click)="download($event, el)">
           <mat-icon>cloud_download</mat-icon>
         </button>
@@ -57,7 +54,6 @@
         <button
           [disabled]="!canDeleteItem(el)"
           mat-icon-button
-          matTooltip="Delete"
           (click)="delete($event, el)">
           <mat-icon>delete</mat-icon>
         </button>

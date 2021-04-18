@@ -1,7 +1,7 @@
 
 <mat-form-field class="form-field" appearance="outline">
 
-  <mat-label>Database type</mat-label>
+  <mat-label>Database</mat-label>
   <mat-select
     [(ngModel)]="databaseType"
     (selectionChange)="databaseTypeChanged()">
@@ -14,7 +14,7 @@
 
 <mat-form-field *ngIf="databaseType && connectionStrings.length > 0" class="form-field" appearance="outline">
 
-  <mat-label>Connection string</mat-label>
+  <mat-label>Connection</mat-label>
   <mat-select
     [(ngModel)]="connectionString"
     (selectionChange)="connectionStringChanged()">

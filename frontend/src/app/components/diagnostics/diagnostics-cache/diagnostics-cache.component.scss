@@ -2,8 +2,19 @@
 .wrapper {
   margin:2rem;
   min-height: 20rem;
-  .fill-width {
-    margin-top: 1rem;
+  .button-strip {
+    display: table;
+    width: 100%;
+    .fill-width {
+      display: table-cell;
+      width: 100%;
+    }
+    .clear-button {
+      display: table-cell;
+      width: 100px;
+      top: -5px;
+      height: 50px;
+    }
   }
   table.cache-items {
     margin-bottom: 5rem;
@@ -27,10 +38,5 @@
         right: .5rem;
       }
     }
-  }
-  .clear-button {
-    position: absolute;
-    top: .5rem;
-    right: .5rem;
   }
 }

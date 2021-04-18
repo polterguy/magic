@@ -256,7 +256,7 @@ export class DiagnosticsTestsComponent implements OnInit {
   /**
    * Invoked when user wants to execute all tests.
    */
-  public executeAll() {
+  public executeFiltered() {
 
     const parallellNo = 2;
     let idxNo = 0;
@@ -265,7 +265,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     this.loaderInterceptor.increment();
 
     // Invoking backend once for every test in suite.
-    from(this.tests.map(x => this.endpointService.executeTest(x.filename)))
+    from(this.getFilteredTests().map(x => this.endpointService.executeTest(x.filename)))
       .pipe(
         bufferCount(parallellNo),
         concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
@@ -274,8 +274,9 @@ export class DiagnosticsTestsComponent implements OnInit {
            * Marking test as either failure or success,
            * depending upon return value from backend.
            */
+          const filtered = this.getFilteredTests();
           for (let idx of results) {
-            this.tests[idxNo].success = idx.result === 'success';
+            filtered[idxNo].success = idx.result === 'success';
             idxNo++;
           }
         }, (error: any) => {
@@ -311,10 +312,10 @@ export class DiagnosticsTestsComponent implements OnInit {
    private filterTests() {
 
     // Checking if all tests succeeded, and if so, avoid filtering.
-    if (this.tests.filter(x => x.success !== true).length === 0) {
+    if (this.getFilteredTests().filter(x => x.success !== true).length === 0) {
 
       // Perfect health! Publishing succeeded message and showing user some feedback.
-      this.feedbackService.showInfo('Your system has perfect health!');
+      this.feedbackService.showInfo('All tests succeeded');
       this.messageService.sendMessage({
         name: 'app.assumptions.succeeded',
       });
@@ -322,7 +323,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     } else {
 
       // One or more tests failed, removing all successful tests.
-      this.feedbackService.showError('Oops, one or more assumptions failed!');
+      this.feedbackService.showError('One or more assumptions failed!');
       this.tests = this.tests.filter(x => x.success !== true);
     }
   }
