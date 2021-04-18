@@ -144,16 +144,6 @@ mat-paginator.mat-paginator {
   right: .5rem;
 }
 
-mat-horizontal-stepper.mat-stepper-horizontal,
-mat-horizontal-stepper.mat-stepper-vertical {
-  background-color: rgb(45,45,45);
-  mat-step-header {
-    .mat-step-text-label {
-      color: rgb(245, 245, 245);
-    }
-  }
-}
-
 .mat-dialog-title, .mat-dialog-content {
   input {
     color: #000;

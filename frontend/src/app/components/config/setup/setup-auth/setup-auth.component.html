@@ -1,7 +1,7 @@
 
 <mat-form-field *ngIf="!showAdvanced" class="form-field" appearance="outline">
 
-  <mat-label>Database type</mat-label>
+  <mat-label>Database</mat-label>
   <mat-select
     [(ngModel)]="selectedDatabaseType">
     <mat-option
@@ -13,7 +13,7 @@
 
 <mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field wide" appearance="outline">
 
-  <mat-label>Connection string</mat-label>
+  <mat-label>Connection</mat-label>
   <input
     matInput
     [(ngModel)]="config.magic.databases[selectedDatabaseType].generic">
@@ -24,7 +24,7 @@
 
 <mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field"  appearance="outline">
 
-  <mat-label>Root password</mat-label>
+  <mat-label>Password</mat-label>
   <input
     matInput
     type="password"
@@ -34,7 +34,7 @@
 
 <mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field" appearance="outline">
 
-  <mat-label>Repeat password</mat-label>
+  <mat-label>Repeat</mat-label>
   <input
     matInput
     type="password"
@@ -56,25 +56,6 @@
 
 <div *ngIf="showAdvanced">
 
-  <mat-form-field class="fill-width" appearance="outline">
-
-    <mat-label>Configuration</mat-label>
-    <textarea
-      matInput
-      [(ngModel)]="json"
-      rows="15"></textarea>
-
-  </mat-form-field>
-
-  <div class="button-strip">
-
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="saveAdvanced()">
-      Save
-    </button>
-
-  </div>
+  <app-config-editor></app-config-editor>
 
 </div>

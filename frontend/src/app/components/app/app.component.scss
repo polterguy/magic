@@ -225,10 +225,29 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
   width: 20rem;
 }
 
+::ng-deep mat-horizontal-stepper.mat-stepper-horizontal,
+::ng-deep mat-horizontal-stepper.mat-stepper-vertical {
+  background-color: rgb(45,45,45);
+  mat-step-header {
+    .mat-step-text-label {
+      color: rgb(245, 245, 245);
+    }
+  }
+}
+
 /*
  * Light theme overrides.
  */
  ::ng-deep .light {
+  ::ng-deep mat-horizontal-stepper.mat-stepper-horizontal,
+  ::ng-deep mat-horizontal-stepper.mat-stepper-vertical {
+    background-color: rgb(245,245,245);
+    mat-step-header {
+      .mat-step-text-label {
+        color: rgb(45, 45, 45);
+      }
+    }
+  }
   input.mat-input-element {
     color:#555;
   }
