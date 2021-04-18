@@ -44,7 +44,6 @@ export class CrudifierTableComponent {
   public displayedColumns: string[] = [
     'name',
     'db',
-    'hl',
     'nullable',
     'primary',
     'automatic',

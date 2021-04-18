@@ -2,13 +2,19 @@
 .wrapper {
   margin:2rem;
   min-height: 20rem;
-  .fill-width {
-    margin-top: 1rem;
-  }
-  .run-all {
-    position: absolute;
-    top: .5rem;
-    right: .5rem;
+  .button-strip {
+    display: table;
+    width: 100%;
+    .fill-width {
+      display: table-cell;
+      width: 100%;
+    }
+    .run-all {
+      display: table-cell;
+      width: 100px;
+      top: -5px;
+      height: 50px;
+    }
   }
   table {
     table-layout: fixed;

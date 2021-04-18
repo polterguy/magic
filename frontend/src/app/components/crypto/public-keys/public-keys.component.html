@@ -1,10 +1,9 @@
 
 <button
   mat-icon-button
-  matTooltip="Import key"
   class="create-button"
   (click)="import()">
-  <mat-icon aria-label="Imports a public key">add_box</mat-icon>
+  <mat-icon>add_box</mat-icon>
 </button>
 
 <mat-form-field class="fill-width" appearance="outline">
@@ -39,7 +38,6 @@
     <td
       mat-cell
       class="mini-col"
-      matTooltip="Key was imported"
       *matCellDef="let el">{{el.key.imported | since}}</td>
   </ng-container>
 
@@ -50,7 +48,6 @@
       *matCellDef="let el">
       <button
         mat-icon-button
-        matTooltip="Invocations signed by key"
         (click)="invocations(el)">
         <mat-icon>cached</mat-icon>
       </button>
@@ -61,7 +58,6 @@
     <td mat-cell class="mini-col button-col" *matCellDef="let el">
       <button
         mat-icon-button
-        matTooltip="Delete"
         (click)="delete($event, el.key)">
         <mat-icon>delete</mat-icon>
       </button>

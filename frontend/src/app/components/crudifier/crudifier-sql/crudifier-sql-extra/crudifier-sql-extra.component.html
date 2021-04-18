@@ -1,9 +1,21 @@
 
 <div *ngIf="input">
 
-  <h2>Database {{input.database}}</h2>
+  <h2>{{input.database}}</h2>
 
-  <h3>Endpoint URLs</h3>
+  <h3>URL</h3>
+
+  <mat-form-field class="form-field" appearance="outline">
+
+    <mat-label>Verb</mat-label>
+    <mat-select
+      [(ngModel)]="verb">
+      <mat-option
+        *ngFor="let idx of verbs"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
 
   <mat-form-field class="form-field" appearance="outline">
 
@@ -40,8 +52,7 @@
     <mat-chip-list>
       <mat-chip
         *ngFor="let arg of arguments"
-        (removed)="removeArgument(arg)"
-        [matTooltip]="arg.name + ' as ' + arg.type">
+        (removed)="removeArgument(arg)">
         {{arg.name}}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
@@ -50,18 +61,6 @@
   </div>
 
   <h3>Miscelanous</h3>
-
-  <mat-form-field class="form-field" appearance="outline">
-
-    <mat-label>HTTP verb</mat-label>
-    <mat-select
-      [(ngModel)]="verb">
-      <mat-option
-        *ngFor="let idx of verbs"
-        [value]="idx">{{idx}}</mat-option>
-    </mat-select>
-
-  </mat-form-field>
 
   <mat-form-field class="form-field" appearance="outline">
 

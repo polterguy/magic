@@ -143,7 +143,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
 
     // Creating modal dialogue that asks user what name and type he wants to use for his argument.
     const dialogRef = this.dialog.open(CrudifierSqlAddArgumentDialogComponent, {
-      width: '550px',
+      width: '350px',
     });
 
     dialogRef.afterClosed().subscribe((argument: Argument) => {
