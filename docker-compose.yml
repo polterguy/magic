@@ -34,5 +34,5 @@ services:
 
 volumes:
   database:
-    cryptokeys:
-    magiccrud:
+  cryptokeys:
+  magiccrud:
