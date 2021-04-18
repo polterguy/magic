@@ -49,7 +49,7 @@ export class ToolbarComponent implements OnInit {
   /**
    * True if user wants to use light theme, otherwise false.
    */
-  public lightTheme = false;
+  public lightTheme = true;
 
   /**
    * Creates an instance of your component.
@@ -75,12 +75,17 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
 
     // Checking if user has stored a theme in his local storage.
-    var theme = localStorage.getItem('theme') ?? 'dark';
+    var theme = localStorage.getItem('theme') ?? 'light';
 
     // Storing whether or not user is using light theme.
     this.lightTheme = theme === 'light';
 
-    // Publishing the message that will apply the currently selected theme.
+    /*
+     * Publishing the message that will apply the currently selected theme.
+     *
+     * Notice, the setTimeout parts looks a bit silly, but are necessary in order
+     * to avoid race conditions during initialization of other components on page ...
+     */
     setTimeout(() => {
       this.messageService.sendMessage({
         name: Messages.THEME_CHANGED,
