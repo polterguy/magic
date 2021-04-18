@@ -45,7 +45,7 @@
   </span>
 
   <span *ngIf="url" class="item">
-    <strong class="label">Absolute URL</strong>
+    <strong class="label">Invocation URL</strong>
     <span class="description description-break">{{url}}</span>
   </span>
 
@@ -81,7 +81,7 @@
 
     <hr>
 
-    <strong class="label">Query params</strong>
+    <strong class="label">Arguments</strong>
     <span class="description" *ngIf="getArguments(endpoint.input, true).length > 0">
 
       <mat-chip-list>
@@ -143,7 +143,6 @@
     <button
       mat-raised-button
       color="primary"
-      matTooltip="Invokes endpoint with the specified arguments"
       (click)="invoke()">
       Invoke
     </button>
@@ -188,7 +187,6 @@
 
       <button
         mat-raised-button
-        matTooltip="Creates an assumption wrapping the current invocation"
         (click)="createTest()">
         New assumption
       </button>
