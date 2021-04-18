@@ -28,7 +28,21 @@
   <mat-step>
     <ng-template matStepLabel>Run assumptions</ng-template>
     <ng-container *ngIf="stepper.selectedIndex === 3">
+
       <app-diagnostics-assumptions></app-diagnostics-assumptions>
+
+      <div class="toolbar-strip">
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="seed === '' || subject === '' || email === ''"
+          (click)="close()"
+          class="done">
+          Close
+        </button>
+
+      </div>
+
     </ng-container>
   </mat-step>
 

@@ -21,3 +21,11 @@ mat-horizontal-stepper {
 ::ng-deep .mat-horizontal-stepper-header{
   pointer-events: none !important;
 }
+
+button.done {
+  display: block;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  min-width: 8rem;
+}
