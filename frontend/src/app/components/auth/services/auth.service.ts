@@ -198,6 +198,11 @@ export class AuthService {
         continue;
       }
 
+      // Checking if component allows anyone being authenticated.
+      if (idx.auth.length === 1 && idx.auth[0] === '*' && this.authenticated) {
+        continue;
+      }
+
       // Verifying user belongs to at least one of the roles required to invoke endpoint.
       if (idx.auth.filter(x => userRoles.indexOf(x) >= 0).length === 0) {
         return false;
