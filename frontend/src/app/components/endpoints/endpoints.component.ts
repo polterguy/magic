@@ -31,7 +31,7 @@ export class EndpointsComponent implements OnInit {
   /**
    * Columns to display in table.
    */
-  public displayedColumns: string[] = ['path', 'verb'];
+  public displayedColumns: string[] = ['verb', 'path', 'auth'];
 
   /**
    * Model describing endpoints in your installation.
@@ -119,6 +119,18 @@ export class EndpointsComponent implements OnInit {
 
     // Returns true if we're currently displaying this particular item.
     return this.displayDetails.filter(x => x === el.verb + el.path).length > 0;
+  }
+
+  /**
+   * Returns a string containing all roles allowed to invoke endpoint.
+   * 
+   * @param item Endpoint to return auth for
+   */
+  public getAuth(item: Endpoint) {
+    if (!item.auth) {
+      return '';
+    }
+    return item.auth.join(', ');
   }
 
   /*

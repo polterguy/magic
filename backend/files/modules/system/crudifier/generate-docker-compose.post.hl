@@ -16,6 +16,12 @@ validators.mandatory:x:@.arguments/*/apiDomain
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
  * Making sure we get the HTTP headers correctly applied before we return YML
  * file to caller.
  */
