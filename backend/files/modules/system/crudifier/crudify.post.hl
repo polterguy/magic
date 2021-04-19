@@ -48,6 +48,12 @@ validators.enum:x:@.arguments/*/template
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
  * Synchronising access to endpoint to avoid race condition.
  */
 semaphore:crudifier

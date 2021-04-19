@@ -16,6 +16,12 @@ validators.mandatory:x:@.arguments/*/releaseDate
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
  * Updating user record in database.
  */
 data.connect:magic

@@ -2,7 +2,7 @@
 /*
  * Imports a public key into the system.
  */
-.description:Imports a public key into the system
+.description:Imports a public key into the system. Notice, the key will not be enabled to prevent clients from gaining access to execute Hyperlambda until their key has been explicitly enabled by an admin of the current server.
 .arguments
    subject:string
    email:string
