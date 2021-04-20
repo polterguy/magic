@@ -6,7 +6,6 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
-import { Template } from '../../endpoints/models/template.model';
 import { MessageService } from 'src/app/services/message.service';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { CrudifierFrontendExtraComponent } from './crudifier-frontend-extra/crudifier-frontend-extra.component';
@@ -63,7 +62,7 @@ export class CrudifierFrontendComponent implements OnInit {
     this.endpointService.templates().subscribe((result: string[]) => {
 
       // Assigning result of invocation to model.
-      this.templates = result;
+      this.templates = result || [];
     });
   }
 

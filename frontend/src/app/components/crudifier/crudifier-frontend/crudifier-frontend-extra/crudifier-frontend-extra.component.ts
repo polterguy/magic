@@ -53,6 +53,11 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
   public endpoints: EndpointEx[];
 
   /**
+   * True if advanced settings shoulkd be shown.
+   */
+  public advanced = false;
+
+  /**
    * Docker image name as you want to publish it
    * to docker HUB for instance.
    */
@@ -114,7 +119,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
             auth: x.auth,
             type: x.type,
             description: x.description,
-            selected: false
+            selected: true
           };
         });
 
