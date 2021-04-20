@@ -51,11 +51,11 @@
 
 </mat-form-field>
 
-<mat-checkbox
-  *ngIf="database && database.tables && database.tables.length > 0"
-  [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
-
 <div class="button-strip">
+
+  <mat-checkbox
+    *ngIf="database && database.tables && database.tables.length > 0"
+    [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
 
   <button
     [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"

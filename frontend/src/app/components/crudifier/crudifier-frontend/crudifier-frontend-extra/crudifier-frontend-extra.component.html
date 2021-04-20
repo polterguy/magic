@@ -1,101 +1,115 @@
 
-<h3>Modules</h3>
+<div *ngIf="endpoints && endpoints.length > 0">
 
-<div class="module-declarations">
+  <h3>Modules</h3>
 
-  <mat-chip-list>
-    <mat-chip
-      [class]="moduleSelected(idx) ? 'selected' : 'not-selected'"
-      *ngFor="let idx of modules"
-      (click)="moduleClicked(idx)">
-      {{idx}}
-      <mat-icon
-        *ngIf="moduleSelected(idx)"
-        matChipRemove>check</mat-icon>
-    </mat-chip>
-  </mat-chip-list>
+  <div class="module-declarations">
 
-  <h3 *ngIf="endpoints && getComponents().length > 0">Components</h3>
+    <mat-chip-list>
+      <mat-chip
+        [class]="moduleSelected(idx) ? 'selected' : 'not-selected'"
+        *ngFor="let idx of modules"
+        (click)="moduleClicked(idx)">
+        {{idx}}
+        <mat-icon
+          *ngIf="moduleSelected(idx)"
+          matChipRemove>check</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
 
-  <mat-chip-list *ngIf="endpoints">
-    <mat-chip
-      [class]="componentSelected(idx) ? 'selected' : 'not-selected'"
-      *ngFor="let idx of getComponents()"
-      (click)="componentClicked(idx)">
-      {{idx}}
-      <mat-icon
-        *ngIf="componentSelected(idx)"
-        matChipRemove>check</mat-icon>
-    </mat-chip>
-  </mat-chip-list>
+    <h3 *ngIf="endpoints && getComponents().length > 0">Components</h3>
+
+    <mat-chip-list *ngIf="endpoints">
+      <mat-chip
+        [class]="componentSelected(idx) ? 'selected' : 'not-selected'"
+        *ngFor="let idx of getComponents()"
+        (click)="componentClicked(idx)">
+        {{idx}}
+        <mat-icon
+          *ngIf="componentSelected(idx)"
+          matChipRemove>check</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+
+  </div>
+
+  <div *ngIf="advanced">
+
+    <h3>Deployment</h3>
+
+    <mat-form-field class="form-field-double" appearance="outline">
+
+      <mat-label>Docker</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [(ngModel)]="dockerImage">
+
+    </mat-form-field>
+
+    <mat-form-field class="form-field-double" appearance="outline">
+
+      <mat-label>Frontend URL</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [(ngModel)]="deploymentUrl">
+
+    </mat-form-field>
+
+    <h3>Endpoints</h3>
+
+    <table
+      *ngIf="endpoints"
+      mat-table
+      [dataSource]="endpoints"
+      class="endpoints-items clickable">
+
+      <ng-container matColumnDef="path">
+        <td
+          mat-cell
+          *matCellDef="let el">{{el.path}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="verb">
+        <td
+          mat-cell
+          class="mini-col"
+          *matCellDef="let el">{{el.verb}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="selected">
+        <td
+          mat-cell
+          class="mini-col"
+          *matCellDef="let el">
+          <mat-checkbox matTooltip="Include endpoint in application" [(ngModel)]="el.selected"></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <tr
+        mat-row
+        (click)="el.selected = !el.selected"
+        *matRowDef="let el; columns: displayedColumns;"></tr>
+
+    </table>
+
+  </div>
+
+  <div class="button-strip">
+    <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
+  </div>
 
 </div>
 
-<div class="button-strip">
-  <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
-</div>
+<div *ngIf="endpoints && endpoints.length === 0">
 
-<div *ngIf="advanced">
+  <h3>No modules</h3>
 
-  <h3>Deployment</h3>
-
-  <mat-form-field class="form-field-double" appearance="outline">
-
-    <mat-label>Docker</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="dockerImage">
-
-  </mat-form-field>
-
-  <mat-form-field class="form-field-double" appearance="outline">
-
-    <mat-label>Frontend URL</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="deploymentUrl">
-
-  </mat-form-field>
-
-  <h3>Endpoints</h3>
-
-  <table
-    *ngIf="endpoints"
-    mat-table
-    [dataSource]="endpoints"
-    class="endpoints-items clickable">
-
-    <ng-container matColumnDef="path">
-      <td
-        mat-cell
-        *matCellDef="let el">{{el.path}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="verb">
-      <td
-        mat-cell
-        class="mini-col"
-        *matCellDef="let el">{{el.verb}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="selected">
-      <td
-        mat-cell
-        class="mini-col"
-        *matCellDef="let el">
-        <mat-checkbox matTooltip="Include endpoint in application" [(ngModel)]="el.selected"></mat-checkbox>
-      </td>
-    </ng-container>
-
-    <tr
-      mat-row
-      (click)="el.selected = !el.selected"
-      *matRowDef="let el; columns: displayedColumns;"></tr>
-
-  </table>
+  <p>
+    You don't have any modules, please generate a CRUD backend first.
+  </p>
 
 </div>

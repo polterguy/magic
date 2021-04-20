@@ -202,9 +202,7 @@
     <mat-checkbox
       *ngIf="isGetIncluded()"
       [disabled]="!table.cache || table.cache === 0"
-      [(ngModel)]="table.publicCache">Public</mat-checkbox>
-
-    <br>
+      [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
 
     <mat-checkbox
       *ngIf="isDeleteIncluded()"
