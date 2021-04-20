@@ -96,120 +96,133 @@
 
   </table>
 
-  <h3>URL</h3>
+  <div class="splitter">
 
-  <mat-form-field class="field-input" appearance="outline">
+    <div class="section-1">
 
-    <mat-label>Primary</mat-label>
-    <input
-      matInput
-      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.moduleName">
+      <h3>URL</h3>
 
-  </mat-form-field>
+      <mat-form-field class="field-input" appearance="outline">
 
-  <mat-form-field class="field-input" appearance="outline">
+        <mat-label>Primary</mat-label>
+        <input
+          matInput
+          [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.moduleName">
 
-    <mat-label>Secondary</mat-label>
-    <input
-      matInput
-      [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.moduleUrl">
+      </mat-form-field>
 
-  </mat-form-field>
+      <mat-form-field class="field-input" appearance="outline">
 
-  <h3>Authorization</h3>
+        <mat-label>Secondary</mat-label>
+        <input
+          matInput
+          [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.moduleUrl">
 
-  <mat-form-field *ngIf="isPostIncluded()" class="field-input" appearance="outline">
+      </mat-form-field>
 
-    <mat-label>Create</mat-label>
-    <input
-      matInput
-      [disabled]="!isPostIncluded()"
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.authPost">
+    </div>
 
-  </mat-form-field>
+    <div class="section-2">
 
-  <mat-form-field *ngIf="isGetIncluded()" class="field-input" appearance="outline">
+      <h3>Authorization</h3>
 
-    <mat-label>Read</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.authGet">
+      <mat-form-field *ngIf="isPostIncluded()" class="field-input" appearance="outline">
 
-  </mat-form-field>
+        <mat-label>Create</mat-label>
+        <input
+          matInput
+          [disabled]="!isPostIncluded()"
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.authPost">
 
-  <mat-form-field *ngIf="isPutIncluded()" class="field-input" appearance="outline">
+      </mat-form-field>
 
-    <mat-label>Update</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.authPut">
+      <mat-form-field *ngIf="isGetIncluded()" class="field-input" appearance="outline">
 
-  </mat-form-field>
+        <mat-label>Read</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.authGet">
 
-  <mat-form-field *ngIf="isDeleteIncluded()" class="field-input" appearance="outline">
+      </mat-form-field>
 
-    <mat-label>Delete</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="table.authDelete">
+      <mat-form-field *ngIf="isPutIncluded()" class="field-input" appearance="outline">
 
-  </mat-form-field>
+        <mat-label>Update</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.authPut">
 
-  <h3>Miscelanous</h3>
+      </mat-form-field>
 
-  <mat-form-field *ngIf="isGetIncluded()" class="field-input" appearance="outline">
+      <mat-form-field *ngIf="isDeleteIncluded()" class="field-input" appearance="outline">
 
-    <mat-label>Caching</mat-label>
-    <input
-      matInput
-      type="number"
-      min="0"
-      max="300"
-      autocomplete="off"
-      [disabled]="!isGetIncluded()"
-      [(ngModel)]="table.cache">
+        <mat-label>Delete</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.authDelete">
 
-  </mat-form-field>
+      </mat-form-field>
 
-  <mat-checkbox
-    *ngIf="isGetIncluded()"
-    [disabled]="!table.cache || table.cache === 0"
-    [(ngModel)]="table.publicCache">Public</mat-checkbox>
+    </div>
 
-  <br>
+  </div>
 
-  <mat-checkbox
-    *ngIf="isDeleteIncluded()"
-    [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
+  <div *ngIf="advanced">
 
-  <mat-checkbox
-    *ngIf="isPutIncluded()"
-    [(ngModel)]="table.logPut">Log update</mat-checkbox>
+    <h3>Miscellaneous</h3>
 
-  <br>
-  <br>
+    <mat-form-field *ngIf="isGetIncluded()" class="field-input" appearance="outline">
 
-  <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
+      <mat-label>Caching</mat-label>
+      <input
+        matInput
+        type="number"
+        min="0"
+        max="300"
+        autocomplete="off"
+        [disabled]="!isGetIncluded()"
+        [(ngModel)]="table.cache">
 
-  <h3 *ngIf="advanced">Additional POST/PUT Hyperlambda</h3>
+    </mat-form-field>
 
-  <app-codemirror-hyperlambda *ngIf="advanced" [(model)]="input"></app-codemirror-hyperlambda>
+    <mat-checkbox
+      *ngIf="isGetIncluded()"
+      [disabled]="!table.cache || table.cache === 0"
+      [(ngModel)]="table.publicCache">Public</mat-checkbox>
+
+    <br>
+
+    <mat-checkbox
+      *ngIf="isDeleteIncluded()"
+      [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
+
+    <mat-checkbox
+      *ngIf="isPutIncluded()"
+      [(ngModel)]="table.logPut">Log update</mat-checkbox>
+
+    <h3>Additional POST/PUT Hyperlambda</h3>
+
+    <app-codemirror-hyperlambda *ngIf="advanced" [(model)]="input"></app-codemirror-hyperlambda>
+
+  </div>
 
   <div class="button-strip">
+
+    <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
 
     <button
       [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded())"

@@ -3,41 +3,66 @@
 
   <h2>{{input.database}}</h2>
 
-  <h3>URL</h3>
+  <div class="splitter">
 
-  <mat-form-field class="form-field" appearance="outline">
+    <div class="section-1">
 
-    <mat-label>Verb</mat-label>
-    <mat-select
-      [(ngModel)]="verb">
-      <mat-option
-        *ngFor="let idx of verbs"
-        [value]="idx">{{idx}}</mat-option>
-    </mat-select>
+      <h3>URL</h3>
 
-  </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
 
-  <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Verb</mat-label>
+        <mat-select
+          [(ngModel)]="verb">
+          <mat-option
+            *ngFor="let idx of verbs"
+            [value]="idx">{{idx}}</mat-option>
+        </mat-select>
 
-    <mat-label>Primary</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="moduleName">
+      </mat-form-field>
 
-  </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
 
-  <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Primary</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="moduleName">
 
-    <mat-label>Secondary</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="endpointName">
+      </mat-form-field>
 
-  </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
+
+        <mat-label>Secondary</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="endpointName">
+
+      </mat-form-field>
+
+    </div>
+
+    <div class="section-2">
+
+      <h3>Authorization</h3>
+
+      <mat-form-field class="form-field" appearance="outline">
+
+        <mat-label>Authorization</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="authorization">
+
+      </mat-form-field>
+
+    </div>
+
+  </div>
 
   <h3>Arguments</h3>
 
@@ -60,29 +85,16 @@
 
   </div>
 
-  <h3>Miscelanous</h3>
-
-  <mat-form-field class="form-field" appearance="outline">
-
-    <mat-label>Authorization</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [(ngModel)]="authorization">
-
-  </mat-form-field>
-
-  <mat-checkbox [(ngModel)]="isList">Scalar</mat-checkbox>
-
-  <mat-checkbox [(ngModel)]="overwrite">Overwrite</mat-checkbox>
-
   <h3>SQL</h3>
 
   <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
 
   <div class="button-strip">
 
+    <mat-checkbox [(ngModel)]="isList">Scalar</mat-checkbox>
+
+    <mat-checkbox [(ngModel)]="overwrite">Overwrite</mat-checkbox>
+  
     <button
       mat-raised-button
       color="primary"

@@ -50,3 +50,24 @@ table.table-items {
 h3 {
   margin-top: 1.5rem;
 }
+
+.splitter {
+  display: flex;
+  .section-1 {
+    flex-direction: column;
+    flex: .60;
+  }
+  .section-2 {
+    flex-direction: column;
+    flex: .40;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .splitter {
+    display: block;
+    .section-1, .section-2 {
+      flex: none;
+    }
+  }
+}

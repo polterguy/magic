@@ -1,11 +1,10 @@
 
 <mat-form-field class="form-field" appearance="outline">
 
-  <mat-label>Select template</mat-label>
+  <mat-label>Template</mat-label>
   <mat-select
     [(ngModel)]="template"
-    (selectionChange)="templateChanged()"
-    matTooltip="Template to generate frontend from">
+    (selectionChange)="templateChanged()">
     <mat-option
       *ngFor="let idx of templates"
       [value]="idx">{{idx}}</mat-option>
@@ -19,7 +18,6 @@
   <input
     matInput
     type="text"
-    matTooltip="Name of your app"
     autocomplete="off"
     [(ngModel)]="name">
 
@@ -27,12 +25,11 @@
 
 <mat-form-field class="form-field form-field-double" appearance="outline">
 
-  <mat-label>Copyright notice</mat-label>
+  <mat-label>Copyright</mat-label>
   <input
     matInput
     type="text"
     autocomplete="off"
-    matTooltip="Copyright notice to put in source files"
     [(ngModel)]="copyright">
 
 </mat-form-field>

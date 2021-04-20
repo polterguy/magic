@@ -44,3 +44,25 @@ table.table-items {
 h3 {
   margin-top: 1.5rem;
 }
+
+.splitter {
+  display: flex;
+  margin-top: 2rem;
+  .section-1 {
+    flex-direction: column;
+    flex: .35;
+  }
+  .section-2 {
+    flex-direction: column;
+    flex: .65;
+  }
+}
+
+@media screen and (max-width: 1350px) {
+  .splitter {
+    display: block;
+    .section-1, .section-2 {
+      flex: none;
+    }
+  }
+}
