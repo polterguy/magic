@@ -71,24 +71,21 @@
 
             <button
               mat-raised-button
-              color="primary"
-              matTooltip="Run assumption"
-              (click)="executeTest(el)">
-              Run
+              (click)="saveTest(el.filename, el.content.hyperlambda)">
+              Save
             </button>
 
             <button
               mat-raised-button
-              matTooltip="Delete assumption"
               (click)="deleteTest(el)">
               Delete
             </button>
 
             <button
               mat-raised-button
-              matTooltip="Save assumption"
-              (click)="saveTest(el.filename, el.content.hyperlambda)">
-              Save
+              color="primary"
+              (click)="executeTest(el)">
+              Run
             </button>
 
           </div>

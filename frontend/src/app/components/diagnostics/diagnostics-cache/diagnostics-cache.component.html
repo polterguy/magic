@@ -26,7 +26,6 @@
       mat-raised-button
       color="primary"
       class="clear-button"
-      [matTooltip]="filterFormControl.value === '' ? 'Clear all items from cache' : 'Clear all filtered items from cache'"
       (click)="deleteAll()">
       Purge
     </button>
@@ -50,7 +49,6 @@
       <td mat-cell class="mini-col button-col" *matCellDef="let el">
         <button
           (click)="delete($event, el.key);"
-          matTooltip="Delete item from cache"
           mat-button>
           <mat-icon>delete</mat-icon>
         </button>
@@ -62,7 +60,6 @@
         <pre>{{el.value}}</pre>
         <button
           mat-icon-button
-          matTooltip="Copy value to clipboard"
           (click)="copyContent(el.value)">
           <mat-icon>edit</mat-icon>
         </button>

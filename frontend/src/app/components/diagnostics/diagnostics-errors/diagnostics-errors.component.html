@@ -3,7 +3,6 @@
 
   <div class="meta-statistics">
     <a
-      matTooltip="Magic restarts over the last 2 weeks"
       [routerLink]="['/log']"
       [queryParams]="{filter: 'Magic was successfully started'}">
       Restarts
@@ -21,7 +20,6 @@
 
   <div class="meta-statistics">
     <a
-      matTooltip="Unhandled exceptions over the last 2 weeks"
       [routerLink]="['/log']"
       [queryParams]="{filter: 'Unhandled exception occurred \''}">
       Unhandled exceptions
@@ -39,7 +37,6 @@
 
   <div class="meta-statistics">
     <a
-      matTooltip="Failed task executions over the last 2 weeks"
       [routerLink]="['/log']"
       [queryParams]="{filter: 'Unhandled exception while executing scheduled task with id of \''}">
       Failed tasks

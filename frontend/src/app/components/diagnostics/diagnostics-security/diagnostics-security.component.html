@@ -3,7 +3,6 @@
 
   <div class="meta-statistics">
     <a
-      matTooltip="Logins per day the last 2 weeks"
       [routerLink]="['/log']"
       [queryParams]="{filter: 'We successfully authenticated user \''}">
       Logins
@@ -21,7 +20,6 @@
 
   <div class="meta-statistics">
     <a
-      matTooltip="Failed logins per day the last 2 weeks"
       [routerLink]="['/log']"
       [queryParams]="{filter: 'Unhandled exception occurred \'Access denied\' at \'/magic/modules/system/auth/authenticate\''}">
       Failed logins
@@ -39,7 +37,6 @@
 
   <div class="meta-statistics">
     <a
-      matTooltip="Access denied per day the last 2 weeks"
       [routerLink]="['/log']"
       [queryParams]="{filter: 'Unhandled exception occurred \'Access denied\' at \''}">
       Access denied
