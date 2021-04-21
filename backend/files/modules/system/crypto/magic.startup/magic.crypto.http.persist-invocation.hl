@@ -8,10 +8,12 @@ slots.create:magic.crypto.http.persist-invocation
    /*
     * Inserting arguments to invocation into crypto_keys database table.
     */
+   convert:x:@.arguments/*/request-id
+      type:string
    data.connect:magic
       data.execute:insert into crypto_invocations (crypto_key, request_id, request, request_raw, response) values (@crypto_key, @request_id, @request, @request_raw, @response)
          @crypto_key:x:@.arguments/*/crypto-key
-         @request_id:x:@.arguments/*/request-id
+         @request_id:x:@convert
          @request:x:@.arguments/*/request
          @request_raw:x:@.arguments/*/request-raw
          @response:x:@.arguments/*/response

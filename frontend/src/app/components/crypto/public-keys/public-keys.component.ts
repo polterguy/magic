@@ -13,6 +13,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from 'src/app/components/log/services/log.service';
 import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
@@ -24,7 +25,7 @@ import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/impor
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
 
 /*
- * Helper class to encapsulate a key and its CodeMirror vocabulary options.
+ * Helper class to encapsulate all public keys and their CodeMirror vocabulary options.
  */
 class PublicKeyEx {
 
@@ -95,15 +96,17 @@ export class PublicKeysComponent implements OnInit {
    * Creates and instance of your component.
    * 
    * @param dialog Needed to create modal dialogs when importing public keys
+   * @param clipboard Needed to be able to copy things into clipboard
    * @param logService Needed to log changes done to key collection
    * @param cryptoService Needed to retrieve public keys from backend
    * @param feedbackService Needed to be able to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
+    private clipboard: Clipboard,
     private logService: LogService,
     private cryptoService: CryptoService,
-    private clipboard: Clipboard,
+    private messageService: MessageService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -124,45 +127,6 @@ export class PublicKeysComponent implements OnInit {
 
     // Retrieving initial keys to databind table towards.
     this.getKeys();
-  }
-
-  /**
-   * Returns public keys from backend.
-   */
-  public getKeys() {
-
-    // Retrieving public keys from backend.
-    this.cryptoService.publicKeys({
-      filter: this.filterFormControl.value,
-      offset: this.paginator.pageIndex * this.paginator.pageSize,
-      limit: this.paginator.pageSize
-    }).subscribe((keys: PublicKey[]) => {
-
-      // Resetting list of items we're currently viewing details for.
-      this.displayDetails = [];
-
-      // Mapping public keys to expected model.
-      this.publicKeys = (keys || []).map(x => {
-        const result = {
-          identity: x.subject + ' - ' + x.email,
-          key: x,
-          options: {
-            hyperlambda: x.vocabulary,
-            options: hyperlambda,
-          },
-          original_content: x.content,
-        };
-        result.options.options.autofocus = false;
-        return result;
-      });
-
-      // Counting items with the same filter as we used to retrieve items with.
-      this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe(res => {
-
-        // Assigning count to returned value from server.
-        this.count = res.count;
-      }, (error: any) => this.feedbackService.showError(error));
-    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -248,13 +212,13 @@ export class PublicKeysComponent implements OnInit {
   /**
    * Invoked when user wants to copy a key's fingerprint
    * 
-   * @param fingerprint Fingerprint to put on to clipboard
+   * @param content Fingerprint to put on to clipboard
    */
-  public copyFingerprint(fingerprint: string) {
+  public copyContentToClipboard(content: string) {
 
     // Putting specified fingerprint on top clipboard.
-    this.clipboard.copy(fingerprint);
-    this.feedbackService.showInfoShort('Fingerprint can be found on your clipboard');
+    this.clipboard.copy(content);
+    this.feedbackService.showInfoShort('Content can be found on your clipboard');
   }
 
   /**
@@ -315,7 +279,7 @@ export class PublicKeysComponent implements OnInit {
 
               // Invoking method responsible for saving the key.
               this.saveKeyImplementation(key, 'The old key was backed up in your log.');
-            });
+            }, (error: any) => this.feedbackService.showError(error));
           });
       } else {
 
@@ -349,6 +313,20 @@ export class PublicKeysComponent implements OnInit {
     });
   }
 
+  /**
+   * Invoked when user wants to see all receipts belonging to one specific key.
+   * 
+   * @param key Key to show receipts for
+   */
+  public showReceipts(key: PublicKey) {
+
+    // Raising message needed to switch tabs.
+    this.messageService.sendMessage({
+      name: 'crypto.receipts.show',
+      content: key.id
+    });
+  }
+
   /*
    * Private helper methods.
    */
@@ -373,6 +351,46 @@ export class PublicKeysComponent implements OnInit {
       }
       key.identity = key.key.subject + ' - ' + key.key.email;
 
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /*
+   * Returns public keys from backend.
+   */
+  private getKeys() {
+
+    // Retrieving public keys from backend.
+    this.cryptoService.publicKeys({
+      filter: this.filterFormControl.value,
+      offset: this.paginator.pageIndex * this.paginator.pageSize,
+      limit: this.paginator.pageSize
+    }).subscribe((keys: PublicKey[]) => {
+
+      // Resetting list of items we're currently viewing details for.
+      this.displayDetails = [];
+
+      // Mapping public keys to expected model.
+      this.publicKeys = (keys || []).map(x => {
+        const result = {
+          identity: x.subject + ' - ' + x.email,
+          key: x,
+          options: {
+            hyperlambda: x.vocabulary,
+            options: hyperlambda,
+          },
+          original_content: x.content,
+        };
+        result.options.options.autofocus = false;
+        return result;
+      });
+
+      // Counting items with the same filter as we used to retrieve items with.
+      this.cryptoService.countPublicKeys({ filter: this.filterFormControl.value }).subscribe(res => {
+
+        // Assigning count to returned value from server.
+        this.count = res.count;
+
+      }, (error: any) => this.feedbackService.showError(error));
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

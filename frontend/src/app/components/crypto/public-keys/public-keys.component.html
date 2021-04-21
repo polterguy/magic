@@ -108,7 +108,7 @@
 
         </mat-form-field>
 
-        <div class="fingerprint" (click)="copyFingerprint(el.key.fingerprint)">{{el.key.fingerprint}}</div>
+        <div class="fingerprint" (click)="copyContentToClipboard(el.key.fingerprint)">{{el.key.fingerprint}}</div>
 
         <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
 
@@ -118,6 +118,10 @@
             class="crypto-enabled"
             (change)="enabledChanged(el.key)"
             [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
+
+          <button
+            mat-raised-button
+            (click)="showReceipts(el.key)">Receipts</button>
 
           <button
             mat-raised-button
