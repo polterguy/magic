@@ -95,7 +95,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   public displayedColumns: string[] = [
     'identity',
     'imported',
-    'invocations',
     'delete',
   ];
 
@@ -292,22 +291,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
           this.getKeys();
         });
     });
-  }
-
-  /**
-   * Invoked when user wants to see invocations for the specified key.
-   * 
-   * @param key Key to view invocations for
-   */
-  public invocations(key: PublicKeyEx) {
-
-    // Changing filter textbox' content to key's email address, which will retrieve keys again.
-    this.filterFormControl.setValue(key.key.email);
-
-    // Changing active tab in tab view.
-    this.messageService.sendMessage({
-      name: 'crypto.view-invocations',
-    })
   }
 
   /**

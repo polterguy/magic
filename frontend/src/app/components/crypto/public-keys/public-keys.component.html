@@ -41,19 +41,6 @@
       *matCellDef="let el">{{el.key.imported | since}}</td>
   </ng-container>
 
-  <ng-container matColumnDef="invocations">
-    <td
-      mat-cell
-      class="mini-col button-col"
-      *matCellDef="let el">
-      <button
-        mat-icon-button
-        (click)="invocations(el)">
-        <mat-icon>cached</mat-icon>
-      </button>
-    </td>
-  </ng-container>
-
   <ng-container matColumnDef="delete">
     <td mat-cell class="mini-col button-col" *matCellDef="let el">
       <button
@@ -115,13 +102,12 @@
           <textarea
             matInput
             class="crypto-key"
-            matTooltip="Public key content"
             [(ngModel)]="el.key.content"
             rows="7"></textarea>
 
         </mat-form-field>
 
-        <div matTooltip="Fingerprint of key" class="fingerprint">{{el.key.fingerprint}}</div>
+        <div class="fingerprint">{{el.key.fingerprint}}</div>
 
         <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
 
@@ -129,7 +115,6 @@
 
           <mat-checkbox
             class="crypto-enabled"
-            matTooltip="Whether or not the key can invoke your server"
             (change)="enabledChanged(el.key)"
             [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
 

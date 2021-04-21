@@ -4,13 +4,8 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
 import { MatTabGroup } from '@angular/material/tabs';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-
-// Application specific imports.
-import { Message } from 'src/app/models/message.model';
-import { MessageService } from 'src/app/services/message.service';
+import { Component, ViewChild } from '@angular/core';
 
 /**
  * Crypto component allowing you to administrate your server's cryptography keys.
@@ -20,58 +15,10 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './crypto.component.html',
   styleUrls: ['./crypto.component.scss']
 })
-export class CryptoComponent implements OnInit, OnDestroy {
-
-  /**
-   * Subscription for messages published by other components.
-   */
-  private _subscription: Subscription;
+export class CryptoComponent {
 
   /**
    * Paginator for paging table.
    */
   @ViewChild(MatTabGroup, {static: true}) public tab: MatTabGroup;
-
-  /**
-   * Creates an instance of your component.
-   * 
-   * @param messageService Needed to subscribe to relevant messages, specifically active tab change requests
-   */
-  constructor(private messageService: MessageService) { }
-
-  /**
-   * Implementtation of OnInit.
-   */
-  public ngOnInit() {
-
-    // Making sure we subscribe to relevant messages.
-    this._subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-      if (msg.name === 'crypto.view-invocations') {
-
-        // Caller wants to change active tab to the 'View invocations' tab.
-        this.tab.selectedIndex = 1;
-      }
-    });
-  }
-
-  /**
-   * Implementation of OnDestroy.
-   */
-  public ngOnDestroy() {
-
-    // House cleaning.
-    this._subscription.unsubscribe();
-  }
-
-  /**
-   * Invoked when active tab changes.
-   */
-  public selectedTabChanged() {
-
-    // Publishing message to inform other components of that the active tab was changed.
-    this.messageService.sendMessage({
-      name: 'crypto.active-tab-changed',
-      content: this.tab.selectedIndex,
-    });
-  }
 }
