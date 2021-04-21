@@ -99,6 +99,7 @@
 
         <mat-form-field class="fill-width" appearance="outline">
 
+          <mat-label>Key content</mat-label>
           <textarea
             matInput
             class="crypto-key"
@@ -107,7 +108,7 @@
 
         </mat-form-field>
 
-        <div class="fingerprint">{{el.key.fingerprint}}</div>
+        <div class="fingerprint" (click)="copyFingerprint(el.key.fingerprint)">{{el.key.fingerprint}}</div>
 
         <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
 
