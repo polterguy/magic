@@ -3,10 +3,9 @@
 
   <button
     mat-icon-button
-    matTooltip="Create new task"
     class="create-button"
     (click)="create()">
-    <mat-icon aria-label="Creates a new task">add_box</mat-icon>
+    <mat-icon>add_box</mat-icon>
   </button>
 
   <mat-form-field class="fill-width" appearance="outline">
@@ -41,7 +40,6 @@
       <td mat-cell class="mini-col button-col" *matCellDef="let el">
         <button
           mat-icon-button
-          matTooltip="Delete task"
           (click)="delete($event, el)">
           <mat-icon>delete</mat-icon>
         </button>
@@ -75,14 +73,12 @@
 
             <button
               mat-icon-button
-              matTooltip="Schedule task"
               (click)="schedule(el.task)">
               <mat-icon>schedule</mat-icon>
             </button>
 
             <button
               mat-icon-button
-              matTooltip="Save task"
               (click)="update(el)">
               <mat-icon>save</mat-icon>
             </button>

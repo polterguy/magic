@@ -108,19 +108,16 @@
       [(ngModel)]="fileInput"
       multiple
       class="invisible-file-element"
-      matTooltip="Upload"
       (change)="upload($event.target.files)">
 
     <button
       mat-icon-button
-      matTooltip="Create file"
       (click)="newFile()">
       <mat-icon>create</mat-icon>
     </button>
 
     <button
       mat-icon-button
-      matTooltip="Create folder"
       (click)="newFolder()">
       <mat-icon>add</mat-icon>
     </button>
