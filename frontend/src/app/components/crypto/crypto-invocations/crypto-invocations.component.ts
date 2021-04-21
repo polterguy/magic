@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -59,10 +59,12 @@ export class CryptoInvocationsComponent {
   /**
    * Creates an instance of your component.
    * 
+   * @param clipboard Needed to be able to copy information to the clipboard
    * @param cryptoService Needed to retrieve cryptographically signed invocations from backend
    * @param feedbackService Needed to display information to user
    */
   constructor(
+    private clipboard: Clipboard,
     private cryptoService: CryptoService,
     private feedbackService: FeedbackService) { }
 
@@ -146,6 +148,18 @@ export class CryptoInvocationsComponent {
       // Displaying item.
       this.displayDetails.push(invocation.id);
     }
+  }
+
+  /**
+   * Copies the specified content into the clipboard.
+   * 
+   * @param content Content to copy to clipboard
+   */
+  public copyToClipboard(content: string) {
+
+    // Copies the specified content into the client's clipboard.
+    this.clipboard.copy(content);
+    this.feedbackService.showInfoShort('Content was copied to your clipboard');
   }
 
   /**
