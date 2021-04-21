@@ -53,13 +53,13 @@
             <strong>Subject</strong>
             <span
               class="clipboard"
-              (click)="copyToClipboard(getCryptoKey(el.crypto_key))">{{getCryptoKey(el.crypto_key)}}</span>
+              (click)="copyToClipboard(getCryptoKeySubject(el.crypto_key))">{{getCryptoKeySubject(el.crypto_key)}}</span>
           </span>
           <span class="item">
-            <strong>Key ID</strong>
+            <strong>Key fingerprint</strong>
             <span
               class="clipboard"
-              (click)="copyToClipboard(getCryptoKeyPlaceholder(el.crypto_key))">{{getCryptoKeyPlaceholder(el.crypto_key)}}</span>
+              (click)="copyToClipboard(getCryptoKeyFingerprint(el.crypto_key))">{{getCryptoKeyFingerprint(el.crypto_key)}}</span>
           </span>
           <span class="item">
             <strong class="full-width">Request</strong>

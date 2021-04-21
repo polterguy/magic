@@ -19,15 +19,15 @@
 
 
 /*
- * Loading stream.
- */
-io.stream.read:x:@.arguments/*/body
-
-
-/*
  * Sanity checking invocation.
  */
 validators.mandatory:x:@.arguments/*/body
+
+
+/*
+ * Loading stream.
+ */
+io.stream.read:x:@.arguments/*/body
 
 
 /*

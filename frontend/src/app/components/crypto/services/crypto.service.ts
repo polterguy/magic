@@ -190,8 +190,8 @@ export class CryptoService {
 
       // Applying filter parts, if given.
       if (filter.filter) {
-        if (filter.filter.request_id && filter.filter.request_id !== '') {
-          query += '&request_id.like=' + encodeURIComponent('%' + filter.filter.request_id + '%');
+        if (filter.filter.filter && filter.filter.filter !== '') {
+          query += '&request_id.like=' + encodeURIComponent('%' + filter.filter.filter + '%');
         }
         if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
           query += '&crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
@@ -213,15 +213,11 @@ export class CryptoService {
     // Dynamically building our query parameters.
     let query = '';
     if (filter.filter) {
-      if (filter.filter.request_id && filter.filter.request_id !== '') {
-        query += '?request_id.like=' + encodeURIComponent('%' + filter.filter.request_id + '%');
-        if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
-          query += '&crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
-        }
-      } else {
-        if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
-          query += '?crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
-        }
+      if (filter.filter.filter && filter.filter.filter !== '') {
+        query += '?request_id.like=' + encodeURIComponent('%' + filter.filter.filter + '%');
+      }
+      if (filter.filter.crypto_key && filter.filter.crypto_key !== -1) {
+        query += '?crypto_key.eq=' + encodeURIComponent(filter.filter.crypto_key);
       }
     }
 

@@ -4,14 +4,17 @@
  */
 
 // Angular and system imports.
+import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
+import { Message } from 'src/app/models/message.model';
 import { PublicKey } from '../models/public-key.model';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { CryptoInvocation } from 'src/app/components/crypto/models/crypto-invocations.model';
@@ -24,7 +27,10 @@ import { CryptoInvocation } from 'src/app/components/crypto/models/crypto-invoca
   templateUrl: './crypto-invocations.component.html',
   styleUrls: ['./crypto-invocations.component.scss']
 })
-export class CryptoInvocationsComponent {
+export class CryptoInvocationsComponent implements OnInit, OnDestroy {
+
+  // Subscription for messages published by other components.
+  private subscription: Subscription;
 
   // List of item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
@@ -67,17 +73,30 @@ export class CryptoInvocationsComponent {
    * 
    * @param clipboard Needed to be able to copy information to the clipboard
    * @param cryptoService Needed to retrieve cryptographically signed invocations from backend
+   * @param messageService Needed to be able to subscribe to messages of relevance transmitted by other components
    * @param feedbackService Needed to display information to user
    */
   constructor(
     private clipboard: Clipboard,
     private cryptoService: CryptoService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
    */
   public ngOnInit() {
+
+    // Making sure we subscribe to messages sent by other components of relevance to us.
+    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+
+      // Subscribing to message applying filter for viewing invocations from one specific key.
+      if (msg.name === 'crypto.receipts.key-id') {
+
+        // Applying filter.
+        this.filterFormControl.setValue('key:' + msg.content);
+      }
+    });
 
     // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');
@@ -95,14 +114,27 @@ export class CryptoInvocationsComponent {
   }
 
   /**
+   * Implementation of OnInit.
+   */
+  public ngOnDestroy() {
+
+    // House cleaning.
+    this.subscription.unsubscribe();
+  }
+
+  /**
    * Retrieves invocations from backend.
    */
   public getInvocations() {
 
     // Invoking backend to retrieve invocations.
-    const filter: any = {
-      request_id: this.filterFormControl.value,
-    };
+    const filterValue = <string>this.filterFormControl.value;
+    const filter: any = { };
+    if (filterValue.indexOf('key:') === 0) {
+      filter.crypto_key = filterValue.substring(filterValue.indexOf(':') + 1);
+    } else {
+      filter.filter = filterValue;
+    }
     this.cryptoService.invocations({
       filter,
       offset: this.paginator.pageIndex * this.paginator.pageSize,
@@ -116,7 +148,13 @@ export class CryptoInvocationsComponent {
       this.invocations = invocations || [];
 
       // Counting items with the same filter as we used to retrieve items with.
-      this.cryptoService.countInvocations({ filter: this.filterFormControl.value }).subscribe(res => {
+      const countFilter: any = { };
+      if (filterValue.indexOf('key:') === 0) {
+        countFilter.crypto_key = filterValue.substring(filterValue.indexOf(':') + 1);
+      } else {
+        countFilter.filter = filterValue;
+      }
+      this.cryptoService.countInvocations({ filter: countFilter }).subscribe(res => {
 
         // Assigning count to returned value from server.
         this.count = res.count;
@@ -149,20 +187,29 @@ export class CryptoInvocationsComponent {
 
       // Hiding item.
       this.displayDetails.splice(idx, 1);
+
     } else {
 
       // Displaying item.
       this.displayDetails.push(invocation.id);
 
-      // Checking if we need to retrieve key details from backend.
+      /*
+       * Checking if we need to retrieve key details from backend.
+       *
+       * This is done such that we can display more friendly text for each invocation,
+       * showing who created the invocation, by displaying email/identity/etc ...
+       */
       if (this.keys.filter(x => x.id === invocation.crypto_key).length === 0) {
 
         // Retrieving key's details from backend.
         this.cryptoService.publicKeys({
           key_id: invocation.crypto_key
         }).subscribe((result: PublicKey[]) => {
+
+          // Pushing currently retrieved key into list of keys.
           this.keys.push(result[0])
-        });
+
+        }, (error: any) => this.feedbackService.showError(error));
       }
     }
   }
@@ -206,7 +253,7 @@ export class CryptoInvocationsComponent {
    * 
    * @param id ID of key to retrieve
    */
-  public getCryptoKey(id: number) {
+  public getCryptoKeySubject(id: number) {
     const result = this.keys.filter(x => x.id === id);
     if (result.length > 0) {
       return result[0].subject + ' - ' + result[0].email;
@@ -219,7 +266,7 @@ export class CryptoInvocationsComponent {
    * 
    * @param id ID of key to retrieve
    */
-   public getCryptoKeyPlaceholder(id: number) {
+   public getCryptoKeyFingerprint(id: number) {
     const result = this.keys.filter(x => x.id === id);
     if (result.length > 0) {
       return result[0].fingerprint;
