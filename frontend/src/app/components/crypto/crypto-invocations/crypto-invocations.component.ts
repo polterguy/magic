@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
+import { PublicKey } from '../models/public-key.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { CryptoInvocation } from 'src/app/components/crypto/models/crypto-invocations.model';
@@ -55,6 +56,11 @@ export class CryptoInvocationsComponent {
     'request_id',
     'created',
   ];
+
+  /**
+   * Information about specific keys.
+   */
+  public keys: PublicKey[] = [];
 
   /**
    * Creates an instance of your component.
@@ -147,6 +153,17 @@ export class CryptoInvocationsComponent {
 
       // Displaying item.
       this.displayDetails.push(invocation.id);
+
+      // Checking if we need to retrieve key details from backend.
+      if (this.keys.filter(x => x.id === invocation.crypto_key).length === 0) {
+
+        // Retrieving key's details from backend.
+        this.cryptoService.publicKeys({
+          key_id: invocation.crypto_key
+        }).subscribe((result: PublicKey[]) => {
+          this.keys.push(result[0])
+        });
+      }
     }
   }
 
@@ -182,5 +199,31 @@ export class CryptoInvocationsComponent {
     // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
     this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
+  }
+
+  /**
+   * Invoked when information about a specific key is needed.
+   * 
+   * @param id ID of key to retrieve
+   */
+  public getCryptoKey(id: number) {
+    const result = this.keys.filter(x => x.id === id);
+    if (result.length > 0) {
+      return result[0].subject + ' - ' + result[0].email;
+    }
+    return '';
+  }
+
+  /**
+   * Invoked when information about a specific key is needed.
+   * 
+   * @param id ID of key to retrieve
+   */
+   public getCryptoKeyPlaceholder(id: number) {
+    const result = this.keys.filter(x => x.id === id);
+    if (result.length > 0) {
+      return result[0].fingerprint;
+    }
+    return '';
   }
 }

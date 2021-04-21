@@ -51,18 +51,26 @@ export class CryptoService {
     let query = '';
     if (filter !== null) {
 
-      // Applying limit and offset
-      query += '?limit=' + filter.limit;
-      query += '&offset=' + filter.offset;
-      query += '&order=imported';
-      query += '&direction=desc';
+      if (filter.key_id) {
 
-      // Applying filter parts, if given.
-      if (filter.filter && filter.filter !== '') {
-        query += '&operator=or';
-        query += '&email.like=' + encodeURIComponent('%' + filter.filter + '%');
-        query += '&subject.like=' + encodeURIComponent('%' + filter.filter + '%');
-        query += '&fingerprint.eq=' + encodeURIComponent(filter.filter);
+        // Retrieve single key invocation.
+        query += '?id.eq=' + encodeURIComponent(filter.key_id);
+
+      } else {
+
+        // Applying limit and offset
+        query += '?limit=' + filter.limit;
+        query += '&offset=' + filter.offset;
+        query += '&order=imported';
+        query += '&direction=desc';
+
+        // Applying filter parts, if given.
+        if (filter.filter && filter.filter !== '') {
+          query += '&operator=or';
+          query += '&email.like=' + encodeURIComponent('%' + filter.filter + '%');
+          query += '&subject.like=' + encodeURIComponent('%' + filter.filter + '%');
+          query += '&fingerprint.eq=' + encodeURIComponent(filter.filter);
+        }
       }
     }
 
