@@ -4,17 +4,15 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
-import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
-import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from 'src/app/components/log/services/log.service';
 import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
@@ -59,12 +57,7 @@ class PublicKeyEx {
   templateUrl: './public-keys.component.html',
   styleUrls: ['./public-keys.component.scss']
 })
-export class PublicKeysComponent implements OnInit, OnDestroy {
-
-  /**
-   * Subscription for messages published by other components.
-   */
-  private _subscription: Subscription;
+export class PublicKeysComponent implements OnInit {
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
@@ -104,14 +97,13 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param dialog Needed to create modal dialogs when importing public keys
    * @param logService Needed to log changes done to key collection
    * @param cryptoService Needed to retrieve public keys from backend
-   * @param messageService Needed to transmit relevant messages to other component as state changes
    * @param feedbackService Needed to be able to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
     private logService: LogService,
     private cryptoService: CryptoService,
-    private messageService: MessageService,
+    private clipboard: Clipboard,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -132,26 +124,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
     // Retrieving initial keys to databind table towards.
     this.getKeys();
-
-    // Subscribing to the active tabe changed from parent component.
-    this._subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-      if (msg.name === 'crypto.active-tab-changed' && msg.content === 0) {
-
-        // Checking if we have a filter, and if so, resetting it.
-        if (this.filterFormControl.value !== '') {
-          this.filterFormControl.setValue(''); // This will re-retrieve keys from backend.
-        }
-      }
-    });
-  }
-
-  /**
-   * Implementation of OnDestroy.
-   */
-  public ngOnDestroy() {
-
-    // House cleaning.
-    this._subscription.unsubscribe();
   }
 
   /**
@@ -189,26 +161,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
         // Assigning count to returned value from server.
         this.count = res.count;
-
-        /*
-         * Checking if filter yielded a single key, at which point we transmit message
-         * to make sure invocations component filters only on invocations belonging to
-         * the specific key.
-         */
-        let id = -1;
-        if (this.count === 1 && this.filterFormControl.value !== '') {
-          id = this.publicKeys[0].key.id;
-        } else if (this.count === 0) {
-          id = 0;
-        }
-        this.messageService.sendMessage({
-          name: 'crypto.key-filter-changed',
-          content: {
-            id,
-            identity: id > 0 ? this.publicKeys[0].identity : null,
-          },
-        });
-
       }, (error: any) => this.feedbackService.showError(error));
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -291,6 +243,18 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
           this.getKeys();
         });
     });
+  }
+
+  /**
+   * Invoked when user wants to copy a key's fingerprint
+   * 
+   * @param fingerprint Fingerprint to put on to clipboard
+   */
+  public copyFingerprint(fingerprint: string) {
+
+    // Putting specified fingerprint on top clipboard.
+    this.clipboard.copy(fingerprint);
+    this.feedbackService.showInfoShort('Fingerprint can be found on your clipboard');
   }
 
   /**
