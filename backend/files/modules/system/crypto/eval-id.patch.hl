@@ -6,16 +6,16 @@
 
 
 /*
- * Making sure we communicate what type of content we can accept.
- */
-.accept:application/octet-stream
-
-
-/*
  * Body here is the raw request stream.
  */
 .arguments
    body:*
+
+
+/*
+ * Making sure we communicate what type of content we can accept.
+ */
+.accept:application/octet-stream
 
 
 /*
@@ -31,19 +31,19 @@ io.stream.read:x:@.arguments/*/body
 
 
 /*
- * Retrieving signing key's fingerprint, for then to retrieve
- * the public key associated with the fingerprint.
- */
-crypto.get-key:x:@io.stream.read
-unwrap:x:+/*
-signal:magic.crypto.get-public-key
-   fingerprint:x:@crypto.get-key
-
-
-/*
- * Verifying signature.
+ * Making sure we can trap exceptions to log details about what went wrong.
  */
 try
+
+
+   /*
+    * Retrieving signing key's fingerprint, for then to retrieve
+    * the public key associated with the fingerprint.
+    */
+   crypto.get-key:x:@io.stream.read
+   unwrap:x:+/*
+   signal:magic.crypto.get-public-key
+      fingerprint:x:@crypto.get-key
 
 
    /*
@@ -73,8 +73,11 @@ try
 
 
          /*
-          * In case caller supplied a Guid, we store this, to make sure
-          * we don't execute the same request twice - Idempotency! (kind of)
+          * We need to store the [.request-id], to make sure
+          * we don't execute the same request twice.
+          * This is done to avoid replay attacks.
+          * In addition we also need to persist a receipt of the
+          * request, both its raw format and its parsed Hyperlambda.
           */
          .request
          .request-id
@@ -89,9 +92,8 @@ try
 
 
          /*
-          * Making sure this request hasn't been invoked previously
+          * Making sure caller supplied a [.request-id] as a part of his Hyperlambda.
           */
-         unwrap:x:+/*/or/**/signal/*
          if
             or
                eq
@@ -99,9 +101,23 @@ try
                   .
                eq
                   get-value:x:@.request-id
-                  .
-               signal:magic.crypto.http.has-invoked
-                  request-id:x:@.request-id
+                  .:
+            .lambda
+
+               /*
+                * Request has been previously sent to this server, or the caller
+                * did not supply a [.request-id].
+                */
+               throw:No [.request-id] found in the Hyperlambda payload
+
+
+         /*
+          * Making sure this request hasn't been invoked previously.
+          */
+         unwrap:x:+/*/signal/*
+         if
+            signal:magic.crypto.http.has-invoked
+               request-id:x:@.request-id
             .lambda
 
                /*
@@ -110,8 +126,8 @@ try
                strings.concat
                   .:"Request with the id of '"
                   get-value:x:@.request-id
-                  .:"' has been previously evaluated in this server"
-               throw:x:-
+                  .:"' has been previously executed implying a replay attack, hence execution was aborted"
+               throw:x:@strings.concat
 
 
          /*
@@ -134,6 +150,9 @@ try
          /*
           * Figuring out how to return results to caller, defaulting to
           * simply "success".
+          *
+          * Notice, regardless of how caller wants his result, we return only
+          * strings from endpoint.
           */
          .result:success
          if
@@ -142,13 +161,37 @@ try
                   get-value:x:@whitelist
                   .
             .lambda
+
+
+               /*
+                * Lambda object wants to return a simple string to caller.
+                */
                set-value:x:@.result
                   get-value:x:@whitelist
+
          else-if
             exists:x:@whitelist/*
             .lambda
+
+
+               /*
+                * Lambda object wants to return a bunch of nodes to caller.
+                */
                set-value:x:@.result
                   lambda2hyper:x:@whitelist/*
+
+
+         /*
+          * Persisting request, including payload, raw request,
+          * and response returned by server as a receipt of invocation.
+          */
+         unwrap:x:+/*
+         signal:magic.crypto.http.persist-invocation
+            crypto-key:x:@try/*/signal/[0,1]/*/id
+            request-id:x:@.request-id
+            request:x:@.request
+            request-raw:x:@.request-raw
+            response:x:@.result
 
 
          /*
@@ -159,20 +202,8 @@ try
 
 
          /*
-          * Persisting request, including payload, raw request,
-          * and response for future references.
-          */
-         unwrap:x:+/*
-         signal:magic.crypto.http.persist-invocation
-            crypto-key:x:../*/signal/[0,1]/*/id
-            request-id:x:@.request-id
-            request:x:@.request
-            request-raw:x:@.request-raw
-            response:x:@.result
-
-
-         /*
-          * Signing result.
+          * Signing result of invocation to give caller a guarantee of
+          * that response was generated by us, and has not been tampered with.
           */
          signal:magic.crypto.get-server-private-key
          crypto.sign:x:@.result
@@ -192,9 +223,9 @@ try
 
 
    /*
-    * Execution error occurred, or signing verification - Regardless,
+    * Execution error occurred, or signing verification error - Regardless,
     * making sure we return that fact to the caller, by throwing "intelligent"
-    * exception, in addition to logging error locally.
+    * exception, in addition to logging the error that occurred.
     *
     * Notice, we return a "generic" error to make sure we don't supply
     * valuable information to malicious adversaries, trying to find out

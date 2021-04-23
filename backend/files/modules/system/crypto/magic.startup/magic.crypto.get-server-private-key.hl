@@ -1,16 +1,25 @@
 
 /*
- * Returns the private RSA server key.
+ * Returns the private server key.
  */
 slots.create:magic.crypto.get-server-private-key
 
    /*
-    * Loading files, creating fingerprint,
-    * and returning private key to caller.
+    * Loading public key, since we generate the key pair's fingerprint from it.
     */
    io.file.load:/modules/system/crypto/keys/public.key
    crypto.fingerprint:x:@io.file.load
+
+
+   /*
+    * Loading private key such that we can return it to the caller.
+    */
    io.file.load:/modules/system/crypto/keys/private.key
+
+
+   /*
+    * Returning private key and fingerprint to caller.
+    */
    unwrap:x:+/*
    return-nodes
       private-key:x:@io.file.load

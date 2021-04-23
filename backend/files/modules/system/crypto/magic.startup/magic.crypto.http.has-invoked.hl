@@ -16,5 +16,5 @@ slots.create:magic.crypto.http.has-invoked
       /*
        * Returns true if the above SQL yielded any results.
        */
-      exists:x:-/*
+      exists:x:@data.select/*
       return:x:-
