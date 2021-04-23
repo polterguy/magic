@@ -5,28 +5,28 @@
   [selectedIndex]="getStepperSelectedIndex()">
 
   <mat-step>
-    <ng-template matStepLabel>Setup authentication</ng-template>
+    <ng-template matStepLabel>Database</ng-template>
     <ng-container *ngIf="stepper.selectedIndex === 0">
       <app-setup-auth></app-setup-auth>
     </ng-container>
   </mat-step>
 
   <mat-step>
-    <ng-template matStepLabel>Crudify Magic database</ng-template>
+    <ng-template matStepLabel>Endpoints</ng-template>
     <ng-container *ngIf="stepper.selectedIndex === 1">
       <app-crudify-database></app-crudify-database>
     </ng-container>
   </mat-step>
 
   <mat-step>
-    <ng-template matStepLabel>Create key pair</ng-template>
+    <ng-template matStepLabel>Cryptography</ng-template>
     <ng-container *ngIf="stepper.selectedIndex === 2">
       <app-create-keypair></app-create-keypair>
     </ng-container>
   </mat-step>
 
   <mat-step>
-    <ng-template matStepLabel>Run assumptions</ng-template>
+    <ng-template matStepLabel>Assumptions</ng-template>
     <ng-container *ngIf="stepper.selectedIndex === 3">
 
       <app-diagnostics-assumptions></app-diagnostics-assumptions>

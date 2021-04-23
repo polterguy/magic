@@ -1,4 +1,6 @@
 
+<strong *ngIf="!showAdvanced">Database connection</strong>
+
 <mat-form-field *ngIf="!showAdvanced" class="form-field" appearance="outline">
 
   <mat-label>Database</mat-label>
@@ -13,14 +15,14 @@
 
 <mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field wide" appearance="outline">
 
-  <mat-label>Connection</mat-label>
+  <mat-label>Server</mat-label>
   <input
     matInput
     [(ngModel)]="config.magic.databases[selectedDatabaseType].generic">
 
 </mat-form-field>
 
-<br>
+<strong *ngIf="!showAdvanced && selectedDatabaseType">Root account password</strong>
 
 <mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field"  appearance="outline">
 
