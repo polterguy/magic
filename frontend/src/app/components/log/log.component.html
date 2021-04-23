@@ -144,7 +144,7 @@
 
     <tr
       mat-row
-      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'log-row'"
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' + el.type : el.type) + ' log-row'"
       (click)="toggleDetails(el)"
       *matRowDef="let el; columns: displayedColumns;"></tr>
 
