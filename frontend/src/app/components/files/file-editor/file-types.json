@@ -33,7 +33,7 @@
     }
   },
   {
-    "extensions": ["xml", "html"],
+    "extensions": ["xml", "html", "htm"],
     "options": {
       "mode": "application/xml",
       "lineNumbers": true,
