@@ -92,7 +92,7 @@ export class DiagnosticsTestsComponent implements OnInit {
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => {
         this.filter = query;
-      });
+    });
 
     // Retrieving all tests form backend.
     this.endpointService.tests().subscribe((tests: string[]) => {

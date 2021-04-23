@@ -173,12 +173,6 @@ export class TasksComponent implements OnInit {
       // Retrieving task from backend.
       this.taskService.get(el.task.id).subscribe((task: Task) => {
 
-        // Adding task to list of currently viewed items.
-        const hyp = hyperlambda;
-        hyp.extraKeys['Alt-M'] = (cm: any) => {
-          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-        };
-
         // Making sure we add additional fields returned from server for completeness sake.
         el.task.hyperlambda = task.hyperlambda;
         if (task.schedule) {
@@ -194,7 +188,7 @@ export class TasksComponent implements OnInit {
         // By adding these fields to instance, task will be edited in UI.
         el.model = {
           hyperlambda: task.hyperlambda,
-          options: hyp
+          options: hyperlambda
         }
       });
     }

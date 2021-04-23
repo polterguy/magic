@@ -66,11 +66,6 @@ export class EvaluatorComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Associating ALT+M with fullscreen toggling of the editor instance.
-    this.input.options.extraKeys['Alt-M'] = (cm: any) => {
-      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-    };
-
     // Associating ALT+L with load snippet button.
     this.input.options.extraKeys['Alt-L'] = (cm: any) => {
       document.getElementById('loadButton').click();
