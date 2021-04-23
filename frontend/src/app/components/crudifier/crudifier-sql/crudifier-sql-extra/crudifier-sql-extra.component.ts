@@ -100,11 +100,6 @@ export class CrudifierSqlExtraComponent implements OnInit {
     // Defaulting primary URL to database name.
     this.moduleName = this.input.database;
     this.endpointName = 'custom-sql';
-
-    // Associating ALT+M with fullscreen toggling of the editor instance.
-    this.input.options.extraKeys['Alt-M'] = (cm: any) => {
-      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-    };
   }
 
   /**

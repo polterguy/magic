@@ -7,8 +7,8 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { ConfigService } from 'src/app/components/config/services/config.service';
 import { FeedbackService } from '../../../services/feedback.service';
+import { ConfigService } from 'src/app/components/config/services/config.service';
 
 // CodeMirror options.
 import json from '../../codemirror/options/json.json'
@@ -51,6 +51,11 @@ export class ConfigEditorComponent implements OnInit {
 
     // Fetching config from backend.
     this.loadConfig();
+
+    // Associating ALT+M with fullscreen toggling of the editor instance.
+    this.cmOptions.json.extraKeys['Alt-M'] = (cm: any) => {
+      cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+    };
   }
 
   /**

@@ -2,5 +2,9 @@
   "lineNumbers": true,
   "theme": "mbo",
   "mode": "application/ld+json",
-  "styleActiveLine": true
+  "styleActiveLine": true,
+  "extraKeys": {
+    "Shift-Tab": "indentLess",
+    "Tab": "indentMore"
+  }
 }
