@@ -149,9 +149,6 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
 ::ng-deep mat-paginator.mat-paginator {
   background-color: transparent;
   color: rgb(245,245,245);
-  position: absolute;
-  bottom: 0;
-  right: 0;
 }
 
 ::ng-deep mat-label {
@@ -268,9 +265,6 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
   mat-paginator.mat-paginator {
     background-color: transparent;
     color: rgb(45,45,45);
-    position: absolute;
-    bottom: 0;
-    right: 0;
   }
   mat-label {
     color: rgb(45,45,45);

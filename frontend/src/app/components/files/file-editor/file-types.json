@@ -11,7 +11,7 @@
     }
   },
   {
-    "extensions": ["md", "txt", "log"],
+    "extensions": ["md", "txt", "log", "key"],
     "options": {
       "mode": "markdown",
       "lineNumbers": true,
