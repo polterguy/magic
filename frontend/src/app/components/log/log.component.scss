@@ -23,6 +23,12 @@ table.log-items {
       }
     }
   }
+  tr.error, tr.fatal {
+    background-color: rgb(255,246,246);
+  }
+  tr.error:hover, tr.fatal:hover {
+    background-color: rgb(255,235,235);
+  }
 }
 
 .details-sheet, .emphasized {
