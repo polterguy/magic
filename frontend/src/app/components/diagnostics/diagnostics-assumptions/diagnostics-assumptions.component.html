@@ -16,7 +16,6 @@
         *ngIf="filterFormControl.value.trim() !== ''"
         class="button"
         role="button"
-        matTooltip="Clear filter"
         (click)="clearFilter()">clear</mat-icon>
 
     </mat-form-field>
@@ -25,7 +24,7 @@
       *ngIf="tests.length > 0"
       mat-raised-button
       color="primary"
-      [matTooltip]="'Verify ' + getFilteredTests().length + ' assumptions'"
+      [matTooltip]="'Run ' + getFilteredTests().length + ' assumptions'"
       class="run-all"
       (click)="executeFiltered()">
       Run
@@ -46,12 +45,10 @@
     <ng-container matColumnDef="result">
       <td mat-cell class="mini-col icon-col" *matCellDef="let el">
         <mat-icon
-          *ngIf="el.success !== null && el.success"
-          matTooltip="Success">favorite</mat-icon>
+          *ngIf="el.success !== null && el.success">favorite</mat-icon>
         <mat-icon
           *ngIf="el.success !== null && !el.success"
-          class="warning"
-          matTooltip="Test failed, see log for details">warning</mat-icon>
+          class="warning">warning</mat-icon>
       </td>
     </ng-container>
 

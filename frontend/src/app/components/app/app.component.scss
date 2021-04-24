@@ -316,3 +316,7 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
     }
   }
 }
+
+::ng-deep.error-snack-bar {
+  background-color: rgb(120,0,0) !important;
+}

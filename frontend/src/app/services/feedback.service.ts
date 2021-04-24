@@ -63,6 +63,7 @@ export abstract class FeedbackService {
   public showError(content: any) {
     this.snackBar.open(content.error?.message || content, null, {
       duration: 5000,
+      panelClass: 'error-snack-bar'
     });
   }
 
