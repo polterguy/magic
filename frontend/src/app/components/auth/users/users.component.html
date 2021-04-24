@@ -20,7 +20,6 @@
     *ngIf="filterFormControl.value.trim() !== ''"
     class="button"
     role="button"
-    matTooltip="Clear filter"
     (click)="clearUserFilter()">clear</mat-icon>
 
 </mat-form-field>
@@ -44,7 +43,7 @@
 
         <span class="details-item">
           <strong>Created</strong>
-          <span [matTooltip]="el.created">{{el.created | since}}</span>
+          <span>{{el.created | since}}</span>
         </span>
 
         <mat-chip-list>
@@ -56,7 +55,6 @@
             {{role}}
             <mat-icon
               *ngIf="el.username !== 'root' || role !== 'root'"
-              matTooltip="Remove role from user"
               matChipRemove>cancel</mat-icon>
           </mat-chip>
         </mat-chip-list>
@@ -66,7 +64,6 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
-            matTooltip="Change user's password"
             (click)="editUser(el)">
             <mat-icon>edit</mat-icon>
           </button>
@@ -99,7 +96,7 @@
             mat-icon-button
             [disabled]="el.username === 'root'"
             (click)="lockedChanged(el)"
-            [matTooltip]="el.locked ? 'Release lock such that user can access Magic again' : 'Lock user out from using Magic'">
+            [matTooltip]="el.locked ? 'Release lock' : 'Lock user'">
             <mat-icon *ngIf="el.locked">lock</mat-icon>
             <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
           </button>
@@ -107,7 +104,6 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
-            matTooltip="Delete user"
             (click)="delete(el)">
             <mat-icon>delete</mat-icon>
           </button>

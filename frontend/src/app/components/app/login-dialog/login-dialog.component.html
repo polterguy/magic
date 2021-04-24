@@ -3,7 +3,6 @@
   Login
   <mat-icon
     *ngIf="backendService.connected && backends.value.startsWith('http://')"
-    aria-label="Warning this will submit your password in clear text"
     matTooltip="Clicking the login button will transmit your password in clear text">warning</mat-icon>
 </h1>
 
@@ -62,7 +61,6 @@
 
   <mat-checkbox
     [disabled]="username === '' || password === '' || backends.value === ''"
-    matTooltip="Save password in local storage"
     [(ngModel)]="savePassword">Save</mat-checkbox>
 
   <button

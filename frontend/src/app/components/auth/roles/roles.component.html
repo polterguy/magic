@@ -19,7 +19,6 @@
     matSuffix
     class="button"
     role="button"
-    matTooltip="Clear filter"
     (click)="clearRoleFilter()">clear</mat-icon>
 
 </mat-form-field>
@@ -70,8 +69,6 @@
 
           <button
             mat-icon-button
-            matTooltip="Edit role"
-            [disabled]="el.name === 'reset-password' || el.name === 'root'"
             (click)="editRole(el)">
             <mat-icon>edit</mat-icon>
           </button>
@@ -79,7 +76,6 @@
           <button
             mat-icon-button
             [disabled]="el.name === 'root' || el.name === 'reset-password'"
-            matTooltip="Delete role"
             (click)="deleteRole(el)">
             <mat-icon>delete</mat-icon>
           </button>

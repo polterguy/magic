@@ -18,8 +18,7 @@
     <mat-label class="dark">Type</mat-label>
     <mat-select
       [(ngModel)]="type"
-      class="dark"
-      matTooltip="Type of argument">
+      class="dark">
       <mat-option
         *ngFor="let idx of types"
         [value]="idx">{{idx}}</mat-option>

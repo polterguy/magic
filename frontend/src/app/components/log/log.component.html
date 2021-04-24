@@ -4,7 +4,6 @@
   <a
     mat-icon-button
     routerLink="/log"
-    matTooltip="Close"
     class="close">
     <mat-icon>close</mat-icon>
   </a>
@@ -51,7 +50,6 @@
       *ngIf="filterFormControl.value.trim() !== ''"
       class="button"
       role="button"
-      matTooltip="Clear filter"
       (click)="clearFilter()">clear</mat-icon>
 
   </mat-form-field>
@@ -130,7 +128,6 @@
             mat-icon-button
             role="button"
             class="id-link"
-            matTooltip="Link to item"
             (click)="showLinkTip()"
             [routerLink]="'/log/' + el.id">
             <mat-icon>link</mat-icon>

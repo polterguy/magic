@@ -226,7 +226,6 @@
       [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded())"
       mat-raised-button
       color="primary"
-      [matTooltip]="'Crudify only your \'' + table.name + '\' table'"
       (click)="crudifyTable()">
       Crudify {{table.name}}
     </button>
