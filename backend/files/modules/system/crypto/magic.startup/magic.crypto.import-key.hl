@@ -28,6 +28,32 @@ slots.create:magic.crypto.import-key
     * Importing key into database.
     */
    data.connect:magic
+
+
+      /*
+       * Checking if key exists in database from before.
+       */
+      data.read
+         table:crypto_keys
+         where
+            and
+               fingerprint.eq:x:@crypto.fingerprint
+      if
+         exists:x:@data.read/*/*
+         .lambda
+
+
+            /*
+             * Oops, key already exists in database.
+             */
+            throw:Key has already been imported
+               public:true
+               status:400
+
+
+      /*
+       * Inserting key into database.
+       */
       data.create
          table:crypto_keys
          values
