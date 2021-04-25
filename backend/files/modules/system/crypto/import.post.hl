@@ -17,6 +17,7 @@
  */
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/email
+validators.mandatory:x:@.arguments/*/domain
 validators.mandatory:x:@.arguments/*/content
 validators.url:x:@.arguments/*/domain
 validators.email:x:@.arguments/*/email

@@ -337,7 +337,7 @@ export class PublicKeysComponent implements OnInit {
   private saveKeyImplementation(key: PublicKeyEx, extraInfo?: string) {
 
     // Invoking backend to save key.
-    this.cryptoService.savePublicKey(key.key).subscribe(() => {
+    this.cryptoService.updatePublicKey(key.key).subscribe(() => {
 
       // Providing some feedback to user, and retrieving keys again to update grid.
       let info = 'Key was successfully saved';

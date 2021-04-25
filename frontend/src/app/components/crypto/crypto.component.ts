@@ -10,7 +10,10 @@ import { Component, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
+import { CryptoService } from './services/crypto.service';
+import { AuthService } from '../auth/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Crypto component allowing you to administrate your server's cryptography keys.
@@ -23,14 +26,51 @@ import { MessageService } from 'src/app/services/message.service';
 export class CryptoComponent {
 
   // Subscription for messages published by other components.
-   private subscription: Subscription;
+  private subscription: Subscription;
+
+  /**
+   * If true, we should show the import public key part.
+   */
+  public showImport = true;
+
+  /**
+   * Import key model for key imported by other users.
+   */
+  public importKey = '';
+
+  /**
+   * Subject for import key.
+   */
+  public importSubject = '';
+
+  /**
+   * Email for import key.
+   */
+  public importEmail = '';
+
+  /**
+   * Domain for import key.
+   */
+  public importDomain = '';
 
   /**
    * Paginator for paging table.
    */
   @ViewChild(MatTabGroup, {static: true}) public tab: MatTabGroup;
 
-  constructor(private messageService: MessageService) { }
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param authService Needed to check role of currently authenticated user
+   * @param cryptoService Needed to be able to import public keys
+   * @param messageService Needed to subscribe to messages published by other components
+   * @param feedbackService Needed to show user feedback
+   */
+  constructor(
+    private authService: AuthService,
+    private cryptoService: CryptoService,
+    private messageService: MessageService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementtation of OnInit.
@@ -65,5 +105,33 @@ export class CryptoComponent {
 
     // House cleaning.
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Returns true if user is root.
+   */
+  public isRoot() {
+
+    // Returning true if user belongs to the root role
+    return this.authService.authenticated && this.authService.roles().filter(x => x === 'root');
+  }
+
+  /**
+   * Invoked when user tries to import a key.
+   */
+  public importPublicKey() {
+
+    // Importing public key.
+    this.cryptoService.importPublicKey(
+      this.importSubject,
+      this.importEmail,
+      this.importDomain,
+      this.importKey).subscribe(() => {
+
+        // Showing user some feedback, and making sure we hide import card.
+        this.feedbackService.showInfo('Key was sucessfully imported');
+        this.showImport = false;
+
+      }, (error: any) => this.feedbackService.showError(error));
   }
 }

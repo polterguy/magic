@@ -6,12 +6,12 @@
 // Angular and system imports.
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Response } from 'src/app/models/response.model';
-import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
-import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
+import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 
 /**
  * Modal dialog component for importing a public key.
@@ -77,7 +77,7 @@ slots.vocabulary
   public import() {
 
     // Importing key.
-    this.cryptoService.importPublicKey(this.key).subscribe((res: Response) => {
+    this.cryptoService.createPublicKey(this.key).subscribe((res: Response) => {
       console.log(res);
       this.dialogRef.close(this.key);
     }, (error: any) => this.feedbackService.showError(error));

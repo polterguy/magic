@@ -10,4 +10,15 @@ mat-card {
     margin-top: 3rem;
     display: block;
   }
+  .divider {
+    display: flex;
+    mat-form-field {
+      flex-direction: column;
+      flex: 33.33%;
+      margin-right: 1rem;
+    }
+    mat-form-field:nth-child(3) {
+      margin-right: 0;
+    }
+  }
 }
