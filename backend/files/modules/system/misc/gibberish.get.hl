@@ -11,9 +11,9 @@
 /*
  * Generating gibberish text.
  */
+add:x:./*/crypto.random
+   get-nodes:x:@.arguments/*
 crypto.random
-   min:x:@.arguments/*/min
-   max:x:@.arguments/*/max
 
 
 /*
