@@ -4,7 +4,7 @@
   <app-server-public-key></app-server-public-key>
 </mat-card>
 
-<mat-card>
+<mat-card *ngIf="isRoot()">
   <mat-tab-group>
 
     <mat-tab label="Keys">
@@ -20,4 +20,66 @@
     </mat-tab>
 
   </mat-tab-group>
+</mat-card>
+
+<mat-card *ngIf="!isRoot() && showImport">
+  
+  <mat-form-field class="fill-width top-space" appearance="outline">
+
+    <mat-label>Public key</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="importKey"
+      rows="7"></textarea>
+
+  </mat-form-field>
+
+  <div class="divider">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Subject</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="importSubject"
+        autocomplete="off">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="importEmail"
+        autocomplete="off">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Domain</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="importDomain"
+        autocomplete="off">
+
+    </mat-form-field>
+
+  </div>
+
+  <div class="button-strip">
+    <button
+      mat-raised-button
+      [disabled]="importKey === '' || importSubject === '' || importEmail === '' || importDomain === ''"
+      class="wider-button"
+      (click)="importPublicKey()"
+      color="primary">
+      Import
+    </button>
+  </div>
+
 </mat-card>

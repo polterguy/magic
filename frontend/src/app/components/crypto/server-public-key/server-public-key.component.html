@@ -1,5 +1,6 @@
 
 <button
+  *ngIf="isRoot()"
   mat-icon-button
   class="create-button"
   (click)="create()">

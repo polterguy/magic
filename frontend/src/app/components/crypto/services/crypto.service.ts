@@ -127,7 +127,7 @@ export class CryptoService {
    * 
    * @param key Key caller wants to save
    */
-  public savePublicKey(key: PublicKey) {
+  public updatePublicKey(key: PublicKey) {
     return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', {
       id: key.id,
       subject: key.subject,
@@ -145,7 +145,7 @@ export class CryptoService {
    * 
    * @param key Key caller wants to import
    */
-  public importPublicKey(key: PublicKey) {
+  public createPublicKey(key: PublicKey) {
     return this.httpService.post<Response>('/magic/modules/magic/crypto_keys', {
       type: key.type,
       subject: key.subject,
@@ -156,6 +156,27 @@ export class CryptoService {
       vocabulary: key.vocabulary,
       enabled: key.enabled,
     });
+  }
+
+  /**
+   * Imports a public key into the system.
+   * 
+   * @param subject Name of key owner
+   * @param email Email of owner
+   * @param domain Root domain of key's owner
+   * @param content Actual public key content
+   */
+  public importPublicKey(
+    subject: string,
+    email: string,
+    domain: string,
+    content: string) {
+      return this.httpService.post<Response>('/magic/modules/system/crypto/import', {
+        subject,
+        email,
+        domain,
+        content
+      });
   }
 
   /**
