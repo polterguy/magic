@@ -14,8 +14,8 @@ import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
-import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-dialog.component';
+import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 
 /**
  * Toolbar component for displaying toolbar that allows the
@@ -210,7 +210,7 @@ export class ToolbarComponent implements OnInit {
           this.dialog.open(ToolbarHelpDialogComponent, {
             width: '625px',
             data: {
-              video: video
+              video: `https://www.youtube.com/embed/${video.url}`
             }
           });
       });
