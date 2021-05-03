@@ -59,48 +59,6 @@ export class SqlService {
   }
 
   /**
-   * Creates a backup of the specified database.
-   * 
-   * @param databaseType Type of database to create backup of, e.g. 'mysql' or 'mssql'
-   * @param connectionString Connection string reference to use to connect to database
-   * @param database Name of database to create backup of
-   * @returns Downloadable raw array
-   */
-  public backup(
-    databaseType: string,
-    connectionString: string,
-    database: string) {
-      return this.httpService.download(
-        '/magic/modules/system/sql/backup?databaseType=' + encodeURIComponent(databaseType) +
-        '&connectionString=' + encodeURIComponent(connectionString) +
-        '&database=' + encodeURIComponent(database));
-  }
-
-  /**
-   * Restores a previously created backup
-   * 
-   * @param databaseType Type of database to restore backup of, e.g. 'mysql' or 'mssql'
-   * @param connectionString Connection string reference to use to connect to database
-   * @param database Name of database to restore backup of
-   * @param backupFile Filename previously existing on server
-   * @returns Whether or not operation was a success
-   */
-  public restore(
-    databaseType: string,
-    connectionString: string,
-    database: string,
-    backupFile: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.put<Response>('/magic/modules/system/sql/restore', {
-      databaseType,
-      connectionString,
-      database,
-      backupFile
-    });
-  }
-
-  /**
    * Returns all connection strings configured in your backend.
    * 
    * @param databaseType Database type to retrieve connection strings for
