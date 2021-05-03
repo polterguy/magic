@@ -153,10 +153,19 @@ export class PublicKeysComponent implements OnInit {
 
       // Hiding item.
       this.displayDetails.splice(idx, 1);
+
     } else {
 
       // Displaying item.
       this.displayDetails.push(key.id);
+
+      // Retrieving association between key and user, if existing.
+      this.cryptoService.getUserAssociation(key.id).subscribe((result: Response) => {
+
+        // Success!
+        key.username = result.result;
+
+      }, (error: any) => this.feedbackService.showError(error));
     }
   }
 
@@ -350,6 +359,28 @@ export class PublicKeysComponent implements OnInit {
         this.feedbackService.showInfoShort(info);
       }
       key.identity = key.key.subject + ' - ' + key.key.email;
+
+      // Checking if we've got an association between a username and a key.
+      if (key.key.username && key.key.username !== '') {
+
+        // Invoking backend to associate key with username specified.
+        this.cryptoService.associateWithUser(key.key.id, key.key.username).subscribe(() => {
+
+          // Success!
+          console.log('Key was successfully associated with user');
+
+        }, (error: any) => this.feedbackService.showError(error));
+
+      } else {
+
+        // Invoking backend to destroy association between user and key.
+        this.cryptoService.deleteUserAssociation(key.key.id).subscribe(() => {
+
+          // Success!
+          console.log('Key was de-associated with any previously associated users')
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
 
     }, (error: any) => this.feedbackService.showError(error));
   }
