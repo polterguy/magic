@@ -128,16 +128,21 @@ export class CryptoService {
    * @param key Key caller wants to save
    */
   public updatePublicKey(key: PublicKey) {
-    return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', {
+    const payload: any = {
       id: key.id,
       subject: key.subject,
       email: key.email,
-      domain: key.domain,
       fingerprint: key.fingerprint,
       content: key.content,
       vocabulary: key.vocabulary,
       enabled: key.enabled,
-    });
+    };
+    if (key.domain && key.domain !== '') {
+      payload.domain = key.domain;
+    } else {
+      payload.domain = null;
+    }
+    return this.httpService.put<Affected>('/magic/modules/magic/crypto_keys', payload);
   }
 
   /**
