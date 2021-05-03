@@ -20,11 +20,21 @@ textarea.crypto-key {
   cursor: pointer;
 }
 
-.crypto-form-fields {
-  display: flex;
-  .crypto-form-field {
-    flex: 1;
-    margin-right: 1rem;
+@media screen and (max-width: 1200px) {
+  .crypto-form-fields {
+    .crypto-form-field {
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .crypto-form-fields {
+    display: flex;
+    .crypto-form-field {
+      flex: 1;
+      margin-right: 1rem;
+    }
   }
 }
 

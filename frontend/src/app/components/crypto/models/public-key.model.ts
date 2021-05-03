@@ -34,6 +34,11 @@ export class PublicKey {
   subject: string;
 
   /**
+   * Optional username to associate key with.
+   */
+   username?: string;
+
+  /**
    * Whether or not key is enabled for cryptography operations or not.
    */
   enabled: boolean;

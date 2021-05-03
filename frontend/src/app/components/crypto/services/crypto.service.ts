@@ -141,6 +141,39 @@ export class CryptoService {
   }
 
   /**
+   * Associates the specified public key with a user.
+   * 
+   * @param keyId Key caller wants to associate with user.
+   * @param username Username caller wants to associate with key.
+   */
+   public associateWithUser(keyId: number, username: string) {
+    return this.httpService.put<Response>('/magic/modules/system/crypto/associate-user', {
+      keyId,
+      username
+    });
+  }
+
+  /**
+   * Returns the username of the user key is associated with, if any.
+   * 
+   * @param keyId Key caller wants to retrieve association for.
+   */
+   public getUserAssociation(keyId: number) {
+    return this.httpService.get<Response>('/magic/modules/system/crypto/user-association?keyId=' + keyId);
+  }
+
+  /**
+   * Deletes any existing associations between a user and a public key.
+   * 
+   * @param keyId Key caller wants to associate with user.
+   */
+   public deleteUserAssociation(keyId: number) {
+    return this.httpService.put<Response>('/magic/modules/system/crypto/deassociate-user', {
+      keyId,
+    });
+  }
+
+  /**
    * Imports a public key.
    * 
    * @param key Key caller wants to import

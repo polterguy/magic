@@ -13,7 +13,7 @@ use magic;
 create table magic_version (
   db_version varchar(30) not null
 );
-insert into magic_version(db_version) values ('008.009.002');
+insert into magic_version(db_version) values ('009.001.007');
 
 
 /*
@@ -162,4 +162,18 @@ create table crypto_invocations (
   unique key id_UNIQUE (id),
   unique key `request_id_UNIQUE` (`request_id`),
   constraint `crypto_key_fky` foreign key (`crypto_key`) references `crypto_keys` (`id`) on delete cascade
+);
+
+
+/*
+ * Creating association table between users and crypto_keys.
+ */
+create table `users_crypto_keys` (
+  `username` varchar(256) not null,
+  `key_id` int(11) not null,
+  primary key (`username`, `key_id`),
+  unique key `username_UNIQUE` (`username`),
+  unique key `username_UNIQUE` (`key_id`),
+  constraint `username_fky` foreign key (`username`) references `users` (`username`) on delete cascade,
+  constraint `key_id_fky` foreign key (`key_id`) references `crypto_keys` (`id`) on delete cascade
 );
