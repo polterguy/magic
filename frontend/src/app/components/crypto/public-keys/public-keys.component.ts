@@ -353,11 +353,6 @@ export class PublicKeysComponent implements OnInit {
       if (extraInfo) {
         info += '. ' + extraInfo;
       }
-      if (extraInfo) {
-        this.feedbackService.showInfo(info);
-      } else {
-        this.feedbackService.showInfoShort(info);
-      }
       key.identity = key.key.subject + ' - ' + key.key.email;
 
       // Checking if we've got an association between a username and a key.
@@ -367,8 +362,12 @@ export class PublicKeysComponent implements OnInit {
         this.cryptoService.associateWithUser(key.key.id, key.key.username).subscribe(() => {
 
           // Success!
-          console.log('Key was successfully associated with user');
-
+          if (extraInfo) {
+            this.feedbackService.showInfo(info);
+          } else {
+            this.feedbackService.showInfoShort(info);
+          }
+    
         }, (error: any) => this.feedbackService.showError(error));
 
       } else {
@@ -377,8 +376,12 @@ export class PublicKeysComponent implements OnInit {
         this.cryptoService.deleteUserAssociation(key.key.id).subscribe(() => {
 
           // Success!
-          console.log('Key was de-associated with any previously associated users')
-
+          if (extraInfo) {
+            this.feedbackService.showInfo(info);
+          } else {
+            this.feedbackService.showInfoShort(info);
+          }
+    
         }, (error: any) => this.feedbackService.showError(error));
       }
 
