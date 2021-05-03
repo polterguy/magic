@@ -243,66 +243,6 @@ export class SqlComponent implements OnInit {
   }
 
   /**
-   * Creates a backup of your currently selected database.
-   */
-  public backup() {
-
-    // Warning user that this might take a very long time.
-    this.feedbackService.confirm(
-      'Warning!',
-      'This might take a very long time if your database is large, as in containing hundreds of thousands of records in total. Are you sure you want to continue? Notice, you might want to use your faster RDBMS backup system with larger databases ...',
-      () => {
-
-      // Invoking backend to create a backup ZIP file of selected database.
-      this.sqlService.backup(
-        this.input.databaseType,
-        this.input.connectionString,
-        this.input.database).subscribe(res => {
-
-          // Retrieving the filename, as provided by the server.
-          const disp = res.headers.get('Content-Disposition');
-          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-          const file = new Blob([res.body]);
-          saveAs(file, filename);
-        }, (error: any) => {
-
-          // Oops ...!!
-          this.feedbackService.showError(error);
-        });
-    });
-  }
-
-  /**
-   * Invoked when user wants to restore a previously created backup.
-   */
-  restore(file: FileList) {
-
-    // Invoking service method responsible for actually uploading file.
-    this.fileService.uploadFile('/temp/', file.item(0)).subscribe(() => {
-
-      // Doing actually restoration of backup file.
-      this.sqlService.restore(
-        this.input.databaseType,
-        this.input.connectionString,
-        this.input.database,
-        '/temp/' + file.item(0).name).subscribe((result: Response) => {
-
-          // Providing user with some feedback.
-          this.feedbackService.showInfo('Backup was successfully restored');
-          this.fileInput = null;
-        }, (error: any) => {
-
-          // Oops ...!!
-          this.feedbackService.showError(error);
-        });
-    }, (error: any) => {
-
-      // Oops ...!!
-      this.feedbackService.showError(error);
-    });
-  }
-
-  /**
    * Opens the load snippet dialog, to allow user to select a previously saved snippet.
    */
   public load() {

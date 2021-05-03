@@ -46,22 +46,6 @@
 
     </mat-form-field>
 
-    <button
-      *ngIf="false"
-      mat-button
-      matTooltip="Creates a backup of your currently selected database"
-      (click)="backup()">
-      Backup
-    </button>
-
-    <button
-      *ngIf="false"
-      [disabled]="safeMode && input.database === 'magic'"
-      mat-button
-      class="file-button">
-      Restore
-    </button>
-
     <input
       *ngIf="false"
       [disabled]="safeMode && input.database === 'magic'"
