@@ -353,7 +353,7 @@ export class PublicKeysComponent implements OnInit {
       if (extraInfo) {
         info += '. ' + extraInfo;
       }
-      key.identity = key.key.subject + ' - ' + key.key.email;
+      key.identity = key.key.subject + '  <' + key.key.email + '>';
 
       // Checking if we've got an association between a username and a key.
       if (key.key.username && key.key.username !== '') {
@@ -406,7 +406,7 @@ export class PublicKeysComponent implements OnInit {
       // Mapping public keys to expected model.
       this.publicKeys = (keys || []).map(x => {
         const result = {
-          identity: x.subject + ' - ' + x.email,
+          identity: x.subject + ' <' + x.email + '>',
           key: x,
           options: {
             hyperlambda: x.vocabulary,
