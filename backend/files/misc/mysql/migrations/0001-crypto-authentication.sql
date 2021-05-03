@@ -20,7 +20,6 @@ create table `users_crypto_keys` (
   `username` varchar(256) not null,
   `key_id` int(11) not null,
   primary key (`username`, `key_id`),
-  unique key `username_UNIQUE` (`username`),
   unique key `key_id_UNIQUE` (`key_id`),
   constraint `username_fky` foreign key (`username`) references `users` (`username`) on delete cascade,
   constraint `key_id_fky` foreign key (`key_id`) references `crypto_keys` (`id`) on delete cascade

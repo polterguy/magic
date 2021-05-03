@@ -207,7 +207,6 @@ go
 create table users_crypto_keys (
   username nvarchar(128) not null,
   key_id int not null,
-  unique(username),
   unique(key_id),
   constraint pk_users_crypto_keys primary key clustered(username, key_id)
 )
