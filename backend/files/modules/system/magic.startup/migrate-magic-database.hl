@@ -1,0 +1,132 @@
+
+/*
+ * Runs through all database migration scripts found in relevant directory.
+ *
+ * Notice, to avoid this from taking too much time during startup before server
+ * becomes responsive, we execute these on a background thread.
+ */
+fork
+
+
+   /*
+    * Notice, in case Magic has not yet been configured, the very act
+    * of even trying to connect to the magic database will fail, which implies
+    * we'll have to do a try/catch/do-nothing thing here ...
+    */
+   try
+
+
+      /*
+       * Logging the fact that we're trying to execute SQL migration scripts.
+       * Notice, this MUST be done BEFORE we try to connect to magic database,
+       * since the very act of logging will throw an exception unless the database
+       * has already been created.
+       */
+      log.info:Attempting to execute database migration scripts
+
+
+      /*
+       * Figuring out what's our default database type.
+       */
+      config.get:"magic:databases:default"
+
+
+      /*
+       * Listing all SQL migration scripts, and executing these sequentially,
+       * making sure we're using the correct folder, according to what database
+       * type Magic has been configured with.
+       */
+      strings.concat
+         .:/misc/
+         get-value:x:@config.get
+         .:/migrations/
+      io.file.list:x:@strings.concat
+
+
+      /*
+       * Connecting to Magic database.
+       */
+      data.connect:magic
+         database-type:x:@config.get
+
+
+         /*
+          * Iterating through each SQL file in folder.
+          */
+         for-each:x:@io.file.list/*
+
+
+            /*
+             * Verifying file ends with ".sql".
+             */
+            if
+               strings.ends-with:x:@.dp/#
+                  .:.sql
+               .lambda
+
+
+                  /*
+                   * This is an SQL file, hence loading it, and executing it.
+                   */
+                  io.file.load:x:@.dp/#
+
+
+                  /*
+                   * Notice, to avoid having ONE failing migration script
+                   * aborting the entire migration job, we need to do a try/catch/ignore
+                   * here. This might occur if for instance some of the migration scripts
+                   * has executed successfully, but others have not.
+                   */
+                  try
+
+
+                     /*
+                      * Logging the fact that we're trying to execute currently
+                      * iterated migration script.
+                      */
+                     log.info
+                        .:"Trying to execute '"
+                        get-value:x:@.dp/#
+                        .:"' database migration script."
+
+
+                     /*
+                      * Executing migration script and logging result.
+                      */
+                     data.execute:x:@io.file.load
+                        database-type:x:@config.get
+
+
+                     /*
+                      * Logging the fact that migration script was successfully executed.
+                      */
+                     log.info
+                        .:"Migration script '"
+                        get-value:x:@.dp/#
+                        .:"' successfully executed."
+
+                  .catch
+
+
+                     /*
+                      * We might end up here if migration script has been previously executed ...
+                      * But, since we were able to successfully connect to magic database, we can
+                      * still safely assume we are able to log the error.
+                      */
+                     log.error
+                        .:"Error while executing migration script '"
+                        get-value:x:@.dp/#
+                        .:"'. Message from system was '"
+                        get-value:x:@.arguments/*/message
+                        .:"'."
+
+   .catch
+
+
+      /*
+       * Do nothing, nothing to do really.
+       *
+       * This might occur if for instance Magic has not yet been configured,
+       * and there exists no magic database.
+       */
+      .foo
