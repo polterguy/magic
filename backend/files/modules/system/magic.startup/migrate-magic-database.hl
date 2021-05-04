@@ -91,6 +91,19 @@ fork
 
 
                      /*
+                      * Ensuring we're doing the "batch execute" thing in case we're in MS SQL land.
+                      */
+                     if
+                        eq
+                           get-value:x:@config.get
+                           .:mssql
+                        .lambda
+                           set-name:x:@if/./*/data.execute
+                              .:mssql.execute-batch
+                           remove-nodes:x:@if/./*/mssql.execute-batch/*/database-type
+
+
+                     /*
                       * Executing migration script and logging result.
                       */
                      data.execute:x:@io.file.load
