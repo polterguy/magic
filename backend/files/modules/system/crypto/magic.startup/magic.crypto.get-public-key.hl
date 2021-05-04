@@ -26,11 +26,11 @@ slots.create:magic.crypto.get-public-key
             /*
              * Public key doesn't exist in database.
              */
-            strings.format
+            strings.concat
                .:"Public key with fingerprint of '"
                get-value:x:@.arguments/*/fingerprint
                .:"' does not exist"
-            throw:x:@strings.format
+            throw:x:@strings.concat
 
 
       /*
@@ -46,11 +46,11 @@ slots.create:magic.crypto.get-public-key
             /*
              * Public key is disabled.
              */
-            strings.format
+            strings.concat
                .:"Public key with fingerprint of '"
                get-value:x:@.arguments/*/fingerprint
                .:"' is disabled"
-            throw:x:@strings.format
+            throw:x:@strings.concat
 
       /*
        * Returning result of database invocation to caller.
