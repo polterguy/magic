@@ -16,7 +16,13 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
    /*
     * Common URL for all invocations.
     */
-   .url:"http://localhost:4444/magic/modules/system/crypto/eval-id"
+   .url
+   set-value:x:@.url
+      strings.concat
+         request.scheme
+         .:"://"
+         request.host
+         .:"/magic/modules/system/crypto/eval-id"
    unwrap:x:./**/signal/*/url
 
    /*
