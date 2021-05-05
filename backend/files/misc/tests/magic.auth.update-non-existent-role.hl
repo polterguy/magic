@@ -4,13 +4,13 @@
  */
 verb:put
 url:/magic/modules/magic/roles
-status:int:200
+status:int:404
 description:Assumes that trying to update a role that does not exist results in the correct response and status code from server
 payload:@"{
   ""name"": ""non-existent-role"",
   ""description"": ""foo""
 }"
 response:@"{
-  ""affected"": 0
+  ""result"": ""Record not found""
 }"
 produces:application/json
