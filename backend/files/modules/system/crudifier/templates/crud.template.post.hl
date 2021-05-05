@@ -19,6 +19,7 @@ data.connect:{database}
       table:{table}
       return-id:{return-id}
       values
+   response.status.set:201
    unwrap:x:+/*
    return
       id:x:@data.create
