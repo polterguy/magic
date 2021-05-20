@@ -71,3 +71,21 @@ vocabulary
 slots.vocabulary
 "
 
+
+      /*
+       * Checking if caller provided a username, and if, creating association.
+       */
+      if
+         exists:x:@.arguments/*/username
+         .lambda
+
+
+            /*
+             * Creating association between user and key.
+             */
+            data.create
+               table:users_crypto_keys
+               values
+                  username:root
+                  key_id:x:@data.create/@data.create
+
