@@ -93,7 +93,7 @@ io.file.save:/modules/system/crypto/keys/private.key
 
 
 /*
- * Creating fingerprint, and doing some basic logging.
+ * Doing some basic logging.
  */
 log.info
    .:"RSA key pair generated for server, fingerprint; '"
@@ -112,6 +112,7 @@ unwrap:x:../*/signal/*/content
 signal:magic.crypto.import-key
    content:x:@crypto.rsa.create-key/*/public
    enabled:bool:true
+   username:root
 
 
 /*
