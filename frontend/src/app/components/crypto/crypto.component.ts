@@ -56,7 +56,7 @@ export class CryptoComponent {
   /**
    * Paginator for paging table.
    */
-  @ViewChild(MatTabGroup, {static: true}) public tab: MatTabGroup;
+  @ViewChild(MatTabGroup, {static: false}) public tab: MatTabGroup;
 
   /**
    * Creates an instance of your component.
