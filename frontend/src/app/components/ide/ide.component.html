@@ -54,7 +54,10 @@
     <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
       <mat-label>Files</mat-label>
       <mat-select [(ngModel)]="activeFile">
-        <mat-option *ngFor="let idx of files" [value]="idx.path">{{idx.name}}</mat-option>
+        <mat-option
+          *ngFor="let idx of files"
+          [matTooltip]="idx.path"
+          [value]="idx.path">{{idx.name}}</mat-option>
       </mat-select>
     </mat-form-field>
 
