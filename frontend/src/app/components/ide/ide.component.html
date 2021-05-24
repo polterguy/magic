@@ -12,10 +12,13 @@
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
+        <mat-icon class="mat-icon-rtl-mirror">insert_drive_file</mat-icon>
+
         <button
           class="file-btn"
           [color]="activeFile === file.node.path ? 'primary' : 'default'"
-          mat-stroked-button
+          mat-button
+          [matTooltip]="file.node.name"
           (click)="openFile(file.node)">{{file.name}}</button>
 
       </mat-tree-node>
