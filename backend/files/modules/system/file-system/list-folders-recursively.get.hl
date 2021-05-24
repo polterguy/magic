@@ -1,0 +1,27 @@
+
+/*
+ * List all folders in the specified [folder] argument.
+ */
+.arguments
+   folder:string
+.description:List all folders in the specified folder
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Listing all folders in specified folder.
+ */
+unwrap:x:+/*
+signal:magic.io.folder.list-recursively
+   .folder:x:@.arguments/*/folder
+
+
+/*
+ * Returning results of above invocation to caller.
+ */
+return-nodes:x:@signal/*

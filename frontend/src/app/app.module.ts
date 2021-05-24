@@ -14,6 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Material imports.
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
+import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
@@ -221,6 +222,7 @@ import { IdeComponent } from './components/ide/ide.component';
     MatCheckboxModule,
     MatTabsModule,
     MatCardModule,
+    MatTreeModule,
     MatIconModule,
     MatChipsModule,
     MatToolbarModule,
