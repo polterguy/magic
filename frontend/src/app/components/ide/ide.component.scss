@@ -7,7 +7,7 @@
   .files-section {
     flex: .2;
     margin-right: 1rem;
-    padding: .5rem;
+    padding: 1rem;
     .folder-node {
       color: #777;
     }
@@ -21,5 +21,22 @@
 
   .content-section {
     flex: .8;
+    position: relative;
   }
+}
+
+.wrapper-full {
+  display: flex;
+  min-height: calc(100vh - 7rem);
+  position: relative;
+  width: 100%;
+  .content-section-full {
+    flex: 1;
+  }
+}
+
+.toggle-explorer {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
 }

@@ -1,13 +1,18 @@
 
-<div class="wrapper">
+<div [class]="showExplorer ? 'wrapper' : 'wrapper-full'">
 
-  <mat-card class="files-section">
+  <mat-card
+    class="files-section"
+    *ngIf="showExplorer">
 
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
 
       <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="10">
 
-        <button class="file-btn" mat-button>{{node.name}}</button>
+        <button
+          class="file-btn"
+          mat-button
+          (click)="openFile(node.node)">{{node.name}}</button>
 
       </mat-tree-node>
 
@@ -29,8 +34,17 @@
 
   </mat-card>
 
-  <mat-card class="content-section">
+  <mat-card [class]="showExplorer ? 'content-section' : 'content-section-full'">
+
+    <button
+      mat-icon-button
+      class="toggle-explorer"
+      (click)="toggleFileExplorer()">
+      <mat-icon>list</mat-icon>
+    </button>
+
     Content
+
   </mat-card>
 
 </div>
