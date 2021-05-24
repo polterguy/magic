@@ -10,6 +10,17 @@
 </a>
 
 <a
+  *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+  mat-button
+  routerLink="/ide"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>extension</mat-icon>
+  <span>IDE</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
   mat-button
   routerLink="/auth"
