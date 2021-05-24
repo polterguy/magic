@@ -46,13 +46,26 @@
     <div class="tab-buttons">
 
       <button
-      *ngFor="let file of files"
-      mat-raised-button
+        *ngFor="let file of files"
+        mat-raised-button
         [color]="activeFile === file.path ? 'primary' : 'default'"
         (click)="activateFile(file)"
         [matTooltip]="file.path">
         {{file.name}}
       </button>
+
+    </div>
+
+    <div *ngFor="let file of files">
+
+      <div *ngIf="file.path === activeFile">
+
+        <ngx-codemirror
+          [(ngModel)]="file.content"
+          [options]="file.options">
+        </ngx-codemirror>
+
+      </div>
 
     </div>
 
