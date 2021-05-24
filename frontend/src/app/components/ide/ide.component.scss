@@ -2,10 +2,21 @@
 .wrapper {
   display: flex;
   width: 100%;
+  min-height: calc(100vh - 7rem);
 
   .files-section {
     flex: .2;
     margin-right: 1rem;
+    padding: .5rem;
+    .folder-node {
+      color: #777;
+    }
+    .file-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-left: 20px;
+    }
   }
 
   .content-section {

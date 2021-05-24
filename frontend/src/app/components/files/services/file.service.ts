@@ -49,6 +49,22 @@ export class FileService {
   }
 
   /**
+   * Returns a list of all files existing within the specified folder recursively.
+   * 
+   * @param folder Folder from where to retrieve list of files from
+   */
+   public listFilesRecursively(folder: string) {
+
+    // Dynamically building our query.
+    let query = '?folder=' + encodeURIComponent(folder);
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<string[]>(
+      '/magic/modules/system/file-system/list-files-recursively' +
+      query);
+  }
+
+  /**
    * Returns a list of all folders existing within the specified folder.
    * 
    * @param folder Folder from where to retrieve list of folders from
@@ -58,6 +74,19 @@ export class FileService {
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
       '/magic/modules/system/file-system/list-folders?folder=' +
+      encodeURIComponent(folder));
+  }
+
+  /**
+   * Returns a list of all folders existing within the specified folder recursively.
+   * 
+   * @param folder Folder from where to retrieve list of folders from
+   */
+   public listFoldersRecursively(folder: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<string[]>(
+      '/magic/modules/system/file-system/list-folders-recursively?folder=' +
       encodeURIComponent(folder));
   }
 

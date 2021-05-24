@@ -4,7 +4,55 @@
  */
 
 // Angular and system imports.
+import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, OnInit } from '@angular/core';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+
+// Application specific imports.
+import { FileService } from '../files/services/file.service';
+
+/*
+ * Model for tree control.
+ */
+class TreeNode {
+
+  /*
+   * File name only.
+   */
+  name: string;
+
+  /*
+   * Full path of file, including folder(s).
+   */
+  path: string;
+
+  /*
+   * if true, this is a folder.
+   */
+  isFolder: boolean;
+
+  /*
+   * If true, this is expanded.
+   */
+  isExpanded: boolean;
+
+  /**
+   * Level from base.
+   */
+  level: number;
+
+  /*
+   * Children nodes.
+   */
+  children: TreeNode[];
+}
+
+/** Flat node with expandable and level information */
+interface FlatNode {
+  expandable: boolean;
+  name: string;
+  level: number;
+}
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -16,11 +64,98 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IdeComponent implements OnInit {
 
-  constructor() { }
+  /*
+   * Root tree node pointing to root folder.
+   */
+  private root: TreeNode = {
+    name: '/',
+    path: '/',
+    isExpanded: false,
+    isFolder: true,
+    children: [],
+    level: 0,
+  };
+
+  private _transformer = (node: TreeNode, level: number) => {
+    return {
+      expandable: !!node.children && node.children.length > 0,
+      name: node.name,
+      level: level,
+    };
+  };
+
+  public treeControl = new FlatTreeControl<FlatNode>(
+      node => node.level, node => node.expandable);
+
+  private treeFlattener = new MatTreeFlattener(
+      this._transformer, node => node.level, node => node.expandable, node => node.children);
+
+  public dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param fileService Needed to load and save files.
+   */
+  public constructor(private fileService: FileService) { }
 
   /**
    * OnInit implementation.
    */
-  ngOnInit() {
+  public ngOnInit() {
+
+    // Retrieving files from backend.
+    this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
+
+      // Creating our initial tree structure.
+      for (const idx of folders) {
+        const entities = idx.split('/').filter(x => x !== '');
+        let parent = this.root;
+        let level = 1;
+        for (const idxPeek of entities.slice(0, entities.length - 1)) {
+          parent = parent.children.filter(x => x.name === idxPeek)[0];
+          level += 1;
+        }
+        parent.children.push({
+          name: entities[entities.length - 1],
+          path: idx,
+          isFolder: true,
+          isExpanded: false,
+          level: level,
+          children: [],
+        });
+      }
+
+      // Retrieving all files from backend.
+      this.fileService.listFilesRecursively('/').subscribe((files: string[]) => {
+        
+        // Adding files to initial structure.
+        for (const idx of files) {
+          const entities = idx.split('/').filter(x => x !== '');
+          let parent = this.root;
+          let level = 1;
+          for (const idxPeek of entities.slice(0, entities.length - 1)) {
+            parent = parent.children.filter(x => x.name === idxPeek)[0];
+            level += 1;
+          }
+          parent.children.push({
+            name: entities[entities.length - 1],
+            path: idx,
+            isFolder: false,
+            isExpanded: false,
+            level: level,
+            children: [],
+          });
+        }
+        this.dataSource.data = this.root.children;
+      });
+    });
+  }
+
+  /**
+   * Returns true if specified node has children.
+   */
+  public hasChild(_: number, node: FlatNode) {
+    return node.expandable;
   }
 }
