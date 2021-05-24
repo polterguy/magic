@@ -7,26 +7,34 @@
 
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
 
-      <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="10">
+      <mat-tree-node
+        *matTreeNodeDef="let file"
+        matTreeNodePadding
+        matTreeNodePaddingIndent="10">
 
         <button
           class="file-btn"
-          mat-button
-          (click)="openFile(node.node)">{{node.name}}</button>
+          [color]="activeFile === file.node.path ? 'primary' : 'default'"
+          mat-stroked-button
+          (click)="openFile(file.node)">{{file.name}}</button>
 
       </mat-tree-node>
 
-      <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="10">
+      <mat-tree-node
+        *matTreeNodeDef="let folder; when: hasChild"
+        matTreeNodePadding
+        matTreeNodePaddingIndent="10">
 
-        <button mat-icon-button matTreeNodeToggle>
-          <mat-icon class="mat-icon-rtl-mirror">
-            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-          </mat-icon>
+        <mat-icon class="mat-icon-rtl-mirror">
+          {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+
+        <button
+          matTreeNodeToggle
+          class="folder-btn"
+          mat-button>
+          {{folder.name}}
         </button>
-
-        <div class="folder-node">
-          {{node.name}}
-        </div>
 
       </mat-tree-node>
 
@@ -40,7 +48,7 @@
       mat-icon-button
       class="toggle-explorer"
       (click)="toggleFileExplorer()">
-      <mat-icon>list</mat-icon>
+      <mat-icon>all_out</mat-icon>
     </button>
 
     <div class="tab-buttons">

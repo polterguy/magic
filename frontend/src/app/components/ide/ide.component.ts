@@ -283,6 +283,9 @@ export class IdeComponent implements OnInit {
         return;
       }
 
+      // AutoFocus makes page "jump", hence turning it off.
+      options[0].options.autofocus = false;
+
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
