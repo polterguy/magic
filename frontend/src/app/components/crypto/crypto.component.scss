@@ -1,4 +1,7 @@
 
+::ng-deep .mat-tab-body-content {
+  overflow: hidden !important;
+}
 mat-card {
   margin-bottom: 2rem;
   min-height: 300px;
