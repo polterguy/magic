@@ -51,18 +51,12 @@
       <mat-icon>all_out</mat-icon>
     </button>
 
-    <div class="tab-buttons">
-
-      <button
-        *ngFor="let file of files"
-        mat-raised-button
-        [color]="activeFile === file.path ? 'primary' : 'default'"
-        (click)="activateFile(file)"
-        [matTooltip]="file.path">
-        {{file.name}}
-      </button>
-
-    </div>
+    <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
+      <mat-label>Files</mat-label>
+      <mat-select [(ngModel)]="activeFile">
+        <mat-option *ngFor="let idx of files" [value]="idx.path">{{idx.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <div *ngFor="let file of files">
 
@@ -72,6 +66,21 @@
           [(ngModel)]="file.content"
           [options]="file.options">
         </ngx-codemirror>
+
+        <div class="button-strip">
+
+          <button
+            mat-button>
+            Save
+          </button>
+
+          <button
+            mat-button
+            (click)="closeFile(file)">
+            Close
+          </button>
+
+        </div>
 
       </div>
 
