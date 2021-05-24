@@ -10,6 +10,11 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 
 // Application specific imports.
 import { FileService } from '../files/services/file.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { EvaluatorService } from '../evaluator/services/evaluator.service';
+
+// File types extensions.
+import fileTypes from './../files/file-editor/file-types.json';
 
 /*
  * Model for tree control.
@@ -75,6 +80,11 @@ class FileNode {
    * Content of file.
    */
   content: string;
+
+  /*
+   * CodeMirror options for file type.
+   */
+  options: any;
 }
 
 /**
@@ -86,6 +96,14 @@ class FileNode {
   styleUrls: ['./ide.component.scss']
 })
 export class IdeComponent implements OnInit {
+
+  /**
+   * If true, vocabulary has been loaded from server.
+   */
+   public vocabularyLoaded = false;
+
+  // Known file extensions we've got editors for.
+  private extensions = fileTypes;
 
   /*
    * Root tree node pointing to root folder.
@@ -148,7 +166,10 @@ export class IdeComponent implements OnInit {
    * 
    * @param fileService Needed to load and save files.
    */
-  public constructor(private fileService: FileService) { }
+  public constructor(
+    private fileService: FileService,
+    private feedbackService: FeedbackService,
+    private evaluatorService: EvaluatorService) { }
 
   /**
    * OnInit implementation.
@@ -157,6 +178,24 @@ export class IdeComponent implements OnInit {
 
     // Retrieving files and folder from server.
     this.getFilesFromServer();
+  }
+
+  /**
+   * Implementation of AfterViewInit
+   */
+   public ngAfterViewInit() {
+
+    // Retrieving server's vocabulary.
+    if (!window['_vocabulary']) {
+
+      // Loading vocabulary from server before initializing editor.
+      this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
+
+        // Publishing vocabulary such that autocomplete component can reach it.
+        window['_vocabulary'] = vocabulary;
+
+      }, error => this.feedbackService.showError(error));
+    }
   }
 
   /**
@@ -234,6 +273,16 @@ export class IdeComponent implements OnInit {
 
     } else {
 
+      // Verifying we have an existing editor for file type.
+      const extension = file.name.substr(file.name.lastIndexOf('.') + 1).toLowerCase();
+      const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+      if (options.length === 0) {
+
+        // Oops, no known editor for file.
+        this.feedbackService.showInfoShort('No known editor for file type');
+        return;
+      }
+
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -242,6 +291,7 @@ export class IdeComponent implements OnInit {
           name: file.name,
           path: file.path,
           content: content,
+          options: options[0].options,
         });
         this.activeFile = file.path;
       });

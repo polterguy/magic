@@ -183,6 +183,7 @@ export class FileEditorComponent implements OnInit {
 
       // Assigning content to field, which will show CodeMirror instance for file type.
       this.content = content;
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 }

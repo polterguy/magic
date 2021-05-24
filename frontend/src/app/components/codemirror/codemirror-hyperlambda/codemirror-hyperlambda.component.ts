@@ -52,7 +52,7 @@ export class HyperlambdaComponent implements AfterViewInit {
    * Model for component containing Hyperlambda that is displayed.
    */
   @Input() public model: Model;
-  
+
   /**
    * If true, vocabulary has been loaded from server.
    */
