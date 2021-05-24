@@ -1,16 +1,22 @@
 
 .wrapper {
   display: flex;
-  width: 100%;
 
   .files-section {
-    flex: .2;
-    width: 20%;
+    box-sizing: content-box;
+    width: 30%;
+    max-width: 30%;
+    min-width: 30%;
+    overflow: auto;
     margin-right: 1rem;
     padding: 1rem;
-    .folder-node {
-      color: #777;
+
+    .folder-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
     }
+
     .file-btn {
       display: block;
       width: 100%;
@@ -20,8 +26,10 @@
   }
 
   .content-section {
-    flex: .8;
-    width: calc(80% - 8rem);
+    box-sizing: content-box;
+    width: calc(70% - 7rem);
+    max-width: calc(70% - 7rem);
+    min-width: calc(70% - 7rem);
     position: relative;
     padding: 2rem;
   }
