@@ -22,6 +22,7 @@
   .content-section {
     flex: .8;
     position: relative;
+    padding: 2rem;
   }
 }
 
@@ -32,6 +33,7 @@
   width: 100%;
   .content-section-full {
     flex: 1;
+    padding: 2rem;
   }
 }
 
@@ -39,4 +41,10 @@
   position: absolute;
   top: .5rem;
   right: .5rem;
+}
+
+.tab-buttons {
+  button {
+    margin-right: .5rem;
+  }
 }
