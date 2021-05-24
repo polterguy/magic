@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, OnInit } from '@angular/core';
+import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
@@ -76,21 +76,39 @@ export class IdeComponent implements OnInit {
     level: 0,
   };
 
+  /*
+   * Transforms from internal data structure to tree control's expectations.
+   */
   private _transformer = (node: TreeNode, level: number) => {
     return {
       expandable: !!node.children && node.children.length > 0,
       name: node.name,
       level: level,
+      node: node,
     };
   };
 
+  /*
+   * Flattens tree structure.
+   */
+  private treeFlattener = new MatTreeFlattener(
+    this._transformer, node => node.level, node => node.expandable, node => node.children);
+
+  /**
+   * Actual tree control for component.
+   */
   public treeControl = new FlatTreeControl<FlatNode>(
       node => node.level, node => node.expandable);
 
-  private treeFlattener = new MatTreeFlattener(
-      this._transformer, node => node.level, node => node.expandable, node => node.children);
-
+  /**
+   * Actual data source for tree control.
+   */
   public dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  /**
+   * Shows file exporer if true.
+   */
+  public showExplorer = true;
 
   /**
    * Creates an instance of your component.
@@ -103,6 +121,15 @@ export class IdeComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
+
+    // Retrieving files and folder from server.
+    this.getFilesFromServer();
+  }
+
+  /**
+   * Invoked when files needs to be fetched from the server.
+   */
+  public getFilesFromServer() {
 
     // Retrieving files from backend.
     this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
@@ -157,5 +184,21 @@ export class IdeComponent implements OnInit {
    */
   public hasChild(_: number, node: FlatNode) {
     return node.expandable;
+  }
+
+  /**
+   * Invoked when user wants to open a file.
+   * 
+   * @param file Tree node wrapping file to open
+   */
+  public openFile(file: TreeNode) {
+    console.log(file.path);
+  }
+
+  /**
+   * Invoked when file explorer's visibility should be toggled.
+   */
+  public toggleFileExplorer() {
+    this.showExplorer = !this.showExplorer;
   }
 }
