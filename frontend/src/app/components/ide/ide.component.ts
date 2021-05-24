@@ -286,6 +286,13 @@ export class IdeComponent implements OnInit {
       // AutoFocus makes page "jump", hence turning it off.
       options[0].options.autofocus = false;
 
+      // Turning on maximize keyboard shortcut.
+      if (options[0].options.extraKeys) {
+        options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        };
+      }
+
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -299,6 +306,22 @@ export class IdeComponent implements OnInit {
         this.activeFile = file.path;
       });
     }
+  }
+
+  /**
+   * Invoked when a file should be saved.
+   * 
+   * @param file File to save
+   */
+   public saveFile(file: FileNode) {
+
+    // Removing file from edited files.
+    this.fileService.saveFile(file.path, file.content).subscribe(() => {
+
+      // Providing feedback to user.
+      this.feedbackService.showInfoShort('File successfully saved');
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
