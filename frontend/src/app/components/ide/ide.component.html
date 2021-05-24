@@ -43,7 +43,18 @@
       <mat-icon>list</mat-icon>
     </button>
 
-    Content
+    <div class="tab-buttons">
+
+      <button
+        mat-raised-button
+        [color]="activeFile === file.path ? 'primary' : 'default'"
+        *ngFor="let file of files"
+        (click)="activateFile(file)"
+        [matTooltip]="file.path">
+        {{file.name}}
+      </button>
+
+    </div>
 
   </mat-card>
 

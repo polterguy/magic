@@ -47,11 +47,29 @@ class TreeNode {
   children: TreeNode[];
 }
 
-/** Flat node with expandable and level information */
+/*
+ *  Flat node with expandable and level information
+ */
 interface FlatNode {
   expandable: boolean;
   name: string;
   level: number;
+}
+
+/*
+ * Model class for files currently being edited.
+ */
+class FileNode {
+
+  /*
+   * Name of file.
+   */
+  name: string;
+
+  /*
+   * Full path and name of file.
+   */
+  path: string;
 }
 
 /**
@@ -109,6 +127,16 @@ export class IdeComponent implements OnInit {
    * Shows file exporer if true.
    */
   public showExplorer = true;
+
+  /**
+   * Currently edited files.
+   */
+  public files: FileNode[] = [];
+
+  /**
+   * Currently open file.
+   */
+  public activeFile: string = '';
 
   /**
    * Creates an instance of your component.
@@ -192,7 +220,31 @@ export class IdeComponent implements OnInit {
    * @param file Tree node wrapping file to open
    */
   public openFile(file: TreeNode) {
-    console.log(file.path);
+
+    // Checking if file is already opened.
+    if (this.files.filter(x => x.path === file.path).length > 0) {
+
+      // Yup, file already opened.
+      this.activeFile = file.path;
+
+    } else {
+
+      // Pushing specified file into files currently being edited object.
+      this.files.push({
+        name: file.name,
+        path: file.path,
+      });
+      this.activeFile = file.path;
+    }
+  }
+
+  /**
+   * Invoked when a file should be activated.
+   * 
+   * @param file File to activate
+   */
+  public activateFile(file: FileNode) {
+    this.activeFile = file.path;
   }
 
   /**
