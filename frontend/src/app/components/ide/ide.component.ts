@@ -70,6 +70,11 @@ class FileNode {
    * Full path and name of file.
    */
   path: string;
+
+  /*
+   * Content of file.
+   */
+  content: string;
 }
 
 /**
@@ -229,12 +234,17 @@ export class IdeComponent implements OnInit {
 
     } else {
 
-      // Pushing specified file into files currently being edited object.
-      this.files.push({
-        name: file.name,
-        path: file.path,
+      // Retrieving file's content from backend.
+      this.fileService.loadFile(file.path).subscribe((content: string) => {
+
+        // Pushing specified file into files currently being edited object.
+        this.files.push({
+          name: file.name,
+          path: file.path,
+          content: content,
+        });
+        this.activeFile = file.path;
       });
-      this.activeFile = file.path;
     }
   }
 

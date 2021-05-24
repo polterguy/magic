@@ -46,9 +46,9 @@
     <div class="tab-buttons">
 
       <button
-        mat-raised-button
+      *ngFor="let file of files"
+      mat-raised-button
         [color]="activeFile === file.path ? 'primary' : 'default'"
-        *ngFor="let file of files"
         (click)="activateFile(file)"
         [matTooltip]="file.path">
         {{file.name}}
