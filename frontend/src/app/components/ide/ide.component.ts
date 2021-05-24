@@ -302,12 +302,23 @@ export class IdeComponent implements OnInit {
   }
 
   /**
-   * Invoked when a file should be activated.
+   * Invoked when a file should be closed.
    * 
-   * @param file File to activate
+   * @param file File to close
    */
-  public activateFile(file: FileNode) {
-    this.activeFile = file.path;
+  public closeFile(file: FileNode) {
+
+    // Removing file from edited files.
+    let idx = this.files.indexOf(file);
+    this.files.splice(idx, 1);
+    if (this.files.length === 0) {
+      this.activeFile = null;
+    } else {
+      if (idx >= this.files.length) {
+        idx = 0;
+      }
+      this.activeFile = this.files[idx].path;
+    }
   }
 
   /**

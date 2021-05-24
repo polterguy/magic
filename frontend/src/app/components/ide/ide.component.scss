@@ -1,12 +1,14 @@
 
 .wrapper {
   display: flex;
+  max-height: calc(100% + 3rem);
+  height: calc(100% + 3rem);
 
   .files-section {
     box-sizing: content-box;
-    width: 30%;
-    max-width: 30%;
-    min-width: 30%;
+    width: 20%;
+    max-width: 20%;
+    min-width: 20%;
     overflow: auto;
     margin-right: 1rem;
     padding: 1rem;
@@ -27,9 +29,9 @@
 
   .content-section {
     box-sizing: content-box;
-    width: calc(70% - 7rem);
-    max-width: calc(70% - 7rem);
-    min-width: calc(70% - 7rem);
+    width: calc(80% - 7rem);
+    max-width: calc(80% - 7rem);
+    min-width: calc(80% - 7rem);
     position: relative;
     padding: 2rem;
   }
@@ -60,5 +62,9 @@
 }
 
 ::ng-deep .CodeMirror {
-  height: 100%;
+  height: calc(100vh - 19.5rem);
+}
+
+.wider {
+  width: 20rem;
 }
