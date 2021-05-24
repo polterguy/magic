@@ -1,0 +1,14 @@
+
+.wrapper {
+  display: flex;
+  width: 100%;
+
+  .files-section {
+    flex: .2;
+    margin-right: 1rem;
+  }
+
+  .content-section {
+    flex: .8;
+  }
+}

@@ -8,6 +8,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
+import { IdeComponent } from './components/ide/ide.component';
 import { LogComponent } from './components/log/log.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { AuthComponent } from './components/auth/auth.component';
@@ -34,6 +35,7 @@ const routes: Routes = [
   // Avoids re-initializing component as user opens and closes view details / URL link
   { path: 'log', redirectTo: 'log/' },
   { path: 'log/:id', component: LogComponent },
+  { path: 'ide', component: IdeComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
   { path: 'config', component: ConfigComponent },
