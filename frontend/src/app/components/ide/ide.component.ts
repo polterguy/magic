@@ -411,6 +411,28 @@ export class IdeComponent implements OnInit {
     }
   }
 
+  /**
+   * Deletes the currently active folder.
+   */
+  public deleteActiveFolder() {
+
+    // Asking user to confirm action.
+    this.feedbackService.confirm('Confirm action', `Are you sure you want to delete the '${this.activeFolder}' folder?`, () => {
+
+      // Invoking backend to actually delete folder.
+      this.fileService.deleteFolder(this.activeFolder).subscribe(() => {
+
+        // Showing feedback to user and updating treeview.
+        this.removeNode(this.activeFolder);
+        this.feedbackService.showInfoShort('Folder successfully deleted');
+
+        // Databinding tree again.
+        this.dataBindTree();
+
+      }, (error: any) => this.feedbackService.showError(error));
+    });
+  }
+
   /*
    * Private helper methods.
    */

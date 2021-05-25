@@ -26,7 +26,7 @@
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
-        <mat-icon class="mat-icon-rtl-mirror">folder</mat-icon>
+        <mat-icon class="mat-icon-rtl-mirror">folder_open</mat-icon>
 
         <button
           matTreeNodeToggle
@@ -52,12 +52,26 @@
       matTooltip="Hyper IDE, when you're in a hurry!"
       alt="Hyper IDE, when you're in a hurry">
 
-    <button
-      mat-icon-button
-      class="add-button"
-      (click)="createNewFileObject()">
-      <mat-icon>add_cirlcle</mat-icon>
-    </button>
+    <div class="toolstrip-top">
+
+      <button
+        *ngIf="activeFolder !== '/'"
+        mat-icon-button
+        class="delete-folder-button"
+        [matTooltip]="'Delete folder \'' + activeFolder + '\''"
+        (click)="deleteActiveFolder()">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        class="add-button"
+        matTooltip="Create new file or folder"
+        (click)="createNewFileObject()">
+        <mat-icon>add_cirlcle</mat-icon>
+      </button>
+
+    </div>
 
     <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
       <mat-label>Open files</mat-label>
