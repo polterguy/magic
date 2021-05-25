@@ -60,6 +60,7 @@ mat-sidenav-container {
     margin-left: 0 !important;
     box-sizing: border-box;
     position: relative;
+    overflow-x: hidden;
 
     .img-wrapper {
       position: fixed;
