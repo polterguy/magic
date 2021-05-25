@@ -23,7 +23,17 @@ export class FileObject {
   /**
    * Name of file object user wants to create.
    */
-  path?: string;
+  name: string;
+
+  /**
+   * Path where user wants to create file object.
+   */
+  path: string;
+
+  /**
+   * All possible folders in system to where the file should be created.
+   */
+  folders: string[];
 }
 
 /**
@@ -31,7 +41,8 @@ export class FileObject {
  */
 @Component({
   selector: 'app-new-file-folder-dialog',
-  templateUrl: './new-file-folder-dialog.component.html'
+  templateUrl: './new-file-folder-dialog.component.html',
+  styleUrls: ['./new-file-folder-dialog.component.scss']
 })
 export class NewFileFolderDialogComponent {
 
@@ -51,12 +62,12 @@ export class NewFileFolderDialogComponent {
   public pathValid() {
 
     // Verifying user has typed a path at all.
-    if (!this.data.path || this.data.path.length === 0) {
+    if (!this.data.name || this.data.name.length === 0) {
       return false;
     }
 
     // Verifying path doesn't contain invalid characters.
-    for (const idx of this.data.path) {
+    for (const idx of this.data.name) {
       if ('abcdefghijklmnopqrstuvwxyz0123456789_-.'.indexOf(idx.toLowerCase()) === -1) {
         return false;
       }
@@ -68,7 +79,7 @@ export class NewFileFolderDialogComponent {
     }
 
     // Verifying we have a CodeMirror editor for file extension.
-    const extension = this.data.path.substr(this.data.path.lastIndexOf('.') + 1);
+    const extension = this.data.name.substr(this.data.name.lastIndexOf('.') + 1);
     const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
     return options.length > 0;
   }
