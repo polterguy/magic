@@ -55,7 +55,7 @@
     <div class="toolstrip-top">
 
       <button
-        *ngIf="activeFolder !== '/'"
+        [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
         mat-icon-button
         class="delete-folder-button"
         [matTooltip]="'Delete folder \'' + activeFolder + '\''"
