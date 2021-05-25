@@ -129,14 +129,12 @@ export class IdeComponent implements OnInit {
   /*
    * Flattens tree structure.
    */
-  private treeFlattener = new MatTreeFlattener(
-    this._transformer, node => node.level, node => node.expandable, node => node.children);
+  private treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.children);
 
   /**
    * Actual tree control for component.
    */
-  public treeControl = new FlatTreeControl<FlatNode>(
-      node => node.level, node => node.expandable);
+  public treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
 
   /**
    * Actual data source for tree control.
@@ -156,7 +154,10 @@ export class IdeComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Needed to create modal dialogs
    * @param fileService Needed to load and save files.
+   * @param feedbackService Needed to display feedback to user
+   * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
    */
   public constructor(
     private dialog: MatDialog,
@@ -196,11 +197,13 @@ export class IdeComponent implements OnInit {
    */
    public getFilesFromServer() {
 
-    // Retrieving files from backend.
-    this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
+    // Common function object for adding folders and files to root graph object.
+    const functor = (objects: string[], isFolder: boolean) => {
 
-      // Creating our initial tree structure.
-      for (const idx of folders) {
+      // Adding folder to root graph object.
+      for (const idx of objects) {
+
+        // Finding parent node of currently iterated folder.
         const entities = idx.split('/').filter(x => x !== '');
         let parent = this.root;
         let level = 1;
@@ -208,38 +211,36 @@ export class IdeComponent implements OnInit {
           parent = parent.children.filter(x => x.name === idxPeek)[0];
           level += 1;
         }
+
+        // Adding folder to graph object, now under correct parent.
         parent.children.push({
           name: entities[entities.length - 1],
           path: idx,
-          isFolder: true,
+          isFolder: isFolder,
           level: level,
           children: [],
         });
       }
+    };
+
+    // Retrieving files from backend.
+    this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
+
+      // Adding folder to root graph object.
+      functor(folders, true);
 
       // Retrieving all files from backend.
       this.fileService.listFilesRecursively('/').subscribe((files: string[]) => {
         
-        // Adding files to initial structure.
-        for (const idx of files) {
-          const entities = idx.split('/').filter(x => x !== '');
-          let parent = this.root;
-          let level = 1;
-          for (const idxPeek of entities.slice(0, entities.length - 1)) {
-            parent = parent.children.filter(x => x.name === idxPeek)[0];
-            level += 1;
-          }
-          parent.children.push({
-            name: entities[entities.length - 1],
-            path: idx,
-            isFolder: false,
-            level: level,
-            children: [],
-          });
-        }
+        // Adding files to root graph object.
+        functor(files, false);
+
+        // Databinding tree control initially.
         this.dataSource.data = this.root.children;
-      });
-    });
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
