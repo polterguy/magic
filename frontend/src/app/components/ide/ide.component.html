@@ -26,14 +26,14 @@
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
-        <mat-icon class="mat-icon-rtl-mirror">
-          {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
-        </mat-icon>
+        <mat-icon class="mat-icon-rtl-mirror">folder</mat-icon>
 
         <button
           matTreeNodeToggle
           class="folder-btn"
-          mat-button>
+          [color]="activeFolder === folder.node.path ? 'primary' : 'default'"
+          mat-button
+          (click)="openFolder(folder.node)">
           {{folder.name}}
         </button>
 
@@ -61,7 +61,7 @@
 
     <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
       <mat-label>Open files</mat-label>
-      <mat-select [(ngModel)]="activeFile">
+      <mat-select [(ngModel)]="activeFile" (selectionChange)="selectedFileChanged()">
         <mat-option
           *ngFor="let idx of files"
           [matTooltip]="idx.path"
