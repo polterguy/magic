@@ -142,6 +142,13 @@ mat-sidenav-container {
   color: rgb(55,55,55);
 }
 
+::ng-deep .dark mat-tree {
+  background: rgb(45,45,45);
+  button {
+    color: rgb(245,245,245);
+  }
+}
+
 mat-tab-group .mat-tab-label .mat-tab-label-content {
   color: #fff;
 }
