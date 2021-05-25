@@ -57,11 +57,6 @@ export class IdeComponent implements OnInit {
   private treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.children);
 
   /**
-   * If true, vocabulary has been loaded from server.
-   */
-   public vocabularyLoaded = false;
-
-  /**
    * Actual tree control for component.
    */
   public treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
@@ -77,7 +72,7 @@ export class IdeComponent implements OnInit {
   public files: FileNode[] = [];
 
   /**
-   * Currently open file.
+   * Currently active edited file's full path.
    */
   public activeFile: string = '';
 
@@ -178,8 +173,11 @@ export class IdeComponent implements OnInit {
    */
   public createNewFileObject() {
 
-    // Retrieving all possible folders in system to allow user to select folder to create object within.
+    // Retrieving all existing folders in system to allow user to select folder to create object within.
     const folders = this.getFolders();
+
+    // Retieving all existing files to prevent user from creating a new file that already exists.
+    const files = this.getFiles();
 
     // Creating modal dialog responsible for asking user for name and type of object.
     const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
@@ -189,6 +187,7 @@ export class IdeComponent implements OnInit {
         name: '',
         path: '/',
         folders: folders,
+        files: files,
       },
     });
 
@@ -391,7 +390,6 @@ export class IdeComponent implements OnInit {
   /*
    * Private helper methods.
    */
-  
 
   /*
    * Returns all folders in system to caller.
@@ -400,9 +398,30 @@ export class IdeComponent implements OnInit {
 
     // Finding all folders in currently iterated level.
     const result: string[] = [];
-    result.push(current.path);
+    if (current.isFolder) {
+      result.push(current.path);
+    }
     for (const idx of current.children.filter(x => x.isFolder)) {
       const inner = this.getFolders(idx);
+      for (const idxInner of inner) {
+        result.push(idxInner);
+      }
+    }
+    return result;
+  }
+
+  /*
+   * Returns all folders in system to caller.
+   */
+  private getFiles(current: TreeNode = this.root) {
+
+    // Finding all folders in currently iterated level.
+    const result: string[] = [];
+    if (!current.isFolder) {
+      result.push(current.path);
+    }
+    for (const idx of current.children.filter(x => !x.isFolder)) {
+      const inner = this.getFiles(idx);
       for (const idxInner of inner) {
         result.push(idxInner);
       }
@@ -415,12 +434,17 @@ export class IdeComponent implements OnInit {
    */
   private findTreeNodeFolder(node: TreeNode, path: string) : TreeNode {
 
+    // Checking if this is the guy we're looking for.
     if (node.path === path) {
       return node;
     }
+
+    // Recursively searching through children nodes.
     for (const idx of node.children) {
       const tmpResult = this.findTreeNodeFolder(idx, path);
       if (tmpResult) {
+
+        // This is our guy!
         return tmpResult
       }
     }

@@ -31,10 +31,15 @@ export class FileObject {
   path: string;
 
   /**
-   * All possible folders in system to where the file should be created.
+   * All existing folders in system.
    */
-  folders: string[];
-}
+   folders: string[];
+  
+  /**
+   * All existing files in system.
+   */
+   files: string[];
+  }
 
 /**
  * Component for creating a new file system object, either a folder or a file.
@@ -75,12 +80,12 @@ export class NewFileFolderDialogComponent {
 
     // If we're creating a folder, we've now sanity checked its name.
     if (this.data.isFolder) {
-      return true;
+      return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
     }
 
     // Verifying we have a CodeMirror editor for file extension.
     const extension = this.data.name.substr(this.data.name.lastIndexOf('.') + 1);
     const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
-    return options.length > 0;
+    return options.length > 0 && this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
   }
 }
