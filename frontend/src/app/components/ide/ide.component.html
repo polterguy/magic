@@ -23,7 +23,7 @@
       </mat-tree-node>
 
       <mat-tree-node
-        *matTreeNodeDef="let folder; when: hasChild"
+        *matTreeNodeDef="let folder; when: isExpandable"
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 

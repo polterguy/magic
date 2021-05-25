@@ -10,7 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
+import { FlatNode } from './models/flat-node.model';
+import { FileNode } from './models/file-node.model';
+import { TreeNode } from './models/tree-node.model';
 import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
@@ -18,72 +20,6 @@ import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dial
 
 // File types extensions.
 import fileTypes from './../files/file-editor/file-types.json';
-
-/*
- * Model for tree control.
- */
-class TreeNode {
-
-  /*
-   * File name only.
-   */
-  name: string;
-
-  /*
-   * Full path of file, including folder(s).
-   */
-  path: string;
-
-  /*
-   * if true, this is a folder.
-   */
-  isFolder: boolean;
-
-  /**
-   * Level from base.
-   */
-  level: number;
-
-  /*
-   * Children nodes.
-   */
-  children: TreeNode[];
-}
-
-/*
- *  Flat node with expandable and level information
- */
-interface FlatNode {
-  expandable: boolean;
-  name: string;
-  level: number;
-}
-
-/*
- * Model class for files currently being edited.
- */
-class FileNode {
-
-  /*
-   * Name of file.
-   */
-  name: string;
-
-  /*
-   * Full path and name of file.
-   */
-  path: string;
-
-  /*
-   * Content of file.
-   */
-  content: string;
-
-  /*
-   * CodeMirror options for file type.
-   */
-  options: any;
-}
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -95,17 +31,10 @@ class FileNode {
 })
 export class IdeComponent implements OnInit {
 
-  /**
-   * If true, vocabulary has been loaded from server.
-   */
-  public vocabularyLoaded = false;
-
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
 
-  /*
-   * Root tree node pointing to root folder.
-   */
+  // Root tree node pointing to root folder.
   private root: TreeNode = {
     name: '/',
     path: '/',
@@ -114,9 +43,7 @@ export class IdeComponent implements OnInit {
     level: 0,
   };
 
-  /*
-   * Transforms from internal data structure to tree control's expectations.
-   */
+  // Transforms from internal data structure to tree control's expectations.
   private _transformer = (node: TreeNode, level: number) => {
     return {
       expandable: node.isFolder,
@@ -126,10 +53,13 @@ export class IdeComponent implements OnInit {
     };
   };
 
-  /*
-   * Flattens tree structure.
-   */
+  // Flattens tree structure.
   private treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.children);
+
+  /**
+   * If true, vocabulary has been loaded from server.
+   */
+   public vocabularyLoaded = false;
 
   /**
    * Actual tree control for component.
@@ -268,6 +198,27 @@ export class IdeComponent implements OnInit {
       // Verifying user clicked rename button
       if (result) {
 
+        // Common sorter object used for both files and folders branch.
+        const sorter = () => {
+
+          // Sorting children such that folder comes before files, and everything else is sorted case insensitively.
+          node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
+            if (lhs.isFolder && !rhs.isFolder) {
+              return -1;
+            } else if (!lhs.isFolder && rhs.isFolder) {
+              return 1;
+            }
+            const lhsLowers = lhs.path.toLowerCase();
+            const rhsLowers = rhs.path.toLowerCase();
+            if (lhsLowers < rhsLowers) {
+              return -1;
+            } else if (lhsLowers > rhsLowers) {
+              return 1;
+            }
+            return 0;
+          });
+        };
+
         // Invoking backend to rename file or folder.
         let path = result.path + result.name;
 
@@ -281,7 +232,7 @@ export class IdeComponent implements OnInit {
           path += '/';
 
           // We're supposed to create a folder.
-          this.fileService.createFolder(path).subscribe((response: Response) => {
+          this.fileService.createFolder(path).subscribe(() => {
 
             // Showing user some feedback.
             this.feedbackService.showInfoShort('Folder successfully created');
@@ -296,19 +247,7 @@ export class IdeComponent implements OnInit {
             });
 
             // Making sure we sort nodes at level before we databind tree control again.
-            node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
-              if (lhs.isFolder && !rhs.isFolder) {
-                return -1;
-              } else if (!lhs.isFolder && rhs.isFolder) {
-                return 1;
-              }
-              if (lhs.path.toLowerCase() < rhs.path.toLowerCase()) {
-                return -1;
-              } else if (lhs.path.toLowerCase() > rhs.path.toLowerCase()) {
-                return 1;
-              }
-              return 0;
-            });
+            sorter();
 
             // Databinding tree control again.
             this.dataBindTree();
@@ -337,19 +276,7 @@ export class IdeComponent implements OnInit {
           this.activeFile = path;
 
           // Making sure we sort nodes at level before we databind tree control again.
-          node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
-            if (lhs.isFolder && !rhs.isFolder) {
-              return -1;
-            } else if (!lhs.isFolder && rhs.isFolder) {
-              return 1;
-            }
-            if (lhs.path.toLowerCase() < rhs.path.toLowerCase()) {
-              return -1;
-            } else if (lhs.path.toLowerCase() > rhs.path.toLowerCase()) {
-              return 1;
-            }
-            return 0;
-          });
+          sorter();
 
           // Databinding tree control again.
           this.dataBindTree();
@@ -361,7 +288,7 @@ export class IdeComponent implements OnInit {
   /**
    * Returns true if specified node has children.
    */
-  public hasChild(_: number, node: FlatNode) {
+  public isExpandable(_: number, node: FlatNode) {
     return node.expandable;
   }
 
@@ -431,18 +358,7 @@ export class IdeComponent implements OnInit {
           this.dataBindTree();
 
           // Closing file.
-          let idx = this.files.indexOf(this.files.filter(x => x.path === file.path)[0]);
-          this.files.splice(idx, 1);
-
-          // Making another file the active file.
-          if (this.files.length === 0) {
-            this.activeFile = null;
-          } else {
-            if (idx >= this.files.length) {
-              idx = 0;
-            }
-            this.activeFile = this.files[idx].path;
-          }
+          this.closeFile(this.files.filter(x => x.path === file.path)[0]);
         }
 
         // Providing feedback to user.
@@ -475,6 +391,7 @@ export class IdeComponent implements OnInit {
   /*
    * Private helper methods.
    */
+  
 
   /*
    * Returns all folders in system to caller.
