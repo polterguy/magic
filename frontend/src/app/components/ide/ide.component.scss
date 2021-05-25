@@ -1,15 +1,24 @@
 
 .wrapper {
-  display: flex;
-  max-height: calc(100% + 3rem);
-  height: calc(100% + 3rem);
-  margin-bottom: -4rem;
+  max-height: calc(100vh - 5rem);
+  height: calc(100vh - 5rem);
+  width: calc(100% + 8rem);
+  margin-left: -4rem;
+  margin-top: -2rem;
+  margin-right: 0;
+  margin-bottom: -5rem;
+
+  mat-card {
+    margin-bottom: 0;
+  }
 
   .files-section {
     box-sizing: content-box;
-    width: 20%;
-    max-width: 20%;
-    min-width: 20%;
+    float: left;
+    width: 30%;
+    max-width: 30%;
+    max-height: calc(100% - 3rem);
+    height: calc(100% - 3rem);
     overflow: auto;
     margin-right: 1rem;
     padding: 1rem;
@@ -34,10 +43,11 @@
   }
 
   .content-section {
-    box-sizing: content-box;
-    width: calc(80% - 7rem);
-    max-width: calc(80% - 7rem);
-    min-width: calc(80% - 7rem);
+    float: left;
+    width: calc(70% - 7rem);
+    max-width: calc(70% - 7rem);
+    height: calc(100% - 5rem);
+    max-height: calc(100% - 5rem);
     position: relative;
     padding: 2rem;
 
@@ -62,21 +72,28 @@
 }
 
 ::ng-deep .CodeMirror {
-  height: calc(100vh - 19.5rem);
+  height: calc(100vh - 16.5rem);
 }
 
 @media screen and (max-width: 1024px) {
   .wrapper {
     display: block;
+    max-height: unset;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
     .files-section {
+      float: none;
       width: calc(100% - 2rem);
       max-width: calc(100% - 2rem);
       min-width: calc(100% - 2rem);
     }
     .content-section {
+      float: none;
       width: calc(100% - 4rem);
       max-width: calc(100% - 4rem);
       min-width: calc(100% - 4rem);
-      }
+      margin-bottom: 0;
+    }
   }  
 }
