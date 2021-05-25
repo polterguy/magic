@@ -123,6 +123,7 @@ import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-di
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
+import { NewFileFolderDialogComponent } from './components/ide/new-file-folder-dialog/new-file-folder-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { RenameFileObjectDialogComponent } from './components/files/rename-file-object-dialog/rename-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
@@ -175,6 +176,7 @@ import { IdeComponent } from './components/ide/ide.component';
     ScheduleTaskDialogComponent,
     NewTaskDialogComponent,
     FileEditorComponent,
+    NewFileFolderDialogComponent,
     NewFileObjectDialogComponent,
     RenameFileObjectDialogComponent,
     ServerPublicKeyComponent,

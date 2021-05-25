@@ -6,12 +6,14 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
 import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
+import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
 import fileTypes from './../files/file-editor/file-types.json';
@@ -162,6 +164,7 @@ export class IdeComponent implements OnInit {
    * @param fileService Needed to load and save files.
    */
   public constructor(
+    private dialog: MatDialog,
     private fileService: FileService,
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService) { }
@@ -191,6 +194,32 @@ export class IdeComponent implements OnInit {
 
       }, error => this.feedbackService.showError(error));
     }
+  }
+
+  /**
+   * Invoked when user wants to create a new file or folder.
+   */
+  public createNewFileObject() {
+
+    // Creating modal dialog responsible for asking user for name and type of object.
+    const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
+      width: '550px',
+      data: {
+        isFolder: true,
+        path: '',
+      },
+    });
+
+    // Subscribing to closed event and creating a new folder if we're given a folder name.
+    dialogRef.afterClosed().subscribe((result: FileObject) => {
+
+      // Verifying user clicked rename button
+      if (result) {
+
+        // Invoking backend to rename file or folder.
+        console.log(result);
+      }
+    });
   }
 
   /**

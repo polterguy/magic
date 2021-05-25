@@ -1,0 +1,26 @@
+
+<h1 mat-dialog-title>New file object</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Name</mat-label>
+    <input
+      type="text"
+      matInput
+      autocomplete="off"
+      [(ngModel)]="data.path">
+    </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!pathValid()"
+    [mat-dialog-close]="data">Create</button>
+
+</div>

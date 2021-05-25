@@ -40,17 +40,16 @@
     min-width: calc(80% - 7rem);
     position: relative;
     padding: 2rem;
-  }
 
-  .tab-buttons {
-    button {
-      margin-right: .5rem;
-      margin-bottom: .5rem;
+    .add-button {
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
     }
-  }
 
-  .wider {
-    width: 20rem;
+    .wider {
+      width: 20rem;
+    }
   }
 }
 
