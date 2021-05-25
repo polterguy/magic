@@ -39,11 +39,6 @@ class TreeNode {
    */
   isFolder: boolean;
 
-  /*
-   * If true, this is expanded.
-   */
-  isExpanded: boolean;
-
   /**
    * Level from base.
    */
@@ -114,7 +109,6 @@ export class IdeComponent implements OnInit {
   private root: TreeNode = {
     name: '/',
     path: '/',
-    isExpanded: false,
     isFolder: true,
     children: [],
     level: 0,
@@ -198,6 +192,57 @@ export class IdeComponent implements OnInit {
   }
 
   /**
+   * Invoked when files needs to be fetched from the server.
+   */
+   public getFilesFromServer() {
+
+    // Retrieving files from backend.
+    this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
+
+      // Creating our initial tree structure.
+      for (const idx of folders) {
+        const entities = idx.split('/').filter(x => x !== '');
+        let parent = this.root;
+        let level = 1;
+        for (const idxPeek of entities.slice(0, entities.length - 1)) {
+          parent = parent.children.filter(x => x.name === idxPeek)[0];
+          level += 1;
+        }
+        parent.children.push({
+          name: entities[entities.length - 1],
+          path: idx,
+          isFolder: true,
+          level: level,
+          children: [],
+        });
+      }
+
+      // Retrieving all files from backend.
+      this.fileService.listFilesRecursively('/').subscribe((files: string[]) => {
+        
+        // Adding files to initial structure.
+        for (const idx of files) {
+          const entities = idx.split('/').filter(x => x !== '');
+          let parent = this.root;
+          let level = 1;
+          for (const idxPeek of entities.slice(0, entities.length - 1)) {
+            parent = parent.children.filter(x => x.name === idxPeek)[0];
+            level += 1;
+          }
+          parent.children.push({
+            name: entities[entities.length - 1],
+            path: idx,
+            isFolder: false,
+            level: level,
+            children: [],
+          });
+        }
+        this.dataSource.data = this.root.children;
+      });
+    });
+  }
+
+  /**
    * Invoked when user wants to create a new file or folder.
    */
   public createNewFileObject() {
@@ -245,7 +290,6 @@ export class IdeComponent implements OnInit {
               name: result.name,
               path: path,
               isFolder: true,
-              isExpanded: false,
               level: result.path.split('/').filter(x => x !== '').length + 1,
               children: [],
             });
@@ -295,7 +339,6 @@ export class IdeComponent implements OnInit {
             name: result.name,
             path: path,
             isFolder: false,
-            isExpanded: false,
             level: result.path.split('/').filter(x => x !== '').length + 1,
             children: [],
           });
@@ -318,63 +361,16 @@ export class IdeComponent implements OnInit {
             return 0;
           });
 
-          // This will databind the tree control again.
+          // This will databind the tree control again, making sure we keep expanded nodes as such.
+          const expanded = this.getExpandedNodes();
           this.dataSource.data = this.root.children;
-        }
-      }
-    });
-  }
-
-  /**
-   * Invoked when files needs to be fetched from the server.
-   */
-  public getFilesFromServer() {
-
-    // Retrieving files from backend.
-    this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
-
-      // Creating our initial tree structure.
-      for (const idx of folders) {
-        const entities = idx.split('/').filter(x => x !== '');
-        let parent = this.root;
-        let level = 1;
-        for (const idxPeek of entities.slice(0, entities.length - 1)) {
-          parent = parent.children.filter(x => x.name === idxPeek)[0];
-          level += 1;
-        }
-        parent.children.push({
-          name: entities[entities.length - 1],
-          path: idx,
-          isFolder: true,
-          isExpanded: false,
-          level: level,
-          children: [],
-        });
-      }
-
-      // Retrieving all files from backend.
-      this.fileService.listFilesRecursively('/').subscribe((files: string[]) => {
-        
-        // Adding files to initial structure.
-        for (const idx of files) {
-          const entities = idx.split('/').filter(x => x !== '');
-          let parent = this.root;
-          let level = 1;
-          for (const idxPeek of entities.slice(0, entities.length - 1)) {
-            parent = parent.children.filter(x => x.name === idxPeek)[0];
-            level += 1;
+          for (const idx of this.treeControl.dataNodes) {
+            if (expanded.filter(x => x.node.path === (<any>idx).node.path).length > 0) {
+              this.treeControl.expand(idx);
+            }
           }
-          parent.children.push({
-            name: entities[entities.length - 1],
-            path: idx,
-            isFolder: false,
-            isExpanded: false,
-            level: level,
-            children: [],
-          });
         }
-        this.dataSource.data = this.root.children;
-      });
+      }
     });
   }
 
@@ -466,6 +462,15 @@ export class IdeComponent implements OnInit {
 
         // Removing node from collection.
         if (this.removeNode(file.path)) {
+      
+          // This will databind the tree control again, making sure we keep expanded nodes as such.
+          const expanded = this.getExpandedNodes();
+          this.dataSource.data = this.root.children;
+          for (const idx of this.treeControl.dataNodes) {
+            if (expanded.filter(x => x.node.path === (<any>idx).node.path).length > 0) {
+              this.treeControl.expand(idx);
+            }
+          }
 
           // Closing file.
           let idx = this.files.indexOf(this.files.filter(x => x.path === file.path)[0]);
@@ -480,9 +485,6 @@ export class IdeComponent implements OnInit {
             }
             this.activeFile = this.files[idx].path;
           }
-      
-          // Re-databinding tree control.
-          this.dataSource.data = this.root.children;
         }
 
         // Providing feedback to user.
@@ -564,10 +566,23 @@ export class IdeComponent implements OnInit {
 
     // Recursively iterate children collection.
     for (const idx of node.children.filter(x => path.startsWith(x.path))) {
-      if (this.removeNode(idx.path)) {
+      if (this.removeNode(path, idx)) {
         return true;
       }
     }
     return false;
+  }
+
+  /*
+   * Returns all expanded nodes.
+   */
+  private getExpandedNodes() : any[] {
+    const result: FlatNode[] = [];
+    for (const idx of this.treeControl.dataNodes) {
+      if (this.treeControl.isExpanded(idx)) {
+        result.push(idx);
+      }
+    }
+    return result;
   }
 }
