@@ -315,23 +315,12 @@ export class IdeComponent implements OnInit {
 
         } else {
 
-          // We're supposed to create a file. Notice, we don't actually create the file, only open it in edit mode.
-          const extension = result.name.substr(result.name.lastIndexOf('.') + 1).toLowerCase();
-          const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
-
-          // Turning on maximize keyboard shortcut.
-          if (options[0].options.extraKeys) {
-            options[0].options.extraKeys['Alt-M'] = (cm: any) => {
-              cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-            };
-          }
-
           // Pushing file on to currently edited files list.
           this.files.push({
             name: result.name,
             path: path,
             content: '',
-            options: options[0].options
+            options: this.getCodeMirrorOptions(result.name),
           });
 
           // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
@@ -390,26 +379,6 @@ export class IdeComponent implements OnInit {
 
     } else {
 
-      // Verifying we have an existing editor for file type.
-      const extension = file.name.substr(file.name.lastIndexOf('.') + 1).toLowerCase();
-      const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
-      if (options.length === 0) {
-
-        // Oops, no known editor for file.
-        this.feedbackService.showInfoShort('No known editor for file type');
-        return;
-      }
-
-      // AutoFocus makes page "jump", hence turning it off.
-      options[0].options.autofocus = false;
-
-      // Turning on maximize keyboard shortcut.
-      if (options[0].options.extraKeys) {
-        options[0].options.extraKeys['Alt-M'] = (cm: any) => {
-          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-        };
-      }
-
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -418,7 +387,7 @@ export class IdeComponent implements OnInit {
           name: file.name,
           path: file.path,
           content: content,
-          options: options[0].options,
+          options: this.getCodeMirrorOptions(file.name),
         });
         this.activeFile = file.path;
       });
@@ -583,5 +552,23 @@ export class IdeComponent implements OnInit {
         this.treeControl.expand(idx);
       }
     }
+  }
+
+  /*
+   * Returns options for CodeMirror editor.
+   */
+  private getCodeMirrorOptions(filename: string) {
+
+    // We're supposed to create a file. Notice, we don't actually create the file, only open it in edit mode.
+    const extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
+    const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+
+    // Turning on maximize keyboard shortcut.
+    if (options[0].options.extraKeys) {
+      options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+        cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+      };
+    }
+    return options[0].options;
   }
 }
