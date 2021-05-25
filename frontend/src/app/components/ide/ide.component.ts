@@ -209,7 +209,7 @@ export class IdeComponent implements OnInit {
     const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
       width: '550px',
       data: {
-        isFolder: true,
+        isFolder: false,
         name: '',
         path: '/',
         folders: folders,
@@ -442,13 +442,54 @@ export class IdeComponent implements OnInit {
    */
    public saveFile(file: FileNode) {
 
-    // Removing file from edited files.
+    // Saving file by invoking backend.
     this.fileService.saveFile(file.path, file.content).subscribe(() => {
 
       // Providing feedback to user.
       this.feedbackService.showInfoShort('File successfully saved');
 
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when a file should be deleted.
+   * 
+   * @param file File to delete
+   */
+   public deleteFile(file: FileNode) {
+
+    // Asking user to confirm action.
+    this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete this file?', () => {
+
+      // Deleting file by invoking backend.
+      this.fileService.deleteFile(file.path).subscribe(() => {
+
+        // Removing node from collection.
+        if (this.removeNode(file.path)) {
+
+          // Closing file.
+          let idx = this.files.indexOf(this.files.filter(x => x.path === file.path)[0]);
+          this.files.splice(idx, 1);
+
+          // Making another file the active file.
+          if (this.files.length === 0) {
+            this.activeFile = null;
+          } else {
+            if (idx >= this.files.length) {
+              idx = 0;
+            }
+            this.activeFile = this.files[idx].path;
+          }
+      
+          // Re-databinding tree control.
+          this.dataSource.data = this.root.children;
+        }
+
+        // Providing feedback to user.
+        this.feedbackService.showInfoShort('File successfully deleted');
+
+      }, (error: any) => this.feedbackService.showError(error));
+    });
   }
 
   /**
@@ -507,5 +548,26 @@ export class IdeComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  /*
+   * Invoked when a node should be removed from tree node collection.
+   */
+  private removeNode(path: string, node: TreeNode = this.root) {
+
+    // Checking if node to be removed exists in current node's children collection.
+    const toBeRemoved = node.children.filter(x => x.path === path);
+    if (toBeRemoved.length > 0) {
+      node.children.splice(node.children.indexOf(toBeRemoved[0]), 1);
+      return true;
+    }
+
+    // Recursively iterate children collection.
+    for (const idx of node.children.filter(x => path.startsWith(x.path))) {
+      if (this.removeNode(idx.path)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
