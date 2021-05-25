@@ -45,6 +45,8 @@
       display: block;
       margin-left: auto;
       margin-right: auto;
+      max-width: 50%;
+      max-height: 80%;
     }
 
     .add-button {
@@ -61,4 +63,20 @@
 
 ::ng-deep .CodeMirror {
   height: calc(100vh - 19.5rem);
+}
+
+@media screen and (max-width: 1024px) {
+  .wrapper {
+    display: block;
+    .files-section {
+      width: calc(100% - 2rem);
+      max-width: calc(100% - 2rem);
+      min-width: calc(100% - 2rem);
+    }
+    .content-section {
+      width: calc(100% - 4rem);
+      max-width: calc(100% - 4rem);
+      min-width: calc(100% - 4rem);
+      }
+  }  
 }
