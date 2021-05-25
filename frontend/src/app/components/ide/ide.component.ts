@@ -103,7 +103,7 @@ export class IdeComponent implements OnInit {
   /**
    * If true, vocabulary has been loaded from server.
    */
-   public vocabularyLoaded = false;
+  public vocabularyLoaded = false;
 
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
@@ -223,8 +223,16 @@ export class IdeComponent implements OnInit {
       if (result) {
 
         // Invoking backend to rename file or folder.
-        const path = result.path + result.name;
+        let path = result.path + result.name;
+
+        // Finding tree node for where file/folder is to be created, such that we can inject object into tree structure.
+        const node = this.findTreeNodeFolder(this.root, result.path);
+
+        // Checking if we're creating a folder or a file.
         if (result.isFolder) {
+
+          // Making sure we append end slash.
+          path += '/';
 
           // We're supposed to create a folder.
           this.fileService.createFolder(path).subscribe((response: Response) => {
@@ -232,11 +240,86 @@ export class IdeComponent implements OnInit {
             // Showing user some feedback.
             this.feedbackService.showInfoShort('Folder successfully created');
 
+            // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
+            node.children.push({
+              name: result.name,
+              path: path,
+              isFolder: true,
+              isExpanded: false,
+              level: result.path.split('/').filter(x => x !== '').length + 1,
+              children: [],
+            });
+
+            // Making sure we sort nodes at level before we databind tree control again.
+            node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
+              if (lhs.isFolder && !rhs.isFolder) {
+                return -1;
+              } else if (!lhs.isFolder && rhs.isFolder) {
+                return 1;
+              }
+              if (lhs.path.toLowerCase() < rhs.path.toLowerCase()) {
+                return -1;
+              } else if (lhs.path.toLowerCase() > rhs.path.toLowerCase()) {
+                return 1;
+              }
+              return 0;
+            });
+
+            // This will databind the tree control again.
+            this.dataSource.data = this.root.children;
           });
 
         } else {
 
-          // We're supposed to create a file.
+          // We're supposed to create a file. Notice, we don't actually create the file, only open it in edit mode.
+          const extension = result.name.substr(result.name.lastIndexOf('.') + 1).toLowerCase();
+          const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+
+          // Turning on maximize keyboard shortcut.
+          if (options[0].options.extraKeys) {
+            options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+              cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+            };
+          }
+
+          // Pushing file on to currently edited files list.
+          this.files.push({
+            name: result.name,
+            path: path,
+            content: '',
+            options: options[0].options
+          });
+
+          // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
+          node.children.push({
+            name: result.name,
+            path: path,
+            isFolder: false,
+            isExpanded: false,
+            level: result.path.split('/').filter(x => x !== '').length + 1,
+            children: [],
+          });
+
+          // Making sure file becomes active.
+          this.activeFile = path;
+
+          // Making sure we sort nodes at level before we databind tree control again.
+          node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
+            if (lhs.isFolder && !rhs.isFolder) {
+              return -1;
+            } else if (!lhs.isFolder && rhs.isFolder) {
+              return 1;
+            }
+            if (lhs.path.toLowerCase() < rhs.path.toLowerCase()) {
+              return -1;
+            } else if (lhs.path.toLowerCase() > rhs.path.toLowerCase()) {
+              return 1;
+            }
+            return 0;
+          });
+
+          // This will databind the tree control again.
+          this.dataSource.data = this.root.children;
         }
       }
     });
@@ -407,5 +490,22 @@ export class IdeComponent implements OnInit {
       }
     }
     return result;
+  }
+
+  /*
+   * Invoked when we need to find the specified tree node.
+   */
+  private findTreeNodeFolder(node: TreeNode, path: string) : TreeNode {
+
+    if (node.path === path) {
+      return node;
+    }
+    for (const idx of node.children) {
+      const tmpResult = this.findTreeNodeFolder(idx, path);
+      if (tmpResult) {
+        return tmpResult
+      }
+    }
+    return null;
   }
 }
