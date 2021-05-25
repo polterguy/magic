@@ -458,13 +458,7 @@ export class IdeComponent implements OnInit {
         if (this.removeNode(file.path)) {
       
           // This will databind the tree control again, making sure we keep expanded nodes as such.
-          const expanded = this.getExpandedNodes();
-          this.dataSource.data = this.root.children;
-          for (const idx of this.treeControl.dataNodes) {
-            if (expanded.filter(x => x.node.path === (<any>idx).node.path).length > 0) {
-              this.treeControl.expand(idx);
-            }
-          }
+          this.dataBindTree();
 
           // Closing file.
           let idx = this.files.indexOf(this.files.filter(x => x.path === file.path)[0]);
@@ -568,28 +562,24 @@ export class IdeComponent implements OnInit {
   }
 
   /*
-   * Returns all expanded nodes.
-   */
-  private getExpandedNodes() : any[] {
-    const result: FlatNode[] = [];
-    for (const idx of this.treeControl.dataNodes) {
-      if (this.treeControl.isExpanded(idx)) {
-        result.push(idx);
-      }
-    }
-    return result;
-  }
-
-  /*
-   * Re-databinds tree control such that expanded items stays expanded.
+   * Databinds tree control such that expanded items stays expanded.
    */
   private dataBindTree() {
 
-    // This will databind the tree control again, making sure we keep expanded nodes as such.
-    const expanded = this.getExpandedNodes();
-    this.dataSource.data = this.root.children;
+    // Storing all expanded items in tree control.
+    const expanded: FlatNode[] = [];
     for (const idx of this.treeControl.dataNodes) {
-      if (expanded.filter(x => x.node.path === (<any>idx).node.path).length > 0) {
+      if (this.treeControl.isExpanded(idx)) {
+        expanded.push(idx);
+      }
+    }
+
+    // Re-databinding tree control.
+    this.dataSource.data = this.root.children;
+
+    // Expanding all items that was previously expanded.
+    for (const idx of this.treeControl.dataNodes) {
+      if (expanded.filter(x => (<any>x).node.path === (<any>idx).node.path).length > 0) {
         this.treeControl.expand(idx);
       }
     }
