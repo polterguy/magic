@@ -1,8 +1,7 @@
 
 <div class="wrapper">
 
-  <mat-card
-    class="files-section">
+  <mat-card class="files-section">
 
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
 
@@ -45,6 +44,13 @@
   </mat-card>
 
   <mat-card class="content-section">
+
+    <img
+      *ngIf="files.length === 0"
+      src="assets/light-bulb.png"
+      class="light-bulb"
+      matTooltip="Hyper IDE, when you're in a hurry!"
+      alt="Hyper IDE, when you're in a hurry">
 
     <button
       mat-icon-button

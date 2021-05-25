@@ -41,6 +41,12 @@
     position: relative;
     padding: 2rem;
 
+    .light-bulb {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     .add-button {
       position: absolute;
       top: .5rem;
