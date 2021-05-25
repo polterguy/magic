@@ -362,6 +362,27 @@ export class IdeComponent implements OnInit {
   }
 
   /**
+   * Invoked when a file should be executed.
+   * 
+   * @param file File to execute
+   */
+   public executeFile(file: FileNode) {
+
+    // Saving file by invoking backend before we execute it.
+    this.fileService.saveFile(file.path, file.content).subscribe(() => {
+
+      // Then executing file's content.
+      this.evaluatorService.execute(file.content).subscribe(() => {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfoShort('File successfully saved and executed');
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
    * Invoked when a file should be deleted.
    * 
    * @param file File to delete

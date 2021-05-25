@@ -101,6 +101,13 @@
           </button>
 
           <button
+            [disabled]="!file.path.endsWith('.hl')"
+            mat-button
+            (click)="executeFile(file)">
+            Execute
+          </button>
+
+          <button
             mat-button
             (click)="deleteFile(file)">
             Delete
