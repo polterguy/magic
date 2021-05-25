@@ -147,11 +147,6 @@ export class IdeComponent implements OnInit {
   public dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
   /**
-   * Shows file exporer if true.
-   */
-  public showExplorer = true;
-
-  /**
    * Currently edited files.
    */
   public files: FileNode[] = [];
@@ -342,12 +337,5 @@ export class IdeComponent implements OnInit {
       }
       this.activeFile = this.files[idx].path;
     }
-  }
-
-  /**
-   * Invoked when file explorer's visibility should be toggled.
-   */
-  public toggleFileExplorer() {
-    this.showExplorer = !this.showExplorer;
   }
 }

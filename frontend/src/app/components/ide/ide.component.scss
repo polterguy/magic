@@ -3,6 +3,7 @@
   display: flex;
   max-height: calc(100% + 3rem);
   height: calc(100% + 3rem);
+  margin-bottom: -4rem;
 
   .files-section {
     box-sizing: content-box;
@@ -40,36 +41,19 @@
     position: relative;
     padding: 2rem;
   }
-}
 
-.wrapper-full {
-  display: flex;
-  position: relative;
-  width: 100%;
-  .content-section-full {
-    width: calc(80% - 4rem);
-    flex: 1;
-    padding: 2rem;
+  .tab-buttons {
+    button {
+      margin-right: .5rem;
+      margin-bottom: .5rem;
+    }
   }
-}
 
-.toggle-explorer {
-  position: absolute;
-  top: .5rem;
-  right: .5rem;
-}
-
-.tab-buttons {
-  button {
-    margin-right: .5rem;
-    margin-bottom: .5rem;
+  .wider {
+    width: 20rem;
   }
 }
 
 ::ng-deep .CodeMirror {
   height: calc(100vh - 19.5rem);
-}
-
-.wider {
-  width: 20rem;
 }
