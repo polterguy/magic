@@ -46,6 +46,13 @@
 
   <mat-card class="content-section">
 
+    <button
+      mat-icon-button
+      class="add-button"
+      (click)="createNewFileObject()">
+      <mat-icon>add_cirlcle</mat-icon>
+    </button>
+
     <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
       <mat-label>Open files</mat-label>
       <mat-select [(ngModel)]="activeFile">
