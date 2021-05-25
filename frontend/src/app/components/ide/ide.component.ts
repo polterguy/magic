@@ -309,8 +309,8 @@ export class IdeComponent implements OnInit {
               return 0;
             });
 
-            // This will databind the tree control again.
-            this.dataSource.data = this.root.children;
+            // Databinding tree control again.
+            this.dataBindTree();
           });
 
         } else {
@@ -361,14 +361,8 @@ export class IdeComponent implements OnInit {
             return 0;
           });
 
-          // This will databind the tree control again, making sure we keep expanded nodes as such.
-          const expanded = this.getExpandedNodes();
-          this.dataSource.data = this.root.children;
-          for (const idx of this.treeControl.dataNodes) {
-            if (expanded.filter(x => x.node.path === (<any>idx).node.path).length > 0) {
-              this.treeControl.expand(idx);
-            }
-          }
+          // Databinding tree control again.
+          this.dataBindTree();
         }
       }
     });
@@ -584,5 +578,20 @@ export class IdeComponent implements OnInit {
       }
     }
     return result;
+  }
+
+  /*
+   * Re-databinds tree control such that expanded items stays expanded.
+   */
+  private dataBindTree() {
+
+    // This will databind the tree control again, making sure we keep expanded nodes as such.
+    const expanded = this.getExpandedNodes();
+    this.dataSource.data = this.root.children;
+    for (const idx of this.treeControl.dataNodes) {
+      if (expanded.filter(x => x.node.path === (<any>idx).node.path).length > 0) {
+        this.treeControl.expand(idx);
+      }
+    }
   }
 }
