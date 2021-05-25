@@ -505,6 +505,9 @@ export class IdeComponent implements OnInit {
     const extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
     const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
 
+    // Turning OFF autofocus.
+    options[0].options.autofocus = false;
+
     // Turning on maximize keyboard shortcut.
     if (options[0].options.extraKeys) {
       options[0].options.extraKeys['Alt-M'] = (cm: any) => {
