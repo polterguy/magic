@@ -4,18 +4,31 @@
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width" appearance="outline">
+    <mat-label class="dark">Folder</mat-label>
+    <mat-select [(ngModel)]="data.path" class="dark">
+      <mat-option
+        *ngFor="let idx of data.folders"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="fill-width" appearance="outline">
 
     <mat-label class="dark">Name</mat-label>
     <input
       type="text"
       matInput
       autocomplete="off"
-      [(ngModel)]="data.path">
+      [(ngModel)]="data.name">
     </mat-form-field>
 
 </div>
 
 <div mat-dialog-actions>
+
+  <mat-checkbox
+    [(ngModel)]="data.isFolder"
+    class="margin-right">Folder</mat-checkbox>
 
   <button
     mat-raised-button

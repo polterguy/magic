@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
 import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
@@ -124,7 +125,7 @@ export class IdeComponent implements OnInit {
    */
   private _transformer = (node: TreeNode, level: number) => {
     return {
-      expandable: !!node.children && node.children.length > 0,
+      expandable: node.isFolder,
       name: node.name,
       level: level,
       node: node,
@@ -201,12 +202,17 @@ export class IdeComponent implements OnInit {
    */
   public createNewFileObject() {
 
+    // Retrieving all possible folders in system to allow user to select folder to create object within.
+    const folders = this.getFolders();
+
     // Creating modal dialog responsible for asking user for name and type of object.
     const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
       width: '550px',
       data: {
         isFolder: true,
-        path: '',
+        name: '',
+        path: '/',
+        folders: folders,
       },
     });
 
@@ -217,7 +223,21 @@ export class IdeComponent implements OnInit {
       if (result) {
 
         // Invoking backend to rename file or folder.
-        console.log(result);
+        const path = result.path + result.name;
+        if (result.isFolder) {
+
+          // We're supposed to create a folder.
+          this.fileService.createFolder(path).subscribe((response: Response) => {
+
+            // Showing user some feedback.
+            this.feedbackService.showInfoShort('Folder successfully created');
+
+          });
+
+        } else {
+
+          // We're supposed to create a file.
+        }
       }
     });
   }
@@ -366,5 +386,26 @@ export class IdeComponent implements OnInit {
       }
       this.activeFile = this.files[idx].path;
     }
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Returns all folders in system to caller.
+   */
+  private getFolders(current: TreeNode = this.root) {
+
+    // Finding all folders in currently iterated level.
+    const result: string[] = [];
+    result.push(current.path);
+    for (const idx of current.children.filter(x => x.isFolder)) {
+      const inner = this.getFolders(idx);
+      for (const idxInner of inner) {
+        result.push(idxInner);
+      }
+    }
+    return result;
   }
 }
