@@ -1,9 +1,8 @@
 
-<div [class]="showExplorer ? 'wrapper' : 'wrapper-full'">
+<div class="wrapper">
 
   <mat-card
-    class="files-section"
-    *ngIf="showExplorer">
+    class="files-section">
 
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
 
@@ -45,17 +44,10 @@
 
   </mat-card>
 
-  <mat-card [class]="showExplorer ? 'content-section' : 'content-section-full'">
-
-    <button
-      mat-icon-button
-      class="toggle-explorer"
-      (click)="toggleFileExplorer()">
-      <mat-icon>all_out</mat-icon>
-    </button>
+  <mat-card class="content-section">
 
     <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
-      <mat-label>Files</mat-label>
+      <mat-label>Open files</mat-label>
       <mat-select [(ngModel)]="activeFile">
         <mat-option
           *ngFor="let idx of files"
