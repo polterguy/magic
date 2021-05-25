@@ -77,6 +77,11 @@ export class IdeComponent implements OnInit {
   public activeFile: string = '';
 
   /**
+   * Currently active folder, which is dependent upon file selected, etc.
+   */
+   public activeFolder: string = '/';
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
@@ -185,7 +190,7 @@ export class IdeComponent implements OnInit {
       data: {
         isFolder: false,
         name: '',
-        path: '/',
+        path: this.activeFolder,
         folders: folders,
         files: files,
       },
@@ -319,7 +324,26 @@ export class IdeComponent implements OnInit {
         this.activeFile = file.path;
       });
     }
+
+    // Changing active folder.
+    this.activeFolder = file.path.substr(0, file.path.lastIndexOf('/') + 1);
   }
+
+  /**
+   * Invoked when user wants to open a folder.
+   * 
+   * @param folder Tree node wrapping folder to open
+   */
+   public openFolder(folder: TreeNode) {
+     this.activeFolder = folder.path;
+   }
+
+   /**
+    * Invoked when the currently selected file is changed.
+    */
+   public selectedFileChanged() {
+    this.activeFolder = this.activeFile.substr(0, this.activeFile.lastIndexOf('/') + 1);
+   }
 
   /**
    * Invoked when a file should be saved.
