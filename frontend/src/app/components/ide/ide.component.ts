@@ -425,10 +425,11 @@ export class IdeComponent implements OnInit {
     if (this.files.length === 0) {
       this.activeFile = null;
     } else {
-      if (idx >= this.files.length) {
-        idx = 0;
+      if (idx === 0) {
+        this.activeFile = this.files[0].path;
+      } else {
+        this.activeFile = this.files[idx - 1].path;
       }
-      this.activeFile = this.files[idx].path;
     }
   }
 

@@ -45,43 +45,44 @@
 
   <mat-card class="content-section">
 
+    <div class="toolbar-top">
+
+      <mat-form-field appearance="outline" class="fill-width">
+        <mat-label>Open files</mat-label>
+        <mat-select [(ngModel)]="activeFile" (selectionChange)="selectedFileChanged()">
+          <mat-option
+            *ngFor="let idx of files"
+            [matTooltip]="idx.path"
+            [value]="idx.path">{{idx.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <button
+        [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
+        mat-raised-button
+        class="toolbar-button"
+        [matTooltip]="'Delete folder \'' + activeFolder + '\''"
+        (click)="deleteActiveFolder()">
+        Delete
+      </button>
+
+      <button
+        mat-raised-button
+        class="toolbar-button"
+        color="primary"
+        matTooltip="Create new file or folder"
+        (click)="createNewFileObject()">
+        New
+      </button>
+
+    </div>
+
     <img
       *ngIf="files.length === 0"
       src="assets/light-bulb.png"
       class="light-bulb"
       matTooltip="Hyper IDE, when you're in a hurry!"
       alt="Hyper IDE, when you're in a hurry">
-
-    <div class="toolstrip-top">
-
-      <button
-        [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
-        mat-icon-button
-        class="delete-folder-button"
-        [matTooltip]="'Delete folder \'' + activeFolder + '\''"
-        (click)="deleteActiveFolder()">
-        <mat-icon>delete</mat-icon>
-      </button>
-
-      <button
-        mat-icon-button
-        class="add-button"
-        matTooltip="Create new file or folder"
-        (click)="createNewFileObject()">
-        <mat-icon>add_cirlcle</mat-icon>
-      </button>
-
-    </div>
-
-    <mat-form-field appearance="outline" *ngIf="files.length > 0" class="wider">
-      <mat-label>Open files</mat-label>
-      <mat-select [(ngModel)]="activeFile" (selectionChange)="selectedFileChanged()">
-        <mat-option
-          *ngFor="let idx of files"
-          [matTooltip]="idx.path"
-          [value]="idx.path">{{idx.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
 
     <div *ngFor="let file of files">
 
