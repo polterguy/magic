@@ -23,14 +23,15 @@
     margin-right: 1rem;
     padding: .5rem 1rem;
 
-    mat-icon {
-      color: #999;
-    }
-
     .folder-btn {
       display: block;
       width: 100%;
       text-align: left;
+
+      mat-icon {
+        margin-right: .5rem;
+        color: #999;
+      }
     }
 
     .file-btn {
@@ -39,6 +40,12 @@
       text-align: left;
       overflow: hidden;
       text-overflow: ellipsis;
+
+      mat-icon {
+        margin-right: .5rem;
+        color: #999;
+        margin-top: -5px;
+      }
     }
   }
 

@@ -10,14 +10,16 @@
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
-        <mat-icon class="mat-icon-rtl-mirror">insert_drive_file</mat-icon>
-
         <button
           class="file-btn"
           [color]="activeFile === file.node.path ? 'primary' : 'default'"
           mat-button
           [matTooltip]="file.node.name"
-          (click)="openFile(file.node)">{{file.name}}</button>
+          (click)="openFile(file.node)">
+
+          <mat-icon class="mat-icon-rtl-mirror">insert_drive_file</mat-icon>{{file.name}}
+
+        </button>
 
       </mat-tree-node>
 
@@ -26,15 +28,15 @@
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
-        <mat-icon class="mat-icon-rtl-mirror">folder_open</mat-icon>
-
         <button
           matTreeNodeToggle
           class="folder-btn"
           [color]="activeFolder === folder.node.path ? 'primary' : 'default'"
           mat-button
           (click)="openFolder(folder.node)">
-          {{folder.name}}
+
+          <mat-icon class="mat-icon-rtl-mirror">folder_open</mat-icon>{{folder.name}}
+
         </button>
 
       </mat-tree-node>
