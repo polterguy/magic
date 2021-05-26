@@ -17,11 +17,11 @@
     float: left;
     width: 30%;
     max-width: 30%;
-    max-height: calc(100% - 3rem);
-    height: calc(100% - 3rem);
+    max-height: calc(100% - 2rem);
+    height: calc(100% - 2rem);
     overflow: auto;
     margin-right: 1rem;
-    padding: 1rem;
+    padding: .5rem 1rem;
 
     mat-icon {
       color: #999;
@@ -75,7 +75,7 @@
   height: calc(100vh - 16.5rem);
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 800px) {
   .wrapper {
     display: block;
     max-height: unset;
@@ -84,16 +84,20 @@
     margin-bottom: 0;
     .files-section {
       float: none;
-      width: calc(100% - 2rem);
-      max-width: calc(100% - 2rem);
-      min-width: calc(100% - 2rem);
+      width: calc(100% - 4rem);
+      max-width: calc(100% - 6rem);
+      min-width: calc(100% - 6rem);
+      margin-left: 2rem;
+      margin-bottom: 1rem;
     }
     .content-section {
       float: none;
       width: calc(100% - 4rem);
-      max-width: calc(100% - 4rem);
-      min-width: calc(100% - 4rem);
+      max-width: calc(100% - 8rem);
+      min-width: calc(100% - 8rem);
+      margin-left: 2rem;
       margin-bottom: 0;
+      padding-bottom: 1rem;
     }
   }  
 }
