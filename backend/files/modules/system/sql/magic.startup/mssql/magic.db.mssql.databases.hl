@@ -36,7 +36,7 @@ slots.create:magic.db.mssql.databases
       /*
        * Runs our query
        */
-      mssql.select:select name from master.dbo.sysdatabases
+      mssql.select:select name from master.dbo.sysdatabases where has_dbaccess(name) = 1
 
 
       /*
