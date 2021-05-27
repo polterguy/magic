@@ -62,4 +62,4 @@ services:
 volumes:
   database:
   files:
-  ssl_data: 
+  ssl_data:
