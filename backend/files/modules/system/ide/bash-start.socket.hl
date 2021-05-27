@@ -1,0 +1,16 @@
+
+/*
+ * Spawns a new terminal on server.
+ */
+
+
+/*
+ * Verifying caller has access to execute file.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Logging the fact that we're starting a terminal on server.
+ */
+log.info:Starting terminal on server

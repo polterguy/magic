@@ -58,6 +58,13 @@
             [value]="idx.path">{{idx.name}}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <button
+        mat-raised-button
+        class="toolbar-button"
+        (click)="openTerminal()">
+        Terminal
+      </button>
   
       <button
         [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
@@ -80,47 +87,53 @@
     </div>
 
     <img
-      *ngIf="files.length === 0"
+      *ngIf="!showTerminal && files.length === 0"
       src="assets/light-bulb.png"
       class="light-bulb"
       matTooltip="Hyper IDE, when you're in a hurry!"
       alt="Hyper IDE, when you're in a hurry">
 
-    <div *ngFor="let file of files">
+    <app-terminal *ngIf="showTerminal"></app-terminal>
 
-      <div *ngIf="file.path === activeFile">
+    <div *ngIf="!showTerminal">
 
-        <ngx-codemirror
-          [(ngModel)]="file.content"
-          [options]="file.options">
-        </ngx-codemirror>
+      <div *ngFor="let file of files">
 
-        <div class="button-strip">
+        <div *ngIf="file.path === activeFile">
 
-          <button
-            mat-button
-            (click)="saveFile(file)">
-            Save
-          </button>
+          <ngx-codemirror
+            [(ngModel)]="file.content"
+            [options]="file.options">
+          </ngx-codemirror>
 
-          <button
-            [disabled]="!file.path.endsWith('.hl')"
-            mat-button
-            (click)="executeFile(file)">
-            Execute
-          </button>
+          <div class="button-strip">
 
-          <button
-            mat-button
-            (click)="deleteFile(file)">
-            Delete
-          </button>
+            <button
+              mat-button
+              (click)="saveFile(file)">
+              Save
+            </button>
 
-          <button
-            mat-button
-            (click)="closeFile(file)">
-            Close
-          </button>
+            <button
+              [disabled]="!file.path.endsWith('.hl')"
+              mat-button
+              (click)="executeFile(file)">
+              Execute
+            </button>
+
+            <button
+              mat-button
+              (click)="deleteFile(file)">
+              Delete
+            </button>
+
+            <button
+              mat-button
+              (click)="closeFile(file)">
+              Close
+            </button>
+
+          </div>
 
         </div>
 
