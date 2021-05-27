@@ -88,7 +88,7 @@
     }
   },
   {
-    "extensions": ["js"],
+    "extensions": ["js", "ts"],
     "options": {
       "mode": "text/javascript",
       "lineNumbers": true,
@@ -107,6 +107,24 @@
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
+    }
+  },
+  {
+    "extensions": ["py"],
+    "options": {
+      "mode": "text/x-python",
+      "lineNumbers": true,
+      "tabSize": 4,
+      "indentUnit": 4,
+      "indentAuto": true,
+      "matchBrackets": true,
+      "theme": "mbo",
+      "autofocus": true,
+      "styleActiveLine": true,
+      "extraKeys": {
+        "Shift-Tab": "indentLess",
+        "Tab": "indentMore"
+      }
     }
   },
   {

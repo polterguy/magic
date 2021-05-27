@@ -16,6 +16,7 @@ import 'codemirror/mode/yaml/yaml';
 import 'codemirror/mode/shell/shell';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/python/python';
 
 // CodeMirror addons.
 import 'codemirror/addon/display/fullscreen';
