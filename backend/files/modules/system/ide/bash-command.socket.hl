@@ -1,0 +1,30 @@
+
+/*
+ * Executes the specified terminal command.
+ */
+.arguments
+   cmd:string
+
+
+/*
+ * Verifying caller has access to execute file.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Logging bash command.
+ */
+log.info
+   strings.concat
+      .:"Executing bash command '"
+      get-value:x:@.arguments/*/cmd
+      .:"'"
+
+
+/*
+ * Transmitting message to listeners.
+ */
+unwrap:x:+/*
+signalr.invoke:ide.terminal.out
+   result:x:@.arguments/*/cmd

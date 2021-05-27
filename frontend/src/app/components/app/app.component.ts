@@ -108,7 +108,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Retrieving all endpoints from backend
     this.authService.getEndpoints().subscribe(res => {
-      console.log('Endpoints authorisation objects retrieved');
+      ; // Do nothing ...
     }, error => {
       this.showError(error);
     });

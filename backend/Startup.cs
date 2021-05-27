@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.library;
+using magic.lambda.signalr;
 using magic.lambda.logging.helpers;
 
 namespace magic.backend
@@ -31,6 +32,7 @@ namespace magic.backend
              * Notice, must be done AFTER you invoke "AddControllers".
              */
             services.AddMagic(Configuration);
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -43,9 +45,20 @@ namespace magic.backend
             app.UseMagic(Configuration);
 
             app.UseHttpsRedirection();
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+
+            // Needed to make SignalR work.
+            app.UseCors(x => x
+                .AllowAnyHeader()
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithOrigins("http://localhost:4200")); // TODO: Fix this!!
             app.UseAuthentication();
-            app.UseRouting().UseEndpoints(conf => conf.MapControllers());
+            app.UseRouting().UseEndpoints(conf =>
+            {
+                conf.MapControllers();
+                conf.MapHub<MagicHub>("/signalr");
+            });
 
             // Creating a log entry for having started application, but only if system has beeen setup.
             if (Configuration["magic:auth:secret"] != "THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT")
