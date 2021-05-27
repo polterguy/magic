@@ -255,7 +255,8 @@ export class IdeComponent implements OnInit {
 
             // Databinding tree control again.
             this.dataBindTree();
-          });
+
+          }, (error: any) => this.feedbackService.showError(error));
 
         } else {
 
@@ -311,6 +312,16 @@ export class IdeComponent implements OnInit {
 
     } else {
 
+      // Verifying we have an editor type for file extension.
+      const extension = file.name.substr(file.name.lastIndexOf('.') + 1).toLowerCase();
+      const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+      if (options.length === 0) {
+
+        // Oops, no editor for file type.
+        this.feedbackService.showInfo('No registered editor for file type');
+        return;
+      }
+  
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -322,7 +333,8 @@ export class IdeComponent implements OnInit {
           options: this.getCodeMirrorOptions(file.name),
         });
         this.activeFile = file.path;
-      });
+
+      }, (error: any) => this.feedbackService.showError(error));
     }
 
     // Changing active folder.
