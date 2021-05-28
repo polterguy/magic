@@ -4,6 +4,7 @@
  */
 .arguments
    channel:string
+   folder:string
 
 
 /*
@@ -34,6 +35,7 @@ strings.concat
  */
 unwrap:x:+/*/*/.channel
 system.terminal.create:x:@.arguments/*/channel
+   folder:x:@.arguments/*/folder
    .stdOut
       .channel:x:@strings.concat
       unwrap:x:+/*/args/*/result
