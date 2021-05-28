@@ -21,6 +21,8 @@ log.info
    strings.concat
       .:"Executing bash command '"
       get-value:x:@.arguments/*/cmd
+      .:"' on channel '"
+      get-value:x:@.arguments/*/channel
       .:"'"
 
 

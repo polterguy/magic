@@ -2,6 +2,8 @@
 /*
  * Spawns a new terminal on server.
  */
+.arguments
+   channel:string
 
 
 /*
@@ -13,4 +15,7 @@ auth.ticket.verify:root
 /*
  * Logging the fact that we're starting a terminal on server.
  */
-log.info:Starting terminal on server
+log.info
+   .:"Starting terminal on server on channel '"
+   get-value:x:@.arguments/*/channel
+   .:"'"
