@@ -19,3 +19,25 @@ log.info
    .:"Starting terminal on server on channel '"
    get-value:x:@.arguments/*/channel
    .:"'"
+
+
+/*
+ * Figuring out channel name to transmit results to.
+ */
+strings.concat
+   .:ide.terminal.out.
+   get-value:x:@.arguments/*/channel
+
+
+/*
+ * Starting terminal.
+ */
+unwrap:x:+/*/*/.channel
+system.terminal.create:x:@.arguments/*/channel
+   .lambda
+      .channel:x:@strings.concat
+      unwrap:x:+/*/args/*
+      signalr.invoke:x:@.channel
+         roles:root
+         args
+            result:x:@.arguments/*/cmd

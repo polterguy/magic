@@ -35,10 +35,7 @@ strings.concat
 
 
 /*
- * Transmitting message to listeners.
+ * Passsing command into terminal window.
  */
-unwrap:x:+/*/*
-signalr.invoke:x:@strings.concat
-   roles:root
-   args
-      result:x:@.arguments/*/cmd
+system.terminal.write-line:x:@.arguments/*/channel
+   cmd:x:@.arguments/*/cmd

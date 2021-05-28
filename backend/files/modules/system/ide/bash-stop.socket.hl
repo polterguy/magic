@@ -19,3 +19,9 @@ log.info
    .:"Stopping terminal on server for channel '"
    get-value:x:@.arguments/*/channel
    .:"'"
+
+
+/*
+ * Stopping terminal.
+ */
+system.terminal.destroy:x:@.arguments/*/channel
