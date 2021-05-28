@@ -484,6 +484,8 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Invoken when terminal should be toggled.
    */
   openTerminal() {
+
+    // Toggling terming.
     this.showTerminal = !this.showTerminal;
 
     // Checking if we should transmit message to terminal to set 'current folder'.

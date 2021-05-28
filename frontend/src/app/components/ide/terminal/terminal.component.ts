@@ -78,10 +78,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
         // Creating our XTerm component.
         this.term = new Terminal();
         this.term.open(this.terminal.nativeElement);
-        this.term.focus();
 
         // Settings current working folder.
         this.currentFolder = <string>msg.content;
+        this.term.writeln(this.currentFolder);
+
+        // Accepting input.
+        this.term.focus();
 
         // Subscribing to key events.
         this.term.onData(e => {
@@ -109,7 +112,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
             case '\u007F':
 
               // Do not delete the prompt
-              if (this.buffer.length > 1) {
+              if (this.buffer.length > 0) {
                 this.term.write('\b \b');
                 this.buffer = this.buffer.substring(0, this.buffer.length - 1);
               }
@@ -210,6 +213,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         // When connected over socket we need to spawn a terminal on the server.
         this.hubConnection.invoke('execute', '/system/ide/bash-start', JSON.stringify({
           channel: this.channel,
+          folder: this.currentFolder
         }));
       });
     });
