@@ -1,9 +1,11 @@
 
 /*
- * Executes the specified terminal command.
+ * Executes the specified terminal command and returns the result of execution on
+ * the specified [channel].
  */
 .arguments
    cmd:string
+   channel:string
 
 
 /*
@@ -23,9 +25,20 @@ log.info
 
 
 /*
+ * Figuring out channel name to transmit results to.
+ */
+log.info
+   lambda2hyper:x:../*
+strings.concat
+   .:ide.terminal.out.
+   get-value:x:@.arguments/*/channel
+
+
+/*
  * Transmitting message to listeners.
  */
 unwrap:x:+/*/*
-signalr.invoke:ide.terminal.out
+signalr.invoke:x:@strings.concat
+   roles:root
    args
       result:x:@.arguments/*/cmd

@@ -11,8 +11,10 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation 
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
+import { Response } from '../../../models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { ConfigService } from '../../config/services/config.service';
 
 /**
  * Terminal component for allowing user to use the terminal through a web based interface
@@ -24,6 +26,9 @@ import { BackendService } from 'src/app/services/backend.service';
   styleUrls: ['./terminal.component.scss']
 })
 export class TerminalComponent implements OnInit, OnDestroy {
+
+  // Unique channel name for SignalR communication.
+  private channel = '';
 
   // Subscription for message service.
   private subscription: Subscription;
@@ -50,10 +55,12 @@ export class TerminalComponent implements OnInit, OnDestroy {
    /**
     * Creates an instance of your component.
     * 
+    * @param configService Needed to retrieve 'gibberish' creating a unique channel for the user on SignalR
     * @param messageService Service used to publish messages to other components in the system
     * @param backendService Needed to retrieve the root URL for backend used by SignalR.
     */
   public constructor(
+    private configService: ConfigService,
     private messageService: MessageService,
     private backendService: BackendService) { }
 
@@ -90,6 +97,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
             if (this.buffer.length > 0) {
               this.hubConnection.invoke('execute', '/system/ide/bash-command', JSON.stringify({
                 cmd: this.buffer,
+                channel: this.channel,
               }));
             }
 
@@ -146,28 +154,38 @@ export class TerminalComponent implements OnInit, OnDestroy {
    */
   private connectToTerminal() {
 
-    // Creating our hub connection.
-    let builder = new HubConnectionBuilder();
-    this.hubConnection = builder.withUrl(this.backendService.current.url + '/signalr', {
-        accessTokenFactory: () => this.backendService.current.token
-      }).build();
-
     /*
-     * Subscribing to [ide.terminal] messages which are transmitted by
-     * the backend once some terminal output is ready.
+     * Retrieving gibberish from server which is used as unique channel name,
+     * to avoid multiple users interfering with each others sessions.
      */
-    this.hubConnection.on('ide.terminal.out', (args) => {
-      
-      // Writing result to xterm instance.
-      const json = JSON.parse(args);
-      this.term.writeln(json.result);
-    });
+    this.configService.getGibberish(15, 25).subscribe((result: Response) => {
 
-    // Connecting to SignalR
-    this.hubConnection.start().then(() => {
+      // Storing gibberish to use as unique channel name.
+      this.channel = result.result;
 
-      // When connected over socket we need to spawn a terminal on the server.
-      this.hubConnection.invoke('execute', '/system/ide/bash-start', null);
+      // Creating our hub connection now that we know the channel name.
+      let builder = new HubConnectionBuilder();
+      this.hubConnection = builder.withUrl(this.backendService.current.url + '/signalr', {
+          accessTokenFactory: () => this.backendService.current.token
+        }).build();
+
+      /*
+      * Subscribing to [ide.terminal] messages which are transmitted by
+      * the backend once some terminal output is ready.
+      */
+      this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
+        
+        // Writing result to xterm instance.
+        const json = JSON.parse(args);
+        this.term.writeln(json.result);
+      });
+
+      // Connecting to SignalR
+      this.hubConnection.start().then(() => {
+
+        // When connected over socket we need to spawn a terminal on the server.
+        this.hubConnection.invoke('execute', '/system/ide/bash-start', null);
+      });
     });
   }
 }
