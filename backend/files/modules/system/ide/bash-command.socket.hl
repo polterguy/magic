@@ -27,8 +27,6 @@ log.info
 /*
  * Figuring out channel name to transmit results to.
  */
-log.info
-   lambda2hyper:x:../*
 strings.concat
    .:ide.terminal.out.
    get-value:x:@.arguments/*/channel
