@@ -75,15 +75,16 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
         // Settings current working folder.
         this.currentFolder = <string>msg.content;
-        this.term.writeln('Hyper terminal');
-        this.term.writeln('');
-        this.term.write('$ ');
 
         // Subscribing to key events.
         this.term.onKey((key) => {
 
           // Checking if user clicked CR.
           if (key.key === '\r') {
+
+            // Appending character into terminal and buffer.
+            this.buffer += '\r';
+            this.term.writeln('');
 
             // Invoking backend using SignalR.
             if (this.buffer.length > 0) {
@@ -92,9 +93,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
               }));
             }
 
-            // Adding CR sequence into terminal, and starting new line, clearing buffer.
-            this.term.writeln('');
-            this.term.write('$ ');
+            // Emptying buffer.
             this.buffer = '';
     
           } else {
@@ -162,9 +161,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
       // Writing result to xterm instance.
       const json = JSON.parse(args);
       this.term.writeln(json.result);
-
-      // Making sure we prepend next line with some terminal lookalike characters.
-      this.term.write('$ ');
     });
 
     // Connecting to SignalR

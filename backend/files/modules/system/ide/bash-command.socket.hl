@@ -25,6 +25,7 @@ log.info
 /*
  * Transmitting message to listeners.
  */
-unwrap:x:+/*
+unwrap:x:+/*/*
 signalr.invoke:ide.terminal.out
-   result:x:@.arguments/*/cmd
+   args
+      result:x:@.arguments/*/cmd
