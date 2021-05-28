@@ -84,31 +84,41 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.currentFolder = <string>msg.content;
 
         // Subscribing to key events.
-        this.term.onKey((key) => {
+        this.term.onData(e => {
 
-          // Checking if user clicked CR.
-          if (key.key === '\r') {
+          // Handling characters correctly.
+          switch (e) {
 
-            // Appending character into terminal and buffer.
-            this.buffer += '\r';
-            this.term.writeln('');
+            // Carriage return.
+            case '\r':
 
-            // Invoking backend using SignalR.
-            if (this.buffer.length > 0) {
-              this.hubConnection.invoke('execute', '/system/ide/bash-command', JSON.stringify({
-                cmd: this.buffer,
-                channel: this.channel,
-              }));
-            }
+              // Invoking backend using SignalR.
+              if (this.buffer.length > 0) {
+                this.term.writeln('');
+                this.hubConnection.invoke('execute', '/system/ide/bash-command', JSON.stringify({
+                  cmd: this.buffer,
+                  channel: this.channel,
+                }));
+              }
 
-            // Emptying buffer.
-            this.buffer = '';
-    
-          } else {
+              // Emptying buffer.
+              this.buffer = '';
+              break;
 
-            // Appending text to buffer.
-            this.buffer += key.key;
-            this.term.write(key.key);
+            // Backspace/Delete key
+            case '\u007F':
+
+              // Do not delete the prompt
+              if (this.buffer.length > 1) {
+                this.term.write('\b \b');
+                this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+              }
+              break;
+
+            default:
+              this.buffer += e;
+              this.term.write(e);
+              break;
           }
         });
 
@@ -179,7 +189,19 @@ export class TerminalComponent implements OnInit, OnDestroy {
         
         // Writing result to xterm instance.
         const json = JSON.parse(args);
-        this.term.writeln(json.result);
+
+        // Checking if server gave us the 'null' value, which implies terminal should be closed.
+        if (!json.result) {
+
+          // Closing terminal, session was closed by server.
+          this.closeTerminal();
+          return;
+        }
+        if (json.error === true) {
+          this.term.writeln(json.result);
+        } else {
+          this.term.writeln(json.result);
+        }
       });
 
       // Connecting to SignalR

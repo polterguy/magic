@@ -34,10 +34,18 @@ strings.concat
  */
 unwrap:x:+/*/*/.channel
 system.terminal.create:x:@.arguments/*/channel
-   .lambda
+   .stdOut
       .channel:x:@strings.concat
-      unwrap:x:+/*/args/*
+      unwrap:x:+/*/args/*/result
       signalr.invoke:x:@.channel
          roles:root
          args
+            result:x:@.arguments/*/cmd
+   .stdErr
+      .channel:x:@strings.concat
+      unwrap:x:+/*/args/*/result
+      signalr.invoke:x:@.channel
+         roles:root
+         args
+            error:bool:true
             result:x:@.arguments/*/cmd
