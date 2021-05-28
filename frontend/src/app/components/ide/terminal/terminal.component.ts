@@ -84,6 +84,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.term.writeln(this.currentFolder);
 
         // Accepting input.
+        this.term.write('$ ');
         this.term.focus();
 
         // Subscribing to key events.
@@ -202,6 +203,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
         }
         if (json.error === true) {
           this.term.writeln(json.result);
+        } else if (json.result === '--waiting-for-input--') {
+          this.term.write('$ ');
         } else {
           this.term.writeln(json.result);
         }
