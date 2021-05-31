@@ -63,9 +63,9 @@
         mat-raised-button
         class="toolbar-button"
         (click)="openTerminal()">
-        Terminal
+        X
       </button>
-  
+
       <button
         [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
         mat-raised-button
@@ -93,9 +93,7 @@
       matTooltip="Hyper IDE, when you're in a hurry!"
       alt="Hyper IDE, when you're in a hurry">
 
-    <app-terminal *ngIf="showTerminal"></app-terminal>
-
-    <div *ngIf="!showTerminal">
+    <div>
 
       <div *ngFor="let file of files">
 
@@ -142,5 +140,13 @@
     </div>
 
   </mat-card>
+
+  <div *ngIf="showTerminal" class="terminal-obscurer">
+
+    <mat-card class="terminal">
+      <app-terminal></app-terminal>
+    </mat-card>
+
+  </div>
 
 </div>

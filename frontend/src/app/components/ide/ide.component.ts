@@ -483,7 +483,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Invoken when terminal should be toggled.
    */
-  openTerminal() {
+  public openTerminal() {
 
     // Toggling terming.
     this.showTerminal = !this.showTerminal;

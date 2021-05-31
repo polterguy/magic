@@ -42,6 +42,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   // Buffer for text currently typed into terminal.
   private buffer: string = '';
 
+  // Number of lines received since last input from server.
+  private noReceived = 0;
+
   /**
    * Current working folder for terminal script.
    */
@@ -82,6 +85,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         // Settings current working folder.
         this.currentFolder = <string>msg.content;
         this.term.writeln(this.currentFolder);
+        this.term.writeln('');
 
         // Accepting input.
         this.term.write('$ ');
@@ -97,6 +101,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
             case '\r':
 
               // Invoking backend using SignalR.
+              this.noReceived = 0;
               if (this.buffer.length > 0) {
                 this.term.writeln('');
                 this.hubConnection.invoke('execute', '/system/ide/bash-command', JSON.stringify({
@@ -147,6 +152,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
       // Closing SignalR socket connection.
       this.hubConnection.stop();
+      this.term.dispose();
     });
   }
 
@@ -201,11 +207,21 @@ export class TerminalComponent implements OnInit, OnDestroy {
           this.closeTerminal();
           return;
         }
+
         if (json.error === true) {
+          if (++this.noReceived === 1) {
+            this.term.writeln('');
+          }
           this.term.writeln(json.result);
         } else if (json.result === '--waiting-for-input--') {
+          if (this.noReceived > 0) {
+            this.term.writeln('');
+          }
           this.term.write('$ ');
         } else {
+          if (++this.noReceived === 1) {
+            this.term.writeln('');
+          }
           this.term.writeln(json.result);
         }
       });
