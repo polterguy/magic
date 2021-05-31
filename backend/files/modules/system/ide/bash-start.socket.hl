@@ -39,14 +39,14 @@ system.terminal.create:x:@.arguments/*/channel
    .stdOut
       .channel:x:@strings.concat
       unwrap:x:+/*/args/*/result
-      signalr.invoke:x:@.channel
+      sockets.invoke:x:@.channel
          roles:root
          args
             result:x:@.arguments/*/cmd
    .stdErr
       .channel:x:@strings.concat
       unwrap:x:+/*/args/*/result
-      signalr.invoke:x:@.channel
+      sockets.invoke:x:@.channel
          roles:root
          args
             error:bool:true

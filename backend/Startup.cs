@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.library;
-using magic.lambda.signalr;
+using magic.lambda.sockets;
 using magic.lambda.logging.helpers;
 
 namespace magic.backend
@@ -57,7 +57,7 @@ namespace magic.backend
             app.UseRouting().UseEndpoints(conf =>
             {
                 conf.MapControllers();
-                conf.MapHub<MagicHub>("/signalr");
+                conf.MapHub<MagicHub>("/sockets");
             });
 
             // Creating a log entry for having started application, but only if system has beeen setup.
