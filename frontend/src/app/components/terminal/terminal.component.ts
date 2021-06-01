@@ -38,11 +38,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
   // Buffer for text currently typed into terminal.
   private buffer: string = '';
 
-  // Number of lines received since last input from server.
-  private noReceived = 0;
-
   // False if no output has been sent to server.
   private sentCommand = false;
+
+  /**
+   * If true, we are connected to backend process.
+   */
+  public isConnected = false;
 
   // Wrapper div for terminal.
   @ViewChild('terminal', {static: true}) terminal: ElementRef;
@@ -75,14 +77,18 @@ export class TerminalComponent implements OnInit, OnDestroy {
     // Subscribing to key events.
     this.term.onData(e => {
 
+      // Making sure we are connected before doing anything else.
+      if (!this.isConnected) {
+        return;
+      }
+
       // Handling characters correctly.
       switch (e) {
 
         // Carriage return.
+        case '\r\n':
+        case '\n':
         case '\r':
-
-          // Invoking backend using SignalR.
-          this.noReceived = 0;
 
           // Checking if we have something to actually transmit to terminal on backend.
           if (this.buffer.length > 0) {
@@ -131,7 +137,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
           }
           break;
 
-        // Default, simply adding key to buffer.
+        // Default, simply adding character to buffer.
         default:
 
           // Default action is to simply append the character into XTerm.
@@ -193,7 +199,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       */
       this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
         
-        // Writing result to xterm instance.
+        // Writing result to XTerm instance.
         const json = JSON.parse(args);
 
         // Checking if server gave us the 'null' value, which implies terminal should be closed.
@@ -201,29 +207,36 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
           // Closing terminal, session was closed by server.
           this.term.writeln('Terminal session was closed by server');
+          this.isConnected = false;
+          this.feedbackService.showInfo('Refresh browser window to reconnect to terminal process');
           return;
         }
 
+        // Checking what type of content server provided us with.
         if (json.error === true) {
-          if (++this.noReceived === 1) {
-            this.term.writeln('');
-          }
+
+          // Oops, error in process on server for some reasons.
           this.term.writeln(json.result);
+
         } else if (json.result.endsWith('echo --waiting-for-input--')) {
-          ; // Do nothing, next result will echo the command resulting in prompt being shown.
+
+          // Do nothing, next result will echo the command resulting in prompt being shown.
+
         } else if (json.result === '--waiting-for-input--') {
-          if (this.noReceived > 0) {
-            this.term.writeln('');
-          }
+
+          // Making sure we display prompt to user.
           this.term.write('$ ');
+
         } else {
+
+          // Checking if this is initial garbage information from Windows or not.
           if (this.sentCommand === false) {
-            // This is just operating system information, avoiding outputing it, to avoid messing up prompt.
+
+            // This is just operating system information, avoiding outputting it, to avoid messing up prompt.
             return;
           }
-          if (++this.noReceived === 1) {
-            this.term.writeln('');
-          }
+
+          // Default implementation, simply writing out result from server.
           this.term.writeln(json.result);
         }
       });
@@ -235,9 +248,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.hubConnection.invoke('execute', '/system/ide/terminal-start', JSON.stringify({
           channel: this.channel,
           folder: '/',
-        })).catch((error: any) => this.feedbackService.showError('Could not start terminal on server'));
+        }))
+        .then(() => {
+          this.isConnected = true;
+        })
+        .catch(() => this.feedbackService.showError('Could not start terminal on server'));
 
-      }, (error: any) => this.feedbackService.showError('Could not negotiate socket connection with backend'));
+      }, () => this.feedbackService.showError('Could not negotiate socket connection with backend'));
     });
   }
 }
