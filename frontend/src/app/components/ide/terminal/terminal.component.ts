@@ -110,7 +110,10 @@ export class TerminalComponent implements OnInit, OnDestroy {
                 this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
                   cmd: this.buffer,
                   channel: this.channel,
-                }));
+                })).catch((error: any) => {
+                  this.feedbackService.showError('Could not execute command on server');
+                  this.term.write('$ ');
+                });
               }
 
               // Emptying buffer.
@@ -238,10 +241,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.hubConnection.invoke('execute', '/system/ide/terminal-start', JSON.stringify({
           channel: this.channel,
           folder: this.currentFolder
-        }));
-      }, (error: any) => {
-        this.feedbackService.showError('Could not negotiate socket connection with backen');
-      });
+        })).catch((error: any) => this.feedbackService.showError('Could not start terminal on server'));
+
+      }, (error: any) => this.feedbackService.showError('Could not negotiate socket connection with backend'));
     });
   }
 }
