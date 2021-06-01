@@ -73,7 +73,7 @@
       .fill-width {
         display: block;
         float: left;
-        width: calc(100% - 16.5rem);
+        width: calc(100% - 11rem);
       }
 
       .toolbar-button {
@@ -87,30 +87,6 @@
 
     .wider {
       width: 80%;
-    }
-
-    .show-terminal {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-    }
-  }
-
-  .terminal-obscurer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1000;
-    background-color: rgba(0,0,0,.5);
-
-    .terminal {
-      position: fixed;
-      top: calc(50vh - 225px);
-      left: calc(50vw - 380px);
-      height: 410px;
-      width: 720px;
     }
   }
 }

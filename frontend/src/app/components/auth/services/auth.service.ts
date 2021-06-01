@@ -64,6 +64,15 @@ export class AuthService {
   }
 
   /**
+   * Returns true if user is authenticated as root.
+   */
+   public get isRoot() {
+    return this.backendService.connected &&
+      !!this.backendService.current.token &&
+      this.roles().filter(x => x === 'root').length > 0;
+  }
+
+  /**
    * Authenticates user towards specified backend.
    * 
    * @param username Username

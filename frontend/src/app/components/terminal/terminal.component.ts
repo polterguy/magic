@@ -5,17 +5,14 @@
 
 // Angular and system imports.
 import { Terminal } from 'xterm';
-import { Subscription } from 'rxjs';
 import { HttpTransportType, HubConnection, HubConnectionBuilder} from '@aspnet/signalr';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 // Application specific imports.
-import { Message } from 'src/app/models/message.model';
-import { Response } from '../../../models/response.model';
-import { MessageService } from 'src/app/services/message.service';
+import { Response } from '../../models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../config/services/config.service';
+import { ConfigService } from '../config/services/config.service';
 
 /**
  * Terminal component for allowing user to use the terminal through a web based interface
@@ -26,13 +23,10 @@ import { ConfigService } from '../../config/services/config.service';
   templateUrl: './terminal.component.html',
   styleUrls: ['./terminal.component.scss']
 })
-export class TerminalComponent implements OnInit, OnDestroy {
+export class TerminalComponent implements OnInit {
 
   // Unique channel name for SignalR communication.
   private channel = '';
-
-  // Subscription for message service.
-  private subscription: Subscription;
 
   // Actual XTerm instance.
   private term: Terminal;
@@ -50,11 +44,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private sentCommand = false;
 
   /**
-   * Current working folder for terminal script.
-   */
-  public currentFolder = '/';
-
-  /**
    * Wrapper div for terminal.
    */
   @ViewChild('terminal', {static: true}) terminal: ElementRef;
@@ -69,7 +58,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
     */
   public constructor(
     private configService: ConfigService,
-    private messageService: MessageService,
     private backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
@@ -78,109 +66,66 @@ export class TerminalComponent implements OnInit, OnDestroy {
    */
   public ngOnInit() {
 
-    // Making sure we subscribe to relevant messages.
-    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+    // Creating our XTerm component.
+    this.term = new Terminal();
+    this.term.open(this.terminal.nativeElement);
 
-      // Checking if this is an interesting message.
-      if (msg.name === 'terminal.current-folder.set') {
+    // Accepting input.
+    this.term.write('$ ');
+    this.term.focus();
 
-        // Creating our XTerm component.
-        this.term = new Terminal();
-        this.term.open(this.terminal.nativeElement);
+    // Subscribing to key events.
+    this.term.onData(e => {
 
-        // Settings current working folder.
-        this.currentFolder = <string>msg.content;
-        this.term.writeln(this.currentFolder);
-        this.term.writeln('');
+      // Handling characters correctly.
+      switch (e) {
 
-        // Accepting input.
-        this.term.write('$ ');
-        this.term.focus();
+        // Carriage return.
+        case '\r':
 
-        // Subscribing to key events.
-        this.term.onData(e => {
+          // Invoking backend using SignalR.
+          this.noReceived = 0;
+          if (this.buffer.length > 0) {
+            this.term.writeln('');
+            this.sentCommand = true;
 
-          // Handling characters correctly.
-          switch (e) {
+            // Invoking backend.
+            this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
+              cmd: this.buffer,
+              channel: this.channel,
+            })).catch((error: any) => {
 
-            // Carriage return.
-            case '\r':
-
-              // Invoking backend using SignalR.
-              this.noReceived = 0;
-              if (this.buffer.length > 0) {
-                this.term.writeln('');
-                this.sentCommand = true;
-
-                // Invoking backend.
-                this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
-                  cmd: this.buffer,
-                  channel: this.channel,
-                })).catch((error: any) => {
-
-                  // Oops, error!
-                  this.feedbackService.showError('Could not execute command on server');
-                  this.term.write('$ ');
-                });
-              }
-
-              // Emptying buffer.
-              this.buffer = '';
-              break;
-
-            // Backspace/Delete key
-            case '\u007F':
-
-              // Do not delete the prompt
-              if (this.buffer.length > 0) {
-                this.term.write('\b \b');
-                this.buffer = this.buffer.substring(0, this.buffer.length - 1);
-              }
-              break;
-
-            default:
-
-            // Default action is to simply append the character into XTerm.
-              this.buffer += e;
-              this.term.write(e);
-              break;
+              // Oops, error!
+              this.feedbackService.showError('Could not execute command on server');
+              this.term.write('$ ');
+            });
           }
-        });
 
-        // Connecting to SignalR socket.
-        this.connectToTerminal();
+          // Emptying buffer.
+          this.buffer = '';
+          break;
+
+        // Backspace/Delete key
+        case '\u007F':
+
+          // Do not delete the prompt
+          if (this.buffer.length > 0) {
+            this.term.write('\b \b');
+            this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+          }
+          break;
+
+        default:
+
+        // Default action is to simply append the character into XTerm.
+          this.buffer += e;
+          this.term.write(e);
+          break;
       }
     });
-  }
 
-  /**
-   * Implementation of OnDestroy.
-   */
-   public ngOnDestroy() {
-
-    // Unsubscribing to message subscription.
-    this.subscription.unsubscribe();
-
-    // Closing SignalR connection, making sure we stop terminal on server first.
-    this.hubConnection.invoke('execute', '/system/ide/terminal-stop', JSON.stringify({
-      channel: this.channel,
-    })).then(() => {
-
-      // Closing SignalR socket connection.
-      this.hubConnection.stop();
-      this.term.dispose();
-    });
-  }
-
-  /**
-   * Invoked when terminal should be closed.
-   */
-  public closeTerminal() {
-
-    // Transmitting message to inform subscribers of that terminal window should be closed.
-    this.messageService.sendMessage({
-      name: 'terminal.close'
-    });
+    // Connecting to SignalR socket.
+    this.connectToTerminal();
   }
 
   /*
@@ -222,7 +167,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         if (!json.result) {
 
           // Closing terminal, session was closed by server.
-          this.closeTerminal();
+          this.term.writeln('Terminal session was closed by server');
           return;
         }
 
@@ -256,7 +201,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         // When connected over socket we need to spawn a terminal on the server.
         this.hubConnection.invoke('execute', '/system/ide/terminal-start', JSON.stringify({
           channel: this.channel,
-          folder: this.currentFolder
+          folder: '/',
         })).catch((error: any) => this.feedbackService.showError('Could not start terminal on server'));
 
       }, (error: any) => this.feedbackService.showError('Could not negotiate socket connection with backend'));

@@ -4,7 +4,6 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
@@ -14,7 +13,6 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
-import { Message } from 'src/app/models/message.model';
 import { FileService } from '../files/services/file.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -32,10 +30,7 @@ import fileTypes from './../files/file-editor/file-types.json';
   templateUrl: './ide.component.html',
   styleUrls: ['./ide.component.scss']
 })
-export class IdeComponent implements OnInit, OnDestroy {
-
-  // Subscription for message service.
-  private subscription: Subscription;
+export class IdeComponent implements OnInit {
 
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
@@ -71,11 +66,6 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Actual data source for tree control.
    */
   public dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-  /**
-   * True if we should show terminal.
-   */
-  public showTerminal = false;
 
   /**
    * Currently edited files.
@@ -115,25 +105,6 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Retrieving files and folder from server.
     this.getFilesFromServer();
-
-    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
-
-      // Checking if this is an interesting message.
-      if (msg.name === 'terminal.close') {
-
-        // Hiding terminal.
-        this.showTerminal = false;
-      }
-    });
-  }
-
-  /**
-   * Implementation of OnDestroy.
-   */
-   public ngOnDestroy() {
-
-    // Unsubscribing to message subscription.
-    this.subscription.unsubscribe();
   }
 
   /**
@@ -341,7 +312,6 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Yup, file already opened.
       this.activeFile = file.path;
-      this.showTerminal = false;
 
     } else {
 
@@ -366,7 +336,6 @@ export class IdeComponent implements OnInit, OnDestroy {
           options: this.getCodeMirrorOptions(file.name),
         });
         this.activeFile = file.path;
-        this.showTerminal = false;
 
       }, (error: any) => this.feedbackService.showError(error));
     }
@@ -389,7 +358,6 @@ export class IdeComponent implements OnInit, OnDestroy {
     */
    public selectedFileChanged() {
     this.activeFolder = this.activeFile.substr(0, this.activeFile.lastIndexOf('/') + 1);
-    this.showTerminal = false;
    }
 
   /**
@@ -477,27 +445,6 @@ export class IdeComponent implements OnInit, OnDestroy {
       } else {
         this.activeFile = this.files[idx - 1].path;
       }
-    }
-  }
-
-  /**
-   * Invoken when terminal should be toggled.
-   */
-  public openTerminal() {
-
-    // Toggling terming.
-    this.showTerminal = !this.showTerminal;
-
-    // Checking if we should transmit message to terminal to set 'current folder'.
-    if (this.showTerminal) {
-
-      // Transmitting message to make sure terminal knows our current folder.
-      setTimeout(() => {
-        this.messageService.sendMessage({
-          name: 'terminal.current-folder.set',
-          content: this.activeFolder,
-        });
-      }, 1);
     }
   }
 

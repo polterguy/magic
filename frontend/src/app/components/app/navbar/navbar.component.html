@@ -21,6 +21,17 @@
 </a>
 
 <a
+  *ngIf="authService.isRoot"
+  mat-button
+  routerLink="/terminal"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>input</mat-icon>
+  <span>Terminal</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
   mat-button
   routerLink="/auth"

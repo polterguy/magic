@@ -18,6 +18,7 @@ import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
+import { TerminalComponent } from './components/terminal/terminal.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { RegisterComponent } from './components/auth/register/register.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'tasks', component: TasksComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
+  { path: 'terminal', component: TerminalComponent },
   { path: 'file-system', component: FilesComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'endpoints', component: EndpointsComponent },
