@@ -32,7 +32,14 @@ namespace magic.backend
              * Notice, must be done AFTER you invoke "AddControllers".
              */
             services.AddMagic(Configuration);
-            services.AddSignalR();
+
+            /*
+             * Checking if SignalR is enabled, and if so, making sure we
+             * add support for it.
+             */
+            if (Configuration["magic:sockets:url"] != null) {
+                services.AddSignalR();
+            }
         }
 
         public void Configure(IApplicationBuilder app)
@@ -47,17 +54,19 @@ namespace magic.backend
             app.UseHttpsRedirection();
 
             // Needed to make SignalR work.
-            app.UseCors(x => x
-                .AllowAnyHeader()
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowCredentials()
-                .WithOrigins("http://localhost:4200")); // TODO: Fix this!!
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseAuthentication();
             app.UseRouting().UseEndpoints(conf =>
             {
                 conf.MapControllers();
-                conf.MapHub<MagicHub>("/sockets");
+
+                /*
+                 * Checking if SignalR is enabled, and if so, making sure we
+                 * resolve the "/sockets" endpoint as SignalR invocations.
+                 */
+                if (Configuration["magic:sockets:url"] != null) {
+                    conf.MapHub<MagicHub>("/sockets");
+                }
             });
 
             // Creating a log entry for having started application, but only if system has beeen setup.
