@@ -60,13 +60,6 @@
       </mat-form-field>
 
       <button
-        mat-raised-button
-        class="toolbar-button"
-        (click)="openTerminal()">
-        X
-      </button>
-
-      <button
         [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
         mat-raised-button
         class="toolbar-button"
@@ -87,7 +80,7 @@
     </div>
 
     <img
-      *ngIf="!showTerminal && files.length === 0"
+      *ngIf="files.length === 0"
       src="assets/light-bulb.png"
       class="light-bulb"
       matTooltip="Hyper IDE, when you're in a hurry!"
@@ -140,13 +133,5 @@
     </div>
 
   </mat-card>
-
-  <div *ngIf="showTerminal" class="terminal-obscurer">
-
-    <mat-card class="terminal">
-      <app-terminal></app-terminal>
-    </mat-card>
-
-  </div>
 
 </div>
