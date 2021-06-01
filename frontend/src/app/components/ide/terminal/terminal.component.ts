@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Terminal } from 'xterm';
 import { Subscription } from 'rxjs';
-import { HubConnection, HubConnectionBuilder} from '@aspnet/signalr';
+import { HttpTransportType, HubConnection, HubConnectionBuilder} from '@aspnet/signalr';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 // Application specific imports.
@@ -14,6 +14,7 @@ import { Message } from 'src/app/models/message.model';
 import { Response } from '../../../models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
 
 /**
@@ -61,11 +62,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
     * @param configService Needed to retrieve 'gibberish' creating a unique channel for the user on SignalR
     * @param messageService Service used to publish messages to other components in the system
     * @param backendService Needed to retrieve the root URL for backend used by SignalR.
+    * @param feedbackService Needed to display feedback to caller.
     */
   public constructor(
     private configService: ConfigService,
     private messageService: MessageService,
-    private backendService: BackendService) { }
+    private backendService: BackendService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
@@ -188,7 +191,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
       // Creating our hub connection now that we know the channel name.
       let builder = new HubConnectionBuilder();
       this.hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
-          accessTokenFactory: () => this.backendService.current.token
+          accessTokenFactory: () => this.backendService.current.token,
+          skipNegotiation: true,
+          transport: HttpTransportType.WebSockets,
         }).build();
 
       /*
@@ -234,6 +239,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
           channel: this.channel,
           folder: this.currentFolder
         }));
+      }, (error: any) => {
+        this.feedbackService.showError('Could not negotiate socket connection with backen');
       });
     });
   }
