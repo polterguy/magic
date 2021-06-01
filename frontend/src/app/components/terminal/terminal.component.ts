@@ -93,6 +93,15 @@ export class TerminalComponent implements OnInit, OnDestroy {
           // Checking if we have something to actually transmit to terminal on backend.
           if (this.buffer.length > 0) {
 
+            // Checking if user wants to clear terminal.
+            if (this.buffer === 'clear' || this.buffer === 'cls') {
+              this.buffer = '';
+              this.term.writeln('');
+              this.term.clear();
+              this.term.write('$ ');
+              return;
+            }
+
             // We have something to transmit to server.
             this.term.writeln('');
             this.sentCommand = true;
