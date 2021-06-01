@@ -11,11 +11,12 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation 
 // Application specific imports.
 import { Response } from '../../models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../config/services/config.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
- * Terminal component for allowing user to use the terminal through a web based interface
+ * Terminal component for allowing user to use the terminal through a
+ * web based interface.
  */
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -23,9 +24,9 @@ import { ConfigService } from '../config/services/config.service';
   templateUrl: './terminal.component.html',
   styleUrls: ['./terminal.component.scss']
 })
-export class TerminalComponent implements OnInit {
+export class TerminalComponent implements OnInit, OnDestroy {
 
-  // Unique channel name for SignalR communication.
+  // Unique channel name for SignalR communication to communicate with backend terminal instance.
   private channel = '';
 
   // Actual XTerm instance.
@@ -43,16 +44,13 @@ export class TerminalComponent implements OnInit {
   // False if no output has been sent to server.
   private sentCommand = false;
 
-  /**
-   * Wrapper div for terminal.
-   */
+  // Wrapper div for terminal.
   @ViewChild('terminal', {static: true}) terminal: ElementRef;
 
    /**
     * Creates an instance of your component.
     * 
     * @param configService Needed to retrieve 'gibberish' creating a unique channel for the user on SignalR
-    * @param messageService Service used to publish messages to other components in the system
     * @param backendService Needed to retrieve the root URL for backend used by SignalR.
     * @param feedbackService Needed to display feedback to caller.
     */
@@ -85,7 +83,11 @@ export class TerminalComponent implements OnInit {
 
           // Invoking backend using SignalR.
           this.noReceived = 0;
+
+          // Checking if we have something to actually transmit to terminal on backend.
           if (this.buffer.length > 0) {
+
+            // We have something to transmit to server.
             this.term.writeln('');
             this.sentCommand = true;
 
@@ -99,10 +101,24 @@ export class TerminalComponent implements OnInit {
               this.feedbackService.showError('Could not execute command on server');
               this.term.write('$ ');
             });
-          }
 
-          // Emptying buffer.
-          this.buffer = '';
+            // Emptying buffer.
+            this.buffer = '';
+
+          } else {
+
+            // Empty line, just adding come 'formating'.
+            this.term.writeln('');
+            this.term.write('$ ');
+          }
+          break;
+
+        // Swallowing cursor keys and other keys we don't know how to handle.
+        case '[A':
+        case '[B':
+        case '[C':
+        case '[D':
+        case '\t':
           break;
 
         // Backspace/Delete key
@@ -115,9 +131,10 @@ export class TerminalComponent implements OnInit {
           }
           break;
 
+        // Default, simply adding key to buffer.
         default:
 
-        // Default action is to simply append the character into XTerm.
+          // Default action is to simply append the character into XTerm.
           this.buffer += e;
           this.term.write(e);
           break;
@@ -126,6 +143,22 @@ export class TerminalComponent implements OnInit {
 
     // Connecting to SignalR socket.
     this.connectToTerminal();
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+   public ngOnDestroy() {
+
+    // Closing SignalR connection, making sure we stop terminal on server first.
+    this.hubConnection.invoke('execute', '/system/ide/terminal-stop', JSON.stringify({
+      channel: this.channel,
+    })).then(() => {
+
+      // Closing SignalR socket connection.
+      this.hubConnection.stop();
+      this.term.dispose();
+    });
   }
 
   /*
