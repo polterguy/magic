@@ -43,7 +43,9 @@ export class ToolbarComponent implements OnInit {
     {name: 'crypto', url: 'mfQOTq7rMv4'},
     {name: 'diagnostics', url: 'nZ_yrw3MRS4'},
     {name: 'log', url: 'mjqvjy-lqnY'},
-    {name:'config', url: 'KkVUQk5eAPg'},
+    {name: 'config', url: 'KkVUQk5eAPg'},
+    {name: 'ide', url: 'jt8kETrE5EI'},
+    {name: 'terminal', url: 'jt8kETrE5EI'},
   ];
 
   /**
