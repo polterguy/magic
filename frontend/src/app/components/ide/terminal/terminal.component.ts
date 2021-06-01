@@ -46,6 +46,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   // Number of lines received since last input from server.
   private noReceived = 0;
 
+  // False if no output has been sent to server.
+  private sentCommand = false;
+
   /**
    * Current working folder for terminal script.
    */
@@ -107,6 +110,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
               this.noReceived = 0;
               if (this.buffer.length > 0) {
                 this.term.writeln('');
+                this.sentCommand = true;
                 this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
                   cmd: this.buffer,
                   channel: this.channel,
@@ -221,12 +225,18 @@ export class TerminalComponent implements OnInit, OnDestroy {
             this.term.writeln('');
           }
           this.term.writeln(json.result);
+        } else if (json.result.endsWith('echo --waiting-for-input--')) {
+          ; // Do nothing, next result will echo the command resulting in prompt being shown.
         } else if (json.result === '--waiting-for-input--') {
           if (this.noReceived > 0) {
             this.term.writeln('');
           }
           this.term.write('$ ');
         } else {
+          if (this.sentCommand === false) {
+            // This is just operating system information, avoiding outputing it, to avoid messing up prompt.
+            return;
+          }
           if (++this.noReceived === 1) {
             this.term.writeln('');
           }
