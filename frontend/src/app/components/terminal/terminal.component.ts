@@ -49,13 +49,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
   // Wrapper div for terminal.
   @ViewChild('terminal', {static: true}) terminal: ElementRef;
 
-   /**
-    * Creates an instance of your component.
-    * 
-    * @param configService Needed to retrieve 'gibberish' creating a unique channel for the user on SignalR
-    * @param backendService Needed to retrieve the root URL for backend used by SignalR.
-    * @param feedbackService Needed to display feedback to caller.
-    */
+  /**
+   * Creates an instance of your component.
+   * 
+   * @param configService Needed to retrieve 'gibberish' creating a unique channel for the user on SignalR
+   * @param backendService Needed to retrieve the root URL for backend used by SignalR.
+   * @param feedbackService Needed to display feedback to caller.
+   */
   public constructor(
     private configService: ConfigService,
     private backendService: BackendService,
@@ -110,7 +110,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
             this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
               cmd: this.buffer,
               channel: this.channel,
-            })).catch((error: any) => {
+            })).catch(() => {
 
               // Oops, error!
               this.feedbackService.showError('Could not execute command on server');
@@ -163,7 +163,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-   public ngOnDestroy() {
+  public ngOnDestroy() {
 
     // Closing SignalR connection, making sure we stop terminal on server first.
     this.hubConnection.invoke('execute', '/system/ide/terminal-stop', JSON.stringify({
@@ -187,7 +187,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
     /*
      * Retrieving gibberish from server which is used as unique channel name,
-     * to avoid multiple users interfering with each others sessions.
+     * to avoid multiple users/windows interfering with each others sessions.
      */
     this.configService.getGibberish(15, 25).subscribe((result: Response) => {
 
@@ -203,9 +203,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
         }).build();
 
       /*
-      * Subscribing to [ide.terminal] messages which are transmitted by
-      * the backend once some terminal output is ready.
-      */
+       * Subscribing to [ide.terminal] messages which are transmitted by
+       * the backend once some terminal output is ready.
+       */
       this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
         
         // Writing result to XTerm instance.
