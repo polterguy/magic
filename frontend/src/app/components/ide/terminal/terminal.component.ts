@@ -104,7 +104,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
               this.noReceived = 0;
               if (this.buffer.length > 0) {
                 this.term.writeln('');
-                this.hubConnection.invoke('execute', '/system/ide/bash-command', JSON.stringify({
+                this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
                   cmd: this.buffer,
                   channel: this.channel,
                 }));
@@ -146,7 +146,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
 
     // Closing SignalR connection, making sure we stop terminal on server first.
-    this.hubConnection.invoke('execute', '/system/ide/bash-stop', JSON.stringify({
+    this.hubConnection.invoke('execute', '/system/ide/terminal-stop', JSON.stringify({
       channel: this.channel,
     })).then(() => {
 
@@ -230,7 +230,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.hubConnection.start().then(() => {
 
         // When connected over socket we need to spawn a terminal on the server.
-        this.hubConnection.invoke('execute', '/system/ide/bash-start', JSON.stringify({
+        this.hubConnection.invoke('execute', '/system/ide/terminal-start', JSON.stringify({
           channel: this.channel,
           folder: this.currentFolder
         }));
