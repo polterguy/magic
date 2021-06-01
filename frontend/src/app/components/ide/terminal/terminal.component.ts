@@ -111,10 +111,14 @@ export class TerminalComponent implements OnInit, OnDestroy {
               if (this.buffer.length > 0) {
                 this.term.writeln('');
                 this.sentCommand = true;
+
+                // Invoking backend.
                 this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
                   cmd: this.buffer,
                   channel: this.channel,
                 })).catch((error: any) => {
+
+                  // Oops, error!
                   this.feedbackService.showError('Could not execute command on server');
                   this.term.write('$ ');
                 });
@@ -135,6 +139,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
               break;
 
             default:
+
+            // Default action is to simply append the character into XTerm.
               this.buffer += e;
               this.term.write(e);
               break;
