@@ -1,7 +1,8 @@
 
 /*
- * Executes the specified terminal command and returns the result of execution on
- * the specified [channel].
+ * File resolved from a socket connection invocation.
+ *
+ * Executes the specified command on the specified terminal instance.
  */
 .arguments
    cmd:string
