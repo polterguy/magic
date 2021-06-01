@@ -53,7 +53,7 @@ namespace magic.backend
 
             app.UseHttpsRedirection();
 
-            // Needed to make SignalR work.
+            // Necessary to make SignalR work.
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseAuthentication();
             app.UseRouting().UseEndpoints(conf =>
