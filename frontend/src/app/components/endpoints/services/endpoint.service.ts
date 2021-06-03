@@ -14,6 +14,7 @@ import { saveAs } from "file-saver";
 import { Template } from '../models/template.model';
 import { Endpoint } from '../models/endpoint.model';
 import { Response } from 'src/app/models/response.model';
+import { SocketUser } from '../models/socket-user.model';
 import { HttpService } from '../../../services/http.service';
 import { FileService } from '../../files/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
@@ -143,6 +144,15 @@ export class EndpointService {
       // Simple version, retrieving all files in assumption test folder.
       return this.fileService.listFiles('/misc/tests/');
     }
+  }
+
+  /**
+   * Returns a list of all users currently connected to a socket.
+   */
+   public socketUsers() {
+
+    // Simple version, retrieving all files in assumption test folder.
+    return this.httpService.get<SocketUser[]>('/magic/modules/system/misc/socket-users');
   }
 
   /**

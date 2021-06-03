@@ -1,0 +1,25 @@
+
+/*
+ * Returns users currently connected to the web server on a web socket connection to caller.
+ */
+.description:Returns users currently connected to the web server on a web socket connection to caller
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Rettrieving currently connected users.
+ */
+sockets.users
+
+
+/*
+ * Generating gibberish text.
+ */
+add:x:+
+   get-nodes:x:@sockets.users/*
+return
