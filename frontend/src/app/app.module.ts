@@ -133,6 +133,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 import { IdeComponent } from './components/ide/ide.component';
 import { TerminalComponent } from './components/terminal/terminal.component';
+import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostics-sockets/diagnostics-sockets.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -211,6 +212,7 @@ import { TerminalComponent } from './components/terminal/terminal.component';
     CrudifierDockerComponent,
     IdeComponent,
     TerminalComponent,
+    DiagnosticsSocketsComponent,
   ],
   imports: [
     FormsModule,
