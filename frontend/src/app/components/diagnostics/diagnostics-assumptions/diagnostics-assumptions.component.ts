@@ -167,14 +167,14 @@ export class DiagnosticsTestsComponent implements OnInit {
   }
 
   /**
-   * Returns true if we should display the details view for specified user.
+   * Returns true if we should display the details view for specified test.
    * 
-   * @param user User to check if we should display details for
+   * @param test User to check if we should display details for
    */
-  public shouldDisplayDetails(user: TestModel) {
+  public shouldDisplayDetails(test: TestModel) {
 
     // Returns true if we're currently displaying this particular item.
-    return this.selectedTests.filter(x => x === user.filename).length > 0;
+    return this.selectedTests.filter(x => x === test.filename).length > 0;
   }
 
   /**

@@ -36,10 +36,38 @@
       <td mat-cell *matCellDef="let el">{{el.username}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="show-details">
+      <td
+        mat-cell
+        *matCellDef="let el">
+
+        <div
+          class="details-sheet"
+          *ngIf="shouldDisplayDetails(el)">
+
+          <mat-chip-list>
+            <mat-chip
+              *ngFor="let con of el.connections"
+              selectable="false">
+              {{con}}
+            </mat-chip>
+          </mat-chip-list>
+
+        </div>
+
+      </td>
+    </ng-container>
+
     <tr
       mat-row
-      class="row"
+      [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'user-row'"
+      (click)="toggleDetails(el)"
       mat-row *matRowDef="let el; columns: ['name'];"></tr>
+
+    <tr
+      mat-row
+      [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+      *matRowDef="let el; columns: ['show-details'];"></tr>
 
   </table>
 

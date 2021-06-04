@@ -57,11 +57,11 @@
         mat-cell
         colspan="2"
         *matCellDef="let el">
-  
+
         <div
           class="details-sheet"
           *ngIf="shouldDisplayDetails(el) && el.content">
-  
+
           <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
 
           <div class="button-strip">
@@ -86,12 +86,12 @@
             </button>
 
           </div>
-  
+
         </div>
-  
+
       </td>
     </ng-container>
-  
+
     <tr
       mat-row
       [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'test-row'"
