@@ -107,7 +107,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
             this.sentCommand = true;
 
             // Invoking backend.
-            this.hubConnection.invoke('execute', '/system/ide/terminal-command', JSON.stringify({
+            this.hubConnection.invoke('execute', '/system/terminal/command', JSON.stringify({
               cmd: this.buffer,
               channel: this.channel,
             })).catch(() => {
@@ -166,7 +166,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   public ngOnDestroy() {
 
     // Closing SignalR connection, making sure we stop terminal on server first.
-    this.hubConnection.invoke('execute', '/system/ide/terminal-stop', JSON.stringify({
+    this.hubConnection.invoke('execute', '/system/terminal/stop', JSON.stringify({
       channel: this.channel,
     })).then(() => {
 
@@ -254,7 +254,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.hubConnection.start().then(() => {
 
         // When connected over socket we need to spawn a terminal on the server.
-        this.hubConnection.invoke('execute', '/system/ide/terminal-start', JSON.stringify({
+        this.hubConnection.invoke('execute', '/system/terminal/start', JSON.stringify({
           channel: this.channel,
           folder: '/',
         }))
