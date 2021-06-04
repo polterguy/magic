@@ -36,6 +36,11 @@ export class DiagnosticsSocketsComponent implements OnInit {
   public filterFormControl: FormControl;
 
   /**
+   * What users are currently being edited and viewed.
+   */
+   public selectedUsers: string[] = [];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to provide feedback to user
@@ -82,5 +87,37 @@ export class DiagnosticsSocketsComponent implements OnInit {
 
     // Returning tests matching currently filter condition.
     return this.users.filter(x => x.username.indexOf(this.filter) !== -1);
+  }
+
+  /**
+   * Toggles the details view for a single user.
+   * 
+   * @param user Test to toggle details for
+   */
+   public toggleDetails(user: SocketUser) {
+
+    // Checking if we're already displaying details for current item.
+    const idx = this.selectedUsers.indexOf(user.username);
+    if (idx !== -1) {
+
+      // Hiding item.
+      this.selectedUsers.splice(idx, 1);
+
+    } else {
+
+      // Displaying item.
+      this.selectedUsers.push(user.username);
+    }
+  }
+
+  /**
+   * Returns true if we should display the details view for specified user.
+   * 
+   * @param user User to check if we should display details for
+   */
+   public shouldDisplayDetails(user: SocketUser) {
+
+    // Returns true if we're currently displaying this particular item.
+    return this.selectedUsers.filter(x => x === user.username).length > 0;
   }
 }
