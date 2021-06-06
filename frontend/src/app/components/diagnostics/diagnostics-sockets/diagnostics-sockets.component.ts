@@ -4,9 +4,13 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+
+// Application specific imports.
+import { Count } from 'src/app/models/count.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
@@ -22,13 +26,15 @@ import { EndpointService } from '../../endpoints/services/endpoint.service';
 })
 export class DiagnosticsSocketsComponent implements OnInit {
 
-  // Filter for which users to display.
-  private filter: string = '';
-
   /**
    * Users as retrieved from backend.
    */
   public users: SocketUser[] = [];
+
+  /**
+   * Number of socket connections matching specified filtering condition.
+   */
+  public count: number;
 
   /**
    * Filter form control for filtering users to display.
@@ -39,6 +45,11 @@ export class DiagnosticsSocketsComponent implements OnInit {
    * What users are currently being edited and viewed.
    */
    public selectedUsers: string[] = [];
+
+  /**
+   * Paginator for paging table.
+   */
+   @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
   /**
    * Creates an instance of your component.
@@ -61,16 +72,12 @@ export class DiagnosticsSocketsComponent implements OnInit {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => {
-        this.filter = query;
+        this.paginator.pageIndex = 0;
+        this.getConnections();
     });
 
-    // Retrieving all tests form backend.
-    this.endpointService.socketUsers().subscribe((users: SocketUser[]) => {
-
-      // Assigning result to model.
-      this.users = users ?? [];
-
-    }, (error: any) => this.feedbackService.showError(error));
+    // Retrieving all connected users from backend.
+    this.getConnections();
   }
 
   /**
@@ -78,15 +85,6 @@ export class DiagnosticsSocketsComponent implements OnInit {
    */
   public clearFilter() {
     this.filterFormControl.setValue('');
-  }
-
-  /**
-   * Returns tests that should be display due to matching filter condition.
-   */
-  public getFilteredUsers() {
-
-    // Returning tests matching currently filter condition.
-    return this.users.filter(x => x.username.indexOf(this.filter) !== -1);
   }
 
   /**
@@ -119,5 +117,48 @@ export class DiagnosticsSocketsComponent implements OnInit {
 
     // Returns true if we're currently displaying this particular item.
     return this.selectedUsers.filter(x => x === user.username).length > 0;
+  }
+
+  /**
+   * Invoked when paginator wants to page data table.
+   * 
+   * @param e Page event argument
+   */
+   public paged(e: PageEvent) {
+
+    // Changing pager's size according to arguments, and retrieving log items from backend.
+    this.paginator.pageSize = e.pageSize;
+    this.getConnections();
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Returns connections to caller by unvoking backend.
+   */
+  private getConnections() {
+
+    // Invoking backend to retrieve connected users.
+    this.endpointService.socketUsers(
+      this.filterFormControl.value,
+      this.paginator.pageIndex * this.paginator.pageSize,
+      this.paginator.pageSize).subscribe((users: SocketUser[]) => {
+
+      // Making sure we reset view details items.
+      this.selectedUsers = [];
+
+      // Assigning result to model.
+      this.users = users ?? [];
+
+      // Retrieving number of socket connections matching filter condition.
+      this.endpointService.socketUserCount(this.filterFormControl.value).subscribe((count: Count) => {
+
+        // Assigning model.
+        this.count = count.count;
+      });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

@@ -1,13 +1,9 @@
 
 <div class="wrapper">
 
-  <div *ngIf="users.length === 0">
-    No users are currently connected with backend over a Web Socket connection.
-  </div>
-
   <div class="button-strip">
 
-    <mat-form-field [class]="users.length > 0 ? 'fill-width' : 'invisible'" appearance="outline">
+    <mat-form-field class="fill-width" appearance="outline">
 
       <mat-label>Filter</mat-label>
       <input
@@ -28,7 +24,7 @@
 
   <table
     mat-table
-    [dataSource]="getFilteredUsers()"
+    [dataSource]="users"
     class="tests clickable"
     multiTemplateDataRows>
 
@@ -70,5 +66,15 @@
       *matRowDef="let el; columns: ['show-details'];"></tr>
 
   </table>
+
+  <mat-paginator
+    #paginator
+    [class]="count > paginator.pageSize ? '' : 'invisible'"
+    [length]="count"
+    pageSize="10"
+    showFirstLastButtons="true"
+    (page)="paged($event)"
+    [pageSizeOptions]="[5,10,25,50]">
+  </mat-paginator>
 
 </div>

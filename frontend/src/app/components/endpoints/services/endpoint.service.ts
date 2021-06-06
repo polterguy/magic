@@ -11,6 +11,7 @@ import { Injectable } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
+import { Count } from 'src/app/models/count.model';
 import { Template } from '../models/template.model';
 import { Endpoint } from '../models/endpoint.model';
 import { Response } from 'src/app/models/response.model';
@@ -148,11 +149,40 @@ export class EndpointService {
 
   /**
    * Returns a list of all users currently connected to a socket.
+   * 
+   * @param filter Filter to apply for which connections to return to caller
+   * @param offset Offset from where to start returning connections
+   * @param limit Maximum number of items to return.
    */
-   public socketUsers() {
+   public socketUsers(filter: string, offset: number, limit: number) {
+
+    // Building our query parameter(s).
+    var query = '?offset=' + offset + '&limit=' + limit;
+    if (filter) {
+      query += '&filter=' + encodeURIComponent(filter);
+    }
 
     // Simple version, retrieving all files in assumption test folder.
-    return this.httpService.get<SocketUser[]>('/magic/modules/system/misc/socket-users');
+    return this.httpService.get<SocketUser[]>(
+      '/magic/modules/system/misc/socket-users' + query);
+  }
+
+  /**
+   * Returns the count of all users currently connected to a socket.
+   * 
+   * @param filter Filter to apply for which connections to return to caller
+   */
+   public socketUserCount(filter: string) {
+
+    // Building our query parameter(s).
+    var query = '';
+    if (filter) {
+      query += '?filter=' + encodeURIComponent(filter);
+    }
+
+    // Simple version, retrieving all files in assumption test folder.
+    return this.httpService.get<Count>(
+      '/magic/modules/system/misc/socket-users-count' + query);
   }
 
   /**
