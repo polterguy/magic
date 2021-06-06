@@ -9,6 +9,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Component, Input, OnInit } from '@angular/core';
+import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
 import { Endpoint } from '../models/endpoint.model';
@@ -527,34 +528,69 @@ export class EndpointDetailsComponent implements OnInit {
       case 'patch':
         invocation = this.endpointService.patch(this.url, JSON.parse(this.payload), responseType);
         break;
+
+      case 'socket':
+
+        // Creating our hub connection.
+        let builder = new HubConnectionBuilder();
+        const hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
+            accessTokenFactory: () => this.backendService.current.token,
+            skipNegotiation: true,
+            transport: HttpTransportType.WebSockets,
+          }).build();
+
+        // Connecting to socket.
+        hubConnection.start().then(() => {
+
+          // When having connected we invoke the 'execute' method, passing in URL and arguments.
+          let success = true;
+          const url = this.url.substr(14);
+          hubConnection
+            .invoke('execute', url, this.payload)
+            .catch(() => {
+              this.feedbackService.showError('Something went wrong as we tried to invoke socket endpoint');
+              success = false;
+            })
+            .then(() => {
+              hubConnection.stop();
+              if (success) {
+                this.feedbackService.showInfoShort('Socket invocation was successful');
+              }
+            });
+        });
+        break;
     }
 
-    // Invoking backend now that we've got our observable.
-    invocation.subscribe((res: any) => {
+    // Verifying we have an observable, which is not necessarily the case for socket invocations.
+    if (invocation) {
 
-      // Binding result model to result of invocation.
-      const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
-      this.result = {
-        status: res.status,
-        statusText: res.statusText,
-        response: response,
-        blob: null
-      };
-      if (responseType === 'blob') {
-        const objectUrl = URL.createObjectURL(response);
-        this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-      }
+      // Invoking backend now that we've got our observable.
+      invocation.subscribe((res: any) => {
 
-    }, (error: any) => {
+        // Binding result model to result of invocation.
+        const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
+        this.result = {
+          status: res.status,
+          statusText: res.statusText,
+          response: response,
+          blob: null
+        };
+        if (responseType === 'blob') {
+          const objectUrl = URL.createObjectURL(response);
+          this.result.blob = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+        }
 
-      // Assigning model to result of invocation.
-      this.result = {
-        status: error.status,
-        statusText: error.statusText,
-        response: JSON.stringify(error.error || '{}', null, 2),
-        blob: null,
-      };
-    });
+      }, (error: any) => {
+
+        // Assigning model to result of invocation.
+        this.result = {
+          status: error.status,
+          statusText: error.statusText,
+          response: JSON.stringify(error.error || '{}', null, 2),
+          blob: null,
+        };
+      });
+    }
   }
 
   /**
