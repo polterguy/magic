@@ -2,4 +2,7 @@
 .wrapper {
   margin:2rem;
   min-height: 20rem;
+  mat-chip:hover {
+    cursor: pointer;
+  }
 }

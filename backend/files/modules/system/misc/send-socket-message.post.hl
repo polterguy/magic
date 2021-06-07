@@ -1,0 +1,32 @@
+
+/*
+ * Sends specified socket message to specified client subscriber/connection.
+ */
+.arguments
+   client:string
+   name:string
+   message:*
+.description:Sends specified socket message to specified client subscriber/connection
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Invoking slot responsible for transmitting message.
+ */
+add:x:+/*/args
+   get-nodes:x:@.arguments/*/message/*
+sockets.signal:x:@.arguments/*/name
+   client:x:@.arguments/*/client
+   args
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

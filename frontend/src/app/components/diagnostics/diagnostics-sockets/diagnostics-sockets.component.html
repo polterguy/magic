@@ -44,7 +44,8 @@
           <mat-chip-list>
             <mat-chip
               *ngFor="let con of el.connections"
-              selectable="false">
+              selectable="false"
+              (click)="connectionSelected(con)">
               {{con}}
             </mat-chip>
           </mat-chip-list>
