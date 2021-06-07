@@ -14,6 +14,7 @@ import { saveAs } from "file-saver";
 import { Count } from 'src/app/models/count.model';
 import { Template } from '../models/template.model';
 import { Endpoint } from '../models/endpoint.model';
+import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { SocketUser } from '../models/socket-user.model';
 import { HttpService } from '../../../services/http.service';
@@ -183,6 +184,23 @@ export class EndpointService {
     // Simple version, retrieving all files in assumption test folder.
     return this.httpService.get<Count>(
       '/magic/modules/system/misc/socket-users-count' + query);
+  }
+
+  /**
+   * Transmits the specified message to the specified client.
+   * 
+   * @param msg What message to send
+   * @param client What client (connection) to transmit the message to
+   */
+   public sendSocketMessage(msg: Message, client: string) {
+
+    // Invoking backend returning observable to caller.
+    return this.httpService.post<Response>(
+      '/magic/modules/system/misc/send-socket-message', {
+        client: client,
+        name: msg.name,
+        message: JSON.parse(msg.content),
+      });
   }
 
   /**

@@ -5,19 +5,21 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
+import { Message } from 'src/app/models/message.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
+import { SendMessageComponent } from './send-message/send-message.component';
 
 /**
- * Sockets diagnostic component, allowing to see current connections and other type of
- * information.
+ * Sockets diagnostic component, allowing to see current connections grouped by users.
  */
 @Component({
   selector: 'app-diagnostics-sockets',
@@ -27,7 +29,8 @@ import { EndpointService } from '../../endpoints/services/endpoint.service';
 export class DiagnosticsSocketsComponent implements OnInit {
 
   /**
-   * Users as retrieved from backend.
+   * Users connected to a socket according to filtering condition,
+   * as returned from our backend.
    */
   public users: SocketUser[] = [];
 
@@ -37,7 +40,7 @@ export class DiagnosticsSocketsComponent implements OnInit {
   public count: number;
 
   /**
-   * Filter form control for filtering users to display.
+   * Filter form control for filtering connections to display according to users.
    */
   public filterFormControl: FormControl;
 
@@ -54,10 +57,12 @@ export class DiagnosticsSocketsComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Needed to create modal dialogues
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all connected users from backend
    */
   constructor(
+    private dialog: MatDialog,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
 
@@ -72,7 +77,11 @@ export class DiagnosticsSocketsComponent implements OnInit {
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => {
+
+        // Resetting paginator.
         this.paginator.pageIndex = 0;
+
+        // Retrieving connections/users again since filtering condition has changed.
         this.getConnections();
     });
 
@@ -81,16 +90,18 @@ export class DiagnosticsSocketsComponent implements OnInit {
   }
 
   /**
-   * Invoked when user wants to clear filter.
+   * Invoked when user wants to clear filter condition.
    */
   public clearFilter() {
+
+    // Just resetting the control's value will trigger the debounce method.
     this.filterFormControl.setValue('');
   }
 
   /**
    * Toggles the details view for a single user.
    * 
-   * @param user Test to toggle details for
+   * @param user User to toggle details for
    */
    public toggleDetails(user: SocketUser) {
 
@@ -126,9 +137,42 @@ export class DiagnosticsSocketsComponent implements OnInit {
    */
    public paged(e: PageEvent) {
 
-    // Changing pager's size according to arguments, and retrieving log items from backend.
+    // Changing pager's size according to arguments, and retrieving items from backend again.
     this.paginator.pageSize = e.pageSize;
     this.getConnections();
+  }
+
+  /**
+   * Shows a modal dialog allowing you to send a message to one single connection.
+   * 
+   * @param connection Which connection to transmit message to
+   */
+  public connectionSelected(connection: string) {
+
+    // Creating modal dialogue that asks user what message and payload to transmit to server.
+    const dialogRef = this.dialog.open(SendMessageComponent, {
+      width: '550px',
+      data: {
+        name: '',
+        content: '{\r\n  "foo": "bar"\r\n}'
+      }
+    });
+
+    // Subscribing to after closed to allow for current component to actually do the invocation towards backend.
+    dialogRef.afterClosed().subscribe((data: Message) => {
+
+      // Checking if modal dialog wants transmit message.
+      if (data) {
+
+        // Invoking backend to transmit message to client.
+        this.endpointService.sendSocketMessage(data, connection).subscribe(() => {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfoShort('Message was successfully sent');
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
   }
 
   /*
@@ -140,7 +184,7 @@ export class DiagnosticsSocketsComponent implements OnInit {
    */
   private getConnections() {
 
-    // Invoking backend to retrieve connected users.
+    // Invoking backend to retrieve connected users according to filtering and pagination condition(s).
     this.endpointService.socketUsers(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
@@ -157,7 +201,8 @@ export class DiagnosticsSocketsComponent implements OnInit {
 
         // Assigning model.
         this.count = count.count;
-      });
+
+      }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => this.feedbackService.showError(error));
   }

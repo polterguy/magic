@@ -122,6 +122,7 @@ import { JailUserDialogComponent } from './components/auth/users/jail-user-dialo
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
+import { SendMessageComponent } from './components/diagnostics/diagnostics-sockets/send-message/send-message.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileFolderDialogComponent } from './components/ide/new-file-folder-dialog/new-file-folder-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
@@ -208,6 +209,7 @@ import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostic
     CrudifierFrontendComponent,
     CrudifierSqlComponent,
     CrudifierSqlAddArgumentDialogComponent,
+    SendMessageComponent,
     ToolbarHelpDialogComponent,
     CrudifierDockerComponent,
     IdeComponent,

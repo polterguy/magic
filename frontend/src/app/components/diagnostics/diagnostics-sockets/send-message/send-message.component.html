@@ -1,0 +1,32 @@
+
+<h1 mat-dialog-title>Send message</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Message name</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.name"
+      autocomplete="off">
+
+  </mat-form-field>
+
+  <ngx-codemirror
+    *ngIf="options"
+    [(ngModel)]="data.content"
+    [options]="options">
+  </ngx-codemirror>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    [disabled]="!data.name || !data.content || !notGood()"
+    mat-raised-button
+    color="primary"
+    (click)="send()">Send</button>
+
+</div>
