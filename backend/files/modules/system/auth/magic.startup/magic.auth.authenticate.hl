@@ -119,7 +119,7 @@ slots.create:magic.auth.authenticate
                .
                   ad-auth.authenticate
                      username:x:@.arguments/*/username
-                     password:x:@.arguments/*/passsword
+                     password:x:@.arguments/*/password
             remove-nodes:x:@if/./**/crypto.password.verify
 
 
