@@ -97,6 +97,33 @@ slots.create:magic.auth.authenticate
 
 
       /*
+       * This part exchanges the invocation to [crypto.password.verify] below,
+       * but only if a configuration setting is found to be overriding the default
+       * implementation from your "appsettings.json" file.
+       */
+      config.get:"magic:auth:authentication"
+      if
+         not
+            eq
+               get-value:x:@config.get
+               .
+         .lambda
+
+
+            /*
+             * User has overridden the default password authentication slot invocation.
+             * Hence we replace the existing invocation to [crypto.password.verify]
+             * with the slot found from the "appsettings.json" file.
+             */
+            insert-after:x:@if/./**/crypto.password.verify
+               .
+                  ad-auth.authenticate
+                     username:x:@.arguments/*/username
+                     password:x:@.arguments/*/passsword
+            remove-nodes:x:@if/./**/crypto.password.verify
+
+
+      /*
        * Verify we have a password match, unless [check-password] was false,
        * which might occur if a JWT token is generated on behalf of another user.
        */
