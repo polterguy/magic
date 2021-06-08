@@ -115,9 +115,11 @@ slots.create:magic.auth.authenticate
              * Hence we replace the existing invocation to [crypto.password.verify]
              * with the slot found from the "appsettings.json" file.
              */
+            set-name:x:+/*/*
+               get-value:x:@config.get
             insert-after:x:@if/./**/crypto.password.verify
                .
-                  ad-auth.authenticate
+                  foo
                      username:x:@.arguments/*/username
                      password:x:@.arguments/*/password
             remove-nodes:x:@if/./**/crypto.password.verify
