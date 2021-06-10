@@ -151,7 +151,7 @@ export class LoginDialogComponent implements OnInit {
     this.authService.login(
       this.username,
       this.password,
-      this.savePassword).subscribe((res: AuthenticateResponse) => {
+      this.savePassword).subscribe(() => {
 
         /*
          * Success!
