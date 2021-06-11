@@ -283,6 +283,15 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
     this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1);
   }
 
+  /**
+   * Clears messages.
+   */
+  public clearMessages() {
+
+    // Resettings messages to empty array.
+    this.messages = [];
+  }
+
   /*
    * Private helper methods.
    */
