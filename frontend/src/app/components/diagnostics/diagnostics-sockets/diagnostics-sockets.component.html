@@ -100,11 +100,17 @@
     </mat-chip>
   </mat-chip-list>
 
-  <h2 *ngIf="messages.length > 0"></h2>
+  <h2 *ngIf="messages.length > 0">Messages</h2>
 
   <div *ngFor="let idx of messages" class="message">
     <strong>{{idx.name}}</strong>
     <pre>{{idx.content | json}}</pre>
+  </div>
+
+  <div *ngIf="messages.length > 0" class="button-strip">
+    <button mat-raised-button color="primary" (click)="clearMessages()">
+      Clear
+    </button>
   </div>
 
 </div>
