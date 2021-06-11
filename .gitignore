@@ -340,3 +340,5 @@ backend/files/modules/system/crypto/keys/*
 !**/log/
 backend/files/temp/**
 !backend/files/temp/README.md
+
+frontend/dist/**
