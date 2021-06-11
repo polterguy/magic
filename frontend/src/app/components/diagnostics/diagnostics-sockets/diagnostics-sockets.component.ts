@@ -13,6 +13,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
+import { ConnectComponent } from './connect/connect.component';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
@@ -76,7 +77,7 @@ export class DiagnosticsSocketsComponent implements OnInit {
     this.filterFormControl.setValue('');
     this.filterFormControl.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((query: string) => {
+      .subscribe(() => {
 
         // Resetting paginator.
         this.paginator.pageIndex = 0;
@@ -171,6 +172,29 @@ export class DiagnosticsSocketsComponent implements OnInit {
           this.feedbackService.showInfoShort('Message was successfully sent');
 
         }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to establish a new socket connection.
+   */
+  public subscribe() {
+
+    // Creating modal dialogue that asks user what message he wants to subscribe to.
+    const dialogRef = this.dialog.open(ConnectComponent, {
+      width: '550px',
+      data: ''
+    });
+
+    // Subscribing to after closed to allow for current component to actually create the subscription.
+    dialogRef.afterClosed().subscribe((message: string) => {
+
+      // Checking if modal dialog wants transmit message.
+      if (message) {
+
+        // Invoking backend to transmit message to client.
+        console.log(message)
       }
     });
   }

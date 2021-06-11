@@ -1,0 +1,26 @@
+
+<h1 mat-dialog-title>Create socket connection</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Message name</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data"
+      autocomplete="off">
+
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    [disabled]="!data || data.length === 0"
+    mat-raised-button
+    color="primary"
+    (click)="connect()">Send</button>
+
+</div>

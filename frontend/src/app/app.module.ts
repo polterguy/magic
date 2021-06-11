@@ -116,6 +116,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
+import { ConnectComponent } from './components/diagnostics/diagnostics-sockets/connect/connect.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
@@ -178,6 +179,7 @@ import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostic
     NewRoleDialogComponent,
     ScheduleTaskDialogComponent,
     NewTaskDialogComponent,
+    ConnectComponent,
     FileEditorComponent,
     NewFileFolderDialogComponent,
     NewFileObjectDialogComponent,
