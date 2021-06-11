@@ -6,14 +6,16 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
 import { ConnectComponent } from './connect/connect.component';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
@@ -27,7 +29,7 @@ import { SendMessageComponent } from './send-message/send-message.component';
   templateUrl: './diagnostics-sockets.component.html',
   styleUrls: ['./diagnostics-sockets.component.scss']
 })
-export class DiagnosticsSocketsComponent implements OnInit {
+export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Users connected to a socket according to filtering condition,
@@ -55,6 +57,19 @@ export class DiagnosticsSocketsComponent implements OnInit {
    */
    @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
+   /**
+    * SignalR socket subscriptions (message names).
+    */
+   public subscriptions: string[] = [];
+
+   /**
+    * Messages published over socket connection.
+    */
+   public messages: Message[] = [];
+
+  // SignalR hub connection
+  private hubConnection: HubConnection = null;
+
   /**
    * Creates an instance of your component.
    * 
@@ -64,6 +79,7 @@ export class DiagnosticsSocketsComponent implements OnInit {
    */
   constructor(
     private dialog: MatDialog,
+    private backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
 
@@ -88,6 +104,19 @@ export class DiagnosticsSocketsComponent implements OnInit {
 
     // Retrieving all connected users from backend.
     this.getConnections();
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  public ngOnDestroy() {
+
+    // Checking if we've got subscriptions to socket messages, and if so, making sure we clean up.
+    if (this.hubConnection) {
+
+      // House cleaning.
+      this.hubConnection.stop();
+    }
   }
 
   /**
@@ -187,16 +216,71 @@ export class DiagnosticsSocketsComponent implements OnInit {
       data: ''
     });
 
-    // Subscribing to after closed to allow for current component to actually create the subscription.
+    // Subscribing to after closed to allow for current component to actually create the socket subscription.
     dialogRef.afterClosed().subscribe((message: string) => {
 
-      // Checking if modal dialog wants transmit message.
+      // Checking if modal dialog wants to create a subscription.
       if (message) {
 
-        // Invoking backend to transmit message to client.
-        console.log(message)
+        // If this is our first socket subscription, we'll have to create our connection.
+        let createdNow = false;
+        if (!this.hubConnection) {
+
+          // Creating our connection.
+          let builder = new HubConnectionBuilder();
+          this.hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
+              accessTokenFactory: () => this.backendService.current.token,
+              skipNegotiation: true,
+              transport: HttpTransportType.WebSockets,
+          }).build();
+
+          // Needed to make sure we start our socket connection further down.
+          createdNow = true;
+        }
+    
+        // Making sure we subscribe to messages published over socket.
+        this.hubConnection.on(message, (args) => {
+
+          // Updating model.
+          this.messages.push({
+            name: message,
+            content: JSON.parse(args),
+          });
+        });
+
+        // Adding subscription to model.
+        this.subscriptions.push(message);
+
+        if (createdNow) {
+
+          // Starting connection.
+          this.hubConnection.start().then(() => {
+            this.getConnections();
+          });
+
+        } else {
+
+          // Making sure our subscription reaches the server before we update our connections.
+          setTimeout(() => {
+
+            // Re-retrieving connections from backend.
+            this.getConnections();
+          }, 3000);
+        }
       }
     });
+  }
+
+  /**
+   * Invoked when a socket subscription should be removed.
+   * 
+   * @param subscription What subscription to remove
+   */
+  public removeSubscription(subscription: string) {
+
+    // Making sure we unsubscribe to messages of specified type.
+    this.hubConnection.off(subscription);
+    this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1);
   }
 
   /*
