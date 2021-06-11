@@ -103,7 +103,7 @@
   <h2 *ngIf="messages.length > 0"></h2>
 
   <div *ngFor="let idx of messages" class="message">
-    <strong>Name - {{idx.name}}</strong>
+    <strong>{{idx.name}}</strong>
     <pre>{{idx.content | json}}</pre>
   </div>
 
