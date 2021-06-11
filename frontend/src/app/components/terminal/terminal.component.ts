@@ -207,7 +207,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
        * the backend once some terminal output is ready.
        */
       this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
-        
+
         // Writing result to XTerm instance.
         const json = JSON.parse(args);
 

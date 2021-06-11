@@ -14,7 +14,6 @@ import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
 import { FileService } from '../files/services/file.service';
-import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
@@ -95,7 +94,6 @@ export class IdeComponent implements OnInit {
     private dialog: MatDialog,
     private fileService: FileService,
     private feedbackService: FeedbackService,
-    private messageService: MessageService,
     private evaluatorService: EvaluatorService) { }
 
   /**
