@@ -2,6 +2,20 @@
 .wrapper {
   margin:2rem;
   min-height: 20rem;
+  .button-strip {
+    display: table;
+    width: 100%;
+    .fill-width {
+      display: table-cell;
+      width: 100%;
+    }
+    .connect-button {
+      display: table-cell;
+      width: 100px;
+      top: -5px;
+      height: 50px;
+    }
+  }
   mat-chip:hover {
     cursor: pointer;
   }
