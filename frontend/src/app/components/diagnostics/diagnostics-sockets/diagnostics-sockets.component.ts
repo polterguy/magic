@@ -266,7 +266,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
           this.hubConnection.start().then(() => {
 
             // Since we now have one additional connection (obviously), we need to re-retrieve connections.
-            this.getConnections();
+            setTimeout(() => this.getConnections(), 500);
           });
         }
       }
