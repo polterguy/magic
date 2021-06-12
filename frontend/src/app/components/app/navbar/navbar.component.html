@@ -120,6 +120,16 @@
 
 <a
   mat-button
+  routerLink="/sockets"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>compare_arrows</mat-icon>
+  <span>Sockets</span>
+</a>
+
+<a
+  mat-button
   routerLink="/register"
   routerLinkActive="active-link"
   (click)="closeNavbar()"

@@ -17,8 +17,9 @@ import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
-import { CrudifierComponent } from './components/crudifier/crudifier.component';
+import { SocketsComponent } from './components/sockets/sockets.component';
 import { TerminalComponent } from './components/terminal/terminal.component';
+import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { RegisterComponent } from './components/auth/register/register.component';
@@ -41,6 +42,7 @@ const routes: Routes = [
   { path: 'tasks', component: TasksComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
+  { path: 'sockets', component: SocketsComponent },
   { path: 'terminal', component: TerminalComponent },
   { path: 'file-system', component: FilesComponent },
   { path: 'register', component: RegisterComponent },
