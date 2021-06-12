@@ -8,14 +8,34 @@
     <mat-label class="dark">Message name</mat-label>
     <input
       matInput
-      [(ngModel)]="data.name"
+      [(ngModel)]="data.message.name"
+      autocomplete="off">
+
+  </mat-form-field>
+
+  <mat-form-field *ngIf="data.client === null || data.client === ''" class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Groups</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.groups"
+      autocomplete="off">
+
+  </mat-form-field>
+
+  <mat-form-field *ngIf="data.client === null || data.client === ''" class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Roles</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.roles"
       autocomplete="off">
 
   </mat-form-field>
 
   <ngx-codemirror
     *ngIf="options"
-    [(ngModel)]="data.content"
+    [(ngModel)]="data.message.content"
     [options]="options">
   </ngx-codemirror>
 
@@ -24,7 +44,7 @@
 <div mat-dialog-actions class="mat-dialog-actions">
 
   <button
-    [disabled]="!data.name || !data.content || !notGood()"
+    [disabled]="!good()"
     mat-raised-button
     color="primary"
     (click)="send()">Send</button>

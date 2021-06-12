@@ -19,7 +19,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
-import { SendMessageComponent } from './send-message/send-message.component';
+import { MessageWrapper, SendMessageComponent } from './send-message/send-message.component';
 
 /**
  * Sockets diagnostic component, allowing to see current connections grouped by users.
@@ -180,39 +180,6 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Shows a modal dialog allowing you to send a message to one single connection.
-   * 
-   * @param connection Which connection to transmit message to
-   */
-  public sendMessageToConnection(connection: string) {
-
-    // Creating modal dialogue that asks user what message and payload to transmit to server.
-    const dialogRef = this.dialog.open(SendMessageComponent, {
-      width: '550px',
-      data: {
-        name: '',
-        content: '{\r\n  "foo": "bar"\r\n}'
-      }
-    });
-
-    // Subscribing to after closed to allow for current component to actually do the invocation towards backend.
-    dialogRef.afterClosed().subscribe((data: Message) => {
-
-      // Checking if modal dialog wants transmit message.
-      if (data) {
-
-        // Invoking backend to transmit message to client.
-        this.endpointService.sendSocketMessage(data, connection).subscribe(() => {
-
-          // Providing feedback to user.
-          this.feedbackService.showInfoShort('Message was successfully sent');
-
-        }, (error: any) => this.feedbackService.showError(error));
-      }
-    });
-  }
-
-  /**
    * Invoked when user wants to establish a new socket connection.
    */
   public subscribe() {
@@ -287,19 +254,60 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Invoked when user wants to generically post a message, to for instance
-   * one or more groups, or one or more roles, instead of a single connection.
+   * Shows a modal dialog allowing you to send a message to one single connection.
+   * 
+   * @param connection Which connection to transmit message to
    */
-  public post() {
-
-    // TODO: Continue implementation here allowing user to select groups or roles to publish message to.
+   public sendMessageToConnection(connection: string) {
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(SendMessageComponent, {
       width: '550px',
       data: {
-        name: '',
-        content: '{\r\n  "foo": "bar"\r\n}'
+        message: {
+          name: '',
+          content: '{\r\n  "foo": "bar"\r\n}',
+        },
+        client: connection,
+        groups: '',
+        roles: '',
+      }
+    });
+
+    // Subscribing to after closed to allow for current component to actually do the invocation towards backend.
+    dialogRef.afterClosed().subscribe((data: MessageWrapper) => {
+
+      // Checking if modal dialog wants transmit message.
+      if (data) {
+
+        // Invoking backend to transmit message to client.
+        this.endpointService.sendSocketMessage(data.message, data.client).subscribe(() => {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfoShort('Message was successfully sent');
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to generically post a message, to for instance
+   * one or more groups, or one or more roles, instead of a single connection.
+   */
+  public post() {
+
+    // Creating modal dialogue that asks user what message and payload to transmit to server.
+    const dialogRef = this.dialog.open(SendMessageComponent, {
+      width: '550px',
+      data: {
+        message: {
+          name: '',
+          content: '{\r\n  "foo": "bar"\r\n}',
+        },
+        client: '',
+        groups: '',
+        roles: '',
       }
     });
 
@@ -310,6 +318,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
+        console.log(data);
         this.endpointService.sendSocketMessage(data, '').subscribe(() => {
 
           // Providing feedback to user.

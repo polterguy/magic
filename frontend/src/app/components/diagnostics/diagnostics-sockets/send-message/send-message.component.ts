@@ -14,6 +14,32 @@ import { Message } from 'src/app/models/message.model';
 import fileTypes from '../../../files/file-editor/file-types.json';
 
 /**
+ * Message wrapper for what message to publish.
+ */
+export class MessageWrapper {
+
+  /**
+   * the actual message to publish.
+   */
+  message?: Message;
+
+  /**
+   * Client/connection to publish it to.
+   */
+  client?: string;
+
+  /**
+   * Groups to publish it to.
+   */
+  groups?: string
+
+  /**
+   * Roles to publish it to.
+   */
+  roles?: string;
+}
+
+/**
  * Send message component allowing users to provide what message to
  * transmit and what payload to transmit.
  */
@@ -40,7 +66,7 @@ export class SendMessageComponent implements AfterViewInit {
    */
   constructor(
     private dialogRef: MatDialogRef<SendMessageComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Message) { }
+    @Inject(MAT_DIALOG_DATA) public data: MessageWrapper) { console.log(data); }
 
   /**
    * Implementation of AfterViewInit.
@@ -75,11 +101,17 @@ export class SendMessageComponent implements AfterViewInit {
   /**
    * Returns false if JSON is not valid.
    */
-  public notGood() {
+  public good() {
 
     // A bit of a hack, but it works.
     try {
-      JSON.parse(this.data.content);
+      JSON.parse(this.data.message.content);
+      if (this.data.message.name === null || this.data.message.name === '') {
+        return false;
+      }
+      if ([this.data.client, this.data.groups, this.data.roles].filter(x => x !== null && x !== '').length !== 1) {
+        return false;
+      }
       return true;
     } catch {
       return false;
