@@ -8,7 +8,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
@@ -51,6 +51,12 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * What users are currently being edited and viewed.
    */
   public selectedUsers: string[] = [];
+
+  /**
+   * Whether or not we should allow for creating subscriptions,
+   * or this is purely a "diagnostic view".
+   */
+  @Input() public createSubscriptions: boolean;
 
   /**
    * Paginator for paging table.
@@ -178,7 +184,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * 
    * @param connection Which connection to transmit message to
    */
-  public connectionSelected(connection: string) {
+  public sendMessageToConnection(connection: string) {
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(SendMessageComponent, {
@@ -265,12 +271,54 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
           // Starting connection.
           this.hubConnection.start().then(() => {
 
-            // Since we now have one additional connection (obviously), we need to re-retrieve connections.
+            /*
+             * Since we now have one additional connection (obviously),
+             * we need to re-retrieve connections.
+             * 
+             * However, due to that SignalR doesn't immediately create the connection
+             * for unknown reasons, we have to apply a "wait 500 milliseconds" type of
+             * trickery here.
+             */
             setTimeout(() => this.getConnections(), 500);
           });
         }
       }
     });
+  }
+
+  /**
+   * Invoked when user wants to generically post a message, to for instance
+   * one or more groups, or one or more roles, instead of a single connection.
+   */
+  public post() {
+
+    // TODO: Continue implementation here allowing user to select groups or roles to publish message to.
+
+    // Creating modal dialogue that asks user what message and payload to transmit to server.
+    const dialogRef = this.dialog.open(SendMessageComponent, {
+      width: '550px',
+      data: {
+        name: '',
+        content: '{\r\n  "foo": "bar"\r\n}'
+      }
+    });
+
+    // Subscribing to after closed to allow for current component to actually do the invocation towards backend.
+    dialogRef.afterClosed().subscribe((data: Message) => {
+
+      // Checking if modal dialog wants transmit message.
+      if (data) {
+
+        // Invoking backend to transmit message to client.
+        this.endpointService.sendSocketMessage(data, '').subscribe(() => {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfoShort('Message was successfully sent');
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+
   }
 
   /**

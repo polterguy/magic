@@ -64,6 +64,7 @@ import { LoaderService } from './components/app/services/loader.service';
 import { LoaderInterceptor } from './components/app/services/loader.interceptor';
 
 // Application specific components.
+import { IdeComponent } from './components/ide/ide.component';
 import { LogComponent } from './components/log/log.component';
 import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/sql/sql.component';
@@ -75,9 +76,11 @@ import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
 import { UsersComponent } from './components/auth/users/users.component';
 import { RolesComponent } from './components/auth/roles/roles.component';
+import { SocketsComponent } from './components/sockets/sockets.component';
 import { InjectDirective } from './components/crudifier/inject.directive';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
 import { SetupComponent } from './components/config/setup/setup.component';
+import { TerminalComponent } from './components/terminal/terminal.component';
 import { ToolbarComponent } from './components/app/toolbar/toolbar.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
@@ -103,6 +106,7 @@ import { CrudifierBackendComponent } from './components/crudifier/crudifier-back
 import { CrudifierFrontendComponent } from './components/crudifier/crudifier-frontend/crudifier-frontend.component';
 import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
+import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostics-sockets/diagnostics-sockets.component';
 import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
 import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnostics-security/diagnostics-security.component';
 import { CrudifierTableComponent } from './components/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
@@ -133,9 +137,6 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
 import { AddQueryParameterDialogComponent } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
-import { IdeComponent } from './components/ide/ide.component';
-import { TerminalComponent } from './components/terminal/terminal.component';
-import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostics-sockets/diagnostics-sockets.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -217,6 +218,7 @@ import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostic
     IdeComponent,
     TerminalComponent,
     DiagnosticsSocketsComponent,
+    SocketsComponent,
   ],
   imports: [
     FormsModule,

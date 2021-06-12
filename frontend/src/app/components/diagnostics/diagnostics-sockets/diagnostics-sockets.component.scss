@@ -5,11 +5,11 @@
   .button-strip {
     display: table;
     width: 100%;
+    white-space: nowrap;
     .fill-width {
       display: table-cell;
-      width: 100%;
     }
-    .connect-button {
+    .button {
       display: table-cell;
       width: 100px;
       top: -5px;
@@ -18,9 +18,6 @@
   }
   mat-chip:hover {
     cursor: pointer;
-  }
-  h2 {
-    margin-top: 2rem;
   }
   .subscriptions {
     display: block;
