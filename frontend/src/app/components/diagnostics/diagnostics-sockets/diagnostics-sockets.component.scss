@@ -27,11 +27,17 @@
     margin-top: 2rem;
   }
   .message {
+    position: relative;
     margin-top: .5rem;
     padding: 1rem;
     background-color: rgba(0,0,0,.1);
     border: sold 1px rgb(240, 240, 240);
     border-radius: .2rem;
+    .close {
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
+    }
     strong {
       display: block;
       margin-bottom: .5rem;
@@ -39,5 +45,8 @@
   }
   .clear-button {
     margin-top: 1rem;
+  }
+  .non-selectable:hover {
+    cursor: default;
   }
 }

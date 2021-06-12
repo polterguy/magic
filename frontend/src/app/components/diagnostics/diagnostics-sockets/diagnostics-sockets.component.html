@@ -88,11 +88,12 @@
     [pageSizeOptions]="[5,10,25,50]">
   </mat-paginator>
 
-  <h2 *ngIf="subscriptions.length > 0">Message subscriptions</h2>
+  <h2 *ngIf="subscriptions.length > 0">Subscriptions</h2>
 
   <mat-chip-list class="subscriptions">
     <mat-chip
       *ngFor="let sub of subscriptions"
+      class="non-selectable"
       selectable="false"
       (removed)="removeSubscription(sub)">
       {{sub}}
@@ -103,6 +104,12 @@
   <h2 *ngIf="messages.length > 0">Messages</h2>
 
   <div *ngFor="let idx of messages" class="message">
+    <button
+      mat-icon-button
+      class="close"
+      (click)="deleteMessage(idx)">
+      <mat-icon>delete</mat-icon>
+    </button>
     <strong>{{idx.name}}</strong>
     <pre>{{idx.content | json}}</pre>
   </div>

@@ -274,6 +274,20 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Deletes a single message from list of messages.
+   * 
+   * @param msg Message to delete
+   */
+  public deleteMessage(msg: Message) {
+
+    // Removing message from list of messages.
+    this.messages.splice(this.messages.indexOf(msg), 1);
+
+    // Providing feedback to user.
+    this.feedbackService.showInfoShort('Message was removed');
+  }
+
+  /**
    * Invoked when a socket subscription should be removed.
    * 
    * @param subscription What subscription to remove
