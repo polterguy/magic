@@ -88,7 +88,7 @@
     [pageSizeOptions]="[5,10,25,50]">
   </mat-paginator>
 
-  <h2 *ngIf="subscriptions.length > 0">Subscriptions</h2>
+  <h2 *ngIf="subscriptions.length > 0">Message subscriptions</h2>
 
   <mat-chip-list class="subscriptions">
     <mat-chip
@@ -108,7 +108,12 @@
   </div>
 
   <div *ngIf="messages.length > 0" class="button-strip">
-    <button mat-raised-button color="primary" (click)="clearMessages()">
+    <button
+      mat-raised-button
+      class="clear-button"
+      color="primary"
+      matTooltip="Clear messages"
+      (click)="clearMessages()">
       Clear
     </button>
   </div>

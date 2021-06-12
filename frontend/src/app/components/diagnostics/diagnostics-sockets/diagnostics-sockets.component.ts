@@ -50,22 +50,22 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
   /**
    * What users are currently being edited and viewed.
    */
-   public selectedUsers: string[] = [];
+  public selectedUsers: string[] = [];
 
   /**
    * Paginator for paging table.
    */
-   @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
-   /**
-    * SignalR socket subscriptions (message names).
-    */
-   public subscriptions: string[] = [];
+  /**
+   * SignalR socket subscriptions (message names).
+   */
+  public subscriptions: string[] = [];
 
-   /**
-    * Messages published over socket connection.
-    */
-   public messages: Message[] = [];
+  /**
+   * Messages published over socket connection.
+   */
+  public messages: Message[] = [];
 
   // SignalR hub connection
   private hubConnection: HubConnection = null;
@@ -74,6 +74,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogues
+   * @param backendService Needed to retrieve backend URL to connect to web sockets in backend
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all connected users from backend
    */
@@ -222,6 +223,14 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
       // Checking if modal dialog wants to create a subscription.
       if (message) {
 
+        // Verifying we're not already subscribing to this guy.
+        if (this.subscriptions.filter(x => x === message).length > 0) {
+
+          // We're already subscribing to this guy.
+          this.feedbackService.showInfoShort('You are already subscribing to such messages');
+          return;
+        }
+
         // If this is our first socket subscription, we'll have to create our connection.
         let createdNow = false;
         if (!this.hubConnection) {
@@ -255,17 +264,10 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
 
           // Starting connection.
           this.hubConnection.start().then(() => {
+
+            // Since we now have one additional connection (obviously), we need to re-retrieve connections.
             this.getConnections();
           });
-
-        } else {
-
-          // Making sure our subscription reaches the server before we update our connections.
-          setTimeout(() => {
-
-            // Re-retrieving connections from backend.
-            this.getConnections();
-          }, 3000);
         }
       }
     });
