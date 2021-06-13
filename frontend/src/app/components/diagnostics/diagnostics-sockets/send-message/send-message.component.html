@@ -1,11 +1,11 @@
 
-<h1 mat-dialog-title>Send message</h1>
+<h1 mat-dialog-title>Publish message</h1>
 
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width" appearance="outline">
 
-    <mat-label class="dark">Message name</mat-label>
+    <mat-label class="dark">Name</mat-label>
     <input
       matInput
       [(ngModel)]="data.message.name"
@@ -13,7 +13,10 @@
 
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.client === null || data.client === ''" class="fill-width" appearance="outline">
+  <mat-form-field
+    *ngIf="data.client === null || data.client === ''"
+    class="fill-width"
+    appearance="outline">
 
     <mat-label class="dark">Groups</mat-label>
     <input
@@ -23,7 +26,10 @@
 
   </mat-form-field>
 
-  <mat-form-field *ngIf="data.client === null || data.client === ''" class="fill-width" appearance="outline">
+  <mat-form-field
+    *ngIf="data.client === null || data.client === ''"
+    class="fill-width"
+    appearance="outline">
 
     <mat-label class="dark">Roles</mat-label>
     <input

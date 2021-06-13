@@ -109,7 +109,7 @@ export class SendMessageComponent implements AfterViewInit {
       if (this.data.message.name === null || this.data.message.name === '') {
         return false;
       }
-      if ([this.data.client, this.data.groups, this.data.roles].filter(x => x !== null && x !== '').length !== 1) {
+      if ([this.data.client, this.data.groups, this.data.roles].filter(x => x !== null && x !== '').length > 1) {
         return false;
       }
       return true;

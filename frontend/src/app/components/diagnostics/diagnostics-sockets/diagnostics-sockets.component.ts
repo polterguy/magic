@@ -260,6 +260,11 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    */
    public sendMessageToConnection(connection: string) {
 
+    // Ensuring component was initialised in a state that allows for publishing messages.
+    if (!this.createSubscriptions) {
+      return;
+    }
+
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(SendMessageComponent, {
       width: '550px',
@@ -281,7 +286,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
-        this.endpointService.sendSocketMessage(data.message, data.client).subscribe(() => {
+        this.endpointService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
 
           // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');
@@ -312,14 +317,13 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
     });
 
     // Subscribing to after closed to allow for current component to actually do the invocation towards backend.
-    dialogRef.afterClosed().subscribe((data: Message) => {
+    dialogRef.afterClosed().subscribe((data: MessageWrapper) => {
 
       // Checking if modal dialog wants transmit message.
       if (data) {
 
         // Invoking backend to transmit message to client.
-        console.log(data);
-        this.endpointService.sendSocketMessage(data, '').subscribe(() => {
+        this.endpointService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
 
           // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');

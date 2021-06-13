@@ -4,6 +4,8 @@
  */
 .arguments
    client:string
+   roles:string
+   groups:string
    name:string
    message:*
 .description:Sends specified socket message to specified client subscriber/connection
@@ -22,6 +24,8 @@ add:x:+/*/args
    get-nodes:x:@.arguments/*/message/*
 sockets.signal:x:@.arguments/*/name
    client:x:@.arguments/*/client
+   roles:x:@.arguments/*/roles
+   groups:x:@.arguments/*/groups
    args
 
 
