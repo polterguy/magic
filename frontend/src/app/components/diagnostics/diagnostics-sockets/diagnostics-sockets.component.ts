@@ -359,13 +359,14 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
     this.hubConnection.off(subscription);
     this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1);
 
-    // Checking if this is our last subscription, at which point we delete connection entirely.
+    // Checking if this is our last subscription, at which point we stop connection entirely.
     if (this.subscriptions.length === 0) {
 
       // This is our last subscription.
       this.hubConnection.stop();
       this.hubConnection = null;
       this.getConnections();
+      this.messages = [];
     }
   }
 
