@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Utility component imports.
@@ -191,13 +191,27 @@ export class EndpointService {
    * 
    * @param msg What message to send
    * @param client What client (connection) to transmit the message to
+   * @param roles What roles to publish message to
+   * @param groups What groups to publish message to
    */
-   public sendSocketMessage(msg: Message, client: string) {
+   public sendSocketMessage(msg: Message, client: string, roles: string, groups: string) {
+
+    // Creating our invocation.
+    client = client === null || client === '' ? null : client;
+    roles = roles === null || roles === '' ? null : roles;
+    groups = groups === null || groups === '' ? null : groups;
+
+    // Sanity checking invocation.
+    if ([client, roles, groups].filter(x => x !== null).length > 1) {
+      of('You have to choose maximum one of client, roles or groups')
+    }
 
     // Invoking backend returning observable to caller.
     return this.httpService.post<Response>(
       '/magic/modules/system/misc/send-socket-message', {
-        client: client,
+        client,
+        roles,
+        groups,
         name: msg.name,
         message: JSON.parse(msg.content),
       });
