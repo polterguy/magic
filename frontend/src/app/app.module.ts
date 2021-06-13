@@ -120,6 +120,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
+import { PublishComponent } from './components/diagnostics/diagnostics-sockets/publish/publish.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
@@ -127,7 +128,6 @@ import { JailUserDialogComponent } from './components/auth/users/jail-user-dialo
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
-import { SendMessageComponent } from './components/diagnostics/diagnostics-sockets/send-message/send-message.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileFolderDialogComponent } from './components/ide/new-file-folder-dialog/new-file-folder-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
@@ -212,7 +212,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     CrudifierFrontendComponent,
     CrudifierSqlComponent,
     CrudifierSqlAddArgumentDialogComponent,
-    SendMessageComponent,
+    PublishComponent,
     ToolbarHelpDialogComponent,
     CrudifierDockerComponent,
     IdeComponent,

@@ -14,12 +14,12 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
-import { SubscribeComponent } from './subscribe/subscribe.component';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { SubscribeComponent } from './subscribe/subscribe.component';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
-import { MessageWrapper, SendMessageComponent } from './send-message/send-message.component';
+import { MessageWrapper, PublishComponent } from './publish/publish.component';
 
 /**
  * Sockets diagnostic component, allowing to see current connections grouped by users.
@@ -266,7 +266,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
     }
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
-    const dialogRef = this.dialog.open(SendMessageComponent, {
+    const dialogRef = this.dialog.open(PublishComponent, {
       width: '550px',
       data: {
         message: {
@@ -303,7 +303,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
   public post() {
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
-    const dialogRef = this.dialog.open(SendMessageComponent, {
+    const dialogRef = this.dialog.open(PublishComponent, {
       width: '550px',
       data: {
         message: {
