@@ -120,9 +120,9 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
-import { ConnectComponent } from './components/diagnostics/diagnostics-sockets/connect/connect.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
+import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
 import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
@@ -180,7 +180,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     NewRoleDialogComponent,
     ScheduleTaskDialogComponent,
     NewTaskDialogComponent,
-    ConnectComponent,
+    SubscribeComponent,
     FileEditorComponent,
     NewFileFolderDialogComponent,
     NewFileObjectDialogComponent,

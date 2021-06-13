@@ -14,7 +14,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
-import { ConnectComponent } from './connect/connect.component';
+import { SubscribeComponent } from './subscribe/subscribe.component';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
@@ -185,7 +185,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
   public subscribe() {
 
     // Creating modal dialogue that asks user what message he wants to subscribe to.
-    const dialogRef = this.dialog.open(ConnectComponent, {
+    const dialogRef = this.dialog.open(SubscribeComponent, {
       width: '550px',
       data: ''
     });

@@ -12,10 +12,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
  * that he wants to create a socket subscription for.
  */
 @Component({
-  selector: 'app-connect',
-  templateUrl: './connect.component.html'
+  selector: 'app-subscribe',
+  templateUrl: './subscribe.component.html'
 })
-export class ConnectComponent {
+export class SubscribeComponent {
 
   /**
    * Creates an instance of your component.
@@ -24,7 +24,7 @@ export class ConnectComponent {
    * @param data Injected data being message name of message returned as dialog is closed
    */
   constructor(
-    private dialogRef: MatDialogRef<ConnectComponent>,
+    private dialogRef: MatDialogRef<SubscribeComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string) { }
 
   /**
