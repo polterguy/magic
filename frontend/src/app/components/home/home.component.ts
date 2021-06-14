@@ -9,13 +9,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
+import { Message } from 'src/app/models/message.model';
+import { Messages } from 'src/app/models/messages.model';
 import { AuthService } from '../auth/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
-import { Message } from 'src/app/models/message.model';
-import { Messages } from 'src/app/models/messages.model';
 
 /**
  * Home component for Magic Dashboard.
@@ -38,16 +38,16 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param router Needed to redirect user after having verified his authentication token
-   * @param activated Needed to retrieve query parameters
    * @param authService Needed to verify user is authenticated
+   * @param activated Needed to retrieve query parameters
    * @param backendService Needed modify backend values according to query parameters given
    * @param diagnosticsService Needed to retrieve backend version
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
     private router: Router,
+    public authService: AuthService,
     private activated: ActivatedRoute,
-    private authService: AuthService,
     private backendService: BackendService,
     private messageService: MessageService,
     private diagnosticsService: DiagnosticsService,

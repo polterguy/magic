@@ -119,6 +119,7 @@
 </a>
 
 <a
+  *ngIf="authService.hasAccess('magic/modules/system/misc')"
   mat-button
   routerLink="/sockets"
   routerLinkActive="active-link"
