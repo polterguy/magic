@@ -17,10 +17,19 @@ mat-card {
       float: left;
       margin-right: 10px;
       margin-bottom: 10px;
+      position: relative;
       mat-icon {
-        font-size: 75px;
-        margin-left: -45px;
-        margin-top: -45px;
+        font-size: 55px;
+        margin-left: -25px;
+        margin-top: -20px;
+        opacity: .7;
+      }
+      span {
+        position: absolute;
+        top: .125rem;
+        right: .25rem;
+        font-size: .8rem;
+        color:rgb(150,150,150);
       }
     }
   }

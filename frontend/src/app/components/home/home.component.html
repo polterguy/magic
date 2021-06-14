@@ -8,64 +8,73 @@
     <button
       mat-raised-button
       routerLink="/sql"
-      matTooltip="SQL, execute arbitrary SQL towards your database(s)">
+      matTooltip="Execute arbitrary SQL towards your database">
       <mat-icon matSuffix color="primary">language</mat-icon>
+      <span>SQL</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/crudifier"
-      matTooltip="Generator, automatically generate your CRUD apps">
+      matTooltip="Automatically generate your CRUD apps">
       <mat-icon matSuffix color="primary">build</mat-icon>
+      <span>CRUD</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/endpoints"
-      matTooltip="Endpoints, browse and invoke your HTTP endpoints">
+      matTooltip="Browse and invoke your HTTP endpoints">
       <mat-icon matSuffix color="primary">http</mat-icon>
+      <span>Endpoints</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/file-system"
-      matTooltip="Files, manage your dynamic files on your server">
+      matTooltip="Manage your dynamic files on your server">
       <mat-icon matSuffix color="primary">file_copy</mat-icon>
+      <span>Files</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/ide"
-      matTooltip="Hyper IDE, a micro IDE for your dynamic files">
+      matTooltip="A micro IDE for your dynamic files">
       <mat-icon matSuffix color="primary">extension</mat-icon>
+      <span>IDE</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/sockets"
-      matTooltip="Sockets, administrate your socket connections">
+      matTooltip="Administrate your socket connections">
       <mat-icon matSuffix color="primary">compare_arrows</mat-icon>
+      <span>Sockets</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/terminal"
-      matTooltip="Terminal, access your server through a web based terminal">
+      matTooltip="Access your server through a web based terminal">
       <mat-icon matSuffix color="primary">input</mat-icon>
+      <span>Terminal</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/evaluator"
-      matTooltip="Evaluator, execute Hyperlambda directly on your server">
+      matTooltip="Execute Hyperlambda directly on your server">
       <mat-icon matSuffix color="primary">offline_bolt</mat-icon>
+      <span>Eval</span>
     </button>
 
     <button
       mat-raised-button
       routerLink="/config"
-      matTooltip="Configuration, edit your server's configuration">
+      matTooltip="Edit your server's configuration">
       <mat-icon matSuffix color="primary">settings</mat-icon>
+      <span>Config</span>
     </button>
 
     <button
@@ -73,9 +82,50 @@
       routerLink="/log"
       matTooltip="Access your server's log">
       <mat-icon matSuffix color="primary">bar_chart</mat-icon>
+      <span>Log</span>
     </button>
 
-</div>
+    <button
+      mat-raised-button
+      routerLink="/tasks"
+      matTooltip="Administrate your scheduled tasks">
+      <mat-icon matSuffix color="primary">calendar_today</mat-icon>
+      <span>Tasks</span>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/tasks"
+      matTooltip="Administrate users in your system">
+      <mat-icon matSuffix color="primary">people</mat-icon>
+      <span>Auth</span>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/crypto"
+      matTooltip="Administrate your server's cryptography keys">
+      <mat-icon matSuffix color="primary">people</mat-icon>
+      <span>Crypto</span>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/diagnostics"
+      matTooltip="View your server's health">
+      <mat-icon matSuffix color="primary">local_hospital</mat-icon>
+      <span>Health</span>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/register"
+      matTooltip="URL for registering new users in your system">
+      <mat-icon matSuffix color="primary">face</mat-icon>
+      <span>Register</span>
+    </button>
+
+  </div>
 
   <p class="copyright">
     Magic is the Copyright(c) of Thomas Hansen, thomas@servergardens.com and 100% Open Source
