@@ -465,22 +465,6 @@ export class IdeComponent implements OnInit {
     }
   }
 
-  private closeFileImpl(file: FileNode) {
-
-    // Removing file from edited files.
-    let idx = this.files.indexOf(file);
-    this.files.splice(idx, 1);
-    if (this.files.length === 0) {
-      this.activeFile = null;
-    } else {
-      if (idx === 0) {
-        this.activeFile = this.files[0].path;
-      } else {
-        this.activeFile = this.files[idx - 1].path;
-      }
-    }
-  }
-
   /**
    * Deletes the currently active folder.
    */
@@ -631,5 +615,24 @@ export class IdeComponent implements OnInit {
       };
     }
     return options[0].options;
+  }
+
+  /*
+   * Actual method responsible for closing file.
+   */
+  private closeFileImpl(file: FileNode) {
+
+    // Removing file from edited files.
+    let idx = this.files.indexOf(file);
+    this.files.splice(idx, 1);
+    if (this.files.length === 0) {
+      this.activeFile = null;
+    } else {
+      if (idx === 0) {
+        this.activeFile = this.files[0].path;
+      } else {
+        this.activeFile = this.files[idx - 1].path;
+      }
+    }
   }
 }
