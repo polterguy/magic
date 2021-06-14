@@ -11,6 +11,7 @@ mat-card {
     width: 720px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 3rem;
     button {
       width: 100px;
       height: 100px;
@@ -41,11 +42,32 @@ mat-card {
     display: table;
     content:'';
   }
+  @media screen and (max-width: 1024px) {
+    .buttons {
+      width: 620px;
+    }
+  }
+  @media screen and (max-width: 667px) {
+    .buttons {
+      width: 250px;
+    }
+  }
+  @media screen and (max-width: 540px) {
+    .buttons {
+      width: 380px;
+    }
+  }
+  @media screen and (max-width: 414px) {
+    .buttons {
+      width: 250px;
+    }
+  }
   .copyright {
     display: block;
     text-align: center;
     color:#aaa;
     font-size: .8rem;
     margin-top: 2rem;
+    margin-bottom: -2rem;
   }
 }
