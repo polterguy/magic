@@ -27,8 +27,8 @@ You can find [the project's documentation here](https://polterguy.github.io).
 The frontend dashboard is licensed under the terms of the GPL version 3, as published by the Free Software Foundation,
 while the backend is licensed under the terms of the MIT license. What this implies, is that you can freely use Magic
 as you see fit, also in your own proprietary and closed source applications - However, if you modify any of its plugins,
-and or the dashboard frontend, you'll have to publish your changes to anyone requesting your changes. To sum up
-what this implies in a _"dumbed down"_ explanation, here's the explanation by component.
+and or the dashboard frontend, you'll have to publish your changes to anyone requesting your changes. Below is a
+simpler explanation as a rule of thumb.
 
 * You can use Magic to create closed source applications, and extend it with custom C# code, without having to publish your extensions
 * You can use Magic to scaffold frontend applications that are closed source
