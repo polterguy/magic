@@ -25,6 +25,8 @@ of your own server, and/or other cloud systems. Below is a screenshot of its das
 14. Health component to see diagnostics about your systems, such as failed login attempt, other security issues, breaking down bugs and errors occurring in the system.
 15. ++++
 
+## Video introduction to Magic
+
 You can get a rapid introduction to the system by watching the following video.
 
 <p align="center">
