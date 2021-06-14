@@ -28,7 +28,7 @@ export class ServerPublicKeyComponent implements OnInit {
   /**
    * Server's public key information.
    */
-  public publicKeyFull: PublicKeyFull;
+  public publicKeyFull: PublicKeyFull = null;
 
   /**
    * Creates an instance of your component.
@@ -61,8 +61,19 @@ export class ServerPublicKeyComponent implements OnInit {
   public getServerPublicKey() {
 
     // Invoking backend to retrieve key.
-    this.cryptoService.serverPublicKey().subscribe((key: PublicKeyFull) => {
-      this.publicKeyFull = key;
+    this.cryptoService.serverPublicKey().subscribe((key: any) => {
+
+      // Verifying invocation was a success.
+      if (key.result === 'FAILURE') {
+
+        // No server key pair.
+        this.feedbackService.showInfo('No server key pair found, please create one');
+        return;
+      }
+
+      // Assigning model.
+      this.publicKeyFull = <PublicKeyFull>key;
+      console.log(key);
     });
   }
 

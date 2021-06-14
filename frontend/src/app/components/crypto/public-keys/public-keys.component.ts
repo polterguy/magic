@@ -53,7 +53,7 @@ class PublicKeyEx {
 }
 
 /**
- * Component to show public keys installation contains.
+ * Component to show public keys.
  */
 @Component({
   selector: 'app-public-keys',
@@ -104,6 +104,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param clipboard Needed to be able to copy things into clipboard
    * @param logService Needed to log changes done to key collection
    * @param cryptoService Needed to retrieve public keys from backend
+   * @param messageService Needed to subscribe to relevant messages, such that server key pair has been created, etc
    * @param feedbackService Needed to be able to display feedback to user
    */
   constructor(
@@ -121,6 +122,8 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
     // Subscribing to relevant meessages.
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+
+      // Checking if we've got a new server key pair.
       if (msg.name === 'crypto.server.new-key-pair-generated') {
 
         // New server key pair was created, hence we need to re-retrieve public keys.
