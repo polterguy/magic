@@ -21,7 +21,7 @@ of your own server, and/or other cloud systems. Below is a screenshot of its das
 10. Audit logging, with the ability to browse your log, including extracting statistics and filtering.
 11. Scheduled tasks allowing you to create tasks in Hyperlambda and schedule these as you see fit.
 12. Auth component giving you access to administrate your server's users and roles.
-13. Crypto menu to administrate cryptography keys, plus a lot of unique features, such as cryptographically signed lambda invocations, with receipt of execution, etc.
+13. Crypto menu to administrate cryptography keys, plus a lot of unique features, such as cryptographically signed lambda invocations, with receipts of execution, etc.
 14. Health component to see diagnostics about your systems, such as failed login attempt, other security issues, breaking down bugs and errors occurring in the system.
 15. ++++
 
