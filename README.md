@@ -45,7 +45,7 @@ You can get a rapid introduction to the system by watching the following video.
 
 ## License
 
-**TL/TR** - You can create closed source applications with Magic, but you can _not_ close Magic itself.
+**TL;TR** - You can create closed source applications with Magic, but you can _not_ close Magic itself.
 
 The frontend dashboard is licensed under the terms of the GPL version 3, as published by the Free Software Foundation -
 While the backend is licensed under the terms of the MIT license. What this implies, is that you can freely use Magic
