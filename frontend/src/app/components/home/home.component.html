@@ -7,6 +7,7 @@
   <div class="buttons">
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/sql')"
       mat-raised-button
       routerLink="/sql"
       matTooltip="Execute SQL">
@@ -15,6 +16,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/crudifier')"
       mat-raised-button
       routerLink="/crudifier"
       matTooltip="Generate CRUD apps">
@@ -23,6 +25,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/endpoints')"
       mat-raised-button
       routerLink="/endpoints"
       matTooltip="HTTP endpoints">
@@ -31,6 +34,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
       mat-raised-button
       routerLink="/file-system"
       matTooltip="Manage your files">
@@ -39,6 +43,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
       mat-raised-button
       routerLink="/ide"
       matTooltip="Hyper IDE">
@@ -47,6 +52,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/misc')"
       mat-raised-button
       routerLink="/sockets"
       matTooltip="Administrate socket connections">
@@ -55,6 +61,7 @@
     </button>
 
     <button
+      *ngIf="authService.isRoot"
       mat-raised-button
       routerLink="/terminal"
       matTooltip="A web based terminal">
@@ -63,6 +70,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
       mat-raised-button
       routerLink="/evaluator"
       matTooltip="Execute Hyperlambda">
@@ -71,6 +79,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/config')"
       mat-raised-button
       routerLink="/config"
       matTooltip="Edit configuration">
@@ -79,6 +88,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/log')"
       mat-raised-button
       routerLink="/log"
       matTooltip="Server's log">
@@ -87,6 +97,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/tasks')"
       mat-raised-button
       routerLink="/tasks"
       matTooltip="Administrate scheduled tasks">
@@ -95,6 +106,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
       mat-raised-button
       routerLink="/auth"
       matTooltip="Administrate users and roles">
@@ -111,6 +123,7 @@
     </button>
 
     <button
+      *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
       mat-raised-button
       routerLink="/diagnostics"
       matTooltip="Health and diagnostics">
