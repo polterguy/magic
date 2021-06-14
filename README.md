@@ -41,7 +41,7 @@ You can get a rapid introduction to the system by watching the following video.
 
 ## Documentation
 
-* [Full documentation for the system](https://polterguy.github.io)
+* [Full documentation for the system](https://polterguy.github.io/documentation/)
 
 ## License
 
