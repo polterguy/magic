@@ -7,6 +7,28 @@ mat-card {
   h1 {
     text-align: center;
   }
+  .buttons {
+    width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    button {
+      width: 110px;
+      height: 110px;
+      float: left;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      mat-icon {
+        font-size: 75px;
+        margin-left: -45px;
+        margin-top: -45px;
+      }
+    }
+  }
+  .buttons:after {
+    clear: both;
+    display: table;
+    content:'';
+  }
   .copyright {
     display: block;
     text-align: center;
