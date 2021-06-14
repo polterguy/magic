@@ -143,7 +143,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {
-        this.version = version.version;
+        this.version = 'v' + version.version;
       });
     } else {
 

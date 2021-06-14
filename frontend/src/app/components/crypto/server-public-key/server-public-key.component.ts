@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { AuthService } from '../../auth/services/auth.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { PublicKeyFull } from 'src/app/components/crypto/models/public-key-full.model';
@@ -35,12 +36,14 @@ export class ServerPublicKeyComponent implements OnInit {
    * @param dialog Needed to show modal dialogs
    * @param authService Needed to check if user is root
    * @param cryptoService Service needed to retrieve server's public key
+   * @param messageService Needed to publish message to subscribers as we create new server key pair
    * @param feedbackService Displays errors and such to user
    */
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
     private cryptoService: CryptoService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -82,6 +85,17 @@ export class ServerPublicKeyComponent implements OnInit {
         // Success! Giving user some feedback, and reloading server key data.
         this.feedbackService.showInfo('A new server key pair was successfully generated. Your old key was backed up.');
         this.getServerPublicKey();
+
+        /*
+         * Publishing message to have other components understand they need to
+        * re-retrieve publick keys.
+        * 
+        * This needs to be done since as we create a new server key pair, the public parts
+        * of the key is also imported into the trusted public keys' database.
+        */
+       this.messageService.sendMessage({
+         name: 'crypto.server.new-key-pair-generated'
+       });
       }
     });
   }
