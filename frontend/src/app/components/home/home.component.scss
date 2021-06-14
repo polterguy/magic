@@ -4,6 +4,13 @@ mat-card {
   margin-left: auto;
   margin-right: auto;
   margin-top: 2rem;
+  position: relative;
+  .version {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: rgb(180, 180, 180);
+  }
   h1 {
     text-align: center;
   }
