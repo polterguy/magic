@@ -46,6 +46,7 @@ export class ToolbarComponent implements OnInit {
     {name: 'config', url: 'KkVUQk5eAPg'},
     {name: 'ide', url: 'jt8kETrE5EI'},
     {name: 'terminal', url: 'jt8kETrE5EI'},
+    {name: 'sockets', url: 'xvnTCl_BnaE'}
   ];
 
   /**
