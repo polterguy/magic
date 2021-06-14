@@ -4,9 +4,9 @@
  */
 
 // Angular and system imports.
+import { Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
@@ -372,6 +372,11 @@ export class IdeComponent implements OnInit {
 
     // Saving file by invoking backend.
     this.fileService.saveFile(file.path, file.content).subscribe(() => {
+
+      // Marking document as clean.
+      var activeWrapper = document.querySelector('.active-codemirror-editor');
+      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+      editor.doc.markClean();
 
       // Providing feedback to user.
       this.feedbackService.showInfoShort('File successfully saved');
