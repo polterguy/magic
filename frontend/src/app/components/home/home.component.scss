@@ -5,6 +5,7 @@ mat-card {
   margin-right: auto;
   margin-top: 2rem;
   position: relative;
+  min-height: 460px;
   .version {
     position: absolute;
     top: 1rem;
@@ -13,6 +14,16 @@ mat-card {
   }
   h1 {
     text-align: center;
+  }
+  @keyframes drop {
+    0% {
+      margin-top: -500px;
+      opacity: 0;
+    }
+    100% {
+      margin-top: 0;
+      opacity: 1;
+    }
   }
   .buttons {
     width: 720px;
@@ -26,6 +37,10 @@ mat-card {
       margin-right: 20px;
       margin-bottom: 20px;
       position: relative;
+      transform: rotate(0deg);
+      transition: box-shadow, transform;
+      transition-duration: .2s;
+      background-color: rgba(0,128,0,.05);
       mat-icon {
         font-size: 45px;
         margin-left: -15px;
@@ -40,8 +55,31 @@ mat-card {
         color:rgb(150,150,150);
       }
     }
-    button:hover {
+    button:hover, button:active {
       box-shadow: 3px 3px 5px rgb(0,0,0,.5);
+      transform: rotate(7deg);
+      transition: box-shadow, transform;
+      transition-duration: .2s;
+    }
+    button:hover:nth-child(2),
+    button:hover:nth-child(4),
+    button:hover:nth-child(6),
+    button:hover:nth-child(8),
+    button:hover:nth-child(10),
+    button:hover:nth-child(12),
+    button:hover:nth-child(14),
+    button:hover:nth-child(16),
+    button:hover:nth-child(18),
+    button:active:nth-child(2),
+    button:active:nth-child(4),
+    button:active:nth-child(6),
+    button:active:nth-child(8),
+    button:active:nth-child(10),
+    button:active:nth-child(12),
+    button:active:nth-child(14),
+    button:active:nth-child(16),
+    button:active:nth-child(18) {
+      transform: rotate(-7deg);
     }
   }
   .buttons:after {
