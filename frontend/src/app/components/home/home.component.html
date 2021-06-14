@@ -1,20 +1,82 @@
 
 <mat-card>
+
   <h1>Magic Cloud {{version}}</h1>
-  <p>
-    Welcome to Magic Cloud, a virtual cloud system, fifth generation programming language,
-    and application generator allowing your computer to create most of your code.
-    To get started, click the question mark in the top right corner of this page, and watch the
-    YouTube video, that will walk you through how to configure Magic initially.
-    Each menu item will show a context sensitive tutorial video as you click the question mark,
-    explaining the basic features for that particular page. 
-  </p>
-  <p>
-    <strong>Notice</strong> - As of version 9.0.0 Magic is 100% Open Source through to the bone,
-    and I no longer charge for use of Magic. And you can create as many closed source applications
-    using Magic as you wish. The only restriction is if you improve upon the Angular frontend dashboard,
-    and/or improve upon the NuGet packages, you will have to publish your changes.
-  </p>
+
+  <div class="buttons">
+
+    <button
+      mat-raised-button
+      routerLink="/sql"
+      matTooltip="SQL, execute arbitrary SQL towards your database(s)">
+      <mat-icon matSuffix color="primary">language</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/crudifier"
+      matTooltip="Generator, automatically generate your CRUD apps">
+      <mat-icon matSuffix color="primary">build</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/endpoints"
+      matTooltip="Endpoints, browse and invoke your HTTP endpoints">
+      <mat-icon matSuffix color="primary">http</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/file-system"
+      matTooltip="Files, manage your dynamic files on your server">
+      <mat-icon matSuffix color="primary">file_copy</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/ide"
+      matTooltip="Hyper IDE, a micro IDE for your dynamic files">
+      <mat-icon matSuffix color="primary">extension</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/sockets"
+      matTooltip="Sockets, administrate your socket connections">
+      <mat-icon matSuffix color="primary">compare_arrows</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/terminal"
+      matTooltip="Terminal, access your server through a web based terminal">
+      <mat-icon matSuffix color="primary">input</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/evaluator"
+      matTooltip="Evaluator, execute Hyperlambda directly on your server">
+      <mat-icon matSuffix color="primary">offline_bolt</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/config"
+      matTooltip="Configuration, edit your server's configuration">
+      <mat-icon matSuffix color="primary">settings</mat-icon>
+    </button>
+
+    <button
+      mat-raised-button
+      routerLink="/log"
+      matTooltip="Access your server's log">
+      <mat-icon matSuffix color="primary">bar_chart</mat-icon>
+    </button>
+
+</div>
+
   <p class="copyright">
     Magic is the Copyright(c) of Thomas Hansen, thomas@servergardens.com and 100% Open Source
   </p>
