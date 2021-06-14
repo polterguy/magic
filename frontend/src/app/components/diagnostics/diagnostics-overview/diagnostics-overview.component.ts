@@ -23,6 +23,9 @@ import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { TaskService } from 'src/app/components/tasks/services/task.service';
 import { DiagnosticsService } from 'src/app/components/diagnostics/services/diagnostics.service';
 
+// Importing global bar chart colors.
+import barColors from '../bar_chart_colors.json';
+
 /**
  * Component that allows user to view diagnostics information
  * about his installation specific.
@@ -110,27 +113,6 @@ export class DiagnosticsOverviewComponent implements OnInit {
   public assumptionsData: SingleDataSet = null;
 
   /**
-   * Colors for log type pie chart.
-   */
-  public assumptionsColors = [{
-    backgroundColor: [
-      'rgba(200,200,200,0.6)',
-      'rgba(190,190,190,0.6)',
-      'rgba(180,180,180,0.6)',
-      'rgba(170,170,170,0.6)',
-      'rgba(160,160,160,0.6)',
-      'rgba(150,150,150,0.6)',
-      'rgba(140,140,140,0.6)',
-      'rgba(130,130,130,0.6)',
-      'rgba(120,120,120,0.6)',
-      'rgba(110,110,110,0.6)',
-      'rgba(100,100,100,0.6)',
-      'rgba(90,90,90,0.6)',
-      'rgba(80,80,80,0.6)',
-      'rgba(70,70,70,0.6)',
-    ]}];
-
-  /**
    * Options for log items per day bar chart.
    */
   public daysOptions: ChartOptions = {
@@ -151,25 +133,9 @@ export class DiagnosticsOverviewComponent implements OnInit {
   public daysData: SingleDataSet = null;
 
   /**
-   * Colors for log items per day bar chart.
+   * Common bar chart colors.
    */
-  public daysColors = [{
-    backgroundColor: [
-      'rgba(200,200,200,0.6)',
-      'rgba(190,190,190,0.6)',
-      'rgba(180,180,180,0.6)',
-      'rgba(170,170,170,0.6)',
-      'rgba(160,160,160,0.6)',
-      'rgba(150,150,150,0.6)',
-      'rgba(140,140,140,0.6)',
-      'rgba(130,130,130,0.6)',
-      'rgba(120,120,120,0.6)',
-      'rgba(110,110,110,0.6)',
-      'rgba(100,100,100,0.6)',
-      'rgba(90,90,90,0.6)',
-      'rgba(80,80,80,0.6)',
-      'rgba(70,70,70,0.6)',
-    ]}];
+  public colors = barColors;
 
   /**
    * Creates an instance of your component.
