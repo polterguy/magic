@@ -335,7 +335,8 @@ export class IdeComponent implements OnInit {
         });
         this.activeFile = file.path;
         setTimeout(() => {
-          var editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
+          var activeWrapper = document.querySelector('.active-codemirror-editor');
+          var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
           editor.doc.markClean();
         }, 1);
 
@@ -437,7 +438,8 @@ export class IdeComponent implements OnInit {
   public closeFile(file: FileNode) {
 
     // Checking if content is dirty.
-    var editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
+    var activeWrapper = document.querySelector('.active-codemirror-editor');
+    var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
     if (editor.doc.isClean()) {
 
       // File has not been edited and we can close editor immediately.
