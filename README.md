@@ -1,7 +1,13 @@
 
-# Magic, an Application Generator
+# Magic, an Application Generator and Cloud System
 
-Magic is an application generator, that allows you to create your Web applications, _literally by simply clicking a button_. Watch the video below for a demonstration.
+Magic is an application generator, that allows you to create CRUD apps automatically. In addition it
+is a complete Open Source cloud system, allowing you to create your own virtualised cloud on top
+of your own server, and/or other cloud systems. Below is a screenshot of its dashboard.
+
+![Dashboard screenshot](https://servergardens.files.wordpress.com/2021/06/dashboard-home.png)
+
+You can get a rapid introduction to the system by watching the following video.
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=afzxchk82nY">
@@ -11,37 +17,22 @@ Magic is an application generator, that allows you to create your Web applicatio
 
 ## Getting started
 
-The simplest way to get started, is to [download its latest release](https://github.com/polterguy/magic/releases),
-and use it as a _"starter kit"_. You will need.
-
-1. [.Net 5 CLI and SDK](https://dotnet.microsoft.com/download)
-2. Some sort of database server [MySql](https://dev.mysql.com/downloads/mysql/) or [MS SQL](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
-3. [NodeJS](https://nodejs.org/en/download/), required to serve Angular frontend
-4. Install [Angular](https://angular.io/guide/setup-local) in a terminal window with `npm install -g @angular/cli`
-5. [Magic](https://github.com/polterguy/magic/releases)
-
-To start the Magic dashboard type `dotnet run` in the _"backend"_ folder. Then type `npm link` in your
-_"frontend"_ folder. Start the Magic dashboard by typing `ng serve` in the _"frontend"_ folder. then go to
-[http://localhost:4200](http://localhost:4200) with your browser.
+Read the documentation [here](https://polterguy.github.io/tutorials/getting-started/).
 
 ## Documentation
 
 You can find [the project's documentation here](https://polterguy.github.io).
 
 ## License
-
-Magic is 100% Open Source as of version 9.0.0, which implies that all plugins are licensed under the terms of
-the LGPL license version 3, as published by the Free Software Foundation. The frontend dashboard is licensed
-under the terms of the GPL version 3, as published by the Free Software Foundation, while the backend is
-licensed under the terms of the MIT license. What this implies, is that you can freely use Magic as you see fit,
-also in your own proprietary and closed source applications - However, if you modify any of its plugins, and
-or the dashboard frontend, you'll have to publish your changes to anyone requesting the code. To sum up
-what this implies in a _"dumbed down"_ explanation, just remember the following.
+The frontend dashboard is licensed under the terms of the GPL version 3, as published by the Free Software Foundation,
+while the backend is licensed under the terms of the MIT license. What this implies, is that you can freely use Magic
+as you see fit, also in your own proprietary and closed source applications - However, if you modify any of its plugins,
+and or the dashboard frontend, you'll have to publish your changes to anyone requesting your changes. To sum up
+what this implies in a _"dumbed down"_ explanation, here's the explanation by component.
 
 * You can use Magic to create closed source applications, and extend it with custom C# code, without having to publish your extensions
 * You can use Magic to scaffold frontend applications that are closed source
 * If you improve upon Magic's plugins, or the frontend dashboard, you'll need to publish your changes
-* [However, I still accept donations](https://servergardens.com/buy/)
 
 To sum up each license.
 
