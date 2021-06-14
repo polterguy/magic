@@ -35,12 +35,9 @@ You can get a rapid introduction to the system by watching the following video.
 </a>
 </p>
 
-## Getting started
-
-* [How to get started](https://polterguy.github.io/tutorials/getting-started/)
-
 ## Documentation
 
+* [Getting started](https://polterguy.github.io/tutorials/getting-started/)
 * [Full documentation for the system](https://polterguy.github.io/documentation/)
 
 ## License
