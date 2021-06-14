@@ -90,7 +90,7 @@
 
       <div *ngFor="let file of files">
 
-        <div *ngIf="file.path === activeFile">
+        <div [class]="file.path === activeFile ? 'active-codemirror-editor' : 'invisible'">
 
           <ngx-codemirror
             [(ngModel)]="file.content"
