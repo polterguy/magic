@@ -59,6 +59,7 @@ export class CreateKeypairDialogComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param configService Needed to retrieve random gibberish seeding the CSRNG as we create new key pair
    * @param dialogRef Needed to be able to close self when key has been created
    */
   constructor(

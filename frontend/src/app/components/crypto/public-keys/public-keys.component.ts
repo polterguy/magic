@@ -4,14 +4,16 @@
  */
 
 // Angular and system imports.
+import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
+import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -58,10 +60,13 @@ class PublicKeyEx {
   templateUrl: './public-keys.component.html',
   styleUrls: ['./public-keys.component.scss']
 })
-export class PublicKeysComponent implements OnInit {
+export class PublicKeysComponent implements OnInit, OnDestroy {
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
+
+  // Needed to subscribe to messages published by other components.
+  private subscription: Subscription;
 
   /**
    * Filter form control for filtering log items to display.
@@ -114,6 +119,15 @@ export class PublicKeysComponent implements OnInit {
    */
   public ngOnInit() {
 
+    // Subscribing to relevant meessages.
+    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+      if (msg.name === 'crypto.server.new-key-pair-generated') {
+
+        // New server key pair was created, hence we need to re-retrieve public keys.
+        this.getKeys();
+      }
+    });
+
     // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');
@@ -127,6 +141,15 @@ export class PublicKeysComponent implements OnInit {
 
     // Retrieving initial keys to databind table towards.
     this.getKeys();
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+   public ngOnDestroy() {
+
+    // simply unsubscribing to subscription.
+    this.subscription.unsubscribe();
   }
 
   /**
