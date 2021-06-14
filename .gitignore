@@ -342,3 +342,5 @@ backend/files/temp/**
 !backend/files/temp/README.md
 
 frontend/dist/**
+
+!frontend/src/app/components/diagnostics/diagnostics-sockets/publish
