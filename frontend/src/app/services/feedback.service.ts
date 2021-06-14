@@ -74,7 +74,7 @@ export abstract class FeedbackService {
    * @param text Content of modal dialog
    * @param confirmed Callback invoked if user confirms action
    */
-  public confirm(title: string, text: string, confirmed: () => void) {
+  public confirm(title: string, text: string, confirmed: () => void, cancel: () => void = null) {
 
     // Asking user to confirm deletion of file object.
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -93,6 +93,10 @@ export abstract class FeedbackService {
 
         // Invoking callback provided by caller.
         confirmed();
+      } else if (cancel) {
+
+        // Use clicked no, and we've got a cancel callback.
+        cancel();
       }
     });
   }

@@ -322,7 +322,7 @@ export class IdeComponent implements OnInit {
         this.feedbackService.showInfo('No registered editor for file type');
         return;
       }
-  
+
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -334,6 +334,10 @@ export class IdeComponent implements OnInit {
           options: this.getCodeMirrorOptions(file.name),
         });
         this.activeFile = file.path;
+        setTimeout(() => {
+          var editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
+          editor.doc.markClean();
+        }, 1);
 
       }, (error: any) => this.feedbackService.showError(error));
     }
@@ -431,6 +435,37 @@ export class IdeComponent implements OnInit {
    * @param file File to close
    */
   public closeFile(file: FileNode) {
+
+    // Checking if content is dirty.
+    var editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
+    if (editor.doc.isClean()) {
+
+      // File has not been edited and we can close editor immediately.
+      this.closeFileImpl(file);
+
+    } else {
+
+      // File has been edited, and we need to inform user allowing him to save it.
+      this.feedbackService.confirm('File not saved', 'File has unsaved changes, do you want me to save it before closing it?', () => {
+
+        // User wants to save the file before he close it.
+        this.fileService.saveFile(file.path, file.content).subscribe(() => {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfoShort('File successfully saved');
+          this.closeFileImpl(file);
+    
+        }, (error: any) => this.feedbackService.showError(error));
+
+      }, () => {
+
+        // User confirmed he wants to close file, even though the editor is dirty (has changes).
+        this.closeFileImpl(file);
+      });
+    }
+  }
+
+  private closeFileImpl(file: FileNode) {
 
     // Removing file from edited files.
     let idx = this.files.indexOf(file);
