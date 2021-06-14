@@ -68,7 +68,7 @@ mat-sidenav-container {
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url(/assets/bg.jpg);
+      background-image: url(/assets/bg1.jpg);
       background-repeat: repeat;
       background-size: 300px 300px;
       opacity: .3;
@@ -244,7 +244,7 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
 /*
  * Light theme overrides.
  */
- ::ng-deep .light {
+::ng-deep .light {
   ::ng-deep mat-horizontal-stepper.mat-stepper-horizontal,
   ::ng-deep mat-horizontal-stepper.mat-stepper-vertical {
     background-color: rgb(245,245,245);
@@ -327,4 +327,12 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
 
 ::ng-deep.error-snack-bar {
   background-color: rgb(120,0,0) !important;
+}
+
+.light {
+  .img-wrapper {
+    background-image: url(/assets/bg2.jpg) !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+  }
 }
