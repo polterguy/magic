@@ -1,12 +1,10 @@
 
-<div
+<mat-spinner
   *ngIf="loaderService.isLoading | async"
-  class="obscurer">
-  <mat-spinner
-    mode="indeterminate"
-    diameter="50">
-  </mat-spinner>
-</div>
+  class="obscurer"
+  mode="indeterminate"
+  diameter="50">
+</mat-spinner>
 
 <div [class]="theme">
 

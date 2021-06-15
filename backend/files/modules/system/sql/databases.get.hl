@@ -7,7 +7,6 @@
    connectionString:string
 .description:"Returns all databases in your installation, according to the arguments specified."
 
-
 /*
  * Ensures user is authorized to access endpoint.
  */
