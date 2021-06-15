@@ -103,11 +103,16 @@ slots.create:magic.auth.authenticate
        */
       config.get:"magic:auth:authentication"
       if
-         not
-            and
+         and
+            not
                eq
                   get-value:x:@config.get
                   .
+            not
+               eq
+                  get-value:x:@config.get
+                  .:
+            not
                eq
                   get-value:x:@config.get
                   .:crypto.password.verify
@@ -118,6 +123,9 @@ slots.create:magic.auth.authenticate
              * User has overridden the default password authentication slot invocation.
              * Hence we replace the existing invocation to [crypto.password.verify]
              * with the slot found from the "appsettings.json" file.
+             *
+             * This is the part that basically allows for external username/password verifications,
+             * including using AD/Windows authentication, etc.
              */
             set-name:x:+/*/*
                get-value:x:@config.get
