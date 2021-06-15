@@ -104,9 +104,13 @@ slots.create:magic.auth.authenticate
       config.get:"magic:auth:authentication"
       if
          not
-            eq
-               get-value:x:@config.get
-               .
+            and
+               eq
+                  get-value:x:@config.get
+                  .
+               eq
+                  get-value:x:@config.get
+                  .:crypto.password.verify
          .lambda
 
 
