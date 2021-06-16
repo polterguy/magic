@@ -57,6 +57,12 @@ if
           * simplicity reasons, and turning OFF password checking during
           * invocation to [magic.auth.authenticate].
           */
+         log.info
+            .:"Automatically authenticating '"
+            get-value:x:@if/-
+            .:"' using ["
+            get-name:x:@if/-
+            .:]
          unwrap:x:+/*/*
          add:x:@.arguments
             .
