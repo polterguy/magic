@@ -78,10 +78,7 @@ namespace magic.backend
             var origins = Configuration["magic:frontend:urls"];
             if (!string.IsNullOrEmpty(origins))
             {
-                app.UseCors((builder) =>
-                {
-                    builder.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins.Split(',')).AllowCredentials();
-                });
+                app.UseCors(builder => builder.WithOrigins(origins.Split(',')).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             }
 
             // Creating a log entry for having started application, but only if system has beeen setup.
