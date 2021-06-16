@@ -185,14 +185,14 @@ export class LoginDialogComponent implements OnInit {
     }
     this.backendService.current = {
       url: url,
-      username: this.username,
+      username: this.autoLogin === false || this.advanced ? this.username : null,
       password: this.savePassword ? this.password : null,
     };
 
     // Authenticating user.
     this.authService.login(
-      this.username,
-      this.password,
+      this.autoLogin === false || this.advanced ? this.username : null,
+      this.autoLogin === false || this.advanced ? this.password : null,
       this.savePassword).subscribe(() => {
 
         /*
