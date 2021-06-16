@@ -1,0 +1,39 @@
+
+/*
+ * Returns true if auto-auth is enabled.
+ */
+.description:Returns true if auto-auth is enabled
+
+
+/*
+ * Retrieving auto-auth configuration setting.
+ */
+config.get:"magic:auth:auto-auth"
+
+
+/*
+ * Checking if auto-auth is turned on or not.
+ */
+if
+   or
+      eq
+         get-value:x:@config.get
+         .
+      eq
+         get-value:x:@config.get
+         .:
+   .lambda
+
+      /*
+       * Auto-auth is turned OFF.
+       */
+      return-nodes
+         result:bool:false
+
+else
+
+   /*
+    * Auto-auth is turned ON.
+    */
+   return-nodes
+      result:bool:true
