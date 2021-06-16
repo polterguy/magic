@@ -126,9 +126,9 @@ export class ToolbarComponent implements OnInit {
 
     // Checking if user is authenticated.
     if (this.authService.authenticated) {
-      return this.backendService.current.username + '@' + url;
+      return this.backendService.current.username + ' / ' + url;
     } else if (this.backendService.connected) {
-      return 'anonymous@' + url;
+      return 'anonymous / ' + url;
     }
   }
 
