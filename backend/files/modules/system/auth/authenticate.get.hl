@@ -67,14 +67,12 @@ if
             .:"' using ["
             get-name:x:@if/-
             .:]
-         unwrap:x:+/*/*
-         add:x:@.arguments
-            .
-               username:x:@if/-
+         remove-nodes:x:../*/signal/*
+         unwrap:x:+/*/*/username
          add:x:../*/signal
             .
+               username:x:@if/-
                check-password:bool:false
-         remove-nodes:x:../*/signal/*/password
 
 else
 
@@ -93,7 +91,9 @@ else
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
-unwrap:x:+/*
+unwrap:x:+/+/*
+log.info
+   lambda2hyper:x:../*
 signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
