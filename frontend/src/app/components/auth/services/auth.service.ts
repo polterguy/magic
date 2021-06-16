@@ -159,7 +159,11 @@ export class AuthService {
    */
   public logout(destroyPassword: boolean, showInfo: boolean = true) {
     if (this.authenticated) {
-      this.backendService.current.token = null;
+      this.backendService.current = {
+        url: this.backendService.current.url,
+        username: this.backendService.current.username,
+        password: destroyPassword ? null : this.backendService.current.password
+      };
       if (destroyPassword) {
         this.backendService.current.password = null;
       }
