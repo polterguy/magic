@@ -75,6 +75,15 @@ namespace magic.backend
                     conf.MapHub<MagicHub>("/sockets");
             });
 
+            var origins = Configuration["magic:frontends:urls"];
+            if (!string.IsNullOrEmpty(origins))
+            {
+                app.UseCors((builder) =>
+                {
+                    builder.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins.Split(',')).AllowCredentials();
+                });
+            }
+
             // Creating a log entry for having started application, but only if system has beeen setup.
             if (Configuration["magic:auth:secret"] != "THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT")
             {
