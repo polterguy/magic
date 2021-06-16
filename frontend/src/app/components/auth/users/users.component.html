@@ -64,6 +64,7 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
+            matTooltip="Change password"
             (click)="editUser(el)">
             <mat-icon>edit</mat-icon>
           </button>
@@ -79,7 +80,7 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
-            matTooltip="Create a reset password link for user"
+            matTooltip="Create reset password link"
             (click)="generateResetPasswordLink(el)">
             <mat-icon>perm_identity</mat-icon>
           </button>
@@ -88,7 +89,7 @@
             mat-icon-button
             [disabled]="el.username === 'root' || el.locked"
             (click)="jailUser(el)"
-            matTooltip="Imprison user for a specific amount of time">
+            matTooltip="Imprison user">
             <mat-icon>gavel</mat-icon>
           </button>
 
@@ -104,6 +105,7 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
+            matTooltip="Delete user"
             (click)="delete(el)">
             <mat-icon>delete</mat-icon>
           </button>
