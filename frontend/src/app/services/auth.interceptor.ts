@@ -79,7 +79,10 @@ export class AuthInterceptor implements HttpInterceptor {
        * No token for invocation, hence simply invoking next
        * interceptor without doing anything.
        */
-      return next.handle(req);
+      const authReq = req.clone({
+        withCredentials: true
+      });
+      return next.handle(authReq);
     }
   }
 }
