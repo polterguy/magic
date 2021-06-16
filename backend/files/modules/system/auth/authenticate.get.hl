@@ -91,7 +91,7 @@ else
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
-unwrap:x:+/+/*
+unwrap:x:+/*
 signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
