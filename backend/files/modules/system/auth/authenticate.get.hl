@@ -9,10 +9,72 @@
 
 
 /*
- * Sanity checking invocation.
+ * Notice, if no username was supplied to invocation, we check to
+ * see if system has been setup to use Automatic Windows
+ * authentication, and if so, we retrieve the username through Kerberos.
+ *
+ * This allows a user to still login explicitly with a [username] and a
+ * [password] from a machine were the user is not logged in as himself,
+ * using Windows manual authentication.
  */
-validators.mandatory:x:@.arguments/*/username
-validators.mandatory:x:@.arguments/*/password
+config.get:"magic:auth:authentication"
+if
+   and
+      not
+         exists:x:@.arguments/*/username
+      eq
+         get-value:x:@config.get
+         .:ad-auth.authenticate-auto
+   .lambda
+
+      /*
+       * System is configured to use automatic Windows authentication.
+       *
+       * Retrieving username first.
+       */
+      ad-auth.authenticate-auto
+      if
+         eq
+            get-value:x:@ad-auth.authenticate-auto
+            .
+         .lambda
+
+            /*
+             * User is not authenticated on Windows domain.
+             */
+            throw:Access denied
+               status:int:401
+               public:bool:true
+
+      else
+
+         /*
+          * User is authenticated on Windows domain.
+          *
+          * Adding user's username to [.arguments] collection for
+          * simplicity reasons, and turning OFF password check during
+          * invocation to [magic.auth.authenticate].
+          */
+         unwrap:x:+/*/*
+         add:x:@.arguments
+            .
+               username:x:@ad-auth.authenticate-auto
+         add:x:../*/signal
+            .
+               check-password:bool:false
+         remove-nodes:x:../*/signal/*/password
+
+else
+
+
+   /*
+    * System has not been setup to do automatic Windows
+    * authentication, hence we'll need to verify that 
+    * invocation was given a username and a password as
+    * arguments.
+    */
+   validators.mandatory:x:@.arguments/*/username
+   validators.mandatory:x:@.arguments/*/password
 
 
 /*
