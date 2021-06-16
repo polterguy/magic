@@ -44,6 +44,10 @@ if
             /*
              * No username returned by auto-auth slot invocation.
              */
+            log.error
+               .:Authentication failed, [
+               get-name:x:@if/-
+               .:] returned null object
             throw:Access denied
                status:int:401
                public:bool:true
