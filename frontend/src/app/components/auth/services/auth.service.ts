@@ -108,7 +108,15 @@ export class AuthService {
 
       // Authenticating user.
       this.httpService.get<AuthenticateResponse>(
-        '/magic/modules/system/auth/authenticate' + query).subscribe((auth: AuthenticateResponse) => {
+        '/magic/modules/system/auth/authenticate' + query, {
+
+          /*
+           * Notice, if we're doing Windows automatica authentication,
+           * there will be given a username/password to this method, at which point
+           * we'll have to make sure Angular passes in Windows credentials to endpoint.
+           */
+          withCredentials: query === '' ? true : false,
+        }).subscribe((auth: AuthenticateResponse) => {
 
           // Persisting backend data.
           this.backendService.current = {
