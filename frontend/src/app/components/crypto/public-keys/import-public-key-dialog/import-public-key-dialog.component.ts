@@ -78,7 +78,6 @@ slots.vocabulary
 
     // Importing key.
     this.cryptoService.createPublicKey(this.key).subscribe((res: Response) => {
-      console.log(res);
       this.dialogRef.close(this.key);
     }, (error: any) => this.feedbackService.showError(error));
   }

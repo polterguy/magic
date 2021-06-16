@@ -220,7 +220,6 @@ export class FileService {
         const disp = res.headers.get('Content-Disposition');
         let filename = disp.substr(disp.indexOf('=') + 1);
         filename = filename.substr(1, filename.lastIndexOf('"') - 1);
-        console.log(filename);
         const file = new Blob([res.body], { type: 'application/zip' });
         saveAs(file, filename);
       });

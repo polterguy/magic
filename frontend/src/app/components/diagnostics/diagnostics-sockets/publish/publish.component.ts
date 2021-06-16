@@ -66,7 +66,7 @@ export class PublishComponent implements AfterViewInit {
    */
   constructor(
     private dialogRef: MatDialogRef<PublishComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MessageWrapper) { console.log(data); }
+    @Inject(MAT_DIALOG_DATA) public data: MessageWrapper) { }
 
   /**
    * Implementation of AfterViewInit.

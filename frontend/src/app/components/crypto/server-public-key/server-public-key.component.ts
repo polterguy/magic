@@ -73,7 +73,6 @@ export class ServerPublicKeyComponent implements OnInit {
 
       // Assigning model.
       this.publicKeyFull = <PublicKeyFull>key;
-      console.log(key);
     });
   }
 
