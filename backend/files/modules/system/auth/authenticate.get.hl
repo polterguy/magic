@@ -9,38 +9,40 @@
 
 
 /*
- * Notice, if no username was supplied to invocation, we check to
- * see if system has been setup to use Automatic Windows
- * authentication, and if so, we retrieve the username through Kerberos.
- *
- * This allows a user to still login explicitly with a [username] and a
- * [password] from a machine were the user is not logged in as himself,
- * using Windows manual authentication.
+ * Notice, if no username was supplied to invocation, and system has
+ * been configured to allow for "auto-auth", neither the [username]
+ * nor the [password] arguments are mandatory, and if not given, we
+ * invoke slot responsible for retrieving username.
  */
-config.get:"magic:auth:authentication"
+config.get:"magic:auth:auto-auth"
 if
    and
       not
          exists:x:@.arguments/*/username
-      eq
-         get-value:x:@config.get
-         .:ad-auth.authenticate-auto
+      not
+         eq
+            get-value:x:@config.get
+            .:
+      not
+         eq
+            get-value:x:@config.get
+            .
    .lambda
 
       /*
-       * System is configured to use automatic Windows authentication.
-       *
-       * Retrieving username first.
+       * System is configured to use automatic authentication.
        */
-      ad-auth.authenticate-auto
+      set-name:x:./*/auth-slot
+         get-value:x:@config.get
+      auth-slot
       if
          eq
-            get-value:x:@ad-auth.authenticate-auto
+            get-value:x:@if/-
             .
          .lambda
 
             /*
-             * User is not authenticated on Windows domain.
+             * No username returned by auto-auth slot invocation.
              */
             throw:Access denied
                status:int:401
@@ -49,16 +51,16 @@ if
       else
 
          /*
-          * User is authenticated on Windows domain.
+          * User is automatically authenticated somehow.
           *
           * Adding user's username to [.arguments] collection for
-          * simplicity reasons, and turning OFF password check during
+          * simplicity reasons, and turning OFF password checking during
           * invocation to [magic.auth.authenticate].
           */
          unwrap:x:+/*/*
          add:x:@.arguments
             .
-               username:x:@ad-auth.authenticate-auto
+               username:x:@if/-
          add:x:../*/signal
             .
                check-password:bool:false
