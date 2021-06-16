@@ -2,7 +2,7 @@
 <h1 mat-dialog-title>
   Login
   <mat-icon
-    *ngIf="backendService.connected && backends.value.startsWith('http://')"
+    *ngIf="backendHasBeenSelected && backendService.connected && backends.value.startsWith('http://') && (autoLogin !== true || advanced === true)"
     matTooltip="Clicking the login button will transmit your password in clear text">warning</mat-icon>
 </h1>
 
@@ -14,6 +14,7 @@
     <input type="text"
       matInput
       [formControl]="backends"
+      (change)="backendValueChanged()"
       [matAutocomplete]="auto">
     <mat-autocomplete
       #auto="matAutocomplete"
@@ -27,7 +28,7 @@
 
   </mat-form-field>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
 
     <mat-label class="dark">Username</mat-label>
     <input
@@ -37,7 +38,7 @@
 
   </mat-form-field>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
 
     <mat-label class="dark">Password</mat-label>
     <input
@@ -57,21 +58,27 @@
 
 </div>
 
-<div mat-dialog-actions class="button-strip">
+<div *ngIf="backendHasBeenSelected" mat-dialog-actions class="button-strip">
 
   <mat-checkbox
+    *ngIf="autoLogin === true"
+    [(ngModel)]="advanced">Advanced</mat-checkbox>
+
+  <mat-checkbox
+    *ngIf="autoLogin !== true"
     [disabled]="username === '' || password === '' || backends.value === ''"
     [(ngModel)]="savePassword">Save</mat-checkbox>
 
   <button
     mat-raised-button
     color="primary"
-    [disabled]="username === '' || password === '' || backends.value === ''"
+    [disabled]="!autoLogin && (username === '' || password === '' || backends.value === '')"
     (click)="login()">Login</button>
 
   <button
+    *ngIf="autoLogin !== true"
     mat-raised-button
-    [disabled]="username === '' || password !== '' || backends.value === ''"
+    [disabled]="autoLogin || username === '' || password !== '' || backends.value === ''"
     matTooltip="Send me a reset password link"
     (click)="resetPassword()">Forgot?</button>
 

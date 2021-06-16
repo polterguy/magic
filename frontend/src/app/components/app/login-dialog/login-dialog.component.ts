@@ -20,7 +20,6 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { ConfigService } from 'src/app/components/config/services/config.service';
-import { AuthenticateResponse } from 'src/app/components/auth/models/authenticate-response.model';
 
 /**
  * Login dialog allowing user to login to a backend of his choice.
@@ -38,6 +37,9 @@ export class LoginDialogComponent implements OnInit {
   public username: string = '';
   public password: string = '';
   public savePassword: boolean = false;
+  public backendHasBeenSelected: boolean = false;
+  public autoLogin: boolean = false;
+  public advanced: boolean = false;
 
   /**
    * Creates an instance of your login dialog.
@@ -57,8 +59,7 @@ export class LoginDialogComponent implements OnInit {
     private feedbackService: FeedbackService,
     protected messageService: MessageService,
     public authService: AuthService,
-    public backendService: BackendService) {
-  }
+    public backendService: BackendService) { }
 
   /**
    * OnInit implementation.
@@ -87,6 +88,47 @@ export class LoginDialogComponent implements OnInit {
       this.username = el[0].username || '';
       this.password = el[0].password || '';
       this.savePassword = !!el[0].password && this.password !== 'root';
+    }
+
+    // Making sure we invoke method responsible for checking if auto-auth is turned on for current backend or not.
+    this.backendValueChanged();
+  }
+
+  /**
+   * Invoked when the backend URL has been changed, for whatever reason.
+   */
+  public backendValueChanged() {
+
+    // Verifying control actual contains any content.
+    if (this.backends.value && this.backends.value !== '') {
+
+      // Invoking backend to check if it has turned on auto-auth or not.
+      this.authService.autoAuth(this.backends.value).subscribe((result: Response) => {
+
+        // This will display username and password dialogs, unless backend supports automatic logins.
+        this.backendHasBeenSelected = true;
+
+        /*
+         * Checking if backend allows for auto-auth, and if so allowing user to click
+         * login button without providing username or password.
+         */
+        if (result.result === 'on') {
+
+          // Allowing user to logging in without username/password combination.
+          this.autoLogin = true;
+          this.username = '';
+
+        } else {
+
+          // Preventing user from logging in without a username/password combination.
+          this.autoLogin = false;
+        }
+      }, (error: any) => {
+
+        // Oops.
+        this.feedbackService.showError(error);
+        this.backendHasBeenSelected = false;
+      });
     }
   }
 
