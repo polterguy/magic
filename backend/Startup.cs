@@ -75,7 +75,7 @@ namespace magic.backend
                     conf.MapHub<MagicHub>("/sockets");
             });
 
-            var origins = Configuration["magic:frontends:urls"];
+            var origins = Configuration["magic:frontend:urls"];
             if (!string.IsNullOrEmpty(origins))
             {
                 app.UseCors((builder) =>
