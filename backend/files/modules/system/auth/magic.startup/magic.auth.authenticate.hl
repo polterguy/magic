@@ -165,9 +165,9 @@ slots.create:magic.auth.authenticate
 
 
                   /*
-                   * Caller requested a "reset password link", hence the only
-                   * role we add user to is the "reset-password" role, and we
-                   * also add the [old-password] claim, which we check when user
+                   * Caller requested a "reset password link", hence
+                   * we add the user to the "reset-password" role, and
+                   * the [old-password] role, which we check when user
                    * actually attempts to change his password, to make sure one
                    * reset password link can only be used once.
                    *
@@ -177,9 +177,9 @@ slots.create:magic.auth.authenticate
                    */
                   crypto.hash:x:@data.read/*/*
                   unwrap:x:+/*/*
-                  add:x:+
+                  add:x:+/*/roles
                      .
-                        old-password:x:@crypto.hash
+                        .:x:@crypto.hash
                   auth.ticket.create
                      username:x:@.arguments/*/username
                      roles
