@@ -204,10 +204,17 @@ export class LoginDialogComponent implements OnInit {
 
           // Checking status to see if we've setup system.
           this.configService.status().subscribe((status: Status) => {
+
+            // Checking status of setup process.
             if (!status.magic_crudified || !status.server_keypair || !status.config_done) {
+
+              // There are still configuration steps left.
               this.router.navigate(['/config']);
             }
+
           }, (error: any) => {
+
+            // Oops ...
             this.feedbackService.showError(error);
           });
         }
