@@ -28,7 +28,7 @@ if
        * Auto-auth is turned OFF.
        */
       return-nodes
-         result:bool:false
+         result:off
 
 else
 
@@ -36,4 +36,4 @@ else
     * Auto-auth is turned ON.
     */
    return-nodes
-      result:bool:true
+      result:on
