@@ -60,8 +60,13 @@ namespace magic.backend
 
             app.UseHttpsRedirection();
 
-            // Necessary to make SignalR work.
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+            // Applying CORS.
+            var origins = Configuration["magic:frontend:urls"];
+            if (!string.IsNullOrEmpty(origins))
+                app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(origins.Split(',')));
+            else
+                app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseAuthentication();
             app.UseRouting().UseEndpoints(conf =>
             {
@@ -74,12 +79,6 @@ namespace magic.backend
                 if (Configuration["magic:sockets:url"] != null)
                     conf.MapHub<MagicHub>("/sockets");
             });
-
-            var origins = Configuration["magic:frontend:urls"];
-            if (!string.IsNullOrEmpty(origins))
-            {
-                app.UseCors(builder => builder.WithOrigins(origins.Split(',')).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            }
 
             // Creating a log entry for having started application, but only if system has beeen setup.
             if (Configuration["magic:auth:secret"] != "THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT")
