@@ -92,8 +92,6 @@ else
  * making sure we return that token to caller.
  */
 unwrap:x:+/+/*
-log.info
-   lambda2hyper:x:../*
 signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
