@@ -30,6 +30,7 @@
   <input
     matInput
     type="password"
+    autocomplete="new-password"
     [(ngModel)]="password">
 
 </mat-form-field>
@@ -40,7 +41,18 @@
   <input
     matInput
     type="password"
+    autocomplete="new-password"
     [(ngModel)]="passwordRepeat">
+
+</mat-form-field>
+
+<mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="wide break"  appearance="outline">
+
+  <mat-label>Auth secret</mat-label>
+  <input
+    matInput
+    type="text"
+    [(ngModel)]="config.magic.auth.secret">
 
 </mat-form-field>
 

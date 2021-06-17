@@ -105,6 +105,14 @@ export class SetupAuthComponent implements OnInit {
    */
   public next() {
 
+    // Sanity checking auth secret.
+    if (this.config.magic.auth.secret.length < 50 || this.config.magic.auth.secret.length > 100) {
+
+      // No good AUTH secret.
+      this.feedbackService.showError('Auth secret must be between 50 and 100 charaters in length');
+      return;
+    }
+
     // Sanity checking connection string.
     if (this.config.magic.databases[this.selectedDatabaseType].generic.indexOf('{database}') === -1) {
 
