@@ -127,8 +127,12 @@ slots.create:magic.auth.authenticate
              * This is the part that basically allows for external username/password verifications,
              * including using AD/Windows authentication, etc.
              */
-            set-name:x:+/*/*
-               get-value:x:@config.get
+            strings.split:x:@config.get
+               .:":"
+            set-name:x:+/+/*/*
+               get-value:x:@strings.split/0
+            set-value:x:+/*/*
+               get-value:x:@strings.split/1
             insert-after:x:@if/./**/crypto.password.verify
                .
                   foo
