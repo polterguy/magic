@@ -65,7 +65,7 @@
     [(ngModel)]="advanced">Advanced</mat-checkbox>
 
   <mat-checkbox
-    *ngIf="autoLogin !== true"
+    *ngIf="autoLogin !== true && password !== 'root'"
     [disabled]="username === '' || password === '' || backends.value === ''"
     [(ngModel)]="savePassword">Save</mat-checkbox>
 
