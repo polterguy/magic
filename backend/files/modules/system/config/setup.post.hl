@@ -247,6 +247,15 @@ try
 
 
    /*
+    * Explicitly seeding CSRNG with auth secret, which might have been manually applied
+    * by user during setup process.
+    */
+   config.get:"magic:auth:secret"
+   crypto.seed:x:-
+   log.info:CSRNG successfully seeded with your auth secret
+
+
+   /*
     * Starting scheduler.
     */
    scheduler.start
