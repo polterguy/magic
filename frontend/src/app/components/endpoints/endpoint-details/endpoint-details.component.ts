@@ -495,15 +495,18 @@ export class EndpointDetailsComponent implements OnInit {
    */
   public invoke() {
 
-    // Figuring out what endpoint returns.
-    let responseType = '';
-    if (this.endpoint.produces === 'application/json') {
-      responseType = 'json';
-    } else if (this.endpoint.produces.startsWith('text')) {
-      responseType = 'text';
-    } else {
-      responseType = 'blob';
-    }
+  // Figuring out what endpoint returns.
+  let responseType = '';
+  if (this.endpoint.produces === 'application/json') {
+    responseType = 'json';
+  } else if (this.endpoint.produces.startsWith('text')) {
+    responseType = 'text';
+  } else {
+    responseType = 'blob';
+  }
+
+  // Making sure we trap JSON conversion errors, etc.
+  try {
 
     // Creating backend invocation.
     let invocation: Observable<any> = null;
@@ -592,6 +595,10 @@ export class EndpointDetailsComponent implements OnInit {
       });
     }
   }
+  catch (error) {
+    this.feedbackService.showError(error);
+  }
+}
 
   /**
    * Returns whether or not the current invocation was successful or not.
