@@ -5,8 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build-prod": "ng build --prod --aot",
-    "test": "ng test",
+    "build-prod": "export NODE_OPTIONS=--max_old_space_size=8192 && ng build --prod --aot",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
