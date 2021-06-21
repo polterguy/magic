@@ -1,0 +1,27 @@
+
+/*
+ * App manifest file containing apps that can be dynamically installed in
+ * your Magic installation through its Bazar.
+ */
+
+
+app
+   name:Babel
+   description:Chat client backend parts for Magic
+   version:v0.8.0
+   url:"https://github.com/polterguy/babel/archive/refs/tags/v0.8.0.zip"
+   requires:9.3.6
+
+app
+   name:BabelFish
+   description:Translation service for your own apps
+   version:v0.8.0
+   url:"https://github.com/polterguy/babelfish/archive/refs/tags/v0.8.0.zip"
+   requires:9.3.6
+
+app
+   name:BabelMail
+   description:A Magic and Hyperlambda backend micro service mail module
+   version:v0.8.0
+   url:"https://github.com/polterguy/babelmail/archive/refs/tags/v0.8.0.zip"
+   requires:9.3.6
