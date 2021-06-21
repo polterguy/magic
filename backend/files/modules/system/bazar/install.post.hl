@@ -5,7 +5,13 @@
 .arguments
    url:string
    name:string
-.description:Installs the specified Bazarmodule
+.description:Installs the specified Bazar module
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
 
 
 /*
@@ -16,9 +22,23 @@ validators.mandatory:x:@.arguments/*/name
 
 
 /*
- * Ensures user is authorized to access endpoint.
+ * Verifying that folder doesn't already exist, as in that module
+ * is already installed.
  */
-auth.ticket.verify:root
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/name
+   .:/
+if
+   io.folder.exists:x:@strings.concat
+   .lambda
+
+      /*
+       * Oops ...
+       */
+      throw:Module is already installed
+         public:bool:true
+         status:int:500
 
 
 /*
@@ -33,7 +53,7 @@ http.get.binary:x:@.arguments/*/url
 strings.split:x:@http.get.binary/*/headers/*/Content-Disposition
    .:=
 strings.concat
-   .:/temp/
+   .:/modules/
    get-value:x:@strings.split/1
 io.file.save.binary:x:@strings.concat
    get-value:x:@http.get.binary/*/content
@@ -42,11 +62,25 @@ io.file.save.binary:x:@strings.concat
 /*
  * Unzipping downloaded ZIP file.
  */
-strings.concat
-   .:/modules/
-   get-value:x:@.arguments/*/name
-io.file.unzip:x:@strings.concat/@strings.concat
-   folder:x:@strings.concat
+io.file.unzip:x:@strings.concat
+
+
+/*
+ * Deletes ZIP file.
+ */
+io.file.delete:x:@strings.concat
+
+
+/*
+ * Renaming the folder to the name specified by caller.
+ */
+strings.split:x:@strings.concat
+   .:.zip
+io.folder.move:x:@strings.split/0
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/name
+      .:/
 
 
 /*
