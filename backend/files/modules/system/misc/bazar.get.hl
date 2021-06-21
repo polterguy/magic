@@ -1,0 +1,57 @@
+
+/*
+ * Returns Bazar apps to caller.
+ */
+.description:Returns Bazar apps to caller
+
+
+/*
+ * Retrieving installed Bazars
+ */
+config.get:"magic:bazars"
+
+
+/*
+ * Splitting above on commas, to allow for delcaring multiple bazars in same config key.
+ */
+strings.split:x:@config.get
+   .:,
+
+
+/*
+ * Iterating through each bazar, retrieving manifest, and returning contents to caller.
+ */
+for-each:x:@strings.split/*
+
+   /*
+    * Retrieving manifest.
+    */
+   http.get:x:@.dp/#
+      headers
+         Cache-Control:no-cache
+         Pragma:no-cache
+   if
+      not
+         eq
+            get-value:x:@http.get
+            .:int:200
+      .lambda
+
+         /*
+          * Oops ...
+          */
+         throw:Bazar unreachable for some reasons
+            status:int:500
+            public:bool:true
+
+   /*
+    * Converting Bazar to relevant model and returning all apps in it to caller.
+    */
+   hyper2lambda:x:@http.get/*/content
+   add:x:../*/return
+      get-nodes:x:@hyper2lambda/*
+
+/*
+ * Dynamically built above to return all apps to caller.
+ */
+return

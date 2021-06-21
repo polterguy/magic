@@ -1,0 +1,14 @@
+
+<mat-card>
+
+  <button
+    *ngFor="let idx of apps"
+    mat-raised-button
+    class="app"
+    [matTooltip]="idx.description">
+    {{idx.name}}
+  </button>
+
+  <div class="clearfix"></div>
+
+</mat-card>

@@ -14,6 +14,7 @@ import { SqlComponent } from './components/sql/sql.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
+import { BazarComponent } from './components/bazar/bazar.component';
 import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'ide', component: IdeComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
+  { path: 'bazar', component: BazarComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'sockets', component: SocketsComponent },
