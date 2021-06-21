@@ -9,6 +9,7 @@
    name:Babel
    module_name:babel
    description:Chat client backend parts for Magic
+   readme:"https://raw.githubusercontent.com/polterguy/babel/master/README.md"
    version:v0.8.0
    url:"https://github.com/polterguy/babel/archive/refs/tags/v0.8.0.zip"
    requires:v9.3.6
@@ -20,6 +21,7 @@
    name:BabelFish
    module_name:babelfish
    description:Translation service for your own apps
+   readme:"https://raw.githubusercontent.com/polterguy/babelfish/master/README.md"
    version:v0.8.0
    url:"https://github.com/polterguy/babelfish/archive/refs/tags/v0.8.0.zip"
    requires:v9.3.6
@@ -31,6 +33,7 @@
    name:BabelMail
    module_name:babelmail
    description:A Magic and Hyperlambda backend micro service mail module
+   readme:"https://raw.githubusercontent.com/polterguy/babelmail/master/README.md"
    version:v0.8.0
    url:"https://github.com/polterguy/babelmail/archive/refs/tags/v0.8.0.zip"
    requires:v9.3.6

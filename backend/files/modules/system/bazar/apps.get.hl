@@ -46,7 +46,7 @@ for-each:x:@strings.split/*
          /*
           * Oops ...
           */
-         throw:Bazar unreachable for some reasons
+         throw:Bazar manifest is unreachable for some reasons
             status:int:500
             public:bool:true
 
@@ -60,4 +60,6 @@ for-each:x:@strings.split/*
 /*
  * Dynamically built above to return all apps to caller.
  */
+response.headers.add
+   Cache-Control:public, max-age=3600
 return
