@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Status } from '../../../models/status.model';
 import { Response } from '../../../models/response.model';
+import { AppManifest } from '../models/app-manifest.model';
 import { KeyPair } from '../../crypto/models/key-pair.model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../auth/services/auth.service';
@@ -132,6 +133,13 @@ export class ConfigService {
       '/magic/modules/system/misc/gibberish?min=' +
       min +
       '&max=' + max);
+  }
+
+  /**
+   * Returns Bazar content to caller.
+   */
+   public getBazarManifest() {
+    return this.httpService.get<AppManifest[]>('/magic/modules/system/misc/bazar');
   }
 
   /**

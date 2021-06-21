@@ -171,3 +171,14 @@
   <mat-icon matSuffix>settings</mat-icon>
   <span>Config</span>
 </a>
+
+<a
+  *ngIf="authService.hasAccess('magic/modules/system/misc/bazar')"
+  mat-button
+  routerLink="/bazar"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>public</mat-icon>
+  <span>Bazar</span>
+</a>

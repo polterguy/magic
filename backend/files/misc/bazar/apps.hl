@@ -7,7 +7,7 @@
 
 .
    name:Babel
-   module-name:babel
+   module_name:babel
    description:Chat client backend parts for Magic
    version:v0.8.0
    url:"https://github.com/polterguy/babel/archive/refs/tags/v0.8.0.zip"
@@ -18,7 +18,7 @@
 
 .
    name:BabelFish
-   module-name:babelfish
+   module_name:babelfish
    description:Translation service for your own apps
    version:v0.8.0
    url:"https://github.com/polterguy/babelfish/archive/refs/tags/v0.8.0.zip"
@@ -29,7 +29,7 @@
 
 .
    name:BabelMail
-   module-name:babelmail
+   module_name:babelmail
    description:A Magic and Hyperlambda backend micro service mail module
    version:v0.8.0
    url:"https://github.com/polterguy/babelmail/archive/refs/tags/v0.8.0.zip"
