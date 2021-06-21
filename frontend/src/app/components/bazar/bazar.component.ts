@@ -82,12 +82,15 @@ export class BazarComponent implements OnInit {
 
     // Invoking backend to install module.
     this.configService.installBazarModule(module).subscribe(() => {
-      
-      // Providing feedback to user.
-      this.feedbackService.showInfoShort('Module was successfully installed');
 
-      // Removing module from list of modules.
-      this.folders.push(module.module_name);
+      this.fileService.install('/modules/' + module.module_name + '/').subscribe(() => {
+      
+        // Providing feedback to user.
+        this.feedbackService.showInfoShort('Module was successfully installed');
+
+        // Removing module from list of modules.
+        this.folders.push(module.module_name);
+      });
 
     }, (error: any) => this.feedbackService.showError(error));
   }
