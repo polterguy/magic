@@ -7,7 +7,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
+import { FileService } from '../files/services/file.service';
 import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -23,6 +23,9 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 })
 export class BazarComponent implements OnInit {
 
+  // Modules already installed.
+  private folders: string[] = [];
+
   /**
    * Apps as returned from backend.
    */
@@ -34,6 +37,7 @@ export class BazarComponent implements OnInit {
    * @param configService Needed to retrieve Bazar manifests
    */
   constructor(
+    private fileService: FileService,
     private configService: ConfigService,
     private feedbackService: FeedbackService) { }
 
@@ -42,12 +46,31 @@ export class BazarComponent implements OnInit {
    */
   public ngOnInit() {
 
+    // Retrieving already installed modules.
+    this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
+
+      // Assigning model.
+      this.folders = folders.map(x => {
+        const res = x.substr(9);
+        return res.substr(0, res.length - 1);
+      });
+    });
+
     // Retrieving Bazar modules from backend.
     this.configService.getBazarManifest().subscribe((result: AppManifest[]) => {
 
       // Assigning result to model.
       this.apps = result;
     });
+  }
+
+  /**
+   * Returns true if module is already installed.
+   * 
+   * @param module Module to check
+   */
+  public isInstalled(module: AppManifest) {
+    return this.folders.indexOf(module.module_name) !== -1;
   }
 
   /**
@@ -62,6 +85,9 @@ export class BazarComponent implements OnInit {
       
       // Providing feedback to user.
       this.feedbackService.showInfoShort('Module was successfully installed');
+
+      // Removing module from list of modules.
+      this.folders.push(module.module_name);
 
     }, (error: any) => this.feedbackService.showError(error));
   }

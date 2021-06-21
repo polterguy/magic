@@ -4,8 +4,8 @@
   <button
     *ngFor="let idx of apps"
     mat-raised-button
-    class="app"
-    [matTooltip]="idx.description"
+    [class]="isInstalled(idx) ? 'installed app' : 'app'"
+    [matTooltip]="isInstalled(idx) ? '' : idx.description"
     (click)="install(idx)">
     <span class="title">{{idx.name}}</span>
     <span class="version">{{idx.version}}</span>
