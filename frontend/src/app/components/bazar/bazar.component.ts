@@ -5,10 +5,12 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
-import { AppManifest } from '../config/models/app-manifest.model';
 
 // Application specific imports.
+import { Response } from 'src/app/models/response.model';
+import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -31,7 +33,9 @@ export class BazarComponent implements OnInit {
    * 
    * @param configService Needed to retrieve Bazar manifests
    */
-  constructor(private configService: ConfigService) { }
+  constructor(
+    private configService: ConfigService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
@@ -43,6 +47,21 @@ export class BazarComponent implements OnInit {
 
       // Assigning result to model.
       this.apps = result;
+    });
+  }
+
+  /**
+   * Installs the specified module into your modules folder.
+   * 
+   * @param module Module to install
+   */
+  public install(module: AppManifest) {
+
+    // Invoking backend to install module.
+    this.configService.installBazarModule(module).subscribe((result: Response) => {
+      
+      // Providing feedback to user.
+      this.feedbackService.showInfoShort('Module was successfully installed');
     });
   }
 }

@@ -6,6 +6,12 @@
 
 
 /*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
  * Retrieving installed Bazars
  */
 config.get:"magic:bazars"

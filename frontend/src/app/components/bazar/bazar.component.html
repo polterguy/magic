@@ -5,7 +5,8 @@
     *ngFor="let idx of apps"
     mat-raised-button
     class="app"
-    [matTooltip]="idx.description">
+    [matTooltip]="idx.description"
+    (click)="install(idx)">
     {{idx.name}}
   </button>
 
