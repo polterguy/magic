@@ -14,6 +14,7 @@
    url:"https://github.com/polterguy/babel/archive/refs/tags/v0.8.0.zip"
    requires:v9.3.6
    type:module
+   git:"https://github.com/polterguy/babel.git"
    database_support
       .:mssql
       .:mysql
@@ -27,6 +28,7 @@
    url:"https://github.com/polterguy/babelfish/archive/refs/tags/v0.8.0.zip"
    requires:v9.3.6
    type:module
+   git:"https://github.com/polterguy/babelfish.git"
    database_support
       .:mssql
       .:mysql
@@ -40,6 +42,7 @@
    url:"https://github.com/polterguy/babelmail/archive/refs/tags/v0.8.0.zip"
    requires:v9.3.6
    type:module
+   git:"https://github.com/polterguy/babelmail.git"
    database_support
       .:mssql
       .:mysql
