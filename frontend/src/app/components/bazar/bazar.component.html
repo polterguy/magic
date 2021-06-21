@@ -7,7 +7,8 @@
     class="app"
     [matTooltip]="idx.description"
     (click)="install(idx)">
-    {{idx.name}}
+    <span class="title">{{idx.name}}</span>
+    <span class="version">{{idx.version}}</span>
   </button>
 
   <div class="clearfix"></div>

@@ -1,6 +1,6 @@
 
 /*
- * Installs the specified module.
+ * Installs the specified Bazar module.
  */
 .arguments
    url:string

@@ -1,22 +1,60 @@
 
 mat-card {
-  .app {
+  button.app {
     display: block;
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     float: left;
-    margin-right: 2rem;
+    margin-right: 20px;
+    margin-bottom: 20px;
     background-color: rgba(0,128,0,.05);
     transform: scale(1);
-    box-shadow: 2px 2px 1px rgb(0,0,0,.2);
+    position: relative;
+    transform: rotate(0deg);
+    transition: box-shadow, transform;
+    transition-duration: .2s;
+    .version {
+      position: absolute;
+      bottom: -.25rem;
+      right: .25rem;
+      color:rgb(128,128,128);
+      font-size: .7rem;
+    }
+    .title {
+      position: absolute;
+      top: 0;
+      left: .5rem;
+      color:rgb(64,64,64);
+      font-size: .9rem;
+    }
   }
-  .app:hover, .app:active {
-    box-shadow: 2px 2px 1px rgb(0,0,0,.3);
-    transform: scale(1.05);
+  button.app:hover, button.app:active {
+    box-shadow: 3px 3px 5px rgb(0,0,0,.5);
+    transform: rotate(7deg);
     transition: box-shadow, transform;
     transition-duration: .2s;
   }
-.clearfix {
+  button:hover:nth-child(2),
+  button:hover:nth-child(4),
+  button:hover:nth-child(6),
+  button:hover:nth-child(8),
+  button:hover:nth-child(10),
+  button:hover:nth-child(12),
+  button:hover:nth-child(14),
+  button:hover:nth-child(16),
+  button:hover:nth-child(18),
+  button:active:nth-child(2),
+  button:active:nth-child(4),
+  button:active:nth-child(6),
+  button:active:nth-child(8),
+  button:active:nth-child(10),
+  button:active:nth-child(12),
+  button:active:nth-child(14),
+  button:active:nth-child(16),
+  button:active:nth-child(18) {
+    transform: rotate(-7deg);
+  }
+  .clearfix {
     clear: both;
     display: table;
   }
