@@ -14,6 +14,43 @@ auth.ticket.verify:root
 
 
 /*
+ * Checking if this is a module folder, and if so, we uninstall module before actually
+ * deleting it.
+ */
+strings.split:x:@.arguments/*/folder
+   .:/
+if
+   and
+      eq
+         get-count:x:@strings.split/*
+         .:int:2
+      eq
+         get-value:x:@strings.split/0
+         .:modules
+   .lambda
+
+      /*
+       * Module folder, checking if it's got an uninstall file, and if so, executing it.
+       */
+      strings.concat
+         get-value:x:@.arguments/*/folder
+         .:uninstall.hl
+      if
+         io.file.exists:x:@strings.concat
+         .lambda
+
+            /*
+             * Uninstall file exists
+             */
+            log.info
+               .:"Executing uninstallation file '"
+               get-value:x:@strings.concat
+               .:"'"
+            io.file.execute:x:@strings.concat
+
+
+
+/*
  * Deletes the specified folder.
  */
 io.folder.delete:x:@.arguments/*/folder
