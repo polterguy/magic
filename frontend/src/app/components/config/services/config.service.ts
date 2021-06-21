@@ -139,7 +139,21 @@ export class ConfigService {
    * Returns Bazar content to caller.
    */
    public getBazarManifest() {
-    return this.httpService.get<AppManifest[]>('/magic/modules/system/misc/bazar');
+
+    // Invoking backend and returns app manifests to caller.
+    return this.httpService.get<AppManifest[]>('/magic/modules/system/bazar/apps');
+  }
+
+  /**
+   * Returns Bazar content to caller.
+   */
+   public installBazarModule(manifest: AppManifest) {
+
+    // Invoking backend and returns app manifests to caller.
+    return this.httpService.post<Response>('/magic/modules/system/bazar/install', {
+      url: manifest.url,
+      name: manifest.module_name,
+    });
   }
 
   /**

@@ -1,0 +1,39 @@
+
+/*
+ * Installs the specified module.
+ */
+.arguments
+   url:string
+   name:string
+.description:Installs the specified Bazarmodule
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Downloading zip file.
+ */
+http.get.binary:x:@.arguments/*/url
+
+
+/*
+ * Saving file to temporary folder.
+ */
+strings.split:x:@http.get.binary/*/headers/*/Content-Disposition
+   .:=
+strings.concat
+   .:/modules/
+   get-value:x:@strings.split/1
+io.file.save:x:@strings.concat
+   get-value:x:@http.get.binary/*/content
+
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success
