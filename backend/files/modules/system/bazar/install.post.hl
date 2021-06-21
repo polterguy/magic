@@ -36,7 +36,7 @@ if
       /*
        * Oops ...
        */
-      throw:Module is already installed
+      throw:Module is already installed. If you wish to update the module please uninstall it first.
          public:bool:true
          status:int:500
 

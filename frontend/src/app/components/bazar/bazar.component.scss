@@ -28,6 +28,11 @@ mat-card {
       font-size: .9rem;
     }
   }
+  button.app.installed {
+    background-color: rgb(245,245,245);
+    opacity: .5;
+    cursor: default;
+  }
   button.app:hover, button.app:active {
     box-shadow: 3px 3px 5px rgb(0,0,0,.5);
     transform: rotate(7deg);
@@ -53,6 +58,11 @@ mat-card {
   button:active:nth-child(16),
   button:active:nth-child(18) {
     transform: rotate(-7deg);
+  }
+  button.app.installed:hover, button.app.installed:active {
+    transition: none !important;
+    transform: none;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
   }
   .clearfix {
     clear: both;
