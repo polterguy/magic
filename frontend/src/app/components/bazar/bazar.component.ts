@@ -58,10 +58,11 @@ export class BazarComponent implements OnInit {
   public install(module: AppManifest) {
 
     // Invoking backend to install module.
-    this.configService.installBazarModule(module).subscribe((result: Response) => {
+    this.configService.installBazarModule(module).subscribe(() => {
       
       // Providing feedback to user.
       this.feedbackService.showInfoShort('Module was successfully installed');
-    });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
