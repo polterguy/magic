@@ -9,6 +9,13 @@
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/name
+
+
+/*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
@@ -21,15 +28,25 @@ http.get.binary:x:@.arguments/*/url
 
 
 /*
- * Saving file to temporary folder.
+ * Saving file to modules folder.
  */
 strings.split:x:@http.get.binary/*/headers/*/Content-Disposition
    .:=
 strings.concat
-   .:/modules/
+   .:/temp/
    get-value:x:@strings.split/1
-io.file.save:x:@strings.concat
+io.file.save.binary:x:@strings.concat
    get-value:x:@http.get.binary/*/content
+
+
+/*
+ * Unzipping downloaded ZIP file.
+ */
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/name
+io.file.unzip:x:@strings.concat/@strings.concat
+   folder:x:@strings.concat
 
 
 /*
