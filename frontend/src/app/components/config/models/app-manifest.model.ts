@@ -35,6 +35,11 @@ export class AppManifest {
    url: string;
   
   /**
+   * URL to README.md file.
+   */
+   readme: string;
+  
+  /**
    * Version of Magic backend module requires.
    */
    requires: string;

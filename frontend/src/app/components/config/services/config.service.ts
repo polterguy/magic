@@ -145,6 +145,17 @@ export class ConfigService {
   }
 
   /**
+   * Returns README file for specified Bazar component.
+   * 
+   * @param module Module to retrieve README file for
+   */
+   public getReadMeFile(module: AppManifest) {
+
+    // Invoking backend and returns app's README file to caller.
+    return this.httpService.get<Response>('/magic/modules/system/bazar/readme?url=' + encodeURIComponent(module.readme));
+  }
+
+  /**
    * Returns Bazar content to caller.
    */
    public installBazarModule(manifest: AppManifest) {

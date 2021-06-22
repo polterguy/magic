@@ -5,12 +5,14 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { FileService } from '../files/services/file.service';
 import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { BazarDialogResult, ViewAppComponent } from './view-app/view-app.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -37,6 +39,7 @@ export class BazarComponent implements OnInit {
    * @param configService Needed to retrieve Bazar manifests
    */
   constructor(
+    private dialog: MatDialog,
     private fileService: FileService,
     private configService: ConfigService,
     private feedbackService: FeedbackService) { }
@@ -78,20 +81,35 @@ export class BazarComponent implements OnInit {
    * 
    * @param module Module to install
    */
-  public install(module: AppManifest) {
+  public viewDetails(module: AppManifest) {
 
-    // Invoking backend to install module.
-    this.configService.installBazarModule(module).subscribe(() => {
+    // Opening modal dialog to display details about app.
+    const dialog = this.dialog.open(ViewAppComponent, {
+      data: {
+        manifest: module
+      }
+    });
 
-      this.fileService.install('/modules/' + module.module_name + '/').subscribe(() => {
-      
-        // Providing feedback to user.
-        this.feedbackService.showInfoShort('Module was successfully installed');
+    // Subscribing to close to do the heavy lifting in this component.
+    dialog.afterClosed().subscribe((result: BazarDialogResult) => {
 
-        // Removing module from list of modules.
-        this.folders.push(module.module_name);
-      });
+      // Verifying dialog returned a result.
+      if (result) {
 
-    }, (error: any) => this.feedbackService.showError(error));
+        // Invoking backend to install module.
+        this.configService.installBazarModule(module).subscribe(() => {
+
+          this.fileService.install('/modules/' + module.module_name + '/').subscribe(() => {
+          
+            // Providing feedback to user.
+            this.feedbackService.showInfoShort('Module was successfully installed');
+
+            // Removing module from list of modules.
+            this.folders.push(module.module_name);
+          });
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
   }
 }
