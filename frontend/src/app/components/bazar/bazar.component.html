@@ -6,7 +6,7 @@
     mat-raised-button
     [class]="isInstalled(idx) ? 'installed app' : 'app'"
     [matTooltip]="isInstalled(idx) ? '' : idx.description"
-    (click)="install(idx)">
+    (click)="viewDetails(idx)">
     <span class="title">{{idx.name}}</span>
     <span class="version">{{idx.version}}</span>
   </button>

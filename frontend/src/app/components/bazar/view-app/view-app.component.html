@@ -1,0 +1,18 @@
+
+<div mat-dialog-content>
+  <div *ngIf="readme" [innerHTML]="readme | marked"></div>
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="install()">Install</button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="close()">Close</button>
+
+</div>
