@@ -7,6 +7,7 @@
 
   <button
     mat-raised-button
+    [disabled]="!data.canInstall"
     color="primary"
     (click)="install()">Install</button>
 

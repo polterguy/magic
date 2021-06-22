@@ -23,6 +23,11 @@ export class BazarDialogResult {
    * Manifest for app we should install.
    */
   public manifest: AppManifest;
+
+  /**
+   * If false then app cannot be installed.
+   */
+  public canInstall: boolean;
 }
 
 /**
@@ -58,7 +63,6 @@ export class ViewAppComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
-
 
     // Retrieving component's README file.
     this.configService.getReadMeFile(this.data.manifest).subscribe((result: Response) => {

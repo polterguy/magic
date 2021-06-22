@@ -33,6 +33,11 @@ mat-card {
     opacity: .5;
     cursor: default;
   }
+  button.app.incompatible {
+    background-color: rgb(245,205,205);
+    opacity: .5;
+    cursor: default;
+  }
   button.app:hover, button.app:active {
     box-shadow: 3px 3px 5px rgb(0,0,0,.5);
     transform: rotate(7deg);
