@@ -604,6 +604,17 @@ semaphore:crudifier
                      sockets.signal:x:@.signal
                         args
 
+               /*
+                * Updating the endpoint's description to make sure consumers understands
+                * it will publish a SignalR signal.
+                */
+               set-value:x:@apply/*/.description
+                  strings.concat
+                     get-value:x:@apply/*/.description
+                     .:", and publishes the ["
+                     get-value:x:@.signal
+                     .:"] web socket SignalR message to users authorised to invoke the endpoint, passing in the arguments specified"
+
    /*
     * Then creating our folder if necessary.
     *
