@@ -106,5 +106,10 @@ export class Crudify {
    * Input reactors such as validators, transformers, injectables, etc.
    */
   validators?: string;
+
+  /**
+   * Whether or not to turn on the CQRS pattern when crudifying table.
+   */
+  cqrs: boolean;
 }
   

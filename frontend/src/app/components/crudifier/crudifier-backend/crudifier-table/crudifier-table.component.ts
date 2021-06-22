@@ -55,6 +55,11 @@ export class CrudifierTableComponent {
   public advanced = false;
 
   /**
+   * Whether or not to turn on the CQRS pattern when crudifying table.
+   */
+  public cqrs = false;
+
+  /**
    * Model for component wrapping table.
    */
   @Input() public table: TableEx;

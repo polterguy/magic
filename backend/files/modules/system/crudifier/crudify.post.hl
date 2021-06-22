@@ -1,6 +1,6 @@
 
 /*
- * Generate an HTTP REST endpoint according to the given [.arguments].
+ * Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments.
  */
 .arguments
    databaseType:string
@@ -17,10 +17,10 @@
    validators:string
    cache:int
    publicCache:bool
+   cqrs:bool
    args:*
    conditions:*
-.description:Creates an HTTP REST CRUD endpoint, wrapping your existing database, according to the arguments given
-
+.description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
 
 /*
  * Sanity checks invocation.
@@ -46,24 +46,20 @@ validators.enum:x:@.arguments/*/template
    .:/modules/system/crudifier/templates/crud.template.put.hl
    .:/modules/system/crudifier/templates/crud.template.delete.hl
 
-
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
-
 
 /*
  * Synchronising access to endpoint to avoid race condition.
  */
 semaphore:crudifier
 
-
    /*
     * Ensures user is authorized to access endpoint.
     */
    auth.ticket.verify:root
-
 
    /*
     * Sanity checking module name, to prevent overwriting "/system/".
@@ -77,7 +73,6 @@ semaphore:crudifier
          throw:"You can't use the name 'system' as your module's name"
             public:true
             status:401
-
 
    /*
     * Sanity checking module name, to make sure it has a name at all.
@@ -95,7 +90,6 @@ semaphore:crudifier
             public:true
             status:401
 
-
    /*
     * Creating a log entry explaining roughly what we're about to do.
     */
@@ -110,7 +104,6 @@ semaphore:crudifier
       get-value:x:@.arguments/*/verb
       .:"'"
 
-
    /*
     * Making sure we create a valid filename.
     */
@@ -121,7 +114,6 @@ semaphore:crudifier
          .:/
    set-value:x:@.filename
       strings.to-lower:x:@.filename
-
 
    /*
     * Creating our endpoint according to arguments given, by using [apply]
@@ -136,7 +128,6 @@ semaphore:crudifier
       table:x:@.arguments/*/table
       return-id:x:@.arguments/*/returnId
       args
-
 
    /*
     * Then ensuring we create a log entry during invocation of endpoint,
@@ -157,7 +148,6 @@ semaphore:crudifier
                   .:x:@.arguments/*/log
                   .:" - Arguments: \r\n"
                   lambda2hyper:x:@.arguments/*
-
 
    /*
     * Making sure we append validators, if given by client.
@@ -181,7 +171,6 @@ semaphore:crudifier
       .lambda
          insert-after:x:@apply/*/.type
             hyper2lambda:x:@.arguments/*/validators
-
 
    /*
     * Then ensuring we turn on authorization to our endpoint according
@@ -220,7 +209,6 @@ semaphore:crudifier
                .
                   auth.ticket.verify:x:@.arguments/*/auth
 
-
    /*
     * Then making sure we do our specialized transformation,
     * according to verb requested by caller.
@@ -232,7 +220,6 @@ semaphore:crudifier
        * HTTP DELETE special case
        */
       case:delete
-
 
          /*
           * Sanity checking invocation.
@@ -250,7 +237,6 @@ semaphore:crudifier
                throw:There are no actual primary keys declared for your DELETE endpoint.
                   public:true
                   status:401
-
 
          /*
           * Applying DELETE arguments.
@@ -272,12 +258,10 @@ semaphore:crudifier
                .
                   validators.mandatory
 
-
       /*
        * HTTP GET special case
        */
       case:get
-
 
          /*
           * Sanity checking invocation.
@@ -288,14 +272,12 @@ semaphore:crudifier
                .:int:0
             .lambda
 
-
                /*
                 * Cannot have a GET endpoint returning no actual columns.
                 */
                throw:There are no actual columns declared for your GET endpoint.
                   public:true
                   status:401
-
 
          /*
           * Checking if we have an [.arguments]/[args]/[cache] value.
@@ -312,7 +294,6 @@ semaphore:crudifier
                      get-value:x:@.arguments/*/cache
                      .:0
             .lambda
-
 
                /*
                 * Caller wants results of endpoint to be cached, figuring out
@@ -350,7 +331,6 @@ semaphore:crudifier
                 */
                add:x:@apply/*/.arguments
                   get-nodes:x:@.arguments/*/conditions/*/*
-               
 
          else
 
@@ -418,6 +398,7 @@ semaphore:crudifier
                            .:.eq
                      add:x:@apply/*/.arguments
                         get-nodes:x:@.buffer/*
+
                else
 
                   /*
@@ -436,7 +417,6 @@ semaphore:crudifier
                      add:x:@apply/*/.arguments
                         get-nodes:x:@.buffer/*
 
-
          /*
           * Making sure we explicitly declare which [columns] that our
           * endpoint should return, according to caller's specifications.
@@ -446,12 +426,10 @@ semaphore:crudifier
          add:x:@apply/**/columns
             get-nodes:x:@.arguments/*/args/*/columns/*/*
 
-
       /*
        * HTTP POST special cases
        */
       case:post
-
 
          /*
           * Sanity checking invocation.
@@ -462,14 +440,12 @@ semaphore:crudifier
                .:int:0
             .lambda
 
-
                /*
                 * Cannot have a POST endpoint without any actual data to POST.
                 */
                throw:There are no actual columns declared for your POST endpoint.
                   public:true
                   status:401
-
 
          /*
           * Applying POST arguments, which are basically the [values] that
@@ -492,12 +468,10 @@ semaphore:crudifier
                   .
                      result:success
 
-
       /*
        * HTTP PUT special cases
        */
       case:put
-
 
          /*
           * Sanity checking invocation.
@@ -512,7 +486,6 @@ semaphore:crudifier
                   .:int:0
             .lambda
 
-
                /*
                 * Cannot have a PUT endpoint without any [values] to modify and
                 * [where] statements to declare which records to modify.
@@ -520,7 +493,6 @@ semaphore:crudifier
                throw:There are no actual columns, and/or primary keys declared for your PUT endpoint.
                   public:true
                   status:401
-
 
          /*
           * Applying PUT arguments.
@@ -591,6 +563,46 @@ semaphore:crudifier
                add:x:./*/data.update/*/values
                   get-nodes
 
+   /*
+    * Checking if caller wants to apply the CQRS pattern to his endpoint.
+    */
+   if
+      and
+         exists:x:@.arguments/*/cqrs
+         get-value:x:@.arguments/*/cqrs
+      .lambda
+
+         /*
+          * Notice, we only apply the CQRS pattern to post, put and delete endpoints.
+          */
+         switch:x:@.arguments/*/verb
+
+            case:put
+            case:post
+            case:delete
+
+               /*
+                * Applying [sockets.signal] just before returning from endpoint.
+                */
+               .signal
+               set-value:x:@.signal
+                  strings.concat
+                     get-value:x:@.arguments/*/moduleName
+                     .:.
+                     get-value:x:@.arguments/*/moduleUrl
+                     .:.
+                     get-value:x:@.arguments/*/verb
+               unwrap:x:+/*/*/sockets.signal
+               insert-before:x:@apply/*/data.connect/*/unwrap
+                  .
+                     add:x:./*/sockets.signal/*/args
+                        get-nodes:x:@.arguments/*
+                     add:x:./*/sockets.signal
+                        get-nodes:x:@auth.ticket.verify
+                     set-name:x:./*/sockets.signal/*/auth.ticket.verify
+                        .:roles
+                     sockets.signal:x:@.signal
+                        args
 
    /*
     * Then creating our folder if necessary.
@@ -627,7 +639,6 @@ semaphore:crudifier
          .:{table}
          get-value:x:@.arguments/*/table
 
-
    /*
     * Transforming lambda to Hyperlambda, and saving it to the correct file, making sure
     * we give the filename the correct HTTP verb, extension, etc.
@@ -645,14 +656,12 @@ semaphore:crudifier
          get-value:x:@.arguments/*/verb
          .:.hl
 
-
    /*
     * Substituting illegal characters in our filename, such as spaces, etc.
     */
    strings.replace:x:@.path
       .:' '
       .:_
-
 
    /*
     * Throwing an exception if the file exists from before, unless [.argument][overwrite] is true.
@@ -670,7 +679,6 @@ semaphore:crudifier
             status:int:401
             public:bool:true
 
-
    /*
     * Saving file, now transformed according to arguments, database, table, columns etc -
     * And with the correct filename.
@@ -678,14 +686,12 @@ semaphore:crudifier
    io.file.save:x:@strings.replace
       get-value:x:@lambda2hyper
 
-
    /*
     * Calculating how many lines of code we created.
     *
     * This is returned back to the caller after crudification is done.
     */
    get-count:x:@apply/**
-
 
    /*
     * Checking if this is an HTTP GET verb, at which point we create TWO endpoints,
@@ -699,7 +705,6 @@ semaphore:crudifier
          get-value:x:@.arguments/*/verb
          .:get
       .lambda
-
 
          /*
           * First removing [columns], adding [count(*) as count, and then transforming lambda
@@ -736,7 +741,7 @@ semaphore:crudifier
                   get-nodes:x:@.arguments/*
          insert-after:x:@apply/**/table/.
             .
-               return-nodes:x:-/*/*
+               return-nodes:x:@data.read/*/*
          lambda2hyper:x:@apply/*
          unwrap:x:+
          .path:x:@.folder
@@ -751,14 +756,12 @@ semaphore:crudifier
                get-value:x:@.arguments/*/verb
                .:.hl
 
-
          /*
           * Figuring out filename for HTTP endpoint.
           */
          strings.replace:x:@.path
             .:' '
             .:_
-
 
          /*
           * Making sure file does not exist from before, unless [.argument][overwrite] is true.
@@ -776,14 +779,12 @@ semaphore:crudifier
                   status:int:401
                   public:bool:true
 
-
          /*
           * Saving file, now applied according to template declaration,
           * and with the correct filename.
           */
          io.file.save:x:@strings.replace
             get-value:x:@lambda2hyper
-
 
          /*
           * Adding count endpoint LOC count to our above LOC value.
@@ -793,12 +794,10 @@ semaphore:crudifier
                get-value:x:@get-count
                get-count:x:@apply/**
 
-
    /*
     * Making sure we evict the cache entry for endpoints.
     */
    cache.set:endpoints
-
 
    /*
     * Returning success to caller.
