@@ -2,7 +2,7 @@
 table.roles {
   width: 100%;
   tr {
-    td:nth-child(1) {
+    td.nowrap {
       white-space: nowrap;
     }
     td:nth-child(2) {
