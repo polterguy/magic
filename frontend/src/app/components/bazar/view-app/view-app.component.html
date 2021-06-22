@@ -3,7 +3,7 @@
   <div *ngIf="readme" [innerHTML]="readme | marked"></div>
 </div>
 
-<div mat-dialog-actions class="mat-dialog-actions">
+<div *ngIf="readme" mat-dialog-actions class="mat-dialog-actions">
 
   <button
     mat-raised-button
