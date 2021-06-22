@@ -84,4 +84,9 @@ export class TableEx {
    * Additional validators, injectables and transformers for endpoint.
    */
   validators: string;
+
+  /**
+   * Whether or not to turn on the CQRS pattern for table or not.
+   */
+  cqrs: boolean;
 }

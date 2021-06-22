@@ -222,6 +222,8 @@
 
     <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
 
+    <mat-checkbox [(ngModel)]="table.cqrs">CQRS</mat-checkbox>
+
     <button
       [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded())"
       mat-raised-button
