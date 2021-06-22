@@ -15,17 +15,19 @@ mat-card {
     transition-duration: .2s;
     .version {
       position: absolute;
-      bottom: -.25rem;
+      bottom: 0;
       right: .25rem;
+      margin-bottom: -.5rem;
       color:rgb(128,128,128);
-      font-size: .7rem;
+      font-size: .5rem;
     }
     .title {
       position: absolute;
-      top: 0;
-      left: .5rem;
-      color:rgb(64,64,64);
-      font-size: .9rem;
+      top: .125rem;
+      right: .25rem;
+      margin-top: -.5rem;
+      color:rgb(150,150,150);
+      font-size: .8rem;
     }
   }
   button.app.installed {
@@ -68,6 +70,14 @@ mat-card {
     transition: none !important;
     transform: none;
     box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  }
+  button.app {
+    mat-icon {
+      font-size: 45px;
+      margin-left: -18px;
+      margin-top: -10px;
+      opacity: .5;
+    }
   }
   .clearfix {
     clear: both;
