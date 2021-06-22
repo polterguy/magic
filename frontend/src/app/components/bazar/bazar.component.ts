@@ -132,19 +132,26 @@ export class BazarComponent implements OnInit {
       // Verifying dialog returned a result.
       if (result) {
 
-        // Invoking backend to install module.
-        this.configService.installBazarModule(module).subscribe(() => {
+        this.feedbackService.confirm(
+          'Confirm installation',
+          `This will install '${module.name}' into your backend. Are you sure you wish to proceed? Please make sure you trust the publisher of this module before clicking yes.`,
+          () => {
 
-          this.fileService.install('/modules/' + module.module_name + '/').subscribe(() => {
-          
-            // Providing feedback to user.
-            this.feedbackService.showInfoShort('Module was successfully installed');
+            // Invoking backend to install module.
+            this.configService.installBazarModule(module).subscribe(() => {
 
-            // Removing module from list of modules.
-            this.folders.push(module.module_name);
-          });
+              this.fileService.install('/modules/' + module.module_name + '/').subscribe(() => {
+              
+                // Providing feedback to user.
+                this.feedbackService.showInfoShort('Module was successfully installed');
 
-        }, (error: any) => this.feedbackService.showError(error));
+                // Removing module from list of modules.
+                this.folders.push(module.module_name);
+
+              }, (error: any) => this.feedbackService.showError(error));
+
+            }, (error: any) => this.feedbackService.showError(error));
+        });
       }
     });
   }
