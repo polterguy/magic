@@ -12,6 +12,7 @@ import { FileService } from '../files/services/file.service';
 import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { DefaultDatabaseType } from '../config/models/default-database-type.model';
 import { BazarDialogResult, ViewAppComponent } from './view-app/view-app.component';
 
 /**
@@ -34,6 +35,11 @@ export class BazarComponent implements OnInit {
   public apps: AppManifest[] = [];
 
   /**
+   * Default database backend is using.
+   */
+  public defaultDatabase: string;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param configService Needed to retrieve Bazar manifests
@@ -49,22 +55,32 @@ export class BazarComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Retrieving already installed modules.
-    this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
+    // Retrieving default database from backend.
+    this.configService.defaultDatabaseType().subscribe((result: DefaultDatabaseType) => {
 
       // Assigning model.
-      this.folders = folders.map(x => {
-        const res = x.substr(9);
-        return res.substr(0, res.length - 1);
-      });
-    });
+      this.defaultDatabase = result.default;
 
-    // Retrieving Bazar modules from backend.
-    this.configService.getBazarManifest().subscribe((result: AppManifest[]) => {
+      // Retrieving already installed modules.
+      this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
 
-      // Assigning result to model.
-      this.apps = result;
-    });
+        // Assigning model.
+        this.folders = folders.map(x => {
+          const res = x.substr(9);
+          return res.substr(0, res.length - 1);
+        });
+
+        // Retrieving Bazar modules from backend.
+        this.configService.getBazarManifest().subscribe((result: AppManifest[]) => {
+
+          // Assigning result to model.
+          this.apps = result;
+
+        }, (error: any) => this.feedbackService.showError(error));
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -77,16 +93,36 @@ export class BazarComponent implements OnInit {
   }
 
   /**
+   * Returns true if app can be installed into backend.
+   * 
+   * @param module App to check
+   */
+  public canInstall(module: AppManifest) {
+
+    // Verifying app supports the default database adapter used by backend.
+    return module.database_support.indexOf(this.defaultDatabase) !== -1;
+  }
+
+  /**
    * Installs the specified module into your modules folder.
    * 
    * @param module Module to install
    */
   public viewDetails(module: AppManifest) {
 
+    // Checking if module is already installed, at which point we return early.
+    if (this.isInstalled(module)) {
+
+      // Oops, module already installed.
+      this.feedbackService.showInfoShort('Module is already installed');
+      return;
+    }
+
     // Opening modal dialog to display details about app.
     const dialog = this.dialog.open(ViewAppComponent, {
       data: {
-        manifest: module
+        manifest: module,
+        canInstall: this.canInstall(module),
       }
     });
 
