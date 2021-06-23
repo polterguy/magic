@@ -62,7 +62,7 @@ export class AddToRoleDialogComponent implements OnInit {
       limit: -1,
     }).subscribe((roles: Role[]) => {
 
-      // Assigning result to model.
+      // Assigning result to model, making sure we remove roles user already belongs to.
       this.roles = roles.filter(x => this.data.roles?.indexOf(x.name) === -1);
       if (this.roles.length > 0) {
         this.role = this.roles[0];
