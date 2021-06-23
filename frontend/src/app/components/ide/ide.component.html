@@ -113,6 +113,13 @@
             </button>
 
             <button
+              [disabled]="!file.path.endsWith('.md')"
+              mat-button
+              (click)="previewFile(file)">
+              Preview
+            </button>
+
+            <button
               mat-button
               (click)="deleteFile(file)">
               Delete
