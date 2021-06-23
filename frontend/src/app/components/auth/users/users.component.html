@@ -64,17 +64,17 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
-            matTooltip="Change password"
-            (click)="editUser(el)">
-            <mat-icon>edit</mat-icon>
+            matTooltip="Add to role"
+            (click)="addToRole(el)">
+            <mat-icon>add_box</mat-icon>
           </button>
 
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
-            matTooltip="Add to role"
-            (click)="addToRole(el)">
-            <mat-icon>add_box</mat-icon>
+            matTooltip="Change password"
+            (click)="editUser(el)">
+            <mat-icon>edit</mat-icon>
           </button>
 
           <button
