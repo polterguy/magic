@@ -287,6 +287,10 @@ export class CrudifierBackendComponent implements OnInit {
       idxTable.authPut = 'root, admin';
       idxTable.authDelete = 'root, admin';
 
+      // Defaulting CQRS fields to sane values.
+      idxTable.cqrsAuthorisation = 'inherited';
+      idxTable.cqrsAuthorisationValues = null;
+
       // Creating defaults for fields in table.
       for (const idxColumn of columns) {
 

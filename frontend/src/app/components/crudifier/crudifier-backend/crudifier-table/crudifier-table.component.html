@@ -181,6 +181,43 @@
 
   </div>
 
+  <div class="splitter">
+
+    <div class="section-3">
+
+      <h3>SignalR</h3>
+
+      <mat-checkbox
+        class="line-checkbox"
+        [(ngModel)]="table.cqrs">Publish</mat-checkbox>
+
+      <mat-form-field *ngIf="table.cqrs" class="form-field" appearance="outline">
+
+        <mat-label>Authorisation</mat-label>
+        <mat-select
+          [(ngModel)]="table.cqrsAuthorisation">
+          <mat-option
+            *ngFor="let idx of cqrsAuthorisationTypes"
+            [value]="idx">{{idx}}</mat-option>
+        </mat-select>
+
+      </mat-form-field>
+
+      <mat-form-field *ngIf="table.cqrs && (table.cqrsAuthorisation === 'roles' || table.cqrsAuthorisation === 'groups' || table.cqrsAuthorisation === 'users')" class="form-field" appearance="outline">
+
+        <mat-label>Authorisation values</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="table.cqrsAuthorisationValues">
+
+      </mat-form-field>
+        
+    </div>
+
+  </div>
+
   <div *ngIf="advanced">
 
     <h3>Miscellaneous</h3>
@@ -219,10 +256,6 @@
   </div>
 
   <div class="button-strip">
-
-    <mat-checkbox
-      matTooltip="Publish web socket messages during PUT, DELETE and POST invocations"
-      [(ngModel)]="table.cqrs">Publish</mat-checkbox>
 
     <mat-checkbox
       [(ngModel)]="advanced">Advanced</mat-checkbox>

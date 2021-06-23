@@ -55,9 +55,9 @@ export class CrudifierTableComponent {
   public advanced = false;
 
   /**
-   * Whether or not to turn on the CQRS pattern when crudifying table.
+   * Authorisation requirements for SignalR messages published during invocation of endpoint.
    */
-  public cqrs = false;
+  public cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
 
   /**
    * Model for component wrapping table.
