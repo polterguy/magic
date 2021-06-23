@@ -64,6 +64,9 @@ export class AddToRoleDialogComponent implements OnInit {
 
       // Assigning result to model.
       this.roles = roles.filter(x => this.data.roles?.indexOf(x.name) === -1);
+      if (this.roles.length > 0) {
+        this.role = this.roles[0];
+      }
 
     }, (error: any) => this.feedbackService.showError(error));
   }
