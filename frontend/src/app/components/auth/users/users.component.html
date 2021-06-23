@@ -72,6 +72,14 @@
           <button
             mat-icon-button
             [disabled]="el.username === 'root'"
+            matTooltip="Add to role"
+            (click)="addToRole(el)">
+            <mat-icon>add_box</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [disabled]="el.username === 'root'"
             matTooltip="Impersonate user"
             (click)="generateLoginLink(el)">
             <mat-icon>account_circle</mat-icon>

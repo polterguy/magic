@@ -123,8 +123,9 @@ import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-t
 import { PublishComponent } from './components/diagnostics/diagnostics-sockets/publish/publish.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
-import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
 import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
+import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
+import { AddToRoleDialogComponent } from './components/auth/users/add-to-role-dialog/add-to-role-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
@@ -183,6 +184,7 @@ import { ViewAppComponent } from './components/bazar/view-app/view-app.component
     ScheduleTaskDialogComponent,
     NewTaskDialogComponent,
     SubscribeComponent,
+    AddToRoleDialogComponent,
     FileEditorComponent,
     NewFileFolderDialogComponent,
     NewFileObjectDialogComponent,
