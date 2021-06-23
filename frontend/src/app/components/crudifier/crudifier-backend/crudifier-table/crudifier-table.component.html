@@ -220,9 +220,12 @@
 
   <div class="button-strip">
 
-    <mat-checkbox [(ngModel)]="advanced">Advanced</mat-checkbox>
+    <mat-checkbox
+      matTooltip="Publish web socket messages during PUT, DELETE and POST invocations"
+      [(ngModel)]="table.cqrs">Publish</mat-checkbox>
 
-    <mat-checkbox [(ngModel)]="table.cqrs">CQRS</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="advanced">Advanced</mat-checkbox>
 
     <button
       [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded())"

@@ -36,15 +36,6 @@
     <button
       *ngIf="authService.hasAccess('magic/modules/system/file-system')"
       mat-raised-button
-      routerLink="/file-system"
-      matTooltip="Manage your files">
-      <mat-icon matSuffix color="primary">file_copy</mat-icon>
-      <span>Files</span>
-    </button>
-
-    <button
-      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
-      mat-raised-button
       routerLink="/ide"
       matTooltip="Hyper IDE">
       <mat-icon matSuffix color="primary">extension</mat-icon>
@@ -52,39 +43,12 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/misc')"
+      *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
       mat-raised-button
-      routerLink="/sockets"
-      matTooltip="Administrate socket connections">
-      <mat-icon matSuffix color="primary">compare_arrows</mat-icon>
-      <span>Sockets</span>
-    </button>
-
-    <button
-      *ngIf="authService.isRoot"
-      mat-raised-button
-      routerLink="/terminal"
-      matTooltip="A web based terminal">
-      <mat-icon matSuffix color="primary">input</mat-icon>
-      <span>Terminal</span>
-    </button>
-
-    <button
-      *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
-      mat-raised-button
-      routerLink="/evaluator"
-      matTooltip="Execute Hyperlambda">
-      <mat-icon matSuffix color="primary">offline_bolt</mat-icon>
-      <span>Eval</span>
-    </button>
-
-    <button
-      *ngIf="authService.hasAccess('magic/modules/system/config')"
-      mat-raised-button
-      routerLink="/config"
-      matTooltip="Edit configuration">
-      <mat-icon matSuffix color="primary">settings</mat-icon>
-      <span>Config</span>
+      routerLink="/auth"
+      matTooltip="Administrate users and roles">
+      <mat-icon matSuffix color="primary">people</mat-icon>
+      <span>Auth</span>
     </button>
 
     <button
@@ -106,12 +70,21 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
+      *ngIf="authService.isRoot"
       mat-raised-button
-      routerLink="/auth"
-      matTooltip="Administrate users and roles">
-      <mat-icon matSuffix color="primary">people</mat-icon>
-      <span>Auth</span>
+      routerLink="/terminal"
+      matTooltip="A web based terminal">
+      <mat-icon matSuffix color="primary">input</mat-icon>
+      <span>Terminal</span>
+    </button>
+
+    <button
+      *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
+      mat-raised-button
+      routerLink="/evaluator"
+      matTooltip="Execute Hyperlambda">
+      <mat-icon matSuffix color="primary">offline_bolt</mat-icon>
+      <span>Eval</span>
     </button>
 
     <button
@@ -129,6 +102,33 @@
       matTooltip="Health and diagnostics">
       <mat-icon matSuffix color="primary">local_hospital</mat-icon>
       <span>Health</span>
+    </button>
+
+    <button
+      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+      mat-raised-button
+      routerLink="/file-system"
+      matTooltip="Manage your files">
+      <mat-icon matSuffix color="primary">file_copy</mat-icon>
+      <span>Files</span>
+    </button>
+
+    <button
+      *ngIf="authService.hasAccess('magic/modules/system/misc')"
+      mat-raised-button
+      routerLink="/sockets"
+      matTooltip="Administrate socket connections">
+      <mat-icon matSuffix color="primary">compare_arrows</mat-icon>
+      <span>Sockets</span>
+    </button>
+
+    <button
+      *ngIf="authService.hasAccess('magic/modules/system/config')"
+      mat-raised-button
+      routerLink="/config"
+      matTooltip="Edit configuration">
+      <mat-icon matSuffix color="primary">settings</mat-icon>
+      <span>Config</span>
     </button>
 
     <button
