@@ -18,6 +18,8 @@
    cache:int
    publicCache:bool
    cqrs:bool
+   cqrsAuthorisation:string
+   cqrsAuthorisationValues:string
    args:*
    conditions:*
 .description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
@@ -45,6 +47,12 @@ validators.enum:x:@.arguments/*/template
    .:/modules/system/crudifier/templates/crud.template.get.hl
    .:/modules/system/crudifier/templates/crud.template.put.hl
    .:/modules/system/crudifier/templates/crud.template.delete.hl
+validators.enum:x:@.arguments/*/cqrsAuthorisation
+   .:inherited
+   .:roles
+   .:groups
+   .:users
+   .:none
 
 /*
  * Ensures user is authorized to access endpoint.
@@ -583,6 +591,8 @@ semaphore:crudifier
 
                /*
                 * Applying [sockets.signal] just before returning from endpoint.
+                *
+                * First creating signal name.
                 */
                .signal
                set-value:x:@.signal
@@ -592,17 +602,64 @@ semaphore:crudifier
                      get-value:x:@.arguments/*/moduleUrl
                      .:.
                      get-value:x:@.arguments/*/verb
+
+               /*
+                * Adding [sockets.signal] invocation to lambda.
+                */
                unwrap:x:+/*/*/sockets.signal
                insert-before:x:@apply/*/data.connect/*/unwrap
                   .
                      add:x:./*/sockets.signal/*/args
                         get-nodes:x:@.arguments/*
-                     add:x:./*/sockets.signal
-                        get-nodes:x:@auth.ticket.verify
-                     set-name:x:./*/sockets.signal/*/auth.ticket.verify
-                        .:roles
                      sockets.signal:x:@.signal
                         args
+
+               /*
+                * Applying authorisation requirements for signal invocation.
+                */
+               switch:x:@.arguments/*/cqrsAuthorisation
+
+                  case:inherited
+
+                     /*
+                      * SignalR socket invocation should use same authorisation as endpoint.
+                      */
+                     insert-before:x:@apply/*/data.connect/*/sockets.signal
+                        .
+                           add:x:./*/sockets.signal
+                              get-nodes:x:@auth.ticket.verify
+                           set-name:x:./*/sockets.signal/*/auth.ticket.verify
+                              .:roles
+
+                  case:roles
+
+                     /*
+                      * SignalR socket invocation should use explicit roles when published.
+                      */
+                     unwrap:x:+/*/*/roles
+                     add:x:@apply/*/data.connect/*/sockets.signal
+                        .
+                           roles:x:@.arguments/*/cqrsAuthorisationValues
+
+                  case:groups
+
+                     /*
+                      * SignalR socket invocation should use explicit roles when published.
+                      */
+                     unwrap:x:+/*/*/groups
+                     add:x:@apply/*/data.connect/*/sockets.signal
+                        .
+                           groups:x:@.arguments/*/cqrsAuthorisationValues
+
+                  case:users
+
+                     /*
+                      * SignalR socket invocation should use explicit roles when published.
+                      */
+                     unwrap:x:+/*/*/users
+                     add:x:@apply/*/data.connect/*/sockets.signal
+                        .
+                           users:x:@.arguments/*/cqrsAuthorisationValues
 
                /*
                 * Updating the endpoint's description to make sure consumers understands

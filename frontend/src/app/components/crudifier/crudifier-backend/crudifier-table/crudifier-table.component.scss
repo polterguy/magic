@@ -56,6 +56,14 @@ h3 {
     flex-direction: column;
     flex: .65;
   }
+  .section-3 {
+    flex-direction: column;
+    flex: 1;
+    .line-checkbox {
+      display: block;
+      margin-bottom: 1rem;
+    }
+  }
 }
 
 @media screen and (max-width: 1350px) {

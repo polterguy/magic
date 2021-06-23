@@ -89,4 +89,23 @@ export class TableEx {
    * Whether or not to turn on the CQRS pattern for table or not.
    */
   cqrs: boolean;
-}
+
+  /**
+   * If CQRS is turned on, this declares what type of authorisation requirements
+   * the messages will be published with. Legal values are.
+   * 
+   * - none
+   * - inherited
+   * - roles
+   * 
+   * If type is 'roles' the cqrsAuthorisationValues should be a comma separated
+   * list of which roles messages are published to.
+   */
+   cqrsAuthorisation?: string;
+
+   /**
+    * Only relevant if above field is 'roles', at which point this should be
+    * the comma separated list of which roles messages are published to.
+    */
+   cqrsAuthorisationValues?: string;
+ }
