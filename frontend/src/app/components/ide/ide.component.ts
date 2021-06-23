@@ -316,12 +316,11 @@ export class IdeComponent implements OnInit {
 
       // Verifying we have an editor type for file extension.
       const extension = file.name.substr(file.name.lastIndexOf('.') + 1).toLowerCase();
-      const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+      let options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
       if (options.length === 0) {
 
-        // Oops, no editor for file type.
-        this.feedbackService.showInfo('No registered editor for file type');
-        return;
+        // Oops, no editor for file type, defaulting to Markdown bugger.
+        options = this.extensions.filter(x => x.options.mode === 'markdown');
       }
 
       // Retrieving file's content from backend.
@@ -624,7 +623,12 @@ export class IdeComponent implements OnInit {
 
     // We're supposed to create a file. Notice, we don't actually create the file, only open it in edit mode.
     const extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
-    const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+    let options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
+    if (options.length === 0) {
+
+      // Oops, no editor for file type, defaulting to Markdown bugger.
+      options = this.extensions.filter(x => x.options.mode === 'markdown');
+    }
 
     // Turning OFF autofocus.
     options[0].options.autofocus = false;
