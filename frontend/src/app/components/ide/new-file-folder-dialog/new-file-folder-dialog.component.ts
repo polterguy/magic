@@ -39,7 +39,7 @@ export class FileObject {
    * All existing files in system.
    */
    files: string[];
-  }
+}
 
 /**
  * Component for creating a new file system object, either a folder or a file.

@@ -131,6 +131,7 @@ import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileFolderDialogComponent } from './components/ide/new-file-folder-dialog/new-file-folder-dialog.component';
+import { PreviewFileDialogComponent } from './components/ide/preview-file-dialog/preview-file-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { RenameFileObjectDialogComponent } from './components/files/rename-file-object-dialog/rename-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
@@ -187,6 +188,7 @@ import { ViewAppComponent } from './components/bazar/view-app/view-app.component
     AddToRoleDialogComponent,
     FileEditorComponent,
     NewFileFolderDialogComponent,
+    PreviewFileDialogComponent,
     NewFileObjectDialogComponent,
     RenameFileObjectDialogComponent,
     ServerPublicKeyComponent,
