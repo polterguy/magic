@@ -466,21 +466,11 @@ export class IdeComponent implements OnInit {
     } else {
 
       // File has been edited, and we need to inform user allowing him to save it.
-      this.feedbackService.confirm('File not saved', 'File has unsaved changes, do you want me to save it before closing it?', () => {
-
-        // User wants to save the file before he close it.
-        this.fileService.saveFile(file.path, file.content).subscribe(() => {
-
-          // Providing feedback to user.
-          this.feedbackService.showInfoShort('File successfully saved');
-          this.closeFileImpl(file);
-    
-        }, (error: any) => this.feedbackService.showError(error));
-
-      }, () => {
+      this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
 
         // User confirmed he wants to close file, even though the editor is dirty (has changes).
         this.closeFileImpl(file);
+
       });
     }
   }
