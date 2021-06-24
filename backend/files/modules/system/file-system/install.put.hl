@@ -14,11 +14,18 @@ auth.ticket.verify:root
 
 
 /*
+ * Splitting up folder argument to ensure we're left only with module name.
+ */
+strings.split:x:@.arguments/*/folder
+   .:/
+
+
+/*
  * Installing module.
  */
 unwrap:x:+/*
 signal:magic.modules.install-module
-   module:x:@.arguments/*/folder
+   module:x:@strings.split/1
 
 
 /*
