@@ -78,7 +78,7 @@ export class NewFileFolderDialogComponent {
       }
     }
 
-    // If we're creating a folder, we've now sanity checked its name.
+    // Making sure no other file/folder already exists with the same name.
     if (this.data.isFolder) {
       return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
     } else {
