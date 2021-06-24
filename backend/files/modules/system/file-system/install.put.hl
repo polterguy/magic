@@ -23,67 +23,11 @@ log.info
 
 
 /*
- * Loops through all files recursively from within the module's "magic.startup" folder.
+ * Installing module.
  */
-io.folder.list:x:@.arguments/*/folder
-
-
-/*
- * Looping through results from above, to check if we have a
- * "magic.startup" folder within module.
- */
-for-each:x:@io.folder.list/*
-   strings.split:x:@.dp/#
-      .:/
-   if
-      eq
-         get-value:x:@strings.split/0/-
-         .:magic.startup
-      .lambda
-
-
-         /*
-          * Main "magic.startup" folder of module, making sure we execute
-          * all files within it recursively.
-          */
-         unwrap:x:+/*
-         signal:magic.io.file.list-recursively
-            .:x:@.dp/#
-         for-each:x:@signal/*
-            if
-               strings.ends-with:x:@.dp/#
-                  .:.hl
-               .lambda
-                  io.file.execute:x:@.dp/#
-
-
-         /*
-          * Looping through all sub-folders/modules of module.
-          */
-         io.folder.list:x:@.dp/#
-         for-each:x:@io.folder.list/*
-            strings.split:x:@.dp/#
-               .:/
-            if
-               eq
-                  get-value:x:@strings.split/0/-
-                  .:magic.startup
-               .lambda
-
-
-                  /*
-                   * Sub folder "magic.startup" folder of module, making sure we execute
-                   * all files within it recursively.
-                   */
-                  unwrap:x:+/*
-                  signal:magic.io.file.list-recursively
-                     .:x:@.dp/#
-                  for-each:x:@signal/*
-                     if
-                        strings.ends-with:x:@.dp/#
-                           .:.hl
-                        .lambda
-                           io.file.execute:x:@.dp/#
+unwrap:x:+/*
+signal:magic.modules.install-module
+   module:x:@.arguments/*/folder
 
 
 /*

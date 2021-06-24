@@ -35,7 +35,6 @@ auth.ticket.verify:root
  */
 try
 
-
    /*
     * Checking if JWT secret has been changed, and
     * if is has, we throw an exception, to prevent the
@@ -51,10 +50,9 @@ try
       .lambda
 
          // System has been setup before
-         throw:"Your system has already been setup"
+         throw:Your system has already been setup
             status:401
             public:true
-
 
    /*
     * Saving settings to appsettings.json file.
@@ -69,13 +67,13 @@ try
     */
    json2lambda:x:@.arguments/*/settings
 
-
    /*
     * Testing connection string before we save it, to make sure
     * it is functioning. This part will throw if connection string is
     * not valid.
     */
    try
+
       switch:x:@.arguments/*/databaseType
 
          case:mssql
@@ -93,10 +91,10 @@ try
                mysql.select:show databases
 
    .catch
+
       throw:Could not connect to database, please double check your connection string
          public:true
          status:400
-
 
    /*
     * Connection string is valid and able to connect to a database,
@@ -108,13 +106,11 @@ try
       format:true
    config.save:x:-
 
-
    /*
     * Sleeping for 5 seconds to allow configuration to kick
     * in on thread pools threads.
     */
    sleep:5000
-
 
    /*
     * We now have a new JWT/AUTH secret, and a database connection string
@@ -122,7 +118,6 @@ try
     * MS SQL server. Hence, now we can start the setup process, creating the
     * magic database, and inserting a root user, etc ...
     */
-
 
    /*
     * Retrieving all databases from selected database type,
@@ -138,7 +133,6 @@ try
       .:.databases
    signal:x:-
 
-
    /*
     * Checking if magic was returned from above invocation.
     */
@@ -146,7 +140,6 @@ try
       not
          exists:x:@signal/*/*/=magic
       .lambda
-
 
          /*
           * Database does not exist.
@@ -159,13 +152,11 @@ try
             get-value:x:@.arguments/*/databaseType
             .:/magic.sql
 
-
          /*
           * Loading create database SQL script file, and replacing execution slots according
           * to which database type we're dealing with.
           */
          io.file.load:x:@strings.concat
-
 
          /*
           * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
@@ -181,7 +172,6 @@ try
                set-name:x:./././*/xxx.connect/*/xxx.execute
                   .:mssql.execute-batch
 
-
             /*
              * Anything but MS SQL.
              */
@@ -192,7 +182,6 @@ try
                      get-value:x:@.arguments/*/databaseType
                      .:.execute
 
-
          /*
           * Modifying the connect slot according to database type specified.
           */
@@ -201,13 +190,11 @@ try
                get-value:x:@.arguments/*/databaseType
                .:.connect
 
-
          /*
           * Executing create database SQL script.
           */
          xxx.connect
             xxx.execute:x:@io.file.load
-
 
          /*
           * Inserting root user.
@@ -220,9 +207,7 @@ try
             roles
                .:root
 
-
    else
-
 
       /*
        * Database already exists, so we simply change root user's password
@@ -233,18 +218,67 @@ try
          password:x:@.arguments/*/password
          database-type:x:@.arguments/*/databaseType
 
-
       /*
        * Then we need to make sure we run any database migration scripts.
        */
       io.file.execute:/modules/system/magic.startup/migrate-magic-database.hl
-
 
    /*
     * Logging the fact that system was setup.
     */
    log.info:System was successfully setup
 
+   /*
+    * After setup we need to run setup process for all modules in system,
+    * besides magic and system.
+    */
+   io.folder.list:/modules/
+   for-each:x:@io.folder.list/*
+      strings.split:x:@.dp/#
+         .:/
+      if
+         and
+            not
+               eq
+                  get-value:x:@strings.split/1
+                  .:magic
+            not
+               eq
+                  get-value:x:@strings.split/1
+                  .:system
+         .lambda
+
+            /*
+             * Installing module, ensuring we trap exceptions in the process.
+             */
+            try
+
+               /*
+                * Installing module.
+                */
+               unwrap:x:+/*
+               signal:magic.modules.install-module
+                  module:x:@strings.split/1
+
+               /*
+                * Doing some basic logging.
+                */
+               log.info
+                  .:"Module successfully installed, module name was '"
+                  get-value:x:@strings.split/1
+                  .:"'"
+
+            .catch
+
+               /*
+                * Oops, making sure we log failure.
+                */
+               log.error
+                  .:"Module failed to install, module name was '"
+                  get-value:x:@strings.split/1
+                  .:"'\r\n\r\nMessage from system was '"
+                  get-value:x:@.arguments/*/message
+                  .:"'"
 
    /*
     * Explicitly seeding CSRNG with auth secret, which might have been manually applied
@@ -254,12 +288,10 @@ try
    crypto.seed:x:-
    log.info:CSRNG successfully seeded with your auth secret
 
-
    /*
     * Starting scheduler.
     */
    scheduler.start
-
 
    /*
     * Authenticating user and returning new JWT token to client.
@@ -268,7 +300,6 @@ try
    signal:magic.auth.authenticate
       username:root
       password:x:@.arguments/*/password
-
 
    /*
     * Returns the authentication JWT ticket created above to caller.
