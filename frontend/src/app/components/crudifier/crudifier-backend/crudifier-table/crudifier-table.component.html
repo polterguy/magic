@@ -191,14 +191,16 @@
         matTooltip="Publish SignalR messages when creating, updating, or deleting records"
         [(ngModel)]="table.cqrs">Publish</mat-checkbox>
 
+      <br>
+
       <mat-form-field
-        class="form-field"
+        *ngIf="table.cqrs"
+        class="form-field more-space"
         matTooltip="Type of authorisation for SignalR messages"
         appearance="outline">
 
         <mat-label>Message authorisation type</mat-label>
         <mat-select
-          [disabled]="!table.cqrs"
           [(ngModel)]="table.cqrsAuthorisation">
           <mat-option
             *ngFor="let idx of cqrsAuthorisationTypes"
