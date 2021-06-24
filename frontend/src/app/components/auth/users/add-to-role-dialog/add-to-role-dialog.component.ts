@@ -78,8 +78,11 @@ export class AddToRoleDialogComponent implements OnInit {
     // Invoking backend to associate user with specified role.
     this.userService.addRole(this.data.username, this.role.name).subscribe(() => {
 
-      // Success! User created.
+      // Success! User associated with role.
       this.dialogRef.close(this.data);
+
+      // Updating user object.
+      this.data.roles.push(this.role.name);
 
     }, (error: any) => this.feedbackService.showError(error));
   }
