@@ -30,7 +30,7 @@ if
    .lambda
 
       /*
-       * Module folder, checking if it's got an uninstall file, and if so, executing it.
+       * 'modules' folder, checking if it's got an uninstall file, and if so, executing it.
        */
       strings.concat
          get-value:x:@.arguments/*/folder
