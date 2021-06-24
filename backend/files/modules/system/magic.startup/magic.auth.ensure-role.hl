@@ -8,7 +8,7 @@
  * - [role] - Name of role to create.
  * - [description] - Description of role.
  */
-slots.create:magic.auth.ensure-roles
+slots.create:magic.auth.ensure-role
 
    /*
     * Sanity checking invocation.
