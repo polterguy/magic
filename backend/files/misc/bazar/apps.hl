@@ -20,7 +20,7 @@
       .:mysql
 
 .
-   name:BabelFish
+   name:Babel Fish
    module_name:babelfish
    description:Translation service for your own apps
    readme:"https://raw.githubusercontent.com/polterguy/babelfish/master/README.md"
@@ -34,7 +34,7 @@
       .:mysql
 
 .
-   name:BabelMail
+   name:Babel Mail
    module_name:babelmail
    description:A Magic and Hyperlambda backend micro service mail module
    readme:"https://raw.githubusercontent.com/polterguy/babelmail/master/README.md"
