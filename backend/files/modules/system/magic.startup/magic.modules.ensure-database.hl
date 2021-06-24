@@ -16,10 +16,15 @@
 slots.create:magic.modules.ensure-database
 
    /*
-    * Sanity checks invocation.
+    * Sanity checking invocation.
     */
    validators.mandatory:x:@.arguments/*/module
    validators.mandatory:x:@.arguments/*/database
+
+   /*
+    * Returned to caller to signal whether or not operation was a success or not.
+    */
+   .result:bool:true
 
    /*
     * Ensuring system has been setup.
@@ -34,7 +39,7 @@ slots.create:magic.modules.ensure-database
          /*
           * We cannot create any databases before system has been setup.
           */
-         return
+         return:bool:false
 
    /*
     * Figuring out folder from where to read migration scripts and
@@ -136,7 +141,7 @@ slots.create:magic.modules.ensure-database
          /*
           * Module doesn't have a migration script folder.
           */
-         return
+         return:bool:true
 
    /*
     * Iterating through each SQL script found in folder.
@@ -212,3 +217,8 @@ slots.create:magic.modules.ensure-database
                 */
                set-value:x:@.result
                   .:bool:false
+
+   /*
+    * Returning result of invocation to caller.
+    */
+   return
