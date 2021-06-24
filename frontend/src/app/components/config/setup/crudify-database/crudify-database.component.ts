@@ -77,11 +77,6 @@ export class CrudifyDatabaseComponent implements OnInit {
     // Figuring out which database type the backend is using for its Magic database.
     this.configService.defaultDatabaseType().subscribe((res: DefaultDatabaseType) => {
 
-      // Making sure we apply the database type for every item in JSON file.
-      for (const idx of data) {
-        idx.databaseType = res.default;
-      }
-
       // Setting the database type.
       this.databaseType = res.default;
 

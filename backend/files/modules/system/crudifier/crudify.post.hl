@@ -27,7 +27,6 @@
 /*
  * Sanity checks invocation.
  */
-validators.mandatory:x:@.arguments/*/databaseType
 validators.mandatory:x:@.arguments/*/moduleName
 validators.mandatory:x:@.arguments/*/database
 validators.mandatory:x:@.arguments/*/table
@@ -53,6 +52,23 @@ validators.enum:x:@.arguments/*/cqrsAuthorisation
    .:groups
    .:users
    .:none
+
+/*
+ * Defaulting [databaseType] to default database type from config.
+ */
+if
+   not
+      exists:x:@.arguments/*/databaseType
+   .lambda
+
+      /*
+       * Just inserting value from config into [.arguments] for simplicity.
+       */
+      config.get:"magic:databases:default"
+      unwrap:x:+/*/*
+      add:x:@.arguments
+         .
+            databaseType:x:@config.get
 
 /*
  * Ensures user is authorized to access endpoint.
