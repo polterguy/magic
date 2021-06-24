@@ -308,7 +308,8 @@
              "description":"string"
           }
        ]
-    }
+    },
+    "validators": "validators.regex:x:@.arguments/*/name\r\n   regex:^[A-Za-z0-9\\-_]*$"
   },
   {
     "overwrite": true,
