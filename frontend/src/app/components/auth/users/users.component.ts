@@ -305,20 +305,9 @@ export class UsersComponent implements OnInit {
    public addToRole(user: User) {
 
     // Showing modal dialog.
-    const dialogRef = this.dialog.open(AddToRoleDialogComponent, {
+    this.dialog.open(AddToRoleDialogComponent, {
       width: '550px',
       data: user
-    });
-
-    dialogRef.afterClosed().subscribe((user: User) => {
-
-      // Checking if modal dialog wants to associate user with a new role.
-      if (user) {
-
-        // User was associated with a new role.
-        this.feedbackService.showInfo(`'${user.username}' successfully associated with new role`);
-        this.getUsers();
-      }
     });
   }
 
