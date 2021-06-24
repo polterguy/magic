@@ -188,18 +188,17 @@
       <h3>SignalR</h3>
 
       <mat-checkbox
-        class="line-checkbox"
         matTooltip="Publish SignalR messages when creating, updating, or deleting records"
         [(ngModel)]="table.cqrs">Publish</mat-checkbox>
 
       <mat-form-field
-        *ngIf="table.cqrs"
         class="form-field"
         matTooltip="Type of authorisation for SignalR messages"
         appearance="outline">
 
         <mat-label>Message authorisation type</mat-label>
         <mat-select
+          [disabled]="!table.cqrs"
           [(ngModel)]="table.cqrsAuthorisation">
           <mat-option
             *ngFor="let idx of cqrsAuthorisationTypes"
@@ -209,8 +208,8 @@
       </mat-form-field>
 
       <mat-form-field
-        *ngIf="table.cqrs && (table.cqrsAuthorisation === 'roles' || table.cqrsAuthorisation === 'groups' || table.cqrsAuthorisation === 'users')"
         class="form-field"
+        *ngIf="table.cqrs && (table.cqrsAuthorisation === 'roles' || table.cqrsAuthorisation === 'groups' || table.cqrsAuthorisation === 'users')"
         matTooltip="Comma separated list of authorisation values"
         appearance="outline">
 
