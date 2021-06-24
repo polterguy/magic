@@ -81,11 +81,8 @@ export class NewFileFolderDialogComponent {
     // If we're creating a folder, we've now sanity checked its name.
     if (this.data.isFolder) {
       return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
+    } else {
+      return this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
     }
-
-    // Verifying we have a CodeMirror editor for file extension.
-    const extension = this.data.name.substr(this.data.name.lastIndexOf('.') + 1);
-    const options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
-    return options.length > 0 && this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
   }
 }
