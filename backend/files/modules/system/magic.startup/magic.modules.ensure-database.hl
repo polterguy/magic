@@ -1,7 +1,8 @@
 
 /*
- * Helper slot to migrate any particular [module] app's database by executing
- * all migration scripts existing within module's "db-migrations" folder.
+ * Helper slot to initially create and migrate any particular [module] app's
+ * database by executing the module's 'create-database.sql' script, and all
+ * migration scripts existing within module's "db-migrations" folder.
  *
  * Arguments
  *
@@ -12,7 +13,7 @@
  * a 'db-migrations' folder inside of its 'magic.startup' folder, containing SQL
  * files that upgrades the module's database.
  */
-slots.create:magic.modules.migrate-database
+slots.create:magic.modules.ensure-database
 
    /*
     * Sanity checks invocation.
@@ -21,10 +22,36 @@ slots.create:magic.modules.migrate-database
    validators.mandatory:x:@.arguments/*/database
 
    /*
-    * Figuring out folder from where to read migration scripts.
+    * Ensuring system has been setup.
     */
+   config.get:"magic:auth:secret"
+   if
+      eq
+         get-value:x:@config.get
+         .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+      .lambda
+
+         /*
+          * We cannot create any databases before system has been setup.
+          */
+         return
+
+   /*
+    * Figuring out folder from where to read migration scripts and
+    * main 'create-database.sql' script.
+    */
+   .create-database-script
    .migration-script-folder
    config.get:"magic:databases:default"
+   set-value:x:@.create-database-script
+      strings.concat
+         .:/modules/
+         get-value:x:@.arguments/*/module
+         .:/magic.startup/
+         get-value:x:@.arguments/*/module
+         .:.
+         get-value:x:@config.get
+         .:.sql
    set-value:x:@.migration-script-folder
       strings.concat
          .:/modules/
@@ -32,6 +59,70 @@ slots.create:magic.modules.migrate-database
          .:/magic.startup/db-migrations/
          get-value:x:@config.get
          .:/
+
+   /*
+    * Checking if database already exists.
+    */
+   strings.concat
+      .:magic.db.
+      get-value:x:@config.get
+      .:.databases
+   signal:x:-
+   strings.concat
+      .:@signal/*/*/db/=
+      get-value:x:@.arguments/*/database
+   set-x:x:+/*/*/exists
+      convert:x:@strings.concat
+         type:x
+   if
+      not
+         exists
+      .lambda
+
+         /*
+          * Executing create database SQL script, making sure we trap exceptions.
+          */
+         try
+
+            /*
+             * Loading file.
+             */
+            io.file.load:x:@.create-database-script
+
+            /*
+             * Opening database connection.
+             */
+            switch:x:@config.get
+
+               case:mysql
+                  mysql.connect:sys
+                     mysql.execute:x:@io.file.load
+
+               case:mssql
+                  mssql.connect:master
+                     mssql.execute-batch:x:@io.file.load
+
+            /*
+             * Doing some basic logging.
+             */
+            log.info
+               .:"Successfully created database '"
+               get-value:x:@.arguments/*/database
+               .:"'"
+
+         .catch
+
+            /*
+             * Logging exception.
+             */
+            log.error
+               .:"Something went wrong as we tried to create '"
+               get-value:x:@.arguments/@.arguments/*/database
+               .:"' database using '"
+               get-value:x:@.create-database-script
+               .:"' database script.\r\n\r\nMessage from system was '"
+               get-value:x:@.arguments
+               .:"'"
 
    /*
     * Making sure module has a migration script folder, and if not,
@@ -45,12 +136,7 @@ slots.create:magic.modules.migrate-database
          /*
           * Module doesn't have a migration script folder.
           */
-         return:bool:true
-
-   /*
-    * Boolean used to store whether or not ALL migration scripts successfully executed.
-    */
-   .result:bool:true
+         return
 
    /*
     * Iterating through each SQL script found in folder.
@@ -101,6 +187,14 @@ slots.create:magic.modules.migrate-database
                    */
                   data.execute:x:@io.file.load
 
+                  /*
+                   * Logging the fact that we've executed the database migration script.
+                   */
+                  log.info
+                     .:"Database migration script '"
+                     get-value:x:@.dp/#
+                     .:"' successfully executed."
+
             .catch
 
                /*
@@ -118,8 +212,3 @@ slots.create:magic.modules.migrate-database
                 */
                set-value:x:@.result
                   .:bool:false
-
-   /*
-    * Returning result to caller.
-    */
-   return-value:x:@.result
