@@ -59,6 +59,9 @@ h3 {
   .section-3 {
     flex-direction: column;
     flex: 1;
+    .more-space {
+      margin-top: 2rem;
+    }
   }
 }
 
