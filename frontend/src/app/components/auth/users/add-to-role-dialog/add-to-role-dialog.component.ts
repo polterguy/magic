@@ -58,7 +58,6 @@ export class AddToRoleDialogComponent implements OnInit {
 
     // Fetching available roles from backend.
     this.roleService.list({
-      offset: 0,
       limit: -1,
     }).subscribe((roles: Role[]) => {
 
