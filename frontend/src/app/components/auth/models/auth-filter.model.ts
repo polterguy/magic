@@ -31,12 +31,12 @@ export class AuthFilter {
   /**
    * Offset of where to start returning records.
    */
-  offset: number;
+  offset?: number;
 
   /**
    * How many records to return max.
    */
-  limit: number;
+  limit?: number;
 }
 
 /**
@@ -51,8 +51,16 @@ export function createAuthQuery(filter: AuthFilter, name: string) {
   }
 
   // Applying limit and offset
-  query += '?limit=' + filter.limit;
-  query += "&offset=" + filter.offset;
+  if (filter.limit) {
+    query += '?limit=' + filter.limit;
+  }
+  if (filter.offset) {
+    if (filter !== '') {
+      query += "&offset=" + filter.offset;
+    } else {
+      query += "?offset=" + filter.offset;
+    }
+  }
 
   // Applying filter parts, if given.
   if (filter.filter && filter.filter !== '') {
