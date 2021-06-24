@@ -14,15 +14,6 @@ auth.ticket.verify:root
 
 
 /*
- * Basic logging.
- */
-log.info
-   .:"Installing module '"
-   get-value:x:@.arguments/*/folder
-   .:"'"
-
-
-/*
  * Installing module.
  */
 unwrap:x:+/*
@@ -34,7 +25,7 @@ signal:magic.modules.install-module
  * Logging success.
  */
 log.info
-   .:"Successfully installed '"
+   .:"Module successfully installed, module name was '"
    get-value:x:@.arguments/*/folder
    .:"'"
 
