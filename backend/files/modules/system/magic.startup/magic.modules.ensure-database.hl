@@ -1,8 +1,9 @@
 
 /*
  * Helper slot to initially create and migrate any particular [module] app's
- * database by executing the module's 'create-database.sql' script, and all
- * migration scripts existing within module's "db-migrations" folder.
+ * database by executing the module's 'xxx.mssql.sql' or 'xxx.mysql.sql' script, and all
+ * migration scripts existing within module's "db-migrations" folder, according to
+ * which database type happens to be the default.
  *
  * Arguments
  *
@@ -11,7 +12,11 @@
  *
  * The slot assumes the module is created according to the same structure, having
  * a 'db-migrations' folder inside of its 'magic.startup' folder, containing SQL
- * files that upgrades the module's database.
+ * files that upgrades the module's database. In addition to 'xxx.yyy.sql' scripts,
+ * where 'xxx' is the name of the module, and 'yyy' is the database type.
+ *
+ * Only truly works with modules created to transparently support both MySQL
+ * and SQL Server database types.
  */
 slots.create:magic.modules.ensure-database
 
