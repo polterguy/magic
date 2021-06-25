@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
@@ -86,6 +86,7 @@ export class IdeComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
+   * @param cdRef Needed to mark component as having changes
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
    * @param messageService Service used to publish messages to other components in the system
@@ -93,6 +94,7 @@ export class IdeComponent implements OnInit {
    */
   public constructor(
     private dialog: MatDialog,
+    private cdRef:ChangeDetectorRef,
     private fileService: FileService,
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService) { }
@@ -290,7 +292,10 @@ export class IdeComponent implements OnInit {
           this.dataBindTree();
 
           // Marking document as clean.
-          this.saveFile(fileNode)
+          this.saveFile(fileNode);
+
+          // Making sure we re-check component for changes to avoid CDR errors.
+          this.cdRef.detectChanges();
         }
       }
     });
@@ -359,6 +364,9 @@ export class IdeComponent implements OnInit {
           var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
           editor.doc.markClean();
         }, 1);
+
+        // Making sure we re-check component for changes to avoid CDR errors.
+        this.cdRef.detectChanges();
 
       }, (error: any) => this.feedbackService.showError(error));
     }
