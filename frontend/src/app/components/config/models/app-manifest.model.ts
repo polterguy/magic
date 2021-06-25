@@ -23,6 +23,19 @@ export class AppManifest {
    * Small descriptive text explaining the module.
    */
    description: string;
+
+   /**
+    * Git repository's URL.
+    */
+   git: string;
+
+   /**
+    * Type of module.
+    * 
+    * Notice, we only support 'module' for now, but we might support
+    * alternative types in the future, such as 'frontend-template', etc.
+    */
+   type: string;
   
   /**
    * Version of module that can be installed.
