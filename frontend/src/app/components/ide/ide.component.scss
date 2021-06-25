@@ -15,8 +15,8 @@
   .files-section {
     box-sizing: content-box;
     float: left;
-    width: 30%;
-    max-width: 30%;
+    width: 25%;
+    max-width: 25%;
     max-height: calc(100% - 2rem);
     height: calc(100% - 2rem);
     overflow: auto;
@@ -51,8 +51,8 @@
 
   .content-section {
     float: left;
-    width: calc(70% - 7rem);
-    max-width: calc(70% - 7rem);
+    width: calc(75% - 7rem);
+    max-width: calc(75% - 7rem);
     height: calc(100% - 5rem);
     max-height: calc(100% - 5rem);
     position: relative;
