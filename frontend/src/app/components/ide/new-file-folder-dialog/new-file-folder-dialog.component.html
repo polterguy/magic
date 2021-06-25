@@ -42,7 +42,8 @@
   <mat-checkbox
     *ngIf="!data.isFolder"
     [(ngModel)]="filterTemplates"
-    class="margin-right">Filter templates</mat-checkbox>
+    matTooltip="Apply 'intelligent' filtering of templates"
+    class="margin-right">Filter</mat-checkbox>
 
   <mat-checkbox
     [(ngModel)]="data.isFolder"
