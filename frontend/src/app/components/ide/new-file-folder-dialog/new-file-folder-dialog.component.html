@@ -19,7 +19,7 @@
       (selectionChange)="templateChanged()"
       class="dark">
       <mat-option
-        *ngFor="let idx of templates"
+        *ngFor="let idx of getTemplates()"
         [value]="idx">{{getFileName(idx.name)}}</mat-option>
     </mat-select>
   </mat-form-field>
