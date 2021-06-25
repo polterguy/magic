@@ -16,4 +16,4 @@ auth.ticket.verify:root
  */
 eval:x:+
 return-nodes
-   version:x:@version
+   version
