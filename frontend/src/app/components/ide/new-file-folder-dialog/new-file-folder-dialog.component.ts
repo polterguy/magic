@@ -248,7 +248,7 @@ export class NewFileFolderDialogComponent implements OnInit {
     } else {
 
       // Verifying file doesn't exist from before.
-      return this.data.files.filter(x => x.toLowerCase().endsWith('/' + this.data.name.toLowerCase())).length === 0;
+      return this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
 
     }
   }
