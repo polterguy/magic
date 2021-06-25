@@ -70,6 +70,11 @@ export class NewFileFolderDialogComponent implements OnInit {
   public activeTemplate: Template = null;
 
   /**
+   * Whether or not we should attempt to intelligently filter templates or not.
+   */
+  public filterTemplates: boolean = true;
+
+  /**
    * Element wrapping name input.
    */
   @ViewChild('fileName') fileName: ElementRef;
@@ -116,6 +121,13 @@ export class NewFileFolderDialogComponent implements OnInit {
    * Returns the relevant templates according to which folder is currently active.
    */
   public getTemplates() {
+
+    // Checking if intelligent filtering is turned on.
+    if (!this.filterTemplates) {
+
+      // No filtering of templates should be performed.
+      return this.templates;
+    }
 
     // Handling special cases filtering out irrelevant templates.
     switch (this.data.path) {
