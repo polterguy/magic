@@ -40,6 +40,11 @@
 <div mat-dialog-actions>
 
   <mat-checkbox
+    *ngIf="!data.isFolder"
+    [(ngModel)]="filterTemplates"
+    class="margin-right">Filter templates</mat-checkbox>
+
+  <mat-checkbox
     [(ngModel)]="data.isFolder"
     class="margin-right">Folder</mat-checkbox>
   
