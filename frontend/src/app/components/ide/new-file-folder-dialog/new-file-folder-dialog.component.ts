@@ -165,7 +165,8 @@ export class NewFileFolderDialogComponent implements OnInit {
               x.name.endsWith('.post.hl') ||
               x.name.endsWith('.put.hl') ||
               x.name.endsWith('.get.hl') ||
-              x.name.endsWith('.patch.hl')));
+              x.name.endsWith('.patch.hl') ||
+              x.name.endsWith('.socket.hl')));
         }
 
         // Checking if we can create 'create slots' files.
