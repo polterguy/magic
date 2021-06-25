@@ -177,8 +177,8 @@ export class NewFileFolderDialogComponent implements OnInit {
           // Verifying we're NOT in 'db-migrations' folder.
           if (splits.filter(x => x === 'db-migrations').length === 0) {
 
-            // Concatenating '/create-slot.hl' file.
-            result = result.concat(this.templates.filter(x => x.name.endsWith('/create-slot.hl')));
+            // Concatenating '/acme.foo.bar.hl' file.
+            result = result.concat(this.templates.filter(x => x.name.endsWith('/acme.foo.bar.hl')));
 
             // Concatenating all .sql type of files.
             result = result.concat(this.templates.filter(x => x.name.endsWith('.mssql.sql') || x.name.endsWith('.mysql.sql')));
