@@ -12,15 +12,28 @@
     </mat-select>
   </mat-form-field>
 
+  <mat-form-field *ngIf="templates.length > 0 && !data.isFolder" class="fill-width" appearance="outline">
+    <mat-label class="dark">Template</mat-label>
+    <mat-select
+      [(ngModel)]="activeTemplate"
+      (selectionChange)="templateChanged()"
+      class="dark">
+      <mat-option
+        *ngFor="let idx of templates"
+        [value]="idx">{{idx.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <mat-form-field class="fill-width" appearance="outline">
 
     <mat-label class="dark">Name</mat-label>
     <input
+      #fileName
       type="text"
       matInput
       autocomplete="off"
       [(ngModel)]="data.name">
-    </mat-form-field>
+  </mat-form-field>
 
 </div>
 
@@ -29,7 +42,7 @@
   <mat-checkbox
     [(ngModel)]="data.isFolder"
     class="margin-right">Folder</mat-checkbox>
-
+  
   <button
     mat-raised-button
     color="primary"

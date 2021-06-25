@@ -266,8 +266,8 @@ export class IdeComponent implements OnInit {
           this.files.push({
             name: result.name,
             path: path,
-            content: '',
             options: this.getCodeMirrorOptions(result.name),
+            content: result.template || ''
           });
 
           // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
