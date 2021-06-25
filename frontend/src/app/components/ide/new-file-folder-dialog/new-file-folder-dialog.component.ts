@@ -181,6 +181,16 @@ export class NewFileFolderDialogComponent implements OnInit {
           result = result.concat(this.templates.filter(x => x.name.endsWith('.sql')));
         }
 
+        // Checking if we can create MySQL migration scripts.
+        if (canCreateSlotsAndSqlFiles && splits.filter(x => x === 'db-migrations' || x === 'mysql').length === 2) {
+          result = result.concat(this.templates.filter(x => x.name.endsWith('0001-migrate-foo_bar-mysql-database.sql')))
+        }
+
+        // Checking if we can create MS SQL migration scripts.
+        if (canCreateSlotsAndSqlFiles && splits.filter(x => x === 'db-migrations' || x === 'mysql').length === 2) {
+          result = result.concat(this.templates.filter(x => x.name.endsWith('0001-migrate-foo_bar-mssql-database.sql')))
+        }
+
         // Returning result to caller.
         return result;
     }
