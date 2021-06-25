@@ -104,6 +104,15 @@ export class NewFileFolderDialogComponent implements OnInit {
   }
 
   /**
+   * Returns only filename for specified path.
+   * 
+   * @param path Full path of file we should return filename for
+   */
+  public getFileName(path: string) {
+    return path.substr(path.lastIndexOf('/') + 1);
+  }
+
+  /**
    * Invoked when selected template is changed.
    */
   public templateChanged() {
