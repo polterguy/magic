@@ -151,7 +151,7 @@ export class NewFileFolderDialogComponent implements OnInit {
     if (this.data.isFolder) {
       return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
     } else {
-      return this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
+      return this.data.files.filter(x => x.toLowerCase().endsWith('/' + this.data.name.toLowerCase())).length === 0;
     }
   }
 }
