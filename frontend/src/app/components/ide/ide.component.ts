@@ -300,6 +300,22 @@ export class IdeComponent implements OnInit {
   }
 
   /**
+   * Returns true if active file is dirty.
+   */
+  public activeFileIsClean() {
+
+    // Retrieving active DodeMirror editor to check if its document is dirty or not.
+    var activeWrapper = document.querySelector('.active-codemirror-editor');
+    if (activeWrapper) {
+      var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
+      if (editor) {
+        return editor.isClean();
+      }
+    }
+    return true;
+  }
+
+  /**
    * Returns true if specified node has children.
    */
   public isExpandable(_: number, node: FlatNode) {
@@ -400,6 +416,11 @@ export class IdeComponent implements OnInit {
 
     // Saving file by invoking backend before we execute it.
     this.fileService.saveFile(file.path, file.content).subscribe(() => {
+
+      // Marking document as clean.
+      var activeWrapper = document.querySelector('.active-codemirror-editor');
+      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+      editor.doc.markClean();
 
       // Then executing file's content.
       this.evaluatorService.execute(file.content).subscribe(() => {

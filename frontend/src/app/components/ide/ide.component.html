@@ -101,6 +101,7 @@
 
             <button
               mat-button
+              [disabled]="activeFileIsClean()"
               (click)="saveFile(file)">
               Save
             </button>
