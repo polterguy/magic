@@ -132,6 +132,15 @@ export class BazarComponent implements OnInit {
       // Verifying dialog returned a result.
       if (result) {
 
+        // Sanity checking that we can install application.
+        if (module.type !== 'module') {
+
+          // Oops, currently we can only install moedules, and no other types.
+          this.feedbackService.showInfoShort('Sorry, Magic only supports installing modules for now through the Bazar');
+          return;
+        }
+
+        // Asking user to confirm installation.
         this.feedbackService.confirm(
           'Confirm installation',
           `This will install '${module.name}' into your backend. Are you sure you wish to proceed? Please make sure you trust the publisher of this module before clicking yes.`,
