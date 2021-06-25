@@ -557,16 +557,13 @@ export class IdeComponent implements OnInit {
    */
   private getFiles(current: TreeNode = this.root) {
 
-    // Finding all folders in currently iterated level.
-    const result: string[] = [];
-    if (!current.isFolder) {
-      result.push(current.path);
-    }
+    // Finding all files in currently iterated level.
+    let result: string[] = [];
     for (const idx of current.children.filter(x => !x.isFolder)) {
-      const inner = this.getFiles(idx);
-      for (const idxInner of inner) {
-        result.push(idxInner);
-      }
+      result.push(idx.path);
+    }
+    for (const idx of current.children.filter(x => x.isFolder)) {
+      result = result.concat(this.getFiles(idx));
     }
     return result;
   }
