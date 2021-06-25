@@ -263,12 +263,13 @@ export class IdeComponent implements OnInit {
         } else {
 
           // Pushing file on to currently edited files list.
-          this.files.push({
+          const fileNode = {
             name: result.name,
             path: path,
             options: this.getCodeMirrorOptions(result.name),
-            content: result.template || ''
-          });
+            content: result.template || '// File content here ...'
+          };
+          this.files.push(fileNode);
 
           // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
           node.children.push({
@@ -289,11 +290,7 @@ export class IdeComponent implements OnInit {
           this.dataBindTree();
 
           // Marking document as clean.
-          setTimeout(() => {
-            var activeWrapper = document.querySelector('.active-codemirror-editor');
-            var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-            editor.doc.markClean();
-          }, 1);
+          this.saveFile(fileNode)
         }
       }
     });
