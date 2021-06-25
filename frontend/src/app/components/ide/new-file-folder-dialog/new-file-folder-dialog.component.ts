@@ -183,6 +183,9 @@ export class NewFileFolderDialogComponent implements OnInit {
 
             // Concatenating all .sql type of files.
             result = result.concat(this.templates.filter(x => x.name.endsWith('.mssql.sql') || x.name.endsWith('.mysql.sql')));
+
+            // Concatenating 'create-database.hl' file.
+            result = result.concat(this.templates.filter(x => x.name.endsWith('/create-database.hl')));
           }
         }
 
@@ -238,9 +241,15 @@ export class NewFileFolderDialogComponent implements OnInit {
 
     // Making sure no other file/folder already exists with the same name.
     if (this.data.isFolder) {
+
+      // Verifying folder doesn't exist from before.
       return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
+
     } else {
+
+      // Verifying file doesn't exist from before.
       return this.data.files.filter(x => x.toLowerCase().endsWith('/' + this.data.name.toLowerCase())).length === 0;
+
     }
   }
 }
