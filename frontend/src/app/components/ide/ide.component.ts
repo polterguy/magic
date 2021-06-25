@@ -204,6 +204,9 @@ export class IdeComponent implements OnInit {
       // Verifying user clicked rename button
       if (result) {
 
+        // Finding tree node for where file/folder is to be created, such that we can inject object into tree structure.
+        const node = this.findTreeNodeFolder(this.root, result.path);
+
         // Common sorter object used for both files and folders branch.
         const sorter = () => {
 
@@ -227,9 +230,6 @@ export class IdeComponent implements OnInit {
 
         // Invoking backend to rename file or folder.
         let path = result.path + result.name;
-
-        // Finding tree node for where file/folder is to be created, such that we can inject object into tree structure.
-        const node = this.findTreeNodeFolder(this.root, result.path);
 
         // Checking if we're creating a folder or a file.
         if (result.isFolder) {
@@ -287,6 +287,13 @@ export class IdeComponent implements OnInit {
 
           // Databinding tree control again.
           this.dataBindTree();
+
+          // Marking document as clean.
+          setTimeout(() => {
+            var activeWrapper = document.querySelector('.active-codemirror-editor');
+            var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+            editor.doc.markClean();
+          }, 1);
         }
       }
     });
@@ -438,7 +445,7 @@ export class IdeComponent implements OnInit {
           this.dataBindTree();
 
           // Closing file.
-          this.closeFile(this.files.filter(x => x.path === file.path)[0]);
+          this.closeFile(this.files.filter(x => x.path === file.path)[0], true);
         }
 
         // Providing feedback to user.
@@ -452,13 +459,20 @@ export class IdeComponent implements OnInit {
    * Invoked when a file should be closed.
    * 
    * @param file File to close
+   * @param force If true user will not be warned about unsaved changes
    */
-  public closeFile(file: FileNode) {
+  public closeFile(file: FileNode, noDirtyWarnings: boolean = false) {
 
     // Checking if content is dirty.
-    var activeWrapper = document.querySelector('.active-codemirror-editor');
-    var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-    if (editor.doc.isClean()) {
+    const shouldWarn = () => {
+      if (noDirtyWarnings) {
+        return false;
+      }
+      var activeWrapper = document.querySelector('.active-codemirror-editor');
+      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+      return !editor.doc.isClean();
+    };
+    if (!shouldWarn()) {
 
       // File has not been edited and we can close editor immediately.
       this.closeFileImpl(file);
