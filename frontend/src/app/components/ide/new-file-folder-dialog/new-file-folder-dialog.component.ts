@@ -157,13 +157,16 @@ export class NewFileFolderDialogComponent implements OnInit {
         }
 
         // Checking if we can create 'create slots' files.
-        const canCreateSlots = splits.length >= 4 &&
+        const canCreateSlotsAndSqlFiles = splits.length >= 4 &&
           splits[1] === 'modules' &&
-          splits.filter(x => x.indexOf('.') !== -1).length !== 0;
-        if (canCreateSlots) {
+          splits.filter(x => x === 'magic.startup').length !== 0;
+        if (canCreateSlotsAndSqlFiles) {
 
           // Concatenating '/create-slot.hl' file.
           result = result.concat(this.templates.filter(x => x.name.endsWith('/create-slot.hl')));
+
+          // Concatenating all .sql type of files.
+          result = result.concat(this.templates.filter(x => x.name.endsWith('.sql')));
         }
 
         // Returning result to caller.
