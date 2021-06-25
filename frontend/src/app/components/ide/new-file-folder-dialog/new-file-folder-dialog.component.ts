@@ -113,6 +113,65 @@ export class NewFileFolderDialogComponent implements OnInit {
   }
 
   /**
+   * Returns the relevant templates according to which folder is currently active.
+   */
+  public getTemplates() {
+
+    // Handling special cases filtering out irrelevant templates.
+    switch (this.data.path) {
+
+      // Default result.
+      default:
+
+        /*
+         * Figuring out which files we can legally create here.
+         *
+         * We do this by checking semantically what type of folder we're within,
+         * dynamically populating the select list, according to what files user is
+         * legally allowed to create.
+         */
+        const splits = this.data.path.split('/');
+
+        /*
+         * Default return value.
+         *
+         * Notice, we allow user to create any Markdown type of files in any folder.
+         */
+        let result: Template[] = this.templates.filter(x => x.name.endsWith('.md'));
+
+        // Checking if we can create HTTP endpoints.
+        const canCreateHttpEndpoint =
+          splits.length >= 4 &&
+          splits[1] === 'modules' &&
+          splits.filter(x => x.indexOf('.') !== -1).length === 0;
+        if (canCreateHttpEndpoint) {
+
+          // Concatenating all HTTP endpoint types of Hyperlambda files.
+          result = result.concat(
+            this.templates.filter(x =>
+              x.name.endsWith('.delete.hl') ||
+              x.name.endsWith('.post.hl') ||
+              x.name.endsWith('.put.hl') ||
+              x.name.endsWith('.get.hl') ||
+              x.name.endsWith('.patch.hl')));
+        }
+
+        // Checking if we can create 'create slots' files.
+        const canCreateSlots = splits.length >= 4 &&
+          splits[1] === 'modules' &&
+          splits.filter(x => x.indexOf('.') !== -1).length !== 0;
+        if (canCreateSlots) {
+
+          // Concatenating '/create-slot.hl' file.
+          result = result.concat(this.templates.filter(x => x.name.endsWith('/create-slot.hl')));
+        }
+
+        // Returning result to caller.
+        return result;
+    }
+  }
+
+  /**
    * Invoked when selected template is changed.
    */
   public templateChanged() {
