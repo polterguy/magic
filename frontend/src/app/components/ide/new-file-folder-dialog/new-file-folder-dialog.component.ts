@@ -174,11 +174,15 @@ export class NewFileFolderDialogComponent implements OnInit {
           splits.filter(x => x === 'magic.startup').length !== 0;
         if (canCreateSlotsAndSqlFiles) {
 
-          // Concatenating '/create-slot.hl' file.
-          result = result.concat(this.templates.filter(x => x.name.endsWith('/create-slot.hl')));
+          // Verifying we're NOT in 'db-migrations' folder.
+          if (splits.filter(x => x === 'db-migrations').length === 0) {
 
-          // Concatenating all .sql type of files.
-          result = result.concat(this.templates.filter(x => x.name.endsWith('.sql')));
+            // Concatenating '/create-slot.hl' file.
+            result = result.concat(this.templates.filter(x => x.name.endsWith('/create-slot.hl')));
+
+            // Concatenating all .sql type of files.
+            result = result.concat(this.templates.filter(x => x.name.endsWith('.mssql.sql') || x.name.endsWith('.mysql.sql')));
+          }
         }
 
         // Checking if we can create MySQL migration scripts.
@@ -187,7 +191,7 @@ export class NewFileFolderDialogComponent implements OnInit {
         }
 
         // Checking if we can create MS SQL migration scripts.
-        if (canCreateSlotsAndSqlFiles && splits.filter(x => x === 'db-migrations' || x === 'mysql').length === 2) {
+        if (canCreateSlotsAndSqlFiles && splits.filter(x => x === 'db-migrations' || x === 'mssql').length === 2) {
           result = result.concat(this.templates.filter(x => x.name.endsWith('0001-migrate-foo_bar-mssql-database.sql')))
         }
 
