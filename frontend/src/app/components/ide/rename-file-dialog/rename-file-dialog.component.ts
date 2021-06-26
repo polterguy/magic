@@ -29,14 +29,21 @@ export class FileObjectName {
 export class RenameFileDialogComponent {
 
   /**
+   * Need to keep track of original filename to disable rename button
+   * unless it's been changed.
+   */
+  public originalName: string;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param data Name of file or folder you want to rename
    */
   constructor(
     public dialogRef: MatDialogRef<RenameFileDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: FileObjectName)
-  { }
+    @Inject(MAT_DIALOG_DATA) public data: FileObjectName) {
+      this.originalName = data.name;
+    }
 
   /**
    * Invoked when user wants to close dialog without renaming file.

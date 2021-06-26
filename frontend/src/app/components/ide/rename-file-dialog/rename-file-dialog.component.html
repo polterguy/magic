@@ -19,12 +19,12 @@
 
   <button
     mat-raised-button
+    [disabled]="data.name === originalName"
     color="primary"
-    (click)="ok()">OK</button>
+    (click)="ok()">Rename</button>
 
   <button
     mat-raised-button
-    color="primary"
-    (click)="cancel()">Cancel</button>
+    (click)="cancel()">Close</button>
 
 </div>
