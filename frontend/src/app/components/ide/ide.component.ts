@@ -576,6 +576,9 @@ export class IdeComponent implements OnInit {
         this.removeNode(this.activeFolder);
         this.feedbackService.showInfoShort('Folder successfully deleted');
 
+        // Making sure we remove all files existing within the folder that are currentl edited.
+        this.files = this.files.filter(x => !x.path.startsWith(this.activeFolder));
+
         // Databinding tree again.
         this.dataBindTree();
 
