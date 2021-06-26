@@ -761,6 +761,18 @@ export class IdeComponent implements OnInit {
           }
         }
       };
+
+      // Alt+N opens up create new file object dialog.
+      options[0].options.extraKeys['Alt-A'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var btn = <any>document.querySelector('.new-file-object-btn');
+        if (btn) {
+          if (btn) {
+            btn.click();
+          }
+        }
+      };
     }
     return options[0].options;
   }
