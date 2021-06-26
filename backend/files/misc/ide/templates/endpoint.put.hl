@@ -1,6 +1,6 @@
 
 /*
- * HTTP GET endpoint, returning xyz to caller.
+ * HTTP PUT endpoint, returning xyz to caller.
  */
 .arguments
    arg1:string
