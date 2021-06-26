@@ -17,6 +17,7 @@ import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
+import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
@@ -448,6 +449,51 @@ export class IdeComponent implements OnInit {
     // Opening up a modal dialog to preview file.
     this.dialog.open(PreviewFileDialogComponent, {
       data: file.content,
+    });
+  }
+
+  /**
+   * Invoked when a file should be renamed.
+   * 
+   * @param file File to rename
+   */
+   public renameFile(file: FileNode) {
+
+    // Opening up a modal dialog to preview file.
+    const dialog = this.dialog.open(RenameFileDialogComponent, {
+      width: '550px',
+      data: {
+        name: file.name,
+      },
+    });
+    dialog.afterClosed().subscribe((data: FileObjectName) => {
+
+      // Checking if user wants to rename file.
+      if (data) {
+
+        // Invoking backend to rename object.
+        this.fileService.rename(file.path, data.name).subscribe(() => {
+
+          // Updating treeview model.
+          const treeNode = this.findTreeNodeFolder(this.root, file.path);          
+          treeNode.name = data.name;
+          treeNode.path = file.path.substr(0, file.path.lastIndexOf('/') + 1) + data.name;
+
+          // Updating model.
+          file.name = treeNode.name;
+          file.path = treeNode.path;
+
+          // Updating active file.
+          this.activeFile = file.path;
+
+          // Databinding tree again.
+          this.dataBindTree();
+
+          // Showing user some feedback.
+          this.feedbackService.showInfoShort('File successfully renamed');
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
     });
   }
 
