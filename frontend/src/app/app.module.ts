@@ -124,6 +124,7 @@ import { PublishComponent } from './components/diagnostics/diagnostics-sockets/p
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
+import { RenameFileDialogComponent } from './components/ide/rename-file-dialog/rename-file-dialog.component';
 import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
 import { AddToRoleDialogComponent } from './components/auth/users/add-to-role-dialog/add-to-role-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
@@ -212,6 +213,7 @@ import { ViewAppComponent } from './components/bazar/view-app/view-app.component
     ChangePasswordComponent,
     ConfirmEmailComponent,
     JailUserDialogComponent,
+    RenameFileDialogComponent,
     RegisterComponent,
     CrudifierTableComponent,
     CrudifierBackendComponent,
