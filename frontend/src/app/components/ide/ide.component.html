@@ -103,7 +103,7 @@
               mat-button
               class="save-file-btn"
               [disabled]="activeFileIsClean()"
-              matTooltip="Save file"
+              matTooltip="Save file ALT+S"
               (click)="saveFile(file)">
               Save
             </button>
@@ -126,21 +126,24 @@
 
             <button
               mat-button
-              matTooltip="Rename file"
+              class="rename-file-btn"
+              matTooltip="Rename file ALT+R"
               (click)="renameFile(file)">
               Rename
             </button>
 
             <button
               mat-button
-              matTooltip="Delete file"
+              class="delete-file-btn"
+              matTooltip="Delete file ALT+D"
               (click)="deleteFile(file)">
               Delete
             </button>
 
             <button
               mat-button
-              matTooltip="Close file"
+              class="close-file-btn"
+              matTooltip="Close file ALT+C"
               (click)="closeFile(file)">
               Close
             </button>

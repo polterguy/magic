@@ -338,6 +338,9 @@ export class IdeComponent implements OnInit {
       // Yup, file already opened.
       this.activeFile = file.path;
 
+      // Setting focus to active editor.
+      this.setFocusToActiveEditor();
+
     } else {
 
       // Retrieving file's content from backend.
@@ -697,9 +700,6 @@ export class IdeComponent implements OnInit {
       options = this.extensions.filter(x => x.options.mode === 'markdown');
     }
 
-    // Turning OFF autofocus.
-    options[0].options.autofocus = false;
-
     // Turning on keyboard shortcuts.
     if (options[0].options.extraKeys) {
 
@@ -717,6 +717,45 @@ export class IdeComponent implements OnInit {
         var activeWrapper = document.querySelector('.active-codemirror-editor');
         if (activeWrapper) {
           var btn = (<any>activeWrapper.querySelector('.save-file-btn'));
+          if (btn) {
+            btn.click();
+          }
+        }
+      };
+
+      // Alt+D deletes the active file.
+      options[0].options.extraKeys['Alt-D'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var activeWrapper = document.querySelector('.active-codemirror-editor');
+        if (activeWrapper) {
+          var btn = (<any>activeWrapper.querySelector('.delete-file-btn'));
+          if (btn) {
+            btn.click();
+          }
+        }
+      };
+
+      // Alt+C deletes the active file.
+      options[0].options.extraKeys['Alt-C'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var activeWrapper = document.querySelector('.active-codemirror-editor');
+        if (activeWrapper) {
+          var btn = (<any>activeWrapper.querySelector('.close-file-btn'));
+          if (btn) {
+            btn.click();
+          }
+        }
+      };
+
+      // Alt+R renames the active file.
+      options[0].options.extraKeys['Alt-R'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var activeWrapper = document.querySelector('.active-codemirror-editor');
+        if (activeWrapper) {
+          var btn = (<any>activeWrapper.querySelector('.rename-file-btn'));
           if (btn) {
             btn.click();
           }
@@ -743,5 +782,25 @@ export class IdeComponent implements OnInit {
         this.activeFile = this.files[idx - 1].path;
       }
     }
+
+    // Making sure we give focus to newly activated editor.
+    this.setFocusToActiveEditor();
+  }
+
+  /*
+   * Sets focus to active editor.
+   */
+  private setFocusToActiveEditor() {
+
+    // Needs to be delayed.
+    setTimeout(() => {
+      var activeWrapper = document.querySelector('.active-codemirror-editor');
+      if (activeWrapper) {
+        var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
+        if (editor) {
+          editor.focus();
+        }
+      }
+    }, 1);
   }
 }
