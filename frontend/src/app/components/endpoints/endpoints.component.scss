@@ -1,4 +1,16 @@
 
+.filter-wrapper {
+  display: table;
+  mat-form-field {
+    width: 100%;
+    display: table-cell;
+  }
+  button {
+    width: 50px;
+    display: table-cell;
+  }
+}
+
 .endpoint-items {
   table-layout: fixed;
   tr {

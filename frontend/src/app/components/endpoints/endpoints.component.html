@@ -1,22 +1,33 @@
 
 <mat-card>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <div class="filter-wrapper">
 
-    <mat-label>Filter</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="off"
-      [formControl]="filterFormControl">
-    <mat-icon
-      matSuffix
-      *ngIf="filterFormControl.value.trim() !== ''"
-      class="button"
-      role="button"
-      (click)="clearFilter()">clear</mat-icon>
+    <mat-form-field class="fill-width" appearance="outline">
 
-  </mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="off"
+        [formControl]="filterFormControl">
+      <mat-icon
+        matSuffix
+        *ngIf="filterFormControl.value.trim() !== ''"
+        class="button"
+        role="button"
+        (click)="clearFilter()">clear</mat-icon>
+
+    </mat-form-field>
+
+    <button
+      mat-icon-button
+      (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+
+    </button>
+
+  </div>
 
   <table
     *ngIf="endpoints"
