@@ -423,7 +423,11 @@ export class SqlComponent implements OnInit {
 
           // Special handling of strings, to allow for double quotes and carriage returns.
           if (typeof value === 'string') {
-            content += '"' + idxRow.data[idxProperty].replace('"', '""') + '"';
+            var idxContent = idxRow.data[idxProperty];
+            while (idxContent.indexOf('"') !== -1) {
+              idxContent = idxContent.replace('"', '""');
+            }
+            content += '"' + idxContent + '"';
           } else {
             content += idxRow.data[idxProperty];
           }
