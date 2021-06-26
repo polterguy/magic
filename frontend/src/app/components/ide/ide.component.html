@@ -102,12 +102,14 @@
             <button
               mat-button
               [disabled]="activeFileIsClean()"
+              matTooltip="Save file"
               (click)="saveFile(file)">
               Save
             </button>
 
             <button
               [disabled]="!file.path.endsWith('.hl')"
+              matTooltip="Execute Hyperlambda file"
               mat-button
               (click)="executeFile(file)">
               Execute
@@ -115,6 +117,7 @@
 
             <button
               [disabled]="!file.path.endsWith('.md')"
+              matTooltip="Preview file"
               mat-button
               (click)="previewFile(file)">
               Preview
@@ -122,18 +125,21 @@
 
             <button
               mat-button
+              matTooltip="Rename file"
               (click)="renameFile(file)">
               Rename
             </button>
 
             <button
               mat-button
+              matTooltip="Delete file"
               (click)="deleteFile(file)">
               Delete
             </button>
 
             <button
               mat-button
+              matTooltip="Close file"
               (click)="closeFile(file)">
               Close
             </button>
