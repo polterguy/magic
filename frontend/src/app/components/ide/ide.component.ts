@@ -266,10 +266,10 @@ export class IdeComponent implements OnInit {
         } else {
 
           // Pushing file on to currently edited files list.
-          const fileNode = {
+          const fileNode: FileNode = {
             name: result.name,
             path: path,
-            options: this.getCodeMirrorOptions(result.name),
+            options: this.getCodeMirrorOptions(result.path),
             content: result.template || '// File content here ...'
           };
           this.files.push(fileNode);
@@ -307,7 +307,7 @@ export class IdeComponent implements OnInit {
    */
   public activeFileIsClean() {
 
-    // Retrieving active DodeMirror editor to check if its document is dirty or not.
+    // Retrieving active CodeMirror editor to check if its document is dirty or not.
     var activeWrapper = document.querySelector('.active-codemirror-editor');
     if (activeWrapper) {
       var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
@@ -340,15 +340,6 @@ export class IdeComponent implements OnInit {
 
     } else {
 
-      // Verifying we have an editor type for file extension.
-      const extension = file.name.substr(file.name.lastIndexOf('.') + 1).toLowerCase();
-      let options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
-      if (options.length === 0) {
-
-        // Oops, no editor for file type, defaulting to Markdown bugger.
-        options = this.extensions.filter(x => x.options.mode === 'markdown');
-      }
-
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -357,7 +348,7 @@ export class IdeComponent implements OnInit {
           name: file.name,
           path: file.path,
           content: content,
-          options: this.getCodeMirrorOptions(file.name),
+          options: this.getCodeMirrorOptions(file.path),
         });
         this.activeFile = file.path;
         setTimeout(() => {
@@ -695,10 +686,10 @@ export class IdeComponent implements OnInit {
   /*
    * Returns options for CodeMirror editor.
    */
-  private getCodeMirrorOptions(filename: string) {
+  private getCodeMirrorOptions(path: string) {
 
     // We're supposed to create a file. Notice, we don't actually create the file, only open it in edit mode.
-    const extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
+    const extension = path.substr(path.lastIndexOf('.') + 1).toLowerCase();
     let options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
     if (options.length === 0) {
 
@@ -709,10 +700,27 @@ export class IdeComponent implements OnInit {
     // Turning OFF autofocus.
     options[0].options.autofocus = false;
 
-    // Turning on maximize keyboard shortcut.
+    // Turning on keyboard shortcuts.
     if (options[0].options.extraKeys) {
+
+      // Alt+M maximises editor.
       options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+
+        // Toggling maximise mode.
         cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+      };
+
+      // Alt+S saves the active file.
+      options[0].options.extraKeys['Alt-S'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var activeWrapper = document.querySelector('.active-codemirror-editor');
+        if (activeWrapper) {
+          var btn = (<any>activeWrapper.querySelector('.save-file-btn'));
+          if (btn) {
+            btn.click();
+          }
+        }
       };
     }
     return options[0].options;
