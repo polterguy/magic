@@ -72,15 +72,26 @@ io.file.delete:x:@strings.concat
 
 
 /*
- * Renaming the folder to the name specified by caller.
+ * Checking if the ZIP file's name is different than the module's name
+ * as specified in the arguments.
  */
-strings.split:x:@strings.concat
-   .:.zip
-io.folder.move:x:@strings.split/0
-   strings.concat
-      .:/modules/
-      get-value:x:@.arguments/*/name
-      .:/
+if
+   not
+      eq
+         get-value:x:@strings.split/1
+         get-value:x:@.arguments/*/name
+   .lambda
+
+      /*
+       * Renaming the folder to the name specified by caller.
+       */
+      strings.split:x:@strings.concat
+         .:.zip
+      io.folder.move:x:@strings.split/0
+         strings.concat
+            .:/modules/
+            get-value:x:@.arguments/*/name
+            .:/
 
 
 /*
