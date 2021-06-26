@@ -51,7 +51,9 @@
 
       <mat-form-field appearance="outline" class="fill-width">
         <mat-label>Open files</mat-label>
-        <mat-select [(ngModel)]="activeFile" (selectionChange)="selectedFileChanged()">
+        <mat-select
+          [(ngModel)]="activeFile"
+          (selectionChange)="selectedFileChanged()">
           <mat-option
             *ngFor="let idx of files"
             [matTooltip]="idx.path"
@@ -62,8 +64,8 @@
       <button
         [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
         mat-raised-button
-        class="toolbar-button"
-        [matTooltip]="'Delete folder \'' + activeFolder + '\''"
+        class="toolbar-button delete-folder-btn"
+        [matTooltip]="'Delete folder \'' + activeFolder + '\' ALT+X'"
         (click)="deleteActiveFolder()">
         Delete
       </button>
