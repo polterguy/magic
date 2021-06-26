@@ -383,7 +383,12 @@ export class IdeComponent implements OnInit {
     * Invoked when the currently selected file is changed.
     */
    public selectedFileChanged() {
+
+    // Assigning model.
     this.activeFolder = this.activeFile.substr(0, this.activeFile.lastIndexOf('/') + 1);
+
+    // Making sure we give focus to newly activated editor.
+    this.setFocusToActiveEditor();
    }
 
   /**
@@ -499,7 +504,7 @@ export class IdeComponent implements OnInit {
    public deleteFile(file: FileNode) {
 
     // Asking user to confirm action.
-    this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete this file?', () => {
+    this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
 
       // Deleting file by invoking backend.
       this.fileService.deleteFile(file.path).subscribe(() => {
@@ -572,6 +577,17 @@ export class IdeComponent implements OnInit {
 
         // Making sure we remove all files existing within the folder that are currentl edited.
         this.files = this.files.filter(x => !x.path.startsWith(this.activeFolder));
+
+        // Verifying that active file is not one of the files actually removed in above logic.
+        if (this.files.filter(x => x.path === this.activeFile).length === 0) {
+
+          // Verifying there are any open files left.
+          if (this.files.length > 0) {
+            this.activeFile = this.files[0].path;
+          } else {
+            this.activeFile = null;
+          }
+        }
 
         // Databinding tree again.
         this.dataBindTree();
@@ -767,6 +783,18 @@ export class IdeComponent implements OnInit {
 
         // Retrieving active CodeMirror editor to check if its document is dirty or not.
         var btn = <any>document.querySelector('.new-file-object-btn');
+        if (btn) {
+          if (btn) {
+            btn.click();
+          }
+        }
+      };
+
+      // Alt+X deletes currently selected folder.
+      options[0].options.extraKeys['Alt-X'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var btn = <any>document.querySelector('.delete-folder-btn');
         if (btn) {
           if (btn) {
             btn.click();
