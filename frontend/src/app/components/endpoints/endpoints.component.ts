@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 // Application specific imports.
 import { Endpoint } from 'src/app/models/endpoint.model';
 import { EndpointService } from './services/endpoint.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Endpoints component allowing user to see and invoke his endpoints.
@@ -46,9 +47,12 @@ export class EndpointsComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Needed to display feedback to user
    * @param endpointService Endpoint service required to retrieve meta information about endpoints, and invoke them generically
    */
-  constructor(private endpointService: EndpointService) { }
+  constructor(
+    private feedbackService: FeedbackService,
+    private endpointService: EndpointService) { }
 
   /**
    * Implementation of OnInit.
@@ -133,6 +137,15 @@ export class EndpointsComponent implements OnInit {
     return item.auth.join(', ');
   }
 
+  /**
+   * Invoked when user needs to refresh his endpoints.
+   */
+  public refresh() {
+
+    // Invoking method responsible for re-retrieving endpoints again.
+    this.getEndpoints(() => this.feedbackService.showInfoShort('Endpoints refreshed'))
+  }
+
   /*
    * Private helper methods.
    */
@@ -140,13 +153,19 @@ export class EndpointsComponent implements OnInit {
   /*
    * Invokes backend to retrieve meta data about endpoints.
    */
-  private getEndpoints() {
+  private getEndpoints(onAfter: () => void = null) {
 
     // Invoking backend to retrieve endpoints.
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
 
       // Assigning model to result of invocation.
       this.endpoints = endpoints;
-    });
+
+      // Checking if caller supplied a lambda to execute afterwards.
+      if (onAfter) {
+        onAfter();
+      }
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
