@@ -46,16 +46,6 @@
 
     </mat-form-field>
 
-    <input
-      *ngIf="false"
-      [disabled]="safeMode && input.database === 'magic'"
-      type="file"
-      [(ngModel)]="fileInput"
-      accept=".zip"
-      class="invisible-file-element"
-      matTooltip="Restore a previously created backup of database"
-      (change)="restore($event.target.files)">
-
     <mat-checkbox
       class="safe-mode"
       [(ngModel)]="safeMode">Safe mode</mat-checkbox>
@@ -64,6 +54,14 @@
       *ngIf="input.databaseType === 'mssql'"
       matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
       [(ngModel)]="isBatch">Batch</mat-checkbox>
+
+    <button
+      id="loadButton"
+      mat-icon-button
+      matTooltip="Empties your server side cache and reloads database declarations"
+      (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
 
     <button
       id="loadButton"
