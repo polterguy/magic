@@ -58,6 +58,14 @@
     [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
 
   <button
+    id="loadButton"
+    mat-icon-button
+    matTooltip="Empties your server side database declaration cache items and reloads page"
+    (click)="refresh()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+
+  <button
     [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
     mat-raised-button
     color="primary"
