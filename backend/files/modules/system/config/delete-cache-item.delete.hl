@@ -6,22 +6,45 @@
 .arguments
    id:string
 
-
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
-
 
 /*
  * Sanity checking invocation.
  */
 validators.mandatory:x:@.arguments/*/id
 
+/*
+ * Checking if caller wants to delete multiple cache items simultaneously.
+ */
+if
+   strings.ends-with:x:@.arguments/*/id
+      .:*
+   .lambda
+
+      /*
+       * Deletes all cache items starting with specified string.
+       */
+      strings.split:x:@.arguments/*/id
+         .:*
+      cache.list
+         filter:x:@strings.split/0
+         offset:0
+         limit:10000
+      for-each:x:@cache.list/*
+         cache.set:x:@.dp/#/*/key
+
+else
+
+   /*
+    * Deletes a single cache item.
+    */
+   cache.set:x:@.arguments/*/id
 
 /*
- * Deletes cache item and returns success to caller.
+ * Returning success to caller.
  */
-cache.set:x:@.arguments/*/id
 return
    result:success

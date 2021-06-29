@@ -13,7 +13,6 @@ import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.compon
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from '../../services/feedback.service';
 import { SqlService } from 'src/app/components/sql/services/sql.service';
 import { Databases } from 'src/app/components/sql/models/databases.model';
@@ -21,10 +20,10 @@ import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
 import { ConfigService } from 'src/app/components/config/services/config.service';
 import { DefaultDatabaseType } from '../config/models/default-database-type.model';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
+import { CacheService } from '../diagnostics/diagnostics-cache/services/cache.service';
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
-import { FileService } from '../files/services/file.service';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -89,7 +88,7 @@ export class SqlComponent implements OnInit {
    * 
    * @param feedbackService Needed to show user feedback
    * @param configService Needed to read configuration settings, more specifically default database config setting
-   * @param fileService Needed to be able to restore backups
+   * @param cacheService Needed to be able to delete cache items in your backend
    * @param sqlService Needed to be able to execute SQL towards backend
    * @param dialog Needed to be able to show Load SQL snippet dialog
    * @param messageService Message service used to message other components
@@ -97,7 +96,7 @@ export class SqlComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    private fileService: FileService,
+    private cacheService: CacheService,
     private sqlService: SqlService,
     private clipboard: Clipboard,
     private dialog: MatDialog) { }
@@ -240,6 +239,29 @@ export class SqlComponent implements OnInit {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
     this.input.options.hintOptions.tables = result;
+  }
+
+  /**
+   * Empties server side cache and reloads your database declarations,
+   * 'refreshing' your available databases.
+   */
+  public refresh() {
+
+    // Asking user to confirm action, since it reloads page.
+    // A bit 'dirty' but simplifies code significantly.
+    this.feedbackService.confirm(
+      'Confirm action',
+      'This will flush your server side cache and reload your page. Are you sure you want to do this?',
+      () => {
+
+        // Invoking backend to empty database meta data cache entry.
+        this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
+
+          // Reloading database meta declarations now.
+          window.location.href = window.location.href;
+
+        }, (error: any) => this.feedbackService.showError(error));
+    });
   }
 
   /**
