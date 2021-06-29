@@ -258,6 +258,7 @@ export class SqlComponent implements OnInit {
         this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
 
           // Reloading database meta declarations now.
+          // A bit 'dirty' but simplifies code significantly.
           window.location.href = window.location.href;
 
         }, (error: any) => this.feedbackService.showError(error));

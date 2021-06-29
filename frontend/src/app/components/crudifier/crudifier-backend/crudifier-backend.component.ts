@@ -23,6 +23,7 @@ import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { TransformModelService } from '../services/transform-model.service';
 import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
 import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
+import { CacheService } from '../../diagnostics/diagnostics-cache/services/cache.service';
 
 /**
  * Crudifier component for crudifying database
@@ -77,6 +78,7 @@ export class CrudifierBackendComponent implements OnInit {
    * 
    * @param logService Needed to be able to log LOC generated
    * @param sqlService Needed to retrieve meta information about databases from backend
+   * @param cacheService Needed to delete cache items from backend
    * @param configService Needed to retrieve meta information about connection strings from backend
    * @param crudifyService Needed to actually crudify endpoints
    * @param messageService Needed to signal other components that we've create an additional info type of component that needs to be injected
@@ -88,6 +90,7 @@ export class CrudifierBackendComponent implements OnInit {
   constructor(
     private logService: LogService,
     private sqlService: SqlService,
+    private cacheService: CacheService,
     private configService: ConfigService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
@@ -211,6 +214,30 @@ export class CrudifierBackendComponent implements OnInit {
           databaseType: this.databaseType,
         }
       }
+    });
+  }
+
+  /**
+   * Empties server side cache and reloads your database declarations,
+   * 'refreshing' your available databases.
+   */
+   public refresh() {
+
+    // Asking user to confirm action, since it reloads page.
+    // A bit 'dirty' but simplifies code significantly.
+    this.feedbackService.confirm(
+      'Confirm action',
+      'This will flush your server side cache and reload your page. Are you sure you want to do this?',
+      () => {
+
+        // Invoking backend to empty database meta data cache entry.
+        this.cacheService.delete('magic.sql.databases.*').subscribe(() => {
+
+          // Reloading database meta declarations now.
+          // A bit 'dirty' but simplifies code significantly.
+          window.location.href = window.location.href;
+
+        }, (error: any) => this.feedbackService.showError(error));
     });
   }
 
