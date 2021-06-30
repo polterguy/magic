@@ -231,7 +231,7 @@
          /*
           * Appending module to app manifest for server.
           */
-         io.file.load:/misc/bazar/apps.hl
+         io.file.load:/misc/bazar/published.hl
          hyper2lambda:x:@io.file.load
 
          /*
@@ -242,6 +242,7 @@
             strings.concat
                .:@hyper2lambda/*/*/module_name/=
                get-value:x:@.arguments/*/module
+               .:/.
          set-x:x:./*/remove-nodes
             convert:x:@.x
                type:x
