@@ -6,5 +6,3 @@
  * If the database doesn't exist, it will create it.
  */
 signal:magic.modules.ensure-database
-   module:{{module}}
-   database:{{database}}
