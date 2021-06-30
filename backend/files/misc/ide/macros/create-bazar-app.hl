@@ -6,8 +6,38 @@
 .description:Macro for Hyper IDE that creates a Bazar app from your module
 .arguments
    .
-      name:module_name
+      name:name
       type:string
-      description:"Your module's name"
+      description:"Your module's friendly name"
       mandatory:bool:true
+   .
+      name:module
+      type:string
+      description:"Your module's main root folder"
+      mandatory:bool:true
+   .
+      name:description
+      type:string
+      description:A friendly descriptive text providing some description to others wanting to install your module
+      mandatory:bool:true
+   .
+      name:readme
+      type:string
+      description:"The URL to your module's README.md file"
+      mandatory:bool:false
+   .
+      name:version
+      type:string
+      description:What version you are currently building
+      mandatory:bool:true
+   .
+      name:requires
+      type:string
+      description:What version of Magic your module requires to function correctly
+      mandatory:bool:true
+   .
+      name:git
+      type:string
+      description:"Your module's git repository"
+      mandatory:bool:false
 .lambda
