@@ -110,7 +110,7 @@
     * Opening 'create-database.hl' file such that we can correctly decorate it
     * according to arguments specified by caller.
     *
-    * First loading file and transformning to lambda.
+    * First loading file and transforming to lambda.
     */
    strings.concat
       get-value:x:@.module-path
