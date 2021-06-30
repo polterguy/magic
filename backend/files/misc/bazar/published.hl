@@ -1,0 +1,9 @@
+.
+   name:sdfpih
+   module_name:sakila
+   description:oiuhoiuh
+   version:v1.0.0
+   url:"http://localhost:55247/magic/modules/system/bazar/get-app?app=sakila-v1.0.0.zip"
+   requires:v9.4.5
+   type:module
+   publisher:foo@bar.com

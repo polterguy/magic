@@ -22,7 +22,6 @@ strings.concat
    get-value:x:@.arguments/*/app
    .:"\""
 response.headers.add
-   Cache-Control:public, max-age=3600
    Content-Disposition:x:@strings.concat
    Content-Type:application/zip
 return:x:@io.stream.open-file

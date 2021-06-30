@@ -7,7 +7,7 @@
 /*
  * Loading Bazar declaration file.
  */
-io.file.load:/misc/bazar/apps.hl
+io.file.load:/misc/bazar/published.hl
 hyper2lambda:x:@io.file.load
 add:x:../*/return
    get-nodes:x:@hyper2lambda/*
