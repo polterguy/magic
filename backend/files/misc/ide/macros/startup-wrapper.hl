@@ -31,4 +31,57 @@
     * Sanity checking invocation.
     */
    validators.mandatory:x:@.arguments/*/module
-   log.info:FROM MACRO!!
+   validators.regex:x:@.arguments/*/module
+      regex:^[a-zA-Z0-9_-]+$
+
+   /*
+    * Figuring out module's complete path.
+    */
+   .module-path
+   set-value:x:@.module-path
+      strings.concat
+         .:/modules/
+         get-value:x:@.arguments/*/module
+         .:/
+
+   /*
+    * Making sure that module exists.
+    */
+   if
+      not
+         io.folder.exists:x:@.module-path
+      .lambda
+
+         // No such module
+         strings.concat
+            .:"The module called '"
+            get-value:x:@.arguments/*/module
+            .:"' does not exist"
+         throw:x:-
+            public:bool:true
+            status:int:404
+
+   /*
+    * Making sure that module does not already have a 'magic.startup' folder.
+    */
+   strings.concat
+      get-value:x:@.module-path
+      .:/magic.startup/
+   if
+      io.folder.exists:x:@strings.concat
+      .lambda
+
+         // No such module
+         strings.concat
+            .:"The module called '"
+            get-value:x:@.arguments/*/module
+            .:"' already has a 'magic.startup' folder and hence we cannot create another"
+         throw:x:-
+            public:bool:true
+            status:int:404
+
+   /*
+    * Copying main 'magic.startup' template folder from misc folder.
+    */
+   io.folder.copy:/misc/ide/template-folders/magic.startup/
+      get-value:x:@.module-path
