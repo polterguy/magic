@@ -128,6 +128,13 @@
          database:x:@.arguments/*/module
 
    /*
+    * Then transforming file to Hyperlambda and saving it again.
+    */
+   lambda2hyper:x:@hyper2lambda/*
+   io.file.save:x:@strings.concat
+      get-value:x:@lambda2hyper
+
+   /*
     * Checking if caller supplied a [mssql] argument, and if so, creating the
     * create MSSQL database file.
     */
@@ -164,10 +171,3 @@
             .:.mysql.sql
          io.file.save:x:@strings.concat
             get-value:x:@.arguments/*/mysql
-
-   /*
-    * Then transforming file to Hyperlambda and saving it again.
-    */
-   lambda2hyper:x:@hyper2lambda/*
-   io.file.save:x:@strings.concat
-      get-value:x:@lambda2hyper

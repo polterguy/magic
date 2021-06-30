@@ -4,9 +4,9 @@
  */
 
 // Angular and system imports.
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
@@ -669,6 +669,15 @@ export class IdeComponent implements OnInit {
 
             // Giving user some feedback.
             this.feedbackService.showInfoShort('Macro successfully executed');
+            this.feedbackService.confirm(
+              'Confirm refresh', 
+              'You might want to refresh your files and folders if your macro created new files. Do you want me to refresh your files and folders and retrieve these from your backend again?',
+              () => {
+
+                // Refreshing files and folder.
+                this.root.children = [];
+                this.getFilesFromServer();
+            });
 
           }, (error: any) => this.feedbackService.showError(error));
 
