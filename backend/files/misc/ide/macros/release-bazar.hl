@@ -173,6 +173,7 @@
     */
    io.file.load:/misc/bazar/apps.hl
    hyper2lambda:x:@io.file.load
+   unwrap:x:+/*/*/*
    add:x:@hyper2lambda
       .
          .
