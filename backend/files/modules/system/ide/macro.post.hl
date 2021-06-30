@@ -41,4 +41,4 @@ eval:x:@hyper2lambda/*/.lambda
  * Returning success to caller.
  */
 return
-   result:success
+   result:SUCCESS
