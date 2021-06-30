@@ -16,10 +16,10 @@
    column1.like:string
    column2.eq:long
    column2.neq:long
-   column2:lt:long
-   column2:mt:long
-   column2:lteq:long
-   column2:mteq:long
+   column2.lt:long
+   column2.mt:long
+   column2.lteq:long
+   column2.mteq:long
 .description:HTTP GET database endpoint, providing a template endpoint for retrieving records from your database
 .type:crud-read
 
