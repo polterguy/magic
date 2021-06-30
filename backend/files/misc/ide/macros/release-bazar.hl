@@ -3,7 +3,7 @@
  * Macro for Hyper IDE that creates a Bazar app from your module.
  */
 .name:Create Bazar app
-.description:Macro for Hyper IDE that creates a Bazar app from your module
+.description:Macro for Hyper IDE that creates a Bazar app from your module and copies the Bazar ZIP file to your local Bazar allowing others to install it from you
 .arguments
    .
       name:name
