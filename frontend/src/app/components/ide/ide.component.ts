@@ -16,6 +16,7 @@ import { TreeNode } from './models/tree-node.model';
 import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
+import { MacroDefinition } from '../files/services/models/macro-definition.model';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
@@ -556,7 +557,6 @@ export class IdeComponent implements OnInit {
 
         // User confirmed he wants to close file, even though the editor is dirty (has changes).
         this.closeFileImpl(file);
-
       });
     }
   }
@@ -600,7 +600,7 @@ export class IdeComponent implements OnInit {
   /**
    * Invoked when user wants to execute a macro.
    */
-  public showMacros() {
+  public selectMacro() {
 
     // Opening modal dialog allowing user to select macro.
     const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
@@ -615,7 +615,9 @@ export class IdeComponent implements OnInit {
 
       // Verifying user selected a macro.
       if (result) {
-        console.log(result);
+
+        // User selected a macro, executing it.
+        this.executeMacro(result.name);
       }
     });
   }
@@ -623,6 +625,19 @@ export class IdeComponent implements OnInit {
   /*
    * Private helper methods.
    */
+
+  /*
+   * Executes the specified macro.
+   */
+  private executeMacro(file: string) {
+
+    // Retrieving macro's arguments and description.
+    this.fileService.getMacroDefinition(file).subscribe((result: MacroDefinition) => {
+
+      // Creating modal dialog allowing user to decorate macro execution.
+      console.log(result);
+    });
+  }
 
   /*
    * Returns all folders in system to caller.
