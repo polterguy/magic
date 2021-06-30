@@ -1,29 +1,29 @@
 
 /*
- * Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module.
+ * Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module that automatically creates your database if it does not exist from before.
  */
-.name:Startup wrapper
-.description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module"
+.name:Ensure database
+.description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module that automatically creates your database if it does not exist from before"
 .arguments
    .
       name:module
       type:string
-      description:"The name of your module, which will become its root folder name"
+      description:"Name of module to create a 'magic.startup' folder for"
       mandatory:bool:true
    .
       name:database
       type:string
-      description:"The name of your app's database"
+      description:"The name of your application's database. Typically the same as your module's name"
       mandatory:bool:true
    .
       name:mssql
       type:multi_string
-      description:"Microsoft SQL server create database script"
+      description:"Microsoft SQL server create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied."
       mandatory:bool:false
    .
       name:mysql
       type:multi_string
-      description:"MySQL create database script"
+      description:"MySQL create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied."
       mandatory:bool:false
 .lambda
 
