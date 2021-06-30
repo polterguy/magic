@@ -90,7 +90,7 @@
    for-each:x:@signal/*
       set-value:x:@.dp/#
          strings.replace:x:@.dp/#
-            get-value:x:@.module-path
+            .:/modules
             .:
       add:x:@.lambda/*/io.content.zip-stream
          get-nodes:x:@.dp/#
@@ -104,6 +104,7 @@
     * Figuring out filename to use.
     */
    strings.concat
+      .:/misc/bazar/apps/
       get-value:x:@.arguments/*/module
       .:-
       get-value:x:@.arguments/*/version
