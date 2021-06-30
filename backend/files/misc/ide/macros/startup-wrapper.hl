@@ -84,4 +84,23 @@
     * Copying main 'magic.startup' template folder from misc folder.
     */
    io.folder.copy:/misc/ide/template-folders/magic.startup/
+      get-value:x:@strings.concat
+
+   /*
+    * Opening 'create-database.hl' file such that we can correctly decorate it
+    * according to arguments specified by caller.
+    *
+    * First loading file and transformning to lambda.
+    */
+   strings.concat
       get-value:x:@.module-path
+      .:/magic.startup/create-database.hl
+   io.file.load:x:@strings.concat
+   hyper2lambda:x:@io.file.load
+
+   /*
+    * Then transforming file to Hyperlambda and saving it again.
+    */
+   lambda2hyper:x:@hyper2lambda
+   io.file.save:x:@strings.concat
+      get-value:x:@lambda2hyper
