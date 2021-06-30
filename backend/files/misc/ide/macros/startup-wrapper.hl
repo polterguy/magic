@@ -14,7 +14,7 @@
       name:database
       type:string
       description:"The name of your app's database"
-      mandatory:bool:false
+      mandatory:bool:true
    .
       name:mssql
       type:multi_string
@@ -81,6 +81,22 @@
             status:int:404
 
    /*
+    * Making sure that at least one of [mysql] or [mssql] arguments was given.
+    */
+   if
+      and
+         not
+            exists:x:@.arguments/*/mysql
+         not
+            exists:x:@.arguments/*/mssql
+      .lambda
+
+         // Neither MS SQL nor MySQL was given, and hence there are no reasons to create 'magic.startup' folder.
+         throw:"You have to supply either [mysql] or [mssql] arguments, or both. There are no reasons to create a 'magic.startup' folder without at least one of these"
+            public:bool:true
+            status:int:404
+
+   /*
     * Copying main 'magic.startup' template folder from misc folder.
     */
    io.folder.copy:/misc/ide/template-folders/magic.startup/
@@ -99,8 +115,55 @@
    hyper2lambda:x:@io.file.load
 
    /*
+    * Adding module's name into file.
+    */
+   unwrap:x:+/*/*
+   add:x:@hyper2lambda/*/signal
+      .
+         module:x:@.arguments/*/module
+         database:x:@.arguments/*/module
+
+   /*
+    * Checking if caller supplied a [mssql] argument, and if so, creating the
+    * create database SQL file.
+    */
+   if
+      exists:x:@.arguments/*/mssql
+      .lambda
+
+         /*
+          * Creating our 'module.mssql.sql' file.
+          */
+         strings.concat
+            get-value:x:@.module-path
+            .:/magic.startup/
+            get-value:x:@.arguments/*/module
+            .:.mssql.sql
+         io.file.save:x:@strings.concat
+            get-value:x:@.arguments/*/mssql
+
+   /*
+    * Checking if caller supplied a [mysql] argument, and if so, creating the
+    * create database SQL file.
+    */
+   if
+      exists:x:@.arguments/*/mysql
+      .lambda
+
+         /*
+          * Creating our 'module.mysql.sql' file.
+          */
+         strings.concat
+            get-value:x:@.module-path
+            .:/magic.startup/
+            get-value:x:@.arguments/*/module
+            .:.mysql.sql
+         io.file.save:x:@strings.concat
+            get-value:x:@.arguments/*/mysql
+
+   /*
     * Then transforming file to Hyperlambda and saving it again.
     */
-   lambda2hyper:x:@hyper2lambda
+   lambda2hyper:x:@hyper2lambda/*
    io.file.save:x:@strings.concat
       get-value:x:@lambda2hyper
