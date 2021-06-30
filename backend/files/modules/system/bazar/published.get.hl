@@ -7,7 +7,7 @@
 /*
  * Loading Bazar declaration file.
  */
-io.file.load:/misc/bazar/apps.hl
+io.file.load:/misc/bazar/published.hl
 
 /*
  * Making sure we apply aggressive caching and the correct Content-Type header.

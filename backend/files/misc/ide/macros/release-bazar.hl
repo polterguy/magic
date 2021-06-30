@@ -245,8 +245,6 @@
          set-x:x:./*/remove-nodes
             convert:x:@.x
                type:x
-         log.info
-            lambda2hyper:x:../*
          remove-nodes
 
          /*
@@ -256,7 +254,7 @@
             get-nodes:x:@hyper2lambda/*
 
    /*
-    * Adding currently created app to manifest.
+    * Adding currently created app to manifest and saving published manifest file.
     */
    unwrap:x:+/*/*/*
    add:x:@.published
@@ -271,6 +269,6 @@
             type:module
             publisher:x:@.arguments/*/publisher
             database_support
-   lambda2hyper:x:@hyper2lambda/*
+   lambda2hyper:x:@.published/*
    io.file.save:/misc/bazar/published.hl
       get-value:x:@lambda2hyper
