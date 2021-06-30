@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
+import { AuthService } from '../auth/services/auth.service';
 import { FileService } from '../files/services/file.service';
 import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
@@ -30,9 +31,14 @@ export class BazarComponent implements OnInit {
   private folders: string[] = [];
 
   /**
-   * Apps as returned from backend.
+   * Apps as returned from backend that can be installed directly into your backend.
    */
   public apps: AppManifest[] = [];
+
+  /**
+   * Bazar apps as published by the current server.
+   */
+  public publishedApps: AppManifest[] = [];
 
   /**
    * Default database backend is using.
@@ -42,10 +48,15 @@ export class BazarComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Needed to be able to create modal dialogs
+   * @param authService Needed to check if user is logged in as root or not
+   * @param fileService Needed to be able to figure out which modules are already installed
    * @param configService Needed to retrieve Bazar manifests
+   * @param feedbackService Needed to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
+    public authService: AuthService,
     private fileService: FileService,
     private configService: ConfigService,
     private feedbackService: FeedbackService) { }
@@ -55,32 +66,43 @@ export class BazarComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Retrieving default database from backend.
-    this.configService.defaultDatabaseType().subscribe((result: DefaultDatabaseType) => {
+    // Checking if user is root before we allow him to install bazar apps into current server.
+    if (this.authService.isRoot) {
 
-      // Assigning model.
-      this.defaultDatabase = result.default;
-
-      // Retrieving already installed modules.
-      this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
+      // Retrieving default database from backend.
+      this.configService.defaultDatabaseType().subscribe((result: DefaultDatabaseType) => {
 
         // Assigning model.
-        this.folders = folders.map(x => {
-          const res = x.substr(9);
-          return res.substr(0, res.length - 1);
-        });
+        this.defaultDatabase = result.default;
 
-        // Retrieving Bazar modules from backend.
-        this.configService.getBazarManifest().subscribe((result: AppManifest[]) => {
+        // Retrieving already installed modules.
+        this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
 
-          // Assigning result to model.
-          this.apps = result;
+          // Assigning model.
+          this.folders = folders.map(x => {
+            const res = x.substr(9);
+            return res.substr(0, res.length - 1);
+          });
+
+          // Retrieving Bazar modules from backend.
+          this.configService.getBazarManifest().subscribe((result: AppManifest[]) => {
+
+            // Assigning result to model.
+            this.apps = result || [];
+
+          }, (error: any) => this.feedbackService.showError(error));
 
         }, (error: any) => this.feedbackService.showError(error));
 
       }, (error: any) => this.feedbackService.showError(error));
+    }
 
-    }, (error: any) => this.feedbackService.showError(error));
+    // Retrieving Bazar apps published by the current server.
+    this.configService.getPublishedBazarApps().subscribe((result: AppManifest[]) => {
+
+      // Assigning model.
+      this.publishedApps = result || [];
+    });
   }
 
   /**
@@ -102,6 +124,15 @@ export class BazarComponent implements OnInit {
     // Verifying app supports the default database adapter used by backend.
     return module.database_support.indexOf(this.defaultDatabase) !== -1;
   }
+
+  /**
+   * Installs the specified module into your modules folder.
+   * 
+   * @param module Module to install
+   */
+   public viewPublishedDetails(module: AppManifest) {
+     console.log(module);
+   }
 
   /**
    * Installs the specified module into your modules folder.
