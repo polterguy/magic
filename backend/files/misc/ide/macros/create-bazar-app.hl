@@ -2,9 +2,12 @@
 /*
  * Macro for Hyper IDE that creates a Bazar app from your module.
  */
+.name:Create Bazar app
 .description:Macro for Hyper IDE that creates a Bazar app from your module
 .arguments
    .
       name:module_name
       type:string
+      description:"Your module's name"
+      mandatory:bool:true
 .lambda

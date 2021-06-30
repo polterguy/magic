@@ -143,6 +143,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
 import { BazarComponent } from './components/bazar/bazar.component';
 import { ViewAppComponent } from './components/bazar/view-app/view-app.component';
 import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog/select-macro-dialog.component';
+import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dialog/execute-macro-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -231,6 +232,7 @@ import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog
     BazarComponent,
     ViewAppComponent,
     SelectMacroDialogComponent,
+    ExecuteMacroDialogComponent,
   ],
   imports: [
     FormsModule,

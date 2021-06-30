@@ -2,9 +2,33 @@
 /*
  * Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module.
  */
+.name:Startup wrapper
 .description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module"
 .arguments
    .
-      name:database_name
+      name:module
       type:string
+      description:"The name of your module, which will become its root folder name"
+      mandatory:bool:true
+   .
+      name:database
+      type:string
+      description:"The name of your app's database"
+      mandatory:bool:false
+   .
+      name:mssql
+      type:multi_string
+      description:"Microsoft SQL server create database script"
+      mandatory:bool:false
+   .
+      name:mysql
+      type:multi_string
+      description:"MySQL create database script"
+      mandatory:bool:false
 .lambda
+
+   /*
+    * Sanity checking invocation.
+    */
+   validators.mandatory:x:@.arguments/*/module
+   log.info:FROM MACRO!!
