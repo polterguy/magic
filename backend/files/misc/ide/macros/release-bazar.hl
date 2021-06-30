@@ -135,14 +135,13 @@
          get-value:x:@.only-filename
 
    /*
-    * Saving ZIP stream.
+    * Saving ZIP stream and closing it.
+    *
+    * Technically this isn't necessary since the stream is memory based,
+    * but cleaning up things doesn't hurt either ...
     */
    io.stream.save-file:x:@.filename
       get-value:x:@io.content.zip-stream
-
-   /*
-    * Closing ZIP stream.
-    */
    io.stream.close:x:@io.content.zip-stream
 
    /*
@@ -207,7 +206,8 @@
             get-nodes:x:@.arguments/*/readme
 
    /*
-    * Checking if app is not dependent upon any databases.
+    * Checking if app is not dependent upon any databases, at which
+    * point we remove entire [database_support] node for app's manifest.
     */
    if
       not
@@ -216,12 +216,50 @@
          remove-nodes:x:@.lambda/@.lambda/**/database_support
 
    /*
-    * Appending module to app manifest for server.
+    * This becomes our Bazar published manifest.
     */
-   io.file.load:/misc/bazar/apps.hl
-   hyper2lambda:x:@io.file.load
+   .published
+
+   /*
+    * Checking if there already exists a 'published.hl' file
+    * being our Bazar manifest file.
+    */
+   if
+      io.file.exists:/misc/bazar/published.hl
+      .lambda
+
+         /*
+          * Appending module to app manifest for server.
+          */
+         io.file.load:/misc/bazar/apps.hl
+         hyper2lambda:x:@io.file.load
+
+         /*
+          * Removing any existing apps with the same module name.
+          */
+         .x
+         set-value:x:@.x
+            strings.concat
+               .:@hyper2lambda/*/*/module_name/=
+               get-value:x:@.arguments/*/module
+         set-x:x:./*/remove-nodes
+            convert:x:@.x
+               type:x
+         log.info
+            lambda2hyper:x:../*
+         remove-nodes
+
+         /*
+          * Removing any existing apps with the same module name.
+          */
+         add:x:@.published
+            get-nodes:x:@hyper2lambda/*
+
+   /*
+    * Adding currently created app to manifest.
+    */
    unwrap:x:+/*/*/*
-   add:x:@hyper2lambda
+   add:x:@.published
       .
          .
             name:x:@.arguments/*/name
@@ -234,5 +272,5 @@
             publisher:x:@.arguments/*/publisher
             database_support
    lambda2hyper:x:@hyper2lambda/*
-   io.file.save:/misc/bazar/apps.hl
+   io.file.save:/misc/bazar/published.hl
       get-value:x:@lambda2hyper
