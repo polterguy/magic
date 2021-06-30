@@ -6,6 +6,6 @@ executed in alphabetical order. Notice, there is one folder for each of your dat
 If you create a migration script, make sure you put it into the _correct_ folder, where folders
 implies the following.
 
-* mysql - MySQL migration script folder
-* mssql - Microsoft SQL Server migration script folder
+* __mysql__ - MySQL migration script folder
+* __mssql__ - Microsoft SQL Server migration script folder
 
