@@ -168,6 +168,15 @@ export class ConfigService {
   }
 
   /**
+   * Returns published Bazar apps to caller.
+   */
+   public getPublishedBazarApps() {
+
+    // Invoking backend and returns app manifests to caller.
+    return this.httpService.get<AppManifest[]>('/magic/modules/system/bazar/published-json');
+  }
+
+  /**
    * Returns license information to caller.
    */
   public license() {

@@ -2,7 +2,7 @@
 /*
  * Returns Bazar apps to caller the local server can install.
  */
-.description:Returns Bazar apps to caller the local server can install
+.description:Returns Bazar apps that the local server can install
 
 
 /*
@@ -12,7 +12,7 @@ auth.ticket.verify:root
 
 
 /*
- * Retrieving installed Bazars
+ * Retrieving configured Bazars.
  */
 config.get:"magic:bazars"
 
@@ -25,7 +25,8 @@ strings.split:x:@config.get
 
 
 /*
- * Iterating through each bazar, retrieving manifest, and returning contents to caller.
+ * Iterating through each bazar, retrieving manifest file,
+ * and returning contents to caller as JSON.
  */
 for-each:x:@strings.split/*
 

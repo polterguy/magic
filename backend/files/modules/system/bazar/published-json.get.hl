@@ -1,0 +1,20 @@
+
+/*
+ * Returns Bazar apps to caller that the current server has published.
+ */
+.description:Returns Bazar apps to caller that the current server has published as JSON
+
+/*
+ * Loading Bazar declaration file.
+ */
+io.file.load:/misc/bazar/apps.hl
+hyper2lambda:x:@io.file.load
+add:x:../*/return
+   get-nodes:x:@hyper2lambda/*
+
+/*
+ * Making sure we apply aggressive caching.
+ */
+response.headers.add
+   Cache-Control:public, max-age=3600
+return

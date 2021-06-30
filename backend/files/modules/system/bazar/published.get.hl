@@ -2,7 +2,7 @@
 /*
  * Returns Bazar apps to caller that the current server has published.
  */
-.description:Returns Bazar apps to caller that the current server has published
+.description:Returns Bazar apps to caller that the current server has published as Hyperlambda
 
 /*
  * Loading Bazar declaration file.
