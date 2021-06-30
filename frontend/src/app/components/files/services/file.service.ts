@@ -10,8 +10,9 @@ import { Injectable } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { HttpService } from '../../../services/http.service';
 import { Response } from '../../../models/response.model';
+import { HttpService } from '../../../services/http.service';
+import { MacroDefinition } from './models/macro-definition.model';
 
 /**
  * File service allowing you to read, download, upload and delete files.
@@ -267,5 +268,17 @@ export class FileService {
     return this.httpService.delete<Response>(
       '/magic/modules/system/file-system/folder?folder=' +
       encodeURIComponent(folder));
+  }
+
+  /**
+   * Returns macro definition to caller for specified macro.
+   * 
+   * @param file Full path of macro to retrieve meta information about
+   */
+  public getMacroDefinition(file: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<MacroDefinition>('/magic/modules/system/ide/macro?macro=' +
+      encodeURIComponent(file))
   }
 }

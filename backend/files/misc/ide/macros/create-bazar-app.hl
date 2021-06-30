@@ -4,5 +4,7 @@
  */
 .description:Macro for Hyper IDE that creates a Bazar app from your module
 .arguments
-   module-name:string
+   .
+      name:module_name
+      type:string
 .lambda
