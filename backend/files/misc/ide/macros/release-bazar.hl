@@ -25,6 +25,19 @@
       type:string
       description:Version you are deploying
       mandatory:bool:true
+      default:v1.0.0
+   .
+      name:requires
+      type:string
+      description:Version of Magic this module depends upon in order to work correctly
+      mandatory:bool:true
+      default:v9.4.5
+   .
+      name:publisher
+      type:string
+      description:Email address you want to associate with module. Typically your email address.
+      mandatory:bool:false
+      default:foo@bar.com
    .
       name:readme
       type:string
@@ -44,10 +57,13 @@
    /*
     * Sanity checking invocation.
     */
+   validators.mandatory:x:@.arguments/*/name
    validators.mandatory:x:@.arguments/*/version
    validators.mandatory:x:@.arguments/*/module
    validators.regex:x:@.arguments/*/module
       regex:^[a-zA-Z0-9_-]+$
+   validators.regex:x:@.arguments/*/version
+      regex:"^v[0-9]+\\.[0-9]+\\.[0.9]+$"
 
    /*
     * Figuring out module's complete path.
@@ -115,3 +131,59 @@
     */
    io.stream.save-file:x:@strings.concat
       get-value:x:@io.content.zip-stream
+
+   /*
+    * Closing ZIP stream.
+    */
+   io.stream.close:x:@io.content.zip-stream
+
+   /*
+    * Figuring out which database module supports, which depends upon whether
+    * module has module.mssql.sql and module.mysql.sql files in 'magic.startup' folder.
+    */
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/module
+      .:/magic.startup/
+      get-value:x:@.arguments/*/module
+      .:.mssql.sql
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
+         add:x:@.lambda/**/database_support
+            .
+               .:mssql
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/module
+      .:/magic.startup/
+      get-value:x:@.arguments/*/module
+      .:.mssql.sql
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
+         add:x:@.lambda/**/database_support
+            .
+               .:mssql
+
+   /*
+    * Appending module to app manifest for server.
+    */
+   io.file.load:/misc/bazar/apps.hl
+   hyper2lambda:x:@io.file.load
+   add:x:@hyper2lambda
+      .
+         .
+            name:x:@.arguments/*/name
+            module_name:x:@.arguments/*/module
+            description:x:@.arguments/*/description
+            readme:x:@.arguments/*/readme
+            version:x:@.arguments/*/version
+            url:"https://foo.com"
+            requires:x:@.arguments/*/requires
+            type:module
+            git:x:@.arguments/*/git
+            publisher:x:@.arguments/*/publisher
+            database_support
+   lambda2hyper:x:@hyper2lambda/*
+   io.file.save:/misc/bazar/apps.hl
