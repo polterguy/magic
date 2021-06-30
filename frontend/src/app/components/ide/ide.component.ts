@@ -18,6 +18,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { MacroDefinition } from '../files/services/models/macro-definition.model';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
+import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macro-dialog.component';
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
@@ -634,9 +635,39 @@ export class IdeComponent implements OnInit {
     // Retrieving macro's arguments and description.
     this.fileService.getMacroDefinition(file).subscribe((result: MacroDefinition) => {
 
-      // Creating modal dialog allowing user to decorate macro execution.
-      console.log(result);
-    });
+      // Opening modal dialog allowing user to select macro.
+      const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
+        width: '550px',
+        data: result,
+      });
+
+      // Subscribing to closed event and creating a new folder if we're given a folder name.
+      dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
+
+        // Verifying user decorated the macro.
+        if (result && result.name) {
+
+          // User decorated macro, executing macro now by invoking backend.
+          const payload = {};
+          for (const idx of result.arguments.filter(x => x.value)) {
+            payload[idx.name] = idx.value;
+          }
+          this.fileService.executeMacro(file, payload).subscribe(() => {
+
+            // Giving user some feedback.
+            this.feedbackService.showInfoShort('Macro successfully executed');
+
+          }, (error: any) => this.feedbackService.showError(error));
+
+        } else if (result) {
+          
+          // Assuming user wants to select another macro.
+          this.selectMacro();
+
+        } // Else, do nothing ...
+      });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /*

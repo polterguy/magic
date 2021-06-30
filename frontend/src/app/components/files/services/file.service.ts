@@ -279,6 +279,21 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<MacroDefinition>('/magic/modules/system/ide/macro?macro=' +
-      encodeURIComponent(file))
+      encodeURIComponent(file));
+  }
+
+  /**
+   * Returns macro definition to caller for specified macro.
+   * 
+   * @param file Full path of macro to retrieve meta information about
+   * @param args Arguments to macro execution
+   */
+   public executeMacro(file: string, args: any) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.post<Response>('/magic/modules/system/ide/macro', {
+      macro: file,
+      args
+    });
   }
 }

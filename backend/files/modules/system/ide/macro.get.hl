@@ -29,5 +29,6 @@ add:x:../*/return/*/arguments
  */
 unwrap:x:+/*
 return
+   name:x:@hyper2lambda/*/.name
    description:x:@hyper2lambda/*/.description
    arguments
