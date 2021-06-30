@@ -2,8 +2,8 @@
 /*
  * Macro for Hyper IDE that creates a Bazar app from your module.
  */
-.name:Create Bazar app
-.description:Macro for Hyper IDE that creates a Bazar app from your module and copies the Bazar ZIP file to your local Bazar allowing others to install it from you
+.name:Package Bazar app
+.description:"Macro for Hyper IDE that creates a Bazar app package from your module and copies the Bazar ZIP file to your local Bazar allowing others to install it from you. Notice, you should probably run the 'ensure-database' macro first if your app depends upon a database to function correctly."
 .arguments
    .
       name:name
@@ -40,4 +40,8 @@
       type:string
       description:"Your module's git repository"
       mandatory:bool:false
+
+/*
+ * Lambda object executed as macro is actually executed.
+ */
 .lambda

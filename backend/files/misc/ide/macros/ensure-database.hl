@@ -3,7 +3,7 @@
  * Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module that automatically creates your database if it does not exist from before.
  */
 .name:Ensure database
-.description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module that automatically creates your database if it does not exist from before"
+.description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module's main folder that automatically creates your database if it does not exist from before. Notice, requires that you supply at least one of a MySQL database create script or a MS SQL database create script."
 .arguments
    .
       name:module
@@ -25,6 +25,10 @@
       type:multi_string
       description:"MySQL create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied."
       mandatory:bool:false
+
+/*
+ * Lambda object executed as macro is actually executed.
+ */
 .lambda
 
    /*
