@@ -107,14 +107,27 @@ export class BazarComponent implements OnInit {
    * Installs the specified module into your modules folder.
    * 
    * @param module Module to install
+   * @param noCheck If true does not check if module is already installed before installing it
    */
-  public viewDetails(module: AppManifest) {
+  public viewDetails(module: AppManifest, noCheck: boolean = false) {
 
     // Checking if module is already installed, at which point we return early.
-    if (this.isInstalled(module)) {
+    if (noCheck === false && this.isInstalled(module)) {
 
-      // Oops, module already installed.
-      this.feedbackService.showInfoShort('Module is already installed');
+      // Oops, module already installed, asking user if he wants to uninstall his existing version.
+      this.feedbackService.confirm(
+        'Confirm action',
+        'Module is already installed, do you want to uninstall your current version?',
+        () => {
+
+          // Uninstalling module.
+          this.fileService.deleteFolder('/modules/' + module.module_name + '/').subscribe(() => {
+
+            // Module was successfully uninstalled, now installing specified version.
+            this.viewDetails(module, true);
+
+          }, (error: any) => this.feedbackService.showError(error));
+        });
       return;
     }
 
