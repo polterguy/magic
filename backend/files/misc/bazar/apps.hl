@@ -15,6 +15,7 @@
    requires:v9.4.0
    type:module
    git:"https://github.com/polterguy/babel.git"
+   publisher:thomas@servergardens.com
    database_support
       .:mssql
       .:mysql
@@ -29,6 +30,7 @@
    requires:v9.4.0
    type:module
    git:"https://github.com/polterguy/babelfish.git"
+   publisher:thomas@servergardens.com
    database_support
       .:mssql
       .:mysql
@@ -43,6 +45,7 @@
    requires:v9.4.0
    type:module
    git:"https://github.com/polterguy/babelmail.git"
+   publisher:thomas@servergardens.com
    database_support
       .:mssql
       .:mysql
