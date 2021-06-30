@@ -26,16 +26,6 @@
       description:"The URL to your module's README.md file"
       mandatory:bool:false
    .
-      name:version
-      type:string
-      description:"What version of your module you are currently building. You would probably want to use something such as e.g. 'v1.2.3' here."
-      mandatory:bool:true
-   .
-      name:requires
-      type:string
-      description:"What version of Magic your module requires to function correctly. Typically this is for instance 'v9.4.5' or something similar."
-      mandatory:bool:true
-   .
       name:git
       type:string
       description:"Your module's git repository"
