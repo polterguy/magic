@@ -50,7 +50,7 @@
     <div class="toolbar-top">
 
       <mat-form-field appearance="outline" class="fill-width">
-        <mat-label>Open files</mat-label>
+        <mat-label>Open files ...</mat-label>
         <mat-select
           [(ngModel)]="activeFile"
           (selectionChange)="selectedFileChanged()">
@@ -73,7 +73,14 @@
       <button
         mat-raised-button
         class="toolbar-button new-file-object-btn"
-        color="primary"
+        matTooltip="Execute a pre defined macro"
+        (click)="showMacros()">
+        Macro
+      </button>
+
+      <button
+        mat-raised-button
+        class="toolbar-button new-file-object-btn"
         matTooltip="Create or add new file or folder to active folder ALT+A"
         (click)="createNewFileObject()">
         Add

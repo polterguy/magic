@@ -35,7 +35,7 @@ if
             strings.contains:x:@.dp/#
                get-value:x:@.arguments/*/filter
             .lambda
-               add:x:@for-each/./return-nodes
+               add:x:@for-each/./*/return-nodes
                   get-nodes:x:@.dp/#
       return-nodes
 else

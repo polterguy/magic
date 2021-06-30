@@ -1,0 +1,8 @@
+
+/*
+ * Macro for Hyper IDE that creates a Bazar app from your module.
+ */
+.description:Macro for Hyper IDE that creates a Bazar app from your module
+.arguments
+   module-name:string
+.lambda

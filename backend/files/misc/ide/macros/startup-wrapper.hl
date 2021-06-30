@@ -1,0 +1,8 @@
+
+/*
+ * Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module.
+ */
+.description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module"
+.arguments
+   database-name:string
+.lambda
