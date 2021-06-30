@@ -21,6 +21,11 @@
       description:A friendly descriptive text providing some description to others wanting to install your module
       mandatory:bool:true
    .
+      name:version
+      type:string
+      description:Version you are deploying
+      mandatory:bool:true
+   .
       name:readme
       type:string
       description:"The URL to your module's README.md file"
@@ -35,3 +40,77 @@
  * Lambda object executed as macro is actually executed.
  */
 .lambda
+
+   /*
+    * Sanity checking invocation.
+    */
+   validators.mandatory:x:@.arguments/*/version
+   validators.mandatory:x:@.arguments/*/module
+   validators.regex:x:@.arguments/*/module
+      regex:^[a-zA-Z0-9_-]+$
+
+   /*
+    * Figuring out module's complete path.
+    */
+   .module-path
+   set-value:x:@.module-path
+      strings.concat
+         .:/modules/
+         get-value:x:@.arguments/*/module
+         .:/
+
+   /*
+    * Making sure that module exists.
+    */
+   if
+      not
+         io.folder.exists:x:@.module-path
+      .lambda
+
+         // No such module
+         strings.concat
+            .:"The module called '"
+            get-value:x:@.arguments/*/module
+            .:"' does not exist"
+         throw:x:-
+            public:bool:true
+            status:int:404
+
+   /*
+    * Loading all files within module recursively.
+    */
+   unwrap:x:+/*
+   signal:magic.io.file.load-recursively
+      .:x:@.module-path
+
+   /*
+    * Iterating through each file above, stripping its root folder,
+    * and adding to zip stream below.
+    */
+   for-each:x:@signal/*
+      set-value:x:@.dp/#
+         strings.replace:x:@.dp/#
+            get-value:x:@.module-path
+            .:
+      add:x:@.lambda/*/io.content.zip-stream
+         get-nodes:x:@.dp/#
+
+   /*
+    * Zipping file.
+    */
+   io.content.zip-stream
+
+   /*
+    * Figuring out filename to use.
+    */
+   strings.concat
+      get-value:x:@.arguments/*/module
+      .:-
+      get-value:x:@.arguments/*/version
+      .:.zip
+
+   /*
+    * Saving ZIP stream.
+    */
+   io.stream.save-file:x:@strings.concat
+      get-value:x:@io.content.zip-stream
