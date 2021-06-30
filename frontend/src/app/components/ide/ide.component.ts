@@ -17,6 +17,7 @@ import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
+import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
@@ -593,6 +594,29 @@ export class IdeComponent implements OnInit {
         this.dataBindTree();
 
       }, (error: any) => this.feedbackService.showError(error));
+    });
+  }
+
+  /**
+   * Invoked when user wants to execute a macro.
+   */
+  public showMacros() {
+
+    // Opening modal dialog allowing user to select macro.
+    const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
+      width: '550px',
+      data: {
+        name: '',
+      },
+    });
+
+    // Subscribing to closed event and creating a new folder if we're given a folder name.
+    dialogRef.afterClosed().subscribe((result: Macro) => {
+
+      // Verifying user selected a macro.
+      if (result) {
+        console.log(result);
+      }
     });
   }
 

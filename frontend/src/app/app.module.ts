@@ -142,6 +142,7 @@ import { CreateAssumptionTestDialogComponent } from './components/endpoints/endp
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 import { BazarComponent } from './components/bazar/bazar.component';
 import { ViewAppComponent } from './components/bazar/view-app/view-app.component';
+import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog/select-macro-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -229,6 +230,7 @@ import { ViewAppComponent } from './components/bazar/view-app/view-app.component
     SocketsComponent,
     BazarComponent,
     ViewAppComponent,
+    SelectMacroDialogComponent,
   ],
   imports: [
     FormsModule,
