@@ -125,7 +125,7 @@
 
    /*
     * Checking if caller supplied a [mssql] argument, and if so, creating the
-    * create database SQL file.
+    * create MSSQL database file.
     */
    if
       exists:x:@.arguments/*/mssql
@@ -144,7 +144,7 @@
 
    /*
     * Checking if caller supplied a [mysql] argument, and if so, creating the
-    * create database SQL file.
+    * create MYSQL database file.
     */
    if
       exists:x:@.arguments/*/mysql

@@ -635,9 +635,22 @@ export class IdeComponent implements OnInit {
     // Retrieving macro's arguments and description.
     this.fileService.getMacroDefinition(file).subscribe((result: MacroDefinition) => {
 
+      /*
+       * Filling out default values for anything we can intelligently figure
+       * out according to selected folder.
+       */
+      const splits = this.activeFolder.split('/');
+      if (splits.length === 4 && splits[1] === 'modules') {
+        const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
+        if (moduleArgs.length > 0) {
+          for (const idx of moduleArgs) {
+            idx.value = splits[2];
+          }
+        }
+      }
+
       // Opening modal dialog allowing user to select macro.
       const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
-        width: '550px',
         data: result,
       });
 
