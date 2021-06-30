@@ -122,13 +122,17 @@
     * Figuring out filename to use.
     */
    .filename
-   set-value:x:@.filename
+   .only-filename
+   set-value:x:@.only-filename
       strings.concat
-         .:/misc/bazar/apps/
          get-value:x:@.arguments/*/module
          .:-
          get-value:x:@.arguments/*/version
          .:.zip
+   set-value:x:@.filename
+      strings.concat
+         .:/misc/bazar/apps/
+         get-value:x:@.only-filename
 
    /*
     * Saving ZIP stream.
@@ -175,12 +179,32 @@
     */
    request.scheme
    request.host
-   strings.concat
-      get-value:x:@request.scheme
-      .:"://"
-      get-value:x:@request.host
-      .:"/magic/modules/system/bazar/get-app?app="
-      strings.url-encode:x:@.filename
+   .url
+   set-value:x:@.url
+      strings.concat
+         get-value:x:@request.scheme
+         .:"://"
+         get-value:x:@request.host
+         .:"/magic/modules/system/bazar/get-app?app="
+         strings.url-encode:x:@.only-filename
+
+   /*
+    * Checking if caller supplied a git repo.
+    */
+   if
+      exists:x:@.arguments/*/git
+      .lambda
+         add:x:@.lambda/@.lambda/**/database_support/.
+            get-nodes:x:@.arguments/*/git
+
+   /*
+    * Checking if app is not dependent upon any databases.
+    */
+   if
+      not
+         exists:x:@.lambda/**/database_support/*
+      .lambda
+         remove-nodes:x:@.lambda/**/database_support
 
    /*
     * Appending module to app manifest for server.
@@ -196,10 +220,9 @@
             description:x:@.arguments/*/description
             readme:x:@.arguments/*/readme
             version:x:@.arguments/*/version
-            url:"https://foo.com"
+            url:x:@.url
             requires:x:@.arguments/*/requires
             type:module
-            git:x:@.arguments/*/git
             publisher:x:@.arguments/*/publisher
             database_support
    lambda2hyper:x:@hyper2lambda/*
