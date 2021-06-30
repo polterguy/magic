@@ -198,13 +198,22 @@
             get-nodes:x:@.arguments/*/git
 
    /*
+    * Checking if caller supplied a README URL.
+    */
+   if
+      exists:x:@.arguments/*/readme
+      .lambda
+         add:x:@.lambda/@.lambda/**/database_support/.
+            get-nodes:x:@.arguments/*/readme
+
+   /*
     * Checking if app is not dependent upon any databases.
     */
    if
       not
          exists:x:@.lambda/**/database_support/*
       .lambda
-         remove-nodes:x:@.lambda/**/database_support
+         remove-nodes:x:@.lambda/@.lambda/**/database_support
 
    /*
     * Appending module to app manifest for server.
@@ -218,7 +227,6 @@
             name:x:@.arguments/*/name
             module_name:x:@.arguments/*/module
             description:x:@.arguments/*/description
-            readme:x:@.arguments/*/readme
             version:x:@.arguments/*/version
             url:x:@.url
             requires:x:@.arguments/*/requires
