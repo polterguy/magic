@@ -121,17 +121,19 @@
    /*
     * Figuring out filename to use.
     */
-   strings.concat
-      .:/misc/bazar/apps/
-      get-value:x:@.arguments/*/module
-      .:-
-      get-value:x:@.arguments/*/version
-      .:.zip
+   .filename
+   set-value:x:@.filename
+      strings.concat
+         .:/misc/bazar/apps/
+         get-value:x:@.arguments/*/module
+         .:-
+         get-value:x:@.arguments/*/version
+         .:.zip
 
    /*
     * Saving ZIP stream.
     */
-   io.stream.save-file:x:@strings.concat
+   io.stream.save-file:x:@.filename
       get-value:x:@io.content.zip-stream
 
    /*
@@ -167,6 +169,18 @@
          add:x:@.lambda/**/database_support
             .
                .:mssql
+
+   /*
+    * Dynamically building our download zip file URL.
+    */
+   request.scheme
+   request.host
+   strings.concat
+      get-value:x:@request.scheme
+      .:"://"
+      get-value:x:@request.host
+      .:"/magic/modules/system/bazar/get-app?app="
+      strings.url-encode:x:@.filename
 
    /*
     * Appending module to app manifest for server.

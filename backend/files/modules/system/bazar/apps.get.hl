@@ -1,8 +1,14 @@
 
 /*
- * Returns Bazar apps to caller.
+ * Returns Bazar apps to caller the local server can install.
  */
-.description:Returns Bazar apps to caller
+.description:Returns Bazar apps to caller the local server can install
+
+
+/*
+ * Sanity checking invocation.
+ */
+auth.ticket.verify:root
 
 
 /*
