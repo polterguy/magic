@@ -1,0 +1,27 @@
+
+/*
+ * Returns the specified [app] to caller.
+ */
+.description:Returns the specified [app] to caller
+.arguments
+   app:string
+
+/*
+ * Opening up stream that we should return to caller.
+ */
+strings.concat
+   .:/misc/bazar/apps/
+   get-value:x:@.arguments/*/app
+io.stream.open-file:x:@strings.concat
+
+/*
+ * Returning app to caller making sure we apply correct HTTP headers, agressively caching, etc.
+ */
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@.arguments/*/app
+   .:"\""
+response.headers.add
+   Cache-Control:public, max-age=3600
+   Content-Disposition:x:@strings.concat
+return:x:@io.stream.open-file

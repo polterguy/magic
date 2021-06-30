@@ -1,0 +1,18 @@
+
+/*
+ * Returns Bazar apps to caller that the current server has published.
+ */
+.description:Returns Bazar apps to caller that the current server has published
+
+/*
+ * Loading Bazar declaration file.
+ */
+io.file.load:/misc/bazar/apps.hl
+
+/*
+ * Making sure we apply aggressive caching and the correct Content-Type header.
+ */
+response.headers.add
+   Cache-Control:public, max-age=3600
+   Content-Type:application/x-hyperlambda
+return:x:@io.file.load
