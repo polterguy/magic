@@ -63,7 +63,9 @@
    validators.regex:x:@.arguments/*/module
       regex:^[a-zA-Z0-9_-]+$
    validators.regex:x:@.arguments/*/version
-      regex:"^v[0-9]+\\.[0-9]+\\.[0.9]+$"
+      regex:"^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+   validators.regex:x:@.arguments/*/requires
+      regex:"^v[0-9]+\\.[0-9]+\\.[0-9]+$"
 
    /*
     * Figuring out module's complete path.
@@ -187,3 +189,4 @@
             database_support
    lambda2hyper:x:@hyper2lambda/*
    io.file.save:/misc/bazar/apps.hl
+      get-value:x:@lambda2hyper
