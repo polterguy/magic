@@ -179,6 +179,19 @@ export class ConfigService {
   }
 
   /**
+   * Deletes the specified Bazar app, and its associated zip file.
+   */
+   public deleteBazarApp(module: string, filename: string) {
+
+    // Invoking backend and returns app manifests to caller.
+    return this.httpService.delete<Response>(
+      '/magic/modules/system/bazar/remove?module=' +
+      encodeURIComponent(module) +
+      '&filename=' + 
+      encodeURIComponent(filename));
+  }
+
+  /**
    * Returns license information to caller.
    */
   public license() {

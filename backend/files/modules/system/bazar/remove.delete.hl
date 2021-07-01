@@ -1,0 +1,102 @@
+
+/*
+ * Removes the specified app from your Bazar.
+ */
+.arguments
+   filename:string
+   module:string
+.description:Removes the specified app from your Bazar
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/filename
+validators.mandatory:x:@.arguments/*/module
+
+/*
+ * Verifying that file physically exists.
+ */
+strings.concat
+   .:/misc/bazar/apps/
+   get-value:x:@.arguments/*/filename
+if
+   not
+      io.file.exists:x:@strings.concat
+   .lambda
+
+      // Oops, no such file.
+      throw:That files does not exist
+         public:bool:true
+         status:int:404
+
+else
+
+   /*
+    * Deleting file from disc.
+    */
+   io.file.delete:x:@strings.concat
+
+/*
+ * Loading Bazar declaration file, such that we can remove app
+ * from manifest.
+ */
+io.file.load:/misc/bazar/published.hl
+hyper2lambda:x:@io.file.load
+
+/*
+ * Removing app from declaration file.
+ */
+.x
+set-value:x:@.x
+   strings.concat
+      .:@hyper2lambda/*/*/module_name/=
+      get-value:x:@.arguments/*/module
+      .:/.
+set-x:x:+
+   convert:x:@.x
+      type:x
+remove-nodes
+
+/*
+ * Checking if file is empty now, at which point
+ * we simply delete the file entirely.
+ */
+if
+   not
+      exists:x:@hyper2lambda/*
+   .lambda
+
+      /*
+       * File is empty, simply deleting it.
+       */
+      io.file.delete:/misc/bazar/published.hl
+
+else
+
+   /*
+    * File still contains (other) apps, hence saving it.
+    */
+   lambda2hyper:x:@hyper2lambda/*
+   io.file.save:/misc/bazar/published.hl
+      get-value:x:@lambda2hyper
+
+/*
+ * Doing some basic logging.
+ */
+log.info
+   .:"Application removed from local Bazar, module name was '"
+   get-value:x:@.arguments/*/module
+   .:"' and filename was '"
+   get-value:x:@.arguments/*/filename
+   .:"'"
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

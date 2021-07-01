@@ -1,7 +1,7 @@
 
 <mat-card *ngIf="authService.isRoot">
 
-  <h2>Published by others</h2>
+  <h2>Available</h2>
 
   <button
     *ngFor="let idx of apps"
@@ -20,7 +20,7 @@
 
 <mat-card *ngIf="publishedApps.length > 0">
 
-  <h2>Published by server</h2>
+  <h2>Published</h2>
 
   <button
     *ngFor="let idx of publishedApps"

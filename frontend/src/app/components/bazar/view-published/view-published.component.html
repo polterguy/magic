@@ -8,6 +8,12 @@
 <div *ngIf="readme" mat-dialog-actions class="mat-dialog-actions">
 
   <button
+    *ngIf="authService.isRoot"
+    mat-raised-button
+    matTooltip="Removes app from your published app list"
+    (click)="removeAppFromBazar()">Remove</button>
+
+  <button
     mat-raised-button
     matTooltip="Get app's direct download URL"
     (click)="getUrl()">URL</button>

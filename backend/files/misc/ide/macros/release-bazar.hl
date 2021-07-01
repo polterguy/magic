@@ -282,3 +282,15 @@
    lambda2hyper:x:@.published/*
    io.file.save:/misc/bazar/published.hl
       get-value:x:@lambda2hyper
+
+   /*
+    * Doing some basic logging.
+    */
+   log.info
+      .:"Application released to local Bazar, module name was '"
+      get-value:x:@.arguments/*/module
+      .:"', local filename was '"
+      get-value:x:@.only-filename
+      .:"' and version was '"
+      get-value:x:@.arguments/*/version
+      .:"'"
