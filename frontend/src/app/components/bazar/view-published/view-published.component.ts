@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -31,10 +32,14 @@ export class ViewPublishedComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param clipboard Needed to be able to copy app direct download URL
+   * @param configService Needed to be able to retrieve README file for module
+   * @param feedbackService Needed to show user feedback
    * @param dialogRef Needed to be able to explicitly close dialog from TypeScript
    * @param data Information about currently viewed Bazar app
    */
   public constructor(
+    private clipboard: Clipboard,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
     private dialogRef: MatDialogRef<ViewPublishedComponent>,
@@ -61,6 +66,16 @@ export class ViewPublishedComponent implements OnInit {
 
       }, (error: any) => this.feedbackService.showError(error));
     }
+  }
+
+  /**
+   * Invoked when user wants to copy direct download URL for app.
+   */
+  public getUrl() {
+
+    // Putting app's direct download URL unto clipboard and providing some feedback to caller.
+    this.clipboard.copy(this.data.url);
+    this.feedbackService.showInfo("App's direct download URL can be found on your clipboard");
   }
 
   /**
