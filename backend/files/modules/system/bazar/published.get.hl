@@ -1,6 +1,6 @@
 
 /*
- * Returns Bazar apps to caller that the current server has published.
+ * Returns Bazar apps to caller that the current server has published as Hyperlambda.
  */
 .description:Returns Bazar apps to caller that the current server has published as Hyperlambda
 

@@ -1,6 +1,11 @@
 
 /*
  * Returns Bazar app's README file to caller.
+ *
+ * Notice, this looks a bit stupid since the frontend could just
+ * download the README file directly - But since we cannot control
+ * the CORS settings on the server actually publishing the README
+ * file, this is unfortunately necessary.
  */
 .description:Returns Bazar app's README file to caller
 .arguments
@@ -27,8 +32,8 @@ http.get:x:@.arguments/*/url
 
 
 /*
- * Making sure we apply some basic caching, adding the correct Content-Type header,
- * and returning result to caller.
+ * Making sure we apply aggressive caching before returning
+ * result to caller.
  */
 response.headers.add
    Cache-Control:public, max-age=3600

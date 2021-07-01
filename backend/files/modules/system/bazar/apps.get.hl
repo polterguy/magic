@@ -1,6 +1,6 @@
 
 /*
- * Returns Bazar apps to caller the local server can install.
+ * Returns Bazar apps that the local server can install.
  */
 .description:Returns Bazar apps that the local server can install
 
@@ -18,7 +18,8 @@ config.get:"magic:bazars"
 
 
 /*
- * Splitting above on commas, to allow for delcaring multiple bazars in same config key.
+ * Splitting above on commas, to allow for declaring multiple bazars
+ * in the same config key.
  */
 strings.split:x:@config.get
    .:,
@@ -34,9 +35,6 @@ for-each:x:@strings.split/*
     * Retrieving manifest.
     */
    http.get:x:@.dp/#
-      headers
-         Cache-Control:no-cache
-         Pragma:no-cache
    if
       not
          eq
@@ -59,7 +57,8 @@ for-each:x:@strings.split/*
       get-nodes:x:@hyper2lambda/*
 
 /*
- * Dynamically built above to return all apps to caller.
+ * Returning all apps to caller making sure we apply some aggressive caching
+ * in the process.
  */
 response.headers.add
    Cache-Control:public, max-age=3600
