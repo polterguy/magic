@@ -131,6 +131,8 @@ export class BazarComponent implements OnInit {
    * @param module Module to install
    */
    public viewPublishedDetails(module: AppManifest) {
+
+    // Opening up a modal dialog to show user details about specified published app.
      console.log(module);
    }
 
