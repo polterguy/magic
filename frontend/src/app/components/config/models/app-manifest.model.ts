@@ -61,4 +61,9 @@ export class AppManifest {
    * What databases module supports.
    */
    database_support: string[];
+
+   /**
+    * Email address, and/or name of publisher.
+    */
+   publisher: string;
   }
