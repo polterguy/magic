@@ -1,25 +1,27 @@
 
 /*
- * Installs the specified Bazar module.
+ * Installs the specified Bazar module into the local server.
+ *
+ * Notice, this will only download the specified ZIP file, extract
+ * it, and correctly rename it - But not run startup files for module.
+ * Hence, after you've invoked this file, you should invoke the
+ * '/system/file-system/install' PUT file.
  */
 .arguments
    url:string
    name:string
-.description:Installs the specified Bazar module
-
+.description:Installs the specified Bazar module into the local server
 
 /*
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
 
-
 /*
  * Sanity checking invocation.
  */
 validators.mandatory:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/name
-
 
 /*
  * Verifying that folder doesn't already exist, as in that module
@@ -40,36 +42,34 @@ if
          public:bool:true
          status:int:500
 
-
 /*
- * Downloading zip file.
+ * Downloading zip file as binary content from specified URL.
  */
 http.get.binary:x:@.arguments/*/url
 
-
 /*
- * Saving file to modules folder.
+ * Saving file to modules folder using the 'filename' argument specified
+ * by its HTTP Content-Disposition header.
  */
 strings.split:x:@http.get.binary/*/headers/*/Content-Disposition
    .:=
+strings.trim:x:@strings.split/1
+   .:"\""
 strings.concat
    .:/modules/
-   get-value:x:@strings.split/1
+   get-value:x:@strings.trim
 io.file.save.binary:x:@strings.concat
    get-value:x:@http.get.binary/*/content
-
 
 /*
  * Unzipping downloaded ZIP file.
  */
 io.file.unzip:x:@strings.concat
 
-
 /*
- * Deletes ZIP file.
+ * Deleting ZIP file.
  */
 io.file.delete:x:@strings.concat
-
 
 /*
  * Checking if the ZIP file's name is different than the module's name
@@ -92,7 +92,6 @@ if
             .:/modules/
             get-value:x:@.arguments/*/name
             .:/
-
 
 /*
  * Returning success to caller.

@@ -1,21 +1,42 @@
 
 /*
- * Returns the specified [app] to caller.
+ * Returns the specified Bazar zip file [app] to caller.
+ *
+ * Notice, this endpoint allows anonymous users to download an app
+ * published by the current server.
  */
-.description:Returns the specified [app] to caller
+.description:Returns the specified Bazar zip file [app] to caller
 .arguments
    app:string
 
 /*
- * Opening up stream that we should return to caller.
+ * Figuring out exact path of file.
  */
 strings.concat
    .:/misc/bazar/apps/
    get-value:x:@.arguments/*/app
+
+/*
+ * Making sure file exists.
+ */
+if
+   not
+      io.file.exists:x:@strings.concat
+   .lambda
+
+      // Oops, Bazar app file doesn't exist.
+      throw:Bazar app not found
+         status:int:404
+         public:bool:true
+
+/*
+ * Opening up stream that we should return to caller directly
+ * over HTTP response object.
+ */
 io.stream.open-file:x:@strings.concat
 
 /*
- * Returning app to caller making sure we apply correct HTTP headers, agressively caching, etc.
+ * Returning app to caller making sure we apply correct HTTP headers.
  */
 strings.concat
    .:"attachment; filename=\""
