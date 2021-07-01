@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
@@ -12,6 +13,7 @@ import { AuthService } from '../auth/services/auth.service';
 import { FileService } from '../files/services/file.service';
 import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewPublishedComponent } from './view-published/view-published.component';
 import { DefaultDatabaseType } from '../config/models/default-database-type.model';
@@ -51,16 +53,20 @@ export class BazarComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to be able to create modal dialogs
+   * @param clipboard Needed to be able to put manifest URL into clipboard
    * @param authService Needed to check if user is logged in as root or not
    * @param fileService Needed to be able to figure out which modules are already installed
    * @param configService Needed to retrieve Bazar manifests
+   * @param backendService Needed to be able to retrieve main backend URL
    * @param feedbackService Needed to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
+    private clipboard: Clipboard,
     public authService: AuthService,
     private fileService: FileService,
     private configService: ConfigService,
+    private backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -124,7 +130,7 @@ export class BazarComponent implements OnInit {
   public canInstall(module: AppManifest) {
 
     // Verifying app supports the default database adapter used by backend.
-    return module.database_support.indexOf(this.defaultDatabase) !== -1;
+    return !module.database_support || module.database_support.indexOf(this.defaultDatabase) !== -1;
   }
 
   /**
@@ -266,5 +272,15 @@ export class BazarComponent implements OnInit {
         });
       }
     });
+  }
+
+  /**
+   * Invoked when user wants to copy manifest URL.
+   */
+  public getManifestUrl() {
+    
+    // Simply putting manifest URL into clipboard and providing some feedback to user.
+    this.clipboard.copy(this.backendService.current.url + '/magic/modules/system/bazar/published');
+    this.feedbackService.showInfoShort("Server's manifest URL can be found on your clipboard");
   }
 }

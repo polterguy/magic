@@ -1,8 +1,14 @@
 
 <h1 mat-dialog-title>{{data.name}} - [{{data.module_name}}] - {{data.version}}</h1>
 
-<div mat-dialog-content>
+<div mat-dialog-content class="details-wrapper">
+
+  <div class="details">
+    Requires Magic version {{data.requires}}, publisher {{data.publisher}}
+  </div>
+
   <div class="markdown" *ngIf="readme" [innerHTML]="readme | marked"></div>
+
 </div>
 
 <div *ngIf="readme" mat-dialog-actions class="mat-dialog-actions">

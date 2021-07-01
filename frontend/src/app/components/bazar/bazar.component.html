@@ -1,7 +1,7 @@
 
 <mat-card *ngIf="authService.isRoot">
 
-  <h2>Available</h2>
+  <h2>Available for you</h2>
 
   <button
     *ngFor="let idx of apps"
@@ -33,7 +33,7 @@
 
 <mat-card *ngIf="publishedApps.length > 0">
 
-  <h2>Published</h2>
+  <h2>Published by server</h2>
 
   <button
     *ngFor="let idx of publishedApps"
@@ -47,5 +47,17 @@
   </button>
 
   <div class="clearfix"></div>
+
+  <div class="button-strip">
+
+    <button
+      mat-raised-button
+      matTooltip="Manifest URL"
+      (click)="getManifestUrl()"
+      color="primary">
+      Manifest
+    </button>
+
+  </div>
 
 </mat-card>
