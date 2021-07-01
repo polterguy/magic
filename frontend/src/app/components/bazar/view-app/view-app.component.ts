@@ -57,7 +57,7 @@ export class ViewAppComponent implements OnInit {
     private configService: ConfigService,
     private feedbackService: FeedbackService,
     @Inject(MAT_DIALOG_DATA) public data: BazarDialogResult,
-    private dialogRef: MatDialogRef<ViewAppComponent>,) { }
+    private dialogRef: MatDialogRef<ViewAppComponent>) { }
 
   /**
    * Implementation of OnInit.

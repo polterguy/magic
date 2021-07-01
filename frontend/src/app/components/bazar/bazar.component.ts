@@ -13,6 +13,7 @@ import { FileService } from '../files/services/file.service';
 import { AppManifest } from '../config/models/app-manifest.model';
 import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { ViewPublishedComponent } from './view-published/view-published.component';
 import { DefaultDatabaseType } from '../config/models/default-database-type.model';
 import { BazarDialogResult, ViewAppComponent } from './view-app/view-app.component';
 
@@ -132,8 +133,10 @@ export class BazarComponent implements OnInit {
    */
    public viewPublishedDetails(module: AppManifest) {
 
-    // Opening up a modal dialog to show user details about specified published app.
-     console.log(module);
+    // Opening up a modal dialog to show user details about the specified published app.
+    this.dialog.open(ViewPublishedComponent, {
+      data: module
+    });
    }
 
   /**

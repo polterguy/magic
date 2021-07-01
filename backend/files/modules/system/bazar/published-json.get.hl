@@ -1,8 +1,8 @@
 
 /*
- * Returns Bazar apps to caller that the current server has published.
+ * Returns Bazar apps to caller as JSON that the current server has published.
  */
-.description:Returns Bazar apps to caller that the current server has published as JSON
+.description:Returns Bazar apps to caller as JSON that the current server has published
 
 /*
  * Loading Bazar declaration file.
