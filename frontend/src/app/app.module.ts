@@ -144,6 +144,7 @@ import { BazarComponent } from './components/bazar/bazar.component';
 import { ViewAppComponent } from './components/bazar/view-app/view-app.component';
 import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog/select-macro-dialog.component';
 import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dialog/execute-macro-dialog.component';
+import { ViewPublishedComponent } from './components/bazar/view-published/view-published.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -233,6 +234,7 @@ import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dial
     ViewAppComponent,
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,
+    ViewPublishedComponent,
   ],
   imports: [
     FormsModule,

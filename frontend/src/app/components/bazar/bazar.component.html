@@ -1,7 +1,7 @@
 
-<mat-card *ngIf="authService.isRoot && apps.length > 0">
+<mat-card *ngIf="authService.isRoot">
 
-  <h2>Installable on server</h2>
+  <h2>Published by others</h2>
 
   <button
     *ngFor="let idx of apps"
