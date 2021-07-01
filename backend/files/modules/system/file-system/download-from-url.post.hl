@@ -30,8 +30,9 @@ http.get.binary:x:@.arguments/*/url
  */
 if
    not
-      eq:x:@http.get.binary
-      .:int:200
+      eq
+         get-value:x:@http.get.binary
+         .:int:200
    .lambda
 
       // Oops, download did not succeed ...
