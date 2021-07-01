@@ -346,3 +346,4 @@ frontend/dist/**
 !frontend/src/app/components/diagnostics/diagnostics-sockets/publish
 
 backend/files/misc/bazar/apps/*.zip
+backend/files/misc/bazar/published.hl
