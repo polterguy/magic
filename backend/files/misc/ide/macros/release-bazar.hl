@@ -19,7 +19,7 @@
       name:description
       type:string
       description:A friendly descriptive text providing some description to others wanting to install your module
-      mandatory:bool:true
+      mandatory:bool:false
    .
       name:version
       type:string
@@ -57,9 +57,10 @@
    /*
     * Sanity checking invocation.
     */
-   validators.mandatory:x:@.arguments/*/name
-   validators.mandatory:x:@.arguments/*/version
    validators.mandatory:x:@.arguments/*/module
+   validators.mandatory:x:@.arguments/*/version
+   validators.mandatory:x:@.arguments/*/requires
+   validators.mandatory:x:@.arguments/*/name
    validators.regex:x:@.arguments/*/module
       regex:^[a-zA-Z0-9_-]+$
    validators.regex:x:@.arguments/*/version
@@ -188,6 +189,15 @@
          strings.url-encode:x:@.only-filename
 
    /*
+    * Checking if caller supplied a description.
+    */
+   if
+      exists:x:@.arguments/*/description
+      .lambda
+         add:x:@.lambda/@.lambda/**/database_support/.
+            get-nodes:x:@.arguments/*/descriptiont
+
+   /*
     * Checking if caller supplied a git repo.
     */
    if
@@ -263,7 +273,6 @@
          .
             name:x:@.arguments/*/name
             module_name:x:@.arguments/*/module
-            description:x:@.arguments/*/description
             version:x:@.arguments/*/version
             url:x:@.url
             requires:x:@.arguments/*/requires
