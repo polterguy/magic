@@ -46,7 +46,6 @@ export class ViewPublishedComponent implements OnInit {
    public ngOnInit() {
 
     // Verifying module has a README file.
-    console.log(this.data);
     if (!this.data.readme || this.data.readme === '') {
 
       // Assigning some default text to show to user.
