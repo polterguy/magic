@@ -1,5 +1,5 @@
 
-<mat-card *ngIf="authService.isRoot">
+<mat-card *ngIf="authService.isRoot && apps.length > 0">
 
   <h2>Installable on server</h2>
 
@@ -18,7 +18,7 @@
 
 </mat-card>
 
-<mat-card>
+<mat-card *ngIf="publishedApps.length > 0">
 
   <h2>Published by server</h2>
 
@@ -26,6 +26,7 @@
     *ngFor="let idx of publishedApps"
     mat-raised-button
     class="app"
+    [matTooltip]="idx.description || 'No description'"
     (click)="viewPublishedDetails(idx)">
     <span class="title">{{idx.name}}</span>
     <span class="version">{{idx.version}}</span>

@@ -195,7 +195,7 @@
       exists:x:@.arguments/*/description
       .lambda
          add:x:@.lambda/@.lambda/**/database_support/.
-            get-nodes:x:@.arguments/*/descriptiont
+            get-nodes:x:@.arguments/*/description
 
    /*
     * Checking if caller supplied a git repo.
