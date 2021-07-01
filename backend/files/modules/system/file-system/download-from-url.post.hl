@@ -1,0 +1,63 @@
+
+/*
+ * Downloads a file from an external URL and saves it to the specified folder on the server.
+ */
+.arguments
+   folder:string
+   url:string
+.description:Downloads a file from an external URL and saves it to the specified folder on the server
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/folder
+validators.mandatory:x:@.arguments/*/url
+validators.url:x:@.arguments/*/url
+
+/*
+ * Downloading file from external URL.
+ */
+http.get.binary:x:@.arguments/*/url
+
+/*
+ * Verifying result of above invocation was a success.
+ */
+if
+   not
+      eq:x:@http.get.binary
+      .:int:200
+   .lambda
+
+      // Oops, download did not succeed ...
+      throw:That is not a valid URL
+         public:bool:true
+         status:int:400
+
+/*
+ * Figuring out filename to use locally for file.
+ */
+strings.split:x:@http.get.binary/*/headers/*/Content-Disposition
+   .:=
+strings.trim:x:@strings.split/1
+   .:"\""
+
+/*
+ * Saving file to specified folder on local server.
+ */
+strings.concat
+   get-value:x:@.arguments/*/folder
+   get-value:x:@strings.trim
+io.file.save.binary:x:@strings.concat
+   get-value:x:@http.get.binary/*/content
+
+/*
+ * Returning success to caller.
+ */
+return
+   result:success

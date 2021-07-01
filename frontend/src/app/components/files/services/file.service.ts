@@ -206,6 +206,21 @@ export class FileService {
   }
 
   /**
+   * Downloads a file to your backend from an external URL.
+   * 
+   * @param folder Folder on server where user wants to save the file
+   * @param url URL to file user wants to download to his local server
+   */
+   public downloadFileToBackend(folder: string, url: string) {
+
+    // Invoking backend to download file to server.
+    return this.httpService.post<Response>('/magic/modules/system/file-system/download-from-url', {
+      folder,
+      url,
+    });
+  }
+
+  /**
    * Downloads a file from backend.
    * 
    * @param path File to download
