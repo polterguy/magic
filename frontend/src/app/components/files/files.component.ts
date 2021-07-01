@@ -13,6 +13,7 @@ import { Message } from 'src/app/models/message.model';
 import { FeedbackService } from '../../services/feedback.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FileService } from 'src/app/components/files/services/file.service';
+import { DownloadFileDialogComponent } from './download-file-dialog/download-file-dialog.component';
 import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
 import { RenameFileObject, RenameFileObjectDialogComponent } from './rename-file-object-dialog/rename-file-object-dialog.component';
 
@@ -380,6 +381,29 @@ export class FilesComponent implements OnInit, OnDestroy {
           this.getFolderContent();
 
         }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+  }
+
+  /**
+   * Invoked when user wants to download a file directly to server.
+   */
+  public downloadFileToServer() {
+
+    // Showing a modal dialog allowing user to provide us with a download URL.
+    const dialogRef = this.dialog.open(DownloadFileDialogComponent, {
+      width: '550px',
+      data: this.currentFolder,
+    });
+
+    // Subscribing to closed event such that we can refresh current folder if user clicked the download button.
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // Checking if user actually downloaded anything.
+      if (result) {
+
+        // Success, re-retrieving folder's content.
+        this.getFolderContent();
       }
     });
   }

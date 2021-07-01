@@ -135,7 +135,8 @@ export class BazarComponent implements OnInit {
 
     // Opening up a modal dialog to show user details about the specified published app.
     const dialog = this.dialog.open(ViewPublishedComponent, {
-      data: module
+      data: module,
+      width: '80%'
     });
     dialog.afterClosed().subscribe((result: AppManifest) => {
 
@@ -184,7 +185,8 @@ export class BazarComponent implements OnInit {
       data: {
         manifest: module,
         canInstall: this.canInstall(module),
-      }
+      },
+      width: '80%'
     });
 
     // Subscribing to close to do the heavy lifting in this component.
