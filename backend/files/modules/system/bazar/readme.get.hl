@@ -13,12 +13,6 @@
 
 
 /*
- * Ensures user is authorized to access endpoint.
- */
-auth.ticket.verify:root
-
-
-/*
  * Sanity checking invocation.
  */
 validators.mandatory:x:@.arguments/*/url

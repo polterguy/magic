@@ -1,6 +1,6 @@
 
 <div mat-dialog-content>
-  <div *ngIf="readme" [innerHTML]="readme | marked"></div>
+  <div class="markdown" *ngIf="readme" [innerHTML]="readme | marked"></div>
 </div>
 
 <div *ngIf="readme" mat-dialog-actions class="mat-dialog-actions">
