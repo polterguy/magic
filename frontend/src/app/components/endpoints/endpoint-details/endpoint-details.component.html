@@ -164,7 +164,7 @@
     </span>
 
     <span
-      *ngIf="!result.blob"
+      *ngIf="result.responseType === 'json'"
       class="item-full-width no-bottom-margin">
       <span class="description">
         <ngx-codemirror
@@ -175,7 +175,18 @@
     </span>
 
     <span
-      *ngIf="result.blob"
+      *ngIf="result.responseType === 'hyperlambda'"
+      class="item-full-width no-bottom-margin">
+      <span class="description">
+        <ngx-codemirror
+          [(ngModel)]="result.response"
+          [options]="cmHlOptionsReadonly.hl">
+        </ngx-codemirror>
+      </span>
+    </span>
+
+    <span
+      *ngIf="result.responseType === 'blob'"
       class="item-full-width">
       <span class="description">
         <img [src]="result.blob" alt="Image resulting from invocation">

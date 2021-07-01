@@ -24,6 +24,7 @@ import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumpt
 // CodeMirror options.
 import json from '../../codemirror/options/json.json';
 import json_readonly from '../../codemirror/options/json_readonly.json';
+import hyperlambda_readonly from '../../codemirror/options/hyperlambda_readonly.json';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
@@ -53,6 +54,9 @@ class InvocationResult {
 
   // If response returned a blob (image?), this will be its value.
   blob: any;
+
+  // Response type, can be 'hyperlambda', 'json' or 'blob'.
+  responseType: string;
 }
 
 /*
@@ -98,6 +102,13 @@ export class EndpointDetailsComponent implements OnInit {
    */
   public cmOptionsReadonly = {
     json: json_readonly,
+  };
+
+  /**
+   * CodeMirror options object, taken from common settings.
+   */
+   public cmHlOptionsReadonly = {
+    hl: hyperlambda_readonly,
   };
 
   /**
@@ -499,6 +510,8 @@ export class EndpointDetailsComponent implements OnInit {
   let responseType = '';
   if (this.endpoint.produces === 'application/json') {
     responseType = 'json';
+  } else if (this.endpoint.produces === 'application/x-hyperlambda') {
+    responseType = 'hyperlambda';
   } else if (this.endpoint.produces.startsWith('text')) {
     responseType = 'text';
   } else {
@@ -576,7 +589,8 @@ export class EndpointDetailsComponent implements OnInit {
           status: res.status,
           statusText: res.statusText,
           response: response,
-          blob: null
+          blob: null,
+          responseType,
         };
         if (responseType === 'blob') {
           const objectUrl = URL.createObjectURL(response);
@@ -591,6 +605,7 @@ export class EndpointDetailsComponent implements OnInit {
           statusText: error.statusText,
           response: JSON.stringify(error.error || '{}', null, 2),
           blob: null,
+          responseType,
         };
       });
     }
