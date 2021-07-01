@@ -134,8 +134,17 @@ export class BazarComponent implements OnInit {
    public viewPublishedDetails(module: AppManifest) {
 
     // Opening up a modal dialog to show user details about the specified published app.
-    this.dialog.open(ViewPublishedComponent, {
+    const dialog = this.dialog.open(ViewPublishedComponent, {
       data: module
+    });
+    dialog.afterClosed().subscribe((result: AppManifest) => {
+
+      // Checking if app was removed.
+      if (result) {
+
+        // App was removed from local Bazar, hence updating model.
+        this.apps = this.apps.filter(x => x.module_name !== module.module_name);
+      }
     });
    }
 
