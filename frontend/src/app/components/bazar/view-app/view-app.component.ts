@@ -64,13 +64,22 @@ export class ViewAppComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Retrieving component's README file.
-    this.configService.getReadMeFile(this.data.manifest).subscribe((result: Response) => {
+    // Verifying module has a README file.
+    if (!this.data.manifest.readme || this.data.manifest.readme === '') {
 
-      // Assigning model.
-      this.readme = result.result;
+      // Assigning some default text to show to user.
+      this.readme = 'Module does not have a README file';
 
-    }, (error: any) => this.feedbackService.showError(error));
+    } else {
+
+      // Retrieving component's README file.
+      this.configService.getReadMeFile(this.data.manifest).subscribe((result: Response) => {
+
+        // Assigning model.
+        this.readme = result.result;
+
+      }, (error: any) => this.feedbackService.showError(error));
+    }
   }
 
   /**
