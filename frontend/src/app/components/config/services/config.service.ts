@@ -152,7 +152,9 @@ export class ConfigService {
    public getReadMeFile(module: AppManifest) {
 
     // Invoking backend and returns app's README file to caller.
-    return this.httpService.get<Response>('/magic/modules/system/bazar/readme?url=' + encodeURIComponent(module.readme));
+    return this.httpService.get<Response>(
+      '/magic/modules/system/bazar/readme?url=' +
+      encodeURIComponent(module.readme));
   }
 
   /**
