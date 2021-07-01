@@ -143,7 +143,7 @@ export class BazarComponent implements OnInit {
       if (result) {
 
         // App was removed from local Bazar, hence updating model.
-        this.apps = this.apps.filter(x => x.module_name !== module.module_name);
+        this.publishedApps = this.publishedApps.filter(x => x.module_name !== module.module_name);
       }
     });
    }
