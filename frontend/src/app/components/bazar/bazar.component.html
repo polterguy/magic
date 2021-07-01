@@ -16,6 +16,19 @@
 
   <div class="clearfix"></div>
 
+  <div class="button-strip">
+
+    <button
+      *ngIf="authService.isRoot"
+      mat-raised-button
+      matTooltip="Installs a module from a direct link"
+      (click)="installApp()"
+      color="primary">
+      Install
+    </button>
+
+  </div>
+
 </mat-card>
 
 <mat-card *ngIf="publishedApps.length > 0">

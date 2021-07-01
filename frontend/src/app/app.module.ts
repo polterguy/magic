@@ -146,6 +146,7 @@ import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog
 import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { ViewPublishedComponent } from './components/bazar/view-published/view-published.component';
 import { DownloadFileDialogComponent } from './components/files/download-file-dialog/download-file-dialog.component';
+import { InstallAppDialogComponent } from './components/bazar/install-app-dialog/install-app-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -237,6 +238,7 @@ import { DownloadFileDialogComponent } from './components/files/download-file-di
     ExecuteMacroDialogComponent,
     ViewPublishedComponent,
     DownloadFileDialogComponent,
+    InstallAppDialogComponent,
   ],
   imports: [
     FormsModule,

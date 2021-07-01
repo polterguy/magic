@@ -78,6 +78,7 @@ export class ViewPublishedComponent implements OnInit {
     // Putting app's direct download URL unto clipboard and providing some feedback to caller.
     this.clipboard.copy(this.data.url);
     this.feedbackService.showInfo("App's direct download URL can be found on your clipboard");
+    this.dialogRef.close();
   }
 
   /**

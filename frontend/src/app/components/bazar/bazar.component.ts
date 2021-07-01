@@ -16,6 +16,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewPublishedComponent } from './view-published/view-published.component';
 import { DefaultDatabaseType } from '../config/models/default-database-type.model';
 import { BazarDialogResult, ViewAppComponent } from './view-app/view-app.component';
+import { InstallAppDialogComponent, ModuleInstall } from './install-app-dialog/install-app-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -149,6 +150,44 @@ export class BazarComponent implements OnInit {
     });
    }
 
+   /**
+    * Invoked when user wants to provide a direct URL to install a new app
+    * into his backend.
+    */
+   public installApp() {
+
+    // Showing modal dialog allowing user to provide us with the URL and name of module to install.
+    const dialog = this.dialog.open(InstallAppDialogComponent, {
+      width: '550px',
+      data: {
+        url: null,
+        name: null,
+      }
+    });
+    dialog.afterClosed().subscribe((result: ModuleInstall) => {
+
+      // Checking if user clicked the install button.
+      if (result) {
+
+        // User wants to install module, hence invoking backend to download and extract zip file.
+        this.configService.installBazarModule(result.url, result.name).subscribe(() => {
+
+          // Then runnning installation scripts in folder.
+          this.fileService.install('/modules/' + result.name + '/').subscribe(() => {
+
+            // Providing feedback to user.
+            this.feedbackService.showInfoShort('Module was successfully installed');
+
+            // Making sure we track the newly installed module.
+            this.folders.push(result.name);
+
+          }, (error: any) => this.feedbackService.showError(error));
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
+    });
+   }
+
   /**
    * Installs the specified module into your modules folder.
    * 
@@ -209,9 +248,10 @@ export class BazarComponent implements OnInit {
           `This will install '${module.name}' into your backend. Are you sure you wish to proceed? Please make sure you trust the publisher of this module before clicking yes.`,
           () => {
 
-            // Invoking backend to install module.
-            this.configService.installBazarModule(module).subscribe(() => {
+            // Invoking backend to download and unzip file.
+            this.configService.installBazarModule(module.url, module.module_name).subscribe(() => {
 
+              // Invoking backend to run installation script for module.
               this.fileService.install('/modules/' + module.module_name + '/').subscribe(() => {
               
                 // Providing feedback to user.
