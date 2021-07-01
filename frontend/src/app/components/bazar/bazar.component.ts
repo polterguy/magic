@@ -154,8 +154,11 @@ export class BazarComponent implements OnInit {
           // Uninstalling module.
           this.fileService.deleteFolder('/modules/' + module.module_name + '/').subscribe(() => {
 
-            // Module was successfully uninstalled, now installing specified version.
-            this.viewDetails(module, true);
+            // Module was successfully uninstalled, showing user some feedback.
+            this.feedbackService.showInfo('Module successfully uninstalled, click again to install new version');
+
+            // Making sure we update UI.
+            this.folders = this.folders.filter(x => x !== module.module_name);
 
           }, (error: any) => this.feedbackService.showError(error));
         });
