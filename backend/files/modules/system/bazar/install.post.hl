@@ -72,14 +72,18 @@ io.file.unzip:x:@strings.concat
 io.file.delete:x:@strings.concat
 
 /*
- * Checking if the ZIP file's name is different than the module's name
- * as specified in the arguments.
+ * Checking if the ZIP file resulted in creating the module folder,
+ * otherwise renaming folder accordingly.
  */
+.module-folder
+set-value:x:@.module-folder
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/name
+      .:/
 if
    not
-      eq
-         get-value:x:@strings.split/1
-         get-value:x:@.arguments/*/name
+      io.folder.exists:x:@.module-folder
    .lambda
 
       /*
@@ -88,10 +92,7 @@ if
       strings.split:x:@strings.concat
          .:.zip
       io.folder.move:x:@strings.split/0
-         strings.concat
-            .:/modules/
-            get-value:x:@.arguments/*/name
-            .:/
+         get-value:x:@.module-folder
 
 /*
  * Returning success to caller.

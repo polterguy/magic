@@ -1,5 +1,5 @@
 
-<h1 mat-dialog-title>{{data.name}}</h1>
+<h1 mat-dialog-title>{{data.name}} - [{{data.module_name}}] - {{data.version}}</h1>
 
 <div mat-dialog-content>
   <div class="markdown" *ngIf="readme" [innerHTML]="readme | marked"></div>
@@ -8,15 +8,15 @@
 <div *ngIf="readme" mat-dialog-actions class="mat-dialog-actions">
 
   <button
+    mat-raised-button
+    matTooltip="Get app's direct download URL"
+    (click)="getUrl()">URL</button>
+
+  <button
     *ngIf="authService.isRoot"
     mat-raised-button
     matTooltip="Removes app from your local Bazar"
     (click)="removeAppFromBazar()">Remove</button>
-
-  <button
-    mat-raised-button
-    matTooltip="Get app's direct download URL"
-    (click)="getUrl()">URL</button>
 
   <button
     mat-raised-button

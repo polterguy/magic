@@ -159,13 +159,16 @@ export class ConfigService {
 
   /**
    * Returns Bazar content to caller.
+   * 
+   * @param url URL to where Bazar module can be found
+   * @param name Name of module
    */
-   public installBazarModule(manifest: AppManifest) {
+   public installBazarModule(url: string, name: string) {
 
     // Invoking backend and returns app manifests to caller.
     return this.httpService.post<Response>('/magic/modules/system/bazar/install', {
-      url: manifest.url,
-      name: manifest.module_name,
+      url,
+      name,
     });
   }
 
