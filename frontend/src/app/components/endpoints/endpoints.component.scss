@@ -1,6 +1,7 @@
 
 .filter-wrapper {
   display: table;
+  margin-top: 2rem;
   mat-form-field {
     width: 100%;
     display: table-cell;
@@ -9,6 +10,12 @@
     width: 50px;
     display: table-cell;
   }
+}
+
+.show-system {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
 }
 
 .endpoint-items {

@@ -1,6 +1,12 @@
 
 <mat-card>
 
+  <mat-slide-toggle
+    [(ngModel)]="displaySystem"
+    class="show-system"
+    matTooltip="Whether or not we should display system endpoints"
+    labelPosition="before">System</mat-slide-toggle>
+
   <div class="filter-wrapper">
 
     <mat-form-field class="fill-width" appearance="outline">
