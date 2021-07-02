@@ -171,3 +171,9 @@
             .:.mysql.sql
          io.file.save:x:@strings.concat
             get-value:x:@.arguments/*/mysql
+
+   /*
+    * Making sure we inform caller that he needs to refresh his folders.
+    */
+   set-value:x:@.lambda
+      .:folders-changed

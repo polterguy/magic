@@ -13,6 +13,7 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
+import { Response } from 'src/app/models/response.model';
 import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
@@ -665,19 +666,25 @@ export class IdeComponent implements OnInit {
           for (const idx of result.arguments.filter(x => x.value)) {
             payload[idx.name] = idx.value;
           }
-          this.fileService.executeMacro(file, payload).subscribe(() => {
+          this.fileService.executeMacro(file, payload).subscribe((exeResult: Response) => {
 
             // Giving user some feedback.
             this.feedbackService.showInfoShort('Macro successfully executed');
-            this.feedbackService.confirm(
-              'Confirm refresh', 
-              'You might want to refresh your files and folders if your macro created new files. Do you want me to refresh your files and folders and retrieve these from your backend again?',
-              () => {
 
-                // Refreshing files and folder.
-                this.root.children = [];
-                this.getFilesFromServer();
-            });
+            // Checking if macro changed folder or file structure in backend.
+            if (exeResult.result === 'folders-changed') {
+
+              // Asking user if he wants to refresh his folders.
+              this.feedbackService.confirm(
+                'Refresh folders?', 
+                'Macro execution changed your file system, do you want to refresh your files and folders?',
+                () => {
+
+                  // Refreshing files and folder.
+                  this.root.children = [];
+                  this.getFilesFromServer();
+              });
+            }
 
           }, (error: any) => this.feedbackService.showError(error));
 
