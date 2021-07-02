@@ -9,7 +9,7 @@
 
     <mat-form-field
       *ngIf="idx.type === 'string'"
-      class="fill-width"
+      class="half-width"
       appearance="outline">
       <mat-label class="dark">{{idx.name}}</mat-label>
       <input
@@ -28,7 +28,7 @@
       <textarea
         [matTooltip]="idx.description"
         matInput
-        rows="5"
+        rows="4"
         autocomplete="off"
         [(ngModel)]="idx.value"></textarea>
     </mat-form-field>
