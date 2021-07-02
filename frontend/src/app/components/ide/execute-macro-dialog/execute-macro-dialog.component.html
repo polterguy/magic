@@ -7,38 +7,32 @@
 
   <div class="arguments" *ngFor="let idx of data.arguments">
 
-    <div class="argument">
+    <mat-form-field
+      *ngIf="idx.type === 'string'"
+      class="fill-width"
+      appearance="outline">
+      <mat-label class="dark">{{idx.name}}</mat-label>
+      <input
+        type="text"
+        [matTooltip]="idx.description"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="idx.value">
+    </mat-form-field>
 
-      <strong>{{idx.name}}</strong>
-
-      <mat-form-field
-        *ngIf="idx.type === 'string'"
-        class="fill-width"
-        appearance="outline">
-        <mat-label class="dark">Value</mat-label>
-        <input
-          type="text"
-          [matTooltip]="idx.description"
-          matInput
-          autocomplete="off"
-          [(ngModel)]="idx.value">
-      </mat-form-field>
-
-      <mat-form-field
-        *ngIf="idx.type === 'multi_string'"
-        class="fill-width"
-        appearance="outline">
-        <mat-label class="dark">Value</mat-label>
-        <textarea
-          [matTooltip]="idx.description"
-          matInput
-          rows="5"
-          autocomplete="off"
-          [(ngModel)]="idx.value"></textarea>
-      </mat-form-field>
+    <mat-form-field
+      *ngIf="idx.type === 'multi_string'"
+      class="fill-width"
+      appearance="outline">
+      <mat-label class="dark">{{idx.name}}</mat-label>
+      <textarea
+        [matTooltip]="idx.description"
+        matInput
+        rows="5"
+        autocomplete="off"
+        [(ngModel)]="idx.value"></textarea>
+    </mat-form-field>
     
-    </div>
-
   </div>
 
 </div>
