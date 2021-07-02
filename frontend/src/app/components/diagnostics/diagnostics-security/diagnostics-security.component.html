@@ -4,6 +4,7 @@
   <div class="meta-statistics">
     <a
       [routerLink]="['/log']"
+      matTooltip="See related log items"
       [queryParams]="{filter: 'We successfully authenticated user \''}">
       Logins
     </a>
@@ -21,6 +22,7 @@
   <div class="meta-statistics">
     <a
       [routerLink]="['/log']"
+      matTooltip="See related log items"
       [queryParams]="{filter: 'Unhandled exception occurred \'Access denied\' at \'/magic/modules/system/auth/authenticate\''}">
       Failed logins
     </a>
@@ -38,6 +40,7 @@
   <div class="meta-statistics">
     <a
       [routerLink]="['/log']"
+      matTooltip="See related log items"
       [queryParams]="{filter: 'Unhandled exception occurred \'Access denied\' at \''}">
       Access denied
     </a>
