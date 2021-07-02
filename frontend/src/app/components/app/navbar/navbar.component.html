@@ -163,6 +163,7 @@
 </a>
 
 <a
+  *ngIf="!authService.authenticated"
   mat-button
   routerLink="/register"
   routerLinkActive="active-link"

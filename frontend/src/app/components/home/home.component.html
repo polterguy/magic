@@ -132,6 +132,7 @@
     </button>
 
     <button
+      *ngIf="!authService.authenticated"
       mat-raised-button
       routerLink="/register"
       matTooltip="Register as a user">
