@@ -38,6 +38,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Other external components.
+import { NgxPayPalModule } from 'ngx-paypal';
 import { ChartsModule } from 'ng2-charts';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import {
@@ -147,6 +148,7 @@ import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dial
 import { ViewPublishedComponent } from './components/bazar/view-published/view-published.component';
 import { DownloadFileDialogComponent } from './components/files/download-file-dialog/download-file-dialog.component';
 import { InstallAppDialogComponent } from './components/bazar/install-app-dialog/install-app-dialog.component';
+import { AboutComponent } from './components/about/about.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -239,6 +241,7 @@ import { InstallAppDialogComponent } from './components/bazar/install-app-dialog
     ViewPublishedComponent,
     DownloadFileDialogComponent,
     InstallAppDialogComponent,
+    AboutComponent,
   ],
   imports: [
     FormsModule,
@@ -269,6 +272,7 @@ import { InstallAppDialogComponent } from './components/bazar/install-app-dialog
     MatSnackBarModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    NgxPayPalModule,
     ChartsModule,
     CodemirrorModule,
     MatDatepickerModule,

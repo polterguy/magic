@@ -1,0 +1,17 @@
+
+mat-card {
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  .me {
+    float: right;
+    max-width: 200px;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+  }
+  .clearfix {
+    clear: both;
+    display: table;
+    margin-bottom: 2rem;
+  }
+}
