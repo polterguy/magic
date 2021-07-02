@@ -1,0 +1,19 @@
+
+/*
+ * Returns the PayPal ID specified in our appsettings.json file.
+ */
+.description:Returns the PayPal ID specified in our appsettings.json file
+
+
+/*
+ * Retrieving PayPal ID from configuration settings.
+ */
+config.get:"magic:paypal:clientId"
+
+
+/*
+ * Returning above to caller.
+ */
+unwrap:x:+/*
+return
+   result:x:@config.get
