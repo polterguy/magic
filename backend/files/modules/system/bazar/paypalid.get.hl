@@ -4,6 +4,21 @@
  */
 .description:Returns the PayPal ID specified in our appsettings.json file
 
+/*
+ * Checking if user has donated before.
+ */
+data.connect:[generic|magic]
+   data.read
+      table:log_entries
+      where
+         and
+            content.like:"Donation given to Thomas Hansen, the maintainer of Magic%"
+   if
+      exists:x:@data.read/*/*
+      .lambda
+         return
+            result:already-donated
+
 
 /*
  * Retrieving PayPal ID from configuration settings.

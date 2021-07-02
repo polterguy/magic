@@ -27,7 +27,7 @@ export class AboutComponent implements OnInit {
   /**
    * PayPal configuration object.
    */
-  public payPalConfig?: IPayPalConfig;
+  public payPalConfig?: IPayPalConfig = null;
 
   /**
    * Creates an instance of your component.
@@ -44,49 +44,53 @@ export class AboutComponent implements OnInit {
     // Retrieving PayPal ID from backend.
     this.configService.getPayPalID().subscribe((result: Response) => {
 
-      // Configuring PayPal ...
-      this.payPalConfig = {
-        currency: 'EUR',
-        clientId: result.result,
-        createOrderOnClient: (data) => <ICreateOrderRequest>{
-          intent: 'CAPTURE',
-          purchase_units: [
-            {
-              amount: {
-                currency_code: 'EUR',
-                value: '50',
-                breakdown: {
-                  item_total: {
-                    currency_code: 'EUR',
-                    value: '50'
+      // Checking if user has already donated ...
+      if (result.result !== 'already-donated') {
+
+        // Configuring PayPal ...
+        this.payPalConfig = {
+          currency: 'EUR',
+          clientId: result.result,
+          createOrderOnClient: (data) => <ICreateOrderRequest>{
+            intent: 'CAPTURE',
+            purchase_units: [
+              {
+                amount: {
+                  currency_code: 'EUR',
+                  value: '50',
+                  breakdown: {
+                    item_total: {
+                      currency_code: 'EUR',
+                      value: '50'
+                    }
                   }
-                }
-              },
-              items: [
-                {
-                  name: 'Donation to Magic Cloud',
-                  quantity: '1',
-                  category: 'DIGITAL_GOODS',
-                  unit_amount: {
-                    currency_code: 'EUR',
-                    value: '50',
-                  },
-                }
-              ]
-            }
-          ]
-        },
-        advanced: {
-          commit: 'true'
-        },
-        style: {
-          label: 'paypal',
-          layout: 'vertical'
-        },
-        onClientAuthorization: (data) => {
-          this.logService.createLogEntry('info', `Donation given to Thomas Hansen, the maintainer of Magic. Amount donated was 50 EUROs`)
-        },
-      };
+                },
+                items: [
+                  {
+                    name: 'Donation to Magic Cloud',
+                    quantity: '1',
+                    category: 'DIGITAL_GOODS',
+                    unit_amount: {
+                      currency_code: 'EUR',
+                      value: '50',
+                    },
+                  }
+                ]
+              }
+            ]
+          },
+          advanced: {
+            commit: 'true'
+          },
+          style: {
+            label: 'paypal',
+            layout: 'vertical'
+          },
+          onClientAuthorization: (data) => {
+            this.logService.createLogEntry('info', `Donation given to Thomas Hansen, the maintainer of Magic. Amount donated was 50 EUROs`)
+          },
+        };
+      }
     });
   }
 }

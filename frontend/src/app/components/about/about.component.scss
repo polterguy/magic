@@ -1,6 +1,6 @@
 
 mat-card {
-  max-width: 750px;
+  max-width: 850px;
   margin-left: auto;
   margin-right: auto;
   .me {
@@ -13,5 +13,11 @@ mat-card {
     clear: both;
     display: table;
     margin-bottom: 2rem;
+  }
+  ngx-paypal {
+    display: block;
+    width: 750px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
