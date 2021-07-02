@@ -15,8 +15,7 @@ import { MacroDefinition } from '../../files/services/models/macro-definition.mo
  */
 @Component({
   selector: 'app-execute-macro-dialog',
-  templateUrl: './execute-macro-dialog.component.html',
-  styleUrls: ['./execute-macro-dialog.component.scss']
+  templateUrl: './execute-macro-dialog.component.html'
 })
 export class ExecuteMacroDialogComponent {
 
