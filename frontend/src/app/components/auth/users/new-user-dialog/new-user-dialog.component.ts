@@ -33,6 +33,11 @@ export class NewUserDialogComponent {
   public password: string = '';
 
   /**
+   * Whether or not password should be hidden or not.
+   */
+  public hide = true;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param userService Used to create a new user
