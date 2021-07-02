@@ -78,4 +78,14 @@ export class NewUserDialogComponent {
       this.dialogRef.close(this.username);
     }, (error: any) => this.feedbackService.showError(error));
   }
+
+  /**
+   * Invoked when dialog should simply be closed without updating
+   * an existing or creating a new user.
+   */
+   public close() {
+
+    // Simply closing dialog without passing data to caller.
+    this.dialogRef.close();
+  }
 }
