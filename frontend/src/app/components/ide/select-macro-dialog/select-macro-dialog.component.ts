@@ -67,8 +67,17 @@ export class SelectMacroDialogComponent implements OnInit {
    * @param macro Full path of macro
    */
   public getMacroName(macro: string) {
-    const result = macro.substr(macro.lastIndexOf('/') + 1);
-    return result.substr(0, result.lastIndexOf('.'));
+
+    // Trying to display something resembling a friendly name.
+    let result = macro.substr(macro.lastIndexOf('/') + 1);
+    result = result.substr(0, result.lastIndexOf('.'));
+    while (true) {
+      if (result.indexOf('-') === -1) {
+        break;
+      }
+      result = result.replace('-', ' ');
+    }
+    return result.substr(0, 1).toUpperCase() + result.substr(1);
   }
 
   /**
