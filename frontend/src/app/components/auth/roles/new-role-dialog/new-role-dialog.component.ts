@@ -59,6 +59,7 @@ export class NewRoleDialogComponent {
 
       // Success! Closing dialog and informing the caller the name of the new role.
       this.dialogRef.close(this.name);
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -72,6 +73,17 @@ export class NewRoleDialogComponent {
 
       // Success! Closing dialog and informing the caller the name of the new role.
       this.dialogRef.close(this.name);
+
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when dialog should simply be closed without updating
+   * an existing or creating a new role.
+   */
+  public close() {
+
+    // Simply closing dialog without passing data to caller.
+    this.dialogRef.close();
   }
 }
