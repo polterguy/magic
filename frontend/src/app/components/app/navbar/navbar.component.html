@@ -10,39 +10,6 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/file-system')"
-  mat-button
-  routerLink="/ide"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>extension</mat-icon>
-  <span>IDE</span>
-</a>
-
-<a
-  *ngIf="authService.isRoot"
-  mat-button
-  routerLink="/terminal"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>input</mat-icon>
-  <span>Terminal</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
-  mat-button
-  routerLink="/auth"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>people</mat-icon>
-  <span>Auth</span>
-</a>
-
-<a
   *ngIf="authService.hasAccess('magic/modules/system/sql')"
   mat-button
   routerLink="/sql"
@@ -78,76 +45,23 @@
 <a
   *ngIf="authService.hasAccess('magic/modules/system/file-system')"
   mat-button
-  routerLink="/file-system"
+  routerLink="/ide"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
   [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>file_copy</mat-icon>
-  <span>Files</span>
+  <mat-icon matSuffix>extension</mat-icon>
+  <span>IDE</span>
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
+  *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
   mat-button
-  routerLink="/evaluator"
+  routerLink="/auth"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
   [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>offline_bolt</mat-icon>
-  <span>Eval</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/tasks')"
-  mat-button
-  routerLink="/tasks"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>calendar_today</mat-icon>
-  <span>Tasks</span>
-</a>
-
-<a
-  mat-button
-  routerLink="/crypto"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>security</mat-icon>
-  <span>Crypto</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/misc')"
-  mat-button
-  routerLink="/sockets"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>compare_arrows</mat-icon>
-  <span>Sockets</span>
-</a>
-
-<a
-  mat-button
-  routerLink="/register"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>face</mat-icon>
-  <span>Register</span>
-</a>
-
-<a
-  *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
-  mat-button
-  routerLink="/diagnostics"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>local_hospital</mat-icon>
-  <span>Health</span>
+  <mat-icon matSuffix>people</mat-icon>
+  <span>Auth</span>
 </a>
 
 <a
@@ -162,6 +76,82 @@
 </a>
 
 <a
+  *ngIf="authService.hasAccess('magic/modules/system/tasks')"
+  mat-button
+  routerLink="/tasks"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>calendar_today</mat-icon>
+  <span>Tasks</span>
+</a>
+
+<a
+  *ngIf="authService.isRoot"
+  mat-button
+  routerLink="/terminal"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>input</mat-icon>
+  <span>Terminal</span>
+</a>
+
+<a
+  *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
+  mat-button
+  routerLink="/evaluator"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>offline_bolt</mat-icon>
+  <span>Eval</span>
+</a>
+
+<a
+  mat-button
+  routerLink="/crypto"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>security</mat-icon>
+  <span>Crypto</span>
+</a>
+
+<a
+  *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
+  mat-button
+  routerLink="/diagnostics"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>local_hospital</mat-icon>
+  <span>Health</span>
+</a>
+
+<a
+  *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+  mat-button
+  routerLink="/file-system"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>file_copy</mat-icon>
+  <span>Files</span>
+</a>
+
+<a
+  *ngIf="authService.hasAccess('magic/modules/system/misc')"
+  mat-button
+  routerLink="/sockets"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>compare_arrows</mat-icon>
+  <span>Sockets</span>
+</a>
+
+<a
   *ngIf="authService.hasAccess('magic/modules/system/config')"
   mat-button
   routerLink="/config"
@@ -170,6 +160,16 @@
   [routerLinkActiveOptions]="{exact:true}">
   <mat-icon matSuffix>settings</mat-icon>
   <span>Config</span>
+</a>
+
+<a
+  mat-button
+  routerLink="/register"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>face</mat-icon>
+  <span>Register</span>
 </a>
 
 <a

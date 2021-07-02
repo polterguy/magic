@@ -48,7 +48,7 @@
 
 <mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="wide break"  appearance="outline">
 
-  <mat-label>Auth secret</mat-label>
+  <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
   <input
     matInput
     type="text"
