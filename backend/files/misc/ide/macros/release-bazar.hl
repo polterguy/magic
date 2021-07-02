@@ -2,7 +2,7 @@
 /*
  * Macro for Hyper IDE that creates a Bazar app from your module.
  */
-.name:Release app to Bazar
+.name:Release module to Bazar
 .description:"Macro for Hyper IDE that creates a Bazar app package from your module and copies the Bazar ZIP file to your local Bazar allowing others to install it from you. Notice, you should probably run the 'ensure-database' macro first if your app depends upon a database to function correctly."
 .arguments
    .
