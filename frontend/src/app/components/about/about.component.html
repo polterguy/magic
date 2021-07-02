@@ -9,23 +9,30 @@
     proprietary/commercial projects. Magic consists of years of innovation and work, and is constantly maintained
     by yours truly in my spare time.
   </p>
-  <p>
+  <p *ngIf="!payPalConfig">
+    It looks like you are an active supported of Magic Cloud. Thank you for appreciating my work. If you need help
+    with something feel free to reach out to me on <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>,
+    and I will help you as best I can. In fact, your existing donation has just ensured you 30 minutes of setup help
+    with Magic, using a screen share program such as Skype or Zoom if you should need it.
+  </p>
+  <p *ngIf="payPalConfig">
     However, in order for me to create the best possible product for you, I am dependent upon your willingness to donate,
     such that I can justify spending time on the project. Simply because creating and maintaining Magic is an insane
     amount of work, and we all need to feed our families.
   </p>
-  <p>
-    If you got value from Magic, I would appreciate a
-    donation from you. This justifies me continuing working on the project, ensuring you get the best possible value
-    out of it. Click the button below to donate to me. Notice, I am also available for hire in my spare time to create
-    modules for Magic, and or help you getting started with Magic. If you're interested in this, you can
-    <a href="mailto:thomas@servergardens.com">send me an email</a> and ask for a quote. I am also available for screen
-    shares over Skype, Zoom, or similar platforms to help you getting started with Magic - For a fee, paid in full
-    before I help you.
+  <p *ngIf="payPalConfig">
+    If you got value from Magic, I would appreciate a donation from you. This justifies me continuing working on the
+    project, ensuring you get the best possible value out of it. Click the button below to donate to me. Notice, I am
+    also available for hire in my spare time to create modules for Magic, and or help you getting started with Magic.
+    If you're interested in this, you can <a href="mailto:thomas@servergardens.com">send me an email</a> and ask for a
+    quote. I am also available for screen shares over Skype, Zoom, or similar platforms to help you getting started
+    with Magic - For a fee, paid in full before I help you. For the record, if you should choose to donate, this page
+    will automagically disappear, and I will not ask you for a donation again, and your donation will make you eligible
+    for 30 minutes of setup help.
   </p>
 
   <div class="clearfix"></div>
 
-  <ngx-paypal [config]="payPalConfig"></ngx-paypal>
+  <ngx-paypal *ngIf="payPalConfig" [config]="payPalConfig"></ngx-paypal>
 
 </mat-card>
