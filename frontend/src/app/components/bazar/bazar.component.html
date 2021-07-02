@@ -1,4 +1,12 @@
 
+<mat-card *ngIf="!authService.isRoot && publishedApps.length === 0">
+
+  <h2>Nothing to see here</h2>
+
+  <p>It doesn't seem like this server is willing to share anything with you ... :/</p>
+
+</mat-card>
+
 <mat-card *ngIf="authService.isRoot">
 
   <h2>Available for you</h2>
