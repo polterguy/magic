@@ -84,7 +84,7 @@ export class CrudifierSqlComponent implements OnInit {
       this.getConnectionStrings(defaultDatabaseType.default, (connectionStrings: string[]) => {
 
         // Retrieving databases existing in connection string instance.
-        this.getDatabases(defaultDatabaseType.default, connectionStrings[0], (databases: Databases) => {
+        this.getDatabases(defaultDatabaseType.default, 'generic', (databases: Databases) => {
 
           // Storing database declaration such that user can change active database without having to roundtrip to server.
           this.databaseDeclaration = databases;
