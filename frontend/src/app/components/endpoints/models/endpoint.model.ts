@@ -61,4 +61,9 @@ export class Endpoint {
    * Descriptive text for endpoint.
    */
   description?: string;
+
+  /**
+   * If an error occurs during retrieval of endpoint this will contain the exception error message.
+   */
+  error?: string;
 }
