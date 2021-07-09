@@ -1,6 +1,6 @@
 {
-  "apiUrl": "http://localhost:55247",
-  "apiDomain": "localhost:55247",
+  "apiUrl": "[[apiUrl]]",
+  "apiDomain": "[[environmentDomain]]",
   "version": "1.0.0",
   "default_language": "en-US"
 }
