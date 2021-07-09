@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AuthenticateToken } from '@app/services/models/authenticate-token';
 import { environment } from '@env/environment';
 import { Observable, of, Subscriber } from 'rxjs';
 
@@ -29,13 +30,13 @@ export class AuthenticationService {
    * @return The user credentials.
    */
   login(context: LoginContext): Observable<Credentials> {
-    return new Observable<any>((observer: Subscriber<any>) => {
-      this.httpClient.get<any>(
-        environment.serverUrl +
+    return new Observable<AuthenticateToken>((observer: Subscriber<AuthenticateToken>) => {
+      this.httpClient.get<AuthenticateToken>(
+        environment.apiUrl +
         '/magic/modules/system/auth/authenticate?username=' +
         encodeURI(context.username) +
         '&password=' +
-        encodeURI(context.password)).subscribe((res: any) => {
+        encodeURI(context.password)).subscribe((res: AuthenticateToken) => {
 
           // Success.
           const data = {

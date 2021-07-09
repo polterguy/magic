@@ -14,7 +14,7 @@ import env from "./environment.json";
 export const environment = {
   production: false,
   version: env.version,
-  serverUrl: env.api_url,
+  apiUrl: env.apiUrl,
   defaultLanguage: env.default_language,
   supportedLanguages: ['en-US', 'no'],
 };
