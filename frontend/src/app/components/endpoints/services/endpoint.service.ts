@@ -20,6 +20,7 @@ import { SocketUser } from '../models/socket-user.model';
 import { HttpService } from '../../../services/http.service';
 import { FileService } from '../../files/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -40,7 +41,8 @@ export class EndpointService {
   constructor(
     private httpService: HttpService,
     private fileService: FileService,
-    private backendService: BackendService) { }
+    private backendService: BackendService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Retrieves meta data about the endpoints in your installation.
@@ -361,6 +363,6 @@ export class EndpointService {
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
           const file = new Blob([res.body]);
           saveAs(file, filename);
-        });
+        }, (error: any) => this.feedbackService.showError(error));
     }
 }
