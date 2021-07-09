@@ -1,0 +1,51 @@
+<div fxFill fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1.5rem" class="mat-typography">
+  <div>
+    <h1 fxLayoutAlign="center" translate>APP_NAME</h1>
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+      <h4 class="version">v{{ version }}</h4>
+      <app-language-selector></app-language-selector>
+    </div>
+  </div>
+  <div class="login-container" fxLayout="row" fxLayoutAlign="center">
+    <mat-card fxFlex="90%" fxFlex.sm="66%" fxFlex.md="50%" fxFlex.gt-md="33%" class="login-box">
+      <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
+        <div class="login-error" [hidden]="!error || isLoading" translate>Username or password incorrect.</div>
+        <br />
+        <div class="login-fields" fxLayout="column">
+          <mat-form-field [hideRequiredMarker]="true">
+            <input
+              type="text"
+              matInput
+              formControlName="username"
+              autocomplete="username"
+              [placeholder]="'Username' | translate"
+              required
+            />
+            <mat-error *ngIf="loginForm.controls.username.invalid && loginForm.controls.username.touched">
+              <span translate>Username is required</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field [hideRequiredMarker]="true">
+            <input
+              type="password"
+              matInput
+              formControlName="password"
+              autocomplete="current-password"
+              [placeholder]="'Password' | translate"
+              required
+            />
+            <mat-error *ngIf="loginForm.controls.password.invalid && loginForm.controls.password.touched">
+              <span translate>Password is required</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-slide-toggle color="primary" formControlName="remember" translate>Remember me</mat-slide-toggle>
+          <br />
+          <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
+            <app-loader class="inline-loader" [isLoading]="isLoading"></app-loader>
+            <span translate>Login</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>

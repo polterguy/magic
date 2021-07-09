@@ -1,0 +1,16 @@
+{
+  "APP_NAME": "angular-light",
+  "About": "Om",
+  "Hello world!": "Halla kompis!",
+  "Home": "Hjem",
+  "Logged in as": "Innlogget som",
+  "Login": "Logg inn",
+  "Logout": "Logg ut",
+  "Password": "Passord",
+  "Password is required": "Passord er påkrevd",
+  "Username": "Brukernavn",
+  "Username is required": "Brukernavn er påkrevd",
+  "Username or password incorrect.": "Brukernavnet eller passordet er feil.",
+  "Remember me": "Husk meg",
+  "Version": "Versjon"
+}
