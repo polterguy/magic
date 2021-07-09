@@ -59,7 +59,10 @@
       <td
         mat-cell
         class="auth-col"
-        *matCellDef="let el">{{getAuth(el)}}</td>
+        *matCellDef="let el">
+          {{getAuth(el)}}
+          <mat-icon *ngIf="el.error" [matTooltip]="el.error" class="error-icon">warning</mat-icon>
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="show-details">
