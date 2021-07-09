@@ -1,0 +1,22 @@
+
+      <ng-container matColumnDef="[[column-name]]">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field appearance="outline" class="fill-width filter-textbox">
+            <mat-label>[[column-name]]</mat-label>
+            <input
+              matInput
+              placeholder="Filter ..."
+              type="number"
+              autocomplete="off"
+              [formControl]="[[column-name]]">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+          <button
+            class="sort-button"
+            (click)="sort('[[column-name]]')"
+            mat-button>
+            <mat-icon matSuffix>{{getSortIcon('[[column-name]]')}}</mat-icon>
+          </button>
+        </th>
+        <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">{{el.[[column-name]]}}</td>
+      </ng-container>
