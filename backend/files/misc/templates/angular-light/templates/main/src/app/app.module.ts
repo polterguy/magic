@@ -13,6 +13,8 @@ import { HomeModule } from './home/home.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { environment } from '@env/environment';
+import { JwtModule } from '@auth0/angular-jwt';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 
 // Generated CRUD components here.
@@ -36,9 +38,15 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angul
     AuthModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => JSON.parse(sessionStorage.getItem(credentialsKey) || localStorage.getItem(credentialsKey)).token,
-        whitelistedDomains: [environment.apiDomain],
-      }
+        tokenGetter: () => {
+          const persisted = sessionStorage.getItem('credentials') || localStorage.getItem('credentials');
+          if (persisted) {
+            return JSON.parse(persisted).token;
+          }
+          return null;
+        },
+        allowedDomains: [environment.apiDomain],
+      },
     }),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
   ],
