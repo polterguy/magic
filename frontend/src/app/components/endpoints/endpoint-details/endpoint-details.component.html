@@ -9,6 +9,11 @@
     <mat-icon>link</mat-icon>
   </button>
 
+  <span class="item" *ngIf="endpoint.error">
+    <strong class="label">Error</strong>
+    <span class="description error">{{endpoint.error}}</span>
+  </span>
+
   <span class="item">
     <strong class="label">Relative URL</strong>
     <span class="description">{{endpoint.path}}</span>
