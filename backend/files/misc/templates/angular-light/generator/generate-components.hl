@@ -1,0 +1,925 @@
+
+/*
+ * Internal helper file that creates our components according to
+ * which endpoints we have at our disposal.
+ *
+ * The file will perform substitutions according to a [[xx]] pattern,
+ * substituting values in our component templates, return a list of
+ * substituted specialized template files, depending upon which arguments
+ * you supply.
+ *
+ * The file expects [root-folder] argument being the root folder for the
+ * generator template currently being used.
+ */
+
+
+
+
+/*
+ * This is our buffer element, and will contain all component
+ * files, that are eventually returned to caller at the bottom
+ * of the file.
+ */
+.components
+
+
+
+
+/*
+ * Loading form control file, that contains the declaration
+ * for a single form control.
+ */
+.form-control-file
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/misc/form-control.ts
+set-value:x:@.form-control-file
+   io.file.load:x:@strings.concat
+
+
+
+
+/*
+ * Loading column file, that contains the HTML markup for a single
+ * column, including its specialized versions for specific types.
+ */
+.column-file
+   long
+   date
+   bool
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.html
+set-value:x:@.column-file
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.long.html
+set-value:x:@.column-file/*/long
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.date.html
+set-value:x:@.column-file/*/date
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.bool.html
+set-value:x:@.column-file/*/bool
+   io.file.load:x:@strings.concat
+
+
+
+/*
+ * Loading view details file, that contains the declaration
+ * for viewing a single element's details, including its specialized versions
+ * for specific types.
+ */
+.view-details-file
+   date
+   bool
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.html
+set-value:x:@.view-details-file
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.date.html
+set-value:x:@.view-details-file/*/date
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.bool.html
+set-value:x:@.view-details-file/*/bool
+   io.file.load:x:@strings.concat
+
+
+
+
+/*
+ * Loading form field file, that contains the input necessary to
+ * edit a single column's value during editing, including its specializaed type overrides.
+ */
+.form-field-file
+   long
+   bool
+   date
+   decimal
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.html
+set-value:x:@.form-field-file
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.long.html
+set-value:x:@.form-field-file/*/long
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.decimal.html
+set-value:x:@.form-field-file/*/decimal
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.bool.html
+set-value:x:@.form-field-file/*/bool
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.date.html
+set-value:x:@.form-field-file/*/date
+   io.file.load:x:@strings.concat
+
+
+
+
+/*
+ * Loading form control instantiations file, that instantiates
+ * a single form control somehow, including its specialized type versions.
+ */
+.form-control-instantiation-file
+   string
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-control-instantiations/form-control-instantiations.ts
+set-value:x:@.form-control-instantiation-file
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-control-instantiations/form-control-instantiations.string.ts
+set-value:x:@.form-control-instantiation-file/*/string
+   io.file.load:x:@strings.concat
+
+
+
+
+/*
+ * Iterating through each crud method given.
+ */
+for-each:x:@.arguments/*/.crud-methods/*
+
+
+   /*
+    * Verifying CRUD endpoint have GET CRUD endpoint, otherwise
+    * we don't create a component for it.
+    */
+   if
+      exists:x:@.dp/#/*/verbs/*/get
+      .lambda
+
+
+         /*
+          * Currently iterated endpoint can handle the GET verb, hence
+          * at the minimum we should create a datagrid "view" component.
+          */
+         .substitutions
+
+            // URL of endpoint we're currently encapsulating.
+            endpoint-url
+
+            // Primary keys for entity
+            primary-keys:
+
+            // Input to DELETE endpoint.
+            delete-input:
+
+            // Input to POST endpoint.
+            create-input:
+
+            // Input to PUT endpoint.
+            update-input:
+
+            // How many columns our table contains.
+            // Notice, it always has at least one column, its delete-item column.
+            container-count:int:1
+
+            // All table column declarations. (normally HTML)
+            ng-containers
+
+            // View details for an entity. (normally HTML)
+            view-details
+
+            // A TypeScript list of strings, declaring which columns are visible in table.
+            displayed-columns:
+
+            // TypeScript fields/properties, declaring the columns.
+            form-controls
+
+            // Declaration for a single column. (normally HTML)
+            form-fields
+
+            // Instantiations for each above form field.
+            form-controls-instantiations
+
+
+         /*
+          * Setting the URL for our endpoint.
+          */
+         set-value:x:@.substitutions/*/endpoint-url
+            get-value:x:@.dp/#/*/url
+
+
+         /*
+          * Figuring out input to our DELETE method, which happens to
+          * also be the primary keys for table - Hence setting primary
+          * keys in the same operation.
+          */
+         for-each:x:@.dp/#/*/verbs/*/delete/*/input/*
+            set-value:x:@.substitutions/*/primary-keys
+               strings.concat
+                  get-value:x:@.substitutions/*/primary-keys
+                  .:", '"
+                  get-name:x:@.dp/#
+                  .:"'"
+            set-value:x:@.substitutions/*/delete-input
+               strings.concat
+                  get-value:x:@.substitutions/*/delete-input
+                  .:", "
+                  get-name:x:@.dp/#
+                  .:": el."
+                  get-name:x:@.dp/#
+         set-value:x:@.substitutions/*/delete-input
+            strings.trim:x:@.substitutions/*/delete-input
+               .:", "
+         set-value:x:@.substitutions/*/primary-keys
+            strings.trim:x:@.substitutions/*/primary-keys
+               .:", "
+
+
+         /*
+          * Figuring out input to our POST method.
+          */
+         for-each:x:@.dp/#/*/verbs/*/post/*/input/*
+            set-value:x:@.substitutions/*/create-input
+               strings.concat
+                  get-value:x:@.substitutions/*/create-input
+                  .:",\r\n      '"
+                  get-name:x:@.dp/#
+                  .:"'"
+         set-value:x:@.substitutions/*/create-input
+            strings.trim:x:@.substitutions/*/create-input
+               .:", "
+
+
+         /*
+          * Figuring out input to our PUT method.
+          */
+         for-each:x:@.dp/#/*/verbs/*/put/*/input/*
+            set-value:x:@.substitutions/*/update-input
+               strings.concat
+                  get-value:x:@.substitutions/*/update-input
+                  .:",\r\n      '"
+                  get-name:x:@.dp/#
+                  .:"'"
+         set-value:x:@.substitutions/*/update-input
+            strings.trim:x:@.substitutions/*/update-input
+               .:", "
+
+
+         /*
+          * Now we know input to all 4 CRUD endpoints.
+          *
+          * Now we can start creating our datagrid component, and our edit/create component.
+          */
+
+
+         /*
+          * Dynamically creating our datagrid parts, and our form controls
+          * for editing entities.
+          */
+         for-each:x:@.dp/#/*/verbs/*/get/*/output/*
+
+            /*
+             * Column is either of the following.
+             *
+             * - Not a primary key
+             * - Column is primary key, and URL doesn't have a PUT verb, implying ALL columns are primary keys.
+             */
+            set-value:x:@.substitutions/*/container-count
+               math.increment:x:@.substitutions/*/container-count
+
+
+            /*
+             * Column exists in GET output, now we need to check if the column is not
+             * a primary key - At which point we only display the column if the URL
+             * does NOT have an update/PUT verb. This is so because URLs without PUT, ONLY
+             * have primary key columns - Hence, if we don't display primary keys for such
+             * endpoints, we have NOTHING to display.
+             *
+             * Notice, even though we do not display primary keys by default in grid/table,
+             * we still create a wrapper component/ng-container for these, because end user
+             * might want to have the columns displayed depending upon requirements, and/or
+             * specific tables, etc.
+             */
+            get-name:x:@.dp/#
+            if
+               or
+                  not
+                     exists:x:@.dp/#/./././*/put
+                  not
+                     exists:x:@.dp/#/./././*/delete/*/input/*/{0}
+                        :x:@get-name
+               .lambda
+
+                  /*
+                   * Appending currently iterated column to [displayed-columns]
+                   */
+                  set-value:x:@.substitutions/*/displayed-columns
+                     strings.concat
+                        get-value:x:@.substitutions/*/displayed-columns
+                        .:",\r\n    '"
+                        get-name:x:@.dp/#
+                        .:"'"
+
+
+            /*
+             * Making sure we create a TypeScript instance of correct type to
+             * hold our column.
+             */
+            set-value:x:@.substitutions/*/form-controls
+               strings.concat
+                  get-value:x:@.substitutions/*/form-controls
+                  strings.replace:x:@.form-control-file
+                     .:[[column-name]]
+                     get-name:x:@.dp/#
+
+
+            /*
+             * Making sure we correctly instantiate our TypeScript instance.
+             *
+             * Notice, some types have specialized implementations here.
+             */
+            switch:x:@.dp/#
+
+
+               /*
+                * String type.
+                */
+               case:string
+                  set-value:x:@.substitutions/*/form-controls-instantiations
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-controls-instantiations
+                        strings.replace:x:@.form-control-instantiation-file/*/string
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/form-controls-instantiations
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-controls-instantiations
+                        strings.replace:x:@.form-control-instantiation-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+            /*
+             * Appending currently iterated column to [.ng-containers].
+             *
+             * Notice, some types have specialized implementations here.
+             */
+            switch:x:@.dp/#
+
+
+               /*
+                * Long type.
+                */
+               case:long
+               case:int
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file/*/long
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Date type.
+                */
+               case:date
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file/*/date
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Bool type.
+                */
+               case:bool
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file/*/bool
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/ng-containers
+                     strings.concat
+                        get-value:x:@.substitutions/*/ng-containers
+                        strings.replace:x:@.column-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+            /*
+             * Appending currently iterated column to [view-details].
+             *
+             * Notice, some types have specialized implementations, such as for instance
+             * date types, etc.
+             */
+            switch:x:@.dp/#
+
+
+               /*
+                * Date type.
+                */
+               case:date
+                  set-value:x:@.substitutions/*/view-details
+                     strings.concat
+                        get-value:x:@.substitutions/*/view-details
+                        strings.replace:x:@.view-details-file/*/date
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Boolean type.
+                */
+               case:bool
+                  set-value:x:@.substitutions/*/view-details
+                     strings.concat
+                        get-value:x:@.substitutions/*/view-details
+                        strings.replace:x:@.view-details-file/*/bool
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/view-details
+                     strings.concat
+                        get-value:x:@.substitutions/*/view-details
+                        strings.replace:x:@.view-details-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+         /*
+          * Dynamically creating our editor component.
+          *
+          * Notice, this relies upon the combined input of both our
+          * POST and PUT endpoint's input. Depending upon whether or not
+          * it's a PUT or POST invocation, we'll hide some fields, depending upon
+          * which input these different endpoints requires.
+          */
+         .form-fields
+
+
+         /*
+          * First adding PUT input to above [.form-fields].
+          */
+         for-each:x:@.dp/#/*/verbs/*/put/*/input/*
+            add:x:@.form-fields
+               get-nodes:x:@.dp/#
+
+
+         /*
+          * Then adding POST input to above [.form-fields], making sure
+          * we don't add fields already existing in PUT input.
+          */
+         for-each:x:@.dp/#/*/verbs/*/post/*/input/*
+
+
+            /*
+             * Checking if above PUT loop already added currently iterated field.
+             */
+            .exists:bool:false
+            for-each:x:@.form-fields/*
+               if
+                  eq
+                     get-name:x:@.dp/#
+                     get-name:x:@for-each/@.dp/#
+                  .lambda
+                     set-value:x:@.exists
+                        .:bool:true
+            if
+               not
+                  get-value:x:@.exists
+               .lambda
+                  add:x:@.form-fields
+                     get-nodes:x:@.dp/#
+
+
+         /*
+          * Looping through combined input fields of both PUT and POST, to create
+          * our edit/create form fields.
+          *
+          * Notice, we don't create form fields for anything that's an input field
+          * to our DELETE endpoint, since it's highly likely a prmary key.
+          */
+         for-each:x:@.form-fields/*
+
+
+            /*
+             * We can now safely create a form control for currently iterated [.form-fields] instance.
+             * Making sure we correctly create our HTML markup for edit/create component.
+             *
+             * Notice, some types have specialized implementations here.
+             */
+            switch:x:@.dp/#
+
+
+               /*
+                * Long type.
+                */
+               case:long
+               case:int
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file/*/long
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Decimal type.
+                */
+               case:decimal
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file/*/decimal
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Boolean type.
+                */
+               case:bool
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file/*/bool
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Date type.
+                */
+               case:date
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file/*/date
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+               /*
+                * Default (anything not having a specialized implementation).
+                */
+               default
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        strings.replace:x:@.form-field-file
+                           .:[[column-name]]
+                           get-name:x:@.dp/#
+
+
+         /*
+          * Adding "delete-instance" to [displayed-columns]
+          */
+         set-value:x:@.substitutions/*/displayed-columns
+            strings.concat
+               get-value:x:@.substitutions/*/displayed-columns
+               .:",\r\n    'delete-instance'"
+
+
+         /*
+          * Making sure we remove redundant commas and spaces from [.substitutions]/[displayed-columns].
+          */
+         set-value:x:@.substitutions/*/displayed-columns
+            strings.trim:x:@.substitutions/*/displayed-columns
+               .:", \r\n"
+
+
+         /*
+          * Iterating through each component file, to do our substitutions.
+          */
+         for-each:x:@.arguments/*/.component-files/*
+
+
+            /*
+             * Replacing [[component-folder]].
+             */
+            strings.replace:x:@.dp/#
+               .:[[component-folder]]
+               get-value:x:@.lambda/@.dp/#/*/component-folder
+
+
+            /*
+             * Replacing [[component-filename]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-filename]]
+               get-value:x:@.lambda/@.dp/#/*/component-filename
+
+
+            /*
+             * Buffer to hold component's filename.
+             */
+            unwrap:x:+
+            .filename:x:@strings.replace
+
+
+            /*
+             * Replacing [[component-header]].
+             */
+            strings.replace:x:@.dp/#/*
+               .:[[component-header]]
+               get-value:x:@.lambda/@.dp/#/*/component-header
+
+
+            /*
+             * Replacing [[form-fields]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[form-fields]]
+               get-value:x:@.substitutions/*/form-fields
+
+
+            /*
+             * Replacing [[delete-input]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[delete-input]]
+               get-value:x:@.substitutions/*/delete-input
+
+
+            /*
+             * Replacing [[primary-keys]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[primary-keys]]
+               get-value:x:@.substitutions/*/primary-keys
+
+
+            /*
+             * Replacing [[create-input]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[create-input]]
+               get-value:x:@.substitutions/*/create-input
+
+
+            /*
+             * Replacing [[update-input]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[update-input]]
+               get-value:x:@.substitutions/*/update-input
+
+
+            /*
+             * Replacing [[ng-containers]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[ng-containers]]
+               get-value:x:@.substitutions/*/ng-containers
+
+
+            /*
+             * Replacing [[view-details]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[view-details]]
+               get-value:x:@.substitutions/*/view-details
+
+
+            /*
+             * Replacing [[colspan]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[colspan]]
+               get-value:x:@.substitutions/*/container-count
+
+
+            /*
+             * Replacing [[component-filename]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-filename]]
+               strings.concat
+                  get-value:x:@.lambda/@.dp/#/*/component-filename
+
+
+            /*
+             * Replacing [[component-name]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-name]]
+               get-value:x:@.lambda/@.dp/#/*/component-name
+
+
+            /*
+             * Replacing [[component-selector]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[component-selector]]
+               get-value:x:@.lambda/@.dp/#/*/component-selector
+
+
+            /*
+             * Replacing [[displayed-columns]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[displayed-columns]]
+               get-value:x:@.substitutions/*/displayed-columns
+
+
+            /*
+             * Replacing [[endpoint-url]].
+             */
+            strings.replace:x:@strings.replace
+               .:[[endpoint-url]]
+               get-value:x:@.substitutions/*/endpoint-url
+
+
+            /*
+             * Appending our actual form controls into our TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[form-control-declarations]]
+               get-value:x:@.substitutions/*/form-controls
+
+
+            /*
+             * Appending our actual control instantiations into our TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[form-control-instantiations]]
+               get-value:x:@.substitutions/*/form-controls-instantiations
+
+
+            /*
+             * Appending our HTTP client service GET method name into TypeScript file.
+             */
+            strings.replace:x:@strings.replace
+               .:[[service-get-method]]
+               get-value:x:@.lambda/@.dp/#/*/verbs/*/get/*/service-method-name
+
+
+            /*
+             * Appending our HTTP client service DELETE method name into TypeScript file,
+             * if it exists - otherwise making sure method simply throws exception.
+             */
+            .delete-method
+            if
+               exists:x:@.lambda/@.dp/#/*/verbs/*/delete/*/service-method-name
+               .lambda
+                  set-value:x:@.delete-method
+                     strings.replace:x:@strings.replace
+                        .:[[service-delete-method]]
+                        strings.concat
+                           .:return this.httpService.
+                           get-value:x:@if/@.lambda/@.dp/#/*/verbs/*/delete/*/service-method-name
+                           .:(ids);
+            else
+               set-value:x:@.delete-method
+                  strings.replace:x:@strings.replace
+                     .:[[service-delete-method]]
+                     .:"return throwError('No HTTP DELETE service method exists for entity');"
+
+
+            /*
+             * Appending our HTTP client service DELETE method name into TypeScript file,
+             * if it exists - otherwise making sure method simply throws exception.
+             */
+            .create-method
+            if
+               exists:x:@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
+               .lambda
+                  set-value:x:@.create-method
+                     strings.replace:x:@.delete-method
+                        .:[[service-create-method]]
+                        strings.concat
+                           .:return this.service.
+                           get-value:x:@if/@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
+                           .:(this.data.entity);
+            else
+               set-value:x:@.create-method
+                  strings.replace:x:@.delete-method
+                     .:[[service-create-method]]
+                     .:"return throwError('No HTTP POST service method exists for entity');"
+
+
+            /*
+             * Appending our HTTP client service COUNT method name into TypeScript file.
+             */
+            strings.replace:x:@.create-method
+               .:[[service-count-method]]
+               get-value:x:@.lambda/@.dp/#/*/count-method
+
+
+            /*
+             * Appending our HTTP client service PUT method name into TypeScript file.
+             *
+             * Notice, some endpoints might not have a PUT method. If they don't we'll
+             * have to make sure we don't add any getUpdateMethod to the edit component,
+             * at which point the base method will kick in, and return an error in case
+             * method is invoked - Which should be impossible for the record, but since
+             * there might exist situations where the endpoint is later added, and the
+             * scaffolded Angular code is modified, to later include such an endpoint,
+             * we still generate an edit component for endpoints - Even those that don't
+             * even have a PUT method.
+             */
+            if
+               exists:x:@.lambda/@.dp/#/*/verbs/*/put
+               .lambda
+
+                  /*
+                   * PUT method exists for component.
+                   */
+                  set-value:x:@strings.replace
+                     strings.replace:x:@strings.replace
+                        .:[[service-update-wrapper]]
+                        strings.concat
+                           .:@"
+  /**
+   * Returns a reference to the update method, to update entity.
+   */
+  protected getUpdateMethod() {
+    return this.service."
+                           get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/put/*/service-method-name
+                           .:@"(this.data.entity);
+  }"
+
+            else
+
+               /*
+                * No PUT method for component, hence not adding getUpdateMethod method
+                * on edit component.
+                */
+               set-value:x:@strings.replace
+                  strings.replace:x:@strings.replace
+                     .:[[service-update-wrapper]]
+                     .:
+
+
+            /*
+             * Buffer to hold component's content.
+             */
+            unwrap:x:+
+            .content:x:@strings.replace
+
+
+            /*
+             * Adding finished component to [.components] node, that is
+             * returned to caller after file is done evaluating.
+             */
+            unwrap:x:+/+/*/*
+            unwrap:x:+/*/*/*
+            add:x:@.components
+               .
+                  :x:@.filename
+                     :x:@.content
+
+
+/*
+ * Returns results to caller.
+ */
+return-nodes:x:@.components/*
