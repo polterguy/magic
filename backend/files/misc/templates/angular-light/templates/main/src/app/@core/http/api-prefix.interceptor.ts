@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
 /**
- * Prefixes all requests not starting with `http[s]` with `environment.serverUrl`.
+ * Prefixes all requests not starting with `http[s]` with `environment.apiUrl`.
  */
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ import { environment } from '@env/environment';
 export class ApiPrefixInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (!/^(http|https):/i.test(request.url)) {
-      request = request.clone({ url: environment.serverUrl + request.url });
+      request = request.clone({ url: environment.apiUrl + request.url });
     }
     return next.handle(request);
   }

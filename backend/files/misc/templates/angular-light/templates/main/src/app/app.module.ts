@@ -14,6 +14,9 @@ import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
+// Generated CRUD components here.
+[[imports]]
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -29,7 +32,11 @@ import { AppRoutingModule } from './app-routing.module';
     AuthModule,
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
   ],
-  declarations: [AppComponent],
+  declarations: [AppComponent
+
+// Generated CRUD components here.
+[[module-declarations]]  ],
+
   providers: [],
   bootstrap: [AppComponent],
 })
