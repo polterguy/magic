@@ -30,7 +30,7 @@ export class AuthenticationService {
    * @return The user credentials.
    */
   login(context: LoginContext): Observable<Credentials> {
-    return new Observable<AuthenticateToken>((observer: Subscriber<AuthenticateToken>) => {
+    return new Observable<Credentials>((observer: Subscriber<Credentials>) => {
       this.httpClient.get<AuthenticateToken>(
         environment.apiUrl +
         '/magic/modules/system/auth/authenticate?username=' +
@@ -44,7 +44,7 @@ export class AuthenticationService {
             token: res.ticket,
           };
           this.credentialsService.setCredentials(data, context.remember);
-          observer.next(res);
+          observer.next(data);
           observer.complete();
 
         }, (error: any) => {

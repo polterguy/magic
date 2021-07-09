@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MediaObserver } from '@angular/flex-layout';
 
 import { AuthenticationService, CredentialsService } from '@app/auth';
+import { AuthService } from '@app/services/auth-service';
 
 @Component({
   selector: 'app-shell',
@@ -13,6 +14,7 @@ import { AuthenticationService, CredentialsService } from '@app/auth';
 export class ShellComponent implements OnInit {
   constructor(
     private router: Router,
+    public authService: AuthService,
     private titleService: Title,
     private authenticationService: AuthenticationService,
     private credentialsService: CredentialsService,

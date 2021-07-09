@@ -1,11 +1,8 @@
-    <a
-      *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'get')"
-      mat-button
-      routerLink="/[[url]]"
-      routerLinkActive="active-link"
-      class="menu-item"
-      (click)="closeNavigator()"
-      [routerLinkActiveOptions]="{exact:true}">
-      <mat-icon matSuffix>grade</mat-icon>
-      <span class="menu-item-text">[[name]]</span>
-    </a>
+          <a
+            *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'get')"
+            mat-list-item
+            routerLink="/[[url]]"
+            routerLinkActive="active"
+            (click)="isMobile && sidenav.close()">
+            <span translate>[[name]]</span>
+          </a>

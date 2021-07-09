@@ -17,19 +17,6 @@ import { AuthenticateToken } from '../models/authenticate-token';
   canInvoke(url: string, verb: string) : boolean;
 
   /**
-   * Authenticates the current user towards the backend.
-   * 
-   * @param username Username user supplied
-   * @param password Password user supplied
-   */
-  authenticate(username: string, password: string) : Observable<AuthenticateToken>;
-
-  /**
-   * Will refresh the JWT token, by invoking the backend's refresh token endpoint.
-   */
-  refreshTicket() : Observable<AuthenticateToken>;
-
-  /**
    * Returns true if current user belongs to any of the specified roles,
    * otherwise it returns false.
    * 
@@ -41,10 +28,4 @@ import { AuthenticateToken } from '../models/authenticate-token';
    * Returns true if current user is authenticate, otherwise false.
    */
   isLoggedIn() : boolean;
-
-  /**
-   * Destroys the persisted JWT token for the current user, effectively
-   * logging out the user from the backend.
-   */
-  logout() : void;
 }
