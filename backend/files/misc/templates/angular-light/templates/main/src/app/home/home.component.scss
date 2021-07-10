@@ -1,6 +1,9 @@
-.container {
+ .container {
   text-align: center;
   padding: 1em;
+  mat-card {
+    padding-bottom: 3rem;
+  }
 }
 
 .logo {
@@ -11,4 +14,15 @@
 q {
   font-style: italic;
   quotes: "« " " »";
+}
+
+.mat-icon {
+  vertical-align: middle;
+}
+
+.version {
+  position: absolute;
+  bottom: .5rem;
+  right: 1rem;
+  color: rgb(128, 128, 128);
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '@env/environment';
 import { finalize } from 'rxjs/operators';
 
 import { QuoteService } from './quote.service';
@@ -9,6 +10,7 @@ import { QuoteService } from './quote.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  version: string | null = environment.version;
   quote: string | undefined;
   isLoading = false;
 

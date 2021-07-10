@@ -63,9 +63,11 @@
  */
 .component-wrapper {
   position: relative;
-  padding-top: 5rem;
+  padding-top: 1rem;
   .grid-wrapper {
     min-width: fit-content;
+    margin-left: 1rem;
+    margin-right: 1rem;
     .new-button {
       position: absolute !important;
       top: 0;
@@ -244,12 +246,6 @@
         }
       }
     }
-  }
-}
-
-@media screen and (min-width: 1080px) {
-  .component-wrapper {
-    padding: 1rem;
   }
 }
 
