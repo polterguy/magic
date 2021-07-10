@@ -9,6 +9,7 @@
    name:string
    copyright:string
    endpoints:*
+   args:*
 
 
 /*
@@ -24,8 +25,10 @@ strings.concat
    .:/misc/templates/
    .:x:@.arguments/*/templateName
    .:/generate.hl
-add:x:+/+
+add:x:+/+/+
    get-nodes:x:@.arguments/*/endpoints
+add:x:+/+
+   get-nodes:x:@.arguments/*/args
 unwrap:x:+/*
 io.file.execute:x:@strings.concat
    apiUrl:x:@.arguments/*/apiUrl

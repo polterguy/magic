@@ -13,7 +13,7 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue.
-$app-primary: mat-palette($mat-blue);
+$app-primary: mat-palette($[[palette]]);
 // stylelint-disable-next-line value-keyword-case
 $app-accent: mat-palette($mat-pink, A200, A100, A400);
 
