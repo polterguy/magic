@@ -137,6 +137,10 @@
         td.hidden {
           display: none !important;
         }
+        td.mat-column-details {
+          padding-left: .25rem;
+          padding-right: .25rem;
+        }
       }
       tr.visible-details {
         td {
