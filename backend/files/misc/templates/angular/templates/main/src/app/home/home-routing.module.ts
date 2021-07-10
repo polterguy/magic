@@ -10,7 +10,7 @@ import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
   Shell.childRoutes([
-    { path: '', component: HomeComponent, data: { title: marker('[[name]] - Home') } },
+    { path: '', component: HomeComponent, data: { title: marker('Home') } },
 
     // Then routes for all CRUD components.
 [[routes]]
