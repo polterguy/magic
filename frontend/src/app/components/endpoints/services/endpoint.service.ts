@@ -333,17 +333,13 @@ export class EndpointService {
    * @param name Name of application
    * @param copyright Copyright notice to put at top of all files
    * @param endpoints Endpoints you want to embed into your result
-   * @param frontendDomain Domain where you intend to run app later
-   * @param dockerImage Docker image name as you intend to upload it as to Docker HUB
    */
   public generate(
     templateName: string,
     apiUrl: string,
     name: string,
     copyright: string,
-    endpoints: any[],
-    frontendDomain: string,
-    dockerImage: string) {
+    endpoints: any[]) {
 
       // Invoking backend such that we download the result of invocation to client as a ZIP file.
       const payload = {
@@ -352,8 +348,6 @@ export class EndpointService {
         name,
         copyright,
         endpoints,
-        frontendDomain,
-        dockerImage,
       };
       this.httpService.downloadPost(
         '/magic/modules/system/endpoints/generate', payload).subscribe(res => {
