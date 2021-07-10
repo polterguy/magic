@@ -33,6 +33,27 @@
 
   </div>
 
+  <div *ngIf="custom">
+
+    <div *ngFor="let idxCustom of custom | dynamic">
+
+      <h3 class="capsify">{{idxCustom.key}}</h3>
+
+      <mat-form-field
+        *ngIf="idxCustom.value.length > 0"
+        appearance="outline"
+        class="fill-width">
+        <mat-select [(ngModel)]="args[idxCustom.key]">
+          <mat-option
+            *ngFor="let idxOption of idxCustom.value"
+            [value]="idxOption.value">{{idxOption.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+  </div>
+
   <div *ngIf="advanced">
 
     <h3>Endpoints</h3>

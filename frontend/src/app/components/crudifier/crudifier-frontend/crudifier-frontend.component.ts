@@ -86,6 +86,7 @@ export class CrudifierFrontendComponent implements OnInit {
       content: {
         componentFactory,
         data: {
+          template: this.template
         }
       }
     });
@@ -95,6 +96,7 @@ export class CrudifierFrontendComponent implements OnInit {
    * Invoked when user clicks the generate button.
    */
   public generate() {
+
     // Signaling child component to do the actual creation.
     this.messageService.sendMessage({
       name: 'app.generator.generate-frontend',

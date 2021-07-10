@@ -313,7 +313,7 @@ export class EndpointService {
   }
 
   /**
-   * Returns the documentation/README.md file for the specified template..
+   * Returns the documentation/README.md file for the specified template.
    * 
    * @param name Name of template to retrieve README file for
    */
@@ -326,6 +326,19 @@ export class EndpointService {
   }
 
   /**
+   * Returns the custom arguments associated with the specified template.
+   * 
+   * @param name Name of template to retrieve custom arguments for
+   */
+   public templateCustomArgs(name: string) {
+
+    // Filtering tests, to return only tests matching endpoint specified.
+    return this.httpService.get<any>(
+      '/magic/modules/system/endpoints/template-args?name=' +
+      encodeURIComponent(name));
+  }
+
+  /**
    * Generates a frontend and downloads to client as a ZIP file.
    * 
    * @param templateName Name of template to use
@@ -333,13 +346,15 @@ export class EndpointService {
    * @param name Name of application
    * @param copyright Copyright notice to put at top of all files
    * @param endpoints Endpoints you want to embed into your result
+   * @param args Custom args endpoint requires
    */
   public generate(
     templateName: string,
     apiUrl: string,
     name: string,
     copyright: string,
-    endpoints: any[]) {
+    endpoints: any[],
+    args: any) {
 
       // Invoking backend such that we download the result of invocation to client as a ZIP file.
       const payload = {
@@ -348,6 +363,7 @@ export class EndpointService {
         name,
         copyright,
         endpoints,
+        args
       };
       this.httpService.downloadPost(
         '/magic/modules/system/endpoints/generate', payload).subscribe(res => {

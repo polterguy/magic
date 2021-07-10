@@ -12,6 +12,76 @@
 
 
 /*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/args/*/palette
+
+
+/*
+ * Communicating custom arguments to consumers.
+ */
+.custom
+   palette
+      .
+         name:Light blue
+         value:mat-light-blue
+      .
+         name:Red
+         value:mat-red
+      .
+         name:Pink
+         value:mat-pink
+      .
+         name:Purple
+         value:mat-purple
+      .
+         name:Deep purple
+         value:mat-deep-purple
+      .
+         name:Indigo
+         value:mat-indigo
+      .
+         name:Blue
+         value:mat-blue
+      .
+         name:Cyan
+         value:mat-cyan
+      .
+         name:Teal
+         value:mat-teal
+      .
+         name:Green
+         value:mat-green
+      .
+         name:Light green
+         value:mat-light-green
+      .
+         name:Lime
+         value:mat-lime
+      .
+         name:Yellow
+         value:mat-yellow
+      .
+         name:Amber
+         value:mat-amber
+      .
+         name:Orange
+         value:mat-orange
+      .
+         name:Deep orange
+         value:mat-deep-orange
+      .
+         name:Brown
+         value:mat-brown
+      .
+         name:Grey
+         value:mat-grey
+      .
+         name:Blue grey
+         value:mat-blue-grey
+
+
+/*
  * Doing some logging.
  */
 log.info:Generating an ngx-generator Angular frontend
@@ -309,21 +379,12 @@ for-each:x:@.main-files/*
 
 
    /*
-    * Replacing [[docker-image]]
+    * Replacing [[palette]]
     */
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
-         .:[[docker-image]]
-         get-value:x:@.arguments/*/docker-image
-
-
-   /*
-    * Replacing [[frontend-domain]]
-    */
-   set-value:x:@.dp/#/*
-      strings.replace:x:@.dp/#/*
-         .:[[frontend-domain]]
-         get-value:x:@.arguments/*/frontend-domain
+         .:[[palette]]
+         get-value:x:@.arguments/*/args/*/palette
 
 
    /*
