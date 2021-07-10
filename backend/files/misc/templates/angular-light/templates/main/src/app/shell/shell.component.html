@@ -32,10 +32,6 @@
           <a mat-list-item routerLink="/home" routerLinkActive="active" (click)="isMobile && sidenav.close()">
             <span translate>Home</span>
           </a>
-          <mat-divider></mat-divider>
-          <a mat-list-item routerLink="/about" routerLinkActive="active" (click)="isMobile && sidenav.close()">
-            <span translate>About</span>
-          </a>
 [[router-links]]
           <mat-divider></mat-divider>
         </mat-list>
@@ -48,7 +44,7 @@
         </button>
         <span>{{ title }}</span>
       </mat-toolbar>
-      <router-outlet></router-outlet>
+      <router-outlet *ngIf="authService.hasEndpoints()"></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

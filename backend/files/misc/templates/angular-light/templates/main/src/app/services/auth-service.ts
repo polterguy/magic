@@ -4,11 +4,9 @@
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Injectable } from '@angular/core';
-import { Observable, Subscriber } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Endpoint } from './models/endpoint';
-import { AuthenticateToken } from './models/authenticate-token';
 import { IMe } from './interfaces/me-interface';
 import { CredentialsService } from '@app/auth';
 
