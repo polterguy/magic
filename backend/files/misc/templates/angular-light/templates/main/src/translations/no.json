@@ -12,5 +12,9 @@
   "Username is required": "Brukernavn er påkrevd",
   "Username or password incorrect.": "Brukernavnet eller passordet er feil.",
   "Remember me": "Husk meg",
-  "Version": "Versjon"
+  "Version": "Versjon",
+  "Save": "Lagre",
+  "Cancel": "Avbryt",
+  "Edit": "Rediger",
+  "Create": "Lag"
 }

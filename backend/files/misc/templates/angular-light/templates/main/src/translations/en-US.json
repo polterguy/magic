@@ -12,5 +12,9 @@
   "Username is required": "Username is required",
   "Username or password incorrect.": "Username or password incorrect.",
   "Remember me": "Remember me",
-  "Version": "Version"
+  "Version": "Version",
+  "Save": "Save",
+  "Cancel": "Cancel",
+  "Edit": "Edit",
+  "Create": "Create"
 }

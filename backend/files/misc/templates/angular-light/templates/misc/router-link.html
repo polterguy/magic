@@ -2,7 +2,7 @@
           <a
             *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'get')"
             mat-list-item
-            routerLink="/[[url]]"
+            routerLink="crud/[[url]]"
             routerLinkActive="active"
             (click)="isMobile && sidenav.close()">
             <span translate>[[name]]</span>
