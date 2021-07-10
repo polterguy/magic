@@ -39,7 +39,7 @@ export abstract class GridComponent {
    * Current filter being applied to filter items from our backend.
    */
   public filter: any = {
-    limit: 25
+    limit: 10
   };
 
   /**
