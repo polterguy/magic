@@ -84,7 +84,6 @@
         th,
         td {
           display: none;
-          user-select: none;
         }
         td {
           max-width: 80px;
@@ -109,7 +108,6 @@
               width: 100%;
               height: 100%;
               label {
-                text-transform: capitalize;
                 display: block;
                 margin-top: 1rem;
                 margin-bottom: 0.5rem;
@@ -132,7 +130,6 @@
             float: left;
             font-size: 10px;
             width: calc(100% - 70px);
-            text-transform: capitalize;
           }
           .sort-button {
             margin-top: 2px;
@@ -295,7 +292,6 @@
 .entity-edit-field {
   width: calc(100% - 1.2rem);
   margin-right: 1rem;
-  text-transform: capitalize;
   display: inline-block;
   mat-icon {
     color: rgb(128, 128, 128);

@@ -16,6 +16,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { environment } from '@env/environment';
 import { JwtModule } from '@auth0/angular-jwt';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
+import { FormatDatePipe } from './pipes/format-date-pipe';
 
 // Generated CRUD components here.
 [[imports]]
@@ -50,7 +51,9 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angul
     }),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
   ],
-  declarations: [AppComponent,
+  declarations: [
+    AppComponent,
+    FormatDatePipe,
 
 // Generated CRUD components here.
 [[module-declarations]]  ],
