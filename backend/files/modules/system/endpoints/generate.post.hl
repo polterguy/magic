@@ -9,8 +9,7 @@
    name:string
    copyright:string
    endpoints:*
-   dockerImage:string
-   frontendDomain:string
+   args:*
 
 
 /*
@@ -26,15 +25,15 @@ strings.concat
    .:/misc/templates/
    .:x:@.arguments/*/templateName
    .:/generate.hl
-add:x:+/+
+add:x:+/+/+
    get-nodes:x:@.arguments/*/endpoints
+add:x:+/+
+   get-nodes:x:@.arguments/*/args
 unwrap:x:+/*
 io.file.execute:x:@strings.concat
    apiUrl:x:@.arguments/*/apiUrl
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
-   docker-image:x:@.arguments/*/dockerImage
-   frontend-domain:x:@.arguments/*/frontendDomain
 
 
 /*

@@ -20,6 +20,7 @@ import { SocketUser } from '../models/socket-user.model';
 import { HttpService } from '../../../services/http.service';
 import { FileService } from '../../files/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -40,7 +41,8 @@ export class EndpointService {
   constructor(
     private httpService: HttpService,
     private fileService: FileService,
-    private backendService: BackendService) { }
+    private backendService: BackendService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Retrieves meta data about the endpoints in your installation.
@@ -311,7 +313,7 @@ export class EndpointService {
   }
 
   /**
-   * Returns the documentation/README.md file for the specified template..
+   * Returns the documentation/README.md file for the specified template.
    * 
    * @param name Name of template to retrieve README file for
    */
@@ -324,6 +326,19 @@ export class EndpointService {
   }
 
   /**
+   * Returns the custom arguments associated with the specified template.
+   * 
+   * @param name Name of template to retrieve custom arguments for
+   */
+   public templateCustomArgs(name: string) {
+
+    // Filtering tests, to return only tests matching endpoint specified.
+    return this.httpService.get<any>(
+      '/magic/modules/system/endpoints/template-args?name=' +
+      encodeURIComponent(name));
+  }
+
+  /**
    * Generates a frontend and downloads to client as a ZIP file.
    * 
    * @param templateName Name of template to use
@@ -331,8 +346,7 @@ export class EndpointService {
    * @param name Name of application
    * @param copyright Copyright notice to put at top of all files
    * @param endpoints Endpoints you want to embed into your result
-   * @param frontendDomain Domain where you intend to run app later
-   * @param dockerImage Docker image name as you intend to upload it as to Docker HUB
+   * @param args Custom args endpoint requires
    */
   public generate(
     templateName: string,
@@ -340,8 +354,7 @@ export class EndpointService {
     name: string,
     copyright: string,
     endpoints: any[],
-    frontendDomain: string,
-    dockerImage: string) {
+    args: any) {
 
       // Invoking backend such that we download the result of invocation to client as a ZIP file.
       const payload = {
@@ -350,8 +363,7 @@ export class EndpointService {
         name,
         copyright,
         endpoints,
-        frontendDomain,
-        dockerImage,
+        args
       };
       this.httpService.downloadPost(
         '/magic/modules/system/endpoints/generate', payload).subscribe(res => {
@@ -361,6 +373,6 @@ export class EndpointService {
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
           const file = new Blob([res.body]);
           saveAs(file, filename);
-        });
+        }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check log for details'));
     }
 }
