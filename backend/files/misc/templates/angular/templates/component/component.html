@@ -6,7 +6,7 @@
     <button
       mat-raised-button
       *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'post')"
-      class="new-button"
+      class="create-button"
       (click)="createEntity()">
       <mat-icon>add_circle</mat-icon>
     </button>
@@ -47,7 +47,7 @@
               *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'put')"
               mat-button
               color="primary"
-              class="edit-details"
+              class="edit-button"
               (click)="editEntity(el)">
               <mat-icon matSuffix>edit</mat-icon>
             </button>

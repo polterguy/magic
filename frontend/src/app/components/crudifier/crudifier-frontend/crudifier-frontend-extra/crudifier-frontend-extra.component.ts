@@ -96,7 +96,14 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
 
     // Retrieving custom template arguments.
     this.endpointService.templateCustomArgs(this.template).subscribe((res: any) => {
+
+      // Assigning model and trying to find sane default values for them.
       this.custom = res;
+      for (const idx in res) {
+        if (Array.isArray(res[idx])) {
+          this.args[idx] = res[idx][0].value;
+        }
+      }
     });
 
     // Making sure we usbscribe to the 'generate' message.
