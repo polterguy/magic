@@ -32,6 +32,13 @@ mat-chip-list {
   text-transform: capitalize;
 }
 
+.custom-arguments {
+  .custom-argument {
+    width: calc(33% - 1rem);
+    margin-right: 1rem;
+  }
+}
+
 table {
   margin-bottom: 2rem;
   margin-top: 0;

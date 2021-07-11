@@ -373,6 +373,6 @@ export class EndpointService {
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
           const file = new Blob([res.body]);
           saveAs(file, filename);
-        }, (error: any) => this.feedbackService.showError(error));
+        }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check log for details'));
     }
 }
