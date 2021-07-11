@@ -1,6 +1,28 @@
 
 <div *ngIf="endpoints && endpoints.length > 0">
 
+  <h3 *ngIf="custom">Arguments</h3>
+
+  <div *ngIf="custom" class="custom-arguments">
+
+    <div *ngFor="let idxCustom of custom | dynamic" class="custom-argument">
+
+      <mat-form-field
+        *ngIf="idxCustom.value.length > 0"
+        appearance="outline"
+        class="fill-width">
+        <mat-label class="capsify">{{idxCustom.key}}</mat-label>
+        <mat-select [(ngModel)]="args[idxCustom.key]">
+          <mat-option
+            *ngFor="let idxOption of idxCustom.value"
+            [value]="idxOption.value">{{idxOption.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+  </div>
+
   <h3>Modules</h3>
 
   <div class="module-declarations">
@@ -34,30 +56,6 @@
   </div>
 
   <div *ngIf="advanced">
-
-    <h3>Deployment</h3>
-
-    <mat-form-field class="form-field-double" appearance="outline">
-
-      <mat-label>Docker</mat-label>
-      <input
-        matInput
-        type="text"
-        autocomplete="off"
-        [(ngModel)]="dockerImage">
-
-    </mat-form-field>
-
-    <mat-form-field class="form-field-double" appearance="outline">
-
-      <mat-label>Frontend URL</mat-label>
-      <input
-        matInput
-        type="text"
-        autocomplete="off"
-        [(ngModel)]="deploymentUrl">
-
-    </mat-form-field>
 
     <h3>Endpoints</h3>
 

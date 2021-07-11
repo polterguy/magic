@@ -1,0 +1,31 @@
+ .container {
+  text-align: center;
+  padding: 1em;
+  mat-card {
+    padding-bottom: 3rem;
+    p {
+      text-align: left;
+    }
+  }
+}
+
+.logo {
+  width: 150px;
+  margin: 0 auto;
+}
+
+q {
+  font-style: italic;
+  quotes: "« " " »";
+}
+
+.mat-icon {
+  vertical-align: middle;
+}
+
+.version {
+  position: absolute;
+  bottom: .5rem;
+  right: 1rem;
+  color: rgb(128, 128, 128);
+}

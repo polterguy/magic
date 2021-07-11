@@ -71,6 +71,8 @@ import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
+import { BazarComponent } from './components/bazar/bazar.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/config/config.component';
@@ -87,12 +89,14 @@ import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { ViewAppComponent } from './components/bazar/view-app/view-app.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
+import { ViewPublishedComponent } from './components/bazar/view-published/view-published.component';
 import { CrudifierSqlComponent } from './components/crudifier/crudifier-sql/crudifier-sql.component';
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
@@ -100,7 +104,6 @@ import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/dia
 import { CreateKeypairComponent } from './components/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/crypto/server-public-key/server-public-key.component';
 import { EndpointDetailsComponent } from './components/endpoints/endpoint-details/endpoint-details.component';
-import { CrudifierDockerComponent } from './components/crudifier/crudifier-docker/crudifier-docker.component';
 import { CryptoInvocationsComponent } from './components/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { CrudifierBackendComponent } from './components/crudifier/crudifier-backend/crudifier-backend.component';
@@ -124,16 +127,20 @@ import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-t
 import { PublishComponent } from './components/diagnostics/diagnostics-sockets/publish/publish.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
-import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
 import { RenameFileDialogComponent } from './components/ide/rename-file-dialog/rename-file-dialog.component';
+import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
+import { InstallAppDialogComponent } from './components/bazar/install-app-dialog/install-app-dialog.component';
+import { PreviewFileDialogComponent } from './components/ide/preview-file-dialog/preview-file-dialog.component';
 import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
+import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog/select-macro-dialog.component';
+import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { AddToRoleDialogComponent } from './components/auth/users/add-to-role-dialog/add-to-role-dialog.component';
+import { DownloadFileDialogComponent } from './components/files/download-file-dialog/download-file-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileFolderDialogComponent } from './components/ide/new-file-folder-dialog/new-file-folder-dialog.component';
-import { PreviewFileDialogComponent } from './components/ide/preview-file-dialog/preview-file-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { RenameFileObjectDialogComponent } from './components/files/rename-file-object-dialog/rename-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
@@ -141,14 +148,6 @@ import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/
 import { AddQueryParameterDialogComponent } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
-import { BazarComponent } from './components/bazar/bazar.component';
-import { ViewAppComponent } from './components/bazar/view-app/view-app.component';
-import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog/select-macro-dialog.component';
-import { ExecuteMacroDialogComponent } from './components/ide/execute-macro-dialog/execute-macro-dialog.component';
-import { ViewPublishedComponent } from './components/bazar/view-published/view-published.component';
-import { DownloadFileDialogComponent } from './components/files/download-file-dialog/download-file-dialog.component';
-import { InstallAppDialogComponent } from './components/bazar/install-app-dialog/install-app-dialog.component';
-import { AboutComponent } from './components/about/about.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -229,7 +228,6 @@ import { AboutComponent } from './components/about/about.component';
     CrudifierSqlAddArgumentDialogComponent,
     PublishComponent,
     ToolbarHelpDialogComponent,
-    CrudifierDockerComponent,
     IdeComponent,
     TerminalComponent,
     DiagnosticsSocketsComponent,
