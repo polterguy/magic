@@ -33,6 +33,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   exports: [
@@ -60,6 +61,7 @@ import { MatListModule } from '@angular/material/list';
     MatTooltipModule,
     MatDividerModule,
     MatListModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class MaterialModule {}
