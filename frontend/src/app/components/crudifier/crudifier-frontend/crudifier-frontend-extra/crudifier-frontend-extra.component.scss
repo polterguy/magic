@@ -34,6 +34,7 @@ mat-chip-list {
 
 .custom-arguments {
   .custom-argument {
+    display: inline-block;
     width: calc(33% - 1rem);
     margin-right: 1rem;
   }

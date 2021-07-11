@@ -79,6 +79,13 @@ validators.mandatory:x:@.arguments/*/args/*/palette
       .
          name:Blue grey
          value:mat-blue-grey
+   theme
+      .
+         name:Light
+         value:mat-light-theme
+      .
+         name:Dark
+         value:mat-dark-theme
 
 
 /*
@@ -385,6 +392,15 @@ for-each:x:@.main-files/*
       strings.replace:x:@.dp/#/*
          .:[[palette]]
          get-value:x:@.arguments/*/args/*/palette
+
+
+   /*
+    * Replacing [[theme]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[theme]]
+         get-value:x:@.arguments/*/args/*/theme
 
 
    /*
