@@ -1,4 +1,7 @@
 
+// Importing material theming such that we can de-reference variables in active theme.
+@import "~@angular/material/theming";
+
 /*
  * Custom shared classes needed to wire up CRUD components correctly.
  */
@@ -36,6 +39,7 @@
       position: absolute !important;
       top: 0;
       right: 0;
+      color: mat-color($app-primary, 500);
     }
 
     // Actual material data table for CRUD components.
@@ -61,7 +65,7 @@
 
           // View details parts of material table.
           .details-sheet {
-            border: solid 1px rgb(230, 230, 230);
+            border: solid 1px mat-color($app-primary, 200);
             margin-top: 3rem;
             margin-bottom: 3rem;
             border-radius: 0.5rem;
@@ -78,7 +82,6 @@
 
             // 'Card' that shows details of entities.
             .details {
-              flex-grow: 1;
               width: 100%;
               height: 100%;
 
@@ -98,16 +101,24 @@
             }
           }
         }
+
+        // Without this no columns will show when screen is very small
         th:nth-child(1),
         td:nth-child(1) {
           display: table-cell;
         }
+
+        // Headers
         th {
+
+          // Filtering text boxes
           .filter-textbox {
             float: left;
             font-size: 10px;
             width: calc(100% - 70px);
           }
+
+          // Sort buttons
           .sort-button {
             margin-top: 2px;
             float: right;
@@ -117,41 +128,52 @@
             padding-right: 0;
           }
         }
+
+        // Needed to make sure we always display delete row buttons.
         td.delete-column,
         th.delete-column {
           display: table-cell;
           width: 70px;
           text-align: right;
           padding-right: 0;
+          color: mat-color($app-primary, 500);
         }
-        td.delete-column {
-          color: rgb(100, 100, 100);
-        }
-        th.hidden,
+
+        // Necessary to make it possible to toggle rows such that they become visible once clicked.
         td.hidden {
           display: none !important;
         }
+
+        // Needed to make sure details row always has no padding, to align details with the rest of the table.
         td.mat-column-details {
-          padding-left: .25rem;
-          padding-right: .25rem;
+          padding-left: 0;
+          padding-right: 0;
         }
       }
+
+      // Class for when row has been toggled to display details.
       tr.visible-details {
         td {
           border-bottom-color: transparent !important;
-          background-color: rgba(0, 0, 0, 0.05) !important;
+          background-color: mat-color($app-primary, 100);
         }
       }
+
+      // Making sure we communicate that column is clickable and give some visual clues.
       tr.mat-row:hover {
         cursor: pointer;
-        background-color: #f0f0f0;
+        background-color: mat-color($app-primary, 50);
         transition-property: background-color;
         transition-duration: 0.1s;
       }
+
+      // Row that displays details.
       tr.details-row {
         cursor: inherit;
         background-color: transparent !important;
         td {
+
+          // Creating some animations used when column is toggled.
           @keyframes drop-down {
             0% {
               opacity: 0;
@@ -162,12 +184,16 @@
               margin-top: 2rem;
             }
           }
+
+          // Applying animation for details rows.
           .details-sheet {
             animation: drop-down 0.2s ease-in;
             animation-fill-mode: forwards;
           }
         }
       }
+
+      // Important ro make sure details doesn't appear to be clickable.
       tr.details-row:hover {
         cursor: inherit;
       }
@@ -178,31 +204,40 @@
   }
 }
 
+/*
+ * Overrides to make design responsive, as in working on smaller devices.
+ */
 @media screen and (min-width: 590px) {
   .component-wrapper {
     table {
       tr {
+
+        // Ensuring the first column is always visible.
         th:nth-child(1),
-        td:nth-child(1),
-        th:nth-child(2),
-        td:nth-child(2) {
+        td:nth-child(1) {
           display: table-cell;
-        }
-        td {
-          .details-sheet {
-            display: flex;
-            flex-wrap: wrap;
-            .details {
-              height: 100%;
-            }
-          }
         }
       }
     }
   }
 }
 
-@media screen and (min-width: 840px) {
+@media screen and (min-width: 700px) {
+  .component-wrapper {
+    table {
+      tr {
+
+        // Ensuring the first column is always visible.
+        th:nth-child(2),
+        td:nth-child(2) {
+          display: table-cell;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1080px) {
   .component-wrapper {
     table {
       tr {
@@ -212,14 +247,9 @@
         }
         td {
           .details-sheet {
-            padding: 2rem 3rem 2rem 3rem;
+            padding: 0 2rem 1rem 2rem !important;
             margin-top: 2rem;
             margin-bottom: 3rem;
-            display: flex;
-            flex-wrap: wrap;
-            .details {
-              width: 50% !important;
-            }
           }
         }
       }
@@ -228,6 +258,19 @@
 }
 
 @media screen and (min-width: 1420px) {
+  .component-wrapper {
+    table {
+      tr {
+        th:nth-child(4),
+        td:nth-child(4) {
+          display: table-cell;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1620px) {
   .component-wrapper {
     table {
       tr {
@@ -240,25 +283,12 @@
   }
 }
 
-@media screen and (min-width: 1620px) {
+@media screen and (min-width: 2048px) {
   .component-wrapper {
     table {
       tr {
         th:nth-child(6),
         td:nth-child(6) {
-          display: table-cell;
-        }
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 2048px) {
-  .component-wrapper {
-    table {
-      tr {
-        th:nth-child(7),
-        td:nth-child(7) {
           display: table-cell;
         }
       }
