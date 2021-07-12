@@ -526,9 +526,9 @@ for-each:x:@.main-files/*/*
 /*
  * Adding all generated files to return value.
  */
-add:x:../*/return-nodes
+add:x:../*/.return-nodes
    get-nodes:x:@.main-files/*
-add:x:../*/return-nodes
+add:x:../*/.return-nodes
    get-nodes:x:@.components/*
 
 
@@ -551,7 +551,7 @@ if
       /*
        * Copyright notice was supplied.
        */
-      for-each:x:../*/return-nodes/*
+      for-each:x:../*/.return-nodes/*
          if
             or
                strings.ends-with:x:@.dp/#
@@ -581,6 +581,21 @@ if
 
 
 /*
+ * Iterating through each file in [.return-nodes] and making sure we only return
+ * files we actually want.
+ */
+for-each:x:../*/.return-nodes/*
+   if
+      not
+         strings.ends-with:x:@.dp/#
+            .:.DS_Store
+      .lambda
+         add:x:../*/return-nodes
+            get-nodes:x:@.dp/#
+
+
+/*
  * Returning all generated files to caller.
  */
+.return-nodes
 return-nodes
