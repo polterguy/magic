@@ -24,8 +24,6 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
-              "src/favicon.ico",
-              "src/apple-touch-icon.png",
               "src/robots.txt",
               "src/assets"
             ],
@@ -99,8 +97,6 @@
               "src/main.scss"
             ],
             "assets": [
-              "src/favicon.ico",
-              "src/apple-touch-icon.png",
               "src/robots.txt",
               "src/assets"
             ]
