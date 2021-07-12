@@ -5,7 +5,7 @@
 
     <button
       mat-raised-button
-      *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'post')"
+      *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'post') && httpService['[[crud-entity]]']['create']"
       class="create-button"
       (click)="createEntity()">
       <mat-icon>add_circle</mat-icon>
@@ -20,12 +20,12 @@
         <th
           mat-header-cell
           *matHeaderCellDef
-          [ngClass]="authService.me.canInvoke('[[endpoint-url]]', 'delete') ? 'delete-column' : 'hidden'"></th>
+          [ngClass]="authService.me.canInvoke('[[endpoint-url]]', 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'"></th>
 
         <td
           mat-cell
           *matCellDef="let el"
-          [ngClass]="authService.me.canInvoke('[[endpoint-url]]', 'delete') ? 'delete-column' : 'hidden'">
+          [ngClass]="authService.me.canInvoke('[[endpoint-url]]', 'delete') && httpService['[[crud-entity]]']['delete'] ? 'delete-column' : 'hidden'">
           <button
             mat-button
             (click)="deleteEntity(el, {[[delete-input]]})"
@@ -44,7 +44,7 @@
             class="details-sheet"
             *ngIf="shouldDisplayDetails(el)">
             <button
-              *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'put')"
+              *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'put') && httpService['[[crud-entity]]']['update']"
               mat-button
               color="primary"
               class="edit-button"

@@ -55,6 +55,18 @@ for-each:x:@.arguments/*
       .lambda
          set-value:x:@.interface
             .:ICrdEntity
+   else-if
+      not
+         exists:x:@.dp/#/*/verbs/*/post
+      .lambda
+         set-value:x:@.interface
+            .:IRudEntity
+   else-if
+      not
+         exists:x:@.dp/#/*/verbs/*/delete
+      .lambda
+         set-value:x:@.interface
+            .:ICruEntity
    .method
    set-value:x:@.method
       strings.concat

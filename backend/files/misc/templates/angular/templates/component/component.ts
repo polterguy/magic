@@ -34,11 +34,19 @@ export class [[component-name]] extends GridComponent implements OnInit {
 
   // Form control declarations to bind up with reactive form elements.
 [[form-control-declarations]]
-  // Constructor taking a bunch of services/helpers through dependency injection.
-  constructor(
+
+  /**
+   * Creates an instance of your CRUD component.
+   * 
+   * @param httpService Needed to be able to invoke backend during CRUD operations
+   * @param authService Needed to check if user has access to invoking CRUD operation
+   * @param snackBar Needed to display errror and feedback
+   * @param dialog Needed to show modal dialog as user edits or creates new entities
+   */
+   constructor(
+    public httpService: HttpService,
     public authService: AuthService,
     protected snackBar: MatSnackBar,
-    private httpService: HttpService,
     private dialog: MatDialog) {
       super(authService, snackBar);
   }

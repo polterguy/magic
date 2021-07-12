@@ -85,6 +85,50 @@ export interface ICrdEntity extends IREntity {
 }
 
 /**
+ * Entity method group containing Read, Update and Delete, but not Create.
+ * 
+ * This interface is implemented on method groups not containing create.
+ */
+ export interface IRudEntity extends IREntity {
+
+  /**
+   * Updates one entity in your backend.
+   *
+   * @param args What item to update, and what values to update it with. Must at the very least contain your entity's primary key.
+   */
+   update(args: any) : Observable<UpdateResponse>;
+
+  /**
+   * Deletes one entity from your backend.
+   *
+   * @param args Filter condition for item to delete, implying primary key(s) for entity
+   */
+  delete(args: any) : Observable<DeleteResponse>;
+}
+
+/**
+ * Entity method group containing Create, Read and Update, but not Delete.
+ * 
+ * This interface is implemented on method groups not containing delete.
+ */
+ export interface ICruEntity extends IREntity {
+
+  /**
+   * Creates a new entity.
+   *
+   * @param args Initial values for your entity
+   */
+   create(args: any) : Observable<CreateResponse>;
+
+  /**
+   * Updates one entity in your backend.
+   *
+   * @param args What item to update, and what values to update it with. Must at the very least contain your entity's primary key.
+   */
+   update(args: any) : Observable<UpdateResponse>;
+  }
+
+/**
  * Entity method group containing all 4 CRUD operations.
  */
 export interface ICrudEntity extends ICrdEntity {
