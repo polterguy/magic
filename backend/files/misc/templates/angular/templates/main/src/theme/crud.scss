@@ -53,16 +53,16 @@
         transition-property: background-color;
         transition-duration: 0.2s;
 
-        th,
-        td {
+        th, td {
           display: none;
+          max-width: 80px;
         }
 
         td {
-          max-width: 80px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
+          padding-right: 1.5rem;
 
           // View details parts of material table.
           .details-sheet {
@@ -141,7 +141,8 @@
         }
 
         // Necessary to make it possible to toggle rows such that they become visible once clicked.
-        td.hidden {
+        td.hidden,
+        th.hidden {
           display: none !important;
         }
 
