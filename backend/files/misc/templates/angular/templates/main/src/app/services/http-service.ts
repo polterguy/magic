@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ICrudEntity, ICrdEntity, ICrEntity, IREntity, IRudEntity, ICruEntity, IRdEntity } from './interfaces/crud-interfaces'
+import { ICrudEntity, ICrdEntity, ICrEntity, IREntity, IRudEntity, IRuEntity, ICruEntity, IRdEntity } from './interfaces/crud-interfaces'
 import { ILog } from './interfaces/log-interface'
 import { StatusResponse } from './models/status-response';
 import { CreateResponse } from './models/create-response';
