@@ -4,10 +4,14 @@
  */
 .description:Returns Bazar apps to caller that the current server has published as Hyperlambda
 
+
 /*
- * Loading Bazar declaration file.
+ * Loading Bazar declaration file, but only if it exists.
  */
-io.file.load:/misc/bazar/published.hl
+if
+   io.file.exists:/misc/bazar/published.hl
+   .lambda
+      io.file.load:/misc/bazar/published.hl
 
 /*
  * Making sure we apply aggressive caching and the correct Content-Type header.

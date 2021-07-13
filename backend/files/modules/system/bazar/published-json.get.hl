@@ -5,12 +5,15 @@
 .description:Returns Bazar apps to caller as JSON that the current server has published
 
 /*
- * Loading Bazar declaration file.
+ * Loading Bazar declaration file, but only if it exists.
  */
-io.file.load:/misc/bazar/published.hl
-hyper2lambda:x:@io.file.load
-add:x:../*/return
-   get-nodes:x:@hyper2lambda/*
+if
+   io.file.exists:/misc/bazar/published.hl
+   .lambda
+      io.file.load:/misc/bazar/published.hl
+      hyper2lambda:x:@io.file.load
+      add:x:../*/return
+         get-nodes:x:@hyper2lambda/*
 
 /*
  * Making sure we apply aggressive caching.
