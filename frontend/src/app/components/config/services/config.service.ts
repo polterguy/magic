@@ -145,15 +145,6 @@ export class ConfigService {
   }
 
   /**
-   * Returns PayPal ID as configured in the backend.
-   */
-   public getPayPalID() {
-
-    // Invoking backend and returns app manifests to caller.
-    return this.httpService.get<Response>('/magic/modules/system/bazar/paypalid');
-  }
-
-  /**
    * Returns README file for specified Bazar component.
    * 
    * @param module Module to retrieve README file for
