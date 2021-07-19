@@ -1,40 +1,32 @@
 
 <mat-card>
 
-  <h2>About Magic Cloud</h2>
+  <h2>Some words from our Founder and CTO</h2>
 
   <img class="me" src="/assets/thomas.jpeg" alt="Yours truly">
+
   <p>
-    Magic Cloud is in its entirety created by me (Thomas Hansen), and is 100% Open Source and free to use, also in
-    proprietary/commercial projects. Magic consists of years of innovation and work, and is constantly maintained
-    by yours truly in my spare time.
+    Magic Cloud is copyright, created, and maintained by <a href="https://servergardens.com">Server Gardens</a>.
+    In addition to delivering amazing Open Source frameworks, Cloud Systems, NoCode and LowCode tools, we
+    also provide services such as hosting, consulting, etc.
   </p>
-  <p *ngIf="!payPalConfig">
-    It looks like you are an active supported of Magic Cloud. Thank you for appreciating my work. If you need help
-    with something feel free to reach out to me on <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>,
-    and I will help you as best I can. In fact, your existing donation has just ensured you 30 minutes of setup help
-    with Magic, using a screen share program such as Skype or Zoom if you should need it. Or you can send me an email
-    describing your problem and I will try to solve it as best I can within 30 minutes of my time.
+
+  <p>
+    If you need hosting, and/or consulting services on top of Magic Cloud, you can contact our CTO at
+    <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>, or visit <a href="https://servergardens.com">our website</a>
+    for more information. We also provide a whole range of Micro Services on top of Magic Cloud, such
+    as translations, enterprise email components, enterprise chat clients, etc. Either hosted by us on
+    our servers, or hosted on premises by you.
   </p>
-  <p *ngIf="payPalConfig">
-    However, in order for me to create the best possible product for you, I am dependent upon your willingness to donate,
-    such that I can justify spending time on the project. Simply because creating and maintaining Magic is an insane
-    amount of work, and we all need to feed our families.
-  </p>
-  <p *ngIf="payPalConfig">
-    If you got value from Magic, I would appreciate a donation from you. This justifies me continuing working on the
-    project, ensuring you get the best possible value out of it. Click the button below to donate to me. Notice, I am
-    also available for hire in my spare time to create modules for Magic, and or help you getting started with Magic.
-    If you're interested in this, you can <a href="mailto:thomas@servergardens.com">send me an email</a> and ask for a
-    quote. I am also available for screen shares over Skype, Zoom, or similar platforms to help you getting started
-    with Magic for a fee. For the record, if you should choose to donate, this page
-    will automagically disappear, and I will not ask you for a donation again, and your donation will make you eligible
-    for 30 minutes of setup help.
+
+  <p>
+    In addition we also provide consulting services for you to get started with your Cloud initiatives, configuring
+    Magic Cloud pipelines, setting up your initial infrastructure, etc. Contact our CTO on 
+    <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a> if you just want to chat with us to hear
+    what we can help you with.
   </p>
 
   <div class="clearfix"></div>
-
-  <ngx-paypal *ngIf="payPalConfig" [config]="payPalConfig"></ngx-paypal>
 
 </mat-card>
 
@@ -43,22 +35,11 @@
   <h2>Credits</h2>
 
   <p>
-    Although every single line of code in Magic, at least so far, is singlehandedly created by one single human being, no
-    man is an island. I would therefor like to give credits where credits are due, to the following individuals, and/or
-    organisations, having helped me on this journey, facilitating for me being able to create what ultimately turned into
-    Magic Cloud.
+    Although every single line of code in Magic, is created by Server Gardens, no
+    company is an island. We would therefor like to give credits where credits are due, to the following individuals,
+    and/or organisations, having helped us on this journey, facilitating for us being able to create what ultimately
+    turned into Magic Cloud.
   </p>
-
-  <ul>
-    <li>My mom and dad for teaching me that <a href="https://dzone.com/articles/how-much-can-a-single-developer-accomplish-in-a-ye">I was always right, and everybody else is always wrong</a></li>
-    <li>My children for having the patience to still love me, regardless of how eccentric I have sometimes been</li>
-    <li>My wife for always believing in me, and telling me that I was <em>"the best developer in the world"</em>, also when I didn't feel like it</li>
-    <li>MSDN Magazine, and especially <a href="https://www.linkedin.com/in/desmondmichael/">Michael Desmond</a>, its former chief editor, for <a href="https://docs.microsoft.com/en-us/archive/msdn-magazine/2017/june/csharp-make-csharp-more-dynamic-with-hyperlambda">giving me a chance to share my ideas</a></li>
-    <li><a href="https://dzone.com/">DZone.Com</a>, and its community manager <a href="https://www.linkedin.com/in/blakeethridge/">Blake Ethridge</a> for giving me a platform to share my ideas</li>
-    <li>Plus many more, you know who you are ...</li>
-  </ul>
-
-  <h2>Components</h2>
 
   <ul>
     <li><a href="https://github.com/dotnet/core">.Net 5</a> and its amazing team</li>
@@ -71,13 +52,6 @@
     <li><a href="https://joshclose.github.io/CsvHelper/">CSV Helper</a></li>
     <li>Plus many more, check out the packages for Magic for details ...</li>
   </ul>
-
-  <h2>Sponsors</h2>
-
-  <p>
-    I am also looking for sponsors to the project. Contact me on <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>
-    if you're interested in talking to me about this.
-  </p>
 
 </mat-card>
 
