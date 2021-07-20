@@ -48,6 +48,15 @@ export class ConfigService {
   }
 
   /**
+   * Returns the root user's email address
+   */
+   public rootUserEmailAddress() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<Response>('/magic/modules/system/config/email');
+  }
+
+  /**
    * Returns the type of database that is the default database used by backend.
    */
   public defaultDatabaseType() {

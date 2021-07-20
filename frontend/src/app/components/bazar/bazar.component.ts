@@ -5,15 +5,17 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
+import { Count } from 'src/app/models/count.model';
 import { BazarApp } from './models/bazar-app.model';
 import { BazarService } from './services/bazar.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { Count } from 'src/app/models/count.model';
+import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -50,6 +52,7 @@ export class BazarComponent implements OnInit {
    * Creates an instance of your component.
    */
   constructor(
+    private dialog: MatDialog,
     private bazarService: BazarService,
     private feedbackService: FeedbackService) { }
 
@@ -83,6 +86,19 @@ export class BazarComponent implements OnInit {
     // Changing pager's size according to arguments, and retrieving log items from backend.
     this.paginator.pageSize = e.pageSize;
     this.getItems();
+  }
+
+  /**
+   * Invoked when a user clicks a specific app to view details about it.
+   * 
+   * @param app What app the user clicked
+   */
+  public viewApp(app: BazarApp) {
+
+    // Opening up modal dialog passing in reference to Bazar app.
+    const dialogRef = this.dialog.open(ViewAppDialogComponent, {
+      data: app,
+    });
   }
 
   /*

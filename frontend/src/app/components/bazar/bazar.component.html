@@ -23,6 +23,7 @@
   <button
     *ngFor="let idx of apps"
     class="app"
+    (click)="viewApp(idx)"
     mat-raised-button>
     <span class="title">{{idx.name}}</span>
     <span class="version">{{idx.version}}</span>

@@ -1,0 +1,26 @@
+
+<div mat-dialog-content class="file-content">
+
+  <div [innerHTML]="data.description | marked"></div>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    [disabled]="!hasPaid"
+    mat-raised-button
+    color="primary"
+    (click)="install()">Install</button>
+
+  <button
+    [disabled]="hubConnection"
+    mat-raised-button
+    color="primary"
+    (click)="purchase()">Purchase</button>
+
+  <button
+    mat-raised-button
+    (click)="close()">Close</button>
+
+</div>
