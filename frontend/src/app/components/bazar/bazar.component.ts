@@ -4,11 +4,16 @@
  */
 
 // Angular and system imports.
-import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { BazarApp } from './models/bazar-app.model';
 import { BazarService } from './services/bazar.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { Count } from 'src/app/models/count.model';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -27,20 +32,80 @@ export class BazarComponent implements OnInit {
   public apps: BazarApp[] = [];
 
   /**
+   * Number of items matching currently applied filter.
+   */
+  public count: number = 0;
+
+  /**
+   * Filter form control for filtering apps to display.
+   */
+  public filterFormControl: FormControl;
+
+  /**
+   * Paginator for paging apps.
+   */
+  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
+
+  /**
    * Creates an instance of your component.
    */
-  constructor(private bazarService: BazarService) { }
+  constructor(
+    private bazarService: BazarService,
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
    */
   public ngOnInit() {
-    
+
+    // Creating our filter form control, with debounce logic.
+    this.filterFormControl = new FormControl('');
+    this.filterFormControl.setValue('');
+    this.filterFormControl.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query: any) => {
+        this.filterFormControl.setValue(query);
+        this.paginator.pageIndex = 0;
+        this.getItems();
+      });
+
     // Retrieving Bazar items from main Bazar.
-    this.bazarService.listApps().subscribe((apps: BazarApp[]) => {
+    this.getItems();
+  }
+
+  /**
+   * Invoked when paginator wants to page data table.
+   * 
+   * @param e Page event argument
+   */
+   public paged(e: PageEvent) {
+
+    // Changing pager's size according to arguments, and retrieving log items from backend.
+    this.paginator.pageSize = e.pageSize;
+    this.getItems();
+  }
+
+  /*
+   * Private helper methods.
+   */
+  private getItems() {
+
+    // Invoking service to retrieve available apps matching criteria.
+    this.bazarService.listApps(
+      this.filterFormControl.value,
+      this.paginator.pageIndex * this.paginator.pageSize,
+      this.paginator.pageSize).subscribe((apps: BazarApp[]) => {
 
       // Assigning result to model.
       this.apps = apps;
-    });
+
+      // Retrieving number of items.
+      this.bazarService.countApps(this.filterFormControl.value).subscribe((count: Count) => {
+
+        // Assigning model.
+        this.count = count.count;
+      });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

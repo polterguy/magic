@@ -5,8 +5,12 @@ mat-card {
   margin-right: auto;
   padding-left: 80px;
   h2 {
-    margin-top: -2rem;
+    margin-top: -1rem;
     text-align: center;
+  }
+  .fill-width {
+    margin-left: -18px;
+    margin-bottom: 2rem;
   }
   button.app {
     display: block;
