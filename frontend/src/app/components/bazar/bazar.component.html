@@ -1,71 +1,17 @@
 
-<mat-card *ngIf="!authService.isRoot && publishedApps.length === 0">
+<mat-card>
 
-  <h2>Nothing to see here</h2>
-
-  <p>It doesn't seem like this server is willing to share anything with you ... :/</p>
-
-</mat-card>
-
-<mat-card *ngIf="authService.isRoot">
-
-  <h2>Available for you</h2>
+  <h2>Bazar</h2>
 
   <button
     *ngFor="let idx of apps"
-    mat-raised-button
-    [class]="isInstalled(idx) ? 'installed app' : (canInstall(idx) ? 'app' : 'app incompatible')"
-    [matTooltip]="isInstalled(idx) ? 'Module already installed, click to uninstall' : (canInstall(idx) ? idx.description : 'You cannot install this app')"
-    (click)="viewDetails(idx)">
-    <span class="title">{{idx.name}}</span>
-    <span class="version">{{idx.version}}</span>
-    <mat-icon matSuffix color="primary">add_circle</mat-icon>
-  </button>
-
-  <div class="clearfix"></div>
-
-  <div class="button-strip">
-
-    <button
-      *ngIf="authService.isRoot"
-      mat-raised-button
-      matTooltip="Installs a module from a direct link"
-      (click)="installApp()"
-      color="primary">
-      Install
-    </button>
-
-  </div>
-
-</mat-card>
-
-<mat-card *ngIf="publishedApps.length > 0">
-
-  <h2>Published by server</h2>
-
-  <button
-    *ngFor="let idx of publishedApps"
-    mat-raised-button
     class="app"
-    [matTooltip]="idx.description || 'No description'"
-    (click)="viewPublishedDetails(idx)">
+    mat-raised-button>
     <span class="title">{{idx.name}}</span>
     <span class="version">{{idx.version}}</span>
     <mat-icon matSuffix color="primary">add_circle</mat-icon>
   </button>
 
   <div class="clearfix"></div>
-
-  <div class="button-strip">
-
-    <button
-      mat-raised-button
-      matTooltip="Manifest URL"
-      (click)="getManifestUrl()"
-      color="primary">
-      Manifest
-    </button>
-
-  </div>
 
 </mat-card>

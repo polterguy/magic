@@ -1,16 +1,20 @@
 
 mat-card {
+  max-width: 850px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 80px;
   h2 {
     margin-top: -2rem;
     text-align: center;
   }
   button.app {
     display: block;
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     float: left;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin-right: 40px;
+    margin-bottom: 40px;
     background-color: rgba(0,128,0,.05);
     transform: scale(1);
     position: relative;
@@ -85,8 +89,5 @@ mat-card {
   .clearfix {
     clear: both;
     display: table;
-  }
-  .button-strip {
-    margin-bottom: -2rem;
   }
 }
