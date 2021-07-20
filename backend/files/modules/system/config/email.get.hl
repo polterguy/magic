@@ -1,0 +1,46 @@
+
+/*
+ * Returns the root user's email address.
+ */
+.description:Returns the root user's email address
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+/*
+ * Notice, the only place we actually store the email address is when the
+ * user sets up the system, and generates a server key pair. Hence, we need
+ * to retrieve the public key for the server, then retrieve the key declaration
+ * matching that from our public keys in the database, and return that email
+ * address to the caller.
+ */
+signal:magic.crypto.get-server-public-key
+
+
+/*
+ * Opening up our database connection.
+ */
+data.connect:[generic|magic]
+
+   /*
+    * Reading email address from crypto_keys matching fingerprint of public key
+    * retrieved above.
+    */
+   data.read
+      table:crypto_keys
+      columns
+         email
+      where
+         and
+            fingerprint.eq:x:@signal/#/*/fingerprint
+
+
+   /*
+    * Returning result to caller.
+    */
+   unwrap:x:+/*
+   return
+      result:x:@data.read/*/*/email
