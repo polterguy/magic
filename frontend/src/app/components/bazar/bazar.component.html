@@ -3,6 +3,23 @@
 
   <h2>Bazar</h2>
 
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label>Filter ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      role="button"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
+
   <button
     *ngFor="let idx of apps"
     class="app"
@@ -13,5 +30,15 @@
   </button>
 
   <div class="clearfix"></div>
+
+  <mat-paginator
+    #paginator
+    [class]="count > paginator.pageSize ? '' : 'invisible'"
+    [length]="count"
+    pageSize="10"
+    [hidePageSize]="true"
+    (page)="paged($event)"
+    [pageSizeOptions]="[10]">
+  </mat-paginator>
 
 </mat-card>

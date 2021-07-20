@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 // Application specific imports.
+import { Count } from 'src/app/models/count.model';
 import { BazarApp } from '../models/bazar-app.model';
 
 /**
@@ -30,13 +31,38 @@ export class BazarService {
   /**
    * Lists all apps available in the external Bazar.
    */
-  listApps() {
+  listApps(filter: string, offset: number, limit: number) {
 
-    let query = '?limit=10';
+    // Dynamically creating our query parameter(s).
+    let query = '?limit=' + limit;
+    if (offset && offset !== 0) {
+      query += '&offset=' + offset;
+    }
+    if (filter && filter !== '') {
+      query += '&name.like=' + encodeURIComponent(filter + '%');
+    }
+    query += '&order=created&direction=desc';
 
     // Invoking Bazar to list apps.
     return this.httpClient.get<BazarApp[]>(environment.bazarUrl +
       '/magic/modules/paypal/apps' +
+      query);
+  }
+
+  /**
+   * Lists all apps available in the external Bazar.
+   */
+   countApps(filter: string) {
+
+    // Dynamically creating our query parameter(s).
+    let query = '';
+    if (filter && filter !== '') {
+      query += '?name.like=' + encodeURIComponent(filter + '%');
+    }
+
+    // Invoking Bazar to list apps.
+    return this.httpClient.get<Count>(environment.bazarUrl +
+      '/magic/modules/paypal/apps-count' +
       query);
   }
 }
