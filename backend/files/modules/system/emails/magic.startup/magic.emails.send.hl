@@ -14,6 +14,7 @@
  * - [mime-type] - MIME type email will be sent as, e.g. "text/plain" or "text/html".
  * - [email] - To email address of where to send email.
  * - [name] - Name of recipient of email.
+ * - [attachments] - List of [entity] instances that will be attached with the email.
  *
  * Notice, the from email/name will be fetched from your appSettings.json file. And the same with the SMTP server configuration settings.
  */
@@ -25,7 +26,6 @@ slots.create:magic.emails.send
     */
    validators.mandatory:x:@.arguments/*/subject
    validators.mandatory:x:@.arguments/*/email
-   validators.mandatory:x:@.arguments/*/name
    validators.mandatory:x:@.arguments/*/template-file
    validators.mandatory:x:@.arguments/*/mime-type
    validators.enum:x:@.arguments/*/mime-type
@@ -106,18 +106,56 @@ slots.create:magic.emails.send
 
 
    /*
+    * Checking if caller supplied [attachments], at which
+    * point we need to send a multipart/mixed email.
+    */
+   if
+      exists:x:@.arguments/*/attachments/*
+      .lambda
+
+         /*
+          * Caller specified [attachments], hence we need to send a multipart/mixed message.
+          */
+         .entity
+            entity:multipart/mixed
+               entity:x:@.arguments/*/mime-type
+                  content:x:@.body
+         add:x:@.entity/*
+            get-nodes:x:@.arguments/*/attachments/*
+         remove-nodes:x:../*/mail.smtp.send/*/message/*/entity
+         add:x:../*/mail.smtp.send/*/message
+            get-nodes:x:@.entity/*
+
+
+   /*
+    * Checking if caller supplied a [name] argument.
+    */
+   if
+      exists:x:@.arguments/*/name
+      .lambda
+
+         /*
+          * Caller supplied us with a [name] argument.
+          */
+         set-name:x:../*/mail.smtp.send/*/message/*/to/0
+            get-value:x:@.arguments/*/name
+
+
+   /*
     * Sending email.
     */
-   set-name:x:./*/mail.smtp.send/*/message/*/to/0
-      get-value:x:@.arguments/*/name
    unwrap:x:+/**
    mail.smtp.send
       message
          to
-            .:x:@.arguments/*/email
+            :x:@.arguments/*/email
          subject:x:@.arguments/*/subject
          entity:x:@.arguments/*/mime-type
             content:x:@.body
+
+   /*
+    * Logging the fact that email was successfully sent.
+    */
    log.info
       .:"Email successfully sent to '"
       get-value:x:@.arguments/*/email
