@@ -137,6 +137,9 @@ export class ViewAppDialogComponent implements OnDestroy {
       '<br><br><strong>Do not close this window until purchase is complete.</strong>',
       () => {
 
+        // Informing user that he needs to keep the window open to immediately install module.
+        this.feedbackService.showInfo('If you keep this window open you can install module immediately after having paid');
+
         /*
          * Creating a SignalR socket connection to get notified in callbacks
          * when PayPal has accepted the payment.
@@ -151,11 +154,12 @@ export class ViewAppDialogComponent implements OnDestroy {
          * Subscribing to SignalR message from Bazar that is published
          * once app is ready to be downloaded.
          */
-        this.hubConnection.on('paypal.package.avilable.' + email, (args: BazarAppAvailable) => {
+        this.hubConnection.on('paypal.package.avilable.' + email, (args: string) => {
 
           // Purchase accepted by user.
-          this.token = args.token;
+          this.token = (<BazarAppAvailable>JSON.parse(args)).token;
           this.hasPaid = true;
+          console.log(this.token);
           
           // Notifying user of that he should check his email inbox.
           this.feedbackService.showInfo('We have sent the ZIP file containing your product to your email address');
