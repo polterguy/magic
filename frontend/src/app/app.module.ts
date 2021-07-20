@@ -89,14 +89,12 @@ import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
 import { RegisterComponent } from './components/auth/register/register.component';
-import { ViewAppComponent } from './components/bazar/view-app/view-app.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/config/setup/setup-auth/setup-auth.component';
 import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
 import { ConfigEditorComponent } from './components/config/config-editor/config-editor.component';
-import { ViewPublishedComponent } from './components/bazar/view-published/view-published.component';
 import { CrudifierSqlComponent } from './components/crudifier/crudifier-sql/crudifier-sql.component';
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
@@ -129,7 +127,6 @@ import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
 import { RenameFileDialogComponent } from './components/ide/rename-file-dialog/rename-file-dialog.component';
 import { JailUserDialogComponent } from './components/auth/users/jail-user-dialog/jail-user-dialog.component';
-import { InstallAppDialogComponent } from './components/bazar/install-app-dialog/install-app-dialog.component';
 import { PreviewFileDialogComponent } from './components/ide/preview-file-dialog/preview-file-dialog.component';
 import { SubscribeComponent } from './components/diagnostics/diagnostics-sockets/subscribe/subscribe.component';
 import { SelectMacroDialogComponent } from './components/ide/select-macro-dialog/select-macro-dialog.component';
@@ -233,12 +230,9 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     DiagnosticsSocketsComponent,
     SocketsComponent,
     BazarComponent,
-    ViewAppComponent,
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,
-    ViewPublishedComponent,
     DownloadFileDialogComponent,
-    InstallAppDialogComponent,
     AboutComponent,
   ],
   imports: [

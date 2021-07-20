@@ -11,4 +11,5 @@ export const environment = {
       password: 'root',
      },
   ],
+  bazarUrl: 'http://localhost:55247'
 };

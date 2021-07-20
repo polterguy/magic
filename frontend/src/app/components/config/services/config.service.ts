@@ -10,7 +10,6 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Status } from '../../../models/status.model';
 import { Response } from '../../../models/response.model';
-import { AppManifest } from '../models/app-manifest.model';
 import { KeyPair } from '../../crypto/models/key-pair.model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../auth/services/auth.service';
@@ -137,28 +136,6 @@ export class ConfigService {
 
   /**
    * Returns Bazar content to caller.
-   */
-   public getBazarManifest() {
-
-    // Invoking backend and returns app manifests to caller.
-    return this.httpService.get<AppManifest[]>('/magic/modules/system/bazar/apps');
-  }
-
-  /**
-   * Returns README file for specified Bazar component.
-   * 
-   * @param module Module to retrieve README file for
-   */
-   public getReadMeFile(module: AppManifest) {
-
-    // Invoking backend and returns app's README file to caller.
-    return this.httpService.get<Response>(
-      '/magic/modules/system/bazar/readme?url=' +
-      encodeURIComponent(module.readme));
-  }
-
-  /**
-   * Returns Bazar content to caller.
    * 
    * @param url URL to where Bazar module can be found
    * @param name Name of module
@@ -170,15 +147,6 @@ export class ConfigService {
       url,
       name,
     });
-  }
-
-  /**
-   * Returns published Bazar apps to caller.
-   */
-   public getPublishedBazarApps() {
-
-    // Invoking backend and returns app manifests to caller.
-    return this.httpService.get<AppManifest[]>('/magic/modules/system/bazar/published-json');
   }
 
   /**

@@ -141,6 +141,7 @@
     </button>
 
     <button
+      *ngIf="authService.isRoot"
       mat-raised-button
       routerLink="/bazar"
       matTooltip="Collaborate with others in creating modules">
