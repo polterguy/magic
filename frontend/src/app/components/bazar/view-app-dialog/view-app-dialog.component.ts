@@ -181,13 +181,13 @@ export class ViewAppDialogComponent implements OnDestroy {
      * Subscribing to SignalR message from Bazar that is published
      * once app is ready to be downloaded.
      */
-    this.hubConnection.on('paypal.package.avilable.' + email, (args: string) => {
+    this.hubConnection.on('bazar.package.avilable.' + email, (args: string) => {
 
       // Purchase accepted by user.
       this.token = (<BazarAppAvailable>JSON.parse(args)).token;
       
       // Notifying user of that he should check his email inbox.
-      this.feedbackService.showInfo('Now download and install the module');
+      this.feedbackService.showInfo('Your payment has been accepted by our server');
     });
 
     // Connecting SignalR connection.
