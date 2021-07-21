@@ -144,56 +144,6 @@ export class ConfigService {
   }
 
   /**
-   * Returns Bazar content to caller.
-   * 
-   * @param url URL to where Bazar module can be found
-   * @param name Name of module
-   */
-   public installBazarModule(url: string, name: string) {
-
-    // Invoking backend and returns app manifests to caller.
-    return this.httpService.post<Response>('/magic/modules/system/bazar/install', {
-      url,
-      name,
-    });
-  }
-
-  /**
-   * Deletes the specified Bazar app, and its associated zip file.
-   */
-   public deleteBazarApp(module: string, filename: string) {
-
-    // Invoking backend and returns app manifests to caller.
-    return this.httpService.delete<Response>(
-      '/magic/modules/system/bazar/remove?module=' +
-      encodeURIComponent(module) +
-      '&filename=' + 
-      encodeURIComponent(filename));
-  }
-
-  /**
-   * Returns license information to caller.
-   */
-  public license() {
-
-    // Invoking backend and returns license information to caller.
-    return this.httpService.get<any>('/magic/modules/system/config/license');
-  }
-
-  /**
-   * Applies a license to the system.
-   * 
-   * @param license License content
-   */
-  public saveLicense(license: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/config/save-license', {
-      license,
-    });
-  }
-
-  /**
    * Generates a cryptography key pair for your server.
    * 
    * @param strength Strength of key pair to generate, typically 2048, 4096, or some other exponent of 2

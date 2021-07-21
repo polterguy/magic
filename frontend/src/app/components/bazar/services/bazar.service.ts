@@ -6,13 +6,14 @@
 // Angular and system imports.
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { BazarApp } from '../models/bazar-app.model';
+import { Response } from 'src/app/models/response.model';
+import { HttpService } from 'src/app/services/http.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
-import { ConfigService } from '../../config/services/config.service';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -30,7 +31,7 @@ export class BazarService {
    */
   constructor(
     private httpClient: HttpClient,
-    private configService: ConfigService) { }
+    private httpService: HttpService) { }
 
   /**
    * Lists all apps available in the external Bazar.
@@ -84,6 +85,35 @@ export class BazarService {
       '/magic/modules/paypal/purchase', {
         product_id: app.id,
         customer_email: email
+    });
+  }
+
+  /**
+   * Download the specified Bazar app into the current backend.
+   * 
+   * @param app Bazar app user wants to install
+   * @param token Download token needed to download ZIP file from Bazar
+   */
+  public download(app: BazarApp, token: string) {
+
+    // Invoking backend to actually download app.
+    return this.httpService.post<Response>('/magic/modules/bazar/install', {
+      url: environment.bazarUrl + '/magic/modules/paypal/download?token=' + token,
+      name: app.folder_name
+    });
+  }
+
+  /**
+   * Installs an app on your current backend by running initialisation process,
+   * executing startup files, etc.
+   * 
+   * @param folder Module to install
+   */
+  public install(folder: string) {
+
+    // Invoking backend to actually install app.
+    return this.httpService.put<Response>('/magic/modules/files-system/install', {
+      folder,
     });
   }
 }
