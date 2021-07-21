@@ -50,7 +50,7 @@ export class BazarService {
 
     // Invoking Bazar to list apps.
     return this.httpClient.get<BazarApp[]>(environment.bazarUrl +
-      '/magic/modules/paypal/apps' +
+      '/magic/modules/bazar/apps' +
       query);
   }
 
@@ -67,7 +67,7 @@ export class BazarService {
 
     // Invoking Bazar to list apps.
     return this.httpClient.get<Count>(environment.bazarUrl +
-      '/magic/modules/paypal/apps-count' +
+      '/magic/modules/bazar/apps-count' +
       query);
   }
 
@@ -82,7 +82,7 @@ export class BazarService {
 
     // We now have the user's email address, hence invoking Bazar to start purchasing workflow.
     return this.httpClient.post<PurchaseStatus>(environment.bazarUrl +
-      '/magic/modules/paypal/purchase', {
+      '/magic/modules/bazar/purchase', {
         product_id: app.id,
         customer_email: email
     });
@@ -98,7 +98,7 @@ export class BazarService {
 
     // Invoking backend to actually download app.
     return this.httpService.post<Response>('/magic/modules/system/file-system/download', {
-      url: environment.bazarUrl + '/magic/modules/paypal/download?token=' + token,
+      url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
       name: app.folder_name
     });
   }
@@ -109,7 +109,7 @@ export class BazarService {
    * @param token Download token for module
    */
   public downloadLocally(token: string) {
-    window.location.href = environment.bazarUrl + '/magic/modules/paypal/download?token=' + token;
+    window.location.href = environment.bazarUrl + '/magic/modules/bazar/download?token=' + token;
   }
 
   /**
