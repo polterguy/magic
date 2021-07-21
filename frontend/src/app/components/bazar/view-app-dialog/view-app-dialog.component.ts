@@ -35,6 +35,11 @@ export class ViewAppDialogComponent implements OnDestroy {
   public purchaseUrl: string = null;
 
   /**
+   * Download URL to download module directly.
+   */
+  public downloadUrl: string = null;
+
+  /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app ise ready to be installed.
    */
@@ -181,6 +186,9 @@ export class ViewAppDialogComponent implements OnDestroy {
 
       // Purchase accepted by user.
       this.token = (<BazarAppAvailable>JSON.parse(args)).token;
+
+      // Enabling download link.
+      this.downloadUrl = environment.bazarUrl + '/magic/modules/paypal/download?token=' + this.token;
       
       // Notifying user of that he should check his email inbox.
       this.feedbackService.showInfo('We have sent the ZIP file containing your product to your email address');

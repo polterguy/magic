@@ -1,4 +1,6 @@
 
+<h1 mat-dialog-title>Buy {{data.name}} for €{{data.price}} secured by PayPal</h1>
+
 <div mat-dialog-content class="file-content">
 
   <div [innerHTML]="data.description | marked"></div>
@@ -11,23 +13,30 @@
     [disabled]="hubConnection"
     mat-raised-button
     color="primary"
-    (click)="purchase()">Purchase</button>
+    (click)="purchase()">1. Purchase</button>
 
   <a
     [disabled]="!purchaseUrl || token"
     target="_blank"
     mat-raised-button
     color="primary"
-    [href]="purchaseUrl">Pay</a>
+    [href]="purchaseUrl">2. Pay</a>
 
   <button
     [disabled]="!token"
     mat-raised-button
     color="primary"
-    (click)="install()">Install</button>
+    (click)="install()">3. Install</button>
+
+  <a
+    [disabled]="!token"
+    target="_blank"
+    mat-raised-button
+    color="primary"
+    [href]="downloadUrl">4. Download</a>
 
   <button
     mat-raised-button
-    (click)="close()">Close</button>
+    (click)="close()">5. Close</button>
 
 </div>
