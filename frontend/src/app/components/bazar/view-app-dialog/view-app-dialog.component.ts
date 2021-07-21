@@ -41,11 +41,6 @@ export class ViewAppDialogComponent implements OnDestroy {
   public token: string;
 
   /**
-   * When SignalR message is published to notify us package is available, this will becomes true.
-   */
-  public hasPaid = false;
-
-  /**
    * Creates an instance of your component.
    * 
    * @param bazarService Needed to actually purchase apps from Bazar
@@ -105,7 +100,33 @@ export class ViewAppDialogComponent implements OnDestroy {
   public install() {
 
     // Downloading app from Bazar.
-    console.log(this.token);
+    this.bazarService.download(this.data, this.token).subscribe((download: Response) => {
+
+      // Verifying process was successful.
+      if (download.result === 'success') {
+
+        // Now invoking install which actually initialises the app, and executes its startup files.
+        this.bazarService.install(this.data.folder_name).subscribe((install: Response) => {
+
+          // Verifying process was successful.
+          if (install.result === 'success') {
+
+            // Success!
+            this.feedbackService.showInfo('Module was successfully installed on your server');
+          } else {
+
+            // Oops, some unspecified error occurred
+            this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+          }
+        });
+
+      } else {
+
+        // Oops, some unspecified error occurred
+        this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+      }
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -158,8 +179,6 @@ export class ViewAppDialogComponent implements OnDestroy {
 
           // Purchase accepted by user.
           this.token = (<BazarAppAvailable>JSON.parse(args)).token;
-          this.hasPaid = true;
-          console.log(this.token);
           
           // Notifying user of that he should check his email inbox.
           this.feedbackService.showInfo('We have sent the ZIP file containing your product to your email address');

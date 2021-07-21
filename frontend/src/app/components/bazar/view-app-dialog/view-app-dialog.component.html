@@ -14,7 +14,7 @@
     (click)="purchase()">Purchase</button>
 
   <button
-    [disabled]="!hasPaid"
+    [disabled]="!token"
     mat-raised-button
     color="primary"
     (click)="install()">Install</button>
