@@ -104,6 +104,15 @@ export class BazarService {
   }
 
   /**
+   * Downloads module to the local computer.
+   * 
+   * @param token Download token for module
+   */
+  public downloadLocally(token: string) {
+    window.location.href = environment.bazarUrl + '/magic/modules/paypal/download?token=' + token;
+  }
+
+  /**
    * Installs an app on your current backend by running initialisation process,
    * executing startup files, etc.
    * 
