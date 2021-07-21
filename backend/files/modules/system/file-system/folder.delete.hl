@@ -6,7 +6,6 @@
    folder:string
 .description:Deletes the specified folder on the server
 
-
 /*
  * Ensures user is authorized to access endpoint.
  */

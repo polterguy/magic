@@ -14,6 +14,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Count } from 'src/app/models/count.model';
 import { BazarApp } from './models/bazar-app.model';
 import { BazarService } from './services/bazar.service';
+import { AuthService } from '../auth/services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 
@@ -50,9 +51,15 @@ export class BazarComponent implements OnInit {
 
   /**
    * Creates an instance of your component.
+   * 
+   * @param dialog Needed to create modal dialogs
+   * @param authService Needed to verify user is root
+   * @param bazarService Needed to retrieve apps from external Bazar server
+   * @param feedbackService Needed to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
+    public authService: AuthService,
     private bazarService: BazarService,
     private feedbackService: FeedbackService) { }
 
@@ -72,8 +79,12 @@ export class BazarComponent implements OnInit {
         this.getItems();
       });
 
-    // Retrieving Bazar items from main Bazar.
-    this.getItems();
+    // Sanity checking that user is root.
+    if (this.authService.isRoot) {
+
+      // Retrieving Bazar items from main Bazar.
+      this.getItems();
+    }
   }
 
   /**

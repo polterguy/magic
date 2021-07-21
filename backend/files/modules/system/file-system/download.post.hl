@@ -36,11 +36,25 @@ if
    .lambda
 
       /*
-       * Oops ...
+       * Oops, folder already exists, hence we first delete existing folder,
+       * which will run through uninstallation scripts to uninstall module completely.
        */
-      throw:Module is already installed. If you wish to update the module please uninstall it first.
-         public:bool:true
-         status:int:500
+      strings.concat
+         .:/modules/
+         get-value:x:@.arguments/*/name
+         .:/
+      unwrap:x:+/*
+      io.file.execute:/modules/system/file-system/folder.delete.hl
+         folder:x:@strings.concat
+      if
+         not
+            eq
+               get-value:x:@io.file.execute/*/result
+               .:success
+         .lambda
+            throw:"Couldn't uninstall previously installed version"
+               public:bool:true
+               status:int:500
 
 /*
  * Downloading zip file as binary content from specified URL.
