@@ -99,7 +99,7 @@ export class ViewAppDialogComponent implements OnDestroy {
         if (email) {
 
           // User confirmed his email address.
-          this.feedbackService.showInfoShort('Please wait while we notify PayPal ...');
+          this.feedbackService.showInfo('Please wait while we notify PayPal ...');
           this.purchaseImpl(email);
         }
       });
