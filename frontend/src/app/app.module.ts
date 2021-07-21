@@ -122,6 +122,7 @@ import { LoginDialogComponent } from './components/app/login-dialog/login-dialog
 import { LoadSqlDialogComponent } from './components/sql/load-sql-dialog/load-sql-dialog.component';
 import { SaveSqlDialogComponent } from './components/sql/save-sql-dialog/save-sql-dialog.component';
 import { NewTaskDialogComponent } from './components/tasks/new-task-dialog/new-task-dialog.component';
+import { ViewAppDialogComponent } from './components/bazar/view-app-dialog/view-app-dialog.component';
 import { PublishComponent } from './components/diagnostics/diagnostics-sockets/publish/publish.component';
 import { NewUserDialogComponent } from './components/auth/users/new-user-dialog/new-user-dialog.component';
 import { NewRoleDialogComponent } from './components/auth/roles/new-role-dialog/new-role-dialog.component';
@@ -143,9 +144,9 @@ import { RenameFileObjectDialogComponent } from './components/files/rename-file-
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
 import { AddQueryParameterDialogComponent } from './components/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
+import { ConfirmEmailAddressDialogComponent } from './components/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
-import { ViewAppDialogComponent } from './components/bazar/view-app-dialog/view-app-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -236,6 +237,7 @@ import { ViewAppDialogComponent } from './components/bazar/view-app-dialog/view-
     DownloadFileDialogComponent,
     AboutComponent,
     ViewAppDialogComponent,
+    ConfirmEmailAddressDialogComponent,
   ],
   imports: [
     FormsModule,

@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
@@ -17,6 +17,7 @@ import { PurchaseStatus } from '../models/purchase-status.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
 import { BazarAppAvailable } from '../models/bazar-app-available.model';
+import { ConfirmEmailAddressDialogComponent } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
  * View details of Bazar app modal dialog component.
@@ -48,12 +49,15 @@ export class ViewAppDialogComponent implements OnDestroy {
   /**
    * Creates an instance of your component.
    * 
+   * @param dialog Needed to be able to display modal dialog
    * @param bazarService Needed to actually purchase apps from Bazar
+   * @param configService Needed to retrieve root user's email address
    * @param feedbackService Needed to display errors to user
    * @param data Bazar app user wants to view details about
    * @param dialogRef Needed to explicitly close dialog
    */
   constructor(
+    private dialog: MatDialog,
     private bazarService: BazarService,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
@@ -79,20 +83,25 @@ export class ViewAppDialogComponent implements OnDestroy {
    */
   public purchase() {
 
-    // Retrieving user's email address, as he gave us when he configured Magic.
+    // Retrieving user's email address, as provided when he configured Magic.
     this.configService.rootUserEmailAddress().subscribe((response: Response) => {
 
-      // Asking user to confirm his email address.
-      this.feedbackService.confirm(
-        'Confirm your email address',
-        `Is <strong>${response.result}</strong> your current email address? ` +
-        'We must have your correct email address to ship the module to you. ' +
-        'You can still use another email address as you login to PayPal.', () => {
+      // Opening up modal dialog to make sure we get root user's correct email address.
+      const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
+        width: '500px',
+        data: response.result,
+      });
 
-          // Installing app.
-          this.purchaseImpl(response.result);
+      // If close method returns data, we know the app was installed.
+      dialogRef.afterClosed().subscribe((email: string) => {
 
-        });
+        // If user clicks cancel the dialog will not pass in any data.
+        if (email) {
+
+          // User confirmed his email address.
+          this.purchaseImpl(email);
+        }
+      });
 
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -154,60 +163,47 @@ export class ViewAppDialogComponent implements OnDestroy {
    */
   private purchaseImpl(email: string) {
 
-    // Giving user some information and have him confirm he actually wants to go through with the purchase.
-    this.feedbackService.confirm(
-      'Opening up PayPal in another window',
-      `You are about to purchase <strong>${this.data.name} for €${this.data.price}</strong>. ` +
-      'This will open PayPal in another browser window. ' +
-      `To purchase the ${this.data.name} module first accept the payment in PayPal, then close the PayPal ` +
-      `window, and check your email inbox to verify you received a ZIP file containing the module. ` +
-      'You can also install the module immediately afterwards on this page.' +
-      '<br><br><strong>Do not close this window until purchase is complete.</strong>',
-      () => {
+    /*
+     * Creating a SignalR socket connection to get notified in a callback
+     * when PayPal has accepted the payment.
+     */
+    let builder = new HubConnectionBuilder();
+    this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets,
+    }).build();
 
-        // Informing user that he needs to keep the window open to immediately install module.
-        this.feedbackService.showInfo('If you keep this window open you can install module immediately after having paid');
+    /*
+     * Subscribing to SignalR message from Bazar that is published
+     * once app is ready to be downloaded.
+     */
+    this.hubConnection.on('paypal.package.avilable.' + email, (args: string) => {
 
-        /*
-         * Creating a SignalR socket connection to get notified in callbacks
-         * when PayPal has accepted the payment.
-         */
-        let builder = new HubConnectionBuilder();
-        this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
-            skipNegotiation: true,
-            transport: HttpTransportType.WebSockets,
-        }).build();
+      // Purchase accepted by user.
+      this.token = (<BazarAppAvailable>JSON.parse(args)).token;
+      
+      // Notifying user of that he should check his email inbox.
+      this.feedbackService.showInfo('We have sent the ZIP file containing your product to your email address');
+    });
 
-        /*
-         * Subscribing to SignalR message from Bazar that is published
-         * once app is ready to be downloaded.
-         */
-        this.hubConnection.on('paypal.package.avilable.' + email, (args: string) => {
+    // Connecting SignalR connection.
+    this.hubConnection.start().then(() => {
 
-          // Purchase accepted by user.
-          this.token = (<BazarAppAvailable>JSON.parse(args)).token;
-          
-          // Notifying user of that he should check his email inbox.
-          this.feedbackService.showInfo('We have sent the ZIP file containing your product to your email address');
-        });
+      /*
+        * Starting purchase flow.
+        * Notice, to make sure we don't drop SignalR messages we do not do this before
+        * we have successfully connected to SignalR hub.
+        */
+      this.bazarService.purchase(this.data, email).subscribe((status: PurchaseStatus) => {
 
-        // Connecting SignalR connection.
-        this.hubConnection.start().then(() => {
+        // Enabling the pay button now that we have a pay URL returned from PayPal.
+        this.purchaseUrl = status.url;
 
-          /*
-           * Starting purchase flow.
-           * Notice, to make sure we don't drop SignalR messages we do not do this before
-           * we have successfully connected to SignalR hub.
-           */
-          this.bazarService.purchase(this.data, email).subscribe((status: PurchaseStatus) => {
+        // Providing some feedback to user.
+        this.feedbackService.showInfo('Click the Pay button to pay for module');
 
-            // Opening a new window with URL returned from purchase workflow.
-            this.purchaseUrl = status.url;
+      }, (error: any) => this.feedbackService.showError(error));
 
-          }, (error: any) => this.feedbackService.showError(error));
-
-        });
-      }
-    );
+    });
   }
 }
