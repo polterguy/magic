@@ -35,11 +35,6 @@ export class ViewAppDialogComponent implements OnDestroy {
   public purchaseUrl: string = null;
 
   /**
-   * Download URL to download module directly.
-   */
-  public downloadUrl: string = null;
-
-  /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app ise ready to be installed.
    */
@@ -104,6 +99,7 @@ export class ViewAppDialogComponent implements OnDestroy {
         if (email) {
 
           // User confirmed his email address.
+          this.feedbackService.showInfoShort('Please wait while we notify PayPal ...');
           this.purchaseImpl(email);
         }
       });
@@ -148,6 +144,9 @@ export class ViewAppDialogComponent implements OnDestroy {
       }
 
     }, (error: any) => this.feedbackService.showError(error));
+
+    // Downloading module to local computer.
+    this.bazarService.downloadLocally(this.token);
   }
 
   /**
@@ -186,12 +185,9 @@ export class ViewAppDialogComponent implements OnDestroy {
 
       // Purchase accepted by user.
       this.token = (<BazarAppAvailable>JSON.parse(args)).token;
-
-      // Enabling download link.
-      this.downloadUrl = environment.bazarUrl + '/magic/modules/paypal/download?token=' + this.token;
       
       // Notifying user of that he should check his email inbox.
-      this.feedbackService.showInfo('We have sent the ZIP file containing your product to your email address');
+      this.feedbackService.showInfo('Now download and install the module');
     });
 
     // Connecting SignalR connection.
@@ -208,7 +204,10 @@ export class ViewAppDialogComponent implements OnDestroy {
         this.purchaseUrl = status.url;
 
         // Providing some feedback to user.
-        this.feedbackService.showInfo('Click the Pay button to pay for module');
+        this.feedbackService.showInfo('Click the Pay button to pay for module then wait for PayPal to notify our servers');
+
+        // Attempting to open PayPal in another window, which might not work if popups are blocked.
+        window.open(this.purchaseUrl, '_blank');
 
       }, (error: any) => this.feedbackService.showError(error));
 
