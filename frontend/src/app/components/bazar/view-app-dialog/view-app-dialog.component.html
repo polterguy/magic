@@ -13,6 +13,7 @@
     [disabled]="hubConnection"
     mat-raised-button
     color="primary"
+    matTooltip="Click here to purchase the module"
     (click)="purchase()">1. Purchase</button>
 
   <a
@@ -20,12 +21,14 @@
     target="_blank"
     mat-raised-button
     color="primary"
+    matTooltip="If PayPal doesn't open in another window, click here to go to PayPal and pay for the module. Notice, it might take some few minutes before PayPal notifies our servers of that the payment has been accepted."
     [href]="purchaseUrl">2. Pay</a>
 
   <button
     [disabled]="!token"
     mat-raised-button
     color="primary"
+    matTooltip="Click here to install the module into your Magic installation, and download it. Psst, we have also sent the module to your email address as a ZIP file."
     (click)="install()">3. Install and Download</button>
 
 </div>
