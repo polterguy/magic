@@ -1,0 +1,29 @@
+
+<h1 mat-dialog-title>Confirm your email</h1>
+
+<div mat-dialog-content>
+
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Your email</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="data">
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="ok()">OK</button>
+
+  <button
+    mat-raised-button
+    (click)="cancel()">Cancel</button>
+
+</div>
