@@ -28,7 +28,12 @@ import { BazarAppAvailable } from '../models/bazar-app-available.model';
 })
 export class ViewAppDialogComponent implements OnDestroy {
 
-  /*
+  /**
+   * Purchase URL, typically leading to PayPal to pay for the app.
+   */
+  public purchaseUrl: string = null;
+
+  /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app ise ready to be installed.
    */
@@ -113,6 +118,8 @@ export class ViewAppDialogComponent implements OnDestroy {
 
             // Success!
             this.feedbackService.showInfo('Module was successfully installed on your server');
+            this.dialogRef.close(this.data);
+
           } else {
 
             // Oops, some unspecified error occurred
@@ -195,9 +202,10 @@ export class ViewAppDialogComponent implements OnDestroy {
           this.bazarService.purchase(this.data, email).subscribe((status: PurchaseStatus) => {
 
             // Opening a new window with URL returned from purchase workflow.
-            window.open(status.url);
+            this.purchaseUrl = status.url;
 
           }, (error: any) => this.feedbackService.showError(error));
+
         });
       }
     );

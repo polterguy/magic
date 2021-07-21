@@ -13,6 +13,13 @@
     color="primary"
     (click)="purchase()">Purchase</button>
 
+  <a
+    [disabled]="!purchaseUrl || token"
+    target="_blank"
+    mat-raised-button
+    color="primary"
+    [href]="purchaseUrl">Pay</a>
+
   <button
     [disabled]="!token"
     mat-raised-button

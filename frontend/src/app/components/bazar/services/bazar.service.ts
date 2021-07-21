@@ -97,7 +97,7 @@ export class BazarService {
   public download(app: BazarApp, token: string) {
 
     // Invoking backend to actually download app.
-    return this.httpService.post<Response>('/magic/modules/bazar/install', {
+    return this.httpService.post<Response>('/magic/modules/system/file-system/download', {
       url: environment.bazarUrl + '/magic/modules/paypal/download?token=' + token,
       name: app.folder_name
     });
@@ -112,8 +112,8 @@ export class BazarService {
   public install(folder: string) {
 
     // Invoking backend to actually install app.
-    return this.httpService.put<Response>('/magic/modules/files-system/install', {
-      folder,
+    return this.httpService.put<Response>('/magic/modules/system/file-system/install', {
+      folder: '/modules/' + folder + '/',
     });
   }
 }

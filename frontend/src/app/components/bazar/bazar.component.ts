@@ -99,6 +99,13 @@ export class BazarComponent implements OnInit {
     const dialogRef = this.dialog.open(ViewAppDialogComponent, {
       data: app,
     });
+
+    // If close method returns data, we know the app was installed.
+    dialogRef.afterClosed().subscribe((app: BazarApp) => {
+
+      // Modules was installed
+      console.log('Module successfully installed');
+    });
   }
 
   /*
