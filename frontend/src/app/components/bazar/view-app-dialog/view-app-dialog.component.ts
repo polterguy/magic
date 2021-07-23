@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BazarApp } from '../models/bazar-app.model';
@@ -41,8 +41,7 @@ export class ViewAppDialogComponent {
     private bazarService: BazarService,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
-    @Inject(MAT_DIALOG_DATA) public data: BazarApp,
-    private dialogRef: MatDialogRef<ViewAppDialogComponent>) { }
+    @Inject(MAT_DIALOG_DATA) public data: BazarApp) { }
 
   /**
    * Invoked when user wants to purchase the specified app.

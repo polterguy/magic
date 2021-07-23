@@ -6,8 +6,8 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Params } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
@@ -19,8 +19,10 @@ import { BazarApp } from './models/bazar-app.model';
 import { Response } from '../../models/response.model';
 import { BazarService } from './services/bazar.service';
 import { AuthService } from '../auth/services/auth.service';
+import { FileService } from '../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
+import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -62,15 +64,19 @@ export class BazarComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
+   * @param router Needed to redirect user after app has been installed
    * @param dialog Needed to create modal dialogs
    * @param authService Needed to verify user is root
+   * @param fileService Needed to be able to display README file after app has been installed.
    * @param bazarService Needed to retrieve apps from external Bazar server
    * @param activatedRoute Needed to retrieve activated router
    * @param feedbackService Needed to display feedback to user
    */
   constructor(
+    private router: Router,
     private dialog: MatDialog,
     public authService: AuthService,
+    private fileService: FileService,
     private bazarService: BazarService,
     private activatedRoute: ActivatedRoute,
     private feedbackService: FeedbackService) { }
@@ -254,7 +260,35 @@ export class BazarComponent implements OnInit, OnDestroy {
           if (install.result === 'success') {
 
             // Success!
-            this.feedbackService.showInfo('Module was successfully installed on your server');
+            this.feedbackService.showInfo('Module was successfully installed on your server, and an email with the app\'s ZIP file has been sent to you');
+
+            // Making sure we turn OFF socket connections.
+            this.hubConnection.stop();
+            this.hubConnection = null;
+
+            // Redirecting to main Bazar URL now that app has been installed on the local server.
+            this.router.navigate(['/bazar']);
+
+            // Checking if app has a README file, at which point we display the entire file to the user.
+            this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe((files: string[]) => {
+
+              // Checking if above returned one main /modules/xxx/README.md file.
+              const mainReadmeFilePath = files.filter(x => x === '/modules/' + app.folder_name + '/README.md');
+              if (mainReadmeFilePath.length > 0) {
+
+                /*
+                 * Yup, module has a main README file, hence displaying it to
+                 * the user in a modal window - But first we need to load the file's content.
+                 */
+                this.fileService.loadFile(mainReadmeFilePath[0]).subscribe((readMeFileContent: string) => {
+
+                  // Displaying the file's content in a modal dialog.
+                  this.dialog.open(ViewReadmeDialogComponent, {
+                    data: readMeFileContent,
+                  });
+                });
+              }
+            });
 
           } else {
 
