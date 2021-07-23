@@ -11,7 +11,18 @@
       matTooltip="We will send a ZIP file containing the module to this email address"
       type="text"
       autocomplete="off"
-      [(ngModel)]="data">
+      [(ngModel)]="data.email">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width" appearance="outline">
+
+    <mat-label class="dark">Promo code</mat-label>
+    <input
+      matInput
+      matTooltip="If you have a promo code you can supply it here, otherwise just leave this field blank"
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="data.code">
   </mat-form-field>
 
 </div>

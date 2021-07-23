@@ -77,17 +77,27 @@ export class BazarService {
    * 
    * @param app Application user wants to purchase
    * @param email Customer's email address
+   * @param code Optional promo code user supplied before he clicked purchase
    */
-  public purchase(app: BazarApp, email: string) {
+  public purchase(app: BazarApp, email: string, promo_code?: string) {
+
+    // Creating our payload.
+    const payload: any = {
+      product_id: app.id,
+      customer_email: email,
+      redirect_url: window.location.href.split('?')[0],
+    };
+
+    // Checking if user supplied a promo code.
+    if (promo_code && promo_code !== '') {
+      payload.promo_code = promo_code;
+    }
 
     // We now have the user's email address, hence invoking Bazar to start purchasing workflow.
     return this.httpClient.post<PurchaseStatus>(
       environment.bazarUrl +
-      '/magic/modules/bazar/purchase', {
-        product_id: app.id,
-        customer_email: email,
-        redirect_url: window.location.href.split('?')[0],
-    });
+      '/magic/modules/bazar/purchase',
+      payload);
   }
 
   /**

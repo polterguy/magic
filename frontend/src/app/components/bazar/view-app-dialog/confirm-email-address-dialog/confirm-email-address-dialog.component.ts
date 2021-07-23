@@ -8,6 +8,22 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /**
+ * Model for verifying user's email address, and any optional promo codes.
+ */
+export class EmailPromoCodeModel {
+
+  /**
+   * Email address we should send app's ZIP file to.
+   */
+  email: string;
+
+  /**
+   * Optional promo code user has been given.
+   */
+  code?: string;
+}
+
+/**
  * Component for having user provide his email address such that we can send the component
  * to him as a ZIP file.
  */
@@ -25,7 +41,7 @@ export class ConfirmEmailAddressDialogComponent {
    */
   constructor(
     private dialogRef: MatDialogRef<ConfirmEmailAddressDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: string) { }
+    @Inject(MAT_DIALOG_DATA) public data: EmailPromoCodeModel) { }
 
   /**
    * Invoked when user confirms his email address.
