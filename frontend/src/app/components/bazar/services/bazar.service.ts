@@ -83,7 +83,11 @@ export class BazarService {
      * without breaking old code as we implement it in the centralised Bazar
      * server.
      */
-    query += '&type.eq=module';
+    if (query === '') {
+      query += '?type.eq=module';
+    } else {
+      query += '&type.eq=module';
+    }
 
     // Invoking Bazar to list apps.
     return this.httpClient.get<Count>(environment.bazarUrl +

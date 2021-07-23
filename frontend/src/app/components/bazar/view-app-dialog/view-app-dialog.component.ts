@@ -4,13 +4,14 @@
  */
 
 // Angular and system imports.
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { BazarApp } from '../models/bazar-app.model';
 import { BazarService } from '../services/bazar.service';
 import { Response } from '../../../models/response.model';
+import { FileService } from '../../files/services/file.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
@@ -24,7 +25,12 @@ import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confi
   templateUrl: './view-app-dialog.component.html',
   styleUrls: ['./view-app-dialog.component.scss']
 })
-export class ViewAppDialogComponent {
+export class ViewAppDialogComponent implements OnInit {
+
+  /**
+   * If true, this app has already been installed.
+   */
+  public installed: boolean = false;
 
   /**
    * Creates an instance of your component.
@@ -38,10 +44,28 @@ export class ViewAppDialogComponent {
    */
   constructor(
     private dialog: MatDialog,
+    private fileService: FileService,
     private bazarService: BazarService,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
     @Inject(MAT_DIALOG_DATA) public data: BazarApp) { }
+
+  /**
+   * Implementation of OnInit.
+   */
+  ngOnInit() {
+
+    // Checking if module is already installed.
+    this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
+
+      // Checking if invocation returned folder name of currently viewed app.
+      if (folders.filter(x => x === '/modules/' + this.data.folder_name + '/').length > 0) {
+
+        // Module is not installed.
+        this.installed = true;
+      }
+    });
+  }
 
   /**
    * Invoked when user wants to purchase the specified app.

@@ -34,6 +34,11 @@ export class BazarApp {
   version: string;
 
   /**
+   * Minimum Magic version required to install module.
+   */
+  min_magic_version: string;
+
+  /**
    * Type of app, typically 'module', 'template', etc ...
    */
   type: string;

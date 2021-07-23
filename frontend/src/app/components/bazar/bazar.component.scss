@@ -25,14 +25,6 @@ mat-card {
     transform: rotate(0deg);
     transition: box-shadow, transform;
     transition-duration: .2s;
-    .version {
-      position: absolute;
-      bottom: 0;
-      right: .25rem;
-      margin-bottom: -.5rem;
-      color:rgb(128,128,128);
-      font-size: .5rem;
-    }
     .title {
       position: absolute;
       top: .125rem;
@@ -40,6 +32,14 @@ mat-card {
       margin-top: -.5rem;
       color:rgb(150,150,150);
       font-size: .8rem;
+    }
+    .price {
+      position: absolute;
+      bottom: 0;
+      right: .25rem;
+      margin-bottom: -.5rem;
+      color:rgb(170,170,170);
+      font-size: .7rem;
     }
   }
   button.app.installed {
@@ -93,5 +93,27 @@ mat-card {
   .clearfix {
     clear: both;
     display: table;
+  }
+}
+
+@keyframes waiting {
+  0% {
+    background-color: rgb(255,255,128);
+  }
+  100% {
+    background-color: rgb(128,255,128);
+  }
+}
+
+.waiting-for-paypal {
+  position: relative;
+  animation-name: waiting;
+  animation-duration: .5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  .progress {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
   }
 }
