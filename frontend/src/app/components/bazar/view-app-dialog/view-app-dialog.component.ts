@@ -14,7 +14,7 @@ import { Response } from '../../../models/response.model';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
-import { ConfirmEmailAddressDialogComponent } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
+import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
  * View details of Bazar app modal dialog component.
@@ -54,14 +54,17 @@ export class ViewAppDialogComponent {
       // Opening up modal dialog to make sure we get root user's correct email address.
       const dialogRef = this.dialog.open(ConfirmEmailAddressDialogComponent, {
         width: '500px',
-        data: response.result,
+        data: {
+          email: response.result,
+          code: null
+        }
       });
 
       // Waiting for the user to close modal dialog.
-      dialogRef.afterClosed().subscribe((email: string) => {
+      dialogRef.afterClosed().subscribe((model: EmailPromoCodeModel) => {
 
         // If user clicks cancel the dialog will not pass in any data.
-        if (email) {
+        if (model) {
 
           // Providing some feedback to user.
           this.feedbackService.showInfo('Please wait while we redirect you to PayPal');
@@ -69,7 +72,7 @@ export class ViewAppDialogComponent {
           /*
            * Starting purchase flow.
            */
-          this.bazarService.purchase(this.data, email).subscribe((status: PurchaseStatus) => {
+          this.bazarService.purchase(this.data, model.email, model.code).subscribe((status: PurchaseStatus) => {
 
             // Storing currently viewed app in local storage to make it more easily retrieved during callback.
             localStorage.setItem('currently-inctalled-app', JSON.stringify(this.data));
