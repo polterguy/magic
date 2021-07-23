@@ -1,5 +1,19 @@
 
-<mat-card>
+<mat-card class="waiting-for-paypal" *ngIf="hubConnection">
+  <mat-progress-spinner
+    diameter="50"
+    mode="indeterminate"
+    [strokeWidth]="4"
+    class="progress"></mat-progress-spinner>
+  <h1>
+    Waiting for PayPal
+  </h1>
+  <p>
+    Please wait while PayPal accepts your payment and notifies our systems.
+  </p>
+</mat-card>
+
+<mat-card [class]="hubConnection ? 'invisible' : ''">
 
   <h2>Bazar</h2>
 
@@ -24,9 +38,10 @@
     *ngFor="let idx of apps"
     class="app"
     (click)="viewApp(idx)"
+    [matTooltip]="'Purchase this module from Server Gardens for €' + idx.price"
     mat-raised-button>
     <span class="title">{{idx.name}}</span>
-    <span class="version">{{idx.version}}</span>
+    <span class="price">€{{idx.price}}</span>
     <mat-icon matSuffix color="primary">add_circle</mat-icon>
   </button>
 

@@ -35,6 +35,11 @@ export class EmailPromoCodeModel {
 export class ConfirmEmailAddressDialogComponent {
 
   /**
+   * If true, the user can punch a promo code.
+   */
+  public has_code: boolean = false;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param data Root user's email address

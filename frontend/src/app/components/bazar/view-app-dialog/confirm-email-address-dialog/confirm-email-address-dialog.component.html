@@ -14,12 +14,11 @@
       [(ngModel)]="data.email">
   </mat-form-field>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field *ngIf="has_code" class="fill-width" appearance="outline">
 
     <mat-label class="dark">Promo code</mat-label>
     <input
       matInput
-      matTooltip="If you have a promo code you can supply it here, otherwise just leave this field blank"
       type="text"
       autocomplete="off"
       [(ngModel)]="data.code">
@@ -28,6 +27,9 @@
 </div>
 
 <div mat-dialog-actions>
+
+  <mat-checkbox
+    [(ngModel)]="has_code">I have a promo code</mat-checkbox>
 
   <button
     mat-raised-button
