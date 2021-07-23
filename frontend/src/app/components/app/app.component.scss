@@ -52,18 +52,7 @@ mat-sidenav-container {
     box-sizing: border-box;
     position: relative;
     overflow-x: hidden;
-
-    .img-wrapper {
-      position: fixed;
-      top: 64px;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url(/assets/bg1.jpg);
-      background-repeat: repeat;
-      background-size: 300px 300px;
-      opacity: .3;
-    }
+    background-color: rgb(55, 55, 55);
 
     // Makes sure currently loaded component is obscured when navbar is expanded.
     .obscurer {
@@ -321,9 +310,7 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
 }
 
 .light {
-  .img-wrapper {
-    background-image: url(/assets/bg2.jpg) !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
+  mat-sidenav-content {
+    background-color: lightblue;
   }
 }
