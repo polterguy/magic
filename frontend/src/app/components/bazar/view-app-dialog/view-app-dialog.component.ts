@@ -4,19 +4,16 @@
  */
 
 // Angular and system imports.
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
 import { BazarApp } from '../models/bazar-app.model';
 import { BazarService } from '../services/bazar.service';
 import { Response } from '../../../models/response.model';
-import { environment } from 'src/environments/environment';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
-import { BazarAppAvailable } from '../models/bazar-app-available.model';
 import { ConfirmEmailAddressDialogComponent } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
@@ -27,24 +24,7 @@ import { ConfirmEmailAddressDialogComponent } from './confirm-email-address-dial
   templateUrl: './view-app-dialog.component.html',
   styleUrls: ['./view-app-dialog.component.scss']
 })
-export class ViewAppDialogComponent implements OnDestroy {
-
-  /**
-   * Purchase URL, typically leading to PayPal to pay for the app.
-   */
-  public purchaseUrl: string = null;
-
-  /**
-   * SignalR hub connection, used to connect to Bazar server and get notifications
-   * when app ise ready to be installed.
-   */
-  public hubConnection: HubConnection = null;
-
-  /**
-   * Once a purchase has been completed, this will encapsulate a download token,
-   * allowing the user to download the app from the Bazar.
-   */
-  public token: string;
+export class ViewAppDialogComponent {
 
   /**
    * Creates an instance of your component.
@@ -65,20 +45,6 @@ export class ViewAppDialogComponent implements OnDestroy {
     private dialogRef: MatDialogRef<ViewAppDialogComponent>) { }
 
   /**
-   * Implementation of OnDestroy is necessary to make sure we
-   * stop any SignalR connections once the dialog is closed.
-   */
-  ngOnDestroy() {
-
-    // Checking if we've got open SignalR connections.
-    if (this.hubConnection) {
-
-      // Stopping SignalR socket connection.
-      this.hubConnection.stop();
-    }
-  }
-
-  /**
    * Invoked when user wants to purchase the specified app.
    */
   public purchase() {
@@ -92,125 +58,30 @@ export class ViewAppDialogComponent implements OnDestroy {
         data: response.result,
       });
 
-      // If close method returns data, we know the app was installed.
+      // Waiting for the user to close modal dialog.
       dialogRef.afterClosed().subscribe((email: string) => {
 
         // If user clicks cancel the dialog will not pass in any data.
         if (email) {
 
-          // User confirmed his email address.
-          this.feedbackService.showInfo('Please wait while we notify PayPal ...');
-          this.purchaseImpl(email);
+          // Providing some feedback to user.
+          this.feedbackService.showInfo('Please wait while we redirect you to PayPal');
+
+          /*
+           * Starting purchase flow.
+           */
+          this.bazarService.purchase(this.data, email).subscribe((status: PurchaseStatus) => {
+
+            // Storing currently viewed app in local storage to make it more easily retrieved during callback.
+            localStorage.setItem('currently-inctalled-app', JSON.stringify(this.data));
+
+            // Re-directing to PayPal.
+            window.location.href = status.url;
+
+          }, (error: any) => this.feedbackService.showError(error));
         }
       });
 
     }, (error: any) => this.feedbackService.showError(error));
-  }
-
-  /**
-   * Invoked when user wants to install the app, which is only possible when
-   * he or she has received a valid download token, due to having accepted
-   * the payment in PayPal.
-   */
-  public install() {
-
-    // Downloading app from Bazar.
-    this.bazarService.download(this.data, this.token).subscribe((download: Response) => {
-
-      // Verifying process was successful.
-      if (download.result === 'success') {
-
-        // Now invoking install which actually initialises the app, and executes its startup files.
-        this.bazarService.install(this.data.folder_name).subscribe((install: Response) => {
-
-          // Verifying process was successful.
-          if (install.result === 'success') {
-
-            // Success!
-            this.feedbackService.showInfo('Module was successfully installed on your server');
-            this.dialogRef.close(this.data);
-
-          } else {
-
-            // Oops, some unspecified error occurred
-            this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
-          }
-        });
-
-      } else {
-
-        // Oops, some unspecified error occurred
-        this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
-      }
-
-    }, (error: any) => this.feedbackService.showError(error));
-
-    // Downloading module to local computer.
-    this.bazarService.downloadLocally(this.token);
-  }
-
-  /**
-   * Invoked when user wants to close dialog without installing app.
-   */
-  public close() {
-
-    // Closing dialog without passing in any data to caller.
-    this.dialogRef.close();
-  }
-
-  /*
-   * Private helpers.
-   */
-
-  /*
-   * Helper method that actually invokes Bazar to start purchasing workflow.
-   */
-  private purchaseImpl(email: string) {
-
-    /*
-     * Creating a SignalR socket connection to get notified in a callback
-     * when PayPal has accepted the payment.
-     */
-    let builder = new HubConnectionBuilder();
-    this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
-      skipNegotiation: true,
-      transport: HttpTransportType.WebSockets,
-    }).build();
-
-    /*
-     * Subscribing to SignalR message from Bazar that is published
-     * once app is ready to be downloaded.
-     */
-    this.hubConnection.on('bazar.package.avilable.' + email, (args: string) => {
-
-      // Purchase accepted by user.
-      this.token = (<BazarAppAvailable>JSON.parse(args)).token;
-      
-      // Notifying user of that he should check his email inbox.
-      this.feedbackService.showInfo('Your payment has been accepted by our server');
-    });
-
-    // Connecting SignalR connection.
-    this.hubConnection.start().then(() => {
-
-      /*
-        * Starting purchase flow.
-        * Notice, to make sure we don't drop SignalR messages we do not do this before
-        * we have successfully connected to SignalR hub.
-        */
-      this.bazarService.purchase(this.data, email).subscribe((status: PurchaseStatus) => {
-
-        // Enabling the pay button now that we have a pay URL returned from PayPal.
-        this.purchaseUrl = status.url;
-
-        // Providing some feedback to user.
-        this.feedbackService.showInfo('Click the Pay button to pay for module then wait for PayPal to notify our servers');
-
-        // Attempting to open PayPal in another window, which might not work if popups are blocked.
-        window.open(this.purchaseUrl, '_blank');
-
-      }, (error: any) => this.feedbackService.showError(error));
-
-    });
   }
 }
