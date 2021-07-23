@@ -286,16 +286,17 @@ export class BazarComponent implements OnInit, OnDestroy {
                   this.dialog.open(ViewReadmeDialogComponent, {
                     data: readMeFileContent,
                   });
-                });
+
+                }, (error: any) => this.feedbackService.showError(error));
               }
-            });
+            }, (error: any) => this.feedbackService.showError(error));
 
           } else {
 
             // Oops, some unspecified error occurred
             this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
           }
-        });
+        }, (error: any) => this.feedbackService.showError(error));
 
       } else {
 
