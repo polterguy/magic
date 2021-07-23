@@ -1,0 +1,17 @@
+
+<h1 mat-dialog-title>App's README file</h1>
+
+<div mat-dialog-content class="file-content">
+
+  <div [innerHTML]="data | marked"></div>
+
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions">
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="close()">Close</button>
+
+</div>
