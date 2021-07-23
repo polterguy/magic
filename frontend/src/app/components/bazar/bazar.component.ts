@@ -241,9 +241,8 @@ export class BazarComponent implements OnInit, OnDestroy {
   }
 
   /*
-   * Invoked when user wants to install the app, which is only possible when
-   * he or she has received a valid download token, due to having accepted
-   * the payment in PayPal.
+   * Invoked when app should be installed, which is only possible after
+   * PayPal has accepted the payment from the user.
    */
   private install(app: BazarApp, token: string) {
 
