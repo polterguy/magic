@@ -9,7 +9,7 @@
 export class BazarAppAvailable {
 
   /**
-   * Token to download app from Bazar.
+   * If payment was accepted this will have the value of 'ACCEPTED'.
    */
-  token: string;
+  status: string;
 }

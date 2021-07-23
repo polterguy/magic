@@ -6,13 +6,17 @@
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { BazarApp } from './models/bazar-app.model';
+import { Response } from '../../models/response.model';
 import { BazarService } from './services/bazar.service';
 import { AuthService } from '../auth/services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -27,7 +31,13 @@ import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.compon
   templateUrl: './bazar.component.html',
   styleUrls: ['./bazar.component.scss']
 })
-export class BazarComponent implements OnInit {
+export class BazarComponent implements OnInit, OnDestroy {
+
+  /**
+   * SignalR hub connection, used to connect to Bazar server and get notifications
+   * when app ise ready to be installed.
+   */
+  public hubConnection: HubConnection = null;
 
   /**
    * Apps as returned from Bazar.
@@ -55,12 +65,14 @@ export class BazarComponent implements OnInit {
    * @param dialog Needed to create modal dialogs
    * @param authService Needed to verify user is root
    * @param bazarService Needed to retrieve apps from external Bazar server
+   * @param activatedRoute Needed to retrieve activated router
    * @param feedbackService Needed to display feedback to user
    */
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
     private bazarService: BazarService,
+    private activatedRoute: ActivatedRoute,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -84,6 +96,36 @@ export class BazarComponent implements OnInit {
 
       // Retrieving Bazar items from main Bazar.
       this.getItems();
+
+      /*
+       * Checking if we've got a "token" query parameter,
+       * at which point we've been redirected from PayPal,
+       * after a successful purchase.
+       */
+      this.activatedRoute.queryParams.subscribe((pars: Params) => {
+
+        // Checking if we've got "token" param.
+        const token = pars['token'];
+        if (token) {
+
+          // Checking if product is already ready to be downloaded, and if not, subscribing to our SignalR message.
+          this.waitForCallback(token);
+        }
+      });
+    }
+  }
+
+  /**
+   * Implementation of OnDestroy is necessary to make sure we
+   * stop any SignalR connections once the dialog is closed.
+   */
+   public ngOnDestroy() {
+
+    // Checking if we've got open SignalR connections.
+    if (this.hubConnection) {
+
+      // Stopping SignalR socket connection.
+      this.hubConnection.stop();
     }
   }
 
@@ -141,5 +183,95 @@ export class BazarComponent implements OnInit {
       });
 
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /*
+   * Creates a SignalR subscriber that waits for the Bazar to publish a message verifying
+   * that the payment has been accepted.
+   */
+  private waitForCallback(token: string) {
+
+    // Retrieving currently installing app from local storage.
+    const app = <BazarApp>JSON.parse(localStorage.getItem('currently-inctalled-app'));
+
+    // Creating our SignalR hub.
+    let builder = new HubConnectionBuilder();
+    this.hubConnection = builder.withUrl(environment.bazarUrl + '/sockets', {
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets,
+    }).build();
+
+    /*
+     * Subscribing to SignalR message from Bazar that is published
+     * once app is ready to be downloaded.
+     */
+    this.hubConnection.on('bazar.package.avilable.' + token, (args: string) => {
+
+      // Purchase accepted by PayPal, hence starting download and installation process.
+      this.install(app, token);
+    });
+
+    // Connecting SignalR connection.
+    this.hubConnection.start().then(() => {
+
+      /*
+       * Notice, to avoid race conditions where PayPal actually invokes our webhook before
+       * we're able to connect to SignalR socket, we'll need to actualyl check if product is already ready
+       * for download here.
+       */
+      this.bazarService.appReady(token).subscribe((response: Response) => {
+
+        // Checking result from Bazar server.
+        if (response.result === 'APPROVED') {
+
+          /*
+           * PayPal already invoked our callback before we were able
+           * to create our SignalR message subscriber.
+           */
+          this.install(app, token);
+        }
+      });
+    });
+  }
+
+  /*
+   * Invoked when user wants to install the app, which is only possible when
+   * he or she has received a valid download token, due to having accepted
+   * the payment in PayPal.
+   */
+  private install(app: BazarApp, token: string) {
+
+    // Downloading app from Bazar.
+    this.bazarService.download(app, token).subscribe((download: Response) => {
+
+      // Verifying process was successful.
+      if (download.result === 'success') {
+
+        // Now invoking install which actually initialises the app, and executes its startup files.
+        this.bazarService.install(app.folder_name).subscribe((install: Response) => {
+
+          // Verifying process was successful.
+          if (install.result === 'success') {
+
+            // Success!
+            this.feedbackService.showInfo('Module was successfully installed on your server');
+
+          } else {
+
+            // Oops, some unspecified error occurred
+            this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+          }
+        });
+
+      } else {
+
+        // Oops, some unspecified error occurred
+        this.feedbackService.showError('Something went wrong when trying to install Bazar app. Your log might contain more information.');
+      }
+
+    }, (error: any) => this.feedbackService.showError(error));
+
+    // Downloading module to local computer.
+    this.bazarService.downloadLocally(token);
   }
 }

@@ -81,11 +81,28 @@ export class BazarService {
   public purchase(app: BazarApp, email: string) {
 
     // We now have the user's email address, hence invoking Bazar to start purchasing workflow.
-    return this.httpClient.post<PurchaseStatus>(environment.bazarUrl +
+    return this.httpClient.post<PurchaseStatus>(
+      environment.bazarUrl +
       '/magic/modules/bazar/purchase', {
         product_id: app.id,
-        customer_email: email
+        customer_email: email,
+        redirect_url: window.location.href.split('?')[0],
     });
+  }
+
+  /**
+   * Checks to see if the payment for the specified download token has been accepted.
+   * 
+   * Notice, the token will only become accepted as the payment has been accepted by PayPal,
+   * and PayPal has invoked our callback webhook.
+   * 
+   * @param token Download token to check
+   */
+  public appReady(token: string) {
+    return this.httpClient.get<Response>(
+      environment.bazarUrl +
+      '/magic/modules/bazar/can-download?token=' +
+      encodeURIComponent(token));
   }
 
   /**
