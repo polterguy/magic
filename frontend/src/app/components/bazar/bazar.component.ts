@@ -57,6 +57,16 @@ export class BazarComponent implements OnInit, OnDestroy {
   public filterFormControl: FormControl;
 
   /**
+   * If too much time passes, we show the 'get help' message.
+   */
+  public timeout: boolean = false;
+
+  /**
+   * Timer for displaying 'get help' message.
+   */
+  private timer: any = null;
+
+  /**
    * Paginator for paging apps.
    */
   @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
@@ -116,6 +126,11 @@ export class BazarComponent implements OnInit, OnDestroy {
 
           // Checking if product is already ready to be downloaded, and if not, subscribing to our SignalR message.
           this.waitForCallback(token);
+
+          // Unless the process finishes in 60 seconds, we show a 'get help' message to the user.
+          this.timer = setTimeout(() => {
+            this.timeout = true;
+          }, 60000);
         }
       });
     }
@@ -132,6 +147,12 @@ export class BazarComponent implements OnInit, OnDestroy {
 
       // Stopping SignalR socket connection.
       this.hubConnection.stop();
+    }
+
+    // Destroying timer if it was created.
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
     }
   }
 

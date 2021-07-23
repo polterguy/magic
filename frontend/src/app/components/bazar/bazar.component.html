@@ -6,10 +6,14 @@
     [strokeWidth]="4"
     class="progress"></mat-progress-spinner>
   <h1>
-    Waiting for PayPal
+    Waiting for PayPal to notify our systems
   </h1>
   <p>
-    Please wait while PayPal accepts your payment and notifies our systems.
+    <strong>Do not close this window before installation process is done!</strong>
+    <span *ngIf="timeout">
+      If something goes wrong you can contact <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>
+      and we will help you with installing the module.
+    </span>
   </p>
 </mat-card>
 
