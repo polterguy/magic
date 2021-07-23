@@ -155,16 +155,9 @@ export class BazarComponent implements OnInit, OnDestroy {
   public viewApp(app: BazarApp) {
 
     // Opening up modal dialog passing in reference to Bazar app.
-    const dialogRef = this.dialog.open(ViewAppDialogComponent, {
+    this.dialog.open(ViewAppDialogComponent, {
       data: app,
       width: '80%'
-    });
-
-    // If close method returns data, we know the app was installed.
-    dialogRef.afterClosed().subscribe((app: BazarApp) => {
-
-      // Modules was installed
-      console.log('Module successfully installed');
     });
   }
 
