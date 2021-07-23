@@ -48,6 +48,16 @@ export class BazarService {
     }
     query += '&order=created&direction=desc';
 
+    /*
+     * Notice, since we don't support anything nut modules in this
+     * release, but we might support alternative types of components
+     * in the future, we filter according to type === 'module' here,
+     * to allow for future versions to support for instance 'template' etc,
+     * without breaking old code as we implement it in the centralised Bazar
+     * server.
+     */
+    query += '&type.eq=module';
+
     // Invoking Bazar to list apps.
     return this.httpClient.get<BazarApp[]>(environment.bazarUrl +
       '/magic/modules/bazar/apps' +
@@ -64,6 +74,16 @@ export class BazarService {
     if (filter && filter !== '') {
       query += '?name.like=' + encodeURIComponent(filter + '%');
     }
+
+    /*
+     * Notice, since we don't support anything nut modules in this
+     * release, but we might support alternative types of components
+     * in the future, we filter according to type === 'module' here,
+     * to allow for future versions to support for instance 'template' etc,
+     * without breaking old code as we implement it in the centralised Bazar
+     * server.
+     */
+    query += '&type.eq=module';
 
     // Invoking Bazar to list apps.
     return this.httpClient.get<Count>(environment.bazarUrl +
