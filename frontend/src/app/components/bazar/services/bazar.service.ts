@@ -34,6 +34,17 @@ export class BazarService {
     private httpService: HttpService) { }
 
   /**
+   * Retrieves the latest Magic core version as published by the Bazar.
+   */
+  public version() {
+
+    // Invoking Bazar service to retrieve its current version
+    return this.httpClient.get<Response>(
+      environment.bazarUrl +
+      '/magic/modules/bazar/core-version');
+  }
+
+  /**
    * Lists all apps available in the external Bazar.
    */
   public listApps(filter: string, offset: number, limit: number) {
@@ -59,7 +70,8 @@ export class BazarService {
     query += '&type.eq=module';
 
     // Invoking Bazar to list apps.
-    return this.httpClient.get<BazarApp[]>(environment.bazarUrl +
+    return this.httpClient.get<BazarApp[]>(
+      environment.bazarUrl +
       '/magic/modules/bazar/apps' +
       query);
   }

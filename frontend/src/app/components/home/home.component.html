@@ -1,6 +1,16 @@
 
 <mat-card>
 
+  <div *ngIf="version !== bazarVersion" class="update-available">
+    <a
+      href="https://polterguy.github.io"
+      mat-raised-button
+      matTooltip="Update your Magic installation"
+      target="_blank">
+      Update to {{bazarVersion}}
+    </a>
+  </div>
+
   <h1>Magic Cloud</h1>
   <span class="version">{{version}}</span>
 
@@ -144,7 +154,7 @@
       *ngIf="authService.isRoot"
       mat-raised-button
       routerLink="/bazar"
-      matTooltip="Collaborate with others in creating modules">
+      matTooltip="Obtain additional plugins and modules">
       <mat-icon matSuffix color="primary">public</mat-icon>
       <span>Bazar</span>
     </button>

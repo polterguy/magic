@@ -33,14 +33,28 @@ export class ViewAppDialogComponent implements OnInit {
   public installed: boolean = false;
 
   /**
+   * This is true if the user can install the app.
+   * 
+   * Notice, apps are typically built for a "minimum version" of Magic in mind,
+   * implying that the user might have a Magic version that is too old for a specific
+   * version to be possible to install.
+   */
+  public canInstall: boolean = false;
+
+  /**
+   * If Magic installation needs to be updated, this will be true.
+   */
+  public needsCoreUpdate: boolean = false;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialog Needed to be able to display modal dialog
+   * @param fileService Needed to check if the app can be installed, or if another app/version is already installed with the same module folder name
    * @param bazarService Needed to actually purchase apps from Bazar
    * @param configService Needed to retrieve root user's email address
    * @param feedbackService Needed to display errors to user
    * @param data Bazar app user wants to view details about
-   * @param dialogRef Needed to explicitly close dialog
    */
   constructor(
     private dialog: MatDialog,
@@ -64,7 +78,29 @@ export class ViewAppDialogComponent implements OnInit {
         // Module is not installed.
         this.installed = true;
       }
-    });
+    }, (error: any) => this.feedbackService.showError(error));
+
+    // Verifying that the application can be installed in the current version of Magic.
+    this.fileService.canInstall(this.data.min_magic_version).subscribe((result: Response) => {
+
+      // Assigning model accordingly.
+      if (result.result === 'SUCCESS') {
+
+        /*
+         * This app can be installed, since the current Magic version
+         * is equal to or higher than the minimum Magic version the app requires
+         * to function correctly.
+         */
+        this.canInstall = true;
+
+      } else {
+
+        // Notifying user that the application cannot be installed.
+        this.feedbackService.showInfo('In order to install this app you will have to update your Magic version');
+        this.needsCoreUpdate = true;
+      }
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**

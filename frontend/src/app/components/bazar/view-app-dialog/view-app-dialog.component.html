@@ -9,19 +9,24 @@
 
 <div mat-dialog-actions class="mat-dialog-actions">
 
-  <div *ngIf="!installed" class="purchase-info">
+  <div *ngIf="!installed && canInstall" class="purchase-info">
     You can purchase this module for €{{data.price}}
   </div>
 
   <button
     mat-raised-button
-    *ngIf="!installed"
+    *ngIf="!installed && canInstall"
     color="primary"
     matTooltip="Click here to purchase the module"
     (click)="purchase()">Buy</button>
 
   <div *ngIf="installed" class="already-installed">
     You have already installed this module
+  </div>
+
+  <div *ngIf="needsCoreUpdate" class="needs-core-update">
+    You need to update your Magic installation in order to install this app or module.
+    <a target="_blank" href="https://polterguy.github.io">Click here to download the latest Magic version</a>.
   </div>
 
 </div>

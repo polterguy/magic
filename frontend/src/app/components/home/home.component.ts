@@ -10,8 +10,10 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
+import { Response } from 'src/app/models/response.model';
 import { Messages } from 'src/app/models/messages.model';
 import { AuthService } from '../auth/services/auth.service';
+import { BazarService } from '../bazar/services/bazar.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -27,12 +29,18 @@ import { DiagnosticsService } from '../diagnostics/services/diagnostics.service'
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
+  // Subscription for login and logout message subscriptions.
   private subscription: Subscription;
 
   /**
    * Backend version as returned from server if authenticated.
    */
    public version: string;
+
+   /**
+    * Latest version of Magic as published by the Bazar.
+    */
+   public bazarVersion: string;
 
   /**
    * Creates an instance of your component.
@@ -41,6 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    * @param authService Needed to verify user is authenticated
    * @param activated Needed to retrieve query parameters
    * @param backendService Needed modify backend values according to query parameters given
+   * @param messageService Needed to subscribe to messages informing us when user logs in and out
    * @param diagnosticsService Needed to retrieve backend version
    * @param feedbackService Needed to provide feedback to user
    */
@@ -48,12 +57,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     public authService: AuthService,
     private activated: ActivatedRoute,
+    private bazarService: BazarService,
     private backendService: BackendService,
     private messageService: MessageService,
     private diagnosticsService: DiagnosticsService,
     private feedbackService: FeedbackService) { }
 
-  /*
+  /**
    * Implementation of OnInit.
    */
   public ngOnInit() {
@@ -123,7 +133,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   /**
    * OnDestroy implementation.
    */
-  ngOnDestroy() {
+  public ngOnDestroy() {
 
     // Making sure we unsibscribe to subscription.
     this.subscription.unsubscribe();
@@ -143,8 +153,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {
-        this.version = 'v' + version.version;
+        this.version = version.version;
       });
+
+      // Invoking Bazar to check if we have the latest current version of Magic installed.
+      this.bazarService.version().subscribe((result: Response) => {
+
+        // Assigning model.
+        this.bazarVersion = result.result;
+
+      }, (error: any) => this.feedbackService.showError(error));
+
     } else {
 
       // Unknown backend version since we're obviously not connected to any backend.
