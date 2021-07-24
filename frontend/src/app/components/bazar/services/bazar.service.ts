@@ -45,6 +45,15 @@ export class BazarService {
   }
 
   /**
+   * Retrieves the local manifests from your local installation.
+   */
+  public localManifests() {
+
+    // Invoking backend to actually retrieve manifest.
+    return this.httpService.get<any[]>('/magic/modules/system/file-system/app-manifests');
+  }
+
+  /**
    * Lists all apps available in the external Bazar.
    */
   public listApps(filter: string, offset: number, limit: number) {
@@ -180,12 +189,14 @@ export class BazarService {
    * executing startup files, etc.
    * 
    * @param folder Module to install
+   * @param app_version Version of app we're currently installing
    */
-  public install(folder: string) {
+  public install(folder: string, app_version: string) {
 
     // Invoking backend to actually install app.
     return this.httpService.put<Response>('/magic/modules/system/file-system/install', {
       folder: '/modules/' + folder + '/',
+      app_version,
     });
   }
 }

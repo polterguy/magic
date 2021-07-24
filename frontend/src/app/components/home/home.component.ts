@@ -16,6 +16,7 @@ import { AuthService } from '../auth/services/auth.service';
 import { BazarService } from '../bazar/services/bazar.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
 
@@ -35,12 +36,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   /**
    * Backend version as returned from server if authenticated.
    */
-   public version: string;
+   public version: string = null;
 
    /**
     * Latest version of Magic as published by the Bazar.
     */
-   public bazarVersion: string;
+   public bazarVersion: string = null;
+
+   /**
+    * If there exists a newer version of Magic Core as published by the Bazar,
+    * this value will be true.
+    */
+   public shouldUpdateCore: boolean = false;
 
   /**
    * Creates an instance of your component.
@@ -58,6 +65,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private activated: ActivatedRoute,
     private bazarService: BazarService,
+    private configService: ConfigService,
     private backendService: BackendService,
     private messageService: MessageService,
     private diagnosticsService: DiagnosticsService,
@@ -153,14 +161,36 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {
-        this.version = version.version;
-      });
-
-      // Invoking Bazar to check if we have the latest current version of Magic installed.
-      this.bazarService.version().subscribe((result: Response) => {
 
         // Assigning model.
-        this.bazarVersion = result.result;
+        this.version = version.version;
+
+        // Invoking Bazar to check if we have the latest current version of Magic installed.
+        this.bazarService.version().subscribe((result: Response) => {
+
+          // Assigning model.
+          this.bazarVersion = result.result;
+
+          // Checking if Bazar version differs from current version.
+          if (this.bazarVersion !== this.version) {
+
+            // Invoking backend to check if Bazar version of Magic is higher than current version of Magic.
+            this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
+
+              /*
+               * Checking return value of invocation, and if it was +1, the Bazar
+               * claims there exists a newer version of the core.
+               */
+              if (+result.result === 1) {
+
+                // Newer version exists according to Bazar.
+                this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
+                this.shouldUpdateCore = true;
+              }
+            });
+          }
+
+        }, (error: any) => this.feedbackService.showError(error));
 
       }, (error: any) => this.feedbackService.showError(error));
 

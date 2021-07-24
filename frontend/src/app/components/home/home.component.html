@@ -1,9 +1,9 @@
 
 <mat-card>
 
-  <div *ngIf="version !== bazarVersion" class="update-available">
+  <div *ngIf="shouldUpdateCore" class="update-available">
     <a
-      href="https://polterguy.github.io"
+      href="https://polterguy.github.io/tutorials/getting-started/"
       mat-raised-button
       matTooltip="Update your Magic installation"
       target="_blank">
@@ -11,8 +11,20 @@
     </a>
   </div>
 
+  <div *ngIf="!shouldUpdateCore" class="documentation">
+    <a
+      href="https://polterguy.github.io/documentation/"
+      mat-raised-button
+      matTooltip="Read the documentation for Magic"
+      target="_blank">
+      Documentation
+    </a>
+  </div>
+
   <h1>Magic Cloud</h1>
-  <span class="version">{{version}}</span>
+  <span
+    class="version"
+    [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'">{{version}}</span>
 
   <div class="buttons">
 
@@ -100,7 +112,7 @@
     <button
       mat-raised-button
       routerLink="/crypto"
-      matTooltip="Administrate cryptography keys">
+      matTooltip="Administrate your cryptography keys">
       <mat-icon matSuffix color="primary">security</mat-icon>
       <span>Crypto</span>
     </button>

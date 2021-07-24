@@ -168,4 +168,20 @@ export class ConfigService {
       domain
     });
   }
+
+  /**
+   * Compares the two specified versions, and returns an integer declaring which comes before the other.
+   * 
+   * @param version_1 First version to compare
+   * @param version_2 Second version to compare
+   */
+  public versionCompare(version_1: string, version_2: string) {
+
+    // Invoking backend returning an observable to caller.
+    return this.httpService.get(
+      '/magic/modules/system/config/version-compare?version_1=' +
+      encodeURIComponent(version_1) + 
+      '&version_2=' +
+      encodeURIComponent(version_2));
+  }
 }
