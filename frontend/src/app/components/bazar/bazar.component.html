@@ -10,6 +10,7 @@
   </h1>
   <p>
     <strong>Do not close this window before installation process is done!</strong>
+    This might take some few minutes.
     <span *ngIf="timeout">
       If something goes wrong you can contact <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>
       and we will help you with installing the module.
@@ -38,18 +39,22 @@
 
   </mat-form-field>
 
-  <button
-    *ngFor="let idx of apps"
-    class="app"
-    (click)="viewApp(idx)"
-    [matTooltip]="'Purchase this module from Server Gardens for €' + idx.price"
-    mat-raised-button>
-    <span class="title">{{idx.name}}</span>
-    <span class="price">€{{idx.price}}</span>
-    <mat-icon matSuffix color="primary">add_circle</mat-icon>
-  </button>
+  <div *ngIf="manifests">
 
-  <div class="clearfix"></div>
+    <button
+      *ngFor="let idx of apps"
+      class="app"
+      (click)="viewApp(idx)"
+      [matTooltip]="'Purchase this module from Server Gardens for €' + idx.price"
+      mat-raised-button>
+      <span class="title">{{idx.name}}</span>
+      <span class="price">€{{idx.price}}</span>
+      <mat-icon matSuffix color="primary">add_circle</mat-icon>
+    </button>
+
+    <div class="clearfix"></div>
+
+  </div>
 
   <mat-paginator
     #paginator
@@ -60,5 +65,22 @@
     (page)="paged($event)"
     [pageSizeOptions]="[10]">
   </mat-paginator>
+
+</mat-card>
+
+<mat-card *ngIf="!hubConnection && manifests && manifests.length > 0">
+
+  <h2>Installed apps</h2>
+
+  <button
+    *ngFor="let idx of manifests"
+    class="app"
+    mat-raised-button>
+    <span class="title">{{idx.name}}</span>
+    <span class="price">Purchased</span>
+    <mat-icon matSuffix color="primary">add_circle</mat-icon>
+  </button>
+
+  <div class="clearfix"></div>
 
 </mat-card>

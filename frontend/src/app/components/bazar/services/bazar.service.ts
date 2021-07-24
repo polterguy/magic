@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { BazarApp } from '../models/bazar-app.model';
+import { AppManifest } from '../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/services/http.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
@@ -50,7 +51,7 @@ export class BazarService {
   public localManifests() {
 
     // Invoking backend to actually retrieve manifest.
-    return this.httpService.get<any[]>('/magic/modules/system/file-system/app-manifests');
+    return this.httpService.get<AppManifest[]>('/magic/modules/system/file-system/app-manifests');
   }
 
   /**
@@ -190,13 +191,15 @@ export class BazarService {
    * 
    * @param folder Module to install
    * @param app_version Version of app we're currently installing
+   * @param name Friendly display name of app
    */
-  public install(folder: string, app_version: string) {
+  public install(folder: string, app_version: string, name: string) {
 
     // Invoking backend to actually install app.
     return this.httpService.put<Response>('/magic/modules/system/file-system/install', {
       folder: '/modules/' + folder + '/',
       app_version,
+      name,
     });
   }
 }
