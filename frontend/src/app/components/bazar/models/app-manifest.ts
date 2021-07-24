@@ -24,7 +24,22 @@ export class AppManifest {
   module_name: string;
 
   /**
+   * Friendly name of app.
+   */
+  name: string;
+
+  /**
    * Version of installed app.
    */
-  version: string
+  version: string;
+
+  /**
+   * Download token, required to update app when updates are available.
+   */
+  token: string;
+
+  /**
+   * If this is true, there exists an update for app in the Bazar.
+   */
+  has_update?: boolean = false;
 }
