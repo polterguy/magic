@@ -37,7 +37,8 @@ if
 
       /*
        * Oops, folder already exists, hence we first delete existing folder,
-       * which will run through uninstallation scripts to uninstall module completely.
+       * which will run through uninstallation scripts to uninstall module completely,
+       * if we execute the 'folder.delete.hl' endpoint.
        */
       strings.concat
          .:/modules/

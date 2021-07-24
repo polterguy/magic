@@ -42,4 +42,9 @@ export class AppManifest {
    * If this is true, there exists an update for app in the Bazar.
    */
   has_update?: boolean = false;
+
+  /**
+   * If app has an update, this will be its new version.
+   */
+  new_version?: string;
 }

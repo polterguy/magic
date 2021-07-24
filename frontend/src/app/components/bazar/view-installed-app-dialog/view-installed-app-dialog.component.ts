@@ -9,6 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { AppManifest } from '../models/app-manifest';
+import { BazarService } from '../services/bazar.service';
+import { Response } from 'src/app/models/response.model';
 import { FileService } from '../../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
@@ -27,13 +29,15 @@ export class ViewInstalledAppDialogComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param dialogRef Needed to manually close dialog from code
+   * @param fileService Needed to display module's README file
+   * @param bazarService Needed to be able to update app, if app needs updating
    * @param feedbackService Needed to display feedback to user.
    * @param data App's manifest or meta data
    * @param dialogRef Needed to manually close dialog from code
    */
   constructor(
     private fileService: FileService,
+    private bazarService: BazarService,
     private feedbackService: FeedbackService,
     @Inject(MAT_DIALOG_DATA) public data: AppManifest,
     private dialogRef: MatDialogRef<ViewInstalledAppDialogComponent>) { }
@@ -60,6 +64,38 @@ export class ViewInstalledAppDialogComponent implements OnInit {
             this.markdown = markdown;
 
           }, (error: any) => this.feedbackService.showError(error));
+      }
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Invoked when user wants to update the app.
+   */
+  public update() {
+
+    // Invoking backend to update app.
+    this.bazarService.update(this.data).subscribe((result: Response) => {
+
+      // Verifying update invocation was a success.
+      if (result.result === 'success') {
+
+        // Success, now we need to initialise app, byt executing its 'magic.startup' folder's Hyperlamdba files.
+        this.bazarService.install(
+          this.data.module_name,
+          this.data.new_version,
+          this.data.name,
+          this.data.token).subscribe((install: Response) => {
+
+          // Verifying process was successful.
+          if (install.result === 'success') {
+
+            // Application was successfully initialised.
+            this.feedbackService.showInfo('Application was successfully updated');
+
+            // This will signal parent form that app was updated, triggering refreshing of manifests.
+            this.dialogRef.close(this.data);
+          }
+        }, (error: any) => this.feedbackService.showError(error));
       }
     }, (error: any) => this.feedbackService.showError(error));
   }

@@ -194,6 +194,25 @@ export class BazarService {
   }
 
   /**
+   * Updates the specified app by invoking Bazar.
+   * 
+   * @param app App's manifest
+   */
+   public update(app: AppManifest) {
+
+    // Sanity checking invocation.
+    if (!app.token || app.token === '') {
+      throw new Error('No token found in app\'s manifest')
+    }
+
+    // Invoking backend to actually download app.
+    return this.httpService.post<Response>('/magic/modules/system/file-system/download', {
+      url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + app.token,
+      name: app.module_name
+    });
+  }
+
+  /**
    * Downloads module to the local computer.
    * 
    * @param token Download token for module
