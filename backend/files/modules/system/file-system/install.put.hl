@@ -5,6 +5,7 @@
 .arguments
    folder:string
    app_version:string
+   name:string
 .description:Installs the specified module by executing its Hyperlambda startup scripts
 
 
@@ -55,17 +56,82 @@ if
       add:x:@.manifest
          get-nodes:x:@hyper2lambda/*
 
-      // Removing [version] node from manifest if it exists, since we'll add it according to arguments specified.
-      remove-nodes:x:@.manifest/*/version
+      /*
+       * Removing [version] node from manifest if it exists, since we'll add
+       * it according to arguments specified.
+       *
+       * Notice, we only do this if an explicit version was supplied as an argument.
+       */
+      if
+         and
+            exists:x:@.arguments/*/name
+            not
+               eq
+                  get-value:x:@.arguments/*/name
+                  .
+            not
+               eq
+                  get-value:x:@.arguments/*/name
+                  .:
+         .lambda
+            remove-nodes:x:@.manifest/*/version
 
 
 /*
- * Dynamically appending to/creating our manifest declaration.
+ * Adding name to our manifest.
+ *
+ * Notice, if app is simply uploaded through "Files" menu item,
+ * we don't have all the manifest data.
+ */
+if
+   and
+      exists:x:@.arguments/*/name
+      not
+         eq
+            get-value:x:@.arguments/*/name
+            .
+      not
+         eq
+            get-value:x:@.arguments/*/name
+            .:
+   .lambda
+      unwrap:x:+/*/*
+      add:x:@.manifest
+         .
+            name:x:@.arguments/*/name
+
+
+/*
+ * Adding version to manifest.
+ *
+ * Notice, if app is simply uploaded through "Files" menu item,
+ * we don't have all the manifest data.
+ */
+if
+   and
+      exists:x:@.arguments/*/name
+      not
+         eq
+            get-value:x:@.arguments/*/name
+            .
+      not
+         eq
+            get-value:x:@.arguments/*/name
+            .:
+   .lambda
+      unwrap:x:+/*/*
+      add:x:@.manifest
+         .
+            version:x:@.arguments/*/app_version
+
+
+/*
+ * Adding module name to manifest.
  */
 unwrap:x:+/*/*
 add:x:@.manifest
    .
-      version:x:@.arguments/*/version
+      module_name:x:@strings.split/1
 
 
 /*

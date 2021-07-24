@@ -16,6 +16,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { BazarApp } from './models/bazar-app.model';
+import { AppManifest } from './models/app-manifest';
 import { Response } from '../../models/response.model';
 import { BazarService } from './services/bazar.service';
 import { AuthService } from '../auth/services/auth.service';
@@ -65,6 +66,11 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Timer for displaying 'get help' message.
    */
   private timer: any = null;
+
+  /**
+   * Manifests for already installed apps.
+   */
+  public manifests: AppManifest[] = null;
 
   /**
    * Paginator for paging apps.
@@ -127,19 +133,15 @@ export class BazarComponent implements OnInit, OnDestroy {
           // Checking if product is already ready to be downloaded, and if not, subscribing to our SignalR message.
           this.waitForCallback(token);
 
-          // Unless the process finishes in 60 seconds, we show a 'get help' message to the user.
+          // Unless the process finishes in 3 minutes, we show a 'get help' message to the user.
           this.timer = setTimeout(() => {
             this.timeout = true;
-          }, 60000);
+          }, 180000);
         }
       });
 
       // Loading manifests from local server.
-      this.bazarService.localManifests().subscribe((manifests: any[]) => {
-
-        // Assigning model.
-        console.log(manifests);
-      });
+      this.loadManifests();
     }
   }
 
@@ -275,7 +277,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       if (download.result === 'success') {
 
         // Now invoking install which actually initialises the app, and executes its startup files.
-        this.bazarService.install(app.folder_name, app.version).subscribe((install: Response) => {
+        this.bazarService.install(app.folder_name, app.version, app.name).subscribe((install: Response) => {
 
           // Verifying process was successful.
           if (install.result === 'success') {
@@ -289,6 +291,9 @@ export class BazarComponent implements OnInit, OnDestroy {
 
             // Redirecting to main Bazar URL now that app has been installed on the local server.
             this.router.navigate(['/bazar']);
+
+            // Reloading manifests now that we've installed an additional app.
+            this.loadManifests();
 
             // Checking if app has a README file, at which point we display the entire file to the user.
             this.fileService.listFiles('/modules/' + app.folder_name + '/', 'README.md').subscribe((files: string[]) => {
@@ -329,5 +334,18 @@ export class BazarComponent implements OnInit, OnDestroy {
 
     // Downloading module to local computer.
     this.bazarService.downloadLocally(token);
+  }
+
+  /*
+   * Loads manifests of installed apps from current installation.
+   */
+  private loadManifests() {
+
+    // Invoking backend to load manifests.
+    this.bazarService.localManifests().subscribe((manifests: any[]) => {
+
+      // Assigning model.
+      this.manifests = manifests || [];
+    });
   }
 }
