@@ -216,6 +216,17 @@ export class BazarComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Returns true if specified app is already installed.
+   * 
+   * @param app App to check
+   */
+  public appIsInstalled(app: BazarApp) {
+
+    // Checking manifest apps to see if we can find this app in our currently installed apps.
+    return this.manifests.filter(x => x.module_name === app.folder_name).length > 0;
+  }
+
   /*
    * Private helper methods.
    */
