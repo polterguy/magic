@@ -203,9 +203,16 @@ export class BazarComponent implements OnInit, OnDestroy {
   public viewInstalledAppDetails(app: AppManifest) {
 
     // Opening up modal dialog passing in reference to app's manifest.
-    this.dialog.open(ViewInstalledAppDialogComponent, {
+    const dialogRef = this.dialog.open(ViewInstalledAppDialogComponent, {
       data: app,
       width: '80%',
+    });
+
+    // Subscribing to afterClose such that we can check if app was updated, at which point we'll need to refresh manifests.
+    dialogRef.afterClosed().subscribe((result: AppManifest) => {
+
+      // app was updated, hence we need to refresh manifests.
+      this.loadManifests();
     });
   }
 
@@ -398,6 +405,7 @@ export class BazarComponent implements OnInit, OnDestroy {
 
                 // App has an update.
                 idx.has_update = true;
+                idx.new_version = version;
               }
             });
           }

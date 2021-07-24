@@ -10,8 +10,14 @@
 <div mat-dialog-actions class="mat-dialog-actions">
 
   <button
+    *ngIf="data.has_update"
     mat-raised-button
+    matTooltip="Automatically updates your app"
     color="primary"
+    (click)="update()">Update</button>
+
+  <button
+    mat-raised-button
     (click)="close()">Close</button>
 
 </div>
