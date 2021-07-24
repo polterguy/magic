@@ -133,6 +133,13 @@ export class BazarComponent implements OnInit, OnDestroy {
           }, 60000);
         }
       });
+
+      // Loading manifests from local server.
+      this.bazarService.localManifests().subscribe((manifests: any[]) => {
+
+        // Assigning model.
+        console.log(manifests);
+      });
     }
   }
 
@@ -268,7 +275,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       if (download.result === 'success') {
 
         // Now invoking install which actually initialises the app, and executes its startup files.
-        this.bazarService.install(app.folder_name).subscribe((install: Response) => {
+        this.bazarService.install(app.folder_name, app.version).subscribe((install: Response) => {
 
           // Verifying process was successful.
           if (install.result === 'success') {
