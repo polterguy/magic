@@ -9,32 +9,15 @@
     Waiting for PayPal to notify our systems
   </h1>
   <p>
-    <strong>Do not close this window before installation process is done!</strong>
-    This might take some few minutes.
+    <strong>
+      Do not close this window before installation process is done!
+      This might take some few minutes.
+    </strong>
     <span *ngIf="timeout">
       If something goes wrong you can contact <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>
       and we will help you with installing the module.
     </span>
   </p>
-</mat-card>
-
-<mat-card *ngIf="!hubConnection && manifests && manifests.length > 0">
-
-  <h2>Installed apps</h2>
-
-  <button
-    *ngFor="let idx of manifests"
-    [class]="idx.has_update && idx.has_update === true ? 'app has-update' : 'app'"
-    [matTooltip]="idx.has_update ? 'Update' : ''"
-    (click)="viewInstalledAppDetails(idx)"
-    mat-raised-button>
-    <span class="title">{{idx.name}}</span>
-    <span class="price">{{idx.has_update ? 'Update app' : 'Owned'}}</span>
-    <mat-icon matSuffix color="primary">{{idx.has_update ? 'get_app' : 'extension'}}</mat-icon>
-  </button>
-
-  <div class="clearfix"></div>
-
 </mat-card>
 
 <mat-card [class]="hubConnection ? 'invisible' : ''">
@@ -62,12 +45,12 @@
 
     <button
       *ngFor="let idx of apps"
-      class="app"
+      [class]="appIsInstalled(idx) ? 'app installed' : 'app'"
       (click)="viewApp(idx)"
-      [matTooltip]="'Purchase this module from Server Gardens for €' + idx.price"
+      [matTooltip]="appIsInstalled(idx) ? 'You already own this app' : 'Purchase this module from Server Gardens for €' + idx.price"
       mat-raised-button>
       <span class="title">{{idx.name}}</span>
-      <span class="price">€{{idx.price}}</span>
+      <span class="price">{{appIsInstalled(idx) ? 'Owned' : '€' + idx.price}}</span>
       <mat-icon matSuffix color="primary">get_app</mat-icon>
     </button>
 
@@ -84,5 +67,24 @@
     (page)="paged($event)"
     [pageSizeOptions]="[10]">
   </mat-paginator>
+
+</mat-card>
+
+<mat-card *ngIf="!hubConnection && manifests && manifests.length > 0">
+
+  <h2>Installed apps</h2>
+
+  <button
+    *ngFor="let idx of manifests"
+    [class]="idx.has_update && idx.has_update === true ? 'app has-update' : 'app'"
+    [matTooltip]="idx.has_update ? 'Update' : 'You seem to have the latest version'"
+    (click)="viewInstalledAppDetails(idx)"
+    mat-raised-button>
+    <span class="title">{{idx.name}}</span>
+    <span class="price">{{idx.has_update ? 'Update app' : ''}}</span>
+    <mat-icon matSuffix color="primary">{{idx.has_update ? 'get_app' : 'extension'}}</mat-icon>
+  </button>
+
+  <div class="clearfix"></div>
 
 </mat-card>
