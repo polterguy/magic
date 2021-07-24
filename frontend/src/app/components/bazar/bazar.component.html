@@ -18,6 +18,25 @@
   </p>
 </mat-card>
 
+<mat-card *ngIf="!hubConnection && manifests && manifests.length > 0">
+
+  <h2>Installed apps</h2>
+
+  <button
+    *ngFor="let idx of manifests"
+    [class]="idx.has_update && idx.has_update === true ? 'app has-update' : 'app'"
+    [matTooltip]="idx.has_update ? 'Update app' : ''"
+    (click)="viewInstalledAppDetails(idx)"
+    mat-raised-button>
+    <span class="title">{{idx.name}}</span>
+    <span class="price">{{idx.has_update ? 'Update app' : 'Owned'}}</span>
+    <mat-icon matSuffix color="primary">{{idx.has_update ? 'get_app' : 'extension'}}</mat-icon>
+  </button>
+
+  <div class="clearfix"></div>
+
+</mat-card>
+
 <mat-card [class]="hubConnection ? 'invisible' : ''">
 
   <h2>Bazar</h2>
@@ -65,23 +84,5 @@
     (page)="paged($event)"
     [pageSizeOptions]="[10]">
   </mat-paginator>
-
-</mat-card>
-
-<mat-card *ngIf="!hubConnection && manifests && manifests.length > 0">
-
-  <h2>Installed apps</h2>
-
-  <button
-    *ngFor="let idx of manifests"
-    class="app"
-    (click)="viewInstalledAppDetails(idx)"
-    mat-raised-button>
-    <span class="title">{{idx.name}}</span>
-    <span class="price">Owned</span>
-    <mat-icon matSuffix color="primary">extension</mat-icon>
-  </button>
-
-  <div class="clearfix"></div>
 
 </mat-card>

@@ -87,6 +87,23 @@ export class BazarService {
   }
 
   /**
+   * Returns specified app from Bazar.
+   * 
+   * @param module_name Name of module
+   */
+  public getApp(module_name: string) {
+
+    // Dynamically building our query.
+    const query = '?folder_name.eq=' + encodeURIComponent(module_name);
+
+    // Invoking Bazar server to retrieve app.
+    return this.httpClient.get<BazarApp[]>(
+      environment.bazarUrl +
+      '/magic/modules/bazar/apps' +
+      query);
+  }
+
+  /**
    * Lists all apps available in the external Bazar.
    */
   public countApps(filter: string) {
@@ -192,14 +209,16 @@ export class BazarService {
    * @param folder Module to install
    * @param app_version Version of app we're currently installing
    * @param name Friendly display name of app
+   * @param token Installation token, required to be able to automatically update the app later
    */
-  public install(folder: string, app_version: string, name: string) {
+  public install(folder: string, app_version: string, name: string, token: string) {
 
     // Invoking backend to actually install app.
     return this.httpService.put<Response>('/magic/modules/system/file-system/install', {
       folder: '/modules/' + folder + '/',
       app_version,
       name,
+      token,
     });
   }
 }

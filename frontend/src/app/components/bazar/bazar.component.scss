@@ -90,6 +90,20 @@ mat-card {
       opacity: .5;
     }
   }
+  @keyframes has_update {
+    0% {
+      background-color: rgb(255,255,128);
+    }
+    100% {
+      background-color: rgb(255,200,200);
+    }
+  }
+  button.has-update {
+    animation-name: has_update;
+    animation-direction: alternate;
+    animation-duration: .5s;
+    animation-iteration-count: infinite;
+  }
   .clearfix {
     clear: both;
     display: table;

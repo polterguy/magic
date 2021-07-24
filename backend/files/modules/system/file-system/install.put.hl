@@ -6,6 +6,7 @@
    folder:string
    app_version:string
    name:string
+   token:string
 .description:Installs the specified module by executing its Hyperlambda startup scripts
 
 
@@ -123,6 +124,30 @@ if
       add:x:@.manifest
          .
             version:x:@.arguments/*/app_version
+
+
+/*
+ * Adding version to manifest.
+ *
+ * Notice, if app is simply uploaded through "Files" menu item,
+ * we don't have all the manifest data.
+ */
+if
+   and
+      exists:x:@.arguments/*/token
+      not
+         eq
+            get-value:x:@.arguments/*/token
+            .
+      not
+         eq
+            get-value:x:@.arguments/*/token
+            .:
+   .lambda
+      unwrap:x:+/*/*
+      add:x:@.manifest
+         .
+            token:x:@.arguments/*/token
 
 
 /*

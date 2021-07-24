@@ -21,9 +21,11 @@ import { Response } from '../../models/response.model';
 import { BazarService } from './services/bazar.service';
 import { AuthService } from '../auth/services/auth.service';
 import { FileService } from '../files/services/file.service';
+import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
+import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -85,6 +87,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @param authService Needed to verify user is root
    * @param fileService Needed to be able to display README file after app has been installed.
    * @param bazarService Needed to retrieve apps from external Bazar server
+   * @param configService Needed to compare versions semantically
    * @param activatedRoute Needed to retrieve activated router
    * @param feedbackService Needed to display feedback to user
    */
@@ -94,6 +97,7 @@ export class BazarComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private fileService: FileService,
     private bazarService: BazarService,
+    private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
     private feedbackService: FeedbackService) { }
 
@@ -198,8 +202,11 @@ export class BazarComponent implements OnInit, OnDestroy {
    */
   public viewInstalledAppDetails(app: AppManifest) {
 
-    // Foo bar
-    console.log(app);
+    // Opening up modal dialog passing in reference to app's manifest.
+    this.dialog.open(ViewInstalledAppDialogComponent, {
+      data: app,
+      width: '80%',
+    });
   }
 
   /*
@@ -292,7 +299,11 @@ export class BazarComponent implements OnInit, OnDestroy {
       if (download.result === 'success') {
 
         // Now invoking install which actually initialises the app, and executes its startup files.
-        this.bazarService.install(app.folder_name, app.version, app.name).subscribe((install: Response) => {
+        this.bazarService.install(
+          app.folder_name,
+          app.version,
+          app.name,
+          token).subscribe((install: Response) => {
 
           // Verifying process was successful.
           if (install.result === 'success') {
@@ -357,10 +368,41 @@ export class BazarComponent implements OnInit, OnDestroy {
   private loadManifests() {
 
     // Invoking backend to load manifests.
-    this.bazarService.localManifests().subscribe((manifests: any[]) => {
+    this.bazarService.localManifests().subscribe((manifests: AppManifest[]) => {
 
       // Assigning model.
       this.manifests = manifests || [];
-    });
+
+      // Checking if any of the apps have available updates.
+      for (const idx of this.manifests) {
+
+        // Retrieving app from Bazar server.
+        this.bazarService.getApp(idx.module_name).subscribe((result: BazarApp[]) => {
+
+          // Making sure app is still available in Bazar, and if not, simply ignoring it.
+          if (result && result.length > 0) {
+
+            // Checking version of app, to see if we have an available update of it.
+            const version = result[0].version;
+
+            // Invoking local backend to do a comparison of currently installed app's version, and Bazar latest version.
+            this.configService.versionCompare(idx.version, version).subscribe((versionCompare: any) => {
+
+              /*
+               * Checking if app has an update.
+               *
+               * Notice, if version comparison returned -1, this implies that the local version is
+               * less than the current Bazar version, and hence app has an update in the Bazar.
+               */
+              if (+versionCompare.result === -1) {
+
+                // App has an update.
+                idx.has_update = true;
+              }
+            });
+          }
+        });
+      }
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
