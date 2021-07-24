@@ -1,5 +1,20 @@
 
 mat-card {
+  .update-available a {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 1.2rem;
+    padding: 1rem;
+    box-shadow: 0 0 5px rgb(0,0,0,.2);
+    border-radius: 15px 0px 0px 0px;
+    color: #8080ff;
+    transition: box-shadow .2s ease-in-out;
+  }
+  .update-available a:hover {
+    box-shadow: 0 0 5px rgb(0,0,0,.5);
+    transition: box-shadow .2s ease-in-out;
+  }
   max-width: 50rem;
   margin-left: auto;
   margin-right: auto;

@@ -173,7 +173,20 @@ export class FileService {
   }
 
   /**
-   * Re-installs a module
+   * Returns whether or not the application can be successfully installed or not.
+   * 
+   * @param required_magic_version Minimum Magic version required by app to function correctly
+   */
+  public canInstall(required_magic_version: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<Response>(
+      '/magic/modules/system/file-system/can-install?required_magic_version=' +
+      encodeURIComponent(required_magic_version));
+  }
+
+  /**
+   * (Re) installs a module
    * 
    * @param folder Path of folder to re-install
    */
