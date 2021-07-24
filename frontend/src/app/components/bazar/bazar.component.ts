@@ -191,8 +191,23 @@ export class BazarComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Opens a modal dialog showing the user details about his already installed app.
+   * 
+   * @param app Which app to view details about
+   */
+  public viewInstalledAppDetails(app: AppManifest) {
+
+    // Foo bar
+    console.log(app);
+  }
+
   /*
    * Private helper methods.
+   */
+
+  /*
+   * Lists apps from Bazar server.
    */
   private getItems() {
 

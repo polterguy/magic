@@ -49,7 +49,7 @@
       mat-raised-button>
       <span class="title">{{idx.name}}</span>
       <span class="price">€{{idx.price}}</span>
-      <mat-icon matSuffix color="primary">add_circle</mat-icon>
+      <mat-icon matSuffix color="primary">get_app</mat-icon>
     </button>
 
     <div class="clearfix"></div>
@@ -75,10 +75,11 @@
   <button
     *ngFor="let idx of manifests"
     class="app"
+    (click)="viewInstalledAppDetails(idx)"
     mat-raised-button>
     <span class="title">{{idx.name}}</span>
-    <span class="price">Purchased</span>
-    <mat-icon matSuffix color="primary">add_circle</mat-icon>
+    <span class="price">Owned</span>
+    <mat-icon matSuffix color="primary">extension</mat-icon>
   </button>
 
   <div class="clearfix"></div>
