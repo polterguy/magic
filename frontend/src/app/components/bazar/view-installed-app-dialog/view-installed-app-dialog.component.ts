@@ -90,7 +90,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
           if (install.result === 'success') {
 
             // Application was successfully initialised.
-            this.feedbackService.showInfo('Application was successfully updated');
+            this.feedbackService.showInfo('Application was successfully updated. You probably want to store the ZIP file later.');
 
             // This will signal parent form that app was updated, triggering refreshing of manifests.
             this.dialogRef.close(this.data);
@@ -98,6 +98,9 @@ export class ViewInstalledAppDialogComponent implements OnInit {
         }, (error: any) => this.feedbackService.showError(error));
       }
     }, (error: any) => this.feedbackService.showError(error));
+
+    // Downloading module to local computer.
+    this.bazarService.downloadLocally(this.data.token);
   }
 
   /**
