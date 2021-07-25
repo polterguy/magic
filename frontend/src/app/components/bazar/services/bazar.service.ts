@@ -131,9 +131,25 @@ export class BazarService {
     }
 
     // Invoking Bazar to list apps.
-    return this.httpClient.get<Count>(environment.bazarUrl +
+    return this.httpClient.get<Count>(
+      environment.bazarUrl +
       '/magic/modules/bazar/apps-count' +
       query);
+  }
+
+  /**
+   * Subscribes the specified user to our newsletter.
+   * 
+   * @param name Full name of user
+   * @param email Email address belonging to user
+   */
+  public subscribe(name: string, email: string) {
+
+    return this.httpClient.get<Response>(
+      environment.bazarUrl +
+      '/magic/modules/bazar/subscribe?name=' +
+      encodeURIComponent(name) +
+      '&email=' + encodeURIComponent(email));
   }
 
   /**

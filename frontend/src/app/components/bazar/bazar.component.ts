@@ -29,6 +29,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
+import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -196,6 +197,17 @@ export class BazarComponent implements OnInit, OnDestroy {
 
     // Destroying subscription.
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Invoked when user wants to subscribe to our newsletter.
+   */
+  public subscribe() {
+
+    // Opening up modal dialog passing in reference to Bazar app.
+    this.dialog.open(SubscribeDialogComponent, {
+      width: '550px'
+    });
   }
 
   /**
