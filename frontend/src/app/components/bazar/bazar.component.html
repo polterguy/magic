@@ -22,6 +22,14 @@
 
 <mat-card [class]="hubConnection ? 'invisible' : ''">
 
+  <button
+    mat-icon-button
+    class="subscribe"
+    matTooltip="Subscribe to our newsletter"
+    (click)="subscribe()">
+    <mat-icon>email</mat-icon>
+  </button>
+
   <h2>Bazar</h2>
 
   <mat-form-field [class]="hideFilterControl ? 'invisible' : 'fill-width'" appearance="outline">

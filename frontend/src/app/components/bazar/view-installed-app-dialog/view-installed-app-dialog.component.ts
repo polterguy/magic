@@ -104,6 +104,23 @@ export class ViewInstalledAppDialogComponent implements OnInit {
   }
 
   /**
+   * Invoked when user wants to uninstall app from local server.
+   */
+  public uninstall() {
+
+    // Invoking backend to delete module folder.
+    this.fileService.deleteFolder('/modules/' + this.data.module_name + '/').subscribe((result: Response) => {
+
+      // Providing feedback to user and closing dialog.
+      this.feedbackService.showInfo('Application was successfully uninstalled from local server');
+
+      // Notice, passing in data to caller makes sure parent form reloads installed app manifests.
+      this.dialogRef.close(this.data);
+
+    }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
    * Invoked when user wants to close dialog.
    */
   public close() {

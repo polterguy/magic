@@ -1,5 +1,11 @@
 
 mat-card {
+  .subscribe {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    color: rgb(128, 128, 128);
+  }
   max-width: 850px;
   margin-left: auto;
   margin-right: auto;

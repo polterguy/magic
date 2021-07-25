@@ -22,7 +22,7 @@
     *ngIf="!installed && canInstall"
     color="primary"
     matTooltip="Click here to purchase the module"
-    (click)="purchase()">{{data.price === 0 ? 'Install' : 'Buy'}}</button>
+    (click)="purchase()">{{data.price === 0 ? 'Install' : 'Buy now'}}</button>
 
   <div *ngIf="installed" class="already-installed">
     You already own this module
