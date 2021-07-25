@@ -40,10 +40,11 @@
 
   <mat-checkbox
     *ngIf="data.code !== -1"
-    [(ngModel)]="has_code">I have a promo code</mat-checkbox>
+    matTooltip="I have a promo code"
+    [(ngModel)]="has_code">Code</mat-checkbox>
 
   <mat-checkbox
-    matTooltip="Subscribe to our newsletter"
+    matTooltip="Subscribe to security updates and product information from Server Gardens"
     [(ngModel)]="data.subscribe">Subscribe</mat-checkbox>
 
   <button

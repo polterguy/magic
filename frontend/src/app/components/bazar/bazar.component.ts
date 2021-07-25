@@ -357,7 +357,7 @@ export class BazarComponent implements OnInit, OnDestroy {
           if (install.result === 'success') {
 
             // Success!
-            this.feedbackService.showInfo('Module was successfully installed on your server, and an email with the app\'s ZIP file has been sent to you');
+            this.feedbackService.showInfo('Module was successfully installed on your server. Make sure you verify your email address such that we can send you important update information about your app.');
 
             /*
              * Making sure we turn OFF socket connections if these have been created.
