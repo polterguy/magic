@@ -397,6 +397,10 @@ export class BazarComponent implements OnInit, OnDestroy {
 
                 }, (error: any) => this.feedbackService.showError(error));
               }
+
+              // Downloading module to local computer.
+              this.bazarService.downloadLocally(app.folder_name);
+
             }, (error: any) => this.feedbackService.showError(error));
 
           } else {
@@ -413,9 +417,6 @@ export class BazarComponent implements OnInit, OnDestroy {
       }
 
     }, (error: any) => this.feedbackService.showError(error));
-
-    // Downloading module to local computer.
-    this.bazarService.downloadLocally(token);
   }
 
   /*

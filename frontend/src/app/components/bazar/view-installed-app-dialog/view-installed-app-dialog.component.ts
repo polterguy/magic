@@ -94,13 +94,13 @@ export class ViewInstalledAppDialogComponent implements OnInit {
 
             // This will signal parent form that app was updated, triggering refreshing of manifests.
             this.dialogRef.close(this.data);
+
+            // Downloading module to local computer.
+            this.bazarService.downloadLocally(this.data.module_name);
           }
         }, (error: any) => this.feedbackService.showError(error));
       }
     }, (error: any) => this.feedbackService.showError(error));
-
-    // Downloading module to local computer.
-    this.bazarService.downloadLocally(this.data.token);
   }
 
   /**

@@ -75,6 +75,8 @@ if
                   get-value:x:@.arguments/*/name
                   .:
          .lambda
+
+            // Removing [version] node from existing manifest, to use version supplied by caller.
             remove-nodes:x:@.manifest/*/version
 
 
