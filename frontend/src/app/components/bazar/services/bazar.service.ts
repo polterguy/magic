@@ -13,6 +13,7 @@ import { BazarApp } from '../models/bazar-app.model';
 import { AppManifest } from '../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/services/http.service';
+import { FileService } from '../../files/services/file.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { environment } from '../../../../environments/environment';
 
@@ -32,7 +33,8 @@ export class BazarService {
    */
   constructor(
     private httpClient: HttpClient,
-    private httpService: HttpService) { }
+    private httpService: HttpService,
+    private fileService: FileService) { }
 
   /**
    * Retrieves the latest Magic core version as published by the Bazar.
@@ -224,10 +226,20 @@ export class BazarService {
   /**
    * Downloads module to the local computer.
    * 
-   * @param token Download token for module
+   * @param module_name Name of module to download
    */
-  public downloadLocally(token: string) {
-    window.location.href = environment.bazarUrl + '/magic/modules/bazar/download?token=' + token;
+  public downloadLocally(module_name: string) {
+
+    /*
+     * Notice, for some reasons I don't entirely understand, we'll need to wait a
+     * second before we download the app, since otherwise the manifest.hl file won't be a part
+     * of our downloaded ZIP file.
+     */
+    setTimeout(() => {
+
+      // Zipping and downloading local app module.
+      this.fileService.downloadFolder('/modules/' + module_name + '/');
+    }, 1000)
   }
 
   /**
