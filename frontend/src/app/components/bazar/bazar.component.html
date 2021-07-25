@@ -24,7 +24,7 @@
 
   <h2>Bazar</h2>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field [class]="hideFilterControl ? 'invisible' : 'fill-width'" appearance="outline">
 
     <mat-label>Filter ...</mat-label>
     <input
@@ -62,10 +62,10 @@
     #paginator
     [class]="count > paginator.pageSize ? '' : 'invisible'"
     [length]="count"
-    pageSize="10"
+    pageSize="5"
     [hidePageSize]="true"
     (page)="paged($event)"
-    [pageSizeOptions]="[10]">
+    [pageSizeOptions]="[5]">
   </mat-paginator>
 
 </mat-card>

@@ -52,6 +52,11 @@ export class BazarComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   /**
+   * If true, then filter form control should be hidden.
+   */
+  public hideFilterControl: boolean = true;
+
+  /**
    * SignalR hub connection, used to connect to Bazar server and get notifications
    * when app ise ready to be installed.
    */
@@ -131,7 +136,7 @@ export class BazarComponent implements OnInit, OnDestroy {
     if (this.authService.isRoot) {
 
       // Retrieving Bazar items from main Bazar.
-      this.getItems();
+      this.getItems(true);
 
       /*
        * Checking if we've got a "token" query parameter,
@@ -191,6 +196,15 @@ export class BazarComponent implements OnInit, OnDestroy {
 
     // Destroying subscription.
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Invoked when filter should be cleared.
+   */
+  public clearFilter() {
+
+    // Just resetting the form control's value which will trigger debounce after some milliseconds.
+    this.filterFormControl.setValue('');
   }
 
   /**
@@ -264,7 +278,7 @@ export class BazarComponent implements OnInit, OnDestroy {
   /*
    * Lists apps from Bazar server.
    */
-  private getItems() {
+  private getItems(first: boolean = false) {
 
     // Invoking service to retrieve available apps matching criteria.
     this.bazarService.listApps(
@@ -280,6 +294,14 @@ export class BazarComponent implements OnInit, OnDestroy {
 
         // Assigning model.
         this.count = count.count;
+
+        /*
+         * Checking if this is our first invocation, at which point we hide filter form control
+         * if there are fewer than 6 apps.
+         */
+        if (first) {
+          this.hideFilterControl = this.count <= 5;
+        }
       });
 
     }, (error: any) => this.feedbackService.showError(error));
