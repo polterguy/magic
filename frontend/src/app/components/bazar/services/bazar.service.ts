@@ -139,15 +139,24 @@ export class BazarService {
    * install application in his own Magic installation.
    * 
    * @param app Application user wants to purchase
+   * @param name Customer's name
    * @param email Customer's email address
+   * @param subscribe True if user wants to subscribe to our newsletter
    * @param code Optional promo code user supplied before he clicked purchase
    */
-  public purchase(app: BazarApp, email: string, promo_code?: string) {
+  public purchase(
+    app: BazarApp,
+    name: string,
+    email: string,
+    subscribe: boolean,
+    promo_code?: string) {
 
     // Creating our payload.
     const payload: any = {
       product_id: app.id,
+      name,
       customer_email: email,
+      subscribe,
       redirect_url: window.location.href.split('?')[0],
     };
 

@@ -33,6 +33,7 @@ data.connect:[generic|magic]
       table:crypto_keys
       columns
          email
+         subject
       where
          and
             fingerprint.eq:x:@signal/#/*/fingerprint
@@ -43,4 +44,5 @@ data.connect:[generic|magic]
     */
    unwrap:x:+/*
    return
-      result:x:@data.read/*/*/email
+      email:x:@data.read/*/*/email
+      name:x:@data.read/*/*/subject
