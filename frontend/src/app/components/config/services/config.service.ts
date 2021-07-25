@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Status } from '../../../models/status.model';
 import { Response } from '../../../models/response.model';
+import { NameEmailModel } from '../models/name-email.model';
 import { KeyPair } from '../../crypto/models/key-pair.model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../auth/services/auth.service';
@@ -53,7 +54,7 @@ export class ConfigService {
    public rootUserEmailAddress() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Response>('/magic/modules/system/config/email');
+    return this.httpService.get<NameEmailModel>('/magic/modules/system/config/email');
   }
 
   /**

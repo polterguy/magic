@@ -9,8 +9,12 @@
 
 <div mat-dialog-actions class="mat-dialog-actions">
 
-  <div *ngIf="!installed && canInstall" class="purchase-info">
+  <div *ngIf="!installed && canInstall && data.price > 0" class="purchase-info">
     You can purchase this module for €{{data.price}}
+  </div>
+
+  <div *ngIf="!installed && canInstall && data.price === 0" class="purchase-info">
+    You can install this app for free
   </div>
 
   <button
@@ -18,10 +22,10 @@
     *ngIf="!installed && canInstall"
     color="primary"
     matTooltip="Click here to purchase the module"
-    (click)="purchase()">Buy</button>
+    (click)="purchase()">{{data.price === 0 ? 'Install' : 'Buy'}}</button>
 
   <div *ngIf="installed" class="already-installed">
-    You have already installed this module
+    You already own this module
   </div>
 
   <div *ngIf="needsCoreUpdate" class="needs-core-update">

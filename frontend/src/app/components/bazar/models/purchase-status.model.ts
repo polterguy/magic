@@ -16,5 +16,12 @@ export class PurchaseStatus {
   /**
    * PayPal re-direct URL where user needs to go to actually pay for app.
    */
-  url: string;
+  url?: string;
+
+  /**
+   * If purchase is accepted immediately, due to app being free for instance,
+   * this will contain the download code, allowing user to download app
+   * immediately.
+   */
+  code?: string;
 }

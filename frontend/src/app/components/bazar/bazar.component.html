@@ -47,10 +47,10 @@
       *ngFor="let idx of apps"
       [class]="appIsInstalled(idx) ? 'app installed' : 'app'"
       (click)="viewApp(idx)"
-      [matTooltip]="appIsInstalled(idx) ? 'You already own this app' : 'Purchase this module from Server Gardens for €' + idx.price"
+      [matTooltip]="appIsInstalled(idx) ? 'You already own this app' : (idx.price === 0 ? 'Download this app for free' : 'Purchase this module from Server Gardens for €' + idx.price)"
       mat-raised-button>
       <span class="title">{{idx.name}}</span>
-      <span class="price">{{appIsInstalled(idx) ? 'Owned' : '€' + idx.price}}</span>
+      <span class="price">{{appIsInstalled(idx) ? 'Owned' : (idx.price === 0 ? 'Free' : '€' + idx.price)}}</span>
       <mat-icon matSuffix color="primary">get_app</mat-icon>
     </button>
 

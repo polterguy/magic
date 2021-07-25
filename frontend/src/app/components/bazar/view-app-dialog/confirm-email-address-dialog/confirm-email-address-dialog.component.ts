@@ -13,14 +13,24 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class EmailPromoCodeModel {
 
   /**
+   * Whether user wants to subscribe to our newsletter or not.
+   */
+  public subscribe: boolean;
+
+  /**
+   * Name of customer.
+   */
+  public name: string;
+
+  /**
    * Email address we should send app's ZIP file to.
    */
-  email: string;
+  public email: string;
 
   /**
    * Optional promo code user has been given.
    */
-  code?: string;
+  public code?: any;
 }
 
 /**

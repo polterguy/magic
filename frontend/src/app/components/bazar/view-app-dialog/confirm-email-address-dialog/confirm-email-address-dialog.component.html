@@ -5,6 +5,16 @@
 
   <mat-form-field class="fill-width" appearance="outline">
 
+    <mat-label class="dark">Your name</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [(ngModel)]="data.name">
+  </mat-form-field>
+
+  <mat-form-field class="fill-width" appearance="outline">
+
     <mat-label class="dark">Your email</mat-label>
     <input
       matInput
@@ -29,7 +39,12 @@
 <div mat-dialog-actions>
 
   <mat-checkbox
+    *ngIf="data.code !== -1"
     [(ngModel)]="has_code">I have a promo code</mat-checkbox>
+
+  <mat-checkbox
+    matTooltip="Subscribe to our newsletter"
+    [(ngModel)]="data.subscribe">Subscribe</mat-checkbox>
 
   <button
     mat-raised-button
