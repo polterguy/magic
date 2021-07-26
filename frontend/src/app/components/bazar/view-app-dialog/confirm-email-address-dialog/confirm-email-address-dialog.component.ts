@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /**
@@ -42,7 +42,7 @@ export class EmailPromoCodeModel {
   templateUrl: './confirm-email-address-dialog.component.html',
   styleUrls: ['./confirm-email-address-dialog.component.scss']
 })
-export class ConfirmEmailAddressDialogComponent {
+export class ConfirmEmailAddressDialogComponent implements OnInit {
 
   /**
    * If true, the user can punch a promo code.
@@ -59,9 +59,33 @@ export class ConfirmEmailAddressDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: EmailPromoCodeModel) { }
 
   /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
+
+    // Checking if user has previously ordered a product, at which point we use previously submitted data.
+    const data = localStorage.getItem('confirm-email-data');
+    if (data && data !== '') {
+
+      // Updating model.
+      const dataObj = JSON.parse(data);
+      this.data.code = dataObj.code && dataObj.code !== '' ? dataObj.code : null;
+      this.data.email = dataObj.email;
+      this.data.name = dataObj.name;
+      this.data.subscribe = dataObj.subscribe;
+      if (this.data.code) {
+        this.has_code = true;
+      }
+    }
+  }
+
+  /**
    * Invoked when user confirms his email address.
    */
   public ok() {
+
+    // Saving data in local storage to simplify process later.
+    localStorage.setItem('confirm-email-data', JSON.stringify(this.data));
 
     // Closing dialog.
     this.dialogRef.close(this.data);

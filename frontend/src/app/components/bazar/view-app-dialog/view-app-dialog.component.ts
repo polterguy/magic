@@ -73,7 +73,7 @@ export class ViewAppDialogComponent implements OnInit {
   /**
    * Implementation of OnInit.
    */
-  ngOnInit() {
+  public ngOnInit() {
 
     // Checking if module is already installed.
     this.fileService.listFolders('/modules/').subscribe((folders: string[]) => {
