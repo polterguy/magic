@@ -71,6 +71,10 @@ export class SubscribeDialogComponent implements OnInit {
 
           // Providing feedback to user.
           this.feedbackService.showInfo('We successfully subscribed you to our newsletter');
+
+          // Closing dialog.
+          this.dialogRef.close();
+
         }
       }, (error: any) => this.feedbackService.showError(error));
   }
