@@ -50,6 +50,18 @@ export class ConfirmEmailAddressDialogComponent implements OnInit {
   public has_code: boolean = false;
 
   /**
+   * If this is true user has previously subscribed to newsletter, so we hide the
+   * checkbox allowing him to sign up.
+   */
+  public hideSubscribeCheckBox: boolean = false;
+
+  /**
+   * If this is true, user has previously supplied a promo code, and hence
+   * we associate current purchase with the same promo code.
+   */
+  public disablePromoCode: boolean = false;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param data Root user's email address
@@ -75,7 +87,14 @@ export class ConfirmEmailAddressDialogComponent implements OnInit {
       this.data.subscribe = dataObj.subscribe;
       if (this.data.code) {
         this.has_code = true;
+        this.disablePromoCode = true;
       }
+    }
+
+    // Checking if user has previously subscribed to our newsletter, at which point we hide the checkbox for subscribing
+    const subscribingStr = localStorage.getItem('subscribes-to-newsletter');
+    if (subscribingStr && subscribingStr !== '') {
+      this.hideSubscribeCheckBox = JSON.parse(subscribingStr).subscribing;
     }
   }
 

@@ -28,6 +28,7 @@
     <mat-label class="dark">Promo code</mat-label>
     <input
       matInput
+      [disabled]="disablePromoCode"
       type="text"
       autocomplete="off"
       [(ngModel)]="data.code">
@@ -38,11 +39,12 @@
 <div mat-dialog-actions>
 
   <mat-checkbox
-    *ngIf="data.code !== -1"
+    *ngIf="data.code !== -1 && !disablePromoCode"
     matTooltip="I have a promo code"
     [(ngModel)]="has_code">Code</mat-checkbox>
 
   <mat-checkbox
+    *ngIf="!hideSubscribeCheckBox"
     matTooltip="Subscribe to important security updates and product information from Server Gardens about your product and related products"
     [(ngModel)]="data.subscribe">Subscribe</mat-checkbox>
 

@@ -23,6 +23,7 @@
 <mat-card [class]="hubConnection ? 'invisible' : ''">
 
   <button
+    *ngIf="!subscribing"
     mat-icon-button
     class="subscribe"
     matTooltip="Subscribe to our newsletter"

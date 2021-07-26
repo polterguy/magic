@@ -25,11 +25,12 @@ import { AuthService } from '../auth/services/auth.service';
 import { FileService } from '../files/services/file.service';
 import { ConfigService } from '../config/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
+import { NameEmailModel } from '../config/models/name-email.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
+import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
-import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -87,6 +88,11 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Manifests for already installed apps.
    */
   public manifests: AppManifest[] = null;
+
+  /**
+   * If true, the user has already subscribed to our newsletter.
+   */
+  public subscribing: boolean = false;
 
   /**
    * Paginator for paging apps.
@@ -174,6 +180,17 @@ export class BazarComponent implements OnInit, OnDestroy {
         this.install(<BazarApp>msg.content.app, <string>msg.content.code);
       }
     });
+
+    // Checking if user has already subscribed to newsletter.
+    const subscribesStr = localStorage.getItem('subscribes-to-newsletter');
+    if (subscribesStr && subscribesStr !== '') {
+      const subObj = JSON.parse(subscribesStr);
+      if (subObj.subscribing === true) {
+
+        // User has already subscribed to newsletter.
+        this.subscribing = true;
+      }
+    }
   }
 
   /**
@@ -205,8 +222,17 @@ export class BazarComponent implements OnInit, OnDestroy {
   public subscribe() {
 
     // Opening up modal dialog passing in reference to Bazar app.
-    this.dialog.open(SubscribeDialogComponent, {
+    let dialogRef = this.dialog.open(SubscribeDialogComponent, {
       width: '550px'
+    });
+
+    // Subscribing to afterClose such that we can hide email icon in case user subscribes.
+    dialogRef.afterClosed().subscribe((model: NameEmailModel) => {
+
+      // Checking if user chose to subscribe.
+      if (model) {
+        this.subscribing = true;
+      }
     });
   }
 
