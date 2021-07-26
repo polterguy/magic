@@ -81,7 +81,7 @@ export class SubscribeDialogComponent implements OnInit {
         if (result.result === 'success') {
 
           // Providing feedback to user.
-          this.feedbackService.showInfo('We successfully subscribed you to our newsletter');
+          this.feedbackService.showInfo('Please confirm your email address by clicking the link in the email we sent you');
 
         } else {
 
