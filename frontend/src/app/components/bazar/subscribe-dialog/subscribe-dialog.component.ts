@@ -53,7 +53,8 @@ export class SubscribeDialogComponent implements OnInit {
 
       // Assigning model.
       this.model = result;
-    });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -72,10 +73,16 @@ export class SubscribeDialogComponent implements OnInit {
           // Providing feedback to user.
           this.feedbackService.showInfo('We successfully subscribed you to our newsletter');
 
-          // Closing dialog.
-          this.dialogRef.close();
+        } else {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfo('It seems that you\'re already subscribed to our newsletter');
 
         }
+
+        // Closing dialog.
+        this.dialogRef.close();
+
       }, (error: any) => this.feedbackService.showError(error));
   }
 

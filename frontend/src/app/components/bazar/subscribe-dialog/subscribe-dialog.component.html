@@ -8,7 +8,7 @@
     to Magic and your apps, special offers, in addition to tips and tricks related to the system.
   </p>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field *ngIf="model" class="fill-width" appearance="outline">
 
     <mat-label class="dark">Your name</mat-label>
     <input
@@ -18,7 +18,7 @@
       [(ngModel)]="model.name">
   </mat-form-field>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field *ngIf="model" class="fill-width" appearance="outline">
 
     <mat-label class="dark">Your email</mat-label>
     <input
