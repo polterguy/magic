@@ -54,6 +54,16 @@ export class SubscribeDialogComponent implements OnInit {
       // Assigning model.
       this.model = result;
 
+      // Checking if user has previously ordered a product, and or subscribed to our newsletter.
+      const data = localStorage.getItem('confirm-email-data');
+      if (data && data !== '') {
+
+        // Updating model.
+        const dataObj = JSON.parse(data);
+        this.model.email = dataObj.email;
+        this.model.name = dataObj.name;
+      }
+  
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -77,11 +87,15 @@ export class SubscribeDialogComponent implements OnInit {
 
           // Providing feedback to user.
           this.feedbackService.showInfo('It seems that you\'re already subscribed to our newsletter');
-
         }
 
+        // Storing the fact that user has subscribed to newsletter in local storage.
+        localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+          subscribing: true,
+        }));
+
         // Closing dialog.
-        this.dialogRef.close();
+        this.dialogRef.close(this.model);
 
       }, (error: any) => this.feedbackService.showError(error));
   }
