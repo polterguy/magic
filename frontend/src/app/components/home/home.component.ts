@@ -134,6 +134,31 @@ export class HomeComponent implements OnInit, OnDestroy {
           // Oops, failure to verify token.
           this.feedbackService.showError(error);
         });
+
+      } else {
+
+        // No token supplied, checking for hash.
+        const hash = params['hash'];
+        if (hash) {
+
+          // Need to set the current backend first.
+          this.backendService.current = {
+            url: params['url'],
+            username: params['username'],
+          };
+
+          // Registration confirmation of email address.
+          this.authService.verifyEmail(params['username'], hash).subscribe((result: Response) => {
+
+            // Checking for success.
+            if (result.result === 'success') {
+
+              // Success.
+              this.feedbackService.showInfo('You successfully confirmed your email address');
+              this.router.navigate(['/']);
+            }
+          });
+        }
       }
     });
   }

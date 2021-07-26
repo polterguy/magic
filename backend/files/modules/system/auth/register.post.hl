@@ -108,18 +108,16 @@ data.connect:magic
  */
 config.get:"magic:smtp:host"
 if
-   not
-      eq
-         get-value:x:@config.get
-         .
+   and
+      not
+         eq
+            get-value:x:@config.get
+            .
+      not
+         eq
+            get-value:x:@config.get
+            .:
    .lambda
-
-      /*
-       * We have some sort of SMTP settings section in our configuration.
-       * Loading up email template, which is modified and parametrized
-       * according to input arguments.
-       */
-      io.file.load:/modules/system/auth/templates/register.html
 
       /*
        * Hashing the JWT secret combined with the user's selected username,
@@ -140,21 +138,12 @@ if
       set-value:x:@.url
          strings.concat
             get-value:x:@.arguments/*/frontendUrl
-            .:?token=
+            .:?hash=
             get-value:x:@.token
             .:&username=
             strings.url-encode:x:@.arguments/*/username
             .:&url=
             strings.url-encode:x:@.arguments/*/backendUrl
-
-      /*
-       * Performing substitution in email template.
-       */
-      .body
-      set-value:x:@.body
-         strings.replace:x:@io.file.load
-            .:{{url}}
-            get-value:x:@.url
 
       /*
        * Checking if site is configured such that users needs to
@@ -172,9 +161,13 @@ if
       set-value:x:@.recipient
          config.get:"magic:auth:registration:confirm-email"
       if
-         eq
-            get-value:x:@.recipient
-            .
+         or
+            eq
+               get-value:x:@.recipient
+               .
+            eq
+               get-value:x:@.recipient
+               .:
          .lambda
 
             /*
@@ -204,13 +197,13 @@ if
        * Now we can send an email to user.
        */
       unwrap:x:+/**
-      mail.smtp.send
-         message
-            to
-               .:x:@.recipient
-            subject:Thank you for registering
-            entity:text/html
-               content:x:@.body
+      signal:magic.emails.send
+         subject:Thank you for registering
+         template-file:/modules/system/auth/templates/register.html
+         substitutes
+            url:x:@.url
+         mime-type:text/html
+         email:x:@.recipient
 
 else
 
@@ -235,5 +228,6 @@ log.info
 /*
  * Returns success to caller.
  */
+unwrap:x:+/*
 return-nodes
-   result:success
+   result:x:@.result
