@@ -83,10 +83,15 @@ export class SubscribeDialogComponent implements OnInit {
           // Providing feedback to user.
           this.feedbackService.showInfo('Please confirm your email address by clicking the link in the email we sent you');
 
-        } else if (result.result === 'already-subscribed') {
+        } else if (result.result === 'no-change') {
 
           // Providing feedback to user.
-          this.feedbackService.showInfo('It seems that you\'re already subscribed to our newsletter');
+          this.feedbackService.showInfo('We could not add you to our newsletter, did you already subscribe previously?');
+
+        } else if (result.result === 'please-confirm') {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfo('We have already sent a confirm email to you. Please check your inbox for an email from ServerGardens.Com');
         }
 
         // Storing the fact that user has subscribed to newsletter in local storage.
