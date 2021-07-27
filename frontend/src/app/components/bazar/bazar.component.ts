@@ -352,7 +352,8 @@ export class BazarComponent implements OnInit, OnDestroy {
   private waitForCallback(token: string) {
 
     // Retrieving currently installing app from local storage.
-    const app = <BazarApp>JSON.parse(localStorage.getItem('currently-inctalled-app'));
+    const app = <BazarApp>JSON.parse(localStorage.getItem('currently-installed-app'));
+    localStorage.removeItem('currently-installed-app');
 
     // Creating our SignalR hub.
     let builder = new HubConnectionBuilder();
