@@ -108,12 +108,12 @@
 
           <span class="details-item full-width">
             <strong>Content</strong>
-            <span class="pre-formatted">{{el.content}}</span>
+            <span class="pre-formatted copy" (click)="copyContent(el.content)">{{el.content}}</span>
           </span>
 
           <span *ngIf="el.exception" class="details-item full-width">
             <strong>Exception</strong>
-            <span class="pre-formatted">{{el.exception}}</span>
+            <span class="pre-formatted copy" (click)="copyContent(el.exception)">{{el.exception}}</span>
           </span>
 
           <button

@@ -71,6 +71,13 @@
 
           <button
             mat-icon-button
+            matTooltip="Copy username to clipboard"
+            (click)="copyUsername(el)">
+            <mat-icon>bookmark</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
             [disabled]="el.username === 'root'"
             matTooltip="Change password"
             (click)="editUser(el)">

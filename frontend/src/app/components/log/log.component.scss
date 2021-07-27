@@ -43,6 +43,9 @@ table.log-items {
     span.pre-formatted {
       white-space: pre-wrap;
     }
+    span.copy {
+      cursor: pointer;
+    }
   }
   .full-width {
     margin-top: 2rem;

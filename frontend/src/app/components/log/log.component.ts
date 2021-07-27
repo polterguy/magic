@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -61,12 +62,15 @@ export class LogComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Needed to display feedback to user
    * @param logService Log HTTP service to use for retrieving log items
+   * @param clipboard Needed to be able to access the clipboard
    * @param route Activated route service to subscribe to router changed events
    */
   constructor(
     private feedbackService: FeedbackService,
     private logService: LogService,
+    private clipboard: Clipboard,
     private route: ActivatedRoute) { }
 
   /**
@@ -207,5 +211,17 @@ export class LogComponent implements OnInit {
    */
   public showLinkTip() {
     this.feedbackService.showInfo('Scroll to the top of the page to see the item');
+  }
+
+  /**
+   * Puts the specified content into the user's clipboard
+   * 
+   * @param content Content to put on to clipboard
+   */
+  public copyContent(content: string) {
+
+    // Putting content to clipboard and giving user some feedback.
+    this.clipboard.copy(content);
+    this.feedbackService.showInfoShort('The specified content can be found on your clipboard');
   }
 }
