@@ -200,6 +200,18 @@ export class UsersComponent implements OnInit {
   }
 
   /**
+   * Put user's username into clipboard
+   * 
+   * @param user User to copy
+   */
+  public copyUsername(user: User) {
+
+    // Adding username to clipboard and providing some feedback to user.
+    this.clipboard.copy(user.username);
+    this.feedbackService.showInfoShort('User\s username can be found on your clipboard');
+  }
+
+  /**
    * Put user in jail for some time, preventing him or her to access Magic
    * for some specified amount of time.
    * 
