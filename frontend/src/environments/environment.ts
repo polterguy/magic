@@ -11,5 +11,5 @@ export const environment = {
       password: 'root',
      },
   ],
-  bazarUrl: 'http://localhost:55247'
+  bazarUrl: 'https://api.servergardens.com'
 };
