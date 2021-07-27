@@ -182,7 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private retrieveBackendVersion() {
 
     // Retrieving backend version if we're authenticated.
-    if (this.authService.authenticated) {
+    if (this.authService.isRoot) {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {
