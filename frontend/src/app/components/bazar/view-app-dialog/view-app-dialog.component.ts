@@ -155,7 +155,7 @@ export class ViewAppDialogComponent implements OnInit {
                  * Hence, storing currently viewed app in local storage to make it more
                  * easily retrieved during callback.
                  */
-                localStorage.setItem('currently-inctalled-app', JSON.stringify(this.data));
+                localStorage.setItem('currently-installed-app', JSON.stringify(this.data));
 
                 // Re-directing to PayPal.
                 window.location.href = status.url;
