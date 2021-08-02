@@ -1,0 +1,41 @@
+
+
+<mat-card>
+
+  <h3>Change password</h3>
+
+  <div class="button-strip">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>New password</mat-label>
+      <input
+        matInput
+        type="password"
+        autocomplete="off"
+        [(ngModel)]="password">
+  
+    </mat-form-field>
+  
+    <mat-form-field appearance="outline">
+
+      <mat-label>Repeat password</mat-label>
+      <input
+        matInput
+        type="password"
+        autocomplete="off"
+        [(ngModel)]="repeatPassword">
+
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      class="button"
+      (click)="changePassword()"
+      color="primary">
+      Save
+    </button>
+
+  </div>
+
+</mat-card>
