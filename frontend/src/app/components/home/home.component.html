@@ -163,6 +163,15 @@
     </button>
 
     <button
+      *ngIf="authService.authenticated"
+      mat-raised-button
+      routerLink="/profile"
+      matTooltip="Edit your profile">
+      <mat-icon matSuffix color="primary">account_circle</mat-icon>
+      <span>Profile</span>
+    </button>
+
+    <button
       *ngIf="authService.isRoot"
       mat-raised-button
       routerLink="/bazar"

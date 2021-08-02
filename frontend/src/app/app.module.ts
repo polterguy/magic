@@ -150,6 +150,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
 import { ViewReadmeDialogComponent } from './components/bazar/view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './components/bazar/view-installed-app-dialog/view-installed-app-dialog.component';
 import { SubscribeDialogComponent } from './components/bazar/subscribe-dialog/subscribe-dialog.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -244,6 +245,7 @@ import { SubscribeDialogComponent } from './components/bazar/subscribe-dialog/su
     ViewReadmeDialogComponent,
     ViewInstalledAppDialogComponent,
     SubscribeDialogComponent,
+    ProfileComponent,
   ],
   imports: [
     FormsModule,

@@ -19,6 +19,7 @@ import { FilesComponent } from './components/files/files.component';
 import { AboutComponent } from './components/about/about.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CryptoComponent } from './components/crypto/crypto.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { SocketsComponent } from './components/sockets/sockets.component';
 import { TerminalComponent } from './components/terminal/terminal.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
+  { path: 'profile', component: ProfileComponent },
   { path: 'sockets', component: SocketsComponent },
   { path: 'terminal', component: TerminalComponent },
   { path: 'file-system', component: FilesComponent },
