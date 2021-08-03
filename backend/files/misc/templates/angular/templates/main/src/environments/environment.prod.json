@@ -1,0 +1,6 @@
+{
+  "apiUrl": "[[apiUrl]]",
+  "apiDomain": "[[environmentDomain]]",
+  "version": "1.0.0",
+  "default_language": "en-US"
+}
