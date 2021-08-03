@@ -25,6 +25,17 @@
 
 <mat-form-field class="form-field form-field-double" appearance="outline">
 
+  <mat-label>API</mat-label>
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="apiUrl">
+
+</mat-form-field>
+
+<mat-form-field class="form-field form-field-double" appearance="outline">
+
   <mat-label>Copyright</mat-label>
   <input
     matInput
@@ -40,7 +51,7 @@
     mat-raised-button
     color="primary"
     class="generate-button"
-    [disabled]="!template || name === ''"
+    [disabled]="!template || name === '' || apiUrl === ''"
     (click)="generate()">
     Generate
   </button>

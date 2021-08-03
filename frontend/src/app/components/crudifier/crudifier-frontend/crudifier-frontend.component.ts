@@ -6,6 +6,7 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
+import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { CrudifierFrontendExtraComponent } from './crudifier-frontend-extra/crudifier-frontend-extra.component';
@@ -37,6 +38,11 @@ export class CrudifierFrontendComponent implements OnInit {
   public name = '';
 
   /**
+   * The API URL to bind the frontend towards.
+   */
+  public apiUrl = '';
+
+  /**
    * Copyright notice to use for generated files.
    */
   public copyright = '';
@@ -47,11 +53,13 @@ export class CrudifierFrontendComponent implements OnInit {
    * @param resolver Needed to be able to create component factory to create dynamically inject extra information component
    * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
    * @param messageService Needed to be able to publish messages for creating child component
+   * @param backendService Needed to populate the default value of the API URL.
    */
   constructor(
     private resolver: ComponentFactoryResolver,
     private endpointService: EndpointService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private backendService: BackendService) { }
 
   /**
    * Implementation of OnInit.
@@ -64,6 +72,9 @@ export class CrudifierFrontendComponent implements OnInit {
       // Assigning result of invocation to model.
       this.templates = result || [];
     });
+
+    // Defaulting API URL to current backend's URL.
+    this.apiUrl = this.backendService.current.url;
   }
 
   /**
@@ -104,6 +115,7 @@ export class CrudifierFrontendComponent implements OnInit {
         template: this.template,
         name: this.name,
         copyright: this.copyright,
+        apiUrl: this.apiUrl
       }
     });
   }
