@@ -6,6 +6,8 @@
 .arguments
    templateName:string
    apiUrl:string
+   frontendUrl:string
+   email:string
    name:string
    copyright:string
    endpoints:*
@@ -16,6 +18,15 @@
  * Ensures user is authorized to access endpoint.
  */
 auth.ticket.verify:root
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/email
+validators.email:x:@.arguments/*/email
+validators.mandatory:x:@.arguments/*/apiUrl
+validators.url:x:@.arguments/*/apiUrl
 
 
 /*
@@ -32,6 +43,8 @@ add:x:+/+
 unwrap:x:+/*
 io.file.execute:x:@strings.concat
    apiUrl:x:@.arguments/*/apiUrl
+   frontendUrl:x:@.arguments/*/frontendUrl
+   email:x:@.arguments/*/email
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
 

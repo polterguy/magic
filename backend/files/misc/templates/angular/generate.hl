@@ -1,14 +1,11 @@
 
 /*
- * Generates an Angular dark frontend for you wrapping the given [endpoints].
- * Frontend will contain one grid component for each CRUD method group supplied,
+ * Generates an Angular frontend for you wrapping the given [endpoints].
+ * The frontend will contain one grid component for each CRUD method group supplied,
  * in addition to an edit/create modal dialogue, and an HTTP service endpoint
  * for each HTTP REST endpoint you supply.
- *
- * In addition, the generated frontend will also contain some helper components,
- * for managing users, changing password of currently logged in user, etc.
  */
-.description:Generates a light Angular frontend based upon ngx-generator and returns to client as a ZIP file
+.description:Generates an Angular frontend based upon ngx-generator and returns it to the client as a ZIP file
 
 
 /*
@@ -404,6 +401,24 @@ for-each:x:@.main-files/*
 
 
    /*
+    * Replacing [[frontendUrl]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[frontendUrl]]
+         get-value:x:@.arguments/*/frontendUrl
+
+
+   /*
+    * Replacing [[email]]
+    */
+   set-value:x:@.dp/#/*
+      strings.replace:x:@.dp/#/*
+         .:[[email]]
+         get-value:x:@.arguments/*/email
+
+
+   /*
     * Replacing [[router-links]]
     */
    set-value:x:@.dp/#/*
@@ -470,6 +485,18 @@ for-each:x:@.components/*
 
 
 /*
+ * Some template fields needs the name in to-lower form, without spaces.
+ */
+.name-lowers
+set-value:x:@.name-lowers
+   strings.to-lower:x:@.arguments/*/name
+set-value:x:@.name-lowers
+   strings.replace-not-of:x:@.name-lowers
+      .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
+      .:_
+
+
+/*
  * Iterating through each [.main-files] and doing substitutions
  * according to specifications and meta information.
  *
@@ -490,6 +517,15 @@ for-each:x:@.main-files/*/*
       strings.replace:x:@.dp/#
          .:[[name]]
          get-value:x:@.arguments/*/name
+
+
+   /*
+    * Replacing all [[name-lowers]] occurrencies.
+    */
+   set-value:x:@.dp/#
+      strings.replace:x:@.dp/#
+         .:[[name-lowers]]
+         get-value:x:@.name-lowers
 
 
    /*

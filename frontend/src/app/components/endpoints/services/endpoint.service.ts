@@ -343,6 +343,8 @@ export class EndpointService {
    * 
    * @param templateName Name of template to use
    * @param apiUrl API root URL to use when generating template
+   * @param frontendUrl Frontend URL of where app is supposed to be deployed
+   * @param email Email address of user required to renew SSL certificate
    * @param name Name of application
    * @param copyright Copyright notice to put at top of all files
    * @param endpoints Endpoints you want to embed into your result
@@ -351,6 +353,8 @@ export class EndpointService {
   public generate(
     templateName: string,
     apiUrl: string,
+    frontendUrl: string,
+    email: string,
     name: string,
     copyright: string,
     endpoints: any[],
@@ -360,6 +364,8 @@ export class EndpointService {
       const payload = {
         templateName,
         apiUrl,
+        frontendUrl,
+        email,
         name,
         copyright,
         endpoints,

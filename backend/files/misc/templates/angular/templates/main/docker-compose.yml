@@ -5,8 +5,8 @@ version: "2"
 services:
 
   # Your app's main container
-  sakila:
-    container_name: sakila
+  [[name-lowers]]:
+    container_name: [[name-lowers]]
     restart: unless-stopped
     build:
       context: .
@@ -17,9 +17,9 @@ services:
     environment:
 
       # REPLACE THESE NEXT 3 PARTS WITH YOUR OWN DOMAIN/EMAIL
-      - VIRTUAL_HOST=sakila.servergardens.com
-      - LETSENCRYPT_HOST=sakila.servergardens.com
-      - LETSENCRYPT_EMAIL=thomas@servergardens.com
+      - VIRTUAL_HOST=[[frontendUrl]]
+      - LETSENCRYPT_HOST=[[frontendUrl]]
+      - LETSENCRYPT_EMAIL=[[email]]
 
     networks:
       - proxy
