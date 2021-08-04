@@ -1,5 +1,24 @@
 
-<mat-form-field class="form-field" appearance="outline">
+<h3>Main settings</h3>
+
+<mat-form-field
+  class="form-field"
+  matTooltip="The name of your app"
+  appearance="outline">
+
+  <mat-label>Name</mat-label>
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="name">
+
+</mat-form-field>
+
+<mat-form-field
+  class="form-field"
+  matTooltip="Type of template you want to use"
+  appearance="outline">
 
   <mat-label>Template</mat-label>
   <mat-select
@@ -12,29 +31,10 @@
 
 </mat-form-field>
 
-<mat-form-field class="form-field" appearance="outline">
-
-  <mat-label>Name</mat-label>
-  <input
-    matInput
-    type="text"
-    autocomplete="off"
-    [(ngModel)]="name">
-
-</mat-form-field>
-
-<mat-form-field class="form-field form-field-double" appearance="outline">
-
-  <mat-label>API</mat-label>
-  <input
-    matInput
-    type="text"
-    autocomplete="off"
-    [(ngModel)]="apiUrl">
-
-</mat-form-field>
-
-<mat-form-field class="form-field form-field-double" appearance="outline">
+<mat-form-field
+  class="form-field form-field-double"
+  matTooltip="Common file comment for all files that can be commented"
+  appearance="outline">
 
   <mat-label>Copyright</mat-label>
   <input
@@ -45,13 +45,60 @@
 
 </mat-form-field>
 
+<h3 *ngIf="template">Deployment settings</h3>
+
+<mat-form-field
+  *ngIf="template"
+  class="form-field form-field-double"
+  matTooltip="Root API URL of the backend you intend to use for your app"
+  appearance="outline">
+
+  <mat-label>API URL</mat-label>
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="apiUrl">
+
+</mat-form-field>
+
+<mat-form-field
+  *ngIf="template"
+  class="form-field form-field-double"
+  matTooltip="Needed to wire up docker-compose file correctly with your deployment domain/URL"
+  appearance="outline">
+
+  <mat-label>Deployment domain</mat-label>
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="frontendUrl">
+
+</mat-form-field>
+
+<mat-form-field
+  *ngIf="template"
+  class="form-field form-field-double"
+  matTooltip="Needed to wire up docker-compose file correctly for creating SSL/TLS certificate from LetsEncrypt"
+  appearance="outline">
+
+  <mat-label>Email</mat-label>
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="email">
+
+</mat-form-field>
+
 <div class="button-strip">
 
   <button
     mat-raised-button
     color="primary"
     class="generate-button"
-    [disabled]="!template || name === '' || apiUrl === ''"
+    [disabled]="!template || name === '' || apiUrl === '' || frontendUrl === '' || email === ''"
     (click)="generate()">
     Generate
   </button>
