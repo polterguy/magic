@@ -1,5 +1,16 @@
 
-# Notice, this file depends upon the ".env" file which pulls in the main docker-compose.yml file for Magic.
+# Notice, this file depends upon the 'nginx-proxy' network, the 'nginx-proxy' container,
+# and the 'letsencrypt' container existing from the following docker-compose file
+#
+# https://github.com/polterguy/magic.deploy/blob/master/docker-compose.yml
+#
+# Hence, this file will only be deployable unchanged on a VPS where you have already deployed
+# Magic from before.
+#
+# If you don't want this, you'll need to pull in the 'nginx-proxy' and 'letsencrypt' containers
+# from the above file, to make sure you're correctly setting up the nGinx reverse proxy, and
+# the LetsEncrypt cerificate retriever container.
+
 version: "2"
 
 services:
