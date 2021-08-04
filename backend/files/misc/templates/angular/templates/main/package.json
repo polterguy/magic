@@ -14,7 +14,7 @@
     "write:env": "ngx-scripts env npm_package_version",
     "prettier": "prettier --write \"./{src,e2e}/**/*.{ts,js,html,scss}\"",
     "prettier:check": "prettier --list-different \"./{src,e2e}/**/*.{ts,js,html,scss}\"",
-    "postinstall": "npm run prettier -s",
+    "postinstall": "sass-migrator division **/*.scss && npm run prettier -s",
     "generate": "ng generate"
   },
   "dependencies": {
@@ -38,6 +38,7 @@
     "moment": "^2.29.1",
     "postcss": "^8.3.6",
     "rxjs": "^6.6.3",
+    "sass-migrator": "^1.5.1",
     "tslib": "^2.0.1",
     "zone.js": "~0.10.3"
   },
