@@ -1,25 +1,25 @@
 import { Observable } from 'rxjs';
-import { Component, OnInit, Input } from '@angular/core';
-import { HttpService } from '../../services/http-service';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 /**
  * Selector component allowing you to have a selector dropdown list
  * during editing/creating of items, for items where you have a key,
  * which is a lookup into another database table. Usage would be
  * something like the following in your markup.
- * 
+ *
  * <app-selector
  *   key="locale"
  *   value="language"
  *   [model]="data.entity"
  *   [placeholder]="Choose a language"
- *   [getItems]="service.languages_Get({limit:-1})">
+ *   (change)="changed('language')"
+ *   [getItems]="service.languages.read({limit:-1})">
  * </app-selector>
- * 
+ *
  * The above would create a select list for you, allowing you to
  * select from a list of items, declared in a database table, instead
  * of having user to manually type in the correct key.
- * 
+ *
  * For the above you have 'data.entity.locale' normally being bound
  * towards an input field, and the services.languages_Get method returns
  * a list of items with a 'key' and a 'description', where the value of
@@ -30,10 +30,9 @@ import { HttpService } from '../../services/http-service';
 @Component({
   selector: 'app-selector',
   templateUrl: './selector.component.html',
-  styleUrls: ['./selector.component.scss']
+  styleUrls: ['./selector.component.scss'],
 })
 export class SelectorComponent implements OnInit {
-
   /**
    * Model you're databinding towards.
    */
@@ -63,22 +62,29 @@ export class SelectorComponent implements OnInit {
   @Input() public getItems: Observable<any>;
 
   /**
+   * Callback to invoke once item is changed.
+   */
+  @Output() public change: EventEmitter<any> = new EventEmitter();
+
+  /**
    * Contains actual databound items, after having fetched
    * them from the backend.
    */
   public items: any[];
 
   /**
-   * Constructor taking HTTPP service injected using dependency injection.
-   */
-  constructor(private service: HttpService) { }
-
-  /**
    * OnInit implementation.
    */
   public ngOnInit() {
-    this.getItems.subscribe(res => {
+    this.getItems.subscribe((res) => {
       this.items = res;
     });
+  }
+
+  /**
+   * Invoked when value is changed.
+   */
+  public valueChanged() {
+    this.change?.emit();
   }
 }
