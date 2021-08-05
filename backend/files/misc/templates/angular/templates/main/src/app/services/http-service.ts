@@ -97,6 +97,23 @@ export class HttpService {
    */
 [[http-client-service-method-implementations]]
 
+  /**
+   * Uploads a file to your backend.
+   * TODO: Notice, this service endpoint doesn't work out as is, and
+   * is only supplied here to create an example for you of how to do this.
+   * 
+   * First of all, the endpoint requires a server-side upload PUT endpoint
+   * equivalent. Secondly, the URL of the probably needs to be changed.
+   *
+   * @param file File you want to upload
+   */
+   public uploadFile(file: any) {
+    // Invoking backend with a form data object containing file.
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.httpClient.put<any>('magic/modules/foo/upload', formData);
+  }
+
   /*
    * Creates QUERY parameters from the specified "args" argument given.
    *
