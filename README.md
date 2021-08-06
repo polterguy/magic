@@ -36,8 +36,14 @@ You can get a rapid introduction to the system by watching the [following video]
 
 ## Documentation
 
-* [Getting started](https://polterguy.github.io/tutorials/getting-started/)
+* [Getting started](https://servergardens.com/get-started/)
 * [Full documentation for the system](https://polterguy.github.io/documentation/)
+
+## Services
+
+[ServerGardens.Com](https://servergardens.com/) provides a whole range of services around Magic,
+including custom development, hosting, setup, etc. Visit [our website](https://servergardens.com/)
+for more information.
 
 ## License
 
