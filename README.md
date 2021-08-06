@@ -1,11 +1,16 @@
 
 # Magic, THE Open Source No-Code/Low-Code platform
 
-Magic is an application generator, that allows you to create CRUD apps automatically. In addition it
-is a complete Open Source cloud system, allowing you to create your own virtualised cloud on top
-of your own server, and/or other cloud systems. Below is a screenshot of its dashboard.
+Magic is a No-Code/Low-Code application generator, that allows you to create CRUD apps automatically.
+In addition it is a complete Open Source cloud system, allowing you to create your own virtualised
+cloud on top of your own server, and/or other cloud systems. Below is a screenshot of its dashboard.
 
-![Dashboard screenshot](https://servergardens.files.wordpress.com/2021/06/dashboard-home.png)
+![Dashboard screenshot](https://servergardens.com/wp-content/uploads/2021/08/low-code-screenshot.png)
+
+The way Magic works is by reading meta data from your database, for then to automatically generate a
+complete web API for you, and then afterwards create a complete Angular frontend on top of that.
+Basically, minutes after you started, you've got thousands of lines of perfect Angular code, super
+scalable, and 100% perfectly secure.
 
 ## Features
 
