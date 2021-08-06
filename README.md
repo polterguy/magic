@@ -1,5 +1,5 @@
 
-# Magic, an Application Generator and Cloud System
+# Magic, THE Open Source No-Code/Low-Code platform
 
 Magic is an application generator, that allows you to create CRUD apps automatically. In addition it
 is a complete Open Source cloud system, allowing you to create your own virtualised cloud on top
