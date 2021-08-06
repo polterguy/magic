@@ -9,8 +9,8 @@ cloud on top of your own server, and/or other cloud systems. Below is a screensh
 
 The way Magic works is by reading meta data from your database, for then to automatically generate a
 complete web API for you, and then afterwards create a complete Angular frontend on top of that.
-Basically, minutes after you started, you've got thousands of lines of perfect Angular code, super
-scalable, and 100% perfectly secure.
+Basically, minutes after you started, you've got thousands of lines of perfect Angular and .Net code,
+super scalable, and 100% perfectly secure.
 
 ## Features
 
