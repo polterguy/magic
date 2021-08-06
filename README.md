@@ -32,13 +32,7 @@ scalable, and 100% perfectly secure.
 
 ## Video introduction to Magic
 
-You can get a rapid introduction to the system by watching the following video.
-
-<p align="center">
-<a href="https://www.youtube.com/watch?v=1Wmp5QJCnmM">
-<img alt="Create a CRUD Web app in seconds" title="Create a CRUD Web app in seconds" src="https://servergardens.files.wordpress.com/2021/06/video-thumb.png" />
-</a>
-</p>
+You can get a rapid introduction to the system by watching the [following video](https://www.youtube.com/watch?v=1Wmp5QJCnmM).
 
 ## Documentation
 
