@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
@@ -62,7 +63,7 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
 // Generated CRUD components here.
 [[module-declarations]]  ],
 
-  providers: [],
+  providers: [NgxImageCompressService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
