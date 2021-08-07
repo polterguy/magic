@@ -1,0 +1,14 @@
+<div>
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="model[key]"
+      autocomplete="off"
+      [placeholder]="placeholder">
+  </mat-form-field>
+  <button
+    mat-icon-button
+    (click)="selectImage()">
+    <mat-icon>camera_enhance</mat-icon>
+  </button>
+</div>
