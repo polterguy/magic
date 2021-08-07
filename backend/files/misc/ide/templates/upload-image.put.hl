@@ -57,6 +57,11 @@ else
    /*
     * Checking if [old_file] is specified, and existing.
     */
+   .old-file-full-path
+   set-value:x:@.old-file-full-path
+      strings.concat
+         get-value:x:@.folder
+         get-value:x:@.arguments/*/old_file
    if
       and
          not
@@ -67,11 +72,11 @@ else
             eq
                get-value:x:@.arguments/*/old_file
                .:
-         io.file.exists:x:@.arguments/*/old_file
+         io.file.exists:x:@.old-file-full-path
       .lambda
 
          // Old file exists, deleting it.
-         io.file.delete:x:@.arguments/*/old_file
+         io.file.delete:x:@.old-file-full-path
 
 /*
  * Creating a unique filename for image.
