@@ -12,7 +12,8 @@ import { AuthModule } from '@app/auth';
 import { HomeModule } from './home/home.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
-import { SelectorComponent } from './helpers/selector/selector.component';
+import { MagicSelectorComponent } from './helpers/magic-selector/magic-selector.component';
+import { MagicImageComponent } from './helpers/magic-image/magic-image.component';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '@env/environment';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -54,7 +55,8 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
   ],
   declarations: [
     AppComponent,
-    SelectorComponent,
+    MagicSelectorComponent,
+    MagicImageComponent,
     FormatDatePipe,
 
 // Generated CRUD components here.

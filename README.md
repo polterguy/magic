@@ -1,7 +1,7 @@
 
 # Magic; THE Open Source No-Code/Low-Code platform
 
-Magic is a No-Code/Low-Code application generator, that allows you to create CRUD apps automatically.
+Magic is a No-Code/Low-Code application generator that allows you to create CRUD apps automatically.
 In addition it is a complete Open Source cloud system, allowing you to create your own virtualised
 cloud on top of your own server, and/or other cloud systems. Below is a screenshot of its dashboard.
 
