@@ -1,0 +1,41 @@
+
+/*
+ * Returns the specified image to caller.
+ *
+ * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
+ * will correctly decorate your file with the correct properties.
+ */
+.description:Returns the specified image to caller
+.arguments
+   image:string
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/image
+
+/*
+ * Verifying user has access to invoke endpoint.
+ */
+auth.ticket.verify:[[auth]]
+
+/*
+ * Concatenating folder with specified image.
+ */
+strings.concat
+   .:/misc/
+   .:[[module]]
+   get-value:x:@.arguments/*/image
+
+/*
+ * Opening up a read stream for file.
+ */
+io.stream.open-file:x:@strings.concat
+
+/*
+ * Returning image to caller, making sure we get the HTTP headers correctly applied.
+ */
+response.headers.add
+   Content-Type:application/octet-stream
+   Cache-Control:public, 6000
+return:x:@io.stream.open-file
