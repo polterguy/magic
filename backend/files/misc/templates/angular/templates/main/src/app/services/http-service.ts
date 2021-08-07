@@ -104,15 +104,15 @@ export class HttpService {
    * to set its module name correctly, in addition to making sure you've
    * got a backend endpoint capable of handling its payload.
    *
-   * @param file Base64 encoded image data
+   * @param content Base64 encoded image data
    * @param type Type of image, such as 'jpeg', 'png', etc
    */
-   public uploadImage(file: string, type: string) {
+   public uploadImage(content: string, type: string) {
 
     // Invoking backend with a form data object containing file.
     // TODO: If you want to handle images, you'll need a backend endpoint, and change the URL below.
     return this.httpClient.put<any>('magic/modules/MODULE_NAME_HERE/upload', {
-      file,
+      content,
       type,
     });
   }
