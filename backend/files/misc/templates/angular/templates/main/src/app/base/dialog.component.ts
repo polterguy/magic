@@ -107,8 +107,18 @@ export abstract class DialogComponent {
       return;
     }
 
+    // Making sure we set all values having an empty string to 'null values'.
+    const data = this.getData();
+    for (const idx in data.entity) {
+      if (data.entity[idx] === '') {
+
+        // Changing value to NULL.
+        data.entity[idx] = null;
+      }
+    }
+
     // Checking if this is edit invocation or create invocation.
-    if (this.getData().isEdit) {
+    if (data.isEdit) {
 
       for (const idx in this.getData().entity) {
         if (this.updateColumns.indexOf(idx) === -1 ||
