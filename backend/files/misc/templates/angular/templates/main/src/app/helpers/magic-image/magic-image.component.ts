@@ -14,18 +14,18 @@ import { NgxImageCompressService } from 'ngx-image-compress';
  * This component automatically resize the image according to its configuration
  * if you set its maxWidth or maxHeight properties. Example usage can be found
  * below.
- * 
- * <app-magic-image
- *   [model]="data.entity"
- *   key="image"
- *   placeholder="Image"
- *   class="entity-edit-field"
- *   maxWidth="1024"
- *   maxHeight="800"
- *   [upload]="service.uploadImage.bind(service)"
- *   (change)="changed('image')">
- * </app-magic-image>
- * 
+
+  <app-magic-image
+    [model]="data.entity"
+    key="image"
+    placeholder="Image"
+    class="entity-edit-field"
+    maxWidth="1024"
+    maxHeight="800"
+    [upload]="service.uploadImage.bind(service)"
+    (change)="changed('image')">
+  </app-magic-image>
+
  * Notice, the [upload] callback needs to be a function taking two arguments;
  * - The image itself as a base64 encoded string
  * - The type of image being e.g. 'jpeg', 'png' etc.
