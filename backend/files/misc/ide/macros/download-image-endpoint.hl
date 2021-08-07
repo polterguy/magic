@@ -14,7 +14,7 @@
       name:auth
       type:string
       description:"Comma separated list of roles users must belong to in order to invoke endpoint. If empty, there are no authorisation requirements"
-      mandatory:bool:true
+      mandatory:bool:false
 
 /*
  * Lambda object executed as macro is actually executed.
@@ -101,10 +101,12 @@
          eq
             get-value:x:@.arguments/*/auth
             .:
+         not
+            exists:x:@.arguments/*/auth
       .lambda
 
          // No [auth] specified.
-         remove-nodes:x:hyper2lambda/**/=[[auth]]
+         remove-nodes:x:@hyper2lambda/**/=[[auth]]
 
    else
 
