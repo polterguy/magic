@@ -11,17 +11,17 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
  * during editing/creating of items, for items where you have a foreign key,
  * which is a lookup into another database table. Usage would be
  * something like the following in your HTML.
- *
- * <app-magic-selector
- *   [model]="data.entity"
- *   key="locale"
- *   value="language"
- *   placeholder="Choose a language"
- *   class="entity-edit-field"
- *   (change)="changed('language')"
- *   [getItems]="service.languages.read({limit:-1})">
- * </app-magic-selector>
- *
+
+  <app-magic-selector
+    [model]="data.entity"
+    key="locale"
+    value="language"
+    placeholder="Choose a language"
+    class="entity-edit-field"
+    (change)="changed('language')"
+    [getItems]="service.languages.read({limit:-1})">
+  </app-magic-selector>
+
  * The above would create a select list for you, allowing you to
  * select from a list of items, declared in a database table, instead
  * of having user to manually type in the correct key.
