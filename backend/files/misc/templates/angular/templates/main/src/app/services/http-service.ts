@@ -111,7 +111,7 @@ export class HttpService {
 
     // Invoking backend with a form data object containing file.
     // TODO: If you want to handle images, you'll need a backend endpoint, and change the URL below.
-    return this.httpClient.put<any>('magic/modules/MODULE_NAME_HERE/upload', {
+    return this.httpClient.put<any>('magic/modules/MODULE_NAME_HERE/upload-image', {
       content,
       type,
     });
