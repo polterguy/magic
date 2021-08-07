@@ -106,14 +106,16 @@ export class HttpService {
    *
    * @param content Base64 encoded image data
    * @param type Type of image, such as 'jpeg', 'png', etc
+   * @param old_file Optional name of old file, which if existing and specified will be deleted
    */
-   public uploadImage(content: string, type: string) {
+   public uploadImage(content: string, type: string, old_file?: string) {
 
     // Invoking backend with a form data object containing file.
     // TODO: If you want to handle images, you'll need a backend endpoint, and change the URL below.
     return this.httpClient.put<any>('magic/modules/MODULE_NAME_HERE/upload-image', {
       content,
       type,
+      old_file,
     });
   }
 
