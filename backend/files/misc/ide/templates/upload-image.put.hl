@@ -3,13 +3,15 @@
  * Upload image endpoint template file.
  *
  * This file creates an HTTP PUT endpoint that allows you to upload a single image file and store
- * it in a specified folder on the server.
+ * it in a specified folder on the server. The endpoint will delete the [old_file] file if it exists,
+ * and [old_file] is given.
  *
  * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
  * will correctly decorate your file with the correct properties.
  */
 .description:Upload image file endpoint
 .arguments
+   old_file:string
    content:string
    type:string
 
@@ -50,6 +52,26 @@ if
 
       // Need to create folder.
       io.folder.create:x:@.folder
+else
+
+   /*
+    * Checking if [old_file] is specified, and existing.
+    */
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/old_file
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/old_file
+               .:
+         io.file.exists:x:@.arguments/*/old_file
+      .lambda
+
+         // Old file exists, deleting it.
+         io.file.delete:x:@.arguments/*/old_file
 
 /*
  * Creating a unique filename for image.

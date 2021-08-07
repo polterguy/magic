@@ -68,7 +68,7 @@ export class MagicImageComponent {
   /**
    * Observable callback for component to upload image.
    */
-   @Input() public upload: (image: string, type: string) => Observable<any>;
+   @Input() public upload: (image: string, type: string, old_file?: string) => Observable<any>;
 
   /**
    * Callback to invoke once item is changed.
@@ -153,7 +153,7 @@ export class MagicImageComponent {
     image = image.substring(cutoff + 1);
 
     // Uploading image as base64 encoded bytes.
-    this.upload(image, type).subscribe((uploadResult: any) => {
+    this.upload(image, type, this.model[this.key]).subscribe((uploadResult: any) => {
 
       // Assigning model.
       this.model[this.key] = uploadResult.filename;

@@ -3,7 +3,7 @@
  * Macro for Hyper IDE that creates an upload image endpoint.
  */
 .name:"Creates an upload image endpoint"
-.description:"Macro for Hyper IDE that creates an 'upload image' HTTP PUT endpoint for you, which assumes the image is given as base64 encoded bytes, and its type specified as [type]."
+.description:"Macro for Hyper IDE that creates an 'upload image' HTTP PUT endpoint for you that assumes the image is given as base64 encoded bytes in [content] arguments, and its type specified as [type]. This macro goes perfectly hand in hand with the frontend component called MagicImageComponent, and the method in HttpService called uploadImage."
 .arguments
    .
       name:module

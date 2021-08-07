@@ -650,6 +650,14 @@ export class IdeComponent implements OnInit {
         }
       }
 
+      // Checking if we've got an [auth] argument, and defaulting its value to 'root'.
+      const authArgs = result.arguments.filter(x => x.name === 'auth');
+      if (authArgs.length > 0) {
+        for (const idx of authArgs) {
+          idx.value = 'root';
+        }
+      }
+
       // Opening modal dialog allowing user to select macro.
       const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
         data: result,
