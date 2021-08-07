@@ -25,6 +25,7 @@ auth.ticket.verify:[[auth]]
 strings.concat
    .:/misc/
    .:[[module]]
+   .:/
    get-value:x:@.arguments/*/image
 
 /*
