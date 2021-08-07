@@ -22,7 +22,7 @@ export class Edit[[component-name]] extends DialogComponent {
     public dialogRef: MatDialogRef<Edit[[component-name]]>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     protected snackBar: MatSnackBar,
-    private service: HttpService) {
+    public service: HttpService) {
     super(snackBar);
     this.primaryKeys = [[[primary-keys]]];
     this.createColumns = [[[create-input]]
