@@ -1,6 +1,6 @@
 **/.DS_Store
 files/modules/**
 !files/modules/system
-files/modules/system/crypto/keys/**
-!files/modules/system/crypto/keys/README.md
+files/etc/system/crypto/keys/**
+!files/etc/system/crypto/keys/README.md
 

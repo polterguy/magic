@@ -11,7 +11,7 @@ slots.create:magic.crypto.get-server-public-key
       expiration:300
       .lambda
 
-         io.file.load:/modules/system/crypto/keys/public.key
+         io.file.load:/etc/system/crypto/keys/public.key
          crypto.fingerprint:x:@io.file.load
          unwrap:x:+/*
          return

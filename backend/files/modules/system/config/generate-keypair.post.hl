@@ -41,7 +41,7 @@ validators.string:x:@.arguments/*/seed
  */
 log.info:Generating an RSA key pair for server
 if
-   io.file.exists:/modules/system/crypto/keys/public.key
+   io.file.exists:/etc/system/crypto/keys/public.key
    .lambda
 
       /*
@@ -50,23 +50,23 @@ if
       log.info:Creating a backup of the old key pair
       .public-key
       set-value:x:@.public-key
-         io.file.load:/modules/system/crypto/keys/public.key
+         io.file.load:/etc/system/crypto/keys/public.key
       .private-key
       set-value:x:@.private-key
-         io.file.load:/modules/system/crypto/keys/private.key
+         io.file.load:/etc/system/crypto/keys/private.key
       .fingerprint
       set-value:x:@.fingerprint
          crypto.fingerprint:x:@.public-key
       .public-key-filename
       set-value:x:@.public-key-filename
          strings.concat
-            .:/modules/system/crypto/keys/public-
+            .:/etc/system/crypto/keys/public-
             get-value:x:@.fingerprint
             .:.key
       .private-key-filename
       set-value:x:@.private-key-filename
          strings.concat
-            .:/modules/system/crypto/keys/private-
+            .:/etc/system/crypto/keys/private-
             get-value:x:@.fingerprint
             .:.key
       io.file.save:x:@.public-key-filename
