@@ -364,7 +364,7 @@ for-each:x:@.crud-methods/*
 
 
          /*
-          * Adding entry components, which basically is the Edit modal windows
+          * Adding entry components, which basically is the edit modal windows
           * for each component we have.
           */
          set-value:x:@.entry-components
