@@ -10,6 +10,7 @@
  * will correctly decorate your file with the correct properties.
  */
 .description:Upload image file endpoint
+.type:image-upload
 .arguments
    old_file:string
    content:string

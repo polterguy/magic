@@ -6,6 +6,7 @@
  * will correctly decorate your file with the correct properties.
  */
 .description:Returns the specified image to caller
+.type:image-download
 .arguments
    image:string
 
