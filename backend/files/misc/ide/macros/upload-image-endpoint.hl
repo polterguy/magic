@@ -13,7 +13,12 @@
    .
       name:auth
       type:string
-      description:"Comma separated list of roles users must belong to in order to invoke endpoint"
+      description:Comma separated list of roles users must belong to in order to invoke endpoint
+      mandatory:bool:true
+   .
+      name:name
+      type:string
+      description:Name of your endpoint that becomes the last parts of its URL
       mandatory:bool:true
 
 /*
@@ -26,6 +31,9 @@
     */
    validators.mandatory:x:@.arguments/*/module
    validators.regex:x:@.arguments/*/module
+      regex:^[a-zA-Z0-9_-]+$
+   validators.mandatory:x:@.arguments/*/name
+   validators.regex:x:@.arguments/*/name
       regex:^[a-zA-Z0-9_-]+$
 
    /*
@@ -56,11 +64,13 @@
             status:int:404
 
    /*
-    * Making sure that module does not already have an 'upload-image.put.hl' file.
+    * Making sure that module does not already have an 'xxx.put.hl' file.
     */
    strings.concat
       get-value:x:@.module-path
-      .:/upload-image.put.hl
+      .:/
+      get-value:x:@.arguments/*/name
+      .:.put.hl
    if
       io.file.exists:x:@strings.concat
       .lambda
@@ -69,7 +79,9 @@
          strings.concat
             .:"The module called '"
             get-value:x:@.arguments/*/module
-            .:"' already has a 'upload-image.put.hl' file and hence we cannot create another"
+            .:"' already has a '"
+            get-value:x:@.arguments/*/name
+            .:".put.hl' file and hence we cannot create another"
          throw:x:-
             public:bool:true
             status:int:404
@@ -81,20 +93,42 @@
       get-value:x:@strings.concat
 
    /*
-    * Opening 'upload-image.put.hl' file such that we can correctly decorate it
+    * Opening 'xxx.put.hl' file such that we can correctly decorate it
     * according to arguments specified by caller.
     */
    strings.concat
       get-value:x:@.module-path
-      .:/upload-image.put.hl
+      .:/
+      get-value:x:@.arguments/*/name
+      .:.put.hl
    io.file.load:x:@strings.concat
    hyper2lambda:x:@io.file.load
+
 
    /*
     * Substituting parameters.
     */
-   set-value:x:@hyper2lambda/**/=[[auth]]
-      get-value:x:@.arguments/*/auth
+   if
+      or
+         eq
+            get-value:x:@.arguments/*/auth
+            .
+         eq
+            get-value:x:@.arguments/*/auth
+            .:
+         not
+            exists:x:@.arguments/*/auth
+      .lambda
+
+         // No [auth] specified.
+         remove-nodes:x:@hyper2lambda/**/=[[auth]]
+
+   else
+
+      // Auth specified.
+      set-value:x:@hyper2lambda/**/=[[auth]]
+         get-value:x:@.arguments/*/auth
+
    set-value:x:@hyper2lambda/**/=[[module]]
       get-value:x:@.arguments/*/module
 

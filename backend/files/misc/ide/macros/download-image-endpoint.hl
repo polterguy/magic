@@ -15,6 +15,11 @@
       type:string
       description:"Comma separated list of roles users must belong to in order to invoke endpoint. If empty, there are no authorisation requirements"
       mandatory:bool:false
+   .
+      name:name
+      type:string
+      description:Name of your endpoint that becomes the last parts of its URL
+      mandatory:bool:true
 
 /*
  * Lambda object executed as macro is actually executed.
@@ -26,6 +31,9 @@
     */
    validators.mandatory:x:@.arguments/*/module
    validators.regex:x:@.arguments/*/module
+      regex:^[a-zA-Z0-9_-]+$
+   validators.mandatory:x:@.arguments/*/name
+   validators.regex:x:@.arguments/*/name
       regex:^[a-zA-Z0-9_-]+$
 
    /*
@@ -56,11 +64,13 @@
             status:int:404
 
    /*
-    * Making sure that module does not already have a 'download-image.get.hl' file.
+    * Making sure that module does not already have a 'xxx.get.hl' file.
     */
    strings.concat
       get-value:x:@.module-path
-      .:/download-image.get.hl
+      .:/
+      get-value:x:@.arguments/*/name
+      .:.get.hl
    if
       io.file.exists:x:@strings.concat
       .lambda
@@ -69,7 +79,9 @@
          strings.concat
             .:"The module called '"
             get-value:x:@.arguments/*/module
-            .:"' already has a 'download-image.get.hl' file and hence we cannot create another"
+            .:"' already has a '"
+            get-value:x:@.arguments/*/name
+            .:".get.hl' file and hence we cannot create another"
          throw:x:-
             public:bool:true
             status:int:404
@@ -81,12 +93,14 @@
       get-value:x:@strings.concat
 
    /*
-    * Opening 'download-image.get.hl' file such that we can correctly decorate it
+    * Opening 'xxx.get.hl' file such that we can correctly decorate it
     * according to arguments specified by caller.
     */
    strings.concat
       get-value:x:@.module-path
-      .:/download-image.get.hl
+      .:/
+      get-value:x:@.arguments/*/name
+      .:.get.hl
    io.file.load:x:@strings.concat
    hyper2lambda:x:@io.file.load
 
