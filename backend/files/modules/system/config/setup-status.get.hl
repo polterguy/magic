@@ -22,7 +22,7 @@ io.folder.exists:/modules/magic/
 /*
  * Checks to see if server has a key pair
  */
-io.file.exists:/modules/system/crypto/keys/public.key
+io.file.exists:/etc/system/crypto/keys/public.key
 
 
 /*

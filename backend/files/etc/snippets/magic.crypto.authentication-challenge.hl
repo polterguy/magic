@@ -7,14 +7,14 @@ http.get:"http://localhost:55247/magic/modules/system/crypto/challenge"
 /*
  * Loading public key needed to supply fingerprint to signing process.
  */
-io.file.load:/modules/system/crypto/keys/public.key
+io.file.load:/etc/system/crypto/keys/public.key
 crypto.fingerprint:x:-
 
 
 /*
  * Loading private key needed to cryptographically sign challenge.
  */
-io.file.load:/modules/system/crypto/keys/private.key
+io.file.load:/etc/system/crypto/keys/private.key
 
 
 /*

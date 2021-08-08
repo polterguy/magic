@@ -334,8 +334,8 @@ backend/tasks/**
 backend/files/modules/*
 !backend/files/modules/system
 !backend/files/modules/README.md
-backend/files/modules/system/crypto/keys/*
-!backend/files/modules/system/crypto/keys/README.md
+backend/files/etc/system/crypto/keys/*
+!backend/files/etc/system/crypto/keys/README.md
 !frontend/src/app/components/log/
 !**/log/
 backend/files/temp/**
