@@ -80,12 +80,10 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
-   * @param backendService Needed to retrieve root URL for current backend
    * @param messageService Needed to subscribe to messages published by other components
    * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
    */
   constructor(
-    private backendService: BackendService,
     private messageService: MessageService,
     private endpointService: EndpointService) { }
 
@@ -125,11 +123,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
       // Assigning result to model.
       this.endpoints = endpoints
         .filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
-        .filter(x => x.type === 'crud-count' ||
-          x.type === 'crud-delete' ||
-          x.type === 'crud-read' ||
-           x.type === 'crud-create' ||
-            x.type === 'crud-update')
+        .filter(x => x.type !== 'custom')
         .map(x => {
           return {
             path: x.path,
