@@ -254,6 +254,11 @@ for-each:x:@.arguments/*/.crud-methods/*
                   get-name:x:@.dp/#
                   .:": el."
                   get-name:x:@.dp/#
+
+
+         /*
+          * Trimming away additional ',' and ' ' characters.
+          */
          set-value:x:@.substitutions/*/delete-input
             strings.trim:x:@.substitutions/*/delete-input
                .:", "
@@ -302,6 +307,9 @@ for-each:x:@.arguments/*/.crud-methods/*
          /*
           * Dynamically creating our datagrid parts, and our form controls
           * for editing entities.
+          *
+          * Notice - We use the GET methods here to find out what columns to create for our
+          * grids.
           */
          for-each:x:@.dp/#/*/verbs/*/get/*/output/*
 
@@ -630,14 +638,6 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Making sure we remove redundant commas and spaces from [.substitutions]/[displayed-columns].
-          */
-         set-value:x:@.substitutions/*/displayed-columns
-            strings.trim:x:@.substitutions/*/displayed-columns
-               .:", \r\n"
-
-
-         /*
           * Iterating through each component file, to do our substitutions.
           */
          for-each:x:@.arguments/*/.component-files/*
@@ -841,6 +841,10 @@ for-each:x:@.arguments/*/.crud-methods/*
             if
                exists:x:@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
                .lambda
+
+                  /*
+                   * Adding HTTP POST method invocation for entity.
+                   */
                   set-value:x:@.create-method
                      strings.replace:x:@.delete-method
                         .:[[service-create-method]]
@@ -850,6 +854,10 @@ for-each:x:@.arguments/*/.crud-methods/*
                            .:(this.data.entity);
             else
                set-value:x:@.create-method
+
+                  /*
+                   * No HTTP POST method exists for entity.
+                   */
                   strings.replace:x:@.delete-method
                      .:[[service-create-method]]
                      .:"return throwError('No HTTP POST service method exists for entity');"
@@ -886,7 +894,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      strings.replace:x:@strings.replace
                         .:[[service-update-wrapper]]
                         strings.concat
-                           .:@"
+                           .:@"                           
   /**
    * Returns a reference to the update method, to update entity.
    */
