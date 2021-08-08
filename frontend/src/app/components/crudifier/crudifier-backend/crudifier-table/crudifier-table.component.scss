@@ -73,3 +73,12 @@ h3 {
     }
   }
 }
+
+.crud-warning {
+  position: relative;
+  .warning-icon {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
+}

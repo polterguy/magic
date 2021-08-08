@@ -280,6 +280,15 @@ export class CrudifierBackendComponent implements OnInit {
     });
   }
 
+  public hasWarnings(el: TableEx) {
+    for (const idx of el.columns) {
+      if (idx.warning) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /*
    * Private methods.
    */
@@ -335,6 +344,16 @@ export class CrudifierBackendComponent implements OnInit {
         idxColumn.getDisabled = false;
         idxColumn.putDisabled = idxColumn.primary;
         idxColumn.deleteDisabled = true;
+
+        /*
+         * Notice, if we're not sure whether or not column should be a part of POST and PUT
+         * we expand the column by default, to give visual clues to the user that he needs to
+         * pay particular attention to this column.
+         */
+        if (idxColumn.automatic && !idxColumn.primary) {
+          idxColumn.expanded = true;
+          idxColumn.warning = 'Warning, I could not determine with certainty if this column should be included in your create and update endpoints. Please carefully look at it and decide for yourself.';
+        }
       }
     }
   }
