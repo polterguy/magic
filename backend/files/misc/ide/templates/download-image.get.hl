@@ -24,7 +24,7 @@ auth.ticket.verify:[[auth]]
  * Concatenating folder with specified image.
  */
 strings.concat
-   .:/misc/
+   .:/etc/
    .:[[module]]
    .:/
    get-value:x:@.arguments/*/image
