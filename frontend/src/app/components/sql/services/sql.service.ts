@@ -90,7 +90,7 @@ export class SqlService {
    * @param databaseType Database type to retrieve snippets for
    */
   public snippets(databaseType: string) {
-    return this.fileService.listFiles(`/misc/${databaseType}/templates/`);
+    return this.fileService.listFiles(`/etc/${databaseType}/templates/`);
   }
 
   /**
@@ -107,7 +107,7 @@ export class SqlService {
     }
 
     // Making sure we use the correct folder.
-    filename = `/misc/${databaseType}/templates/` + filename;
+    filename = `/etc/${databaseType}/templates/` + filename;
     if (!filename.endsWith('.sql')) {
       filename += '.sql';
     }
@@ -131,7 +131,7 @@ export class SqlService {
     }
 
     // Making sure we put our file into the correct folder.
-    filename = `/misc/${databaseType}/templates/` + filename;
+    filename = `/etc/${databaseType}/templates/` + filename;
     if (!filename.endsWith('.sql')) {
       filename += '.sql';
     }
