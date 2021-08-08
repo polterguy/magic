@@ -76,7 +76,7 @@ export class EvaluatorService {
    * Returns a list of all Hyperlambda snippets the backend has stored.
    */
   public snippets() {
-    return this.fileService.listFiles('/misc/snippets/');
+    return this.fileService.listFiles('/etc/snippets/');
   }
 
   /**
@@ -92,7 +92,7 @@ export class EvaluatorService {
     }
 
     // Making sure we use the correct folder.
-    filename = '/misc/snippets/' + filename;
+    filename = '/etc/snippets/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';
     }
@@ -115,7 +115,7 @@ export class EvaluatorService {
     }
 
     // Making sure we put our file into the correct folder.
-    filename = '/misc/snippets/' + filename;
+    filename = '/etc/snippets/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';
     }
