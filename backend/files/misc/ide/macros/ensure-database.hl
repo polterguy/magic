@@ -75,7 +75,7 @@
       io.folder.exists:x:@strings.concat
       .lambda
 
-         // No such module
+         // Modules already has a 'magic.startup' folder.
          strings.concat
             .:"The module called '"
             get-value:x:@.arguments/*/module
