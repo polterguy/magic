@@ -86,9 +86,9 @@ crypto.rsa.create-key
 /*
  * Saving key(s) to disc.
  */
-io.file.save:/modules/system/crypto/keys/public.key
+io.file.save:/etc/system/crypto/keys/public.key
    get-value:x:@crypto.rsa.create-key/*/public
-io.file.save:/modules/system/crypto/keys/private.key
+io.file.save:/etc/system/crypto/keys/private.key
    get-value:x:@crypto.rsa.create-key/*/private
 
 
