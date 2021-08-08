@@ -5,7 +5,8 @@
 
 // Angular and system imports.
 import { of, throwError } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
+import { formatNumber } from '@angular/common';
 
 // Utility component imports.
 import { saveAs } from "file-saver";
@@ -21,6 +22,7 @@ import { HttpService } from '../../../services/http.service';
 import { FileService } from '../../files/services/file.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { LocResult } from '../../crudifier/models/loc-result.model';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -42,6 +44,7 @@ export class EndpointService {
     private httpService: HttpService,
     private fileService: FileService,
     private backendService: BackendService,
+    @Inject(LOCALE_ID) public locale: string,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -378,7 +381,30 @@ export class EndpointService {
           const disp = res.headers.get('Content-Disposition');
           let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
           const file = new Blob([res.body]);
+
+          // Providing feedback to user about LOC count operation resulted in.
+          this.getLastLocCount().subscribe((loc: LocResult) => {
+
+            // Providing feedback to user.
+            this.feedbackService.showInfo(`${formatNumber(loc.loc, this.locale, '1.0')} number of lines of code generated`);
+          });
+
+          // Saving file.
           saveAs(file, filename);
-        }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check log for details'));
-    }
+
+        }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check your log for details'));
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Returns the number of lines of code that was generated the last time the generator ran.
+   */
+   private getLastLocCount() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<LocResult>('/magic/modules/system/endpoints/last-loc-count');
+  }
 }

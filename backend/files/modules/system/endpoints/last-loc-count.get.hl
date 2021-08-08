@@ -1,0 +1,30 @@
+
+/*
+ * Returns the last generated LOC count to caller.
+ */
+.description:Returns the last generated LOC count to caller
+
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+data.connect:[generic|magic]
+   data.read
+      table:log_entries
+      columns
+         content
+      where
+         and
+            content.like:"LOC generated '%"
+      order:id
+      direction:desc
+      limit:1
+   strings.split:x:@data.read/*/*/content
+      .:"'"
+   convert:x:@strings.split/1
+      type:long
+   unwrap:x:+/*
+   return
+      loc:x:@convert
