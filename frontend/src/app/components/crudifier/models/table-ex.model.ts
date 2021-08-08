@@ -51,6 +51,11 @@ export class TableEx {
   verbs: Verb[];
 
   /**
+   * Whether or not post invocations should be logged.
+   */
+   logPost: boolean;
+
+  /**
    * Whether or not delete invocations should be logged.
    */
   logDelete: boolean;

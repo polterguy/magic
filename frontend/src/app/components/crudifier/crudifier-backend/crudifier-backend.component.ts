@@ -311,6 +311,9 @@ export class CrudifierBackendComponent implements OnInit {
         authUpdate: 'root, admin',
         authDelete: 'root, admin',
         primaryUrl: this.database.name,
+        logCreate: false,
+        logUpdate: false,
+        logDelete: false,
       },
     });
 
@@ -327,6 +330,9 @@ export class CrudifierBackendComponent implements OnInit {
           idxTable.authGet = model.authRead;
           idxTable.authPut = model.authUpdate;
           idxTable.authDelete = model.authDelete;
+          idxTable.logPost = model.logCreate;
+          idxTable.logPut = model.logUpdate;
+          idxTable.logDelete = model.logDelete;
         }
 
         // Providing feedback to user.
