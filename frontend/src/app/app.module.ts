@@ -151,6 +151,7 @@ import { ViewReadmeDialogComponent } from './components/bazar/view-readme-dialog
 import { ViewInstalledAppDialogComponent } from './components/bazar/view-installed-app-dialog/view-installed-app-dialog.component';
 import { SubscribeDialogComponent } from './components/bazar/subscribe-dialog/subscribe-dialog.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { CrudifierSetDefaultsComponent } from './components/crudifier/crudifier-backend/crudifier-set-defaults/crudifier-set-defaults.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -246,6 +247,7 @@ import { ProfileComponent } from './components/profile/profile.component';
     ViewInstalledAppDialogComponent,
     SubscribeDialogComponent,
     ProfileComponent,
+    CrudifierSetDefaultsComponent,
   ],
   imports: [
     FormsModule,

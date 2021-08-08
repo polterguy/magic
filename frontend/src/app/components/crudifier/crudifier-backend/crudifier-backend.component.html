@@ -70,6 +70,13 @@
   <button
     [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
     mat-raised-button
+    (click)="setDefaults()">
+    Set defaults
+  </button>
+
+  <button
+    [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
+    mat-raised-button
     color="primary"
     (click)="crudifyAll()">
     Crudify all tables
