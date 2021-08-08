@@ -75,7 +75,7 @@
             status:int:404
 
    /*
-    * Copying main 'download-image.get.hl' template file from 'misc/idea/templates' folder.
+    * Copying main 'download-image.get.hl' template file from '/misc/idea/templates' folder.
     */
    io.file.copy:/misc/ide/templates/download-image.get.hl
       get-value:x:@strings.concat

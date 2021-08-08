@@ -39,7 +39,7 @@ auth.ticket.verify:[[auth]]
 .folder
 set-value:x:@.folder
    strings.concat
-      .:/misc/
+      .:/etc/
       .:[[module]]
       .:/
 
@@ -93,7 +93,7 @@ set-value:x:@.filename
       get-value:x:@.arguments/*/type
 
 /*
- * Saving file with the specified filename to our '/misc/MODULE_NAME/' folder.
+ * Saving file with the specified filename to our '/etc/MODULE_NAME/' folder.
  */
 .full-path
 set-value:x:@.full-path
