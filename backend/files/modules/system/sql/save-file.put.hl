@@ -19,7 +19,7 @@ auth.ticket.verify:root
  * Saving file.
  */
 strings.concat
-   .:/misc/
+   .:/etc/
    get-value:x:@.arguments/*/databaseType
    .:/templates/
    get-value:x:@.arguments/*/filename
