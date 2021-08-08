@@ -65,7 +65,7 @@
         *matCellDef="let el"
         colspan="6">
         <div
-          class="details-sheet"
+          [class]="el.warning ? 'details-sheet crud-warning' : 'details-sheet'"
           *ngIf="el.expanded">
           <ul class="verbs">
             <li *ngFor="let idx of getEnabledVerbs()">
@@ -74,6 +74,10 @@
                 [(ngModel)]="el[idx.name]">{{getCrudNameForVerb(idx.name)}}</mat-checkbox>
             </li>
           </ul>
+          <mat-icon
+            class="warning-icon warning"
+            *ngIf="el.warning"
+            [matTooltip]="el.warning">warning</mat-icon>
 
         </div>
       </td>

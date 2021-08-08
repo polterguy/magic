@@ -45,6 +45,11 @@ export class ColumnEx {
   expanded: boolean;
 
   /**
+   * Optional additional information supplied to user.
+   */
+  warning?: string;
+
+  /**
    * Whether or not column should be included in HTTP POST invocations or not.
    */
   post: boolean;

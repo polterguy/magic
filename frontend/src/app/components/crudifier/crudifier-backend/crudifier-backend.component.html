@@ -46,6 +46,8 @@
     (selectionChange)="tableChanged()">
     <mat-option
       *ngFor="let idx of database.tables"
+      [class]="hasWarnings(idx) ? 'warning' : ''"
+      [matTooltip]="hasWarnings(idx) ? 'Table has warnings, please inspect it carefully' : ''"
       [value]="idx">{{idx.name}}</mat-option>
   </mat-select>
 
