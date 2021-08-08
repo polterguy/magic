@@ -5,8 +5,9 @@
 
 // Angular specific imports.
 import { forkJoin, Observable } from 'rxjs';
+import { formatNumber } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, Inject, LOCALE_ID, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { TableEx } from '../models/table-ex.model';
@@ -86,6 +87,7 @@ export class CrudifierBackendComponent implements OnInit {
    * @param crudifyService Needed to actually crudify endpoints
    * @param messageService Needed to signal other components that we've create an additional info type of component that needs to be injected
    * @param feedbackService Needed to display feedback to user
+   * @param locale Needed to display numbers in user's locale
    * @param resolver Needed to be able to dynamically create additional components
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
    * @param transformService Needed to transform from UI model to required backend model
@@ -99,6 +101,7 @@ export class CrudifierBackendComponent implements OnInit {
     private crudifyService: CrudifyService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
+    @Inject(LOCALE_ID) public locale: string,
     private resolver: ComponentFactoryResolver,
     private loaderInterceptor: LoaderInterceptor,
     private transformService: TransformModelService) { }
@@ -274,7 +277,7 @@ export class CrudifierBackendComponent implements OnInit {
       this.logService.createLocItem(loc, 'backend', `${this.database.name}`).subscribe(() => {
 
         // Showing user some feedback information.
-        this.feedbackService.showInfo(`${loc} LOC generated`);
+        this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated`);
 
       }, (error: any) => this.feedbackService.showError(error));
 
