@@ -5,6 +5,7 @@
 
 // Angular specific imports.
 import { forkJoin, Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
@@ -24,6 +25,7 @@ import { TransformModelService } from '../services/transform-model.service';
 import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
 import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
 import { CacheService } from '../../diagnostics/diagnostics-cache/services/cache.service';
+import { CrudifierSetDefaultsComponent } from './crudifier-set-defaults/crudifier-set-defaults.component';
 
 /**
  * Crudifier component for crudifying database
@@ -77,6 +79,7 @@ export class CrudifierBackendComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param logService Needed to be able to log LOC generated
+   * @param dialog Needed to be able to open modal dialogs
    * @param sqlService Needed to retrieve meta information about databases from backend
    * @param cacheService Needed to delete cache items from backend
    * @param configService Needed to retrieve meta information about connection strings from backend
@@ -89,6 +92,7 @@ export class CrudifierBackendComponent implements OnInit {
    */
   constructor(
     private logService: LogService,
+    private dialog: MatDialog,
     private sqlService: SqlService,
     private cacheService: CacheService,
     private configService: ConfigService,
@@ -287,6 +291,45 @@ export class CrudifierBackendComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  /**
+   * Invoked when user wants to apply default settings that are applied for all tables
+   * in currently selected database.
+   */
+  public setDefaults() {
+
+    // Opening up modal dialog passing in reference default values.
+    let dialogRef = this.dialog.open(CrudifierSetDefaultsComponent, {
+      width: '550px',
+      data: {
+        authCreate: 'root, admin',
+        authRead: 'root, admin',
+        authUpdate: 'root, admin',
+        authDelete: 'root, admin',
+        primaryUrl: this.database.name,
+      },
+    });
+
+    // Subscribing to afterClose such that we can apply defaults if user clicks apply button.
+    dialogRef.afterClosed().subscribe((model: any) => {
+
+      // Checking if user wants to apply default settings to all tables.
+      if (model) {
+
+        // Applying default values.
+        for (const idxTable of this.database.tables) {
+          idxTable.moduleName = model.primaryUrl;
+          idxTable.authPost = model.authCreate;
+          idxTable.authGet = model.authRead;
+          idxTable.authPut = model.authUpdate;
+          idxTable.authDelete = model.authDelete;
+        }
+
+        // Providing feedback to user.
+        this.feedbackService.showInfoShort('Default values were applied');
+      }
+    });
   }
 
   /*
