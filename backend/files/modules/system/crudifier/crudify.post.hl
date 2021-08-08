@@ -170,7 +170,8 @@ semaphore:crudifier
             .
                log.info
                   .:x:@.arguments/*/log
-                  .:" - Arguments: \r\n"
+                  auth.ticket.get
+                  .:"\r\n\r\n"
                   lambda2hyper:x:@.arguments/*
 
    /*

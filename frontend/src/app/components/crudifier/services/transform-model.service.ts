@@ -60,17 +60,17 @@ export class TransformModelService {
 
     // Checking if this is delete invocation, and delete invocations should be logged.
     if (verb === 'delete' && table.logDelete) {
-      result.log = `${database}.${table.name} entry deleted`;
+      result.log = `${table.moduleName}.${table.name} entry deleted by `;
     }
 
     // Checking if this is put invocation, and put invocations should be logged.
     if (verb === 'put' && table.logPut) {
-      result.log = `${database}.${table.name} entry updated`;
+      result.log = `${table.moduleName}.${table.name} entry updated by `;
     }
 
     // Checking if this is put invocation, and put invocations should be logged.
     if (verb === 'post' && table.logPost) {
-      result.log = `${database}.${table.name} entry created`;
+      result.log = `${table.moduleName}.${table.name} entry created by `;
     }
 
     // Creating authentication requirements for endpoint(s).
