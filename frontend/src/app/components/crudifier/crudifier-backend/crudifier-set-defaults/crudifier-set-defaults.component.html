@@ -53,6 +53,15 @@
       [(ngModel)]="data.primaryUrl">
   </mat-form-field>
 
+  <mat-checkbox
+    [(ngModel)]="data.logCreate">Log create</mat-checkbox>
+
+  <mat-checkbox
+    [(ngModel)]="data.logUpdate">Log update</mat-checkbox>
+
+  <mat-checkbox
+    [(ngModel)]="data.logDelete">Log delete</mat-checkbox>
+
 </div>
 
 <div mat-dialog-actions>

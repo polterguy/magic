@@ -256,12 +256,16 @@
       [(ngModel)]="table.publicCache">Public cache</mat-checkbox>
 
     <mat-checkbox
-      *ngIf="isDeleteIncluded()"
-      [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
+      *ngIf="isPostIncluded()"
+      [(ngModel)]="table.logPost">Log create</mat-checkbox>
 
     <mat-checkbox
       *ngIf="isPutIncluded()"
       [(ngModel)]="table.logPut">Log update</mat-checkbox>
+
+    <mat-checkbox
+      *ngIf="isDeleteIncluded()"
+      [(ngModel)]="table.logDelete">Log delete</mat-checkbox>
 
     <h3>Additional POST/PUT Hyperlambda</h3>
 
