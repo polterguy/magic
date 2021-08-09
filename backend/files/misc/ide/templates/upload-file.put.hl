@@ -9,6 +9,9 @@
  * will correctly decorate your file with the correct properties.
  */
 .description:Upload file endpoint
+.arguments
+   file:*
+   old_file:string
 .type:file-upload
 .accept:multipart/form-data
 
@@ -38,14 +41,40 @@ if
       // Need to create folder.
       io.folder.create:x:@.folder
 
+else
+
+   /*
+    * Checking if [old_file] is specified, and existing.
+    */
+   .old-file-full-path
+   set-value:x:@.old-file-full-path
+      strings.concat
+         get-value:x:@.folder
+         get-value:x:@.arguments/*/old_file
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/old_file
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/old_file
+               .:
+         io.file.exists:x:@.old-file-full-path
+      .lambda
+
+         // Old file exists, deleting it.
+         io.file.delete:x:@.old-file-full-path
+
 /*
  * Saving file with the specified filename to the specified folder.
  */
 strings.concat
    get-value:x:@.folder
-   get-value:x:@.arguments/0/*/name
+   get-value:x:@.arguments/*/file/*/name
 io.stream.save-file:x:@strings.concat
-   get-value:x:@.arguments/0/*/stream
+   get-value:x:@.arguments/*/file/*/stream
 
 /*
  * Returning success to caller.
