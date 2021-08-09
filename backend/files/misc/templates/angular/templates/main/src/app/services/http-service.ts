@@ -132,8 +132,9 @@ export class HttpService {
    *
    * @param url Backend relative endpoint URL
    * @param file File you want to upload
+   * @param old_file Optional name of old file, which if existing and specified will be deleted
    */
-   public uploadFile(url: string, file: any) {
+   public uploadFile(url: string, file: any, old_file: string) {
 
     // Invoking backend with a form data object containing file.
     // NOTICE! If you want to handle file uploading, you'll need a backend endpoint.
@@ -142,6 +143,9 @@ export class HttpService {
     }
     const formData: FormData = new FormData();
     formData.append('file', file);
+    if (old_file) {
+      formData.append('old_file', old_file);
+    }
     return this.httpClient.put<any>(`magic/modules${url}`, formData);
   }
 

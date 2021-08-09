@@ -15,6 +15,7 @@ import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { MagicSelectorComponent } from './helpers/magic-selector/magic-selector.component';
 import { MagicImageComponent } from './helpers/magic-image/magic-image.component';
+import { MagicFileComponent } from './helpers/magic-file/magic-file.component';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '@env/environment';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -58,6 +59,7 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
     AppComponent,
     MagicSelectorComponent,
     MagicImageComponent,
+    MagicFileComponent,
     FormatDatePipe,
 
 // Generated CRUD components here.

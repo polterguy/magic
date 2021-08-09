@@ -20,7 +20,7 @@ import { HttpService } from '@app/services/http-service';
   <app-magic-file
     *ngIf="canEditColumn('filename')"
     [model]="data.entity"
-    key="filename"
+    field="filename"
     placeholder="File"
     class="entity-edit-field"
     uploadUrl="/YOUR_MODULE_NAME/upload-file"
@@ -85,7 +85,7 @@ export class MagicFileComponent {
 
     // Retrieving selected file and uploading to server.
     const selectedFile = e.target.files[0];
-    this.httpService.uploadFile(this.uploadUrl, selectedFile).subscribe((result: any) => {
+    this.httpService.uploadFile(this.uploadUrl, selectedFile, this.model[this.field]).subscribe((result: any) => {
 
       // Assigning model
       this.model[this.field] = selectedFile.name;
