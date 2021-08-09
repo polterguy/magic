@@ -3,11 +3,13 @@
  */
 
 // Angular and system imports.
-import { Observable } from 'rxjs';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 // Helper libraries.
 import { NgxImageCompressService } from 'ngx-image-compress';
+
+// Application specific imports.
+import { HttpService } from '@app/services/http-service';
 
 /**
  * Image uploader component, allowing you to browse for and upload an image.
@@ -23,7 +25,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     class="entity-edit-field"
     maxWidth="1024"
     maxHeight="800"
-    [upload]="service.uploadImage.bind(service)"
+    uploadUrl="/YOUR_MODULE_NAME/YOUR_UPLOAD_URL"
     (change)="changed('image')">
   </app-magic-image>
 
@@ -67,9 +69,9 @@ export class MagicImageComponent {
   @Input() public placeholder: string;
 
   /**
-   * Observable callback for component to upload image.
+   * Upload URL to use when uploading images.
    */
-   @Input() public upload: (image: string, type: string, old_file?: string) => Observable<any>;
+   @Input() public uploadUrl: string;
 
   /**
    * Callback to invoke once item is changed.
@@ -79,9 +81,12 @@ export class MagicImageComponent {
   /**
    * Creates an instance of your component.
    * 
+   * @param httpService Needed to actually upload the image(s).
    * @param imageCompress Needed to resize images before we upload them to backend
    */
-  constructor(private imageCompress: NgxImageCompressService) {}
+  constructor(
+    private httpService: HttpService,
+    private imageCompress: NgxImageCompressService) {}
 
   /**
    * Invoked as user clicks the button to select an image.
@@ -154,7 +159,11 @@ export class MagicImageComponent {
     image = image.substring(cutoff + 1);
 
     // Uploading image as base64 encoded bytes.
-    this.upload(image, type, this.model[this.key]).subscribe((uploadResult: any) => {
+    this.httpService.uploadImage(
+      this.uploadUrl,
+      image,
+      type,
+      this.model[this.key]).subscribe((uploadResult: any) => {
 
       // Assigning model.
       this.model[this.key] = uploadResult.filename;
