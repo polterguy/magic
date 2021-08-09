@@ -66,25 +66,6 @@
             status:int:404
 
    /*
-    * Making sure that module does not already have a 'magic.startup' folder.
-    */
-   strings.concat
-      get-value:x:@.module-path
-      .:/magic.startup/
-   if
-      io.folder.exists:x:@strings.concat
-      .lambda
-
-         // Modules already has a 'magic.startup' folder.
-         strings.concat
-            .:"The module called '"
-            get-value:x:@.arguments/*/module
-            .:"' already has a 'magic.startup' folder and hence we cannot create another"
-         throw:x:-
-            public:bool:true
-            status:int:404
-
-   /*
     * Making sure that at least one of [mysql] or [mssql] arguments was given.
     */
    if
@@ -103,6 +84,9 @@
    /*
     * Copying main 'magic.startup' template folder from misc folder.
     */
+   strings.concat
+      get-value:x:@.module-path
+      .:/magic.startup/
    io.folder.copy:/misc/ide/template-folders/magic.startup/
       get-value:x:@strings.concat
 
