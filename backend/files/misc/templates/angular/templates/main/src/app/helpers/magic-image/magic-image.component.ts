@@ -16,6 +16,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
  * below.
 
   <app-magic-image
+    *ngIf="canEditColumn('image')"
     [model]="data.entity"
     key="image"
     placeholder="Image"
