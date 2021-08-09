@@ -20,7 +20,7 @@ import { HttpService } from '@app/services/http-service';
   <app-magic-image
     *ngIf="canEditColumn('image')"
     [model]="data.entity"
-    key="image"
+    field="image"
     placeholder="Image"
     class="entity-edit-field"
     maxWidth="1024"
@@ -48,10 +48,10 @@ export class MagicImageComponent {
   @Input() public model: any;
 
   /**
-   * Key in the model, that you want this particular object
+   * Field in the model that you want this particular object
    * to be databound towards.
    */
-  @Input() public key: string;
+  @Input() public field: string;
 
   /**
    * Maximum width of image.
@@ -163,10 +163,10 @@ export class MagicImageComponent {
       this.uploadUrl,
       image,
       type,
-      this.model[this.key]).subscribe((uploadResult: any) => {
+      this.model[this.field]).subscribe((uploadResult: any) => {
 
       // Assigning model.
-      this.model[this.key] = uploadResult.filename;
+      this.model[this.field] = uploadResult.filename;
 
       // Signaling image has changed.
       this.change?.emit();
