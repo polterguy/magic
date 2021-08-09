@@ -3,7 +3,7 @@
  * Macro for Hyper IDE that creates an upload image endpoint.
  */
 .name:"Creates a download image endpoint"
-.description:"Macro for Hyper IDE that creates a 'download image' HTTP GET endpoint for you where the image is specified as an [image] query parameter."
+.description:"Macro for Hyper IDE that creates a 'download image' HTTP GET endpoint for you where the image is specified as an [image] query parameter. This macro goes hand in hand with the upload image macro, and becomes its 'get' equivalent."
 .arguments
    .
       name:module
