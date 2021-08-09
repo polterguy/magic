@@ -116,7 +116,10 @@ export class HttpService {
      old_file?: string) {
 
     // Invoking backend with the specified arguments.
-    // TODO: If you want to handle image uploading, you'll need a backend endpoint, and change the URL below.
+    // NOTICE! If you want to handle image uploading, you'll need a backend endpoint.
+    if (url.indexOf('/') !== 0) {
+      url = '/' + url;
+    }
     return this.httpClient.put<any>(`magic/modules${url}`, {
       content,
       type,
@@ -127,15 +130,19 @@ export class HttpService {
   /**
    * Uploads a file to your backend.
    *
+   * @param url Backend relative endpoint URL
    * @param file File you want to upload
    */
-   public uploadFile(file: any) {
+   public uploadFile(url: string, file: any) {
 
     // Invoking backend with a form data object containing file.
-    // TODO: If you want to handle file uploading, you'll need a backend endpoint, and change the URL below.
+    // NOTICE! If you want to handle file uploading, you'll need a backend endpoint.
+    if (url.indexOf('/') !== 0) {
+      url = '/' + url;
+    }
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.httpClient.put<any>('magic/modules/MODULE_NAME_HERE/upload-file', formData);
+    return this.httpClient.put<any>(`magic/modules${url}`, formData);
   }
 
   /*

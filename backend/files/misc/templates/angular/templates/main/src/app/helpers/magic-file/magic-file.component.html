@@ -1,0 +1,20 @@
+<div>
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="model[field]"
+      autocomplete="off"
+      [placeholder]="placeholder"
+    />
+  </mat-form-field>
+  <input
+    hidden
+    type="file"
+    id="{{ 'file_' + field }}"
+    (change)="uploadFile($event)">
+  <button
+    mat-icon-button
+    (click)="clickFileUploader()">
+    <mat-icon>cloud_upload</mat-icon>
+  </button>
+</div>
