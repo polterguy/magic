@@ -17,14 +17,14 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
  * something like the following in your HTML.
 
   <app-magic-selector
-    *ngIf="canEditColumn(field)"
+    *ngIf="canEditColumn('locale_id')"
     [model]="data.entity"
     field="locale_id"
     key="id"
     value="language"
     placeholder="Choose a language"
     class="entity-edit-field"
-    (change)="changed('language')"
+    (change)="changed('locale_id')"
     [getItems]="service.languages.read({limit:-1})">
   </app-magic-selector>
 
