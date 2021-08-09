@@ -1,10 +1,11 @@
 <mat-form-field>
   <mat-select
-    [(ngModel)]="model[key]"
+    [(ngModel)]="model[field]"
     [placeholder]="placeholder"
-    (selectionChange)="valueChanged()">
-    <mat-option
-      *ngFor="let idx of items"
-      [value]="idx[key]">{{idx[value]}}</mat-option>
+    (selectionChange)="valueChanged()"
+  >
+    <mat-option *ngFor="let idx of items" [value]="idx[key]">{{
+      idx[value]
+    }}</mat-option>
   </mat-select>
 </mat-form-field>
