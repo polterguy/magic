@@ -4,21 +4,21 @@ import { Component, Input } from '@angular/core';
 import { environment } from '@env/environment';
 
 /**
- * Image view component, allowing you to view an individual image referenced
- * as a field in a table. Below you can find example usage.
+ * File view component, allowing you to view and download an individual file
+ * associated with a database entity. Below you can find example usage.
 
-  <app-magic-image-view
-    [image]="el.filename"
-    downloadUrl="/MODULE_NAME/download-image">
-  </app-magic-image-view>
+  <app-magic-file-view
+    [file]="el.filename"
+    downloadUrl="/MODULE_NAME/download-file">
+  </app-magic-file-view>
 
  */
 @Component({
-  selector: 'app-magic-image-view',
-  templateUrl: './magic-image-view.component.html',
-  styleUrls: ['./magic-image-view.component.scss'],
+  selector: 'app-magic-file-view',
+  templateUrl: './magic-file-view.component.html',
+  styleUrls: ['./magic-file-view.component.scss'],
 })
-export class MagicImageViewComponent {
+export class MagicFileViewComponent {
 
   /**
    * Backend API URL.
@@ -28,7 +28,7 @@ export class MagicImageViewComponent {
   /**
    * Relative filename of image to view.
    */
-  @Input() public image: string;
+  @Input() public file: string;
 
   /**
    * Relative download URL to retrieve image.

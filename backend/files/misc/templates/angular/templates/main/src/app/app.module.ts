@@ -16,6 +16,7 @@ import { AppComponent } from './app.component';
 import { MagicSelectorComponent } from './helpers/magic-selector/magic-selector.component';
 import { MagicImageComponent } from './helpers/magic-image/magic-image.component';
 import { MagicImageViewComponent } from './helpers/magic-image-view/magic-image-view.component';
+import { MagicFileViewComponent } from './helpers/magic-file-view/magic-file-view.component';
 import { MagicFileComponent } from './helpers/magic-file/magic-file.component';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '@env/environment';
@@ -61,6 +62,7 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
     MagicSelectorComponent,
     MagicImageComponent,
     MagicImageViewComponent,
+    MagicFileViewComponent,
     MagicFileComponent,
     FormatDatePipe,
 
