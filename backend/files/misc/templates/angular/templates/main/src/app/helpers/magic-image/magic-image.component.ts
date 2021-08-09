@@ -25,7 +25,7 @@ import { HttpService } from '@app/services/http-service';
     class="entity-edit-field"
     maxWidth="1024"
     maxHeight="800"
-    uploadUrl="/YOUR_MODULE_NAME/YOUR_UPLOAD_URL"
+    uploadUrl="/YOUR_MODULE_NAME/upload-image"
     (change)="changed('image')">
   </app-magic-image>
 
