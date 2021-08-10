@@ -324,6 +324,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
           };
           if (idxInput.lookup) {
             cur.lookup = idxInput.lookup;
+            cur.lookup.table = cur.lookup.table.replace('dbo.', '').toLowerCase();
           }
           tmp.input.push(cur);
         }
@@ -336,6 +337,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
           };
           if (idxOutput.lookup) {
             cur.lookup = idxOutput.lookup;
+            cur.lookup.table = cur.lookup.table.replace('dbo.', '').toLowerCase();
           }
           tmp.output.push(cur);
         }
