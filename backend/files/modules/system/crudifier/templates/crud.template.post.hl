@@ -5,6 +5,7 @@
 .arguments
 .description:Creates an item in your {table} table in your {database} database according to the specified arguments
 .type:crud-create
+.foreign-keys
 
 
 /*

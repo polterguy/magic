@@ -79,6 +79,21 @@
             *ngIf="el.warning"
             [matTooltip]="el.warning">warning</mat-icon>
 
+          <div *ngIf="hasForeignKeys(el)" class="foreign-key">
+            <strong>{{getForeignKey(el)}}</strong>
+            <mat-form-field class="form-field" appearance="outline">
+
+              <mat-label>Field</mat-label>
+              <mat-select
+                [(ngModel)]="el.foreign_key.foreign_name">
+                <mat-option
+                  *ngFor="let idx of getForeignKeyCandidates(el)"
+                  [value]="idx">{{idx}}</mat-option>
+              </mat-select>
+
+            </mat-form-field>
+          </div>
+
         </div>
       </td>
     </ng-container>

@@ -12,25 +12,32 @@
     "args":{
        "columns":[
           {
-             "id":"long"
+             "name":"id",
+             "type":"long"
           },
           {
-             "crypto_key":"long"
+             "name":"crypto_key",
+             "type":"long"
           },
           {
-             "request_id":"string"
+             "name":"request_id",
+             "type":"string"
           },
           {
-             "request":"string"
+             "name":"request",
+             "type":"string"
           },
           {
-             "request_raw":"string"
+             "name":"request_raw",
+             "type":"string"
           },
           {
-             "response":"string"
+             "name":"response",
+             "type":"string"
           },
           {
-             "created":"date"
+             "name":"created",
+             "type":"date"
           }
        ]
     },
@@ -92,28 +99,36 @@
     "args":{
        "columns":[
           {
-             "subject":"string"
-          },
-          {
-             "email":"string"
-          },
-          {
-             "domain":"string"
-          },
-          {
+             "name":"subject",
              "type":"string"
           },
           {
-             "fingerprint":"string"
+             "name":"email",
+             "type":"string"
           },
           {
-             "content":"string"
+             "name":"domain",
+             "type":"string"
           },
           {
-             "vocabulary":"string"
+             "name":"type",
+             "type":"string"
           },
           {
-             "enabled":"bool"
+             "name":"fingerprint",
+             "type":"string"
+          },
+          {
+             "name":"content",
+             "type":"string"
+          },
+          {
+             "name":"vocabulary",
+             "type":"string"
+          },
+          {
+             "name":"enabled",
+             "type":"bool"
           }
        ]
     },
@@ -132,34 +147,44 @@
     "args":{
        "columns":[
           {
-             "id":"long"
+             "name":"id",
+             "type":"long"
           },
           {
-             "subject":"string"
-          },
-          {
-             "email":"string"
-          },
-          {
-             "domain":"string"
-          },
-          {
+             "name":"subject",
              "type":"string"
           },
           {
-             "fingerprint":"string"
+             "name":"email",
+             "type":"string"
           },
           {
-             "content":"string"
+             "name":"domain",
+             "type":"string"
           },
           {
-             "vocabulary":"string"
+             "name":"type",
+             "type":"string"
           },
           {
-             "imported":"date"
+             "name":"fingerprint",
+             "type":"string"
           },
           {
-             "enabled":"bool"
+             "name":"content",
+             "type":"string"
+          },
+          {
+             "name":"vocabulary",
+             "type":"string"
+          },
+          {
+             "name":"imported",
+             "type":"date"
+          },
+          {
+             "name":"enabled",
+             "type":"bool"
           }
        ]
     },
@@ -302,10 +327,12 @@
     "args":{
        "columns":[
           {
-             "name":"string"
+             "name":"name",
+             "type":"string"
           },
           {
-             "description":"string"
+             "name":"description",
+             "type":"string"
           }
        ]
     },
@@ -324,10 +351,12 @@
     "args":{
        "columns":[
           {
-             "name":"string"
+             "name":"name",
+             "type":"string"
           },
           {
-             "description":"string"
+             "name":"description",
+             "type":"string"
           }
        ]
     },
@@ -361,7 +390,8 @@
        ],
        "columns":[
           {
-             "description":"string"
+             "name":"description",
+             "type":"string"
           }
        ]
     }
@@ -397,13 +427,16 @@
     "args":{
        "columns":[
           {
-             "username":"string"
+             "name":"username",
+             "type":"string"
           },
           {
-             "password":"string"
+             "name":"password",
+             "type":"string"
           },
           {
-            "locked":"bool"
+             "name":"locked",
+             "type":"bool"
           }
       ]
     },
@@ -422,13 +455,16 @@
     "args":{
        "columns":[
           {
-             "username":"string"
+             "name":"username",
+             "type":"string"
           },
           {
-            "locked":"bool"
+             "name":"locked",
+             "type":"bool"
           },
           {
-            "created":"date"
+             "name":"created",
+             "type":"date"
           }
        ]
     },
@@ -474,8 +510,12 @@
        ],
        "columns":[
           {
-             "password":"string",
-             "locked":"bool"
+            "name":"password",
+            "type":"string"
+          },
+          {
+            "name":"locked",
+            "type":"bool"
           }
        ]
     },
@@ -512,10 +552,12 @@
     "args":{
        "columns":[
           {
-             "role":"string"
+            "name":"role",
+            "type":"string"
           },
           {
-             "user":"string"
+            "name":"user",
+            "type":"string"
           }
        ]
     }
@@ -533,10 +575,12 @@
     "args":{
        "columns":[
           {
-             "role":"string"
+             "name":"role",
+             "type":"string"
           },
           {
-             "user":"string"
+             "name":"user",
+             "type":"string"
           }
        ]
     },

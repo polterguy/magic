@@ -3,6 +3,7 @@
  * Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments.
  */
 .arguments
+   verbose:bool
    databaseType:string
    moduleName:string
    database:string
@@ -376,7 +377,28 @@ semaphore:crudifier
                lteq
                neq
                eq
-            for-each:x:@.arguments/*/args/*/columns/*/*
+
+            /*
+             * Checking if caller wants 'verbose' scaffolding.
+             */
+            if
+               or
+                  not
+                     exists:x:@.arguments/*/verbose
+                  not
+                     get-value:x:@.arguments/*/verbose
+               .lambda
+                  remove-nodes:x:@.operators/*/mt
+                  remove-nodes:x:@.operators/*/lt
+                  remove-nodes:x:@.operators/*/mteq
+                  remove-nodes:x:@.operators/*/lteq
+                  remove-nodes:x:@.operators/*/neq
+
+            /*
+             * Applying arguments to endpoint.
+             */
+            for-each:x:@.arguments/*/args/*/columns/*
+
 
                /*
                 * Checking if argument needs a ".like" comparison type,
@@ -384,7 +406,7 @@ semaphore:crudifier
                 */
                if
                   eq
-                     get-value:x:@.dp/#
+                     get-value:x:@.dp/#/*/type
                      .:string
                   .lambda
 
@@ -392,11 +414,11 @@ semaphore:crudifier
                       * String type of argument, appending ".like" to legal arguments.
                       */
                      .buffer
-                        .name:x:@.dp/#
+                        .name:x:@.dp/#/*/type
                      unwrap:x:@.buffer/*
                      set-name:x:@.buffer/*
                         strings.concat
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
                            .:.like
                      add:x:@apply/*/.arguments
                         get-nodes:x:@.buffer/*
@@ -407,7 +429,7 @@ semaphore:crudifier
                 */
                if
                   eq
-                     get-value:x:@.dp/#
+                     get-value:x:@.dp/#/*/type
                      .:bool
                   .lambda
 
@@ -415,11 +437,11 @@ semaphore:crudifier
                       * Boolean type of argument, removing everything but ".eq" type of arguments.
                       */
                      .buffer
-                        .name:x:@.dp/#
+                        .name:x:@.dp/#/*/type
                      unwrap:x:@.buffer/*
                      set-name:x:@.buffer/*
                         strings.concat
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
                            .:.eq
                      add:x:@apply/*/.arguments
                         get-nodes:x:@.buffer/*
@@ -432,11 +454,11 @@ semaphore:crudifier
                    */
                   for-each:x:@.operators/*
                      .buffer
-                        .name:x:@.dp/@.dp/#
+                        .name:x:@.dp/@.dp/#/*/type
                      unwrap:x:@.buffer/*
                      set-name:x:@.buffer/*
                         strings.concat
-                           get-name:x:@.dp/@.dp/#
+                           get-value:x:@.dp/@.dp/#/*/name
                            .:.
                            get-name:x:@.dp/#
                      add:x:@apply/*/.arguments
@@ -446,10 +468,50 @@ semaphore:crudifier
           * Making sure we explicitly declare which [columns] that our
           * endpoint should return, according to caller's specifications.
           */
-         for-each:x:@.arguments/*/args/*/columns/*/*
-            set-value:x:@.dp/#
-         add:x:@apply/**/columns
-            get-nodes:x:@.arguments/*/args/*/columns/*/*
+         for-each:x:@.arguments/*/args/*/columns/*/*/name
+            set-name:x:+/*/*
+               get-value:x:@.dp/#
+            add:x:@apply/**/columns
+               .
+                  .
+
+         /*
+          * Applying foreign keys if specified.
+          */
+         for-each:x:@.arguments/*/args/*/columns/*
+
+            /*
+             * Checking if currently iterated column has a foreign key declaration.
+             */
+            if
+               exists:x:@.dp/#/*/foreign_key/*
+               .lambda
+
+                  /*
+                   * Adding meta information about foreign key to lambda object.
+                   */
+                  unwrap:x:+/*/*/*
+                  add:x:@apply/*/.foreign-keys
+                     .
+                        .
+                           column:x:@.dp/#/*/name
+                           table:x:@.dp/#/*/foreign_key/*/table
+                           foreign_column:x:@.dp/#/*/foreign_key/*/column
+                           foreign_name:x:@.dp/#/*/foreign_key/*/name
+
+
+         /*
+          * Checking if we have foreign keys at all, and if not, removing entire declaration.
+          */
+         if
+            not
+               exists:x:@apply/*/.foreign-keys/*
+            .lambda
+
+               /*
+                * Removing [.foreign-key] declaration altogether.
+                */
+               remove-nodes:x:@apply/*/.foreign-keys
 
       /*
        * HTTP POST special cases
@@ -477,8 +539,12 @@ semaphore:crudifier
           * invokers of endpoint are allowed to insert during creationg of
           * record.
           */
-         add:x:@apply/*/.arguments
-            get-nodes:x:@.arguments/*/args/*/columns/*/*
+         for-each:x:@.arguments/*/args/*/columns/*
+            set-name:x:+/*/*
+               get-value:x:@.dp/#/*/name
+            add:x:@apply/*/.arguments
+               .
+                  .
 
          /*
           * Checking if caller specified he wanted to have ID of item returned,
@@ -492,6 +558,44 @@ semaphore:crudifier
                add:x:@apply/**/return
                   .
                      result:success
+
+
+         /*
+          * Applying foreign keys if specified.
+          */
+         for-each:x:@.arguments/*/args/*/columns/*
+
+            /*
+             * Checking if currently iterated column has a foreign key declaration.
+             */
+            if
+               exists:x:@.dp/#/*/foreign_key/*
+               .lambda
+
+                  /*
+                   * Adding meta information about foreign key to lambda object.
+                   */
+                  unwrap:x:+/*/*/*
+                  add:x:@apply/*/.foreign-keys
+                     .
+                        .
+                           column:x:@.dp/#/*/name
+                           table:x:@.dp/#/*/foreign_key/*/table
+                           foreign_column:x:@.dp/#/*/foreign_key/*/column
+                           foreign_name:x:@.dp/#/*/foreign_key/*/name
+
+         /*
+          * Checking if we have foreign keys at all, and if not, removing entire declaration.
+          */
+         if
+            not
+               exists:x:@apply/*/.foreign-keys/*
+            .lambda
+
+               /*
+                * Removing [.foreign-key] declaration altogether.
+                */
+               remove-nodes:x:@apply/*/.foreign-keys
 
       /*
        * HTTP PUT special cases
@@ -548,8 +652,12 @@ semaphore:crudifier
           * which we can get away with, since we know that all primary keys are mandatory,
           * and declared first in our [.arguments] node in our endpoint.
           */
-         add:x:@apply/*/.arguments
-            get-nodes:x:@.arguments/*/args/*/columns/*/*
+         for-each:x:@.arguments/*/args/*/columns/*
+            set-name:x:+/*/*
+               get-value:x:@.dp/#/*/name
+            add:x:@apply/*/.arguments
+               .
+                  .
 
          /*
           * First adding the [add] into [where] parts, which are the primary keys.
@@ -587,6 +695,44 @@ semaphore:crudifier
             .
                add:x:./*/data.update/*/values
                   get-nodes
+
+
+         /*
+          * Applying foreign keys if specified.
+          */
+         for-each:x:@.arguments/*/args/*/columns/*
+
+            /*
+             * Checking if currently iterated column has a foreign key declaration.
+             */
+            if
+               exists:x:@.dp/#/*/foreign_key/*
+               .lambda
+
+                  /*
+                   * Adding meta information about foreign key to lambda object.
+                   */
+                  unwrap:x:+/*/*/*
+                  add:x:@apply/*/.foreign-keys
+                     .
+                        .
+                           column:x:@.dp/#/*/name
+                           table:x:@.dp/#/*/foreign_key/*/table
+                           foreign_column:x:@.dp/#/*/foreign_key/*/column
+                           foreign_name:x:@.dp/#/*/foreign_key/*/name
+
+         /*
+          * Checking if we have foreign keys at all, and if not, removing entire declaration.
+          */
+         if
+            not
+               exists:x:@apply/*/.foreign-keys/*
+            .lambda
+
+               /*
+                * Removing [.foreign-key] declaration altogether.
+                */
+               remove-nodes:x:@apply/*/.foreign-keys
 
    /*
     * Checking if caller wants to apply the CQRS pattern to his endpoint.
@@ -792,10 +938,11 @@ semaphore:crudifier
       .lambda
 
          /*
-          * First removing [columns], adding [count(*) as count, and then transforming lambda
+          * First removing [.foreign-keys], [columns], adding [count(*) as count, and then transforming lambda
           * to Hyperlambda, and saving it to the correct file - Which is the same filename as the
           * plain get, except appending "-count" to it.
           */
+         remove-nodes:x:@apply/*/.foreign-keys
          remove-nodes:x:@apply/**/columns/*
          remove-nodes:x:@apply/**/table/././*/remove-nodes
          remove-nodes:x:@apply/**/return-nodes

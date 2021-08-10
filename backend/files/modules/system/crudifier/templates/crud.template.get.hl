@@ -10,6 +10,7 @@
    operator:string
 .description:Returns items from your {table} table in your {database} database according to the specified arguments
 .type:crud-read
+.foreign-keys
 
 
 /*

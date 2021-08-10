@@ -11,7 +11,7 @@ export class ForeignKey {
   /**
    * Name of column that has the foreign key.
    */
-   column: string;
+   column?: string;
 
    /**
     * Name of table foreign key points to.
@@ -22,4 +22,9 @@ export class ForeignKey {
     * Name of field in foreign key table.
     */
    foreign_column: string;
+
+   /**
+    * Display name.
+    */
+   foreign_name?: string;
 }

@@ -18,6 +18,7 @@ import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/code
 
 // CodeMirror options.
 import hyperlambda from '../../../codemirror/options/hyperlambda.json';
+import { DatabaseEx } from '../../models/database-ex.model';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -70,6 +71,11 @@ export class CrudifierTableComponent {
   @Input() public database: string;
 
   /**
+   * Model for component wrapping database, needed to retrieve foreign key table's columns.
+   */
+  @Input() public currentDatabase: DatabaseEx;
+
+  /**
    * Model for component wrapping database type.
    */
   @Input() public databaseType: string;
@@ -90,7 +96,40 @@ export class CrudifierTableComponent {
     private loaderInterceptor: LoaderInterceptor,
     private transformService: TransformModelService) {
       this.input.options.autofocus = false;
-    }
+  }
+
+  /**
+   * Returns true if column has a foreign key pointing into another table.
+   * 
+   * @param column Column to check
+   */
+  public hasForeignKeys(column: ColumnEx) {
+    return this.table.foreign_keys.filter(x => x.column === column.name).length > 0;
+  }
+
+  /**
+   * Returns a string representation of foreign key for column.
+   * 
+   * @param column Column to return foreign key for
+   */
+  public getForeignKey(column: ColumnEx) {
+    const key = this.table.foreign_keys.filter(x => x.column === column.name)[0];
+    return key.foreign_table + '.' + key.foreign_column;
+  }
+
+  /**
+   * Returns foreign key candidates for column.
+   * 
+   * @param column Column to return values for
+   */
+  public getForeignKeyCandidates(column: ColumnEx) {
+
+    // Returns list of all candidates for foreign key values (display names) in referenced table.
+    const key = this.table.foreign_keys.filter(x => x.column === column.name)[0].foreign_table;
+    const table = this.currentDatabase.tables.filter(x => x.name === key)[0];
+    return table.columns.map(x => x.name);
+
+  }
 
   /**
    * Returns true if this is the generic/magic database

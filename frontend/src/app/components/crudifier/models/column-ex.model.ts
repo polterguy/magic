@@ -3,6 +3,8 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 
+import { ForeignKey } from "../../sql/models/foreign-key.model";
+
 /**
  * Column class containing meta information about
  * a single column in a single table.
@@ -88,4 +90,9 @@ export class ColumnEx {
    * Whether or not user can change if column should be submitted to delete invocations.
    */
   deleteDisabled: boolean;
+
+  /**
+   * Foreign key reference to use when crudifying table.
+   */
+   foreign_key?: ForeignKey;
 }
