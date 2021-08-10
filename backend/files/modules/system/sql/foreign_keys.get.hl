@@ -1,13 +1,13 @@
 
 /*
- * Returns foreign keys for the specified arguments.
+ * Returns foreign keys for the specified table.
  */
 .arguments
    databaseType:string
    connectionString:string
    database:string
    table:string
-.description:Returns foreign keys for the specified arguments
+.description:Returns foreign keys for the specified table
 
 
 /*
