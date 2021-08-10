@@ -40,8 +40,7 @@ cache.try-get:x:@strings.concat
 
 
       /*
-       * Invokes slots.create responsible for returning our database names,
-       * and returns results to caller.
+       * Retrieving databases.
        */
       .databaseType:x:@.arguments/*/databaseType
       .connection-string:x:@.arguments/*/connectionString
@@ -55,7 +54,7 @@ cache.try-get:x:@strings.concat
 
 
       /*
-       * Creating our return value.
+       * Creating our return value, one for each database.
        */
       .result
       for-each:x:@signal/*/*
@@ -69,8 +68,18 @@ cache.try-get:x:@strings.concat
                .
                   name:x:@.dp/#
                   tables
+
+
+      /*
+       * Iterating through databases.
+       */
       for-each:x:@.result/*
          try
+
+
+            /*
+             * Retrieving tables.
+             */
             strings.concat
                .:magic.db.
                get-value:x:@.databaseType
@@ -80,6 +89,11 @@ cache.try-get:x:@strings.concat
                connection-string:x:@.connection-string
                database:x:@.dp/#/*/name
             for-each:x:@signal/*
+
+
+               /*
+                * Retrieving columns.
+                */
                unwrap:x:+/*/*/*
                add:x:@for-each/@.dp/#/*/tables
                   .
@@ -106,6 +120,30 @@ cache.try-get:x:@strings.concat
                            primary:x:@.dp/#/*/primary
                            automatic:x:@.dp/#/*/automatic
                            hl:x:@.dp/#/*/hl
+
+
+               /*
+                * Retrieving foreign keys.
+                */
+               add:x:@for-each/@for-each/@.dp/#/*/tables/0/-
+                  .
+                     foreign_keys
+               strings.concat
+                  .:magic.db.
+                  get-value:x:@.databaseType
+                  .:.foreign_keys
+               unwrap:x:+/*
+               signal:x:@strings.concat
+                  connection-string:x:@.connection-string
+                  database:x:@for-each/@for-each/@.dp/#/*/name
+                  table:x:@.dp/#/*/table
+               for-each:x:@signal/*
+                  add:x:+/*/*
+                     get-nodes:x:@.dp/#/*
+                  add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/foreign_keys
+                     .
+                        .
+
          .catch
 
             // Silently ignoring, after logging, probably don't have access to database.

@@ -5,6 +5,7 @@
 
 // Application specific imports.
 import { Column } from "./column.model";
+import { ForeignKey } from "./foreign-key.model";
 
 /**
  * Table class containing meta information about
@@ -21,4 +22,9 @@ export class Table {
    * Columns in table.
    */
   columns: Column[];
+
+  /**
+   * Foreign keys for table.
+   */
+   foreign_keys: ForeignKey[];
 }
