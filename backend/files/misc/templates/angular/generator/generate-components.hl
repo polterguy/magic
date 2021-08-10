@@ -113,6 +113,7 @@ set-value:x:@.view-details-file/*/bool
    bool
    date
    decimal
+   selector
 
 strings.concat
    get-value:x:@.arguments/*/root-folder
@@ -142,6 +143,12 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.date.html
 set-value:x:@.form-field-file/*/date
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.selector.html
+set-value:x:@.form-field-file/*/selector
    io.file.load:x:@strings.concat
 
 
@@ -559,73 +566,106 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * We can now safely create a form control for currently iterated [.form-fields] instance.
-             * Making sure we correctly create our HTML markup for edit/create component.
-             *
-             * Notice, some types have specialized implementations here.
+             * Checking if this is a selector type of field, implying a foreign key into
+             * another table.
              */
-            switch:x:@.dp/#/*/type
+            if
+               exists:x:@.dp/#/*/lookup/*
+               .lambda
 
-
-               /*
-                * Long type.
-                */
-               case:long
-               case:int
+                  /*
+                   * Using the selector component for our edit/create modal dialog.
+                   */
+                  strings.replace:x:@.form-field-file/*/selector
+                     .:[[column-name]]
+                     get-value:x:@.dp/#/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_key]]
+                     get-value:x:@.dp/#/*/lookup/*/key
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_name]]
+                     get-value:x:@.dp/#/*/lookup/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_table]]
+                     get-value:x:@.dp/#/*/lookup/*/table
                   set-value:x:@.substitutions/*/form-fields
                      strings.concat
                         get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file/*/long
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+                        get-value:x:@strings.replace
+
+            else
 
 
                /*
-                * Decimal type.
+                * Not a foreign key, figuring out its type.
+                *
+                * We can now safely create a form control for currently iterated [.form-fields] instance.
+                * Making sure we correctly create our HTML markup for edit/create component.
+                *
+                * Notice, some types have specialized implementations here.
                 */
-               case:decimal
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file/*/decimal
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+               switch:x:@.dp/#/*/type
 
 
-               /*
-                * Boolean type.
-                */
-               case:bool
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file/*/bool
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+                  /*
+                   * Long type.
+                   */
+                  case:long
+                  case:int
+                     set-value:x:@.substitutions/*/form-fields
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-fields
+                           strings.replace:x:@.form-field-file/*/long
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
 
 
-               /*
-                * Date type.
-                */
-               case:date
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file/*/date
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+                  /*
+                   * Decimal type.
+                   */
+                  case:decimal
+                     set-value:x:@.substitutions/*/form-fields
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-fields
+                           strings.replace:x:@.form-field-file/*/decimal
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
 
 
-               /*
-                * Default (anything not having a specialized implementation).
-                */
-               default
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        strings.replace:x:@.form-field-file
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+                  /*
+                   * Boolean type.
+                   */
+                  case:bool
+                     set-value:x:@.substitutions/*/form-fields
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-fields
+                           strings.replace:x:@.form-field-file/*/bool
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
+
+
+                  /*
+                   * Date type.
+                   */
+                  case:date
+                     set-value:x:@.substitutions/*/form-fields
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-fields
+                           strings.replace:x:@.form-field-file/*/date
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
+
+
+                  /*
+                   * Default (anything not having a specialized implementation).
+                   */
+                  default
+                     set-value:x:@.substitutions/*/form-fields
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-fields
+                           strings.replace:x:@.form-field-file
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
 
 
          /*
