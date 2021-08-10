@@ -540,8 +540,10 @@ semaphore:crudifier
           * record.
           */
          for-each:x:@.arguments/*/args/*/columns/*
-            set-name:x:+/*/*
+            set-name:x:+/+/*/*
                get-value:x:@.dp/#/*/name
+            set-value:x:+/*/*
+               get-value:x:@.dp/#/*/type
             add:x:@apply/*/.arguments
                .
                   .
@@ -653,8 +655,10 @@ semaphore:crudifier
           * and declared first in our [.arguments] node in our endpoint.
           */
          for-each:x:@.arguments/*/args/*/columns/*
-            set-name:x:+/*/*
+            set-name:x:+/+/*/*
                get-value:x:@.dp/#/*/name
+            set-value:x:+/*/*
+               get-value:x:@.dp/#/*/type
             add:x:@apply/*/.arguments
                .
                   .
