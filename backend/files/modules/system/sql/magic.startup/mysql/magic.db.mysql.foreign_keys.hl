@@ -1,0 +1,66 @@
+
+/*
+ * Lists all foreign keys in some MySQL table.
+ *
+ * Arguments
+ *
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
+ */
+slots.create:magic.db.mysql.foreign_keys
+
+
+   /*
+    * Opens up our connection
+    */
+   .connection:[information_schema]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   mysql.connect:x:@.connection
+
+
+      /*
+       * Dynamically creating our SQL.
+       */
+      .sql:@"select `column_name` as `column`, `referenced_table_name` as foreign_table, `referenced_column_name`  as foreign_column 
+  from `information_schema`.`key_column_usage`
+  where `constraint_schema` = schema()
+    and `table_name` = '[[table]]'
+    and `referenced_column_name` is not null
+    and `constraint_schema` = '[[database]]'
+  order by `column_name`;
+"
+      set-value:x:@.sql
+         strings.replace:x:@.sql
+            .:[[table]]
+            get-value:x:@.arguments/*/table
+      set-value:x:@.sql
+         strings.replace:x:@.sql
+            .:[[database]]
+            get-value:x:@.arguments/*/database
+      mysql.select:x:@.sql
+
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon MySQL's syntactic
+       * details.
+       */
+      return-nodes:x:@mysql.select/*

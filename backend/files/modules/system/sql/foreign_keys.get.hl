@@ -1,0 +1,52 @@
+
+/*
+ * Returns foreign keys for the specified arguments.
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+   database:string
+   table:string
+.description:Returns foreign keys for the specified arguments
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/connectionString
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/table
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:mssql
+
+
+/*
+ * Figuring out what slot to invoke, as in the MySQL or SQL Server version.
+ */
+strings.concat
+   .:magic.db.
+   get-value:x:@.arguments/*/databaseType
+   :.foreign_keys
+
+
+/*
+ * Invoking slot responsible for returning foreign keys for table.
+ */
+unwrap:x:+/*
+signal:x:@strings.concat
+   connection-string:x:@.arguments/*/connectionString
+   database:x:@.arguments/*/database
+   table:x:@.arguments/*/table
+
+
+/*
+ * Returning result of above invocation to caller.
+ */
+return-nodes:x:@signal/*
