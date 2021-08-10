@@ -475,44 +475,6 @@ semaphore:crudifier
                .
                   .
 
-         /*
-          * Applying foreign keys if specified.
-          */
-         for-each:x:@.arguments/*/args/*/columns/*
-
-            /*
-             * Checking if currently iterated column has a foreign key declaration.
-             */
-            if
-               exists:x:@.dp/#/*/foreign_key/*
-               .lambda
-
-                  /*
-                   * Adding meta information about foreign key to lambda object.
-                   */
-                  unwrap:x:+/*/*/*
-                  add:x:@apply/*/.foreign-keys
-                     .
-                        .
-                           column:x:@.dp/#/*/name
-                           table:x:@.dp/#/*/foreign_key/*/table
-                           foreign_column:x:@.dp/#/*/foreign_key/*/column
-                           foreign_name:x:@.dp/#/*/foreign_key/*/name
-
-
-         /*
-          * Checking if we have foreign keys at all, and if not, removing entire declaration.
-          */
-         if
-            not
-               exists:x:@apply/*/.foreign-keys/*
-            .lambda
-
-               /*
-                * Removing [.foreign-key] declaration altogether.
-                */
-               remove-nodes:x:@apply/*/.foreign-keys
-
       /*
        * HTTP POST special cases
        */
@@ -560,44 +522,6 @@ semaphore:crudifier
                add:x:@apply/**/return
                   .
                      result:success
-
-
-         /*
-          * Applying foreign keys if specified.
-          */
-         for-each:x:@.arguments/*/args/*/columns/*
-
-            /*
-             * Checking if currently iterated column has a foreign key declaration.
-             */
-            if
-               exists:x:@.dp/#/*/foreign_key/*
-               .lambda
-
-                  /*
-                   * Adding meta information about foreign key to lambda object.
-                   */
-                  unwrap:x:+/*/*/*
-                  add:x:@apply/*/.foreign-keys
-                     .
-                        .
-                           column:x:@.dp/#/*/name
-                           table:x:@.dp/#/*/foreign_key/*/table
-                           foreign_column:x:@.dp/#/*/foreign_key/*/column
-                           foreign_name:x:@.dp/#/*/foreign_key/*/name
-
-         /*
-          * Checking if we have foreign keys at all, and if not, removing entire declaration.
-          */
-         if
-            not
-               exists:x:@apply/*/.foreign-keys/*
-            .lambda
-
-               /*
-                * Removing [.foreign-key] declaration altogether.
-                */
-               remove-nodes:x:@apply/*/.foreign-keys
 
       /*
        * HTTP PUT special cases
@@ -699,6 +623,14 @@ semaphore:crudifier
             .
                add:x:./*/data.update/*/values
                   get-nodes
+
+   /*
+    * HTTP PUT, POST and GET commonalities
+    */
+   switch:x:@.arguments/*/verb
+      case:put
+      case:post
+      case:get
 
 
          /*
