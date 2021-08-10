@@ -22,6 +22,12 @@ export class TransformModelService {
   public overwrite = false;
 
   /**
+   * Whether or not scaffolding should create verbose endpoints, implying applying
+   * as many argument options as possible, or only apply the bare minimum.
+   */
+   public verbose = false;
+
+  /**
    * Transforms the specified input to a Crudify instance, required to invoke backend
    * 
    * @param databaseType Type of database, 'mysql' or 'mssql' for instance
@@ -45,6 +51,7 @@ export class TransformModelService {
     result.verb = verb;
     result.returnId = (table.columns || []).filter(x => x.primary && !x.automatic).length === 0;
     result.overwrite = this.overwrite;
+    result.verbose = this.verbose;
     result.validators = table.validators;
     result.cqrs = table.cqrs;
     result.cqrsAuthorisation = table.cqrsAuthorisation;
@@ -120,30 +127,55 @@ export class TransformModelService {
 
         case 'post':
           if (idxColumn.post) {
-            result.args.columns.push({
-              [idxColumn.name]: idxColumn.hl
-            });
+            const cur = {
+              name: idxColumn.name,
+              type: idxColumn.hl,
+            };
+            if (idxColumn.foreign_key) {
+              cur['foreign_key'] = {
+                table: idxColumn.foreign_key.foreign_table,
+                column: idxColumn.foreign_key.foreign_column,
+                name: idxColumn.foreign_key.foreign_name,
+              };
+            }
+          result.args.columns.push(cur);
           }
           break;
 
         case 'get':
           if (idxColumn.get) {
-            result.args.columns.push({
-              [idxColumn.name]: idxColumn.hl
-            });
+            const cur = {
+              name: idxColumn.name,
+              type: idxColumn.hl,
+            };
+            if (idxColumn.foreign_key) {
+              cur['foreign_key'] = {
+                table: idxColumn.foreign_key.foreign_table,
+                column: idxColumn.foreign_key.foreign_column,
+                name: idxColumn.foreign_key.foreign_name,
+              };
+            }
+            result.args.columns.push(cur);
           }
           break;
 
         case 'put':
           if (idxColumn.put) {
+            const cur = {
+              name: idxColumn.name,
+              type: idxColumn.hl,
+            };
             if (idxColumn.primary) {
-              result.args.primary.push({
-                [idxColumn.name]: idxColumn.hl
-              });
+              result.args.primary.push(cur);
             } else {
-              result.args.columns.push({
-                [idxColumn.name]: idxColumn.hl
-              });
+              if (idxColumn.foreign_key) {
+                cur['foreign_key'] = {
+                  table: idxColumn.foreign_key.foreign_table,
+                  column: idxColumn.foreign_key.foreign_column,
+                  name: idxColumn.foreign_key.foreign_name,
+                };
+              }
+              result.args.columns.push(cur);
             }
           }
           break;

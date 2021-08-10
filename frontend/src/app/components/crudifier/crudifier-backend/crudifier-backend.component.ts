@@ -125,6 +125,7 @@ export class CrudifierBackendComponent implements OnInit {
         this.connectionStrings = connectionStrings;
         this.connectionString = this.connectionStrings.filter(x => x === 'generic')[0];
         this.connectionStringChanged();
+
       });
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -219,6 +220,7 @@ export class CrudifierBackendComponent implements OnInit {
           table: this.table,
           database: '[' + this.connectionString + '|' + this.database.name + ']',
           databaseType: this.databaseType,
+          currentDatabase: this.database,
         }
       }
     });
@@ -352,6 +354,19 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Looping through each table in database.
     for (const idxTable of database.tables || []) {
+
+      // Figuring out if table has foreign keys.
+      for (const idx of idxTable.columns) {
+        const keys = idxTable.foreign_keys?.filter(x => x.column === idx.name) ?? [];
+        if (keys.length > 0) {
+          idx.foreign_key = {
+            foreign_table: keys[0].foreign_table,
+            foreign_column: keys[0].foreign_column,
+            foreign_name: database.tables
+              .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string' || !x.primary)[0].name,
+          };
+        }
+      }
 
       // Creating defaults for currently iterated table.
       idxTable.moduleName = database.name;

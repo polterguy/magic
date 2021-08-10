@@ -36,6 +36,17 @@ table.table-items {
           top: unset;
           right: unset;
         }
+        ul.verbs:after {
+          clear: both;
+          content: '';
+          display: table;
+        }
+        .foreign-key {
+          margin-top: 1rem;
+          strong {
+            display: block;
+          }
+        }
       }
     }
   }

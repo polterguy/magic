@@ -6,6 +6,7 @@
 // Application specific imports.
 import { Verb } from "./verb.model";
 import { ColumnEx } from "./column-ex.model";
+import { ForeignKey } from "../../sql/models/foreign-key.model";
 
 /**
  * Table class containing meta information about
@@ -113,4 +114,9 @@ export class TableEx {
     * the comma separated list of which roles messages are published to.
     */
    cqrsAuthorisationValues?: string;
+
+   /**
+    * Foreign keys in table.
+    */
+   foreign_keys: ForeignKey[];
  }
