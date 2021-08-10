@@ -104,7 +104,7 @@ export class CrudifierTableComponent {
    * @param column Column to check
    */
   public hasForeignKeys(column: ColumnEx) {
-    return this.table.foreign_keys.filter(x => x.column === column.name).length > 0;
+    return this.table.foreign_keys?.filter(x => x.column === column.name).length > 0 || false;
   }
 
   /**
