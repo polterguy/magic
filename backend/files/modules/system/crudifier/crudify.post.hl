@@ -557,20 +557,26 @@ semaphore:crudifier
           * This is done by making sure all specified primary keys becomes mandatory
           * arguments when invoking the endpoint.
           */
-         for-each:x:@.arguments/*/args/*/primary/*/*
+         for-each:x:@.arguments/*/args/*/primary/*
+            set-name:x:+/+/*/*
+               get-value:x:@.dp/#/*/name
+            set-value:x:+/*/*
+               get-value:x:@.dp/#/*/type
+            add:x:@apply/*/.arguments
+               .
+                  .
+         for-each:x:@.arguments/*/args/*/primary/*
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
                   get-value:x:@.x
-                  get-name:x:@.dp/#
+                  get-value:x:@.dp/#/*/name
             set-x:x:+/*/*
                convert:x:@.x
                   type:x
             insert-after:x:@apply/*/.type
                .
                   validators.mandatory
-         add:x:@apply/*/.arguments
-            get-nodes:x:@.arguments/*/args/*/primary/*/*
 
          /*
           * Then adding the [add] into [values] and [where] invocations to our endpoint.
@@ -594,7 +600,7 @@ semaphore:crudifier
          set-value:x:@.x
             strings.concat
                get-value:x:@.x
-               get-count:x:@.arguments/*/args/*/primary/*/*
+               get-count:x:@.arguments/*/args/*/primary/*
                .:]
          set-x:x:+/*/*/*
             convert:x:@.x
@@ -614,7 +620,7 @@ semaphore:crudifier
          set-value:x:@.x
             strings.concat
                get-value:x:@.x
-               get-count:x:@.arguments/*/args/*/primary/*/*
+               get-count:x:@.arguments/*/args/*/primary/*
                .:,1000]
          set-x:x:+/*/*/*
             convert:x:@.x

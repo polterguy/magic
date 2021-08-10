@@ -245,15 +245,15 @@ for-each:x:@.arguments/*/.crud-methods/*
                strings.concat
                   get-value:x:@.substitutions/*/primary-keys
                   .:", '"
-                  get-name:x:@.dp/#
+                  get-value:x:@.dp/#/*/name
                   .:"'"
             set-value:x:@.substitutions/*/delete-input
                strings.concat
                   get-value:x:@.substitutions/*/delete-input
                   .:", "
-                  get-name:x:@.dp/#
+                  get-value:x:@.dp/#/*/name
                   .:": el."
-                  get-name:x:@.dp/#
+                  get-value:x:@.dp/#/*/name
 
 
          /*
@@ -275,7 +275,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                strings.concat
                   get-value:x:@.substitutions/*/create-input
                   .:",\r\n      '"
-                  get-name:x:@.dp/#
+                  get-value:x:@.dp/#/*/name
                   .:"'"
          set-value:x:@.substitutions/*/create-input
             strings.trim:x:@.substitutions/*/create-input
@@ -290,7 +290,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                strings.concat
                   get-value:x:@.substitutions/*/update-input
                   .:",\r\n      '"
-                  get-name:x:@.dp/#
+                  get-value:x:@.dp/#/*/name
                   .:"'"
          set-value:x:@.substitutions/*/update-input
             strings.trim:x:@.substitutions/*/update-input
@@ -298,7 +298,7 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
          /*
-          * Now we know input to all 4 CRUD endpoints.
+          * Now we know input to POST, PUT and DELETE endpoints.
           *
           * Now we can start creating our datagrid component, and our edit/create component.
           */
@@ -335,14 +335,14 @@ for-each:x:@.arguments/*/.crud-methods/*
              * might want to have the columns displayed depending upon requirements, and/or
              * specific tables, etc.
              */
-            get-name:x:@.dp/#
+            get-value:x:@.dp/#/*/name
             if
                or
                   not
                      exists:x:@.dp/#/./././*/put
                   not
                      exists:x:@.dp/#/./././*/delete/*/input/*/{0}
-                        :x:@get-name
+                        :x:@get-value
                .lambda
 
                   /*
@@ -352,7 +352,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      strings.concat
                         get-value:x:@.substitutions/*/displayed-columns
                         .:",\r\n    '"
-                        get-name:x:@.dp/#
+                        get-value:x:@.dp/#/*/name
                         .:"'"
 
 
@@ -365,7 +365,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                   get-value:x:@.substitutions/*/form-controls
                   strings.replace:x:@.form-control-file
                      .:[[column-name]]
-                     get-name:x:@.dp/#
+                     get-value:x:@.dp/#/*/name
 
 
             /*
@@ -373,7 +373,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              *
              * Notice, some types have specialized implementations here.
              */
-            switch:x:@.dp/#
+            switch:x:@.dp/#/*/type
 
 
                /*
@@ -385,7 +385,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-controls-instantiations
                         strings.replace:x:@.form-control-instantiation-file/*/string
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -397,7 +397,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-controls-instantiations
                         strings.replace:x:@.form-control-instantiation-file
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
             /*
@@ -405,7 +405,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              *
              * Notice, some types have specialized implementations here.
              */
-            switch:x:@.dp/#
+            switch:x:@.dp/#/*/type
 
 
                /*
@@ -418,7 +418,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/ng-containers
                         strings.replace:x:@.column-file/*/long
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -430,7 +430,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/ng-containers
                         strings.replace:x:@.column-file/*/date
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -442,7 +442,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/ng-containers
                         strings.replace:x:@.column-file/*/bool
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -454,7 +454,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/ng-containers
                         strings.replace:x:@.column-file
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
             /*
@@ -463,7 +463,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              * Notice, some types have specialized implementations, such as for instance
              * date types, etc.
              */
-            switch:x:@.dp/#
+            switch:x:@.dp/#/*/type
 
 
                /*
@@ -475,7 +475,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/view-details
                         strings.replace:x:@.view-details-file/*/date
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -487,7 +487,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/view-details
                         strings.replace:x:@.view-details-file/*/bool
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -499,7 +499,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/view-details
                         strings.replace:x:@.view-details-file
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
          /*
@@ -535,8 +535,8 @@ for-each:x:@.arguments/*/.crud-methods/*
             for-each:x:@.form-fields/*
                if
                   eq
-                     get-name:x:@.dp/#
-                     get-name:x:@for-each/@.dp/#
+                     get-value:x:@.dp/#/*/name
+                     get-value:x:@for-each/@.dp/#/*/name
                   .lambda
                      set-value:x:@.exists
                         .:bool:true
@@ -564,7 +564,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              *
              * Notice, some types have specialized implementations here.
              */
-            switch:x:@.dp/#
+            switch:x:@.dp/#/*/name
 
 
                /*
@@ -577,7 +577,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-fields
                         strings.replace:x:@.form-field-file/*/long
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -589,7 +589,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-fields
                         strings.replace:x:@.form-field-file/*/decimal
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -601,7 +601,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-fields
                         strings.replace:x:@.form-field-file/*/bool
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -613,7 +613,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-fields
                         strings.replace:x:@.form-field-file/*/date
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
                /*
@@ -625,7 +625,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/form-fields
                         strings.replace:x:@.form-field-file
                            .:[[column-name]]
-                           get-name:x:@.dp/#
+                           get-value:x:@.dp/#/*/name
 
 
          /*
@@ -864,7 +864,9 @@ for-each:x:@.arguments/*/.crud-methods/*
                            .:return this.service.
                            get-value:x:@if/@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
                            .:(this.data.entity);
+
             else
+
                set-value:x:@.create-method
 
                   /*
