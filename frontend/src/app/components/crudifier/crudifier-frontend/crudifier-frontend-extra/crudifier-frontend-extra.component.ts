@@ -136,7 +136,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
             auth: x.auth,
             type: x.type,
             description: x.description,
-            selected: true
+            selected: true,
           };
         });
 
@@ -313,17 +313,31 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
         path: idx.path,
         type: idx.type,
         verb: idx.verb,
-        input: {},
-        output: {},
+        input: [],
+        output: [],
       };
       if (idx.input && idx.input.length > 0) {
         for (const idxInput of idx.input) {
-          tmp.input[idxInput.name] = idxInput.type;
+          const cur: any = {
+            name: idxInput.name,
+            type: idxInput.type,
+          };
+          if (idxInput.lookup) {
+            cur.lookup = idxInput.lookup;
+          }
+          tmp.input.push(cur);
         }
       }
       if (idx.output && idx.output.length > 0) {
         for (const idxOutput of idx.output) {
-          tmp.output[idxOutput.name] = idxOutput.type || tmp.input[idxOutput.name + '.eq'];
+          const cur: any = {
+            name: idxOutput.name,
+            type: idxOutput.type || tmp.input[idxOutput.name + '.eq'],
+          };
+          if (idxOutput.lookup) {
+            cur.lookup = idxOutput.lookup;
+          }
+          tmp.output.push(cur);
         }
       }
       result.push(tmp);
