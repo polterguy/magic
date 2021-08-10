@@ -264,34 +264,43 @@
     "args":{
        "primary":[
           {
-             "id":"long"
-          }
+            "name":"id",
+            "type":"long"
+         }
        ],
        "columns":[
           {
-             "subject":"string"
-          },
-          {
-             "email":"string"
-          },
-          {
-             "domain":"string"
-          },
-          {
+             "name":"subject",
              "type":"string"
           },
           {
-             "fingerprint":"string"
-          },
+            "name":"email",
+            "type":"string"
+         },
           {
-             "content":"string"
-          },
+            "name":"domain",
+            "type":"string"
+         },
           {
-             "vocabulary":"string"
-          },
+            "name":"type",
+            "type":"string"
+         },
           {
-             "enabled":"bool"
-          }
+            "name":"fingerprint",
+            "type":"string"
+         },
+          {
+            "name":"content",
+            "type":"string"
+         },
+          {
+            "name":"vocabulary",
+            "type":"string"
+         },
+          {
+            "name":"enabled",
+            "type":"bool"
+         }
        ]
     },
     "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79"
@@ -385,8 +394,9 @@
     "args":{
        "primary":[
           {
-             "name":"string"
-          }
+            "name":"name",
+            "type":"string"
+         }
        ],
        "columns":[
           {
@@ -505,8 +515,9 @@
     "args":{
        "primary":[
           {
-             "username":"string"
-          }
+            "name":"username",
+            "type":"string"
+         }
        ],
        "columns":[
           {
