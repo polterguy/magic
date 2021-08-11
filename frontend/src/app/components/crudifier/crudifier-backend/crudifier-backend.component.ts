@@ -137,6 +137,7 @@ export class CrudifierBackendComponent implements OnInit {
 
     // Resetting currently selected models for fields.
     this.connectionStrings = [];
+    this.connectionString = null;
     this.database = null;
     this.table = null;
 
