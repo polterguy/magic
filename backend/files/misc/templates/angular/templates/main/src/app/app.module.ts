@@ -14,6 +14,7 @@ import { HomeModule } from './home/home.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { MagicSelectorComponent } from './helpers/magic-selector/magic-selector.component';
+import { MagicAutocompleteComponent } from './helpers/magic-autocomplete/magic-autocomplete.component';
 import { MagicImageComponent } from './helpers/magic-image/magic-image.component';
 import { MagicImageViewComponent } from './helpers/magic-image-view/magic-image-view.component';
 import { MagicFileViewComponent } from './helpers/magic-file-view/magic-file-view.component';
@@ -60,6 +61,7 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
   declarations: [
     AppComponent,
     MagicSelectorComponent,
+    MagicAutocompleteComponent,
     MagicImageComponent,
     MagicImageViewComponent,
     MagicFileViewComponent,
