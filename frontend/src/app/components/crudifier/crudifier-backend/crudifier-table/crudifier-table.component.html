@@ -95,6 +95,10 @@
               </mat-select>
 
             </mat-form-field>
+            <mat-checkbox
+              [(ngModel)]="el.foreign_key.long_data"
+              class="long-data"
+              matTooltip="If your referenced table contains more than 50 records">Long data</mat-checkbox>
           </div>
 
         </div>

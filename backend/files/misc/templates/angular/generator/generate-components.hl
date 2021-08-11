@@ -114,6 +114,7 @@ set-value:x:@.view-details-file/*/bool
    date
    decimal
    selector
+   autocomplete
 
 strings.concat
    get-value:x:@.arguments/*/root-folder
@@ -149,6 +150,12 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.selector.html
 set-value:x:@.form-field-file/*/selector
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/form-field/form-field.autocomplete.html
+set-value:x:@.form-field-file/*/autocomplete
    io.file.load:x:@strings.concat
 
 
@@ -570,7 +577,33 @@ for-each:x:@.arguments/*/.crud-methods/*
              * another table.
              */
             if
-               exists:x:@.dp/#/*/lookup/*
+               and
+                  exists:x:@.dp/#/*/lookup/*
+                  get-value:x:@.dp/#/*/lookup/*/long
+               .lambda
+
+                  /*
+                   * Using the autocomplete component for our edit/create modal dialog.
+                   */
+                  strings.replace:x:@.form-field-file/*/autocomplete
+                     .:[[column-name]]
+                     get-value:x:@.dp/#/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_key]]
+                     get-value:x:@.dp/#/*/lookup/*/key
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_name]]
+                     get-value:x:@.dp/#/*/lookup/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_table]]
+                     get-value:x:@.dp/#/*/lookup/*/table
+                  set-value:x:@.substitutions/*/form-fields
+                     strings.concat
+                        get-value:x:@.substitutions/*/form-fields
+                        get-value:x:@strings.replace
+
+            else-if
+               exists:x:@.dp/#/*/lookup/*/long
                .lambda
 
                   /*

@@ -1,0 +1,12 @@
+  <app-magic-autocomplete
+    *ngIf="canEditColumn('[[column-name]]')"
+    [model]="data.entity"
+    field="[[column-name]]"
+    key="[[lookup_key]]"
+    value="[[lookup_name]]"
+    placeholder="Choose a [[lookup_table]]"
+    class="entity-edit-field"
+    (change)="changed('[[column-name]]')"
+    [getItems]="service.[[lookup_table]].read">
+  </app-magic-autocomplete>
+

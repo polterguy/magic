@@ -136,6 +136,7 @@ export class TransformModelService {
                 table: idxColumn.foreign_key.foreign_table,
                 column: idxColumn.foreign_key.foreign_column,
                 name: idxColumn.foreign_key.foreign_name,
+                long: idxColumn.foreign_key.long_data,
               };
             }
           result.args.columns.push(cur);
@@ -153,6 +154,7 @@ export class TransformModelService {
                 table: idxColumn.foreign_key.foreign_table,
                 column: idxColumn.foreign_key.foreign_column,
                 name: idxColumn.foreign_key.foreign_name,
+                long: idxColumn.foreign_key.long_data,
               };
             }
             result.args.columns.push(cur);
@@ -173,6 +175,7 @@ export class TransformModelService {
                   table: idxColumn.foreign_key.foreign_table,
                   column: idxColumn.foreign_key.foreign_column,
                   name: idxColumn.foreign_key.foreign_name,
+                  long: idxColumn.foreign_key.long_data,
                 };
               }
               result.args.columns.push(cur);
