@@ -79,16 +79,18 @@
             *ngIf="el.warning"
             [matTooltip]="el.warning">warning</mat-icon>
 
-          <div *ngIf="hasForeignKeys(el)" class="foreign-key">
-            <strong>{{getForeignKey(el)}}</strong>
-            <mat-form-field class="form-field" appearance="outline">
+          <div *ngIf="foreignKeys[el.name] && foreignKeys[el.name].length > 0" class="foreign-key">
+            <mat-form-field
+              class="form-field-wide"
+              appearance="outline"
+              matTooltip="Link this field to a value field in its referenced table">
 
-              <mat-label>Field</mat-label>
+              <mat-label>Foreign field</mat-label>
               <mat-select
                 [(ngModel)]="el.foreign_key.foreign_name">
                 <mat-option
-                  *ngFor="let idx of getForeignKeyCandidates(el)"
-                  [value]="idx">{{idx}}</mat-option>
+                  *ngFor="let idx of foreignKeys[el.name]"
+                  [value]="idx.value">{{idx.name}}</mat-option>
               </mat-select>
 
             </mat-form-field>
