@@ -416,11 +416,25 @@ export class CrudifierBackendComponent implements OnInit {
         /*
          * Notice, if we're not sure whether or not column should be a part of POST and PUT
          * we expand the column by default, to give visual clues to the user that he needs to
-         * pay particular attention to this column.
+         * pay particular attention to this column, and attach a warning with the column.
          */
         if (idxColumn.automatic && !idxColumn.primary) {
           idxColumn.expanded = true;
           idxColumn.warning = 'Warning, I could not determine with certainty if this column should be included in your create and update endpoints. Please carefully look at it and decide for yourself.';
+        }
+
+        /*
+         * If column is a foreign key, we also warn the user such that he can associate it with the
+         * correct field in the foreign table.
+         */
+        if (idxColumn.foreign_key) {
+          idxColumn.expanded = true;
+          if (idxColumn.warning) {
+            idxColumn.warning += ' ';
+          } else {
+            idxColumn.warning = '';
+          }
+          idxColumn.warning += 'You need to make sure this column is associated with the correct value field in the referenced table.';
         }
       }
     }

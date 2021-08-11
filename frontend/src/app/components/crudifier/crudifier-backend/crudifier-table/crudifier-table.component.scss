@@ -42,10 +42,8 @@ table.table-items {
           display: table;
         }
         .foreign-key {
-          margin-top: 1rem;
-          strong {
-            display: block;
-          }
+          margin-top: 2rem;
+          text-align: right;
         }
       }
     }
@@ -89,7 +87,9 @@ h3 {
   position: relative;
   .warning-icon {
     position: absolute;
-    top: .5rem;
-    right: .5rem;
+    top: 0;
+    right: 0;
+    margin-top: -1rem;
+    margin-right: -1rem;
   }
 }

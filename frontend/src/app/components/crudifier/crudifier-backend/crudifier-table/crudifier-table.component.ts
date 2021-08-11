@@ -3,7 +3,7 @@
  * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
  */
 import { forkJoin } from 'rxjs';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { TableEx } from '../../models/table-ex.model';
@@ -29,7 +29,7 @@ import { DatabaseEx } from '../../models/database-ex.model';
   templateUrl: './crudifier-table.component.html',
   styleUrls: ['./crudifier-table.component.scss']
 })
-export class CrudifierTableComponent {
+export class CrudifierTableComponent implements OnInit {
 
   /**
    * Input Hyperlambda component model and options.
@@ -59,6 +59,11 @@ export class CrudifierTableComponent {
    * Authorisation requirements for SignalR messages published during invocation of endpoint.
    */
   public cqrsAuthorisationTypes: string[] = ['none', 'inherited', 'roles', 'groups', 'users'];
+
+  /**
+   * Foreign key declarations.
+   */
+  public foreignKeys: any = {};
 
   /**
    * Model for component wrapping table.
@@ -95,40 +100,24 @@ export class CrudifierTableComponent {
     private feedbackService: FeedbackService,
     private loaderInterceptor: LoaderInterceptor,
     private transformService: TransformModelService) {
-      this.input.options.autofocus = false;
+    this.input.options.autofocus = false;
   }
 
   /**
-   * Returns true if column has a foreign key pointing into another table.
-   * 
-   * @param column Column to check
+   * Implementation of OnInit.
    */
-  public hasForeignKeys(column: ColumnEx) {
-    return this.table.foreign_keys?.filter(x => x.column === column.name).length > 0 || false;
-  }
-
-  /**
-   * Returns a string representation of foreign key for column.
-   * 
-   * @param column Column to return foreign key for
-   */
-  public getForeignKey(column: ColumnEx) {
-    const key = this.table.foreign_keys.filter(x => x.column === column.name)[0];
-    return key.foreign_table + '.' + key.foreign_column;
-  }
-
-  /**
-   * Returns foreign key candidates for column.
-   * 
-   * @param column Column to return values for
-   */
-  public getForeignKeyCandidates(column: ColumnEx) {
-
-    // Returns list of all candidates for foreign key values (display names) in referenced table.
-    const key = this.table.foreign_keys.filter(x => x.column === column.name)[0].foreign_table;
-    const table = this.currentDatabase.tables.filter(x => x.name === key)[0];
-    return table.columns.map(x => x.name);
-
+  public ngOnInit() {
+    for (const idx of this.table.columns) {
+      if (idx.foreign_key) {
+        const table = this.currentDatabase.tables.filter(x => x.name === idx.foreign_key.foreign_table)[0];
+        this.foreignKeys[idx.name] = table.columns.map(x => {
+          return {
+            name: table.name.replace('dbo.', '') + '.' + x.name,
+            value: x.name,
+          };
+        });
+      }
+    }
   }
 
   /**
