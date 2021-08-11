@@ -131,7 +131,7 @@ export class TransformModelService {
               name: idxColumn.name,
               type: idxColumn.hl,
             };
-            if (idxColumn.foreign_key) {
+            if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
                 table: idxColumn.foreign_key.foreign_table,
                 column: idxColumn.foreign_key.foreign_column,
@@ -148,7 +148,7 @@ export class TransformModelService {
               name: idxColumn.name,
               type: idxColumn.hl,
             };
-            if (idxColumn.foreign_key) {
+            if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
               cur['foreign_key'] = {
                 table: idxColumn.foreign_key.foreign_table,
                 column: idxColumn.foreign_key.foreign_column,
@@ -168,7 +168,7 @@ export class TransformModelService {
             if (idxColumn.primary) {
               result.args.primary.push(cur);
             } else {
-              if (idxColumn.foreign_key) {
+              if (idxColumn.foreign_key && idxColumn.foreign_key.foreign_name !== null) {
                 cur['foreign_key'] = {
                   table: idxColumn.foreign_key.foreign_table,
                   column: idxColumn.foreign_key.foreign_column,
