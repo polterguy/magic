@@ -44,6 +44,9 @@ table.table-items {
         .foreign-key {
           margin-top: 2rem;
           text-align: right;
+          .long-data {
+            margin-left: 1rem;
+          }
         }
       }
     }

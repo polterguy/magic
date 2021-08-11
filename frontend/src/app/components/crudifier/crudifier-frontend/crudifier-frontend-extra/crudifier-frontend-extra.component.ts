@@ -121,6 +121,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
 
       // Assigning result to model.
+      console.log(endpoints);
       this.endpoints = endpoints
         .filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
         .filter(x => x.type !== 'custom')
@@ -139,17 +140,18 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
             selected: true,
           };
         });
+      console.log(this.endpoints);
 
-        // Assigning modules to model.
-        const modules: string[] = [];
-        for (const idx of this.endpoints) {
-          let moduleName = idx.path.substr('magic/modules/'.length);
-          moduleName = moduleName.substr(0, moduleName.indexOf('/'));
-          if (modules.indexOf(moduleName) === -1) {
-            modules.push(moduleName);
-          }
+      // Assigning modules to model.
+      const modules: string[] = [];
+      for (const idx of this.endpoints) {
+        let moduleName = idx.path.substr('magic/modules/'.length);
+        moduleName = moduleName.substr(0, moduleName.indexOf('/'));
+        if (modules.indexOf(moduleName) === -1) {
+          modules.push(moduleName);
         }
-        this.modules = modules;
+      }
+      this.modules = modules;
     });
   }
 

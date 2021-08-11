@@ -27,4 +27,10 @@ export class ForeignKey {
     * Display name.
     */
    foreign_name?: string;
+
+   /**
+    * If true, the referenced table typically contains more than 50 records,
+    * possibly thousands of records.
+    */
+   long_data: boolean
 }

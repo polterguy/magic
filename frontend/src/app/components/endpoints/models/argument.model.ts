@@ -22,6 +22,11 @@ export class Lookup {
    * Name of table we're doing a lookup into.
    */
   table: string;
+
+  /**
+   * If true, this needs to use an autocomplete and not a select list.
+   */
+  long?: boolean;
 }
 
 /**

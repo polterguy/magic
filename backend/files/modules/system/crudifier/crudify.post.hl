@@ -662,6 +662,7 @@ semaphore:crudifier
                            table:x:@.dp/#/*/foreign_key/*/table
                            foreign_column:x:@.dp/#/*/foreign_key/*/column
                            foreign_name:x:@.dp/#/*/foreign_key/*/name
+                           long:x:@.dp/#/*/foreign_key/*/long
 
          /*
           * Checking if we have foreign keys at all, and if not, removing entire declaration.
