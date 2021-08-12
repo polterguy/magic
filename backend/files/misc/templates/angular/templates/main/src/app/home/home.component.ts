@@ -9,24 +9,8 @@ import { QuoteService } from './quote.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-  version: string | null = environment.version;
-  quote: string | undefined;
-  isLoading = false;
+export class HomeComponent {
+  version: string = environment.version;
 
-  constructor(private quoteService: QuoteService) {}
-
-  ngOnInit() {
-    this.isLoading = true;
-    this.quoteService
-      .getRandomQuote({ category: 'dev' })
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe((quote: string) => {
-        this.quote = quote;
-      });
-  }
+  constructor() {}
 }

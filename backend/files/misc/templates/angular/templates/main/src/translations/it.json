@@ -1,0 +1,20 @@
+{
+  "APP_NAME": "bonacci",
+  "About": "Circa",
+  "Hello world!": "Salve, mondo!",
+  "Home": "Casa",
+  "Logged in as": "Accesso come",
+  "Login": "Accesso",
+  "Logout": "Disconnettersi",
+  "Password": "Parola d'ordine",
+  "Password is required": "La password è obbligatoria",
+  "Username": "Nome utente",
+  "Username is required": "Il nome utente è obbligatorio",
+  "Username or password incorrect.": "Nome utente o password non corretti.",
+  "Remember me": "Ricordati di me",
+  "Version": "Versione",
+  "Save": "Salvare",
+  "Cancel": "Annulla",
+  "Edit": "Redigere",
+  "Create": "Creare"
+}
