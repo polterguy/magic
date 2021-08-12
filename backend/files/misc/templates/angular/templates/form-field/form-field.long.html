@@ -6,7 +6,7 @@
       type="number"
       step="1"
       (change)="changed('[[column-name]]')"
-      placeholder="[[column-name]]"
+      [placeholder]="'[[column-name]]' | translate"
       [(ngModel)]="data.entity.[[column-name]]"
       autocomplete="off">
   </mat-form-field>

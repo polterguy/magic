@@ -7,6 +7,7 @@
       mat-raised-button
       *ngIf="authService.me.canInvoke('[[endpoint-url]]', 'post') && httpService['[[crud-entity]]']['create']"
       class="create-button"
+      [matTooltip]="('Create' | translate) + (' [[component-header]]' | translate)"
       (click)="createEntity()">
       <mat-icon>add_circle</mat-icon>
     </button>
@@ -29,7 +30,7 @@
           <button
             mat-button
             (click)="deleteEntity(el, {[[delete-input]]})"
-            placeholder="Deletes this record">
+            [matTooltip]="'Delete this record' | translate">
             <mat-icon matSuffix>delete</mat-icon>
           </button>
         </td>
@@ -48,6 +49,7 @@
               mat-button
               color="primary"
               class="edit-button"
+              [matTooltip]="'Edit' | translate"
               (click)="editEntity(el)">
               <mat-icon matSuffix>edit</mat-icon>
             </button>

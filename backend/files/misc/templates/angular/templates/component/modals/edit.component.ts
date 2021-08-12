@@ -10,8 +10,7 @@ import { DialogComponent, DialogData } from '../../../base/dialog.component';
  * creating new entity types of type [[component-header]].
  */
 @Component({
-  templateUrl: './edit.[[component-filename]].html',
-  styleUrls: ['./edit.[[component-filename]].scss']
+  templateUrl: './edit.[[component-filename]].html'
 })
 export class Edit[[component-name]] extends DialogComponent {
 
