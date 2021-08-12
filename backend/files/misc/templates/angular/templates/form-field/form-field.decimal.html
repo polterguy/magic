@@ -5,7 +5,7 @@
       matInput
       type="number"
       step="any"
-      placeholder="[[column-name]]"
+      [placeholder]="'[[column-name]]' | translate"
       (change)="changed('[[column-name]]')"
       [(ngModel)]="data.entity.[[column-name]]"
       autocomplete="off">

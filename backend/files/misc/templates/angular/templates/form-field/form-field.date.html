@@ -3,7 +3,7 @@
     class="entity-edit-field">
     <input
       matInput
-      placeholder="[[column-name]]"
+      [placeholder]="'[[column-name]]' | translate"
       (change)="changed('[[column-name]]')"
       [owlDateTime]="picker[[column-name]]"
       [owlDateTimeTrigger]="picker[[column-name]]"

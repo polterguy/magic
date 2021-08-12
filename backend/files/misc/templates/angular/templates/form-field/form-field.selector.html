@@ -4,7 +4,7 @@
     field="[[column-name]]"
     key="[[lookup_key]]"
     value="[[lookup_name]]"
-    placeholder="Choose a [[lookup_table]]"
+    [placeholder]="('Choose a ' | translate) + ('[[lookup_table]]' | translate)"
     class="entity-edit-field"
     (change)="changed('[[column-name]]')"
     [getItems]="service.[[lookup_table]].read({limit:-1})">
