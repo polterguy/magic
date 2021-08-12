@@ -9,6 +9,12 @@ import es from '../../translations/es.json';
 import fr from '../../translations/fr.json';
 import it from '../../translations/it.json';
 import de from '../../translations/de.json';
+import pt from '../../translations/pt.json';
+import hi from '../../translations/hi.json';
+import ar from '../../translations/ar.json';
+import iw from '../../translations/iw.json';
+import zh from '../../translations/zh.json';
+import el from '../../translations/el.json';
 
 const log = new Logger('I18nService');
 const languageKey = 'language';
@@ -30,6 +36,12 @@ export class I18nService {
     translateService.setTranslation('fr', fr);
     translateService.setTranslation('it', it);
     translateService.setTranslation('de', de);
+    translateService.setTranslation('pt', pt);
+    translateService.setTranslation('hi', hi);
+    translateService.setTranslation('ar', ar);
+    translateService.setTranslation('iw', iw);
+    translateService.setTranslation('zh', zh);
+    translateService.setTranslation('el', el);
   }
 
   /**
