@@ -638,27 +638,6 @@ for-each:x:../*/.return-nodes/*
 
 
 /*
- * Adding Favicon.
- */
-strings.concat
-   .:/
-   get-value:x:@.arguments/*/name
-   .:/src/assets/favicon.ico
-io.path.get-folder:x:@.filename
-strings.concat
-   get-value:x:@io.path.get-folder
-   .:templates/main/src/assets/favicon.ico
-io.stream.open-file:x:@strings.concat
-io.stream.read:x:@io.stream.open-file
-io.stream.close:x:@io.stream.open-file
-unwrap:x:+/*/**
-add:x:../*/return-nodes
-   .
-      .:x:@strings.concat/@strings.concat
-         .:x:@io.stream.read
-
-
-/*
  * Adding touch icons, first our smallest, then our larger icons.
  */
 strings.concat
