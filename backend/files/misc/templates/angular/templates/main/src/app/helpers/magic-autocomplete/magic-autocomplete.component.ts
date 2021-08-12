@@ -155,6 +155,8 @@ export class MagicAutocompleteComponent implements OnInit {
           .pipe(debounceTime(400), distinctUntilChanged())
           .subscribe(() => {
             if (this.fetch) {
+              this.model[this.field] = null;
+              this.change?.emit();
               this.getData();
             }
             this.fetch = true;
@@ -168,8 +170,10 @@ export class MagicAutocompleteComponent implements OnInit {
         .pipe(debounceTime(400), distinctUntilChanged())
         .subscribe(() => {
           if (this.fetch) {
+            this.model[this.field] = null;
+            this.change?.emit();
             this.getData();
-          }
+        }
           this.fetch = true;
       });
 
