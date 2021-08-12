@@ -643,11 +643,11 @@ for-each:x:../*/.return-nodes/*
 strings.concat
    .:/
    get-value:x:@.arguments/*/name
-   .:/src/assets/favicon.jpeg
+   .:/src/assets/favicon.ico
 io.path.get-folder:x:@.filename
 strings.concat
    get-value:x:@io.path.get-folder
-   .:templates/main/src/assets/favicon.jpeg
+   .:templates/main/src/assets/favicon.ico
 io.stream.open-file:x:@strings.concat
 io.stream.read:x:@io.stream.open-file
 io.stream.close:x:@io.stream.open-file
