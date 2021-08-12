@@ -5,6 +5,10 @@ import { Subscription } from 'rxjs';
 import { Logger } from '@core/logger.service';
 import enUS from '../../translations/en-US.json';
 import no from '../../translations/no.json';
+import es from '../../translations/es.json';
+import fr from '../../translations/fr.json';
+import it from '../../translations/it.json';
+import de from '../../translations/de.json';
 
 const log = new Logger('I18nService');
 const languageKey = 'language';
@@ -22,6 +26,10 @@ export class I18nService {
     // Embed languages to avoid extra HTTP requests
     translateService.setTranslation('en-US', enUS);
     translateService.setTranslation('no', no);
+    translateService.setTranslation('es', es);
+    translateService.setTranslation('fr', fr);
+    translateService.setTranslation('it', it);
+    translateService.setTranslation('de', de);
   }
 
   /**

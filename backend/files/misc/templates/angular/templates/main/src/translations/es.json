@@ -1,0 +1,20 @@
+{
+  "APP_NAME": "bonacci",
+  "About": "Acerca de",
+  "Hello world!": "¡Hola mundo!",
+  "Home": "Hogar",
+  "Logged in as": "Ha iniciado sesión como",
+  "Login": "Iniciar sesión",
+  "Logout": "Cerrar sesión",
+  "Password": "Contraseña",
+  "Password is required": "Se requiere contraseña",
+  "Username": "Nombre de usuario",
+  "Username is required": "Se requiere nombre de usuario",
+  "Username or password incorrect.": "Nombre de usuario o contraseña incorrectos.",
+  "Remember me": "Recuérdame",
+  "Version": "Versión",
+  "Save": "Salvar",
+  "Cancel": "Cancelar",
+  "Edit": "Editar",
+  "Create": "Crear"
+}
