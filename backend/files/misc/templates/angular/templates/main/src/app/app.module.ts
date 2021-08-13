@@ -24,6 +24,7 @@ import { environment } from '@env/environment';
 import { JwtModule } from '@auth0/angular-jwt';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { FormatDatePipe } from './pipes/format-date-pipe';
+import { DateSincePipe } from './pipes/date-since.pipe';
 
 // Generated CRUD components here.
 [[imports]]
@@ -67,6 +68,7 @@ import { FormatDatePipe } from './pipes/format-date-pipe';
     MagicFileViewComponent,
     MagicFileComponent,
     FormatDatePipe,
+    DateSincePipe,
 
 // Generated CRUD components here.
 [[module-declarations]]  ],

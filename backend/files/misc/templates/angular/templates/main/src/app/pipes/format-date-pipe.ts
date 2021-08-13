@@ -10,6 +10,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FormatDatePipe implements PipeTransform {
   transform(value: any): any {
+    if (!value) {
+      return '';
+    }
     const date = new Date(value);
     return date.toLocaleString();
   }
