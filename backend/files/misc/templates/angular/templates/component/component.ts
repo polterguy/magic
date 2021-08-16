@@ -47,8 +47,8 @@ export class [[component-name]] extends GridComponent implements OnInit {
     public httpService: HttpService,
     public authService: AuthService,
     protected snackBar: MatSnackBar,
-    private dialog: MatDialog) {
-      super(authService, snackBar);
+    protected dialog: MatDialog) {
+      super(authService, snackBar, dialog);
   }
 
   /**

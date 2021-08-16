@@ -25,6 +25,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { FormatDatePipe } from './pipes/format-date-pipe';
 import { DateSincePipe } from './pipes/date-since.pipe';
+import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog.component';
 
 // Generated CRUD components here.
 [[imports]]
