@@ -1,5 +1,6 @@
 
 // Angular and system imports.
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 // Helper libraries.
@@ -7,6 +8,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 
 // Application specific imports.
 import { HttpService } from '@app/services/http-service';
+import { MessageService } from '@app/services/message.service';
 
 /**
  * Image uploader component, allowing you to browse for and upload an image.
@@ -78,12 +80,16 @@ export class MagicImageComponent {
   /**
    * Creates an instance of your component.
    * 
+   * @param snack Needed to show errors to the user
    * @param httpService Needed to actually upload the image(s).
    * @param imageCompress Needed to resize images before we upload them to backend
+   * @param messageService Needed to signal other components to wait for operation while uploading
    */
   constructor(
+    private snack: MatSnackBar,
     private httpService: HttpService,
-    private imageCompress: NgxImageCompressService) {}
+    private imageCompress: NgxImageCompressService,
+    private messageService: MessageService) { }
 
   /**
    * Invoked as user clicks the button to select an image.
@@ -93,6 +99,11 @@ export class MagicImageComponent {
     // Asking user for an image.
     this.imageCompress.uploadFile().then(({image, orientation}) => {
 
+      // Making sure we obscure UI while image is being uploaded.
+      this.messageService.sendMessage({
+        name: 'magic.app.obscurer.show'
+      });
+  
       // Verifying user provided a maximum height/width, and if not, uploading image as is.
       if (this.maxHeight || this.maxWidth) {
 
@@ -162,12 +173,30 @@ export class MagicImageComponent {
       type,
       this.model[this.field]).subscribe((uploadResult: any) => {
 
+      // Making sure we hide obscurer.
+      this.messageService.sendMessage({
+        name: 'magic.app.obscurer.hide'
+      });
+
       // Assigning model.
       this.model[this.field] = uploadResult.filename;
 
       // Signaling image has changed.
       this.change?.emit();
 
-    }, (error: any) => console.error('Something went wrong as MagicImage tried to upload an image'));
+    }, (error: any) => {
+
+      // Making sure we hide obscurer.
+      this.messageService.sendMessage({
+        name: 'magic.app.obscurer.hide'
+      });
+
+      // Oops, couldn't upload image ...
+      this.snack.open(
+        'ERROR: ' + (error?.error?.message || error || 'Unspecified error when trying to upload file'),
+        null, {
+          duration: 5000
+        });
+    });
   }
 }
