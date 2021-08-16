@@ -4,6 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from '@app/services/http-service';
+import { MessageService } from '@app/services/message.service';
 
 /**
  * File uploader component, allowing you to browse for and upload a file.
@@ -55,11 +56,14 @@ export class MagicFileComponent {
   /**
    * Creates an instance of your component.
    *
+   * @param snack Needed to show errors to the user
    * @param httpService Needed to actually upload the image(s).
+   * @param messageService Needed to signal other components to wait for operation while uploading
    */
   constructor(
     private snack: MatSnackBar,
-    private httpService: HttpService) { }
+    private httpService: HttpService,
+    private messageService: MessageService) { }
 
   /**
    * Invoked when file uploader should be clicked.
@@ -75,15 +79,30 @@ export class MagicFileComponent {
    */
   public uploadFile(e: any) {
 
+    // Making sure we obscure UI while file is being uploaded.
+    this.messageService.sendMessage({
+      name: 'magic.app.obscurer.show'
+    });
+
     // Retrieving selected file and uploading to server.
     const selectedFile = e.target.files[0];
     this.httpService.uploadFile(this.uploadUrl, selectedFile, this.model[this.field]).subscribe((result: any) => {
+
+      // Making sure we hide obscurer.
+      this.messageService.sendMessage({
+        name: 'magic.app.obscurer.hide'
+      });
 
       // Assigning model
       this.model[this.field] = result.filename;
       this.change?.emit();
 
     }, (error: any) => {
+
+      // Making sure we hide obscurer.
+      this.messageService.sendMessage({
+        name: 'magic.app.obscurer.hide'
+      });
 
       // Oops, couldn't upload file ...
       this.snack.open(

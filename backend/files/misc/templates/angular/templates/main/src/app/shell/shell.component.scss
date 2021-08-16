@@ -27,3 +27,18 @@
 .menu-button {
   margin-right: 1rem;
 }
+
+.obscurer {
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(0,0,0,.2);
+  mat-spinner {
+    position: absolute;
+    top: calc(50% - 25px);
+    left: calc(50% - 25px);
+  }
+}
