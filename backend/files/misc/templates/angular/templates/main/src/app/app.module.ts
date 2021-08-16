@@ -70,6 +70,7 @@ import { ConfirmDialogComponent } from './confirm-deletion-dialog/confirm-dialog
     MagicFileComponent,
     FormatDatePipe,
     DateSincePipe,
+    ConfirmDialogComponent,
 
 // Generated CRUD components here.
 [[module-declarations]]  ],
