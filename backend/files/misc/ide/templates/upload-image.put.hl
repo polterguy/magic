@@ -9,7 +9,7 @@
  * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
  * will correctly decorate your file with the correct properties.
  */
-.description:Upload image file endpoint
+.description:Upload image file endpoint, allowing you to upload a file to the backend. Notice, [old_file] if declared and existing will be deleted.
 .type:image-upload
 .arguments
    old_file:string
@@ -94,7 +94,7 @@ set-value:x:@.filename
       get-value:x:@.arguments/*/type
 
 /*
- * Saving file with the specified filename to our '/etc/MODULE_NAME/' folder.
+ * Saving file with the specified filename to our folder.
  */
 .full-path
 set-value:x:@.full-path
