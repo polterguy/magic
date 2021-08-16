@@ -8,12 +8,19 @@
  * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
  * will correctly decorate your file with the correct properties.
  */
-.description:Upload file endpoint
+.description:Upload file endpoint, allowing you to upload a file to the backend, Notice, [old_file] if declared and existing will be deleted.
 .arguments
    file:*
    old_file:string
 .type:file-upload
 .accept:multipart/form-data
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
 
 /*
  * Verifying user has access to invoke endpoint.
@@ -68,16 +75,35 @@ else
          io.file.delete:x:@.old-file-full-path
 
 /*
- * Saving file with the specified filename to the specified folder.
+ * Creating a unique filename for file.
  */
-strings.concat
-   get-value:x:@.folder
-   get-value:x:@.arguments/*/file/*/name
-io.stream.save-file:x:@strings.concat
+.filename
+strings.split:x:@.arguments/*/file/*/name
+   .:.
+guid.new
+set-value:x:@.filename
+   strings.concat
+      .:
+      convert:x:@guid.new
+         type:string
+      .:.
+      get-value:x:@strings.split/0/-
+
+/*
+ * Saving file with the specified filename to our folder.
+ */
+.full-path
+set-value:x:@.full-path
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.filename
+io.stream.save-file:x:@.full-path
    get-value:x:@.arguments/*/file/*/stream
 
 /*
  * Returning success to caller.
  */
+unwrap:x:+/*/filename
 return
    result:success
+   filename:x:@.filename

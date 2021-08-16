@@ -80,7 +80,7 @@ export class MagicFileComponent {
     this.httpService.uploadFile(this.uploadUrl, selectedFile, this.model[this.field]).subscribe((result: any) => {
 
       // Assigning model
-      this.model[this.field] = selectedFile.name;
+      this.model[this.field] = result.filename;
       this.change?.emit();
 
     }, (error: any) => {
