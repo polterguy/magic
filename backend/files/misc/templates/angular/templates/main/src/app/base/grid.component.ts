@@ -4,11 +4,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 // Custom services and models your app depends upon.
 import { DeleteResponse } from '../services/models/delete-response';
 import { CountResponse } from '../services/models/count-response';
 import { AuthService } from 'src/app/services/auth-service';
+import { ConfirmDialogComponent, ConfirmDialogData } from '@app/confirm-deletion-dialog/confirm-dialog.component';
 
 /**
  * Base class for all "data-grid" components, displaying items to
@@ -52,10 +54,12 @@ export abstract class GridComponent {
    * 
    * @param authService Authentication and authorization service
    * @param snackBar Snack bar to use to display errors, and also general information
+   * @param dialog Needed to ask for user's confirmtion during deletion of entities
    */
   constructor(
     protected authService: AuthService,
-    protected snackBar: MatSnackBar) { }
+    protected snackBar: MatSnackBar,
+    protected dialog: MatDialog) { }
 
   /**
    * Abstract method you'll need to override to actually return URL of
@@ -168,9 +172,31 @@ export abstract class GridComponent {
       return;
     }
 
-    this.delete(ids).subscribe((res: DeleteResponse) => {
-      this.getData();
-    }, (error: any) => this.showError(error));
+    // Asking user to confirm deletion of entity.
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '550px',
+      data: {
+        title: 'Confirm action',
+        text: 'Please confirm deletion of entity. Notice, this action cannot be undone. Deletion is permanent',
+      }
+    });
+
+    // Subscribing to close such that we can delete schedule if it's confirmed.
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogData) => {
+
+      // Checking if user confirmed that he wants to delete the schedule.
+      if (result && result.confirmed) {
+
+        // Deleting entity
+        this.delete(ids).subscribe((res: DeleteResponse) => {
+            this.getData();
+        }, (error: any) => {
+          this.showError('We could not delete entity, maybe other entities are referencing it?');
+          console.log(error);
+        });
+    
+      }
+    });
   }
 
   /**
