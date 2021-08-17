@@ -113,7 +113,7 @@ export abstract class GridComponent {
    * 
    * @param countRecords Whether or not we should also retrieve and update count of records
    */
-  protected getData(countRecords: boolean = true) {
+  public getData(countRecords: boolean = true) {
 
     this.viewDetails = [];
 
