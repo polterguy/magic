@@ -1,12 +1,13 @@
   <mat-form-field
     *ngIf="canEditColumn('[[column-name]]')"
-    class="entity-edit-field">
+    class="entity-edit-field"
+    appearance="outline">
+    <mat-label>{{'[[column-name]]' | translate}}</mat-label>
     <input
       matInput
       type="number"
       step="1"
       (change)="changed('[[column-name]]')"
-      [placeholder]="'[[column-name]]' | translate"
       [(ngModel)]="data.entity.[[column-name]]"
       autocomplete="off">
   </mat-form-field>

@@ -1,9 +1,10 @@
   <mat-form-field
     *ngIf="canEditColumn('[[column-name]]')"
-    class="entity-edit-field">
+    class="entity-edit-field"
+    appearance="outline">
+    <mat-label>{{'[[column-name]]' | translate}}</mat-label>
     <input
       matInput
-      [placeholder]="'[[column-name]]' | translate"
       (change)="changed('[[column-name]]')"
       [owlDateTime]="picker[[column-name]]"
       [owlDateTimeTrigger]="picker[[column-name]]"
