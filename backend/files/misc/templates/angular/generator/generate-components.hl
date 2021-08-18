@@ -89,6 +89,7 @@ set-value:x:@.column-file/*/lookup
 .view-details-file
    date
    bool
+   lookup
 
 strings.concat
    get-value:x:@.arguments/*/root-folder
@@ -106,6 +107,12 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.bool.html
 set-value:x:@.view-details-file/*/bool
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/view-details/view-details.lookup.html
+set-value:x:@.view-details-file/*/lookup
    io.file.load:x:@strings.concat
 
 
@@ -351,6 +358,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              * might want to have the columns displayed depending upon requirements, and/or
              * specific tables, etc.
              */
+            .should-display:bool:false
             strings.concat
                .:@.dp/#/./././*/delete/*/input/*/*/name/=
                get-value:x:@.dp/#/*/name
@@ -373,6 +381,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                      exists:x:@.dp/#/./././*/put
                .lambda
 
+                  /*
+                   * Storing the fact of that this is a field we're interested in displaying.
+                   */
+                  set-value:x:@.should-display
+                     .:bool:true
+
 
                   /*
                    * Making sure we increment colspan value.
@@ -390,51 +404,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                         .:",\r\n    '"
                         get-value:x:@.dp/#/*/name
                         .:"'"
-
-
-                  /*
-                   * Appending currently iterated column to [view-details].
-                   *
-                   * Notice, some types have specialized implementations, such as for instance
-                   * date types, etc.
-                   */
-                  switch:x:@.dp/#/*/type
-
-
-                     /*
-                      * Date type.
-                      */
-                     case:date
-                        set-value:x:@.substitutions/*/view-details
-                           strings.concat
-                              get-value:x:@.substitutions/*/view-details
-                              strings.replace:x:@.view-details-file/*/date
-                                 .:[[column-name]]
-                                 get-value:x:@.dp/#/*/name
-
-
-                     /*
-                      * Boolean type.
-                      */
-                     case:bool
-                        set-value:x:@.substitutions/*/view-details
-                           strings.concat
-                              get-value:x:@.substitutions/*/view-details
-                              strings.replace:x:@.view-details-file/*/bool
-                                 .:[[column-name]]
-                                 get-value:x:@.dp/#/*/name
-
-
-                     /*
-                      * Default (anything not having a specialized implementation).
-                      */
-                     default
-                        set-value:x:@.substitutions/*/view-details
-                           strings.concat
-                              get-value:x:@.substitutions/*/view-details
-                              strings.replace:x:@.view-details-file
-                                 .:[[column-name]]
-                                 get-value:x:@.dp/#/*/name
 
 
             /*
@@ -465,7 +434,80 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/ng-containers
                         get-value:x:@strings.replace
 
+
+                  /*
+                   * Applying correct changes to view-details parts.
+                   */
+                  strings.replace:x:@.view-details-file/*/lookup
+                     .:[[column-name]]
+                     get-value:x:@.dp/#/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_key]]
+                     get-value:x:@.dp/#/*/lookup/*/key
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_name]]
+                     get-value:x:@.dp/#/*/lookup/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_table]]
+                     get-value:x:@.dp/#/*/lookup/*/table
+                  set-value:x:@.substitutions/*/view-details
+                     strings.concat
+                        get-value:x:@.substitutions/*/view-details
+                        get-value:x:@strings.replace
+
             else
+
+               /*
+                * Checking if this column should be displayed.
+                */
+               if
+                  get-value:x:@.should-display
+                  .lambda
+
+
+                     /*
+                      * Appending currently iterated column to [view-details].
+                      *
+                      * Notice, some types have specialized implementations, such as for instance
+                      * date types, etc.
+                      */
+                     switch:x:@.dp/#/*/type
+
+
+                        /*
+                         * Date type.
+                         */
+                        case:date
+                           set-value:x:@.substitutions/*/view-details
+                              strings.concat
+                                 get-value:x:@.substitutions/*/view-details
+                                 strings.replace:x:@.view-details-file/*/date
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+
+
+                        /*
+                         * Boolean type.
+                         */
+                        case:bool
+                           set-value:x:@.substitutions/*/view-details
+                              strings.concat
+                                 get-value:x:@.substitutions/*/view-details
+                                 strings.replace:x:@.view-details-file/*/bool
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
+
+
+                        /*
+                         * Default (anything not having a specialized implementation).
+                         */
+                        default
+                           set-value:x:@.substitutions/*/view-details
+                              strings.concat
+                                 get-value:x:@.substitutions/*/view-details
+                                 strings.replace:x:@.view-details-file
+                                    .:[[column-name]]
+                                    get-value:x:@.dp/#/*/name
 
 
                /*
