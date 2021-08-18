@@ -6,11 +6,15 @@ import { environment } from '@env/environment';
 /**
  * Image view component, allowing you to view an individual image referenced
  * as a field in a table. Below you can find example usage.
+ * 
 
-  <app-magic-image-view
-    [image]="el.filename"
-    downloadUrl="/MODULE_NAME/download-image">
-  </app-magic-image-view>
+            <p class="details">
+              <label>Image</label>
+              <app-magic-image-view
+                [image]="el.filename"
+                downloadUrl="/MODULE_NAME/download-image">
+              </app-magic-image-view>
+            </p>
 
  */
 @Component({
