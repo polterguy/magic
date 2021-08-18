@@ -347,23 +347,38 @@ for-each:x:@.arguments/*/.crud-methods/*
             /*
              * Column exists in GET output, now we need to check if the column is not
              * a primary key - At which point we only display the column if the URL
-             * does NOT have an update/PUT verb. This is so because URLs without PUT, ONLY
-             * have primary key columns - Hence, if we don't display primary keys for such
-             * endpoints, we have NOTHING to display.
+             * does NOT have a PUT verb, or the PK is of type string. This is chosen
+             * because URLs without PUT, ONLY have primary key columns - Hence, if we
+             * don't display primary keys for such endpoints, we have NOTHING to display.
+             *
+             * While also primary keys sith type string is also typically a part of
+             * the "main data" of the entity.
              *
              * Notice, even though we do not display primary keys by default in grid/table,
              * we still create a wrapper component/ng-container for these, because end user
              * might want to have the columns displayed depending upon requirements, and/or
              * specific tables, etc.
              */
-            get-value:x:@.dp/#/*/name
+            strings.concat
+               .:@.dp/#/./././*/delete/*/input/*/*/name/=
+               get-value:x:@.dp/#/*/name
+               .:/./*/type/=string
+            strings.concat
+               .:@.dp/#/./././*/delete/*/input/*/*/name/=
+               get-value:x:@.dp/#/*/name
+            set-x:x:+/+/0/1
+               convert:x:@strings.concat/@strings.concat
+                  type:x
+            set-x:x:+/0/0/0
+               convert:x:@strings.concat
+                  type:x
             if
                or
                   not
-                     exists:x:@.dp/#/./././*/put
+                     exists
+                  exists
                   not
-                     exists:x:@.dp/#/./././*/delete/*/input/*/{0}
-                        :x:@get-value
+                     exists:x:@.dp/#/./././*/put
                .lambda
 
                   /*
