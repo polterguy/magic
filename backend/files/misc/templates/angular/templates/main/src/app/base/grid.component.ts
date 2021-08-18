@@ -369,13 +369,30 @@ export abstract class GridComponent {
    * @param id ID to lookup into cache
    * @param param Parameter to add when doing lookup towards server
    * @param functor Cache item read function to invoke if we have a cache miss
+   * @param property Property to return to caller from objact
    */
   private cache: any = {};
   public getCachedItem(
     cacheStorageName: string,
     id: any,
     param: string,
-    entityStorage: IREntity) {
+    entityStorage: IREntity,
+    property: string) {
+
+    // Making sure this is not a null value.
+    if (!id) {
+      return '';
+    }
+
+    // In case lookup field is the value field, we simply return it immediately as is.
+    if (cacheStorageName + '.eq' === param) {
+      return id; // No need to invoke server at all.
+    }
+
+    // In case display field is the same as the filter field, we simply return it immediately as is.
+    if (property +'.eq' === param) {
+      return id; // No need to invoke server at all.
+    }
 
     // Making sure we've got cache storage for specified cache type.
     if (!this.cache[cacheStorageName]) {
@@ -386,7 +403,7 @@ export abstract class GridComponent {
     if (this.cache[cacheStorageName]['id_' + id]) {
 
       // Item found in cache.
-      return this.cache[cacheStorageName]['id_' + id];
+      return this.cache[cacheStorageName]['id_' + id][property];
     }
 
     // Checking if another invocation previously have started the fetching process to retrieve item from server.

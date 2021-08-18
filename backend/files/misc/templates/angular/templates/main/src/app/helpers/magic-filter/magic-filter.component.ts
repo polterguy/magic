@@ -3,28 +3,14 @@
  */
 
 // Angular imports.
-import {
-  Component,
-  OnInit,
-  Input,
-  EventEmitter,
-  Output,
-  ChangeDetectorRef,
-  ViewChild,
-} from '@angular/core';
-import { FormControl } from '@angular/forms';
-import {
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
-import { IREntity } from '@app/services/interfaces/crud-interfaces';
 import { Observable } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  startWith,
-} from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { Component, OnInit, Input, EventEmitter, Output,  ViewChild } from '@angular/core';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+
+// Application specific imports.
+import { IREntity } from '@app/services/interfaces/crud-interfaces';
 
 /**
  * Autocomplete filtering component allowing you to have an autocomplete
@@ -184,8 +170,16 @@ export class MagicFilterComponent implements OnInit {
           }
           this.fetch = true;
         });
+    }
+  }
 
-      // Retrieving items from IREntity instance provided by consumer.
+  /**
+   * Invoked when filter control gains focus.
+   */
+   public focused() {
+
+    // Checking if we already have items, at which point we do nothing.
+    if (this.items.length === 0) {
       this.getData();
     }
   }
