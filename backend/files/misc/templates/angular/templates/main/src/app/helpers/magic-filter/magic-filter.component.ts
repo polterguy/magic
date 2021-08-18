@@ -137,6 +137,7 @@ export class MagicFilterComponent implements OnInit {
           limit: 1,
         })
         .subscribe((result: any[]) => {
+
           // Assigning model.
           this.items = result;
           setTimeout(() => {
@@ -151,7 +152,6 @@ export class MagicFilterComponent implements OnInit {
             .subscribe(() => {
               if (this.fetch) {
                 this.model[this.field] = null;
-                this.change?.emit();
                 this.getData();
               }
               this.fetch = true;
@@ -165,7 +165,6 @@ export class MagicFilterComponent implements OnInit {
         .subscribe(() => {
           if (this.fetch) {
             this.model[this.field] = null;
-            this.change?.emit();
             this.getData();
           }
           this.fetch = true;
