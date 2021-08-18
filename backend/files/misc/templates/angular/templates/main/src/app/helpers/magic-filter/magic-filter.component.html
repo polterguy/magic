@@ -4,6 +4,7 @@
     type="text"
     matInput
     [formControl]="control"
+    (focus)="focused()"
     [matAutocomplete]="auto" />
   <mat-autocomplete
     #auto="matAutocomplete"
