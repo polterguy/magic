@@ -334,27 +334,19 @@ for-each:x:@.arguments/*/.crud-methods/*
           */
          for-each:x:@.dp/#/*/verbs/*/get/*/output/*
 
-            /*
-             * Column is either of the following.
-             *
-             * - Not a primary key
-             * - Column is primary key, and URL doesn't have a PUT verb, implying ALL columns are primary keys.
-             */
-            set-value:x:@.substitutions/*/container-count
-               math.increment:x:@.substitutions/*/container-count
-
 
             /*
-             * Column exists in GET output, now we need to check if the column is not
+             * Column exists in GET output, now we need to check if the column is
              * a primary key - At which point we only display the column if the URL
-             * does NOT have a PUT verb, or the PK is of type string. This is chosen
+             * does NOT have a PUT verb, or the primary key is of type string. This is chosen
              * because URLs without PUT, ONLY have primary key columns - Hence, if we
              * don't display primary keys for such endpoints, we have NOTHING to display.
+             * Besides, such columns are also often foreign keys into other tables.
              *
              * While also primary keys sith type string is also typically a part of
              * the "main data" of the entity.
              *
-             * Notice, even though we do not display primary keys by default in grid/table,
+             * Notice, even though we do not display primary keys by default in grid/table/view-details,
              * we still create a wrapper component/ng-container for these, because end user
              * might want to have the columns displayed depending upon requirements, and/or
              * specific tables, etc.
@@ -381,6 +373,14 @@ for-each:x:@.arguments/*/.crud-methods/*
                      exists:x:@.dp/#/./././*/put
                .lambda
 
+
+                  /*
+                   * Making sure we increment colspan value.
+                   */
+                  set-value:x:@.substitutions/*/container-count
+                     math.increment:x:@.substitutions/*/container-count
+
+
                   /*
                    * Appending currently iterated column to [displayed-columns]
                    */
@@ -390,6 +390,51 @@ for-each:x:@.arguments/*/.crud-methods/*
                         .:",\r\n    '"
                         get-value:x:@.dp/#/*/name
                         .:"'"
+
+
+                  /*
+                   * Appending currently iterated column to [view-details].
+                   *
+                   * Notice, some types have specialized implementations, such as for instance
+                   * date types, etc.
+                   */
+                  switch:x:@.dp/#/*/type
+
+
+                     /*
+                      * Date type.
+                      */
+                     case:date
+                        set-value:x:@.substitutions/*/view-details
+                           strings.concat
+                              get-value:x:@.substitutions/*/view-details
+                              strings.replace:x:@.view-details-file/*/date
+                                 .:[[column-name]]
+                                 get-value:x:@.dp/#/*/name
+
+
+                     /*
+                      * Boolean type.
+                      */
+                     case:bool
+                        set-value:x:@.substitutions/*/view-details
+                           strings.concat
+                              get-value:x:@.substitutions/*/view-details
+                              strings.replace:x:@.view-details-file/*/bool
+                                 .:[[column-name]]
+                                 get-value:x:@.dp/#/*/name
+
+
+                     /*
+                      * Default (anything not having a specialized implementation).
+                      */
+                     default
+                        set-value:x:@.substitutions/*/view-details
+                           strings.concat
+                              get-value:x:@.substitutions/*/view-details
+                              strings.replace:x:@.view-details-file
+                                 .:[[column-name]]
+                                 get-value:x:@.dp/#/*/name
 
 
             /*
@@ -522,51 +567,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                            strings.replace:x:@.column-file
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
-
-
-            /*
-             * Appending currently iterated column to [view-details].
-             *
-             * Notice, some types have specialized implementations, such as for instance
-             * date types, etc.
-             */
-            switch:x:@.dp/#/*/type
-
-
-               /*
-                * Date type.
-                */
-               case:date
-                  set-value:x:@.substitutions/*/view-details
-                     strings.concat
-                        get-value:x:@.substitutions/*/view-details
-                        strings.replace:x:@.view-details-file/*/date
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
-
-
-               /*
-                * Boolean type.
-                */
-               case:bool
-                  set-value:x:@.substitutions/*/view-details
-                     strings.concat
-                        get-value:x:@.substitutions/*/view-details
-                        strings.replace:x:@.view-details-file/*/bool
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
-
-
-               /*
-                * Default (anything not having a specialized implementation).
-                */
-               default
-                  set-value:x:@.substitutions/*/view-details
-                     strings.concat
-                        get-value:x:@.substitutions/*/view-details
-                        strings.replace:x:@.view-details-file
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
 
 
          /*
