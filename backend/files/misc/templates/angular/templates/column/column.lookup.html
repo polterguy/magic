@@ -1,0 +1,20 @@
+
+      <ng-container matColumnDef="[[column-name]]">
+        <th mat-header-cell *matHeaderCellDef>
+          <app-magic-filter
+            [model]="filter"
+            field="[[column-name]].eq"
+            key="[[lookup_key]]"
+            value="[[lookup_name]]"
+            placeholder="[[column-name]]"
+            (change)="getData()"
+            [getItems]="httpService.[[lookup_table]]">
+          </app-magic-filter>
+          <button class="sort-button" (click)="sort('horse_id')" mat-button>
+            <mat-icon matSuffix>{{ getSortIcon('[[column-name]]') }}</mat-icon>
+          </button>
+        </th>
+        <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">
+          {{ el.[[column-name]] }}
+        </td>
+      </ng-container>
