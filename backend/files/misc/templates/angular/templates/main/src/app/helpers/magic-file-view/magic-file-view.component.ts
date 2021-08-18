@@ -6,12 +6,18 @@ import { environment } from '@env/environment';
 /**
  * File view component, allowing you to view and download an individual file
  * associated with a database entity. Below you can find example usage.
+ * 
 
-  <app-magic-file-view
-    [file]="el.filename"
-    downloadUrl="/MODULE_NAME/download-file">
-  </app-magic-file-view>
+            <p class="details">
+              <label>Download</label>
+              <app-magic-file-view
+                [file]="el.filename"
+                downloadUrl="/MODULE_NAME/download-file">
+              </app-magic-file-view>
+            </p>
 
+ * The component is typically used in the "view details" section of the grid component,
+ * allowing the user to download the specified file associated with an entity.
  */
 @Component({
   selector: 'app-magic-file-view',
