@@ -10,11 +10,11 @@
             (change)="getData()"
             [getItems]="httpService.[[lookup_table]]">
           </app-magic-filter>
-          <button class="sort-button" (click)="sort('horse_id')" mat-button>
+          <button class="sort-button" (click)="sort('[[column-name]]')" mat-button>
             <mat-icon matSuffix>{{ getSortIcon('[[column-name]]') }}</mat-icon>
           </button>
         </th>
         <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">
-          {{ el.[[column-name]] }}
+          {{ getCachedItem('[[lookup_table]]', el.[[column-name]], '[[lookup_key]].eq', httpService.[[lookup_table]]).[[lookup_name]] }}
         </td>
       </ng-container>

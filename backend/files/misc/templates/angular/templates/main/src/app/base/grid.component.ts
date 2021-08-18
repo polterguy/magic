@@ -11,6 +11,7 @@ import { DeleteResponse } from '../services/models/delete-response';
 import { CountResponse } from '../services/models/count-response';
 import { AuthService } from 'src/app/services/auth-service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '@app/confirm-deletion-dialog/confirm-dialog.component';
+import { IREntity } from '@app/services/interfaces/crud-interfaces';
 
 /**
  * Base class for all "data-grid" components, displaying items to
@@ -360,6 +361,50 @@ export abstract class GridComponent {
     return false;
   }
 
+  /**
+   * Invoked when a referenced item needs to be fetched to display
+   * some foreign key lookup value.
+   * 
+   * @param cacheStorageName Name of cache storage
+   * @param id ID to lookup into cache
+   * @param param Parameter to add when doing lookup towards server
+   * @param functor Cache item read function to invoke if we have a cache miss
+   */
+  private cache: any = {};
+  public getCachedItem(
+    cacheStorageName: string,
+    id: any,
+    param: string,
+    entityStorage: IREntity) {
+
+    // Making sure we've got cache storage for specified cache type.
+    if (!this.cache[cacheStorageName]) {
+      this.cache[cacheStorageName] = {};
+    }
+
+    // Checking if we already have this item in our cache.
+    if (this.cache[cacheStorageName]['id_' + id]) {
+
+      // Item found in cache.
+      return this.cache[cacheStorageName]['id_' + id];
+    }
+
+    // Checking if another invocation previously have started the fetching process to retrieve item from server.
+    if (this.cache[cacheStorageName]['id_' + id] === undefined) {
+
+      // Making sure only ONE invocation actually invokes server.
+      this.cache[cacheStorageName]['id_' + id] = null;
+      entityStorage.read({[param]: id}).subscribe((result: any[]) => {
+
+        // Applying item to cache.
+        this.cache[cacheStorageName]['id_' + id] = result[0];
+      });
+    }
+
+    // Waiting for server method to return - Hence, while we wait, we simply return the ID of the element.
+    return id;
+  }
+ 
   /**
    * Shows an HTTP error, or some other error
    * 
