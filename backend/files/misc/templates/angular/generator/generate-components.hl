@@ -47,6 +47,7 @@ set-value:x:@.form-control-file
    long
    date
    bool
+   lookup
 
 strings.concat
    get-value:x:@.arguments/*/root-folder
@@ -70,6 +71,12 @@ strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.bool.html
 set-value:x:@.column-file/*/bool
+   io.file.load:x:@strings.concat
+
+strings.concat
+   get-value:x:@.arguments/*/root-folder
+   .:templates/column/column.lookup.html
+set-value:x:@.column-file/*/lookup
    io.file.load:x:@strings.concat
 
 
@@ -371,104 +378,135 @@ for-each:x:@.arguments/*/.crud-methods/*
 
 
             /*
-             * Making sure we create a TypeScript instance of correct type to
-             * hold our column.
+             * Checking if this is a lookup type of field, implying a foreign key into
+             * another table.
              */
-            set-value:x:@.substitutions/*/form-controls
-               strings.concat
-                  get-value:x:@.substitutions/*/form-controls
-                  strings.replace:x:@.form-control-file
+            if
+               exists:x:@.dp/#/*/lookup/*
+               .lambda
+
+                  /*
+                   * Using the autocomplete component for our filtering control.
+                   */
+                  strings.replace:x:@.column-file/*/lookup
                      .:[[column-name]]
                      get-value:x:@.dp/#/*/name
-
-
-            /*
-             * Making sure we correctly instantiate our TypeScript instance.
-             *
-             * Notice, some types have specialized implementations here.
-             */
-            switch:x:@.dp/#/*/type
-
-
-               /*
-                * String type.
-                */
-               case:string
-                  set-value:x:@.substitutions/*/form-controls-instantiations
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-controls-instantiations
-                        strings.replace:x:@.form-control-instantiation-file/*/string
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
-
-
-               /*
-                * Default (anything not having a specialized implementation).
-                */
-               default
-                  set-value:x:@.substitutions/*/form-controls-instantiations
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-controls-instantiations
-                        strings.replace:x:@.form-control-instantiation-file
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
-
-
-            /*
-             * Appending currently iterated column to [.ng-containers].
-             *
-             * Notice, some types have specialized implementations here.
-             */
-            switch:x:@.dp/#/*/type
-
-
-               /*
-                * Long type.
-                */
-               case:long
-               case:int
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_key]]
+                     get-value:x:@.dp/#/*/lookup/*/key
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_name]]
+                     get-value:x:@.dp/#/*/lookup/*/name
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_table]]
+                     get-value:x:@.dp/#/*/lookup/*/table
                   set-value:x:@.substitutions/*/ng-containers
                      strings.concat
                         get-value:x:@.substitutions/*/ng-containers
-                        strings.replace:x:@.column-file/*/long
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+                        get-value:x:@strings.replace
+
+            else
 
 
                /*
-                * Date type.
+                * Making sure we create a TypeScript instance of correct type to
+                * hold our column.
                 */
-               case:date
-                  set-value:x:@.substitutions/*/ng-containers
-                     strings.concat
-                        get-value:x:@.substitutions/*/ng-containers
-                        strings.replace:x:@.column-file/*/date
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+               set-value:x:@.substitutions/*/form-controls
+                  strings.concat
+                     get-value:x:@.substitutions/*/form-controls
+                     strings.replace:x:@.form-control-file
+                        .:[[column-name]]
+                        get-value:x:@.dp/#/*/name
 
 
                /*
-                * Bool type.
+                * Making sure we correctly instantiate our TypeScript instance.
+                *
+                * Notice, some types have specialized implementations here.
                 */
-               case:bool
-                  set-value:x:@.substitutions/*/ng-containers
-                     strings.concat
-                        get-value:x:@.substitutions/*/ng-containers
-                        strings.replace:x:@.column-file/*/bool
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+               switch:x:@.dp/#/*/type
+
+
+                  /*
+                   * String type.
+                   */
+                  case:string
+                     set-value:x:@.substitutions/*/form-controls-instantiations
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-controls-instantiations
+                           strings.replace:x:@.form-control-instantiation-file/*/string
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
+
+
+                  /*
+                   * Default (anything not having a specialized implementation).
+                   */
+                  default
+                     set-value:x:@.substitutions/*/form-controls-instantiations
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-controls-instantiations
+                           strings.replace:x:@.form-control-instantiation-file
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
 
 
                /*
-                * Default (anything not having a specialized implementation).
+                * Appending currently iterated column to [.ng-containers].
+                *
+                * Notice, some types have specialized implementations here.
                 */
-               default
-                  set-value:x:@.substitutions/*/ng-containers
-                     strings.concat
-                        get-value:x:@.substitutions/*/ng-containers
-                        strings.replace:x:@.column-file
-                           .:[[column-name]]
-                           get-value:x:@.dp/#/*/name
+               switch:x:@.dp/#/*/type
+
+
+                  /*
+                   * Long type.
+                   */
+                  case:long
+                  case:int
+                     set-value:x:@.substitutions/*/ng-containers
+                        strings.concat
+                           get-value:x:@.substitutions/*/ng-containers
+                           strings.replace:x:@.column-file/*/long
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
+
+
+                  /*
+                   * Date type.
+                   */
+                  case:date
+                     set-value:x:@.substitutions/*/ng-containers
+                        strings.concat
+                           get-value:x:@.substitutions/*/ng-containers
+                           strings.replace:x:@.column-file/*/date
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
+
+
+                  /*
+                   * Bool type.
+                   */
+                  case:bool
+                     set-value:x:@.substitutions/*/ng-containers
+                        strings.concat
+                           get-value:x:@.substitutions/*/ng-containers
+                           strings.replace:x:@.column-file/*/bool
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
+
+
+                  /*
+                   * Default (anything not having a specialized implementation).
+                   */
+                  default
+                     set-value:x:@.substitutions/*/ng-containers
+                        strings.concat
+                           get-value:x:@.substitutions/*/ng-containers
+                           strings.replace:x:@.column-file
+                              .:[[column-name]]
+                              get-value:x:@.dp/#/*/name
 
 
             /*
