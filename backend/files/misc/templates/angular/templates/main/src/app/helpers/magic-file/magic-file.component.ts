@@ -14,7 +14,7 @@ import { MessageService } from '@app/services/message.service';
     *ngIf="canEditColumn('filename')"
     [model]="data.entity"
     field="filename"
-    placeholder="File"
+    [placeholder]="'filename' | translate"
     class="entity-edit-field"
     uploadUrl="/YOUR_MODULE_NAME/upload-file"
     (change)="changed('filename')">

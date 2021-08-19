@@ -20,7 +20,7 @@ import { MessageService } from '@app/services/message.service';
     *ngIf="canEditColumn('image')"
     [model]="data.entity"
     field="image"
-    placeholder="Image"
+    [placeholder]="'filename' | translate"
     class="entity-edit-field"
     maxWidth="1024"
     maxHeight="800"

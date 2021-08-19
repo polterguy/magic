@@ -9,7 +9,7 @@ import { environment } from '@env/environment';
  * 
 
             <p class="details">
-              <label>Image</label>
+              <label>{{'filename' | translate}}</label>
               <app-magic-image-view
                 [image]="el.filename"
                 downloadUrl="/MODULE_NAME/download-image">
