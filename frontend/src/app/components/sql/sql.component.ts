@@ -234,7 +234,7 @@ export class SqlComponent implements OnInit {
     // Updating SQL hints according to selected database.
     const result = {};
     const tables = this.databaseDeclaration.databases
-      .filter((x: any) => x.name === this.input.database)[0].tables;
+      .filter((x: any) => x.name === this.input.database)[0].tables || [];
     for (const idxTable of tables) {
       result[idxTable.name] = (idxTable.columns?.map((x: any) => x.name) || []);
     }
