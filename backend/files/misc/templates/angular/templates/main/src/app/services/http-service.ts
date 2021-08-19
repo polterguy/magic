@@ -99,10 +99,6 @@ export class HttpService {
 
   /**
    * Uploads an image to your backend.
-   * 
-   * NOTICE! This method doesn't work out of the box, and require you
-   * to set its module name correctly, in addition to making sure you've
-   * got a backend endpoint capable of handling its payload.
    *
    * @param url Backend relative endpoint URL
    * @param content Base64 encoded image data
