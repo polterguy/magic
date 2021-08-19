@@ -17,15 +17,15 @@ import { MessageService } from '@app/services/message.service';
  * below.
 
   <app-magic-image
-    *ngIf="canEditColumn('image')"
+    *ngIf="canEditColumn('filename')"
     [model]="data.entity"
-    field="image"
+    field="filename"
     [placeholder]="'filename' | translate"
     class="entity-edit-field"
     maxWidth="1024"
     maxHeight="800"
     uploadUrl="/YOUR_MODULE_NAME/upload-image"
-    (change)="changed('image')">
+    (change)="changed('filename')">
   </app-magic-image>
 
  * Notice, the [upload] callback needs to be a function taking two arguments;
