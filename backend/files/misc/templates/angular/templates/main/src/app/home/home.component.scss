@@ -1,9 +1,14 @@
- .container {
+.container {
   text-align: center;
   padding: 1em;
   mat-card {
     padding-bottom: 3rem;
     p {
+      text-align: left;
+    }
+  }
+  ul {
+    li {
       text-align: left;
     }
   }
