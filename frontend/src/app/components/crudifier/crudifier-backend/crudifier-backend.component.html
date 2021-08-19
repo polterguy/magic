@@ -57,6 +57,7 @@
 
   <mat-checkbox
     *ngIf="database && database.tables && database.tables.length > 0"
+    matTooltip="If true will generate all possible QUERY parameters for your read endpoints"
     [(ngModel)]="transformService.verbose">Verbose</mat-checkbox>
 
   <mat-checkbox
@@ -74,6 +75,7 @@
   <button
     [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
     mat-raised-button
+    matTooltip="Set default values used for components"
     (click)="setDefaults()">
     Set defaults
   </button>
