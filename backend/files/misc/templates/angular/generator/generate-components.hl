@@ -415,6 +415,13 @@ for-each:x:@.arguments/*/.crud-methods/*
                .lambda
 
                   /*
+                   * Figuring out service method name, which is the last parts
+                   * of the entity's table name, due to schemas namespacing tables.
+                   */
+                  strings.split:x:@.dp/#/*/lookup/*/table
+                     .:.
+
+                  /*
                    * Using the autocomplete component for our filtering control.
                    */
                   strings.replace:x:@.column-file/*/lookup
@@ -428,7 +435,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/lookup/*/name
                   strings.replace:x:@strings.replace
                      .:[[lookup_table]]
-                     get-value:x:@.dp/#/*/lookup/*/table
+                     get-value:x:@strings.split/0/-
                   set-value:x:@.substitutions/*/ng-containers
                      strings.concat
                         get-value:x:@.substitutions/*/ng-containers
@@ -449,7 +456,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/lookup/*/name
                   strings.replace:x:@strings.replace
                      .:[[lookup_table]]
-                     get-value:x:@.dp/#/*/lookup/*/table
+                     get-value:x:@strings.split/0/-
                   set-value:x:@.substitutions/*/view-details
                      strings.concat
                         get-value:x:@.substitutions/*/view-details
@@ -678,6 +685,13 @@ for-each:x:@.arguments/*/.crud-methods/*
                .lambda
 
                   /*
+                   * Figuring out service method name, which is the last parts
+                   * of the entity's table name, due to schemas namespacing tables.
+                   */
+                  strings.split:x:@.dp/#/*/lookup/*/table
+                     .:.
+
+                  /*
                    * Using the autocomplete component for our edit/create modal dialog.
                    */
                   strings.replace:x:@.form-field-file/*/autocomplete
@@ -691,7 +705,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/lookup/*/name
                   strings.replace:x:@strings.replace
                      .:[[lookup_table]]
-                     get-value:x:@.dp/#/*/lookup/*/table
+                     get-value:x:@strings.split/0/-
                   set-value:x:@.substitutions/*/form-fields
                      strings.concat
                         get-value:x:@.substitutions/*/form-fields
@@ -700,6 +714,13 @@ for-each:x:@.arguments/*/.crud-methods/*
             else-if
                exists:x:@.dp/#/*/lookup/*/long
                .lambda
+
+                  /*
+                   * Figuring out service method name, which is the last parts
+                   * of the entity's table name, due to schemas namespacing tables.
+                   */
+                  strings.split:x:@.dp/#/*/lookup/*/table
+                     .:.
 
                   /*
                    * Using the selector component for our edit/create modal dialog.
@@ -715,7 +736,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/lookup/*/name
                   strings.replace:x:@strings.replace
                      .:[[lookup_table]]
-                     get-value:x:@.dp/#/*/lookup/*/table
+                     get-value:x:@strings.split/0/-
                   set-value:x:@.substitutions/*/form-fields
                      strings.concat
                         get-value:x:@.substitutions/*/form-fields
