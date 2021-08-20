@@ -1,5 +1,5 @@
 
-<mat-form-field *ngIf="filteredOptions" appearance="outline">
+<mat-form-field appearance="outline">
   <mat-label>{{placeholder}}</mat-label>
   <input
     type="text"
@@ -13,7 +13,7 @@
     [displayWith]="displayFn.bind(this)">
     <ng-container *ngIf="!loading">
       <mat-option
-        *ngFor="let option of filteredOptions | async"
+        *ngFor="let option of items"
         [value]="option">
         {{option[value]}}
       </mat-option>
