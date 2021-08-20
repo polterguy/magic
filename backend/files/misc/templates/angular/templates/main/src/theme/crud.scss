@@ -159,14 +159,14 @@
       tr.visible-details {
         td {
           border-bottom-color: transparent !important;
-          background-color: mat-color($app-primary, 100);
+          background-color: mat-color($app-primary, 700);
         }
       }
 
       // Making sure we communicate that column is clickable and give some visual clues.
       tr.mat-row:hover {
         cursor: pointer;
-        background-color: mat-color($app-primary, 50);
+        background-color: mat-color($app-primary, 500);
         transition-property: background-color;
         transition-duration: 0.1s;
       }
