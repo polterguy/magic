@@ -664,6 +664,42 @@ semaphore:crudifier
                            foreign_name:x:@.dp/#/*/foreign_key/*/name
                            long:x:@.dp/#/*/foreign_key/*/long
 
+
+         /*
+          * Making sure we also run through the primary arguments, if
+          * this is a PUT invocation.
+          */
+         if
+            eq
+               get-value:x:@.arguments/*/verb
+               .:put
+            .lambda
+
+               /*
+                * Primry keys can also be foreign keys.
+                */
+               for-each:x:@.arguments/*/args/*/primary/*
+
+                  /*
+                   * Checking if currently iterated column has a foreign key declaration.
+                   */
+                  if
+                     exists:x:@.dp/#/*/foreign_key/*
+                     .lambda
+
+                        /*
+                         * Adding meta information about foreign key to lambda object.
+                         */
+                        unwrap:x:+/*/*/*
+                        add:x:@apply/*/.foreign-keys
+                           .
+                              .
+                                 column:x:@.dp/#/*/name
+                                 table:x:@.dp/#/*/foreign_key/*/table
+                                 foreign_column:x:@.dp/#/*/foreign_key/*/column
+                                 foreign_name:x:@.dp/#/*/foreign_key/*/name
+                                 long:x:@.dp/#/*/foreign_key/*/long
+
          /*
           * Checking if we have foreign keys at all, and if not, removing entire declaration.
           */
