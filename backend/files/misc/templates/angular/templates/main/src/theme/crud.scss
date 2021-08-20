@@ -23,6 +23,14 @@
   width: 100%;
 }
 
+.mat-list-item:hover {
+  background-color: mat-color($app-primary, 500);
+}
+
+.mat-list-item.active {
+  background-color: mat-color($app-primary, 700);
+}
+
 /*
  * Styles for CRUD components and more specifically its actual material table,
  * and its wrapper elements.

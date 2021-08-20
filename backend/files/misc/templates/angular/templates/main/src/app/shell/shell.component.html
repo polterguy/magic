@@ -34,7 +34,12 @@
       <nav>
         <mat-list>
           <mat-divider></mat-divider>
-          <a mat-list-item routerLink="/home" routerLinkActive="active" (click)="isMobile && sidenav.close()">
+          <a
+            mat-list-item
+            routerLink="/"
+            [routerLinkActiveOptions]="{exact: true}"
+            routerLinkActive="active"
+            (click)="isMobile && sidenav.close()">
             <span translate>Home</span>
           </a>
 [[router-links]]
