@@ -91,7 +91,8 @@
                 <mat-option [value]="null">No link</mat-option>
                 <mat-option
                   *ngFor="let idx of foreignKeys[el.name]"
-                  [value]="idx.value">{{idx.name}}</mat-option>
+                  [disabled]="idx.type !== 'string'"
+                  [value]="idx.value">{{idx.name + ' [' + idx.type + ']'}}</mat-option>
               </mat-select>
 
             </mat-form-field>
