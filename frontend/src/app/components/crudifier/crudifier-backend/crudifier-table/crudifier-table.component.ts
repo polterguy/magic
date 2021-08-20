@@ -114,6 +114,7 @@ export class CrudifierTableComponent implements OnInit {
           return {
             name: table.name.replace('dbo.', '') + '.' + x.name,
             value: x.name,
+            type: x.hl,
           };
         });
       }

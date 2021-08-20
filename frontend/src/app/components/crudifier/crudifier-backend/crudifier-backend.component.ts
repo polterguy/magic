@@ -374,7 +374,7 @@ export class CrudifierBackendComponent implements OnInit {
               foreign_column: keys[0].foreign_column,
               long_data: true,
               foreign_name: database.tables
-                .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string' || !x.primary)[0].name,
+                .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string')[0].name,
             };
           }
         }
