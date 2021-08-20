@@ -132,9 +132,9 @@ export abstract class DialogComponent {
       this.getUpdateMethod().subscribe((res: UpdateResponse) => {
         this.close(this.getData().entity);
       }, (error: any) => {
-        this.snackBar.open(error.error.message, 'Close', {
-          duration: 5000,
-          panelClass: ['error-snackbar'],
+        console.error(error);
+        this.snackBar.open('I could not update your entity, are you sure you supplied correct data?', 'Close', {
+          duration: 10000,
         });
       });
     } else {
@@ -148,9 +148,9 @@ export abstract class DialogComponent {
       this.getCreateMethod().subscribe((res: CreateResponse) => {
         this.close(this.getData().entity);
       }, (error: any) => {
-        this.snackBar.open(error.error.message, 'Close', {
-          duration: 5000,
-          panelClass: ['error-snackbar'],
+        console.log(error);
+        this.snackBar.open('I could not create your entity, are you sure you supplied correct data?', 'Close', {
+          duration: 10000,
         });
       });
     }

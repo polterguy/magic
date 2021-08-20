@@ -192,7 +192,7 @@ export abstract class GridComponent {
         this.delete(ids).subscribe((res: DeleteResponse) => {
             this.getData();
         }, (error: any) => {
-          this.showError('We could not delete entity, maybe other entities are referencing it?');
+          this.showError('I could not delete your entity, maybe other entities are referencing it?');
           console.log(error);
         });
     
@@ -432,8 +432,7 @@ export abstract class GridComponent {
       error?.error?.message ||
         (error.status ? error.status + ' - ' + error.statusText : error),
       'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
+      duration: 10000,
     });
   }
 
