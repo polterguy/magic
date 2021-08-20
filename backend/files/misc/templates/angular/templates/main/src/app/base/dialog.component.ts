@@ -109,6 +109,7 @@ export abstract class DialogComponent {
 
     // Making sure we set all values having an empty string to 'null values'.
     const data = this.getData();
+    debugger;
     for (const idx in data.entity) {
       if (data.entity[idx] === '') {
 
@@ -120,11 +121,11 @@ export abstract class DialogComponent {
     // Checking if this is edit invocation or create invocation.
     if (data.isEdit) {
 
-      for (const idx in this.getData().entity) {
+      for (const idx in data.entity) {
         if (this.updateColumns.indexOf(idx) === -1 ||
           (this.primaryKeys.indexOf(idx) === -1 &&
             this.changedValues.indexOf(idx) === -1)) {
-          delete this.getData().entity[idx];
+          delete data.entity[idx];
         }
       }
 
@@ -138,9 +139,9 @@ export abstract class DialogComponent {
       });
     } else {
 
-      for (const idx in this.getData().entity) {
+      for (const idx in data.entity) {
         if (this.createColumns.indexOf(idx) === -1) {
-          delete this.getData().entity[idx];
+          delete data.entity[idx];
         }
       }
 
