@@ -360,13 +360,23 @@ export class CrudifierBackendComponent implements OnInit {
       for (const idx of idxTable.columns) {
         const keys = idxTable.foreign_keys?.filter(x => x.column === idx.name) ?? [];
         if (keys.length > 0) {
-          idx.foreign_key = {
-            foreign_table: keys[0].foreign_table,
-            foreign_column: keys[0].foreign_column,
-            long_data: true,
-            foreign_name: database.tables
-              .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string' || !x.primary)[0].name,
-          };
+          let shouldCreateForeignKey = false;
+          const foreignTable = database.tables.filter(x => x.name === keys[0].foreign_table)[0];
+          for (const idxCol of foreignTable.columns) {
+            if (idxCol.hl === 'string') {
+              shouldCreateForeignKey = true;
+              break;
+            }
+          }
+          if (shouldCreateForeignKey) {
+            idx.foreign_key = {
+              foreign_table: keys[0].foreign_table,
+              foreign_column: keys[0].foreign_column,
+              long_data: true,
+              foreign_name: database.tables
+                .filter(x => x.name === keys[0].foreign_table)[0].columns.filter(x => x.hl === 'string' || !x.primary)[0].name,
+            };
+          }
         }
       }
 
