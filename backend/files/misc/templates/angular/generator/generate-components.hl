@@ -346,7 +346,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              * Column exists in GET output, now we need to check if the column is
              * a primary key - At which point we only display the column if the URL
              * does NOT have a PUT verb, or the primary key is of type string. This is chosen
-             * because URLs without PUT, ONLY have primary key columns - Hence, if we
+             * because URLs without PUT typically ONLY have primary key columns - Hence, if we
              * don't display primary keys for such endpoints, we have NOTHING to display.
              * Besides, such columns are also often foreign keys into other tables.
              *
@@ -672,7 +672,7 @@ for-each:x:@.arguments/*/.crud-methods/*
           * our edit/create form fields.
           *
           * Notice, we don't create form fields for anything that's an input field
-          * to our DELETE endpoint, since it's highly likely a prmary key.
+          * to our DELETE endpoint, since it's a primary key.
           */
          for-each:x:@.form-fields/*
 
@@ -682,9 +682,7 @@ for-each:x:@.arguments/*/.crud-methods/*
              * another table.
              */
             if
-               and
-                  exists:x:@.dp/#/*/lookup/*
-                  get-value:x:@.dp/#/*/lookup/*/long
+               exists:x:@.dp/#/*/lookup
                .lambda
 
                   /*
@@ -695,58 +693,57 @@ for-each:x:@.arguments/*/.crud-methods/*
                      .:.
 
                   /*
-                   * Using the autocomplete component for our edit/create modal dialog.
+                   * Figuring out if this is a long dataset or not.
                    */
-                  strings.replace:x:@.form-field-file/*/autocomplete
-                     .:[[column-name]]
-                     get-value:x:@.dp/#/*/name
-                  strings.replace:x:@strings.replace
-                     .:[[lookup_key]]
-                     get-value:x:@.dp/#/*/lookup/*/key
-                  strings.replace:x:@strings.replace
-                     .:[[lookup_name]]
-                     get-value:x:@.dp/#/*/lookup/*/name
-                  strings.replace:x:@strings.replace
-                     .:[[lookup_table]]
-                     get-value:x:@strings.split/0/-
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        get-value:x:@strings.replace
+                  if
+                     eq
+                        get-value:x:@.dp/#/*/lookup/*/long
+                        .:bool:true
+                     .lambda
 
-            else-if
-               exists:x:@.dp/#/*/lookup/*/long
-               .lambda
+                        /*
+                         * Using the autocomplete component for our edit/create modal dialog.
+                         */
+                        strings.replace:x:@.form-field-file/*/autocomplete
+                           .:[[column-name]]
+                           get-value:x:@.dp/#/*/name
+                        strings.replace:x:@strings.replace
+                           .:[[lookup_key]]
+                           get-value:x:@.dp/#/*/lookup/*/key
+                        strings.replace:x:@strings.replace
+                           .:[[lookup_name]]
+                           get-value:x:@.dp/#/*/lookup/*/name
+                        strings.replace:x:@strings.replace
+                           .:[[lookup_table]]
+                           get-value:x:@strings.split/0/-
+                        set-value:x:@.substitutions/*/form-fields
+                           strings.concat
+                              get-value:x:@.substitutions/*/form-fields
+                              get-value:x:@strings.replace
 
-                  /*
-                   * Figuring out service method name, which is the last parts
-                   * of the entity's table name, due to schemas namespacing tables.
-                   */
-                  strings.split:x:@.dp/#/*/lookup/*/table
-                     .:.
+                  else
 
-                  /*
-                   * Using the selector component for our edit/create modal dialog.
-                   */
-                  strings.replace:x:@.form-field-file/*/selector
-                     .:[[column-name]]
-                     get-value:x:@.dp/#/*/name
-                  strings.replace:x:@strings.replace
-                     .:[[lookup_key]]
-                     get-value:x:@.dp/#/*/lookup/*/key
-                  strings.replace:x:@strings.replace
-                     .:[[lookup_name]]
-                     get-value:x:@.dp/#/*/lookup/*/name
-                  strings.replace:x:@strings.replace
-                     .:[[lookup_table]]
-                     get-value:x:@strings.split/0/-
-                  set-value:x:@.substitutions/*/form-fields
-                     strings.concat
-                        get-value:x:@.substitutions/*/form-fields
-                        get-value:x:@strings.replace
+                     /*
+                      * Using the selector component for our edit/create modal dialog.
+                      */
+                     strings.replace:x:@.form-field-file/*/selector
+                        .:[[column-name]]
+                        get-value:x:@.dp/#/*/name
+                     strings.replace:x:@strings.replace
+                        .:[[lookup_key]]
+                        get-value:x:@.dp/#/*/lookup/*/key
+                     strings.replace:x:@strings.replace
+                        .:[[lookup_name]]
+                        get-value:x:@.dp/#/*/lookup/*/name
+                     strings.replace:x:@strings.replace
+                        .:[[lookup_table]]
+                        get-value:x:@strings.split/0/-
+                     set-value:x:@.substitutions/*/form-fields
+                        strings.concat
+                           get-value:x:@.substitutions/*/form-fields
+                           get-value:x:@strings.replace
 
             else
-
 
                /*
                 * Not a foreign key, figuring out its type.
