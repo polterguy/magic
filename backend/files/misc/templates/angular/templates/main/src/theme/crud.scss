@@ -328,4 +328,10 @@
     text-transform: capitalize;
     display: inline-block;
   }
+  .entity-edit-field:only-child {
+    width: calc(100% - 1.2rem);
+  }
+  .mat-dialog-content {
+    min-width:500px;
+  }
 }
