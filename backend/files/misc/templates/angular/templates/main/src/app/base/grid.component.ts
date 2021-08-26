@@ -193,7 +193,7 @@ export abstract class GridComponent {
             this.getData();
         }, (error: any) => {
           this.showError('I could not delete your entity, maybe other entities are referencing it?');
-          console.log(error);
+          console.error(error);
         });
     
       }

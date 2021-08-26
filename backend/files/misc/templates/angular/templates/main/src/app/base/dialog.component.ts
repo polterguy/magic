@@ -147,7 +147,7 @@ export abstract class DialogComponent {
       this.getCreateMethod().subscribe((res: CreateResponse) => {
         this.close(this.getData().entity);
       }, (error: any) => {
-        console.log(error);
+        console.error(error);
         this.snackBar.open('I could not create your entity, are you sure you supplied correct data?', 'Close', {
           duration: 10000,
         });
