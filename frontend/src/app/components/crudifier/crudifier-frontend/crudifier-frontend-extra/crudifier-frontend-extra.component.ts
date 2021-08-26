@@ -7,7 +7,6 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
-import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { Endpoint } from '../../../endpoints/models/endpoint.model';
 import { EndpointService } from '../../../endpoints/services/endpoint.service';
@@ -121,7 +120,6 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
 
       // Assigning result to model.
-      console.log(endpoints);
       this.endpoints = endpoints
         .filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
         .filter(x => x.type !== 'custom')
