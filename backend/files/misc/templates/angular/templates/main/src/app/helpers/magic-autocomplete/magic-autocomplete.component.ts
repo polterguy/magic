@@ -3,12 +3,11 @@
  */
 
 // Angular imports.
-import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { IREntity } from '@app/services/interfaces/crud-interfaces';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild } from '@angular/core';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 /**
  * Autocomplete component allowing you to have an autocomplete
@@ -21,6 +20,7 @@ import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operato
     [model]="data.entity"
     field="locale_id"
     key="id"
+    table="languages"
     value="language"
     placeholder="Choose a language"
     class="entity-edit-field"
@@ -71,6 +71,12 @@ export class MagicAutocompleteComponent implements OnInit {
    * an item is selected.
    */
   @Input() public key: string;
+
+  /**
+   * Name of table which we need to retrieve items from.
+   * Needed as we query for existing values.
+   */
+   @Input() public table: string;
 
   /**
    * Field in the referenced table that is displayed to the user
@@ -131,7 +137,7 @@ export class MagicAutocompleteComponent implements OnInit {
       // Wee need to fetch the currently selected item and set the value of our autocomplete.
       this.loading = true;
       this.getItems.read({
-        [this.key + '.eq']: this.model[this.field],
+        [this.table + '.' + this.key + '.eq']: this.model[this.field],
         limit: 1,
       }).subscribe((result: any[]) => {
 
@@ -216,7 +222,7 @@ export class MagicAutocompleteComponent implements OnInit {
       limit: 25,
     };
     if (this.control.value && this.control.value !== '') {
-      filter[this.value + '.like'] = this.control.value;
+      filter[this.table + '.' + this.value + '.like'] = this.control.value;
     }
     this.getItems.read(filter).subscribe(res => {
 

@@ -419,6 +419,8 @@ semaphore:crudifier
                      unwrap:x:@.buffer/*
                      set-name:x:@.buffer/*
                         strings.concat
+                           get-value:x:@.arguments/*/table
+                           .:.
                            get-value:x:@.dp/#/*/name
                            .:.like
                      add:x:@apply/*/.arguments
@@ -442,6 +444,8 @@ semaphore:crudifier
                      unwrap:x:@.buffer/*
                      set-name:x:@.buffer/*
                         strings.concat
+                           get-value:x:@.arguments/*/table
+                           .:.
                            get-value:x:@.dp/#/*/name
                            .:.eq
                      add:x:@apply/*/.arguments
@@ -459,6 +463,8 @@ semaphore:crudifier
                      unwrap:x:@.buffer/*
                      set-name:x:@.buffer/*
                         strings.concat
+                           get-value:x:@.arguments/*/table
+                           .:.
                            get-value:x:@.dp/@.dp/#/*/name
                            .:.
                            get-name:x:@.dp/#
