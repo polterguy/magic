@@ -444,20 +444,16 @@ for-each:x:@.arguments/*/.crud-methods/*
              * Checking if this is a lookup type of field, implying a foreign key into
              * another table.
              */
+            .lookup:bool:false
             if
                exists:x:@.dp/#/*/lookup/*
                .lambda
 
                   /*
-                   * Figuring out service method name, which is the last parts
-                   * of the entity's table name, due to schemas namespacing tables.
-                   */
-                  strings.split:x:@.dp/#/*/lookup/*/table
-                     .:.
-
-                  /*
                    * Using the autocomplete component for our filtering control.
                    */
+                  set-value:x:@.lookup
+                     .:bool:true
                   strings.replace:x:@.column-file/*/lookup
                      .:[[column-name]]
                      get-value:x:@.dp/#/*/name
@@ -469,7 +465,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/lookup/*/name
                   strings.replace:x:@strings.replace
                      .:[[lookup_table]]
-                     get-value:x:@strings.split/0/-
+                     strings.replace:x:@.dp/#/*/lookup/*/table
+                        .:.
+                        .:_
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_table_with_namespace]]
+                     get-value:x:@.dp/#/*/lookup/*/table
                   set-value:x:@.substitutions/*/ng-containers
                      strings.concat
                         get-value:x:@.substitutions/*/ng-containers
@@ -490,7 +491,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                      get-value:x:@.dp/#/*/lookup/*/name
                   strings.replace:x:@strings.replace
                      .:[[lookup_table]]
-                     get-value:x:@strings.split/0/-
+                     strings.replace:x:@.dp/#/*/lookup/*/table
+                        .:.
+                        .:_
+                  strings.replace:x:@strings.replace
+                     .:[[lookup_table_with_namespace]]
+                     get-value:x:@.dp/#/*/lookup/*/table
                   set-value:x:@.substitutions/*/view-details
                      strings.concat
                         get-value:x:@.substitutions/*/view-details
@@ -570,6 +576,19 @@ for-each:x:@.arguments/*/.crud-methods/*
                 *
                 * Notice, some types have specialized implementations here.
                 */
+               .col-name-tmp
+               if
+                  strings.contains:x:@.dp/#/*/name
+                     .:.
+                  .lambda
+                     set-value:x:@.col-name-tmp
+                        get-value:x:@.dp/#/*/name
+               else
+                  set-value:x:@.col-name-tmp
+                     strings.concat
+                        get-value:x:@for-each/@.dp/#/*/table-name
+                        .:.
+                        get-value:x:@.dp/#/*/name
                switch:x:@.dp/#/*/type
 
 
@@ -582,25 +601,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                         strings.replace:x:@.dp/#/*/name
                            .:.
                            .:_
-                     .col-name
-                     if
-                        strings.contains:x:@.dp/#/*/name
-                           .:.
-                        .lambda
-                           set-value:x:@.col-name
-                              get-value:x:@.dp/#/*/name
-                     else
-                        set-value:x:@.col-name
-                           strings.concat
-                              get-value:x:@for-each/@.dp/#/*/component-folder
-                              .:.
-                              get-value:x:@.dp/#/*/name
                      set-value:x:@.substitutions/*/form-controls-instantiations
                         strings.concat
                            get-value:x:@.substitutions/*/form-controls-instantiations
                            strings.replace:x:@strings.replace
                               .:[[column-name]]
-                              get-value:x:@.col-name
+                              get-value:x:@.col-name-tmp
 
 
                   /*
@@ -612,25 +618,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                         strings.replace:x:@.dp/#/*/name
                            .:.
                            .:_
-                     .col-name
-                     if
-                        strings.contains:x:@.dp/#/*/name
-                           .:.
-                        .lambda
-                           set-value:x:@.col-name
-                              get-value:x:@.dp/#/*/name
-                     else
-                        set-value:x:@.col-name
-                           strings.concat
-                              get-value:x:@for-each/@.dp/#/*/component-folder
-                              .:.
-                              get-value:x:@.dp/#/*/name
                      set-value:x:@.substitutions/*/form-controls-instantiations
                         strings.concat
                            get-value:x:@.substitutions/*/form-controls-instantiations
                            strings.replace:x:@strings.replace
                               .:[[column-name]]
-                              get-value:x:@.col-name
+                              get-value:x:@.col-name-tmp
 
 
                /*
@@ -804,7 +797,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                            get-value:x:@.dp/#/*/lookup/*/name
                         strings.replace:x:@strings.replace
                            .:[[lookup_table]]
-                           get-value:x:@strings.split/0/-
+                           strings.replace:x:@.dp/#/*/lookup/*/table
+                              .:.
+                              .:_
+                        strings.replace:x:@strings.replace
+                           .:[[lookup_table_with_namespace]]
+                           get-value:x:@.dp/#/*/lookup/*/table
                         set-value:x:@.substitutions/*/form-fields
                            strings.concat
                               get-value:x:@.substitutions/*/form-fields
@@ -826,7 +824,12 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.dp/#/*/lookup/*/name
                      strings.replace:x:@strings.replace
                         .:[[lookup_table]]
-                        get-value:x:@strings.split/0/-
+                        strings.replace:x:@.dp/#/*/lookup/*/table
+                           .:.
+                           .:_
+                     strings.replace:x:@strings.replace
+                        .:[[lookup_table_with_namespace]]
+                        get-value:x:@.dp/#/*/lookup/*/table
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
                            get-value:x:@.substitutions/*/form-fields
