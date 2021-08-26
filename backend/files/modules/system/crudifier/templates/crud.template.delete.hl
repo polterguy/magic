@@ -12,13 +12,17 @@
  */
 data.connect:{database}
    database-type:{database-type}
-   add:x:+/*/where/*/and
+   add:x:./*/data.delete/*/where/*/and
       get-nodes:x:@.arguments/*
    data.delete
       database-type:{database-type}
       table:{table}
       where
          and
+
+   /*
+    * Returning result of bove invocation to caller.
+    */
    unwrap:x:+/*
    return
       affected:x:@data.delete

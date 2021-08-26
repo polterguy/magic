@@ -4,6 +4,7 @@
  */
 .arguments
    verbose:bool
+   join:bool
    databaseType:string
    moduleName:string
    database:string
@@ -470,10 +471,113 @@ semaphore:crudifier
           */
          for-each:x:@.arguments/*/args/*/columns/*/*/name
             set-name:x:+/*/*
-               get-value:x:@.dp/#
+               strings.concat
+                  get-value:x:@.arguments/*/table
+                  .:.
+                  get-value:x:@.dp/#
             add:x:@apply/**/columns
                .
                   .
+
+         /*
+          * Checking if caller wants to apply server side joins, at which point we left join
+          * with all referenced tables referenced as foreign keys.
+          */
+         if
+            eq
+               get-value:x:@.arguments/*/join
+               .:bool:true
+            .lambda
+
+               /*
+                * Looping through all foreign keys making sure we left join with the referenced table.
+                */
+               for-each:x:@.arguments/*/args/*/columns/*
+
+                  /*
+                   * Checking if currently iterated column has a [foreign_key] declaration,
+                   * and that the foreign key column in the source table is not of type string.
+                   */
+                  if
+                     and
+                        exists:x:@.dp/#/*/foreign_key
+                        not
+                           eq
+                              get-value:x:@.dp/#/*/type
+                              .:string
+                     .lambda
+
+                        /*
+                         * Currently iterated column has a [foreign_key] declaration.
+                         *
+                         * First we need to create our [join] part.
+                         */
+                        .src-field
+                        .dest-field
+                        set-value:x:@.src-field
+                           strings.concat
+                              get-value:x:@.arguments/*/table
+                              .:.
+                              get-value:x:@.dp/#/*/name
+                        set-value:x:@.dest-field
+                           strings.concat
+                              get-value:x:@.dp/#/*/name
+                              .:.
+                              get-value:x:@.dp/#/*/foreign_key/*/column
+                        set-value:x:./*/add/*/*/*/*/*
+                           get-value:x:@.dest-field
+                        set-name:x:./*/add/*/*/*/*/*
+                           get-value:x:@.src-field
+                        unwrap:x:+/+/*/*/join/*/as
+                        unwrap:x:+/*/*/join
+                        add:x:@apply/**/table
+                           .
+                              join:x:@.dp/#/*/foreign_key/*/table
+                                 as:x:@.dp/#/*/name
+                                 type:left
+                                 on
+                                    and
+                                       .
+
+                        /*
+                         * Then we need to add the joined display [name] as a part of our result set.
+                         */
+                        .display-col
+                        .display-name
+                        set-value:x:@.display-col
+                           strings.concat
+                              get-value:x:@.dp/#/*/name
+                              .:.
+                              get-value:x:@.dp/#/*/foreign_key/*/name
+                        set-value:x:@.display-name
+                           strings.concat
+                              get-value:x:@.dp/#/*/name
+                              .:.
+                              get-value:x:@.dp/#/*/foreign_key/*/name
+                        unwrap:x:+/+/*/*/*
+                        set-name:x:+/*/*
+                           get-value:x:@.display-col
+                        add:x:@apply/**/columns
+                           .
+                              .
+                                 as:x:@.display-name
+
+                        /*
+                         * Then we need to add the eq and like query parameters for the referenced columns.
+                         */
+                        set-name:x:+/+/*/*/like
+                           strings.concat
+                              get-value:x:@.display-col
+                              .:.like
+                        set-name:x:+/*/*/eq
+                           strings.concat
+                              get-value:x:@.display-col
+                              .:.eq
+                        add:x:@apply/*/.arguments
+                           .
+                              eq:string
+                              like:string
+               
 
       /*
        * HTTP POST special cases
@@ -646,9 +750,22 @@ semaphore:crudifier
 
             /*
              * Checking if currently iterated column has a foreign key declaration.
+             *
+             * Notice, for GET endpoints we do NOT generate [.foreign-key] declaration
+             * if caller specified he wanted to create left joins for foreign keys.
              */
             if
-               exists:x:@.dp/#/*/foreign_key/*
+               and
+                  exists:x:@.dp/#/*/foreign_key/*
+                  or
+                     not
+                        eq
+                           get-value:x:@.arguments/*/verb
+                           .:get
+                     not
+                        eq
+                           get-value:x:@.arguments/*/join
+                           .:bool:true
                .lambda
 
                   /*

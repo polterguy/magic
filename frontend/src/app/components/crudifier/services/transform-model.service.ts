@@ -28,6 +28,11 @@ export class TransformModelService {
    public verbose = false;
 
   /**
+   * Whether or not scaffolding should create left joins for backend GET endpoints.
+   */
+   public join = true;
+
+  /**
    * Transforms the specified input to a Crudify instance, required to invoke backend
    * 
    * @param databaseType Type of database, 'mysql' or 'mssql' for instance
@@ -52,6 +57,7 @@ export class TransformModelService {
     result.returnId = (table.columns || []).filter(x => x.primary && !x.automatic).length === 0;
     result.overwrite = this.overwrite;
     result.verbose = this.verbose;
+    result.join = this.join;
     result.validators = table.validators;
     result.cqrs = table.cqrs;
     result.cqrsAuthorisation = table.cqrsAuthorisation;
