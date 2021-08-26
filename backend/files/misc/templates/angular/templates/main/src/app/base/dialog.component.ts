@@ -109,7 +109,6 @@ export abstract class DialogComponent {
 
     // Making sure we set all values having an empty string to 'null values'.
     const data = this.getData();
-    debugger;
     for (const idx in data.entity) {
       if (data.entity[idx] === '') {
 

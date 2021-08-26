@@ -1,1 +1,1 @@
-  public [[column-name]]: FormControl;
+  public [[form-control-name]]: FormControl;

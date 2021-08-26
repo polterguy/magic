@@ -9,16 +9,24 @@
 
 
 /*
- * Invoking update, making sure we add [values] and any [where] conditions.
+ * Opening up our database connection.
  */
 data.connect:{database}
    database-type:{database-type}
+
+   /*
+    * Invoking our update slot.
+    */
    data.update
       database-type:{database-type}
       table:{table}
       values
       where
          and
+
+   /*
+    * Verifying record exists.
+    */
    if
       eq
          get-value:x:@data.update
@@ -27,6 +35,10 @@ data.connect:{database}
          response.status.set:404
          return
             result:Record not found
+
+   /*
+    * Returning success to caller.
+    */
    response.status.set:202
    unwrap:x:+/*
    return

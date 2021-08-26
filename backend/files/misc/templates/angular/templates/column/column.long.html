@@ -7,7 +7,7 @@
               matInput
               type="number"
               autocomplete="off"
-              [formControl]="[[column-name]]">
+              [formControl]="[[form-control-name]]">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
           <button
@@ -17,5 +17,5 @@
             <mat-icon matSuffix>{{getSortIcon('[[column-name]]')}}</mat-icon>
           </button>
         </th>
-        <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">{{el.[[column-name]]}}</td>
+        <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">{{el['[[column-name]]']}}</td>
       </ng-container>

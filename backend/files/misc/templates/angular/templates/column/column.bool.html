@@ -7,7 +7,7 @@
               matInput
               type="text"
               autocomplete="off"
-              [formControl]="[[column-name]]">
+              [formControl]="[[form-control-name]]">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
           <button
@@ -19,7 +19,7 @@
         </th>
         <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">
           <mat-icon 
-            *ngIf="el.[[column-name]] === true"
+            *ngIf="el['[[column-name]]'] === true"
             matSuffix>check</mat-icon>
         </td>
       </ng-container>

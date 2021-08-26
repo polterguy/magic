@@ -9,17 +9,29 @@
 
 
 /*
- * Invoking create, making sure we add [values] to create.
+ * Opening up database connection.
  */
 data.connect:{database}
    database-type:{database-type}
-   add:x:+/*/values
+
+   /*
+    * Parametrising our create invocation.
+    */
+   add:x:./*/data.create/*/values
       get-nodes:x:@.arguments/*
+
+   /*
+    * Creating our record.
+    */
    data.create
       database-type:{database-type}
       table:{table}
       return-id:{return-id}
       values
+
+   /*
+    * Returning result of bove invoction to caller.
+    */
    response.status.set:201
    unwrap:x:+/*
    return

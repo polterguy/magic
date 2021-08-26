@@ -1,1 +1,1 @@
-    this.[[column-name]] = this.createFormControl('[[column-name]].eq');
+    this.[[form-control-name]] = this.createFormControl('[[column-name]].eq');

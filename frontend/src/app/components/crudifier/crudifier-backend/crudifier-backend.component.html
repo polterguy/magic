@@ -57,6 +57,11 @@
 
   <mat-checkbox
     *ngIf="database && database.tables && database.tables.length > 0"
+    matTooltip="If true will create left joins for all referenced tables in your backend and return foreign field as a part of the result set"
+    [(ngModel)]="transformService.join">Left joins</mat-checkbox>
+
+  <mat-checkbox
+    *ngIf="database && database.tables && database.tables.length > 0"
     matTooltip="If true will generate all possible QUERY parameters for your read endpoints"
     [(ngModel)]="transformService.verbose">Verbose</mat-checkbox>
 

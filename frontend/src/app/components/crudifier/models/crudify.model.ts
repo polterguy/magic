@@ -104,6 +104,11 @@ export class Crudify {
    verbose: boolean;
 
   /**
+   * Whether or not the crudify process should implement left joins for all foreign keys.
+   */
+   join: boolean;
+
+  /**
    * Arguments for endpoint. Basically primary keys and input arguments.
    */
   args: ArgType;
