@@ -15,6 +15,6 @@
           </button>
         </th>
         <td mat-cell (click)="toggleDetails(el)" *matCellDef="let el">
-          {{ getCachedItem('[[lookup_table]]', el.[[column-name]], '[[lookup_key]].eq', httpService.[[lookup_table]], '[[lookup_name]]') }}
+          {{ getCachedItem('[[lookup_table]]', el['[[column-name]]'], '[[lookup_key]].eq', httpService.[[lookup_table]], '[[lookup_name]]') }}
         </td>
       </ng-container>
