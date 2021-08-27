@@ -26,9 +26,11 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       .:/
    remove-nodes:x:@strings.split/0
    remove-nodes:x:@strings.split/0
-   remove-nodes:x:@strings.split/0
    strings.join:x:@strings.split/*
       .:/
+   strings.replace-not-of:x:@strings.join
+      .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ/_0987654321
+      .:_
    strings.replace-not-of:x:@strings.join
       .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
       .:_
@@ -62,12 +64,18 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
       .:.component
 
    // The component's routing URL.
-   strings.to-lower:x:@strings.replace-not-of
+   strings.to-lower:x:@strings.replace-not-of/@strings.replace-not-of
 
    // The component's header
    strings.capitalize:x:@strings.split/0/-
 
    // Table name
+   strings.replace:x:@strings.join
+      .:/
+      .:.
+   remove-nodes:x:@strings.split/0
+   strings.join:x:@strings.split/*
+      .:/
    strings.replace:x:@strings.join
       .:/
       .:.
@@ -84,7 +92,8 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
          component-name:x:@strings.concat/@strings.concat/@strings.concat/@strings.concat
          component-filename:x:@strings.concat/@strings.concat/@strings.concat
          component-folder:x:@strings.to-lower
-         table-name:x:@strings.replace
+         table-name:x:@strings.replace/@strings.replace
+         database-name:x:@strings.replace
          component-header:x:@strings.capitalize
          component-edit-name:x:@strings.concat/@strings.concat
          component-edit-filename:x:@strings.concat
@@ -122,7 +131,6 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
                      .:read
             strings.split:x:@.dp/#/*/path
                .:/
-            remove-nodes:x:@strings.split/0
             remove-nodes:x:@strings.split/0
             remove-nodes:x:@strings.split/0
             strings.join:x:@strings.split/*
@@ -187,7 +195,7 @@ for-each:x:@.arguments/*/endpoints/*/*/type/=crud-read/.
              */
             strings.split:x:@for-each/@.dp/#/*/path
                .:/
-            strings.replace-not-of:x:@strings.join
+            strings.replace-not-of:x:@strings.join/@strings.join
                .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
                .:_
             strings.concat

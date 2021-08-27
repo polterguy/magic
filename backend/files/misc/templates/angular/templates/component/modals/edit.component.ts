@@ -3,7 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpService } from 'src/app/services/http-service';
-import { DialogComponent, DialogData } from '../../../base/dialog.component';
+import { DialogComponent, DialogData } from '@app/base/dialog.component';
 
 /**
  * Modal dialog for editing your existing [[component-header]] entity types, and/or
