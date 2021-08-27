@@ -122,7 +122,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
       // Assigning result to model.
       this.endpoints = endpoints
         .filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
-        .filter(x => x.type !== 'custom')
+        .filter(x => x.type === 'crud-count' || x.type === 'crud-delete' || x.type === 'crud-read' || x.type === 'crud-create' || x.type === 'crud-update')
         .map(x => {
           return {
             path: x.path,
@@ -138,7 +138,6 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
             selected: true,
           };
         });
-      console.log(this.endpoints);
 
       // Assigning modules to model.
       const modules: string[] = [];
@@ -179,9 +178,9 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
    */
   public getComponents() {
     return this.endpoints
-      .filter(x => x.path.endsWith('-count'))
+      .filter(x => x.type === 'crud-count')
       .map(x => {
-        const componentName = x.path.substr(x.path.lastIndexOf('/') + 1);
+        const componentName = x.path.substr(14);
         return componentName.substr(0, componentName.length - 6);
       });
   }
@@ -264,7 +263,9 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
   public componentSelected(component: string) {
     return this.endpoints
       .filter(x => x.selected)
-      .filter(x => x.verb === 'get' && (x.path.endsWith('/' + component) || x.path.endsWith('/' + component + '-count'))).length === 2;
+      .filter(x => {
+        return x.verb === 'get' && x.type === 'crud-count' && (x.path == 'magic/modules/' + component + '-count');
+      }).length === 1;
   }
 
   /*
@@ -325,6 +326,11 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
           if (idxInput.lookup) {
             cur.lookup = idxInput.lookup;
             cur.lookup.table = cur.lookup.table.replace('dbo.', '').toLowerCase();
+            cur.lookup.service = idx.path.substr(14);
+            cur.lookup.service = cur.lookup.service.substr(0, cur.lookup.service.indexOf('/')) + '.' + cur.lookup.table;
+            while (cur.lookup.service.indexOf('.') > 0) {
+              cur.lookup.service = cur.lookup.service.replace('.', '_');
+            }
           }
           tmp.input.push(cur);
         }
@@ -338,6 +344,11 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
           if (idxOutput.lookup) {
             cur.lookup = idxOutput.lookup;
             cur.lookup.table = cur.lookup.table.replace('dbo.', '').toLowerCase();
+            cur.lookup.service = idx.path.substr(14);
+            cur.lookup.service = cur.lookup.service.substr(0, cur.lookup.service.indexOf('/')) + '.' + cur.lookup.table;
+            while (cur.lookup.service.indexOf('.') > 0) {
+              cur.lookup.service = cur.lookup.service.replace('.', '_');
+            }
           }
           tmp.output.push(cur);
         }

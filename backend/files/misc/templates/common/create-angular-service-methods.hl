@@ -82,11 +82,15 @@ for-each:x:@.arguments/*
          .:@"
   /**
    * HTTP CRUD service methods for your '"
-         get-value:x:@.dp/#/*/component-folder
+         strings.replace:x:@.dp/#/*/component-folder
+            .:/
+            .:_
          .:@"' entities.
    */
   get "
-         get-value:x:@.dp/#/*/component-folder
+         strings.replace:x:@.dp/#/*/component-folder
+            .:/
+            .:_
          .:@"() : "
          get-value:x:@.interface
          .:@" {
