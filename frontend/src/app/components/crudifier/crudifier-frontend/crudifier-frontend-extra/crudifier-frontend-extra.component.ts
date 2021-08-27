@@ -318,6 +318,56 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
         output: [],
       };
       if (idx.input && idx.input.length > 0) {
+
+        // Sorting input fields in order of lookup, string, date, the rest ...
+        idx.input.sort((lhs, rhs) => {
+          if (lhs.name.toLowerCase() === 'name' && rhs.name.toLowerCase() !== 'name') {
+            return -1;
+          }
+          if (lhs.name.toLowerCase() !== 'name' && rhs.name.toLowerCase() === 'name') {
+            return 1;
+          }
+          if (lhs.name.toLowerCase() === 'name' && rhs.name.toLowerCase() === 'name') {
+            return 0;
+          }
+          if (lhs.name.toLowerCase().indexOf('name') >= 0 && lhs.name.indexOf('.') === -1 &&
+            (rhs.name.toLowerCase().indexOf('name') === -1 || rhs.name.indexOf('.') >= 0)) {
+            return -1;
+          }
+          if (rhs.name.toLowerCase().indexOf('name') >= 0 && rhs.name.indexOf('.') === -1 &&
+            (lhs.name.toLowerCase().indexOf('name') === -1 || lhs.name.indexOf('.') >= 0)) {
+            return 1;
+          }
+          if (lhs.lookup && !rhs.lookup) {
+            return -1;
+          }
+          if (!lhs.lookup && rhs.lookup) {
+            return 1;
+          }
+          if (lhs.lookup && rhs.lookup) {
+            return 0;
+          }
+          if (lhs.type === 'string' && rhs.type !== 'string') {
+            return -1;
+          }
+          if (lhs.type !== 'string' && rhs.type === 'string') {
+            return 1;
+          }
+          if (lhs.type === 'string' && rhs.type === 'string') {
+            return 0;
+          }
+          if (lhs.type === 'date' && rhs.type !== 'date') {
+            return -1;
+          }
+          if (lhs.type !== 'date' && rhs.type === 'date') {
+            return 1;
+          }
+          if (lhs.type === 'date' && rhs.type === 'date') {
+            return 0;
+          }
+          return 0;
+        });
+
         for (const idxInput of idx.input) {
           const cur: any = {
             name: idxInput.name,
@@ -336,6 +386,84 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
         }
       }
       if (idx.output && idx.output.length > 0) {
+
+        // Sorting input fields in order of lookup, string, date, the rest ...
+        idx.output.sort((lhs, rhs) => {
+          if (lhs.name.toLowerCase() === 'name' && rhs.name.toLowerCase() !== 'name') {
+            return -1;
+          }
+          if (lhs.name.toLowerCase() !== 'name' && rhs.name.toLowerCase() === 'name') {
+            return 1;
+          }
+          if (lhs.name.toLowerCase() === 'name' && rhs.name.toLowerCase() === 'name') {
+            return 0;
+          }
+          if (lhs.name.toLowerCase().indexOf('name') >= 0 && lhs.name.indexOf('.') === -1 &&
+            (rhs.name.toLowerCase().indexOf('name') === -1 || rhs.name.indexOf('.') >= 0)) {
+            return -1;
+          }
+          if (rhs.name.toLowerCase().indexOf('name') >= 0 && rhs.name.indexOf('.') === -1 &&
+            (lhs.name.toLowerCase().indexOf('name') === -1 || lhs.name.indexOf('.') >= 0)) {
+            return 1;
+          }
+          if (lhs.lookup && !rhs.lookup) {
+            return -1;
+          }
+          if (!lhs.lookup && rhs.lookup) {
+            return 1;
+          }
+          if (lhs.lookup && rhs.lookup) {
+            return 0;
+          }
+          if (idx.type === 'crud-read') {
+
+            // CRUD read endpoint type, making sure linked fields comes before others.
+            let lhsIsLinked = false;
+            if (lhs.name.indexOf('.') > 0) {
+              const firstSplit = lhs.name.split('.')[0];
+              const urlSplit = idx.path.split('/');
+              if (firstSplit !== urlSplit[urlSplit.length]) {
+                lhsIsLinked = true;
+              }
+            }
+            let rhsIsLinked = false;
+            if (rhs.name.indexOf('.') > 0) {
+              const firstSplit = rhs.name.split('.')[0];
+              const urlSplit = idx.path.split('/');
+              if (firstSplit !== urlSplit[urlSplit.length]) {
+                rhsIsLinked = true;
+              }
+            }
+            if (lhsIsLinked && !rhsIsLinked) {
+              return -1;
+            }
+            if (!lhsIsLinked && rhsIsLinked) {
+              return 1;
+            }
+            if (lhsIsLinked && rhsIsLinked) {
+              return 0;
+            }
+          }
+          if (lhs.type === 'string' && rhs.type !== 'string') {
+            return -1;
+          }
+          if (lhs.type !== 'string' && rhs.type === 'string') {
+            return 1;
+          }
+          if (lhs.type === 'string' && rhs.type === 'string') {
+            return 0;
+          }
+          if (lhs.type === 'date' && rhs.type !== 'date') {
+            return -1;
+          }
+          if (lhs.type !== 'date' && rhs.type === 'date') {
+            return 1;
+          }
+          if (lhs.type === 'date' && rhs.type === 'date') {
+            return 0;
+          }
+          return 0;
+        });
         for (const idxOutput of idx.output) {
           const cur: any = {
             name: idxOutput.name,
