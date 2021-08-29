@@ -2,16 +2,19 @@
   text-align: center;
   padding: 1em;
   mat-card {
+    padding-bottom: 3rem;
     .logo {
       float: right;
       margin-left: 1rem;
       margin-bottom: 1rem;
+      border-radius: 5px;
+      box-shadow: 3px 3px 5px rgba(0,0,0,.5);
+      padding-left: 1rem;
+      padding-right: 1rem;
       img {
-        border-radius: 5px;
-        box-shadow: 3px 3px 5px rgba(0,0,0,.5);
+        width: 100%;
       }
     }
-    padding-bottom: 3rem;
     p {
       text-align: left;
     }
