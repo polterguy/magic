@@ -39,5 +39,5 @@ io.stream.open-file:x:@strings.concat
  */
 response.headers.add
    Content-Type:application/octet-stream
-   Cache-Control:public, 6000
+   Cache-Control:public, max-age=6000
 return:x:@io.stream.open-file
