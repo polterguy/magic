@@ -329,6 +329,15 @@
   }
 }
 
+.entity-edit-field-wide {
+  width: calc(100% - 1.2rem);
+  display: inline-block;
+  mat-icon {
+    color: rgb(128, 128, 128);
+    font-size: 1.1rem !important;
+  }
+}
+
 @media screen and (min-width: 800px) {
   .entity-edit-field {
     width: calc(50% - 1.2rem);
@@ -340,6 +349,11 @@
     width: calc(100% - 1.2rem);
   }
   .mat-dialog-content {
-    min-width:500px;
+    min-width: 500px;
+  }
+  .entity-edit-field-wide {
+    width: calc(100% - 1.2rem);
+    text-transform: capitalize;
+    display: inline-block;
   }
 }
