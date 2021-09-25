@@ -347,9 +347,3 @@ frontend/dist/**
 
 backend/files/misc/bazar/apps/*.zip
 backend/files/misc/bazar/published.hl
-
-backend/files/etc/**
-!backend/files/etc/mssql/**
-!backend/files/etc/mysql/**
-!backend/files/etc/snippets/**
-!backend/files/etc/system/**
