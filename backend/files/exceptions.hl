@@ -1,0 +1,27 @@
+
+/*
+ * Global exception handler, invoked if no other overrides exists
+ * at a module level.
+ */
+log.error
+   .:"Unhandled exception occurred '"
+   get-value:x:@.arguments/*/message
+   .:"' at '"
+   get-value:x:@.arguments/*/path
+   .:"'"
+
+/*
+ * Returning generic error to caller.
+ */
+if
+   and
+      exists:x:@.arguments/*/public
+      get-value:x:@.arguments/*/public
+   .lambda
+      set-value:x:../*/return/*/message
+         get-value:x:@.arguments/*/message
+add:x:+
+   get-nodes:x:@.arguments/*/status
+   get-nodes:x:@.arguments/*/field
+return
+   message:Guru meditation, come back when Universe is in order!
