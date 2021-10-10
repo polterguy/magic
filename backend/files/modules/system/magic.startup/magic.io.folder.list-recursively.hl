@@ -29,6 +29,8 @@ slots.create:magic.io.folder.list-recursively
     */
    io.folder.list:x:@.arguments/0
    for-each:x:-/*
+      add:x:./*/signal
+         get-nodes:x:@.arguments/*/.hidden-files
       unwrap:x:+/*
       signal:magic.io.folder.list-recursively
          .:x:@.dp/#

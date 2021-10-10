@@ -16,9 +16,10 @@ auth.ticket.verify:root
 /*
  * Listing all folders in specified folder.
  */
-unwrap:x:+/*
+unwrap:x:+/*/.folder
 signal:magic.io.file.list-recursively
    .folder:x:@.arguments/*/folder
+   .hidden-files:bool:true
 
 
 /*
