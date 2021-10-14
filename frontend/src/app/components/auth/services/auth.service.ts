@@ -130,7 +130,7 @@ export class AuthService {
           this.getEndpoints().subscribe((endpoints: Endpoint[]) => {
 
             // Assigning endpoints.
-            this._endpoints = endpoints;
+            this._endpoints = endpoints || [];
 
             // Making sure we refresh JWT token just before it expires.
             this.createRefreshJWTTimer(this.backendService.current);
@@ -186,7 +186,7 @@ export class AuthService {
       // Invoking backend.
       this.httpService.get<Endpoint[]>(
         '/magic/modules/system/auth/endpoints').subscribe(res => {
-        this._endpoints = res;
+        this._endpoints = res || [];
         observer.next(res);
         observer.complete();
       }, error => {
