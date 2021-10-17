@@ -29,11 +29,19 @@
         matTreeNodePaddingIndent="10">
 
         <button
-          matTreeNodeToggle
+          mat-icon-button
+          class="expander"
+          matTreeNodeToggle>
+          <mat-icon class="mat-icon-rtl-mirror">
+            {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
+          </mat-icon>
+        </button>
+
+        <button
           class="folder-btn"
           [color]="activeFolder === folder.node.path ? 'primary' : 'default'"
           mat-button
-          (click)="openFolder(folder.node)">
+          (click)="selectFolder(folder.node)">
 
           <mat-icon class="mat-icon-rtl-mirror">folder_open</mat-icon>{{folder.name}}
 

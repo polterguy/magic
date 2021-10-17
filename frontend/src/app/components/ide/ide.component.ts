@@ -379,7 +379,7 @@ export class IdeComponent implements OnInit {
    * 
    * @param folder Tree node wrapping folder to open
    */
-   public openFolder(folder: TreeNode) {
+   public selectFolder(folder: TreeNode) {
      this.activeFolder = folder.path;
    }
 
