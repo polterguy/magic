@@ -861,7 +861,7 @@ export class IdeComponent implements OnInit {
         }
       };
 
-      // Alt+C deletes the active file.
+      // Alt+C closes the active file.
       options[0].options.extraKeys['Alt-C'] = (cm: any) => {
 
         // Retrieving active CodeMirror editor to check if its document is dirty or not.
@@ -884,6 +884,16 @@ export class IdeComponent implements OnInit {
           if (btn) {
             btn.click();
           }
+        }
+      };
+
+      // Alt+O opens up the select macro window.
+      options[0].options.extraKeys['Alt-O'] = (cm: any) => {
+
+        // Retrieving active CodeMirror editor to check if its document is dirty or not.
+        var btn = <any>document.querySelector('.new-macro-object-btn');
+        if (btn) {
+          btn.click();
         }
       };
 
