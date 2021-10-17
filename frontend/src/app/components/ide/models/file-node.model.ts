@@ -19,6 +19,11 @@ export class FileNode {
   public path: string;
 
   /**
+   * Folder where file exists.
+   */
+  public folder: string;
+
+  /**
    * Content of file.
    */
   public content: string;
