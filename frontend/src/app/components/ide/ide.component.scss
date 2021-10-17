@@ -27,6 +27,7 @@
       display: block;
       width: 100%;
       text-align: left;
+      padding-left: 0;
 
       mat-icon {
         margin-right: .5rem;
@@ -40,6 +41,7 @@
       text-align: left;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-left: 30px;
 
       mat-icon {
         margin-right: .5rem;
@@ -90,6 +92,11 @@
       width: 80%;
     }
   }
+}
+
+.expander {
+  width: 30px;
+  color: rgb(128, 128, 128);
 }
 
 ::ng-deep .content-section .CodeMirror {
