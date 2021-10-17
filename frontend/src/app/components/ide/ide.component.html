@@ -64,8 +64,7 @@
           (selectionChange)="selectedFileChanged()">
           <mat-option
             *ngFor="let idx of files"
-            [matTooltip]="idx.path"
-            [value]="idx.path">{{idx.name}}</mat-option>
+            [value]="idx.path">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
         </mat-select>
       </mat-form-field>
 

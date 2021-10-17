@@ -273,6 +273,7 @@ export class IdeComponent implements OnInit {
           const fileNode: FileNode = {
             name: result.name,
             path: path,
+            folder: path.substr(0, path.lastIndexOf('/') + 1),
             options: this.getCodeMirrorOptions(result.name),
             content: result.template || '// File content here ...'
           };
@@ -354,6 +355,7 @@ export class IdeComponent implements OnInit {
         this.files.push({
           name: file.name,
           path: file.path,
+          folder: file.path.substr(0, file.path.lastIndexOf('/') + 1),
           content: content,
           options: this.getCodeMirrorOptions(file.path),
         });
