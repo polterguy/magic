@@ -92,7 +92,7 @@
     </button>
 
     <button
-      *ngIf="authService.isRoot"
+      *ngIf="authService.access.terminal.execute"
       mat-raised-button
       routerLink="/terminal"
       matTooltip="A web based terminal">
@@ -101,7 +101,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
+      *ngIf="authService.access.eval.execute"
       mat-raised-button
       routerLink="/evaluator"
       matTooltip="Execute Hyperlambda">

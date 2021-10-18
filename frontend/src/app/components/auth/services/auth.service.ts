@@ -62,6 +62,14 @@ export class AccessModel {
     update: false,
     delete: false,
   }
+  terminal: any = {
+    execute: false,
+  }
+  eval: any = {
+    read_files: false,
+    write_files: false,
+    execute: false,
+  }
 }
 
 /**
@@ -84,6 +92,8 @@ export class AuthService {
     auth: {},
     log: {},
     tasks: {},
+    terminal: {},
+    eval: {},
   };
 
   /**
@@ -579,6 +589,12 @@ export class AuthService {
         addDue: this.canInvoke('magic/modules/system/tasks/add-due', 'post'),
         deleteDue: this.canInvoke('magic/modules/system/tasks/delete-due', 'delete'),
       },
+      terminal: {
+        execute: this.canInvoke('magic/modules/system/terminal/command', 'socket') && this.canInvoke('magic/modules/system/terminal/start', 'socket') && this.canInvoke('magic/modules/system/terminal/stop', 'socket'),
+      },
+      eval: {
+        execute: this.canInvoke('magic/modules/system/evaluator/evaluate', 'post'),
+      }
     };
   }
 }
