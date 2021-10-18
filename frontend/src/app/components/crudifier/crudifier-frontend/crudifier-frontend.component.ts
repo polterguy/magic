@@ -10,8 +10,8 @@ import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { ConfigService } from '../../config/services/config.service';
 import { NameEmailModel } from '../../config/models/name-email.model';
-import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { CrudifierFrontendExtraComponent } from './crudifier-frontend-extra/crudifier-frontend-extra.component';
+import { CrudifyService } from '../services/crudify.service';
 
 /**
  * Crudifier component for generating a frontend from
@@ -63,14 +63,14 @@ export class CrudifierFrontendComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param resolver Needed to be able to create component factory to create dynamically inject extra information component
-   * @param endpointService Needed to retrieve templates, meta information, and actually generate frontend
+   * @param crudifyService Needed to retrieve templates, meta information, and actually generate frontend
    * @param messageService Needed to be able to publish messages for creating child component
    * @param backendService Needed to populate the default value of the API URL.
    * @param configService Needed to retrieve user's email address
    */
   constructor(
     private resolver: ComponentFactoryResolver,
-    private endpointService: EndpointService,
+    private crudifyService: CrudifyService,
     private messageService: MessageService,
     private backendService: BackendService,
     private configService: ConfigService) { }
@@ -81,7 +81,7 @@ export class CrudifierFrontendComponent implements OnInit {
   public ngOnInit() {
 
     // Invoking backend to retrieve templates.
-    this.endpointService.templates().subscribe((result: string[]) => {
+    this.crudifyService.templates().subscribe((result: string[]) => {
 
       // Assigning result of invocation to model.
       this.templates = result || [];
