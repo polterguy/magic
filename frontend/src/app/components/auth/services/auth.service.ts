@@ -505,6 +505,7 @@ export class AuthService {
       },
       endpoints: {
         view: this.canInvoke('magic/modules/system/endpoints/endpoints', 'get'),
+        assumptions: this.canInvoke('magic/modules/system/endpoints/assumptions', 'get'),
       }
     };
   }
