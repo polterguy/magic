@@ -19,6 +19,25 @@ import { BackendService } from '../../../services/backend.service';
 import { AuthenticateResponse } from '../models/authenticate-response.model';
 
 /**
+ * Wrapper class declaring user's access to different modules.
+ */
+export class AccessModel {
+  sql: any = {
+    execute_access: false,
+    list_files: false,
+    save_file: false,
+  }
+  crud: any = {
+    generate_crud: false,
+    generate_sql: false,
+    generate_frontend: false,
+  }
+  endpoints: any = {
+    view: false,
+  }
+}
+
+/**
  * Authentication and authorization HTTP service.
  */
 @Injectable({
@@ -28,6 +47,23 @@ export class AuthService {
 
   // Used to figure out if user is authorised to access URLs or not.
   private _endpoints: Endpoint[] = [];
+
+  // Used to associate user with access rights on individual component level.
+  private _access: AccessModel = {
+    sql: {},
+    crud: {},
+    endpoints: {},
+  };
+
+  /**
+   * Returns access rights ffor user.
+   */
+  public get access() { return this._access; }
+
+  /**
+   * Returns true if endpoints have been initialised.
+   */
+  public get has_endpoints() { return this._endpoints && this._endpoints.length > 0; }
 
   /**
    * Creates an instance of your service.
@@ -116,6 +152,7 @@ export class AuthService {
            * we'll have to make sure Angular passes in Windows credentials to endpoint.
            */
           withCredentials: query === '' ? true : false,
+
         }).subscribe((auth: AuthenticateResponse) => {
 
           // Persisting backend data.
@@ -131,6 +168,9 @@ export class AuthService {
 
             // Assigning endpoints.
             this._endpoints = endpoints || [];
+
+            // Creating access right object.
+            this.createAccessRights();
 
             // Making sure we refresh JWT token just before it expires.
             this.createRefreshJWTTimer(this.backendService.current);
@@ -172,6 +212,7 @@ export class AuthService {
         name: Messages.USER_LOGGED_OUT,
         content: showInfo,
       });
+      this.createAccessRights();
     }
   }
 
@@ -186,9 +227,17 @@ export class AuthService {
       // Invoking backend.
       this.httpService.get<Endpoint[]>(
         '/magic/modules/system/auth/endpoints').subscribe(res => {
+
+        // Associating result to model.
         this._endpoints = res || [];
+
+        // Creating authorisation object.
+        this.createAccessRights();
+
+        // Invoking next amongst observables
         observer.next(res);
         observer.complete();
+
       }, error => {
         observer.error(error);
         observer.complete();
@@ -217,7 +266,7 @@ export class AuthService {
   }
 
   /**
-   * Returns true if user has access to the specified component.
+   * Returns true if user has general access to the specified component.
    * In order to have access to a component, user has to have access to all component URLs.
    * 
    * @param component Name of component to check if user has access to
@@ -248,6 +297,48 @@ export class AuthService {
       if (idx.auth.filter(x => userRoles.indexOf(x) >= 0).length === 0) {
         return false;
       }
+    }
+
+    /*
+     * User belongs to at least one of the roles required to invoke all
+     * endoints for specified component, or component does not require authorisation
+     * to be invoked.
+     */
+    return true;
+  }
+
+  /**
+   * Returns true if user has general access to the specified component.
+   * In order to have access to a component, user has to have access to all component URLs.
+   * 
+   * @param url URL to check
+   * @param verb HTTP verb to check
+   */
+   public canInvoke(url: string, verb: string) {
+
+    // Retrieving roles, and all endpoints matching path for specific component.
+    const userRoles = this.roles();
+    const componentEndpoints = this._endpoints.filter(x => x.path === url && x.verb === verb);
+    if (componentEndpoints.length === 0) {
+      return false; // No URL matching component's URL.
+    }
+
+    // Getting single component endpoint URL/verb.
+    const componentEndpoint = componentEndpoints[0];
+
+    // Checking that component requires authorisation.
+    if (!componentEndpoint.auth || componentEndpoint.auth.length === 0) {
+      return true;
+    }
+
+    // Checking if component allows anyone being authenticated.
+    if (componentEndpoint.auth.length === 1 && componentEndpoint.auth[0] === '*' && this.authenticated) {
+      return true;
+    }
+
+    // Verifying user belongs to at least one of the roles required to invoke endpoint.
+    if (componentEndpoint.auth.filter(x => userRoles.indexOf(x) >= 0).length === 0) {
+      return false;
     }
 
     /*
@@ -388,5 +479,33 @@ export class AuthService {
       frontendUrl,
       backendUrl,
     });
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  /*
+   * Creates access right object used to determine if user has access to specific parts of the app or not.
+   */
+  private createAccessRights() {
+    this._access = {
+      sql: {
+        execute_access:
+          this.canInvoke('magic/modules/system/sql/connection-strings', 'get') &&
+          this.canInvoke('magic/modules/system/sql/databases', 'get') &&
+          this.canInvoke('magic/modules/system/sql/evaluate', 'post'),
+        list_files: this.canInvoke('magic/modules/system/sql/list-files', 'get'),
+        save_file: this.canInvoke('magic/modules/system/sql/save-file', 'put'),
+      },
+      crud: {
+        generate_crud: this.canInvoke('magic/modules/system/crudifier/crudify', 'post'),
+        generate_sql: this.canInvoke('magic/modules/system/crudifier/custom-sql', 'post'),
+        generate_frontend: this.canInvoke('magic/modules/system/crudifier/generate-frontend', 'post'),
+      },
+      endpoints: {
+        view: this.canInvoke('magic/modules/system/endpoints/endpoints', 'get'),
+      }
+    };
   }
 }
