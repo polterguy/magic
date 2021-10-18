@@ -71,7 +71,7 @@
       </mat-form-field>
 
       <button
-        [disabled]="activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
+        [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder === '/modules/system/'"
         mat-raised-button
         class="toolbar-button delete-folder-btn"
         [matTooltip]="'Delete folder \'' + activeFolder + '\' ALT+X'"
@@ -89,6 +89,7 @@
 
       <button
         mat-raised-button
+        [disabled]="!authService.access.files.create_folder"
         class="toolbar-button new-file-object-btn"
         color="primary"
         matTooltip="Create or add new file or folder to active folder ALT+A"
@@ -145,6 +146,7 @@
 
             <button
               mat-button
+              [disabled]="!authService.access.files.rename"
               class="rename-file-btn"
               matTooltip="Rename file ALT+R"
               (click)="renameFile(file)">
@@ -154,6 +156,7 @@
             <button
               mat-button
               class="delete-file-btn"
+              [disabled]="!authService.access.files.delete_file"
               matTooltip="Delete file ALT+D"
               (click)="deleteFile(file)">
               Delete
