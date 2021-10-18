@@ -118,7 +118,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
+      *ngIf="authService.access.diagnostics.statistics"
       mat-raised-button
       routerLink="/diagnostics"
       matTooltip="Health and diagnostics">

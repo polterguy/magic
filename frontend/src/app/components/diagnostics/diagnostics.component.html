@@ -26,13 +26,13 @@
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="Health check">
+    <mat-tab label="Health check" [disabled]="!authService.access.diagnostics.execute_test">
       <ng-template matTabContent>
         <app-diagnostics-assumptions></app-diagnostics-assumptions>
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="Cache">
+    <mat-tab label="Cache" [disabled]="!authService.access.diagnostics.list_cache">
       <ng-template matTabContent>
         <app-diagnostics-cache></app-diagnostics-cache>
       </ng-template>
