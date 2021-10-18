@@ -242,6 +242,37 @@ export class SqlComponent implements OnInit {
   }
 
   /**
+   * Invoked when CSS class for database name is to be returned.
+   * 
+   * @param db Database name
+   */
+  public getDatabaseCssClass(db: string) {
+    switch (this.input.databaseType) {
+      case 'mysql':
+        switch (db) {
+          case 'information_schema':
+          case 'mysql':
+          case 'performance_schema':
+          case 'sys':
+            return 'sys-database';
+          default:
+            return '';
+        }
+      case 'mssql':
+        switch (db) {
+          case 'master':
+          case 'msdb':
+          case 'model':
+          case 'Resource':
+          case 'tempdb':
+            return 'sys-database';
+          default:
+            return '';
+        }
+    }
+  }
+
+  /**
    * Empties server side cache and reloads your database declarations,
    * 'refreshing' your available databases.
    */
