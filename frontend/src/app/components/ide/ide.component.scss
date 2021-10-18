@@ -60,6 +60,14 @@
     position: relative;
     padding: 2rem;
 
+    .active-folder {
+      position: absolute;
+      top: .25rem;
+      right: 1rem;
+      color: rgb(128, 128, 128);
+      font-style: italic;
+    }
+
     .light-bulb {
       display: block;
       margin-left: auto;
