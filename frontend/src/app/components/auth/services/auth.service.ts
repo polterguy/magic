@@ -35,6 +35,20 @@ export class AccessModel {
   endpoints: any = {
     view: false,
   }
+  files: any = {
+    list_files: false,
+    list_folders: false,
+    rename: false,
+    unzip: false,
+    install: false,
+    create_folder: false,
+    delete_folder: false,
+    delete_file: false,
+    download_from_bazar: false,
+    download_from_url: false,
+    download_folder: false,
+    get_manifests: false,
+  }
 }
 
 /**
@@ -53,6 +67,7 @@ export class AuthService {
     sql: {},
     crud: {},
     endpoints: {},
+    files: {},
   };
 
   /**
@@ -506,6 +521,20 @@ export class AuthService {
       endpoints: {
         view: this.canInvoke('magic/modules/system/endpoints/endpoints', 'get'),
         assumptions: this.canInvoke('magic/modules/system/endpoints/assumptions', 'get'),
+      },
+      files: {
+        list_files: this.canInvoke('magic/modules/system/file-system/list-files', 'get') && this.canInvoke('magic/modules/system/file-system/list-files-recursively', 'get'),
+        list_folders: this.canInvoke('magic/modules/system/file-system/list-folders', 'get') && this.canInvoke('magic/modules/system/file-system/list-folders-recursively', 'get'),
+        rename: this.canInvoke('magic/modules/system/file-system/rename', 'post'),
+        unzip: this.canInvoke('magic/modules/system/file-system/unzip', 'put'),
+        install: this.canInvoke('magic/modules/system/file-system/install', 'put'),
+        create_folder: this.canInvoke('magic/modules/system/file-system/folder', 'put'),
+        delete_folder: this.canInvoke('magic/modules/system/file-system/folder', 'delete'),
+        delete_file: this.canInvoke('magic/modules/system/file-system/file', 'delete'),
+        download_from_bazar: this.canInvoke('magic/modules/system/file-system/download-from-bazar', 'post'),
+        download_from_url: this.canInvoke('magic/modules/system/file-system/download-from-url', 'post'),
+        download_folder: this.canInvoke('magic/modules/system/file-system/download-folder', 'get'),
+        get_manifests: this.canInvoke('magic/modules/system/file-system/app-manifests', 'get'),
       }
     };
   }

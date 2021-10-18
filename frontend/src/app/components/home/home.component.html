@@ -56,7 +56,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+      *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
       mat-raised-button
       routerLink="/ide"
       matTooltip="Hyper IDE">
