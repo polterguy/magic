@@ -78,6 +78,12 @@ if
 
             // Removing [version] node from existing manifest, to use version supplied by caller.
             remove-nodes:x:@.manifest/*/version
+      if
+         exists:x:@.manifest/*/module_name
+         .lambda
+            remove-nodes:x:@.manifest/*/module_name
+            remove-nodes:x:@.manifest/*/installed_by
+            remove-nodes:x:@.manifest/*/installed
 
 
 /*
