@@ -6,7 +6,6 @@
 // Angular and system types of imports.
 import {
   Component,
-  ComponentFactoryResolver,
   OnDestroy,
   OnInit,
   ViewChild
@@ -18,6 +17,7 @@ import { InjectDirective } from './inject.directive';
 import { MessageService } from 'src/app/services/message.service';
 import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
+import { AuthService } from '../auth/services/auth.service';
 
 /**
  * Crudifier component for creating applications.
@@ -35,6 +35,11 @@ export class CrudifierComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   /**
+   * Active tab.
+   */
+  public activeTab: number = 0;
+
+  /**
    * Needed to be able to dynamically inject components into container.
    */
   @ViewChild(InjectDirective) injectComp: InjectDirective;
@@ -49,11 +54,11 @@ export class CrudifierComponent implements OnInit, OnDestroy {
   /**
    * Creates a new instance of your component.
    * 
-   * @param resolver Needed to be able to dynamically inject components created by sub-components
+   * @param authService Needed to verify user has access to components
    * @param messageService Needed to subscribe to messages sent by other components
    */
   public constructor(
-    private resolver: ComponentFactoryResolver,
+    public authService: AuthService,
     private messageService: MessageService) { }
 
   /**
@@ -85,6 +90,15 @@ export class CrudifierComponent implements OnInit, OnDestroy {
         this.injectComp.viewContainerRef.clear();
       }
     });
+
+    // Figuring out active tab.
+    if (this.authService.access.crud.generate_crud) {
+      this.activeTab = 0;
+    } else if (this.authService.access.crud.generate_sql) {
+      this.activeTab = 1;
+    } else if (this.authService.access.crud.generate_frontend) {
+      this.activeTab = 2;
+    }
   }
 
   /**

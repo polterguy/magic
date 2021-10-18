@@ -10,6 +10,7 @@ import { Message } from 'src/app/models/message.model';
 import { MessageService } from 'src/app/services/message.service';
 import { Endpoint } from '../../../endpoints/models/endpoint.model';
 import { EndpointService } from '../../../endpoints/services/endpoint.service';
+import { CrudifyService } from '../../services/crudify.service';
 
 /**
  * Endpoint model class, for allowing user to select which endpoints
@@ -84,7 +85,8 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
    */
   constructor(
     private messageService: MessageService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private crudifyService: CrudifyService) { }
 
   /**
    * Implementation of OnInit.
@@ -92,7 +94,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
   public ngOnInit() {
 
     // Retrieving custom template arguments.
-    this.endpointService.templateCustomArgs(this.template).subscribe((res: any) => {
+    this.crudifyService.templateCustomArgs(this.template).subscribe((res: any) => {
 
       // Assigning model and trying to find sane default values for them.
       this.custom = res;
@@ -290,7 +292,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
 
     // Invoking backend to actually generate the specified frontend.
     const svcModel = this.createServiceModel(this.endpoints.filter(x => x.selected));
-    this.endpointService.generate(
+    this.crudifyService.generate(
       template,
       apiUrl + '/',
       frontendUrl,

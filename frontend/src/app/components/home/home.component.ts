@@ -36,18 +36,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   /**
    * Backend version as returned from server if authenticated.
    */
-   public version: string = null;
+  public version: string = null;
 
-   /**
-    * Latest version of Magic as published by the Bazar.
-    */
-   public bazarVersion: string = null;
+  /**
+   * Latest version of Magic as published by the Bazar.
+   */
+  public bazarVersion: string = null;
 
-   /**
-    * If there exists a newer version of Magic Core as published by the Bazar,
-    * this value will be true.
-    */
-   public shouldUpdateCore: boolean = false;
+  /**
+   * If there exists a newer version of Magic Core as published by the Bazar,
+   * this value will be true.
+   */
+  public shouldUpdateCore: boolean = false;
 
   /**
    * Creates an instance of your component.

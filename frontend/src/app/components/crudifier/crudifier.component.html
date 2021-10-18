@@ -1,21 +1,21 @@
 
 <mat-card>
 
-  <mat-tab-group (selectedTabChange)="selectedTabChanged()">
+  <mat-tab-group (selectedTabChange)="selectedTabChanged()" [(selectedIndex)]="activeTab">
 
-    <mat-tab label="CRUD">
+    <mat-tab label="CRUD" [disabled]="!authService.access.crud.generate_crud">
       <ng-template matTabContent>
         <app-crudifier-backend></app-crudifier-backend>
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="SQL">
+    <mat-tab label="SQL" [disabled]="!authService.access.crud.generate_sql">
       <ng-template matTabContent>
         <app-crudifier-sql></app-crudifier-sql>
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="Frontend">
+    <mat-tab label="Frontend" [disabled]="!authService.access.crud.generate_frontend">
       <ng-template matTabContent>
         <app-crudifier-frontend></app-crudifier-frontend>
       </ng-template>

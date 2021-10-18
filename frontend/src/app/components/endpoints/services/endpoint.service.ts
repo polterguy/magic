@@ -43,9 +43,7 @@ export class EndpointService {
   constructor(
     private httpService: HttpService,
     private fileService: FileService,
-    private backendService: BackendService,
-    @Inject(LOCALE_ID) public locale: string,
-    private feedbackService: FeedbackService) { }
+    private backendService: BackendService) { }
 
   /**
    * Retrieves meta data about the endpoints in your installation.
@@ -313,98 +311,5 @@ export class EndpointService {
 
     // Filtering tests, to return only tests matching endpoint specified.
     return this.httpService.get<string[]>('/magic/modules/system/endpoints/templates');
-  }
-
-  /**
-   * Returns the documentation/README.md file for the specified template.
-   * 
-   * @param name Name of template to retrieve README file for
-   */
-  public template(name: string) {
-
-    // Filtering tests, to return only tests matching endpoint specified.
-    return this.httpService.get<Template>(
-      '/magic/modules/system/endpoints/template?name=' +
-      encodeURIComponent(name));
-  }
-
-  /**
-   * Returns the custom arguments associated with the specified template.
-   * 
-   * @param name Name of template to retrieve custom arguments for
-   */
-   public templateCustomArgs(name: string) {
-
-    // Filtering tests, to return only tests matching endpoint specified.
-    return this.httpService.get<any>(
-      '/magic/modules/system/endpoints/template-args?name=' +
-      encodeURIComponent(name));
-  }
-
-  /**
-   * Generates a frontend and downloads to client as a ZIP file.
-   * 
-   * @param templateName Name of template to use
-   * @param apiUrl API root URL to use when generating template
-   * @param frontendUrl Frontend URL of where app is supposed to be deployed
-   * @param email Email address of user required to renew SSL certificate
-   * @param name Name of application
-   * @param copyright Copyright notice to put at top of all files
-   * @param endpoints Endpoints you want to embed into your result
-   * @param args Custom args endpoint requires
-   */
-  public generate(
-    templateName: string,
-    apiUrl: string,
-    frontendUrl: string,
-    email: string,
-    name: string,
-    copyright: string,
-    endpoints: any[],
-    args: any) {
-
-      // Invoking backend such that we download the result of invocation to client as a ZIP file.
-      const payload = {
-        templateName,
-        apiUrl,
-        frontendUrl,
-        email,
-        name,
-        copyright,
-        endpoints,
-        args
-      };
-      this.httpService.downloadPost(
-        '/magic/modules/system/endpoints/generate', payload).subscribe(res => {
-  
-          // Retrieving the filename, as provided by the server.
-          const disp = res.headers.get('Content-Disposition');
-          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-          const file = new Blob([res.body]);
-
-          // Providing feedback to user about LOC count operation resulted in.
-          this.getLastLocCount().subscribe((loc: LocResult) => {
-
-            // Providing feedback to user.
-            this.feedbackService.showInfo(`${formatNumber(loc.loc, this.locale, '1.0')} number of lines of code generated`);
-          });
-
-          // Saving file.
-          saveAs(file, filename);
-
-        }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check your log for details'));
-  }
-
-  /*
-   * Private helper methods.
-   */
-
-  /*
-   * Returns the number of lines of code that was generated the last time the generator ran.
-   */
-   private getLastLocCount() {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<LocResult>('/magic/modules/system/endpoints/last-loc-count');
   }
 }

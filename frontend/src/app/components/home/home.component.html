@@ -29,7 +29,7 @@
   <div class="buttons">
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/sql')"
+      *ngIf="authService.access.sql.execute_access"
       mat-raised-button
       routerLink="/sql"
       matTooltip="Execute SQL">
@@ -38,7 +38,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/crudifier')"
+      *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend"
       mat-raised-button
       routerLink="/crudifier"
       matTooltip="Generate CRUD apps">
@@ -47,7 +47,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/endpoints')"
+      *ngIf="authService.access.endpoints.view"
       mat-raised-button
       routerLink="/endpoints"
       matTooltip="HTTP endpoints">
