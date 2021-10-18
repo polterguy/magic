@@ -1,7 +1,7 @@
 
 /*
- * Global exception handler, invoked if no other overrides exists
- * at a module level.
+ * Default global exception handler, invoked if no other overrides exists
+ * at the module level.
  */
 log.error
    .:"Unhandled exception occurred '"
