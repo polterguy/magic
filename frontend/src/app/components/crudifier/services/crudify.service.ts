@@ -113,15 +113,24 @@ export class CrudifyService {
   }
 
   /**
+   * Returns a list of all templates the backend has stored.
+   */
+  public templates() {
+
+    // Filtering tests, to return only tests matching endpoint specified.
+    return this.httpService.get<string[]>('/magic/modules/system/crudifier/templates');
+  }
+
+  /**
    * Returns the documentation/README.md file for the specified template.
    * 
    * @param name Name of template to retrieve README file for
    */
-   public template(name: string) {
+  public template(name: string) {
 
     // Filtering tests, to return only tests matching endpoint specified.
     return this.httpService.get<Template>(
-      '/magic/modules/system/endpoints/template?name=' +
+      '/magic/modules/system/crudifier/template?name=' +
       encodeURIComponent(name));
   }
 
@@ -130,11 +139,11 @@ export class CrudifyService {
    * 
    * @param name Name of template to retrieve custom arguments for
    */
-   public templateCustomArgs(name: string) {
+  public templateCustomArgs(name: string) {
 
     // Filtering tests, to return only tests matching endpoint specified.
     return this.httpService.get<any>(
-      '/magic/modules/system/endpoints/template-args?name=' +
+      '/magic/modules/system/crudifier/template-args?name=' +
       encodeURIComponent(name));
   }
 
@@ -150,7 +159,7 @@ export class CrudifyService {
    * @param endpoints Endpoints you want to embed into your result
    * @param args Custom args endpoint requires
    */
-   public generate(
+  public generate(
     templateName: string,
     apiUrl: string,
     frontendUrl: string,
@@ -199,9 +208,9 @@ export class CrudifyService {
   /*
    * Returns the number of lines of code that was generated the last time the generator ran.
    */
-   private getLastLocCount() {
+  private getLastLocCount() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<LocResult>('/magic/modules/system/endpoints/last-loc-count');
+    return this.httpService.get<LocResult>('/magic/modules/system/crudifier/last-loc-count');
   }
 }

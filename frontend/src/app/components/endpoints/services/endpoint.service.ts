@@ -303,13 +303,4 @@ export class EndpointService {
       '/magic/modules/system/diagnostics/assumption-test-description?test_file=' +
       encodeURIComponent(filename));
   }
-
-  /**
-   * Returns a list of all templates the backend has stored.
-   */
-  public templates() {
-
-    // Filtering tests, to return only tests matching endpoint specified.
-    return this.httpService.get<string[]>('/magic/modules/system/endpoints/templates');
-  }
 }
