@@ -25,7 +25,7 @@
         class="obscurer"
         (click)="closeNavbar()"></div>
 
-      <router-outlet></router-outlet>
+      <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
 
     </mat-sidenav-content>
 
