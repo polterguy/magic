@@ -275,6 +275,7 @@ export class AuthService {
 
       // Invoking the refresh token method for backend.
       this.refreshJWTToken(backend);
+
     }, Math.max(delta * 1000, 100));
   }
 
