@@ -3,6 +3,7 @@
 
   <button
     mat-icon-button
+    [disabled]="!authService.access.tasks.create"
     class="create-button"
     (click)="create()">
     <mat-icon>add_box</mat-icon>
@@ -39,6 +40,8 @@
       <td mat-cell class="mini-col button-col" *matCellDef="let el">
         <button
           mat-icon-button
+          matTooltip="Delete task"
+          [disabled]="!authService.access.tasks.delete"
           (click)="delete($event, el)">
           <mat-icon>delete</mat-icon>
         </button>
@@ -61,6 +64,7 @@
             <mat-label>Description</mat-label>
             <input
               matInput
+              [disabled]="!authService.access.tasks.update"
               [(ngModel)]="el.task.description"
               autocomplete="off">
 
@@ -72,12 +76,16 @@
 
             <button
               mat-icon-button
+              [disabled]="!authService.access.tasks.addDue"
+              matTooltip="Schedule task"
               (click)="schedule(el.task)">
               <mat-icon>schedule</mat-icon>
             </button>
 
             <button
               mat-icon-button
+              matTooltip="Update task"
+              [disabled]="!authService.access.tasks.update"
               (click)="update(el)">
               <mat-icon>save</mat-icon>
             </button>
@@ -90,6 +98,7 @@
               <mat-chip
                 *ngFor="let idxSchedule of el.task.schedule"
                 selectable="false"
+                [disabled]="!authService.access.tasks.deleteDue"
                 [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
                 (removed)="deleteSchedule(el.task, idxSchedule)">
                 {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
