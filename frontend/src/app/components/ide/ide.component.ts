@@ -600,6 +600,9 @@ export class IdeComponent implements OnInit {
         // Databinding tree again.
         this.dataBindTree();
 
+        // Resetting active folder to root folder.
+        this.activeFolder = '/';
+
       }, (error: any) => this.feedbackService.showError(error));
     });
   }
