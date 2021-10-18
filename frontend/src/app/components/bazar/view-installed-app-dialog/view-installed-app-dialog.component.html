@@ -21,6 +21,7 @@
 
   <button
     mat-raised-button
+    [disabled]="!authService.access.files.delete_folder"
     (click)="uninstall()">Uninstall</button>
 
 </div>

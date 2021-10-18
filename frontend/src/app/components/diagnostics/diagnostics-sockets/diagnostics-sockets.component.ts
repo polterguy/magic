@@ -20,6 +20,7 @@ import { SubscribeComponent } from './subscribe/subscribe.component';
 import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
+import { AuthService } from '../../auth/services/auth.service';
 
 /**
  * Sockets diagnostic component, allowing to see current connections grouped by users.
@@ -80,12 +81,14 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogues
+   * @param authService Needed to verify user has access to component
    * @param backendService Needed to retrieve backend URL to connect to web sockets in backend
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all connected users from backend
    */
   constructor(
     private dialog: MatDialog,
+    public authService: AuthService,
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
@@ -261,7 +264,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    public sendMessageToConnection(connection: string) {
 
     // Ensuring component was initialised in a state that allows for publishing messages.
-    if (!this.createSubscriptions) {
+    if (!this.createSubscriptions || !this.authService.access.sockets.send) {
       return;
     }
 

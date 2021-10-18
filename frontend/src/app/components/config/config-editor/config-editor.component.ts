@@ -12,6 +12,7 @@ import { ConfigService } from 'src/app/components/config/services/config.service
 
 // CodeMirror options.
 import json from '../../codemirror/options/json.json'
+import { AuthService } from '../../auth/services/auth.service';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.
@@ -37,11 +38,14 @@ export class ConfigEditorComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
+   * @param feedbackService Needed to display feedback to user
+   * @param configService Needed to load and save configuration file
+   * @param authService Needed to verify user has access to components
    */
   constructor(
     private feedbackService: FeedbackService,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    public authService: AuthService) {
   }
 
   /**

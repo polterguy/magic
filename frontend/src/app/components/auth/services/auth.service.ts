@@ -73,6 +73,14 @@ export class AccessModel {
   diagnostics: any = {
     statistics: false,
   }
+  sockets: any = {
+    read: false,
+    send: false,
+  }
+  config: any = {
+    load: false,
+    save: false,
+  }
 }
 
 /**
@@ -98,6 +106,8 @@ export class AuthService {
     terminal: {},
     eval: {},
     diagnostics: {},
+    sockets: {},
+    config: {},
   };
 
   /**
@@ -551,6 +561,7 @@ export class AuthService {
       endpoints: {
         view: this.canInvoke('magic/modules/system/endpoints/endpoints', 'get'),
         assumptions: this.canInvoke('magic/modules/system/endpoints/assumptions', 'get'),
+        create_test: this.canInvoke('magic/modules/system/diagnostics/create-test', 'post'),
       },
       files: {
         list_files: this.canInvoke('magic/modules/system/file-system/list-files', 'get') && this.canInvoke('magic/modules/system/file-system/list-files-recursively', 'get'),
@@ -600,12 +611,19 @@ export class AuthService {
         execute: this.canInvoke('magic/modules/system/evaluator/evaluate', 'post'),
       },
       diagnostics: {
-        statistics: this.canInvoke('magic/modules/system/diagnostics/log-statistics-days', 'post') && this.canInvoke('magic/modules/system/diagnostics/log-statistics', 'post') && this.canInvoke('magic/modules/system/diagnostics/loc-generated', 'post'),
+        statistics: this.canInvoke('magic/modules/system/diagnostics/log-statistics-days', 'get') && this.canInvoke('magic/modules/system/diagnostics/log-statistics', 'get') && this.canInvoke('magic/modules/system/diagnostics/loc-generated', 'get'),
         read_assumptions: this.canInvoke('magic/modules/system/diagnostics/assumption-test-description', 'get'),
-        create_test: this.canInvoke('magic/modules/system/diagnostics/create-test', 'post'),
         execute_test: this.canInvoke('magic/modules/system/diagnostics/execute-test', 'get'),
         list_cache: this.canInvoke('magic/modules/system/config/list-cache', 'get') && this.canInvoke('magic/modules/system/config/list-cache-count', 'get'),
         delete_cache: this.canInvoke('magic/modules/system/config/delete-cache-item', 'delete') && this.canInvoke('magic/modules/system/config/empty-cache', 'delete'),
+      },
+      sockets: {
+        read: this.canInvoke('magic/modules/system/misc/socket-users-count', 'get') && this.canInvoke('magic/modules/system/misc/socket-users', 'get'),
+        send: this.canInvoke('magic/modules/system/misc/send-socket-message', 'post'),
+      },
+      config: {
+        load: this.canInvoke('magic/modules/system/config/load-config', 'get'),
+        save: this.canInvoke('magic/modules/system/config/save-config', 'post'),
       }
     };
   }
