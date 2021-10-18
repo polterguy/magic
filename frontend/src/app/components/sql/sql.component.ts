@@ -24,6 +24,7 @@ import { CacheService } from '../diagnostics/diagnostics-cache/services/cache.se
 
 // CodeMirror options.
 import sql from '../codemirror/options/sql.json'
+import { AuthService } from '../auth/services/auth.service';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
@@ -89,6 +90,7 @@ export class SqlComponent implements OnInit {
    * @param feedbackService Needed to show user feedback
    * @param configService Needed to read configuration settings, more specifically default database config setting
    * @param cacheService Needed to be able to delete cache items in your backend
+   * @param authService Needed to check if user is authorised to access features
    * @param sqlService Needed to be able to execute SQL towards backend
    * @param dialog Needed to be able to show Load SQL snippet dialog
    * @param messageService Message service used to message other components
@@ -97,6 +99,7 @@ export class SqlComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private cacheService: CacheService,
+    public authService: AuthService,
     private sqlService: SqlService,
     private clipboard: Clipboard,
     private dialog: MatDialog) { }

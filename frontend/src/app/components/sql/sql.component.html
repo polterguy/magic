@@ -64,6 +64,7 @@
 
     <button
       id="loadButton"
+      [disabled]="!authService.access.sql.list_files"
       mat-raised-button
       (click)="load()">
       Load
@@ -71,7 +72,7 @@
 
     <button
       id="saveButton"
-      [disabled]="!input.sql"
+      [disabled]="!input.sql || !authService.access.sql.save_file"
       mat-raised-button
       (click)="save()">
       Save
