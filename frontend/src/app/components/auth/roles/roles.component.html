@@ -2,6 +2,7 @@
 <button
   mat-icon-button
   class="create-button"
+  [disabled]="!authService.access.auth.create_role"
   (click)="createRole()">
   <mat-icon aria-label="Creates a new role">add_box</mat-icon>
 </button>
@@ -61,7 +62,7 @@
 
           <button
             mat-icon-button
-            [disabled]="el.name === 'reset-password' || getAffectedUsers(el) === 0"
+            [disabled]="!authService.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
             [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
             (click)="addRole(el)">
             <mat-icon>add_box</mat-icon>
@@ -69,13 +70,16 @@
 
           <button
             mat-icon-button
+            matTooltip="Edit role"
+            [disabled]="!authService.access.auth.update_role"
             (click)="editRole(el)">
             <mat-icon>edit</mat-icon>
           </button>
 
           <button
             mat-icon-button
-            [disabled]="el.name === 'root' || el.name === 'reset-password'"
+            matTooltip="Delete role"
+            [disabled]="!authService.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
             (click)="deleteRole(el)">
             <mat-icon>delete</mat-icon>
           </button>

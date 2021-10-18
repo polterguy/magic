@@ -21,6 +21,7 @@ import { RoleService } from 'src/app/components/auth/services/role.service';
 import { UserService } from 'src/app/components/auth/services/user.service';
 import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
+import { AuthService } from '../services/auth.service';
 
 /**
  * Roles component for administrating roles in the system.
@@ -84,12 +85,14 @@ export class RolesComponent implements OnInit {
    * 
    * @param feedbackService Used to provide feedback to user
    * @param dialog Used to open the create new role dialog
+   * @param authService Needed to verify user has access to component
    * @param roleService Used to retrieve all roles from backend
    * @param userService Used to associate a user with a role
    */
   constructor(
     private feedbackService: FeedbackService,
     private dialog: MatDialog,
+    public authService: AuthService,
     private roleService: RoleService,
     private userService: UserService) {
   }

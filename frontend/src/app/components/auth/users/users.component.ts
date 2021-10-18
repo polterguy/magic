@@ -25,6 +25,7 @@ import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
 import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
+import { AuthService } from '../services/auth.service';
 
 /**
  * Users component for administrating users in the system.
@@ -86,6 +87,7 @@ export class UsersComponent implements OnInit {
    * @param feedbackService Used to display feedback to user
    * @param backendService Needed to create login link
    * @param userService Used to fetch, create, and modify users in the system
+   * @param authService Needed to verify user has access to components
    * @param clipboard Needed to put login link for users into clipboard
    * @param dialog Needed to create modal dialogues
    */
@@ -94,6 +96,7 @@ export class UsersComponent implements OnInit {
     private feedbackService: FeedbackService,
     private backendService: BackendService,
     private userService: UserService,
+    public authService: AuthService,
     private clipboard: Clipboard,
     private dialog: MatDialog) { }
 

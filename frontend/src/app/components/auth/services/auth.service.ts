@@ -49,6 +49,10 @@ export class AccessModel {
     download_folder: false,
     get_manifests: false,
   }
+  auth: any = {
+    view_users: false,
+    view_roles: false,
+  }
 }
 
 /**
@@ -68,6 +72,7 @@ export class AuthService {
     crud: {},
     endpoints: {},
     files: {},
+    auth: {},
   };
 
   /**
@@ -535,6 +540,21 @@ export class AuthService {
         download_from_url: this.canInvoke('magic/modules/system/file-system/download-from-url', 'post'),
         download_folder: this.canInvoke('magic/modules/system/file-system/download-folder', 'get'),
         get_manifests: this.canInvoke('magic/modules/system/file-system/app-manifests', 'get'),
+      },
+      auth: {
+        view_users: this.canInvoke('magic/modules/magic/users', 'get') && this.canInvoke('magic/modules/magic/users-count', 'get') && this.canInvoke('magic/modules/magic/users_roles', 'get') && this.canInvoke('magic/modules/magic/users_roles-count', 'get'),
+        view_roles: this.canInvoke('magic/modules/magic/roles', 'get'),
+        create_user: this.canInvoke('magic/modules/magic/users', 'post'),
+        create_role: this.canInvoke('magic/modules/magic/roles', 'post'),
+        delete_user: this.canInvoke('magic/modules/magic/users', 'delete'),
+        delete_role: this.canInvoke('magic/modules/magic/roles', 'delete'),
+        update_user: this.canInvoke('magic/modules/magic/users', 'put'),
+        update_role: this.canInvoke('magic/modules/magic/roles', 'put'),
+        create_user_role: this.canInvoke('magic/modules/magic/users_roles', 'post'),
+        delete_user_role: this.canInvoke('magic/modules/magic/users_roles', 'delete'),
+        update_user_role: this.canInvoke('magic/modules/magic/users_roles', 'put'),
+        impersonate: this.canInvoke('magic/modules/system/auth/generate-token', 'get'),
+        jail: this.canInvoke('magic/modules/system/auth/imprison', 'put'),
       }
     };
   }

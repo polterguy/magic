@@ -65,7 +65,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
+      *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles"
       mat-raised-button
       routerLink="/auth"
       matTooltip="Administrate users and roles">
