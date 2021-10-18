@@ -20,6 +20,7 @@ import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperl
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
+import { AuthService } from '../../auth/services/auth.service';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -67,6 +68,7 @@ export class DiagnosticsTestsComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param authService Needed to verify user has access to component
    * @param fileService Needed to load test files from backend
    * @param messageService Needed to publish message when all assumptions succeeds
    * @param feedbackService Needed to provide feedback to user
@@ -74,6 +76,7 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param loaderInterceptor Used to manually increment invocation count to avoid flickering as we execute all tests
    */
   constructor(
+    public authService: AuthService,
     private fileService: FileService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,

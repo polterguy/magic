@@ -127,7 +127,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+      *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
       mat-raised-button
       routerLink="/file-system"
       matTooltip="Manage your files">
@@ -136,7 +136,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/misc')"
+      *ngIf="authService.access.sockets.read"
       mat-raised-button
       routerLink="/sockets"
       matTooltip="Administrate socket connections">
@@ -145,7 +145,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/config')"
+      *ngIf="authService.access.config.load"
       mat-raised-button
       routerLink="/config"
       matTooltip="Edit configuration">
@@ -172,7 +172,7 @@
     </button>
 
     <button
-      *ngIf="authService.isRoot"
+      *ngIf="authService.access.files.get_manifests"
       mat-raised-button
       routerLink="/bazar"
       matTooltip="Obtain additional plugins and modules">

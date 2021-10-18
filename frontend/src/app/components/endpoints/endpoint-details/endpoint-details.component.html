@@ -60,8 +60,12 @@
 
     <hr>
 
-    <strong class="label">Assumptions</strong>
-    <span class="description">
+    <strong
+      *ngIf="authService.access.diagnostics.execute_test"
+      class="label">Assumptions</strong>
+    <span
+      *ngIf="authService.access.diagnostics.execute_test"
+      class="description">
 
       <mat-chip-list>
         <mat-chip
@@ -202,6 +206,7 @@
 
       <button
         mat-raised-button
+        [disabled]="!authService.access.endpoints.create_test"
         class="assumption-btn"
         (click)="createTest()">
         New assumption

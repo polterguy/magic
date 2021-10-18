@@ -22,6 +22,7 @@
 
     <button
       *ngIf="tests.length > 0"
+      [disabled]="!authService.access.diagnostics.execute_test"
       mat-raised-button
       color="primary"
       [matTooltip]="'Run ' + getFilteredTests().length + ' health checks'"

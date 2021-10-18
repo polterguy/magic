@@ -13,6 +13,7 @@ import { BazarService } from '../services/bazar.service';
 import { Response } from 'src/app/models/response.model';
 import { FileService } from '../../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-view-installed-app-dialog',
@@ -30,6 +31,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param fileService Needed to display module's README file
+   * @param authService Needed verify user has access to components
    * @param bazarService Needed to be able to update app, if app needs updating
    * @param feedbackService Needed to display feedback to user.
    * @param data App's manifest or meta data
@@ -37,6 +39,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
    */
   constructor(
     private fileService: FileService,
+    public authService: AuthService,
     private bazarService: BazarService,
     private feedbackService: FeedbackService,
     @Inject(MAT_DIALOG_DATA) public data: AppManifest,

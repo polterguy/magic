@@ -32,6 +32,7 @@
     <button
       mat-raised-button
       *ngIf="createSubscriptions === true"
+      [disabled]="!authService.access.sockets.send"
       color="primary"
       class="button"
       (click)="post()">
@@ -62,6 +63,7 @@
           <mat-chip-list>
             <mat-chip
               *ngFor="let con of el.connections"
+              [disabled]="!authService.access.sockets.send"
               selectable="false"
               [class]="createSubscriptions ? '' : 'non-selectable'"
               (click)="sendMessageToConnection(con)">
