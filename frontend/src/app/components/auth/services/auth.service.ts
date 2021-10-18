@@ -70,6 +70,9 @@ export class AccessModel {
     write_files: false,
     execute: false,
   }
+  diagnostics: any = {
+    statistics: false,
+  }
 }
 
 /**
@@ -94,6 +97,7 @@ export class AuthService {
     tasks: {},
     terminal: {},
     eval: {},
+    diagnostics: {},
   };
 
   /**
@@ -594,6 +598,14 @@ export class AuthService {
       },
       eval: {
         execute: this.canInvoke('magic/modules/system/evaluator/evaluate', 'post'),
+      },
+      diagnostics: {
+        statistics: this.canInvoke('magic/modules/system/diagnostics/log-statistics-days', 'post') && this.canInvoke('magic/modules/system/diagnostics/log-statistics', 'post') && this.canInvoke('magic/modules/system/diagnostics/loc-generated', 'post'),
+        read_assumptions: this.canInvoke('magic/modules/system/diagnostics/assumption-test-description', 'get'),
+        create_test: this.canInvoke('magic/modules/system/diagnostics/create-test', 'post'),
+        execute_test: this.canInvoke('magic/modules/system/diagnostics/execute-test', 'get'),
+        list_cache: this.canInvoke('magic/modules/system/config/list-cache', 'get') && this.canInvoke('magic/modules/system/config/list-cache-count', 'get'),
+        delete_cache: this.canInvoke('magic/modules/system/config/delete-cache-item', 'delete') && this.canInvoke('magic/modules/system/config/empty-cache', 'delete'),
       }
     };
   }

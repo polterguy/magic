@@ -15,6 +15,7 @@ import { Count } from 'src/app/models/count.model';
 import { CacheItem } from './models/cache-item.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.
@@ -60,11 +61,13 @@ export class DiagnosticsCache implements OnInit {
    * Creates an instance of your component.
    * 
    * @param clipboard Used to copy content of cache item to clipboard
+   * @param authService Needed to verify user has access to components
    * @param cacheService Needed to read, remove and clear cache
    * @param feedbackService Needed to display feedback information to user
    */
   constructor(
     private clipboard: Clipboard,
+    public authService: AuthService,
     private cacheService: CacheService,
     private feedbackService: FeedbackService) { }
 
