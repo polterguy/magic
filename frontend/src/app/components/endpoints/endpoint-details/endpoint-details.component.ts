@@ -25,6 +25,7 @@ import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumpt
 import json from '../../codemirror/options/json.json';
 import json_readonly from '../../codemirror/options/json_readonly.json';
 import hyperlambda_readonly from '../../codemirror/options/hyperlambda_readonly.json';
+import { AuthService } from '../../auth/services/auth.service';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
@@ -150,6 +151,7 @@ export class EndpointDetailsComponent implements OnInit {
     private dialog: MatDialog,
     private clipboard: Clipboard,
     private sanitizer: DomSanitizer,
+    public authService: AuthService,
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
@@ -695,25 +697,29 @@ export class EndpointDetailsComponent implements OnInit {
    */
   private getAssumptions() {
 
+    // Verifying user has access to assumptions.
+    if (this.authService.access.endpoints.assumptions) {
+
     // Retrieving assumptions for endpoint.
     this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: string[]) => {
-      if (assumptions && assumptions.length) {
-        const all = assumptions.map(x => this.endpointService.getDescription(x));
-        forkJoin(all).subscribe((description: Response[]) => {
+        if (assumptions && assumptions.length) {
+          const all = assumptions.map(x => this.endpointService.getDescription(x));
+          forkJoin(all).subscribe((description: Response[]) => {
 
-          // Creating model for assumptions.
-          const arr: Assumption[] = [];
-          for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
-            arr.push({
-              name: assumptions[idxNo],
-              description: description[idxNo].result,
-              success: null,
-            });
-          }
-          this.assumptions = arr;
+            // Creating model for assumptions.
+            const arr: Assumption[] = [];
+            for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
+              arr.push({
+                name: assumptions[idxNo],
+                description: description[idxNo].result,
+                success: null,
+              });
+            }
+            this.assumptions = arr;
 
-        }, (error: any) => this.feedbackService.showError(error));
-      }
-    }, (error: any) => this.feedbackService.showError(error));
+          }, (error: any) => this.feedbackService.showError(error));
+        }
+      }, (error: any) => this.feedbackService.showError(error));
+    }
   }
 }

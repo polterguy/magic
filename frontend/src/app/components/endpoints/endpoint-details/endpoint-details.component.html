@@ -55,7 +55,7 @@
   </span>
 
   <span
-    *ngIf="assumptions.length > 0"
+    *ngIf="authService.access.endpoints.assumptions && assumptions.length > 0"
     class="item-full-width">
 
     <hr>
