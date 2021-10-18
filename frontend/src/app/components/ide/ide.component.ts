@@ -26,6 +26,7 @@ import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dial
 
 // File types extensions.
 import fileTypes from './../files/file-editor/file-types.json';
+import { AuthService } from '../auth/services/auth.service';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -92,6 +93,7 @@ export class IdeComponent implements OnInit {
    * 
    * @param dialog Needed to create modal dialogs
    * @param cdRef Needed to mark component as having changes
+   * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
    * @param messageService Service used to publish messages to other components in the system
@@ -100,6 +102,7 @@ export class IdeComponent implements OnInit {
   public constructor(
     private dialog: MatDialog,
     private cdRef:ChangeDetectorRef,
+    public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService) { }
