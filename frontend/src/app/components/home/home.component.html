@@ -74,7 +74,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/log')"
+      *ngIf="authService.access.log.read"
       mat-raised-button
       routerLink="/log"
       matTooltip="Server's log">
@@ -83,7 +83,7 @@
     </button>
 
     <button
-      *ngIf="authService.hasAccess('magic/modules/system/tasks')"
+      *ngIf="authService.access.tasks.read"
       mat-raised-button
       routerLink="/tasks"
       matTooltip="Administrate scheduled tasks">

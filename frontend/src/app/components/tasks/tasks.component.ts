@@ -22,6 +22,7 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
+import { AuthService } from '../auth/services/auth.service';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -78,11 +79,15 @@ export class TasksComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param feedbackService Needed to display feedback to user
    * @param taskService Needed to retrieve, update, delete and modify tasks in our backend
+   * @param authService Needed to verify user has access to components
+   * @param dialog Needed to create modal dialogues
    */
   constructor(
     private feedbackService: FeedbackService,
     private taskService: TaskService,
+    public authService: AuthService,
     private dialog: MatDialog) { }
 
   /**

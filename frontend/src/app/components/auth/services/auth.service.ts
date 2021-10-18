@@ -53,6 +53,15 @@ export class AccessModel {
     view_users: false,
     view_roles: false,
   }
+  log: any = {
+    read: false,
+  }
+  tasks: any = {
+    create: false,
+    read: false,
+    update: false,
+    delete: false,
+  }
 }
 
 /**
@@ -73,6 +82,8 @@ export class AuthService {
     endpoints: {},
     files: {},
     auth: {},
+    log: {},
+    tasks: {},
   };
 
   /**
@@ -555,7 +566,19 @@ export class AuthService {
         update_user_role: this.canInvoke('magic/modules/magic/users_roles', 'put'),
         impersonate: this.canInvoke('magic/modules/system/auth/generate-token', 'get'),
         jail: this.canInvoke('magic/modules/system/auth/imprison', 'put'),
-      }
+      },
+      log: {
+        read: this.canInvoke('magic/modules/system/log/count-items', 'get') && this.canInvoke('magic/modules/system/log/log-item', 'get') && this.canInvoke('magic/modules/system/log/log-items', 'get'),
+        write: this.canInvoke('magic/modules/system/log/log', 'post'),
+      },
+      tasks: {
+        create: this.canInvoke('magic/modules/system/tasks/create-task', 'post'),
+        read: this.canInvoke('magic/modules/system/tasks/count-tasks', 'get') && this.canInvoke('magic/modules/system/tasks/get-task', 'get') && this.canInvoke('magic/modules/system/tasks/list-tasks', 'get'),
+        update: this.canInvoke('magic/modules/system/tasks/update-task', 'post'),
+        delete: this.canInvoke('magic/modules/system/tasks/delete-task', 'delete') && this.canInvoke('magic/modules/system/tasks/delete-due', 'delete'),
+        addDue: this.canInvoke('magic/modules/system/tasks/add-due', 'post'),
+        deleteDue: this.canInvoke('magic/modules/system/tasks/delete-due', 'delete'),
+      },
     };
   }
 }
