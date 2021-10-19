@@ -3,7 +3,7 @@
  * Automatically generated assumption test.
  */
 verb:delete
-url:/magic/modules/system/config/delete-cache-item
+url:/magic/modules/system/cache/delete-cache-item
 status:int:400
 response:@"{""message"":""Mandatory argument 'id' not given"",""field"":""id""}"
 description:Assumes that invoking endpoint without a cache key results in an error

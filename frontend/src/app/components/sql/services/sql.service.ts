@@ -9,9 +9,9 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Databases } from '../models/databases.model';
-import { Response } from 'src/app/models/response.model';
 import { HttpService } from '../../../services/http.service';
 import { FileService } from '../../files/services/file.service';
+import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
 
 /**
  * SQL service allowing you to execute SQL and retrieve meta information about
@@ -56,6 +56,15 @@ export class SqlService {
       safeMode,
       batch
     });
+  }
+
+  /**
+   * Returns the type of database that is the default database used by backend.
+   */
+   public defaultDatabaseType() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<DefaultDatabaseType>('/magic/modules/system/sql/default-database-type');
   }
 
   /**

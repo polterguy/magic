@@ -40,15 +40,6 @@ export class CrudifyService {
     @Inject(LOCALE_ID) public locale: string) { }
 
   /**
-   * Returns all available input reactors from backend.
-   */
-  public getInputReactor() {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>('/magic/modules/system/crudifier/input-reactors');
-  }
-
-  /**
    * Crudifies a database table for a specified HTTP verb.
    * 
    * @param data Input for process

@@ -53,16 +53,7 @@ export class ConfigService {
    public rootUserEmailAddress() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<NameEmailModel>('/magic/modules/system/config/email');
-  }
-
-  /**
-   * Returns the type of database that is the default database used by backend.
-   */
-  public defaultDatabaseType() {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<DefaultDatabaseType>('/magic/modules/system/config/default-database-type');
+    return this.httpService.get<NameEmailModel>('/magic/modules/system/emails/email');
   }
 
   /**

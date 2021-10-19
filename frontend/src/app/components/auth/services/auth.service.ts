@@ -618,17 +618,17 @@ export class AuthService {
         statistics: this.canInvoke('magic/modules/system/diagnostics/log-statistics-days', 'get') && this.canInvoke('magic/modules/system/diagnostics/log-statistics', 'get') && this.canInvoke('magic/modules/system/diagnostics/loc-generated', 'get'),
         read_assumptions: this.canInvoke('magic/modules/system/diagnostics/assumption-test-description', 'get'),
         execute_test: this.canInvoke('magic/modules/system/diagnostics/execute-test', 'get'),
-        list_cache: this.canInvoke('magic/modules/system/config/list-cache', 'get') && this.canInvoke('magic/modules/system/config/list-cache-count', 'get'),
-        delete_cache: this.canInvoke('magic/modules/system/config/delete-cache-item', 'delete') && this.canInvoke('magic/modules/system/config/empty-cache', 'delete'),
+        list_cache: this.canInvoke('magic/modules/system/cache/list-cache', 'get') && this.canInvoke('magic/modules/system/cache/list-cache-count', 'get'),
+        delete_cache: this.canInvoke('magic/modules/system/cache/delete-cache-item', 'delete') && this.canInvoke('magic/modules/system/cache/empty-cache', 'delete'),
       },
       sockets: {
-        read: this.canInvoke('magic/modules/system/misc/socket-users-count', 'get') && this.canInvoke('magic/modules/system/misc/socket-users', 'get'),
-        send: this.canInvoke('magic/modules/system/misc/send-socket-message', 'post'),
+        read: this.canInvoke('magic/modules/system/sockets/socket-users-count', 'get') && this.canInvoke('magic/modules/system/sockets/socket-users', 'get'),
+        send: this.canInvoke('magic/modules/system/sockets/send-socket-message', 'post'),
       },
       config: {
         load: this.canInvoke('magic/modules/system/config/load-config', 'get'),
         save: this.canInvoke('magic/modules/system/config/save-config', 'post'),
-        delete_cache_item: this.canInvoke('magic/modules/system/config/delete-cache-item', 'delete'),
+        delete_cache_item: this.canInvoke('magic/modules/system/cache/delete-cache-item', 'delete'),
       },
       crypto: {
         import_public_key: this.canInvoke('magic/modules/system/crypto/import', 'post'),
