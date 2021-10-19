@@ -168,7 +168,7 @@ export class EndpointService {
 
     // Simple version, retrieving all files in assumption test folder.
     return this.httpService.get<SocketUser[]>(
-      '/magic/modules/system/misc/socket-users' + query);
+      '/magic/modules/system/sockets/socket-users' + query);
   }
 
   /**
@@ -186,7 +186,7 @@ export class EndpointService {
 
     // Simple version, retrieving all files in assumption test folder.
     return this.httpService.get<Count>(
-      '/magic/modules/system/misc/socket-users-count' + query);
+      '/magic/modules/system/sockets/socket-users-count' + query);
   }
 
   /**
@@ -211,7 +211,7 @@ export class EndpointService {
 
     // Invoking backend returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/misc/send-socket-message', {
+      '/magic/modules/system/sockets/send-socket-message', {
         client,
         roles,
         groups,

@@ -23,6 +23,7 @@ import json from '../../../codemirror/options/json.json'
 
 // Default configuration for crudifying database.
 import data from './data/data.json';
+import { SqlService } from 'src/app/components/sql/services/sql.service';
 
 /**
  * Component that helps you crudify your magic database
@@ -56,14 +57,14 @@ export class CrudifyDatabaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param configService Configuration service used to read and write configuration settings, etc
+   * @param sqlgService Needed to retrieve default database type
    * @param crudifyService Needed to crudify Magic database.
    * @param feedbackService Needed to display feedback to user
    * @param messageService Message service used to publish messages informing parent component about change of state
    */
   public constructor(
     private logService: LogService,
-    private configService: ConfigService,
+    private sqlService: SqlService,
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService,
     protected messageService: MessageService) {
@@ -75,7 +76,7 @@ export class CrudifyDatabaseComponent implements OnInit {
   public ngOnInit() {
 
     // Figuring out which database type the backend is using for its Magic database.
-    this.configService.defaultDatabaseType().subscribe((res: DefaultDatabaseType) => {
+    this.sqlService.defaultDatabaseType().subscribe((res: DefaultDatabaseType) => {
 
       // Setting the database type.
       this.databaseType = res.default;

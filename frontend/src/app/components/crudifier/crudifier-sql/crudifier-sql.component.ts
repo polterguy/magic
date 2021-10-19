@@ -66,7 +66,6 @@ export class CrudifierSqlComponent implements OnInit {
     private resolver: ComponentFactoryResolver,
     private feedbackService: FeedbackService,
     private messageServive: MessageService,
-    private configService: ConfigService,
     private sqlService: SqlService) { }
 
   /**
@@ -75,7 +74,7 @@ export class CrudifierSqlComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving default database type from backend.
-    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
+    this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
 
       // Assigning database types to model.
       this.databaseTypes = defaultDatabaseType.options;

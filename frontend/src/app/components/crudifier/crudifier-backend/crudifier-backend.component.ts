@@ -97,7 +97,6 @@ export class CrudifierBackendComponent implements OnInit {
     private dialog: MatDialog,
     private sqlService: SqlService,
     private cacheService: CacheService,
-    private configService: ConfigService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
@@ -112,7 +111,7 @@ export class CrudifierBackendComponent implements OnInit {
   ngOnInit() {
 
     // Retrieving default database type from backend.
-    this.configService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
+    this.sqlService.defaultDatabaseType().subscribe((defaultDatabaseType: DefaultDatabaseType) => {
 
       // Assigning database types to model.
       this.databaseTypes = defaultDatabaseType.options;
