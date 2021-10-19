@@ -16,6 +16,7 @@ import { FileService } from 'src/app/components/files/services/file.service';
 import { DownloadFileDialogComponent } from './download-file-dialog/download-file-dialog.component';
 import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
 import { RenameFileObject, RenameFileObjectDialogComponent } from './rename-file-object-dialog/rename-file-object-dialog.component';
+import { AuthService } from '../auth/services/auth.service';
 
 /**
  * Files component to allow user to browse his dynamic files folder,
@@ -76,12 +77,14 @@ export class FilesComponent implements OnInit, OnDestroy {
    * 
    * @param feedbackService Needed to display messages to user
    * @param messageService Needed to signal changes to the parent folder
+   * @param authService Needed to verify access to components
    * @param dialog Used to open new file object dialog to create new folders or files
    * @param fileService File service used to retrieve files and folders from backend
    */
   constructor(
     private feedbackService: FeedbackService,
     protected messageService: MessageService,
+    public authService: AuthService,
     private fileService: FileService,
     private applicationRef: ApplicationRef,
     private dialog: MatDialog) { }

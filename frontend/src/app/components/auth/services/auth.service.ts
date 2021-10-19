@@ -44,9 +44,11 @@ export class AccessModel {
     create_folder: false,
     delete_folder: false,
     delete_file: false,
+    download_folder: false,
+  }
+  bazar: any = {
     download_from_bazar: false,
     download_from_url: false,
-    download_folder: false,
     get_manifests: false,
   }
   auth: any = {
@@ -103,6 +105,7 @@ export class AuthService {
     crud: {},
     endpoints: {},
     files: {},
+    bazar: {},
     auth: {},
     log: {},
     tasks: {},
@@ -576,10 +579,12 @@ export class AuthService {
         create_folder: this.canInvoke('magic/modules/system/file-system/folder', 'put'),
         delete_folder: this.canInvoke('magic/modules/system/file-system/folder', 'delete'),
         delete_file: this.canInvoke('magic/modules/system/file-system/file', 'delete'),
-        download_from_bazar: this.canInvoke('magic/modules/system/file-system/download-from-bazar', 'post'),
-        download_from_url: this.canInvoke('magic/modules/system/file-system/download-from-url', 'post'),
         download_folder: this.canInvoke('magic/modules/system/file-system/download-folder', 'get'),
-        get_manifests: this.canInvoke('magic/modules/system/file-system/app-manifests', 'get'),
+      },
+      bazar: {
+        download_from_bazar: this.canInvoke('magic/modules/system/bazar/download-from-bazar', 'post'),
+        download_from_url: this.canInvoke('magic/modules/system/bazar/download-from-url', 'post'),
+        get_manifests: this.canInvoke('magic/modules/system/bazar/app-manifests', 'get'),
       },
       auth: {
         view_users: this.canInvoke('magic/modules/magic/users', 'get') && this.canInvoke('magic/modules/magic/users-count', 'get') && this.canInvoke('magic/modules/magic/users_roles', 'get') && this.canInvoke('magic/modules/magic/users_roles-count', 'get'),

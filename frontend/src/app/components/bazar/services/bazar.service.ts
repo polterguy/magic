@@ -53,7 +53,7 @@ export class BazarService {
   public localManifests() {
 
     // Invoking backend to actually retrieve manifest.
-    return this.httpService.get<AppManifest[]>('/magic/modules/system/file-system/app-manifests');
+    return this.httpService.get<AppManifest[]>('/magic/modules/system/bazar/app-manifests');
   }
 
   /**
@@ -214,7 +214,7 @@ export class BazarService {
   public download(app: BazarApp, token: string) {
 
     // Invoking backend to actually download app.
-    return this.httpService.post<Response>('/magic/modules/system/file-system/download-from-bazar', {
+    return this.httpService.post<Response>('/magic/modules/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
       name: app.folder_name
     });
@@ -233,7 +233,7 @@ export class BazarService {
     }
 
     // Invoking backend to actually download app.
-    return this.httpService.post<Response>('/magic/modules/system/file-system/download-from-bazar', {
+    return this.httpService.post<Response>('/magic/modules/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + app.token,
       name: app.module_name
     });
