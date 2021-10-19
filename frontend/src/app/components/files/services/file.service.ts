@@ -319,7 +319,7 @@ export class FileService {
    public executeMacro(file: string, args: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/ide/macro', {
+    return this.httpService.post<Response>('/magic/modules/system/ide/execute-macro', {
       macro: file,
       args
     });
