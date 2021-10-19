@@ -5,12 +5,11 @@ mat-toolbar {
   position: fixed;
   top: 0;
   left: 0;
-  button.menu {
-    height: 3rem;
-    padding-top: .4rem;
-    width: 5rem;
-    img {
-      height: 100%;
+  button {
+    span {
+      display: inline-block;
+      font-size: 1.5rem;
+      padding-left: .5rem;
     }
   }
   .spacer {

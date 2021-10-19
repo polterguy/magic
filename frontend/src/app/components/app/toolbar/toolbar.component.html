@@ -2,16 +2,17 @@
 <mat-toolbar>
 
   <button
-    class="menu"
     mat-button
     (click)="toggleNavbar()">
-    <img src="/assets/logo-no-text.svg" alt="ServerGardens.Com Logo">
+    <mat-icon>menu</mat-icon>
+    <span>Magic</span>
   </button>
 
   <span class="spacer"></span>
 
-  <span
-    [class]="backendService.secure ? 'user' : 'user warning'">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</span>
+  <span [class]="backendService.secure ? 'user' : 'user warning'">
+    {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
+  </span>
 
   <mat-slide-toggle
     [(ngModel)]="lightTheme"
