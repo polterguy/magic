@@ -72,6 +72,7 @@
   <button
     id="loadButton"
     mat-icon-button
+    [disabled]="!authService.access.config.delete_cache_item"
     matTooltip="Empties your server side database declaration cache items and reloads page"
     (click)="refresh()">
     <mat-icon>refresh</mat-icon>

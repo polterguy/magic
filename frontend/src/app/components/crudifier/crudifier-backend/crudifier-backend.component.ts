@@ -27,6 +27,7 @@ import { DefaultDatabaseType } from '../../config/models/default-database-type.m
 import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
 import { CacheService } from '../../diagnostics/diagnostics-cache/services/cache.service';
 import { CrudifierSetDefaultsComponent } from './crudifier-set-defaults/crudifier-set-defaults.component';
+import { AuthService } from '../../auth/services/auth.service';
 
 /**
  * Crudifier component for crudifying database
@@ -96,6 +97,7 @@ export class CrudifierBackendComponent implements OnInit {
     private logService: LogService,
     private dialog: MatDialog,
     private sqlService: SqlService,
+    public authService: AuthService,
     private cacheService: CacheService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
