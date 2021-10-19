@@ -46,17 +46,12 @@ export class ProfileComponent {
    */
   public changePassword() {
 
-    // Sanity checking invocation.
-    if (this.password !== this.repeatPassword || this.password === '') {
-      this.feedbackService.showInfo('You need to supply a new password and repeat it twice');
-      return;
-    }
-
     // Changing password
     this.authService.changePassword(this.password).subscribe((result: Response) => {
 
       // Providing feedback to user.
       this.feedbackService.showInfoShort('Your password was successfully changed');
-    });
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
