@@ -248,7 +248,10 @@ mat-tab-group .mat-tab-label .mat-tab-label-content {
     color: rgb(250,250,250);
   }
   mat-tab-group .mat-tab-label .mat-tab-label-content {
-    color: #555;
+    color: #000;
+  }
+  mat-tab-group .mat-tab-label.mat-tab-disabled .mat-tab-label-content {
+    color: #999;
   }
   mat-paginator.mat-paginator {
     background-color: transparent;
