@@ -10,7 +10,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/sql')"
+  *ngIf="authService.access.sql.execute_access"
   mat-button
   routerLink="/sql"
   routerLinkActive="active-link"
@@ -21,7 +21,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/crudifier')"
+  *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend"
   mat-button
   routerLink="/crudifier"
   routerLinkActive="active-link"
@@ -32,7 +32,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/endpoints')"
+  *ngIf="authService.access.endpoints.view"
   mat-button
   routerLink="/endpoints"
   routerLinkActive="active-link"
@@ -43,7 +43,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+  *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
   mat-button
   routerLink="/ide"
   routerLinkActive="active-link"
@@ -54,7 +54,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/auth/imprison')"
+  *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles"
   mat-button
   routerLink="/auth"
   routerLinkActive="active-link"
@@ -65,7 +65,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/log')"
+  *ngIf="authService.access.log.read"
   mat-button
   routerLink="/log"
   routerLinkActive="active-link"
@@ -76,7 +76,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/tasks')"
+  *ngIf="authService.access.tasks.read"
   mat-button
   routerLink="/tasks"
   routerLinkActive="active-link"
@@ -87,7 +87,7 @@
 </a>
 
 <a
-  *ngIf="authService.isRoot"
+  *ngIf="authService.access.terminal.execute"
   mat-button
   routerLink="/terminal"
   routerLinkActive="active-link"
@@ -98,7 +98,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/evaluator')"
+  *ngIf="authService.access.eval.execute"
   mat-button
   routerLink="/evaluator"
   routerLinkActive="active-link"
@@ -109,6 +109,7 @@
 </a>
 
 <a
+  *ngIf="authService.access.crypto.import_public_key"
   mat-button
   routerLink="/crypto"
   routerLinkActive="active-link"
@@ -119,7 +120,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/diagnostics')"
+  *ngIf="authService.access.diagnostics.statistics"
   mat-button
   routerLink="/diagnostics"
   routerLinkActive="active-link"
@@ -130,7 +131,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/file-system')"
+  *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
   mat-button
   routerLink="/file-system"
   routerLinkActive="active-link"
@@ -141,7 +142,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/misc')"
+  *ngIf="authService.access.sockets.read"
   mat-button
   routerLink="/sockets"
   routerLinkActive="active-link"
@@ -152,7 +153,7 @@
 </a>
 
 <a
-  *ngIf="authService.hasAccess('magic/modules/system/config')"
+  *ngIf="authService.access.config.load"
   mat-button
   routerLink="/config"
   routerLinkActive="active-link"
@@ -174,7 +175,18 @@
 </a>
 
 <a
-  *ngIf="authService.isRoot"
+  *ngIf="authService.authenticated"
+  mat-button
+  routerLink="/profile"
+  routerLinkActive="active-link"
+  (click)="closeNavbar()"
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>account_circle</mat-icon>
+  <span>Profile</span>
+</a>
+
+<a
+  *ngIf="authService.access.files.get_manifests"
   mat-button
   routerLink="/bazar"
   routerLinkActive="active-link"
