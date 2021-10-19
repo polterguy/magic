@@ -30,6 +30,7 @@
 
     <button
       mat-raised-button
+      [disabled]="!password || password.length === 0 || password !== repeatPassword"
       class="button"
       (click)="changePassword()"
       color="primary">
