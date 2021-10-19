@@ -19,6 +19,8 @@ import { BackendService } from 'src/app/services/backend.service';
 import { ConfigService } from '../config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
+import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Home component for Magic Dashboard.
@@ -53,6 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Creates an instance of your component.
    * 
    * @param router Needed to redirect user after having verified his authentication token
+   * @param dialog Needed to allow user to login
    * @param authService Needed to verify user is authenticated
    * @param activated Needed to retrieve query parameters
    * @param backendService Needed modify backend values according to query parameters given
@@ -62,6 +65,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   constructor(
     private router: Router,
+    private dialog: MatDialog,
     public authService: AuthService,
     private activated: ActivatedRoute,
     private bazarService: BazarService,
@@ -170,6 +174,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // Making sure we unsibscribe to subscription.
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Invoked when user wants to login.
+   */
+  public login() {
+    this.dialog.open(LoginDialogComponent, {
+      width: '550px',
+    });
   }
 
   /*

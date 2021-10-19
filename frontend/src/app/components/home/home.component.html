@@ -29,6 +29,15 @@
   <div class="buttons">
 
     <button
+      *ngIf="!authService.authenticated"
+      mat-raised-button
+      (click)="login()"
+      matTooltip="Login">
+      <mat-icon matSuffix color="primary">lock_open</mat-icon>
+      <span>Login</span>
+    </button>
+
+    <button
       *ngIf="authService.access.sql.execute_access"
       mat-raised-button
       routerLink="/sql"
