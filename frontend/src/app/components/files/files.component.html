@@ -113,6 +113,7 @@
 
     <button
       mat-icon-button
+      [disabled]="!authService.access.bazar.download_from_url"
       matTooltip="Download file from external URL"
       (click)="downloadFileToServer()">
       <mat-icon>cloud_download</mat-icon>

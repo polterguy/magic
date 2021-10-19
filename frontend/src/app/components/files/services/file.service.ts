@@ -181,7 +181,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
-      '/magic/modules/system/file-system/can-install?required_magic_version=' +
+      '/magic/modules/system/bazar/can-install?required_magic_version=' +
       encodeURIComponent(required_magic_version));
   }
 
@@ -227,7 +227,7 @@ export class FileService {
    public downloadFileToBackend(folder: string, url: string) {
 
     // Invoking backend to download file to server.
-    return this.httpService.post<Response>('/magic/modules/system/file-system/download-from-url', {
+    return this.httpService.post<Response>('/magic/modules/system/bazar/download-from-url', {
       folder,
       url,
     });
