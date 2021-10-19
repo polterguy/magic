@@ -41,7 +41,7 @@
           class="folder-btn"
           [color]="activeFolder === folder.node.path ? 'primary' : 'default'"
           mat-button
-          (click)="selectFolder(folder.node)">
+          (click)="selectFolder(folder)">
 
           <mat-icon class="mat-icon-rtl-mirror">folder_open</mat-icon>{{folder.name}}
 
