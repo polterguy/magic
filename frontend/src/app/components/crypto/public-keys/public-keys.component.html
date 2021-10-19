@@ -69,6 +69,7 @@
             <mat-label>Subject</mat-label>
             <input
               matInput
+              [disabled]="!authService.access.crypto.save_public_key"
               type="text"
               [(ngModel)]="el.key.subject"
               autocomplete="off">
@@ -80,6 +81,7 @@
             <mat-label>Email</mat-label>
             <input
               matInput
+              [disabled]="!authService.access.crypto.save_public_key"
               type="text"
               [(ngModel)]="el.key.email"
               autocomplete="off">
@@ -91,6 +93,7 @@
             <mat-label>Domain</mat-label>
             <input
               matInput
+              [disabled]="!authService.access.crypto.save_public_key"
               type="text"
               [(ngModel)]="el.key.domain"
               autocomplete="off">
@@ -102,6 +105,7 @@
             <mat-label>Username</mat-label>
             <input
               matInput
+              [disabled]="!authService.access.crypto.save_public_key"
               type="text"
               [(ngModel)]="el.key.username"
               autocomplete="off">
@@ -115,6 +119,7 @@
           <mat-label>Key content</mat-label>
           <textarea
             matInput
+            [disabled]="!authService.access.crypto.save_public_key"
             class="crypto-key"
             [(ngModel)]="el.key.content"
             rows="7"></textarea>
