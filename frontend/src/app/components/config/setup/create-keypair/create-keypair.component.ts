@@ -13,6 +13,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from 'src/app/components/config/services/config.service';
+import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 
 /**
  * Component allowing user to setup a cryptography key pair.
@@ -55,12 +56,14 @@ export class CreateKeypairComponent implements OnInit {
    * @param backendService Needed to retrieve the root URL for the current backend
    * @param feedbackService Needed to provide feedback to user
    * @param configService Configuration service used to generate server key pair
+   * @param cryptoService Needed to generate key pair
    * @param messageService Message service used to publish messages to other components.
    */
   public constructor(
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private configService: ConfigService,
+    private cryptoService: CryptoService,
     protected messageService: MessageService) {
   }
 
@@ -87,7 +90,7 @@ export class CreateKeypairComponent implements OnInit {
   public next() {
 
     // Invoking backend to generate a key pair.
-    this.configService.generateKeyPair(
+    this.cryptoService.generateKeyPair(
       +this.strength,
       this.seed,
       this.subject,

@@ -25,6 +25,7 @@ import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/impor
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
+import { AuthService } from '../../auth/services/auth.service';
 
 /*
  * Helper class to encapsulate all public keys and their CodeMirror vocabulary options.
@@ -103,6 +104,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param dialog Needed to create modal dialogs when importing public keys
    * @param clipboard Needed to be able to copy things into clipboard
    * @param logService Needed to log changes done to key collection
+   * @param authService Needed to verify access to components
    * @param cryptoService Needed to retrieve public keys from backend
    * @param messageService Needed to subscribe to relevant messages, such that server key pair has been created, etc
    * @param feedbackService Needed to be able to display feedback to user
@@ -111,6 +113,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private clipboard: Clipboard,
     private logService: LogService,
+    public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
     private feedbackService: FeedbackService) { }

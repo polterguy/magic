@@ -81,6 +81,9 @@ export class AccessModel {
     load: false,
     save: false,
   }
+  crypto: any = {
+    import_public_key: false,
+  }
 }
 
 /**
@@ -108,6 +111,7 @@ export class AuthService {
     diagnostics: {},
     sockets: {},
     config: {},
+    crypto: {},
   };
 
   /**
@@ -624,6 +628,13 @@ export class AuthService {
       config: {
         load: this.canInvoke('magic/modules/system/config/load-config', 'get'),
         save: this.canInvoke('magic/modules/system/config/save-config', 'post'),
+      },
+      crypto: {
+        import_public_key: this.canInvoke('magic/modules/system/crypto/import', 'post'),
+        generate_server_key: this.canInvoke('magic/modules/system/crypto/generate-keypair', 'post'),
+        crypto_invocations: this.canInvoke('magic/modules/magic/crypto_invocations', 'get'),
+        delete_public_key: this.canInvoke('magic/modules/magic/crypto_keys', 'delete'),
+        save_public_key: this.canInvoke('magic/modules/magic/crypto_keys', 'put'),
       }
     };
   }

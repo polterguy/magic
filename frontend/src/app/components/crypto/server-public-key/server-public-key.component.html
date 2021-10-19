@@ -1,7 +1,8 @@
 
 <button
-  *ngIf="isRoot()"
   mat-icon-button
+  [disabled]="!authService.access.crypto.generate_server_key"
+  matTooltip="Generate server key pair"
   class="create-button"
   (click)="create()">
   <mat-icon>add_box</mat-icon>

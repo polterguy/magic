@@ -41,7 +41,7 @@ export class ServerPublicKeyComponent implements OnInit {
    */
   constructor(
     private dialog: MatDialog,
-    private authService: AuthService,
+    public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
     private feedbackService: FeedbackService) { }

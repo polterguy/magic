@@ -1,6 +1,8 @@
 
 <button
   mat-icon-button
+  [disabled]="!authService.access.crypto.import_public_key"
+  matTooltip="Import public key"
   class="create-button"
   (click)="import()">
   <mat-icon>add_box</mat-icon>
@@ -44,6 +46,7 @@
     <td mat-cell class="mini-col button-col" *matCellDef="let el">
       <button
         mat-icon-button
+        [disabled]="!authService.access.crypto.delete_public_key"
         (click)="delete($event, el.key)">
         <mat-icon>delete</mat-icon>
       </button>
@@ -126,15 +129,21 @@
 
           <mat-checkbox
             class="crypto-enabled"
+            [disabled]="!authService.access.crypto.save_public_key"
+            matTooltip="Enables or disables public key"
             (change)="enabledChanged(el.key)"
             [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
 
           <button
             mat-raised-button
+            [disabled]="!authService.access.crypto.crypto_invocations"
+            matTooltip="Retrieve all receipts for invocations done with key"
             (click)="showReceipts(el.key)">Receipts</button>
 
           <button
             mat-raised-button
+            matTooltip="Saves changes to key"
+            [disabled]="!authService.access.crypto.save_public_key"
             color="primary"
             (click)="save(el)">Save</button>
 
