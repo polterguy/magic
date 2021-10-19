@@ -67,7 +67,7 @@ export class CryptoComponent {
    * @param feedbackService Needed to show user feedback
    */
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
     private feedbackService: FeedbackService) { }

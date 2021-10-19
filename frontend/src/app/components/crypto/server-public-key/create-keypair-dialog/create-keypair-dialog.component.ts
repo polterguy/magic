@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 // Application specific imports.
 import { Response } from 'src/app/models/response.model';
 import { KeyPair } from 'src/app/components/crypto/models/key-pair.model';
+import { CryptoService } from '../../services/crypto.service';
 import { ConfigService } from 'src/app/components/config/services/config.service';
 
 /**
@@ -60,10 +61,12 @@ export class CreateKeypairDialogComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param configService Needed to retrieve random gibberish seeding the CSRNG as we create new key pair
+   * @param cryptoService Needed to create private key pair
    * @param dialogRef Needed to be able to close self when key has been created
    */
   constructor(
     private configService: ConfigService,
+    private cryptoService: CryptoService,
     private dialogRef: MatDialogRef<CreateKeypairDialogComponent>) { }
 
   /**
@@ -87,7 +90,7 @@ export class CreateKeypairDialogComponent implements OnInit {
   public create() {
 
     // Invoking backend to generate key pair.
-    this.configService.generateKeyPair(
+    this.cryptoService.generateKeyPair(
       +this.strength,
       this.seed,
       this.subject,

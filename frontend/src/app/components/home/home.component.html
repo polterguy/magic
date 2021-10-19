@@ -110,6 +110,7 @@
     </button>
 
     <button
+      *ngIf="authService.access.crypto.import_public_key"
       mat-raised-button
       routerLink="/crypto"
       matTooltip="Administrate your cryptography keys">

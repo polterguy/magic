@@ -4,7 +4,8 @@
   <app-server-public-key></app-server-public-key>
 </mat-card>
 
-<mat-card *ngIf="isRoot()">
+<mat-card>
+
   <mat-tab-group #tab>
 
     <mat-tab label="Keys">
@@ -13,13 +14,14 @@
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="Receipts">
+    <mat-tab label="Receipts" [disabled]="!authService.access.crypto.crypto_invocations">
       <ng-template matTabContent>
         <app-crypto-invocations></app-crypto-invocations>
       </ng-template>
     </mat-tab>
 
   </mat-tab-group>
+
 </mat-card>
 
 <mat-card *ngIf="!isRoot() && showImport">
