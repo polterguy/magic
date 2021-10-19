@@ -628,6 +628,7 @@ export class AuthService {
       config: {
         load: this.canInvoke('magic/modules/system/config/load-config', 'get'),
         save: this.canInvoke('magic/modules/system/config/save-config', 'post'),
+        delete_cache_item: this.canInvoke('magic/modules/system/config/delete-cache-item', 'delete'),
       },
       crypto: {
         import_public_key: this.canInvoke('magic/modules/system/crypto/import', 'post'),
