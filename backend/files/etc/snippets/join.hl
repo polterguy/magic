@@ -1,0 +1,9 @@
+
+/*
+ * And example of waiting for multiple threads to finish parallel execution.
+ */
+join
+   fork
+      http.get:"https://gaiasoul.com"
+   fork
+      http.get:"https://servergardens.com"
