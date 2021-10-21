@@ -385,7 +385,6 @@ export class IdeComponent implements OnInit {
    * @param folder Tree node wrapping folder to open
    */
    public selectFolder(folder: any) {
-     this.treeControl.expand(folder);
      this.activeFolder = folder.node.path;
    }
 
