@@ -1,0 +1,34 @@
+
+/*
+ * Loads the specified file and returns to caller as text.
+ */
+.arguments
+   file:string
+.description:Loads the specified file and returns to caller as text
+
+/*
+ * Ensures user is authorized to access endpoint.
+ */
+auth.ticket.verify:root
+
+/*
+ * Sanity checking invocation.
+ */
+validators.mandatory:x:@.arguments/*/file
+
+/*
+ * Loading file and returning it, as text content to caller, making
+ * sure we return the correct Content-Type in the process.
+ */
+strings.split:x:@.arguments/*/file
+   .:/
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@strings.split/0/-
+   .:"\""
+response.headers.add
+   Content-Type:application/octet-stream
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+io.stream.open-file:x:@.arguments/*/file
+return:x:-
