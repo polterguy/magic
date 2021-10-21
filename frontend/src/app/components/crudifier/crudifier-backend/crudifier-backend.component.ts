@@ -18,16 +18,15 @@ import { SqlService } from '../../sql/services/sql.service';
 import { LogService } from '../../log/services/log.service';
 import { Databases } from '../../sql/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../config/services/config.service';
 import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { TransformModelService } from '../services/transform-model.service';
 import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
 import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
 import { CacheService } from '../../diagnostics/diagnostics-cache/services/cache.service';
 import { CrudifierSetDefaultsComponent } from './crudifier-set-defaults/crudifier-set-defaults.component';
-import { AuthService } from '../../auth/services/auth.service';
 
 /**
  * Crudifier component for crudifying database
@@ -283,6 +282,9 @@ export class CrudifierBackendComponent implements OnInit {
         // Showing user some feedback information.
         this.feedbackService.showInfo(`${formatNumber(loc, this.locale, '1.0')} lines of code generated`);
 
+        // Flushing endpoints' auth requirements and re-retrieving them again.
+        this.flushEndpointsAuthRequirements();
+
       }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => {
@@ -480,5 +482,24 @@ export class CrudifierBackendComponent implements OnInit {
       // Oops, showing user some feedback
       this.feedbackService.showError(error);}
     );
+  }
+
+  /*
+   * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
+   */
+  private flushEndpointsAuthRequirements() {
+
+    // Deleting auth cache and retrieving it again.
+    this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
+
+      // Reretriving endpoints.
+      this.authService.getEndpoints().subscribe(() => {
+
+        // Simply logging to console.
+        console.log('Endpoint auth requirements flushed and re-retrieved');
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }

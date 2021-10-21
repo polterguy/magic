@@ -19,6 +19,8 @@ import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/code
 // CodeMirror options.
 import hyperlambda from '../../../codemirror/options/hyperlambda.json';
 import { DatabaseEx } from '../../models/database-ex.model';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
+import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -89,6 +91,8 @@ export class CrudifierTableComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param logService Needed to be able to log LOC generated
+   * @param authService Needed to be able to re-retrieve auth endpoints once crudification is done
+   * @param cacheService Needed to be able to flush server side cache once crudification is done
    * @param crudifyService Needed to be able to actually crudify selected table
    * @param feedbackService Needed to display feedback to user
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
@@ -96,6 +100,8 @@ export class CrudifierTableComponent implements OnInit {
    */
   constructor(
     private logService: LogService,
+    public authService: AuthService,
+    private cacheService: CacheService,
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService,
     private loaderInterceptor: LoaderInterceptor,
@@ -248,13 +254,40 @@ export class CrudifierTableComponent implements OnInit {
       const loc = results.reduce((x,y) => x + y.loc, 0);
 
       // Logging items to backend, and once done, showing user some feedback information.
-      this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(
-        () => this.feedbackService.showInfo(`${loc} LOC generated`),
-        (error: any) => this.feedbackService.showError(error));
+      this.logService.createLocItem(loc, 'backend', `${this.database + '.' + this.table.name}`).subscribe(() => {
+
+        // Providing feedback to user.
+        this.feedbackService.showInfo(`${loc} LOC generated`);
+
+        // Flushing endpoints' auth requirements and re-retrieving them again.
+        this.flushEndpointsAuthRequirements();
+
+      }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => {
+
+      // Hiding interceptor (load gif) and providing feedback to user.
       this.loaderInterceptor.forceHide();
       this.feedbackService.showError(error);
     });
+  }
+
+  /*
+   * Will flush server side cache of endpoints (auth invocations) and re-retrieve these again.
+   */
+  private flushEndpointsAuthRequirements() {
+
+    // Deleting auth cache and retrieving it again.
+    this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
+
+      // Reretriving endpoints.
+      this.authService.getEndpoints().subscribe(() => {
+
+        // Simply logging to console.
+        console.log('Endpoint auth requirements flushed and re-retrieved');
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 }
