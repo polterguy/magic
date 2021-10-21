@@ -137,7 +137,7 @@ export class IdeComponent implements OnInit {
   /**
    * Invoked when files needs to be fetched from the server.
    */
-   public getFilesFromServer(folder: string = '/') {
+   public getFilesFromServer(folder: string = '/', onAfter: () => void = null) {
 
     // Common function object for adding folders and files to root graph object.
     const functor = (objects: string[], isFolder: boolean) => {
@@ -187,6 +187,11 @@ export class IdeComponent implements OnInit {
 
           // Re-databinding tree, hence databinding such that we keep expanded folders as such.
           this.dataBindTree();
+        }
+
+        // Checking if caller supplied an onAfter callback, and if so, invoking it.
+        if (onAfter) {
+          onAfter();
         }
 
       }, (error: any) => this.feedbackService.showError(error));
@@ -712,8 +717,8 @@ export class IdeComponent implements OnInit {
             } else if (exeResult.result.startsWith('folders-changed|')) {
 
               // Macro returned specific folder that we'll need to update, and hence we can update only that folder.
-              var folder = exeResult.result.split('|')[1];
-              this.updateFolder(folder);
+              var fileObject = exeResult.result.split('|')[1];
+              this.updateFolder(fileObject);
             }
 
           }, (error: any) => this.feedbackService.showError(error));
@@ -986,21 +991,53 @@ export class IdeComponent implements OnInit {
   /*
    * Updates the specified folder (only) and re-renders TreeView.
    */
-  private updateFolder(folder: string) {
+  private updateFolder(fileObject: string) {
+
+    // Figuring out folder to refresh, since fileObject might be a file or a folder.
+    var folder = fileObject;
+    var isFile = false;
+    if (!fileObject.endsWith('/')) {
+
+      // File object is a file.
+      folder = folder.substr(0, folder.lastIndexOf('/') + 1);
+      isFile = true;
+    }
 
     // Finding specified folder in data source.
     let parent = this.root;
-    let level = 1;
     const entities = folder.split('/').filter(x => x !== '');
     for (const idxPeek of entities.slice(0, entities.length)) {
       parent = parent.children.filter(x => x.name === idxPeek)[0];
-      level += 1;
     }
 
     // Clearing folder's children collection.
     parent.children = [];
 
     // Re-databinding specified folder by invoking server with folder as root object.
-    this.getFilesFromServer(folder);
+    this.getFilesFromServer(folder, isFile ? () => {
+
+      // Retrieving file's content from backend.
+      this.fileService.loadFile(fileObject).subscribe((content: string) => {
+
+        // Pushing specified file into files currently being edited object.
+        this.files.push({
+          name: fileObject.substr(fileObject.lastIndexOf('/') + 1),
+          path: fileObject,
+          folder: fileObject.substr(0, fileObject.lastIndexOf('/') + 1),
+          content: content,
+          options: this.getCodeMirrorOptions(fileObject),
+        });
+        this.activeFile = fileObject;
+        setTimeout(() => {
+          var activeWrapper = document.querySelector('.active-codemirror-editor');
+          var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
+          editor.doc.markClean();
+        }, 1);
+
+        // Making sure we re-check component for changes to avoid CDR errors.
+        this.cdRef.detectChanges();
+
+      });
+    }: null);
   }
 }
