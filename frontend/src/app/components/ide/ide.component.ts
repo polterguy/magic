@@ -137,7 +137,7 @@ export class IdeComponent implements OnInit {
   /**
    * Invoked when files needs to be fetched from the server.
    */
-   public getFilesFromServer() {
+   public getFilesFromServer(folder: string = '/') {
 
     // Common function object for adding folders and files to root graph object.
     const functor = (objects: string[], isFolder: boolean) => {
@@ -166,19 +166,28 @@ export class IdeComponent implements OnInit {
     };
 
     // Retrieving files from backend.
-    this.fileService.listFoldersRecursively('/').subscribe((folders: string[]) => {
+    this.fileService.listFoldersRecursively(folder).subscribe((folders: string[]) => {
 
       // Adding folder to root graph object.
-      functor(folders, true);
+      functor(folders || [], true);
 
       // Retrieving all files from backend.
-      this.fileService.listFilesRecursively('/').subscribe((files: string[]) => {
+      this.fileService.listFilesRecursively(folder).subscribe((files: string[]) => {
         
         // Adding files to root graph object.
-        functor(files, false);
+        functor(files || [], false);
 
         // Databinding tree control initially.
-        this.dataSource.data = this.root.children;
+        if (folder === '/') {
+
+          // Initial databinding of tree.
+          this.dataSource.data = this.root.children;
+
+        } else {
+
+          // Re-databinding tree, hence databinding such that we keep expanded folders as such.
+          this.dataBindTree();
+        }
 
       }, (error: any) => this.feedbackService.showError(error));
 
@@ -700,6 +709,11 @@ export class IdeComponent implements OnInit {
                   this.root.children = [];
                   this.getFilesFromServer();
               });
+            } else if (exeResult.result.startsWith('folders-changed|')) {
+
+              // Macro returned specific folder that we'll need to update, and hence we can update only that folder.
+              var folder = exeResult.result.split('|')[1];
+              this.updateFolder(folder);
             }
 
           }, (error: any) => this.feedbackService.showError(error));
@@ -967,5 +981,26 @@ export class IdeComponent implements OnInit {
         }
       }
     }, 1);
+  }
+
+  /*
+   * Updates the specified folder (only) and re-renders TreeView.
+   */
+  private updateFolder(folder: string) {
+
+    // Finding specified folder in data source.
+    let parent = this.root;
+    let level = 1;
+    const entities = folder.split('/').filter(x => x !== '');
+    for (const idxPeek of entities.slice(0, entities.length)) {
+      parent = parent.children.filter(x => x.name === idxPeek)[0];
+      level += 1;
+    }
+
+    // Clearing folder's children collection.
+    parent.children = [];
+
+    // Re-databinding specified folder by invoking server with folder as root object.
+    this.getFilesFromServer(folder);
   }
 }
