@@ -105,9 +105,30 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string>(
-      '/api/files?file=' +
+      '/magic/modules/system/file-system/file?file=' +
       encodeURIComponent(filename),
       requestOptions);
+  }
+
+  /**
+   * Saves the specified file with the given filename.
+   * 
+   * @param filename Filename to save file as
+   * @param content Content of file
+   */
+   public saveFile(filename: string, content: string) {
+
+    // Passing in file as form data.
+    const folder = filename.substr(0, filename.lastIndexOf('/') + 1);
+    const formData: FormData = new FormData();
+    const blob = new Blob([content], { type: 'text/plain'});
+    formData.append('file', blob, filename.substr(filename.lastIndexOf('/') + 1));
+
+    return this.httpService.put<any>(
+      '/magic/modules/system/file-system/file?folder=' +
+      encodeURI(folder),
+      formData
+    );
   }
 
   /**
@@ -127,26 +148,6 @@ export class FileService {
   }
 
   /**
-   * Saves the specified file with the given filename.
-   * 
-   * @param filename Filename to save file as
-   * @param content Content of file
-   */
-  public saveFile(filename: string, content: string) {
-
-    // Passing in file as form data.
-    const folder = filename.substr(0, filename.lastIndexOf('/') + 1);
-    const formData: FormData = new FormData();
-    const blob = new Blob([content], { type: 'text/plain'});
-    formData.append('file', blob, filename.substr(filename.lastIndexOf('/') + 1));
-
-    return this.httpService.put<any>(
-      '/api/files?folder=' + encodeURI(folder),
-      formData
-    );
-  }
-
-  /**
    * Deletes an existing file on the server.
    * 
    * @param file Path of file to delete
@@ -157,6 +158,44 @@ export class FileService {
     return this.httpService.delete<Response>(
       '/magic/modules/system/file-system/file?file=' +
       encodeURIComponent(file));
+  }
+
+  /**
+   * Downloads a file from backend.
+   * 
+   * @param path File to download
+   */
+   public downloadFile(path: string) {
+
+    // Invoking backend to download file and opening up save-as dialog.
+    this.httpService.download(
+      '/magic/modules/system/file-system/file?file=' +
+      encodeURI(path)).subscribe(res => {
+
+        // Retrieving the filename, as provided by the server.
+        const disp = res.headers.get('Content-Disposition');
+        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+        const file = new Blob([res.body]);
+        saveAs(file, filename);
+      });
+  }
+
+  /**
+   * Uploads a file to your backend.
+   * 
+   * @param path Folder to upload file to
+   * @param file File you want to upload
+   */
+   public uploadFile(path: string, file: any) {
+
+    // Invoking backend with a form data object containing file.
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.httpService.put<any>(
+      '/magic/modules/system/file-system/file?folder=' +
+      encodeURI(path),
+      formData
+    );
   }
 
   /**
@@ -199,26 +238,6 @@ export class FileService {
   }
 
   /**
-   * Downloads a file from backend.
-   * 
-   * @param path File to download
-   */
-  public downloadFile(path: string) {
-
-    // Invoking backend to download file and opening up save-as dialog.
-    this.httpService.download(
-      '/api/files?file=' +
-      encodeURI(path)).subscribe(res => {
-
-        // Retrieving the filename, as provided by the server.
-        const disp = res.headers.get('Content-Disposition');
-        let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-        const file = new Blob([res.body]);
-        saveAs(file, filename);
-      });
-  }
-
-  /**
    * Downloads a file to your backend from an external URL.
    * 
    * @param folder Folder on server where user wants to save the file
@@ -252,23 +271,6 @@ export class FileService {
         const file = new Blob([res.body], { type: 'application/zip' });
         saveAs(file, filename);
       });
-  }
-
-  /**
-   * Uploads a file to your backend.
-   * 
-   * @param path Folder to upload file to
-   * @param file File you want to upload
-   */
-  public uploadFile(path: string, file: any) {
-
-    // Invoking backend with a form data object containing file.
-    const formData: FormData = new FormData();
-    formData.append('file', file);
-    return this.httpService.put<any>(
-      '/api/files?folder=' + encodeURI(path),
-      formData
-    );
   }
 
   /**
