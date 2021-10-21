@@ -55,7 +55,7 @@
     */
    strings.concat
       get-value:x:@.module-path
-      .:/ENDPOINTS.md
+      .:ENDPOINTS.md
    if
       io.file.exists:x:@strings.concat
       .lambda
@@ -231,4 +231,4 @@ and automatically generating documentation for individual endpoints.
    set-value:x:@.lambda
       strings.concat
          .:folders-changed|
-         get-value:x:@.module-path
+         get-value:x:@strings.concat/@strings.concat
