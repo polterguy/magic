@@ -1,6 +1,7 @@
 
 /*
- * And example of waiting for multiple threads to finish parallel execution.
+ * And example of waiting for multiple threads to
+ * finish parallel execution.
  */
 join
    fork
