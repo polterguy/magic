@@ -147,6 +147,7 @@ semaphore:crudifier
     */
    io.file.load:x:@.arguments/*/template
    hyper2lambda:x:-
+      comments:bool:true
    unwrap:x:+/*
    apply:x:@hyper2lambda
       database-type:x:@.arguments/*/databaseType
@@ -977,6 +978,7 @@ semaphore:crudifier
     * we give the filename the correct HTTP verb, extension, etc.
     */
    lambda2hyper:x:@apply/*
+      comments:bool:true
    unwrap:x:+
    .path:x:@.folder
    strings.split:x:@.filename
@@ -1077,6 +1079,7 @@ semaphore:crudifier
             .
                return-nodes:x:@data.read/*/*
          lambda2hyper:x:@apply/*
+            comments:bool:true
          unwrap:x:+
          .path:x:@.folder
          strings.split:x:@.filename

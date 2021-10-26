@@ -1,22 +1,18 @@
 
 /*
  * Template for HTTP PUT CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
  */
 .arguments
 .description:Updates an existing item in your {table} table in your {database} database according to the specified arguments
 .type:crud-update
 .foreign-keys
 
-
-/*
- * Opening up our database connection.
- */
+// Opening up our database connection.
 data.connect:{database}
    database-type:{database-type}
 
-   /*
-    * Invoking our update slot.
-    */
+   // Invoking our update slot.
    data.update
       database-type:{database-type}
       table:{table}
@@ -24,9 +20,7 @@ data.connect:{database}
       where
          and
 
-   /*
-    * Verifying record exists.
-    */
+   // Verifying record exists.
    if
       eq
          get-value:x:@data.update
@@ -36,9 +30,7 @@ data.connect:{database}
          return
             result:Record not found
 
-   /*
-    * Returning success to caller.
-    */
+   // Returning success to caller.
    response.status.set:202
    unwrap:x:+/*
    return

@@ -1,37 +1,29 @@
 
 /*
  * Template for HTTP POST CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
  */
 .arguments
 .description:Creates an item in your {table} table in your {database} database according to the specified arguments
 .type:crud-create
 .foreign-keys
 
-
-/*
- * Opening up database connection.
- */
+// Opening up database connection.
 data.connect:{database}
    database-type:{database-type}
 
-   /*
-    * Parametrising our create invocation.
-    */
+   // Parametrising our create invocation.
    add:x:./*/data.create/*/values
       get-nodes:x:@.arguments/*
 
-   /*
-    * Creating our record.
-    */
+   // Creating our record.
    data.create
       database-type:{database-type}
       table:{table}
       return-id:{return-id}
       values
 
-   /*
-    * Returning result of bove invoction to caller.
-    */
+   // Returning result of bove invoction to caller.
    response.status.set:201
    unwrap:x:+/*
    return

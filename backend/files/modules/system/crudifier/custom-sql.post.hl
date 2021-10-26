@@ -47,6 +47,7 @@ auth.ticket.verify:root
  */
 io.file.load:/modules/system/crudifier/templates/sql.template.hl
 hyper2lambda:x:-
+   comments:bool:true
 unwrap:x:+/*
 apply:x:@hyper2lambda
    database-type:x:@.arguments/*/databaseType
@@ -120,6 +121,7 @@ io.folder.create:x:@.folder
  * Transforming above lambda to Hyperlambda, and figuring out filename.
  */
 lambda2hyper:x:@apply/*
+   comments:bool:true
 unwrap:x:+
 .filename:x:@.folder
 set-value:x:@.filename

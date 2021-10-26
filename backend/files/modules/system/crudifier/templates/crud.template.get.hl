@@ -1,6 +1,7 @@
 
 /*
  * Template for HTTP GET CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
  */
 .arguments
    limit:long
@@ -12,14 +13,10 @@
 .type:crud-read
 .foreign-keys
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.enum:x:@.arguments/*/operator
    .:or
    .:and
-
 
 /*
  * Checking if user supplied an operator, and if so,
@@ -29,22 +26,16 @@ if
    exists:x:@.arguments/*/operator
    .lambda
 
-      /*
-       * User provided a boolean comparison operator.
-       */
+      // User provided a boolean comparison operator.
       set-name:x:../*/data.connect/*/data.read/*/where/*
          get-value:x:@.arguments/*/operator
 
 
-/*
- * Opening up our database connection.
- */
+// Opening up our database connection.
 data.connect:{database}
    database-type:{database-type}
 
-   /*
-    * Parametrising our read invocation.
-    */
+   // Parametrising our read invocation.
    add:x:./*/data.read
       get-nodes:x:@.arguments/*/limit
       get-nodes:x:@.arguments/*/offset
@@ -58,9 +49,7 @@ data.connect:{database}
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 
-   /*
-    * Reading data from database.
-    */
+   // Reading data from database.
    data.read
       database-type:{database-type}
       table:{table}
@@ -68,7 +57,5 @@ data.connect:{database}
       where
          and
 
-   /*
-    * Returning result of above read invocation to caller.
-    */
+   // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

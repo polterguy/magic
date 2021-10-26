@@ -1,30 +1,22 @@
 
 /*
  * Template for custom SQL HTTP request.
- *
- * Expects {database} and {sql} [apply] arguments.
+ * This file was automatically generated using Magic's CRUDifier.
  */
 .arguments
 .type:sql
 
 
-/*
- * Opening up a database connection
- */
+// Opening up a database connection
 data.connect:{database}
    database-type:{database-type}
 
-
-   /*
-    * Parametrizing [xxx.select].
-    */
+   // Parametrizing [xxx.select].
    add:x:+
       get-nodes:x:@.arguments/*
 
 
-   /*
-    * Evaluating [xxx.select] slot.
-    */
+   // Evaluating [xxx.select] slot.
    data.select:{sql}
       database-type:{database-type}
 
@@ -43,7 +35,5 @@ data.connect:{database}
          return-nodes:x:@data.select/*
 
 
-   /*
-    * Returning a single result to caller.
-    */
+   // Returning a single result to caller.
    return-nodes:x:@data.select/*/*
