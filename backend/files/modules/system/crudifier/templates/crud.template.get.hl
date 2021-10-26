@@ -19,17 +19,16 @@ validators.enum:x:@.arguments/*/operator
    .:and
 
 /*
- * Checking if user supplied an operator, and if so,
+ * Checking if user supplied an [operator] argument, and if so
  * changing the boolean operator for comparison operations.
  */
 if
    exists:x:@.arguments/*/operator
    .lambda
 
-      // User provided a boolean comparison operator.
+      // User provided a boolean comparison [operator] argument.
       set-name:x:../*/data.connect/*/data.read/*/where/*
          get-value:x:@.arguments/*/operator
-
 
 // Opening up our database connection.
 data.connect:{database}

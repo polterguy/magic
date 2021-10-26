@@ -225,6 +225,7 @@ semaphore:crudifier
                 */
                insert-after:x:@apply/*/.type
                   .
+                     ..:Verifying user is authorized to access endpoint.
                      auth.ticket.verify
 
          else
@@ -232,9 +233,10 @@ semaphore:crudifier
             /*
              * Comma separated list of roles specified.
              */
-            unwrap:x:+/*/*
+            unwrap:x:+/*/*/auth.ticket.verify
             insert-after:x:@apply/*/.type
                .
+                  ..:Verifying user is authorized to access endpoint.
                   auth.ticket.verify:x:@.arguments/*/auth
 
    /*
@@ -271,18 +273,27 @@ semaphore:crudifier
           *
           * This basically ensures that all primary keys becomes mandatory arguments.
           */
+         .first:bool:true
          add:x:@apply/*/.arguments
             get-nodes:x:@.arguments/*/args/*/primary/*/*
          for-each:x:@.arguments/*/args/*/primary/*/*
+            if
+               get-value:x:@.first
+               .lambda
+                  set-value:x:@.first
+                     .:bool:false
+                  insert-before:x:@apply/*/data.connect/-
+                     .
+                        ..:Sanity checking invocation, making sure primary key(s) are specified.
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
                   get-value:x:@.x
                   get-name:x:@.dp/#
-            set-x:x:+/*/*
+            set-x:x:+/*/*/validators.mandatory
                convert:x:@.x
                   type:x
-            insert-after:x:@apply/*/.type
+            insert-before:x:@apply/*/data.connect/-
                .
                   validators.mandatory
 
@@ -676,7 +687,16 @@ semaphore:crudifier
             add:x:@apply/*/.arguments
                .
                   .
+         .first:bool:true
          for-each:x:@.arguments/*/args/*/primary/*
+            if
+               get-value:x:@.first
+               .lambda
+                  set-value:x:@.first
+                     .:bool:false
+                  insert-after:x:@apply/*/.type
+                     .
+                        ..:Sanity checking invocation, making sure primary key(s) are specified.
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
@@ -685,7 +705,7 @@ semaphore:crudifier
             set-x:x:+/*/*
                convert:x:@.x
                   type:x
-            insert-after:x:@apply/*/.type
+            insert-after:x:@apply/*/.type/+
                .
                   validators.mandatory
 
@@ -718,6 +738,7 @@ semaphore:crudifier
                type:x
          insert-before:x:@apply/**/table/././1
             .
+               ..:Parametrising our update invocation.
                add:x:./*/data.update/*/where/*/and
                   get-nodes
 
@@ -736,7 +757,7 @@ semaphore:crudifier
          set-x:x:+/*/*/*
             convert:x:@.x
                type:x
-         insert-before:x:@apply/**/table/././1
+         insert-before:x:@apply/**/table/././2
             .
                add:x:./*/data.update/*/values
                   get-nodes
@@ -1068,14 +1089,14 @@ semaphore:crudifier
          add:x:@apply/**/table/.
             .
                limit:long:1
-         insert-before:x:@apply/**/table/.
+         insert-before:x:@apply/**/table/./-
             .
-               add:x:+/+/+
+               add:x:./*/data.read
                   get-nodes:x:@.arguments/*/operator
                remove-nodes:x:@.arguments/*/operator
                add:x:+/*/where/*
                   get-nodes:x:@.arguments/*
-         insert-after:x:@apply/**/table/.
+         insert-after:x:@apply/**/table/./+
             .
                return-nodes:x:@data.read/*/*
          lambda2hyper:x:@apply/*

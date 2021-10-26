@@ -7,23 +7,22 @@
 .description:Deletes one item from your {table} table in your {database} database matching the specified argument(s)
 .type:crud-delete
 
-
-/*
- * Invoking delete, making sure we add any [where] conditions.
- */
+// Opening up our database connection.
 data.connect:{database}
    database-type:{database-type}
+
+   // Parametrising our delete invocation.
    add:x:./*/data.delete/*/where/*/and
       get-nodes:x:@.arguments/*
+
+   // Deleting item from database.
    data.delete
       database-type:{database-type}
       table:{table}
       where
          and
 
-   /*
-    * Returning result of bove invocation to caller.
-    */
+   // Returning result of above invocation to caller.
    unwrap:x:+/*
    return
       affected:x:@data.delete

@@ -132,7 +132,7 @@
           }
        ]
     },
-    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79\r\nvalidators.mandatory:x:@.arguments/*/email\r\nvalidators.mandatory:x:@.arguments/*/domain\r\nvalidators.mandatory:x:@.arguments/*/type\r\nvalidators.mandatory:x:@.arguments/*/fingerprint\r\nvalidators.mandatory:x:@.arguments/*/content"
+    "validators":"..:\"Sanity checking invocation\"\r\nvalidators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79\r\nvalidators.mandatory:x:@.arguments/*/email\r\nvalidators.mandatory:x:@.arguments/*/domain\r\nvalidators.mandatory:x:@.arguments/*/type\r\nvalidators.mandatory:x:@.arguments/*/fingerprint\r\nvalidators.mandatory:x:@.arguments/*/content"
   },
   {
     "overwrite": true,
@@ -303,7 +303,7 @@
          }
        ]
     },
-    "validators":"validators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79"
+    "validators":"..:\"Sanity checking invocation\"\r\nvalidators.email:x:@.arguments/*/email\r\nvalidators.url:x:@.arguments/*/domain\r\nvalidators.enum:x:@.arguments/*/type\r\n   .:RSA\r\nvalidators.string:x:@.arguments/*/fingerprint\r\n   min:int:79\r\n   max:int:79"
   },
   {
     "overwrite": true,
@@ -345,7 +345,7 @@
           }
        ]
     },
-    "validators": "validators.regex:x:@.arguments/*/name\r\n   regex:^[A-Za-z0-9\\-_]*$"
+    "validators": "..:\"Sanity checking invocation\"\r\nvalidators.regex:x:@.arguments/*/name\r\n   regex:^[A-Za-z0-9\\-_]*$"
   },
   {
     "overwrite": true,
@@ -450,7 +450,7 @@
           }
       ]
     },
-    "validators": "validators.mandatory:x:@.arguments/*/username\r\nvalidators.mandatory:x:@.arguments/*/password\r\neval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
+    "validators": "..:\"Sanity checking invocation\"\r\nvalidators.mandatory:x:@.arguments/*/username\r\nvalidators.mandatory:x:@.arguments/*/password\r\neval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
   },
   {
     "overwrite": true,
@@ -530,7 +530,7 @@
           }
        ]
     },
-    "validators": "validators.mandatory:x:@.arguments/*/username\r\neval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
+    "validators": "..:\"Sanity checking invocation\"\r\nvalidators.mandatory:x:@.arguments/*/username\r\neval:x:+\r\nsignal:transformers.hash-password\r\n   reference:x:@.arguments/*/password"
   },
   {
     "overwrite": true,
