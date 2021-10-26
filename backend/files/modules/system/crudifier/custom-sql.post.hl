@@ -100,8 +100,9 @@ if
        * Adding authorization to endpoint's lambda.
        */
       unwrap:x:+/*/*
-      insert-after:x:@apply/*/.arguments
+      insert-after:x:@apply/*/.arguments/+
          .
+            ..:Making sure user is authorized to invoke endpoint.
             auth.ticket.verify:x:@.arguments/*/authorization
 
 
