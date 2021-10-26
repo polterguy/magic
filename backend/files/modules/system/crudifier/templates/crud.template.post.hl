@@ -23,7 +23,7 @@ data.connect:{database}
       return-id:{return-id}
       values
 
-   // Returning result of bove invoction to caller.
+   // Returning result of above invoction to caller.
    response.status.set:201
    unwrap:x:+/*
    return
