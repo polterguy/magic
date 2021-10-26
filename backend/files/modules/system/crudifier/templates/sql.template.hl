@@ -11,8 +11,8 @@
 data.connect:{database}
    database-type:{database-type}
 
-   // Parametrizing [xxx.select].
-   add:x:+
+   // Parametrizing [data.select].
+   add:x:./*/data.select
       get-nodes:x:@.arguments/*
 
 
