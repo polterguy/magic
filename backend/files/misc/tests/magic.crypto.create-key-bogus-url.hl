@@ -1,7 +1,5 @@
 
-/*
- * Automatically generated assumption test.
- */
+// Automatically generated assumption test.
 verb:post
 url:/magic/modules/magic/crypto_keys
 status:int:400

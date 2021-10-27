@@ -6,9 +6,7 @@
 description:Assumes that we can authenticate using our private key and a crypto challenge.
 .lambda
 
-   /*
-    * Common URL for all invocations.
-    */
+   // Common URL for all invocations.
    .url
    set-value:x:@.url
       strings.concat
@@ -17,43 +15,28 @@ description:Assumes that we can authenticate using our private key and a crypto 
          request.host
          .:/magic/modules/system/crypto/challenge
 
-   /*
-    * Invoking server to retrieve a cryptography challenge.
-    */
+   // Invoking server to retrieve a cryptography challenge.
    http.get:x:@.url
 
-
-   /*
-    * Loading public key needed to supply fingerprint to signing process.
-    */
+   // Loading public key needed to supply fingerprint to signing process.
    io.file.load:/etc/system/crypto/keys/public.key
    crypto.fingerprint:x:-
 
-
-   /*
-    * Loading private key needed to cryptographically sign challenge.
-    */
+   // Loading private key needed to cryptographically sign challenge.
    io.file.load:/etc/system/crypto/keys/private.key
 
-
-   /*
-    * Cryptographically signing challenge.
-    */
+   // Cryptographically signing challenge.
    json2lambda:x:@http.get/*/content
    crypto.sign:x:@json2lambda/*/result
       signing-key:x:@io.file.load
       signing-key-fingerprint:x:@crypto.fingerprint
 
-
-   /*
-    * Posting cryptographically signed challenge to server.
-    */
+   // Posting cryptographically signed challenge to server.
    unwrap:x:+/*
    lambda2json
       challenge:x:@crypto.sign
    http.post:x:@.url
       payload:x:@lambda2json
-
 
    /*
     * Retrieving JWT token from result returned from server,
@@ -70,12 +53,9 @@ description:Assumes that we can authenticate using our private key and a crypto 
          .:/magic/modules/system/evaluator/evaluate
    http.post:x:@.url
       token:x:@json2lambda/*/result
-      payload:@"{""hyperlambda"":""auth.ticket.verify:root""}"
+      payload:"{\"hyperlambda\":\"auth.ticket.verify:root\"}"
 
-
-   /*
-    * Verifying invocation succeeded.
-    */
+   // Verifying invocation succeeded.
    if
       not
          eq

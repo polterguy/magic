@@ -2,7 +2,7 @@
 /*
  * HTTP GET database endpoint, providing a template endpoint
  * for retrieving records from your database.
- *
+ * 
  * Exchange 'foo_bar', 'table1', 'column1', and 'column2' with
  * your database name, table, and column names.
  */
@@ -23,9 +23,7 @@
 .description:HTTP GET database endpoint, providing a template endpoint for retrieving records from your database
 .type:crud-read
 
-/*
- * Verifying user is authorised to access endpoint.
- */
+// Verifying user is authorised to access endpoint.
 auth.ticket.verify:root
 
 /*
@@ -46,9 +44,7 @@ if
       set-name:x:../*/data.connect/*/data.read/*/where/*
          get-value:x:@.arguments/*/operator
 
-/*
- * Opening up our database connection.
- */
+// Opening up our database connection.
 data.connect:[generic|foo_bar]
 
    /*
@@ -67,15 +63,11 @@ data.connect:[generic|foo_bar]
    remove-nodes:x:@.arguments/*/order
    remove-nodes:x:@.arguments/*/direction
 
-   /*
-    * Adding filtering criteria into [data.read] invocation.
-    */
+   // Adding filtering criteria into [data.read] invocation.
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 
-   /*
-    * Invoking [data.read] now parametrised.
-    */
+   // Invoking [data.read] now parametrised.
    data.read
       table:table1
       columns
@@ -84,7 +76,5 @@ data.connect:[generic|foo_bar]
       where
          and
 
-   /*
-    * Returning result of above invocation to caller.
-    */
+   // Returning result of above invocation to caller.
    return-nodes:x:@data.read/*

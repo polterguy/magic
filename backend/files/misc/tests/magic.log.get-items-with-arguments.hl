@@ -1,7 +1,5 @@
 
-/*
- * Automatically generated assumption test.
- */
+// Automatically generated assumption test.
 verb:get
 url:/magic/modules/system/log/log-items?query=Trying%20to%20authenticate%25&limit=5&offset=2
 status:int:200

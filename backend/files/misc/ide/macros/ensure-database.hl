@@ -1,7 +1,5 @@
 
-/*
- * Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module that automatically creates your database if it does not exist from before.
- */
+// Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module that automatically creates your database if it does not exist from before.
 .name:"Ensures your module's database exists"
 .description:"Macro for Hyper IDE that creates a 'magic.startup' folder for you within your module's main folder that automatically creates your database if it does not exist from before. Notice, this macro requires that you supply at least one of a MySQL database create script or an MS SQL database create script, or preferably both if you can."
 .arguments
@@ -18,29 +16,23 @@
    .
       name:mssql
       type:multi_string
-      description:"Microsoft SQL server create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied."
+      description:Microsoft SQL server create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied.
       mandatory:bool:false
    .
       name:mysql
       type:multi_string
-      description:"MySQL create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied."
+      description:MySQL create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied.
       mandatory:bool:false
 
-/*
- * Lambda object executed as macro is actually executed.
- */
+// Lambda object executed as macro is actually executed.
 .lambda
 
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/module
    validators.regex:x:@.arguments/*/module
       regex:^[a-zA-Z0-9_-]+$
 
-   /*
-    * Figuring out module's complete path.
-    */
+   // Figuring out module's complete path.
    .module-path
    set-value:x:@.module-path
       strings.concat
@@ -48,9 +40,7 @@
          get-value:x:@.arguments/*/module
          .:/
 
-   /*
-    * Making sure that module exists.
-    */
+   // Making sure that module exists.
    if
       not
          io.folder.exists:x:@.module-path
@@ -65,9 +55,7 @@
             public:bool:true
             status:int:404
 
-   /*
-    * Making sure that at least one of [mysql] or [mssql] arguments was given.
-    */
+   // Making sure that at least one of [mysql] or [mssql] arguments was given.
    if
       and
          not
@@ -81,9 +69,7 @@
             public:bool:true
             status:int:404
 
-   /*
-    * Copying main 'magic.startup' template folder from misc folder.
-    */
+   // Copying main 'magic.startup' template folder from misc folder.
    strings.concat
       get-value:x:@.module-path
       .:/magic.startup/
@@ -93,7 +79,7 @@
    /*
     * Opening 'create-database.hl' file such that we can correctly decorate it
     * according to arguments specified by caller.
-    *
+    * 
     * First loading file and transforming to lambda.
     */
    strings.concat
@@ -102,18 +88,14 @@
    io.file.load:x:@strings.concat
    hyper2lambda:x:@io.file.load
 
-   /*
-    * Adding module's name into file.
-    */
+   // Adding module's name into file.
    unwrap:x:+/*/*
    add:x:@hyper2lambda/*/signal
       .
          module:x:@.arguments/*/module
          database:x:@.arguments/*/module
 
-   /*
-    * Then transforming file to Hyperlambda and saving it again.
-    */
+   // Then transforming file to Hyperlambda and saving it again.
    lambda2hyper:x:@hyper2lambda/*
    io.file.save:x:@strings.concat
       get-value:x:@lambda2hyper
@@ -126,9 +108,7 @@
       exists:x:@.arguments/*/mssql
       .lambda
 
-         /*
-          * Creating our 'module.mssql.sql' file.
-          */
+         // Creating our 'module.mssql.sql' file.
          strings.concat
             get-value:x:@.module-path
             .:/magic.startup/
@@ -145,9 +125,7 @@
       exists:x:@.arguments/*/mysql
       .lambda
 
-         /*
-          * Creating our 'module.mysql.sql' file.
-          */
+         // Creating our 'module.mysql.sql' file.
          strings.concat
             get-value:x:@.module-path
             .:/magic.startup/
@@ -156,8 +134,6 @@
          io.file.save:x:@strings.concat
             get-value:x:@.arguments/*/mysql
 
-   /*
-    * Making sure we inform caller that he needs to refresh his folders.
-    */
+   // Making sure we inform caller that he needs to refresh his folders.
    set-value:x:@.lambda
       .:folders-changed

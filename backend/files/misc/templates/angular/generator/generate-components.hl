@@ -2,18 +2,15 @@
 /*
  * Internal helper file that creates our components according to
  * which endpoints we have at our disposal.
- *
+ * 
  * The file will perform substitutions according to a [[xx]] pattern,
  * substituting values in our component templates, return a list of
  * substituted specialized template files, depending upon which arguments
  * you supply.
- *
+ * 
  * The file expects [root-folder] argument being the root folder for the
  * generator template currently being used.
  */
-
-
-
 
 /*
  * This is our buffer element, and will contain all component
@@ -21,9 +18,6 @@
  * of the file.
  */
 .components
-
-
-
 
 /*
  * Loading form control file, that contains the declaration
@@ -36,9 +30,6 @@ strings.concat
 set-value:x:@.form-control-file
    io.file.load:x:@strings.concat
 
-
-
-
 /*
  * Loading column file, that contains the HTML markup for a single
  * column, including its specialized versions for specific types.
@@ -48,38 +39,31 @@ set-value:x:@.form-control-file
    date
    bool
    lookup
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.html
 set-value:x:@.column-file
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.long.html
 set-value:x:@.column-file/*/long
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.date.html
 set-value:x:@.column-file/*/date
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.bool.html
 set-value:x:@.column-file/*/bool
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/column/column.lookup.html
 set-value:x:@.column-file/*/lookup
    io.file.load:x:@strings.concat
-
-
 
 /*
  * Loading view details file, that contains the declaration
@@ -90,33 +74,26 @@ set-value:x:@.column-file/*/lookup
    date
    bool
    lookup
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.html
 set-value:x:@.view-details-file
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.date.html
 set-value:x:@.view-details-file/*/date
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.bool.html
 set-value:x:@.view-details-file/*/bool
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/view-details/view-details.lookup.html
 set-value:x:@.view-details-file/*/lookup
    io.file.load:x:@strings.concat
-
-
-
 
 /*
  * Loading form field file, that contains the input necessary to
@@ -129,51 +106,41 @@ set-value:x:@.view-details-file/*/lookup
    decimal
    selector
    autocomplete
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.html
 set-value:x:@.form-field-file
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.long.html
 set-value:x:@.form-field-file/*/long
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.decimal.html
 set-value:x:@.form-field-file/*/decimal
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.bool.html
 set-value:x:@.form-field-file/*/bool
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.date.html
 set-value:x:@.form-field-file/*/date
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.selector.html
 set-value:x:@.form-field-file/*/selector
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-field/form-field.autocomplete.html
 set-value:x:@.form-field-file/*/autocomplete
    io.file.load:x:@strings.concat
-
-
-
 
 /*
  * Loading form control instantiations file, that instantiates
@@ -181,27 +148,19 @@ set-value:x:@.form-field-file/*/autocomplete
  */
 .form-control-instantiation-file
    string
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-control-instantiations/form-control-instantiations.ts
 set-value:x:@.form-control-instantiation-file
    io.file.load:x:@strings.concat
-
 strings.concat
    get-value:x:@.arguments/*/root-folder
    .:templates/form-control-instantiations/form-control-instantiations.string.ts
 set-value:x:@.form-control-instantiation-file/*/string
    io.file.load:x:@strings.concat
 
-
-
-
-/*
- * Iterating through each CRUD method given.
- */
+// Iterating through each CRUD method given.
 for-each:x:@.arguments/*/.crud-methods/*
-
 
    /*
     * Verifying CRUD endpoint have GET CRUD endpoint, otherwise
@@ -210,7 +169,6 @@ for-each:x:@.arguments/*/.crud-methods/*
    if
       exists:x:@.dp/#/*/verbs/*/get
       .lambda
-
 
          /*
           * Currently iterated endpoint can handle the GET verb, hence
@@ -234,6 +192,7 @@ for-each:x:@.arguments/*/.crud-methods/*
             update-input:
 
             // How many columns our table contains.
+
             // Notice, it always has at least one column, its delete-item column.
             container-count:int:1
 
@@ -255,13 +214,9 @@ for-each:x:@.arguments/*/.crud-methods/*
             // Instantiations for each above form field.
             form-controls-instantiations
 
-
-         /*
-          * Setting the URL for our endpoint.
-          */
+         // Setting the URL for our endpoint.
          set-value:x:@.substitutions/*/endpoint-url
             get-value:x:@.dp/#/*/url
-
 
          /*
           * Figuring out input to our DELETE method, which happens to
@@ -283,10 +238,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                   .:": el."
                   get-value:x:@.dp/#/*/name
 
-
-         /*
-          * Trimming away additional ',' and ' ' characters.
-          */
+         // Trimming away additional ',' and ' ' characters.
          set-value:x:@.substitutions/*/delete-input
             strings.trim:x:@.substitutions/*/delete-input
                .:", "
@@ -294,53 +246,46 @@ for-each:x:@.arguments/*/.crud-methods/*
             strings.trim:x:@.substitutions/*/primary-keys
                .:", "
 
-
-         /*
-          * Figuring out input to our POST method.
-          */
+         // Figuring out input to our POST method.
          for-each:x:@.dp/#/*/verbs/*/post/*/input/*
             set-value:x:@.substitutions/*/create-input
                strings.concat
                   get-value:x:@.substitutions/*/create-input
-                  .:",\r\n      '"
+                  .:@",
+      '"
                   get-value:x:@.dp/#/*/name
                   .:"'"
          set-value:x:@.substitutions/*/create-input
             strings.trim:x:@.substitutions/*/create-input
                .:", "
 
-
-         /*
-          * Figuring out input to our PUT method.
-          */
+         // Figuring out input to our PUT method.
          for-each:x:@.dp/#/*/verbs/*/put/*/input/*
             set-value:x:@.substitutions/*/update-input
                strings.concat
                   get-value:x:@.substitutions/*/update-input
-                  .:",\r\n      '"
+                  .:@",
+      '"
                   get-value:x:@.dp/#/*/name
                   .:"'"
          set-value:x:@.substitutions/*/update-input
             strings.trim:x:@.substitutions/*/update-input
                .:", "
 
-
          /*
           * Now we know input to POST, PUT and DELETE endpoints.
-          *
+          * 
           * Now we can start creating our datagrid component, and our edit/create component.
           */
-
 
          /*
           * Dynamically creating our datagrid parts, and our form controls
           * for editing entities.
-          *
+          * 
           * Notice - We use the GET methods here to find out what columns to create for our
           * grids.
           */
          for-each:x:@.dp/#/*/verbs/*/get/*/output/*
-
 
             /*
              * Column exists in GET output, now we need to check if the column is
@@ -349,12 +294,12 @@ for-each:x:@.arguments/*/.crud-methods/*
              * because URLs without PUT typically ONLY have primary key columns - Hence, if we
              * don't display primary keys for such endpoints, we have NOTHING to display.
              * Besides, such columns are also often foreign keys into other tables.
-             *
+             * 
              * Notice, if the column is a lookup it is ALWAYS displayed in the main grid.
-             *
+             * 
              * While also primary keys with type string is also typically a part of
              * the "main data" of the entity.
-             *
+             * 
              * Notice, even though we do not display primary keys by default in grid/table/view-details,
              * we still create a wrapper component/ng-container for these, because end user
              * might want to have the columns displayed depending upon requirements, and/or
@@ -403,7 +348,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                             * adds a "." followed by something more. This implies that this is a foreign key
                             * field, and the column has already been displayed, or will be displayed in later
                             * iterations, using it foreign table lookup field.
-                            *
+                            * 
                             * We do NOT display such fields by default, but we create a form control in case
                             * user wants to (easily) display these anyways.
                             */
@@ -415,30 +360,22 @@ for-each:x:@.arguments/*/.crud-methods/*
                         .:bool:false
                      .lambda
 
-                        /*
-                         * Storing the fact of that this is a field we're interested in displaying.
-                         */
+                        // Storing the fact of that this is a field we're interested in displaying.
                         set-value:x:@.should-display
                            .:bool:true
 
-
-                        /*
-                         * Making sure we increment colspan value.
-                         */
+                        // Making sure we increment colspan value.
                         set-value:x:@.substitutions/*/container-count
                            math.increment:x:@.substitutions/*/container-count
 
-
-                        /*
-                         * Appending currently iterated column to [displayed-columns]
-                         */
+                        // Appending currently iterated column to [displayed-columns]
                         set-value:x:@.substitutions/*/displayed-columns
                            strings.concat
                               get-value:x:@.substitutions/*/displayed-columns
-                              .:",\r\n    '"
+                              .:@",
+    '"
                               get-value:x:@.dp/#/*/name
                               .:"'"
-
 
             /*
              * Checking if this is a lookup type of field, implying a foreign key into
@@ -449,9 +386,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                exists:x:@.dp/#/*/lookup/*
                .lambda
 
-                  /*
-                   * Using the autocomplete component for our filtering control.
-                   */
+                  // Using the autocomplete component for our filtering control.
                   set-value:x:@.lookup
                      .:bool:true
                   strings.replace:x:@.column-file/*/lookup
@@ -474,10 +409,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.substitutions/*/ng-containers
                         get-value:x:@strings.replace
 
-
-                  /*
-                   * Applying correct changes to view-details parts.
-                   */
+                  // Applying correct changes to view-details parts.
                   strings.replace:x:@.view-details-file/*/lookup
                      .:[[column-name]]
                      get-value:x:@.dp/#/*/name
@@ -497,29 +429,22 @@ for-each:x:@.arguments/*/.crud-methods/*
                      strings.concat
                         get-value:x:@.substitutions/*/view-details
                         get-value:x:@strings.replace
-
             else
 
-               /*
-                * Checking if this column should be displayed.
-                */
+               // Checking if this column should be displayed.
                if
                   get-value:x:@.should-display
                   .lambda
 
-
                      /*
                       * Appending currently iterated column to [view-details].
-                      *
+                      * 
                       * Notice, some types have specialized implementations, such as for instance
                       * date types, etc.
                       */
                      switch:x:@.dp/#/*/type
 
-
-                        /*
-                         * Date type.
-                         */
+                        // Date type.
                         case:date
                            set-value:x:@.substitutions/*/view-details
                               strings.concat
@@ -528,10 +453,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
 
-
-                        /*
-                         * Boolean type.
-                         */
+                        // Boolean type.
                         case:bool
                            set-value:x:@.substitutions/*/view-details
                               strings.concat
@@ -540,10 +462,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
 
-
-                        /*
-                         * Default (anything not having a specialized implementation).
-                         */
+                        // Default (anything not having a specialized implementation).
                         default
                            set-value:x:@.substitutions/*/view-details
                               strings.concat
@@ -551,7 +470,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                                  strings.replace:x:@.view-details-file
                                     .:[[column-name]]
                                     get-value:x:@.dp/#/*/name
-
 
                /*
                 * Making sure we create a TypeScript instance of correct type to
@@ -566,10 +484,9 @@ for-each:x:@.arguments/*/.crud-methods/*
                            .:.
                            .:_
 
-
                /*
                 * Making sure we correctly instantiate our TypeScript instance.
-                *
+                * 
                 * Notice, some types have specialized implementations here.
                 */
                .col-name-tmp
@@ -587,10 +504,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                         get-value:x:@.dp/#/*/name
                switch:x:@.dp/#/*/type
 
-
-                  /*
-                   * String type.
-                   */
+                  // String type.
                   case:string
                      strings.replace:x:@.form-control-instantiation-file/*/string
                         .:[[form-control-name]]
@@ -604,10 +518,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.col-name-tmp
 
-
-                  /*
-                   * Default (anything not having a specialized implementation).
-                   */
+                  // Default (anything not having a specialized implementation).
                   default
                      strings.replace:x:@.form-control-instantiation-file
                         .:[[form-control-name]]
@@ -621,18 +532,14 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.col-name-tmp
 
-
                /*
                 * Appending currently iterated column to [.ng-containers].
-                *
+                * 
                 * Notice, some types have specialized implementations here.
                 */
                switch:x:@.dp/#/*/type
 
-
-                  /*
-                   * Long type.
-                   */
+                  // Long type.
                   case:long
                   case:int
                      strings.replace:x:@.column-file/*/long
@@ -647,10 +554,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Date type.
-                   */
+                  // Date type.
                   case:date
                      strings.replace:x:@.column-file/*/date
                         .:[[form-control-name]]
@@ -664,10 +568,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Bool type.
-                   */
+                  // Bool type.
                   case:bool
                      strings.replace:x:@.column-file/*/bool
                         .:[[form-control-name]]
@@ -681,10 +582,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Default (anything not having a specialized implementation).
-                   */
+                  // Default (anything not having a specialized implementation).
                   default
                      strings.replace:x:@.column-file
                         .:[[form-control-name]]
@@ -698,10 +596,9 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
          /*
           * Dynamically creating our editor component.
-          *
+          * 
           * Notice, this relies upon the combined input of both our
           * POST and PUT endpoint's input. Depending upon whether or not
           * it's a PUT or POST invocation, we'll hide some fields, depending upon
@@ -709,14 +606,10 @@ for-each:x:@.arguments/*/.crud-methods/*
           */
          .form-fields
 
-
-         /*
-          * First adding PUT input to above [.form-fields].
-          */
+         // First adding PUT input to above [.form-fields].
          for-each:x:@.dp/#/*/verbs/*/put/*/input/*
             add:x:@.form-fields
                get-nodes:x:@.dp/#
-
 
          /*
           * Then adding POST input to above [.form-fields], making sure
@@ -724,10 +617,7 @@ for-each:x:@.arguments/*/.crud-methods/*
           */
          for-each:x:@.dp/#/*/verbs/*/post/*/input/*
 
-
-            /*
-             * Checking if above PUT loop already added currently iterated field.
-             */
+            // Checking if above PUT loop already added currently iterated field.
             .exists:bool:false
             for-each:x:@.form-fields/*
                if
@@ -744,16 +634,14 @@ for-each:x:@.arguments/*/.crud-methods/*
                   add:x:@.form-fields
                      get-nodes:x:@.dp/#
 
-
          /*
           * Looping through combined input fields of both PUT and POST, to create
           * our edit/create form fields.
-          *
+          * 
           * Notice, we don't create form fields for anything that's an input field
           * to our DELETE endpoint, since it's a primary key.
           */
          for-each:x:@.form-fields/*
-
 
             /*
              * Checking if this is a selector type of field, implying a foreign key into
@@ -770,18 +658,14 @@ for-each:x:@.arguments/*/.crud-methods/*
                   strings.split:x:@.dp/#/*/lookup/*/table
                      .:.
 
-                  /*
-                   * Figuring out if this is a long dataset or not.
-                   */
+                  // Figuring out if this is a long dataset or not.
                   if
                      eq
                         get-value:x:@.dp/#/*/lookup/*/long
                         .:bool:true
                      .lambda
 
-                        /*
-                         * Using the autocomplete component for our edit/create modal dialog.
-                         */
+                        // Using the autocomplete component for our edit/create modal dialog.
                         strings.replace:x:@.form-field-file/*/autocomplete
                            .:[[column-name]]
                            get-value:x:@.dp/#/*/name
@@ -801,12 +685,9 @@ for-each:x:@.arguments/*/.crud-methods/*
                            strings.concat
                               get-value:x:@.substitutions/*/form-fields
                               get-value:x:@strings.replace
-
                   else
 
-                     /*
-                      * Using the selector component for our edit/create modal dialog.
-                      */
+                     // Using the selector component for our edit/create modal dialog.
                      strings.replace:x:@.form-field-file/*/selector
                         .:[[column-name]]
                         get-value:x:@.dp/#/*/name
@@ -826,23 +707,19 @@ for-each:x:@.arguments/*/.crud-methods/*
                         strings.concat
                            get-value:x:@.substitutions/*/form-fields
                            get-value:x:@strings.replace
-
             else
 
                /*
                 * Not a foreign key, figuring out its type.
-                *
+                * 
                 * We can now safely create a form control for currently iterated [.form-fields] instance.
                 * Making sure we correctly create our HTML markup for edit/create component.
-                *
+                * 
                 * Notice, some types have specialized implementations here.
                 */
                switch:x:@.dp/#/*/type
 
-
-                  /*
-                   * Long type.
-                   */
+                  // Long type.
                   case:long
                   case:int
                      set-value:x:@.substitutions/*/form-fields
@@ -852,10 +729,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Decimal type.
-                   */
+                  // Decimal type.
                   case:decimal
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
@@ -864,10 +738,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Boolean type.
-                   */
+                  // Boolean type.
                   case:bool
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
@@ -876,10 +747,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Date type.
-                   */
+                  // Date type.
                   case:date
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
@@ -888,10 +756,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-                  /*
-                   * Default (anything not having a specialized implementation).
-                   */
+                  // Default (anything not having a specialized implementation).
                   default
                      set-value:x:@.substitutions/*/form-fields
                         strings.concat
@@ -900,203 +765,134 @@ for-each:x:@.arguments/*/.crud-methods/*
                               .:[[column-name]]
                               get-value:x:@.dp/#/*/name
 
-
-         /*
-          * Adding "delete-instance" to [displayed-columns]
-          */
+         // Adding "delete-instance" to [displayed-columns]
          set-value:x:@.substitutions/*/displayed-columns
             strings.concat
                get-value:x:@.substitutions/*/displayed-columns
-               .:",\r\n    'delete-instance'"
-
+               .:@",
+    'delete-instance'"
 
          /*
           * Making sure we remove redundant commas and spaces
           * from [.substitutions]/[displayed-columns].
-          *
+          * 
           * Notice, this has to be done, not only to remove additional characters
           * at the end of the string, but also at the BEGINNING of the string.
           */
          set-value:x:@.substitutions/*/displayed-columns
             strings.trim:x:@.substitutions/*/displayed-columns
-               .:", \r\n"
+               .:@", 
+"
 
-
-         /*
-          * Iterating through each component file, to do our substitutions.
-          */
+         // Iterating through each component file, to do our substitutions.
          for-each:x:@.arguments/*/.component-files/*
 
-
-            /*
-             * Replacing [[component-folder]].
-             */
+            // Replacing [[component-folder]].
             strings.replace:x:@.dp/#
                .:[[component-folder]]
                get-value:x:@.lambda/@.dp/#/*/component-folder
 
-
-            /*
-             * Replacing [[component-filename]].
-             */
+            // Replacing [[component-filename]].
             strings.replace:x:@strings.replace
                .:[[component-filename]]
                get-value:x:@.lambda/@.dp/#/*/component-filename
 
-
-            /*
-             * Buffer to hold component's filename.
-             */
+            // Buffer to hold component's filename.
             unwrap:x:+
             .filename:x:@strings.replace
 
-
-            /*
-             * Replacing [[component-header]].
-             */
+            // Replacing [[component-header]].
             strings.replace:x:@.dp/#/*
                .:[[component-header]]
                get-value:x:@.lambda/@.dp/#/*/component-header
 
-
-            /*
-             * Replacing [[form-fields]].
-             */
+            // Replacing [[form-fields]].
             strings.replace:x:@strings.replace
                .:[[form-fields]]
                get-value:x:@.substitutions/*/form-fields
 
-
-            /*
-             * Replacing [[delete-input]].
-             */
+            // Replacing [[delete-input]].
             strings.replace:x:@strings.replace
                .:[[delete-input]]
                get-value:x:@.substitutions/*/delete-input
 
-
-            /*
-             * Replacing [[primary-keys]].
-             */
+            // Replacing [[primary-keys]].
             strings.replace:x:@strings.replace
                .:[[primary-keys]]
                get-value:x:@.substitutions/*/primary-keys
 
-
-            /*
-             * Replacing [[create-input]].
-             */
+            // Replacing [[create-input]].
             strings.replace:x:@strings.replace
                .:[[create-input]]
                get-value:x:@.substitutions/*/create-input
 
-
-            /*
-             * Replacing [[update-input]].
-             */
+            // Replacing [[update-input]].
             strings.replace:x:@strings.replace
                .:[[update-input]]
                get-value:x:@.substitutions/*/update-input
 
-
-            /*
-             * Replacing [[ng-containers]].
-             */
+            // Replacing [[ng-containers]].
             strings.replace:x:@strings.replace
                .:[[ng-containers]]
                get-value:x:@.substitutions/*/ng-containers
 
-
-            /*
-             * Replacing [[view-details]].
-             */
+            // Replacing [[view-details]].
             strings.replace:x:@strings.replace
                .:[[view-details]]
                get-value:x:@.substitutions/*/view-details
 
-
-            /*
-             * Replacing [[colspan]].
-             */
+            // Replacing [[colspan]].
             strings.replace:x:@strings.replace
                .:[[colspan]]
                get-value:x:@.substitutions/*/container-count
 
-
-            /*
-             * Replacing [[component-filename]].
-             */
+            // Replacing [[component-filename]].
             strings.replace:x:@strings.replace
                .:[[component-filename]]
                strings.concat
                   get-value:x:@.lambda/@.dp/#/*/component-filename
 
-
-            /*
-             * Replacing [[component-name]].
-             */
+            // Replacing [[component-name]].
             strings.replace:x:@strings.replace
                .:[[component-name]]
                get-value:x:@.lambda/@.dp/#/*/component-name
 
-
-            /*
-             * Replacing [[component-selector]].
-             */
+            // Replacing [[component-selector]].
             strings.replace:x:@strings.replace
                .:[[component-selector]]
                get-value:x:@.lambda/@.dp/#/*/component-selector
 
-
-            /*
-             * Replacing [[displayed-columns]].
-             */
+            // Replacing [[displayed-columns]].
             strings.replace:x:@strings.replace
                .:[[displayed-columns]]
                get-value:x:@.substitutions/*/displayed-columns
 
-
-            /*
-             * Replacing [[endpoint-url]].
-             */
+            // Replacing [[endpoint-url]].
             strings.replace:x:@strings.replace
                .:[[endpoint-url]]
                get-value:x:@.substitutions/*/endpoint-url
 
-
-            /*
-             * Replacing [[crud-entity]].
-             */
+            // Replacing [[crud-entity]].
             strings.replace:x:@strings.replace
                .:[[crud-entity]]
                strings.replace:x:@.lambda/@.dp/#/*/component-folder
                   .:/
                   .:_
 
-
-            /*
-             * Appending our actual form controls into our TypeScript file.
-             */
+            // Appending our actual form controls into our TypeScript file.
             strings.replace:x:@strings.replace
                .:[[form-control-declarations]]
                get-value:x:@.substitutions/*/form-controls
 
-
-            /*
-             * Appending our actual control instantiations into our TypeScript file.
-             */
+            // Appending our actual control instantiations into our TypeScript file.
             strings.replace:x:@strings.replace
                .:[[form-control-instantiations]]
                get-value:x:@.substitutions/*/form-controls-instantiations
 
-
-            /*
-             * Appending our HTTP client service GET method name into TypeScript file.
-             */
+            // Appending our HTTP client service GET method name into TypeScript file.
             strings.replace:x:@strings.replace
                .:[[service-get-method]]
                get-value:x:@.lambda/@.dp/#/*/verbs/*/get/*/service-method-name
-
 
             /*
              * Appending our HTTP client service DELETE method name into TypeScript file,
@@ -1119,7 +915,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                      .:[[service-delete-method]]
                      .:"return throwError('No HTTP DELETE service method exists for entity');"
 
-
             /*
              * Appending our HTTP client service DELETE method name into TypeScript file,
              * if it exists - otherwise making sure method simply throws exception.
@@ -1129,9 +924,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                exists:x:@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
                .lambda
 
-                  /*
-                   * Adding HTTP POST method invocation for entity.
-                   */
+                  // Adding HTTP POST method invocation for entity.
                   set-value:x:@.create-method
                      strings.replace:x:@.delete-method
                         .:[[service-create-method]]
@@ -1139,30 +932,22 @@ for-each:x:@.arguments/*/.crud-methods/*
                            .:return this.service.
                            get-value:x:@if/@.lambda/@.dp/#/*/verbs/*/post/*/service-method-name
                            .:(this.data.entity);
-
             else
-
                set-value:x:@.create-method
 
-                  /*
-                   * No HTTP POST method exists for entity.
-                   */
+                  // No HTTP POST method exists for entity.
                   strings.replace:x:@.delete-method
                      .:[[service-create-method]]
                      .:"return throwError('No HTTP POST service method exists for entity');"
 
-
-            /*
-             * Appending our HTTP client service COUNT method name into TypeScript file.
-             */
+            // Appending our HTTP client service COUNT method name into TypeScript file.
             strings.replace:x:@.create-method
                .:[[service-count-method]]
                get-value:x:@.lambda/@.dp/#/*/count-method
 
-
             /*
              * Appending our HTTP client service PUT method name into TypeScript file.
-             *
+             * 
              * Notice, some endpoints might not have a PUT method. If they don't we'll
              * have to make sure we don't add any getUpdateMethod to the edit component,
              * at which point the base method will kick in, and return an error in case
@@ -1176,9 +961,7 @@ for-each:x:@.arguments/*/.crud-methods/*
                exists:x:@.lambda/@.dp/#/*/verbs/*/put
                .lambda
 
-                  /*
-                   * PUT method exists for component.
-                   */
+                  // PUT method exists for component.
                   set-value:x:@strings.replace
                      strings.replace:x:@strings.replace
                         .:[[service-update-wrapper]]
@@ -1192,7 +975,6 @@ for-each:x:@.arguments/*/.crud-methods/*
                            get-value:x:@.lambda/@.lambda/@.dp/#/*/verbs/*/put/*/service-method-name
                            .:@"(this.data.entity);
   }"
-
             else
 
                /*
@@ -1204,13 +986,9 @@ for-each:x:@.arguments/*/.crud-methods/*
                      .:[[service-update-wrapper]]
                      .:
 
-
-            /*
-             * Buffer to hold component's content.
-             */
+            // Buffer to hold component's content.
             unwrap:x:+
             .content:x:@strings.replace
-
 
             /*
              * Adding finished component to [.components] node, that is
@@ -1223,8 +1001,5 @@ for-each:x:@.arguments/*/.crud-methods/*
                   :x:@.filename
                      :x:@.content
 
-
-/*
- * Returns results to caller.
- */
+// Returns results to caller.
 return-nodes:x:@.components/*

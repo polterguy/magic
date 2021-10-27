@@ -1,8 +1,6 @@
 
-/*
- * Macro for Hyper IDE that creates an upload image endpoint.
- */
-.name:"Creates a download file endpoint"
+// Macro for Hyper IDE that creates an upload image endpoint.
+.name:Creates a download file endpoint
 .description:"Macro for Hyper IDE that creates a 'download file' HTTP GET endpoint for you where the file is specified as an [file] query parameter. This macro goes hand in hand with the upload file macro, and becomes its 'get' equivalent."
 .arguments
    .
@@ -13,7 +11,7 @@
    .
       name:auth
       type:string
-      description:"Comma separated list of roles users must belong to in order to invoke endpoint. If empty, there are no authorisation requirements"
+      description:Comma separated list of roles users must belong to in order to invoke endpoint. If empty, there are no authorisation requirements
       mandatory:bool:false
    .
       name:name
@@ -22,14 +20,10 @@
       mandatory:bool:true
       default:download-file
 
-/*
- * Lambda object executed as macro is actually executed.
- */
+// Lambda object executed as macro is actually executed.
 .lambda
 
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/module
    validators.regex:x:@.arguments/*/module
       regex:^[a-zA-Z0-9_-]+$
@@ -37,9 +31,7 @@
    validators.regex:x:@.arguments/*/name
       regex:^[a-zA-Z0-9_-]+$
 
-   /*
-    * Figuring out module's complete path.
-    */
+   // Figuring out module's complete path.
    .module-path
    set-value:x:@.module-path
       strings.concat
@@ -47,9 +39,7 @@
          get-value:x:@.arguments/*/module
          .:/
 
-   /*
-    * Making sure that module exists.
-    */
+   // Making sure that module exists.
    if
       not
          io.folder.exists:x:@.module-path
@@ -64,9 +54,7 @@
             public:bool:true
             status:int:404
 
-   /*
-    * Making sure that module does not already have a 'xxx.get.hl' file.
-    */
+   // Making sure that module does not already have a 'xxx.get.hl' file.
    strings.concat
       get-value:x:@.module-path
       get-value:x:@.arguments/*/name
@@ -86,9 +74,7 @@
             public:bool:true
             status:int:404
 
-   /*
-    * Copying main 'download-image.get.hl' template file from '/misc/idea/templates' folder.
-    */
+   // Copying main 'download-image.get.hl' template file from '/misc/idea/templates' folder.
    io.file.copy:/misc/ide/templates/download-file.get.hl
       get-value:x:@strings.concat
 
@@ -103,9 +89,7 @@
    io.file.load:x:@strings.concat
    hyper2lambda:x:@io.file.load
 
-   /*
-    * Substituting parameters.
-    */
+   // Substituting parameters.
    if
       or
          eq
@@ -120,26 +104,20 @@
 
          // No [auth] specified.
          remove-nodes:x:@hyper2lambda/**/=[[auth]]
-
    else
 
       // Auth specified.
       set-value:x:@hyper2lambda/**/=[[auth]]
          get-value:x:@.arguments/*/auth
-
    set-value:x:@hyper2lambda/**/=[[module]]
       get-value:x:@.arguments/*/module
 
-   /*
-    * Then transforming file to Hyperlambda and saving it again.
-    */
+   // Then transforming file to Hyperlambda and saving it again.
    lambda2hyper:x:@hyper2lambda/*
    io.file.save:x:@strings.concat
       get-value:x:@lambda2hyper
 
-   /*
-    * Making sure we inform caller that he needs to refresh his folders.
-    */
+   // Making sure we inform caller that he needs to refresh his folders.
    set-value:x:@.lambda
       strings.concat
          .:folders-changed|

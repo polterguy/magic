@@ -1,6 +1,5 @@
-/*
- * Creates a new Hyperlambda slot.
- */
+
+// Creates a new Hyperlambda slot.
 slots.create:meaning-of-life
    return-value:int:57
 

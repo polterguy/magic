@@ -2,23 +2,17 @@
 /*
  * Internal helper file to create service method implementations (Angular style),
  * according to specified [.arguments].
- *
+ * 
  * Notice, this file creates a service method for every single HTTP endpoint caller
  * has told us he wants to wrap. The files expects its [.arguments] to be in
  * structured format, as created by the structure-endpoint.hl file.
  */
 
-
-/*
- * Iterating through each service endpoint.
- */
+// Iterating through each service endpoint.
 .http-service-methods
 for-each:x:@.arguments/*
 
-
-   /*
-    * Creating main property for service class.
-    */
+   // Creating main property for service class.
    .interface:ICrudEntity
    if
       and
@@ -91,23 +85,19 @@ for-each:x:@.arguments/*
          strings.replace:x:@.dp/#/*/component-folder
             .:/
             .:_
-         .:@"() : "
+         .:"() : "
          get-value:x:@.interface
          .:@" {
 
     return {
 "
 
-
-   /*
-    * Iterating through each HTTP verb in method group.
-    */
+   // Iterating through each HTTP verb in method group.
    for-each:x:@.dp/#/*/verbs/*
       get-name:x:@.dp/#
       switch:x:-
-
          case:post
-            
+
             // Adding 'create' method to method group.
             set-value:x:@.method
                strings.concat
@@ -122,9 +112,8 @@ for-each:x:@.arguments/*
           args);
       },
 "
-
          case:get
-            
+
             // Adding 'read' method to method group.
             set-value:x:@.method
                strings.concat
@@ -139,7 +128,7 @@ for-each:x:@.arguments/*
           this.getQueryArgs(filter));
       },
 "
-            
+
             // Adding 'count' method to method group.
             set-value:x:@.method
                strings.concat
@@ -154,9 +143,8 @@ for-each:x:@.arguments/*
           this.getQueryArgs(filter));
       },
 "
-
          case:put
-            
+
             // Adding 'update' method to method group.
             set-value:x:@.method
                strings.concat
@@ -171,9 +159,8 @@ for-each:x:@.arguments/*
           args);
       },
 "
-
          case:delete
-            
+
             // Adding 'delete' method to method group.
             set-value:x:@.method
                strings.concat
@@ -189,30 +176,22 @@ for-each:x:@.arguments/*
       },
 "
 
-
-
-   /*
-    * Closing main property for service class, and trimming superflous characters.
-    */
+   // Closing main property for service class, and trimming superflous characters.
    set-value:x:@.method
       strings.concat
          strings.trim-end:x:@.method
-            .:"\r\n,"
+            .:@"
+,"
          .:@"
     }
   }
 "
 
-   /*
-    * Appending currently iterated method groupd to returned value.
-    */
+   // Appending currently iterated method groupd to returned value.
    set-value:x:@.http-service-methods
       strings.concat
          get-value:x:@.http-service-methods
          get-value:x:@.method
 
-
-/*
- * Returning TypeScript for method implementations to caller.
- */
+// Returning TypeScript for method implementations to caller.
 return-value:x:@.http-service-methods

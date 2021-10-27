@@ -1,7 +1,5 @@
 
-/*
- * Automatically generated assumption test.
- */
+// Automatically generated assumption test.
 verb:get
 url:/magic/modules/magic/users?locked.eq=false&username.eq=root
 status:int:200

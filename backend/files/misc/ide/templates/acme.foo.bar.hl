@@ -1,15 +1,11 @@
 
-/*
- * Creates the dynamic [acme.foo.bar] slot.
- */
+// Creates the dynamic [acme.foo.bar] slot.
 slots.create:acme.foo.bar
 
    // Verifies the [foo] argument was given.
    validators.mandatory:x:@.arguments/*/foo
 
-   /*
-    * Do stuff here ...
-    */
+   // Do stuff here ...
 
    // Return something here ...
    return:bool:true
