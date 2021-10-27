@@ -6,28 +6,16 @@
  */
 .description:Returns the setup status of the system
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Checks to see magic database has been crudified.
- */
+// Checks to see magic database has been crudified.
 io.folder.exists:/modules/magic/
 
-
-/*
- * Checks to see if server has a key pair
- */
+// Checks to see if server has a key pair
 io.file.exists:/etc/system/crypto/keys/public.key
 
-
-/*
- * Checking if JWT secret has been changed.
- */
+// Checking if JWT secret has been changed.
 .jwt-secret-changed:bool:true
 config.get:"magic:auth:secret"
 if
@@ -40,10 +28,7 @@ if
       set-value:x:@.jwt-secret-changed
          .:bool:false
 
-
-/*
- * Returns results of above invocations to caller.
- */
+// Returns results of above invocations to caller.
 unwrap:x:+/*
 return
    magic_crudified:x:@io.folder.exists

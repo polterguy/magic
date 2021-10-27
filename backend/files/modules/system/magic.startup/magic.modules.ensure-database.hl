@@ -4,36 +4,30 @@
  * database by executing the module's 'xxx.mssql.sql' or 'xxx.mysql.sql' script, and all
  * migration scripts existing within module's "db-migrations" folder, according to
  * which database type happens to be the default.
- *
+ * 
  * Arguments
- *
+ * 
  * - [module] - Module's name and root folder.
  * - [database] - Module's database, and connection string reference.
- *
+ * 
  * The slot assumes the module is created according to the same structure, having
  * a 'db-migrations' folder inside of its 'magic.startup' folder, containing SQL
  * files that upgrades the module's database. In addition to 'xxx.yyy.sql' scripts,
  * where 'xxx' is the name of the module, and 'yyy' is the database type.
- *
+ * 
  * Only truly works with modules created to transparently support both MySQL
  * and SQL Server database types.
  */
 slots.create:magic.modules.ensure-database
 
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/module
    validators.mandatory:x:@.arguments/*/database
 
-   /*
-    * Returned to caller to signal whether or not operation was a success or not.
-    */
+   // Returned to caller to signal whether or not operation was a success or not.
    .result:bool:true
 
-   /*
-    * Ensuring system has been setup.
-    */
+   // Ensuring system has been setup.
    config.get:"magic:auth:secret"
    if
       eq
@@ -41,9 +35,7 @@ slots.create:magic.modules.ensure-database
          .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
       .lambda
 
-         /*
-          * We cannot create any databases before system has been setup.
-          */
+         // We cannot create any databases before system has been setup.
          return:bool:false
 
    /*
@@ -70,9 +62,7 @@ slots.create:magic.modules.ensure-database
          get-value:x:@config.get
          .:/
 
-   /*
-    * Checking if database already exists.
-    */
+   // Checking if database already exists.
    strings.concat
       .:magic.db.
       get-value:x:@config.get
@@ -89,48 +79,37 @@ slots.create:magic.modules.ensure-database
          exists
       .lambda
 
-         /*
-          * Executing create database SQL script, making sure we trap exceptions.
-          */
+         // Executing create database SQL script, making sure we trap exceptions.
          try
 
-            /*
-             * Loading file.
-             */
+            // Loading file.
             io.file.load:x:@.create-database-script
 
-            /*
-             * Opening database connection.
-             */
+            // Opening database connection.
             switch:x:@config.get
-
                case:mysql
                   mysql.connect:sys
                      mysql.execute:x:@io.file.load
-
                case:mssql
                   mssql.connect:master
                      mssql.execute-batch:x:@io.file.load
 
-            /*
-             * Doing some basic logging.
-             */
+            // Doing some basic logging.
             log.info
                .:"Successfully created database '"
                get-value:x:@.arguments/*/database
                .:"'"
-
          .catch
 
-            /*
-             * Logging exception.
-             */
+            // Logging exception.
             log.error
                .:"Something went wrong as we tried to create '"
                get-value:x:@.arguments/@.arguments/*/database
                .:"' database using '"
                get-value:x:@.create-database-script
-               .:"' database script.\r\n\r\nMessage from system was '"
+               .:@"' database script.
+
+Message from system was '"
                get-value:x:@.arguments
                .:"'"
 
@@ -143,87 +122,62 @@ slots.create:magic.modules.ensure-database
          io.folder.exists:x:@.migration-script-folder
       .lambda
 
-         /*
-          * Module doesn't have a migration script folder.
-          */
+         // Module doesn't have a migration script folder.
          return:bool:true
 
-   /*
-    * Iterating through each SQL script found in folder.
-    */
+   // Iterating through each SQL script found in folder.
    io.file.list:x:@.migration-script-folder
    for-each:x:@io.file.list/*
 
-      /*
-       * Verifying file is an SQL file.
-       */
+      // Verifying file is an SQL file.
       if
          strings.ends-with:x:@.dp/#
             .:.sql
          .lambda
 
-            /*
-             * Loading SQL migration script file.
-             */
+            // Loading SQL migration script file.
             io.file.load:x:@.dp/#
 
-            /*
-             * Executing file, making sure we trap exceptions.
-             */
+            // Executing file, making sure we trap exceptions.
             try
 
-               /*
-                * Opening database connection.
-                */
+               // Opening database connection.
                data.connect:x:@.arguments/*/database
 
-                  /*
-                   * Special case for MS SQL to make sure we use batch execute.
-                   */
+                  // Special case for MS SQL to make sure we use batch execute.
                   if
                      eq
                         get-value:x:@config.get
                         .:mssql
                      .lambda
 
-                        /*
-                         * SQL server, ensuring we use batch execute.
-                         */
+                        // SQL server, ensuring we use batch execute.
                         set-name:x:@data.connect/*/data.execute
                            .:mssql.execute-batch
 
-                  /*
-                   * Executing SQL script now.
-                   */
+                  // Executing SQL script now.
                   data.execute:x:@io.file.load
 
-                  /*
-                   * Logging the fact that we've executed the database migration script.
-                   */
+                  // Logging the fact that we've executed the database migration script.
                   log.info
                      .:"Database migration script '"
                      get-value:x:@.dp/#
                      .:"' successfully executed."
-
             .catch
 
-               /*
-                * Logging exception.
-                */
+               // Logging exception.
                log.error
                   .:"Something went wrong as we tried to execute plugin database migration script with the name of '"
                   get-value:x:@.dp/#
-                  .:"'.\r\n\r\nMessage from system was '"
+                  .:@"'.
+
+Message from system was '"
                   get-value:x:@.arguments/*/message
                   .:"'"
 
-               /*
-                * Ensuring slot returns false.
-                */
+               // Ensuring slot returns false.
                set-value:x:@.result
                   .:bool:false
 
-   /*
-    * Returning result of invocation to caller.
-    */
+   // Returning result of invocation to caller.
    return

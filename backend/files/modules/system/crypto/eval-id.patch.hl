@@ -1,40 +1,22 @@
 
-/*
- * Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database.
- */
+// Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database.
 .description:Evaluates a cryptographically signed HTTP invocation, and persists the invocation into your database with the [.request-id] as its unique reference
 
-
-/*
- * Body here is the raw request stream.
- */
+// Body here is the raw request stream.
 .arguments
    body:*
 
-
-/*
- * Making sure we communicate what type of content we can accept.
- */
+// Making sure we communicate what type of content we can accept.
 .accept:application/octet-stream
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/body
 
-
-/*
- * Loading stream.
- */
+// Loading stream.
 io.stream.read:x:@.arguments/*/body
 
-
-/*
- * Making sure we can trap exceptions to log details about what went wrong.
- */
+// Making sure we can trap exceptions to log details about what went wrong.
 try
-
 
    /*
     * Retrieving signing key's fingerprint, for then to retrieve
@@ -45,13 +27,9 @@ try
    signal:magic.crypto.get-public-key
       fingerprint:x:@crypto.get-key
 
-
-   /*
-    * Verifies signature, and also chops up payload.
-    */
+   // Verifies signature, and also chops up payload.
    crypto.verify:x:@io.stream.read
       public-key:x:@signal/*/public_key
-
 
    /*
     * Creating a stack object containing the key's fingerprint,
@@ -62,7 +40,6 @@ try
       value:x:@crypto.get-key
       .lambda
 
-
          /*
           * Transforming Hyperlambda to lambda object, and adding into
           * [whitelist] invocation below.
@@ -70,7 +47,6 @@ try
          hyper2lambda:x:@crypto.verify
          add:x:./*/whitelist/*/.lambda
             get-nodes:x:@hyper2lambda/*
-
 
          /*
           * We need to store the [.request-id], to make sure
@@ -90,10 +66,7 @@ try
             convert:x:@io.stream.read
                type:base64
 
-
-         /*
-          * Making sure caller supplied a [.request-id] as a part of his Hyperlambda.
-          */
+         // Making sure caller supplied a [.request-id] as a part of his Hyperlambda.
          if
             or
                eq
@@ -110,25 +83,19 @@ try
                 */
                throw:No [.request-id] found in the Hyperlambda payload
 
-
-         /*
-          * Making sure this request hasn't been invoked previously.
-          */
+         // Making sure this request hasn't been invoked previously.
          unwrap:x:+/*/signal/*
          if
             signal:magic.crypto.http.has-invoked
                request-id:x:@.request-id
             .lambda
 
-               /*
-                * Request has been previously sent to this server.
-                */
+               // Request has been previously sent to this server.
                strings.concat
                   .:"Request with the id of '"
                   get-value:x:@.request-id
                   .:"' has been previously executed implying a replay attack, hence execution was aborted"
                throw:x:@strings.concat
-
 
          /*
           * Adding the [vocabulary] to [whitelist] invocation, according
@@ -138,19 +105,15 @@ try
          add:x:./*/whitelist/*/vocabulary
             get-nodes:x:@signal/*/vocabulary/*
 
-
-         /*
-          * Evaluating request.
-          */
+         // Evaluating request.
          whitelist
             vocabulary
             .lambda
 
-
          /*
           * Figuring out how to return results to caller, defaulting to
           * simply "success".
-          *
+          * 
           * Notice, regardless of how caller wants his result, we return only
           * strings from endpoint.
           */
@@ -162,24 +125,16 @@ try
                   .
             .lambda
 
-
-               /*
-                * Lambda object wants to return a simple string to caller.
-                */
+               // Lambda object wants to return a simple string to caller.
                set-value:x:@.result
                   get-value:x:@whitelist
-
          else-if
             exists:x:@whitelist/*
             .lambda
 
-
-               /*
-                * Lambda object wants to return a bunch of nodes to caller.
-                */
+               // Lambda object wants to return a bunch of nodes to caller.
                set-value:x:@.result
                   lambda2hyper:x:@whitelist/*
-
 
          /*
           * Persisting request, including payload, raw request,
@@ -193,13 +148,9 @@ try
             request-raw:x:@.request-raw
             response:x:@.result
 
-
-         /*
-          * Making sure we apply the correct HTTP header.
-          */
+         // Making sure we apply the correct HTTP header.
          response.headers.add
             Content-Type:application/octet-stream
-
 
          /*
           * Signing result of invocation to give caller a guarantee of
@@ -211,22 +162,18 @@ try
             signing-key:x:@signal/*/private-key
             signing-key-fingerprint:x:@signal/*/fingerprint
 
-
          /*
           * Returning result of signing to caller, which will
           * return it as byte[] as our response.
           */
          return:x:@crypto.sign
-
-
 .catch
-
 
    /*
     * Execution error occurred, or signing verification error - Regardless,
     * making sure we return that fact to the caller, by throwing "intelligent"
     * exception, in addition to logging the error that occurred.
-    *
+    * 
     * Notice, we return a "generic" error to make sure we don't supply
     * valuable information to malicious adversaries, trying to find out
     * valuable information about the system, in order to crack it.

@@ -1,9 +1,6 @@
 
-/*
- * Returns the public RSA key for the server.
- */
+// Returns the public RSA key for the server.
 .description:"Returns the server's public cryptography key in raw format"
-
 
 /*
  * Loads the file containing the public key, if existing,
@@ -16,10 +13,7 @@ else
    return
       result:FAILURE
 
-
-/*
- * Key exists, returning it to caller, in addition to its fingerprint.
- */
+// Key exists, returning it to caller, in addition to its fingerprint.
 response.headers.add
    Content-Type:text/plain
 io.file.load:/etc/system/crypto/keys/public.key

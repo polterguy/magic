@@ -1,19 +1,11 @@
 
-/*
- * Returns the version of the backend to the caller.
- */
+// Returns the version of the backend to the caller.
 .description:Returns the backend version
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieves backend version, and returns to client.
- */
+// Retrieves backend version, and returns to client.
 eval:x:+
 return-nodes
    version

@@ -1,18 +1,12 @@
 
-/*
- * Returns the highest version of the two specified versions given as input.
- */
+// Returns the highest version of the two specified versions given as input.
 .arguments
    version_1:string
    version_2:string
 .description:Returns the highest version of the two specified versions given as input
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
-
 version.compare
    get-value:x:@.arguments/*/version_1
    get-value:x:@.arguments/*/version_2

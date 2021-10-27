@@ -1,23 +1,15 @@
 
-/*
- * Returns all cache items to caller.
- */
+// Returns all cache items to caller.
 .description:Returns cache items to caller matching optional paging and filtering arguments
 .arguments
    limit:int
    offset:int
    filter:string
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieves all cache items, and returns to caller.
- */
+// Retrieves all cache items, and returns to caller.
 add:x:../*/cache.list
    get-nodes:x:@.arguments/*
 cache.list

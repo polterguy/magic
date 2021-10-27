@@ -1,19 +1,11 @@
 
-/*
- * Returns the nxt due date for the scheduler.
- */
-.description:"Returns the date for when the first task is due for being executed."
+// Returns the nxt due date for the scheduler.
+.description:Returns the date for when the first task is due for being executed.
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieves next due date, and returns to caller.
- */
+// Retrieves next due date, and returns to caller.
 scheduler.next
 unwrap:x:+/*
 return

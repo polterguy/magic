@@ -1,15 +1,9 @@
 
-/*
- * Imports the specified public key.
- */
+// Imports the specified public key.
 slots.create:magic.crypto.import-key
 
-
-   /*
-    * Figuring out key's fingerprint.
-    */
+   // Figuring out key's fingerprint.
    crypto.fingerprint:x:@.arguments/*/content
-
 
    /*
     * Checking if caller supplied en enabled argument,
@@ -23,16 +17,10 @@ slots.create:magic.crypto.import-key
          set-value:x:@.enabled
             get-value:x:@.arguments/*/enabled
 
-
-   /*
-    * Importing key into database.
-    */
+   // Importing key into database.
    data.connect:magic
 
-
-      /*
-       * Checking if key exists in database from before.
-       */
+      // Checking if key exists in database from before.
       data.read
          table:crypto_keys
          where
@@ -42,18 +30,12 @@ slots.create:magic.crypto.import-key
          exists:x:@data.read/*/*
          .lambda
 
-
-            /*
-             * Oops, key already exists in database.
-             */
+            // Oops, key already exists in database.
             throw:Key has already been imported
                public:true
                status:400
 
-
-      /*
-       * Inserting key into database.
-       */
+      // Inserting key into database.
       data.create
          table:crypto_keys
          values
@@ -71,21 +53,14 @@ vocabulary
 slots.vocabulary
 "
 
-
-      /*
-       * Checking if caller provided a username, and if, creating association.
-       */
+      // Checking if caller provided a username, and if, creating association.
       if
          exists:x:@.arguments/*/username
          .lambda
 
-
-            /*
-             * Creating association between user and key.
-             */
+            // Creating association between user and key.
             data.create
                table:users_crypto_keys
                values
                   username:root
                   key_id:x:@data.create/@data.create
-

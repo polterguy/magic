@@ -1,19 +1,16 @@
 
 /*
  * Lists all foreign keys in some SQL Server table.
- *
+ * 
  * Arguments
- *
+ * 
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
 slots.create:magic.db.mssql.foreign_keys
 
-
-   /*
-    * Opens up our connection
-    */
+   // Opens up our connection
    .connection:[information_schema]
    if
       and
@@ -35,10 +32,7 @@ slots.create:magic.db.mssql.foreign_keys
                .:]
    mssql.connect:x:@.connection
 
-
-      /*
-       * Dynamically creating our SQL.
-       */
+      // Dynamically creating our SQL.
       strings.split:x:@.arguments/*/table
          .:.
       mssql.select:@"select
@@ -58,7 +52,6 @@ slots.create:magic.db.mssql.foreign_keys
          sch.name = @schema"
          @table:x:@strings.split/0/-
          schema:x:@strings.split/0
-
 
       /*
        * Creating our return value, by projecting it into

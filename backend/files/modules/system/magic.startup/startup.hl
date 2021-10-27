@@ -1,8 +1,9 @@
+
 /*
  * Startup initialization logic just creating a log entry
  * every time server is started, to signal startup scripts have
  * been executed. We do this for monitoring reasons.
- *
+ * 
  * Notice, since database might still not have been initialized,
  * we do this in a thread, silently catching exceptions.
  */
@@ -10,4 +11,5 @@ fork
    try
       log.info:Magic startup files executed
    .catch
+
       // Do nothing, nothing to do really

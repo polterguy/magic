@@ -1,15 +1,9 @@
 
-/*
- * Returns the last generated LOC count to caller.
- */
+// Returns the last generated LOC count to caller.
 .description:Returns the last generated LOC count to caller
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
-
 data.connect:[generic|magic]
    data.read
       table:log_entries

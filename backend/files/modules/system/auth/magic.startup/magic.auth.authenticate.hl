@@ -1,14 +1,13 @@
 
 /*
  * Authenticates the user with the specified [username] and [password] combination.
- *
+ * 
  * Notice, if [check-password] is false, we don't check the user's password, and
  * if [reset-password] is true, we generate a JWT token that can only be used to
  * change the user's password. The latter allows us to generated "change password links"
  * in the frontend, and similar type of logic.
  */
 slots.create:magic.auth.authenticate
-
 
    /*
     * Checking if JWT secret has been changed, and
@@ -22,9 +21,7 @@ slots.create:magic.auth.authenticate
          .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
       .lambda
 
-         /*
-          * System has not yet been setup.
-          */
+         // System has not yet been setup.
          if
             and
                eq
@@ -43,7 +40,6 @@ slots.create:magic.auth.authenticate
                unwrap:x:+/*
                return
                   ticket:x:@auth.ticket.create
-
          else
 
             // Failure!
@@ -51,23 +47,16 @@ slots.create:magic.auth.authenticate
                status:int:401
                public:bool:true
 
-
    /*
     * If we came this far, the system has been setup,
     * and we can check the 'magic' database to see if
     * the credentials the caller provided is correct.
     */
 
-
-   /*
-    * Opens up our database connection.
-    */
+   // Opens up our database connection.
    data.connect:magic
 
-
-      /*
-       * Selects the user with the given username from our table.
-       */
+      // Selects the user with the given username from our table.
       data.read
          table:users
          columns
@@ -77,24 +66,17 @@ slots.create:magic.auth.authenticate
                username:x:@.arguments/*/username
                locked.neq:1
 
-
-      /*
-       * Checking if user with specified [username] exists.
-       */
+      // Checking if user with specified [username] exists.
       if
          eq
             get-count:x:@data.read/*
             .:int:0
          .lambda
 
-
-            /*
-             * No such user.
-             */
+            // No such user.
             throw:Access denied
                status:int:401
                public:bool:true
-
 
       /*
        * This part exchanges the invocation to [crypto.password.verify] below,
@@ -118,12 +100,11 @@ slots.create:magic.auth.authenticate
                   .:crypto.password.verify
          .lambda
 
-
             /*
              * User has overridden the default password authentication slot invocation.
              * Hence we replace the existing invocation to [crypto.password.verify]
              * with the slot found from the "appsettings.json" file.
-             *
+             * 
              * This is the part that basically allows for external username/password verifications,
              * including using AD/Windows authentication, etc.
              */
@@ -140,7 +121,6 @@ slots.create:magic.auth.authenticate
                      password:x:@.arguments/*/password
             remove-nodes:x:@if/./**/crypto.password.verify
 
-
       /*
        * Verify we have a password match, unless [check-password] was false,
        * which might occur if a JWT token is generated on behalf of another user.
@@ -154,11 +134,10 @@ slots.create:magic.auth.authenticate
                hash:x:@data.read/*/*/password
          .lambda
 
-
             /*
              * Password is matching hashed value from database, or caller
              * does not want to verify password.
-             *
+             * 
              * Now checking if this is a request for a "change password link".
              */
             if
@@ -167,14 +146,13 @@ slots.create:magic.auth.authenticate
                   .:bool:true
                .lambda
 
-
                   /*
                    * Caller requested a "reset password link", hence
                    * we add the user to the "reset-password" role, and
                    * the [old-password] role, which we check when user
                    * actually attempts to change his password, to make sure one
                    * reset password link can only be used once.
-                   *
+                   * 
                    * Hashing the password might be a bit overkill here, since
                    * it's already hashed in the database - However, we can't be
                    * too cautious.
@@ -189,30 +167,19 @@ slots.create:magic.auth.authenticate
                      roles
                         .:reset-password
 
-
-                  /*
-                   * Logging the fact that we generated a reset-password token.
-                   */
+                  // Logging the fact that we generated a reset-password token.
                   log.info
                      .:"Reset password token successfully generated for user '"
                      get-value:x:@.arguments/*/username
                      .:"'"
 
-
-                  /*
-                   * Returning results back to caller.
-                   */
+                  // Returning results back to caller.
                   unwrap:x:+/*
                   return
                      ticket:x:@auth.ticket.create
-
-
             else
 
-
-               /*
-                * Now we need to select all roles user belongs to.
-                */
+               // Now we need to select all roles user belongs to.
                data.read
                   table:users_roles
                   columns
@@ -221,10 +188,7 @@ slots.create:magic.auth.authenticate
                      and
                         user:x:@.arguments/*/username
 
-
-               /*
-                * Then we can create our JWT token/ticket.
-                */
+               // Then we can create our JWT token/ticket.
                add:x:+/*/roles
                   get-nodes:x:@data.read/*/*
                auth.ticket.create
@@ -232,30 +196,19 @@ slots.create:magic.auth.authenticate
                   expires:x:@.arguments/*/expires
                   roles
 
-
-               /*
-                * Logging the fact that user successfully logged in.
-                */
+               // Logging the fact that user successfully logged in.
                log.info
                   .:"We successfully authenticated user '"
                   get-value:x:@.arguments/*/username
                   .:"'"
 
-
-               /*
-                * Returning results back to caller.
-                */
+               // Returning results back to caller.
                unwrap:x:+/*
                return
                   ticket:x:@auth.ticket.create
-
-
       else
 
-
-         /*
-          * Hash version of password didn't match.
-          */
+         // Hash version of password didn't match.
          throw:Access denied
             status:int:401
             public:bool:true

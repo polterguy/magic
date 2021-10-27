@@ -1,7 +1,5 @@
 
-/*
- * Saves the specified file in the specified folder.
- */
+// Saves the specified file in the specified folder.
 .arguments
    file:*
    folder:string
@@ -9,22 +7,16 @@
 .type:file-upload
 .accept:multipart/form-data
 
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
 validators.mandatory:x:@.arguments/*/folder
 
-/*
- * Saves the file to the specified folder.
- */
+// Saves the file to the specified folder.
 .full-path
 set-value:x:@.full-path
    strings.concat

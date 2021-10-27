@@ -1,23 +1,14 @@
 
-/*
- * Returns true if the specified app can be installed or not.
- */
+// Returns true if the specified app can be installed or not.
 .arguments
    required_magic_version:string
 .description:Returns true if the specified app can be installed or not
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieves the Magic version of the current installation.
- */
+// Retrieves the Magic version of the current installation.
 version
-
 
 /*
  * Doing a version compare of the specified versions, and
@@ -39,8 +30,6 @@ if
       return
          result:ERROR
 
-/*
- * Application can be installed.
- */
+// Application can be installed.
 return
    result:SUCCESS

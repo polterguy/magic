@@ -1,19 +1,11 @@
 
-/*
- * Will refresh the currently authenticated user's token, and return a new JWT token with a new expiration date.
- */
+// Will refresh the currently authenticated user's token, and return a new JWT token with a new expiration date.
 .description:"Will refresh the currently authenticated user's token, and return a new JWT token with a new expiration date"
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify
 
-
-/*
- * Ensuring this is not a 'reset-password' type of token.
- */
+// Ensuring this is not a 'reset-password' type of token.
 if
    exists:x:@auth.ticket.verify/*/roles/*/reset-password
    .lambda
@@ -26,7 +18,6 @@ if
          status:int:401
          public:bool:true
 
-
 /*
  * Retrieving actual token, which is necessary to retrieve
  * user's username, and whether ot not the current token
@@ -35,10 +26,7 @@ if
  */
 auth.ticket.get
 
-
-/*
- * Ensuring this is not a 'reset-password' type of token.
- */
+// Ensuring this is not a 'reset-password' type of token.
 if
    exists:x:@auth.ticket.get/*/roles/*/reset-password
    .lambda
@@ -51,11 +39,10 @@ if
          status:int:401
          public:bool:true
 
-
 /*
  * Verifying user has not been locked out since he logged in
  * or refreshed his ticket earlier.
- *
+ * 
  * Without this step, user could just login, and refresh his
  * token for an eternity, without Magic having any capacity to
  * lock user out from backend.
@@ -78,17 +65,13 @@ data.connect:magic
             status:int:401
             public:bool:true
 
-
 /*
  * Invokes [auth.ticket.refresh] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
 auth.ticket.refresh
 
-
-/*
- * Returns the authentication JWT ticket created above to caller.
- */
+// Returns the authentication JWT ticket created above to caller.
 unwrap:x:+/*
 return-nodes
    ticket:x:@auth.ticket.refresh

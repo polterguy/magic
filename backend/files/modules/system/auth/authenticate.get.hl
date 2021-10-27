@@ -1,12 +1,9 @@
 
-/*
- * Authenticates a user returning a JWT token if successful
- */
+// Authenticates a user returning a JWT token if successful
 .arguments
    username:string
    password:string
 .description:Authenticates a user returning a JWT token if successful
-
 
 /*
  * Notice, if no username was supplied to invocation, and system has
@@ -29,9 +26,7 @@ if
             .
    .lambda
 
-      /*
-       * System is configured to use automatic authentication.
-       */
+      // System is configured to use automatic authentication.
       set-name:x:./*/auth-slot
          get-value:x:@config.get
       auth-slot
@@ -41,9 +36,7 @@ if
             .
          .lambda
 
-            /*
-             * No username returned by auto-auth slot invocation.
-             */
+            // No username returned by auto-auth slot invocation.
             log.error
                .:Authentication failed, [
                get-name:x:@if/-
@@ -51,12 +44,11 @@ if
             throw:Access denied
                status:int:401
                public:bool:true
-
       else
 
          /*
           * User is automatically authenticated somehow.
-          *
+          * 
           * Adding user's username to [.arguments] collection for
           * simplicity reasons, and turning OFF password checking during
           * invocation to [magic.auth.authenticate].
@@ -73,9 +65,7 @@ if
             .
                username:x:@if/-
                check-password:bool:false
-
 else
-
 
    /*
     * System has not been setup to do automatic Windows
@@ -86,7 +76,6 @@ else
    validators.mandatory:x:@.arguments/*/username
    validators.mandatory:x:@.arguments/*/password
 
-
 /*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
@@ -96,8 +85,5 @@ signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
 
-
-/*
- * Returns the authentication JWT ticket created above to caller.
- */
+// Returns the authentication JWT ticket created above to caller.
 return-nodes:x:@signal/*

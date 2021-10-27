@@ -1,7 +1,5 @@
 
-/*
- * Logs line of codes generated.
- */
+// Logs line of codes generated.
 .arguments
    loc:int
    type:string
@@ -14,16 +12,10 @@ validators.enum:x:@.arguments/*/type
    .:backend
    .:frontend
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Creating a log entry with LOC that was generated.
- */
+// Creating a log entry with LOC that was generated.
 strings.concat
    .:"LOC generated '"
    get-value:x:@.arguments/*/loc
@@ -34,9 +26,6 @@ strings.concat
    .:"'"
 log.info:x:@strings.concat
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

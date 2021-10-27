@@ -1,28 +1,17 @@
 
-/*
- * Returns log item count grouped by type of item.
- */
+// Returns log item count grouped by type of item.
 .description:Returns log item count grouped by type of item for the last 2 weeks
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Finding date and time for 2 weeks ago.
- */
+// Finding date and time for 2 weeks ago.
 math.subtract
    date.now
    time
       days:14
 
-
-/*
- * Retrieving statistics from database.
- */
+// Retrieving statistics from database.
 data.connect:magic
    data.read
       table:log_entries
@@ -36,7 +25,5 @@ data.connect:magic
       group
          type
 
-   /*
-    * Returning items to caller.
-    */
+   // Returning items to caller.
    return-nodes:x:@data.read/*

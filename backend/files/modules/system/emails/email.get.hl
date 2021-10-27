@@ -1,13 +1,8 @@
 
-/*
- * Returns the root user's email address.
- */
-.description:Returns the root user's email address
+// Returns the root user's email address.
+.description:"Returns the root user's email address"
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
 /*
@@ -19,10 +14,7 @@ auth.ticket.verify:root
  */
 signal:magic.crypto.get-server-public-key
 
-
-/*
- * Opening up our database connection.
- */
+// Opening up our database connection.
 data.connect:[generic|magic]
 
    /*
@@ -38,10 +30,7 @@ data.connect:[generic|magic]
          and
             fingerprint.eq:x:@signal/#/*/fingerprint
 
-
-   /*
-    * Returning result to caller.
-    */
+   // Returning result to caller.
    unwrap:x:+/*
    return
       email:x:@data.read/*/*/email

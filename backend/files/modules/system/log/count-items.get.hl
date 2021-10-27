@@ -1,21 +1,13 @@
 
-/*
- * Returns number of log items in the database.
- */
+// Returns number of log items in the database.
 .arguments
    query:string
 .description:Returns the number of log items in your database matching the optional filter
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Adding filter argument, if given.
- */
+// Adding filter argument, if given.
 if
    exists:x:@.arguments/*/query
    .lambda
@@ -30,19 +22,14 @@ if
                   type.eq:x:@.arguments/*/query
                   content.like:x:@strings.concat
 
-
-/*
- * Retrieving count from database.
- */
+// Retrieving count from database.
 data.connect:magic
    data.read
       table:log_entries
       columns
          count(*) as count
 
-   /*
-    * Returning log items to caller.
-    */
+   // Returning log items to caller.
    unwrap:x:+/*
    return
       count:x:@data.read/*/*

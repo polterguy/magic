@@ -1,26 +1,15 @@
 
-/*
- * Deletes the specified [file] file.
- */
+// Deletes the specified [file] file.
 .arguments
    file:string
 .description:Deletes the specified file on the server
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Deletes the specified file.
- */
+// Deletes the specified file.
 io.file.delete:x:@.arguments/*/file
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

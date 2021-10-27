@@ -1,38 +1,24 @@
 
-/*
- * Creates a new scheduled task according to the arguments specified.
- */
+// Creates a new scheduled task according to the arguments specified.
 .arguments
    id:string
    description:string
    hyperlambda:string
-.description:"Creates a new task according to the arguments specified."
+.description:Creates a new task according to the arguments specified.
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Converting Hyperlambda to lambda.
- */
+// Converting Hyperlambda to lambda.
 hyper2lambda:x:@.arguments/*/hyperlambda
 
-
-/*
- * Creates task.
- */
+// Creates task.
 add:x:../*/tasks.create/*/.lambda
    get-nodes:x:@hyper2lambda/*
 tasks.create:x:@.arguments/*/id
    description:x:@.arguments/*/description
    .lambda
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

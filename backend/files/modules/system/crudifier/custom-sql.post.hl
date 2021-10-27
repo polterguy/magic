@@ -1,7 +1,5 @@
 
-/*
- * Generate an HTTP REST generic SQL endpoint according to the given [.arguments].
- */
+// Generate an HTTP REST generic SQL endpoint according to the given [.arguments].
 .arguments
    databaseType:string
    authorization:string
@@ -15,10 +13,7 @@
    isList:bool
 .description:Creates a custom SQL HTTP endpoint according to the specified arguments
 
-
-/*
- * Sanity checks invocation.
- */
+// Sanity checks invocation.
 validators.mandatory:x:@.arguments/*/databaseType
 validators.mandatory:x:@.arguments/*/moduleName
 validators.mandatory:x:@.arguments/*/database
@@ -34,12 +29,8 @@ validators.enum:x:@.arguments/*/verb
    .:put
    .:delete
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
-
 
 /*
  * Creating our endpoint according to arguments given, by using [apply]
@@ -55,10 +46,7 @@ apply:x:@hyper2lambda
    sql:x:@.arguments/*/sql
    isList:x:@.arguments/*/isList
 
-
-/*
- * Making sure we add arguments to the above lambda.
- */
+// Making sure we add arguments to the above lambda.
 if
    and
       exists:x:@.arguments/*/arguments
@@ -72,12 +60,9 @@ if
             .
    .lambda
 
-      /*
-       * Argument collection was specified, hence applying arguments to lambda.
-       */
+      // Argument collection was specified, hence applying arguments to lambda.
       add:x:@apply/*/.arguments
          hyper2lambda:x:@.arguments/*/arguments
-
 
 /*
  * Checking if caller provided specific authorization
@@ -95,20 +80,15 @@ if
             .
    .lambda
 
-
-      /*
-       * Adding authorization to endpoint's lambda.
-       */
+      // Adding authorization to endpoint's lambda.
       unwrap:x:+/*/*
       insert-after:x:@apply/*/.arguments/+
          .
-            ..:Making sure user is authorized to invoke endpoint.
+
+            // Making sure user is authorized to invoke endpoint.
             auth.ticket.verify:x:@.arguments/*/authorization
 
-
-/*
- * Creating our folder if necessary.
- */
+// Creating our folder if necessary.
 .folder:/modules/
 set-value:x:@.folder
    strings.concat
@@ -117,10 +97,7 @@ set-value:x:@.folder
       .:/
 io.folder.create:x:@.folder
 
-
-/*
- * Transforming above lambda to Hyperlambda, and figuring out filename.
- */
+// Transforming above lambda to Hyperlambda, and figuring out filename.
 lambda2hyper:x:@apply/*
    comments:bool:true
 unwrap:x:+
@@ -133,10 +110,7 @@ set-value:x:@.filename
       get-value:x:@.arguments/*/verb
       .:.hl
 
-
-/*
- * Making sure file does not exist from before, unless [.argument][overwrite] is true.
- */
+// Making sure file does not exist from before, unless [.argument][overwrite] is true.
 if
    and
       not
@@ -147,16 +121,10 @@ if
          status:400
          public:true
 
-
-/*
- * Saving file.
- */
+// Saving file.
 io.file.save:x:@.filename
    get-value:x:@lambda2hyper
 
-
-/*
- * Returns success to caller.
- */
+// Returns success to caller.
 return-nodes
    result:success

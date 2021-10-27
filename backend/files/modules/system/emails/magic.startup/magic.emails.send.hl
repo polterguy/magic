@@ -2,12 +2,12 @@
 /*
  * Attempts to send a braided email, substituting template values found in the 
  * specified emplate email file from the given collection of [substitutes].
- *
+ * 
  * Notice, will not do anything unless SMTP configuration settings can be found
  * in your appSettings.json file.
- *
+ * 
  * Arguments;
- *
+ * 
  * - [subject] - Subject line for email.
  * - [template-file] - Template file that contains the email that is to be sent
  * - [substitutes] - Key value collection of substitutions to perform in template file. E.g. {{foo}} in template file will be replaced by the value of [substitutes]/[foo]'s value.
@@ -15,15 +15,12 @@
  * - [email] - To email address of where to send email.
  * - [name] - Name of recipient of email.
  * - [attachments] - List of [entity] instances that will be attached with the email.
- *
+ * 
  * Notice, the from email/name will be fetched from your appSettings.json file. And the same with the SMTP server configuration settings.
  */
 slots.create:magic.emails.send
 
-
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/subject
    validators.mandatory:x:@.arguments/*/email
    validators.mandatory:x:@.arguments/*/template-file
@@ -32,10 +29,7 @@ slots.create:magic.emails.send
       .:text/plain
       .:text/html
 
-
-   /*
-    * Verifying there exists valid SMTP configuration settings.
-    */
+   // Verifying there exists valid SMTP configuration settings.
    config.get:"magic:smtp:host"
    if
       eq
@@ -43,36 +37,24 @@ slots.create:magic.emails.send
          .
       .lambda
 
-
-         /*
-          * Oops, no SMTP settings found, logging that fact, and returning early.
-          */
+         // Oops, no SMTP settings found, logging that fact, and returning early.
          log.error:"Tried to send an email but couldn't since there is no SMTP server configured in your appSettings.json file"
          return-value:bool:false
 
-
-   /*
-    * Verifying template file specified by caller exists.
-    */
+   // Verifying template file specified by caller exists.
    if
       not
          io.file.exists:x:@.arguments/*/template-file
       .lambda
 
-
-         /*
-          * Template file doesn't exists, logging that fact, and returning early.
-          */
+         // Template file doesn't exists, logging that fact, and returning early.
          log.error
             .:"Tried to send an email but couldn't since the specified template file '"
             get-value:x:@.arguments/*/template-file
             .:"' doesn't exist"
          return-value:bool:false
 
-
-   /*
-    * Loading template file and performing substitutions.
-    */
+   // Loading template file and performing substitutions.
    .body
    set-value:x:@.body
       io.file.load:x:@.arguments/*/template-file
@@ -80,30 +62,34 @@ slots.create:magic.emails.send
       set-value:x:@.body
          strings.replace:x:@.body
             strings.concat
-               .:"{{"
+               .:{{
                get-name:x:@.dp/#
-               .:"}}"
+               .:}}
             get-value:x:@.dp/#
-
 
    /*
     * Making sure we log our attempt of sending the email, with all arguments supplied.
-    *
+    * 
     * In case of failures, this allows us to later "replay" the send email invocation if necessary.
     */
    log.info
-      .:"Attempting to send email\r\n\r\n"
+      .:@"Attempting to send email
+
+"
       .:"To: "
       get-value:x:@.arguments/*/email
-      .:"\r\n"
+      .:@"
+"
       .:"Name: "
       get-value:x:@.arguments/*/name
-      .:"\r\n"
+      .:@"
+"
       .:"Subject: "
       get-value:x:@.arguments/*/subject
-      .:"\r\n\r\n"
-      get-value:x:@.body
+      .:@"
 
+"
+      get-value:x:@.body
 
    /*
     * Checking if caller supplied [attachments], at which
@@ -113,9 +99,7 @@ slots.create:magic.emails.send
       exists:x:@.arguments/*/attachments/*
       .lambda
 
-         /*
-          * Caller specified [attachments], hence we need to send a multipart/mixed message.
-          */
+         // Caller specified [attachments], hence we need to send a multipart/mixed message.
          .entity
             entity:multipart/mixed
                entity:x:@.arguments/*/mime-type
@@ -126,24 +110,16 @@ slots.create:magic.emails.send
          add:x:../*/mail.smtp.send/*/message
             get-nodes:x:@.entity/*
 
-
-   /*
-    * Checking if caller supplied a [name] argument.
-    */
+   // Checking if caller supplied a [name] argument.
    if
       exists:x:@.arguments/*/name
       .lambda
 
-         /*
-          * Caller supplied us with a [name] argument.
-          */
+         // Caller supplied us with a [name] argument.
          set-name:x:../*/mail.smtp.send/*/message/*/to/0
             get-value:x:@.arguments/*/name
 
-
-   /*
-    * Sending email.
-    */
+   // Sending email.
    unwrap:x:+/**
    mail.smtp.send
       message
@@ -153,9 +129,7 @@ slots.create:magic.emails.send
          entity:x:@.arguments/*/mime-type
             content:x:@.body
 
-   /*
-    * Logging the fact that email was successfully sent.
-    */
+   // Logging the fact that email was successfully sent.
    log.info
       .:"Email successfully sent to '"
       get-value:x:@.arguments/*/email
@@ -163,8 +137,5 @@ slots.create:magic.emails.send
       get-value:x:@.arguments/*/template-file
       .:"'"
 
-
-   /*
-    * Returning success to caller.
-    */
+   // Returning success to caller.
    return-value:bool:true

@@ -1,35 +1,22 @@
 
-/*
- * List all files in the specified [folder] argument.
- */
+// List all files in the specified [folder] argument.
 .arguments
    folder:string
    filter:string
 .description:List all files in the specified folder matching the (optional) filter argument
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Listing all files in specified folder.
- */
+// Listing all files in specified folder.
 io.file.list:x:@.arguments/*/folder
 
-
-/*
- * Checking if we have a filter, and if so, only return files matching filter.
- */
+// Checking if we have a filter, and if so, only return files matching filter.
 if
    exists:x:@.arguments/*/filter
    .lambda
 
-      /*
-       * Filtering out files not matching filter condition.
-       */
+      // Filtering out files not matching filter condition.
       for-each:x:@io.file.list/*
          if
             strings.contains:x:@.dp/#
@@ -40,7 +27,5 @@ if
       return-nodes
 else
 
-   /*
-    * Returning all files from above invocation to caller.
-    */
+   // Returning all files from above invocation to caller.
    return-nodes:x:@io.file.list/*

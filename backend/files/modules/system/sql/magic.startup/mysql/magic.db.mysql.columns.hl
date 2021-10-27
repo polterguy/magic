@@ -1,19 +1,16 @@
 
 /*
  * Lists all columns in some MySQL table.
- *
+ * 
  * Arguments
- *
+ * 
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
 slots.create:magic.db.mysql.columns
 
-
-   /*
-    * Opens up our connection
-    */
+   // Opens up our connection
    .connection:[information_schema]
    if
       and
@@ -35,17 +32,13 @@ slots.create:magic.db.mysql.columns
                .:]
    mysql.connect:x:@.connection
 
-
-      /*
-       * Making sure we support table names with special characters.
-       */
+      // Making sure we support table names with special characters.
       strings.concat
          .:"describe "
-         .:'`'
+         .:`
          get-value:x:@.arguments/*/table
-         .:'`'
+         .:`
       mysql.select:x:@strings.concat
-
 
       /*
        * Creating our return value, by projecting it into
@@ -59,10 +52,7 @@ slots.create:magic.db.mysql.columns
                name:x:@.dp/#/*/Field
                db:x:@.dp/#/*/Type
 
-
-         /*
-          * Checking if column is nullable.
-          */
+         // Checking if column is nullable.
          if
             eq
                get-value:x:@.dp/#/*/Null
@@ -76,10 +66,7 @@ slots.create:magic.db.mysql.columns
                .
                   nullable:bool:true
 
-
-         /*
-          * Checking if column is a part of the primary key.
-          */
+         // Checking if column is a part of the primary key.
          if
             eq
                get-value:x:@.dp/#/*/Key
@@ -93,10 +80,7 @@ slots.create:magic.db.mysql.columns
                .
                   primary:bool:false
 
-
-         /*
-          * Checking if column has a default value.
-          */
+         // Checking if column has a default value.
          if
             or
                and
@@ -123,17 +107,13 @@ slots.create:magic.db.mysql.columns
                .
                   automatic:bool:false
 
-
          /*
           * Figuring our which Hyperlambda type to project
           * its database type to.
           */
          .type
-         
-         
-         /*
-          * Checking for boolean types.
-          */
+
+         // Checking for boolean types.
          if
             or
                eq
@@ -146,20 +126,13 @@ slots.create:magic.db.mysql.columns
                   get-value:x:@.dp/#/*/Type
                   .:boolean
             .lambda
-            
-            
-               /*
-                * This is some sort of boolean type.
-                */
+
+               // This is some sort of boolean type.
                set-value:x:@.type
                   .:bool
-                  
          else
-         
-         
-            /*
-             * Anything BUT booleans.
-             */
+
+            // Anything BUT booleans.
             strings.regex-replace:x:@.dp/#/*/Type
                .:\([0-9,]+\)
                .:
@@ -168,20 +141,14 @@ slots.create:magic.db.mysql.columns
                .:
             switch:x:@strings.replace
 
-
-               /*
-                * Everything transformed into date values.
-                */
+               // Everything transformed into date values.
                case:date
                case:datetime
                case:timestamp
                   set-value:x:@.type
                      .:date
 
-
-               /*
-                * Everything transformed into decimal values.
-                */
+               // Everything transformed into decimal values.
                case:float
                case:double
                case:double precision
@@ -190,10 +157,7 @@ slots.create:magic.db.mysql.columns
                   set-value:x:@.type
                      .:decimal
 
-
-               /*
-                * Everything transformed into integer long values.
-                */
+               // Everything transformed into integer long values.
                case:bit
                case:tinyint
                case:bool
@@ -207,10 +171,7 @@ slots.create:magic.db.mysql.columns
                   set-value:x:@.type
                      .:long
 
-
-               /*
-                * Everything transformed into string values.
-                */
+               // Everything transformed into string values.
                case:char
                case:varchar
                case:binary
@@ -228,57 +189,36 @@ slots.create:magic.db.mysql.columns
                   set-value:x:@.type
                      .:string
 
-
-               /*
-                * Everything transformed into boolean.
-                */
+               // Everything transformed into boolean.
                case:tinyint
                   set-value:x:@.type
                      .:bool
 
-
-               /*
-                * Default/special cases.
-                */
+               // Default/special cases.
                default
                   if
                      strings.starts-with:x:@strings.replace
                         .:enum
                      .lambda
 
-
-                        /*
-                         * Enum type
-                         */
+                        // Enum type
                         set-value:x:@.type
                            .:string
                   else
 
-
-                     /*
-                      * Defaulting to string type.
-                      */
+                     // Defaulting to string type.
                      set-value:x:@.type
                         .:string
 
-
-         /*
-          * Adding Hyperlambda type to [.tmp] above.
-          */
+         // Adding Hyperlambda type to [.tmp] above.
          unwrap:x:+/*/*
          add:x:@.tmp/*
             .
                hl:x:@.type
 
-
-         /*
-          * Adding [.tmp] to [return-nodes] below.
-          */
+         // Adding [.tmp] to [return-nodes] below.
          add:x:../*/mysql.connect/*/return-nodes
             get-nodes:x:@.tmp/*
 
-
-      /*
-       * Returning results to caller.
-       */
+      // Returning results to caller.
       return-nodes

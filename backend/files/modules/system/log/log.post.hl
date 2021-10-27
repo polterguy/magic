@@ -1,12 +1,9 @@
 
-/*
- * Creates a log item using the specified arguments.
- */
+// Creates a log item using the specified arguments.
 .arguments
    type:string
    content:string
-.description:"Creates a log item using the specified arguments."
-
+.description:Creates a log item using the specified arguments.
 
 /*
  * Ensures user is authorized to access endpoint.
@@ -15,10 +12,7 @@
  */
 auth.ticket.verify
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/content
 validators.enum:x:@.arguments/*/type
@@ -27,19 +21,13 @@ validators.enum:x:@.arguments/*/type
    .:debug
    .:fatal
 
-
-/*
- * Creating a log entry using the specified type of logger.
- */
+// Creating a log entry using the specified type of logger.
 set-name:x:../*/log-invocation
    strings.concat
       .:log.
       get-value:x:@.arguments/*/type
 log-invocation:x:@.arguments/*/content
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

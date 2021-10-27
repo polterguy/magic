@@ -1,26 +1,15 @@
 
-/*
- * Deletes the named task from the task scheduler.
- */
+// Deletes the named task from the task scheduler.
 .arguments
    id:string
-.description:"Deletes the task with the specified [id]."
+.description:Deletes the task with the specified [id].
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Deletes task.
- */
+// Deletes task.
 tasks.delete:x:@.arguments/*/id
 
-
-/*
- * Returns success to caller.
- */
+// Returns success to caller.
 return-nodes
    result:Success

@@ -1,19 +1,11 @@
 
-/*
- * Returns true if auto-auth is enabled.
- */
+// Returns true if auto-auth is enabled.
 .description:Returns true if auto-auth is enabled
 
-
-/*
- * Retrieving auto-auth configuration setting.
- */
+// Retrieving auto-auth configuration setting.
 config.get:"magic:auth:auto-auth"
 
-
-/*
- * Checking if auto-auth is turned on or not.
- */
+// Checking if auto-auth is turned on or not.
 if
    or
       eq
@@ -24,16 +16,11 @@ if
          .:
    .lambda
 
-      /*
-       * Auto-auth is turned OFF.
-       */
+      // Auto-auth is turned OFF.
       return-nodes
          result:off
-
 else
 
-   /*
-    * Auto-auth is turned ON.
-    */
+   // Auto-auth is turned ON.
    return-nodes
       result:on

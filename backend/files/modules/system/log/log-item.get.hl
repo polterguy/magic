@@ -1,27 +1,16 @@
 
-/*
- * Returns the specified log item tpo caller.
- */
+// Returns the specified log item tpo caller.
 .arguments
    id:long
 .description:Returns the specified log item
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/id
 
-
-/*
- * Retrieving items from database.
- */
+// Retrieving items from database.
 data.connect:magic
    data.read
       table:log_entries
@@ -29,7 +18,5 @@ data.connect:magic
          and
             id.eq:x:@.arguments/*/id
 
-   /*
-    * Returning items to caller.
-    */
+   // Returning items to caller.
    return-nodes:x:-/*/*

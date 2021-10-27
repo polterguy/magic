@@ -1,28 +1,17 @@
 
-/*
- * List all folders in the specified [folder] argument.
- */
+// List all folders in the specified [folder] argument.
 .arguments
    folder:string
 .description:List all folders in the specified folder
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Listing all folders in specified folder.
- */
+// Listing all folders in specified folder.
 unwrap:x:+/*/.folder
 signal:magic.io.folder.list-recursively
    .folder:x:@.arguments/*/folder
    .hidden-files:bool:true
 
-
-/*
- * Returning results of above invocation to caller.
- */
+// Returning results of above invocation to caller.
 return-nodes:x:@signal/*
