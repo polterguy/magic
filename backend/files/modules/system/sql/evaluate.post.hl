@@ -1,7 +1,7 @@
 
 /*
  * Evaluates the given [sql] and returns results to caller.
- *
+ * 
  * Arguments;
  * - [databaseType] - Database type, typically 'mssql' or 'mysql'.
  * - [database] - Initial database to use in connection
@@ -15,21 +15,14 @@
    sql:string
    safeMode:bool
    batch:bool
-.description:"Evaluates the given SQL given for your specified database, and returns the result to caller."
+.description:Evaluates the given SQL given for your specified database, and returns the result to caller.
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Creating our database connection.
- */
+// Creating our database connection.
 data.connect:x:@.arguments/*/database
    database-type:x:@.arguments/*/databaseType
-
 
    /*
     * Checking if we're supposed to execute SQL in safe mode, only
@@ -44,7 +37,6 @@ data.connect:x:@.arguments/*/database
          add:x:@data.connect/**/data.select
             .
                max:200
-
 
    /*
     * Checking if we're supposed to execute SQL as an MS SQL 'batch' operation,
@@ -64,7 +56,6 @@ data.connect:x:@.arguments/*/database
          .
             database-type:x:@.arguments/*/databaseType
 
-
    /*
     * Executing SQL and returning results to caller, making sure we're
     * able to return exceptions to caller.
@@ -73,20 +64,14 @@ data.connect:x:@.arguments/*/database
       data.select:x:@.arguments/*/sql
          multiple-result-sets:true
 
-
-      /*
-       * Returning result of invocation to caller.
-       */
+      // Returning result of invocation to caller.
       if
          exists:x:@data.select/*/*
          .lambda
             return-nodes:x:@data.select/*
-
    .catch
 
-      /*
-       * Notice, throwing exceptions as public now.
-       */
+      // Notice, throwing exceptions as public now.
       throw:x:@.arguments/*/message
          public:bool:true
          status:int:401

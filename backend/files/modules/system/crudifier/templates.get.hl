@@ -1,19 +1,11 @@
 
-/*
- * Returns all templates for generating "stuff" from endpoints.
- */
+// Returns all templates for generating "stuff" from endpoints.
 .description:Returns all scaffolding templates registered in the system
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Returns all templates to caller.
- */
+// Returns all templates to caller.
 io.folder.list:/misc/templates/
 for-each:x:-/*
    if

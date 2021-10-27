@@ -7,26 +7,17 @@
  */
 .description:Returns a cryptographic authentication challenge to the caller, which if the caller can cryptographically sign, allows him to retrieve a JWT token wrapping the user associated with the public key used to verify the cryptographic signature
 
-
-/*
- * Creating a cryptographically secured bunch of gibberish.
- */
+// Creating a cryptographically secured bunch of gibberish.
 crypto.random
    min:50
    max:100
 
-
-/*
- * Storing challenge in memory cache for 300 seconds (5 minutes).
- */
+// Storing challenge in memory cache for 300 seconds (5 minutes).
 cache.set:x:@crypto.random
    expiration:300
    value:VALID
 
-
-/*
- * Returning challenge to caller.
- */
+// Returning challenge to caller.
 unwrap:x:+/*
 return
    result:x:@crypto.random

@@ -1,36 +1,22 @@
 
-/*
- * Returns a JWT token wrapping the user associated with the public key used to verify the cryptographic signature used to sign the payload.
- */
+// Returns a JWT token wrapping the user associated with the public key used to verify the cryptographic signature used to sign the payload.
 .description:Returns a JWT token wrapping the user associated with the public key used to verify the cryptographic signature used to sign the payload
 .arguments
    challenge:string
 
-
-/*
- * Retrieving public key used to sign challenge payload.
- */
+// Retrieving public key used to sign challenge payload.
 crypto.get-key:x:@.arguments/*/challenge
 
-
-/*
- * Logging
- */
+// Logging
 log.info
    .:"Cryptography challenge for authenticating with key '"
    get-value:x:@crypto.get-key
    .:"' submitted to server"
 
-
-/*
- * Opening up database connection.
- */
+// Opening up database connection.
 data.connect:magic
 
-
-   /*
-    * Retrieving public key's used to cryptographically sign payload.
-    */
+   // Retrieving public key's used to cryptographically sign payload.
    data.read
       table:crypto_keys
       columns
@@ -41,15 +27,13 @@ data.connect:magic
             fingerprint.eq:x:@crypto.get-key
             enabled:bool:true
 
-
    /*
     * Verifying challenge was correctly signed with the key retrieved above.
-    *
+    * 
     * This part will throw an exception unless the signature is good.
     */
    crypto.verify:x:@.arguments/*/challenge
       public-key:x:@data.read/*/*/content
-
 
    /*
     * Ensuring the payload that was cryptographically signed still exists
@@ -63,18 +47,12 @@ data.connect:magic
             .:VALID
       .lambda
 
-
-         /*
-          * Challenge has expired.
-          */
+         // Challenge has expired.
          throw:Access denied
             public:true
             status:401
 
-
-   /*
-    * Looking up user associated with public key.
-    */
+   // Looking up user associated with public key.
    data.read
       table:users_crypto_keys
       columns
@@ -83,25 +61,16 @@ data.connect:magic
          and
             key_id.eq:x:@data.read/@data.read/*/*/id
 
-
-   /*
-    * Creating a JWT token for the above user.
-    */
+   // Creating a JWT token for the above user.
    unwrap:x:+/*/username
    signal:magic.auth.authenticate
       check-password:bool:false
       username:x:@data.read/*/*/username
 
-
-   /*
-    * Clearing challenge out of memory cache to avoid replay attacks.
-    */
+   // Clearing challenge out of memory cache to avoid replay attacks.
    cache.set:x:@crypto.verify
 
-
-   /*
-    * Returning JWT token to caller.
-    */
+   // Returning JWT token to caller.
    unwrap:x:+/*
    return
       result:x:@signal/*/ticket

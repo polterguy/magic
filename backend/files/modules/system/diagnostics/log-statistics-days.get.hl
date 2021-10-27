@@ -1,21 +1,13 @@
 
-/*
- * Returns log item count grouped by type of item.
- */
+// Returns log item count grouped by type of item.
 .description:Returns log item count grouped by type of item
 .arguments
    filter:string
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Adding filter argument, if given.
- */
+// Adding filter argument, if given.
 if
    exists:x:@.arguments/*/filter
    .lambda
@@ -29,7 +21,6 @@ if
                or
                   type.eq:x:@.arguments/*/filter
                   content.like:x:@strings.concat
-
 
 /*
  * Making sure we're adding the correct date conversion,
@@ -52,10 +43,7 @@ switch:x:@config.get
          .
             convert(char(10), created, 126)
 
-
-/*
- * Retrieving statistics from database.
- */
+// Retrieving statistics from database.
 data.connect:magic
    data.read
       table:log_entries
@@ -111,8 +99,5 @@ data.connect:magic
                      count:long:0
          math.increment:x:@.no
 
-
-/*
- * Returning items to caller.
- */
+// Returning items to caller.
 return

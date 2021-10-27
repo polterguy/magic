@@ -1,7 +1,5 @@
 
-/*
- * Sends specified socket message to specified client subscriber/connection.
- */
+// Sends specified socket message to specified client subscriber/connection.
 .arguments
    client:string
    roles:string
@@ -10,16 +8,10 @@
    message:*
 .description:Sends specified socket message to specified client subscriber/connection
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Invoking slot responsible for transmitting message.
- */
+// Invoking slot responsible for transmitting message.
 add:x:+/*/args
    get-nodes:x:@.arguments/*/message/*
 sockets.signal:x:@.arguments/*/name
@@ -28,9 +20,6 @@ sockets.signal:x:@.arguments/*/name
    groups:x:@.arguments/*/groups
    args
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

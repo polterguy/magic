@@ -1,15 +1,9 @@
 
-/*
- * Returns the manifests for all installed apps.
- */
+// Returns the manifests for all installed apps.
 .description:Returns the manifests for all installed apps
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
-
 
 /*
  * Listing all folders in the modules folders, traveres each folder,
@@ -23,6 +17,7 @@ for-each:x:@io.folder.list/*
    switch:x:@.dp/#
       case:/modules/system/
       case:/modules/magic/
+
          // Ignoring ...
          .foo
       default
@@ -42,8 +37,5 @@ for-each:x:@io.folder.list/*
                   .
                      .
 
-
-/*
- * Returning result to caller.
- */
+// Returning result to caller.
 return

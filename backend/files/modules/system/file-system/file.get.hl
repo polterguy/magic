@@ -1,19 +1,13 @@
 
-/*
- * Loads the specified file and returns to caller as text.
- */
+// Loads the specified file and returns to caller as text.
 .arguments
    file:string
 .description:Loads the specified file and returns to caller as text
 
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 
 /*

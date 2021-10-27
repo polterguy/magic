@@ -1,17 +1,14 @@
 
 /*
  * Lists all database in your MySQL instance.
- *
+ * 
  * Arguments
- *
+ * 
  * - [connection-string] - What connection string to use
  */
 slots.create:magic.db.mysql.databases
 
-
-   /*
-    * Opens up our connection
-    */
+   // Opens up our connection
    .connection:[information_schema]
    if
       and
@@ -32,21 +29,12 @@ slots.create:magic.db.mysql.databases
                .:information_schema]
    mysql.connect:x:@.connection
 
-
-      /*
-       * Runs our query
-       */
+      // Runs our query
       mysql.select:show databases
 
-
-      /*
-       * Renaming "Database" nodes.
-       */
+      // Renaming "Database" nodes.
       set-name:x:@mysql.select/*/*
          .:db
 
-
-      /*
-       * Returns the remaining databases to caller.
-       */
+      // Returns the remaining databases to caller.
       return-nodes:x:@mysql.select/*

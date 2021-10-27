@@ -1,23 +1,15 @@
 
-/*
- * Saves an SQL file according to the specified arguments.
- */
+// Saves an SQL file according to the specified arguments.
 .arguments
    databaseType:string
    filename:string
    content:string
-.description:"Saves an SQL template file according to the specified arguments."
+.description:Saves an SQL template file according to the specified arguments.
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Saving file.
- */
+// Saving file.
 strings.concat
    .:/etc/
    get-value:x:@.arguments/*/databaseType

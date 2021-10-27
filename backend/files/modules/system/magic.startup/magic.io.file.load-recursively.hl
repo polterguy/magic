@@ -1,33 +1,26 @@
 
 /*
  * Loads all files recursively from the specified folder.
- *
+ * 
  * This slot is used as we scaffold a frontend, since we'll need to
  * recursively load all files in the template folder, before we start
  * transforming the template to an actual result.
- *
+ * 
  * Arguments
- *
+ * 
  * - 1st argument. Folder from where to load all files recursively from.
  */
 slots.create:magic.io.file.load-recursively
 
-
-   /*
-    * In case we've got a "slot" type of argument.
-    */
+   // In case we've got a "slot" type of argument.
    eval:x:@.arguments
 
-
-   /*
-    * Lists all files in current [folder], and adds up the result to return value.
-    */
+   // Lists all files in current [folder], and adds up the result to return value.
    add:x:+/+
       get-nodes:x:@.arguments/*/.hidden-files
    unwrap:x:+/*
    signal:magic.io.file.list-recursively
       .:x:@.arguments/0
-
 
    /*
     * Iterating through all files listed above, and loads them,
@@ -40,9 +33,5 @@ slots.create:magic.io.file.load-recursively
       set-name:x:@.dp/#/*
          .:
 
-
-   /*
-    * Returning to caller all files in folder, and sub folder(s).
-    */
+   // Returning to caller all files in folder, and sub folder(s).
    return-nodes:x:@signal/*
-   

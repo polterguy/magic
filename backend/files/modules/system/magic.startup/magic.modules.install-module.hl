@@ -1,16 +1,14 @@
 
 /*
  * Installs the specified module.
- *
+ * 
  * Arguments.
- *
+ * 
  * - [module] - Name of module to install.
  */
 slots.create:magic.modules.install-module
 
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/module
 
    /*
@@ -50,9 +48,7 @@ slots.create:magic.modules.install-module
                   .lambda
                      io.file.execute:x:@.dp/#
 
-            /*
-             * Looping through all sub-folders/modules of module.
-             */
+            // Looping through all sub-folders/modules of module.
             io.folder.list:x:@.dp/#
             for-each:x:@io.folder.list/*
                strings.split:x:@.dp/#

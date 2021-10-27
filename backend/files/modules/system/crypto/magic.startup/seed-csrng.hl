@@ -2,7 +2,7 @@
 /*
  * Explicitly seeding CSRNG with auth secret, which might have been manually applied
  * by user during setup process.
- *
+ * 
  * Notice, we only do this if system has been setup.
  */
 config.get:"magic:auth:secret"
@@ -13,9 +13,6 @@ if
          .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
    .lambda
 
-
-      /*
-       * System has been setup.
-       */
+      // System has been setup.
       crypto.seed:x:@config.get
       log.info:CSRNG successfully seeded with your auth secret

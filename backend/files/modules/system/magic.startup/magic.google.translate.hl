@@ -1,18 +1,17 @@
+
 /*
  * Google Translate slot allowing you to translate pieces of
  * text from one language to another.
- *
+ * 
  * Arguments:
- *
+ * 
  * - [text] - What string you want to translate
  * - [src-lang] - What the source language if to translate from, typically 'es' or 'en' being 2 letter ISO code for language.
  * - [dest-lang] - Destination language for your translation, typically 'es' or 'en' being 2 letter ISO code for language.
  */
 slots.create:magic.google.translate
 
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/text
    validators.mandatory:x:@.arguments/*/src-lang
    validators.mandatory:x:@.arguments/*/dest-lang
@@ -29,13 +28,9 @@ slots.create:magic.google.translate
       .:&dt=t&q=
       get-value:x:@.arguments/*/text
 
-   /*
-    * Invoking Google Translate endpoint.
-    */
+   // Invoking Google Translate endpoint.
    http.get:x:@strings.concat
 
-   /*
-    * Returning translated text to caller.
-    */
+   // Returning translated text to caller.
    json2lambda:x:@http.get/*/content
    return-value:x:@json2lambda/0/0/0

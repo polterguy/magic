@@ -1,32 +1,18 @@
 
-/*
- * Deletes the specified due date instance.
- */
+// Deletes the specified due date instance.
 .arguments
    id:long
-.description:"Deletes the task due with the specified [id]."
+.description:Deletes the task due with the specified [id].
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/id
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Deletes task due instance.
- */
+// Deletes task due instance.
 tasks.schedule.delete:x:@.arguments/*/id
 
-
-/*
- * Returns success to caller.
- */
+// Returns success to caller.
 return-nodes
    result:Success

@@ -1,24 +1,15 @@
 
-/*
- * Returns all assumptions in system for specified endpoint.
- */
+// Returns all assumptions in system for specified endpoint.
 .description:Returns all assumptions in the system for the specified endpoint/verb combination
 .arguments
    endpoint:string
    verb:string
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Listing all files in assumption test folder.
- */
+// Listing all files in assumption test folder.
 io.file.list:/misc/tests/
-
 
 /*
  * Iterates through result from above invocation and returns only resulting files
@@ -26,17 +17,13 @@ io.file.list:/misc/tests/
  */
 for-each:x:@io.file.list/*
 
-   /*
-    * Verifying currently iterated file is a Hyperlambda file.
-    */
+   // Verifying currently iterated file is a Hyperlambda file.
    if
       strings.ends-with:x:@.dp/#
          .:.hl
       .lambda
 
-         /*
-          * File is Hyperlambda, loading it and checking if URL and verb is a match.
-          */
+         // File is Hyperlambda, loading it and checking if URL and verb is a match.
          io.file.load:x:@.dp/#
          hyper2lambda:x:@io.file.load
 
@@ -48,9 +35,7 @@ for-each:x:@io.file.list/*
             exists:x:@hyper2lambda/*/url
             .lambda
 
-               /*
-                * Automatically generated assumption, checking if it's for currently requested endpoint.
-                */
+               // Automatically generated assumption, checking if it's for currently requested endpoint.
                strings.split:x:@hyper2lambda/*/url
                   .:?
                if
@@ -65,10 +50,5 @@ for-each:x:@io.file.list/*
                      add:x:../*/return-nodes
                         get-nodes:x:@.dp/#
 
-
-
-
-/*
- * Returns result to caller.
- */
+// Returns result to caller.
 return-nodes

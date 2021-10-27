@@ -1,7 +1,5 @@
 
-/*
- * Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments.
- */
+// Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments.
 .arguments
    verbose:bool
    join:bool
@@ -26,9 +24,7 @@
    conditions:*
 .description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
 
-/*
- * Sanity checks invocation.
- */
+// Sanity checks invocation.
 validators.mandatory:x:@.arguments/*/moduleName
 validators.mandatory:x:@.arguments/*/database
 validators.mandatory:x:@.arguments/*/table
@@ -55,41 +51,29 @@ validators.enum:x:@.arguments/*/cqrsAuthorisation
    .:users
    .:none
 
-/*
- * Defaulting [databaseType] to default database type from config.
- */
+// Defaulting [databaseType] to default database type from config.
 if
    not
       exists:x:@.arguments/*/databaseType
    .lambda
 
-      /*
-       * Just inserting value from config into [.arguments] for simplicity.
-       */
+      // Just inserting value from config into [.arguments] for simplicity.
       config.get:"magic:databases:default"
       unwrap:x:+/*/*
       add:x:@.arguments
          .
             databaseType:x:@config.get
 
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-/*
- * Synchronising access to endpoint to avoid race condition.
- */
+// Synchronising access to endpoint to avoid race condition.
 semaphore:crudifier
 
-   /*
-    * Ensures user is authorized to access endpoint.
-    */
+   // Ensures user is authorized to access endpoint.
    auth.ticket.verify:root
 
-   /*
-    * Sanity checking module name, to prevent overwriting "/system/".
-    */
+   // Sanity checking module name, to prevent overwriting "/system/".
    strings.to-lower:x:@.arguments/*/moduleName
    if
       eq
@@ -100,9 +84,7 @@ semaphore:crudifier
             public:true
             status:401
 
-   /*
-    * Sanity checking module name, to make sure it has a name at all.
-    */
+   // Sanity checking module name, to make sure it has a name at all.
    if
       or
          eq
@@ -116,9 +98,7 @@ semaphore:crudifier
             public:true
             status:401
 
-   /*
-    * Creating a log entry explaining roughly what we're about to do.
-    */
+   // Creating a log entry explaining roughly what we're about to do.
    log.info
       .:"Crudifying '"
       get-value:x:@strings.to-lower
@@ -130,13 +110,11 @@ semaphore:crudifier
       get-value:x:@.arguments/*/verb
       .:"'"
 
-   /*
-    * Making sure we create a valid filename.
-    */
+   // Making sure we create a valid filename.
    .filename
    set-value:x:-
       strings.replace:x:@.arguments/*/moduleUrl
-         .:'.'
+         .:.
          .:/
    set-value:x:@.filename
       strings.to-lower:x:@.filename
@@ -174,12 +152,14 @@ semaphore:crudifier
                log.info
                   .:x:@.arguments/*/log
                   auth.ticket.get
-                  .:"\r\n\r\n"
+                  .:@"
+
+"
                   lambda2hyper:x:@.arguments/*
 
    /*
     * Making sure we append validators, if given by client.
-    *
+    * 
     * Notice, we only do this for PUT or POST verbs.
     */
    if
@@ -209,7 +189,8 @@ semaphore:crudifier
       .lambda
 
          /*
-          * Checking if '*' was provided as the value for authentication,
+          * Checking if '
+          * ' was provided as the value for authentication,
           * at which point we simply add authentication, without any
           * roles - Ensuring only authenticated users can access endpoint,
           * but no requirements in regards to roles are specified.
@@ -220,23 +201,20 @@ semaphore:crudifier
                .:*
             .lambda
 
-               /*
-                * No roles specified, but user must be authenticated.
-                */
+               // No roles specified, but user must be authenticated.
                insert-after:x:@apply/*/.type
                   .
-                     ..:Verifying user is authorized to access endpoint.
-                     auth.ticket.verify
 
+                     // Verifying user is authorized to access endpoint.
+                     auth.ticket.verify
          else
 
-            /*
-             * Comma separated list of roles specified.
-             */
+            // Comma separated list of roles specified.
             unwrap:x:+/*/*/auth.ticket.verify
             insert-after:x:@apply/*/.type
                .
-                  ..:Verifying user is authorized to access endpoint.
+
+                  // Verifying user is authorized to access endpoint.
                   auth.ticket.verify:x:@.arguments/*/auth
 
    /*
@@ -245,32 +223,24 @@ semaphore:crudifier
     */
    switch:x:@.arguments/*/verb
 
-
-      /*
-       * HTTP DELETE special case
-       */
+      // HTTP DELETE special case
       case:delete
 
-         /*
-          * Sanity checking invocation.
-          */
+         // Sanity checking invocation.
          if
             eq
                get-count:x:@.arguments/*/args/*/primary/*
                .:int:0
             .lambda
 
-
-               /*
-                * Cannot have a DELETE endpoint without primary keys.
-                */
+               // Cannot have a DELETE endpoint without primary keys.
                throw:There are no actual primary keys declared for your DELETE endpoint.
                   public:true
                   status:401
 
          /*
           * Applying DELETE arguments.
-          *
+          * 
           * This basically ensures that all primary keys becomes mandatory arguments.
           */
          .first:bool:true
@@ -284,7 +254,8 @@ semaphore:crudifier
                      .:bool:false
                   insert-before:x:@apply/*/data.connect/-
                      .
-                        ..:Sanity checking invocation, making sure primary key(s) are specified.
+
+                        // Sanity checking invocation, making sure primary key(s) are specified.
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
@@ -297,30 +268,22 @@ semaphore:crudifier
                .
                   validators.mandatory
 
-      /*
-       * HTTP GET special case
-       */
+      // HTTP GET special case
       case:get
 
-         /*
-          * Sanity checking invocation.
-          */
+         // Sanity checking invocation.
          if
             eq
                get-count:x:@.arguments/*/args/*/columns/*
                .:int:0
             .lambda
 
-               /*
-                * Cannot have a GET endpoint returning no actual columns.
-                */
+               // Cannot have a GET endpoint returning no actual columns.
                throw:There are no actual columns declared for your GET endpoint.
                   public:true
                   status:401
 
-         /*
-          * Checking if we have an [.arguments]/[args]/[cache] value.
-          */
+         // Checking if we have an [.arguments]/[args]/[cache] value.
          if
             and
                exists:x:@.arguments/*/cache
@@ -365,20 +328,17 @@ semaphore:crudifier
             exists:x:@.arguments/*/conditions
             .lambda
 
-               /*
-                * Applying custom conditions to endpoint.
-                */
+               // Applying custom conditions to endpoint.
                add:x:@apply/*/.arguments
                   get-nodes:x:@.arguments/*/conditions/*/*
-
          else
 
             /*
              * Creating and applying default conditions to endpoint
-             *
+             * 
              * This is the part where we create our condition arguments, allowing
              * for filtering result when endpoint is invoked.
-             *
+             * 
              * Making sure we legalize all the most common operators for all
              * columns, in addition to "like" conditions for string types of
              * endpoints.
@@ -391,9 +351,7 @@ semaphore:crudifier
                neq
                eq
 
-            /*
-             * Checking if caller wants 'verbose' scaffolding.
-             */
+            // Checking if caller wants 'verbose' scaffolding.
             if
                or
                   not
@@ -407,11 +365,8 @@ semaphore:crudifier
                   remove-nodes:x:@.operators/*/lteq
                   remove-nodes:x:@.operators/*/neq
 
-            /*
-             * Applying arguments to endpoint.
-             */
+            // Applying arguments to endpoint.
             for-each:x:@.arguments/*/args/*/columns/*
-
 
                /*
                 * Checking if argument needs a ".like" comparison type,
@@ -423,9 +378,7 @@ semaphore:crudifier
                      .:string
                   .lambda
 
-                     /*
-                      * String type of argument, appending ".like" to legal arguments.
-                      */
+                     // String type of argument, appending ".like" to legal arguments.
                      .buffer
                         .name:x:@.dp/#/*/type
                      unwrap:x:@.buffer/*
@@ -448,9 +401,7 @@ semaphore:crudifier
                      .:bool
                   .lambda
 
-                     /*
-                      * Boolean type of argument, removing everything but ".eq" type of arguments.
-                      */
+                     // Boolean type of argument, removing everything but ".eq" type of arguments.
                      .buffer
                         .name:x:@.dp/#/*/type
                      unwrap:x:@.buffer/*
@@ -462,7 +413,6 @@ semaphore:crudifier
                            .:.eq
                      add:x:@apply/*/.arguments
                         get-nodes:x:@.buffer/*
-
                else
 
                   /*
@@ -507,9 +457,7 @@ semaphore:crudifier
                .:bool:true
             .lambda
 
-               /*
-                * Looping through all foreign keys making sure we left join with the referenced table.
-                */
+               // Looping through all foreign keys making sure we left join with the referenced table.
                for-each:x:@.arguments/*/args/*/columns/*
 
                   /*
@@ -527,7 +475,7 @@ semaphore:crudifier
 
                         /*
                          * Currently iterated column has a [foreign_key] declaration.
-                         *
+                         * 
                          * First we need to create our [join] part.
                          */
                         .src-field
@@ -557,9 +505,7 @@ semaphore:crudifier
                                     and
                                        .
 
-                        /*
-                         * Then we need to add the joined display [name] as a part of our result set.
-                         */
+                        // Then we need to add the joined display [name] as a part of our result set.
                         .display-col
                         .display-name
                         set-value:x:@.display-col
@@ -580,9 +526,7 @@ semaphore:crudifier
                               .
                                  as:x:@.display-name
 
-                        /*
-                         * Then we need to add the eq and like query parameters for the referenced columns.
-                         */
+                        // Then we need to add the eq and like query parameters for the referenced columns.
                         set-name:x:+/+/*/*/like
                            strings.concat
                               get-value:x:@.display-col
@@ -595,25 +539,18 @@ semaphore:crudifier
                            .
                               eq:string
                               like:string
-               
 
-      /*
-       * HTTP POST special cases
-       */
+      // HTTP POST special cases
       case:post
 
-         /*
-          * Sanity checking invocation.
-          */
+         // Sanity checking invocation.
          if
             eq
                get-count:x:@.arguments/*/args/*/columns/*
                .:int:0
             .lambda
 
-               /*
-                * Cannot have a POST endpoint without any actual data to POST.
-                */
+               // Cannot have a POST endpoint without any actual data to POST.
                throw:There are no actual columns declared for your POST endpoint.
                   public:true
                   status:401
@@ -645,14 +582,10 @@ semaphore:crudifier
                   .
                      result:success
 
-      /*
-       * HTTP PUT special cases
-       */
+      // HTTP PUT special cases
       case:put
 
-         /*
-          * Sanity checking invocation.
-          */
+         // Sanity checking invocation.
          if
             or
                eq
@@ -675,7 +608,7 @@ semaphore:crudifier
           * Applying PUT arguments.
           * First our primary keys, which ends up becoming a [where] condition,
           * to avoid allowing for updating all records.
-          *
+          * 
           * This is done by making sure all specified primary keys becomes mandatory
           * arguments when invoking the endpoint.
           */
@@ -696,7 +629,8 @@ semaphore:crudifier
                      .:bool:false
                   insert-after:x:@apply/*/.type
                      .
-                        ..:Sanity checking invocation, making sure primary key(s) are specified.
+
+                        // Sanity checking invocation, making sure primary key(s) are specified.
             .x:@.arguments/*/
             set-value:x:@.x
                strings.concat
@@ -724,9 +658,7 @@ semaphore:crudifier
                .
                   .
 
-         /*
-          * First adding the [add] into [where] parts, which are the primary keys.
-          */
+         // First adding the [add] into [where] parts, which are the primary keys.
          .x:@.arguments/*/[0,
          set-value:x:@.x
             strings.concat
@@ -738,13 +670,14 @@ semaphore:crudifier
                type:x
          insert-before:x:@apply/**/table/././1
             .
-               ..:Parametrising our update invocation.
+
+               // Parametrising our update invocation.
                add:x:./*/data.update/*/where/*/and
                   get-nodes
 
          /*
           * Then adding the [add] into [values] parts, which are the values to update.
-          *
+          * 
           * Notice, we assume there are less than 1.000 values to update, which should be
           * enough for any sane database table.
           */
@@ -762,23 +695,18 @@ semaphore:crudifier
                add:x:./*/data.update/*/values
                   get-nodes
 
-   /*
-    * HTTP PUT, POST and GET commonalities
-    */
+   // HTTP PUT, POST and GET commonalities
    switch:x:@.arguments/*/verb
       case:put
       case:post
       case:get
 
-
-         /*
-          * Applying foreign keys if specified.
-          */
+         // Applying foreign keys if specified.
          for-each:x:@.arguments/*/args/*/columns/*
 
             /*
              * Checking if currently iterated column has a foreign key declaration.
-             *
+             * 
              * Notice, for GET endpoints we do NOT generate [.foreign-key] declaration
              * if caller specified he wanted to create left joins for foreign keys.
              */
@@ -796,9 +724,7 @@ semaphore:crudifier
                            .:bool:true
                .lambda
 
-                  /*
-                   * Adding meta information about foreign key to lambda object.
-                   */
+                  // Adding meta information about foreign key to lambda object.
                   unwrap:x:+/*/*/*
                   add:x:@apply/*/.foreign-keys
                      .
@@ -808,7 +734,6 @@ semaphore:crudifier
                            foreign_column:x:@.dp/#/*/foreign_key/*/column
                            foreign_name:x:@.dp/#/*/foreign_key/*/name
                            long:x:@.dp/#/*/foreign_key/*/long
-
 
          /*
           * Making sure we also run through the primary arguments, if
@@ -820,21 +745,15 @@ semaphore:crudifier
                .:put
             .lambda
 
-               /*
-                * Primry keys can also be foreign keys.
-                */
+               // Primry keys can also be foreign keys.
                for-each:x:@.arguments/*/args/*/primary/*
 
-                  /*
-                   * Checking if currently iterated column has a foreign key declaration.
-                   */
+                  // Checking if currently iterated column has a foreign key declaration.
                   if
                      exists:x:@.dp/#/*/foreign_key/*
                      .lambda
 
-                        /*
-                         * Adding meta information about foreign key to lambda object.
-                         */
+                        // Adding meta information about foreign key to lambda object.
                         unwrap:x:+/*/*/*
                         add:x:@apply/*/.foreign-keys
                            .
@@ -845,40 +764,31 @@ semaphore:crudifier
                                  foreign_name:x:@.dp/#/*/foreign_key/*/name
                                  long:x:@.dp/#/*/foreign_key/*/long
 
-         /*
-          * Checking if we have foreign keys at all, and if not, removing entire declaration.
-          */
+         // Checking if we have foreign keys at all, and if not, removing entire declaration.
          if
             not
                exists:x:@apply/*/.foreign-keys/*
             .lambda
 
-               /*
-                * Removing [.foreign-key] declaration altogether.
-                */
+               // Removing [.foreign-key] declaration altogether.
                remove-nodes:x:@apply/*/.foreign-keys
 
-   /*
-    * Checking if caller wants to apply the CQRS pattern to his endpoint.
-    */
+   // Checking if caller wants to apply the CQRS pattern to his endpoint.
    if
       and
          exists:x:@.arguments/*/cqrs
          get-value:x:@.arguments/*/cqrs
       .lambda
 
-         /*
-          * Notice, we only apply the CQRS pattern to post, put and delete endpoints.
-          */
+         // Notice, we only apply the CQRS pattern to post, put and delete endpoints.
          switch:x:@.arguments/*/verb
-
             case:put
             case:post
             case:delete
 
                /*
                 * Applying [sockets.signal] just before returning from endpoint.
-                *
+                * 
                 * First creating signal name.
                 */
                .signal
@@ -890,9 +800,7 @@ semaphore:crudifier
                      .:.
                      get-value:x:@.arguments/*/verb
 
-               /*
-                * Adding [sockets.signal] invocation to lambda.
-                */
+               // Adding [sockets.signal] invocation to lambda.
                unwrap:x:+/*/*/sockets.signal
                insert-before:x:@apply/*/data.connect/*/unwrap
                   .
@@ -901,48 +809,34 @@ semaphore:crudifier
                      sockets.signal:x:@.signal
                         args
 
-               /*
-                * Applying authorisation requirements for signal invocation.
-                */
+               // Applying authorisation requirements for signal invocation.
                switch:x:@.arguments/*/cqrsAuthorisation
-
                   case:inherited
 
-                     /*
-                      * SignalR socket invocation should use same authorisation as endpoint.
-                      */
+                     // SignalR socket invocation should use same authorisation as endpoint.
                      insert-before:x:@apply/*/data.connect/*/sockets.signal
                         .
                            add:x:./*/sockets.signal
                               get-nodes:x:@auth.ticket.verify
                            set-name:x:./*/sockets.signal/*/auth.ticket.verify
                               .:roles
-
                   case:roles
 
-                     /*
-                      * SignalR socket invocation should use explicit roles when published.
-                      */
+                     // SignalR socket invocation should use explicit roles when published.
                      unwrap:x:+/*/*/roles
                      add:x:@apply/*/data.connect/*/sockets.signal
                         .
                            roles:x:@.arguments/*/cqrsAuthorisationValues
-
                   case:groups
 
-                     /*
-                      * SignalR socket invocation should use explicit roles when published.
-                      */
+                     // SignalR socket invocation should use explicit roles when published.
                      unwrap:x:+/*/*/groups
                      add:x:@apply/*/data.connect/*/sockets.signal
                         .
                            groups:x:@.arguments/*/cqrsAuthorisationValues
-
                   case:users
 
-                     /*
-                      * SignalR socket invocation should use explicit roles when published.
-                      */
+                     // SignalR socket invocation should use explicit roles when published.
                      unwrap:x:+/*/*/users
                      add:x:@apply/*/data.connect/*/sockets.signal
                         .
@@ -955,13 +849,13 @@ semaphore:crudifier
                set-value:x:@apply/*/.description
                   strings.concat
                      get-value:x:@apply/*/.description
-                     .:", and publishes the ["
+                     .:, and publishes the [
                      get-value:x:@.signal
-                     .:"] web socket SignalR message to users authorised to invoke the endpoint, passing in the arguments specified"
+                     .:] web socket SignalR message to users authorised to invoke the endpoint, passing in the arguments specified
 
    /*
     * Then creating our folder if necessary.
-    *
+    * 
     * We find the foldername here, by taking the entire filepath, and
     * removing its filename. Then we create the folder.
     */
@@ -982,9 +876,7 @@ semaphore:crudifier
          .:/
    io.folder.create:x:@.folder
 
-   /*
-    * Applying the correct description to the file.
-    */
+   // Applying the correct description to the file.
    set-value:x:@apply/*/.description
       strings.replace:x:@apply/*/.description
          .:{database}
@@ -1012,16 +904,12 @@ semaphore:crudifier
          get-value:x:@.arguments/*/verb
          .:.hl
 
-   /*
-    * Substituting illegal characters in our filename, such as spaces, etc.
-    */
+   // Substituting illegal characters in our filename, such as spaces, etc.
    strings.replace:x:@.path
-      .:' '
+      .:" "
       .:_
 
-   /*
-    * Throwing an exception if the file exists from before, unless [.argument][overwrite] is true.
-    */
+   // Throwing an exception if the file exists from before, unless [.argument][overwrite] is true.
    if
       and
          or
@@ -1044,7 +932,7 @@ semaphore:crudifier
 
    /*
     * Calculating how many lines of code we created.
-    *
+    * 
     * This is returned back to the caller after crudification is done.
     */
    get-count:x:@apply/**
@@ -1052,7 +940,7 @@ semaphore:crudifier
    /*
     * Checking if this is an HTTP GET verb, at which point we create TWO endpoints,
     * one to retrieve actual data, and another to retrieve the count of records in table.
-    *
+    * 
     * This is done by taking our existing "get items" lambda structure, and modifying it
     * until it becomes a "get count" endpoint file instead.
     */
@@ -1063,7 +951,8 @@ semaphore:crudifier
       .lambda
 
          /*
-          * First removing [.foreign-keys], [columns], adding [count(*) as count, and then transforming lambda
+          * First removing [.foreign-keys], [columns], adding [count(
+          * ) as count, and then transforming lambda
           * to Hyperlambda, and saving it to the correct file - Which is the same filename as the
           * plain get, except appending "-count" to it.
           */
@@ -1114,16 +1003,12 @@ semaphore:crudifier
                get-value:x:@.arguments/*/verb
                .:.hl
 
-         /*
-          * Figuring out filename for HTTP endpoint.
-          */
+         // Figuring out filename for HTTP endpoint.
          strings.replace:x:@.path
-            .:' '
+            .:" "
             .:_
 
-         /*
-          * Making sure file does not exist from before, unless [.argument][overwrite] is true.
-          */
+         // Making sure file does not exist from before, unless [.argument][overwrite] is true.
          if
             and
                or
@@ -1144,22 +1029,16 @@ semaphore:crudifier
          io.file.save:x:@strings.replace
             get-value:x:@lambda2hyper
 
-         /*
-          * Adding count endpoint LOC count to our above LOC value.
-          */
+         // Adding count endpoint LOC count to our above LOC value.
          set-value:x:@get-count
             math.add
                get-value:x:@get-count
                get-count:x:@apply/**
 
-   /*
-    * Making sure we evict the cache entry for endpoints.
-    */
+   // Making sure we evict the cache entry for endpoints.
    cache.set:endpoints
 
-   /*
-    * Returning success to caller.
-    */
+   // Returning success to caller.
    unwrap:x:+/*
    return
       result:success

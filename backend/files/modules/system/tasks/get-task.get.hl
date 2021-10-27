@@ -1,31 +1,17 @@
 
-/*
- * Returns the named task to caller.
- */
+// Returns the named task to caller.
 .arguments
    name:string
-.description:"Returns the named task to caller."
+.description:Returns the named task to caller.
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/name
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieves the specified task from the task scheduler.
- */
+// Retrieves the specified task from the task scheduler.
 tasks.get:x:@.arguments/*/name
 
-
-/*
- * Returning the results of the evaluation to caller.
- */
+// Returning the results of the evaluation to caller.
 return-nodes:x:@tasks.get/*

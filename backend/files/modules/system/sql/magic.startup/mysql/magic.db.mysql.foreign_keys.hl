@@ -1,19 +1,16 @@
 
 /*
  * Lists all foreign keys in some MySQL table.
- *
+ * 
  * Arguments
- *
+ * 
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
 slots.create:magic.db.mysql.foreign_keys
 
-
-   /*
-    * Opens up our connection
-    */
+   // Opens up our connection
    .connection:[information_schema]
    if
       and
@@ -35,10 +32,7 @@ slots.create:magic.db.mysql.foreign_keys
                .:]
    mysql.connect:x:@.connection
 
-
-      /*
-       * Dynamically creating our SQL.
-       */
+      // Dynamically creating our SQL.
       mysql.select:@"select
    `column_name` as `column`, `referenced_table_name` as foreign_table, `referenced_column_name`  as foreign_column 
    from `information_schema`.`key_column_usage`
@@ -49,7 +43,6 @@ slots.create:magic.db.mysql.foreign_keys
    order by `column_name`"
          @table:x:@.arguments/*/table
          @database:x:@.arguments/*/database
-
 
       /*
        * Creating our return value, by projecting it into

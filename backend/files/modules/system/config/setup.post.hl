@@ -3,7 +3,7 @@
  * This file will setup your system, changing its default JWT secret,
  * create the magic database, and insert a root user - Unless the
  * database, and/or root user exists from before.
- *
+ * 
  * Notice, if the root user exists from before, this file will change
  * its password - However, you cannot setup the system twice, unless you
  * manually change the JWT secret to its default value, which
@@ -15,24 +15,15 @@
    settings:string
 .description:Setup authentication and other parts of the system according to the arguments provided
 
-
-/*
- * Sanity checks invocation.
- */
+// Sanity checks invocation.
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:mssql
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Making sure we're able to return exceptions to caller.
- */
+// Making sure we're able to return exceptions to caller.
 try
 
    /*
@@ -56,11 +47,11 @@ try
 
    /*
     * Saving settings to appsettings.json file.
-    *
+    * 
     * Notice, this has to be done before we check if database exists,
     * otherwise it'll not be possible to login to database to check
     * if magic database already exists.
-    *
+    * 
     * Hence, without this step first, there is no way to use for instance a MySQL
     * instance that doesn't have the same root password as the default password
     * from the appSettings.json file.
@@ -73,25 +64,20 @@ try
     * not valid.
     */
    try
-
       switch:x:@.arguments/*/databaseType
-
          case:mssql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
                .:{database}
                .:master
             mssql.connect:x:@strings.replace
                mssql.select:select name from master.dbo.sysdatabases
-
          case:mysql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
                .:{database}
                .:information_schema
             mysql.connect:x:@strings.replace
                mysql.select:show databases
-
    .catch
-
       throw:Could not connect to database, please double check your connection string
          public:true
          status:400
@@ -122,7 +108,7 @@ try
    /*
     * Retrieving all databases from selected database type,
     * to see if 'magic' database has previously been created.
-    *
+    * 
     * If not, we create the 'magic' database using the specialised
     * schema declaration SQL file for the database type, and we later
     * insert a default user into its 'user' table.
@@ -133,9 +119,7 @@ try
       .:.databases
    signal:x:-
 
-   /*
-    * Checking if magic was returned from above invocation.
-    */
+   // Checking if magic was returned from above invocation.
    if
       not
          exists:x:@signal/*/*/=magic
@@ -143,7 +127,7 @@ try
 
          /*
           * Database does not exist.
-          *
+          * 
           * Evaluating SQL script that creates our database, but first we must dynamically
           * determine which script to execute.
           */
@@ -164,41 +148,29 @@ try
           */
          switch:x:@.arguments/*/databaseType
 
-            /*
-             * Special case for MS SQL, to execute "batch" slot.
-             */
+            // Special case for MS SQL, to execute "batch" slot.
             case:mssql
-
                set-name:x:./././*/xxx.connect/*/xxx.execute
                   .:mssql.execute-batch
 
-            /*
-             * Anything but MS SQL.
-             */
+            // Anything but MS SQL.
             default
-
                set-name:x:./././*/xxx.connect/*/xxx.execute
                   strings.concat
                      get-value:x:@.arguments/*/databaseType
                      .:.execute
 
-         /*
-          * Modifying the connect slot according to database type specified.
-          */
+         // Modifying the connect slot according to database type specified.
          set-name:x:./*/xxx.connect
             strings.concat
                get-value:x:@.arguments/*/databaseType
                .:.connect
 
-         /*
-          * Executing create database SQL script.
-          */
+         // Executing create database SQL script.
          xxx.connect
             xxx.execute:x:@io.file.load
 
-         /*
-          * Inserting root user.
-          */
+         // Inserting root user.
          unwrap:x:+/*
          signal:magic.auth.create-user
             username:root
@@ -206,7 +178,6 @@ try
             database-type:x:@.arguments/*/databaseType
             roles
                .:root
-
    else
 
       /*
@@ -218,14 +189,10 @@ try
          password:x:@.arguments/*/password
          database-type:x:@.arguments/*/databaseType
 
-      /*
-       * Then we need to make sure we run any database migration scripts.
-       */
+      // Then we need to make sure we run any database migration scripts.
       io.file.execute:/modules/system/magic.startup/migrate-magic-database.hl
 
-   /*
-    * Logging the fact that system was setup.
-    */
+   // Logging the fact that system was setup.
    log.info:System was successfully setup
 
    /*
@@ -248,35 +215,28 @@ try
                   .:system
          .lambda
 
-            /*
-             * Installing module, ensuring we trap exceptions in the process.
-             */
+            // Installing module, ensuring we trap exceptions in the process.
             try
 
-               /*
-                * Installing module.
-                */
+               // Installing module.
                unwrap:x:+/*
                signal:magic.modules.install-module
                   module:x:@strings.split/1
 
-               /*
-                * Doing some basic logging.
-                */
+               // Doing some basic logging.
                log.info
                   .:"Module successfully installed, module name was '"
                   get-value:x:@strings.split/1
                   .:"'"
-
             .catch
 
-               /*
-                * Oops, making sure we log failure.
-                */
+               // Oops, making sure we log failure.
                log.error
                   .:"Module failed to install, module name was '"
                   get-value:x:@strings.split/1
-                  .:"'\r\n\r\nMessage from system was '"
+                  .:@"'
+
+Message from system was '"
                   get-value:x:@.arguments/*/message
                   .:"'"
 
@@ -288,24 +248,17 @@ try
    crypto.seed:x:-
    log.info:CSRNG successfully seeded with your auth secret
 
-   /*
-    * Starting scheduler.
-    */
+   // Starting scheduler.
    scheduler.start
 
-   /*
-    * Authenticating user and returning new JWT token to client.
-    */
+   // Authenticating user and returning new JWT token to client.
    unwrap:x:+/*
    signal:magic.auth.authenticate
       username:root
       password:x:@.arguments/*/password
 
-   /*
-    * Returns the authentication JWT ticket created above to caller.
-    */
+   // Returns the authentication JWT ticket created above to caller.
    return-nodes:x:@signal/*
-
 .catch
 
    // Making sure we make exception publicly visible for frontend.

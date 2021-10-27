@@ -1,19 +1,13 @@
 
-/*
- * Schedules the task with the specified [id] for execution according to the specified parameters.
- */
+// Schedules the task with the specified [id] for execution according to the specified parameters.
 .arguments
    id:string
    due:date
    repeats:string
 .description:Schedules the task with the specified id for execution
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
-
 
 /*
  * Adds either a [repeats] or [due] argument to invocation below,
@@ -31,15 +25,9 @@ else
    add:x:../*/tasks.schedule
       get-nodes:x:@.arguments/*/due
 
-
-/*
- * Performs actual scheduling of task.
- */
+// Performs actual scheduling of task.
 tasks.schedule:x:@.arguments/*/id
 
-
-/*
- * Returns success to caller.
- */
+// Returns success to caller.
 return-nodes
    result:success

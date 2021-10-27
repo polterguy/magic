@@ -1,7 +1,5 @@
 
-/*
- * Installs the specified module by executing its Hyperlambda startup scripts.
- */
+// Installs the specified module by executing its Hyperlambda startup scripts.
 .arguments
    folder:string
    app_version:string
@@ -9,40 +7,25 @@
    token:string
 .description:Installs the specified module by executing its Hyperlambda startup scripts
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Splitting up folder argument to ensure we're left only with module name.
- */
+// Splitting up folder argument to ensure we're left only with module name.
 strings.split:x:@.arguments/*/folder
    .:/
 
-
-/*
- * Installing module.
- */
+// Installing module.
 unwrap:x:+/*
 signal:magic.modules.install-module
    module:x:@strings.split/1
 
-
-/*
- * Logging success.
- */
+// Logging success.
 log.info
    .:"Module successfully installed, module name was '"
    get-value:x:@.arguments/*/folder
    .:"'"
 
-
-/*
- * Creating our app's manifest.
- */
+// Creating our app's manifest.
 .manifest
 strings.concat
    get-value:x:@.arguments/*/folder
@@ -60,7 +43,7 @@ if
       /*
        * Removing [version] node from manifest if it exists, since we'll add
        * it according to arguments specified.
-       *
+       * 
        * Notice, we only do this if an explicit version was supplied as an argument.
        */
       if
@@ -79,10 +62,9 @@ if
             // Removing [version] node from existing manifest, to use version supplied by caller.
             remove-nodes:x:@.manifest/*/version
 
-
 /*
  * Adding name to our manifest.
- *
+ * 
  * Notice, if app is simply uploaded through "Files" menu item,
  * we don't have all the manifest data.
  */
@@ -103,10 +85,9 @@ if
          .
             name:x:@.arguments/*/name
 
-
 /*
  * Adding version to manifest.
- *
+ * 
  * Notice, if app is simply uploaded through "Files" menu item,
  * we don't have all the manifest data.
  */
@@ -127,18 +108,14 @@ if
          .
             version:x:@.arguments/*/app_version
 
-
-/*
- * Removing old [module_name], [installed_by] and [installed] nodes.
- */
+// Removing old [module_name], [installed_by] and [installed] nodes.
 remove-nodes:x:@.manifest/*/module_name
 remove-nodes:x:@.manifest/*/installed_by
 remove-nodes:x:@.manifest/*/installed
 
-
 /*
  * Adding version to manifest.
- *
+ * 
  * Notice, if app is simply uploaded through "Files" menu item,
  * we don't have all the manifest data.
  */
@@ -159,45 +136,30 @@ if
          .
             token:x:@.arguments/*/token
 
-
-/*
- * Adding module name to manifest.
- */
+// Adding module name to manifest.
 unwrap:x:+/*/*
 add:x:@.manifest
    .
       module_name:x:@strings.split/1
 
-
-/*
- * Adding username of user installing app.
- */
+// Adding username of user installing app.
 auth.ticket.get
 unwrap:x:+/*/*
 add:x:@.manifest
    .
       installed_by:x:@auth.ticket.get
 
-
-/*
- * Adding installation date.
- */
+// Adding installation date.
 date.now
 unwrap:x:+/*/*
 add:x:@.manifest
    .
       installed:x:@date.now
 
-
-/*
- * Saving manifest file.
- */
+// Saving manifest file.
 io.file.save:x:@strings.concat
    lambda2hyper:x:@.manifest/*
 
-
-/*
- * Returning result to caller.
- */
+// Returning result to caller.
 return-nodes
    result:success

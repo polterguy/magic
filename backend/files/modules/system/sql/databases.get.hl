@@ -1,27 +1,19 @@
 
-/*
- * Lists all database in your installation.
- */
+// Lists all database in your installation.
 .arguments
    databaseType:string
    connectionString:string
 .description:Returns all databases in your installation, according to the arguments specified
 
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/databaseType
 validators.mandatory:x:@.arguments/*/connectionString
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
    .:mssql
-
 
 /*
  * Since this endpoint is quite expensive to invoke, we cache its result
@@ -38,10 +30,7 @@ cache.try-get:x:@strings.concat
    expiration:36000
    .lambda
 
-
-      /*
-       * Retrieving databases.
-       */
+      // Retrieving databases.
       .databaseType:x:@.arguments/*/databaseType
       .connection-string:x:@.arguments/*/connectionString
       strings.concat
@@ -52,10 +41,7 @@ cache.try-get:x:@strings.concat
       signal:x:@strings.concat
          connection-string:x:@.connection-string
 
-
-      /*
-       * Creating our return value, one for each database.
-       */
+      // Creating our return value, one for each database.
       .result
       for-each:x:@signal/*/*
          set-value:x:@.dp/#
@@ -69,17 +55,11 @@ cache.try-get:x:@strings.concat
                   name:x:@.dp/#
                   tables
 
-
-      /*
-       * Iterating through databases.
-       */
+      // Iterating through databases.
       for-each:x:@.result/*
          try
 
-
-            /*
-             * Retrieving tables.
-             */
+            // Retrieving tables.
             strings.concat
                .:magic.db.
                get-value:x:@.databaseType
@@ -90,10 +70,7 @@ cache.try-get:x:@strings.concat
                database:x:@.dp/#/*/name
             for-each:x:@signal/*
 
-
-               /*
-                * Retrieving columns.
-                */
+               // Retrieving columns.
                unwrap:x:+/*/*/*
                add:x:@for-each/@.dp/#/*/tables
                   .
@@ -121,10 +98,7 @@ cache.try-get:x:@strings.concat
                            automatic:x:@.dp/#/*/automatic
                            hl:x:@.dp/#/*/hl
 
-
-               /*
-                * Retrieving foreign keys.
-                */
+               // Retrieving foreign keys.
                add:x:@for-each/@for-each/@.dp/#/*/tables/0/-
                   .
                      foreign_keys
@@ -143,25 +117,18 @@ cache.try-get:x:@strings.concat
                   add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/foreign_keys
                      .
                         .
-
          .catch
 
             // Silently ignoring, after logging, probably don't have access to database.
             log.info:x:@.arguments/*/message
 
-
-      /*
-       * Returning database to caller.
-       */
+      // Returning database to caller.
       add:x:+/*
          get-nodes:x:@.result/*
       return
          databases
 
-
-/*
- * Returning results to caller.
- */
+// Returning results to caller.
 add:x:+
    get-nodes:x:@cache.try-get/#/*
 return

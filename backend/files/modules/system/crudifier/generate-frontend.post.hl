@@ -1,7 +1,5 @@
 
-/*
- * Generates a frontend for you.
- */
+// Generates a frontend for you.
 .description:Generates a frontend for you according to the given arguments
 .arguments
    templateName:string
@@ -13,25 +11,16 @@
    endpoints:*
    args:*
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/email
 validators.email:x:@.arguments/*/email
 validators.mandatory:x:@.arguments/*/apiUrl
 validators.url:x:@.arguments/*/apiUrl
 
-
-/*
- * Figuring out which template/generator to use, and invoking it.
- */
+// Figuring out which template/generator to use, and invoking it.
 strings.concat
    .:/misc/templates/
    .:x:@.arguments/*/templateName
@@ -48,7 +37,6 @@ io.file.execute:x:@strings.concat
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
 
-
 /*
  * Making sure we get the HTTP headers correctly applied before we return ZIP
  * file to caller.
@@ -62,14 +50,12 @@ response.headers.add
    Content-Disposition:x:@strings.concat
    Access-Control-Expose-Headers:Content-Disposition
 
-
-/*
- * Creating a log entry with LOC that was generated.
- */
+// Creating a log entry with LOC that was generated.
 .no:int:0
 for-each:x:@io.file.execute/*
    strings.split:x:@.dp/#/*
-      .:"\n"
+      .:@"
+"
    math.increment:x:@.no
       get-count:x:@strings.split/*
 strings.concat
@@ -80,7 +66,6 @@ strings.concat
    get-value:x:@.arguments/*/name
    .:"'"
 log.info:x:@strings.concat
-
 
 /*
  * Creating a ZIP stream from return value of above [io.file.execute]

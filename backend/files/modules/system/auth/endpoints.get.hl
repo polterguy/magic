@@ -6,12 +6,8 @@
  */
 .description:Returns all dynamic HTTP endpoints in the system, with their associated verb(s), and roles that are allowed to access the endpoint
 
-
-/*
- * Declares how many seconds the operation should be cached.
- */
+// Declares how many seconds the operation should be cached.
 .cache-seconds:int:300
-
 
 /*
  * Invokes [endpoints.list], making sure we cache the results, since it's a
@@ -21,9 +17,7 @@ cache.try-get:magic.auth.endpoints
    expiration:x:@.cache-seconds
    .lambda
 
-      /*
-       * Cache miss, retrieving endpoints, and returning to caller.
-       */
+      // Cache miss, retrieving endpoints, and returning to caller.
       .result
       endpoints.list
       for-each:x:@endpoints.list/*
@@ -38,10 +32,7 @@ cache.try-get:magic.auth.endpoints
                   auth
       return:x:@.result/*
 
-
-/*
- * Returning results of above invocation to caller.
- */
+// Returning results of above invocation to caller.
 add:x:../*/return
    get-nodes:x:@cache.try-get/#/*
 return

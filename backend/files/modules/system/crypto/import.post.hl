@@ -1,14 +1,11 @@
 
-/*
- * Imports a public key into the system.
- */
+// Imports a public key into the system.
 .description:Imports a public key into the system. Notice, the key will not be enabled to prevent clients from gaining access to execute Hyperlambda until their key has been explicitly enabled by an admin of the current server.
 .arguments
    subject:string
    email:string
    domain:string
    content:string
-
 
 /*
  * Sanity checking invocation.
@@ -22,17 +19,11 @@ validators.mandatory:x:@.arguments/*/content
 validators.url:x:@.arguments/*/domain
 validators.email:x:@.arguments/*/email
 
-
-/*
- * Importing key.
- */
+// Importing key.
 add:x:+
    get-nodes:x:@.arguments/*
 signal:magic.crypto.import-key
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

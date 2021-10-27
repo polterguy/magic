@@ -1,27 +1,16 @@
 
-/*
- * Returns the fingerprint for the specified key.
- */
+// Returns the fingerprint for the specified key.
 .description:Returns the fingerprint for the specified key
 .arguments
    key:string
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Sanity checks invocation.
- */
+// Sanity checks invocation.
 validators.mandatory:x:@.arguments/*/key
 
-
-/*
- * Creating fingerprint and returning to caller.
- */
+// Creating fingerprint and returning to caller.
 crypto.fingerprint:x:@.arguments/*/key
    format:fingerprint
 unwrap:x:+/*

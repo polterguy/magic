@@ -1,22 +1,13 @@
 
-/*
- * Creates the specified [folder] folder.
- */
+// Creates the specified [folder] folder.
 .arguments
    folder:string
 .description:Creates the specified folder on the server
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Creates the specified folder.
- */
+// Creates the specified folder.
 io.folder.create:x:@.arguments/*/folder
-
 return
    result:success

@@ -1,18 +1,10 @@
 
-/*
- * Returns all endpoints in the system.
- */
+// Returns all endpoints in the system.
 .description:Returns all endpoints in the system, and their associated meta information
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Returns all endpoints to caller.
- */
+// Returns all endpoints to caller.
 endpoints.list
 return-nodes:x:@endpoints.list/*

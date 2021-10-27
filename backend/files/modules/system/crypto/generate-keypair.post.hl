@@ -1,7 +1,5 @@
 
-/*
- * Creates a new RSA key pair, with the specified parameters
- */
+// Creates a new RSA key pair, with the specified parameters
 .description:Generates a new server cryptography key pair using the specified arguments, creating a backup of any previously created key pair
 .arguments
    strength:int
@@ -10,16 +8,10 @@
    email:string
    domain:string
 
-
-/*
- * Verifying user can access endpoint.
- */
+// Verifying user can access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/strength
 validators.mandatory:x:@.arguments/*/seed
 validators.mandatory:x:@.arguments/*/subject
@@ -35,18 +27,13 @@ validators.enum:x:@.arguments/*/strength
 validators.string:x:@.arguments/*/seed
    min:100
 
-
-/*
- * Checking to see if a key pair already exists.
- */
+// Checking to see if a key pair already exists.
 log.info:Generating an RSA key pair for server
 if
    io.file.exists:/etc/system/crypto/keys/public.key
    .lambda
 
-      /*
-       * Creating a backup of the old key pair.
-       */
+      // Creating a backup of the old key pair.
       log.info:Creating a backup of the old key pair
       .public-key
       set-value:x:@.public-key
@@ -74,36 +61,24 @@ if
       io.file.save:x:@.private-key-filename
          get-value:x:@.private-key
 
-
-/*
- * Creating our RSA key pair using the specified arguments.
- */
+// Creating our RSA key pair using the specified arguments.
 crypto.rsa.create-key
    strength:x:@.arguments/*/strength
    seed:x:@.arguments/*/seed
 
-
-/*
- * Saving key(s) to disc.
- */
+// Saving key(s) to disc.
 io.file.save:/etc/system/crypto/keys/public.key
    get-value:x:@crypto.rsa.create-key/*/public
 io.file.save:/etc/system/crypto/keys/private.key
    get-value:x:@crypto.rsa.create-key/*/private
 
-
-/*
- * Doing some basic logging.
- */
+// Doing some basic logging.
 log.info
    .:"RSA key pair generated for server, fingerprint; '"
    get-value:x:@crypto.rsa.create-key/*/fingerprint
    .:"'"
 
-
-/*
- * Importing serve key into crypto keys storage.
- */
+// Importing serve key into crypto keys storage.
 add:x:../*/signal
    get-nodes:x:@.arguments/*/subject
    get-nodes:x:@.arguments/*/email
@@ -114,10 +89,7 @@ signal:magic.crypto.import-key
    enabled:bool:true
    username:root
 
-
-/*
- * Returning the public key, and its fingerprint to caller.
- */
+// Returning the public key, and its fingerprint to caller.
 unwrap:x:+/*
 return
    fingerprint:x:@crypto.rsa.create-key/*/fingerprint

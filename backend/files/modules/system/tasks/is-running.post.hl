@@ -1,21 +1,13 @@
 
-/*
- * Turns the scheduler on or off.
- */
+// Turns the scheduler on or off.
 .arguments
    value:bool
-.description:"Turns the scheduler on or off."
+.description:Turns the scheduler on or off.
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Checks if caller wants to turn scheduler on or off.
- */
+// Checks if caller wants to turn scheduler on or off.
 if
    eq
       get-value:x:@.arguments/*/value

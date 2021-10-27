@@ -1,16 +1,11 @@
 
-/*
- * Deletes the specified [folder] folder.
- */
+// Deletes the specified [folder] folder.
 .arguments
    folder:string
 .description:Deletes the specified folder on the server
 
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
-
 
 /*
  * Checking if this is a module folder, and if so, we uninstall module before actually
@@ -28,9 +23,7 @@ if
          .:modules
    .lambda
 
-      /*
-       * 'modules' folder, checking if it's got an uninstall file, and if so, executing it.
-       */
+      // 'modules' folder, checking if it's got an uninstall file, and if so, executing it.
       strings.concat
          get-value:x:@.arguments/*/folder
          .:uninstall.hl
@@ -38,25 +31,16 @@ if
          io.file.exists:x:@strings.concat
          .lambda
 
-            /*
-             * Uninstall file exists
-             */
+            // Uninstall file exists
             log.info
                .:"Executing uninstallation file '"
                get-value:x:@strings.concat
                .:"'"
             io.file.execute:x:@strings.concat
 
-
-
-/*
- * Deletes the specified folder.
- */
+// Deletes the specified folder.
 io.folder.delete:x:@.arguments/*/folder
 
-
-/*
- * Returning success to caller.
- */
+// Returning success to caller.
 return
    result:success

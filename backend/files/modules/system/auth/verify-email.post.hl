@@ -8,23 +8,15 @@
    token:string
 .description:Verifies an email address typically supplied during registration of a new user in the system
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/token
 validators.email:x:@.arguments/*/username
 
-
-/*
- * Verifying user exists and has not already verified his or her email address.
- */
+// Verifying user exists and has not already verified his or her email address.
 data.connect:magic
 
-   /*
-    * Checking if username exists in database.
-    */
+   // Checking if username exists in database.
    data.read
       table:users
       where
@@ -36,16 +28,12 @@ data.connect:magic
          exists:x:@data.read/*/*
       .lambda
 
-         /*
-          * No such user.
-          */
+         // No such user.
          throw:Access denied
             public:bool:true
             status:int:401
 
-   /*
-    * Verifying user has not yet confirmed his email address.
-    */
+   // Verifying user has not yet confirmed his email address.
    data.read
       table:users_roles
       where
@@ -57,9 +45,7 @@ data.connect:magic
          exists:x:@data.read/*/*
       .lambda
 
-         /*
-          * User has previously verified his email address.
-          */
+         // User has previously verified his email address.
          throw:Access denied
             public:bool:true
             status:int:401
@@ -81,9 +67,7 @@ data.connect:magic
             get-value:x:@.arguments/*/token
       .lambda
 
-         /*
-          * Token mismatch.
-          */
+         // Token mismatch.
          throw:Access denied
             public:bool:true
             status:int:401
@@ -92,7 +76,7 @@ data.connect:magic
     * Updating user's verified status by removing him or
     * her from the 'unconfirmed' role and adding the user
     * to the 'guest' role.
-    *
+    * 
     * The guest role is the role in the system with the
     * least access to do thing, yet still an actual role,
     * that can do some things.
@@ -109,19 +93,13 @@ data.connect:magic
          user:x:@.arguments/*/username
          role:guest
 
-
-/*
- * Logging the fact that user confirmed his email address.
- */
+// Logging the fact that user confirmed his email address.
 log.info
    strings.concat
       .:"Successfully confirmed email address of user '"
       get-value:x:@.arguments/*/username
       .:"'"
 
-
-/*
- * Returns success to caller.
- */
+// Returns success to caller.
 return-nodes
    result:success

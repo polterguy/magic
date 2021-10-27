@@ -6,7 +6,6 @@
 .arguments
 .type:sql
 
-
 // Opening up a database connection
 data.connect:{database}
    database-type:{database-type}
@@ -15,11 +14,9 @@ data.connect:{database}
    add:x:./*/data.select
       get-nodes:x:@.arguments/*
 
-
    // Evaluating [xxx.select] slot.
    data.select:{sql}
       database-type:{database-type}
-
 
    /*
     * Checking if we should return a list of items, or only a
@@ -29,11 +26,8 @@ data.connect:{database}
       .is-list:{isList}
       .lambda
 
-         /*
-          * Returning a list of items to caller.
-          */
+         // Returning a list of items to caller.
          return-nodes:x:@data.select/*
-
 
    // Returning a single result to caller.
    return-nodes:x:@data.select/*/*

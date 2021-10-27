@@ -1,19 +1,16 @@
 
 /*
  * Lists all columns in some SQL Server database table.
- *
+ * 
  * Arguments
- *
+ * 
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
 slots.create:magic.db.mssql.columns
 
-
-   /*
-    * Opens up our connection
-    */
+   // Opens up our connection
    .connection:[master]
    if
       and
@@ -35,10 +32,7 @@ slots.create:magic.db.mssql.columns
                .:]
    mssql.connect:x:@.connection
 
-
-      /*
-       * Running our query to retrieve meta information.
-       */
+      // Running our query to retrieve meta information.
       mssql.select:@"select c.name 'name', t.Name 'type', c.is_nullable 'nullable', isnull(i.is_primary_key, 0) 'primary', c.is_identity 'automatic', c.default_object_id 'default'
          from sys.columns c 
              inner join sys.types t on c.user_type_id = t.user_type_id
@@ -49,10 +43,7 @@ slots.create:magic.db.mssql.columns
          where c.object_id = OBJECT_ID(@table)"
          @table:x:@.arguments/*/table
 
-
-      /*
-       * Adding the returned values from the above SQL into our return invocation below.
-       */
+      // Adding the returned values from the above SQL into our return invocation below.
       for-each:x:@mssql.select/*
          unwrap:x:+/*/*
          .tmp
@@ -63,7 +54,6 @@ slots.create:magic.db.mssql.columns
                primary:x:@.dp/#/*/primary
                automatic:x:@.dp/#/*/automatic
 
-
          /*
           * Checking if column is not automatic,
           * but still seems to have a default value.
@@ -73,14 +63,10 @@ slots.create:magic.db.mssql.columns
                get-value:x:@.dp/#/*/default
                .:int:0
             .lambda
-            
-            
-               /*
-                * Column has default value.
-                */
+
+               // Column has default value.
                set-value:x:@.tmp/*/*/automatic
                   .:bool:true
-
 
          /*
           * Figuring our which Hyperlambda type to project
@@ -89,10 +75,7 @@ slots.create:magic.db.mssql.columns
          .type
          switch:x:@.dp/#/*/type
 
-
-            /*
-             * Everything transformed into date values.
-             */
+            // Everything transformed into date values.
             case:date
             case:datetime
             case:datetime2
@@ -102,10 +85,7 @@ slots.create:magic.db.mssql.columns
                set-value:x:@.type
                   .:date
 
-
-            /*
-             * Everything transformed into decimal values.
-             */
+            // Everything transformed into decimal values.
             case:numeric
             case:decimal
             case:smallmoney
@@ -115,10 +95,7 @@ slots.create:magic.db.mssql.columns
                set-value:x:@.type
                   .:decimal
 
-
-            /*
-             * Everything transformed into integer long values.
-             */
+            // Everything transformed into integer long values.
             case:bigint
             case:smallint
             case:int
@@ -126,18 +103,12 @@ slots.create:magic.db.mssql.columns
                set-value:x:@.type
                   .:long
 
-
-            /*
-             * Everything transformed into boolean values.
-             */
+            // Everything transformed into boolean values.
             case:bit
                set-value:x:@.type
                   .:bool
 
-
-            /*
-             * Everything transformed into string values.
-             */
+            // Everything transformed into string values.
             case:char
             case:varchar
             case:text
@@ -151,10 +122,7 @@ slots.create:magic.db.mssql.columns
                set-value:x:@.type
                   .:string
 
-
-            /*
-             * Special case for timestamp, since it's actually an "automatic" column.
-             */
+            // Special case for timestamp, since it's actually an "automatic" column.
             case:rowversion
             case:timestamp
                set-value:x:@.type
@@ -162,32 +130,20 @@ slots.create:magic.db.mssql.columns
                set-value:x:@.tmp/*/*/automatic
                   .:bool:true
 
-
-            /*
-             * Defaulting Hyperlambda type to string.
-             */
+            // Defaulting Hyperlambda type to string.
             default
                set-value:x:@.type
                   .:string
 
-
-         /*
-          * Adding Hyperlambda type to [.tmp] above.
-          */
+         // Adding Hyperlambda type to [.tmp] above.
          unwrap:x:+/*/*
          add:x:@.tmp/*
             .
                hl:x:@.type
 
-
-         /*
-          * Adding [.tmp] to [return-nodes] below.
-          */
+         // Adding [.tmp] to [return-nodes] below.
          add:x:../*/mssql.connect/*/return-nodes
             get-nodes:x:@.tmp/*
 
-
-      /*
-       * Returning results to caller.
-       */
+      // Returning results to caller.
       return-nodes

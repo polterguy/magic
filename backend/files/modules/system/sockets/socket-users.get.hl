@@ -1,31 +1,20 @@
 
-/*
- * Returns users currently connected to the web server over a web socket connection.
- */
+// Returns users currently connected to the web server over a web socket connection.
 .description:Returns users currently connected to the web server over a web socket connection
 .arguments
    filter:string
    offset:int
    limit:int
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieving currently connected users.
- */
+// Retrieving currently connected users.
 add:x:+
    get-nodes:x:@.arguments/*
 sockets.users
 
-
-/*
- * Returning result of above invocation to caller.
- */
+// Returning result of above invocation to caller.
 add:x:+
    get-nodes:x:@sockets.users/*
 return

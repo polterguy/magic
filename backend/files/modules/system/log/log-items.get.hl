@@ -1,23 +1,15 @@
 
-/*
- * Returns log items in the database according to specified arguments.
- */
+// Returns log items in the database according to specified arguments.
 .arguments
    offset:long
    limit:long
    query:string
 .description:Returns log items matching the optional arguments
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Adding filter argument, if given.
- */
+// Adding filter argument, if given.
 if
    exists:x:@.arguments/*/query
    .lambda
@@ -32,10 +24,7 @@ if
                   type.eq:x:@.arguments/*/query
                   content.like:x:@strings.concat
 
-
-/*
- * Retrieving items from database.
- */
+// Retrieving items from database.
 data.connect:magic
    add:x:+
       get-nodes:x:@.arguments/*/offset
@@ -45,7 +34,5 @@ data.connect:magic
       order:id
       direction:desc
 
-   /*
-    * Returning items to caller.
-    */
+   // Returning items to caller.
    return-nodes:x:-/*

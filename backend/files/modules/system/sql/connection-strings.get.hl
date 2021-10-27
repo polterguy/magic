@@ -7,16 +7,10 @@
    databaseType:string
 .description:Returns all connection strings in your installation for the specified database type
 
-
-/*
- * Ensures user is authorized to access endpoint.
- */
+// Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-
-/*
- * Retrieves all connection strings according to database type specified.
- */
+// Retrieves all connection strings according to database type specified.
 strings.concat
    .:"magic:databases:"
    get-value:x:@.arguments/*/databaseType

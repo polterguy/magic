@@ -1,17 +1,14 @@
 
 /*
  * Lists all database in your MySQL instance.
- *
+ * 
  * Arguments
- *
+ * 
  * - [connection-string] - What connection string to use
  */
 slots.create:magic.db.mssql.databases
 
-
-   /*
-    * Opens up our connection
-    */
+   // Opens up our connection
    .connection:[master]
    if
       and
@@ -32,21 +29,12 @@ slots.create:magic.db.mssql.databases
                .:master]
    mssql.connect:x:@.connection
 
-
-      /*
-       * Runs our query
-       */
+      // Runs our query
       mssql.select:select name from master.dbo.sysdatabases where has_dbaccess(name) = 1
 
-
-      /*
-       * Renaming "Database" nodes.
-       */
+      // Renaming "Database" nodes.
       set-name:x:@mssql.select/*/*
          .:db
 
-
-      /*
-       * Returns the remaining databases to caller.
-       */
+      // Returns the remaining databases to caller.
       return-nodes:x:@mssql.select/*

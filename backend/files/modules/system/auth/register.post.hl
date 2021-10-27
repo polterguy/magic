@@ -1,7 +1,5 @@
 
-/*
- * Registers a new user in the backend.
- */
+// Registers a new user in the backend.
 .arguments
    username:string
    password:string
@@ -9,10 +7,7 @@
    backendUrl:string
 .description:Registers a new user in the system
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
 validators.mandatory:x:@.arguments/*/frontendUrl
@@ -21,10 +16,7 @@ validators.email:x:@.arguments/*/username
 validators.url:x:@.arguments/*/frontendUrl
 validators.url:x:@.arguments/*/backendUrl
 
-
-/*
- * Verifying that Magic is configured to allow for users to register.
- */
+// Verifying that Magic is configured to allow for users to register.
 config.get:"magic:auth:registration:allow"
 if
    not
@@ -33,9 +25,7 @@ if
          .:True
    .lambda
 
-      /*
-       * Doing some basic logging and returning failure to caller.
-       */
+      // Doing some basic logging and returning failure to caller.
       log.error
          strings.concat
             .:"User tried to register at site, but registrations are turned OFF. Username was '"
@@ -45,16 +35,10 @@ if
          public:bool:true
          status:int:401
 
-
-/*
- * Hashing user's passsword.
- */
+// Hashing user's passsword.
 crypto.password.hash:x:@.arguments/*/password
 
-
-/*
- * Inserts user into database.
- */
+// Inserts user into database.
 data.connect:magic
 
    /*
@@ -63,9 +47,7 @@ data.connect:magic
     */
    try
 
-      /*
-       * Inserting user into database.
-       */
+      // Inserting user into database.
       data.create
          table:users
          values
@@ -73,9 +55,7 @@ data.connect:magic
             password:x:@crypto.password.hash
    .catch
 
-      /*
-       * Doing some basic logging, and returning result to caller.
-       */
+      // Doing some basic logging, and returning result to caller.
       log.info
          strings.concat
             .:"User tried to register consecutive times, username was '"
@@ -84,15 +64,12 @@ data.connect:magic
       return
          result:already-registered
 
-   /*
-    * Associating user with correct role.
-    */
+   // Associating user with correct role.
    data.create
       table:users_roles
       values
          user:x:@.arguments/*/username
          role:unconfirmed
-
 
 /*
  * Response result to return to user, which varies according
@@ -100,10 +77,9 @@ data.connect:magic
  */
 .result:success
 
-
 /*
  * Sends an email to user asking him or her to confirm their email address.
- *
+ * 
  * Notice, we only do this if we can find SMTP settings in our configuration.
  */
 config.get:"magic:smtp:host"
@@ -131,9 +107,7 @@ if
       set-value:x:@.token
          crypto.hash:x:@strings.concat
 
-      /*
-       * Dynamically building our reset password URL.
-       */
+      // Dynamically building our reset password URL.
       .url
       set-value:x:@.url
          strings.concat
@@ -150,7 +124,7 @@ if
        * be manually enabled, at which point we send the "confirm registration email"
        * to the "confirm-email" value from the configuration settings,
        * instead of the user's registered email address.
-       *
+       * 
        * Notice, by default this email is sent to registered user, but if
        * overridden in the configuration to an explicit email, the explicit email
        * address is used instead. Which allows for a specific user to manually
@@ -183,7 +157,6 @@ if
              */
             set-value:x:@.result
                .:confirm-email-address-email-sent
-
       else
 
          /*
@@ -193,9 +166,7 @@ if
          set-value:x:@.result
             .:email-sent-to-moderator
 
-      /*
-       * Now we can send an email to user.
-       */
+      // Now we can send an email to user.
       unwrap:x:+/**
       signal:magic.emails.send
          subject:Thank you for registering
@@ -204,7 +175,6 @@ if
             url:x:@.url
          mime-type:text/html
          email:x:@.recipient
-
 else
 
    /*
@@ -214,20 +184,14 @@ else
     */
    log.info:"Cannot send newly registered user an email asking him or her to confirm their email address, since no SMTP configuration settings was found. Please edit your configuration file according to how it's explained at https://github.com/polterguy/magic.lambda.mail to take fully advantage of these features."
 
-
-/*
- * Logging the fact that we registered a new user.
- */
+// Logging the fact that we registered a new user.
 log.info
    strings.concat
       .:"Successfully registered a new user with username '"
       get-value:x:@.arguments/*/username
       .:"'"
 
-
-/*
- * Returns success to caller.
- */
+// Returns success to caller.
 unwrap:x:+/*
 return-nodes
    result:x:@.result
