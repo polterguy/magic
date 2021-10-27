@@ -3,7 +3,7 @@
  * Script that formats all Hyperlambda files recursively within
  * the specified folder.
  */
-.folder:/modules/system/
+.folder:/modules/YOUR-MODULE-FOLDER-HERE/
 unwrap:x:+/*
 signal:magic.io.file.list-recursively
    .:x:@.folder
