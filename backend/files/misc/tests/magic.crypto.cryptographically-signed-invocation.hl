@@ -6,23 +6,21 @@
 description:Assumes that invoking a cryptographically signed endpoint (localhost) works as expected
 .lambda
 
-   /*
-    * Common URL for all invocations.
-    */
+   // Common URL for all invocations.
    .url
    set-value:x:@.url
       strings.concat
          request.scheme
          .:"://"
          request.host
-         .:"/magic/modules/system/crypto/eval-id"
+         .:/magic/modules/system/crypto/eval-id
    unwrap:x:./**/signal/*/url
 
    /*
     * Invoking self as a cryptographically signed invocation, to
     * make sure cryptographically signed invocations works, and that
     * we have imported our own server key as a 'client key'.
-    *
+    * 
     * First we create a unique request ID.
     */
    guid.new
@@ -32,9 +30,7 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
          convert:x:@guid.new
             type:string
 
-   /*
-    * Then we invoke ourselves using a cryptographically signed invocation.
-    */
+   // Then we invoke ourselves using a cryptographically signed invocation.
    signal:magic.crypto.http.eval
       url:x:@.url
       .lambda
@@ -46,9 +42,7 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
          .request-id
          return:success
 
-   /*
-    * Assuming result of above invocation is success.
-    */
+   // Assuming result of above invocation is success.
    if
       or
          not

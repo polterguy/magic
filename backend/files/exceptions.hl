@@ -10,9 +10,7 @@ log.error
    get-value:x:@.arguments/*/path
    .:"'"
 
-/*
- * Returning generic error to caller.
- */
+// Returning generic error to caller.
 if
    and
       exists:x:@.arguments/*/public

@@ -1,7 +1,7 @@
 
 /*
  * Returns the specified file to caller.
- *
+ * 
  * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
  * will correctly decorate your file with the correct properties.
  */
@@ -10,33 +10,23 @@
 .arguments
    file:string
 
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 
-/*
- * Verifying user has access to invoke endpoint.
- */
+// Verifying user has access to invoke endpoint.
 auth.ticket.verify:[[auth]]
 
-/*
- * Concatenating folder with specified image.
- */
+// Concatenating folder with specified image.
 strings.concat
    .:/etc/
    .:[[module]]
    .:/
    get-value:x:@.arguments/*/file
 
-/*
- * Opening up a read stream for file.
- */
+// Opening up a read stream for file.
 io.stream.open-file:x:@strings.concat
 
-/*
- * Returning image to caller, making sure we get the HTTP headers correctly applied.
- */
+// Returning image to caller, making sure we get the HTTP headers correctly applied.
 strings.concat
    .:"attachment; filename=\""
    get-value:x:@.arguments/*/file

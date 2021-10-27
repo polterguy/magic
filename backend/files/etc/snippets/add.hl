@@ -1,6 +1,5 @@
-/*
- * Adds a bunch of nodes into specified destination expression's children collection.
- */
+
+// Adds a bunch of nodes into specified destination expression's children collection.
 .destination
 add:x:@.destination
    .

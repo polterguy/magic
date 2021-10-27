@@ -1,6 +1,5 @@
-/*
- * Example of how to send an email using Hyperlambda.
- */
+
+// Example of how to send an email using Hyperlambda.
 mail.smtp.send
    message
       to

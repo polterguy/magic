@@ -1,6 +1,5 @@
-/*
- * Evaluates specified [.lambda] for as long as condition evaluates to true.
- */
+
+// Evaluates specified [.lambda] for as long as condition evaluates to true.
 .no:int:0
 while
    lt
@@ -8,12 +7,8 @@ while
       .:int:20
    .lambda
 
-      /*
-       * Your lambda goes here.
-       */
+      // Your lambda goes here.
       log.info:Howdy from while
-      
-      /*
-       * Incrementing counter.
-       */
+
+      // Incrementing counter.
       math.increment:x:@.no

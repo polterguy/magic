@@ -1,7 +1,5 @@
 
-/*
- * Macro for Hyper IDE that ensures that as module is installed, a folder inside of the '/etc/' folder will be created where the module can store its configuration files, images, and other types of dynamic files related to the module.
- */
+// Macro for Hyper IDE that ensures that as module is installed, a folder inside of the '/etc/' folder will be created where the module can store its configuration files, images, and other types of dynamic files related to the module.
 .name:Ensures your modules has an /etc/ dynamic files folder
 .description:"Macro for Hyper IDE that ensures that as module is installed, a folder inside of the '/etc/' folder will be created where the module can store its configuration files, images, and other types of dynamic files related to the module. Notice, the image macros will by default store files inside of this folder, so if you execute the image upload/download macros, you should also probably execute this macro."
 .arguments
@@ -11,21 +9,15 @@
       description:"Name of module to create an '/etc/' folder for"
       mandatory:bool:true
 
-/*
- * Lambda object executed as macro is actually executed.
- */
+// Lambda object executed as macro is actually executed.
 .lambda
 
-   /*
-    * Sanity checking invocation.
-    */
+   // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/module
    validators.regex:x:@.arguments/*/module
       regex:^[a-zA-Z0-9_-]+$
 
-   /*
-    * Figuring out module's complete path.
-    */
+   // Figuring out module's complete path.
    .module-path
    set-value:x:@.module-path
       strings.concat
@@ -33,9 +25,7 @@
          get-value:x:@.arguments/*/module
          .:/
 
-   /*
-    * Making sure that module exists.
-    */
+   // Making sure that module exists.
    if
       not
          io.folder.exists:x:@.module-path
@@ -62,9 +52,7 @@
          io.folder.exists:x:@strings.concat
       .lambda
 
-         /*
-          * Creating the module's 'magic.startup' folder.
-          */
+         // Creating the module's 'magic.startup' folder.
          io.folder.create:x:@strings.concat
 
    /*
@@ -95,9 +83,6 @@
    io.file.save:x:@strings.concat
       lambda2hyper:x:@.file/*
 
-
-   /*
-    * Making sure we inform caller that he needs to refresh his folders.
-    */
+   // Making sure we inform caller that he needs to refresh his folders.
    set-value:x:@.lambda
       .:folders-changed

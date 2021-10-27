@@ -2,7 +2,7 @@
 /*
  * HTTP DELETE database endpoint, providing a template endpoint
  * for deleting a single record in your database.
- *
+ * 
  * Exchange 'foo_bar', 'table1', and 'pk1' with
  * your database name, table, and primary key's name.
  */
@@ -11,19 +11,13 @@
 .description:HTTP DELETE database endpoint, providing a template endpoint for deleting a single record in your database
 .type:crud-delete
 
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/pk1
 
-/*
- * Verifying user is authorised to access endpoint.
- */
+// Verifying user is authorised to access endpoint.
 auth.ticket.verify:root
 
-/*
- * Connecting to database.
- */
+// Connecting to database.
 data.connect:[generic|foo_bar]
 
    /*
@@ -33,9 +27,7 @@ data.connect:[generic|foo_bar]
    add:x:./*/data.delete/*/where/*/and
       get-nodes:x:@.arguments/*
 
-   /*
-    * Deleting items from your database.
-    */
+   // Deleting items from your database.
    data.delete
       table:table1
       where

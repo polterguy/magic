@@ -2,7 +2,7 @@
 /*
  * HTTP POST database endpoint, providing a template endpoint
  * for creating a single record in your database.
- *
+ * 
  * Exchange 'foo_bar', 'table1', and 'column1' with
  * your database name, table, and column names.
  */
@@ -11,27 +11,18 @@
 .description:HTTP POST database endpoint, providing a template endpoint for creating a single record in your database
 .type:crud-create
 
-/*
- * Verifying user is authorised to access endpoint.
- */
+// Verifying user is authorised to access endpoint.
 auth.ticket.verify:root
 
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/column1
-
 data.connect:[generic|foo_bar]
 
-   /*
-    * Decorating [data.create] invocation with arguments specified.
-    */
+   // Decorating [data.create] invocation with arguments specified.
    add:x:+/*/values
       get-nodes:x:@.arguments/*
 
-   /*
-    * Invoking [data.create] towards our database.
-    */
+   // Invoking [data.create] towards our database.
    data.create
       table:table1
       return-id:bool:true

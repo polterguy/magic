@@ -7,7 +7,7 @@
  * the result of the invocation back to the caller,
  * and cryptographically sign the result before returning it
  * to caller.
- *
+ * 
  * Notice, a request will only be executed if the request id
  * has not been previously executed on the server, we will
  * therefor have to create a unique [.request-id] that we
@@ -18,7 +18,7 @@ unwrap:x:+/**/.request-id
 signal:magic.crypto.http.eval
    url:"http://localhost:55247/magic/modules/system/crypto/eval-id"
    .lambda
-   
+
       /*
        * The [.request-id] needs to be a unique value,
        * on a per request level, hence using the guid we

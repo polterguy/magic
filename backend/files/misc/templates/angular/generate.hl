@@ -7,16 +7,10 @@
  */
 .description:Generates an Angular frontend based upon ngx-generator and returns it to the client as a ZIP file
 
-
-/*
- * Sanity checking invocation.
- */
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/args/*/palette
 
-
-/*
- * Communicating custom arguments to consumers.
- */
+// Communicating custom arguments to consumers.
 .custom
    palette
       .
@@ -84,12 +78,8 @@ validators.mandatory:x:@.arguments/*/args/*/palette
          name:Dark
          value:mat-dark-theme
 
-
-/*
- * Doing some logging.
- */
+// Doing some logging.
 log.info:Generating an ngx-generator Angular frontend
-
 
 /*
  * Retrieves main folder we're currently working in, to allow
@@ -97,10 +87,9 @@ log.info:Generating an ngx-generator Angular frontend
  */
 io.path.get-folder:x:@.filename
 
-
 /*
  * Transforming our CRUD methods, such that they become slightly more structured.
- *
+ * 
  * This is later used to generate our components, since we create one component for each
  * CRUD type of endpoint that we were given as input.
  */
@@ -109,7 +98,6 @@ add:x:+/*
    get-nodes:x:@.arguments/*
 add:x:@.crud-methods
    io.file.execute:/misc/templates/common/structure-endpoints.hl
-
 
 /*
  * Creating our HTTP Client service method implementations,
@@ -122,24 +110,20 @@ add:x:+/*
 set-value:x:@.http-service-methods
    io.file.execute:/misc/templates/common/create-angular-service-methods.hl
 
-
 /*
  * These two nodes will contain all template files.
- *
+ * 
  * The [.main-files] will contain the main template files.
  * The [.component-files] will contain the "per component" files, and
  * will be duplicated once for each component that is dynamically created.
- *
+ * 
  * The [.component-files] will be used as the basis for creating one component for each
  * CRUD endpoint method group specified by caller.
  */
 .main-files
 .component-files
 
-
-/*
- * Loads all files in "main" Angular template folder recursively.
- */
+// Loads all files in "main" Angular template folder recursively.
 unwrap:x:+/*/*/*
 add:x:@.main-files
    signal:magic.io.file.load-recursively
@@ -148,10 +132,7 @@ add:x:@.main-files
          .:templates/main/
       .hidden-files:bool:true
 
-
-/*
- * Loads all files in "component" Angular template folder recursively.
- */
+// Loads all files in "component" Angular template folder recursively.
 unwrap:x:+/*/*/*
 add:x:@.component-files
    signal:magic.io.file.load-recursively
@@ -159,7 +140,6 @@ add:x:@.component-files
          .:x:@io.path.get-folder
          .:templates/component/
       .hidden-files:bool:true
-
 
 /*
  * Removing "root" parts of our folder names in [.main-files], to create a
@@ -175,11 +155,10 @@ for-each:x:@.main-files/*
             .:templates/main
          get-value:x:@.arguments/*/name
 
-
 /*
  * Replacing component filenames such that we can keep them
  * slightly more semantically correct before starting transformation process.
- *
+ * 
  * This makes it easier for us to later dynamically replace the filenames
  * of our component files, according to their component name.
  */
@@ -195,7 +174,6 @@ for-each:x:@.component-files/*
    set-value:x:@.dp/#
       get-value:x:@strings.replace
 
-
 /*
  * Loading router link file, that contains the declaration for
  * our router links.
@@ -207,10 +185,7 @@ strings.concat
 set-value:x:@.router-link-file
    io.file.load:x:@strings.concat
 
-
-/*
- * Loading import file, that contains the import declarations for components.
- */
+// Loading import file, that contains the import declarations for components.
 .imports-file
 strings.concat
    get-value:x:@io.path.get-folder
@@ -224,10 +199,7 @@ strings.concat
 set-value:x:@.imports-file-only-grid
    io.file.load:x:@strings.concat
 
-
-/*
- * Loading router declaration file.
- */
+// Loading router declaration file.
 .router-declaration-file
 strings.concat
    get-value:x:@io.path.get-folder
@@ -235,10 +207,7 @@ strings.concat
 set-value:x:@.router-declaration-file
    io.file.load:x:@strings.concat
 
-
-/*
- * Building our CRUD components.
- */
+// Building our CRUD components.
 .components
 strings.concat
    get-value:x:@io.path.get-folder
@@ -252,7 +221,6 @@ add:x:@.components
    io.file.execute:x:@strings.concat
       root-folder:x:@io.path.get-folder
 
-
 /*
  * Retrieving import statements/router declarations,
  * etc, for each component we have.
@@ -265,18 +233,12 @@ add:x:@.components
 .router-links
 for-each:x:@.crud-methods/*
 
-
-   /*
-    * Verifying GET verbs exists for CRUD method.
-    */
+   // Verifying GET verbs exists for CRUD method.
    if
       exists:x:@.dp/#/*/verbs/*/get
       .lambda
 
-
-         /*
-          * Import declarations.
-          */
+         // Import declarations.
          strings.replace:x:@.imports-file
             .:[[component-name]]
             strings.capitalize:x:@.dp/#/*/component-name
@@ -297,10 +259,7 @@ for-each:x:@.crud-methods/*
                get-value:x:@.imports
                get-value:x:@strings.replace
 
-
-         /*
-          * Import declarations (only main component imports).
-          */
+         // Import declarations (only main component imports).
          strings.replace:x:@.imports-file-only-grid
             .:[[component-name]]
             strings.capitalize:x:@.dp/#/*/component-name
@@ -315,10 +274,7 @@ for-each:x:@.crud-methods/*
                get-value:x:@.imports-only-main
                get-value:x:@strings.replace
 
-
-         /*
-          * Router declarations.
-          */
+         // Router declarations.
          strings.replace:x:@.router-declaration-file
             .:[[component-name]]
             strings.capitalize:x:@.dp/#/*/component-name
@@ -330,10 +286,7 @@ for-each:x:@.crud-methods/*
                get-value:x:@.routes
                get-value:x:@strings.replace
 
-
-         /*
-          * Router links.
-          */
+         // Router links.
          strings.replace:x:@.router-link-file
             .:[[url]]
             get-value:x:@.dp/#/*/component-routing-url
@@ -348,20 +301,18 @@ for-each:x:@.crud-methods/*
                get-value:x:@.router-links
                get-value:x:@strings.replace
 
-
-         /*
-          * Module declarations.
-          */
+         // Module declarations.
          set-value:x:@.module-declarations
             strings.concat
                get-value:x:@.module-declarations
                .:"    "
                get-value:x:@.dp/#/*/component-name
-               .:",\r\n"
+               .:@",
+"
                .:"    "
                get-value:x:@.dp/#/*/component-edit-name
-               .:",\r\n"
-
+               .:@",
+"
 
          /*
           * Adding entry components, which basically is the edit modal windows
@@ -372,8 +323,8 @@ for-each:x:@.crud-methods/*
                get-value:x:@.entry-components
                .:"    "
                get-value:x:@.dp/#/*/component-edit-name
-               .:",\r\n"
-
+               .:@",
+"
 
 /*
  * Replacing any [[imports]], [[imports-only-main]], [[routes]],
@@ -381,100 +332,67 @@ for-each:x:@.crud-methods/*
  */
 for-each:x:@.main-files/*
 
-
-   /*
-    * Replacing [[palette]]
-    */
+   // Replacing [[palette]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[palette]]
          get-value:x:@.arguments/*/args/*/palette
 
-
-   /*
-    * Replacing [[theme]]
-    */
+   // Replacing [[theme]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[theme]]
          get-value:x:@.arguments/*/args/*/theme
 
-
-   /*
-    * Replacing [[frontendUrl]]
-    */
+   // Replacing [[frontendUrl]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[frontendUrl]]
          get-value:x:@.arguments/*/frontendUrl
 
-
-   /*
-    * Replacing [[email]]
-    */
+   // Replacing [[email]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[email]]
          get-value:x:@.arguments/*/email
 
-
-   /*
-    * Replacing [[router-links]]
-    */
+   // Replacing [[router-links]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[router-links]]
          get-value:x:@.router-links
 
-
-   /*
-    * Replacing [[imports]]
-    */
+   // Replacing [[imports]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[imports]]
          get-value:x:@.imports
 
-
-   /*
-    * Replacing [[imports-only-main]]
-    */
+   // Replacing [[imports-only-main]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[imports-only-main]]
          get-value:x:@.imports-only-main
 
-
-   /*
-    * Replacing [[routes]]
-    */
+   // Replacing [[routes]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[routes]]
          get-value:x:@.routes
 
-
-   /*
-    * Replacing [[module-declarations]]
-    */
+   // Replacing [[module-declarations]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[module-declarations]]
          get-value:x:@.module-declarations
 
-
-   /*
-    * Replacing [[entry-components]]
-    */
+   // Replacing [[entry-components]]
    set-value:x:@.dp/#/*
       strings.replace:x:@.dp/#/*
          .:[[entry-components]]
          get-value:x:@.entry-components
 
-
-/*
- * Making sure we position our components correctly inside of our zip file.
- */
+// Making sure we position our components correctly inside of our zip file.
 for-each:x:@.components/*
    set-value:x:@.dp/#
       strings.concat
@@ -483,10 +401,7 @@ for-each:x:@.components/*
          .:/src/app/components
          get-value:x:@.dp/#
 
-
-/*
- * Some template fields needs the name in to-lower form, without spaces.
- */
+// Some template fields needs the name in to-lower form, without spaces.
 .name-lowers
 set-value:x:@.name-lowers
    strings.to-lower:x:@.arguments/*/name
@@ -495,51 +410,40 @@ set-value:x:@.name-lowers
       .:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0987654321
       .:_
 
-
 /*
  * Iterating through each [.main-files] and doing substitutions
  * according to specifications and meta information.
- *
+ * 
  * Notice, this is not a completely optimal approach, since according to the
  * way our template files are looking, we could further have optimised things slightly.
- *
+ * 
  * However, to accommodate for future changes, such as for instance having the
- * name of the app in *any* file we wish, we do things this way, to make sure
+ * name of the app in 
+ * any
+ * file we wish, we do things this way, to make sure
  * we have a substitution process that is as flexible and generic as we possibly can.
  */
 for-each:x:@.main-files/*/*
 
-
-   /*
-    * Replacing all [[name]] occurrencies.
-    */
+   // Replacing all [[name]] occurrencies.
    set-value:x:@.dp/#
       strings.replace:x:@.dp/#
          .:[[name]]
          get-value:x:@.arguments/*/name
 
-
-   /*
-    * Replacing all [[name-lowers]] occurrencies.
-    */
+   // Replacing all [[name-lowers]] occurrencies.
    set-value:x:@.dp/#
       strings.replace:x:@.dp/#
          .:[[name-lowers]]
          get-value:x:@.name-lowers
 
-
-   /*
-    * Replacing all [[apiUrl]] occurrencies.
-    */
+   // Replacing all [[apiUrl]] occurrencies.
    set-value:x:@.dp/#
       strings.replace:x:@.dp/#
          .:[[apiUrl]]
          get-value:x:@.arguments/*/apiUrl
 
-
-   /*
-    * Replacing all [[environmentDomain]] occurrencies.
-    */
+   // Replacing all [[environmentDomain]] occurrencies.
    strings.split:x:@.arguments/*/apiUrl
       .:"://"
    strings.split:x:-/1
@@ -549,28 +453,19 @@ for-each:x:@.main-files/*/*
          .:[[environmentDomain]]
          get-value:x:@strings.split/0
 
-
-   /*
-    * Replacing all [[http-client-service-method-implementations]] occurrencies.
-    */
+   // Replacing all [[http-client-service-method-implementations]] occurrencies.
    set-value:x:@.dp/#
       strings.replace:x:@.dp/#
          .:[[http-client-service-method-implementations]]
          get-value:x:@.http-service-methods
 
-
-/*
- * Adding all generated files to return value.
- */
+// Adding all generated files to return value.
 add:x:../*/.return-nodes
    get-nodes:x:@.main-files/*
 add:x:../*/.return-nodes
    get-nodes:x:@.components/*
 
-
-/*
- * Applying copyright, if given.
- */
+// Applying copyright, if given.
 if
    and
       not
@@ -583,10 +478,7 @@ if
             .
    .lambda
 
-
-      /*
-       * Copyright notice was supplied.
-       */
+      // Copyright notice was supplied.
       for-each:x:../*/.return-nodes/*
          if
             or
@@ -602,19 +494,21 @@ if
                   .:.sass
             .lambda
 
-
                /*
                 * Currently iterated file is of a type that can tolerate
                 * having a copyright header comment.
                 */
                set-value:x:@.dp/#/*
                   strings.concat
-                     .:"/*\r\n"
+                     .:@"/*
+"
                      .:" * "
                      get-value:x:@.arguments/*/copyright
-                     .:"\r\n */\r\n\r\n"
-                     get-value:x:@.dp/#/*
+                     .:@"
+ */
 
+"
+                     get-value:x:@.dp/#/*
 
 /*
  * Iterating through each file in [.return-nodes] and making sure we only return
@@ -636,10 +530,7 @@ for-each:x:../*/.return-nodes/*
          add:x:../*/return-nodes
             get-nodes:x:@.dp/#
 
-
-/*
- * Adding touch icons, first our smallest, then our larger icons.
- */
+// Adding touch icons, first our smallest, then our larger icons.
 strings.concat
    .:/
    get-value:x:@.arguments/*/name
@@ -705,9 +596,6 @@ add:x:../*/return-nodes
       .:x:@strings.concat/@strings.concat
          .:x:@io.stream.read
 
-
-/*
- * Returning all generated files to caller.
- */
+// Returning all generated files to caller.
 .return-nodes
 return-nodes

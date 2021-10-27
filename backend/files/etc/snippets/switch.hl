@@ -1,26 +1,18 @@
-/*
- * Switch case comparison, evaluating lambda object matching expression.
- */
+
+// Switch case comparison, evaluating lambda object matching expression.
 .source:foo
 .result
 switch:x:@.source
-
    case:foo
 
-      /*
-       * Lambda object to evaluate if expression's value equals 'foo'.
-       */
+      // Lambda object to evaluate if expression's value equals 'foo'.
       set-value:x:@.result
          .:foo
-
    case:bar
 
-      /*
-       * Lambda object to evaluate if expression's value equals 'bar'.
-       */
+      // Lambda object to evaluate if expression's value equals 'bar'.
       set-value:x:@.result
          .:bar
-
    default
 
       /*

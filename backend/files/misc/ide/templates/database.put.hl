@@ -9,20 +9,14 @@
 .description:HTTP PUT database endpoint, providing a template endpoint for updating a single record in your database
 .type:crud-update
 
-/*
- * Sanity checking invocation
- */
+// Sanity checking invocation
 validators.mandatory:x:@.arguments/*/pk1
 validators.mandatory:x:@.arguments/*/column1
 
-/*
- * Verifying user is authorised to access endpoint.
- */
+// Verifying user is authorised to access endpoint.
 auth.ticket.verify:root
 
-/*
- * Connecting to database.
- */
+// Connecting to database.
 data.connect:[generic|foo_bar]
 
    /*
@@ -34,15 +28,11 @@ data.connect:[generic|foo_bar]
       get-nodes:x:@.arguments/*/pk1
    remove-nodes:x:@.arguments/*/pk1
 
-   /*
-    * Decorating [data.update] with new values for record.
-    */
+   // Decorating [data.update] with new values for record.
    add:x:./*/data.update/*/values
       get-nodes:x:@.arguments/*
 
-   /*
-    * Connecting to database.
-    */
+   // Connecting to database.
    data.update
       table:table1
       values
