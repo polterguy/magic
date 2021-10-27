@@ -33,7 +33,8 @@
     (selectionChange)="databaseChanged()">
     <mat-option
       *ngFor="let idx of databases.databases"
-      [value]="idx">{{idx.name}}</mat-option>
+      [value]="idx"
+      [class]="getDatabaseCssClass(idx.name)">{{idx.name}}</mat-option>
   </mat-select>
 
 </mat-form-field>

@@ -34,7 +34,8 @@ import { CrudifierSetDefaultsComponent } from './crudifier-set-defaults/crudifie
  */
 @Component({
   selector: 'app-crudifier-backend',
-  templateUrl: './crudifier-backend.component.html'
+  templateUrl: './crudifier-backend.component.html',
+  styleUrls: ['./crudifier-backend.component.scss']
 })
 export class CrudifierBackendComponent implements OnInit {
 
@@ -197,6 +198,37 @@ export class CrudifierBackendComponent implements OnInit {
     this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
+  }
+
+  /**
+   * Invoked when CSS class for database name is to be returned.
+   * 
+   * @param db Database name
+   */
+   public getDatabaseCssClass(db: string) {
+    switch (this.databaseType) {
+      case 'mysql':
+        switch (db) {
+          case 'information_schema':
+          case 'mysql':
+          case 'performance_schema':
+          case 'sys':
+            return 'sys-database';
+          default:
+            return '';
+        }
+      case 'mssql':
+        switch (db) {
+          case 'master':
+          case 'msdb':
+          case 'model':
+          case 'Resource':
+          case 'tempdb':
+            return 'sys-database';
+          default:
+            return '';
+        }
+    }
   }
 
   /**
