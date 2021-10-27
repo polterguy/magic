@@ -86,7 +86,7 @@ slots.create:magic.crypto.http.eval
       .:/
    strings.concat
       get-value:x:@strings.split/0
-      .://
+      .:"//"
       get-value:x:@strings.split/1
    if
       not
