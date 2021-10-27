@@ -1,0 +1,22 @@
+
+/*
+ * Script that formats all Hyperlambda files recursively within
+ * the specified folder.
+ */
+.folder:/modules/system/
+unwrap:x:+/*
+signal:magic.io.file.list-recursively
+   .:x:@.folder
+for-each:x:@signal/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+         io.file.load:x:@.dp/#
+         hyper2lambda:x:-
+            comments:true
+         lambda2hyper:x:-/*
+            comments:true
+         io.file.save:x:@.dp/#
+            get-value:x:@lambda2hyper
+         
