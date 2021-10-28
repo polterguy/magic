@@ -54,8 +54,7 @@ response.headers.add
 .no:int:0
 for-each:x:@io.file.execute/*
    strings.split:x:@.dp/#/*
-      .:@"
-"
+      .:"\n"
    math.increment:x:@.no
       get-count:x:@strings.split/*
 strings.concat
@@ -71,7 +70,7 @@ log.info:x:@strings.concat
  * Creating a ZIP stream from return value of above [io.file.execute]
  * and returning it to client.
  */
-add:x:+
+add:x:../*/io.content.zip-stream
    get-nodes:x:@io.file.execute/*
 io.content.zip-stream
 return-value:x:-
