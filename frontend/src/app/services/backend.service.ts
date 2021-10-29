@@ -31,7 +31,7 @@ export class BackendService {
 
     // Reading persisted backends from local storage, or defaulting to whatever is in our environment.ts file.
     let backends: Backend[];
-    const storage = localStorage.getItem('backends');
+    const storage = localStorage.getItem('magic.backends');
     backends = storage === null ? environment.defaultBackends : <Backend[]>JSON.parse(storage);
     this._backends = backends;
 
@@ -128,7 +128,7 @@ export class BackendService {
    * Persists all backends into local storage.
    */
   public persistBackends() {
-    localStorage.setItem('backends', JSON.stringify(this._backends));
+    localStorage.setItem('magic.backends', JSON.stringify(this._backends));
   }
 
   /**
