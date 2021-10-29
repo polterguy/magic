@@ -54,7 +54,8 @@ response.headers.add
 .no:int:0
 for-each:x:@io.file.execute/*
    strings.split:x:@.dp/#/*
-      .:"\n"
+      .:@"
+"
    math.increment:x:@.no
       get-count:x:@strings.split/*
 strings.concat

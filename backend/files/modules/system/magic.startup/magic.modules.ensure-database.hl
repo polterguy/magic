@@ -108,7 +108,6 @@ slots.create:magic.modules.ensure-database
                .:"' database using '"
                get-value:x:@.create-database-script
                .:@"' database script.
-
 Message from system was '"
                get-value:x:@.arguments
                .:"'"
@@ -170,7 +169,6 @@ Message from system was '"
                   .:"Something went wrong as we tried to execute plugin database migration script with the name of '"
                   get-value:x:@.dp/#
                   .:@"'.
-
 Message from system was '"
                   get-value:x:@.arguments/*/message
                   .:"'"
