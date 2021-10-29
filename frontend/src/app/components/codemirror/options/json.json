@@ -3,6 +3,7 @@
   "theme": "mbo",
   "mode": "application/ld+json",
   "styleActiveLine": true,
+  "lineSeparator": "\r\n",
   "extraKeys": {
     "Shift-Tab": "indentLess",
     "Tab": "indentMore"

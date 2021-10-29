@@ -5,6 +5,7 @@
   "theme": "mbo",
   "autofocus": false,
   "styleActiveLine": true,
+  "lineSeparator": "\r\n",
   "extraKeys": {
     "Shift-Tab": "indentLess",
     "Tab": "indentMore",
