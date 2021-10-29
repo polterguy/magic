@@ -1,5 +1,4 @@
 **/.DS_Store
 files/modules/**
-!files/modules/system
 files/etc/system/crypto/keys/**
 !files/etc/system/crypto/keys/README.md

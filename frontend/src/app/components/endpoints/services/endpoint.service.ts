@@ -52,7 +52,7 @@ export class EndpointService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Endpoint[]>(
-      '/magic/modules/system/endpoints/endpoints');
+      '/magic/system/endpoints/endpoints');
   }
 
   /**
@@ -139,7 +139,7 @@ export class EndpointService {
 
       // Filtering tests, to return only tests matching endpoint specified.
       return this.httpService.get<string[]>(
-        '/magic/modules/system/endpoints/assumptions?endpoint=' +
+        '/magic/system/endpoints/assumptions?endpoint=' +
         encodeURIComponent(endpointPath) +
         '&verb=' +
         encodeURIComponent(verb))
@@ -168,7 +168,7 @@ export class EndpointService {
 
     // Simple version, retrieving all files in assumption test folder.
     return this.httpService.get<SocketUser[]>(
-      '/magic/modules/system/sockets/socket-users' + query);
+      '/magic/system/sockets/socket-users' + query);
   }
 
   /**
@@ -186,7 +186,7 @@ export class EndpointService {
 
     // Simple version, retrieving all files in assumption test folder.
     return this.httpService.get<Count>(
-      '/magic/modules/system/sockets/socket-users-count' + query);
+      '/magic/system/sockets/socket-users-count' + query);
   }
 
   /**
@@ -211,7 +211,7 @@ export class EndpointService {
 
     // Invoking backend returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/sockets/send-socket-message', {
+      '/magic/system/sockets/send-socket-message', {
         client,
         roles,
         groups,
@@ -273,7 +273,7 @@ export class EndpointService {
     if (produces) {
       input.produces = produces;
     }
-    return this.httpService.post('/magic/modules/system/diagnostics/create-test', input);
+    return this.httpService.post('/magic/system/diagnostics/create-test', input);
   }
 
   /**
@@ -285,7 +285,7 @@ export class EndpointService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
-      '/magic/modules/system/diagnostics/execute-test?root_url=' +
+      '/magic/system/diagnostics/execute-test?root_url=' +
       encodeURIComponent(this.backendService.current.url) +
       '&test_file=' +
       encodeURIComponent(filename));
@@ -300,7 +300,7 @@ export class EndpointService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
-      '/magic/modules/system/diagnostics/assumption-test-description?test_file=' +
+      '/magic/system/diagnostics/assumption-test-description?test_file=' +
       encodeURIComponent(filename));
   }
 }

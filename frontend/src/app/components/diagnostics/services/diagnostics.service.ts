@@ -31,7 +31,7 @@ export class DiagnosticsService {
   public statisticsType() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>('/magic/modules/system/diagnostics/log-statistics');
+    return this.httpService.get<any[]>('/magic/system/diagnostics/log-statistics');
   }
 
   /**
@@ -51,7 +51,7 @@ export class DiagnosticsService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<any[]>(
-      '/magic/modules/system/diagnostics/log-statistics-days' + query);
+      '/magic/system/diagnostics/log-statistics-days' + query);
   }
 
   /**
@@ -61,7 +61,7 @@ export class DiagnosticsService {
   public getLoc() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/modules/system/diagnostics/loc-generated');
+    return this.httpService.get<any>('/magic/system/diagnostics/loc-generated');
   }
 
   /**
@@ -70,6 +70,6 @@ export class DiagnosticsService {
   public version() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/modules/system/version');
+    return this.httpService.get<any>('/magic/system/version');
   }
 }

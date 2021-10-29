@@ -87,7 +87,7 @@ export class AuthService {
         return new Observable<any>((observer: Subscriber<AuthenticateToken>) => {
           this.httpClient.get<AuthenticateToken>(
             environment.apiUrl +
-            'magic/modules/system/auth/authenticate?username=' +
+            'magic/system/auth/authenticate?username=' +
             encodeURI(username) +
             '&password=' +
             encodeURI(password)).subscribe((res: any) => {
@@ -115,13 +115,13 @@ export class AuthService {
       refreshTicket: () => {
         return this.httpClient.get<AuthenticateToken>(
           environment.apiUrl +
-          'magic/modules/system/auth/refresh-ticket');
+          'magic/system/auth/refresh-ticket');
       },
     
       changePassword: (password: string) => {
         return this.httpClient.put<StatusResponse>(
           environment.apiUrl +
-          'magic/modules/system/auth/change-password', {
+          'magic/system/auth/change-password', {
           password,
         });
       }
@@ -286,7 +286,7 @@ export class AuthService {
      */
     this.httpClient.get<Endpoint[]>(
       environment.apiUrl + 
-      'magic/modules/system/auth/endpoints').subscribe((res: Endpoint[]) => {
+      'magic/system/auth/endpoints').subscribe((res: Endpoint[]) => {
         this.endpoints = res;
       }, (error: any) => {
         console.log(error);

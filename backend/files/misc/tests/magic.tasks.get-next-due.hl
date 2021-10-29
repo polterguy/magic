@@ -1,6 +1,6 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/system/tasks/next-due
+url:/magic/system/tasks/next-due
 status:int:200
 description:Assumes that retrieving next due date and time for a task succeeds

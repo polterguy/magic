@@ -1,6 +1,6 @@
 
 // Invoking server to retrieve a cryptography challenge.
-http.get:"http://localhost:5000/magic/modules/system/crypto/challenge"
+http.get:"http://localhost:5000/magic/system/crypto/challenge"
 
 // Loading public key needed to supply fingerprint to signing process.
 io.file.load:/etc/system/crypto/keys/public.key
@@ -19,7 +19,7 @@ crypto.sign:x:@json2lambda/*/result
 unwrap:x:+/*
 lambda2json
    challenge:x:@crypto.sign
-http.post:"http://localhost:5000/magic/modules/system/crypto/challenge"
+http.post:"http://localhost:5000/magic/system/crypto/challenge"
    payload:x:@lambda2json
 
 /*

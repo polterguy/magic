@@ -45,7 +45,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
-      '/magic/modules/system/file-system/list-files' +
+      '/magic/system/file-system/list-files' +
       query);
   }
 
@@ -61,7 +61,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
-      '/magic/modules/system/file-system/list-files-recursively' +
+      '/magic/system/file-system/list-files-recursively' +
       query);
   }
 
@@ -74,7 +74,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
-      '/magic/modules/system/file-system/list-folders?folder=' +
+      '/magic/system/file-system/list-folders?folder=' +
       encodeURIComponent(folder));
   }
 
@@ -87,7 +87,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
-      '/magic/modules/system/file-system/list-folders-recursively?folder=' +
+      '/magic/system/file-system/list-folders-recursively?folder=' +
       encodeURIComponent(folder));
   }
 
@@ -105,7 +105,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string>(
-      '/magic/modules/system/file-system/file?file=' +
+      '/magic/system/file-system/file?file=' +
       encodeURIComponent(filename),
       requestOptions);
   }
@@ -125,7 +125,7 @@ export class FileService {
     formData.append('file', blob, filename.substr(filename.lastIndexOf('/') + 1));
 
     return this.httpService.put<any>(
-      '/magic/modules/system/file-system/file?folder=' +
+      '/magic/system/file-system/file?folder=' +
       encodeURI(folder),
       formData
     );
@@ -141,7 +141,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/file-system/rename', {
+      '/magic/system/file-system/rename', {
         oldName,
         newName,
       });
@@ -156,7 +156,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/modules/system/file-system/file?file=' +
+      '/magic/system/file-system/file?file=' +
       encodeURIComponent(file));
   }
 
@@ -169,7 +169,7 @@ export class FileService {
 
     // Invoking backend to download file and opening up save-as dialog.
     this.httpService.download(
-      '/magic/modules/system/file-system/file?file=' +
+      '/magic/system/file-system/file?file=' +
       encodeURI(path)).subscribe(res => {
 
         // Retrieving the filename, as provided by the server.
@@ -192,7 +192,7 @@ export class FileService {
     const formData: FormData = new FormData();
     formData.append('file', file);
     return this.httpService.put<any>(
-      '/magic/modules/system/file-system/file?folder=' +
+      '/magic/system/file-system/file?folder=' +
       encodeURI(path),
       formData
     );
@@ -206,7 +206,7 @@ export class FileService {
   public unzipFile(file: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.put<Response>('/magic/modules/system/file-system/unzip', {
+    return this.httpService.put<Response>('/magic/system/file-system/unzip', {
       file
     });
   }
@@ -220,7 +220,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
-      '/magic/modules/system/bazar/can-install?required_magic_version=' +
+      '/magic/system/bazar/can-install?required_magic_version=' +
       encodeURIComponent(required_magic_version));
   }
 
@@ -232,7 +232,7 @@ export class FileService {
   public install(folder: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.put<Response>('/magic/modules/system/file-system/install', {
+    return this.httpService.put<Response>('/magic/system/file-system/install', {
       folder
     });
   }
@@ -246,7 +246,7 @@ export class FileService {
    public downloadFileToBackend(folder: string, url: string) {
 
     // Invoking backend to download file to server.
-    return this.httpService.post<Response>('/magic/modules/system/bazar/download-from-url', {
+    return this.httpService.post<Response>('/magic/system/bazar/download-from-url', {
       folder,
       url,
     });
@@ -261,7 +261,7 @@ export class FileService {
 
     // Invoking backend to download file and opening up save-as dialog.
     this.httpService.download(
-      '/magic/modules/system/file-system/download-folder?folder=' +
+      '/magic/system/file-system/download-folder?folder=' +
       encodeURI(path)).subscribe(res => {
 
         // Retrieving the filename, as provided by the server.
@@ -282,7 +282,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.put<Response>(
-      '/magic/modules/system/file-system/folder', {
+      '/magic/system/file-system/folder', {
         folder
     });
   }
@@ -296,7 +296,7 @@ export class FileService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/modules/system/file-system/folder?folder=' +
+      '/magic/system/file-system/folder?folder=' +
       encodeURIComponent(folder));
   }
 
@@ -308,7 +308,7 @@ export class FileService {
   public getMacroDefinition(file: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<MacroDefinition>('/magic/modules/system/ide/macro?macro=' +
+    return this.httpService.get<MacroDefinition>('/magic/system/ide/macro?macro=' +
       encodeURIComponent(file));
   }
 
@@ -321,7 +321,7 @@ export class FileService {
    public executeMacro(file: string, args: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/ide/execute-macro', {
+    return this.httpService.post<Response>('/magic/system/ide/execute-macro', {
       macro: file,
       args
     });

@@ -123,7 +123,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
 
       // Assigning result to model.
       this.endpoints = endpoints
-        .filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
+        .filter(x => !x.path.startsWith('magic/system/') && !x.path.startsWith('magic/modules/magic/'))
         .filter(x => x.type === 'crud-count' || x.type === 'crud-delete' || x.type === 'crud-read' || x.type === 'crud-create' || x.type === 'crud-update')
         .map(x => {
           return {

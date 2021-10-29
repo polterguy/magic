@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/modules/system/crudifier/crudify
+url:/magic/system/crudifier/crudify
 status:int:400
 description:Assumes that invoking endpoint with a bogus template value results in the correct error response and status code from backend
 payload:@"{
@@ -19,7 +19,7 @@ payload:@"{
   ""validators"": ""foo""
 }"
 response:@"{
-  ""message"": ""'non-existent-template' is not a valid enum of ['/modules/system/crudifier/templates/crud.template.post.hl', '/modules/system/crudifier/templates/crud.template.get.hl', '/modules/system/crudifier/templates/crud.template.put.hl', '/modules/system/crudifier/templates/crud.template.delete.hl'] for [template]"",
+  ""message"": ""'non-existent-template' is not a valid enum of ['/system/crudifier/templates/crud.template.post.hl', '/system/crudifier/templates/crud.template.get.hl', '/system/crudifier/templates/crud.template.put.hl', '/system/crudifier/templates/crud.template.delete.hl'] for [template]"",
   ""field"": ""template""
 }"
 produces:application/json

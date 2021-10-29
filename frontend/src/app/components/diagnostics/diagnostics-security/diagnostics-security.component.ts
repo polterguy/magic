@@ -92,7 +92,7 @@ export class DiagnosticsSecurityComponent implements OnInit {
     });
 
     // Retrieving failed logins per day type of statistics.
-    this.diagnosticsService.statisticsDays('Unhandled exception occurred \'Access denied\' at \'/magic/modules/system/auth/authenticate\'').subscribe((res: any[]) => {
+    this.diagnosticsService.statisticsDays('Unhandled exception occurred \'Access denied\' at \'/magic/system/auth/authenticate\'').subscribe((res: any[]) => {
       this.failedLoginData = res.map(x => x.count);
       this.failedLoginLabels = res.map(x => moment(new Date(x.date)).format("D. MMM"));
     });

@@ -51,7 +51,7 @@ export class CacheService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<CacheItem[]>(
-      '/magic/modules/system/cache/list-cache' +
+      '/magic/system/cache/list-cache' +
       query);
   }
 
@@ -70,7 +70,7 @@ export class CacheService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/modules/system/cache/list-cache-count' +
+      '/magic/system/cache/list-cache-count' +
       query);
   }
 
@@ -83,7 +83,7 @@ export class CacheService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/modules/system/cache/delete-cache-item?id=' +
+      '/magic/system/cache/delete-cache-item?id=' +
       encodeURIComponent(id));
   }
 
@@ -102,7 +102,7 @@ export class CacheService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/modules/system/cache/empty-cache' +
+      '/magic/system/cache/empty-cache' +
       query);
   }
 }

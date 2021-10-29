@@ -40,10 +40,10 @@ validators.enum:x:@.arguments/*/verb
    .:put
    .:delete
 validators.enum:x:@.arguments/*/template
-   .:/modules/system/crudifier/templates/crud.template.post.hl
-   .:/modules/system/crudifier/templates/crud.template.get.hl
-   .:/modules/system/crudifier/templates/crud.template.put.hl
-   .:/modules/system/crudifier/templates/crud.template.delete.hl
+   .:/system/crudifier/templates/crud.template.post.hl
+   .:/system/crudifier/templates/crud.template.get.hl
+   .:/system/crudifier/templates/crud.template.put.hl
+   .:/system/crudifier/templates/crud.template.delete.hl
 validators.enum:x:@.arguments/*/cqrsAuthorisation
    .:inherited
    .:roles

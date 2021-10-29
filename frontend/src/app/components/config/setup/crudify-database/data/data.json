@@ -6,7 +6,7 @@
     "table":"crypto_invocations",
     "moduleUrl":"crypto_invocations",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
+    "template":"/system/crudifier/templates/crud.template.get.hl",
     "verb":"get",
     "auth":"root",
     "args":{
@@ -93,7 +93,7 @@
     "table":"crypto_keys",
     "moduleUrl":"crypto_keys",
     "returnId":true,
-    "template":"/modules/system/crudifier/templates/crud.template.post.hl",
+    "template":"/system/crudifier/templates/crud.template.post.hl",
     "verb":"post",
     "auth":"root",
     "args":{
@@ -141,7 +141,7 @@
     "table":"crypto_keys",
     "moduleUrl":"crypto_keys",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
+    "template":"/system/crudifier/templates/crud.template.get.hl",
     "verb":"get",
     "auth":"root",
     "args":{
@@ -258,7 +258,7 @@
     "table":"crypto_keys",
     "moduleUrl":"crypto_keys",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.put.hl",
+    "template":"/system/crudifier/templates/crud.template.put.hl",
     "verb":"put",
     "auth":"root",
     "args":{
@@ -312,7 +312,7 @@
     "table":"crypto_keys",
     "moduleUrl":"crypto_keys",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.delete.hl",
+    "template":"/system/crudifier/templates/crud.template.delete.hl",
     "verb":"delete",
     "auth":"root",
     "args":{
@@ -330,7 +330,7 @@
     "table":"roles",
     "moduleUrl":"roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.post.hl",
+    "template":"/system/crudifier/templates/crud.template.post.hl",
     "verb":"post",
     "auth":"root",
     "args":{
@@ -354,7 +354,7 @@
     "table":"roles",
     "moduleUrl":"roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
+    "template":"/system/crudifier/templates/crud.template.get.hl",
     "verb":"get",
     "auth":"root",
     "args":{
@@ -388,7 +388,7 @@
     "table":"roles",
     "moduleUrl":"roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.put.hl",
+    "template":"/system/crudifier/templates/crud.template.put.hl",
     "verb":"put",
     "auth":"root",
     "args":{
@@ -413,7 +413,7 @@
     "table":"roles",
     "moduleUrl":"roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.delete.hl",
+    "template":"/system/crudifier/templates/crud.template.delete.hl",
     "verb":"delete",
     "auth":"root",
     "args":{
@@ -431,7 +431,7 @@
     "table":"users",
     "moduleUrl":"users",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.post.hl",
+    "template":"/system/crudifier/templates/crud.template.post.hl",
     "verb":"post",
     "auth":"root",
     "args":{
@@ -459,7 +459,7 @@
     "table":"users",
     "moduleUrl":"users",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
+    "template":"/system/crudifier/templates/crud.template.get.hl",
     "verb":"get",
     "auth":"root",
     "args":{
@@ -509,7 +509,7 @@
     "table":"users",
     "moduleUrl":"users",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.put.hl",
+    "template":"/system/crudifier/templates/crud.template.put.hl",
     "verb":"put",
     "auth":"root",
     "args":{
@@ -539,7 +539,7 @@
     "table":"users",
     "moduleUrl":"users",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.delete.hl",
+    "template":"/system/crudifier/templates/crud.template.delete.hl",
     "verb":"delete",
     "auth":"root",
     "args":{
@@ -557,7 +557,7 @@
     "table":"users_roles",
     "moduleUrl":"users_roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.post.hl",
+    "template":"/system/crudifier/templates/crud.template.post.hl",
     "verb":"post",
     "auth":"root",
     "args":{
@@ -580,7 +580,7 @@
     "table":"users_roles",
     "moduleUrl":"users_roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.get.hl",
+    "template":"/system/crudifier/templates/crud.template.get.hl",
     "verb":"get",
     "auth":"root",
     "args":{
@@ -611,7 +611,7 @@
     "table":"users_roles",
     "moduleUrl":"users_roles",
     "returnId":false,
-    "template":"/modules/system/crudifier/templates/crud.template.delete.hl",
+    "template":"/system/crudifier/templates/crud.template.delete.hl",
     "verb":"delete",
     "auth":"root",
     "args":{

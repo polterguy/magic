@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/modules/system/crudifier/custom-sql
+url:/magic/system/crudifier/custom-sql
 status:int:400
 description:Assumes that invoking endpoint with a bogus HTTP verb results in the correct error response and status code from backend
 payload:@"{

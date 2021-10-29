@@ -179,7 +179,7 @@ export class AuthService {
    * @param url URL of backend to check
    */
    public autoAuth(url: string) {
-    return this.httpClient.get<Response>(url + '/magic/modules/system/auth/auto-auth');
+    return this.httpClient.get<Response>(url + '/magic/system/auth/auto-auth');
    }
 
   /**
@@ -206,7 +206,7 @@ export class AuthService {
 
       // Authenticating user.
       this.httpService.get<AuthenticateResponse>(
-        '/magic/modules/system/auth/authenticate' + query, {
+        '/magic/system/auth/authenticate' + query, {
 
           /*
            * Notice, if we're doing Windows automatica authentication,
@@ -288,7 +288,7 @@ export class AuthService {
 
       // Invoking backend.
       this.httpService.get<Endpoint[]>(
-        '/magic/modules/system/auth/endpoints').subscribe(res => {
+        '/magic/system/auth/endpoints').subscribe(res => {
 
         // Associating result to model.
         this._endpoints = res || [];
@@ -444,7 +444,7 @@ export class AuthService {
 
       // Invoking refresh JWT token endpoint.
       this.httpService.get<AuthenticateResponse>(
-        '/magic/modules/system/auth/refresh-ticket').subscribe(res => {
+        '/magic/system/auth/refresh-ticket').subscribe(res => {
 
         // Saving JWT token, and presisting all backends.
         backend.token = res.ticket;
@@ -471,7 +471,7 @@ export class AuthService {
   public changePassword(password: string) {
 
     // Invoking backend returning observable to caller.
-    return this.httpService.put<Response>('/magic/modules/system/auth/change-password', {
+    return this.httpService.put<Response>('/magic/system/auth/change-password', {
       password
     });
   }
@@ -482,7 +482,7 @@ export class AuthService {
   public verifyToken() {
 
     // Invokes backend and returns observable to caller.
-    return this.httpService.get<Response>('/magic/modules/system/auth/verify-ticket');
+    return this.httpService.get<Response>('/magic/system/auth/verify-ticket');
   }
 
   /**
@@ -501,7 +501,7 @@ export class AuthService {
 
     // Invokes backend and returns observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/auth/register', {
+      '/magic/system/auth/register', {
         username,
         password,
         frontendUrl,
@@ -520,7 +520,7 @@ export class AuthService {
 
     // Invokes backend and returns observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/auth/verify-email', {
+      '/magic/system/auth/verify-email', {
         username,
         token,
       });
@@ -536,7 +536,7 @@ export class AuthService {
   public sendResetPasswordEmail(username: string, frontendUrl: string, backendUrl: string) {
 
     // Invoking backend returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/auth/send-reset-password-link', {
+    return this.httpService.post<Response>('/magic/system/auth/send-reset-password-link', {
       username,
       frontendUrl,
       backendUrl,
@@ -554,37 +554,37 @@ export class AuthService {
     this._access = {
       sql: {
         execute_access:
-          this.canInvoke('magic/modules/system/sql/connection-strings', 'get') &&
-          this.canInvoke('magic/modules/system/sql/databases', 'get') &&
-          this.canInvoke('magic/modules/system/sql/evaluate', 'post'),
-        list_files: this.canInvoke('magic/modules/system/sql/list-files', 'get'),
-        save_file: this.canInvoke('magic/modules/system/sql/save-file', 'put'),
+          this.canInvoke('magic/system/sql/connection-strings', 'get') &&
+          this.canInvoke('magic/system/sql/databases', 'get') &&
+          this.canInvoke('magic/system/sql/evaluate', 'post'),
+        list_files: this.canInvoke('magic/system/sql/list-files', 'get'),
+        save_file: this.canInvoke('magic/system/sql/save-file', 'put'),
       },
       crud: {
-        generate_crud: this.canInvoke('magic/modules/system/crudifier/crudify', 'post'),
-        generate_sql: this.canInvoke('magic/modules/system/crudifier/custom-sql', 'post'),
-        generate_frontend: this.canInvoke('magic/modules/system/crudifier/generate-frontend', 'post'),
+        generate_crud: this.canInvoke('magic/system/crudifier/crudify', 'post'),
+        generate_sql: this.canInvoke('magic/system/crudifier/custom-sql', 'post'),
+        generate_frontend: this.canInvoke('magic/system/crudifier/generate-frontend', 'post'),
       },
       endpoints: {
-        view: this.canInvoke('magic/modules/system/endpoints/endpoints', 'get'),
-        assumptions: this.canInvoke('magic/modules/system/endpoints/assumptions', 'get'),
-        create_test: this.canInvoke('magic/modules/system/diagnostics/create-test', 'post'),
+        view: this.canInvoke('magic/system/endpoints/endpoints', 'get'),
+        assumptions: this.canInvoke('magic/system/endpoints/assumptions', 'get'),
+        create_test: this.canInvoke('magic/system/diagnostics/create-test', 'post'),
       },
       files: {
-        list_files: this.canInvoke('magic/modules/system/file-system/list-files', 'get') && this.canInvoke('magic/modules/system/file-system/list-files-recursively', 'get'),
-        list_folders: this.canInvoke('magic/modules/system/file-system/list-folders', 'get') && this.canInvoke('magic/modules/system/file-system/list-folders-recursively', 'get'),
-        rename: this.canInvoke('magic/modules/system/file-system/rename', 'post'),
-        unzip: this.canInvoke('magic/modules/system/file-system/unzip', 'put'),
-        install: this.canInvoke('magic/modules/system/file-system/install', 'put'),
-        create_folder: this.canInvoke('magic/modules/system/file-system/folder', 'put'),
-        delete_folder: this.canInvoke('magic/modules/system/file-system/folder', 'delete'),
-        delete_file: this.canInvoke('magic/modules/system/file-system/file', 'delete'),
-        download_folder: this.canInvoke('magic/modules/system/file-system/download-folder', 'get'),
+        list_files: this.canInvoke('magic/system/file-system/list-files', 'get') && this.canInvoke('magic/system/file-system/list-files-recursively', 'get'),
+        list_folders: this.canInvoke('magic/system/file-system/list-folders', 'get') && this.canInvoke('magic/system/file-system/list-folders-recursively', 'get'),
+        rename: this.canInvoke('magic/system/file-system/rename', 'post'),
+        unzip: this.canInvoke('magic/system/file-system/unzip', 'put'),
+        install: this.canInvoke('magic/system/file-system/install', 'put'),
+        create_folder: this.canInvoke('magic/system/file-system/folder', 'put'),
+        delete_folder: this.canInvoke('magic/system/file-system/folder', 'delete'),
+        delete_file: this.canInvoke('magic/system/file-system/file', 'delete'),
+        download_folder: this.canInvoke('magic/system/file-system/download-folder', 'get'),
       },
       bazar: {
-        download_from_bazar: this.canInvoke('magic/modules/system/bazar/download-from-bazar', 'post'),
-        download_from_url: this.canInvoke('magic/modules/system/bazar/download-from-url', 'post'),
-        get_manifests: this.canInvoke('magic/modules/system/bazar/app-manifests', 'get'),
+        download_from_bazar: this.canInvoke('magic/system/bazar/download-from-bazar', 'post'),
+        download_from_url: this.canInvoke('magic/system/bazar/download-from-url', 'post'),
+        get_manifests: this.canInvoke('magic/system/bazar/app-manifests', 'get'),
       },
       auth: {
         view_users: this.canInvoke('magic/modules/magic/users', 'get') && this.canInvoke('magic/modules/magic/users-count', 'get') && this.canInvoke('magic/modules/magic/users_roles', 'get') && this.canInvoke('magic/modules/magic/users_roles-count', 'get'),
@@ -598,46 +598,46 @@ export class AuthService {
         create_user_role: this.canInvoke('magic/modules/magic/users_roles', 'post'),
         delete_user_role: this.canInvoke('magic/modules/magic/users_roles', 'delete'),
         update_user_role: this.canInvoke('magic/modules/magic/users_roles', 'put'),
-        impersonate: this.canInvoke('magic/modules/system/auth/generate-token', 'get'),
-        jail: this.canInvoke('magic/modules/system/auth/imprison', 'put'),
+        impersonate: this.canInvoke('magic/system/auth/generate-token', 'get'),
+        jail: this.canInvoke('magic/system/auth/imprison', 'put'),
       },
       log: {
-        read: this.canInvoke('magic/modules/system/log/count-items', 'get') && this.canInvoke('magic/modules/system/log/log-item', 'get') && this.canInvoke('magic/modules/system/log/log-items', 'get'),
-        write: this.canInvoke('magic/modules/system/log/log', 'post'),
+        read: this.canInvoke('magic/system/log/count-items', 'get') && this.canInvoke('magic/system/log/log-item', 'get') && this.canInvoke('magic/system/log/log-items', 'get'),
+        write: this.canInvoke('magic/system/log/log', 'post'),
       },
       tasks: {
-        create: this.canInvoke('magic/modules/system/tasks/create-task', 'post'),
-        read: this.canInvoke('magic/modules/system/tasks/count-tasks', 'get') && this.canInvoke('magic/modules/system/tasks/get-task', 'get') && this.canInvoke('magic/modules/system/tasks/list-tasks', 'get'),
-        update: this.canInvoke('magic/modules/system/tasks/update-task', 'post'),
-        delete: this.canInvoke('magic/modules/system/tasks/delete-task', 'delete') && this.canInvoke('magic/modules/system/tasks/delete-due', 'delete'),
-        addDue: this.canInvoke('magic/modules/system/tasks/add-due', 'post'),
-        deleteDue: this.canInvoke('magic/modules/system/tasks/delete-due', 'delete'),
+        create: this.canInvoke('magic/system/tasks/create-task', 'post'),
+        read: this.canInvoke('magic/system/tasks/count-tasks', 'get') && this.canInvoke('magic/system/tasks/get-task', 'get') && this.canInvoke('magic/system/tasks/list-tasks', 'get'),
+        update: this.canInvoke('magic/system/tasks/update-task', 'post'),
+        delete: this.canInvoke('magic/system/tasks/delete-task', 'delete') && this.canInvoke('magic/system/tasks/delete-due', 'delete'),
+        addDue: this.canInvoke('magic/system/tasks/add-due', 'post'),
+        deleteDue: this.canInvoke('magic/system/tasks/delete-due', 'delete'),
       },
       terminal: {
-        execute: this.canInvoke('magic/modules/system/terminal/command', 'socket') && this.canInvoke('magic/modules/system/terminal/start', 'socket') && this.canInvoke('magic/modules/system/terminal/stop', 'socket'),
+        execute: this.canInvoke('magic/system/terminal/command', 'socket') && this.canInvoke('magic/system/terminal/start', 'socket') && this.canInvoke('magic/system/terminal/stop', 'socket'),
       },
       eval: {
-        execute: this.canInvoke('magic/modules/system/evaluator/evaluate', 'post'),
+        execute: this.canInvoke('magic/system/evaluator/evaluate', 'post'),
       },
       diagnostics: {
-        statistics: this.canInvoke('magic/modules/system/diagnostics/log-statistics-days', 'get') && this.canInvoke('magic/modules/system/diagnostics/log-statistics', 'get') && this.canInvoke('magic/modules/system/diagnostics/loc-generated', 'get'),
-        read_assumptions: this.canInvoke('magic/modules/system/diagnostics/assumption-test-description', 'get'),
-        execute_test: this.canInvoke('magic/modules/system/diagnostics/execute-test', 'get'),
-        list_cache: this.canInvoke('magic/modules/system/cache/list-cache', 'get') && this.canInvoke('magic/modules/system/cache/list-cache-count', 'get'),
-        delete_cache: this.canInvoke('magic/modules/system/cache/delete-cache-item', 'delete') && this.canInvoke('magic/modules/system/cache/empty-cache', 'delete'),
+        statistics: this.canInvoke('magic/system/diagnostics/log-statistics-days', 'get') && this.canInvoke('magic/system/diagnostics/log-statistics', 'get') && this.canInvoke('magic/system/diagnostics/loc-generated', 'get'),
+        read_assumptions: this.canInvoke('magic/system/diagnostics/assumption-test-description', 'get'),
+        execute_test: this.canInvoke('magic/system/diagnostics/execute-test', 'get'),
+        list_cache: this.canInvoke('magic/system/cache/list-cache', 'get') && this.canInvoke('magic/system/cache/list-cache-count', 'get'),
+        delete_cache: this.canInvoke('magic/system/cache/delete-cache-item', 'delete') && this.canInvoke('magic/system/cache/empty-cache', 'delete'),
       },
       sockets: {
-        read: this.canInvoke('magic/modules/system/sockets/socket-users-count', 'get') && this.canInvoke('magic/modules/system/sockets/socket-users', 'get'),
-        send: this.canInvoke('magic/modules/system/sockets/send-socket-message', 'post'),
+        read: this.canInvoke('magic/system/sockets/socket-users-count', 'get') && this.canInvoke('magic/system/sockets/socket-users', 'get'),
+        send: this.canInvoke('magic/system/sockets/send-socket-message', 'post'),
       },
       config: {
-        load: this.canInvoke('magic/modules/system/config/load-config', 'get'),
-        save: this.canInvoke('magic/modules/system/config/save-config', 'post'),
-        delete_cache_item: this.canInvoke('magic/modules/system/cache/delete-cache-item', 'delete'),
+        load: this.canInvoke('magic/system/config/load-config', 'get'),
+        save: this.canInvoke('magic/system/config/save-config', 'post'),
+        delete_cache_item: this.canInvoke('magic/system/cache/delete-cache-item', 'delete'),
       },
       crypto: {
-        import_public_key: this.canInvoke('magic/modules/system/crypto/import', 'post'),
-        generate_server_key: this.canInvoke('magic/modules/system/crypto/generate-keypair', 'post'),
+        import_public_key: this.canInvoke('magic/system/crypto/import', 'post'),
+        generate_server_key: this.canInvoke('magic/system/crypto/generate-keypair', 'post'),
         crypto_invocations: this.canInvoke('magic/modules/magic/crypto_invocations', 'get'),
         delete_public_key: this.canInvoke('magic/modules/magic/crypto_keys', 'delete'),
         save_public_key: this.canInvoke('magic/modules/magic/crypto_keys', 'put'),

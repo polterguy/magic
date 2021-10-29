@@ -162,7 +162,7 @@ export class FilesComponent implements OnInit, OnDestroy {
       case '/misc/':
       case '/modules/':
       case '/modules/magic/':
-      case '/modules/system/':
+      case '/system/':
         return false;
       default:
         return true;

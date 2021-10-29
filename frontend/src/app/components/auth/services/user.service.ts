@@ -104,7 +104,7 @@ export class UserService {
   public imprison(username: string, releaseDate: Date) {
 
     // Invoking backend and returning observable.
-    return this.httpService.put<Response>('/magic/modules/system/auth/imprison', {
+    return this.httpService.put<Response>('/magic/system/auth/imprison', {
       username,
       releaseDate,
     });
@@ -171,7 +171,7 @@ export class UserService {
    */
   public generateLoginLink(username: string) {
     return this.httpService.get<AuthenticateResponse>(
-      '/magic/modules/system/auth/generate-token?username=' +
+      '/magic/system/auth/generate-token?username=' +
       encodeURIComponent(username));
   }
 
@@ -182,7 +182,7 @@ export class UserService {
    */
   public generateResetPasswordLink(username: string) {
     return this.httpService.get<AuthenticateResponse>(
-      '/magic/modules/system/auth/generate-token?username=' +
+      '/magic/system/auth/generate-token?username=' +
       encodeURIComponent(username) +
       '&reset-password=true');
   }

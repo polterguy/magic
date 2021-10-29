@@ -38,7 +38,7 @@ export class CryptoService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<PublicKeyFull>(
-      '/magic/modules/system/crypto/public-key');
+      '/magic/system/crypto/public-key');
   }
 
   /**
@@ -153,7 +153,7 @@ export class CryptoService {
    * @param username Username caller wants to associate with key.
    */
    public associateWithUser(keyId: number, username: string) {
-    return this.httpService.put<Response>('/magic/modules/system/crypto/associate-user', {
+    return this.httpService.put<Response>('/magic/system/crypto/associate-user', {
       keyId,
       username
     });
@@ -165,7 +165,7 @@ export class CryptoService {
    * @param keyId Key caller wants to retrieve association for.
    */
    public getUserAssociation(keyId: number) {
-    return this.httpService.get<Response>('/magic/modules/system/crypto/user-association?keyId=' + keyId);
+    return this.httpService.get<Response>('/magic/system/crypto/user-association?keyId=' + keyId);
   }
 
   /**
@@ -174,7 +174,7 @@ export class CryptoService {
    * @param keyId Key caller wants to associate with user.
    */
    public deleteUserAssociation(keyId: number) {
-    return this.httpService.put<Response>('/magic/modules/system/crypto/deassociate-user', {
+    return this.httpService.put<Response>('/magic/system/crypto/deassociate-user', {
       keyId,
     });
   }
@@ -196,7 +196,7 @@ export class CryptoService {
     domain: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<KeyPair>('/magic/modules/system/crypto/generate-keypair', {
+    return this.httpService.post<KeyPair>('/magic/system/crypto/generate-keypair', {
       strength,
       seed,
       subject,
@@ -236,7 +236,7 @@ export class CryptoService {
     email: string,
     domain: string,
     content: string) {
-      return this.httpService.post<Response>('/magic/modules/system/crypto/import', {
+      return this.httpService.post<Response>('/magic/system/crypto/import', {
         subject,
         email,
         domain,
@@ -253,7 +253,7 @@ export class CryptoService {
 
     // Invoking backend and returning observable.
     return this.httpService.get<Response>(
-      '/magic/modules/system/crypto/get-fingerprint?key=' +
+      '/magic/system/crypto/get-fingerprint?key=' +
       encodeURIComponent(key));
   }
 

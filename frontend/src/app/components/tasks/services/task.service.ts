@@ -48,7 +48,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Task[]>(
-      '/magic/modules/system/tasks/list-tasks?offset=' +
+      '/magic/system/tasks/list-tasks?offset=' +
       offset +
       '&limit=' +
       limit + 
@@ -64,7 +64,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Task>(
-      '/magic/modules/system/tasks/get-task?name=' +
+      '/magic/system/tasks/get-task?name=' +
       encodeURIComponent(name));
   }
 
@@ -83,7 +83,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/modules/system/tasks/count-tasks' +
+      '/magic/system/tasks/count-tasks' +
       query);
   }
 
@@ -98,7 +98,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/tasks/create-task', {
+      '/magic/system/tasks/create-task', {
         id,
         hyperlambda,
         description,
@@ -116,7 +116,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/modules/system/tasks/update-task', {
+      '/magic/system/tasks/update-task', {
         id,
         hyperlambda,
         description,
@@ -132,7 +132,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/modules/system/tasks/delete-task?id=' +
+      '/magic/system/tasks/delete-task?id=' +
       encodeURIComponent(id));
   }
 
@@ -156,7 +156,7 @@ export class TaskService {
       payload.repeats = repeats;
     }
     return this.httpService.post<Response>(
-      '/magic/modules/system/tasks/add-due', payload);
+      '/magic/system/tasks/add-due', payload);
   }
 
   /**
@@ -168,6 +168,6 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/modules/system/tasks/delete-due?id=' + id);
+      '/magic/system/tasks/delete-due?id=' + id);
   }
 }

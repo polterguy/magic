@@ -16,7 +16,7 @@
 guid.new
 unwrap:x:+/**/.request-id
 signal:magic.crypto.http.eval
-   url:"http://localhost:5000/magic/modules/system/crypto/eval-id"
+   url:"http://localhost:5000/magic/system/crypto/eval-id"
    .lambda
 
       /*

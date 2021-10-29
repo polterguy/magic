@@ -47,7 +47,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem[]>(
-      '/magic/modules/system/log/log-items?offset=' +
+      '/magic/system/log/log-items?offset=' +
       offset +
       '&limit=' +
       limit + 
@@ -63,7 +63,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem>(
-      '/magic/modules/system/log/log-item?id=' + id);
+      '/magic/system/log/log-item?id=' + id);
   }
 
   /**
@@ -81,7 +81,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/modules/system/log/count-items' +
+      '/magic/system/log/count-items' +
       query);
   }
 
@@ -96,7 +96,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<any>(
-      '/magic/modules/system/log/log-loc', {
+      '/magic/system/log/log-loc', {
         loc,
         type,
         name,
@@ -112,7 +112,7 @@ export class LogService {
   public createLogEntry(type: string, content: string) {
 
     // Invoking backend to persist log entry, returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/log/log', {
+    return this.httpService.post<Response>('/magic/system/log/log', {
       type,
       content,
     });

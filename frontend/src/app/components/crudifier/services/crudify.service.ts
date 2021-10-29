@@ -65,7 +65,7 @@ export class CrudifyService {
     }
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<LocResult>('/magic/modules/system/crudifier/crudify', data);
+    return this.httpService.post<LocResult>('/magic/system/crudifier/crudify', data);
   }
 
   /**
@@ -76,7 +76,7 @@ export class CrudifyService {
   public generateSqlEndpoint(data: CustomSql) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/crudifier/custom-sql', data);
+    return this.httpService.post<Response>('/magic/system/crudifier/custom-sql', data);
   }
 
   /**
@@ -93,7 +93,7 @@ export class CrudifyService {
       apiDomain,
     };
     this.httpService.downloadPost(
-      '/magic/modules/system/crudifier/generate-docker-compose', payload).subscribe(res => {
+      '/magic/system/crudifier/generate-docker-compose', payload).subscribe(res => {
 
         // Retrieving the filename, as provided by the server.
         const disp = res.headers.get('Content-Disposition');
@@ -109,7 +109,7 @@ export class CrudifyService {
   public templates() {
 
     // Filtering tests, to return only tests matching endpoint specified.
-    return this.httpService.get<string[]>('/magic/modules/system/crudifier/templates');
+    return this.httpService.get<string[]>('/magic/system/crudifier/templates');
   }
 
   /**
@@ -121,7 +121,7 @@ export class CrudifyService {
 
     // Filtering tests, to return only tests matching endpoint specified.
     return this.httpService.get<Template>(
-      '/magic/modules/system/crudifier/template?name=' +
+      '/magic/system/crudifier/template?name=' +
       encodeURIComponent(name));
   }
 
@@ -134,7 +134,7 @@ export class CrudifyService {
 
     // Filtering tests, to return only tests matching endpoint specified.
     return this.httpService.get<any>(
-      '/magic/modules/system/crudifier/template-args?name=' +
+      '/magic/system/crudifier/template-args?name=' +
       encodeURIComponent(name));
   }
 
@@ -172,7 +172,7 @@ export class CrudifyService {
         args
       };
       this.httpService.downloadPost(
-        '/magic/modules/system/crudifier/generate-frontend', payload).subscribe(res => {
+        '/magic/system/crudifier/generate-frontend', payload).subscribe(res => {
   
           // Retrieving the filename, as provided by the server.
           const disp = res.headers.get('Content-Disposition');
@@ -202,6 +202,6 @@ export class CrudifyService {
   private getLastLocCount() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<LocResult>('/magic/modules/system/crudifier/last-loc-count');
+    return this.httpService.get<LocResult>('/magic/system/crudifier/last-loc-count');
   }
 }

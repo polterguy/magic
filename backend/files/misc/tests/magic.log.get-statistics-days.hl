@@ -1,6 +1,6 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/system/diagnostics/log-statistics-days?filter=Trying%20to
+url:/magic/system/diagnostics/log-statistics-days?filter=Trying%20to
 status:int:200
 description:Assumes that retrieving log statistics per day succeeds
