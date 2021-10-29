@@ -15,7 +15,6 @@ import { LogService } from 'src/app/components/log/services/log.service';
 import { Crudify } from 'src/app/components/crudifier/models/crudify.model';
 import { DefaultDatabaseType } from '../../models/default-database-type.model';
 import { LocResult } from 'src/app/components/crudifier/models/loc-result.model';
-import { ConfigService } from 'src/app/components/config/services/config.service';
 import { CrudifyService } from 'src/app/components/crudifier/services/crudify.service';
 
 // CodeMirror options.
@@ -82,7 +81,13 @@ export class CrudifyDatabaseComponent implements OnInit {
       this.databaseType = res.default;
 
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
-      this.crudifyContent = JSON.stringify(data, null, 2);
+      let result = JSON.stringify(data, null, 2);
+      if (result.indexOf('\r') === -1) {
+        // Normalising CR/LF sequences.
+        const splits = result.split('\n');
+        result = splits.join('\r\n');
+      }
+    this.crudifyContent = result;
 
     }, (error: any) => this.feedbackService.showError(error));
   }
