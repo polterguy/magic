@@ -418,7 +418,7 @@ set-value:x:@.name-lowers
  * way our template files are looking, we could further have optimised things slightly.
  * 
  * However, to accommodate for future changes, such as for instance having the
- * name of the app in 
+ * name of the app in
  * any
  * file we wish, we do things this way, to make sure
  * we have a substitution process that is as flexible and generic as we possibly can.
@@ -506,7 +506,6 @@ if
                      get-value:x:@.arguments/*/copyright
                      .:@"
  */
-
 "
                      get-value:x:@.dp/#/*
 
