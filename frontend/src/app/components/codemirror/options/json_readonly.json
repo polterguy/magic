@@ -3,6 +3,5 @@
   "lineNumbers": true,
   "theme": "mbo",
   "mode": "application/ld+json",
-  "styleActiveLine": true,
-  "lineSeparator": "\r\n"
+  "styleActiveLine": true
 }
