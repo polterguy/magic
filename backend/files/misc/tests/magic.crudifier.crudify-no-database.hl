@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/modules/system/crudifier/crudify
+url:/magic/system/crudifier/crudify
 status:int:400
 description:Assumes that invoking endpoint without passing in a database results in the correct error response and status code
 payload:@"{

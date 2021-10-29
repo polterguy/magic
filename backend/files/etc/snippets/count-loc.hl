@@ -1,6 +1,6 @@
 
 // Script counting lines of code in specified folder.
-.folder:/modules/system/
+.folder:/system/
 unwrap:x:+/*
 signal:magic.io.file.load-recursively
    .:x:@.folder

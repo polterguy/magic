@@ -1,6 +1,6 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/system/sql/default-database-type
+url:/magic/system/sql/default-database-type
 status:int:200
 description:Assumes that retrieving default database type succeeds

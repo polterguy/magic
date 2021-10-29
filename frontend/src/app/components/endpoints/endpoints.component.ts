@@ -84,7 +84,7 @@ export class EndpointsComponent implements OnInit {
   public filteredItems() {
     let result = this.endpoints;
     if (this.displaySystem === false) {
-      result = result.filter(x => !x.path.startsWith('magic/modules/system/') && !x.path.startsWith('magic/modules/magic/'))
+      result = result.filter(x => !x.path.startsWith('magic/system/') && !x.path.startsWith('magic/modules/magic/'))
     }
     if (this.filter !== '') {
       result = result.filter(x => x.verb === this.filter || x.path.indexOf(this.filter) !== -1);

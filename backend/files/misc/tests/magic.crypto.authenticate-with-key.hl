@@ -13,7 +13,7 @@ description:Assumes that we can authenticate using our private key and a crypto 
          request.scheme
          .:"://"
          request.host
-         .:/magic/modules/system/crypto/challenge
+         .:/magic/system/crypto/challenge
 
    // Invoking server to retrieve a cryptography challenge.
    http.get:x:@.url
@@ -50,7 +50,7 @@ description:Assumes that we can authenticate using our private key and a crypto 
          request.scheme
          .:"://"
          request.host
-         .:/magic/modules/system/evaluator/evaluate
+         .:/magic/system/evaluator/evaluate
    http.post:x:@.url
       token:x:@json2lambda/*/result
       payload:"{\"hyperlambda\":\"auth.ticket.verify:root\"}"

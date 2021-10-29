@@ -41,7 +41,7 @@ if
          get-value:x:@.arguments/*/name
          .:/
       unwrap:x:+/*
-      io.file.execute:/modules/system/file-system/folder.delete.hl
+      io.file.execute:/system/file-system/folder.delete.hl
          folder:x:@strings.concat
       if
          not

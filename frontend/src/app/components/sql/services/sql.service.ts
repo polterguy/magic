@@ -49,7 +49,7 @@ export class SqlService {
     batch: boolean) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<any[]>('/magic/modules/system/sql/evaluate', {
+    return this.httpService.post<any[]>('/magic/system/sql/evaluate', {
       databaseType,
       database,
       sql,
@@ -64,7 +64,7 @@ export class SqlService {
    public defaultDatabaseType() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<DefaultDatabaseType>('/magic/modules/system/sql/default-database-type');
+    return this.httpService.get<DefaultDatabaseType>('/magic/system/sql/default-database-type');
   }
 
   /**
@@ -74,7 +74,7 @@ export class SqlService {
    */
   public connectionStrings(databaseType: string) {
     return this.httpService.get<any>(
-      '/magic/modules/system/sql/connection-strings?databaseType=' +
+      '/magic/system/sql/connection-strings?databaseType=' +
       encodeURIComponent(databaseType));
   }
 
@@ -87,7 +87,7 @@ export class SqlService {
   public getDatabaseMetaInfo(databaseType: string, connectionString: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Databases>('/magic/modules/system/sql/databases?databaseType=' +
+    return this.httpService.get<Databases>('/magic/system/sql/databases?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
       connectionString);

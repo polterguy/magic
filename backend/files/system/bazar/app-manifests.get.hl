@@ -15,7 +15,7 @@ for-each:x:@io.folder.list/*
 
    // Checking if this is the system or magic folder, which we simply ignore.
    switch:x:@.dp/#
-      case:/modules/system/
+      case:/system/
       case:/modules/magic/
 
          // Ignoring ...

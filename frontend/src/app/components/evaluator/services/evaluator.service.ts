@@ -42,7 +42,7 @@ export class EvaluatorService {
   public execute(hyperlambda: string) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/evaluator/evaluate', {
+    return this.httpService.post<Response>('/magic/system/evaluator/evaluate', {
       hyperlambda
     });
   }
@@ -61,7 +61,7 @@ export class EvaluatorService {
     return new Observable<string[]>((observer) => {
 
       // Invoking backend.
-      this.httpService.get<string[]>('/magic/modules/system/evaluator/vocabulary').subscribe((vocabulary: string[]) => {
+      this.httpService.get<string[]>('/magic/system/evaluator/vocabulary').subscribe((vocabulary: string[]) => {
         this._vocabulary = vocabulary;
         observer.next(vocabulary);
         observer.complete();

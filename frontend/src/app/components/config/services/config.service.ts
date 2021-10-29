@@ -44,7 +44,7 @@ export class ConfigService {
   public status() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Status>('/magic/modules/system/config/setup-status');
+    return this.httpService.get<Status>('/magic/system/config/setup-status');
   }
 
   /**
@@ -53,7 +53,7 @@ export class ConfigService {
    public rootUserEmailAddress() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<NameEmailModel>('/magic/modules/system/emails/email');
+    return this.httpService.get<NameEmailModel>('/magic/system/emails/email');
   }
 
   /**
@@ -62,7 +62,7 @@ export class ConfigService {
   public loadConfig() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/modules/system/config/load-config');
+    return this.httpService.get<any>('/magic/system/config/load-config');
   }
 
   /**
@@ -71,7 +71,7 @@ export class ConfigService {
   public saveConfig(config: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/modules/system/config/save-config', config);
+    return this.httpService.post<Response>('/magic/system/config/save-config', config);
   }
 
   /**
@@ -87,7 +87,7 @@ export class ConfigService {
     return new Observable<AuthenticateResponse>((observer) => {
 
       // Invoking backend to setup system.
-      this.httpService.post<AuthenticateResponse>('/magic/modules/system/config/setup', {
+      this.httpService.post<AuthenticateResponse>('/magic/system/config/setup', {
         databaseType,
         password,
         settings: JSON.stringify(settings, null, 2),
@@ -129,7 +129,7 @@ export class ConfigService {
    */
   public getGibberish(min: number, max: number) {
     return this.httpService.get<Response>(
-      '/magic/modules/system/misc/gibberish?min=' +
+      '/magic/system/misc/gibberish?min=' +
       min +
       '&max=' + max);
   }
@@ -144,7 +144,7 @@ export class ConfigService {
 
     // Invoking backend returning an observable to caller.
     return this.httpService.get(
-      '/magic/modules/system/config/version-compare?version_1=' +
+      '/magic/system/config/version-compare?version_1=' +
       encodeURIComponent(version_1) + 
       '&version_2=' +
       encodeURIComponent(version_2));

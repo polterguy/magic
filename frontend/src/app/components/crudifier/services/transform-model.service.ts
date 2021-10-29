@@ -104,19 +104,19 @@ export class TransformModelService {
     switch (verb) {
 
       case 'post':
-        result.template = '/modules/system/crudifier/templates/crud.template.post.hl';
+        result.template = '/system/crudifier/templates/crud.template.post.hl';
         break;
 
       case 'get':
-        result.template = '/modules/system/crudifier/templates/crud.template.get.hl';
+        result.template = '/system/crudifier/templates/crud.template.get.hl';
         break;
 
       case 'put':
-        result.template = '/modules/system/crudifier/templates/crud.template.put.hl';
+        result.template = '/system/crudifier/templates/crud.template.put.hl';
         break;
 
       case 'delete':
-        result.template = '/modules/system/crudifier/templates/crud.template.delete.hl';
+        result.template = '/system/crudifier/templates/crud.template.delete.hl';
         break;
 
       default:

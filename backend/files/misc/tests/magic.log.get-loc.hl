@@ -1,6 +1,6 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/system/diagnostics/loc-generated
+url:/magic/system/diagnostics/loc-generated
 status:int:200
 description:Assumes that we can invoke get LOC (Lines Of Code generated) from backend

@@ -33,7 +33,7 @@ export class AuthenticationService {
     return new Observable<Credentials>((observer: Subscriber<Credentials>) => {
       this.httpClient.get<AuthenticateToken>(
         environment.apiUrl +
-        'magic/modules/system/auth/authenticate?username=' +
+        'magic/system/auth/authenticate?username=' +
         encodeURI(context.username) +
         '&password=' +
         encodeURI(context.password)).subscribe((res: AuthenticateToken) => {

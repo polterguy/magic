@@ -170,7 +170,7 @@ if
       unwrap:x:+/**
       signal:magic.emails.send
          subject:Thank you for registering
-         template-file:/modules/system/auth/email-templates/register.html
+         template-file:/system/auth/email-templates/register.html
          substitutes
             url:x:@.url
          mime-type:text/html

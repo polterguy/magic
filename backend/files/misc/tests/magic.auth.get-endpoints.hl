@@ -1,6 +1,6 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/system/auth/endpoints
+url:/magic/system/auth/endpoints
 status:int:200
 description:Assumes retrieving auth endpoints succeeds

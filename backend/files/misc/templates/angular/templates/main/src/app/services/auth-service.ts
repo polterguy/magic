@@ -103,7 +103,7 @@ export class AuthService {
      */
     this.httpClient
       .get<Endpoint[]>(
-        environment.apiUrl + 'magic/modules/system/auth/endpoints'
+        environment.apiUrl + 'magic/system/auth/endpoints'
       )
       .subscribe(
         (res: Endpoint[]) => {

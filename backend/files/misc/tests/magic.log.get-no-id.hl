@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/modules/system/log/log-item
+url:/magic/system/log/log-item
 status:int:400
 description:Assumes that trying to retrieve a log item without supplying an id results in the correct error response and status code from backend
 response:@"{
