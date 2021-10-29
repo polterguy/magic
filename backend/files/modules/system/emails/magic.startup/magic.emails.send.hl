@@ -1,6 +1,6 @@
 
 /*
- * Attempts to send a braided email, substituting template values found in the 
+ * Attempts to send a braided email, substituting template values found in the
  * specified emplate email file from the given collection of [substitutes].
  * 
  * Notice, will not do anything unless SMTP configuration settings can be found
@@ -74,7 +74,6 @@ slots.create:magic.emails.send
     */
    log.info
       .:@"Attempting to send email
-
 "
       .:"To: "
       get-value:x:@.arguments/*/email
@@ -87,7 +86,6 @@ slots.create:magic.emails.send
       .:"Subject: "
       get-value:x:@.arguments/*/subject
       .:@"
-
 "
       get-value:x:@.body
 

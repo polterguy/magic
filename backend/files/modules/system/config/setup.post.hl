@@ -235,7 +235,6 @@ try
                   .:"Module failed to install, module name was '"
                   get-value:x:@strings.split/1
                   .:@"'
-
 Message from system was '"
                   get-value:x:@.arguments/*/message
                   .:"'"

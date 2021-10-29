@@ -69,7 +69,7 @@ else
 
    /*
     * System has not been setup to do automatic Windows
-    * authentication, hence we'll need to verify that 
+    * authentication, hence we'll need to verify that
     * invocation was given a username and a password as
     * arguments.
     */

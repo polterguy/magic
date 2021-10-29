@@ -4,7 +4,7 @@
  * invocation towards another Magic server, cryptographically signing
  * your payload before it's sent, with your server's private key - And
  * verifying the response from the server is cryptographically secured,
- * by verifying the payload is signed by the key associated with the 
+ * by verifying the payload is signed by the key associated with the
  * server's domain when parsing the response.
  * 
  * Arguments.
@@ -56,7 +56,6 @@ slots.create:magic.crypto.http.eval
          // Success was not returned from [http.patch] invocation.
          strings.concat
             .:@"Invocation to cryptographically secured HTTP endpoint returned
-
 "
             lambda2hyper:x:@http.patch
          throw:x:@strings.concat

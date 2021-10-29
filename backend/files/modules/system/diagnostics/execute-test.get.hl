@@ -48,7 +48,6 @@ if
             get-value:x:../*/.arguments/*/test_file
             .:@"
 Error: Unhandled exception occurred.
-
 Exception: "
             get-value:x:@.arguments/*/message
          log.error:x:@strings.concat
@@ -113,7 +112,6 @@ if
          get-value:x:@.arguments/*/test_file
          .:@"
 Error: Wrong status code returned.
-
 Assumption: "
          get-value:x:@hyper2lambda/*/status
          .:@"
@@ -215,7 +213,6 @@ if
                get-value:x:@.arguments/*/test_file
                .:@"
 Error: Wrong response returned
-
 Assumption: "
                get-value:x:@.assumption
                .:@"
