@@ -54,13 +54,13 @@ if
                status:int:500
 
 // Downloading zip file as binary content from specified URL.
-http.get.binary:x:@.arguments/*/url
+http.get:x:@.arguments/*/url
 
 /*
  * Saving file to modules folder using the 'filename' argument specified
  * by its HTTP Content-Disposition header.
  */
-strings.split:x:@http.get.binary/*/headers/*/Content-Disposition
+strings.split:x:@http.get/*/headers/*/Content-Disposition
    .:=
 strings.trim:x:@strings.split/1
    .:"\""
@@ -68,7 +68,7 @@ strings.concat
    .:/modules/
    get-value:x:@strings.trim
 io.file.save.binary:x:@strings.concat
-   get-value:x:@http.get.binary/*/content
+   get-value:x:@http.get/*/content
 
 // Unzipping downloaded ZIP file.
 io.file.unzip:x:@strings.concat
