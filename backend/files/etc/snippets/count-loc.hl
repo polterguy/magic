@@ -7,8 +7,7 @@ signal:magic.io.file.load-recursively
 .no:int:0
 for-each:x:@signal/*
    strings.split:x:@.dp/#/0
-      .:@"
-"
+      .:"\n"
    math.increment:x:@.no
       get-count:x:@strings.split/*
 remove-nodes:x:@signal/*
