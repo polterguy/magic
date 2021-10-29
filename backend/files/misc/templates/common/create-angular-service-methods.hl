@@ -88,7 +88,6 @@ for-each:x:@.arguments/*
          .:"() : "
          get-value:x:@.interface
          .:@" {
-
     return {
 "
 

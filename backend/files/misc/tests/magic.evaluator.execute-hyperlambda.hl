@@ -6,5 +6,6 @@ payload:@"{
   ""hyperlambda"": "".foo:bar""
 }"
 status:int:200
-response:"{\"result\":\".foo:bar\r\n\"}"
+response:@"{""result"":"".foo:bar
+""}"
 description:Assumes that executing a piece of Hyperlambda returns the correct result

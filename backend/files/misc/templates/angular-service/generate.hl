@@ -135,7 +135,6 @@ if
                      get-value:x:@.arguments/*/copyright
                      .:@"
  */
-
 "
                      get-value:x:@.dp/#/*
 

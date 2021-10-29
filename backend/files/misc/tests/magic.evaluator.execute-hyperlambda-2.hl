@@ -6,5 +6,8 @@ payload:@"{
   ""hyperlambda"": "".foo\r\nset-value:x:@.foo\r\n   .:howdy world""
 }"
 status:int:200
-response:"{\"result\":\".foo:howdy world\r\nset-value:x:@.foo\r\n   .:howdy world\r\n\"}"
+response:@"{""result"":"".foo:howdy world
+set-value:x:@.foo
+   .:howdy world
+""}"
 description:Assumes that invoking a piece of Hyperlambda correctly executes the Hyperlambda
