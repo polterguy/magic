@@ -3,6 +3,5 @@
   "readOnly": true,
   "lineNumbers": true,
   "theme": "mbo",
-  "mode": "hyperlambda",
-  "lineSeparator": "\r\n"
+  "mode": "hyperlambda"
 }

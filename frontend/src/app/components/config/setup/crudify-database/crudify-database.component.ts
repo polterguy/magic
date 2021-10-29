@@ -81,13 +81,7 @@ export class CrudifyDatabaseComponent implements OnInit {
       this.databaseType = res.default;
 
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
-      let result = JSON.stringify(data, null, 2);
-      if (result.indexOf('\r') === -1) {
-        // Normalising CR/LF sequences.
-        const splits = result.split('\n');
-        result = splits.join('\r\n');
-      }
-    this.crudifyContent = result;
+    this.crudifyContent = JSON.stringify(data, null, 2);
 
     }, (error: any) => this.feedbackService.showError(error));
   }
