@@ -8,6 +8,7 @@
   "indentUnit": 3,
   "indentAuto": true,
   "styleActiveLine": true,
+  "lineSeparator": "\r\n",
   "extraKeys": {
     "Shift-Tab": "indentLess",
     "Tab": "indentMore",
