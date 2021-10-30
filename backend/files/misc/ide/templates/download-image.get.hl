@@ -26,8 +26,10 @@ strings.concat
 // Opening up a read stream for file.
 io.stream.open-file:x:@strings.concat
 
-// Returning image to caller, making sure we get the HTTP headers correctly applied.
+// Making sure we get the HTTP headers correctly applied.
 response.headers.add
    Content-Type:application/octet-stream
    Cache-Control:public, max-age=6000
+
+// Returning image to caller.
 return:x:@io.stream.open-file
