@@ -1,4 +1,6 @@
 **/.DS_Store
 files/modules/**
+!files/modules/README.md
 files/etc/system/crypto/keys/**
 !files/etc/system/crypto/keys/README.md
+Properties/launchSettings.json
