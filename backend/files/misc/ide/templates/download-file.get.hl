@@ -26,12 +26,15 @@ strings.concat
 // Opening up a read stream for file.
 io.stream.open-file:x:@strings.concat
 
-// Returning image to caller, making sure we get the HTTP headers correctly applied.
+// Making sure we get the HTTP headers correctly applied.
 strings.concat
    .:"attachment; filename=\""
    get-value:x:@.arguments/*/file
+   .:"\""
 unwrap:x:+/*/Content-Disposition
 response.headers.add
    Content-Type:application/octet-stream
    Content-Disposition:x:@strings.concat
+
+// Returning image to caller.
 return:x:@io.stream.open-file
