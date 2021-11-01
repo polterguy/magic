@@ -13,7 +13,6 @@ import { SqlService } from '../../sql/services/sql.service';
 import { Databases } from '../../sql/models/databases.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../config/services/config.service';
 import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
 import { DefaultDatabaseType } from '../../config/models/default-database-type.model';
 import { CrudifierSqlExtraComponent } from './crudifier-sql-extra/crudifier-sql-extra.component';
@@ -26,7 +25,8 @@ import sqlOptions from '../../codemirror/options/sql.json'
  */
 @Component({
   selector: 'app-crudifier-sql',
-  templateUrl: './crudifier-sql.component.html'
+  templateUrl: './crudifier-sql.component.html',
+  styleUrls: ['./crudifier-sql.component.scss']
 })
 export class CrudifierSqlComponent implements OnInit {
 
@@ -197,6 +197,37 @@ export class CrudifierSqlComponent implements OnInit {
         }
       }
     });
+  }
+
+  /**
+   * Invoked when CSS class for database name is to be returned.
+   * 
+   * @param db Database name
+   */
+   public getDatabaseCssClass(db: string) {
+    switch (this.input.databaseType) {
+      case 'mysql':
+        switch (db) {
+          case 'information_schema':
+          case 'mysql':
+          case 'performance_schema':
+          case 'sys':
+            return 'sys-database';
+          default:
+            return '';
+        }
+      case 'mssql':
+        switch (db) {
+          case 'master':
+          case 'msdb':
+          case 'model':
+          case 'Resource':
+          case 'tempdb':
+            return 'sys-database';
+          default:
+            return '';
+        }
+    }
   }
 
   /*
