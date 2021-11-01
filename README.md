@@ -63,3 +63,5 @@ To sum up each license.
 See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
 
 Copyright(c) Thomas Hansen 2019 - 2021, Thomas Hansen - thomas@servergardens.com
+
+* [Magic Documentation](https://polterguy.github.io/)
