@@ -18,11 +18,13 @@ mysql.connect:sakila
          join:film_actor
             type:inner
             on
-               film_id:film_id
+               and
+                  film.film_id:film_actor.film_id
             join:actor
                type:inner
                on
-                  actor_id:actor_id
+                  and
+                     film_actor.actor_id:actor.actor_id
       where
          and
             actor.first_name:NICK
