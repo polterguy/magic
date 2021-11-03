@@ -14,7 +14,7 @@ strings.concat
    .:"attachment; filename=\""
    get-value:x:@strings.split/0/-
    .:".zip\""
-response.headers.add
+response.headers.set
    Content-Type:application/zip
    Content-Disposition:x:@strings.concat
    Access-Control-Expose-Headers:Content-Disposition

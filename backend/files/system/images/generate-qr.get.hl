@@ -20,7 +20,7 @@ validators.mandatory:x:@.arguments/*/size
  * Making sure we return the QR code using the correct MIME type.
  * Notice, we also add some caching here.
  */
-response.headers.add
+response.headers.set
    Content-Type:image/png
    Cache-Control:public, max-age=600
 
