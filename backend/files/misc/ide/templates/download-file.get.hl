@@ -32,7 +32,7 @@ strings.concat
    get-value:x:@.arguments/*/file
    .:"\""
 unwrap:x:+/*/Content-Disposition
-response.headers.add
+response.headers.set
    Content-Type:application/octet-stream
    Content-Disposition:x:@strings.concat
 

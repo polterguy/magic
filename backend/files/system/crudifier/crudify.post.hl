@@ -315,7 +315,7 @@ semaphore:crudifier
                unwrap:x:+/*/*/*
                insert-after:x:@apply/*/.type
                   .
-                     response.headers.add
+                     response.headers.set
                         Cache-Control:x:@strings.concat
 
          /*

@@ -149,7 +149,7 @@ try
             response:x:@.result
 
          // Making sure we apply the correct HTTP header.
-         response.headers.add
+         response.headers.set
             Content-Type:application/octet-stream
 
          /*

@@ -27,7 +27,7 @@ strings.concat
 io.stream.open-file:x:@strings.concat
 
 // Making sure we get the HTTP headers correctly applied.
-response.headers.add
+response.headers.set
    Content-Type:application/octet-stream
    Cache-Control:public, max-age=6000
 

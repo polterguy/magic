@@ -14,7 +14,7 @@ else
       result:FAILURE
 
 // Key exists, returning it to caller, in addition to its fingerprint.
-response.headers.add
+response.headers.set
    Content-Type:text/plain
 io.file.load:/etc/system/crypto/keys/public.key
 return:x:@io.file.load
