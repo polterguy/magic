@@ -23,6 +23,21 @@
     margin-right: 1rem;
     padding: .5rem 1rem;
 
+    .mat-tree-node {
+      height: 36px;
+      min-height: 36px;
+
+      button {
+        font-weight: normal;
+      }
+    }
+    .mat-tree-node.selected-node {
+
+      button {
+        font-weight: bold;
+      }
+    }
+
     .folder-btn {
       display: block;
       width: 100%;

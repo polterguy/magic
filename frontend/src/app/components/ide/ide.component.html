@@ -7,12 +7,12 @@
 
       <mat-tree-node
         *matTreeNodeDef="let file"
+        [class]="activeFile === file.node.path ? 'selected-node' : ''"
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
         <button
           class="file-btn"
-          [color]="activeFile === file.node.path ? 'primary' : 'default'"
           mat-button
           [matTooltip]="file.node.name"
           (click)="openFile(file.node)">
@@ -25,6 +25,7 @@
 
       <mat-tree-node
         *matTreeNodeDef="let folder; when: isExpandable"
+        [class]="activeFolder === folder.node.path ? 'selected-node' : ''"
         matTreeNodePadding
         matTreeNodePaddingIndent="10">
 
@@ -39,7 +40,6 @@
 
         <button
           class="folder-btn"
-          [color]="activeFolder === folder.node.path ? 'primary' : 'default'"
           mat-button
           (click)="selectFolder(folder)">
 
