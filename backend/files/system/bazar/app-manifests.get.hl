@@ -13,9 +13,8 @@ auth.ticket.verify:root
 io.folder.list:/modules/
 for-each:x:@io.folder.list/*
 
-   // Checking if this is the system or magic folder, which we simply ignore.
+   // Checking if this is the magic folder, which we simply ignore.
    switch:x:@.dp/#
-      case:/system/
       case:/modules/magic/
 
          // Ignoring ...
