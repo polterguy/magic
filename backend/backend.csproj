@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.2" />
-    <PackageReference Include="magic.library" Version="9.9.0" />
+    <PackageReference Include="magic.library" Version="9.9.2" />
   </ItemGroup>
 
 </Project>
