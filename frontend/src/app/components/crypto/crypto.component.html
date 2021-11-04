@@ -4,7 +4,7 @@
   <app-server-public-key></app-server-public-key>
 </mat-card>
 
-<mat-card>
+<mat-card *ngIf="authService.access.crypto.crypto_invocations">
 
   <mat-tab-group #tab>
 

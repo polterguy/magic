@@ -636,6 +636,7 @@ export class AuthService {
         delete_cache_item: this.canInvoke('magic/system/cache/delete-cache-item', 'delete'),
       },
       crypto: {
+        crypto_keys: this.canInvoke('magic/modules/magic/crypto_keys', 'get'),
         import_public_key: this.canInvoke('magic/system/crypto/import', 'post'),
         generate_server_key: this.canInvoke('magic/system/crypto/generate-keypair', 'post'),
         crypto_invocations: this.canInvoke('magic/modules/magic/crypto_invocations', 'get'),
