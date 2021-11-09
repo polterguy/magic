@@ -1,5 +1,5 @@
 
-# Using .Net 5 image from Microsoft
+# Using .Net 6 image from Microsoft
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /app
 
