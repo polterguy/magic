@@ -1,5 +1,5 @@
 /*
- * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
 import { Pipe, PipeTransform } from '@angular/core';

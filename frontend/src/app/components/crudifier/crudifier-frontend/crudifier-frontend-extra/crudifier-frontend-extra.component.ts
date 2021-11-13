@@ -1,6 +1,6 @@
 
 /*
- * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 import { Subscription } from 'rxjs';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';

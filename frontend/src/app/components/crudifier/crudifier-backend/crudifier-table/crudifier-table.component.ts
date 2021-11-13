@@ -1,6 +1,6 @@
 
 /*
- * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 import { forkJoin } from 'rxjs';
 import { Component, Input, OnInit } from '@angular/core';

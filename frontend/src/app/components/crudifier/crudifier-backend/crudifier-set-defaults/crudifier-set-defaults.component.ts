@@ -1,6 +1,6 @@
 
 /*
- * Copyright(c) Thomas Hansen thomas@servergardens.com, all right reserved
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
