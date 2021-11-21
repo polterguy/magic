@@ -15,6 +15,7 @@ import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
 import { Endpoint } from '../models/endpoint.model';
 import { Argument } from '../models/argument.model';
 import { Response } from 'src/app/models/response.model';
+import { AuthService } from '../../auth/services/auth.service';
 import { EndpointService } from '../services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -24,8 +25,8 @@ import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumpt
 // CodeMirror options.
 import json from '../../codemirror/options/json.json';
 import json_readonly from '../../codemirror/options/json_readonly.json';
+import markdown_readonly from '../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../codemirror/options/hyperlambda_readonly.json';
-import { AuthService } from '../../auth/services/auth.service';
 
 /*
  * Query model encapsulating a single query parameter added to the HTTP invocation.
@@ -110,6 +111,13 @@ export class EndpointDetailsComponent implements OnInit {
    */
    public cmHlOptionsReadonly = {
     hl: hyperlambda_readonly,
+  };
+
+  /**
+   * CodeMirror options object, taken from common settings.
+   */
+   public markdownOptionsReadonly = {
+    md: markdown_readonly,
   };
 
   /**
