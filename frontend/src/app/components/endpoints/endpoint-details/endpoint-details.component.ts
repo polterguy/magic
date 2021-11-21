@@ -230,7 +230,7 @@ export class EndpointDetailsComponent implements OnInit {
         // Setting payload to empty string.
         setTimeout(() => this.payload = '', 250);
 
-      } else if (this.endpoint.consumes === 'text/plain') {
+      } else if (this.endpoint.consumes.startsWith('text/')) {
 
         // Setting payload to empty string.
         setTimeout(() => this.payload = '', 250);
