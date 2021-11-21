@@ -482,10 +482,10 @@ export class IdeComponent implements OnInit {
         const splits = file.path.split('/').filter(x => x !== '');
         const lastEntity = splits[splits.length - 1];
         const lastSplits = lastEntity.split('.');
-        if (lastSplits.length === 3 && lastSplits[2] === 'hl') {
+        if (lastSplits.length >= 3 && lastSplits[2] === 'hl') {
 
           // Hyperlambda file, with 3 entities, possibly an endpoint file.
-          switch (lastSplits[1]) {
+          switch (lastSplits[lastSplits.length - 2]) {
             case 'get':
             case 'put':
             case 'post':
@@ -497,17 +497,19 @@ export class IdeComponent implements OnInit {
                * allowing user to parametrise and invoke endpoint.
                */
               const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
-              const endpoint = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[1])[0];
-              this.dialog.open(ExecuteEndpointDialogComponent, {
-                data: {
-                  filename: file.path,
-                  verb: lastSplits[1],
-                  url,
-                  endpoint,
-                },
-                minWidth: '80%',
-              });
-              return; // Returning early to avoid executing file directly.
+              const endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+              if (endpoints.length > 0) {
+                this.dialog.open(ExecuteEndpointDialogComponent, {
+                  data: {
+                    filename: file.path,
+                    verb: lastSplits[1],
+                    url,
+                    endpoint: endpoints[0],
+                  },
+                  minWidth: '80%',
+                });
+                return; // Returning early to avoid executing file directly.
+              }
           }
         }
       }
