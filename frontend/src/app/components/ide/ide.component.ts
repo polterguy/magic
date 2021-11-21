@@ -576,6 +576,9 @@ export class IdeComponent implements OnInit {
           // Showing user some feedback.
           this.feedbackService.showInfoShort('File successfully renamed');
 
+          // We'll need to re-retrieve endpoints now, to allow for executing file correctly.
+          this.getEndpoints();
+
         }, (error: any) => this.feedbackService.showError(error));
       }
     });
