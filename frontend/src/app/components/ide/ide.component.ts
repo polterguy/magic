@@ -332,6 +332,9 @@ export class IdeComponent implements OnInit {
 
           // Making sure we re-check component for changes to avoid CDR errors.
           this.cdRef.detectChanges();
+
+          // We'll need to re-retrieve endpoints now, to allow for executing file.
+          this.getEndpoints();
         }
       }
     });
@@ -445,11 +448,18 @@ export class IdeComponent implements OnInit {
       // Providing feedback to user.
       this.feedbackService.showInfoShort('File successfully saved');
 
+      // We'll need to re-retrieve endpoints now, to allow for executing file correctly.
+      this.getEndpoints();
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
    * Invoked when a file should be executed.
+   * 
+   * Will save the file, then execute it. How the file is executed depends upon
+   * if the file is an endpoint file or not. If the file is an endpoint file, a
+   * modal dialog will be displayed, allowing user to parametrise invocation first.
    * 
    * @param file File to execute
    */
@@ -468,7 +478,6 @@ export class IdeComponent implements OnInit {
        * file, we'll have to invoke it as such, by allowing client to parametrise the
        * invocation accordingly.
        */
-      let isEndpoint = false;
       if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
         const splits = file.path.split('/').filter(x => x !== '');
         const lastEntity = splits[splits.length - 1];
@@ -482,45 +491,34 @@ export class IdeComponent implements OnInit {
             case 'post':
             case 'patch':
             case 'delete':
-              isEndpoint = true;
+
+              /* 
+               * File is a Hyperlambda endpoint, hence showing modal window to user,
+               * allowing user to parametrise and invoke endpoint.
+               */
+              const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
+              const endpoint = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[1])[0];
+              this.dialog.open(ExecuteEndpointDialogComponent, {
+                data: {
+                  filename: file.path,
+                  verb: lastSplits[1],
+                  url,
+                  endpoint,
+                },
+                minWidth: '80%',
+              });
+              return; // Returning early to avoid executing file directly.
           }
         }
-
-        if (isEndpoint) {
-
-          /* 
-           * File is a Hyperlambda endpoint, hence showing modal window to user,
-           * allowing user to parametrise and invoke endpoint.
-           */
-          const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
-          const endpoint = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[1])[0];
-          console.log(endpoint);
-          this.dialog.open(ExecuteEndpointDialogComponent, {
-            data: {
-              filename: file.path,
-              verb: lastSplits[1],
-              url,
-              endpoint,
-            },
-            minWidth: '80%',
-          });
-        }
       }
 
-      /*
-       * Then executing file, where process depends upon type of type of file,
-       * implying an endpoint file or something else.
-       */
-      if (!isEndpoint) {
+      // Executing file directly as Hyperlambda file.
+      this.evaluatorService.execute(file.content).subscribe(() => {
 
-        // Executing file directly as Hyperlambda file.
-        this.evaluatorService.execute(file.content).subscribe(() => {
+        // Providing feedback to user.
+        this.feedbackService.showInfoShort('File successfully saved and executed');
 
-          // Providing feedback to user.
-          this.feedbackService.showInfoShort('File successfully saved and executed');
-
-        }, (error: any) => this.feedbackService.showError(error));
-      }
+      }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => this.feedbackService.showError(error));
   }
