@@ -140,6 +140,7 @@ import { SaveSnippetDialogComponent } from './components/evaluator/save-snippet-
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileFolderDialogComponent } from './components/ide/new-file-folder-dialog/new-file-folder-dialog.component';
 import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
+import { ExecuteEndpointDialogComponent } from './components/ide/execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { RenameFileObjectDialogComponent } from './components/files/rename-file-object-dialog/rename-file-object-dialog.component';
 import { CreateKeypairDialogComponent } from './components/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
@@ -201,6 +202,7 @@ import { CrudifierSetDefaultsComponent } from './components/crudifier/crudifier-
     NewFileFolderDialogComponent,
     PreviewFileDialogComponent,
     NewFileObjectDialogComponent,
+    ExecuteEndpointDialogComponent,
     RenameFileObjectDialogComponent,
     ServerPublicKeyComponent,
     PublicKeysComponent,

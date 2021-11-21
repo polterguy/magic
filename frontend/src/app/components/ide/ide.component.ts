@@ -25,8 +25,11 @@ import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
-import fileTypes from './../files/file-editor/file-types.json';
 import { AuthService } from '../auth/services/auth.service';
+import { Endpoint } from '../endpoints/models/endpoint.model';
+import fileTypes from './../files/file-editor/file-types.json';
+import { EndpointService } from '../endpoints/services/endpoint.service';
+import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -89,6 +92,11 @@ export class IdeComponent implements OnInit {
    public activeFolder: string = '/';
 
   /**
+   * Model describing endpoints in your installation.
+   */
+  private endpoints: Endpoint[];
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
@@ -98,6 +106,7 @@ export class IdeComponent implements OnInit {
    * @param feedbackService Needed to display feedback to user
    * @param messageService Service used to publish messages to other components in the system
    * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
+   * @param endpointService Needed to retrieve endpoints from backend
    */
   public constructor(
     private dialog: MatDialog,
@@ -105,7 +114,8 @@ export class IdeComponent implements OnInit {
     public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
-    private evaluatorService: EvaluatorService) { }
+    private evaluatorService: EvaluatorService,
+    private endpointService: EndpointService) { }
 
   /**
    * OnInit implementation.
@@ -114,6 +124,9 @@ export class IdeComponent implements OnInit {
 
     // Retrieving files and folder from server.
     this.getFilesFromServer();
+
+    // Retrieving endpoints from server.
+    this.getEndpoints();
   }
 
   /**
@@ -450,13 +463,63 @@ export class IdeComponent implements OnInit {
       var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
       editor.doc.markClean();
 
-      // Then executing file's content.
-      this.evaluatorService.execute(file.content).subscribe(() => {
+      /*
+       * Then figuring out if this is an endpoint file or not, if it's an endpoint
+       * file, we'll have to invoke it as such, by allowing client to parametrise the
+       * invocation accordingly.
+       */
+      let isEndpoint = false;
+      if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
+        const splits = file.path.split('/').filter(x => x !== '');
+        const lastEntity = splits[splits.length - 1];
+        const lastSplits = lastEntity.split('.');
+        if (lastSplits.length === 3 && lastSplits[2] === 'hl') {
 
-        // Providing feedback to user.
-        this.feedbackService.showInfoShort('File successfully saved and executed');
+          // Hyperlambda file, with 3 entities, possibly an endpoint file.
+          switch (lastSplits[1]) {
+            case 'get':
+            case 'put':
+            case 'post':
+            case 'patch':
+            case 'delete':
+              isEndpoint = true;
+          }
+        }
 
-      }, (error: any) => this.feedbackService.showError(error));
+        if (isEndpoint) {
+
+          /* 
+           * File is a Hyperlambda endpoint, hence showing modal window to user,
+           * allowing user to parametrise and invoke endpoint.
+           */
+          const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
+          const endpoint = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[1])[0];
+          console.log(endpoint);
+          this.dialog.open(ExecuteEndpointDialogComponent, {
+            data: {
+              filename: file.path,
+              verb: lastSplits[1],
+              url,
+              endpoint,
+            }
+          });
+        }
+      }
+
+      /*
+       * Then executing file, where process depends upon type of type of file,
+       * implying an endpoint file or something else.
+       */
+      if (!isEndpoint) {
+
+        // Executing file directly as Hyperlambda file.
+        this.evaluatorService.execute(file.content).subscribe(() => {
+
+          // Providing feedback to user.
+          this.feedbackService.showInfoShort('File successfully saved and executed');
+
+        }, (error: any) => this.feedbackService.showError(error));
+      }
 
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -986,6 +1049,20 @@ export class IdeComponent implements OnInit {
         }
       }
     }, 1);
+  }
+
+  /*
+   * Invokes backend to retrieve meta data about endpoints.
+   */
+  private getEndpoints() {
+
+    // Invoking backend to retrieve endpoints.
+    this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
+
+      // Assigning model to result of invocation.
+      this.endpoints = endpoints;
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /*
