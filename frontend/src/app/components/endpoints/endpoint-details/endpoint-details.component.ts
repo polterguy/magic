@@ -207,7 +207,7 @@ export class EndpointDetailsComponent implements OnInit {
           }
           payload[idx.name] = type;
         }
-        this.payload = JSON.stringify(payload, null, 2);
+        setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
       }
     }
 
