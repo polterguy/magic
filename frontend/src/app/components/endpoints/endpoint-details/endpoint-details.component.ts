@@ -24,6 +24,8 @@ import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumpt
 
 // CodeMirror options.
 import json from '../../codemirror/options/json.json';
+import markdown from '../../codemirror/options/markdown.json';
+import hyperlambda from '../../codemirror/options/hyperlambda.json';
 import json_readonly from '../../codemirror/options/json_readonly.json';
 import markdown_readonly from '../../codemirror/options/markdown_readonly.json';
 import hyperlambda_readonly from '../../codemirror/options/hyperlambda_readonly.json';
@@ -97,6 +99,20 @@ export class EndpointDetailsComponent implements OnInit {
    */
   public cmOptions = {
     json: json,
+  };
+
+  /**
+   * CodeMirror options object, taken from common settings.
+   */
+   public cmOptionsHyperlambda = {
+    json: hyperlambda,
+  };
+
+  /**
+   * CodeMirror options object, taken from common settings.
+   */
+   public cmOptionsMarkdown = {
+    json: markdown,
   };
 
   /**
@@ -208,6 +224,16 @@ export class EndpointDetailsComponent implements OnInit {
           payload[idx.name] = type;
         }
         setTimeout(() => this.payload = JSON.stringify(payload, null, 2), 250);
+
+      } else if (this.endpoint.consumes === 'application/x-hyperlambda') {
+
+        // Setting payload to empty string.
+        setTimeout(() => this.payload = '', 250);
+
+      } else if (this.endpoint.consumes === 'text/plain') {
+
+        // Setting payload to empty string.
+        setTimeout(() => this.payload = '', 250);
       }
     }
 
@@ -224,7 +250,9 @@ export class EndpointDetailsComponent implements OnInit {
   public canInvoke() {
     return this.endpoint.verb === 'get' ||
       this.endpoint.verb === 'delete' ||
-      this.endpoint.consumes === 'application/json';
+      this.endpoint.consumes === 'application/json' ||
+      this.endpoint.consumes === 'application/x-hyperlambda' ||
+      this.endpoint.consumes.startsWith('text/');
   }
 
   /**
@@ -544,15 +572,24 @@ export class EndpointDetailsComponent implements OnInit {
         break;
 
       case 'post':
-        invocation = this.endpointService.post(this.url, JSON.parse(this.payload), responseType);
+        {
+          const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
+          invocation = this.endpointService.post(this.url, payload, responseType);
+        }
         break;
 
       case 'put':
-        invocation = this.endpointService.put(this.url, JSON.parse(this.payload), responseType);
+        {
+          const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
+          invocation = this.endpointService.put(this.url, payload, responseType);
+        }
         break;
 
       case 'patch':
-        invocation = this.endpointService.patch(this.url, JSON.parse(this.payload), responseType);
+        {
+          const payload = this.endpoint.consumes === 'application/json' ? JSON.parse(this.payload) : this.payload;
+          invocation = this.endpointService.patch(this.url, payload, responseType);
+        }
         break;
 
       case 'socket':
