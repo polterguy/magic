@@ -131,7 +131,7 @@
   </span>
 
   <span
-    *ngIf="payload"
+    *ngIf="payload !== null && payload !== undefined && endpoint.consumes === 'application/json'"
     class="item-full-width">
 
     <hr>
@@ -142,6 +142,40 @@
       <ngx-codemirror
         [(ngModel)]="payload"
         [options]="cmOptions.json">
+      </ngx-codemirror>
+    </span>
+
+  </span>
+
+  <span
+    *ngIf="payload !== null && payload !== undefined && endpoint.consumes === 'application/x-hyperlambda'"
+    class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Payload</strong>
+
+    <span class="description">
+      <ngx-codemirror
+        [(ngModel)]="payload"
+        [options]="cmOptionsHyperlambda.json">
+      </ngx-codemirror>
+    </span>
+
+  </span>
+
+  <span
+    *ngIf="payload !== null && payload !== undefined && endpoint.consumes.startsWith('text/')"
+    class="item-full-width">
+
+    <hr>
+
+    <strong class="label">Payload</strong>
+
+    <span class="description">
+      <ngx-codemirror
+        [(ngModel)]="payload"
+        [options]="cmOptionsMarkdown.json">
       </ngx-codemirror>
     </span>
 

@@ -497,16 +497,25 @@ export class IdeComponent implements OnInit {
                * allowing user to parametrise and invoke endpoint.
                */
               const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
-              const endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+              let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
               if (endpoints.length > 0) {
-                this.dialog.open(ExecuteEndpointDialogComponent, {
-                  data: {
-                    filename: file.path,
-                    verb: lastSplits[1],
-                    url,
-                    endpoint: endpoints[0],
-                  },
-                  minWidth: '80%',
+
+                // Refetching endpoints in case parts was changed.
+                this.getEndpoints(() => {
+
+                  // Refetching endpoint in case things changed during refetching of endpoints.
+                  endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+
+                  // Opening up dialog to allow user to invoke endpoint.
+                  this.dialog.open(ExecuteEndpointDialogComponent, {
+                    data: {
+                      filename: file.path,
+                      verb: lastSplits[1],
+                      url,
+                      endpoint: endpoints[0],
+                    },
+                    minWidth: '80%',
+                  });
                 });
                 return; // Returning early to avoid executing file directly.
               }
@@ -1058,13 +1067,18 @@ export class IdeComponent implements OnInit {
   /*
    * Invokes backend to retrieve meta data about endpoints.
    */
-  private getEndpoints() {
+  private getEndpoints(onAfter: () => void = null) {
 
     // Invoking backend to retrieve endpoints.
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
 
       // Assigning model to result of invocation.
       this.endpoints = endpoints;
+
+      // Checking if caller supplied a function to invoke after we're done.
+      if (onAfter) {
+        onAfter();
+      }
 
     }, (error: any) => this.feedbackService.showError(error));
   }
