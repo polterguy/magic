@@ -501,7 +501,8 @@ export class IdeComponent implements OnInit {
               verb: lastSplits[1],
               url,
               endpoint,
-            }
+            },
+            minWidth: '80%',
           });
         }
       }
