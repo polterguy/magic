@@ -32,22 +32,15 @@ mat-card {
     text-align: center;
     color: rgb(90,90,90);
   }
-  @keyframes drop {
-    0% {
-      margin-top: -500px;
-      opacity: 0;
-    }
-    100% {
-      margin-top: 0;
-      opacity: 1;
-    }
-  }
   .buttons {
     width: 720px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 3rem;
-    button {
+    a {
+      padding-top: 28px;
+    }
+    button, a {
       width: 100px;
       height: 100px;
       float: left;
@@ -72,7 +65,7 @@ mat-card {
         color:rgb(150,150,150);
       }
     }
-    button:hover, button:active {
+    button:hover, button:active, a:hover, a:active {
       box-shadow: 3px 3px 5px rgb(0,0,0,.5);
       transform: rotate(7deg);
       transition: box-shadow, transform;
@@ -95,7 +88,25 @@ mat-card {
     button:active:nth-child(12),
     button:active:nth-child(14),
     button:active:nth-child(16),
-    button:active:nth-child(18) {
+    button:active:nth-child(18),
+    a:hover:nth-child(2),
+    a:hover:nth-child(4),
+    a:hover:nth-child(6),
+    a:hover:nth-child(8),
+    a:hover:nth-child(10),
+    a:hover:nth-child(12),
+    a:hover:nth-child(14),
+    a:hover:nth-child(16),
+    a:hover:nth-child(18),
+    a:active:nth-child(2),
+    a:active:nth-child(4),
+    a:active:nth-child(6),
+    a:active:nth-child(8),
+    a:active:nth-child(10),
+    a:active:nth-child(12),
+    a:active:nth-child(14),
+    a:active:nth-child(16),
+    a:active:nth-child(18) {
       transform: rotate(-7deg);
     }
   }
