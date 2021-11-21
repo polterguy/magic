@@ -195,6 +195,17 @@
     </span>
 
     <span
+      *ngIf="result.responseType === 'text'"
+      class="item-full-width no-bottom-margin">
+      <span class="description">
+        <ngx-codemirror
+          [(ngModel)]="result.response"
+          [options]="markdownOptionsReadonly.md">
+        </ngx-codemirror>
+      </span>
+    </span>
+
+    <span
       *ngIf="result.responseType === 'blob'"
       class="item-full-width">
       <span class="description">
