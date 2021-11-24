@@ -9,18 +9,19 @@ import { Component, Input, OnInit } from '@angular/core';
 import { TableEx } from '../../models/table-ex.model';
 import { ColumnEx } from '../../models/column-ex.model';
 import { LocResult } from '../../models/loc-result.model';
+import { DatabaseEx } from '../../models/database-ex.model';
 import { LogService } from '../../../log/services/log.service';
 import { CrudifyService } from '../../services/crudify.service';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
 import { TransformModelService } from '../../services/transform-model.service';
+import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
 import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
 import hyperlambda from '../../../codemirror/options/hyperlambda.json';
-import { DatabaseEx } from '../../models/database-ex.model';
-import { AuthService } from 'src/app/components/auth/services/auth.service';
-import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -94,6 +95,7 @@ export class CrudifierTableComponent implements OnInit {
    * @param authService Needed to be able to re-retrieve auth endpoints once crudification is done
    * @param cacheService Needed to be able to flush server side cache once crudification is done
    * @param crudifyService Needed to be able to actually crudify selected table
+   * @param messageService Needed to publish messages to other components
    * @param feedbackService Needed to display feedback to user
    * @param loaderInterceptor Needed to hide Ajax loader GIF in case an error occurs
    * @param transformService Needed to transform model to type required by crudify service
@@ -103,6 +105,7 @@ export class CrudifierTableComponent implements OnInit {
     public authService: AuthService,
     private cacheService: CacheService,
     private crudifyService: CrudifyService,
+    private messageService: MessageService,
     private feedbackService: FeedbackService,
     private loaderInterceptor: LoaderInterceptor,
     private transformService: TransformModelService) {
@@ -261,6 +264,12 @@ export class CrudifierTableComponent implements OnInit {
 
         // Flushing endpoints' auth requirements and re-retrieving them again.
         this.flushEndpointsAuthRequirements();
+
+        // Publishing message to subscribers that '/modules/' folder changed.
+        this.messageService.sendMessage({
+          name: 'magic.folders.update',
+          content: '/modules/'
+        });
 
       }, (error: any) => this.feedbackService.showError(error));
 

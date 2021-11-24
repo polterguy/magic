@@ -4,33 +4,36 @@
  */
 
 // Angular and system imports.
+import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
 import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
+import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
+import { AuthService } from '../auth/services/auth.service';
 import { FileService } from '../files/services/file.service';
+import { Endpoint } from '../endpoints/models/endpoint.model';
+import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { EndpointService } from '../endpoints/services/endpoint.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { MacroDefinition } from '../files/services/models/macro-definition.model';
+import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
 import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macro-dialog.component';
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
+import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
-import { AuthService } from '../auth/services/auth.service';
-import { Endpoint } from '../endpoints/models/endpoint.model';
 import fileTypes from './../files/file-editor/file-types.json';
-import { EndpointService } from '../endpoints/services/endpoint.service';
-import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
-import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -40,7 +43,7 @@ import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execut
   templateUrl: './ide.component.html',
   styleUrls: ['./ide.component.scss']
 })
-export class IdeComponent implements OnInit {
+export class IdeComponent implements OnInit, OnDestroy {
 
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
@@ -90,12 +93,17 @@ export class IdeComponent implements OnInit {
   /**
    * Currently active folder, which is dependent upon file selected, etc.
    */
-   public activeFolder: string = '/';
+  public activeFolder: string = '/';
 
-  /**
+  /*
    * Model describing endpoints in your installation.
    */
   private endpoints: Endpoint[];
+
+  /*
+   * Subscription allowing us to subscribe to messages relevant for component.
+   */
+  private subscription: Subscription;
 
   /**
    * Creates an instance of your component.
@@ -107,6 +115,7 @@ export class IdeComponent implements OnInit {
    * @param feedbackService Needed to display feedback to user
    * @param messageService Service used to publish messages to other components in the system
    * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
+   * @param messageService Needed to subscribe to relevant messages transmitted from other components
    * @param endpointService Needed to retrieve endpoints from backend
    */
   public constructor(
@@ -116,6 +125,7 @@ export class IdeComponent implements OnInit {
     private fileService: FileService,
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService,
+    private messageService: MessageService,
     private endpointService: EndpointService) { }
 
   /**
@@ -128,6 +138,19 @@ export class IdeComponent implements OnInit {
 
     // Retrieving endpoints from server.
     this.getEndpoints();
+
+    // Subscribing to relevant messages.
+    this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
+
+      if (msg.name === 'magic.folders.update') {
+
+        // Some other component informed us that we need to update our folders.
+        this.updateFolder(msg.content);
+
+        // Re-retrieving endpoints to make sure we can correctly execute them immediately.
+        this.getEndpoints();
+      }
+    });
   }
 
   /**
@@ -145,6 +168,17 @@ export class IdeComponent implements OnInit {
         window['_vocabulary'] = vocabulary;
 
       }, error => this.feedbackService.showError(error));
+    }
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+  public ngOnDestroy() {
+
+    // Making sure we unsubscribe to our subscription.
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
@@ -729,18 +763,8 @@ export class IdeComponent implements OnInit {
   public generateCrudApp() {
 
     // Opening modal dialog allowing user to generate a CRUD app.
-    const dialogRef = this.dialog.open(GenerateCrudAppComponent, {
+    this.dialog.open(GenerateCrudAppComponent, {
       width: '80%',
-    });
-
-    // Subscribing to closed event and making sure we refresh the modules folder afterwards.
-    dialogRef.afterClosed().subscribe((result: any) => {
-
-      // Updating folders once modal dialog is closed.
-      this.updateFolder('/modules/');
-
-      // Re-retrieving endpoints to make sure we can correctly execute them immediately.
-      this.getEndpoints();
     });
   }
 

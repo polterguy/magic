@@ -13,6 +13,7 @@ import { Argument } from '../../../endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
+import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Component allowing user to generate an SQL based endpoint.
@@ -79,11 +80,13 @@ export class CrudifierSqlExtraComponent implements OnInit {
    * 
    * @param feedbackService Needed to show user feedback
    * @param crudifyService Needed to crudify endpoint
+   * @param messageServive Needed to publish messages to other components
    * @param dialog Needed to show modal dialog to user allowing him to add a new argument to argument collection of endpoint
    */
   constructor(
     private feedbackService: FeedbackService,
     private crudifyService: CrudifyService,
+    private messageService: MessageService,
     private dialog: MatDialog) { }
 
   /**
@@ -128,7 +131,14 @@ export class CrudifierSqlExtraComponent implements OnInit {
       isList: !this.isScalar}).subscribe(() => {
 
         // Providing feedback to user.
-        this.feedbackService.showInfo('Endpoint successfully created');
+        this.feedbackService.showInfo('SQL endpoint successfully created');
+
+        // Publishing message to subscribers that '/modules/' folder changed.
+        this.messageService.sendMessage({
+          name: 'magic.folders.update',
+          content: '/modules/'
+        });
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 
