@@ -109,7 +109,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
    * Returns true if endpoint name and module name is valid.
    */
   public validModuleComponentName() {
-    return /^[a-z0-9_-]+$/i.test(this.endpointName) && /^[a-z0-9_-]+$/i.test(this.moduleName);
+    return /^[a-z0-9_-]+$/.test(this.endpointName) && /^[a-z0-9_-]+$/.test(this.moduleName);
   }
 
   /**

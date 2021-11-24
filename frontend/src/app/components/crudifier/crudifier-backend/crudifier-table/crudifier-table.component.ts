@@ -235,6 +235,13 @@ export class CrudifierTableComponent implements OnInit {
   }
 
   /**
+   * Returns true if endpoint name and module name is valid.
+   */
+   public validModuleComponentName() {
+    return /^[a-z0-9_-]+$/.test(this.table.moduleName) && /^[a-z0-9_-]+$/.test(this.table.moduleUrl);
+  }
+
+  /**
    * Invoked when user wants to crudify selected table (only).
    */
   public crudifyTable() {

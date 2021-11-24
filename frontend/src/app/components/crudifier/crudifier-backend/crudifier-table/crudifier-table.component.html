@@ -136,6 +136,7 @@
           matInput
           [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
           type="text"
+          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
           [(ngModel)]="table.moduleName">
 
@@ -148,6 +149,7 @@
           matInput
           [disabled]="!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()"
           type="text"
+          matTooltip="Only lowercase characters, numbers and - or _ please"
           autocomplete="off"
           [(ngModel)]="table.moduleUrl">
 
@@ -302,7 +304,7 @@
       [(ngModel)]="advanced">Advanced</mat-checkbox>
 
     <button
-      [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded())"
+      [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()) || !validModuleComponentName()"
       mat-raised-button
       color="primary"
       (click)="crudifyTable()">
