@@ -58,14 +58,13 @@ export class CrudifierSqlComponent implements OnInit {
    * 
    * @param resolver Needed to be able to dynamically create the additional information component
    * @param feedbackService Needed to show user feedback
-   * @param messageServive Needed to publish message as we want to create additional information component
-   * @param configService Needed to read configuration settings, more specifically default database config setting
+   * @param messageService Needed to publish message as we want to create additional information component
    * @param sqlService Needed to be able to retrieve meta information from backend
    */
   constructor(
     private resolver: ComponentFactoryResolver,
     private feedbackService: FeedbackService,
-    private messageServive: MessageService,
+    private messageService: MessageService,
     private sqlService: SqlService) { }
 
   /**
@@ -177,7 +176,7 @@ export class CrudifierSqlComponent implements OnInit {
     this.input.options.hintOptions.tables = result;
 
     // Making sure parent clears it dynamic container in case it's already got another container.
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.CLEAR_COMPONENTS,
     });
 
@@ -188,7 +187,7 @@ export class CrudifierSqlComponent implements OnInit {
      * Signaling listener, passing in component as data, which will dynamically inject our
      * newly created component into the "additional information werapper".
      */
-    this.messageServive.sendMessage({
+    this.messageService.sendMessage({
       name: Messages.INJECT_COMPONENT,
       content: {
         componentFactory,

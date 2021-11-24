@@ -317,6 +317,12 @@ export class CrudifierBackendComponent implements OnInit {
         // Flushing endpoints' auth requirements and re-retrieving them again.
         this.flushEndpointsAuthRequirements();
 
+        // Publishing message to subscribers that '/modules/' folder changed.
+        this.messageService.sendMessage({
+          name: 'magic.folders.update',
+          content: '/modules/'
+        });
+
       }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => {
