@@ -106,6 +106,16 @@
       matTooltip="Hyper IDE, when you're in a hurry!"
       alt="Hyper IDE, when you're in a hurry">
 
+    <button
+      *ngIf="files.length === 0"
+      [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
+      matTooltip="Generate CRUD apps"
+      class="crud-button"
+      mat-button
+      (click)="generateCrudApp()">
+      CRUD
+    </button>
+
     <div>
 
       <div *ngFor="let file of files">

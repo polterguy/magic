@@ -29,6 +29,7 @@ import { AuthService } from '../auth/services/auth.service';
 import { Endpoint } from '../endpoints/models/endpoint.model';
 import fileTypes from './../files/file-editor/file-types.json';
 import { EndpointService } from '../endpoints/services/endpoint.service';
+import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
 import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 
 /**
@@ -719,6 +720,27 @@ export class IdeComponent implements OnInit {
         // User selected a macro, executing it.
         this.executeMacro(result.name);
       }
+    });
+  }
+
+  /**
+   * Invoked when user wants to generate a CRUD app.
+   */
+  public generateCrudApp() {
+
+    // Opening modal dialog allowing user to generate a CRUD app.
+    const dialogRef = this.dialog.open(GenerateCrudAppComponent, {
+      width: '80%',
+    });
+
+    // Subscribing to closed event and making sure we refresh the modules folder afterwards.
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // Updating folders once modal dialog is closed.
+      this.updateFolder('/modules/');
+
+      // Re-retrieving endpoints to make sure we can correctly execute them immediately.
+      this.getEndpoints();
     });
   }
 
