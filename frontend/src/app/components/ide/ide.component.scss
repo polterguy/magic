@@ -92,6 +92,12 @@
       user-select: none;
     }
 
+    .crud-button {
+      position: absolute;
+      bottom: .5rem;
+      right: .5rem;
+    }
+
     .toolbar-top {
       display: table;
       width: 100%;

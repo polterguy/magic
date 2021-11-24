@@ -68,6 +68,7 @@
 
   <mat-checkbox
     *ngIf="database && database.tables && database.tables.length > 0"
+    matTooltip="If true will overwrite existing modules"
     [(ngModel)]="transformService.overwrite">Overwrite</mat-checkbox>
 
   <button
