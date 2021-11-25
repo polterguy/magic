@@ -158,7 +158,8 @@ export class CrudifyService {
     name: string,
     copyright: string,
     endpoints: any[],
-    args: any) {
+    args: any,
+    onAfter: () => void = null) {
 
       // Invoking backend such that we download the result of invocation to client as a ZIP file.
       const payload = {
@@ -172,7 +173,8 @@ export class CrudifyService {
         args
       };
       this.httpService.downloadPost(
-        '/magic/system/crudifier/generate-frontend', payload).subscribe(res => {
+        '/magic/system/crudifier/generate-frontend',
+        payload).subscribe(res => {
   
           // Retrieving the filename, as provided by the server.
           const disp = res.headers.get('Content-Disposition');
@@ -188,6 +190,11 @@ export class CrudifyService {
 
           // Saving file.
           saveAs(file, filename);
+
+          // Checking if caller provided an 'onAfter' function, and if so invoking it.
+          if (onAfter) {
+            onAfter();
+          }
 
         }, (error: any) => this.feedbackService.showError('Something went wrong while generating your app, check your log for details'));
   }
