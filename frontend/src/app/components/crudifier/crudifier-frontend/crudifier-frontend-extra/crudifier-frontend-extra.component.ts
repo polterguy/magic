@@ -308,7 +308,7 @@ export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
 
         // Publishing message to subscribers that '/modules/' folder changed.
         this.messageService.sendMessage({
-          name: 'magic.crudifier.frontend-generated'
+          name: deployLocally ? 'magic.crudifier.frontend-generated-locally' : 'magic.crudifier.frontend-generated'
         });
       });
   }

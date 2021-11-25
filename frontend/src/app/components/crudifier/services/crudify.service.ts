@@ -180,18 +180,22 @@ export class CrudifyService {
   
           // Retrieving the filename, as provided by the server.
           const disp = res.headers.get('Content-Disposition');
-          let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
-          const file = new Blob([res.body]);
+          if (disp) {
 
-          // Providing feedback to user about LOC count operation resulted in.
-          this.getLastLocCount().subscribe((loc: LocResult) => {
+            // We've got a ZIP file coming in.
+            let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
+            const file = new Blob([res.body]);
 
-            // Providing feedback to user.
-            this.feedbackService.showInfo(`${formatNumber(loc.loc, this.locale, '1.0')} number of lines of code generated`);
-          });
+            // Providing feedback to user about LOC count operation resulted in.
+            this.getLastLocCount().subscribe((loc: LocResult) => {
 
-          // Saving file.
-          saveAs(file, filename);
+              // Providing feedback to user.
+              this.feedbackService.showInfo(`${formatNumber(loc.loc, this.locale, '1.0')} number of lines of code generated`);
+            });
+
+            // Saving file.
+            saveAs(file, filename);
+          }
 
           // Checking if caller provided an 'onAfter' function, and if so invoking it.
           if (onAfter) {
