@@ -20,6 +20,8 @@ services:
     restart: always
     ports:
       - "4444:4444"
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock ...
 
   frontend:
     image: servergardens/magic-frontend:latest
