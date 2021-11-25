@@ -14,24 +14,15 @@ services:
       - database:/var/lib/mysql
 
   backend:
-    image: magic-backend:test
+    image: servergardens/magic-backend:latest
     depends_on:
       - db
     restart: always
     ports:
       - "4444:4444"
-    volumes:
-
-     # WARNING!
-     # We need to map the Docker socket to the HOST operating system's Docker socket to make sure
-     # Docker commands are passed into the host operating system, and not kept within the Docker container itself.
-     # This is what allows us to start Docker containers in the host OS from within the Docker container itself.
-     # This implies the Docker container is NOT isolated, since all Docker commands are passed into the HOST OS.
-     # If this is a problem for your particular need, please remove the next line of code!
-     - /var/run/docker.sock:/var/run/docker.sock
 
   frontend:
-    image: magic-frontend:test
+    image: servergardens/magic-frontend:latest
     depends_on:
       - backend
     restart: always
