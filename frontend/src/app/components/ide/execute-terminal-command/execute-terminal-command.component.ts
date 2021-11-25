@@ -115,6 +115,7 @@ export class ExecuteTerminalCommandComponent implements OnInit {
 
           // Appending text to output buffer.
           this.terminal.nativeElement.innerHTML += json.result + '<br>';
+          this.terminal.nativeElement.scrollIntoView({ behavior: "smooth", block: "end" });
        }
       });
 
@@ -148,6 +149,8 @@ export class ExecuteTerminalCommandComponent implements OnInit {
    * Invoked when user wants to close dialog.
    */
   public close() {
+
+    // Closing dialog.
     this.dialogRef.close();
   }
 }
