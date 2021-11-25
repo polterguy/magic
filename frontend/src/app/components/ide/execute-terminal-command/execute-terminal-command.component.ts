@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
@@ -44,10 +44,13 @@ class TerminalCommand {
   templateUrl: './execute-terminal-command.component.html',
   styleUrls: ['./execute-terminal-command.component.scss']
 })
-export class ExecuteTerminalCommandComponent implements OnInit {
+export class ExecuteTerminalCommandComponent implements OnInit, OnDestroy {
 
   // SignalR hub connection
   private hubConnection: HubConnection;
+
+  // Channel to communicate with server over.
+  private channel: string;
 
   /**
    * If true, the process is done executing.
@@ -90,7 +93,7 @@ export class ExecuteTerminalCommandComponent implements OnInit {
     this.configService.getGibberish(15, 25).subscribe((result: Response) => {
 
       // Storing gibberish to use as unique channel name.
-      const channel = result.result;
+      this.channel = result.result;
 
       // Creating our hub connection now that we know the channel name.
       let builder = new HubConnectionBuilder();
@@ -104,7 +107,7 @@ export class ExecuteTerminalCommandComponent implements OnInit {
        * Subscribing to [ide.terminal] messages which are transmitted by
        * the backend once some terminal output is ready.
        */
-      this.hubConnection.on('ide.terminal.out.' + channel, (args) => {
+      this.hubConnection.on('ide.terminal.out.' + this.channel, (args) => {
 
         // Writing result to XTerm instance.
         const json = JSON.parse(args);
@@ -129,7 +132,7 @@ export class ExecuteTerminalCommandComponent implements OnInit {
 
         // When connected over socket we need to spawn a terminal on the server.
         this.hubConnection.invoke('execute', '/system/terminal/start', JSON.stringify({
-          channel: channel,
+          channel: this.channel,
           folder: this.data.folder,
         }))
         .then(() => {
@@ -137,7 +140,7 @@ export class ExecuteTerminalCommandComponent implements OnInit {
           // Invoking backend.
           this.hubConnection.invoke('execute', '/system/terminal/command', JSON.stringify({
             cmd: this.data.command,
-            channel: channel,
+            channel: this.channel,
           })).catch(() => {
 
             // Oops, error!
@@ -147,6 +150,21 @@ export class ExecuteTerminalCommandComponent implements OnInit {
         .catch(() => this.feedbackService.showError('Could not start terminal on server'));
 
       }, () => this.feedbackService.showError('Could not negotiate socket connection with backend'));
+    });
+  }
+
+  /**
+   * Implementation of OnDestroy.
+   */
+   public ngOnDestroy() {
+
+    // Closing SignalR connection, making sure we stop terminal on server first.
+    this.hubConnection.invoke('execute', '/system/terminal/stop', JSON.stringify({
+      channel: this.channel,
+    })).then(() => {
+
+      // Closing SignalR socket connection.
+      this.hubConnection.stop();
     });
   }
 
