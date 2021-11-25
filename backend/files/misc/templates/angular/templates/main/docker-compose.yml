@@ -22,9 +22,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'
     environment:
 
       # REPLACE THESE NEXT 3 PARTS WITH YOUR OWN DOMAIN/EMAIL
