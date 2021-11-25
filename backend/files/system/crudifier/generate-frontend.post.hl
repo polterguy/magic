@@ -9,6 +9,7 @@
    name:string
    copyright:string
    endpoints:*
+   deployLocally:bool
    args:*
 
 // Ensures user is authorized to access endpoint.
@@ -37,19 +38,6 @@ io.file.execute:x:@strings.concat
    name:x:@.arguments/*/name
    copyright:x:@.arguments/*/copyright
 
-/*
- * Making sure we get the HTTP headers correctly applied before we return ZIP
- * file to caller.
- */
-strings.concat
-   .:"attachment; filename=\""
-   get-value:x:@.arguments/*/name
-   .:".zip\""
-response.headers.set
-   Content-Type:application/zip
-   Content-Disposition:x:@strings.concat
-   Access-Control-Expose-Headers:Content-Disposition
-
 // Creating a log entry with LOC that was generated.
 .no:int:0
 for-each:x:@io.file.execute/*
@@ -73,4 +61,32 @@ log.info:x:@strings.concat
 add:x:../*/io.content.zip-stream
    get-nodes:x:@io.file.execute/*
 io.content.zip-stream
-return-value:x:-
+if
+   not
+      get-value:x:@.arguments/*/deployLocally
+   .lambda
+
+      /*
+       * Caller wants a ZIP file returned, making sure we get HTTP headers correctly applied.
+       */
+      strings.concat
+         .:"attachment; filename=\""
+         get-value:x:@.arguments/*/name
+         .:".zip\""
+      response.headers.set
+         Content-Type:application/zip
+         Content-Disposition:x:@strings.concat
+         Access-Control-Expose-Headers:Content-Disposition
+      return-value:x:@io.content.zip-stream
+
+
+// Caller wants to deploy frontend locally on server.
+strings.concat
+   .:/etc/
+   get-value:x:@.arguments/*/name
+   .:.zip
+io.stream.save-file:x:@strings.concat
+   get-value:x:@io.content.zip-stream
+io.file.unzip:x:@strings.concat
+return
+   result:success

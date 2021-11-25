@@ -158,6 +158,7 @@ export class CrudifyService {
     name: string,
     copyright: string,
     endpoints: any[],
+    deployLocally: boolean,
     args: any,
     onAfter: () => void = null) {
 
@@ -170,6 +171,7 @@ export class CrudifyService {
         name,
         copyright,
         endpoints,
+        deployLocally,
         args
       };
       this.httpService.downloadPost(
