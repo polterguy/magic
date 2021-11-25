@@ -14,17 +14,17 @@ services:
       - database:/var/lib/mysql
 
   backend:
-    image: servergardens/magic-backend:latest
+    image: magic-backend:test
     depends_on:
       - db
     restart: always
     ports:
       - "4444:4444"
     volumes:
-     - /var/run/docker.sock:/var/run/docker.sock ...
+     - /var/run/docker.sock:/var/run/docker.sock
 
   frontend:
-    image: servergardens/magic-frontend:latest
+    image: magic-frontend:test
     depends_on:
       - backend
     restart: always
