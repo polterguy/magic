@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
@@ -106,6 +106,11 @@ export class IdeComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   /**
+   * Needed to be kept around such that we can explicitly close it after having CRUDified some database/table.
+   */
+  private generateCrudDialog: MatDialogRef<GenerateCrudAppComponent> = null;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
@@ -149,6 +154,11 @@ export class IdeComponent implements OnInit, OnDestroy {
 
         // Re-retrieving endpoints to make sure we can correctly execute them immediately.
         this.getEndpoints();
+
+        // Closing dialog if it is open.
+        if (this.generateCrudDialog) {
+          this.generateCrudDialog.close();
+        }
       }
     });
   }
@@ -763,7 +773,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public generateCrudApp() {
 
     // Opening modal dialog allowing user to generate a CRUD app.
-    this.dialog.open(GenerateCrudAppComponent, {
+    this.generateCrudDialog = this.dialog.open(GenerateCrudAppComponent, {
       width: '80%',
     });
   }
