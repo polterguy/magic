@@ -781,7 +781,13 @@ export class IdeComponent implements OnInit, OnDestroy {
     // Opening modal dialog allowing user to generate a CRUD app.
     this.generateCrudDialog = this.dialog.open(GenerateCrudAppComponent, {
       width: '80%',
+      disableClose: true
     });
+
+    // Making sure we can still close the dialog when the obscurer is clicked.
+    this.generateCrudDialog.backdropClick().subscribe(() => {
+      this.generateCrudDialog.close();
+    })
   }
 
   /*
