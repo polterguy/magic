@@ -547,7 +547,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           width: '80%',
           data: {
             title: 'Deploying Docker container(s)',
-            command: 'docker-compose up -d',
+            command: 'docker-compose up -d --build',
             folder: file.folder.substr(1),
           },
           disableClose: true,
