@@ -89,6 +89,15 @@
 
       <button
         mat-raised-button
+        [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
+        matTooltip="Generate CRUD apps"
+        class="toolbar-button crud-btn"
+        (click)="generateCrudApp()">
+        CRUD
+      </button>
+
+      <button
+        mat-raised-button
         [disabled]="!authService.access.files.create_folder"
         class="toolbar-button new-file-object-btn"
         color="primary"
@@ -105,16 +114,6 @@
       class="light-bulb"
       matTooltip="Hyper IDE, when you're in a hurry!"
       alt="Hyper IDE, when you're in a hurry">
-
-    <button
-      *ngIf="files.length === 0"
-      [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
-      matTooltip="Generate CRUD apps"
-      class="crud-button"
-      mat-button
-      (click)="generateCrudApp()">
-      CRUD
-    </button>
 
     <div>
 

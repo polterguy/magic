@@ -92,12 +92,6 @@
       user-select: none;
     }
 
-    .crud-button {
-      position: absolute;
-      bottom: .5rem;
-      right: .5rem;
-    }
-
     .toolbar-top {
       display: table;
       width: 100%;
@@ -105,7 +99,7 @@
       .fill-width {
         display: block;
         float: left;
-        width: calc(100% - 16.5rem);
+        width: calc(100% - 22rem);
       }
 
       .toolbar-button {
