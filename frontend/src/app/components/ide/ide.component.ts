@@ -30,6 +30,7 @@ import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macr
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
+import { ExecuteTerminalCommandComponent } from './execute-terminal-command/execute-terminal-command.component';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
@@ -542,6 +543,17 @@ export class IdeComponent implements OnInit, OnDestroy {
       if (file.path.endsWith('docker-compose.yml')) {
 
         // Docker compose file, showing modal dialog that executes files and provides feedback to user.
+        this.dialog.open(ExecuteTerminalCommandComponent, {
+          width: '800px',
+          data: {
+            command: 'docker-compose up -d',
+            folder: file.folder.substr(1),
+          },
+          disableClose: true,
+        });
+
+        // Returning early to avoid executing file further down.
+        return;
 
       } else {
 

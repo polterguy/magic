@@ -138,7 +138,7 @@
             </button>
 
             <button
-              [disabled]="!file.path.endsWith('.hl') || file.path.endsWith('/docker-compose.yml')"
+              [disabled]="!file.path.endsWith('.hl') && !file.path.endsWith('/docker-compose.yml')"
               matTooltip="Saves and executes Hyperlambda file"
               mat-button
               (click)="executeFile(file)">

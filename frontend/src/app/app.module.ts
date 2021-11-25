@@ -154,6 +154,7 @@ import { AddQueryParameterDialogComponent } from './components/endpoints/endpoin
 import { ConfirmEmailAddressDialogComponent } from './components/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
+import { ExecuteTerminalCommandComponent } from './components/ide/execute-terminal-command/execute-terminal-command.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -252,6 +253,7 @@ import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/c
     ProfileComponent,
     CrudifierSetDefaultsComponent,
     GenerateCrudAppComponent,
+    ExecuteTerminalCommandComponent,
   ],
   imports: [
     FormsModule,

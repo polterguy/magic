@@ -1,0 +1,16 @@
+
+<div mat-dialog-content>
+
+  <div class="terminal" #terminal></div>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!done"
+    (click)="close()">Close</button>
+
+</div>
