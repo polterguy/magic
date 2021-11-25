@@ -160,6 +160,13 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.generateCrudDialog.close();
         }
       }
+      else if (msg.name === 'magic.crudifier.frontend-generated') {
+
+        // Closing dialog if it is open.
+        if (this.generateCrudDialog) {
+          this.generateCrudDialog.close();
+        }
+      }
     });
   }
 
