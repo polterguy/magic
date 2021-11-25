@@ -25,6 +25,11 @@ import { CrudifyService } from '../services/crudify.service';
 export class CrudifierFrontendComponent implements OnInit {
 
   /**
+   * If true, will deploy app locally in "/etc/" folder instead of downloading as a ZIP file.
+   */
+  public deployLocally: boolean = false;
+
+  /**
    * Available templates user can select.
    */
   public templates: string[] = [];
@@ -139,6 +144,7 @@ export class CrudifierFrontendComponent implements OnInit {
         apiUrl: this.apiUrl,
         frontendUrl: this.frontendUrl,
         email: this.email,
+        deployLocally: this.deployLocally,
       }
     });
   }
