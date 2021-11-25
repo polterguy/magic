@@ -544,8 +544,9 @@ export class IdeComponent implements OnInit, OnDestroy {
 
         // Docker compose file, showing modal dialog that executes files and provides feedback to user.
         this.dialog.open(ExecuteTerminalCommandComponent, {
-          width: '800px',
+          width: '80%',
           data: {
+            title: 'Deploying Docker container(s)',
             command: 'docker-compose up -d',
             folder: file.folder.substr(1),
           },

@@ -20,6 +20,11 @@ import { ConfigService } from '../../config/services/config.service';
 class TerminalCommand {
 
   /*
+   * Optional title to use for dialog
+   */
+  title?: string;
+
+  /*
    * Actual command to transmit to server.
    */
   command: string;
