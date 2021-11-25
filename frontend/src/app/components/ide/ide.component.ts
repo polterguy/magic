@@ -170,6 +170,9 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.generateCrudDialog.close();
         }
 
+        // Providing some feedback to user.
+        this.feedbackService.showInfo('Frontend was generated and saved to your \'/etc/frontends/\' folder')
+
       } else if (msg.name === 'magic.crudifier.frontend-generated') {
 
         // Closing dialog if it is open.
@@ -535,52 +538,60 @@ export class IdeComponent implements OnInit, OnDestroy {
       var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
       editor.doc.markClean();
 
-      /*
-       * Then figuring out if this is an endpoint file or not, if it's an endpoint
-       * file, we'll have to invoke it as such, by allowing client to parametrise the
-       * invocation accordingly.
-       */
-      if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
-        const splits = file.path.split('/').filter(x => x !== '');
-        const lastEntity = splits[splits.length - 1];
-        const lastSplits = lastEntity.split('.');
-        if (lastSplits.length >= 3 && lastSplits[2] === 'hl') {
+      // Checking if this is a "docker-compose.yml" file.
+      if (file.path.endsWith('docker-compose.yml')) {
 
-          // Hyperlambda file, with 3 entities, possibly an endpoint file.
-          switch (lastSplits[lastSplits.length - 2]) {
-            case 'get':
-            case 'put':
-            case 'post':
-            case 'patch':
-            case 'delete':
+        // Docker compose file, showing modal dialog that executes files and provides feedback to user.
 
-              /* 
-               * File is a Hyperlambda endpoint, hence showing modal window to user,
-               * allowing user to parametrise and invoke endpoint.
-               */
-              const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
-              let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
-              if (endpoints.length > 0) {
+      } else {
 
-                // Refetching endpoints in case parts was changed.
-                this.getEndpoints(() => {
+        /*
+         * Then figuring out if this is an endpoint file or not, if it's an endpoint
+         * file, we'll have to invoke it as such, by allowing client to parametrise the
+         * invocation accordingly.
+         */
+        if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
+          const splits = file.path.split('/').filter(x => x !== '');
+          const lastEntity = splits[splits.length - 1];
+          const lastSplits = lastEntity.split('.');
+          if (lastSplits.length >= 3 && lastSplits[2] === 'hl') {
 
-                  // Refetching endpoint in case things changed during refetching of endpoints.
-                  endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+            // Hyperlambda file, with 3 entities, possibly an endpoint file.
+            switch (lastSplits[lastSplits.length - 2]) {
+              case 'get':
+              case 'put':
+              case 'post':
+              case 'patch':
+              case 'delete':
 
-                  // Opening up dialog to allow user to invoke endpoint.
-                  this.dialog.open(ExecuteEndpointDialogComponent, {
-                    data: {
-                      filename: file.path,
-                      verb: lastSplits[1],
-                      url,
-                      endpoint: endpoints[0],
-                    },
-                    minWidth: '80%',
+                /* 
+                 * File is a Hyperlambda endpoint, hence showing modal window to user,
+                 * allowing user to parametrise and invoke endpoint.
+                 */
+                const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
+                let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+                if (endpoints.length > 0) {
+
+                  // Refetching endpoints in case parts was changed.
+                  this.getEndpoints(() => {
+
+                    // Refetching endpoint in case things changed during refetching of endpoints.
+                    endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+
+                    // Opening up dialog to allow user to invoke endpoint.
+                    this.dialog.open(ExecuteEndpointDialogComponent, {
+                      data: {
+                        filename: file.path,
+                        verb: lastSplits[1],
+                        url,
+                        endpoint: endpoints[0],
+                      },
+                      minWidth: '80%',
+                    });
                   });
-                });
-                return; // Returning early to avoid executing file directly.
-              }
+                  return; // Returning early to avoid executing file directly.
+                }
+            }
           }
         }
       }
