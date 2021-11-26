@@ -521,103 +521,35 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Invoked when a file should be executed.
+   * Invoked when a Hyperlambda file should be executed.
    * 
-   * Will save the file, then execute it. How the file is executed depends upon
-   * if the file is an endpoint file or not. If the file is an endpoint file, a
-   * modal dialog will be displayed, allowing user to parametrise invocation first.
+   * How the file is executed depends upon if the file is an endpoint file or not.
+   * If the file is an endpoint file, a modal dialog will be displayed, allowing
+   * the user to parametrise invocation as an HTTP request first.
    * 
-   * @param file File to execute
+   * @param file File node wrapping file to execute
    */
    public executeFile(file: FileNode) {
 
-    // Saving file by invoking backend before we execute it.
-    this.fileService.saveFile(file.path, file.content).subscribe(() => {
+    // Figuring out if file is an endpoint or not.
+    const endpoint = this.getEndpoint(file);
+    if (endpoint) {
 
-      // Marking document as clean.
-      var activeWrapper = document.querySelector('.active-codemirror-editor');
-      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-      editor.doc.markClean();
+      // Opening up dialog to allow user to invoke endpoint.
+      this.dialog.open(ExecuteEndpointDialogComponent, {
+        data:  endpoint,
+        minWidth: '80%',
+      });
+    } else {
 
-      // Checking if this is a "docker-compose.yml" file.
-      if (file.path.endsWith('docker-compose.yml')) {
-
-        // Docker compose file, showing modal dialog that executes files and provides feedback to user.
-        this.dialog.open(ExecuteTerminalCommandComponent, {
-          width: '80%',
-          data: {
-            title: 'Deploying Docker container(s)',
-            command: 'docker-compose up -d --build',
-            folder: file.folder.substr(1),
-          },
-          disableClose: true,
-        });
-
-        // Returning early to avoid executing file further down.
-        return;
-
-      } else {
-
-        /*
-         * Then figuring out if this is an endpoint file or not, if it's an endpoint
-         * file, we'll have to invoke it as such, by allowing client to parametrise the
-         * invocation accordingly.
-         */
-        if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
-          const splits = file.path.split('/').filter(x => x !== '');
-          const lastEntity = splits[splits.length - 1];
-          const lastSplits = lastEntity.split('.');
-          if (lastSplits.length >= 3 && lastSplits[2] === 'hl') {
-
-            // Hyperlambda file, with 3 entities, possibly an endpoint file.
-            switch (lastSplits[lastSplits.length - 2]) {
-              case 'get':
-              case 'put':
-              case 'post':
-              case 'patch':
-              case 'delete':
-
-                /* 
-                 * File is a Hyperlambda endpoint, hence showing modal window to user,
-                 * allowing user to parametrise and invoke endpoint.
-                 */
-                const url = 'magic/' + splits.slice(0, splits.length - 1).join('/') + '/' + lastSplits[0];
-                let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
-                if (endpoints.length > 0) {
-
-                  // Refetching endpoints in case parts was changed.
-                  this.getEndpoints(() => {
-
-                    // Refetching endpoint in case things changed during refetching of endpoints.
-                    endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
-
-                    // Opening up dialog to allow user to invoke endpoint.
-                    this.dialog.open(ExecuteEndpointDialogComponent, {
-                      data: {
-                        filename: file.path,
-                        verb: lastSplits[1],
-                        url,
-                        endpoint: endpoints[0],
-                      },
-                      minWidth: '80%',
-                    });
-                  });
-                  return; // Returning early to avoid executing file directly.
-                }
-            }
-          }
-        }
-      }
-
-      // Executing file directly as Hyperlambda file.
+      // Executing file directly as a Hyperlambda file.
       this.evaluatorService.execute(file.content).subscribe(() => {
 
         // Providing feedback to user.
         this.feedbackService.showInfoShort('File successfully saved and executed');
 
       }, (error: any) => this.feedbackService.showError(error));
-
-    }, (error: any) => this.feedbackService.showError(error));
+    }
   }
 
   /**
@@ -1237,5 +1169,45 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       });
     }: null);
+  }
+
+  /*
+   * Returns an endpoint matching the specified file node, or null if file cannot
+   * be matched to an endpoint.
+   */
+  private getEndpoint(file: FileNode) {
+
+    // Notice, only files inside of "/modules/" and "/system/" can be endpoint files.
+    if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
+
+      // Splitting filename of file to check if it's semantically correct according to how an endpoint file should be.
+      const lastSplits = file.name.split('.');
+      if (lastSplits.length >= 3 && lastSplits[lastSplits.length - 1] === 'hl') {
+
+        // Hyperlambda file, with 3 or more entities, possibly an endpoint file.
+        switch (lastSplits[lastSplits.length - 2]) {
+          case 'get':
+          case 'put':
+          case 'post':
+          case 'patch':
+          case 'delete':
+
+            /* 
+             * File is probably a Hyperlambda endpoint, however to be sure we
+             * verify we can find file in our list of endpoints.
+             */
+            const url = 'magic' + file.folder + lastSplits[0];
+            let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+            if (endpoints.length > 0) {
+
+              // File is a Hyperlambda endpoint, hence returning endpoint to caller.
+              return endpoints[0];
+            }
+        }
+      }
+    }
+
+    // File is not a Hyperlambda endpoint file.
+    return null;
   }
 }
