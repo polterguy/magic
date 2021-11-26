@@ -142,7 +142,7 @@
               matTooltip="Executes Hyperlambda file or invokes endpoint"
               mat-button
               (click)="executeFile(file)">
-              {{getEndpoint(file) ? 'Invoke' : 'Execute'}}
+              {{getEndpoint(file) === null ? 'Execute' : 'Invoke'}}
             </button>
 
             <button
