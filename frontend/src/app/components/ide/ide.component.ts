@@ -531,7 +531,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
    public executeFile(file: FileNode) {
 
-    // Figuring out if file is an endpoint or not.
+    // Figuring out if file is an endpoint file or not.
     const endpoint = this.getEndpoint(file);
     if (endpoint) {
 
@@ -546,7 +546,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.evaluatorService.execute(file.content).subscribe(() => {
 
         // Providing feedback to user.
-        this.feedbackService.showInfoShort('File successfully saved and executed');
+        this.feedbackService.showInfoShort('File successfully executed');
 
       }, (error: any) => this.feedbackService.showError(error));
     }
