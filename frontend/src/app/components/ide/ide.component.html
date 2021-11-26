@@ -65,7 +65,7 @@
           [(ngModel)]="activeFile"
           (selectionChange)="selectedFileChanged()">
           <mat-option
-            *ngFor="let idx of files"
+            *ngFor="let idx of openFiles"
             [value]="idx.path">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
         </mat-select>
       </mat-form-field>
@@ -109,7 +109,7 @@
     </div>
 
     <img
-      *ngIf="files.length === 0"
+      *ngIf="openFiles.length === 0"
       src="assets/light-bulb.png"
       class="light-bulb"
       matTooltip="Hyper IDE, when you're in a hurry!"
@@ -117,7 +117,7 @@
 
     <div>
 
-      <div *ngFor="let file of files">
+      <div *ngFor="let file of openFiles">
 
         <div [class]="file.path === activeFile ? 'active-codemirror-editor' : 'invisible'">
 
@@ -139,10 +139,10 @@
 
             <button
               [disabled]="!file.path.endsWith('.hl')"
-              matTooltip="Executes Hyperlambda file"
+              matTooltip="Executes Hyperlambda file or invokes endpoint"
               mat-button
               (click)="executeFile(file)">
-              Execute
+              {{getEndpoint(file) ? 'Invoke' : 'Execute'}}
             </button>
 
             <button

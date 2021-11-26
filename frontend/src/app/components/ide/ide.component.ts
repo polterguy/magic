@@ -84,7 +84,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Currently edited files.
    */
-  public files: FileNode[] = [];
+  public openFiles: FileNode[] = [];
 
   /**
    * Currently active edited file's full path.
@@ -140,10 +140,11 @@ export class IdeComponent implements OnInit, OnDestroy {
   public ngOnInit() {
 
     // Retrieving files and folder from server.
-    this.getFilesFromServer();
+    this.getFilesFromServer('/', () => {
 
-    // Retrieving endpoints from server.
-    this.getEndpoints();
+      // Retrieving endpoints from server.
+      this.getEndpoints();
+    });
 
     // Subscribing to relevant messages.
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
@@ -153,8 +154,16 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Some other component informed us that we need to update our folders.
         this.updateFolder(msg.content);
 
-        // Re-retrieving endpoints to make sure we can correctly execute them immediately.
-        this.getEndpoints();
+        /*
+         * If folder that was updated was a folder that could in theory contain endpoints,
+         * we re-retrieve endpoints from server.
+         */
+        switch (msg.content) {
+          case '/modules/':
+          case '/system/':
+            this.getEndpoints();
+            break;
+          }
 
         // Closing dialog if it is open.
         if (this.generateCrudDialog) {
@@ -373,7 +382,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             options: this.getCodeMirrorOptions(result.name),
             content: result.template || '// File content here ...'
           };
-          this.files.push(fileNode);
+          this.openFiles.push(fileNode);
 
           // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
           node.children.push({
@@ -437,7 +446,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public openFile(file: TreeNode) {
 
     // Checking if file is already opened.
-    if (this.files.filter(x => x.path === file.path).length > 0) {
+    if (this.openFiles.filter(x => x.path === file.path).length > 0) {
 
       // Yup, file already opened.
       this.activeFile = file.path;
@@ -451,7 +460,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
         // Pushing specified file into files currently being edited object.
-        this.files.push({
+        this.openFiles.push({
           name: file.name,
           path: file.path,
           folder: file.path.substr(0, file.path.lastIndexOf('/') + 1),
@@ -633,7 +642,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.dataBindTree();
 
           // Closing file.
-          this.closeFile(this.files.filter(x => x.path === file.path)[0], true);
+          this.closeFile(this.openFiles.filter(x => x.path === file.path)[0], true);
         }
 
         // Providing feedback to user.
@@ -692,14 +701,14 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.feedbackService.showInfoShort('Folder successfully deleted');
 
         // Making sure we remove all files existing within the folder that are currentl edited.
-        this.files = this.files.filter(x => !x.path.startsWith(this.activeFolder));
+        this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
 
         // Verifying that active file is not one of the files actually removed in above logic.
-        if (this.files.filter(x => x.path === this.activeFile).length === 0) {
+        if (this.openFiles.filter(x => x.path === this.activeFile).length === 0) {
 
           // Verifying there are any open files left.
-          if (this.files.length > 0) {
-            this.activeFile = this.files[0].path;
+          if (this.openFiles.length > 0) {
+            this.activeFile = this.openFiles[0].path;
           } else {
             this.activeFile = null;
           }
@@ -823,7 +832,9 @@ export class IdeComponent implements OnInit, OnDestroy {
 
                   // Refreshing files and folder.
                   this.root.children = [];
-                  this.getFilesFromServer();
+                  this.getFilesFromServer('/', () => {
+                    this.getEndpoints();
+                  });
               });
             } else if (exeResult.result.startsWith('folders-changed|')) {
 
@@ -1066,15 +1077,15 @@ export class IdeComponent implements OnInit, OnDestroy {
   private closeFileImpl(file: FileNode) {
 
     // Removing file from edited files.
-    let idx = this.files.indexOf(file);
-    this.files.splice(idx, 1);
-    if (this.files.length === 0) {
+    let idx = this.openFiles.indexOf(file);
+    this.openFiles.splice(idx, 1);
+    if (this.openFiles.length === 0) {
       this.activeFile = null;
     } else {
       if (idx === 0) {
-        this.activeFile = this.files[0].path;
+        this.activeFile = this.openFiles[0].path;
       } else {
-        this.activeFile = this.files[idx - 1].path;
+        this.activeFile = this.openFiles[idx - 1].path;
       }
     }
 
@@ -1150,7 +1161,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.fileService.loadFile(fileObject).subscribe((content: string) => {
 
         // Pushing specified file into files currently being edited object.
-        this.files.push({
+        this.openFiles.push({
           name: fileObject.substr(fileObject.lastIndexOf('/') + 1),
           path: fileObject,
           folder: fileObject.substr(0, fileObject.lastIndexOf('/') + 1),
