@@ -139,10 +139,10 @@
 
             <button
               [disabled]="!file.path.endsWith('.hl')"
-              matTooltip="Executes Hyperlambda file or invokes endpoint"
+              [matTooltip]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
               mat-button
               (click)="executeFile(file)">
-              {{getEndpoint(file) === null ? 'Execute' : 'Invoke'}}
+              {{getEndpoint(file) === null ? 'Execute' : 'Invoke ...'}}
             </button>
 
             <button
