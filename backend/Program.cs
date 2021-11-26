@@ -11,13 +11,10 @@ namespace magic.backend
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args)
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
                 .Build()
                 .Run();
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
     }
 }
