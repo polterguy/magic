@@ -2,6 +2,17 @@
 # Magic; THE Open Source No-Code/Low-Code platform
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=alert_status)](https://sonarcloud.io/dashboard?id=polterguy_magic.lambda,mail)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=bugs)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=code_smells)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=coverage)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=ncloc)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=security_rating)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=sqale_index)](https://sonarcloud.io/dashboard?id=polterguy_magic)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=polterguy_magic)
 
 Magic is a No-Code/Low-Code application generator that allows you to create CRUD apps automatically.
 In addition it is a complete Open Source cloud system, allowing you to create your own virtualised
