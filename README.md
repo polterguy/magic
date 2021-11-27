@@ -45,6 +45,8 @@ You can get a rapid introduction to the system by watching the [following video]
 including custom development, hosting, setup, etc. Visit [our website](https://servergardens.com/)
 for more information.
 
+- ![Build status](https://github.com/polterguy/magic.lambda.mail/actions/workflows/build.yaml/badge.svg)
+
 ## License
 
 **TL;TR** - You can create closed source applications with Magic, but you can _not_ close Magic itself.
