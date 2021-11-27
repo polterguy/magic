@@ -1,7 +1,7 @@
 
 # Magic; THE Open Source No-Code/Low-Code platform
 
-![Build status](https://github.com/polterguy/magic.lambda.mail/actions/workflows/build.yaml/badge.svg)
+![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
 Magic is a No-Code/Low-Code application generator that allows you to create CRUD apps automatically.
 In addition it is a complete Open Source cloud system, allowing you to create your own virtualised
