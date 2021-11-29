@@ -2,7 +2,6 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-using System;
 using System.Linq;
 using magic.node;
 using magic.node.extensions;
@@ -25,13 +24,13 @@ namespace magic.backend.slots
         {
             signaler.Signal("eval", input);
             var lhs = input.Children.FirstOrDefault()?.GetEx<string>() ??
-                throw new ArgumentException("No arguments supplied to [version.compare]");
+                throw new HyperlambdaException("No arguments supplied to [version.compare]");
             var rhs = input.Children.Skip(1).FirstOrDefault()?.GetEx<string>() ??
-                throw new ArgumentException("No secondary or rhs arguments supplied to [version.compare]");
+                throw new HyperlambdaException("No secondary or rhs arguments supplied to [version.compare]");
 
             // Sanity checking arguments
             if (!lhs.StartsWith("v") || !rhs.StartsWith("v"))
-                throw new ArgumentException("A version string needs to start with a 'v'");
+                throw new HyperlambdaException("A version string needs to start with a 'v'");
 
             // Removing redundant 'v' parts.
             lhs = lhs.Substring(1);
@@ -41,7 +40,7 @@ namespace magic.backend.slots
             var lhsEntities = lhs.Split(".");
             var rhsEntities = rhs.Split(".");
             if (lhsEntities.Length != 3 || rhsEntities.Length != 3)
-                throw new ArgumentException("A version string needs to contain 3 numbers divided by '.'");
+                throw new HyperlambdaException("A version string needs to contain 3 numbers divided by '.'");
 
             // House cleaning.
             input.Clear();
