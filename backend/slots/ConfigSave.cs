@@ -3,6 +3,7 @@
  */
 
 using System.IO;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.extensions;
@@ -16,6 +17,17 @@ namespace magic.backend.slots
     [Slot(Name = "config.save")]
     public class SaveAppSettings : ISlot
     {
+        readonly IConfigurationRoot _configRoot;
+
+        /// <summary>
+        /// Creates an instance of your type.
+        /// </summary>
+        /// <param name="configRoot">Needed to force a reload of configuration settings after having saved the file.</param>
+        public SaveAppSettings(IConfigurationRoot configRoot)
+        {
+            _configRoot = configRoot;
+        }
+
         /// <summary>
         /// Implementation of signal
         /// </summary>
@@ -23,6 +35,7 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
+            // Retrieving appsettings JSON from input node as a string.
             var json = input.GetEx<string>();
 
             /*
@@ -30,10 +43,15 @@ namespace magic.backend.slots
              * which prevents saving of non-valid JSON to configuration file.
              */
             JObject.Parse(json);
+
+            // Saving JSON as text to "appsettings.json" file.
             File.WriteAllText(
                 Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
                 "/appsettings.json",
                 json);
+
+            // Forcing a reload of the configuration root object.
+            _configRoot.Reload();
         }
     }
 }
