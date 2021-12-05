@@ -1,0 +1,12 @@
+http.post:"http://localhost:5000/magic/modules/foo/foo"
+   headers
+      Content-Type:multipart/form-data
+   payload
+      entity:text/plain
+         headers
+            Content-Disposition:"form-data; name=\"foo\""
+         content:Foo bar
+      entity:text/plain
+         headers
+            Content-Disposition:"form-data; filename=\"README.md\"; name=\"bar\""
+         filename:/README.md
