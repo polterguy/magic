@@ -8,5 +8,5 @@ http.post:"http://localhost:5000/magic/modules/foo/foo"
          content:Foo bar
       entity:text/plain
          headers
-            Content-Disposition:"form-data; filename=\"README.md\"; name=\"bar\""
+            Content-Disposition:"form-data; filename=\"README.md\""
          filename:/README.md
