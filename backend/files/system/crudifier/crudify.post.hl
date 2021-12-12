@@ -33,6 +33,7 @@ validators.mandatory:x:@.arguments/*/template
 validators.mandatory:x:@.arguments/*/verb
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
+   .:psql
    .:mssql
 validators.enum:x:@.arguments/*/verb
    .:post

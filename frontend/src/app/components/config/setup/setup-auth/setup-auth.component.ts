@@ -46,6 +46,7 @@ export class SetupAuthComponent implements OnInit {
    */
   public databaseTypes: string[] = [
     'mysql',
+    'psql',
     'mssql',
   ];
 
