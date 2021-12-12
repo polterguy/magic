@@ -18,6 +18,7 @@
 // Sanity checks invocation.
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
+   .:psql
    .:mssql
 
 // Ensures user is authorized to access endpoint.
@@ -75,6 +76,10 @@ try
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
                .:{database}
                .:information_schema
+         case:psql
+            strings.replace:x:@json2lambda/*/magic/*/databases/*/psql/*/generic
+               .:{database}
+               .:systemd
             mysql.connect:x:@strings.replace
                mysql.select:show databases
    .catch

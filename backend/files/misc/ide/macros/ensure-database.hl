@@ -16,12 +16,17 @@
    .
       name:mssql
       type:multi_string
-      description:Microsoft SQL server create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied.
+      description:Microsoft SQL server create database SQL script. At least one of the MySQL, PostgreSQL or MS SQL create scripts needs to be supplied.
       mandatory:bool:false
    .
       name:mysql
       type:multi_string
-      description:MySQL create database SQL script. At least one of the MySQL or MS SQL create scripts needs to be supplied.
+      description:MySQL create database SQL script. At least one of the MySQL, PostgreSQL or MS SQL create scripts needs to be supplied.
+      mandatory:bool:false
+   .
+      name:psql
+      type:multi_string
+      description:PostgreSQL create database SQL script. At least one of the MySQL, PostgreSQL or MS SQL create scripts needs to be supplied.
       mandatory:bool:false
 
 // Lambda object executed as macro is actually executed.

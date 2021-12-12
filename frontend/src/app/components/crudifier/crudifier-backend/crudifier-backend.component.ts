@@ -44,6 +44,7 @@ export class CrudifierBackendComponent implements OnInit {
    */
   public databaseTypes: string[] = [
     'mysql',
+    'pysql',
     'mssql',
   ];
 

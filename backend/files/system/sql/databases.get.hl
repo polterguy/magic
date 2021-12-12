@@ -13,6 +13,7 @@ validators.mandatory:x:@.arguments/*/databaseType
 validators.mandatory:x:@.arguments/*/connectionString
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
+   .:psql
    .:mssql
 
 /*
