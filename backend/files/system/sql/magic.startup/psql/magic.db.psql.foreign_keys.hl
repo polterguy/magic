@@ -35,9 +35,9 @@ slots.create:magic.db.psql.foreign_keys
       // Dynamically creating our SQL.
       psql.select:@"
 select
-   string_agg(kcu.column_name, ', ') as column,
-   kcu.table_name as foreign_table,
-   string_agg(kcu.column_name, ', ') as foreign_column
+      kcu.column_name as column,
+      rel_kcu.table_name as foreign_table,
+      rel_kcu.column_name as foreign_column
 from information_schema.table_constraints tco
 join information_schema.key_column_usage kcu
           on tco.constraint_schema = kcu.constraint_schema
@@ -45,17 +45,16 @@ join information_schema.key_column_usage kcu
 join information_schema.referential_constraints rco
           on tco.constraint_schema = rco.constraint_schema
           and tco.constraint_name = rco.constraint_name
-join information_schema.table_constraints rel_tco
-          on rco.unique_constraint_schema = rel_tco.constraint_schema
-          and rco.unique_constraint_name = rel_tco.constraint_name
-where tco.constraint_type = 'FOREIGN KEY' and rel_tco.table_name = @table and rel_tco.table_schema = @database
-group by kcu.table_schema,
-         kcu.table_name,
-         rel_tco.table_name,
-         rel_tco.table_schema,
-         kcu.constraint_name
+join information_schema.key_column_usage rel_kcu
+          on rco.unique_constraint_schema = rel_kcu.constraint_schema
+          and rco.unique_constraint_name = rel_kcu.constraint_name
+          and kcu.ordinal_position = rel_kcu.ordinal_position
+where tco.constraint_type = 'FOREIGN KEY' and
+    kcu.table_name = @table and
+    kcu.table_catalog = @database
 order by kcu.table_schema,
-         kcu.table_name"
+         kcu.table_name,
+         kcu.ordinal_position"
          @table:x:@.arguments/*/table
          @database:x:@.arguments/*/database
 
