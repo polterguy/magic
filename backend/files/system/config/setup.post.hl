@@ -208,45 +208,6 @@ try
    log.info:System was successfully setup
 
    /*
-    * After setup we need to run setup process for all modules in system,
-    * besides magic and system.
-    */
-   io.folder.list:/modules/
-   for-each:x:@io.folder.list/*
-      strings.split:x:@.dp/#
-         .:/
-      if
-         not
-            eq
-               get-value:x:@strings.split/1
-               .:magic
-         .lambda
-
-            // Installing module, ensuring we trap exceptions in the process.
-            try
-
-               // Installing module.
-               unwrap:x:+/*
-               signal:magic.modules.install-module
-                  module:x:@strings.split/1
-
-               // Doing some basic logging.
-               log.info
-                  .:"Module successfully installed, module name was '"
-                  get-value:x:@strings.split/1
-                  .:"'"
-            .catch
-
-               // Oops, making sure we log failure.
-               log.error
-                  .:"Module failed to install, module name was '"
-                  get-value:x:@strings.split/1
-                  .:@"'
-Message from system was '"
-                  get-value:x:@.arguments/*/message
-                  .:"'"
-
-   /*
     * Explicitly seeding CSRNG with auth secret, which might have been manually applied
     * by user during setup process.
     */
@@ -265,6 +226,7 @@ Message from system was '"
 
    // Returns the authentication JWT ticket created above to caller.
    return-nodes:x:@signal/*
+
 .catch
 
    // Making sure we make exception publicly visible for frontend.
