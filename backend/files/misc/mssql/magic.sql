@@ -23,7 +23,7 @@ go
 /*
  * Inserting version into database version table.
  */
-insert into magic_version(db_version) values ('009.001.007');
+insert into magic_version(db_version) values ('010.000.001');
 
 go
 
