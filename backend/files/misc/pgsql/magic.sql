@@ -25,10 +25,9 @@ insert into magic_version(db_version) values ('010.000.001');
 create table "users" (
   "username" varchar(256) not null,
   "password" varchar(256) not null,
-  "locked" boolean not null default 0,
-  "created" datetime not null default current_timestamp,
-  primary key ("username"),
-  unique key "username_UNIQUE" ("username")
+  "locked" boolean not null default true,
+  "created" date not null default current_timestamp,
+  primary key ("username")
 );
 
 
@@ -38,8 +37,7 @@ create table "users" (
 create table "roles" (
   "name" varchar(45) not null,
   "description" varchar(256) null,
-  primary key ("name"),
-  unique key "name_UNIQUE" ("name")
+  primary key ("name")
 );
 
 
@@ -50,8 +48,6 @@ create table "users_roles" (
   "role" varchar(45) not null,
   "user" varchar(256) not null,
   primary key ("role", "user"),
-  key "roles_fky_idx" ("role"),
-  key "users_fky_idx" ("user"),
   constraint "roles_fky" foreign key ("role") references "roles" ("name") on delete cascade,
   constraint "users_fky" foreign key ("user") references "users" ("username") on delete cascade
 );
@@ -81,7 +77,7 @@ create table tasks (
   id varchar(256) not null,
   description varchar(1024) null,
   hyperlambda text not null,
-  created datetime not null default current_timestamp,
+  created date not null default current_timestamp,
   primary key (id)
 );
 
@@ -90,13 +86,12 @@ create table tasks (
  * Creating task_due table.
  */
 create table task_due (
-  id int(11) not null auto_increment,
+  id serial not null,
   task varchar(256) not null,
-  due datetime not null,
+  due date not null,
   repeats varchar(128) null,
   constraint task_due_task_fky foreign key (task) references tasks (id) on delete cascade,
-  primary key (id),
-  unique key id_UNIQUE (id)
+  primary key (id)
 );
 
 
@@ -109,13 +104,12 @@ create table task_due (
  * Creating log table.
  */
 create table log_entries (
-  id int(11) not null auto_increment,
-  created datetime not null default current_timestamp,
+  id serial not null,
+  created date not null default current_timestamp,
   type varchar(10) not null,
   content text not null,
   exception text null,
-  primary key (id),
-  unique key id_UNIQUE (id)
+  primary key (id)
 );
 
 
@@ -128,7 +122,7 @@ create table log_entries (
  * Creating crypto_keys table for holding public cryptography keys.
  */
 create table crypto_keys (
-  id int(11) not null auto_increment,
+  id serial not null,
   subject varchar(120) not null, /* Typically the name of the owner of the key */
   email varchar(120) not null, /* Email address of owner */
   domain varchar(250) null, /* The base URL of the subject */
@@ -136,11 +130,9 @@ create table crypto_keys (
   fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
   content text not null, /* Actual public key */
   vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
-  imported datetime not null default current_timestamp,
+  imported date not null default current_timestamp,
   enabled boolean not null, /* If true, the owner is allowed to invoke cryptographically secured endpoints */
-  primary key (id),
-  unique key id_UNIQUE (id),
-  unique key fingerprint_UNIQUE (fingerprint)
+  primary key (id)
 );
 
 
@@ -149,16 +141,15 @@ create table crypto_keys (
  * with some public key.
  */
 create table crypto_invocations (
-  id int(11) not null auto_increment,
-  crypto_key int(11) not null, /* A reference to the crypto key associated with the evaluation */
+  id serial not null,
+  crypto_key integer not null, /* A reference to the crypto key associated with the evaluation */
   request_id varchar(250) not null, /* The ID of the request - Ensures idempotency if caller specifies an ID */
   request text not null, /* The request payload supplied by the caller */
   request_raw text not null, /* The request payload supplied by the caller */
   response text not null, /* The response payload returned to the caller */
-  created datetime not null default current_timestamp,
+  created date not null default current_timestamp,
   primary key (id),
-  unique key id_UNIQUE (id),
-  unique key "request_id_UNIQUE" ("request_id"),
+  constraint "request_id_UNIQUE" unique ("request_id"),
   constraint "crypto_key_fky" foreign key ("crypto_key") references "crypto_keys" ("id") on delete cascade
 );
 
@@ -168,9 +159,8 @@ create table crypto_invocations (
  */
 create table "users_crypto_keys" (
   "username" varchar(256) not null,
-  "key_id" int(11) not null,
+  "key_id" integer not null,
   primary key ("username", "key_id"),
-  unique key "key_id_UNIQUE" ("key_id"),
   constraint "username_fky" foreign key ("username") references "users" ("username") on delete cascade,
   constraint "key_id_fky" foreign key ("key_id") references "crypto_keys" ("id") on delete cascade
 );
