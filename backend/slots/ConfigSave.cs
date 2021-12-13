@@ -42,7 +42,7 @@ namespace magic.backend.slots
              * This little bugger will validate that the JSON is actually valid JSON,
              * which prevents saving of non-valid JSON to configuration file.
              */
-            JObject.Parse(json);
+            var jObject = JObject.Parse(json);
 
             // Saving JSON as text to "appsettings.json" file.
             File.WriteAllText(
@@ -50,8 +50,12 @@ namespace magic.backend.slots
                 "/appsettings.json",
                 json);
 
-            // Forcing a reload of the configuration root object.
-            _configRoot.Reload();
+            /*
+             * In .Net 6.0 for some reasons JWT secret changes doesn't propagate to the root IConfiguration object
+             * unless we explicitly update the setting.
+             * It's a dirty hack, but at least it works ... :/
+             */
+            _configRoot["magic:auth:secret"] = jObject["magic"]["auth"]["secret"].Value<string>();
         }
     }
 }
