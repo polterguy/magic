@@ -161,40 +161,34 @@ try
           */
          switch:x:@.arguments/*/databaseType
 
-            // Special case for MS SQL, to execute "batch" slot.
+            // Special case for MS SQL to use [mssql.execute-batch].
             case:mssql
-               set-name:x:./././*/xxx.connect/*/xxx.execute
-                  .:mssql.execute-batch
+
+               // Executing create database SQL script.
+               mssql.connect
+                  mssql.execute-batch:x:@io.file.load
 
             // Special case for PG SQL to create database in a different connection.
-            case:mssql
-               insert-before:x:./././*/xxx.connect
-                  .
-                     pgsql.connect
-                        pgsql.execute:create database magic
-               set-value:x:./././*/xxx.connect
-                  .:[generic|magic]
-               set-name:x:./././*/xxx.connect/*/xxx.execute
-                  strings.concat
-                     get-value:x:@.arguments/*/databaseType
-                     .:.execute
+            case:pgsql
 
-            // Anything but MS SQL.
+               // We have to create our database on a different connection
+               pgsql.connect:[generic|postgres]
+                  mysql.execute:create database magic
+
+               // Executing create database SQL script.
+               pgsql.connect:[generic|magic]
+                  mysql.execute:x:@io.file.load
+
+            // Special case for PG SQL to create database in a different connection.
+            case:mysql
+
+               // Executing create database SQL script without any special cases.
+               mysql.connect
+                  mysql.execute:x:@io.file.load
+
+            // Unsupported database type for magic.
             default
-               set-name:x:./././*/xxx.connect/*/xxx.execute
-                  strings.concat
-                     get-value:x:@.arguments/*/databaseType
-                     .:.execute
-
-         // Modifying the connect slot according to database type specified.
-         set-name:x:./*/xxx.connect
-            strings.concat
-               get-value:x:@.arguments/*/databaseType
-               .:.connect
-
-         // Executing create database SQL script.
-         xxx.connect
-            xxx.execute:x:@io.file.load
+               throw:Unsupported database type
 
          // Inserting root user.
          unwrap:x:+/*
