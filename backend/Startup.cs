@@ -14,20 +14,18 @@ namespace magic.backend
 {
     public class Startup
     {
-        public Startup()
+        public Startup(IConfiguration configuration)
         {
-            Configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", false, true)
-                .Build();
+            Configuration = configuration;
         }
 
-        IConfigurationRoot Configuration { get; }
+        IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(Configuration);
             services.AddControllers().AddNewtonsoftJson();
-            services.AddSingleton<IConfigurationRoot>(p => Configuration);
+            services.AddSingleton<IConfiguration>(p => Configuration);
 
             /*
              * Checking if we should add IIS authentication scheme, which we

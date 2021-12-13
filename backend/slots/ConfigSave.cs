@@ -17,15 +17,15 @@ namespace magic.backend.slots
     [Slot(Name = "config.save")]
     public class SaveAppSettings : ISlot
     {
-        readonly IConfigurationRoot _configRoot;
+        readonly IConfiguration _configuration;
 
         /// <summary>
         /// Creates an instance of your type.
         /// </summary>
         /// <param name="configRoot">Needed to force a reload of configuration settings after having saved the file.</param>
-        public SaveAppSettings(IConfigurationRoot configRoot)
+        public SaveAppSettings(IConfiguration configuration)
         {
-            _configRoot = configRoot;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -49,13 +49,6 @@ namespace magic.backend.slots
                 Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
                 "/appsettings.json",
                 json);
-
-            /*
-             * In .Net 6.0 for some reasons JWT secret changes doesn't propagate to the root IConfiguration object
-             * unless we explicitly update the setting.
-             * It's a dirty hack, but at least it works ... :/
-             */
-            _configRoot["magic:auth:secret"] = jObject["magic"]["auth"]["secret"].Value<string>();
         }
     }
 }
