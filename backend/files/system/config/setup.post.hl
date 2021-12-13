@@ -79,8 +79,8 @@ try
          case:psql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/psql/*/generic
                .:{database}
-               .:systemd
-            mysql.connect:x:@strings.replace
+               .:postgres
+            psql.connect:x:@strings.replace
                mysql.select:show databases
    .catch
       throw:Could not connect to database, please double check your connection string
