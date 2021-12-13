@@ -4,7 +4,6 @@
  * as Magic's main database.
  */
 create database magic;
-use magic;
 
 
 /*
@@ -24,38 +23,38 @@ insert into magic_version(db_version) values ('010.000.001');
 /*
  * Creating users table.
  */
-create table `users` (
-  `username` varchar(256) not null,
-  `password` varchar(256) not null,
-  `locked` boolean not null default 0,
-  `created` datetime not null default current_timestamp,
-  primary key (`username`),
-  unique key `username_UNIQUE` (`username`)
+create table "users" (
+  "username" varchar(256) not null,
+  "password" varchar(256) not null,
+  "locked" boolean not null default 0,
+  "created" datetime not null default current_timestamp,
+  primary key ("username"),
+  unique key "username_UNIQUE" ("username")
 );
 
 
 /*
  * Creating roles table.
  */
-create table `roles` (
-  `name` varchar(45) not null,
-  `description` varchar(256) null,
-  primary key (`name`),
-  unique key `name_UNIQUE` (`name`)
+create table "roles" (
+  "name" varchar(45) not null,
+  "description" varchar(256) null,
+  primary key ("name"),
+  unique key "name_UNIQUE" ("name")
 );
 
 
 /*
  * Creating association between roles and users through users_roles table.
  */
-create table `users_roles` (
-  `role` varchar(45) not null,
-  `user` varchar(256) not null,
-  primary key (`role`, `user`),
-  key `roles_fky_idx` (`role`),
-  key `users_fky_idx` (`user`),
-  constraint `roles_fky` foreign key (`role`) references `roles` (`name`) on delete cascade,
-  constraint `users_fky` foreign key (`user`) references `users` (`username`) on delete cascade
+create table "users_roles" (
+  "role" varchar(45) not null,
+  "user" varchar(256) not null,
+  primary key ("role", "user"),
+  key "roles_fky_idx" ("role"),
+  key "users_fky_idx" ("user"),
+  constraint "roles_fky" foreign key ("role") references "roles" ("name") on delete cascade,
+  constraint "users_fky" foreign key ("user") references "users" ("username") on delete cascade
 );
 
 
@@ -160,19 +159,19 @@ create table crypto_invocations (
   created datetime not null default current_timestamp,
   primary key (id),
   unique key id_UNIQUE (id),
-  unique key `request_id_UNIQUE` (`request_id`),
-  constraint `crypto_key_fky` foreign key (`crypto_key`) references `crypto_keys` (`id`) on delete cascade
+  unique key "request_id_UNIQUE" ("request_id"),
+  constraint "crypto_key_fky" foreign key ("crypto_key") references "crypto_keys" ("id") on delete cascade
 );
 
 
 /*
  * Creating association table between users and crypto_keys.
  */
-create table `users_crypto_keys` (
-  `username` varchar(256) not null,
-  `key_id` int(11) not null,
-  primary key (`username`, `key_id`),
-  unique key `key_id_UNIQUE` (`key_id`),
-  constraint `username_fky` foreign key (`username`) references `users` (`username`) on delete cascade,
-  constraint `key_id_fky` foreign key (`key_id`) references `crypto_keys` (`id`) on delete cascade
+create table "users_crypto_keys" (
+  "username" varchar(256) not null,
+  "key_id" int(11) not null,
+  primary key ("username", "key_id"),
+  unique key "key_id_UNIQUE" ("key_id"),
+  constraint "username_fky" foreign key ("username") references "users" ("username") on delete cascade,
+  constraint "key_id_fky" foreign key ("key_id") references "crypto_keys" ("id") on delete cascade
 );
