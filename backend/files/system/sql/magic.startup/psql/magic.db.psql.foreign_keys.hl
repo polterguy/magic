@@ -1,0 +1,67 @@
+
+/*
+ * Lists all foreign keys in some MySQL table.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ * - [database] - What database you want to check
+ * - [table] - What table you want to check
+ */
+slots.create:magic.db.psql.foreign_keys
+
+   // Opens up our connection
+   .connection:[postgres]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               get-value:x:@.arguments/*/database
+               .:]
+   psql.connect:x:@.connection
+
+      // Dynamically creating our SQL.
+      psql.select:@"
+select
+   string_agg(kcu.column_name, ', ') as column,
+   kcu.table_name as foreign_table,
+   string_agg(kcu.column_name, ', ') as foreign_column
+from information_schema.table_constraints tco
+join information_schema.key_column_usage kcu
+          on tco.constraint_schema = kcu.constraint_schema
+          and tco.constraint_name = kcu.constraint_name
+join information_schema.referential_constraints rco
+          on tco.constraint_schema = rco.constraint_schema
+          and tco.constraint_name = rco.constraint_name
+join information_schema.table_constraints rel_tco
+          on rco.unique_constraint_schema = rel_tco.constraint_schema
+          and rco.unique_constraint_name = rel_tco.constraint_name
+where tco.constraint_type = 'FOREIGN KEY' and rel_tco.table_name = @table and rel_tco.table_schema = @database
+group by kcu.table_schema,
+         kcu.table_name,
+         rel_tco.table_name,
+         rel_tco.table_schema,
+         kcu.constraint_name
+order by kcu.table_schema,
+         kcu.table_name"
+         @table:x:@.arguments/*/table
+         @database:x:@.arguments/*/database
+
+      /*
+       * Creating our return value, by projecting it into
+       * a generic form, that does not rely upon MySQL's syntactic
+       * details.
+       */
+      return-nodes:x:@psql.select/*

@@ -1,0 +1,40 @@
+
+/*
+ * Lists all database in your MySQL instance.
+ * 
+ * Arguments
+ * 
+ * - [connection-string] - What connection string to use
+ */
+slots.create:magic.db.psql.databases
+
+   // Opens up our connection
+   .connection:[postgres]
+   if
+      and
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .
+         not
+            eq
+               get-value:x:@.arguments/*/connection-string
+               .:
+      .lambda
+         set-value:x:@.connection
+            strings.concat
+               .:[
+               get-value:x:@.arguments/*/connection-string
+               .:|
+               .:postgres]
+   psql.connect:x:@.connection
+
+      // Runs our query
+      psql.select:select datname from pg_database
+
+      // Renaming "Database" nodes.
+      set-name:x:@psql.select/*/*
+         .:db
+
+      // Returns the remaining databases to caller.
+      return-nodes:x:@psql.select/*
