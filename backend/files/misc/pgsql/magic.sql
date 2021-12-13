@@ -51,6 +51,7 @@ create table "users_roles" (
   constraint "roles_fky" foreign key ("role") references "roles" ("name") on delete cascade,
   constraint "users_fky" foreign key ("user") references "users" ("username") on delete cascade
 );
+create index "users_roles_user_idx" on "users_roles" ("user");
 
 
 /*
@@ -80,6 +81,7 @@ create table tasks (
   created timestamptz not null default now(),
   primary key (id)
 );
+create unique index "tasks_id_idx" on "tasks" ("id");
 
 
 /*
@@ -93,6 +95,7 @@ create table task_due (
   constraint task_due_task_fky foreign key (task) references tasks (id) on delete cascade,
   primary key (id)
 );
+create index "task_due_task_idx" on "task_due" ("task");
 
 
 /*
@@ -131,9 +134,11 @@ create table crypto_keys (
   content text not null, /* Actual public key */
   vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
   imported timestamptz not null default now(),
-  enabled boolean not null, /* If true, the owner is allowed to invoke cryptographically secured endpoints */
+  enabled boolean not null default false, /* If true, the owner is allowed to invoke cryptographically secured endpoints */
   primary key (id)
 );
+create index "crypto_keys_subject_idx" on "crypto_keys" ("subject");
+create index "crypto_keys_email_idx" on "crypto_keys" ("email");
 
 
 /*
@@ -152,6 +157,7 @@ create table crypto_invocations (
   constraint "request_id_UNIQUE" unique ("request_id"),
   constraint "crypto_key_fky" foreign key ("crypto_key") references "crypto_keys" ("id") on delete cascade
 );
+create index "crypto_invocations_crypto_key_idx" on "crypto_invocations" ("crypto_key");
 
 
 /*
@@ -164,3 +170,5 @@ create table "users_crypto_keys" (
   constraint "username_fky" foreign key ("username") references "users" ("username") on delete cascade,
   constraint "key_id_fky" foreign key ("key_id") references "crypto_keys" ("id") on delete cascade
 );
+create index "users_crypto_keys_username_idx" on "users_crypto_keys" ("username");
+create index "users_crypto_keys_key_id_idx" on "users_crypto_keys" ("key_id");
