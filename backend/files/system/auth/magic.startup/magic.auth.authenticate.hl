@@ -61,16 +61,20 @@ slots.create:magic.auth.authenticate
          table:users
          columns
             password
+            locked
          where
             and
                username:x:@.arguments/*/username
-               locked.neq:1
 
       // Checking if user with specified [username] exists.
       if
-         eq
-            get-count:x:@data.read/*
-            .:int:0
+         or
+            eq
+               get-count:x:@data.read/*
+               .:int:0
+            eq
+               get-value:x:@data.read/*/*/locked
+               .:bool:true
          .lambda
 
             // No such user.
