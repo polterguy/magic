@@ -8,7 +8,7 @@
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
-slots.create:magic.db.psql.columns
+slots.create:magic.db.pgsql.columns
 
    // Opens up our connection
    .connection:[postgres]
@@ -30,7 +30,7 @@ slots.create:magic.db.psql.columns
                .:|
                get-value:x:@.arguments/*/database
                .:]
-   psql.connect:x:@.connection
+   pgsql.connect:x:@.connection
 
       // Making sure we support table names with special characters.
       strings.concat
@@ -51,14 +51,14 @@ slots.create:magic.db.psql.columns
   where c.table_name = '"
          get-value:x:@.arguments/*/table
          .:@"' and c.data_type != 'tsvector'"
-      psql.select:x:@strings.concat
+      pgsql.select:x:@strings.concat
 
       /*
        * Creating our return value, by projecting it into
        * a generic form, that does not rely upon PostgreSQL's syntactic
        * details.
        */
-      for-each:x:@psql.select/*
+      for-each:x:@pgsql.select/*
          unwrap:x:+/*/*
          .tmp
             ""
@@ -210,7 +210,7 @@ slots.create:magic.db.psql.columns
                hl:x:@.type
 
          // Adding [.tmp] to [return-nodes] below.
-         add:x:../*/psql.connect/*/return-nodes
+         add:x:../*/pgsql.connect/*/return-nodes
             get-nodes:x:@.tmp/*
 
       // Returning results to caller.

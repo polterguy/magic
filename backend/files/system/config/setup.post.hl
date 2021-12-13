@@ -18,7 +18,7 @@
 // Sanity checks invocation.
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
-   .:psql
+   .:pgsql
    .:mssql
 
 // Ensures user is authorized to access endpoint.
@@ -76,11 +76,11 @@ try
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
                .:{database}
                .:information_schema
-         case:psql
-            strings.replace:x:@json2lambda/*/magic/*/databases/*/psql/*/generic
+         case:pgsql
+            strings.replace:x:@json2lambda/*/magic/*/databases/*/pgsql/*/generic
                .:{database}
                .:postgres
-            psql.connect:x:@strings.replace
+            pgsql.connect:x:@strings.replace
                mysql.select:show databases
    .catch
       throw:Could not connect to database, please double check your connection string

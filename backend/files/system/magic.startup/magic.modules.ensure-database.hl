@@ -90,9 +90,9 @@ slots.create:magic.modules.ensure-database
                case:mysql
                   mysql.connect:sys
                      mysql.execute:x:@io.file.load
-               case:psql
-                  psql.connect
-                     psql.execute:x:@io.file.load
+               case:pgsql
+                  pgsql.connect
+                     pgsql.execute:x:@io.file.load
                case:mssql
                   mssql.connect:master
                      mssql.execute-batch:x:@io.file.load

@@ -24,7 +24,7 @@
       description:MySQL create database SQL script. At least one of the MySQL, PostgreSQL or MS SQL create scripts needs to be supplied.
       mandatory:bool:false
    .
-      name:psql
+      name:pgsql
       type:multi_string
       description:PostgreSQL create database SQL script. At least one of the MySQL, PostgreSQL or MS SQL create scripts needs to be supplied.
       mandatory:bool:false

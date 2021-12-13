@@ -16,7 +16,7 @@ payload:@"{
   ""overwrite"": true
 }"
 response:@"{
-  ""message"": ""'foo' is not a valid enum of ['mysql', 'psql', 'mssql'] for [databaseType]"",
+  ""message"": ""'foo' is not a valid enum of ['mysql', 'pgsql', 'mssql'] for [databaseType]"",
   ""field"": ""databaseType""
 }"
 produces:application/json

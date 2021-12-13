@@ -7,7 +7,7 @@
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  */
-slots.create:magic.db.psql.tables
+slots.create:magic.db.pgsql.tables
 
    // Opens up our connection
    .connection:[postgres]
@@ -29,10 +29,10 @@ slots.create:magic.db.psql.tables
                .:|
                get-value:x:@.arguments/*/database
                .:]
-   psql.connect:x:@.connection
+   pgsql.connect:x:@.connection
 
       // Runs our query
-      psql.select:"select tablename from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'"
-      set-name:x:@psql.select/*/*
+      pgsql.select:"select tablename from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'"
+      set-name:x:@pgsql.select/*/*
          .:table
-      return-nodes:x:@psql.select/*
+      return-nodes:x:@pgsql.select/*

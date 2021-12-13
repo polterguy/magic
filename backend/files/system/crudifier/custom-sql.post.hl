@@ -22,7 +22,7 @@ validators.mandatory:x:@.arguments/*/endpointName
 validators.mandatory:x:@.arguments/*/sql
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
-   .:psql
+   .:pgsql
    .:mssql
 validators.enum:x:@.arguments/*/verb
    .:post
