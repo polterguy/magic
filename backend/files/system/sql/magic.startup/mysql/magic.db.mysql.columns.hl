@@ -134,7 +134,7 @@ slots.create:magic.db.mysql.columns
 
             // Anything BUT booleans.
             strings.regex-replace:x:@.dp/#/*/Type
-               .:\([0-9,]+\)
+               .:"\\([0-9,]+\\)"
                .:
             strings.replace:x:@strings.regex-replace
                .:" unsigned"
