@@ -26,7 +26,7 @@ create table "users" (
   "username" varchar(256) not null,
   "password" varchar(256) not null,
   "locked" boolean not null default false,
-  "created" date not null default current_timestamp,
+  "created" timestamptz not null default now(),
   primary key ("username")
 );
 
@@ -77,7 +77,7 @@ create table tasks (
   id varchar(256) not null,
   description varchar(1024) null,
   hyperlambda text not null,
-  created date not null default current_timestamp,
+  created timestamptz not null default now(),
   primary key (id)
 );
 
@@ -88,7 +88,7 @@ create table tasks (
 create table task_due (
   id serial not null,
   task varchar(256) not null,
-  due date not null,
+  due timestamptz not null,
   repeats varchar(128) null,
   constraint task_due_task_fky foreign key (task) references tasks (id) on delete cascade,
   primary key (id)
@@ -105,7 +105,7 @@ create table task_due (
  */
 create table log_entries (
   id serial not null,
-  created date not null default current_timestamp,
+  created timestamptz not null default now(),
   type varchar(10) not null,
   content text not null,
   exception text null,
@@ -130,7 +130,7 @@ create table crypto_keys (
   fingerprint varchar(120) not null, /* Public key's SHA256 value, in 'fingerprint' format */
   content text not null, /* Actual public key */
   vocabulary text not null, /* The vocabulary the key is allowed to evaluate */
-  imported date not null default current_timestamp,
+  imported timestamptz not null default now(),
   enabled boolean not null, /* If true, the owner is allowed to invoke cryptographically secured endpoints */
   primary key (id)
 );
@@ -147,7 +147,7 @@ create table crypto_invocations (
   request text not null, /* The request payload supplied by the caller */
   request_raw text not null, /* The request payload supplied by the caller */
   response text not null, /* The response payload returned to the caller */
-  created date not null default current_timestamp,
+  created timestamptz not null default now(),
   primary key (id),
   constraint "request_id_UNIQUE" unique ("request_id"),
   constraint "crypto_key_fky" foreign key ("crypto_key") references "crypto_keys" ("id") on delete cascade
