@@ -8,7 +8,7 @@
  * - [database] - What database you want to check
  * - [table] - What table you want to check
  */
-slots.create:magic.db.psql.foreign_keys
+slots.create:magic.db.pgsql.foreign_keys
 
    // Opens up our connection
    .connection:[postgres]
@@ -30,10 +30,10 @@ slots.create:magic.db.psql.foreign_keys
                .:|
                get-value:x:@.arguments/*/database
                .:]
-   psql.connect:x:@.connection
+   pgsql.connect:x:@.connection
 
       // Dynamically creating our SQL.
-      psql.select:@"
+      pgsql.select:@"
 select
       kcu.column_name as column,
       rel_kcu.table_name as foreign_table,
@@ -63,4 +63,4 @@ order by kcu.table_schema,
        * a generic form, that does not rely upon MySQL's syntactic
        * details.
        */
-      return-nodes:x:@psql.select/*
+      return-nodes:x:@pgsql.select/*

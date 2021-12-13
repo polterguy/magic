@@ -6,7 +6,7 @@
  * 
  * - [connection-string] - What connection string to use
  */
-slots.create:magic.db.psql.databases
+slots.create:magic.db.pgsql.databases
 
    // Opens up our connection
    .connection:[postgres]
@@ -27,14 +27,14 @@ slots.create:magic.db.psql.databases
                get-value:x:@.arguments/*/connection-string
                .:|
                .:postgres]
-   psql.connect:x:@.connection
+   pgsql.connect:x:@.connection
 
       // Runs our query
-      psql.select:select datname from pg_database
+      pgsql.select:select datname from pg_database
 
       // Renaming "Database" nodes.
-      set-name:x:@psql.select/*/*
+      set-name:x:@pgsql.select/*/*
          .:db
 
       // Returns the remaining databases to caller.
-      return-nodes:x:@psql.select/*
+      return-nodes:x:@pgsql.select/*

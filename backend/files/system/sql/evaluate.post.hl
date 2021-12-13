@@ -24,7 +24,7 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/databaseType
 validators.enum:x:@.arguments/*/databaseType
    .:mysql
-   .:psql
+   .:pgsql
    .:mssql
 
 // Creating our database connection.
