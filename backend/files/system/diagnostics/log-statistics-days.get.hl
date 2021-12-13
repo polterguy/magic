@@ -35,6 +35,13 @@ switch:x:@config.get
       add:x:../**/group
          .
             date
+   case:pgsql
+      insert-before:x:../**/columns/0
+         .
+            to_char(created, 'YYYY-MM-dd') as date
+      add:x:../**/group
+         .
+            date
    case:mssql
       insert-before:x:../**/columns/0
          .
