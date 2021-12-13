@@ -9,7 +9,7 @@
 export class CustomSql {
 
   /**
-   * Database type to wrap, e.g. 'mysql' or 'mssql'.
+   * Database type to wrap, e.g. 'mysql', 'pgsql' or 'mssql'.
    */
   databaseType: string;
 
