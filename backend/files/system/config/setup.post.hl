@@ -76,12 +76,14 @@ try
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
                .:{database}
                .:information_schema
+            mysql.connect:x:@strings.replace
+               mysql.select:show databases
          case:pgsql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/pgsql/*/generic
                .:{database}
                .:postgres
             pgsql.connect:x:@strings.replace
-               mysql.select:show databases
+               pgsql.select:select datname from pg_database
    .catch
       throw:Could not connect to database, please double check your connection string
          public:true
@@ -153,6 +155,9 @@ try
          /*
           * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
           * accommodate for "go" statements and such.
+          *
+          * And, for PG SQL we'll need to first create the database, then run the execute script,
+          * with the created database as our selected database in two distinct different connections.
           */
          switch:x:@.arguments/*/databaseType
 
@@ -160,6 +165,19 @@ try
             case:mssql
                set-name:x:./././*/xxx.connect/*/xxx.execute
                   .:mssql.execute-batch
+
+            // Special case for PG SQL to create database in a different connection.
+            case:mssql
+               insert-before:x:./././*/xxx.connect
+                  .
+                     pgsql.connect
+                        pgsql.execute:create database magic
+               set-value:x:./././*/xxx.connect
+                  .:[generic|magic]
+               set-name:x:./././*/xxx.connect/*/xxx.execute
+                  strings.concat
+                     get-value:x:@.arguments/*/databaseType
+                     .:.execute
 
             // Anything but MS SQL.
             default
