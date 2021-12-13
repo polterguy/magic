@@ -224,15 +224,10 @@ try
       strings.split:x:@.dp/#
          .:/
       if
-         and
-            not
-               eq
-                  get-value:x:@strings.split/1
-                  .:magic
-            not
-               eq
-                  get-value:x:@strings.split/1
-                  .:system
+         not
+            eq
+               get-value:x:@strings.split/1
+               .:magic
          .lambda
 
             // Installing module, ensuring we trap exceptions in the process.
