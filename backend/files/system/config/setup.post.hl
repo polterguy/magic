@@ -98,10 +98,10 @@ try
    config.save:x:-
 
    /*
-    * Sleeping for 5 seconds to allow configuration to kick
+    * Sleeping for 1 millisecond to allow configuration to kick
     * in on thread pools threads.
     */
-   sleep:5000
+   sleep:1
 
    /*
     * We now have a new JWT/AUTH secret, and a database connection string
