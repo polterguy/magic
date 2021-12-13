@@ -47,15 +47,10 @@ try
             public:true
 
    /*
-    * Saving settings to appsettings.json file.
-    * 
-    * Notice, this has to be done before we check if database exists,
-    * otherwise it'll not be possible to login to database to check
-    * if magic database already exists.
-    * 
-    * Hence, without this step first, there is no way to use for instance a MySQL
-    * instance that doesn't have the same root password as the default password
-    * from the appSettings.json file.
+    * Converting settings argument to JSON.
+    *
+    * This will throw an exception if for some reasons the client didn't
+    * supply a valid JSON string as his or her [settings] argument.
     */
    json2lambda:x:@.arguments/*/settings
 
@@ -66,31 +61,38 @@ try
     */
    try
       switch:x:@.arguments/*/databaseType
+
          case:mssql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
                .:{database}
                .:master
             mssql.connect:x:@strings.replace
                mssql.select:select name from master.dbo.sysdatabases
+
          case:mysql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
                .:{database}
                .:information_schema
             mysql.connect:x:@strings.replace
                mysql.select:show databases
+
          case:pgsql
             strings.replace:x:@json2lambda/*/magic/*/databases/*/pgsql/*/generic
                .:{database}
                .:postgres
             pgsql.connect:x:@strings.replace
                pgsql.select:select datname from pg_database
+
+         default
+            // Caught below and transformed into another exception.
+            throw:Foo
    .catch
       throw:Could not connect to database, please double check your connection string
          public:true
          status:400
 
    /*
-    * Connection string is valid and able to connect to a database,
+    * Connection string is valid and we are able to connect to a database,
     * hence we can safely save the appsettings.json file now.
     */
    set-value:x:@json2lambda/*/magic/*/databases/*/default
@@ -103,15 +105,15 @@ try
     * Sleeping for 5 seconds to allow configuration to kick
     * in on thread pools threads.
     *
-    * Notice, this is necessary since we're using the appsettings connection string to
-    * connect to database further down in this file.
+    * Notice, even though this is bananas, it is necessary since we're using the appsettings
+    * connection string to connect to database further down in this file.
     */
    sleep:5000
 
    /*
     * We now have a new JWT/AUTH secret, and a database connection string
-    * that we know we can use to connect to either a MySQL server or an
-    * MS SQL server. Hence, now we can start the setup process, creating the
+    * that we know we can use to connect to either a MySQL instance, PgSQL instance
+    * or an SQL Server instance. Hence, now we can start the setup process, creating the
     * magic database, and inserting a root user, etc ...
     */
 
@@ -147,8 +149,8 @@ try
             .:/magic.sql
 
          /*
-          * Loading create database SQL script file, and replacing execution slots according
-          * to which database type we're dealing with.
+          * Loading create database SQL script file, which is different
+          * according to what database type client supplied us with.
           */
          io.file.load:x:@strings.concat
 
@@ -156,39 +158,29 @@ try
           * Notice, for MS SQL we need to explicitly invoke [mssql.execute-batch] to
           * accommodate for "go" statements and such.
           *
-          * And, for PG SQL we'll need to first create the database, then run the execute script,
-          * with the created database as our selected database in two distinct different connections.
+          * For PG SQL we'll need to first create the database in a separate [pgsql.connect] invocation,
+          * then run the execute script with the created database as our selected database.
           */
          switch:x:@.arguments/*/databaseType
 
             // Special case for MS SQL to use [mssql.execute-batch].
             case:mssql
-
-               // Executing create database SQL script.
                mssql.connect
                   mssql.execute-batch:x:@io.file.load
 
             // Special case for PG SQL to create database in a different connection.
             case:pgsql
-
-               // We have to create our database on a different connection
                pgsql.connect:[generic|postgres]
                   pgsql.execute:create database magic
-
-               // Executing create database SQL script.
                pgsql.connect:[generic|magic]
                   pgsql.execute:x:@io.file.load
 
-            // Special case for PG SQL to create database in a different connection.
+            // MySQL version, simply doing everything as normal and plain as possible.
             case:mysql
 
                // Executing create database SQL script without any special cases.
                mysql.connect
                   mysql.execute:x:@io.file.load
-
-            // Unsupported database type for magic.
-            default
-               throw:Unsupported database type
 
          // Inserting root user.
          unwrap:x:+/*
