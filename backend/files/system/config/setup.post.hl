@@ -98,10 +98,13 @@ try
    config.save:x:-
 
    /*
-    * Sleeping for 1 millisecond to allow configuration to kick
+    * Sleeping for 5 seconds to allow configuration to kick
     * in on thread pools threads.
+    *
+    * Notice, this is necessary since we're using the appsettings connection string to
+    * connect to database further down in this file.
     */
-   sleep:1
+   sleep:5000
 
    /*
     * We now have a new JWT/AUTH secret, and a database connection string
