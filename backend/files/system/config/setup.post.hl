@@ -173,11 +173,11 @@ try
 
                // We have to create our database on a different connection
                pgsql.connect:[generic|postgres]
-                  mysql.execute:create database magic
+                  pgsql.execute:create database magic
 
                // Executing create database SQL script.
                pgsql.connect:[generic|magic]
-                  mysql.execute:x:@io.file.load
+                  pgsql.execute:x:@io.file.load
 
             // Special case for PG SQL to create database in a different connection.
             case:mysql
