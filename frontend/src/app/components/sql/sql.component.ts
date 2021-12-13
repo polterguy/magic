@@ -17,7 +17,6 @@ import { FeedbackService } from '../../services/feedback.service';
 import { SqlService } from 'src/app/components/sql/services/sql.service';
 import { Databases } from 'src/app/components/sql/models/databases.model';
 import { Model } from '../codemirror/codemirror-sql/codemirror-sql.component';
-import { ConfigService } from 'src/app/components/config/services/config.service';
 import { DefaultDatabaseType } from '../config/models/default-database-type.model';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
 import { CacheService } from '../diagnostics/diagnostics-cache/services/cache.service';
@@ -271,7 +270,17 @@ export class SqlComponent implements OnInit {
           default:
             return '';
         }
-    }
+        case 'pgsql':
+          switch (db) {
+            case 'postgres':
+            case 'template0':
+            case 'template1':
+            case 'template_postgis':
+              return 'sys-database';
+            default:
+              return '';
+          }
+      }
   }
 
   /**
