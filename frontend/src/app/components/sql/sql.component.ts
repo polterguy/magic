@@ -270,16 +270,16 @@ export class SqlComponent implements OnInit {
           default:
             return '';
         }
-        case 'pgsql':
-          switch (db) {
-            case 'postgres':
-            case 'template0':
-            case 'template1':
-            case 'template_postgis':
-              return 'sys-database';
-            default:
-              return '';
-          }
+      case 'pgsql':
+        switch (db) {
+          case 'postgres':
+          case 'template0':
+          case 'template1':
+          case 'template_postgis':
+            return 'sys-database';
+          default:
+            return '';
+        }
       }
   }
 

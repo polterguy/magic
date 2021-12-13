@@ -26,7 +26,7 @@ export class ArgType {
 export class Crudify {
 
   /**
-   * Database type, e.g. 'mysql' or 'mssql'.
+   * Database type, e.g. 'mysql', 'psql' or 'mssql'.
    */
   databaseType: string;
 

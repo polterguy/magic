@@ -43,7 +43,7 @@ export class CrudifyDatabaseComponent implements OnInit {
   };
 
   /**
-   * Database type we're using, e.g. 'mysql' or 'mssql'.
+   * Database type we're using, e.g. 'mysql', 'pgsql' or 'mssql'.
    */
   public databaseType: string = null;
 
