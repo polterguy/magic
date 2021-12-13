@@ -25,7 +25,7 @@ insert into magic_version(db_version) values ('010.000.001');
 create table "users" (
   "username" varchar(256) not null,
   "password" varchar(256) not null,
-  "locked" boolean not null default true,
+  "locked" boolean not null default false,
   "created" date not null default current_timestamp,
   primary key ("username")
 );
