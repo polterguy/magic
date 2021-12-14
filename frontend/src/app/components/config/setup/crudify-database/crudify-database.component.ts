@@ -12,17 +12,19 @@ import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from 'src/app/components/log/services/log.service';
+import { SqlService } from 'src/app/components/sql/services/sql.service';
 import { Crudify } from 'src/app/components/crudifier/models/crudify.model';
+import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { DefaultDatabaseType } from '../../models/default-database-type.model';
 import { LocResult } from 'src/app/components/crudifier/models/loc-result.model';
 import { CrudifyService } from 'src/app/components/crudifier/services/crudify.service';
+import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
 
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'
 
 // Default configuration for crudifying database.
 import data from './data/data.json';
-import { SqlService } from 'src/app/components/sql/services/sql.service';
 
 /**
  * Component that helps you crudify your magic database
@@ -56,7 +58,10 @@ export class CrudifyDatabaseComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param sqlgService Needed to retrieve default database type
+   * @param logService Needed to log LOC to backend
+   * @param sqlService Needed to retrieve default database type
+   * @param authService Needed to re-retrieve endpoints after crudification of Magic database
+   * @param cacheService Needed to clear endpoints cache after crudifying Magic database
    * @param crudifyService Needed to crudify Magic database.
    * @param feedbackService Needed to display feedback to user
    * @param messageService Message service used to publish messages informing parent component about change of state
@@ -64,6 +69,8 @@ export class CrudifyDatabaseComponent implements OnInit {
   public constructor(
     private logService: LogService,
     private sqlService: SqlService,
+    private authService: AuthService,
+    private cacheService: CacheService,
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService,
     protected messageService: MessageService) {
@@ -81,7 +88,7 @@ export class CrudifyDatabaseComponent implements OnInit {
       this.databaseType = res.default;
 
       // Parsing data JSON file to display in CodeMirror editor, and figuring out how many endpoints we'll need to crudify.
-    this.crudifyContent = JSON.stringify(data, null, 2);
+      this.crudifyContent = JSON.stringify(data, null, 2);
 
     }, (error: any) => this.feedbackService.showError(error));
   }
@@ -108,7 +115,19 @@ export class CrudifyDatabaseComponent implements OnInit {
       this.logService.createLocItem(loc, 'backend', 'setup').subscribe(() => {
 
         // Success.
-        console.log('LOC logged to backend');
+        this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
+
+          // Providing feedback over the console.
+          console.log('Server side cache cleared');
+
+          this.authService.getEndpoints().subscribe(() => {
+
+            // Providing feedback to the console.
+            console.log('Endpoints fetched again from backend');
+          });
+
+        }, (error: any) => this.feedbackService.showError(error));
+    
 
       }, (error: any) => this.feedbackService.showError(error));
 
