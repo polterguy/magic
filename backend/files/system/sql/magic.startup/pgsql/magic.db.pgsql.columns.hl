@@ -51,17 +51,13 @@ slots.create:magic.db.pgsql.columns
       join information_schema.table_constraints tc on tc.constraint_name = kcu.constraint_name 
       where 
         tc.constraint_type = 'PRIMARY KEY' and
-        kcu.table_name = '"
-         get-value:x:@.arguments/*/table
-         .:@"' and 
-        c.column_default is not null and
+        kcu.table_name = @table and 
         c.column_name = kcu.column_name and c.table_name = kcu.table_name
   ) as is_pk
   from information_schema.columns c
-  where c.table_name = '"
-         get-value:x:@.arguments/*/table
-         .:@"'"
+  where c.table_name = @table"
       pgsql.select:x:@strings.concat
+         @table:x:@.arguments/*/table
 
       /*
        * Creating our return value, by projecting it into
