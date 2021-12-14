@@ -1,5 +1,5 @@
 {
-  "name": "[[name]]",
+  "name": "pagila",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -54,13 +54,13 @@
     "codelyzer": "^6.0.1",
     "htmlhint": "^0.14.2",
     "https-proxy-agent": "^5.0.0",
-    "jasmine-core": "~3.6.0",
+    "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~6.0.0",
     "karma": "~5.1.1",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.3",
     "karma-jasmine": "~4.0.1",
-    "karma-jasmine-html-reporter": "^1.5.4",
+    "karma-jasmine-html-reporter": "^1.7.0",
     "karma-junit-reporter": "^2.0.1",
     "prettier": "^2.2.1",
     "tslint-config-prettier": "^1.18.0",
