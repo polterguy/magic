@@ -9,6 +9,9 @@
  */
 slots.create:magic.db.pgsql.tables
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+
    // Opens up our connection
    .connection:[postgres]
    if
@@ -29,6 +32,12 @@ slots.create:magic.db.pgsql.tables
                .:|
                get-value:x:@.arguments/*/database
                .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
    pgsql.connect:x:@.connection
 
       // Runs our query

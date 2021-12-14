@@ -9,6 +9,9 @@
  */
 slots.create:magic.db.mssql.tables
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+
    // Opens up our connection
    .connection:[master]
    if
@@ -29,6 +32,12 @@ slots.create:magic.db.mssql.tables
                .:|
                get-value:x:@.arguments/*/database
                .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
    mssql.connect:x:@.connection
 
       // Runs our query

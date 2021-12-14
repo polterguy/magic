@@ -10,6 +10,10 @@
  */
 slots.create:magic.db.mysql.columns
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
    // Opens up our connection
    .connection:[information_schema]
    if
@@ -30,6 +34,12 @@ slots.create:magic.db.mysql.columns
                .:|
                get-value:x:@.arguments/*/database
                .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
    mysql.connect:x:@.connection
 
       // Making sure we support table names with special characters.
