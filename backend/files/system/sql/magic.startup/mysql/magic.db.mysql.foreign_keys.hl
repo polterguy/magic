@@ -10,6 +10,10 @@
  */
 slots.create:magic.db.mysql.foreign_keys
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
    // Opens up our connection
    .connection:[information_schema]
    if
@@ -30,6 +34,12 @@ slots.create:magic.db.mysql.foreign_keys
                .:|
                get-value:x:@.arguments/*/database
                .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
    mysql.connect:x:@.connection
 
       // Dynamically creating our SQL.
