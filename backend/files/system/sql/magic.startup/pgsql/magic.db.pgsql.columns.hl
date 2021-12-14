@@ -60,7 +60,7 @@ slots.create:magic.db.pgsql.columns
   from information_schema.columns c
   where c.table_name = '"
          get-value:x:@.arguments/*/table
-         .:@"' and c.data_type != 'tsvector'"
+         .:@"'"
       pgsql.select:x:@strings.concat
 
       /*
