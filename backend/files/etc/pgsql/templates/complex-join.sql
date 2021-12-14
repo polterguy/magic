@@ -1,3 +1,7 @@
+
+-- Notice!
+-- To have this script return anything, you'll need to create the 'pagila' database first
+
 select
   c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
     select *
