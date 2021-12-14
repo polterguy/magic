@@ -10,6 +10,10 @@
  */
 slots.create:magic.db.pgsql.foreign_keys
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
    // Opens up our connection
    .connection:[postgres]
    if
@@ -30,6 +34,12 @@ slots.create:magic.db.pgsql.foreign_keys
                .:|
                get-value:x:@.arguments/*/database
                .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
    pgsql.connect:x:@.connection
 
       // Dynamically creating our SQL.
@@ -52,9 +62,7 @@ join information_schema.key_column_usage rel_kcu
 where tco.constraint_type = 'FOREIGN KEY' and
     kcu.table_name = @table and
     kcu.table_catalog = @database
-order by kcu.table_schema,
-         kcu.table_name,
-         kcu.ordinal_position"
+order by kcu.column_name"
          @table:x:@.arguments/*/table
          @database:x:@.arguments/*/database
 
