@@ -10,6 +10,10 @@
  */
 slots.create:magic.db.pgsql.columns
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/database
+   validators.mandatory:x:@.arguments/*/table
+
    // Opens up our connection
    .connection:[postgres]
    if
@@ -30,6 +34,12 @@ slots.create:magic.db.pgsql.columns
                .:|
                get-value:x:@.arguments/*/database
                .:]
+   else
+      set-value:x:@.connection
+         strings.concat
+            .:[generic|
+            get-value:x:@.arguments/*/database
+            .:]
    pgsql.connect:x:@.connection
 
       // Making sure we support table names with special characters.
