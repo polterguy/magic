@@ -155,7 +155,7 @@
 
             <button
               mat-button
-              [disabled]="!authService.access.files.rename || file.folder.startsWith('/modules/')"
+              [disabled]="!authService.access.files.rename || file.path.startsWith('/system/')"
               class="rename-file-btn"
               matTooltip="Rename file ALT+R"
               (click)="renameFile(file)">
@@ -165,7 +165,7 @@
             <button
               mat-button
               class="delete-file-btn"
-              [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/modules/')"
+              [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/')"
               matTooltip="Delete file ALT+D"
               (click)="deleteFile(file)">
               Delete

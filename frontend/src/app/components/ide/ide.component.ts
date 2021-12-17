@@ -378,8 +378,8 @@ export class IdeComponent implements OnInit, OnDestroy {
           const fileNode: FileNode = {
             name: result.name,
             path: path,
-            folder: path.substr(0, path.lastIndexOf('/') + 1),
-            options: this.getCodeMirrorOptions(result.name),
+            folder: path.substring(0, path.lastIndexOf('/') + 1),
+            options: this.getCodeMirrorOptions(result.path),
             content: result.template || '// File content here ...'
           };
           this.openFiles.push(fileNode);
@@ -959,17 +959,41 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /*
+   * Helper method to clone any object.
+   */
+  private clone(obj: any) {
+    var cloneObj: any = {};
+    for (var attribut in obj) {
+        if (typeof obj[attribut] === "object") {
+            cloneObj[attribut] = this.clone(obj[attribut]);
+        } else {
+            cloneObj[attribut] = obj[attribut];
+        }
+    }
+    return cloneObj;
+  }
+
+  /*
    * Returns options for CodeMirror editor.
    */
   private getCodeMirrorOptions(path: string) {
 
     // We're supposed to create a file. Notice, we don't actually create the file, only open it in edit mode.
-    const extension = path.substr(path.lastIndexOf('.') + 1).toLowerCase();
+    const extension = path.substring(path.lastIndexOf('.') + 1).toLowerCase();
     let options = this.extensions.filter(x => x.extensions.indexOf(extension) !== -1);
     if (options.length === 0) {
 
       // Oops, no editor for file type, defaulting to Markdown bugger.
       options = this.extensions.filter(x => x.options.mode === 'markdown');
+    }
+
+    // Cloning options object.
+    options[0] = this.clone(options[0]);
+    
+
+    // Checking if file should be opened in read-only mode.
+    if (path.startsWith('/system/')) {
+      options[0].options.readOnly = true;
     }
 
     // Turning on keyboard shortcuts.
