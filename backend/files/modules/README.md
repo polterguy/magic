@@ -10,3 +10,6 @@ your own server. However, please be careful as you do this, and make sure you ne
 not originating from a trusted source, since this might result in your server being infected by
 malware. The _"Bazar"_ menu item will also unzip your dynamically instaleld Bazar apps into this
 folder.
+
+The default docker-compose.yml file mounts this folder as a volume, implying changes to this folder
+will be persisted even if you update your Docker magic-backend image.

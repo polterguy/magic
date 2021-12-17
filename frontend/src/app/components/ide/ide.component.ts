@@ -992,7 +992,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     
 
     // Checking if file should be opened in read-only mode.
-    if (path.startsWith('/system/')) {
+    if (path.startsWith('/system/') || path.startsWith('/misc/')) {
       options[0].options.readOnly = true;
     }
 

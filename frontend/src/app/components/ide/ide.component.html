@@ -71,7 +71,7 @@
       </mat-form-field>
 
       <button
-        [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/')"
+        [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
         mat-raised-button
         class="toolbar-button delete-folder-btn"
         [matTooltip]="'Delete folder \'' + activeFolder + '\' ALT+X'"
@@ -131,7 +131,7 @@
             <button
               mat-button
               class="save-file-btn"
-              [disabled]="activeFileIsClean() || file.folder.startsWith('/modules/')"
+              [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
               matTooltip="Save file ALT+S"
               (click)="saveFile(file)">
               Save
@@ -155,7 +155,7 @@
 
             <button
               mat-button
-              [disabled]="!authService.access.files.rename || file.path.startsWith('/system/')"
+              [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
               class="rename-file-btn"
               matTooltip="Rename file ALT+R"
               (click)="renameFile(file)">
@@ -165,7 +165,7 @@
             <button
               mat-button
               class="delete-file-btn"
-              [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/')"
+              [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
               matTooltip="Delete file ALT+D"
               (click)="deleteFile(file)">
               Delete
