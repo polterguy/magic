@@ -10,12 +10,13 @@ auth.ticket.verify:root
 
 // Listing all files in assumption test folder.
 io.file.list:/misc/tests/
+io.file.list:/etc/tests/
 
 /*
  * Iterates through result from above invocation and returns only resulting files
  * that are for specified endpoint.
  */
-for-each:x:@io.file.list/*
+for-each:x:../*/io.file.list/*
 
    // Verifying currently iterated file is a Hyperlambda file.
    if
