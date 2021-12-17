@@ -1,0 +1,18 @@
+
+// Returns the youngest log item to caller.
+.arguments
+.description:Returns the oldest log item
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Retrieving items from database.
+data.connect:magic
+   data.read
+      table:log_entries
+      limit:1
+      order:id
+      direction:asc
+
+   // Returning items to caller.
+   return-nodes:x:-/*/*
