@@ -23,7 +23,7 @@ namespace magic.backend.slots
         {
             input.Value = File.ReadAllText(
                 Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
-                "/appsettings.json");
+                "/config/appsettings.json");
         }
     }
 }
