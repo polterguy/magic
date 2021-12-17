@@ -20,6 +20,9 @@ services:
     restart: always
     ports:
       - "4444:4444"
+    volumes:
+      - modules_folder:/magic/files/modules
+      - config_folder:/magic/config
 
   frontend:
     image: servergardens/magic-frontend:latest
@@ -31,3 +34,5 @@ services:
 
 volumes:
   database:
+  modules_folder:
+  config_folder:
