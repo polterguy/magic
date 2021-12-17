@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { formatNumber } from '@angular/common';
 
@@ -147,7 +147,27 @@ export class EndpointService {
     } else {
 
       // Simple version, retrieving all files in assumption test folder.
-      return this.fileService.listFiles('/misc/tests/');
+      return new Observable<string[]>(observer => {
+
+        // Getting statically declared system tests.
+        return this.fileService.listFiles('/misc/tests/').subscribe(res1 => {
+
+          // Getting dynamically declared tests
+          return this.fileService.listFiles('/etc/tests/').subscribe(res2 => {
+
+            // Invoking next amongst observables
+            observer.next(res1.concat(res2));
+            observer.complete();
+
+          }, error => {
+            observer.error(error);
+            observer.complete();
+          });
+        }, error => {
+          observer.error(error);
+          observer.complete();
+        });
+      });
     }
   }
 
@@ -247,7 +267,7 @@ export class EndpointService {
     }
 
     // Making sure we put our file into the correct folder.
-    filename = '/misc/tests/' + filename;
+    filename = '/etc/tests/' + filename;
     if (!filename.endsWith('.hl')) {
       filename += '.hl';
     }
