@@ -178,7 +178,7 @@ export class DiagnosticsOverviewComponent implements OnInit {
     }, (error: any) => this.feedbackService.showError(error));
 
     // Retrieving oldest log item in installation.
-    this.logService.get(1).subscribe((logItem: LogItem) => {
+    this.logService.getOldest().subscribe((logItem: LogItem) => {
       this.age = new Date(logItem.created);
     }, (error: any) => this.feedbackService.showError(error));
 
