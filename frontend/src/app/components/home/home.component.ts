@@ -230,7 +230,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         }, (error: any) => this.feedbackService.showError(error));
 
-      }, (error: any) => this.feedbackService.showError(error));
+      }, (error: any) => {
+        this.authService.logout(false, false);
+      });
 
     } else {
 
