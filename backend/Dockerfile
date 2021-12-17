@@ -20,6 +20,13 @@ EXPOSE 4444
 ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
 
+# Create magic user to make sure application doesn't run in root context, and set ownership to magic user,
+# for then to switch to magic user
+RUN groupadd -r magic && useradd -g magic magic
+RUN chown -R magic:magic /magic/files
+RUN chown -R magic:magic /magic/config
+USER magic
+
 # To be able to start other docker containers we will need to install Docker in container itself.
 # RUN apt-get update
 # RUN apt-get -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
