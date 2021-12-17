@@ -1,5 +1,5 @@
 
-// Returns the specified log item tpo caller.
+// Returns the specified log item to caller.
 .arguments
    id:long
 .description:Returns the specified log item
