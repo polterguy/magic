@@ -4,6 +4,7 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @import '~codemirror/theme/mbo';
+@import '~codemirror/theme/zenburn';
 @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
 
