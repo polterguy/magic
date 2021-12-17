@@ -21,7 +21,10 @@ services:
     ports:
       - "4444:4444"
     volumes:
+      - etc_folder:/magic/files/etc
+      - misc_folder:/magic/files/misc
       - modules_folder:/magic/files/modules
+      - temp_folder:/magic/files/temp
       - config_folder:/magic/config
 
   frontend:
@@ -34,5 +37,8 @@ services:
 
 volumes:
   database:
+  etc_folder:
+  misc_folder:
   modules_folder:
+  temp_folder:
   config_folder:
