@@ -14,9 +14,11 @@ namespace magic.backend
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup()
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder()
+                .AddJsonFile("config/appsettings.json", false, true)
+                .Build();
         }
 
         IConfiguration Configuration { get; }
