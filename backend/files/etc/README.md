@@ -7,3 +7,6 @@ update your Magic installation if you do.
 
 This folder _should stay the same_ even if you update Magic, since it contains configuration
 specific data, and dynamic files and folders specific to your modules.
+
+The default docker-compose.yml file mounts this folder as a volume, implying changes to this folder
+will be persisted even if you update your Docker magic-backend image.
