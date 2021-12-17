@@ -67,6 +67,16 @@ export class LogService {
   }
 
   /**
+   * Retrieves the youngest log item that exists in the backend.
+   */
+   public getOldest() {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<LogItem>(
+      '/magic/system/log/log-item-oldest');
+  }
+
+  /**
    * Counts the number of log items in your backend.
    * 
    * @param filter Query filter for items to include in count
