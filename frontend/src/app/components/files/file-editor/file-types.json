@@ -4,6 +4,7 @@
     "options": {
       "mode": "text/x-mysql",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -15,6 +16,7 @@
     "options": {
       "mode": "markdown",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -26,6 +28,7 @@
     "options": {
       "mode": "text/x-yaml",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -37,6 +40,7 @@
     "options": {
       "mode": "application/xml",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -48,6 +52,7 @@
     "options": {
       "mode": "text/css",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -59,6 +64,7 @@
     "options": {
       "mode": "text/x-scss",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -70,6 +76,7 @@
     "options": {
       "mode": "text/x-less",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -81,6 +88,7 @@
     "options": {
       "mode": "text/x-sass",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -92,6 +100,7 @@
     "options": {
       "mode": "text/javascript",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -103,6 +112,7 @@
     "options": {
       "mode": "application/ld+json",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -114,6 +124,7 @@
     "options": {
       "mode": "text/x-python",
       "lineNumbers": true,
+      "readOnly": false,
       "tabSize": 4,
       "indentUnit": 4,
       "indentAuto": true,
@@ -132,6 +143,7 @@
     "options": {
       "mode": "text/x-ruby",
       "lineNumbers": true,
+      "readOnly": false,
       "tabSize": 4,
       "indentUnit": 4,
       "indentAuto": true,
@@ -150,6 +162,7 @@
     "options": {
       "mode": "application/x-sh",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
@@ -161,6 +174,7 @@
     "options": {
       "mode": "hyperlambda",
       "lineNumbers": true,
+      "readOnly": false,
       "theme": "mbo",
       "autofocus": true,
       "styleActiveLine": true,
