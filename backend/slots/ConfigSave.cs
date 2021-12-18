@@ -46,8 +46,10 @@ namespace magic.backend.slots
 
             // Saving JSON as text to "appsettings.json" file.
             File.WriteAllText(
-                Directory.GetCurrentDirectory().Replace("\\", "/").TrimEnd('/') +
-                "/config/appsettings.json",
+                Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "config",
+                    "appsettings.json"),
                 json);
         }
     }
