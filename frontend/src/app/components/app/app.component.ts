@@ -82,6 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
           if (this.router.url !== '/') {
             this.router.navigate(['/']);
           }
+          this.authService.createAccessRights();
           break;
 
         // User was logged in.
