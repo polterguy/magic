@@ -30,7 +30,6 @@ import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macr
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
-import { ExecuteTerminalCommandComponent } from './execute-terminal-command/execute-terminal-command.component';
 import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
@@ -491,6 +490,9 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
    public selectFolder(folder: any) {
      this.activeFolder = folder.node.path;
+     if (!this.treeControl.isExpanded(folder)) {
+      this.treeControl.expand(folder);
+     }
    }
 
    /**
