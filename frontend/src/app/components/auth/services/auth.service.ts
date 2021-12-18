@@ -543,14 +543,10 @@ export class AuthService {
     });
   }
 
-  /*
-   * Private helper methods.
-   */
-
-  /*
+  /**
    * Creates access right object used to determine if user has access to specific parts of the app or not.
    */
-  private createAccessRights() {
+  public createAccessRights() {
     this._access = {
       sql: {
         execute_access:
