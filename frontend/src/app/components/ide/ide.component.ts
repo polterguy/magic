@@ -339,7 +339,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           });
         };
 
-        // Invoking backend to rename file or folder.
+        // Firguing out path of file or folder.
         let path = result.path + result.name;
 
         // Checking if we're creating a folder or a file.
@@ -378,10 +378,11 @@ export class IdeComponent implements OnInit, OnDestroy {
             name: result.name,
             path: path,
             folder: path.substring(0, path.lastIndexOf('/') + 1),
-            options: this.getCodeMirrorOptions(result.path),
+            options: this.getCodeMirrorOptions(result.name),
             content: result.template || '// File content here ...'
           };
           this.openFiles.push(fileNode);
+          console.log(fileNode);
 
           // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
           node.children.push({
@@ -464,7 +465,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           path: file.path,
           folder: file.path.substr(0, file.path.lastIndexOf('/') + 1),
           content: content,
-          options: this.getCodeMirrorOptions(file.path),
+          options: this.getCodeMirrorOptions(file.name),
         });
         this.activeFile = file.path;
         setTimeout(() => {
@@ -1189,9 +1190,9 @@ export class IdeComponent implements OnInit, OnDestroy {
 
         // Pushing specified file into files currently being edited object.
         this.openFiles.push({
-          name: fileObject.substr(fileObject.lastIndexOf('/') + 1),
+          name: fileObject.substring(fileObject.lastIndexOf('/') + 1),
           path: fileObject,
-          folder: fileObject.substr(0, fileObject.lastIndexOf('/') + 1),
+          folder: fileObject.substring(0, fileObject.lastIndexOf('/') + 1),
           content: content,
           options: this.getCodeMirrorOptions(fileObject),
         });
