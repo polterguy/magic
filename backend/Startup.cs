@@ -40,13 +40,6 @@ namespace magic.backend
              * Notice, must be done AFTER you invoke "AddControllers".
              */
             services.AddMagic(Configuration);
-
-            /*
-             * Checking if SignalR is enabled, and if so, making sure we
-             * add support for it.
-             */
-            if (Configuration["magic:sockets:url"] != null)
-                services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app)
