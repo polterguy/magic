@@ -628,12 +628,12 @@ export class EndpointDetailsComponent implements OnInit {
     if (invocation) {
 
       // Invoking backend now that we've got our observable.
-      let startTime = new Date();
+      const startTime = new Date();
       invocation.subscribe((res: any) => {
 
         // Binding result model to result of invocation.
-        let endTime = new Date();
-        let timeDiff = endTime.getTime() - startTime.getTime();
+        const endTime = new Date();
+        const timeDiff = endTime.getTime() - startTime.getTime();
         const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
         this.result = {
           status: res.status,
