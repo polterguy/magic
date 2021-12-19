@@ -264,7 +264,11 @@ export class DiagnosticsTestsComponent implements OnInit {
     const parallellNo = 2;
     let idxNo = 0;
 
-    // Avoid filckering in Ajax wait gif bugger.
+    // Used to measure how much time we need to execute currently filtered tests.
+    const startTime = new Date();
+    let timeDiff: number = null;
+
+    // Avoid flickering in Ajax wait gif bugger.
     this.loaderInterceptor.increment();
 
     // Invoking backend once for every test in suite.
@@ -272,6 +276,10 @@ export class DiagnosticsTestsComponent implements OnInit {
       .pipe(
         bufferCount(parallellNo),
         concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
+
+          // Figuring out how many milliseconds tests required to execute.
+          const endTime = new Date();
+          timeDiff = endTime.getTime() - startTime.getTime();
 
           /*
            * Marking test as either failure or success,
@@ -301,7 +309,7 @@ export class DiagnosticsTestsComponent implements OnInit {
 
           // Filtering out tests according to result, and making sure Ajax loader is hidden again.
           this.loaderInterceptor.decrement();
-          this.filterTests();
+          this.filterTests(timeDiff);
         });
   }
 
@@ -312,13 +320,13 @@ export class DiagnosticsTestsComponent implements OnInit {
    /*
     * Filters tests according to result.
     */
-   private filterTests() {
+   private filterTests(timeDiff: number = null) {
 
     // Checking if all tests succeeded, and if so, avoid filtering.
     if (this.getFilteredTests().filter(x => x.success !== true).length === 0) {
 
       // Perfect health! Publishing succeeded message and showing user some feedback.
-      this.feedbackService.showInfo('All tests succeeded');
+      this.feedbackService.showInfo('All tests succeeded' + (timeDiff !== null ? ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds' : ''));
       this.messageService.sendMessage({
         name: 'app.assumptions.succeeded',
       });
