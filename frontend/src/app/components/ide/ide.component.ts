@@ -382,7 +382,6 @@ export class IdeComponent implements OnInit, OnDestroy {
             content: result.template || '// File content here ...'
           };
           this.openFiles.push(fileNode);
-          console.log(fileNode);
 
           // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
           node.children.push({
