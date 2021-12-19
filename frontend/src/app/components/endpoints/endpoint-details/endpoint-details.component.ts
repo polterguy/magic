@@ -607,7 +607,7 @@ export class EndpointDetailsComponent implements OnInit {
 
           // When having connected we invoke the 'execute' method, passing in URL and arguments.
           let success = true;
-          const url = this.url.substr(14);
+          const url = this.url.substring(14);
           hubConnection
             .invoke('execute', url, this.payload)
             .catch(() => {
@@ -628,13 +628,16 @@ export class EndpointDetailsComponent implements OnInit {
     if (invocation) {
 
       // Invoking backend now that we've got our observable.
+      let startTime = new Date();
       invocation.subscribe((res: any) => {
 
         // Binding result model to result of invocation.
+        let endTime = new Date();
+        let timeDiff = endTime.getTime() - startTime.getTime();
         const response = responseType === 'json' ? JSON.stringify(res.body || '{}', null, 2) : res.body;
         this.result = {
           status: res.status,
-          statusText: res.statusText,
+          statusText: res.statusText + ' in ' + new Intl.NumberFormat('en-us').format(timeDiff) + ' milliseconds',
           response: response,
           blob: null,
           responseType,
