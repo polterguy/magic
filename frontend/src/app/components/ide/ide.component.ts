@@ -378,7 +378,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             name: result.name,
             path: path,
             folder: path.substring(0, path.lastIndexOf('/') + 1),
-            options: this.getCodeMirrorOptions(result.name),
+            options: this.getCodeMirrorOptions(path),
             content: result.template || '// File content here ...'
           };
           this.openFiles.push(fileNode);
@@ -462,9 +462,9 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.openFiles.push({
           name: file.name,
           path: file.path,
-          folder: file.path.substr(0, file.path.lastIndexOf('/') + 1),
+          folder: file.path.substring(0, file.path.lastIndexOf('/') + 1),
           content: content,
-          options: this.getCodeMirrorOptions(file.name),
+          options: this.getCodeMirrorOptions(file.path),
         });
         this.activeFile = file.path;
         setTimeout(() => {
