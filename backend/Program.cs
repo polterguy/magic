@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace magic.backend
 {
@@ -12,6 +13,7 @@ namespace magic.backend
         public static void Main(string[] args)
         {
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) => config.AddJsonFile("config/appsettings.json", optional: false, reloadOnChange: true))
                 .UseStartup<Startup>()
                 .Build()
                 .Run();
