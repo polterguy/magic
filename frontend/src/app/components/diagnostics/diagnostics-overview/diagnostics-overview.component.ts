@@ -40,17 +40,17 @@ export class DiagnosticsOverviewComponent implements OnInit {
   /**
    * Number of users in installation.
    */
-  public userCount: number = null;
+  public userCount: number = -1;
 
   /**
    * Number of roles in installation.
    */
-  public roleCount: number = null;
+  public roleCount: number = -1;
 
   /**
    * Number of log items in installation.
    */
-  public logCount: number = null;
+  public logCount: number = -1;
 
   /**
    * Oldest log item in installation.
