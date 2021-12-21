@@ -5,7 +5,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Server.IISIntegration;
 using magic.library;
 
 namespace magic.backend
@@ -21,15 +20,13 @@ namespace magic.backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConfiguration>(p => Configuration);
-
             // Initializing Magic.
             services.AddMagic(Configuration);
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            //Initializing Magic.
+            // Initializing Magic.
             app.UseMagic(Configuration);
         }
     }
