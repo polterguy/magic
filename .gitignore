@@ -346,3 +346,5 @@ frontend/dist/**
 backend/files/misc/bazar/apps/*.zip
 backend/files/misc/bazar/published.hl
 backend/files/etc/frontends/**
+backend/files/etc/tests/*.*
+!backend/files/etc/tests/README.md
