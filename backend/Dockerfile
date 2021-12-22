@@ -20,9 +20,12 @@ EXPOSE 4444
 ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
 
-# Create magic user to make sure application doesn't run in root context, and set ownership to magic user,
-# for then to switch to magic user.
-# Notice, we do NOT allow magic user to have write access to "system" folder to avoid accidentally overwriting system components.
+
+
+# Notice, if you're super paranoid you can uncomment the lines below to make sure Magic runs in the context of
+# a magic user without any privileges at all on the underlaying operating system
+
+
 # RUN groupadd -r magic && useradd -g magic magic
 # RUN chown -R magic:magic /magic/files/etc
 # RUN chown -R magic:magic /magic/files/misc
