@@ -23,7 +23,9 @@ ENTRYPOINT ["dotnet", "backend.dll"]
 
 
 # Notice, if you're super paranoid you can uncomment the lines below to make sure Magic runs in the context of
-# a magic user without any privileges at all on the underlaying operating system
+# a magic user without any privileges at all on the underlaying operating system.
+# NOTICE, this CANNOT be done system wide due to the [system.xxx] slots in magic that might need additional
+# privileges to execute files in other folders.
 
 
 # RUN groupadd -r magic && useradd -g magic magic
