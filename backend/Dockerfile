@@ -23,10 +23,10 @@ ENTRYPOINT ["dotnet", "backend.dll"]
 # Create magic user to make sure application doesn't run in root context, and set ownership to magic user,
 # for then to switch to magic user.
 # Notice, we do NOT allow magic user to have write access to "system" folder to avoid accidentally overwriting system components.
-RUN groupadd -r magic && useradd -g magic magic
-RUN chown -R magic:magic /magic/files/etc
-RUN chown -R magic:magic /magic/files/misc
-RUN chown -R magic:magic /magic/files/modules
-RUN chown -R magic:magic /magic/files/temp
-RUN chown -R magic:magic /magic/config
-USER magic
+# RUN groupadd -r magic && useradd -g magic magic
+# RUN chown -R magic:magic /magic/files/etc
+# RUN chown -R magic:magic /magic/files/misc
+# RUN chown -R magic:magic /magic/files/modules
+# RUN chown -R magic:magic /magic/files/temp
+# RUN chown -R magic:magic /magic/config
+# USER magic
