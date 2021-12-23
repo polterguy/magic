@@ -7,12 +7,12 @@ switch:x:@.source
 
       // Lambda object to evaluate if expression's value equals 'foo'.
       set-value:x:@.result
-         .:foo
+         .:Is foo
    case:bar
 
       // Lambda object to evaluate if expression's value equals 'bar'.
       set-value:x:@.result
-         .:bar
+         .:Is bar
    default
 
       /*
