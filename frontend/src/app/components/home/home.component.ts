@@ -131,6 +131,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
             // Redirecting user to avoid displaying JWT token in plain sight.
             this.router.navigate(['/']);
+
+            // Making sure we refresh access rights.
+            this.authService.createAccessRights();
           }
 
         }, (error: any) => {
