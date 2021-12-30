@@ -215,9 +215,6 @@ try
    crypto.seed:x:-
    log.info:CSRNG successfully seeded with your auth secret
 
-   // Starting scheduler.
-   scheduler.start
-
    // Authenticating user and returning new JWT token to client.
    unwrap:x:+/*
    signal:magic.auth.authenticate
