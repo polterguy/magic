@@ -92,11 +92,11 @@
 
           </div>
 
-          <div *ngIf="el.task.schedule">
+          <div *ngIf="el.task.schedules">
 
             <mat-chip-list>
               <mat-chip
-                *ngFor="let idxSchedule of el.task.schedule"
+                *ngFor="let idxSchedule of el.task.schedules"
                 selectable="false"
                 [disabled]="!authService.access.tasks.deleteDue"
                 [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
