@@ -180,8 +180,8 @@ export class TasksComponent implements OnInit {
 
         // Making sure we add additional fields returned from server for completeness sake.
         el.task.hyperlambda = task.hyperlambda;
-        if (task.schedule) {
-          el.task.schedule = task.schedule.map(x => {
+        if (task.schedules) {
+          el.task.schedules = task.schedules.map(x => {
             return {
               id: x.id,
               due: new Date(x.due),
@@ -299,7 +299,7 @@ export class TasksComponent implements OnInit {
 
         // Invoking backend to retrieve all schedules, now that they're changed.
         this.taskService.get(task.id).subscribe((nTask: Task) => {
-          task.schedule = nTask.schedule;
+          task.schedules = nTask.schedules;
         });
       }
     });
@@ -323,7 +323,7 @@ export class TasksComponent implements OnInit {
         this.taskService.deleteSchedule(schedule.id).subscribe(() => {
 
           // No reasons to invoke backend to retrieve items again.
-          task.schedule.splice(task.schedule.indexOf(schedule), 1);
+          task.schedules.splice(task.schedules.indexOf(schedule), 1);
 
           // Giving user some feedback.
           this.feedbackService.showInfoShort('Schedule deleted');

@@ -33,7 +33,7 @@ export class Task {
   /**
    * List of schedules for task.
    */
-  schedule?: Schedule[];
+  schedules?: Schedule[];
 }
 
 /**
