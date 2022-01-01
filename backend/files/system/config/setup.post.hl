@@ -207,9 +207,23 @@ try
    // Logging the fact that system was setup.
    log.info:System was successfully setup
 
-   // Starting task scheduler.
-   log.info:Starting task scheduler
-   tasks.scheduler.start
+   // Starting task scheduler, making sure we apply maximum number of concurrent threads from config.
+   .max:int:8
+   config.get:"magic:scheduler:max-threads"
+   if
+      not
+         eq
+            get-value:x:@config.get
+            .
+      .lambda
+         set-value:x:@.max
+            convert:x:@config.get
+               type:int
+   log.info
+      .:"Starting task scheduler with "
+      get-value:x:@.max
+      .:" as maximum concurrent threads allowed to execute simultaneously for scheduled tasks"
+   tasks.scheduler.start:x:@.max
 
    /*
     * Explicitly seeding CSRNG with auth secret, which might have been manually applied
