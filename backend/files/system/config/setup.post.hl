@@ -208,7 +208,7 @@ try
    log.info:System was successfully setup
 
    // Starting task scheduler.
-   log.info:"Starting task scheduler"
+   log.info:Starting task scheduler
    tasks.scheduler.start
 
    /*
