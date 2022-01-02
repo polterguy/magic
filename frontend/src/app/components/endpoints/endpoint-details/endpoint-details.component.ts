@@ -220,6 +220,12 @@ export class EndpointDetailsComponent implements OnInit {
             case "string":
               type = "foo";
               break;
+
+            case "decimal":
+            case "float":
+            case "double":
+              type = 5.5;
+              break;
           }
           payload[idx.name] = type;
         }
