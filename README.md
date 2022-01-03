@@ -1,5 +1,5 @@
 
-# Magic; THE Open Source No-Code/Low-Code platform
+# Magic; THE Open Source Low-Code platform
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
@@ -32,20 +32,10 @@ super scalable, and 100% perfectly secure.
 14. Health component to see diagnostics about your systems, such as failed login attempt, other security issues, breaking down bugs and errors occurring in the system.
 15. ++++
 
-## Video introduction to Magic
-
-You can get a rapid introduction to the system by watching the [following video](https://www.youtube.com/watch?v=1Wmp5QJCnmM).
-
 ## Documentation
 
-* [Getting started](https://servergardens.com/get-started/)
+* [Getting started](https://polterguy.github.io/tutorials/getting-started/)
 * [Full documentation for the system](https://polterguy.github.io/documentation/)
-
-## Services
-
-[ServerGardens.Com](https://servergardens.com/) provides a whole range of services around Magic,
-including custom development, hosting, setup, etc. Visit [our website](https://servergardens.com/)
-for more information.
 
 ## License
 
@@ -64,6 +54,4 @@ To sum up each license.
 
 See the enclosed LICENSE files within each folder, and/or plugin if in doubt.
 
-Copyright(c) Thomas Hansen 2019 - 2021, Thomas Hansen - thomas@servergardens.com
-
-* [Magic Documentation](https://polterguy.github.io/)
+Copyright(c) Aista, Ltd 2019 - 2022, th@aista.com
