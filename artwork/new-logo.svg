@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   sodipodi:docname="new-logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showguides="false"
+     inkscape:snap-page="false"
+     inkscape:zoom="1.4813677"
+     inkscape:cx="158.97471"
+     inkscape:cy="195.42751"
+     inkscape:window-width="1312"
+     inkscape:window-height="847"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient4111"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#8ea600;stop-opacity:1;"
+         offset="0"
+         id="stop4109" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="100.92595"
+       y="14.884029"
+       id="text12755"><tspan
+         sodipodi:role="line"
+         id="tspan12753"
+         style="stroke-width:0.264583"></tspan></text>
+    <g
+       id="g17122"
+       transform="matrix(1,0,0,0.98888402,0,0.96610172)">
+      <g
+         id="g16441"
+         transform="matrix(0.38631485,-1.229387,1.4720753,0.53336578,-186.0071,14.935279)"
+         style="fill:#800000;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
+        <path
+           style="fill:#800000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 3.793292,136.17919 52.157766,0.37933 c 0,0 13.978181,0.0814 12.3282,7.44148"
+           id="path15774"
+           sodipodi:nodetypes="ccc" />
+        <path
+           style="fill:#800000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 4,136.179 V 144 h 64.279258 v 0 0"
+           id="path16125"
+           sodipodi:nodetypes="ccccc" />
+      </g>
+      <g
+         id="g16441-4"
+         transform="matrix(-0.38631485,-1.229387,-1.4720753,0.53336578,286.12565,15.024012)"
+         style="fill:#800000;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
+        <path
+           style="fill:#800000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 3.793292,136.17919 52.157766,0.37933 c 0,0 13.978181,0.0814 12.3282,7.44148"
+           id="path15774-8"
+           sodipodi:nodetypes="ccc" />
+        <path
+           style="fill:#800000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 4,136.179 V 144 h 64.279258 v 0 0"
+           id="path16125-0"
+           sodipodi:nodetypes="ccccc" />
+      </g>
+    </g>
+    <ellipse
+       style="fill:none;fill-opacity:1;stroke:#a10000;stroke-width:7.75142;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path5276"
+       cx="50"
+       cy="50"
+       rx="46.12429"
+       ry="46.124294" />
+  </g>
+</svg>
