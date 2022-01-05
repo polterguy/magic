@@ -64,14 +64,14 @@
       <g
          id="g16441"
          transform="matrix(0.38631485,-1.229387,1.4720753,0.53336578,-186.0071,14.935279)"
-         style="fill:#600000;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
+         style="fill:#850;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
         <path
-           style="fill:#600000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:#850;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="m 3.793292,136.17919 52.157766,0.37933 c 0,0 13.978181,0.0814 12.3282,7.44148"
            id="path15774"
            sodipodi:nodetypes="ccc" />
         <path
-           style="fill:#600000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:#850;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="M 4,136.179 V 144 h 64.279258 v 0 0"
            id="path16125"
            sodipodi:nodetypes="ccccc" />
@@ -79,21 +79,21 @@
       <g
          id="g16441-4"
          transform="matrix(-0.38631485,-1.229387,-1.4720753,0.53336578,286.12565,15.024012)"
-         style="fill:#600000;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
+         style="fill:#850;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
         <path
-           style="fill:#600000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:#850;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="m 3.793292,136.17919 52.157766,0.37933 c 0,0 13.978181,0.0814 12.3282,7.44148"
            id="path15774-8"
            sodipodi:nodetypes="ccc" />
         <path
-           style="fill:#600000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:#850;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="M 4,136.179 V 144 h 64.279258 v 0 0"
            id="path16125-0"
            sodipodi:nodetypes="ccccc" />
       </g>
     </g>
     <ellipse
-       style="fill:none;fill-opacity:1;stroke:#600000;stroke-width:7.75142;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#a70;stroke-width:7.75142;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path5276"
        cx="50"
        cy="50"
