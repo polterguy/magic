@@ -29,6 +29,7 @@ validators.enum:x:@.arguments/*/verb
    .:get
    .:put
    .:delete
+   .:patch
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

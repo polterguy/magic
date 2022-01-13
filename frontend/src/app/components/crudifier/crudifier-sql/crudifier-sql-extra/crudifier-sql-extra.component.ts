@@ -9,11 +9,11 @@ import { MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { CrudifyService } from '../../services/crudify.service';
+import { MessageService } from 'src/app/services/message.service';
 import { Argument } from '../../../endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
-import { MessageService } from 'src/app/services/message.service';
 
 /**
  * Component allowing user to generate an SQL based endpoint.
@@ -33,6 +33,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
     'get',
     'put',
     'delete',
+    'patch',
   ];
 
   /**
