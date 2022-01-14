@@ -15,7 +15,7 @@ payload:@"{
   ""overwrite"": true
 }"
 response:@"{
-  ""message"": ""'foo' is not a valid enum of ['post', 'get', 'put', 'delete'] for [verb]"",
+  ""message"": ""'foo' is not a valid enum of ['post', 'get', 'put', 'delete', 'patch'] for [verb]"",
   ""field"": ""verb""
 }"
 produces:application/json
