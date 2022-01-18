@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth.service';
 import { Response } from 'src/app/models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { FormBuilder, Validators } from '@angular/forms';
 
 /**
  * Register component allowing users to register in the system.
@@ -36,12 +37,12 @@ export class RegisterComponent implements OnInit {
   /**
    * Email address of user.
    */
-  public email: string;
+  // public email: string;
 
   /**
    * Password of user.
    */
-  public password: string;
+  // public password: string;
 
   /**
    * Password of user repeated.
@@ -58,7 +59,16 @@ export class RegisterComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private backendService: BackendService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private formBuilder: FormBuilder) { }
+
+  /**
+   * reactive form declaration
+   */
+   registrationForm = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
 
   /**
    * Implementation of OnInit.
@@ -79,13 +89,13 @@ export class RegisterComponent implements OnInit {
   public register() {
 
     // Verifying user correctly typed his password.
-    if (this.password === '') {
+    if (this.registrationForm.value.password === '') {
 
       // Providing user with some basic feedback.
       this.feedbackService.showError('Please supply a password');
       return;
 
-    } else if (this.password !== this.repeatPassword) {
+    } else if (this.registrationForm.value.password !== this.repeatPassword) {
 
       // Providing user with some basic feedback.
       this.feedbackService.showError('Passwords are not matching');
@@ -94,8 +104,8 @@ export class RegisterComponent implements OnInit {
 
     // Invoking backend to register user.
     this.authService.register(
-      this.email,
-      this.password,
+      this.registrationForm.value.email,
+      this.registrationForm.value.password,
       location.origin,
       this.backendService.current.url,
     ).subscribe((result: Response) => {

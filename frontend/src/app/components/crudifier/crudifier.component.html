@@ -1,7 +1,7 @@
 
 <mat-card>
 
-  <mat-tab-group (selectedTabChange)="selectedTabChanged()" [(selectedIndex)]="activeTab">
+  <mat-tab-group (selectedTabChange)="selectedTabChanged()" [(selectedIndex)]="activeTab" dynamicHeight>
 
     <mat-tab label="CRUD" [disabled]="!authService.access.crud.generate_crud">
       <ng-template matTabContent>

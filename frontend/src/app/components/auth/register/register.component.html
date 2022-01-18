@@ -1,60 +1,62 @@
 
 <mat-card>
-
   <div
-    *ngIf="status === 'ok-to-register'"
-    class="wrapper">
+  *ngIf="status === 'ok-to-register'"
+  class="wrapper">
+  <h1>
+    Register
+    <mat-icon
+      matTooltip="Clicking the submit button will transmit your password in clear text">warning</mat-icon>
+  </h1>
+    <form [formGroup]="registrationForm" (ngSubmit)="register()" novalidate>
+      <mat-form-field class="fill-width" appearance="outline">
+        <mat-label>Email address</mat-label>
+        <input
+          matInput
+          type="text"
+          name="email"
+          autocomplete="off"
+          formControlName="email">
+      </mat-form-field>
+      <mat-form-field class="fill-width" appearance="outline">
 
-    <mat-form-field class="fill-width" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            name="password"
+            [type]="hide ? 'password' : 'text'"
+            autocomplete="new-password"
+            formControlName="password">
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-pressed]="hide"
+            tabindex="-1">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
 
-      <mat-label>Email address</mat-label>
-      <input
-        matInput
-        type="text"
-        autocomplete="off"
-        [(ngModel)]="email">
+      </mat-form-field>
+      <mat-form-field class="fill-width" appearance="outline">
 
-    </mat-form-field>
+          <mat-label>Repeat password</mat-label>
+          <input
+            matInput
+            [type]="hide ? 'password' : 'text'"
+            autocomplete="new-password"
+            [(ngModel)]="repeatPassword"
+            [ngModelOptions]="{standalone: true}">
 
-    <mat-form-field class="fill-width" appearance="outline">
-
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        [type]="hide ? 'password' : 'text'"
-        autocomplete="new-password"
-        [(ngModel)]="password">
-      <button
-        mat-icon-button
-        matSuffix
-        (click)="hide = !hide"
-        [attr.aria-pressed]="hide"
-        tabindex="-1">
-        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </button>
-
-    </mat-form-field>
-
-    <mat-form-field class="fill-width" appearance="outline">
-
-      <mat-label>Repeat password</mat-label>
-      <input
-        matInput
-        [type]="hide ? 'password' : 'text'"
-        autocomplete="new-password"
-        [(ngModel)]="repeatPassword">
-
-    </mat-form-field>
-
-    <div class="button-strip">
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="register()">
-        Submit
-      </button>
-    </div>
-
+      </mat-form-field>
+      <div class="button-strip">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit">
+            Submit
+          </button>
+      </div>
+    </form>
   </div>
 
   <div
@@ -76,9 +78,9 @@
   </div>
 
   <div
-    *ngIf="status === 'email-sent-to-moderator'"
-    class="feedback">
-    Please wait for a moderator to accept you as a user in the system.
+      *ngIf="status === 'email-sent-to-moderator'"
+      class="feedback">
+      Please wait for a moderator to accept you as a user in the system.
   </div>
 
   <div

@@ -106,7 +106,7 @@ export class CrudifierBackendComponent implements OnInit {
     @Inject(LOCALE_ID) public locale: string,
     private resolver: ComponentFactoryResolver,
     private loaderInterceptor: LoaderInterceptor,
-    private transformService: TransformModelService) { }
+    protected transformService: TransformModelService) { }
 
   /**
    * Implementation of OnInit.
