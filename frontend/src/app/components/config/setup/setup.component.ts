@@ -34,6 +34,13 @@ export class SetupComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   /**
+   * missing variables used in the html file
+   */
+  public subject: string = '';
+  public seed: string = '';
+  public email: string = '';
+
+  /**
    * Provided by parent component during creation of component.
    * Contains the status of setup process.
    */

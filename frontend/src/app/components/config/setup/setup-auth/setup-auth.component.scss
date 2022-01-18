@@ -6,19 +6,19 @@
 }
 
 button.next {
-  display: block;
-  position: absolute;
-  bottom: 2rem;
-  right: 2.5rem;
+  // display: block;
+  // position: absolute;
+  // bottom: 2rem;
+  // right: 2.5rem;
   min-width: 9.5rem;
 }
 
-mat-slide-toggle {
-  display: block;
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-}
+// mat-slide-toggle {
+//   display: block;
+//   position: absolute;
+//   bottom: 1rem;
+//   left: 1rem;
+// }
 
 .break {
   display: block;
@@ -28,4 +28,14 @@ strong {
   display: block;
   margin-top: 1rem;
   margin-bottom: .75rem;
+}
+
+.d-flex{
+  display: flex;
+  &.justify-content-between{
+    justify-content: space-between;
+  }
+}
+.min-h-400{
+  min-height: 400px;
 }

@@ -1,75 +1,90 @@
 
-<strong *ngIf="!showAdvanced">Database connection</strong>
+<div *ngIf="!showAdvanced" class="min-h-400">
 
-<mat-form-field *ngIf="!showAdvanced" class="form-field" appearance="outline">
+  <strong>Database connection</strong>
 
-  <mat-label>Database</mat-label>
-  <mat-select
-    [(ngModel)]="selectedDatabaseType">
-    <mat-option
-      *ngFor="let idx of databaseTypes"
-      [value]="idx">{{idx}}</mat-option>
-  </mat-select>
+  <form #dbForm="ngForm" novalidate>
+    <mat-form-field class="form-field" appearance="outline">
 
-</mat-form-field>
+      <mat-label>Database</mat-label>
+      <mat-select
+      [(ngModel)]="selectedDatabaseType"
+      name="selectedDatabaseType">
+        <mat-option
+          *ngFor="let idx of databaseTypes"
+          [value]="idx">{{idx}}</mat-option>
+      </mat-select>
 
-<mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field wide" appearance="outline">
+    </mat-form-field>
 
-  <mat-label>Server</mat-label>
-  <input
-    matInput
-    [(ngModel)]="config.magic.databases[selectedDatabaseType].generic">
+    <mat-form-field *ngIf="selectedDatabaseType" class="form-field wide" appearance="outline">
 
-</mat-form-field>
+      <mat-label>Server</mat-label>
+      <input
+        matInput
+        [(ngModel)]="config.magic.databases[selectedDatabaseType].generic"
+        name="databaseGeneric">
 
-<strong *ngIf="!showAdvanced && selectedDatabaseType">Root account password</strong>
+    </mat-form-field>
 
-<mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field"  appearance="outline">
+    <strong *ngIf="selectedDatabaseType">Root account password</strong>
 
-  <mat-label>Password</mat-label>
-  <input
-    matInput
-    type="password"
-    autocomplete="new-password"
-    [(ngModel)]="password">
+    <mat-form-field *ngIf="selectedDatabaseType" class="form-field"  appearance="outline">
 
-</mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        autocomplete="new-password"
+        [(ngModel)]="password"
+        name="password">
 
-<mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="form-field" appearance="outline">
+    </mat-form-field>
 
-  <mat-label>Repeat</mat-label>
-  <input
-    matInput
-    type="password"
-    autocomplete="new-password"
-    [(ngModel)]="passwordRepeat">
+    <mat-form-field *ngIf="selectedDatabaseType" class="form-field" appearance="outline">
 
-</mat-form-field>
+      <mat-label>Repeat</mat-label>
+      <input
+        matInput
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        [(ngModel)]="passwordRepeat"
+        [ngModelOptions]="{standalone: true}">
 
-<mat-form-field *ngIf="!showAdvanced && selectedDatabaseType" class="wide break"  appearance="outline">
+    </mat-form-field>
 
-  <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
-  <input
-    matInput
-    type="text"
-    [(ngModel)]="config.magic.auth.secret">
+    <mat-form-field *ngIf="selectedDatabaseType" class="wide break"  appearance="outline">
 
-</mat-form-field>
+      <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="config.magic.auth.secret"
+        name="authSecret">
 
-<mat-slide-toggle [(ngModel)]="showAdvanced">Advanced</mat-slide-toggle>
+    </mat-form-field>
 
-<button
+  </form>
+</div>
+
+
+<div *ngIf="showAdvanced" class="min-h-400">
+  
+  <app-config-editor></app-config-editor>
+
+</div>
+
+<div class="d-flex justify-content-between">
+  <mat-slide-toggle [(ngModel)]="showAdvanced">Advanced</mat-slide-toggle>
+  
+  <button
   *ngIf="!showAdvanced"
   mat-raised-button
   color="primary"
   [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
-  (click)="next()"
-  class="next">
-  Next
-</button>
-
-<div *ngIf="showAdvanced">
-
-  <app-config-editor></app-config-editor>
-
+  class="next"
+  (click)="next()">
+    Next
+  </button>
 </div>

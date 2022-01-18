@@ -13,6 +13,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { ConfigService } from 'src/app/components/config/services/config.service';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 /**
  * Setup configuration component for allowing user to configure his Magic
@@ -75,9 +76,20 @@ export class SetupAuthComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private authService: AuthService,
-    protected messageService: MessageService) {
+    protected messageService: MessageService,
+    private formBuilder: FormBuilder) {
   }
 
+  /**
+    * template driven form declaration
+    */
+  dbForm = new FormGroup({
+    selectedDatabaseType: new FormControl(),
+    databaseGeneric: new FormControl(),
+    password: new FormControl(),
+    authSecret: new FormControl()
+  });
+  
   /**
    * Implementation of OnInit.
    */

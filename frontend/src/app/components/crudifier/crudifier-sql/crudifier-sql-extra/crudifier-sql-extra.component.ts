@@ -77,6 +77,11 @@ export class CrudifierSqlExtraComponent implements OnInit {
   public input: Model = null;
 
   /**
+   * Missing variable to be identified -- used in the html file
+   */
+  public isList;
+
+  /**
    * Creates an instance of your component.
    * 
    * @param feedbackService Needed to show user feedback
