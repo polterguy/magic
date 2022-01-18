@@ -11,14 +11,14 @@
   },
   "private": true,
   "dependencies": {
-    
+    "@angular-material-components/datetime-picker": "^5.1.0",
     "@angular/animations": "~12.2.15",
-    "@angular/cdk": "^11.1.0",
+    "@angular/cdk": "^12.2.13",
     "@angular/common": "~12.2.15",
     "@angular/compiler": "~12.2.15",
     "@angular/core": "~12.2.15",
     "@angular/forms": "~12.2.15",
-    "@angular/material": "^11.1.0",
+    "@angular/material": "^12.2.13",
     "@angular/platform-browser": "~12.2.15",
     "@angular/platform-browser-dynamic": "~12.2.15",
     "@angular/router": "~12.2.15",
