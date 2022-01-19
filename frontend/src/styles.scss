@@ -7,6 +7,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @import '~codemirror/theme/zenburn';
 @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
+@import './assets/styles/colour.scss';
 
 /*
  * Misc classes.
