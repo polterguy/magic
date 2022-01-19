@@ -1213,7 +1213,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Returns an endpoint matching the specified file node, or null if file cannot
    * be matched to an endpoint.
    */
-  private getEndpoint(file: FileNode) {
+  protected getEndpoint(file: FileNode) {
 
     // Notice, only files inside of "/modules/" and "/system/" can be endpoint files.
     if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
