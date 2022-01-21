@@ -30,28 +30,26 @@ export class LogService {
   /**
    * Returns a list of log items from your backend.
    * 
-   * @param filter Query filter deciding which items to return
-   * @param offset Number of items to skip
-   * @param limit Maximum number of items to return
+   * @param query Query filter deciding which items to return
+   * @param from What item to use as offset for retrieving items
+   * @param max Maximum number of items to return
    */
   public list(
-    filter: string,
-    offset: number,
-    limit: number) {
+    query: string,
+    from: string,
+    max: number) {
 
     // Dynamically building our query according to arguments specificed.
-    let query = '';
-    if (filter) {
-      query += '&query=' + encodeURIComponent(filter);
+    let url = '/magic/system/log/log-items?max=' + max;
+    if (query) {
+      url += '&query=' + encodeURIComponent(query);
+    }
+    if (from) {
+      url += '&from=' + encodeURIComponent(from);
     }
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<LogItem[]>(
-      '/magic/system/log/log-items?offset=' +
-      offset +
-      '&limit=' +
-      limit + 
-      query);
+    return this.httpService.get<LogItem[]>(url);
   }
 
   /**

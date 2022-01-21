@@ -124,7 +124,7 @@ export class LogComponent implements OnInit {
     // Retrieves log items from the backend according to pagination and filter conditions.
     this.logService.list(
       this.filterFormControl.value,
-      this.paginator.pageIndex * this.paginator.pageSize,
+      this.items.length === 0 ? null : this.items[this.items.length].id.toString(),
       this.paginator.pageSize).subscribe(logitems => {
 
       // Resetting details to avoid having 'hanging' details items, and changing internal model to result of invocation.
