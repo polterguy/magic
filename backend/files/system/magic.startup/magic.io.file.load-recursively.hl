@@ -16,17 +16,14 @@ slots.create:magic.io.file.load-recursively
    eval:x:@.arguments
 
    // Lists all files in current [folder], and adds up the result to return value.
-   add:x:+/+
-      get-nodes:x:@.arguments/*/.hidden-files
-   unwrap:x:+/*
-   signal:magic.io.file.list-recursively
-      .:x:@.arguments/0
+   io.file.list-recursively:x:@.arguments/0
+      show-hidden:x:@.arguments/*/.hidden-files
 
    /*
     * Iterating through all files listed above, and loads them,
     * for then to add their contents as a child node of iterated file.
     */
-   for-each:x:@signal/*
+   for-each:x:@io.file.list-recursively/*
       io.file.load:x:@.dp/#
       add:x:@.dp/#
          get-nodes:x:@io.file.load
@@ -34,4 +31,4 @@ slots.create:magic.io.file.load-recursively
          .:
 
    // Returning to caller all files in folder, and sub folder(s).
-   return-nodes:x:@signal/*
+   return-nodes:x:@io.file.list-recursively/*
