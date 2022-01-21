@@ -9,7 +9,6 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
 import { FeedbackService } from '../../services/feedback.service';
@@ -28,11 +27,6 @@ export class LogComponent implements OnInit {
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
-
-  /**
-   * Paginator for paging table.
-   */
-  @ViewChild(MatPaginator, {static: true}) public paginator: MatPaginator;
 
   /**
    * Columns to display in table.
@@ -97,7 +91,6 @@ export class LogComponent implements OnInit {
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: any) => {
         this.filterFormControl.setValue(query);
-        this.paginator.pageIndex = 0;
         this.getItems();
       });
 
@@ -124,12 +117,12 @@ export class LogComponent implements OnInit {
     // Retrieves log items from the backend according to pagination and filter conditions.
     this.logService.list(
       this.filterFormControl.value,
-      this.items.length === 0 ? null : this.items[this.items.length].id.toString(),
-      this.paginator.pageSize).subscribe(logitems => {
+      null,
+      20).subscribe(logitems => {
 
       // Resetting details to avoid having 'hanging' details items, and changing internal model to result of invocation.
       this.displayDetails = [];
-      this.items = logitems;
+      this.items = logitems || [];
 
       // Counting items with the same filter as we used to retrieve items with.
       this.logService.count(this.filterFormControl.value).subscribe(count => {
@@ -142,18 +135,6 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Invoked when paginator wants to page data table.
-   * 
-   * @param e Page event argument
-   */
-  public paged(e: PageEvent) {
-
-    // Changing pager's size according to arguments, and retrieving log items from backend.
-    this.paginator.pageSize = e.pageSize;
-    this.getItems();
-  }
-
-  /**
    * Invoked when filter is programmatically changed for some reasons
    * 
    * @param filter Query filter to use for displaying items
@@ -161,7 +142,6 @@ export class LogComponent implements OnInit {
   public setFilter(filter: string) {
 
     // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
-    this.paginator.pageIndex = 0;
     this.filterFormControl.setValue(filter);
   }
 
@@ -171,7 +151,6 @@ export class LogComponent implements OnInit {
   public clearFilter() {
 
     // Updating page index, and taking advantage of debounce logic on form control to retrieve items from backend.
-    this.paginator.pageIndex = 0;
     this.filterFormControl.setValue('');
   }
 

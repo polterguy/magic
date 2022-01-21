@@ -37,9 +37,11 @@
 
 <mat-card>
 
+  <span class="count">{{count}} items</span>
+
   <mat-form-field class="fill-width" appearance="outline">
 
-    <mat-label>Filter</mat-label>
+    <mat-label>Filter ...</mat-label>
     <input
       matInput
       type="text"
@@ -151,15 +153,5 @@
       *matRowDef="let el; columns: ['show-details'];"></tr>
 
   </table>
-
-  <mat-paginator
-    #paginator
-    [class]="count > paginator.pageSize ? '' : 'invisible'"
-    [length]="count"
-    pageSize="10"
-    showFirstLastButtons="true"
-    (page)="paged($event)"
-    [pageSizeOptions]="[5,10,25,50]">
-  </mat-paginator>
 
 </mat-card>
