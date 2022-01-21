@@ -4,10 +4,8 @@
  * the specified folder.
  */
 .folder:/modules/YOUR-MODULE-FOLDER-HERE/
-unwrap:x:+/*
-signal:magic.io.file.list-recursively
-   .:x:@.folder
-for-each:x:@signal/*
+io.file.list-recursively:x:-
+for-each:x:-/*
    if
       strings.ends-with:x:@.dp/#
          .:.hl
