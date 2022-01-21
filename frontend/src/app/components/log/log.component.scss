@@ -1,4 +1,13 @@
 
+.count {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  color: #aaa;
+  font-size: .8rem;
+  font-style: italic;
+}
+
 table.log-items {
   table-layout: fixed;
   tr {
