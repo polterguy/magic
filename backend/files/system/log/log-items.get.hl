@@ -1,7 +1,7 @@
 
 // Returns log items in the database according to specified arguments.
 .arguments
-   from
+   from:string
    max:long
    query:string
 .description:Returns log items matching the optional arguments
