@@ -2,16 +2,14 @@
 // List all files in the specified [folder] argument.
 .arguments
    folder:string
-.description:List all files in the specified folder matching the (optional) filter argument
+.description:List all files in the specified folder recursively matching the (optional) filter argument
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Listing all folders in specified folder.
-unwrap:x:+/*/.folder
-signal:magic.io.file.list-recursively
-   .folder:x:@.arguments/*/folder
-   .hidden-files:bool:true
+// Listing all file in specified folder.
+io.file.list-recursively:x:@.arguments/*/folder
+   hidden-files:bool:true
 
 // Returning results of above invocation to caller.
-return-nodes:x:@signal/*
+return-nodes:x:@io.file.list-recursively/*
