@@ -5,9 +5,9 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
@@ -26,7 +26,7 @@ import { LogService } from 'src/app/components/log/services/log.service';
 export class LogComponent implements OnInit {
 
   // List of log item IDs that we're currently viewing details for.
-  private displayDetails: number[] = [];
+  private displayDetails: string[] = [];
 
   /**
    * Columns to display in table.
@@ -112,25 +112,33 @@ export class LogComponent implements OnInit {
   /**
    * Returns log items from your backend.
    */
-  public getItems() {
+  public getItems(append: boolean = false) {
 
-    // Retrieves log items from the backend according to pagination and filter conditions.
+    // Retrieves log items from the backend.
+    let from: string = null;
+    if (append && this.items.length > 0) {
+      from = this.items[this.items.length - 1].id;
+    }
     this.logService.list(
       this.filterFormControl.value,
-      null,
+      from,
       20).subscribe(logitems => {
 
-      // Resetting details to avoid having 'hanging' details items, and changing internal model to result of invocation.
-      this.displayDetails = [];
-      this.items = logitems || [];
+      if (append) {
+        this.items = this.items.concat(logitems || []);
+      } else {
+        this.items = logitems || [];
+      }
 
       // Counting items with the same filter as we used to retrieve items with.
-      this.logService.count(this.filterFormControl.value).subscribe(count => {
+      if (from === null) {
+        this.logService.count(this.filterFormControl.value).subscribe(count => {
 
-        // Assigning count to returned value from server.
-        this.count = count.count;
+          // Assigning count to returned value from server.
+          this.count = count.count;
 
-      }, (error: any) => this.feedbackService.showError(error));
+        }, (error: any) => this.feedbackService.showError(error));
+      }
     }, (error: any) => this.feedbackService.showError(error));
   }
 
@@ -202,5 +210,12 @@ export class LogComponent implements OnInit {
     // Putting content to clipboard and giving user some feedback.
     this.clipboard.copy(content);
     this.feedbackService.showInfoShort('The specified content can be found on your clipboard');
+  }
+
+  /**
+   * Invoked when user needs more data.
+   */
+  public feedMore() {
+    this.getItems(true);
   }
 }
