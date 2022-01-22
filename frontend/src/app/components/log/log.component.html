@@ -154,4 +154,13 @@
 
   </table>
 
+  <button
+    *ngIf="items.length !== count"
+    mat-button
+    class="more-btn"
+    matTooltip="Retrieves next 20 items"
+    (click)="feedMore()">
+    More ...
+  </button>
+
 </mat-card>
