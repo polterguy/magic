@@ -7,9 +7,9 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from '../../../services/http.service';
-import { Count } from '../../../models/count.model';
-import { LogItem } from 'src/app/components/log/models/log-item.model';
+import { HttpService } from '../../../../services/http.service';
+import { Count } from '../../../../models/count.model';
+import { LogItem } from 'src/app/components/diagnostics/diagnostics-log/models/log-item.model';
 
 /**
  * Log service, allows you to Read, Create, Update and Delete log items
@@ -30,20 +30,15 @@ export class LogService {
   /**
    * Returns a list of log items from your backend.
    * 
-   * @param query Query filter deciding which items to return
    * @param from What item to use as offset for retrieving items
    * @param max Maximum number of items to return
    */
   public list(
-    query: string,
     from: string,
     max: number) {
 
     // Dynamically building our query according to arguments specificed.
     let url = '/magic/system/log/log-items?max=' + max;
-    if (query) {
-      url += '&query=' + encodeURIComponent(query);
-    }
     if (from) {
       url += '&from=' + encodeURIComponent(from);
     }
@@ -62,16 +57,6 @@ export class LogService {
     // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem>(
       '/magic/system/log/log-item?id=' + id);
-  }
-
-  /**
-   * Retrieves the youngest log item that exists in the backend.
-   */
-   public getOldest() {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<LogItem>(
-      '/magic/system/log/log-item-oldest');
   }
 
   /**

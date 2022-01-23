@@ -10,7 +10,7 @@ import { TableEx } from '../../models/table-ex.model';
 import { ColumnEx } from '../../models/column-ex.model';
 import { LocResult } from '../../models/loc-result.model';
 import { DatabaseEx } from '../../models/database-ex.model';
-import { LogService } from '../../../log/services/log.service';
+import { LogService } from '../../../diagnostics/diagnostics-log/services/log.service';
 import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';

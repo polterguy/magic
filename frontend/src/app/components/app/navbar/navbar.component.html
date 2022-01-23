@@ -65,14 +65,14 @@
 </a>
 
 <a
-  *ngIf="authService.access.log.read"
+  *ngIf="authService.access.diagnostics.statistics"
   mat-button
-  routerLink="/log"
+  routerLink="/diagnostics"
   routerLinkActive="active-link"
   (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:false}">
-  <mat-icon matSuffix>bar_chart</mat-icon>
-  <span>Log</span>
+  [routerLinkActiveOptions]="{exact:true}">
+  <mat-icon matSuffix>local_hospital</mat-icon>
+  <span>Health</span>
 </a>
 
 <a
@@ -117,17 +117,6 @@
   [routerLinkActiveOptions]="{exact:true}">
   <mat-icon matSuffix>security</mat-icon>
   <span>Crypto</span>
-</a>
-
-<a
-  *ngIf="authService.access.diagnostics.statistics"
-  mat-button
-  routerLink="/diagnostics"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>local_hospital</mat-icon>
-  <span>Health</span>
 </a>
 
 <a

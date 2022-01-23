@@ -83,12 +83,12 @@
     </a>
 
     <a
-      *ngIf="authService.access.log.read"
+      *ngIf="authService.access.diagnostics.statistics"
       mat-raised-button
-      routerLink="/log"
-      matTooltip="Server's log">
-      <mat-icon matSuffix color="primary">bar_chart</mat-icon>
-      <span>Log</span>
+      routerLink="/diagnostics"
+      matTooltip="Health and diagnostics">
+      <mat-icon matSuffix color="primary">local_hospital</mat-icon>
+      <span>Health</span>
     </a>
 
     <a
@@ -125,15 +125,6 @@
       matTooltip="Administrate your cryptography keys">
       <mat-icon matSuffix color="primary">security</mat-icon>
       <span>Crypto</span>
-    </a>
-
-    <a
-      *ngIf="authService.access.diagnostics.statistics"
-      mat-raised-button
-      routerLink="/diagnostics"
-      matTooltip="Health and diagnostics">
-      <mat-icon matSuffix color="primary">local_hospital</mat-icon>
-      <span>Health</span>
     </a>
 
     <a

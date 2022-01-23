@@ -2,39 +2,27 @@
 <mat-card>
   <mat-tab-group>
 
-    <mat-tab label="Overview">
+    <mat-tab label="Log">
       <ng-template matTabContent>
-        <app-diagnostics-overview></app-diagnostics-overview>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Security">
-      <ng-template matTabContent>
-        <app-diagnostics-security></app-diagnostics-security>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Errors">
-      <ng-template matTabContent>
-        <app-diagnostics-errors></app-diagnostics-errors>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Sockets">
-      <ng-template matTabContent>
-        <app-diagnostics-sockets [createSubscriptions]="false"></app-diagnostics-sockets>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Health check" [disabled]="!authService.access.diagnostics.execute_test">
-      <ng-template matTabContent>
-        <app-diagnostics-assumptions></app-diagnostics-assumptions>
+        <app-diagnostics-log></app-diagnostics-log>
       </ng-template>
     </mat-tab>
 
     <mat-tab label="Cache" [disabled]="!authService.access.diagnostics.list_cache">
       <ng-template matTabContent>
         <app-diagnostics-cache></app-diagnostics-cache>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Misc">
+      <ng-template matTabContent>
+        <app-diagnostics-overview></app-diagnostics-overview>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Assumptions" [disabled]="!authService.access.diagnostics.execute_test">
+      <ng-template matTabContent>
+        <app-diagnostics-assumptions></app-diagnostics-assumptions>
       </ng-template>
     </mat-tab>
 
