@@ -14,15 +14,15 @@
       </ng-template>
     </mat-tab>
 
-    <mat-tab label="Misc">
-      <ng-template matTabContent>
-        <app-diagnostics-overview></app-diagnostics-overview>
-      </ng-template>
-    </mat-tab>
-
     <mat-tab label="Assumptions" [disabled]="!authService.access.diagnostics.execute_test">
       <ng-template matTabContent>
         <app-diagnostics-assumptions></app-diagnostics-assumptions>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Misc">
+      <ng-template matTabContent>
+        <app-diagnostics-overview></app-diagnostics-overview>
       </ng-template>
     </mat-tab>
 
