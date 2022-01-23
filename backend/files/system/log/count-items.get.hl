@@ -1,14 +1,13 @@
 
 // Returns number of log items in the database.
 .arguments
-   query:string
-.description:Returns the number of log items in your database matching the optional filter
+.description:Returns the number of log items in your database
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
 // Invoking slot responsible for returning count.
-log.count:x:@.arguments/*/query
+log.count
 
 // Returning result of above invocation to caller.
 unwrap:x:+/*
