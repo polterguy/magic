@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:get
-url:/magic/system/log/log-items?query=Trying%20to%20authenticate&max=5
+url:/magic/system/log/log-items?max=5
 status:int:200
 description:Assumes we can retrieve log items from the backend matching query/filter arguments
 produces:application/json
