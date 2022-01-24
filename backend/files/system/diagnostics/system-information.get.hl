@@ -16,11 +16,17 @@ cache.try-get:system-information
       // Retrieving number of persisted tasks.
       tasks.count
 
-      // Counting log items.
+      // Counting total number of log items.
       log.count
 
-      // Retrieving count of types of log items.
-      log.types
+      // Retrieving count of log items grouped by type.
+      add:x:@.lambda/*/return-nodes/*/log_types
+         log.types
+
+      // Retrieving count of log items grouped by day for root logins.
+      log.timeshift:"We successfully authenticated user 'root'"
+      add:x:@.lambda/*/return-nodes/*/root_logins
+         get-nodes:x:@log.timeshift/*
 
       // Retrieving endpoints.
       endpoints.list
@@ -47,8 +53,6 @@ cache.try-get:system-information
 
       // Returning result to caller.
       unwrap:x:@.lambda/*/return-nodes/*
-      add:x:@.lambda/*/return-nodes/*/log_types
-         get-nodes:x:@log.types/*
       return-nodes
          version:x:@version
          persisted_tasks:x:@tasks.count
@@ -58,6 +62,7 @@ cache.try-get:system-information
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
          log_types
+         root_logins
 
 // Returning result of cache invocation to caller.
 return-nodes:x:@cache.try-get/#/*
