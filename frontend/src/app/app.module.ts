@@ -68,7 +68,7 @@ import { LoaderInterceptor } from './components/app/services/loader.interceptor'
 
 // Application specific normal components.
 import { IdeComponent } from './components/ide/ide.component';
-import { LogComponent } from './components/log/log.component';
+import { LogComponent } from './components/diagnostics/diagnostics-log/diagnostics-log.component';
 import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { AuthComponent } from './components/auth/auth.component';
@@ -113,11 +113,9 @@ import { CryptoInvocationsComponent } from './components/crypto/crypto-invocatio
 import { CrudifyDatabaseComponent } from './components/config/setup/crudify-database/crudify-database.component';
 import { CrudifierBackendComponent } from './components/crudifier/crudifier-backend/crudifier-backend.component';
 import { CrudifierFrontendComponent } from './components/crudifier/crudifier-frontend/crudifier-frontend.component';
-import { DiagnosticsErrorsComponent } from './components/diagnostics/diagnostics-errors/diagnostics-errors.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsSocketsComponent } from './components/diagnostics/diagnostics-sockets/diagnostics-sockets.component';
 import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
-import { DiagnosticsSecurityComponent } from './components/diagnostics/diagnostics-security/diagnostics-security.component';
 import { CrudifierTableComponent } from './components/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
 import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
 import { CrudifierSqlExtraComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
@@ -215,10 +213,8 @@ import { ExecuteTerminalCommandComponent } from './components/ide/execute-termin
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
     ConfigEditorComponent,
-    DiagnosticsSecurityComponent,
     DiagnosticsOverviewComponent,
     DiagnosticsComponent,
-    DiagnosticsErrorsComponent,
     DiagnosticsCache,
     InjectDirective,
     EndpointDetailsComponent,

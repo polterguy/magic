@@ -3,12 +3,13 @@
  * Default global exception handler, invoked if no other overrides exists
  * at the module level.
  */
-log.error
+log.exception
    .:"Unhandled exception occurred '"
    get-value:x:@.arguments/*/message
    .:"' at '"
    get-value:x:@.arguments/*/path
    .:"'"
+   exception:x:@.arguments/*/stack
 
 // Returning generic error to caller.
 if

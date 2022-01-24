@@ -11,7 +11,7 @@ import { Component, OnInit } from '@angular/core';
 import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from 'src/app/components/log/services/log.service';
+import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
 import { SqlService } from 'src/app/components/sql/services/sql.service';
 import { Crudify } from 'src/app/components/crudifier/models/crudify.model';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
