@@ -25,6 +25,7 @@ import { TerminalComponent } from './components/terminal/terminal.component';
 import { CrudifierComponent } from './components/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/endpoints/endpoints.component';
 import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
@@ -34,7 +35,7 @@ import { ChangePasswordComponent } from './components/auth/change-password/chang
  * Routes for application.
  */
 const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: DashboardComponent },
   { path: 'sql', component: SqlComponent },
 
   // Avoids re-initializing component as user opens and closes view details / URL link

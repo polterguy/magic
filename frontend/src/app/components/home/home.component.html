@@ -1,206 +1,231 @@
+<div class="w-100">
+  <mat-card>
+    <div class="d-flex justify-content-between align-items-center">
+      <mat-card-title>Magic Cloud</mat-card-title>
+      <mat-card-subtitle>
+        <ng-container *ngIf="shouldUpdateCore">
+          <a
+            href="https://polterguy.github.io/tutorials/getting-started/"
+            mat-raised-button
+            matTooltip="Update your Magic installation"
+            target="_blank">
+            Update to {{bazarVersion}}
+          </a>
+        </ng-container>
+        <ng-container>
+          <span 
+          [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'">{{version}}</span>
+        </ng-container>
+      </mat-card-subtitle>
+    </div>
+    <mat-card-content>
 
-<mat-card>
+    
+    <!-- <div *ngIf="shouldUpdateCore" class="update-available">
+      <a
+        href="https://polterguy.github.io/tutorials/getting-started/"
+        mat-raised-button
+        matTooltip="Update your Magic installation"
+        target="_blank">
+        Update to {{bazarVersion}}
+      </a>
+    </div> -->
 
-  <div *ngIf="shouldUpdateCore" class="update-available">
-    <a
-      href="https://polterguy.github.io/tutorials/getting-started/"
-      mat-raised-button
-      matTooltip="Update your Magic installation"
-      target="_blank">
-      Update to {{bazarVersion}}
-    </a>
-  </div>
+    
 
-  <div *ngIf="!shouldUpdateCore" class="documentation">
-    <a
-      href="https://docs.aista.com"
-      mat-raised-button
-      matTooltip="Read the documentation for Magic"
-      target="_blank">
-      Documentation
-    </a>
-  </div>
+    <!-- <h1>Magic Cloud</h1> -->
+    <!-- <span
+      class="version"
+      [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'">{{version}}</span> -->
 
-  <h1>Magic Cloud</h1>
-  <span
-    class="version"
-    [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'">{{version}}</span>
+    <div class="buttons">
 
-  <div class="buttons">
+      <button
+        *ngIf="!authService.authenticated"
+        mat-raised-button
+        (click)="login()"
+        matTooltip="Login">
+        <mat-icon matSuffix color="primary">lock_open</mat-icon>
+        <span>Login</span>
+      </button>
 
-    <button
-      *ngIf="!authService.authenticated"
-      mat-raised-button
-      (click)="login()"
-      matTooltip="Login">
-      <mat-icon matSuffix color="primary">lock_open</mat-icon>
-      <span>Login</span>
-    </button>
+      <a
+        *ngIf="authService.access.sql.execute_access"
+        mat-raised-button
+        routerLink="/sql"
+        matTooltip="Execute SQL">
+        <mat-icon matSuffix color="primary">language</mat-icon>
+        <span>SQL</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.sql.execute_access"
-      mat-raised-button
-      routerLink="/sql"
-      matTooltip="Execute SQL">
-      <mat-icon matSuffix color="primary">language</mat-icon>
-      <span>SQL</span>
-    </a>
+      <a
+        *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend"
+        mat-raised-button
+        routerLink="/crudifier"
+        matTooltip="Generate CRUD apps">
+        <mat-icon matSuffix color="primary">build</mat-icon>
+        <span>CRUD</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend"
-      mat-raised-button
-      routerLink="/crudifier"
-      matTooltip="Generate CRUD apps">
-      <mat-icon matSuffix color="primary">build</mat-icon>
-      <span>CRUD</span>
-    </a>
+      <a
+        *ngIf="authService.access.endpoints.view"
+        mat-raised-button
+        routerLink="/endpoints"
+        matTooltip="HTTP endpoints">
+        <mat-icon matSuffix color="primary">http</mat-icon>
+        <span>Endpoints</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.endpoints.view"
-      mat-raised-button
-      routerLink="/endpoints"
-      matTooltip="HTTP endpoints">
-      <mat-icon matSuffix color="primary">http</mat-icon>
-      <span>Endpoints</span>
-    </a>
+      <a
+        *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
+        mat-raised-button
+        routerLink="/ide"
+        matTooltip="Hyper IDE">
+        <mat-icon matSuffix color="primary">extension</mat-icon>
+        <span>Hyper IDE</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
-      mat-raised-button
-      routerLink="/ide"
-      matTooltip="Hyper IDE">
-      <mat-icon matSuffix color="primary">extension</mat-icon>
-      <span>Hyper IDE</span>
-    </a>
+      <a
+        *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles"
+        mat-raised-button
+        routerLink="/auth"
+        matTooltip="Administrate users and roles">
+        <mat-icon matSuffix color="primary">people</mat-icon>
+        <span>Auth</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles"
-      mat-raised-button
-      routerLink="/auth"
-      matTooltip="Administrate users and roles">
-      <mat-icon matSuffix color="primary">people</mat-icon>
-      <span>Auth</span>
-    </a>
+      <a
+        *ngIf="authService.access.log.read"
+        mat-raised-button
+        routerLink="/log"
+        matTooltip="Server's log">
+        <mat-icon matSuffix color="primary">bar_chart</mat-icon>
+        <span>Log</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.log.read"
-      mat-raised-button
-      routerLink="/log"
-      matTooltip="Server's log">
-      <mat-icon matSuffix color="primary">bar_chart</mat-icon>
-      <span>Log</span>
-    </a>
+      <a
+        *ngIf="authService.access.tasks.read"
+        mat-raised-button
+        routerLink="/tasks"
+        matTooltip="Administrate scheduled tasks">
+        <mat-icon matSuffix color="primary">calendar_today</mat-icon>
+        <span>Tasks</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.tasks.read"
-      mat-raised-button
-      routerLink="/tasks"
-      matTooltip="Administrate scheduled tasks">
-      <mat-icon matSuffix color="primary">calendar_today</mat-icon>
-      <span>Tasks</span>
-    </a>
+      <a
+        *ngIf="authService.access.terminal.execute"
+        mat-raised-button
+        routerLink="/terminal"
+        matTooltip="A web based terminal">
+        <mat-icon matSuffix color="primary">input</mat-icon>
+        <span>Terminal</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.terminal.execute"
-      mat-raised-button
-      routerLink="/terminal"
-      matTooltip="A web based terminal">
-      <mat-icon matSuffix color="primary">input</mat-icon>
-      <span>Terminal</span>
-    </a>
+      <a
+        *ngIf="authService.access.eval.execute"
+        mat-raised-button
+        routerLink="/evaluator"
+        matTooltip="Execute Hyperlambda">
+        <mat-icon matSuffix color="primary">offline_bolt</mat-icon>
+        <span>Eval</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.eval.execute"
-      mat-raised-button
-      routerLink="/evaluator"
-      matTooltip="Execute Hyperlambda">
-      <mat-icon matSuffix color="primary">offline_bolt</mat-icon>
-      <span>Eval</span>
-    </a>
+      <a
+        *ngIf="authService.access.crypto.import_public_key"
+        mat-raised-button
+        routerLink="/crypto"
+        matTooltip="Administrate your cryptography keys">
+        <mat-icon matSuffix color="primary">security</mat-icon>
+        <span>Crypto</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.crypto.import_public_key"
-      mat-raised-button
-      routerLink="/crypto"
-      matTooltip="Administrate your cryptography keys">
-      <mat-icon matSuffix color="primary">security</mat-icon>
-      <span>Crypto</span>
-    </a>
+      <a
+        *ngIf="authService.access.diagnostics.statistics"
+        mat-raised-button
+        routerLink="/diagnostics"
+        matTooltip="Health and diagnostics">
+        <mat-icon matSuffix color="primary">local_hospital</mat-icon>
+        <span>Health</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.diagnostics.statistics"
-      mat-raised-button
-      routerLink="/diagnostics"
-      matTooltip="Health and diagnostics">
-      <mat-icon matSuffix color="primary">local_hospital</mat-icon>
-      <span>Health</span>
-    </a>
+      <a
+        *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
+        mat-raised-button
+        routerLink="/file-system"
+        matTooltip="Manage your files">
+        <mat-icon matSuffix color="primary">file_copy</mat-icon>
+        <span>Files</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
-      mat-raised-button
-      routerLink="/file-system"
-      matTooltip="Manage your files">
-      <mat-icon matSuffix color="primary">file_copy</mat-icon>
-      <span>Files</span>
-    </a>
+      <a
+        *ngIf="authService.access.sockets.read"
+        mat-raised-button
+        routerLink="/sockets"
+        matTooltip="Administrate socket connections">
+        <mat-icon matSuffix color="primary">compare_arrows</mat-icon>
+        <span>Sockets</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.sockets.read"
-      mat-raised-button
-      routerLink="/sockets"
-      matTooltip="Administrate socket connections">
-      <mat-icon matSuffix color="primary">compare_arrows</mat-icon>
-      <span>Sockets</span>
-    </a>
+      <a
+        *ngIf="authService.access.config.load"
+        mat-raised-button
+        routerLink="/config"
+        matTooltip="Edit configuration">
+        <mat-icon matSuffix color="primary">settings</mat-icon>
+        <span>Config</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.config.load"
-      mat-raised-button
-      routerLink="/config"
-      matTooltip="Edit configuration">
-      <mat-icon matSuffix color="primary">settings</mat-icon>
-      <span>Config</span>
-    </a>
+      <a
+        *ngIf="!authService.authenticated"
+        mat-raised-button
+        routerLink="/register"
+        matTooltip="Register as a user">
+        <mat-icon matSuffix color="primary">face</mat-icon>
+        <span>Register</span>
+      </a>
 
-    <a
-      *ngIf="!authService.authenticated"
-      mat-raised-button
-      routerLink="/register"
-      matTooltip="Register as a user">
-      <mat-icon matSuffix color="primary">face</mat-icon>
-      <span>Register</span>
-    </a>
+      <a
+        *ngIf="authService.authenticated"
+        mat-raised-button
+        routerLink="/profile"
+        matTooltip="Edit your profile">
+        <mat-icon matSuffix color="primary">account_circle</mat-icon>
+        <span>Profile</span>
+      </a>
 
-    <a
-      *ngIf="authService.authenticated"
-      mat-raised-button
-      routerLink="/profile"
-      matTooltip="Edit your profile">
-      <mat-icon matSuffix color="primary">account_circle</mat-icon>
-      <span>Profile</span>
-    </a>
+      <a
+        *ngIf="authService.access.bazar.get_manifests"
+        mat-raised-button
+        routerLink="/bazar"
+        matTooltip="Obtain additional plugins and modules">
+        <mat-icon matSuffix color="primary">public</mat-icon>
+        <span>Bazar</span>
+      </a>
 
-    <a
-      *ngIf="authService.access.bazar.get_manifests"
-      mat-raised-button
-      routerLink="/bazar"
-      matTooltip="Obtain additional plugins and modules">
-      <mat-icon matSuffix color="primary">public</mat-icon>
-      <span>Bazar</span>
-    </a>
+      <a
+        mat-raised-button
+        routerLink="/about"
+        matTooltip="About Magic Cloud">
+        <mat-icon matSuffix color="primary">copyright</mat-icon>
+        <span>About</span>
+      </a>
 
-    <a
-      mat-raised-button
-      routerLink="/about"
-      matTooltip="About Magic Cloud">
-      <mat-icon matSuffix color="primary">copyright</mat-icon>
-      <span>About</span>
-    </a>
+    </div>
 
-  </div>
-
-  <p class="copyright">
-    Magic is Copyright(c) of Aista, Ltd - Contact us at <a href="mailto:th@aista.com">th@aista.com</a>
-  </p>
-</mat-card>
+    </mat-card-content>
+    <mat-card-footer>
+      <p class="copyright">
+        Magic is Copyright(c) of Aista, Ltd - Contact us at <a href="mailto:th@aista.com">th@aista.com</a>
+      </p>
+      <div *ngIf="!shouldUpdateCore" class="documentation">
+        <a
+          href="https://docs.aista.com"
+          mat-raised-button
+          matTooltip="Read the documentation for Magic"
+          target="_blank">
+          Documentation
+        </a>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+</div>

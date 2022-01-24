@@ -161,7 +161,7 @@ export class DiagnosticsOverviewComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
-
+    
     // Counting users in installation.
     this.userService.count().subscribe((count: Count) => {
       this.userCount = count.count;
