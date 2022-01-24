@@ -8,25 +8,24 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Listing all files in assumption test folder.
-io.file.list:/misc/tests/
-io.file.list:/etc/tests/
+// Listing all files in assumption test folder(s).
+io.file.load-recursively:/misc/tests/
+io.file.load-recursively:/etc/tests/
 
 /*
  * Iterates through result from above invocation and returns only resulting files
  * that are for specified endpoint.
  */
-for-each:x:../*/io.file.list/*
+for-each:x:../*/io.file.load-recursively/*
 
    // Verifying currently iterated file is a Hyperlambda file.
    if
-      strings.ends-with:x:@.dp/#
+      strings.ends-with:x:@.dp/#/*/name
          .:.hl
       .lambda
 
          // File is Hyperlambda, loading it and checking if URL and verb is a match.
-         io.file.load:x:@.dp/#
-         hyper2lambda:x:@io.file.load
+         hyper2lambda:x:@.dp/#/*/content
 
          /*
           * Verifying this is an automatically generated assumption, before checking
@@ -49,7 +48,9 @@ for-each:x:../*/io.file.list/*
                         get-value:x:@.arguments/*/verb
                   .lambda
                      add:x:../*/return-nodes
-                        get-nodes:x:@.dp/#
+                        get-nodes:x:@.dp/#/*/name
 
 // Returns result to caller.
+set-name:x:../*/return-nodes/*
+   .:.
 return-nodes

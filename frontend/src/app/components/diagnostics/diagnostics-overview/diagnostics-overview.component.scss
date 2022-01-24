@@ -19,30 +19,17 @@
     flex: 1;
     max-width: 21rem;
     margin-bottom: 2rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
+    margin-left: auto;
+    margin-right: auto;
     .item {
       display: block;
-      width: 21rem;
+      width: 41rem;
       strong {
         display: inline-block;
         width: 10rem;
         text-align: right;
         margin-right: 1rem;
       }
-    }
-  }
-  .meta-statistics {
-    flex: 1;
-    max-width: 21rem;
-    margin-bottom: 2rem;
-    margin-right: 2rem;
-    a {
-      text-align: center;
-      display: block;
-      margin-bottom: .5rem;
-      color: #88f;
-      font-weight: strong;
     }
   }
 }

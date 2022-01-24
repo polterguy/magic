@@ -20,18 +20,11 @@ EXPOSE 4444
 ENV ASPNETCORE_URLS="http://+:4444"
 ENTRYPOINT ["dotnet", "backend.dll"]
 
+# Notice, these lines makes sure Magic cannot write to files outside of the specified folders
 
-
-# Notice, if you're super paranoid you can uncomment the lines below to make sure Magic runs in the context of
-# a magic user without any privileges at all on the underlaying operating system.
-# NOTICE, this CANNOT be done system wide due to the [system.xxx] slots in magic that might need additional
-# privileges to execute files in other folders.
-
-
-# RUN groupadd -r magic && useradd -g magic magic
-# RUN chown -R magic:magic /magic/files/etc
-# RUN chown -R magic:magic /magic/files/misc
-# RUN chown -R magic:magic /magic/files/modules
-# RUN chown -R magic:magic /magic/files/temp
-# RUN chown -R magic:magic /magic/config
-# USER magic
+RUN groupadd -r magic && useradd -g magic magic
+RUN chown -R magic:magic /magic/files/etc
+RUN chown -R magic:magic /magic/files/modules
+RUN chown -R magic:magic /magic/config
+RUN chown -R magic:magic /magic/files/temp
+USER magic

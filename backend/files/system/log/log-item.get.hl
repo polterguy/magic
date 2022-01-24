@@ -1,7 +1,7 @@
 
 // Returns the specified log item to caller.
 .arguments
-   id:long
+   id:string
 .description:Returns the specified log item
 
 // Ensures user is authorized to access endpoint.
@@ -10,13 +10,8 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/id
 
-// Retrieving items from database.
-data.connect:magic
-   data.read
-      table:log_entries
-      where
-         and
-            id.eq:x:@.arguments/*/id
+// Invoking slot responsible for returning item.
+log.get:x:@.arguments/*/id
 
-   // Returning items to caller.
-   return-nodes:x:-/*/*
+// Returning result of above invocation to caller.
+return-nodes:x:-/*

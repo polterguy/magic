@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/diagnostics/log-statistics
-status:int:200
-description:Assumes that retrieving statistics from log succeeds

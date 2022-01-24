@@ -11,7 +11,7 @@ export class LogItem {
   /**
    * Unique ID used to identify record.
    */
-  id: number;
+  id: string;
 
   /**
    * Date and time when log entry was created.

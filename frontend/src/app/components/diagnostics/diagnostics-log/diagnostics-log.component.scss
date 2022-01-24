@@ -1,6 +1,24 @@
 
+.count {
+  position: absolute;
+  top: 1rem;
+  right: .5rem;
+  color: #aaa;
+  font-size: .8rem;
+  font-style: italic;
+}
+
+.more-btn {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -3rem;
+}
+
 table.log-items {
   table-layout: fixed;
+  margin: 4rem 2rem 4rem 2rem;
+  width: calc(100% - 4rem);
   tr {
     td:nth-child(1) {
       white-space: nowrap;
@@ -13,13 +31,13 @@ table.log-items {
     @media screen and (min-width: 600px) {
       td:nth-child(2) {
         display: table-cell;
-        width: 50px;
+        width: 75px;
       }
     }
     @media screen and (min-width: 800px) {
       td:nth-child(3) {
         display: table-cell;
-        width: 80px;
+        width: 100px;
       }
     }
   }
@@ -31,7 +49,7 @@ table.log-items {
   }
 }
 
-.details-sheet, .emphasized {
+.details-sheet {
   position: relative;
   .details-item {
     display: block;
@@ -56,15 +74,5 @@ table.log-items {
       display: block;
       padding-left: 0;
     }
-  }
-  .id-link {
-    position: absolute;
-    top: -.5rem;
-    right: -.5rem;
-  }
-  .filter-button {
-    position: absolute;
-    bottom: -.5rem;
-    right: -.5rem;
   }
 }

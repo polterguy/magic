@@ -1,5 +1,5 @@
 
-// List all folders in the specified [folder] argument.
+// List all folders in the specified [folder] argument recursively.
 .arguments
    folder:string
 .description:List all folders in the specified folder
@@ -8,10 +8,8 @@
 auth.ticket.verify:root
 
 // Listing all folders in specified folder.
-unwrap:x:+/*/.folder
-signal:magic.io.folder.list-recursively
-   .folder:x:@.arguments/*/folder
-   .hidden-files:bool:true
+io.folder.list-recursively:x:@.arguments/*/folder
+   hidden-files:bool:true
 
 // Returning results of above invocation to caller.
-return-nodes:x:@signal/*
+return-nodes:x:@io.folder.list-recursively/*

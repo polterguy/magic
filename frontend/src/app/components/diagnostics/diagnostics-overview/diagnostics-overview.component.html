@@ -1,7 +1,6 @@
 
-<div class="row">
+<!-- <div class="row">
   <div class="col-lg-8 col-md-4 col-12">
-    <!-- logs -->
     <mat-card class="chart-lg">
       <mat-card-content>
         <div class="d-flex justify-content-between align-items-center">
@@ -28,7 +27,6 @@
     </mat-card>
   </div>
   <div class="col-lg-5 col-md-6 col-12">
-    <!-- assumption -->
     <mat-card class="chart-lg">
       <mat-card-content>
         <div class="d-flex justify-content-between align-items-center">
@@ -57,18 +55,13 @@
       </mat-card-content>
     </mat-card>
   </div>
-</div>
+</div> -->
 
 
 
-<!-- <div class="meta-wrapper">
+<div class="meta-wrapper">
 
   <div class="meta-info">
-
-    <span class="item">
-      <strong>Installed</strong>
-      <span matTooltip="Magic was installed at least this long ago, possibly longer ago">{{age | since}}</span>
-    </span>
 
     <span class="item">
       <strong>Users</strong>
@@ -96,55 +89,10 @@
     </span>
 
     <span class="item">
-      <strong>Errors</strong>
-      <span>{{errors.toLocaleString('en-us')}}</span>
-    </span>
-
-    <span class="item">
-      <strong>LOC generated</strong>
-      <span>{{loc.toLocaleString('en-us')}}</span>
-    </span>
-
-    <span class="item">
       <strong>Version</strong>
       <span>{{version}}</span>
     </span>
 
   </div>
 
-  <div class="meta-statistics">
-    <a
-      matTooltip="See related log items"
-      [routerLink]="['/log']">
-      Log items
-    </a>
-    <canvas
-      *ngIf="daysData"
-      baseChart
-      chartType="bar"
-      [data]="daysData" 
-      [labels]="daysLabels" 
-      [options]="daysOptions"
-      [colors]="colors">
-    </canvas>
-  </div>
-
-  <div class="meta-statistics">
-    <a
-      [routerLink]="['/log']"
-      matTooltip="See related log items"
-      [queryParams]="{filter: 'Assumption test failed, test file:'}">
-      Assumption failures
-    </a>
-    <canvas
-      *ngIf="assumptionsData"
-      baseChart 
-      chartType="bar"
-      [data]="assumptionsData" 
-      [labels]="assumptionsLabels" 
-      [options]="assumptionsOptions"
-      [colors]="colors">
-    </canvas>
-  </div>
-
-</div> -->
+</div>

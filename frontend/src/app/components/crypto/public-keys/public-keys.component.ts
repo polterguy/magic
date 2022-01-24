@@ -17,7 +17,7 @@ import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from 'src/app/components/log/services/log.service';
+import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
 import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';

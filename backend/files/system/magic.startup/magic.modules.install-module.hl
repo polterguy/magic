@@ -38,10 +38,8 @@ slots.create:magic.modules.install-module
              * Found a "magic.startup" folder in module's main folder,
              * making sure we execute all files within it recursively.
              */
-            unwrap:x:+/*
-            signal:magic.io.file.list-recursively
-               .:x:@.dp/#
-            for-each:x:@signal/*
+            io.file.list-recursively:x:@.dp/#
+            for-each:x:@io.file.list-recursively/*
                if
                   strings.ends-with:x:@.dp/#
                      .:.hl
@@ -64,9 +62,8 @@ slots.create:magic.modules.install-module
                       * all files within it recursively.
                       */
                      unwrap:x:+/*
-                     signal:magic.io.file.list-recursively
-                        .:x:@.dp/#
-                     for-each:x:@signal/*
+                     io.file.list-recursively:x:@.dp/#
+                     for-each:x:@io.file.list-recursively/*
                         if
                            strings.ends-with:x:@.dp/#
                               .:.hl

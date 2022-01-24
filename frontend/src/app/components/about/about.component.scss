@@ -11,6 +11,8 @@ mat-card {
     img {
       width: 100%;
       display: block;
+      border-radius: .5rem;
+      box-shadow: 3px 3px 5px rgba(0,0,0,.7);
     }
   }
   .clearfix {

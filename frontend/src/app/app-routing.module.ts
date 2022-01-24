@@ -9,7 +9,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
 import { IdeComponent } from './components/ide/ide.component';
-import { LogComponent } from './components/log/log.component';
+import { LogComponent } from './components/diagnostics/diagnostics-log/diagnostics-log.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
@@ -39,8 +39,6 @@ const routes: Routes = [
   { path: 'sql', component: SqlComponent },
 
   // Avoids re-initializing component as user opens and closes view details / URL link
-  { path: 'log', redirectTo: 'log/' },
-  { path: 'log/:id', component: LogComponent },
   { path: 'ide', component: IdeComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
