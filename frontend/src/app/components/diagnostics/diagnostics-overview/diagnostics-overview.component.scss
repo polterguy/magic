@@ -1,4 +1,12 @@
 
+.chart-lg{
+  height: 100%;
+  canvas{
+    max-height: 400px;
+    min-height: 100%;
+  }
+}
+
 .meta-wrapper {
   margin-top: 5rem;
   min-height: 19rem;

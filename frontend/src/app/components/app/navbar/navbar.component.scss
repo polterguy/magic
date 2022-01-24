@@ -1,12 +1,261 @@
+@import '../../../../assets/styles/colour.scss';
+@import '../../../../assets/styles/mixin.scss';
 
-a {
-  width: 100%;
-  text-align: left;
-  margin-bottom: .5rem;
-  span {
-    margin-left: .5rem;
+.top-box-sidebar{
+  padding: 15px;
+  // color: $magic_dark_alternative;
+  border-bottom: 1px solid transparentize($color: $magic_dark_alternative, $amount: 0.9);
+  .nm-top{
+    margin-top: -8px;
+  }
+  .switch-theme{
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+    border-radius: 50px;
+    height: 12px;
+    width: 30px;
+    ::ng-deep .mat-button-wrapper{
+      width: 100%;
+      height: 26px;
+      margin-top: -4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    @include general_transition(0.5s);
+    .light-icon,
+    .dark-icon{
+      @include general_transition(0.5s);
+    }
+    .mat-icon{
+      width: 15px;
+      height: 15px;
+      font-size: 15px;
+      line-height: 15px;
+    }
+    &.light{
+      .light-icon{opacity: 0;}
+      .dark-icon{opacity: 1;}
+      @include general_transition(0.5s);
+    }
+    &.dark{
+      .dark-icon{opacity: 0;}
+      .light-icon{opacity: 1;}
+      @include general_transition(0.5s);
+    }
   }
 }
-a.active-link {
-  background-color: #555;
+::ng-deep{
+  // .mat-expansion-panel-header-title,
+  //   .mat-list-option,
+  //   .mat-list-base .mat-list-item,
+  //   p,
+  //   .mat-expansion-indicator::after,
+  //   .top-box-sidebar{
+  //     color: $magic_default!important;
+  //   }
+  .sideClosed .top-box-sidebar{
+    margin-bottom: 20px;
+    font-size: 80%;
+  }
+  
+  // .dark {
+  //   /*=-=-=-=-=-=
+  //   text colour
+  //   =-=-=-=-=-=*/
+  //   .mat-expansion-panel-header-title,
+  //   .mat-list-option,
+  //   .mat-list-base .mat-list-item,
+  //   p,
+  //   .mat-expansion-indicator::after,
+  //   .top-box-sidebar{
+  //     color: $magic_default_alternative!important;
+  //   }
+  // }
+  /*=-=-=-=-=-=
+  for the collapsed sidebar
+    -- to hide texts & to remove padding on the collapsible elements
+  =-=-=-=-=-=*/
+  .sideClosed #sidebar{
+    padding-bottom: 80px;
+    .mat-expansion-panel-header .title,
+    .mat-list-option .title{display: none;}
+    // .mat-expansion-panel-header-title,
+    // .mat-list-text{display: flex;flex-direction: column!important;align-items: center;}
+    .mat-expansion-panel-body{padding: 0;}
+    .mat-expansion-panel-header{
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      // font-size: 85%;
+      .mat-icon{
+        margin-right: auto;
+        margin-left: auto;
+      }
+    }
+    .mat-list-option{
+      padding-left: 8px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;      
+      .mat-icon{
+        margin-right: auto;
+        margin-left: auto;
+      }
+    }
+    .mat-expansion-panel-header-title{padding-right: 0;margin-right: 0;}
+    // .title{font-size: 85%!important;}
+    /*=-=-=-=-=-=
+    expanded panel background colour
+    =-=-=-=-=-=*/
+    .mat-expanded .mat-expansion-panel-content{
+      box-shadow: none;
+    }
+    /*=-=-=-=-=-=
+    links outside of the main accordion
+    =-=-=-=-=-=*/
+    .standalone-link.mat-list-option{
+      padding-left: 1rem;
+      .mat-list-text{padding-right: 0;}
+    }
+    /*=-=-=-=-=-=
+    to fix positioning of the ripple
+    =-=-=-=-=-=*/
+    .mat-expansion-panel-header .mat-list-item-content, 
+    .mat-list-option .mat-list-item-content{
+      width: 100%;
+    }
+    /*=-=-=-=-=-=
+    active and hover text colour
+    =-=-=-=-=-=*/
+    .mat-list-option,
+    .mat-expansion-panel-header{
+      &.active-link::after,
+      &:hover::after{
+        content: ' '!important;
+        position: absolute!important;
+        height: 100%!important;
+        left: 0!important;
+        width: 91%;
+        background: transparentize($color: $magic_dark, $amount: 0.8);
+        border-top-right-radius: 30px;
+        border-bottom-right-radius: 30px;
+        margin-right: 10px;
+        bottom: 0!important;
+      }
+    }
+    .mat-list-option{
+      &.active-link::after,
+      &:hover::after{
+        width: 82%;
+      }
+    }
+    /*=-=-=-=-=-=
+    expanded panel to have exeption when sidebar is collapsed
+    =-=-=-=-=-=*/
+    mat-expansion-panel.mat-expansion-panel.mat-expanded{
+      box-shadow: none;
+    }
+  }
+  /*=-=-=-=-=-=
+  general styling
+  =-=-=-=-=-=*/
+  #sidebar {
+    padding-bottom: 40px;
+    .mat-expansion-panel{
+      border-radius: 0;
+    }
+    /*=-=-=-=-=-=
+    removing background colour
+    =-=-=-=-=-=*/
+    .mat-expansion-panel,
+    .mat-expansion-panel-header,
+    .mat-list-option{background-color: transparent;}
+
+    .mat-expansion-panel-header,
+    .mat-list-option{
+      height: 40px;
+      font-size: 14px;
+      line-height: 21px;
+      padding: 0 1rem;
+      @include general_transition(0.3s);
+      .mat-icon{
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+        margin-right: 15px;
+      }
+      
+      /*=-=-=-=-=-=
+      inside mat-list-option
+      =-=-=-=-=-=*/
+      .mat-list-text {
+        flex-direction: row;
+        font-size: 13px;
+      }
+      .mat-list-item-content{
+        padding: 0;
+      }
+    }
+    .mat-expansion-panel-header{
+      &::after{@include general_transition(0.5s);}
+      &.active-link::after,
+      &:hover::after {
+        content: ' ';
+        position: absolute;
+        height: 100%;
+        left: 0;
+        width: 99%;
+        background: transparentize($color: $magic_dark, $amount: 0.8);
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 25px;
+        margin-right: 10px;
+      }
+    }
+    .mat-list-option:not(.standalone-link){
+      &::after{@include general_transition(0.5s);}
+        &.active-link::after,
+        &:hover::after{
+            content: '.';
+            position: absolute;
+            height: 100%;
+            right: 0;
+            bottom: 10px;
+            font-size: 60px;
+            color: $magic_accent;
+            left: 90%;
+            margin-left: -10px;
+        }
+    }
+    /*=-=-=-=-=-=
+    expanded panel background color
+    =-=-=-=-=-=*/
+    // .mat-expanded .mat-expansion-panel-content{
+    //   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.05);
+    // }
+    mat-expansion-panel.mat-expansion-panel.mat-expanded{
+      box-shadow: inset 52px -61px 75px rgba(0, 0, 0, 0.08);
+    }
+  }
+  /*=-=-=-=-=-=
+  fixing logout link to the bottom of sidebar
+  =-=-=-=-=-=*/
+  .sideClosed #sidebar .standalone-link:not(.stick-to-bottom){
+    margin-bottom: 60px;
+  }
+  #sidebar .stick-to-bottom{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
+  }
+  .light #sidebar .stick-to-bottom{
+    background-color: $magic_site_bg;
+  }
+  .dark #sidebar .stick-to-bottom{
+    background-color: $magic_dark_alternative_light;
+  }
 }

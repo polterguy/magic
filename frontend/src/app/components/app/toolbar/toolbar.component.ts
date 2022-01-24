@@ -5,8 +5,9 @@
 
 // Angular and system imports.
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
@@ -27,6 +28,9 @@ import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent implements OnInit {
+
+  // checking for the sidenav status -- boolean
+  @Input() sideNavStatus: boolean;
 
   /*
    * Help videos displayed when user clicks help.
@@ -63,7 +67,8 @@ export class ToolbarComponent implements OnInit {
    * @param authService Authentication and authorisation HTTP service
    * @param backendService Service to keep track of currently selected backend
    * @param messageService Message service to send messages to other components using pub/sub
-   * @param feedbackService Needed to show confirm dialog.
+   * @param feedbackService Needed to show confirm dialog
+   * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     private router: Router,
@@ -71,7 +76,8 @@ export class ToolbarComponent implements OnInit {
     public authService: AuthService,
     public backendService: BackendService,
     private messageService: MessageService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private overlayContainer: OverlayContainer) { }
 
   /**
    * Implementation of OnInit.
@@ -79,11 +85,11 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
 
     // Checking if user has stored a theme in his local storage.
-    var theme = localStorage.getItem('theme') ?? 'light';
+    let theme = localStorage.getItem('theme') ?? 'light';
 
     // Storing whether or not user is using light theme.
     this.lightTheme = theme === 'light';
-
+    this.overlayContainer.getContainerElement().classList.add(theme);
     /*
      * Publishing the message that will apply the currently selected theme.
      *
@@ -160,6 +166,8 @@ export class ToolbarComponent implements OnInit {
    * Invoked when theme is changed.
    */
   public themeChanged() {
+    // removing previously added class for dialogs
+    this.overlayContainer.getContainerElement().classList.remove(localStorage.getItem('theme'));
 
     // Publishing message informing other components that active theme was changed.
     const theme = this.lightTheme ? 'light' : 'dark';
@@ -170,6 +178,9 @@ export class ToolbarComponent implements OnInit {
 
     // Persisting active theme to local storage.
     localStorage.setItem('theme', theme);
+
+    // setting new class based on the theme for dialogs
+    this.overlayContainer.getContainerElement().classList.add(theme);
   }
 
   /**

@@ -1,1 +1,51 @@
+/*=-=-=-=-=-=
+main colour definistion
+=-=-=-=-=-=*/
+$magic_default: #ffffff;
+$magic_default_secondary: #fafafa;
+$magic_default_alternative: #e5e5e5;
+
+$magic_dark: #000000;
+$magic_dark_secondary: #1b1b1b;
+$magic_dark_alternative: #303030;
+$magic_dark_alternative_light: #424242;
+
+$magic_primary_dark: #311B92;
+$magic_site_bg: #F5F5F5;
+$magic_primary: #3F51B5;
+$magic_accent: #03A9F4;
+
 $magic_warning: #c88;
+$magic_error: rgba(255, 0, 0, 0.2);
+
+/*=-=-=-=-=-=
+to change the default colour paletter -- 
+    in fact only the "accent" colour is changed from pink to light blue
+=-=-=-=-=-=*/
+@use '~@angular/material' as mat;
+@include mat.core();
+
+$theme-primary: mat.define-palette(mat.$indigo-palette, 500);
+$theme-accent: mat.define-palette(mat.$light-blue-palette, 500);
+
+$theme: mat.define-light-theme((
+ color: (
+   primary: $theme-primary,
+   accent: $theme-accent,
+ )
+));
+
+@include mat.all-component-themes($theme);
+/*=-=-=-=-=-=
+defining dark theme palette
+=-=-=-=-=-=*/
+@import '~@angular/material/theming';
+
+$dark-primary: mat-palette($mat-indigo, 'contrastStrongLightColors');
+$dark-accent:  mat-palette($mat-light-blue, A200, A100, A400);
+$dark-warn:    mat-palette($mat-deep-orange);
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+.dark{
+    @include angular-material-theme($dark-theme);
+}
+

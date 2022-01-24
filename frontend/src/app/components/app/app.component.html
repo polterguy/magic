@@ -8,15 +8,21 @@
 
 <div [class]="theme">
 
-  <app-toolbar></app-toolbar>
+  <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar>
 
-  <mat-sidenav-container>
+  <mat-sidenav-container (backdropClick)="closeNavbar()">
 
-    <mat-sidenav mode="side" [(opened)]="sidenavOpened">
-      <app-navbar></app-navbar>
+    <mat-sidenav [mode]="notSmallScreen ? 'side' : 'over'" class="mat-elevation-z2"
+      [opened]="sidenavOpened || notSmallScreen"
+      [class.sideClosed]="!sidenavOpened && notSmallScreen"
+      [class.full-width-sidebar]="notSmallScreen && sidenavOpened"
+      [class.small-width-sidebar]="notSmallScreen && !sidenavOpened">
+      <app-navbar [sideNavStatus]="sidenavOpened"></app-navbar>
     </mat-sidenav>
 
-    <mat-sidenav-content>
+    <mat-sidenav-content
+    [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
+    [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened">
 
       <div class="img-wrapper"></div>
 
@@ -27,8 +33,43 @@
 
       <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
 
+      
+      <div class="footer d-flex justify-content-between align-items-center w-100"
+      [class.padding-left-full]="notSmallScreen && sidenavOpened"
+      [class.padding-left-small]="notSmallScreen && !sidenavOpened">
+        <p class="mt-0 mb-0 mat-caption">
+          Magic is Copyright(c) of Aista, Ltd - Contact us at <a href="mailto:th@aista.com">th@aista.com</a>
+        </p>
+        <div class="d-flex align-items-center">
+          <ng-container *ngIf="shouldUpdateCore">
+            <a
+              href="https://polterguy.github.io/tutorials/getting-started/"
+              mat-raised-button
+              matTooltip="Update your Magic installation"
+              matTooltipPosition="above" 
+              target="_blank"
+              class="mr-4"
+              color="warn">
+              Update to {{bazarVersion}}
+            </a>
+          </ng-container>
+          <ng-container>
+            <span
+            [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'">{{version}}</span>
+          </ng-container>
+          <!-- <div *ngIf="!shouldUpdateCore" class="documentation">
+            <a
+              href="https://docs.aista.com"
+              mat-button
+              matTooltip="Read the documentation for Magic"
+              target="_blank">
+              Documentation
+            </a>
+          </div> -->
+        </div>
+      </div>
     </mat-sidenav-content>
-
+    
   </mat-sidenav-container>
 
 </div>

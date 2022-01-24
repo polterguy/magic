@@ -1,5 +1,67 @@
 
-<div class="meta-wrapper">
+<div class="row">
+  <div class="col-lg-8 col-md-4 col-12">
+    <!-- logs -->
+    <mat-card class="chart-lg">
+      <mat-card-content>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="mat-subheading-2 mb-0">System's log</h3>
+            <p class="mt-0 mat-caption text-muted">View {{logCount.toLocaleString('en-us')}} logs generated in your system.</p>
+          </div>
+          <button mat-button
+            matTooltip="See related log items"
+            [routerLink]="['/log']">
+            View log items
+          </button>
+        </div>
+        <canvas
+          *ngIf="daysData"
+          baseChart
+          chartType="bar"
+          [data]="daysData" 
+          [labels]="daysLabels" 
+          [options]="daysOptions"
+          [colors]="colors">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-5 col-md-6 col-12">
+    <!-- assumption -->
+    <mat-card class="chart-lg">
+      <mat-card-content>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="w-100">
+            <h3 class="mat-subheading-2 mb-0">Failed assumptions</h3>
+            <p class="mt-0 mat-caption text-muted">View failed assumption logs generated in your system.</p>
+          </div>
+          <div class="w-100 d-flex justify-content-end">
+            <button mat-button
+              [routerLink]="['/log']"
+              matTooltip="See failed assumption log items"
+              [queryParams]="{filter: 'Assumption test failed, test file:'}">
+              View failed assumptions
+            </button>
+          </div>
+        </div>
+        <canvas
+          *ngIf="assumptionsData"
+          baseChart 
+          chartType="bar"
+          [data]="assumptionsData" 
+          [labels]="assumptionsLabels" 
+          [options]="assumptionsOptions"
+          [colors]="colors">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+
+
+<!-- <div class="meta-wrapper">
 
   <div class="meta-info">
 
@@ -85,4 +147,4 @@
     </canvas>
   </div>
 
-</div>
+</div> -->

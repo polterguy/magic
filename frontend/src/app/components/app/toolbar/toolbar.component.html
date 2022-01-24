@@ -1,52 +1,49 @@
 
-<mat-toolbar>
-
-  <button
-    mat-button
-    (click)="toggleNavbar()">
-    <mat-icon>menu</mat-icon>
-    <span>Magic</span>
-  </button>
-
-  <span class="spacer"></span>
-
-  <span [class]="backendService.secure ? 'user' : 'user warning'">
-    {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
-  </span>
-
-  <mat-slide-toggle
-    [(ngModel)]="lightTheme"
-    labelPosition="before"
-    (change)="themeChanged()">Lights</mat-slide-toggle>
-
-  <button
-    *ngIf="!authService.authenticated"
+<mat-toolbar [class]="sideNavStatus ? 'sidebar-open' : 'sidebar-closed'">
+  <div class="d-flex justify-content-between w-100">
+    <button
     mat-icon-button
-    matTooltip="Login"
-    (click)="login()">
-    <mat-icon>lock_open</mat-icon>
-  </button>
+      (click)="toggleNavbar()">
+      <mat-icon>menu{{sideNavStatus ? '_open' : ''}}</mat-icon>
+    </button>
+    <!-- <button
+      mat-button
+      (click)="toggleNavbar()">
+      <mat-icon>menu</mat-icon>
+      <span class="ml-1">Magic</span>
+    </button> -->
+    <div>
+      <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus">
+        {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
+      </span>
+    
+      <!-- <mat-slide-toggle 
+        [(ngModel)]="lightTheme"
+        labelPosition="before"
+        (change)="themeChanged()" class="mr-1 ml-1 d-md-none">Lights</mat-slide-toggle> -->
+    
+      <!-- <button
+        mat-icon-button
+        matTooltip="Home"
+        routerLink="/">
+        <mat-icon>home</mat-icon>
+      </button> -->
+    
+      <button
+        mat-icon-button
+        matTooltip="Help"
+        (click)="help()">
+        <mat-icon>contact_support</mat-icon>
+      </button>
+      
+      <button
+        mat-icon-button
+        [matTooltip]="authService.authenticated ? 'Logout' : 'Login'"
+        (click)="authService.authenticated ? logout() : login()">
+        <mat-icon>{{authService.authenticated ? 'lock' : 'lock_open'}}</mat-icon>
+      </button>
+    </div>
+  </div>
 
-  <button
-    *ngIf="authService.authenticated"
-    mat-icon-button
-    matTooltip="Logout"
-    (click)="logout()">
-    <mat-icon>lock</mat-icon>
-  </button>
-
-  <button
-    mat-icon-button
-    matTooltip="Help"
-    (click)="help()">
-    <mat-icon>contact_support</mat-icon>
-  </button>
-
-  <button
-    mat-icon-button
-    matTooltip="Home"
-    routerLink="/">
-    <mat-icon>home</mat-icon>
-  </button>
 
 </mat-toolbar>

@@ -1,0 +1,7 @@
+<ng-container *ngIf="authService.authenticated">
+    <app-diagnostics-overview></app-diagnostics-overview>
+</ng-container>
+<!-- if not authenticated -->
+<ng-container *ngIf="!authService.authenticated">
+    
+</ng-container>
