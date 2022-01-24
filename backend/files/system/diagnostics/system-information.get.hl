@@ -5,9 +5,13 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Making sure we aggressively cache the HTTP response object on the client side.
+response.headers.set
+   Cache-Control:public, max-age=300
+
 // Retrieving data from cache, and/or creating our cache entry.
 cache.try-get:system-information
-   expiration:3
+   expiration:300
    .lambda
 
       // Retrieving version of Magic we're currently running.
@@ -25,7 +29,7 @@ cache.try-get:system-information
 
       // Retrieving count of log items grouped by day for root logins.
       log.timeshift:"We successfully authenticated user 'root'"
-      add:x:@.lambda/*/return-nodes/*/root_logins
+      add:x:@.lambda/*/return-nodes/*/timeshifts/*/root_logins
          get-nodes:x:@log.timeshift/*
 
       // Retrieving endpoints.
@@ -62,7 +66,8 @@ cache.try-get:system-information
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
          log_types
-         root_logins
+         timeshifts
+            root_logins
 
 // Returning result of cache invocation to caller.
 return-nodes:x:@cache.try-get/#/*
