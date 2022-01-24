@@ -1,0 +1,63 @@
+
+// Returns system information to caller.
+.description:Returns system information to caller
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Retrieving data from cache, and/or creating our cache entry.
+cache.try-get:system-information
+   expiration:3
+   .lambda
+
+      // Retrieving version of Magic we're currently running.
+      version
+
+      // Retrieving number of persisted tasks.
+      tasks.count
+
+      // Counting log items.
+      log.count
+
+      // Retrieving count of types of log items.
+      log.types
+
+      // Retrieving endpoints.
+      endpoints.list
+      .no-endpoints
+      set-value:x:-
+         get-count:x:@endpoints.list/*
+
+      // Retrieving slots.
+      vocabulary
+      .no-slots
+      set-value:x:-
+         get-count:x:@vocabulary/*
+
+      // Retrieving dynamic slots.
+      slots.vocabulary
+      .no-dynamic-slots
+      set-value:x:-
+         get-count:x:@slots.vocabulary/*
+
+      // Retrieving default database adapter.
+      .default-db
+      set-value:x:-
+         config.get:"magic:databases:default"
+
+      // Returning result to caller.
+      unwrap:x:@.lambda/*/return-nodes/*
+      add:x:@.lambda/*/return-nodes/*/log_types
+         get-nodes:x:@log.types/*
+      return-nodes
+         version:x:@version
+         persisted_tasks:x:@tasks.count
+         log_items:x:@log.count
+         endpoints:x:@.no-endpoints
+         slots:x:@.no-slots
+         dynamic_slots:x:@.no-dynamic-slots
+         default_db:x:@.default-db
+         log_types
+
+// Returning result of cache invocation to caller.
+return-nodes:x:@cache.try-get/#/*
