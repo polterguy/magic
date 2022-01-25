@@ -1,26 +1,8 @@
-<div class="d-flex flex-column w-100 h-100">
+<div class="d-flex flex-column w-100 h-100" id="sidebar">
   <div class="top-box-sidebar d-flex flex-column justify-content-center align-items-center text-center">
-    <div class="d-flex w-100 justify-content-between align-items-center" [class.flex-column]="!sideNavStatus">
-      <div>
-        <img src="../../../../assets/logo-no-text.svg" alt="" [width]="sideNavStatus ? 50 : 35">
-        <p class="mat-caption nm-top">MAGIC</p>
-      </div>
-      <div>
-        <button mat-icon-button aria-label="Switch theme" 
-        *ngIf="lightTheme"
-        class="switch-theme {{lightTheme}}" [color]="lightTheme === 'dark' ? 'accent' : ''"
-        [matTooltip]="'Switch to ' + (lightTheme === 'light' ? 'dark' : 'light') + ' theme'"
-        [matTooltipPosition]="sideNavStatus ? 'below' : 'after'"
-        (click)="themeChanged(lightTheme === 'light' ? 'dark' : 'light')">
-          <span class="light-icon">
-            <mat-icon>light_mode</mat-icon>
-          </span>
-          <span class="dark-icon">
-            <mat-icon>brightness_4</mat-icon>
-          </span>
-        </button>
-        <p class="mat-caption" *ngIf="sideNavStatus"><small>Swith theme</small></p>
-      </div>
+    <div class="d-flex flex-column w-100 justify-content-center align-items-center">
+      <img src="../../../../assets/logo-no-text.svg" alt="" [width]="sideNavStatus ? 80 : 35">
+      <p class="nm-top">MAGIC</p>
     </div>
     <ng-container *ngIf="sideNavStatus">
       <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">Welcome {{getUserRoles()}}</h4>
@@ -29,7 +11,7 @@
       </h5>
     </ng-container>
   </div>
-  <mat-accordion id="sidebar" displayMode="flat" [multi]="!sideNavStatus">
+  <mat-accordion displayMode="flat" [multi]="!sideNavStatus">
     <p class="mb-0 text-muted p-3" *ngIf="((authService.access.files.list_files && authService.access.files.list_folders) || authService.access.diagnostics.statistics || authService.access.endpoints.view || authService.access.sockets.read) && sideNavStatus">Main pages</p>
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="dashboard?.isActive || health?.isActive || !sideNavStatus" 
@@ -395,7 +377,7 @@
       </mat-expansion-panel-header>
     </mat-expansion-panel>
   </mat-accordion>
-
+</div>
 <!-- <a
   mat-button
   routerLink="/"

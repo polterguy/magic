@@ -55,9 +55,9 @@ export class ToolbarComponent implements OnInit {
   ];
 
   /**
-   * True if user wants to use light theme, otherwise false.
+   * value for the theme, default is set to light
    */
-  public lightTheme = true;
+  public theme: string;
 
   /**
    * Creates an instance of your component.
@@ -84,12 +84,9 @@ export class ToolbarComponent implements OnInit {
    */
   ngOnInit() {
 
-    // Checking if user has stored a theme in his local storage.
-    let theme = localStorage.getItem('theme') ?? 'light';
-
-    // Storing whether or not user is using light theme.
-    this.lightTheme = theme === 'light';
-    this.overlayContainer.getContainerElement().classList.add(theme);
+    // setting theme value, if user has set previously, otherwise is set to light 
+    this.theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
+    this.overlayContainer.getContainerElement().classList.add(this.theme);
     /*
      * Publishing the message that will apply the currently selected theme.
      *
@@ -99,7 +96,7 @@ export class ToolbarComponent implements OnInit {
     setTimeout(() => {
       this.messageService.sendMessage({
         name: Messages.THEME_CHANGED,
-        content: theme,
+        content: this.theme,
       });
     }, 1);
   }
@@ -165,22 +162,23 @@ export class ToolbarComponent implements OnInit {
   /**
    * Invoked when theme is changed.
    */
-  public themeChanged() {
+  public themeChanged(value: string) {
+    this.theme = value;
+     
     // removing previously added class for dialogs
     this.overlayContainer.getContainerElement().classList.remove(localStorage.getItem('theme'));
 
     // Publishing message informing other components that active theme was changed.
-    const theme = this.lightTheme ? 'light' : 'dark';
     this.messageService.sendMessage({
       name: Messages.THEME_CHANGED,
-      content: theme,
+      content: value,
     });
 
     // Persisting active theme to local storage.
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('theme', value);
 
     // setting new class based on the theme for dialogs
-    this.overlayContainer.getContainerElement().classList.add(theme);
+    this.overlayContainer.getContainerElement().classList.add(value);
   }
 
   /**

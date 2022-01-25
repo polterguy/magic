@@ -12,11 +12,23 @@
       <mat-icon>menu</mat-icon>
       <span class="ml-1">Magic</span>
     </button> -->
-    <div>
+    <div class="d-flex align-items-center">
       <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus">
         {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
       </span>
-    
+      <button mat-icon-button aria-label="Switch theme" 
+      *ngIf="theme"
+      class="switch-theme {{theme}}" [color]="theme === 'dark' ? 'accent' : ''"
+      [matTooltip]="'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'"
+      [matTooltipPosition]="sideNavStatus ? 'below' : 'after'"
+      (click)="themeChanged(theme === 'light' ? 'dark' : 'light')">
+        <span class="light-icon">
+          <mat-icon>light_mode</mat-icon>
+        </span>
+        <span class="dark-icon">
+          <mat-icon>brightness_4</mat-icon>
+        </span>
+      </button>
       <!-- <mat-slide-toggle 
         [(ngModel)]="lightTheme"
         labelPosition="before"

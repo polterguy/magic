@@ -123,6 +123,9 @@ spaces -- MARGIN & PADDING
 .p-3{
     padding: 1.25rem;
 }
+.mt-3{
+    margin-top: 1.25rem!important;
+}
 .mt-4{
     margin-top: 1.5rem!important;
 }
@@ -158,8 +161,8 @@ breakpoints & row/column
   display: -webkit-box;
   display: flex;
   flex-wrap: wrap;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
 //   margin-right: -15px;
 //   margin-left: -15px;
 }
