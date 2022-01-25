@@ -60,9 +60,9 @@ copyright
       border-radius: 10px;
     }
   }
-  // .light .mat-drawer{
-  //   background-color: $magic_primary_dark;
-  // }
+  .dark .mat-drawer{
+    background-color: $magic_dark_secondary_light!important;
+  }
   .mat-drawer-inner-container{
     @include scrollbar(transparent,transparent,3px);
     &:hover{
