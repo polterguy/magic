@@ -23,10 +23,6 @@ cache.try-get:system-information
       // Counting total number of log items.
       log.count
 
-      // Retrieving count of log items grouped by type.
-      add:x:@.lambda/*/return-nodes/*/log_types
-         log.types
-
       // Retrieving count of log items grouped by day for root logins.
       log.timeshift:"We successfully authenticated user 'root'"
       add:x:@.lambda/*/return-nodes/*/timeshifts/*/root_logins
@@ -65,7 +61,6 @@ cache.try-get:system-information
          slots:x:@.no-slots
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
-         log_types
          timeshifts
             root_logins
 
