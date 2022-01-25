@@ -145,8 +145,9 @@ create table log_entries (
   id int not null identity(1,1),
   created datetime not null default getutcdate(),
   type nvarchar(10) not null,
-  exception text null,
-  content text not null,
+  content ntext not null,
+  meta ntext null,
+  exception ntext null,
   constraint pk_log_entries primary key clustered(id asc)
 );
 

@@ -3,7 +3,7 @@
  * Default global exception handler, invoked if no other overrides exists
  * at the module level.
  */
-log.exception
+log.error
    .:"Unhandled exception occurred '"
    get-value:x:@.arguments/*/message
    .:"' at '"
