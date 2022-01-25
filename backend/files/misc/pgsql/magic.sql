@@ -111,6 +111,7 @@ create table log_entries (
   created timestamptz not null default now(),
   type varchar(10) not null,
   content text not null,
+  meta text null,
   exception text null,
   primary key (id)
 );

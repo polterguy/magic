@@ -115,6 +115,7 @@ create table log_entries (
   created datetime not null default current_timestamp,
   type varchar(10) not null,
   content text not null,
+  meta text null,
   exception text null,
   primary key (id),
   unique key id_UNIQUE (id)
