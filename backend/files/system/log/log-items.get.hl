@@ -9,10 +9,10 @@
 auth.ticket.verify:root
 
 // Invoking slot responsible for returning items, making sure we correctly parametrise invocation.
-add:x:../*/log.query
+add:x:../*/log.list
    get-nodes:x:@.arguments/*/max
    get-nodes:x:@.arguments/*/from
-log.query
+log.list
 
 // Returning result of above invocation to caller.
 return-nodes:x:-/*
