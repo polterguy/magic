@@ -1,0 +1,73 @@
+
+// Returns system information to caller.
+.description:Returns system information to caller
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Making sure we aggressively cache the HTTP response object on the client side.
+response.headers.set
+   Cache-Control:public, max-age=300
+
+// Retrieving data from cache, and/or creating our cache entry.
+cache.try-get:system-information
+   expiration:300
+   .lambda
+
+      // Retrieving version of Magic we're currently running.
+      version
+
+      // Retrieving number of persisted tasks.
+      tasks.count
+
+      // Counting total number of log items.
+      log.count
+
+      // Retrieving count of log items grouped by type.
+      add:x:@.lambda/*/return-nodes/*/log_types
+         log.types
+
+      // Retrieving count of log items grouped by day for root logins.
+      log.timeshift:"We successfully authenticated user 'root'"
+      add:x:@.lambda/*/return-nodes/*/timeshifts/*/root_logins
+         get-nodes:x:@log.timeshift/*
+
+      // Retrieving endpoints.
+      endpoints.list
+      .no-endpoints
+      set-value:x:-
+         get-count:x:@endpoints.list/*
+
+      // Retrieving slots.
+      vocabulary
+      .no-slots
+      set-value:x:-
+         get-count:x:@vocabulary/*
+
+      // Retrieving dynamic slots.
+      slots.vocabulary
+      .no-dynamic-slots
+      set-value:x:-
+         get-count:x:@slots.vocabulary/*
+
+      // Retrieving default database adapter.
+      .default-db
+      set-value:x:-
+         config.get:"magic:databases:default"
+
+      // Returning result to caller.
+      unwrap:x:@.lambda/*/return-nodes/*
+      return-nodes
+         version:x:@version
+         persisted_tasks:x:@tasks.count
+         log_items:x:@log.count
+         endpoints:x:@.no-endpoints
+         slots:x:@.no-slots
+         dynamic_slots:x:@.no-dynamic-slots
+         default_db:x:@.default-db
+         log_types
+         timeshifts
+            root_logins
+
+// Returning result of cache invocation to caller.
+return-nodes:x:@cache.try-get/#/*
