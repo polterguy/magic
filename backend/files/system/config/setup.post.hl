@@ -231,7 +231,6 @@ try
     */
    config.get:"magic:auth:secret"
    crypto.seed:x:-
-   log.info:CSRNG successfully seeded with your auth secret
 
    // Authenticating user and returning new JWT token to client.
    unwrap:x:+/*
