@@ -14,14 +14,6 @@ fork
     */
    try
 
-      /*
-       * Logging the fact that we're trying to execute SQL migration scripts.
-       * Notice, this MUST be done BEFORE we try to connect to magic database,
-       * since the very act of logging will throw an exception unless the database
-       * has already been created.
-       */
-      log.info:Attempting to execute database migration scripts
-
       // Figuring out what's our default database type.
       config.get:"magic:databases:default"
 
@@ -60,15 +52,6 @@ fork
                    */
                   try
 
-                     /*
-                      * Logging the fact that we're trying to execute currently
-                      * iterated migration script.
-                      */
-                     log.info
-                        .:"Trying to execute '"
-                        get-value:x:@.dp/#
-                        .:"' database migration script."
-
                      // Ensuring we're doing the "batch execute" thing in case we're in MS SQL land.
                      if
                         eq
@@ -83,24 +66,12 @@ fork
                      data.execute:x:@io.file.load
                         database-type:x:@config.get
 
-                     // Logging the fact that migration script was successfully executed.
-                     log.info
-                        .:"Migration script '"
-                        get-value:x:@.dp/#
-                        .:"' successfully executed."
                   .catch
 
                      /*
                       * We might end up here if migration script has been previously executed ...
-                      * But, since we were able to successfully connect to magic database, we can
-                      * still safely assume we are able to log the error.
                       */
-                     log.error
-                        .:"Error while executing migration script '"
-                        get-value:x:@.dp/#
-                        .:"'. Message from system was '"
-                        get-value:x:@.arguments/*/message
-                        .:"'."
+                     .do-nothing
    .catch
 
       /*
