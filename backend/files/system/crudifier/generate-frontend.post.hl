@@ -21,6 +21,16 @@ validators.email:x:@.arguments/*/email
 validators.mandatory:x:@.arguments/*/apiUrl
 validators.url:x:@.arguments/*/apiUrl
 
+// Doing some basic logging.
+log.info:Generating CRUD frontend
+   template:x:@.arguments/*/templateName
+   apiUrl:x:@.arguments/*/apiUrl
+   frontendUrl:x:@.arguments/*/frontendUrl
+   email:x:@.arguments/*/email
+   name:x:@.arguments/*/name
+   copyright:x:@.arguments/*/copyright
+   deployLocally:x:@.arguments/*/deployLocally
+
 // Figuring out which template/generator to use, and invoking it.
 strings.concat
    .:/misc/templates/
