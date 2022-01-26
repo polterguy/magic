@@ -23,13 +23,27 @@ cache.try-get:system-information
       // Counting total number of log items.
       log.count
 
-      // Retrieving count of log items grouped by day for root logins.
-      add:x:@.lambda/*/return-nodes/*/timeshifts/*/logins
-         log.timeshift:User successfully authenticated
+      /*
+       * Retrieving capabilities of log implementation, and verifying implementation
+       * supports timeshifts before we invoke timeshifts.
+       */
+      log.capabilities
+      if:x:@log.capabilities/*/can-timeshift
 
-      // Retrieving count of log items grouped by day for backend endpoints generated.
-      add:x:@.lambda/*/return-nodes/*/timeshifts/*/backend_endpoints_generated
-         log.timeshift:Generating CRUD backend
+         // Adding root nodes for timeshifts.
+         add:x:@.lambda/*/return-nodes
+            .
+               timeshifts
+                  logins
+                  backend_endpoints_generated
+
+         // Retrieving count of log items grouped by day for root logins.
+         add:x:@.lambda/*/return-nodes/*/timeshifts/*/logins
+            log.timeshift:User successfully authenticated
+
+         // Retrieving count of log items grouped by day for backend endpoints generated.
+         add:x:@.lambda/*/return-nodes/*/timeshifts/*/backend_endpoints_generated
+            log.timeshift:Generating CRUD backend
 
       // Retrieving endpoints.
       endpoints.list
@@ -64,9 +78,6 @@ cache.try-get:system-information
          slots:x:@.no-slots
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
-         timeshifts
-            logins
-            backend_endpoints_generated
 
 // Returning result of cache invocation to caller.
 return-nodes:x:@cache.try-get/#/*
