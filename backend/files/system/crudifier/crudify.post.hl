@@ -100,7 +100,7 @@ semaphore:crudifier
             status:401
 
    // Creating a log entry explaining roughly what we're about to do.
-   log.info:Automatically generating CRUD backend
+   log.info:Generating CRUD backend
       module:x:@strings.to-lower
       database:x:@.arguments/*/database
       table:x:@.arguments/*/table

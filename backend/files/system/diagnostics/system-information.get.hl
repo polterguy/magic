@@ -27,6 +27,10 @@ cache.try-get:system-information
       add:x:@.lambda/*/return-nodes/*/timeshifts/*/logins
          log.timeshift:User successfully authenticated
 
+      // Retrieving count of log items grouped by day for backend endpoints generated.
+      add:x:@.lambda/*/return-nodes/*/timeshifts/*/backend_endpoints_generated
+         log.timeshift:Generating CRUD backend
+
       // Retrieving endpoints.
       endpoints.list
       .no-endpoints
@@ -62,6 +66,7 @@ cache.try-get:system-information
          default_db:x:@.default-db
          timeshifts
             logins
+            backend_endpoints_generated
 
 // Returning result of cache invocation to caller.
 return-nodes:x:@cache.try-get/#/*
