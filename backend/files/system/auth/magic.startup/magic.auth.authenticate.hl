@@ -114,10 +114,11 @@ slots.create:magic.auth.authenticate
              */
             strings.split:x:@config.get
                .:":"
-            set-name:x:+/+/*/*
+            set-name:x:+/+/+/*/*
                get-value:x:@strings.split/0
-            set-value:x:+/*/*
+            set-value:x:+/+/*/*
                get-value:x:@strings.split/1
+            unwrap:x:+/*/*/*
             insert-after:x:@if/./**/crypto.password.verify
                .
                   foo
