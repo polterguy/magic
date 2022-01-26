@@ -100,16 +100,11 @@ semaphore:crudifier
             status:401
 
    // Creating a log entry explaining roughly what we're about to do.
-   log.info
-      .:"Crudifying '"
-      get-value:x:@strings.to-lower
-      .:"' wrapping '"
-      get-value:x:@.arguments/*/database
-      .:"' and '"
-      get-value:x:@.arguments/*/table
-      .:"' with verb '"
-      get-value:x:@.arguments/*/verb
-      .:"'"
+   log.info:Automatically generating CRUD backend
+      module:x:@strings.to-lower
+      database:x:@.arguments/*/database
+      table:x:@.arguments/*/table
+      verb:x:@.arguments/*/verb
 
    // Making sure we create a valid filename.
    .filename
@@ -150,12 +145,11 @@ semaphore:crudifier
          unwrap:x:+/*/*/0
          insert-after:x:@apply/*/.type
             .
-               log.info
-                  .:x:@.arguments/*/log
-                  auth.ticket.get
-                  .:@"
-"
-                  lambda2hyper:x:@.arguments/*
+               auth.ticket.get
+               lambda2hyper:x:@.arguments/*
+               log.info:x:@.arguments/*/log
+                  username:x:@auth.ticket.get
+                  arguments:x:@lambda2hyper
 
    /*
     * Making sure we append validators, if given by client.

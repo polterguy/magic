@@ -53,20 +53,13 @@ tasks.create:x:@strings.concat
                locked:bool:false
 
       // Making sure we log the fact that user was released.
-      log.info
-         strings.concat
-            .:"User was released, username was '"
-            get-value:x:@.username
-            .:"'"
+      log.info:User released
+         username:x:@.username
 
 // Making sure we log the fact that user was imprisoned.
-log.info
-   strings.concat
-      .:"User was imprisoned, username was '"
-      get-value:x:@.arguments/*/username
-      .:"'. Release date is "
-      get-value:x:@.arguments/*/releaseDate
-      .:.
+log.info:User imprisoned
+   username:x:@.arguments/*/username
+   release_date:x:@.arguments/*/releaseDate
 
 // Returns the authentication JWT ticket created above to caller.
 return-nodes
