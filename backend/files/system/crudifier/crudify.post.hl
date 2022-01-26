@@ -102,6 +102,7 @@ semaphore:crudifier
    // Creating a log entry explaining roughly what we're about to do.
    log.info:Generating CRUD backend
       module:x:@strings.to-lower
+      databaseType:x:@.arguments/*/databaseType
       database:x:@.arguments/*/database
       table:x:@.arguments/*/table
       verb:x:@.arguments/*/verb
