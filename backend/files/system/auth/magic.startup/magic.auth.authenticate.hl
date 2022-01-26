@@ -172,10 +172,8 @@ slots.create:magic.auth.authenticate
                         .:reset-password
 
                   // Logging the fact that we generated a reset-password token.
-                  log.info
-                     .:"Reset password token successfully generated for user '"
-                     get-value:x:@.arguments/*/username
-                     .:"'"
+                  log.info:Reset password token successfully generated
+                     username:x:@.arguments/*/username
 
                   // Returning results back to caller.
                   unwrap:x:+/*

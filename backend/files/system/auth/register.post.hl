@@ -26,11 +26,8 @@ if
    .lambda
 
       // Doing some basic logging and returning failure to caller.
-      log.error
-         strings.concat
-            .:"User tried to register at site, but registrations are turned OFF. Username was '"
-            get-value:x:@.arguments/*/username
-            .:"'. Please turn on registrations if you want to allow for this by setting 'allow-registrations' to true."
+      log.error:User tried to register at site, but registrations are turned OFF
+         username:x:@.arguments/*/username
       throw:Access denied
          public:bool:true
          status:int:401
@@ -56,11 +53,8 @@ data.connect:magic
    .catch
 
       // Doing some basic logging, and returning result to caller.
-      log.info
-         strings.concat
-            .:"User tried to register consecutive times, username was '"
-            get-value:x:@.arguments/*/username
-            .:"'"
+      log.info:"User tried to register consecutive times"
+         username:x:@.arguments/*/username
       return
          result:already-registered
 
@@ -185,11 +179,8 @@ else
    log.info:"Cannot send newly registered user an email asking him or her to confirm their email address, since no SMTP configuration settings was found. Please edit your configuration file according to how it's explained at https://github.com/polterguy/magic.lambda.mail to take fully advantage of these features."
 
 // Logging the fact that we registered a new user.
-log.info
-   strings.concat
-      .:"Successfully registered a new user with username '"
-      get-value:x:@.arguments/*/username
-      .:"'"
+log.info:Successfully registered a new user
+   username:x:@.arguments/*/username
 
 // Returns success to caller.
 unwrap:x:+/*

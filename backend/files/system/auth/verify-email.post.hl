@@ -94,11 +94,8 @@ data.connect:magic
          role:guest
 
 // Logging the fact that user confirmed his email address.
-log.info
-   strings.concat
-      .:"Successfully confirmed email address of user '"
-      get-value:x:@.arguments/*/username
-      .:"'"
+log.info:Successfully confirmed email address
+   username:x:@.arguments/*/username
 
 // Returns success to caller.
 return-nodes

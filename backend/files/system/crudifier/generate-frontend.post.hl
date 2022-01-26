@@ -45,14 +45,9 @@ for-each:x:@io.file.execute/*
       .:"\n"
    math.increment:x:@.no
       get-count:x:@strings.split/*
-strings.concat
-   .:"LOC generated '"
-   get-value:x:@.no
-   .:"' for type 'frontend'"
-   .:" with name '"
-   get-value:x:@.arguments/*/name
-   .:"'"
-log.info:x:@strings.concat
+log.info:LOC generated
+   loc:x:@.no
+   name:x:@.arguments/*/name
 
 /*
  * Creating a ZIP stream from return value of above [io.file.execute]

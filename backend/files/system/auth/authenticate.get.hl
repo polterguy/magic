@@ -37,10 +37,8 @@ if
          .lambda
 
             // No username returned by auto-auth slot invocation.
-            log.error
-               .:Authentication failed, [
-               get-name:x:@if/-
-               .:] returned null object
+            log.error:Authentication failed
+               slot:x:@if/-
             throw:Access denied
                status:int:401
                public:bool:true
@@ -53,12 +51,10 @@ if
           * simplicity reasons, and turning OFF password checking during
           * invocation to [magic.auth.authenticate].
           */
-         log.info
-            .:"Automatically authenticating '"
-            get-value:x:@if/-
-            .:"' using ["
-            get-name:x:@if/-
-            .:]
+         get-name:x:@if/-
+         log.info:Automatically authenticating user
+            username:x:@if/-
+            slot:x:@get-name
          remove-nodes:x:../*/signal/*
          unwrap:x:+/*/*/username
          add:x:../*/signal
