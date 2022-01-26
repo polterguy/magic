@@ -199,10 +199,8 @@ slots.create:magic.auth.authenticate
                   roles
 
                // Logging the fact that user successfully logged in.
-               log.info
-                  .:"We successfully authenticated user '"
-                  get-value:x:@.arguments/*/username
-                  .:"'"
+               log.info:User successfully authenticated
+                  username:x:@.arguments/*/username
 
                // Returning results back to caller.
                unwrap:x:+/*

@@ -24,9 +24,8 @@ cache.try-get:system-information
       log.count
 
       // Retrieving count of log items grouped by day for root logins.
-      log.timeshift:"We successfully authenticated user 'root'"
-      add:x:@.lambda/*/return-nodes/*/timeshifts/*/root_logins
-         get-nodes:x:@log.timeshift/*
+      add:x:@.lambda/*/return-nodes/*/timeshifts/*/logins
+         log.timeshift:User successfully authenticated
 
       // Retrieving endpoints.
       endpoints.list
@@ -62,7 +61,7 @@ cache.try-get:system-information
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
          timeshifts
-            root_logins
+            logins
 
 // Returning result of cache invocation to caller.
 return-nodes:x:@cache.try-get/#/*
