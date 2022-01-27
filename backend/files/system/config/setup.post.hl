@@ -204,9 +204,6 @@ try
       // Then we need to make sure we run any database migration scripts.
       io.file.execute:/system/magic.startup/migrate-magic-database.hl
 
-   // Logging the fact that system was setup.
-   log.info:System was successfully setup
-
    // Starting task scheduler, making sure we apply maximum number of concurrent threads from config.
    .max:int:8
    config.get:"magic:scheduler:max-threads"
@@ -219,10 +216,6 @@ try
          set-value:x:@.max
             convert:x:@config.get
                type:int
-   log.info
-      .:"Starting task scheduler with "
-      get-value:x:@.max
-      .:" as maximum concurrent threads allowed to execute simultaneously for scheduled tasks"
    tasks.scheduler.start:x:@.max
 
    /*

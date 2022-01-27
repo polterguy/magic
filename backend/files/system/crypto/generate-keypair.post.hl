@@ -73,10 +73,8 @@ io.file.save:/etc/system/crypto/keys/private.key
    get-value:x:@crypto.rsa.create-key/*/private
 
 // Doing some basic logging.
-log.info
-   .:"RSA key pair generated for server, fingerprint; '"
-   get-value:x:@crypto.rsa.create-key/*/fingerprint
-   .:"'"
+log.info:RSA key pair generated for server
+   fingerprint:x:@crypto.rsa.create-key/*/fingerprint
 
 // Importing serve key into crypto keys storage.
 add:x:../*/signal

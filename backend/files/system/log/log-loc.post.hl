@@ -16,15 +16,10 @@ validators.enum:x:@.arguments/*/type
 auth.ticket.verify:root
 
 // Creating a log entry with LOC that was generated.
-strings.concat
-   .:"LOC generated '"
-   get-value:x:@.arguments/*/loc
-   .:"' for type '"
-   get-value:x:@.arguments/*/type
-   .:"' with name '"
-   get-value:x:@.arguments/*/name
-   .:"'"
-log.info:x:@strings.concat
+log.info:LOC generated
+   loc:x:@.arguments/*/loc
+   type:x:@.arguments/*/type
+   name:x:@.arguments/*/name
 
 // Returning success to caller.
 return

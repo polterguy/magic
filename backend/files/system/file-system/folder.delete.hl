@@ -32,10 +32,8 @@ if
          .lambda
 
             // Uninstall file exists
-            log.info
-               .:"Executing uninstallation file '"
-               get-value:x:@strings.concat
-               .:"'"
+            log.info:Uninstalling module
+               module:x:@strings.concat
             io.file.execute:x:@strings.concat
 
 // Deletes the specified folder.

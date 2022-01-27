@@ -14,10 +14,8 @@
 auth.ticket.verify:root
 
 // Logging the fact that we're starting a terminal on server.
-log.info
-   .:"Starting terminal on server on channel '"
-   get-value:x:@.arguments/*/channel
-   .:"'"
+log.info:Starting terminal on server
+   channel:x:@.arguments/*/channel
 
 // Figuring out channel name to transmit results to.
 strings.concat

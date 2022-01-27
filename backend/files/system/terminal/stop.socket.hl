@@ -11,10 +11,8 @@
 auth.ticket.verify:root
 
 // Logging the fact that we're stopping terminal on the server.
-log.info
-   .:"Stopping terminal on server for channel '"
-   get-value:x:@.arguments/*/channel
-   .:"'"
+log.info:Stopping terminal on server
+   channel:x:@.arguments/*/channel
 
 // Stopping terminal.
 system.terminal.destroy:x:@.arguments/*/channel
