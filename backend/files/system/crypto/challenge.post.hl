@@ -8,10 +8,8 @@
 crypto.get-key:x:@.arguments/*/challenge
 
 // Logging
-log.info
-   .:"Cryptography challenge for authenticating with key '"
-   get-value:x:@crypto.get-key
-   .:"' submitted to server"
+log.info:Cryptography challenge for authenticating
+   key:x:@crypto.get-key
 
 // Opening up database connection.
 data.connect:magic

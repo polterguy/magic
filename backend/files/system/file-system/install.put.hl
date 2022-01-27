@@ -20,10 +20,8 @@ signal:magic.modules.install-module
    module:x:@strings.split/1
 
 // Logging success.
-log.info
-   .:"Module successfully installed, module name was '"
-   get-value:x:@.arguments/*/folder
-   .:"'"
+log.info:Module successfully installed
+   module:x:@.arguments/*/folder
 
 // Creating our app's manifest.
 .manifest

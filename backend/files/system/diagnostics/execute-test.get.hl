@@ -50,7 +50,9 @@ if
 Error: Unhandled exception occurred.
 Exception: "
             get-value:x:@.arguments/*/message
-         log.error:x:@strings.concat
+         log.error:Assumption test failed
+            file:x:../*/.arguments/*/test_file
+            message:x:@.arguments/*/message
          unwrap:x:+/*
          return
             result:x:@strings.concat
@@ -117,7 +119,11 @@ Assumption: "
          .:@"
 Actual: "
          get-value:x:@.foo/-
-      log.error:x:@strings.concat
+      log.error:Assumption test failed
+         file:x:@.arguments/*/test_file
+         type:Wrong status code
+         expected:x:@hyper2lambda/*/status
+         actual:x:@.foo/-
       unwrap:x:+/*
       return
          result:x:@strings.concat
@@ -218,7 +224,11 @@ Assumption: "
                .:@"
 Actual: "
                get-value:x:@.response
-            log.error:x:@strings.concat
+            log.error:Assumption test failed
+               file:x:@.arguments/*/test_file
+               type:Wrong response
+               expected:x:@.assumption
+               actual:x:@.response
             unwrap:x:+/*
             return
                result:x:@strings.concat

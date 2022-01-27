@@ -98,22 +98,15 @@ slots.create:magic.modules.ensure-database
                      mssql.execute-batch:x:@io.file.load
 
             // Doing some basic logging.
-            log.info
-               .:"Successfully created database '"
-               get-value:x:@.arguments/*/database
-               .:"'"
+            log.info:Successfully created database
+               database_name:x:@.arguments/*/database
          .catch
 
             // Logging exception.
-            log.error
-               .:"Something went wrong as we tried to create '"
-               get-value:x:@.arguments/@.arguments/*/database
-               .:"' database using '"
-               get-value:x:@.create-database-script
-               .:@"' database script.
-Message from system was '"
-               get-value:x:@.arguments
-               .:"'"
+            log.error:Something went wrong when creating database
+               database:x:@.arguments/@.arguments/*/database
+               script:x:@.create-database-script
+               error:x:@.arguments/*/message
 
    /*
     * Making sure module has a migration script folder, and if not,
@@ -161,20 +154,14 @@ Message from system was '"
                   data.execute:x:@io.file.load
 
                   // Logging the fact that we've executed the database migration script.
-                  log.info
-                     .:"Database migration script '"
-                     get-value:x:@.dp/#
-                     .:"' successfully executed."
+                  log.info:Database migration script successfully executed
+                     script:x:@.dp/#
             .catch
 
                // Logging exception.
-               log.error
-                  .:"Something went wrong as we tried to execute plugin database migration script with the name of '"
-                  get-value:x:@.dp/#
-                  .:@"'.
-Message from system was '"
-                  get-value:x:@.arguments/*/message
-                  .:"'"
+               log.error:Something went wrong as we tried to execute plugin database migration script
+                  script:x:@.dp/#
+                  error:x:@.arguments/*/message
 
                // Ensuring slot returns false.
                set-value:x:@.result

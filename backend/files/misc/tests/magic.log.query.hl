@@ -1,0 +1,85 @@
+
+/*
+ * Manually created assumption that verifies the log works as expected.
+ */
+description:Assumes that we can query the log correctly
+.lambda
+
+   // Verifying we can create an info log item.
+   log.info:Assumption log item
+   log.info:Assumption log itemXX
+   log.count
+
+   // Verifying we've got at least 2 log items.
+   if
+      lt:x:@log.count
+         .:long:2
+      .lambda
+         throw:Not enough log items in log.
+
+   // Verifying retrieving a single log item works.
+   log.query
+   log.get:x:-/0/*/id
+   if
+      or
+         neq:x:@log.get/*/type
+            .:info
+         neq:x:@log.get/*/content
+            .:Assumption log itemXX
+         not
+            exists:x:@log.get/*/created
+         exists:x:@log.get/*/exception
+         exists:x:@log.get/*/meta
+      .lambda
+         throw:Log item not correctly returned from log implementation
+
+   // Verifying we can create an info log item with meta data.
+   log.info:Assumption log item
+      foo1:bar1
+      foo2:bar2
+   log.query
+   log.get:x:-/0/*/id
+   if
+      or
+         neq:x:@log.get/*/meta/*/foo1
+            .:bar1
+         neq:x:@log.get/*/meta/*/foo2
+            .:bar2
+      .lambda
+         throw:Log item not correctly returned from log implementation where meta data was expected
+
+   // Retrieving capabilities of log implementation.
+   log.capabilities
+
+   // Verifying log implementation supports querying.
+   if:x:@log.capabilities/*/can-query
+      log.query:Assumption log item
+      if
+         not
+            mt
+               get-count:x:@log.query/*
+               .:int:0
+         .lambda
+            throw:Assumption failed, not enough items in log after storing log item
+      log.get:x:@log.query/0/*/id
+      log.query:Assumption log item
+         from:x:./@log.query/0/*/id
+         max:1
+      if
+         not
+            eq
+               get-count:x:@log.query/*
+               .:int:1
+         .lambda
+            throw:Assumption failed, not correct number of items returned from querying log
+
+   // Verifying log implementation supports timeshifts.
+   if:x:@log.capabilities/*/can-timeshift
+      log.timeshift:Assumption log item
+      if
+         not
+            eq
+               get-count:x:@log.timeshift/*
+               .:int:14
+         .lambda
+            throw:Assumption failed, not correct number of items returned from timeshift

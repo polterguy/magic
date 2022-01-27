@@ -9,12 +9,9 @@
 auth.ticket.verify:root
 
 // Basic logging.
-log.info
-   .:"Renaming '"
-   get-value:x:@.arguments/*/oldName
-   .:"' to '"
-   get-value:x:@.arguments/*/newName
-   .:"'"
+log.info:Renaming file object
+   old_name:x:@.arguments/*/oldName
+   new_name:x:@.arguments/*/newName
 
 // Checking if specified object is a file or a folder.
 if

@@ -34,6 +34,14 @@ validators.enum:x:@.arguments/*/verb
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Creating a log entry explaining roughly what we're about to do.
+log.info:Generating SQL backend
+   module:x:@.arguments/*/moduleName
+   databaseType:x:@.arguments/*/databaseType
+   database:x:@.arguments/*/database
+   verb:x:@.arguments/*/verb
+   endpointName:x:@.arguments/*/endpointName
+
 /*
  * Creating our endpoint according to arguments given, by using [apply]
  * on the [template] file given.

@@ -114,10 +114,11 @@ slots.create:magic.auth.authenticate
              */
             strings.split:x:@config.get
                .:":"
-            set-name:x:+/+/*/*
+            set-name:x:+/+/+/*/*
                get-value:x:@strings.split/0
-            set-value:x:+/*/*
+            set-value:x:+/+/*/*
                get-value:x:@strings.split/1
+            unwrap:x:+/*/*/*
             insert-after:x:@if/./**/crypto.password.verify
                .
                   foo
@@ -172,10 +173,8 @@ slots.create:magic.auth.authenticate
                         .:reset-password
 
                   // Logging the fact that we generated a reset-password token.
-                  log.info
-                     .:"Reset password token successfully generated for user '"
-                     get-value:x:@.arguments/*/username
-                     .:"'"
+                  log.info:Reset password token successfully generated
+                     username:x:@.arguments/*/username
 
                   // Returning results back to caller.
                   unwrap:x:+/*
@@ -201,10 +200,8 @@ slots.create:magic.auth.authenticate
                   roles
 
                // Logging the fact that user successfully logged in.
-               log.info
-                  .:"We successfully authenticated user '"
-                  get-value:x:@.arguments/*/username
-                  .:"'"
+               log.info:User successfully authenticated
+                  username:x:@.arguments/*/username
 
                // Returning results back to caller.
                unwrap:x:+/*

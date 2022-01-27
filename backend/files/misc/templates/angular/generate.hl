@@ -78,9 +78,6 @@ validators.mandatory:x:@.arguments/*/args/*/palette
          name:Dark
          value:mat-dark-theme
 
-// Doing some logging.
-log.info:Generating an ngx-generator Angular frontend
-
 /*
  * Retrieves main folder we're currently working in, to allow
  * for retrieving files relative to our current "working directory".

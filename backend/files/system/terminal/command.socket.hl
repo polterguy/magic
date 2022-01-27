@@ -12,13 +12,9 @@
 auth.ticket.verify:root
 
 // Logging bash command.
-log.info
-   strings.concat
-      .:"Executing bash command '"
-      get-value:x:@.arguments/*/cmd
-      .:"' on channel '"
-      get-value:x:@.arguments/*/channel
-      .:"'"
+log.info:Executing bash command
+   command:x:@.arguments/*/cmd
+   channel:x:@.arguments/*/channel
 
 // Figuring out channel name to transmit results to.
 strings.concat
