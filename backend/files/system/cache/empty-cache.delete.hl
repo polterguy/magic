@@ -8,8 +8,7 @@
 auth.ticket.verify:root
 
 // Deletes all cache items and returns success to caller.
-add:x:../*/cache.clear
-   get-nodes:x:@.arguments/*
 cache.clear
+   filter:x:@.arguments/*/filter
 return
    result:success

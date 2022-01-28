@@ -30,9 +30,11 @@ cache.try-get:magic.auth.endpoints
                   path:x:@.dp/#/*/path
                   verb:x:@.dp/#/*/verb
                   auth
-      return:x:@.result/*
+      lambda2hyper:x:@.result/*
+      return:x:-
 
 // Returning results of above invocation to caller.
+hyper2lambda:x:@cache.try-get
 add:x:../*/return
-   get-nodes:x:@cache.try-get/#/*
+   get-nodes:x:@hyper2lambda/*
 return
