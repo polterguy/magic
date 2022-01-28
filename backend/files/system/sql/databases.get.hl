@@ -129,4 +129,7 @@ cache.try-get:x:@strings.concat
 
 // Returning results to caller.
 hyper2lambda:x:@cache.try-get
-return:x:-/*
+add:x:../*/return-nodes/*/databases
+   get-nodes:x:@hyper2lambda/*
+return-nodes
+   databases
