@@ -19,12 +19,8 @@ if
       // Deletes all cache items starting with specified string.
       strings.split:x:@.arguments/*/id
          .:*
-      cache.list
+      cache.clear
          filter:x:@strings.split/0
-         offset:0
-         limit:10000
-      for-each:x:@cache.list/*
-         cache.set:x:@.dp/#/*/key
 else
 
    // Deletes a single cache item.

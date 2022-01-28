@@ -124,12 +124,9 @@ cache.try-get:x:@strings.concat
             log.info:x:@.arguments/*/message
 
       // Returning database to caller.
-      add:x:+/*
-         get-nodes:x:@.result/*
-      return
-         databases
+      lambda2hyper:x:@.result/*
+      return:x:@lambda2hyper
 
 // Returning results to caller.
-add:x:+
-   get-nodes:x:@cache.try-get/#/*
-return
+hyper2lambda:x:@cache.try-get
+return:x:-/*
