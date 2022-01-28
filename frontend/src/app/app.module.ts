@@ -12,6 +12,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Material imports.
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTreeModule } from '@angular/material/tree';
@@ -156,6 +157,7 @@ import { ConfirmEmailAddressDialogComponent } from './components/bazar/view-app-
 import { CreateAssumptionTestDialogComponent } from './components/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudifierSqlAddArgumentDialogComponent } from './components/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
 import { ExecuteTerminalCommandComponent } from './components/ide/execute-terminal-command/execute-terminal-command.component';
+import { PieChartComponent } from './components/dashboard/component/pie-chart/pie-chart.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -254,6 +256,7 @@ import { ExecuteTerminalCommandComponent } from './components/ide/execute-termin
     GenerateCrudAppComponent,
     ExecuteTerminalCommandComponent,
     DashboardComponent,
+    PieChartComponent,
   ],
   imports: [
     FormsModule,
@@ -267,6 +270,7 @@ import { ExecuteTerminalCommandComponent } from './components/ide/execute-termin
     MatButtonModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatMenuModule,
     MatTabsModule,
     MatCardModule,
     MatTreeModule,

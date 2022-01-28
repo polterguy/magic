@@ -1,31 +1,31 @@
 
-h1 {
-  margin-bottom: 2rem;
-  text-align: center;
-}
+// h1 {
+//   margin-bottom: 2rem;
+//   text-align: center;
+// }
 
-mat-horizontal-stepper {
-  position: relative;
-  min-height: 500px;
-  app-setup-auth {
-    display: block;
-    margin: 2rem 1rem 0 1rem;
-  }
-  app-diagnostics-assumptions {
-    position: relative;
-    display: block;
-    padding-top: 2rem;
-  }
-}
+// mat-horizontal-stepper {
+//   position: relative;
+//   min-height: 500px;
+//   app-setup-auth {
+//     display: block;
+//     margin: 2rem 1rem 0 1rem;
+//   }
+//   app-diagnostics-assumptions {
+//     position: relative;
+//     display: block;
+//     padding-top: 2rem;
+//   }
+// }
 
-::ng-deep .mat-horizontal-stepper-header{
-  pointer-events: none !important;
-}
+// ::ng-deep .mat-horizontal-stepper-header{
+//   pointer-events: none !important;
+// }
 
-button.done {
-  display: block;
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  min-width: 8rem;
-}
+// button.done {
+//   display: block;
+//   position: absolute;
+//   bottom: 1rem;
+//   right: 1rem;
+//   min-width: 8rem;
+// }

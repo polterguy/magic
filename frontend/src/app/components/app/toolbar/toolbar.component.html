@@ -13,9 +13,10 @@
       <span class="ml-1">Magic</span>
     </button> -->
     <div class="d-flex align-items-center">
-      <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus">
+      <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus" class="mr-10">
         {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
       </span>
+
       <button mat-icon-button aria-label="Switch theme" 
       *ngIf="theme"
       class="switch-theme {{theme}}" [color]="theme === 'dark' ? 'accent' : ''"
@@ -29,6 +30,7 @@
           <mat-icon>brightness_4</mat-icon>
         </span>
       </button>
+      
       <!-- <mat-slide-toggle 
         [(ngModel)]="lightTheme"
         labelPosition="before"

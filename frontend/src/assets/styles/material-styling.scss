@@ -1,0 +1,104 @@
+
+@import './mixin.scss';
+@import './colour.scss';
+/*=-=-=-=-=-=
+Material body and general styling
+=-=-=-=-=-=*/
+.cdk-global-scrollblock{
+  overflow-y: hidden;
+}
+.dark .mat-primary *{
+  color: $magic_default_alternative;
+}
+.mat-drawer-container{
+  height: 100%;
+}
+.light .mat-drawer-container{
+  background-color: $magic_site_bg!important;
+  height: 100%;
+}
+.mat-drawer-content{
+  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
+}
+/*=-=-=-=-=-=
+Material tables
+=-=-=-=-=-=*/
+table.mat-table{
+    border-radius: 4px;
+    overflow: hidden;
+}
+.expandable-table{
+    tr:last-child td.mat-cell {border: none;}
+    tr.expanded-row{
+        height: 0;
+        background-color: transparentize($color: $magic_default_alternative, $amount: 0.9);
+    }
+    .expandable-row {
+        cursor: pointer;
+        &.selected{
+            background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
+        }
+        td {
+            border-bottom-width: 0;
+        }
+    }
+    .details-row {
+        overflow: hidden;
+        display: flex;
+    }
+}
+/*=-=-=-=-=-=
+Material card
+=-=-=-=-=-=*/
+.card-replacement{
+  &.left-align-arrow{
+    .mat-expansion-panel-header .mat-content{flex: unset;}
+  }
+  .mat-expansion-panel-body{padding: 0px 16px 16px;}
+  .mat-expansion-panel-header{padding: 0px 16px;}
+  .mat-expanded .mat-expansion-panel-header{padding-top: 8px;}
+  .mat-expansion-panel-header.mat-expanded{height: unset;}
+}
+/*=-=-=-=-=-=
+Material tabs
+=-=-=-=-=-=*/
+.mat-tab-header{
+  margin-bottom: 12px;
+}
+/*=-=-=-=-=-=
+Material list
+=-=-=-=-=-=*/
+.detail-list{
+    .mat-list-item.mat-2-line{
+      height: 65px;
+      font-size: 95%;
+      .mat-line:not(:last-child) {
+        color: $magic_dark_alternative;
+        padding-bottom: 5px;
+      }
+    }
+  }
+/*=-=-=-=-=-=
+Material snackbar for short messages
+=-=-=-=-=-=*/
+.center-aligned{
+    .mat-simple-snackbar{
+        justify-content: center;
+    }
+}
+/*=-=-=-=-=-=
+Material icons and button
+=-=-=-=-=-=*/
+.sm-icons{
+  .mat-icon-button{
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    mat-icon{
+      height: 20px;
+      width: 20px;
+      font-size: 20px;
+      line-height: 20px;
+    }
+  }
+}

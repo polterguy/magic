@@ -121,15 +121,15 @@ export class RegisterComponent implements OnInit {
       } else if (result.result === 'confirm-email-address-email-sent') {
 
         // Providing feedback to user.
-        this.feedbackService.showInfo('You have been successfully registered at the site, please verify your email address by clicking the link in the email we just sent you');
+        this.feedbackService.showInfo('You have been successfully registered in the system, please verify your email address by clicking the link in the email we just sent you');
       } else if (result.result === 'email-sent-to-moderator') {
 
         // Providing feedback to user.
-        this.feedbackService.showInfo('You have been successfully registered at the site, please wait for a moderator to accept you as a user');
+        this.feedbackService.showInfo('You have been successfully registered in the system, please wait for a moderator to accept you as a user');
       } else {
 
         // Providing feedback to user.
-        this.feedbackService.showInfo('You have been successfully registered at the site');
+        this.feedbackService.showInfo('You have been successfully registered in the system');
       }
 
     }, (error: any) => this.feedbackService.showError(error));

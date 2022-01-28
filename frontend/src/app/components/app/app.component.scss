@@ -60,6 +60,11 @@ copyright
       border-radius: 10px;
     }
   }
+  @media (max-width: 767px){
+    .mat-drawer {
+      padding-bottom: 60px;
+    }
+  }
   .dark .mat-drawer{
     background-color: $magic_dark_secondary_light!important;
   }
