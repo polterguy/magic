@@ -8,9 +8,8 @@
 auth.ticket.verify:root
 
 // Retrieves all cache items, and returns to caller.
-add:x:../*/cache.count
-   get-nodes:x:@.arguments/*
 cache.count
+   filter:x:@.arguments/*/filter
 unwrap:x:+/*
 return
    count:x:@cache.count
