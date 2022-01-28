@@ -1,22 +1,19 @@
-
-h1 {
-  mat-icon {
-    float: right;
-    color: #e55 !important;
-    margin-top: -.5rem;
-    font-size: 2rem;
+@import '../../../../assets/styles/colour.scss';
+.sign-icon{
+  mat-icon{
+    font-size: 50px;
+    height: 50px;
+    width: 50px;
+    margin-bottom: 20px;
   }
-}
-
-.wrapper {
-  width: 20rem;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.feedback {
-  width: 40rem;
-  margin-right: auto;
-  margin-left: auto;
-  text-align: center;
+  &.success{
+    mat-icon{
+      color: $magic_success;
+    }
+  }
+  &.warn{
+    mat-icon{
+      color: $magic_warning;
+    }
+  }
 }

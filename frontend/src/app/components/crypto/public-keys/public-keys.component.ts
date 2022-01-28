@@ -17,7 +17,7 @@ import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
+// import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
 import { PublicKey } from 'src/app/components/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -26,6 +26,7 @@ import { ImportPublicKeyDialogComponent } from './import-public-key-dialog/impor
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
 import { AuthService } from '../../auth/services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /*
  * Helper class to encapsulate all public keys and their CodeMirror vocabulary options.
@@ -59,9 +60,17 @@ class PublicKeyEx {
 @Component({
   selector: 'app-public-keys',
   templateUrl: './public-keys.component.html',
-  styleUrls: ['./public-keys.component.scss']
+  styleUrls: ['./public-keys.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class PublicKeysComponent implements OnInit, OnDestroy {
+
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: number[] = [];
@@ -83,12 +92,13 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * Public keys the table is currently databound towards.
    */
   public publicKeys: PublicKeyEx[] = [];
-
+  public expandedElement: PublicKeyEx | null;
+  
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
   public count: number = 0;
-
+  
   /**
    * Columns to display in table showing public keys.
    */
@@ -112,7 +122,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private clipboard: Clipboard,
-    private logService: LogService,
+    // private logService: LogService,
     public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
@@ -175,7 +185,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param key Key to toggle detailed view for
    */
   public toggleDetails(key: PublicKey) {
-
+    
     // Checking if we're already displaying details for current item.
     const idx = this.displayDetails.indexOf(key.id);
     if (idx !== -1) {
@@ -256,7 +266,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
     // Putting specified fingerprint on top clipboard.
     this.clipboard.copy(content);
-    this.feedbackService.showInfoShort('Content can be found on your clipboard');
+    this.feedbackService.showInfoShort('Copied to your clipboard!');
   }
 
   /**
@@ -311,13 +321,13 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
               }
               oldKey += idx;
             }
-            this.logService.createLogEntry(
-              'info',
-              `.type:crypto.key_changed\r\n   new_fingerprint:${response.result}\r\n   old_fingerprint:${oldFingerprint}\r\n   old_key:@"${oldKey}"`).subscribe(() => {
+            // this.logService.createLogEntry(
+            //   'info',
+            //   `.type:crypto.key_changed\r\n   new_fingerprint:${response.result}\r\n   old_fingerprint:${oldFingerprint}\r\n   old_key:@"${oldKey}"`).subscribe(() => {
 
-              // Invoking method responsible for saving the key.
-              this.saveKeyImplementation(key, 'The old key was backed up in your log.');
-            }, (error: any) => this.feedbackService.showError(error));
+            //   // Invoking method responsible for saving the key.
+            //   this.saveKeyImplementation(key, 'The old key was backed up in your log.');
+            // }, (error: any) => this.feedbackService.showError(error));
           });
       } else {
 

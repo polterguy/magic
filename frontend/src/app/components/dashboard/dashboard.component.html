@@ -1,5 +1,88 @@
 <ng-container *ngIf="authService.authenticated">
-    <app-diagnostics-overview></app-diagnostics-overview>
+    <div class="row">
+        <div class="col-xl-8 col-md-6 col-12">
+            <ng-container *ngIf="timeshiftChartData">
+                <mat-card class="fit-height-card">
+                    <div class="d-flex justify-content-between w-100">
+                        <div>
+                            <mat-card-title>Logins in the last 14 days</mat-card-title>
+                            <mat-card-subtitle>View the number of logins to your system during the past two weeks.</mat-card-subtitle>
+                        </div>
+                        <div>
+                            <button mat-icon-button (click)="chartType === 'bar' ? chartType = 'line' : chartType = 'bar'">
+                                <mat-icon>{{chartType === 'bar' ? 'show' : 'bar'}}_chart</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <mat-card-content>
+                        <canvas baseChart
+                        [data]="timeshiftChartData" 
+                        [labels]="timeshiftChartLabel"
+                        [options]="barChartOptions"
+                        [chartType]="chartType"
+                        [colors]="colors">
+                        </canvas>
+                    </mat-card-content>
+                </mat-card>
+            </ng-container>
+        </div>
+        <div class="col-xl-4 col-md-6 col-12">
+            <mat-card>
+                <mat-card-content>
+                    <mat-list role="list">
+                        <mat-list-item role="listitem">
+                            <h2 class="mat-headline">System details</h2>
+                        </mat-list-item>
+                    </mat-list>
+                    <mat-list role="list" dense>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Default database</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.default_db}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Dynamic slots</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.dynamic_slots}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Endpoints</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.endpoints}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Log items</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.log_items}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Persisted tasks</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.persisted_tasks}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Slots</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.slots}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">System's version</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.version}}</p>
+                            </div>
+                        </mat-list-item>
+                    </mat-list>
+                      
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
 </ng-container>
 <!-- if not authenticated -->
 <ng-container *ngIf="!authService.authenticated">
@@ -8,12 +91,12 @@
         <p class="mat-subheading-2 mb-0">If you are a member, login to your account.</p>
         <p class="mat-subheading-2 mb-4">Don't have an account yet? register now and start creating your backend!</p>
         <div class="d-flex">
-            <button mat-flat-button class="mr-1" color="primary">Login</button>
-            <button mat-flat-button class="mr-1" color="accent">Register</button>
+            <button mat-flat-button class="mr-1" color="primary" (click)="login()">Login</button>
+            <button mat-flat-button class="mr-1" color="accent" routerLink="/register">Register</button>
         </div>
         <div class="mt-4">
-            <p class="mb-0">Don't know how it works?</p>
-            <h3>Check out the <a>documentation</a> to get started.</h3>
+            <p class="mb-0">Not sure where to start?</p>
+            <h3>Check out the <a href="https://docs.aista.com/" target="_blank">documentation</a> to get started.</h3>
         </div>
     </div>
 </ng-container>

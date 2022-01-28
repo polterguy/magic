@@ -6,9 +6,9 @@
 @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
 @import './assets/styles/colour.scss';
+@import './assets/styles/material-styling.scss';
 @import './assets/styles/sizes.scss';
 @import './assets/styles/default-classes.scss';
-@import './assets/styles/mixin.scss';
 
 
 html, body { height: 100%; }
@@ -20,43 +20,12 @@ General settings
 .dark{
   height: 100%;
 }
-.mat-drawer-container{
-  height: 100%;
-}
-.light .mat-drawer-container{
-  background-color: $magic_site_bg!important;
-  height: 100%;
-}
-.mat-drawer-content{
-  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
-}
-.mat-card{
-  margin: auto!important;
-  // width: 800px;
-  // max-width: calc(100% - 5vw)!important;
-  // padding: 20px!important;
-  // &:not(.top-card){
-  //   .mat-card-content{
-  //     @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
-  //     min-height: 48%;
-  //     max-height: 100%;
-  //     overflow-y: auto;
-  //   }
-  // }
-  // &.top-card{
-  //   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
-  //   height: auto;
-  //   margin-bottom: 10px;
-  // }
-}
-/*=-=-=-=-=-=
-Material overrides
-=-=-=-=-=-=*/
-.cdk-global-scrollblock{
-  overflow-y: hidden;
-}
-.dark .mat-primary *{
-  color: $magic_default_alternative;
+
+.create-button{
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  z-index: 1;
 }
 /*
  * Misc classes.
@@ -78,12 +47,12 @@ Material overrides
   }
 }
 
-button.create-button {
-  position: absolute;
-  top: .5rem;
-  right: .5rem;
-  display: block;
-}
+// button.create-button {
+//   position: absolute;
+//   top: .5rem;
+//   right: .5rem;
+//   display: block;
+// }
 
 .invisible {
   display: none !important;
@@ -198,6 +167,8 @@ table.clickable {
 .CodeMirror {
   border-radius: 10px;
   border: solid 1px transparentize($color: $magic_dark, $amount: 0.5);
+  height: 400px;
+  resize: vertical;
 }
 
 // CodeMirror classes, specifically for autocomplete or hints plugin.

@@ -75,6 +75,7 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel> -->
+
     <!-- hyper ide -->
     <mat-expansion-panel class="mat-elevation-z0" 
     *ngIf="authService.access.diagnostics.statistics" hideToggle>
@@ -191,12 +192,12 @@
     
     <!-- tools -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="sql?.isActive || terminal?.isActive || eval?.isActive || config?.isActive || crypto?.isActive || !sideNavStatus" 
+      [expanded]="sql?.isActive || terminal?.isActive || eval?.isActive || config?.isActive || crypto?.isActive || crudifier?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="authService.access.sql.execute_access || authService.access.terminal.execute || authService.access.eval.execute || authService.access.config.load || authService.access.crypto.import_public_key">
+      *ngIf="authService.access.sql.execute_access || authService.access.terminal.execute || authService.access.eval.execute || authService.access.config.load || authService.access.crypto.import_public_key || (authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend)">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
-      [ngClass]="{'active-link':sql?.isActive || terminal?.isActive || eval?.isActive || config?.isActive || crypto?.isActive}">
+      [ngClass]="{'active-link':sql?.isActive || terminal?.isActive || eval?.isActive || config?.isActive || crypto?.isActive || crudifier?.isActive}">
         <mat-panel-title>
           <mat-icon>code</mat-icon>
           <span class="title">Tools</span>
@@ -267,7 +268,7 @@
         <mat-list-option 
         [style.display]="authService.access.crypto.import_public_key ? '' : 'none'"
         [matTooltipDisabled]="sideNavStatus" 
-        matTooltip="Crypto" 
+        matTooltip="Cryptography" 
         routerLink="/crypto" 
         matTooltipPosition="after" 
         routerLinkActive="active-link"
@@ -275,8 +276,23 @@
         [routerLinkActiveOptions]="{exact:true}">
         <ng-container *ngIf="authService.access.crypto.import_public_key">
           <mat-icon>security</mat-icon>
-          <span class="title">Crypto</span>
+          <span class="title">Cryptography</span>
         </ng-container>
+        </mat-list-option>
+        <!-- crudifier -->
+        <mat-list-option 
+        [style.display]="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend ? '' : 'none'"
+        [matTooltipDisabled]="sideNavStatus" 
+        matTooltip="CRUD" 
+        routerLink="/crudifier" 
+        matTooltipPosition="after" 
+        routerLinkActive="active-link"
+        #crudifier="routerLinkActive"
+        [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend">
+            <mat-icon>build</mat-icon>
+            <span class="title">CRUD</span>
+          </ng-container>
         </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
@@ -373,6 +389,23 @@
           <mat-panel-title>
               <mat-icon>book</mat-icon>
               <span class="title">Documentation</span>
+          </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+    <!-- register -->
+    <mat-expansion-panel class="mat-elevation-z0" 
+      *ngIf="!authService.authenticated" hideToggle>
+      <mat-expansion-panel-header 
+      #panelH (click)="panelH._toggle()" 
+      [matTooltipDisabled]="sideNavStatus" 
+      matTooltip="Create an account" 
+      routerLink="/register" 
+      matTooltipPosition="after" 
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{exact:true}">
+          <mat-panel-title>
+              <mat-icon>how_to_reg</mat-icon>
+              <span class="title">Register</span>
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>

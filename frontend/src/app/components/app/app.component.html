@@ -31,7 +31,9 @@
         class="obscurer"
         (click)="closeNavbar()"></div>
 
-      <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
+        <div class="main-container h-100">
+          <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
+        </div>
 
       
       <div class="footer d-flex justify-content-between align-items-center w-100"

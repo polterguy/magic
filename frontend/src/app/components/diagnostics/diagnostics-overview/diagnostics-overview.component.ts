@@ -16,8 +16,7 @@ import { RoleService } from 'src/app/components/auth/services/role.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { TaskService } from 'src/app/components/tasks/services/task.service';
 import { DiagnosticsService } from 'src/app/components/diagnostics/services/diagnostics.service';
-import moment from 'moment';
-import { ChartOptions } from 'chart.js';
+
 /**
  * Component that allows user to view diagnostics information
  * about his installation specific.

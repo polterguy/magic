@@ -18,6 +18,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoService } from 'src/app/components/crypto/services/crypto.service';
 import { CryptoInvocation } from 'src/app/components/crypto/models/crypto-invocations.model';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Displays all cryptographically signed invocations towards server.
@@ -25,7 +26,14 @@ import { CryptoInvocation } from 'src/app/components/crypto/models/crypto-invoca
 @Component({
   selector: 'app-crypto-invocations',
   templateUrl: './crypto-invocations.component.html',
-  styleUrls: ['./crypto-invocations.component.scss']
+  styleUrls: ['./crypto-invocations.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class CryptoInvocationsComponent implements OnInit, OnDestroy {
 
@@ -49,6 +57,7 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
    * Cryptographically signed invocations as returned from backend.
    */
   public invocations: CryptoInvocation[] = [];
+  public expandedElement: CryptoInvocation | null;
 
   /**
    * Number of items in the backend matching the currently applied filter.
@@ -108,9 +117,12 @@ export class CryptoInvocationsComponent implements OnInit, OnDestroy {
         this.paginator.pageIndex = 0;
         this.getInvocations();
       });
-
-    // Retrieving invocations unfiltered.
-    this.getInvocations();
+      setTimeout(() => {
+        if(this.filterFormControl.value === '') {
+          // Retrieving invocations unfiltered.
+          this.getInvocations();
+        }
+      }, 100);
   }
 
   /**
