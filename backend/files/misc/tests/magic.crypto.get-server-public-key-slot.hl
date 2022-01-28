@@ -19,6 +19,8 @@ description:Tries to invoke slot responsible for retrieving public server key an
             exists:x:@signal/*/fingerprint
       .lambda
          throw:[magic.crypto.get-server-public-key] slot did not return [key] or [fingerprint]
+
+   // Verifying [fingerprint] of key is correct size.
    if
       not
          eq
