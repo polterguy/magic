@@ -79,8 +79,8 @@ cache.try-get:system-information
          config.get:"magic:databases:default"
 
       // Returning result to caller.
-      unwrap:x:@.lambda/*/return-nodes/*
-      return-nodes
+      unwrap:x:+/*
+      lambda2hyper
          version:x:@version
          persisted_tasks:x:@tasks.count
          log_items:x:@log.count
@@ -88,6 +88,8 @@ cache.try-get:system-information
          slots:x:@.no-slots
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
+      return:x:@lambda2hyper
 
 // Returning result of cache invocation to caller.
-return-nodes:x:@cache.try-get/#/*
+hyper2lambda:x:@cache.try-get
+return-nodes:x:@hyper2lambda

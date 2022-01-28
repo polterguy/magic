@@ -9,7 +9,9 @@ slots.create:magic.crypto.get-server-public-key
          io.file.load:/etc/system/crypto/keys/public.key
          crypto.fingerprint:x:@io.file.load
          unwrap:x:+/*
-         return
+         lambda2hyper
             key:x:@io.file.load
             fingerprint:x:@crypto.fingerprint
-   return:x:@cache.try-get
+         return:x:@lambda2hyper
+   hyper2lambda:x:@cache.try-get
+   return:x:@hyper2lambda
