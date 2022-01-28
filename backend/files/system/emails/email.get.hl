@@ -28,7 +28,7 @@ data.connect:[generic|magic]
          subject
       where
          and
-            fingerprint.eq:x:@signal/#/*/fingerprint
+            fingerprint.eq:x:@signal/*/fingerprint
 
    // Returning result to caller.
    unwrap:x:+/*
