@@ -1,8 +1,8 @@
 
 /*
  * Helper slot to initially create and migrate any particular [module] app's
- * database by executing the module's 'xxx.mssql.sql' or 'xxx.mysql.sql' script, and all
- * migration scripts existing within module's "db-migrations" folder, according to
+ * database by executing the module's 'xxx.mssql.sql', 'xxx.pgsql.sql', or 'xxx.mysql.sql' script,
+ * and all migration scripts existing within module's "db-migrations" folder, according to
  * which database type happens to be the default.
  * 
  * Arguments

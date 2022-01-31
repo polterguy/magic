@@ -162,7 +162,7 @@ slots.create:magic.auth.authenticate
                    * it's already hashed in the database - However, we can't be
                    * too cautious.
                    */
-                  crypto.hash:x:@data.read/*/*
+                  crypto.hash:x:@data.read/*/*/password
                   unwrap:x:+/*/*
                   add:x:+/*/roles
                      .
