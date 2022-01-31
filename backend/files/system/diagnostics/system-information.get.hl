@@ -92,4 +92,4 @@ cache.try-get:system-information
 
 // Returning result of cache invocation to caller.
 hyper2lambda:x:@cache.try-get
-return-nodes:x:@hyper2lambda
+return-nodes:x:@hyper2lambda/*
