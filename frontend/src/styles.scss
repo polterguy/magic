@@ -5,6 +5,7 @@
 @import '~codemirror/theme/zenburn';
 @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
+@import './assets/styles/grid.scss';
 @import './assets/styles/colour.scss';
 @import './assets/styles/material-styling.scss';
 @import './assets/styles/sizes.scss';
@@ -20,7 +21,11 @@ General settings
 .dark{
   height: 100%;
 }
-
+hr{
+  border-style: solid;
+  border-width: 0.5px;
+  border-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
+}
 .create-button{
   position: absolute;
   right: 10px;
@@ -98,8 +103,9 @@ table.clickable {
   tbody {
     tr {
       td {
-        vertical-align: top;
-        padding: 1rem 1rem 1rem;
+        vertical-align: middle;
+        // padding: 1rem 1rem 1rem;
+        padding: 0.5rem 1rem 0.5rem;
         cursor: pointer;
         user-select: none;
       }

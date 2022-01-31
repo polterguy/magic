@@ -37,9 +37,10 @@ export class FilesComponent implements OnInit, OnDestroy {
   public displayedColumns: string[] = [
     'icon',
     'path',
-    'rename',
-    'download',
-    'delete',
+    'action'
+    // 'rename',
+    // 'download',
+    // 'delete',
   ];
 
   /**

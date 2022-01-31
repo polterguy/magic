@@ -1,3 +1,4 @@
+@import '../../../assets/styles/colour.scss';
 
 .current-folder {
   position: absolute;
@@ -19,7 +20,7 @@ table.files {
         margin: 1rem .25rem .5rem .25rem;
       }
       .folder-icon {
-        color:rgb(189, 115, 18);
+        color: $magic_warning;
       }
     }
   }

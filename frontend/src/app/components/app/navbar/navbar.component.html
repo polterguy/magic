@@ -12,11 +12,11 @@
     </ng-container>
   </div>
   <mat-accordion displayMode="flat" [multi]="!sideNavStatus">
-    <p class="mb-0 text-muted p-3" *ngIf="((authService.access.files.list_files && authService.access.files.list_folders) || authService.access.diagnostics.statistics || authService.access.endpoints.view || authService.access.sockets.read) && sideNavStatus">Main pages</p>
+    <p class="mb-0 text-muted p-3" *ngIf="(authService.access.log.read || authService.access.endpoints.view || authService.access.sockets.read) && sideNavStatus">Main pages</p>
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="dashboard?.isActive || health?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="authService.access.files.list_files && authService.access.files.list_folders">
+      *ngIf="authService.access.log.read">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
       [ngClass]="{'active-link':dashboard?.isActive || health?.isActive}">
@@ -28,7 +28,7 @@
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
         <!-- dashboard -->
         <mat-list-option 
-        [style.display]="authService.access.files.list_files && authService.access.files.list_folders ? '' : 'none'"
+        [style.display]="authService.access.log.read ? '' : 'none'"
         [matTooltipDisabled]="sideNavStatus" 
         matTooltip="Dashboard" 
         routerLink="/" 
@@ -36,14 +36,14 @@
         routerLinkActive="active-link"
         #dashboard="routerLinkActive"
         [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.files.list_files && authService.access.files.list_folders">
+          <ng-container *ngIf="authService.access.log.read">
             <mat-icon>analytics</mat-icon>
             <span class="title">Dashboard</span>
           </ng-container>
         </mat-list-option>
         <!-- health -->
         <mat-list-option 
-        [style.display]="authService.access.files.list_files && authService.access.files.list_folders ? '' : 'none'"
+        [style.display]="authService.access.log.read ? '' : 'none'"
         [matTooltipDisabled]="sideNavStatus" 
         matTooltip="System's health check" 
         routerLink="/diagnostics" 
@@ -51,7 +51,7 @@
         routerLinkActive="active-link"
         #health="routerLinkActive"
         [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.files.list_files && authService.access.files.list_folders">
+          <ng-container *ngIf="authService.access.log.read">
             <mat-icon>local_hospital</mat-icon>
             <span class="title">Health</span>
           </ng-container>
@@ -78,7 +78,7 @@
 
     <!-- hyper ide -->
     <mat-expansion-panel class="mat-elevation-z0" 
-    *ngIf="authService.access.diagnostics.statistics" hideToggle>
+    *ngIf="authService.access.files.list_files && authService.access.files.list_folders" hideToggle>
       <mat-expansion-panel-header 
       #panelH (click)="panelH._toggle()" 
       [matTooltipDisabled]="sideNavStatus" 
@@ -128,15 +128,15 @@
       </mat-expansion-panel-header>
     </mat-expansion-panel>
     <p class="mb-0 text-muted p-3"
-    *ngIf="(authService.access.log.read || authService.access.tasks.read || (authService.access.files.list_files && authService.access.files.list_folders) || authService.access.sql.execute_access || authService.access.terminal.execute || authService.access.eval.execute || authService.access.config.load || (authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.crypto.import_public_key || authService.access.crypto.import_public_key) && sideNavStatus">Settings</p>
+    *ngIf="(authService.access.tasks.read || (authService.access.files.list_files && authService.access.files.list_folders) || authService.access.sql.execute_access || authService.access.terminal.execute || authService.access.eval.execute || authService.access.config.load || (authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.crypto.import_public_key || authService.access.crypto.import_public_key) && sideNavStatus">Settings</p>
     <!-- reports -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="log?.isActive || tasks?.isActive || files?.isActive || !sideNavStatus" 
+      [expanded]="tasks?.isActive || files?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="authService.access.log.read || authService.access.tasks.read || (authService.access.files.list_files && authService.access.files.list_folders)">
+      *ngIf="authService.access.tasks.read || (authService.access.files.list_files && authService.access.files.list_folders)">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
-      [ngClass]="{'active-link':log?.isActive || crypto?.isActive || tasks?.isActive || files.isActive}">
+      [ngClass]="{'active-link':crypto?.isActive || tasks?.isActive || files.isActive}">
         <mat-panel-title>
           <mat-icon>flag</mat-icon>
           <span class="title">Reports</span>
@@ -144,7 +144,7 @@
       </mat-expansion-panel-header>
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
         <!-- log -->
-        <mat-list-option 
+        <!-- <mat-list-option 
         [style.display]="authService.access.log.read ? '' : 'none'"
         [matTooltipDisabled]="sideNavStatus" 
         matTooltip="Log" 
@@ -156,7 +156,7 @@
             <mat-icon>bar_chart</mat-icon>
             <span class="title">Log</span>
           </ng-container>
-        </mat-list-option>
+        </mat-list-option> -->
         <!-- tasks -->
         <mat-list-option 
         [style.display]="authService.access.tasks.read ? '' : 'none'"

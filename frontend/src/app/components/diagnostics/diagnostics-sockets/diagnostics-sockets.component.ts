@@ -21,6 +21,7 @@ import { SocketUser } from '../../endpoints/models/socket-user.model';
 import { EndpointService } from '../../endpoints/services/endpoint.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
 import { AuthService } from '../../auth/services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Sockets diagnostic component, allowing to see current connections grouped by users.
@@ -28,7 +29,14 @@ import { AuthService } from '../../auth/services/auth.service';
 @Component({
   selector: 'app-diagnostics-sockets',
   templateUrl: './diagnostics-sockets.component.html',
-  styleUrls: ['./diagnostics-sockets.component.scss']
+  styleUrls: ['./diagnostics-sockets.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
 
@@ -37,6 +45,7 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * as returned from our backend.
    */
   public users: SocketUser[] = [];
+  public expandedElement: SocketUser | null;
 
   /**
    * Number of socket connections matching specified filtering condition.

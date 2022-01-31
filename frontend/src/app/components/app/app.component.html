@@ -31,12 +31,12 @@
         class="obscurer"
         (click)="closeNavbar()"></div>
 
-        <div class="main-container h-100">
+        <div class="container-fluid h-100">
           <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
         </div>
 
       
-      <div class="footer d-flex justify-content-between align-items-center w-100"
+      <div class="footer d-flex justify-content-lg-between align-items-center w-100"
       [class.padding-left-full]="notSmallScreen && sidenavOpened"
       [class.padding-left-small]="notSmallScreen && !sidenavOpened">
         <p class="mt-0 mb-0 mat-caption">
