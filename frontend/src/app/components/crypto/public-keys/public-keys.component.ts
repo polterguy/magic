@@ -367,7 +367,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param key Key to show receipts for
    */
   public showReceipts(key: PublicKey) {
-
+console.log(key.id);
     // Raising message needed to switch tabs.
     this.messageService.sendMessage({
       name: 'crypto.receipts.show',

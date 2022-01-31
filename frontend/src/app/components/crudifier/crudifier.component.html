@@ -1,32 +1,42 @@
 
-<mat-card>
+<div class="row">
+  <div class="col-12">
+    <mat-card>
 
-  <mat-tab-group (selectedTabChange)="selectedTabChanged()" [(selectedIndex)]="activeTab" dynamicHeight>
+      <mat-card-content>
+        <mat-tab-group (selectedTabChange)="selectedTabChanged()" [(selectedIndex)]="activeTab" dynamicHeight>
+    
+          <mat-tab label="CRUD" [disabled]="!authService.access.crud.generate_crud">
+            <ng-template matTabContent>
+              <app-crudifier-backend></app-crudifier-backend>
+            </ng-template>
+          </mat-tab>
+      
+          <mat-tab label="SQL" [disabled]="!authService.access.crud.generate_sql">
+            <ng-template matTabContent>
+              <app-crudifier-sql></app-crudifier-sql>
+            </ng-template>
+          </mat-tab>
+      
+          <mat-tab label="Frontend" [disabled]="!authService.access.crud.generate_frontend">
+            <ng-template matTabContent>
+              <app-crudifier-frontend></app-crudifier-frontend>
+            </ng-template>
+          </mat-tab>
+      
+        </mat-tab-group>
+      </mat-card-content>
+    
+    </mat-card>
+  </div>
+  <div class="col-12">
+    <mat-card [class]="hasComponent ? 'mt-3 mb-5' : 'invisible'">
+    
+      <mat-card-content>
+        <ng-template appInject></ng-template>
+      </mat-card-content>
+    
+    </mat-card>
+  </div>
+</div>
 
-    <mat-tab label="CRUD" [disabled]="!authService.access.crud.generate_crud">
-      <ng-template matTabContent>
-        <app-crudifier-backend></app-crudifier-backend>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="SQL" [disabled]="!authService.access.crud.generate_sql">
-      <ng-template matTabContent>
-        <app-crudifier-sql></app-crudifier-sql>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Frontend" [disabled]="!authService.access.crud.generate_frontend">
-      <ng-template matTabContent>
-        <app-crudifier-frontend></app-crudifier-frontend>
-      </ng-template>
-    </mat-tab>
-
-  </mat-tab-group>
-
-</mat-card>
-
-<mat-card [class]="hasComponent ? '' : 'invisible'">
-
-  <ng-template appInject></ng-template>
-
-</mat-card>

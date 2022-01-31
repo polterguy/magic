@@ -70,11 +70,16 @@ Material list
 =-=-=-=-=-=*/
 .detail-list{
     .mat-list-item.mat-2-line{
-      height: 65px;
+      height: unset!important;
+      margin-bottom: 22px;
       font-size: 95%;
-      .mat-line:not(:last-child) {
-        color: $magic_dark_alternative;
-        padding-bottom: 5px;
+      .mat-line{
+        text-overflow: unset!important;
+        white-space: normal!important;
+        :not(:last-child) {
+          color: $magic_dark_alternative;
+          padding-bottom: 5px;
+        }
       }
     }
   }
@@ -102,3 +107,10 @@ Material icons and button
     }
   }
 }
+/*=-=-=-=-=-=
+Material form
+=-=-=-=-=-=*/
+.inline-input{
+    .mat-form-field-wrapper{margin: 0!important;padding-bottom: 0;}
+}
+.light .dark .mat-select-value{color: inherit;}

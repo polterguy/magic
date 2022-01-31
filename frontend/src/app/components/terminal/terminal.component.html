@@ -1,4 +1,10 @@
 
-<mat-card [class]="isConnected ? 'terminal' : 'terminal closed'">
-  <div #terminal></div>
-</mat-card>
+<div class="row">
+  <div class="col-12">
+    <mat-card [class]="isConnected ? 'terminal' : 'terminal closed'">
+      <mat-card-content>
+        <div #terminal></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

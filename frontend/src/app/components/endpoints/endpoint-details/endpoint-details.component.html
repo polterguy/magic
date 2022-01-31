@@ -6,7 +6,7 @@
     matTooltip="Copy full invocation URL"
     class="copy-button"
     (click)="copyUrl()">
-    <mat-icon>link</mat-icon>
+    <mat-icon>content_copy</mat-icon>
   </button>
 
   <span class="item" *ngIf="endpoint.error">
@@ -56,7 +56,7 @@
 
   <span
     *ngIf="authService.access.endpoints.assumptions && assumptions.length > 0"
-    class="item-full-width">
+    class="w-100 d-block">
 
     <hr>
 
@@ -65,7 +65,7 @@
       class="label">Assumptions</strong>
     <span
       *ngIf="authService.access.diagnostics.execute_test"
-      class="description">
+      class="d-block mt-3">
 
       <mat-chip-list>
         <mat-chip
@@ -86,12 +86,12 @@
 
   <span
     *ngIf="endpoint.input && endpoint.input.length > 0 && (endpoint.verb === 'get' || endpoint.verb === 'delete')"
-    class="item-full-width">
+    class="w-100 b-block">
 
     <hr>
 
-    <strong class="label">Arguments</strong>
-    <span class="description" *ngIf="getArguments(endpoint.input, true).length > 0">
+    <strong class="label d-block mb-3">Arguments</strong>
+    <span class="d-block" *ngIf="getArguments(endpoint.input, true).length > 0">
 
       <mat-chip-list>
         <mat-chip
