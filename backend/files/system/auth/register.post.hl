@@ -53,7 +53,7 @@ data.connect:magic
    .catch
 
       // Doing some basic logging, and returning result to caller.
-      log.info:"User tried to register consecutive times"
+      log.info:User tried to register consecutive times
          username:x:@.arguments/*/username
       return
          result:already-registered

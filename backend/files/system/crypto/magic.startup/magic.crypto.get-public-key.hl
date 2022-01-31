@@ -2,6 +2,9 @@
 // Returns a public cryptography key, and its associated [vocabulary].
 slots.create:magic.crypto.get-public-key
 
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/fingerprint
+
    /*
     * Selecting key and vocabulary from database,
     * according to the specified fingerprint.
@@ -9,7 +12,7 @@ slots.create:magic.crypto.get-public-key
     * Notice, key needs to be enabled in order to be returned.
     */
    data.connect:magic
-      data.select:select id, content as public_key, domain, vocabulary, enabled from crypto_keys where fingerprint = @fingerprint
+      data.select:select id, content as public_key, domain, email, vocabulary, enabled from crypto_keys where fingerprint = @fingerprint
          @fingerprint:x:@.arguments/*/fingerprint
 
       // Verifying key exists in database.
@@ -45,6 +48,8 @@ slots.create:magic.crypto.get-public-key
          get-nodes:x:@data.select/*/*/id
          get-nodes:x:@data.select/*/*/public_key
          get-nodes:x:@data.select/*/*/domain
+         get-nodes:x:@data.select/*/*/email
+         get-nodes:x:@data.select/*/*/enabled
       add:x:./*/return/*/vocabulary
          hyper2lambda:x:@data.select/*/*/vocabulary
       return
