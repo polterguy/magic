@@ -8,7 +8,7 @@
 crypto.get-key:x:@.arguments/*/challenge
 
 // Logging
-log.info:Cryptography challenge for authenticating
+log.info:Cryptography challenge for authenticating submitted
    key:x:@crypto.get-key
 
 // Opening up database connection.
