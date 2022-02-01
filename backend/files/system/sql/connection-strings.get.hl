@@ -10,6 +10,13 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/databaseType
+validators.enum:x:@.arguments/*/databaseType
+   .:mysql
+   .:pgsql
+   .:mssql
+
 // Retrieves all connection strings according to database type specified.
 strings.concat
    .:"magic:databases:"
