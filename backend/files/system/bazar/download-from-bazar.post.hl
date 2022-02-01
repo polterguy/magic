@@ -49,7 +49,7 @@ if
                get-value:x:@io.file.execute/*/result
                .:success
          .lambda
-            throw:"Couldn't uninstall previously installed version"
+            throw:Could not uninstall previously installed version
                public:bool:true
                status:int:500
 

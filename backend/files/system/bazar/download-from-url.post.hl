@@ -13,6 +13,19 @@ validators.mandatory:x:@.arguments/*/folder
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
 
+// Verifying folder exists
+if
+   not
+      io.folder.exists:x:@.arguments/*/folder
+   .lambda
+
+      // Oops, folder doesn't exist
+      log.error:Folder does not exist
+         folder:x:@.arguments/*/folder
+      throw:Folder does not exist
+         public:bool:true
+         status:int:400
+
 // Downloading file from external URL.
 http.get:x:@.arguments/*/url
 
@@ -25,6 +38,8 @@ if
    .lambda
 
       // Oops, download did not succeed ...
+      log.error:Invalid URL provided to endpoint
+         url:x:@.arguments/*/url
       throw:That is not a valid URL
          public:bool:true
          status:int:400
