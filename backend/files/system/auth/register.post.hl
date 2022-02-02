@@ -4,17 +4,14 @@
    username:string
    password:string
    frontendUrl:string
-   backendUrl:string
 .description:Registers a new user in the system
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
 validators.mandatory:x:@.arguments/*/frontendUrl
-validators.mandatory:x:@.arguments/*/backendUrl
 validators.email:x:@.arguments/*/username
 validators.url:x:@.arguments/*/frontendUrl
-validators.url:x:@.arguments/*/backendUrl
 
 // Verifying that Magic is configured to allow for users to register.
 config.get:"magic:auth:registration:allow"
@@ -102,6 +99,10 @@ if
          crypto.hash:x:@strings.concat
 
       // Dynamically building our reset password URL.
+      strings.concat
+         request.scheme
+         .:"://"
+         request.host
       .url
       set-value:x:@.url
          strings.concat
@@ -111,7 +112,7 @@ if
             .:&username=
             strings.url-encode:x:@.arguments/*/username
             .:&url=
-            strings.url-encode:x:@.arguments/*/backendUrl
+            strings.url-encode:x:@strings.concat/@strings.concat
 
       /*
        * Checking if site is configured such that users needs to
