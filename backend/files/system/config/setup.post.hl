@@ -10,16 +10,9 @@
  * is 'THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT'.
  */
 .arguments
-   databaseType:string
    password:string
-   settings:string
+   settings:*
 .description:Setup authentication and other parts of the system according to the arguments provided
-
-// Sanity checks invocation.
-validators.enum:x:@.arguments/*/databaseType
-   .:mysql
-   .:pgsql
-   .:mssql
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -47,37 +40,29 @@ try
             public:true
 
    /*
-    * Converting settings argument to JSON.
-    *
-    * This will throw an exception if for some reasons the client didn't
-    * supply a valid JSON string as his or her [settings] argument.
-    */
-   json2lambda:x:@.arguments/*/settings
-
-   /*
     * Testing connection string before we save it, to make sure
     * it is functioning. This part will throw if connection string is
     * not valid.
     */
    try
-      switch:x:@.arguments/*/databaseType
+      switch:x:@.arguments/*/settings/*/magic/*/databases/*/default
 
          case:mssql
-            strings.replace:x:@json2lambda/*/magic/*/databases/*/mssql/*/generic
+            strings.replace:x:@.arguments/*/settings/*/magic/*/databases/*/mssql/*/generic
                .:{database}
                .:master
             mssql.connect:x:@strings.replace
                mssql.select:select name from master.dbo.sysdatabases
 
          case:mysql
-            strings.replace:x:@json2lambda/*/magic/*/databases/*/mysql/*/generic
+            strings.replace:x:@.arguments/*/settings/*/magic/*/databases/*/mysql/*/generic
                .:{database}
                .:information_schema
             mysql.connect:x:@strings.replace
                mysql.select:show databases
 
          case:pgsql
-            strings.replace:x:@json2lambda/*/magic/*/databases/*/pgsql/*/generic
+            strings.replace:x:@.arguments/*/settings/*/magic/*/databases/*/pgsql/*/generic
                .:{database}
                .:postgres
             pgsql.connect:x:@strings.replace
@@ -95,9 +80,7 @@ try
     * Connection string is valid and we are able to connect to a database,
     * hence we can safely save the appsettings.json file now.
     */
-   set-value:x:@json2lambda/*/magic/*/databases/*/default
-      get-value:x:@.arguments/*/databaseType
-   lambda2json:x:@json2lambda/*
+   lambda2json:x:@.arguments/*/settings/*
       format:true
    config.save:x:-
 
@@ -127,7 +110,7 @@ try
     */
    strings.concat
       .:magic.db.
-      get-value:x:@.arguments/*/databaseType
+      get-value:x:@.arguments/*/settings/*/magic/*/databases/*/default
       .:.databases
    signal:x:-
 
@@ -145,7 +128,7 @@ try
           */
          strings.concat
             .:/misc/
-            get-value:x:@.arguments/*/databaseType
+            get-value:x:@.arguments/*/settings/*/magic/*/databases/*/default
             .:/magic.sql
 
          /*
@@ -161,7 +144,7 @@ try
           * For PG SQL we'll need to first create the database in a separate [pgsql.connect] invocation,
           * then run the execute script with the created database as our selected database.
           */
-         switch:x:@.arguments/*/databaseType
+         switch:x:@.arguments/*/settings/*/magic/*/databases/*/default
 
             // Special case for MS SQL to use [mssql.execute-batch].
             case:mssql
@@ -187,7 +170,7 @@ try
          signal:magic.auth.create-user
             username:root
             password:x:@.arguments/*/password
-            database-type:x:@.arguments/*/databaseType
+            database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
             roles
                .:root
    else
@@ -199,7 +182,7 @@ try
       unwrap:x:+/*
       signal:magic.auth.change-password
          password:x:@.arguments/*/password
-         database-type:x:@.arguments/*/databaseType
+         database-type:x:@.arguments/*/settings/*/magic/*/databases/*/default
 
       // Then we need to make sure we run any database migration scripts.
       io.file.execute:/system/magic.startup/migrate-magic-database.hl

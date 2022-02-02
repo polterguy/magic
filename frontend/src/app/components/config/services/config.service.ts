@@ -77,20 +77,18 @@ export class ConfigService {
   /**
    * Will setup your system according to the specified arguments.
    * 
-   * @param databaseType Default database type to use for your magic database
    * @param password Root user's password to use
    * @param settings Configuration for your system
    */
-  public setup(databaseType: string, password: string, settings: any) {
+  public setup(password: string, settings: any) {
 
     // Invoking backend and returning observable to caller.
     return new Observable<AuthenticateResponse>((observer) => {
 
       // Invoking backend to setup system.
       this.httpService.post<AuthenticateResponse>('/magic/system/config/setup', {
-        databaseType,
         password,
-        settings: JSON.stringify(settings, null, 2),
+        settings,
       }).subscribe((res: AuthenticateResponse) => {
 
         /*
