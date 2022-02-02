@@ -97,7 +97,6 @@ export class RegisterComponent implements OnInit {
       this.email,
       this.password,
       location.origin,
-      this.backendService.current.url,
     ).subscribe((result: Response) => {
 
       // Assigning status to result of invocation.
