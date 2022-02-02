@@ -99,9 +99,11 @@ export class HomeComponent implements OnInit, OnDestroy {
        * Checking if user accessed system with an authentication link.
        */
       const token = params['token'];
-      if (token) {
+      if (token && token.includes('.')) {
 
         /*
+         * 'token' query parameter seems to be a JWT token.
+         *
          * Authentication request, authenticating using specified link,
          * and redirecting user to hide URL.
          */
@@ -142,30 +144,29 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.feedbackService.showError(error);
         });
 
-      } else {
+      } else if (token) {
 
-        // No token supplied, checking for hash.
-        const hash = params['hash'];
-        if (hash) {
+        /*
+         * 'token' seems to be a "verify email address" type of token.
+         *
+         * Need to set the current backend first.
+         */
+        this.backendService.current = {
+          url: params['url'],
+          username: params['username'],
+        };
 
-          // Need to set the current backend first.
-          this.backendService.current = {
-            url: params['url'],
-            username: params['username'],
-          };
+        // Registration confirmation of email address.
+        this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {
 
-          // Registration confirmation of email address.
-          this.authService.verifyEmail(params['username'], hash).subscribe((result: Response) => {
+          // Checking for success.
+          if (result.result === 'success') {
 
-            // Checking for success.
-            if (result.result === 'success') {
-
-              // Success.
-              this.feedbackService.showInfo('You successfully confirmed your email address');
-              this.router.navigate(['/']);
-            }
-          });
-        }
+            // Success.
+            this.feedbackService.showInfo('You successfully confirmed your email address');
+            this.router.navigate(['/']);
+          }
+        });
       }
     });
   }
