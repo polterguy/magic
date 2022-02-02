@@ -62,7 +62,7 @@ export class ConfigService {
   public loadConfig() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/system/config/load-config');
+    return this.httpService.get<any>('/magic/system/config/load');
   }
 
   /**
@@ -71,7 +71,7 @@ export class ConfigService {
   public saveConfig(config: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/system/config/save-config', config);
+    return this.httpService.post<Response>('/magic/system/config/save', config);
   }
 
   /**

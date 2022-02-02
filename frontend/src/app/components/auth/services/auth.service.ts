@@ -621,8 +621,8 @@ export class AuthService {
         send: this.canInvoke('magic/system/sockets/send-socket-message', 'post'),
       },
       config: {
-        load: this.canInvoke('magic/system/config/load-config', 'get'),
-        save: this.canInvoke('magic/system/config/save-config', 'post'),
+        load: this.canInvoke('magic/system/config/load', 'get'),
+        save: this.canInvoke('magic/system/config/save', 'post'),
         delete_cache_item: this.canInvoke('magic/system/cache/delete-cache-item', 'delete'),
       },
       crypto: {
