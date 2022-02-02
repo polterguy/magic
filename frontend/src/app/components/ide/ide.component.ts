@@ -45,6 +45,8 @@ import fileTypes from './../files/file-editor/file-types.json';
 })
 export class IdeComponent implements OnInit, OnDestroy {
 
+  // toggle folder section
+  public expandSide: boolean = true;
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
 
@@ -1004,7 +1006,10 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Alt+M maximises editor.
       options[0].options.extraKeys['Alt-M'] = (cm: any) => {
-
+        // to hide/show sidenav
+        let sidenav = document.querySelector('.mat-sidenav');
+        sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+        sidenav.classList.add('d-none');
         // Toggling maximise mode.
         cm.setOption('fullScreen', !cm.getOption('fullScreen'));
       };

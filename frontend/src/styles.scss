@@ -5,11 +5,11 @@
 @import '~codemirror/theme/zenburn';
 @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
+@import './assets/styles/sizes.scss';
 @import './assets/styles/grid.scss';
 @import './assets/styles/colour.scss';
 @import './assets/styles/mixin.scss';
 @import './assets/styles/material-styling.scss';
-@import './assets/styles/sizes.scss';
 @import './assets/styles/default-classes.scss';
 
 
@@ -18,10 +18,10 @@ body { margin: 0;min-height: 100vh;overflow: hidden;}
 /*=-=-=-=-=-=
 General settings 
 =-=-=-=-=-=*/
-.light,
-.dark{
-  height: 100%;
-}
+// .light,
+// .dark{
+//   height: 100%;
+// }
 hr{
   border-style: solid;
   border-width: 0.5px;
