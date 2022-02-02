@@ -5,6 +5,7 @@
    password:string
    frontendUrl:string
    template:string
+   subject:string
 .description:Registers a new user in the system
 
 // Sanity checking invocation.
@@ -98,6 +99,16 @@ if
             set-value:x:@.template
                get-value:x:@.arguments/*/template
 
+      // Default subject line for verify email address email.
+      .subject:Thank you for registering with Aista Magic Cloud
+
+      // Checking if caller supplied a different email subject to use.
+      if
+         exists:x:@.arguments/*/subject
+         .lambda
+            set-value:x:@.subject
+               get-value:x:@.arguments/*/subject
+
       // Making sure we store the fact that a verify email address link was sent to user.
       set-value:x:@.email-sent
          .:Yes
@@ -180,7 +191,7 @@ if
       // Now we can send an email to user.
       unwrap:x:+/**
       signal:magic.emails.send
-         subject:Thank you for registering
+         subject:x:@.subject
          template-file:x:@.template
          substitutes
             url:x:@.url
