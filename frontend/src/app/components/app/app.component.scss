@@ -21,26 +21,12 @@
   animation-fill-mode: forwards;
   animation-duration: .5s;
 }
+
 /*=-=-=-=-=-=
 copyright
 =-=-=-=-=-=*/
-.footer{
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  height: 36px;
-  padding-right: 20px;
-  z-index: 4;
-  &.padding-left-full{padding-left: calc(#{$sidebar_full_width} + #{$side_space} + 15px);}
-  &.padding-left-small{padding-left: calc(#{$sidebar_small_width} + #{$side_space} + 15px);}
-  @media(max-width:800px){
-    height: 80px;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-  }
-}
+.footer{padding-right: $side_space;padding-left: $side_space;padding-bottom: $side_space;}
+
 .light .footer{
   background-color: $magic_site_bg;
 }
@@ -51,20 +37,6 @@ copyright
   /*=-=-=-=-=-=
   sidebar settings
   =-=-=-=-=-=*/
-  @media (min-width: 768px){
-    .mat-drawer{
-      position: fixed!important;
-      top: $side_space!important;
-      bottom: $side_space!important;
-      left: $side_space!important;
-      border-radius: 10px;
-    }
-  }
-  @media (max-width: 767px){
-    .mat-drawer {
-      padding-bottom: 60px;
-    }
-  }
   .dark .mat-drawer{
     background-color: $magic_dark_secondary_light!important;
   }
@@ -73,11 +45,6 @@ copyright
     &:hover{
       @include scrollbar(transparent,transparentize($color: $magic_default_alternative, $amount: 0.75),3px)
     }
-  }
-  mat-sidenav-content.mat-drawer-content{
-    padding-top: 30px;
-    padding-bottom: 30px;
-    height: calc(100% - 80px);
   }
   /*=-=-=-=-=-=
   sidebar and content width and margin relatively

@@ -12,8 +12,8 @@ html {
 
 .container {
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: $side_space;
+  padding-left: $side_space;
   margin-right: auto;
   margin-left: auto;
 }
@@ -44,8 +44,8 @@ html {
 
 .container-fluid, .container-sm, .container-md, .container-lg, .container-xl {
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: $side_space;
+  padding-left: $side_space;
   margin-right: auto;
   margin-left: auto;
 }
@@ -78,8 +78,8 @@ html {
   display: -webkit-box;
   display: flex;
   flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
+  margin-right: -$side_space;
+  margin-left: -$side_space;
 }
 
 .no-gutters {
@@ -101,8 +101,8 @@ html {
 .col-xl-auto {
   position: relative;
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: $side_space;
+  padding-left: $side_space;
 }
 
 .col {

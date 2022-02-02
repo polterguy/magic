@@ -1,34 +1,44 @@
 @import '../../../assets/styles/colour.scss';
 @import '../../../assets/styles/mixin.scss';
 
-$max_height: calc(100vh - 170px);
+$max_height: calc(100vh - 140px);
 $max_height_mobile: calc(100vh - 220px);
-
+.position-absolute{
+  position: absolute;
+  right: 0;
+  top: 40%;
+  z-index: 1;
+  button{
+    display: flex;
+    padding: 0px;
+    line-height: 1;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+.collapsed{
+  width: 16px;
+  max-width: 16px;
+  position: relative;
+  @include general_transition(0.5s);
+  mat-card{display: none;}
+  .position-absolute{right: -7px}
+}
+.folders-wrapper{@include general_transition(0.5s);}
 .wrapper {
-  max-height: $max_height;
-  height: calc(100vh - 5rem);
-  // width: calc(100% + 8rem);
-  // margin-left: -4rem;
-  // margin-top: -2rem;
-  // margin-right: 0;
-  // margin-bottom: -5rem;
-
+  // max-height: $max_height;
+  // height: calc(100vh - 5rem);
   mat-card {
     margin-bottom: 0;
   }
 
   .files-section {
-    // box-sizing: content-box;
-    // float: left;
-    // width: 25%;
-    // max-width: 25%;
     max-height: $max_height;
     height: calc(100% - 2rem);
     overflow: auto;
     @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),8px);
-    // margin-right: 1rem;
-    // padding: .5rem 1rem;
-
+    @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),2px);
     .mat-tree-node {
       height: 36px;
       min-height: 36px;
@@ -73,25 +83,14 @@ $max_height_mobile: calc(100vh - 220px);
   }
 
   .content-section {
-    // float: left;
-    // width: calc(75% - 7rem);
-    // max-width: calc(75% - 7rem);
     height: calc(100% - 5rem);
     max-height: $max_height;
     position: relative;
-    // padding: 2rem;
 
     .active-path{
       color: rgb(128, 128, 128);
       font-style: italic;
     }
-    // .active-folder {
-    //   position: absolute;
-    //   top: .25rem;
-    //   right: 1rem;
-    //   color: rgb(128, 128, 128);
-    //   font-style: italic;
-    // }
 
     .light-bulb {
       display: block;
@@ -133,7 +132,6 @@ $max_height_mobile: calc(100vh - 220px);
 }
 
 ::ng-deep .content-section .CodeMirror {
-  // height: calc(100vh - 16.5rem);
   height: calc(100vh - 350px);
   @media (min-width: 805px) and (max-width: 1024px){
     height: calc(100vh - 400px);
@@ -149,32 +147,13 @@ $max_height_mobile: calc(100vh - 220px);
 @media screen and (max-width: 800px) {
   .wrapper {
     // display: block;
-    max-height: $max_height_mobile;
+    // max-height: $max_height_mobile;
     height: auto;
     overflow-y: auto;
-    // margin-top: 0;
-    // margin-bottom: 0;
-    // .files-section {
-    //   float: none;
-    //   width: calc(100% - 4rem);
-    //   max-width: calc(100% - 6rem);
-    //   min-width: calc(100% - 6rem);
-    //   margin-left: 2rem;
-    //   margin-bottom: 1rem;
-    // }
-    // .content-section {
-    //   float: none;
-    //   width: calc(100% - 4rem);
-    //   max-width: calc(100% - 8rem);
-    //   min-width: calc(100% - 8rem);
-    //   margin-left: 2rem;
-    //   margin-bottom: 0;
-    //   padding-bottom: 1rem;
-    // }
 
-    .content-section,
-    .files-section{
-      max-height: $max_height_mobile;
-    }
+    // .content-section,
+    // .files-section{
+    //   max-height: $max_height_mobile;
+    // }
   }  
 }

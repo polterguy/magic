@@ -1,9 +1,10 @@
 
-<div class="row wrapper">
+<div class="row wrapper h-100">
 
   <div class="col-12">
-    <div class="row">
-      <div class="col-xl-3 col-md-4 col-sm-5 col-12 pr-sm-2">
+    <div class="h-100"
+    [ngClass]="{'row': expandSide, 'd-flex flex-nowrap': !expandSide}">
+      <div [ngClass]="{'col-xl-3 col-md-4 col-sm-5 col-12 pr-sm-2 folders-wrapper': expandSide, 'collapsed': !expandSide}">
         <mat-card class="h-100">
   
           <mat-card-content>
@@ -59,8 +60,15 @@
           </mat-card-content>
       
         </mat-card>
+        <div class="position-absolute">
+          <button (click)="expandSide = !expandSide" [matTooltip]="expandSide ? 'Collapse folders section' : 'Expand folders section'">
+            <mat-icon>{{expandSide ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}}</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class="col-xl-9 col-md-8 col-sm-7 col-12 pl-sm-2">
+      <div 
+      [ngClass]="{'col-xl-9 col-md-8 col-sm-7 col-12 pl-sm-2': expandSide}"
+      [class.w-100]="!expandSide">
         <mat-card class="h-100">
           <mat-card-content>
             <div class="content-section d-flex flex-column w-100">

@@ -151,6 +151,7 @@ export class SqlComponent implements OnInit {
           // Associating ALT+M with fullscreen toggling of the editor instance.
           this.input.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+            // to hide/show sidenav
             let sidenav = document.querySelector('.mat-sidenav');
             sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
             sidenav.classList.add('d-none');
@@ -409,7 +410,10 @@ export class SqlComponent implements OnInit {
       this.result = this.buildResult(result || []);
 
       // to scroll to the result section
-      resultCard.scrollIntoView({behavior: 'smooth'});
+      // wait for the result to get printed inside element
+      setTimeout(() => {
+        resultCard.scrollIntoView({behavior: 'smooth'});
+      }, 300);
 
     }, (error: any) => {
 

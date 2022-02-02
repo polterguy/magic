@@ -8,35 +8,38 @@
 
 <div [class]="theme">
 
-  <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar>
+  <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
 
-  <mat-sidenav-container (backdropClick)="closeNavbar()">
+  <mat-sidenav-container (backdropClick)="closeNavbar()" id="main-wrapper">
 
     <mat-sidenav [mode]="notSmallScreen ? 'side' : 'over'" class="mat-elevation-z2"
       [opened]="sidenavOpened || notSmallScreen"
       [class.sideClosed]="!sidenavOpened && notSmallScreen"
       [class.full-width-sidebar]="notSmallScreen && sidenavOpened"
-      [class.small-width-sidebar]="notSmallScreen && !sidenavOpened">
+      [class.small-width-sidebar]="notSmallScreen && !sidenavOpened"
+      id="sidebar-main">
       <app-navbar [sideNavStatus]="sidenavOpened"></app-navbar>
     </mat-sidenav>
 
     <mat-sidenav-content
     [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
-    [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened">
+    [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
 
-      <div class="img-wrapper"></div>
+    <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar>
 
-      <div
+      <!-- <div class="img-wrapper"></div> -->
+
+      <!-- <div
         *ngIf="sidenavOpened"
         class="obscurer"
-        (click)="closeNavbar()"></div>
+        (click)="closeNavbar()"></div> -->
 
-        <div class="container-fluid h-100">
-          <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
-        </div>
+      <div class="container-fluid h-100">
+        <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
+      </div>
 
       
-      <div class="footer d-flex justify-content-lg-between align-items-center w-100"
+      <div class="footer d-flex justify-content-lg-between align-items-center w-100 mt-auto pt-3"
       [class.padding-left-full]="notSmallScreen && sidenavOpened"
       [class.padding-left-small]="notSmallScreen && !sidenavOpened">
         <p class="mt-0 mb-0 mat-caption">
