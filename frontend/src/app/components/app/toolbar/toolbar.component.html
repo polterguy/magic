@@ -2,18 +2,13 @@
 <mat-toolbar [class]="sideNavStatus ? 'sidebar-open' : 'sidebar-closed'">
   <div class="d-flex justify-content-between w-100">
     <button
-    mat-icon-button
+      mat-icon-button
       (click)="toggleNavbar()">
       <mat-icon>menu{{sideNavStatus ? '_open' : ''}}</mat-icon>
     </button>
-    <!-- <button
-      mat-button
-      (click)="toggleNavbar()">
-      <mat-icon>menu</mat-icon>
-      <span class="ml-1">Magic</span>
-    </button> -->
+
     <div class="d-flex align-items-center">
-      <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus" class="mr-10">
+      <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus">
         {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
       </span>
 
@@ -30,22 +25,11 @@
           <mat-icon>brightness_4</mat-icon>
         </span>
       </button>
-      
-      <!-- <mat-slide-toggle 
-        [(ngModel)]="lightTheme"
-        labelPosition="before"
-        (change)="themeChanged()" class="mr-1 ml-1 d-md-none">Lights</mat-slide-toggle> -->
-    
-      <!-- <button
-        mat-icon-button
-        matTooltip="Home"
-        routerLink="/">
-        <mat-icon>home</mat-icon>
-      </button> -->
     
       <button
         mat-icon-button
         matTooltip="Help"
+        class="d-sm-inline d-none"
         (click)="help()">
         <mat-icon>contact_support</mat-icon>
       </button>

@@ -151,6 +151,9 @@ export class SqlComponent implements OnInit {
           // Associating ALT+M with fullscreen toggling of the editor instance.
           this.input.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+            let sidenav = document.querySelector('.mat-sidenav');
+            sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+            sidenav.classList.add('d-none');
           };
 
           // Associating ALT+L with the load snippet button.
@@ -372,8 +375,9 @@ export class SqlComponent implements OnInit {
 
   /**
    * Executes the current SQL towards your backend.
+   * @param resultCard - html element wrapping the result section
    */
-  public execute() {
+  public execute(resultCard: HTMLElement) {
 
     // Retrieving selected text from CodeMirror instance.
     const selectedText = this.input.editor.getSelection();
@@ -403,6 +407,9 @@ export class SqlComponent implements OnInit {
 
       // Making sure we remove all previously viewed detail records.
       this.result = this.buildResult(result || []);
+
+      // to scroll to the result section
+      resultCard.scrollIntoView({behavior: 'smooth'});
 
     }, (error: any) => {
 

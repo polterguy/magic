@@ -85,12 +85,6 @@
     right: 0;
     box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
   }
-  // .light #sidebar .stick-to-bottom{
-  //   background-color: $magic_site_bg;
-  // }
-  // .dark #sidebar .stick-to-bottom{
-  //   background-color: $magic_dark_alternative_light;
-  // }
 }
 /*=-=-=-=-=-=
 colour setting -- text & background
@@ -211,8 +205,6 @@ colour setting -- text & background
     .mat-list-text{display: flex;flex-direction: column;align-items: center;}
     .title,
     .mat-expansion-panel-header{font-size: 95%;}
-    // .mat-expansion-panel-header .title,
-    // .mat-list-option .title{display: none;}
 
     .mat-expansion-panel-body{padding: 0;}
     .mat-expansion-panel-header{

@@ -1,58 +1,78 @@
 
-
-<div class="centralized">
-
-  <mat-form-field class="form-field-half" appearance="outline">
-
-    <mat-label>Full name</mat-label>
-    <input
-      matInput
-      autocomplete="off"
-      [(ngModel)]="subject">
-
-  </mat-form-field>
-
-  <mat-form-field class="form-field-half" appearance="outline">
-
-    <mat-label>Email</mat-label>
-    <input
-      matInput
-      autocomplete="off"
-      [(ngModel)]="email">
-
-  </mat-form-field>
-
-  <br>
-
-  <mat-form-field class="form-field-half" appearance="outline">
-
-    <mat-label>Domain</mat-label>
-    <input
-      matInput
-      autocomplete="off"
-      [(ngModel)]="domain">
-
-  </mat-form-field>
-
-  <mat-form-field class="form-field-half" appearance="outline">
-
-    <mat-label>Key strength</mat-label>
-    <mat-select [(ngModel)]="strength">
-      <mat-option value="1024">1024</mat-option>
-      <mat-option value="2048">2048</mat-option>
-      <mat-option value="4096">4096</mat-option>
-      <mat-option value="8192">8192</mat-option>
-    </mat-select>
-
-  </mat-form-field>
-
+<div class="d-flex align-items-center mb-3">
+  <div>
+    <h3 class="m-0">Set up your public key</h3>
+  </div>
+  <div class="sm-icons">
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <div class="p-3">
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat laudantium officia odit? Dolorem cumque, et quidem minima placeat, nisi facere laborum vitae voluptatibus dolorum, fuga quod earum officia obcaecati eius.</p>
+      </div>
+    </mat-menu>
+  </div>
 </div>
+<form>
+  <div class="d-flex flex-sm-nowrap flex-wrap">
+    <mat-form-field class="w-100" appearance="outline">
 
-<button
-  mat-raised-button
-  color="primary"
-  [disabled]="seed === '' || subject === '' || email === ''"
-  (click)="next()"
-  class="next">
-  Next
-</button>
+      <mat-label>Full name</mat-label>
+      <input
+        matInput
+        autocomplete="off"
+        [(ngModel)]="subject"
+        name="subject">
+  
+    </mat-form-field>
+    <div class="p-1"></div>
+    <mat-form-field class="w-100" appearance="outline">
+  
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        autocomplete="off"
+        [(ngModel)]="email"
+        name="email">
+  
+    </mat-form-field>
+  </div>
+  
+  <div class="d-flex flex-sm-nowrap flex-wrap">
+    <mat-form-field class="w-100" appearance="outline">
+
+      <mat-label>Domain</mat-label>
+      <input
+        matInput
+        autocomplete="off"
+        [(ngModel)]="domain"
+        name="domain">
+  
+    </mat-form-field>
+    <div class="p-1"></div>
+    <mat-form-field class="w-100" appearance="outline">
+  
+      <mat-label>Key strength</mat-label>
+      <mat-select [(ngModel)]="strength" name="strength">
+        <mat-option value="1024">1024</mat-option>
+        <mat-option value="2048">2048</mat-option>
+        <mat-option value="4096">4096</mat-option>
+        <mat-option value="8192">8192</mat-option>
+      </mat-select>
+  
+    </mat-form-field>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="seed === '' || subject === '' || email === ''"
+      (click)="next()"
+      type="submit"
+      class="next">
+      Next
+    </button>
+  </div>
+</form>

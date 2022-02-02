@@ -1,90 +1,107 @@
 
-<div *ngIf="!showAdvanced" class="min-h-400">
+<form>
+  <div *ngIf="!showAdvanced">
+    <div class="d-flex align-items-center mb-3">
+      <h3 class="m-0">Set up your connection</h3>
+      <div class="sm-icons">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+          <mat-icon>help_outline</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <div class="p-3">
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat laudantium officia odit? Dolorem cumque, et quidem minima placeat, nisi facere laborum vitae voluptatibus dolorum, fuga quod earum officia obcaecati eius.</p>
+          </div>
+        </mat-menu>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mb-3">
+      <mat-icon>storage</mat-icon>
+      <p class="my-0 ml-1">Database connection</p>
+    </div>
+    <mat-form-field appearance="outline">
 
-  <strong>Database connection</strong>
-
-  <form #dbForm="ngForm" novalidate>
-    <mat-form-field class="form-field" appearance="outline">
-
-      <mat-label>Database</mat-label>
-      <mat-select
-      [(ngModel)]="selectedDatabaseType"
-      name="selectedDatabaseType">
-        <mat-option
-          *ngFor="let idx of databaseTypes"
-          [value]="idx">{{idx}}</mat-option>
-      </mat-select>
-
-    </mat-form-field>
-
-    <mat-form-field *ngIf="selectedDatabaseType" class="form-field wide" appearance="outline">
-
-      <mat-label>Server</mat-label>
-      <input
-        matInput
-        [(ngModel)]="config.magic.databases[selectedDatabaseType].generic"
-        name="databaseGeneric">
-
-    </mat-form-field>
-
-    <strong *ngIf="selectedDatabaseType">Root account password</strong>
-
-    <mat-form-field *ngIf="selectedDatabaseType" class="form-field"  appearance="outline">
-
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        type="password"
-        autocomplete="new-password"
-        [(ngModel)]="password"
-        name="password">
+        <mat-label>Database</mat-label>
+        <mat-select
+        [(ngModel)]="selectedDatabaseType"
+        name="selectedDatabaseType">
+          <mat-option
+            *ngFor="let idx of databaseTypes"
+            [value]="idx">{{idx}}</mat-option>
+        </mat-select>
 
     </mat-form-field>
 
-    <mat-form-field *ngIf="selectedDatabaseType" class="form-field" appearance="outline">
+      <ng-container *ngIf="selectedDatabaseType">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Server</mat-label>
+          <input
+            matInput
+            [(ngModel)]="config.magic.databases[selectedDatabaseType].generic"
+            name="databaseGeneric">
+        </mat-form-field>
 
-      <mat-label>Repeat</mat-label>
-      <input
-        matInput
-        name="password"
-        type="password"
-        autocomplete="new-password"
-        [(ngModel)]="passwordRepeat"
-        [ngModelOptions]="{standalone: true}">
+        <div class="d-flex align-items-center mb-3">
+          <mat-icon>password</mat-icon>
+          <p class="my-0 ml-1">Root account password</p>
+        </div>
 
-    </mat-form-field>
+        <div class="d-flex">
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="new-password"
+              [(ngModel)]="password"
+              name="password">
+          </mat-form-field>
+          <div class="p-1"></div>
+          <mat-form-field appearance="outline">
+      
+            <mat-label>Repeat</mat-label>
+            <input
+              matInput
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              [(ngModel)]="passwordRepeat"
+              [ngModelOptions]="{standalone: true}">
+      
+          </mat-form-field>
+        </div>
 
-    <mat-form-field *ngIf="selectedDatabaseType" class="wide break"  appearance="outline">
+        <mat-form-field class="w-100"  appearance="outline">
 
-      <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
-      <input
-        matInput
-        type="text"
-        [(ngModel)]="config.magic.auth.secret"
-        name="authSecret">
+          <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="config.magic.auth.secret"
+            name="authSecret">
 
-    </mat-form-field>
+        </mat-form-field>
+      </ng-container>
+  </div>
 
-  </form>
-</div>
 
+  <div *ngIf="showAdvanced">
+    
+    <app-config-editor></app-config-editor>
 
-<div *ngIf="showAdvanced" class="min-h-400">
-  
-  <app-config-editor></app-config-editor>
+  </div>
 
-</div>
-
-<div class="d-flex justify-content-between">
-  <mat-slide-toggle [(ngModel)]="showAdvanced">Advanced</mat-slide-toggle>
-  
-  <button
-  *ngIf="!showAdvanced"
-  mat-raised-button
-  color="primary"
-  [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
-  class="next"
-  (click)="next()">
-    Next
-  </button>
-</div>
+  <div class="d-{{showAdvanced ? 'inline-' : ''}}flex justify-content-between mt-3">
+    <mat-slide-toggle [(ngModel)]="showAdvanced" name="showAdvanced">Advanced</mat-slide-toggle>
+    
+    <button
+    *ngIf="!showAdvanced"
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="!selectedDatabaseType || password === '' || password !== passwordRepeat"
+    class="next"
+    (click)="next()">
+      Next
+    </button>
+  </div>
+</form>

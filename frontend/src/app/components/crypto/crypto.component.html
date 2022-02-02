@@ -1,4 +1,21 @@
 
+<div class="d-flex align-items-center mb-1">
+  <h2 class="my-0">Cryptographically secured HTTP lambda invocations</h2>
+  <div class="sm-icons">
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <div class="p-3">
+        <p>This will turn your Magic server into a crypto wallet and a financial transaction server, by allowing you to securely execute Hyperlambda code created by a 3rd party client - And have receipts giving you a guarantee of that the executed code was in fact created by one specific client.</p>
+        <div class="d-flex justify-content-end">
+          <a target="_blank" href="https://docs.aista.com/tutorials/crypto-lambda-http/" mat-stroked-button>Learn more</a>
+        </div>
+      </div>
+    </mat-menu>
+  </div>
+</div>
+<mat-card-subtitle>Create, view and edit your public keys</mat-card-subtitle>
 <div class="row mb-3">
   <div class="col-12">
     <mat-accordion class="card-replacement left-align-arrow" displayMode="flat">

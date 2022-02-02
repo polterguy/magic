@@ -22,6 +22,7 @@ import { UserService } from 'src/app/components/auth/services/user.service';
 import { AuthFilter } from 'src/app/components/auth/models/auth-filter.model';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
 import { AuthService } from '../services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Roles component for administrating roles in the system.
@@ -29,7 +30,14 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-roles',
   templateUrl: './roles.component.html',
-  styleUrls: ['./roles.component.scss']
+  styleUrls: ['./roles.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class RolesComponent implements OnInit {
 
@@ -40,6 +48,7 @@ export class RolesComponent implements OnInit {
    * Data for roles table.
    */
   public roles: Role[] = [];
+  public expandedElement: Role | null;
 
   /**
    * Number of roles matching filter in the backend.
