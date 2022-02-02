@@ -1,6 +1,5 @@
 
-@import './mixin.scss';
-@import './colour.scss';
+
 /*=-=-=-=-=-=
 Material body and general styling
 =-=-=-=-=-=*/
@@ -59,12 +58,15 @@ Material card
   .mat-expanded .mat-expansion-panel-header{padding-top: 8px;}
   .mat-expansion-panel-header.mat-expanded{height: unset;}
 }
+.mat-card-title{line-height: 30px;}
 /*=-=-=-=-=-=
-Material tabs
+Material tabs & stepper
 =-=-=-=-=-=*/
-.mat-tab-header{
+.mat-tab-header,
+.mat-step-header{
   margin-bottom: 12px;
 }
+.mat-stepper-horizontal .mat-horizontal-content-container{padding: 0;}
 /*=-=-=-=-=-=
 Material list
 =-=-=-=-=-=*/

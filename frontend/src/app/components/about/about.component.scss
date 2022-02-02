@@ -1,23 +1,22 @@
+@import '../../../assets/styles/colour.scss';
+@import '../../../assets/styles/mixin.scss';
 
-// mat-card {
-//   max-width: 850px;
-//   margin-left: auto;
-//   margin-right: auto;
-//   .logo {
-//     float: right;
-//     max-width: 512px;
-//     margin-left: 1rem;
-//     margin-bottom: 1rem;
-//     img {
-//       width: 100%;
-//       display: block;
-//       border-radius: .5rem;
-//       box-shadow: 3px 3px 5px rgba(0,0,0,.7);
-//     }
-//   }
-//   .clearfix {
-//     clear: both;
-//     display: table;
-//     margin-bottom: 2rem;
-//   }
-// }
+.links{
+    font-size: 14px;
+    mat-icon{
+        font-size: 14px;
+        height: 14px;
+        width: 14px;
+        line-height: 14px;
+    }
+    a{
+        opacity: 0.7;
+        color: $magic_dark_secondary_light;
+        @include general_transition(0.3s);
+        &:hover{
+            opacity: 1;
+            color: $magic_accent;
+            margin-left: 5px;
+        }
+    }
+}

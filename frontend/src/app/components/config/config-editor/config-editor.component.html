@@ -1,16 +1,33 @@
 
+<div class="d-flex mb-3">
+  <div>
+    <h3 class="my-0">View &amp; edit the endpoints</h3>
+    <p class="my-0 text-muted">Skip it if you are not sure.</p>
+  </div>
+  <div class="sm-icons">
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <div class="p-3">
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat laudantium officia odit? Dolorem cumque, et quidem minima placeat, nisi facere laborum vitae voluptatibus dolorum, fuga quod earum officia obcaecati eius.</p>
+      </div>
+    </mat-menu>
+  </div>
+</div>
+
+
 <ngx-codemirror
   *ngIf="config"
   [(ngModel)]="config"
   [options]="cmOptions.json">
 </ngx-codemirror>
 
-<div *ngIf="config" class="button-strip">
+<div *ngIf="config" class="text-right mt-3">
 
   <button
     mat-raised-button
     [disabled]="!authService.access.config.save"
-    class="wider-button"
     color="primary"
     (click)="save()">
     Save

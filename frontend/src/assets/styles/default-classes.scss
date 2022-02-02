@@ -1,5 +1,3 @@
-@import '../../assets/styles/mixin.scss';
-@import '../../assets/styles/colour.scss';
 
 .w-100{
     width: 100%;
@@ -10,6 +8,9 @@
 .text-capitalized{
     text-transform: capitalize;
 }
+.text-uppercase{
+  text-transform: uppercase;
+}
 .float-right{
   float: right;
 }
@@ -18,6 +19,9 @@
 }
 .text-left{
     text-align: left;
+}
+.text-right{
+  text-align: right;
 }
 .text-truncate {
     overflow: hidden;

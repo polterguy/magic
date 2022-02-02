@@ -50,6 +50,13 @@ export class NewRoleDialogComponent {
   }
 
   /**
+   * Returns true if argument name is valid.
+   */
+  public argumentValid() {
+    return /^[a-z0-9_]+$/i.test(this.name);
+  }
+
+  /**
    * Invoked when user clicks the create button to create a new role.
    */
   public create() {

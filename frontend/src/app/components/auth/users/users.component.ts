@@ -26,6 +26,7 @@ import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.compon
 import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
 import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
 import { AuthService } from '../services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Users component for administrating users in the system.
@@ -33,7 +34,14 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss']
+  styleUrls: ['./users.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class UsersComponent implements OnInit {
 
@@ -41,6 +49,7 @@ export class UsersComponent implements OnInit {
    * Users matching filter as returned from backend.
    */
   public users: User[] = [];
+  public expandedElement: User | null;
 
   /**
    * Number of users matching filter in the backend.

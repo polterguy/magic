@@ -5,53 +5,59 @@
 
   <div class="splitter">
 
-    <div class="section-1">
+    <!-- <div class="section-1"> -->
 
-      <h3>URL</h3>
+      <h3 class="mb-1">URL</h3>
 
-      <mat-form-field class="form-field" appearance="outline">
+      <div class="d-flex flex-sm-nowrap flex-wrap">
+        <mat-form-field class="w-100" appearance="outline">
 
-        <mat-label>Verb</mat-label>
-        <mat-select
-          [(ngModel)]="verb">
-          <mat-option
-            *ngFor="let idx of verbs"
-            [value]="idx">{{idx}}</mat-option>
-        </mat-select>
+          <mat-label>Verb</mat-label>
+          <mat-select
+            [(ngModel)]="verb">
+            <mat-option
+              *ngFor="let idx of verbs"
+              [value]="idx">{{idx}}</mat-option>
+          </mat-select>
+  
+        </mat-form-field>
 
-      </mat-form-field>
+        <div class="p-1"></div>
+  
+        <mat-form-field class="w-100" appearance="outline">
+  
+          <mat-label>Primary</mat-label>
+          <input
+            matInput
+            type="text"
+            matTooltip="Only lowercase characters, numbers and - or _ please"
+            autocomplete="off"
+            [(ngModel)]="moduleName">
+  
+        </mat-form-field>
 
-      <mat-form-field class="form-field" appearance="outline">
+        <div class="p-1"></div>
+  
+        <mat-form-field class="w-100" appearance="outline">
+  
+          <mat-label>Secondary</mat-label>
+          <input
+            matInput
+            type="text"
+            matTooltip="Only lowercase characters, numbers and - or _ please"
+            autocomplete="off"
+            [(ngModel)]="endpointName">
+  
+        </mat-form-field>
+      </div>
 
-        <mat-label>Primary</mat-label>
-        <input
-          matInput
-          type="text"
-          matTooltip="Only lowercase characters, numbers and - or _ please"
-          autocomplete="off"
-          [(ngModel)]="moduleName">
+    <!-- </div> -->
 
-      </mat-form-field>
+    <!-- <div class="section-2"> -->
 
-      <mat-form-field class="form-field" appearance="outline">
+      <h3 class="mb-1">Authorization</h3>
 
-        <mat-label>Secondary</mat-label>
-        <input
-          matInput
-          type="text"
-          matTooltip="Only lowercase characters, numbers and - or _ please"
-          autocomplete="off"
-          [(ngModel)]="endpointName">
-
-      </mat-form-field>
-
-    </div>
-
-    <div class="section-2">
-
-      <h3>Authorization</h3>
-
-      <mat-form-field class="form-field" appearance="outline">
+      <mat-form-field appearance="outline">
 
         <mat-label>Authorization</mat-label>
         <input
@@ -62,21 +68,24 @@
 
       </mat-form-field>
 
-    </div>
+    <!-- </div> -->
 
   </div>
 
-  <h3>Arguments</h3>
+  <h3 class="mb-1">Arguments</h3>
 
-  <div class="arguments-declaration">
+  <div class="d-flex flex-wrap align-items-center">
 
     <button
       mat-icon-button
+      class="mt-1"
       (click)="addArgument()">
       <mat-icon>add</mat-icon>
     </button>
 
-    <mat-chip-list>
+    <div class="p-1"></div>
+
+    <mat-chip-list class="mt-1">
       <mat-chip
         *ngFor="let arg of arguments"
         (removed)="removeArgument(arg)">
@@ -87,15 +96,19 @@
 
   </div>
 
-  <h3>SQL</h3>
+  <h3 class="mb-1 mt-3">SQL</h3>
 
   <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
 
-  <div class="button-strip">
+  <div class="d-flex align-items-center justify-content-end mt-3">
 
     <mat-checkbox [(ngModel)]="isList">Scalar</mat-checkbox>
 
+    <div class="p-1"></div>
+
     <mat-checkbox [(ngModel)]="overwrite">Overwrite</mat-checkbox>
+
+    <div class="p-1"></div>
   
     <button
       mat-raised-button

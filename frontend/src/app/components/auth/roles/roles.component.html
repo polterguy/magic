@@ -1,33 +1,34 @@
 
-<button
-  mat-icon-button
-  class="create-button"
-  [disabled]="!authService.access.auth.create_role"
-  (click)="createRole()">
-  <mat-icon aria-label="Creates a new role">add_box</mat-icon>
-</button>
 
-<mat-form-field class="fill-width" appearance="outline">
+<div class="d-flex align-items-center">
+  <mat-form-field class="w-100 inline-input" appearance="outline">
+    <mat-label>Filter</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+    <mat-icon
+      *ngIf="filterFormControl.value.trim() !== ''"
+      matSuffix
+      class="button"
+      role="button"
+      (click)="clearRoleFilter()">clear</mat-icon>
+  </mat-form-field>
 
-  <mat-label>Filter</mat-label>
-  <input
-    matInput
-    type="text"
-    autocomplete="off"
-    [formControl]="filterFormControl">
-  <mat-icon
-    *ngIf="filterFormControl.value.trim() !== ''"
-    matSuffix
-    class="button"
-    role="button"
-    (click)="clearRoleFilter()">clear</mat-icon>
+  <button
+    mat-icon-button
+    [disabled]="!authService.access.auth.create_role"
+    (click)="createRole()">
+    <mat-icon aria-label="Creates a new role">add_box</mat-icon>
+  </button>
+</div>
 
-</mat-form-field>
-
+<hr *ngIf="roles && roles.length > 0" class="mt-4" />
 <table
   mat-table
   [dataSource]="roles"
-  class="roles clickable"
+  class="w-100 expandable-table"
   multiTemplateDataRows>
 
   <ng-container matColumnDef="name">
@@ -36,71 +37,76 @@
   </ng-container>
 
   <ng-container matColumnDef="description">
-    <td mat-cell *matCellDef="let el">{{el.description}}</td>
+    <td mat-cell *matCellDef="let el">
+      <div class="pl-3">
+        {{el.description}}
+      </div>
+    </td>
   </ng-container>
 
-  <ng-container matColumnDef="show-details">
+  <ng-container matColumnDef="showDetails">
     <td
       mat-cell
       *matCellDef="let el"
       colspan="2">
+      <div class="w-100 details-row"
+      [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
+        <div class="d-flex flex-column w-100 py-3">
 
-      <div
-        class="details-sheet"
-        *ngIf="shouldDisplayDetails(el)">
-
-        <span class="details-item">
           <strong>Name</strong>
           <span>{{el.name}}</span>
-        </span>
-        <span class="details-item">
-          <strong>Description</strong>
+          <strong class="mt-1">Description</strong>
           <span>{{el.description}}</span>
-        </span>
 
-        <div class="button-strip">
+          <div class="d-flex align-items-center justify-content-end">
 
-          <button
-            mat-icon-button
-            [disabled]="!authService.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
-            [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
-            (click)="addRole(el)">
-            <mat-icon>add_box</mat-icon>
-          </button>
+            <button
+              mat-icon-button
+              [disabled]="!authService.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
+              [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
+              (click)="addRole(el)">
+              <mat-icon>add_box</mat-icon>
+            </button>
 
-          <button
-            mat-icon-button
-            matTooltip="Edit role"
-            [disabled]="!authService.access.auth.update_role"
-            (click)="editRole(el)">
-            <mat-icon>edit</mat-icon>
-          </button>
+            <div class="p-1"></div>
 
-          <button
-            mat-icon-button
-            matTooltip="Delete role"
-            [disabled]="!authService.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
-            (click)="deleteRole(el)">
-            <mat-icon>delete</mat-icon>
-          </button>
+            <button
+              mat-icon-button
+              matTooltip="Edit role"
+              [disabled]="!authService.access.auth.update_role"
+              (click)="editRole(el)">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <div class="p-1"></div>
+
+            <button
+              mat-icon-button
+              matTooltip="Delete role"
+              [disabled]="!authService.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
+              (click)="deleteRole(el)">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+          </div>
 
         </div>
-
       </div>
-
     </td>
   </ng-container>
 
   <tr
     mat-row
-    [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'role-row'"
-    (click)="toggleDetails(el)"
+    [ngClass]="(expandedElement === el ? 'selected ' : '') + 'role-row'"
+    class="expandable-row"
+    (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
     *matRowDef="let el; columns: displayedColumns;"></tr>
 
-  <tr
+  <!-- <tr
     mat-row
     [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-    *matRowDef="let el; columns: ['show-details'];"></tr>
+    *matRowDef="let el; columns: ['show-details'];"></tr> -->
+  <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
 
 </table>
 

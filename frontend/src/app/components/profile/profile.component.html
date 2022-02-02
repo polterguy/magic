@@ -1,42 +1,41 @@
 
+<div class="row  justify-content-center align-items-center h-100">
+  <div class="col-xl-5 col-lg-6 col-md-7 col-sm-8 col-12">
+    <form>
+      <mat-card>
+        <h2 class="my-0">Change password</h2>
+        <mat-card-subtitle>Give your account a strong password</mat-card-subtitle>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>New password</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="new-password"
+              [(ngModel)]="password"
+              name="password">
+          </mat-form-field>
 
-<mat-card>
-
-  <h3>Change password</h3>
-
-  <div class="button-strip">
-
-    <mat-form-field appearance="outline">
-
-      <mat-label>New password</mat-label>
-      <input
-        matInput
-        type="password"
-        autocomplete="new-password"
-        [(ngModel)]="password">
-  
-    </mat-form-field>
-  
-    <mat-form-field appearance="outline">
-
-      <mat-label>Repeat password</mat-label>
-      <input
-        matInput
-        type="password"
-        autocomplete="new-password"
-        [(ngModel)]="repeatPassword">
-
-    </mat-form-field>
-
-    <button
-      mat-raised-button
-      [disabled]="!password || password.length === 0 || password !== repeatPassword"
-      class="button"
-      (click)="changePassword()"
-      color="primary">
-      Save
-    </button>
-
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Repeat password</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="new-password"
+              [(ngModel)]="repeatPassword"
+              name="repeatPassword">
+          </mat-form-field>
+          <div class="d-flex justify-content-end w-100">
+            <button
+              mat-raised-button
+              [disabled]="!password || password.length === 0 || password !== repeatPassword"
+              (click)="changePassword()"
+              color="primary">
+              Save password
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
   </div>
-
-</mat-card>
+</div>

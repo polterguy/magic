@@ -1,57 +1,60 @@
 
 <h1 mat-dialog-title>{{data ? 'Change user\'s password' : 'Create new user'}}</h1>
+<form>
+  <div mat-dialog-content>
 
-<div mat-dialog-content>
+    <mat-form-field class="w-100" appearance="outline">
 
-  <mat-form-field class="fill-width" appearance="outline">
+      <mat-label class="dark">Username</mat-label>
+      <input
+        matInput
+        [(ngModel)]="username"
+        [disabled]="data"
+        autocomplete="username">
 
-    <mat-label class="dark">Username</mat-label>
-    <input
-      matInput
-      [(ngModel)]="username"
-      [disabled]="data"
-      autocomplete="username">
+    </mat-form-field>
 
-  </mat-form-field>
+    <mat-form-field class="w-100" appearance="outline">
 
-  <mat-form-field class="fill-width" appearance="outline">
+      <mat-label class="dark">{{this.data ? 'New password' : 'Password'}}</mat-label>
+      <input
+        matInput
+        [(ngModel)]="password"
+        [type]="hide ? 'password' : 'text'"
+        autocomplete="new-password">
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
 
-    <mat-label class="dark">{{this.data ? 'New password' : 'Password'}}</mat-label>
-    <input
-      matInput
-      [(ngModel)]="password"
-      [type]="hide ? 'password' : 'text'"
-      autocomplete="new-password">
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions class="mat-dialog-actions">
+
     <button
-      mat-icon-button
-      matSuffix
-      (click)="hide = !hide"
-      [attr.aria-pressed]="hide">
-      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-    </button>
+      *ngIf="!data"
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="username === '' || password === ''"
+      (click)="create()">Create</button>
 
-  </mat-form-field>
+    <button
+      *ngIf="data"
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="password === ''"
+      (click)="update()">Update</button>
 
-</div>
+    <button
+      mat-raised-button
+      (click)="close()">Close</button>
 
-<div mat-dialog-actions class="mat-dialog-actions">
-
-  <button
-    *ngIf="!data"
-    mat-raised-button
-    color="primary"
-    [disabled]="username === '' || password === ''"
-    (click)="create()">Create</button>
-
-  <button
-    *ngIf="data"
-    mat-raised-button
-    color="primary"
-    [disabled]="password === ''"
-    (click)="update()">Update</button>
-
-  <button
-    mat-raised-button
-    (click)="close()">Close</button>
-
-</div>
+  </div>
+</form>

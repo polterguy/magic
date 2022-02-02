@@ -2,7 +2,7 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
 
-.mr-10{margin-right: 10px;}
+
 .switch-theme{
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
   border-radius: 50px;
@@ -46,6 +46,7 @@
   }
   .dark .mat-toolbar-single-row{
     background-color: $magic_dark_alternative;
+    .mat-icon-button{color: $magic_default_secondary;}
   }
 }
 mat-toolbar {
@@ -55,34 +56,10 @@ mat-toolbar {
     &.sidebar-open{padding-left: calc(#{$sidebar_full_width} + 5px + #{$side_space});}
     &.sidebar-closed{padding-left: calc(#{$sidebar_small_width} + 5px + #{$side_space});}
   }
-//   background: #373737;
-//   border-bottom: solid 1px rgba(0,0,0,.3);
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-  button {
-    span {
-      // display: inline-block;
-      font-size: 1.5rem;
-      // padding-left: .5rem;
-    }
-  }
-//   .spacer {
-//     flex: 1 1 auto;
-//   }
+ 
   .user {
     font-size: .9rem;
-    // margin-right: 1rem;
-    // padding-top: 3px;
-  }
-  @media (max-width: 800px) {
-    .user {
-      display: none;
-    }
-  }
-  mat-slide-toggle {
-    font-size: .8rem;
-    // display: block;
-    // margin-top: 3px;
+    margin-top: 5px;
+    margin-right: 20px;
   }
 }
