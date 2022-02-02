@@ -44,7 +44,7 @@ export class ConfigService {
   public status() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Status>('/magic/system/config/setup-status');
+    return this.httpService.get<Status>('/magic/system/config/status');
   }
 
   /**
