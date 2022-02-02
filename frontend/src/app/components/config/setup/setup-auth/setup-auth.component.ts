@@ -123,8 +123,8 @@ export class SetupAuthComponent implements OnInit {
     }
 
     // Invoking backend to save configuration as specified by user.
+    this.config.magic.databases.default = this.selectedDatabaseType;
     this.configService.setup(
-      this.selectedDatabaseType,
       this.password,
       this.config).subscribe(() => {
 
