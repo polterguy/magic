@@ -1,9 +1,10 @@
 
 // Executes the specified test and returns result to caller.
-.description:Executes the specified test and returns the result
 .arguments
    root_url:string
    test_file:string
+.description:Executes the specified test and returns the result
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

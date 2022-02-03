@@ -5,6 +5,7 @@
  * and/or created a server key pair.
  */
 .description:Returns the setup status of the system
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

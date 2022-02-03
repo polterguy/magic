@@ -1,6 +1,7 @@
 
 // Returns true if auto-auth is enabled.
 .description:Returns true if auto-auth is enabled
+.type:internal
 
 // Retrieving auto-auth configuration setting.
 config.get:"magic:auth:auto-auth"

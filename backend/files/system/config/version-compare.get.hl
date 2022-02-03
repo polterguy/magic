@@ -4,6 +4,7 @@
    version_1:string
    version_2:string
 .description:Returns the highest version of the two specified versions given as input
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

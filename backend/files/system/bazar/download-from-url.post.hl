@@ -4,6 +4,7 @@
    folder:string
    url:string
 .description:Downloads a file from an external URL and saves it to the specified folder on the server
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

@@ -1,8 +1,9 @@
 
 // Deletes all cache items.
-.description:Deletes all cache items matching optional filter condition
 .arguments
    filter:string
+.description:Deletes all cache items matching optional filter condition
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

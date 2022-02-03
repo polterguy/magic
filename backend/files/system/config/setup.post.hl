@@ -13,6 +13,7 @@
    password:string
    settings:*
 .description:Setup authentication and other parts of the system according to the arguments provided
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

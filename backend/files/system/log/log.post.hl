@@ -4,6 +4,7 @@
    type:string
    content:string
 .description:Creates a log item using the specified arguments.
+.type:public
 
 /*
  * Ensures user is authorized to access endpoint.

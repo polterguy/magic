@@ -1,10 +1,11 @@
 
 // Returns all cache items to caller.
-.description:Returns cache items to caller matching optional paging and filtering arguments
 .arguments
    limit:int
    offset:int
    filter:string
+.description:Returns cache items to caller matching optional paging and filtering arguments
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

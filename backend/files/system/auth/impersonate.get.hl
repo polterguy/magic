@@ -3,6 +3,7 @@
 .arguments
    username:string
 .description:Generates a JWT token for the specified user allowing you to impersonate that user in Magic
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

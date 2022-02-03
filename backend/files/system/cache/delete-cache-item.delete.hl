@@ -1,8 +1,9 @@
 
 // Deletes the cache item with the specified id.
-.description:Deletes the specified cache item
 .arguments
    id:string
+.description:Deletes the specified cache item
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

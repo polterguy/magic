@@ -1,9 +1,10 @@
 
 // Associates the specified key with the specified user.
-.description:Associates the specified key with the specified user
 .arguments
    keyId:long
    username:string
+.description:Associates the specified key with the specified user
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

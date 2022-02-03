@@ -16,6 +16,7 @@
    safeMode:bool
    batch:bool
 .description:Evaluates the given SQL given for your specified database, and returns the result to caller.
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

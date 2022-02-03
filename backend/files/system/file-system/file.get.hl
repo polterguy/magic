@@ -3,6 +3,7 @@
 .arguments
    file:string
 .description:Loads the specified file and returns to caller as text
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

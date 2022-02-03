@@ -5,6 +5,7 @@
  * allowed to access the endpoint.
  */
 .description:Returns all dynamic HTTP endpoints in the system, with their associated verb(s), and roles that are allowed to access the endpoint
+.type:public
 
 // Declares how many seconds the operation should be cached.
 .cache-seconds:int:300
