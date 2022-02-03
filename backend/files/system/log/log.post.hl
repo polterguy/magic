@@ -3,6 +3,7 @@
 .arguments
    type:string
    content:string
+   meta:*
 .description:Creates a log item using the specified arguments.
 .type:public
 
@@ -23,6 +24,8 @@ validators.enum:x:@.arguments/*/type
    .:fatal
 
 // Creating a log entry using the specified type of logger.
+add:x:../*/log-invocation
+   get-nodes:x:@.arguments/*/meta/*
 set-name:x:../*/log-invocation
    strings.concat
       .:log.
