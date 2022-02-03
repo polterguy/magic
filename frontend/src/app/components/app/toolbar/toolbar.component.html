@@ -13,7 +13,7 @@
       </span>
 
       <button mat-icon-button aria-label="Switch theme" 
-      *ngIf="theme"
+      *ngIf="theme && !sideNavStatus"
       class="switch-theme {{theme}}" [color]="theme === 'dark' ? 'accent' : ''"
       [matTooltip]="'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'"
       [matTooltipPosition]="sideNavStatus ? 'below' : 'after'"

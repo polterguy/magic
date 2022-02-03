@@ -1,10 +1,14 @@
 
-<mat-spinner
+<div class="progress-holder">
+  <mat-progress-bar mode="indeterminate" *ngIf="loaderService.isLoading | async"></mat-progress-bar>
+</div>
+
+<!-- <mat-spinner
   *ngIf="loaderService.isLoading | async"
   class="obscurer"
   mode="indeterminate"
   diameter="50">
-</mat-spinner>
+</mat-spinner> -->
 
 <div [class]="theme">
 
@@ -15,7 +19,7 @@
     <mat-sidenav [mode]="notSmallScreen ? 'side' : 'over'" class="mat-elevation-z2"
       [opened]="sidenavOpened || notSmallScreen"
       [class.sideClosed]="!sidenavOpened && notSmallScreen"
-      [class.full-width-sidebar]="notSmallScreen && sidenavOpened"
+      [class.full-width-sidebar]="sidenavOpened"
       [class.small-width-sidebar]="notSmallScreen && !sidenavOpened"
       id="sidebar-main">
       <app-navbar [sideNavStatus]="sidenavOpened"></app-navbar>
@@ -39,40 +43,6 @@
       </div>
 
       
-      <div class="footer d-flex justify-content-lg-between align-items-center w-100 mt-auto pt-3"
-      [class.padding-left-full]="notSmallScreen && sidenavOpened"
-      [class.padding-left-small]="notSmallScreen && !sidenavOpened">
-        <p class="mt-0 mb-0 mat-caption">
-          Magic is Copyright(c) of Aista, Ltd - Contact us at <a href="mailto:th@aista.com">th@aista.com</a>
-        </p>
-        <div class="d-flex align-items-center">
-          <ng-container *ngIf="shouldUpdateCore">
-            <a
-              href="https://polterguy.github.io/tutorials/getting-started/"
-              mat-raised-button
-              matTooltip="Update your Magic installation"
-              matTooltipPosition="above" 
-              target="_blank"
-              class="mr-4"
-              color="warn">
-              Update to {{bazarVersion}}
-            </a>
-          </ng-container>
-          <ng-container>
-            <span
-            [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'">{{version}}</span>
-          </ng-container>
-          <!-- <div *ngIf="!shouldUpdateCore" class="documentation">
-            <a
-              href="https://docs.aista.com"
-              mat-button
-              matTooltip="Read the documentation for Magic"
-              target="_blank">
-              Documentation
-            </a>
-          </div> -->
-        </div>
-      </div>
     </mat-sidenav-content>
     
   </mat-sidenav-container>

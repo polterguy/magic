@@ -11,6 +11,7 @@ Material body and general styling
 }
 .mat-drawer-container{
   height: 100%;
+  overflow-x: hidden;
 }
 .light .mat-drawer-container{
   background-color: $magic_site_bg!important;

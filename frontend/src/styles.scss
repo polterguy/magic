@@ -53,6 +53,13 @@ hr{
   }
 }
 
+
+.CodeMirror-vscrollbar{
+  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
+}
+.CodeMirror-hscrollbar{
+  @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
+}
 // button.create-button {
 //   position: absolute;
 //   top: .5rem;

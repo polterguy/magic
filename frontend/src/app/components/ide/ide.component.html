@@ -67,16 +67,17 @@
         </div>
       </div>
       <div 
-      [ngClass]="{'col-xl-9 col-md-8 col-sm-7 col-12 pl-sm-2': expandSide}"
+      [ngClass]="{'col-xl-9 col-md-8 col-sm-7 col-12 pl-sm-2 mt-sm-0 mt-3': expandSide}"
       [class.w-100]="!expandSide">
         <mat-card class="h-100">
           <mat-card-content>
             <div class="content-section d-flex flex-column w-100">
-              <p class="active-path">{{activeFolder}}</p>
+              <div class="d-flex align-items-center">
+                <p class="active-path">{{activeFolder}}</p>
+              </div>
           
-              <div class="d-flex flex-xl-nowrap flex-wrap align-items-stretch mb-3">
-          
-                <mat-form-field appearance="outline" class="w-100 inline-input mb-xl-0 mb-1">
+              <div class="d-flex flex-lg-nowrap flex-wrap mb-lg-1 mb-2">
+                <mat-form-field appearance="outline" class="w-100 inline-input mb-lg-0 mb-1">
                   <mat-label>Open files ...</mat-label>
                   <mat-select
                     [(ngModel)]="activeFile"
@@ -88,52 +89,70 @@
                 </mat-form-field>
                 <div class="p-xl-1"></div>
           
-                <div class="d-flex flex-md-nowrap flex-wrap align-items-stretch">
-                  <div class="d-flex w-100">
+                <div class="d-flex flex-nowrap">
                     <button
                       [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      mat-raised-button
+                      mat-icon-button
                       [matTooltip]="'Delete folder \'' + activeFolder + '\' ALT+X'"
-                      class="w-100"
                       (click)="deleteActiveFolder()">
-                      Delete
+                      <mat-icon>delete</mat-icon>
                     </button>
-                    <div class="p-1"></div>
 
                     <button
-                      mat-raised-button
+                      mat-icon-button
                       matTooltip="Execute a macro ALT+O"
-                      class="w-100"
                       (click)="selectMacro()">
-                      Macro
+                      <mat-icon>model_training</mat-icon>
                     </button>
-                  </div>
 
-                  <div class="p-1"></div>
-
-                  <div class="d-flex w-100">
                     <button
-                      mat-raised-button
+                      mat-icon-button
                       [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
                       matTooltip="Generate CRUD apps"
-                      class="w-100"
                       (click)="generateCrudApp()">
-                      CRUD
+                      <mat-icon>compare_arrows</mat-icon>
                     </button>
                     <div class="p-1"></div>
-              
                     <button
-                      mat-raised-button
+                      mat-mini-fab
                       [disabled]="!authService.access.files.create_folder"
                       color="primary"
                       matTooltip="Create or add new file or folder to active folder ALT+A"
-                      class="w-100"
                       (click)="createNewFileObject()">
-                      Add
+                      <mat-icon>add</mat-icon>
                     </button>
-                    </div>
                 </div>
-          
+              </div>
+              <div class="d-md-flex d-none justify-content-end mb-2">
+                <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
+                  Shortkeys
+                </button>
+                <mat-menu #list="matMenu">
+                  <div class="p-3">
+                    <p class="d-flex flex-nowrap align-items-center justify-content-between">
+                      <span>
+                        <span class="d-block">Fullscreen</span>
+                        <span class="d-block">Exit fullscreen</span>
+                      </span>
+                      <span class="code my-0 ml-5">Alt + M</span>
+                    </p>
+                    <mat-divider class="mb-2"></mat-divider>
+                    <p class="d-flex flex-nowrap align-items-center justify-content-between">
+                      Load
+                      <span class="code my-0 ml-5">Alt + L</span>
+                    </p>
+                    <mat-divider class="mb-2"></mat-divider>
+                    <p class="d-flex flex-nowrap align-items-center justify-content-between">
+                      Save
+                      <span class="code my-0 ml-5">Alt + S</span>
+                    </p>
+                    <mat-divider class="mb-2"></mat-divider>
+                    <p class="d-flex flex-nowrap align-items-center justify-content-between mb-0">
+                      Execute
+                      <span class="code my-0 ml-5">F5</span>
+                    </p>
+                  </div>
+                </mat-menu>
               </div>
           
               <img
