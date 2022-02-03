@@ -1,9 +1,10 @@
 
 // Returns all assumptions in system for specified endpoint.
-.description:Returns all assumptions in the system for the specified endpoint/verb combination
 .arguments
    endpoint:string
    verb:string
+.description:Returns all assumptions in the system for the specified endpoint/verb combination
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

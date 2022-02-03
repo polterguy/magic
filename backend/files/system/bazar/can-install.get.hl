@@ -3,6 +3,7 @@
 .arguments
    required_magic_version:string
 .description:Returns true if the specified app can be installed or not
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

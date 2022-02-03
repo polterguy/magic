@@ -1,6 +1,7 @@
 
 // Saves the specified configuration object to appsettings.json.
 .description:Saves the specified configuration, overwriting existing configuration
+.type:internal
 
 // Ensuring user is authorized to access endpoint.
 auth.ticket.verify:root

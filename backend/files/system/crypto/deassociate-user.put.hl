@@ -1,8 +1,9 @@
 
 // De-associates the specified key with any previously associated users.
-.description:De-associates the specified key with any previously associated users
 .arguments
    keyId:long
+.description:De-associates the specified key with any previously associated users
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

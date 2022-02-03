@@ -4,6 +4,7 @@
    username:string
    password:string
 .description:Authenticates a user returning a JWT token if successful
+.type:public
 
 /*
  * Notice, if no username was supplied to invocation, and system has

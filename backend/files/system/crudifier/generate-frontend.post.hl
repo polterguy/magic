@@ -1,6 +1,5 @@
 
 // Generates a frontend for you.
-.description:Generates a frontend for you according to the given arguments
 .arguments
    templateName:string
    apiUrl:string
@@ -11,6 +10,8 @@
    endpoints:*
    deployLocally:bool
    args:*
+.description:Generates a frontend for you according to the given arguments
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

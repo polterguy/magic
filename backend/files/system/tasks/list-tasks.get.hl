@@ -5,6 +5,7 @@
    limit:long
    query:string
 .description:List next tasks that have been created in the system, using the optional arguments supplied.
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
