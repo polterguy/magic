@@ -9,10 +9,51 @@
     margin-top: -8px;
   }
 }
+.footer{
+  background-color: $magic_primary;
+  color: $magic_default;
+  padding: 1em;
+  position: absolute;
+  bottom: 0;
+}
+.theme-title{font-weight: 400;}
+.switch-theme{
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+  border-radius: 50px;
+  height: 11px;
+  width: 33px;
+  margin-top: 4px;
+  position: relative;
+  @include general_transition(0.5s);
+  .light-icon,
+  .dark-icon{
+    font-size: 25px;
+    position: absolute;
+    top: -12px;
+    @include general_transition(0.5s);
+  }
+  .light-icon{left: -5px;}
+  .dark-icon{right: -5px;}
+  .mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+  }
+  &.light{
+    .light-icon{opacity: 0;}
+    .dark-icon{opacity: 1;}
+    @include general_transition(0.5s);
+  }
+  &.dark{
+    .dark-icon{opacity: 0;}
+    .light-icon{opacity: 1;}
+    @include general_transition(0.5s);
+  }
+}
 ::ng-deep{
   /*=-=-=-=-=-=
   for the collapsed sidebar
-    -- to hide texts & to remove padding on the collapsible elements
   =-=-=-=-=-=*/
   .sideClosed #sidebar{
     /*=-=-=-=-=-=
@@ -27,7 +68,13 @@
   general styling
   =-=-=-=-=-=*/
   #sidebar {
-    padding-bottom: 40px;
+    padding-bottom: 155px;
+    overflow-y: auto;
+    @include general_transition(0.5s);
+    @include scrollbar(transparent,transparent,5px);
+    &:hover{
+      @include scrollbar(transparent,transparentize($color: $magic_default_alternative, $amount: 0.3),5px)
+    }
     .mat-expansion-panel{
       border-radius: 0;
     }
@@ -73,19 +120,7 @@
         }
     }    
   }
-  /*=-=-=-=-=-=
-  fixing logout link to the bottom of sidebar
-  =-=-=-=-=-=*/
-  .sideClosed #sidebar .standalone-link:not(.stick-to-bottom){
-    margin-bottom: 60px;
-  }
-  #sidebar .stick-to-bottom{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
-  }
+  
 }
 /*=-=-=-=-=-=
 colour setting -- text & background
@@ -193,7 +228,7 @@ colour setting -- text & background
   =-=-=-=-=-=*/
 ::ng-deep{
   .sideClosed #sidebar{
-    padding-bottom: 80px;
+    // padding-bottom: 80px;
 
     .top-box-sidebar{
       padding-bottom: 0;

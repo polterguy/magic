@@ -21,7 +21,7 @@
   animation-fill-mode: forwards;
   animation-duration: .5s;
 }
-
+.progress-holder{position: fixed;top: 0;left: 0;right: 0;z-index: 9;}
 /*=-=-=-=-=-=
 copyright
 =-=-=-=-=-=*/
@@ -40,12 +40,12 @@ copyright
   .dark .mat-drawer{
     background-color: $magic_dark_secondary_light!important;
   }
-  .mat-drawer-inner-container{
-    @include scrollbar(transparent,transparent,3px);
-    &:hover{
-      @include scrollbar(transparent,transparentize($color: $magic_default_alternative, $amount: 0.75),3px)
-    }
-  }
+  // .mat-drawer-inner-container{
+  //   @include scrollbar(transparent,transparent,3px);
+  //   &:hover{
+  //     @include scrollbar(transparent,transparentize($color: $magic_default_alternative, $amount: 0.75),3px)
+  //   }
+  // }
   /*=-=-=-=-=-=
   sidebar and content width and margin relatively
   =-=-=-=-=-=*/

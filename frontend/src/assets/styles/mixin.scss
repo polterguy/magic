@@ -27,6 +27,7 @@
 
     &::-webkit-scrollbar-thumb {
         background-color: $color_top;
+        border-radius: 10px;
     }
 }
 @mixin scrollbar_horizontal($color_base,$color_top,$height) {

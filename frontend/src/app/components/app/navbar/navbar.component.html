@@ -365,8 +365,69 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
+    
+    <!-- <mat-expansion-panel class="mat-elevation-z0" 
+      *ngIf="sideNavStatus" hideToggle>
+      <mat-expansion-panel-header 
+        #panelH (click)="panelH._toggle();themeChanged(theme === 'light' ? 'dark' : 'light')">
+          <mat-panel-title>
+            <div class="d-flex align-items-center justify-content-between">
+              <div>{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
+              <div class="switch-theme">
+                <span class="light-icon">
+                  <mat-icon>light_mode</mat-icon>
+                </span>
+                <span class="dark-icon">
+                  <mat-icon>brightness_4</mat-icon>
+                </span>
+              </div>
+            </div>
+          </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel> -->
   </mat-accordion>
-  
+<!-- theme -->
+<mat-divider *ngIf="sideNavStatus" class="mt-4"></mat-divider>
+<button mat-button class="ml-2 mr-1"
+*ngIf="sideNavStatus"
+(click)="themeChanged(theme === 'light' ? 'dark' : 'light')" 
+[color]="theme === 'dark' ? 'accent' : ''">
+  <div class="d-flex align-items-center justify-content-between">
+    <div class="theme-title">{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
+    <div class="switch-theme {{theme}}">
+      <span class="light-icon">
+        <mat-icon>light_mode</mat-icon>
+      </span>
+      <span class="dark-icon">
+        <mat-icon>brightness_4</mat-icon>
+      </span>
+    </div>
+  </div>
+</button>
+  <div class="footer d-flex flex-column justify-content-center align-items-center w-100 pt-3">
+    <div class="d-flex flex-column align-items-center">
+      <ng-container *ngIf="shouldUpdateCore">
+        <a
+          href="https://polterguy.github.io/tutorials/getting-started/"
+          mat-raised-button
+          matTooltip="Update your Magic installation"
+          [matTooltipPosition]="sideNavStatus ? 'above' : 'after'" 
+          target="_blank"
+          class="mb-2"
+          color="warn">
+          {{sideNavStatus ? 'Update to ' + bazarVersion : 'Update'}}
+        </a>
+      </ng-container>
+      <ng-container>
+        <span
+        [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'"
+        [matTooltipPosition]="sideNavStatus ? 'above' : 'after'" >{{version}}</span>
+      </ng-container>
+    </div>
+    <p class="mt-2 mb-0 mat-caption text-center" *ngIf="sideNavStatus">
+      Magic is Copyright(c) of Aista, Ltd. Contact us at <a href="mailto:th@aista.com">th@aista.com</a>
+    </p>
+  </div>
 </div>
 <!-- <a
   mat-button

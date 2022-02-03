@@ -29,6 +29,7 @@ $max_height_mobile: calc(100vh - 220px);
 .wrapper {
   // max-height: $max_height;
   // height: calc(100vh - 5rem);
+  overflow-x: hidden;
   mat-card {
     margin-bottom: 0;
   }
@@ -83,8 +84,8 @@ $max_height_mobile: calc(100vh - 220px);
   }
 
   .content-section {
-    height: calc(100% - 5rem);
-    max-height: $max_height;
+    // height: calc(100% - 5rem);
+    // max-height: $max_height;
     position: relative;
 
     .active-path{
@@ -144,16 +145,16 @@ $max_height_mobile: calc(100vh - 220px);
   }
 }
 
-@media screen and (max-width: 800px) {
-  .wrapper {
-    // display: block;
-    // max-height: $max_height_mobile;
-    height: auto;
-    overflow-y: auto;
+// @media screen and (max-width: 800px) {
+//   .wrapper {
+//     // display: block;
+//     // max-height: $max_height_mobile;
+//     height: auto;
+//     overflow-y: auto;
 
-    // .content-section,
-    // .files-section{
-    //   max-height: $max_height_mobile;
-    // }
-  }  
-}
+//     // .content-section,
+//     // .files-section{
+//     //   max-height: $max_height_mobile;
+//     // }
+//   }  
+// }
