@@ -21,15 +21,20 @@ cache.try-get:magic.auth.endpoints
       .result
       endpoints.list
       for-each:x:@endpoints.list/*
-         add:x:+/+/*/*/*/auth
-            get-nodes:x:@.dp/#/*/auth/*
+         if
+            exists:x:@.dp/#/*/auth/*
+            .lambda
+               add:x:+/*/*
+                  get-nodes:x:@.dp/#/*/auth/*
+               add:x:@if/+/+/*/*
+                  .
+                     auth
          unwrap:x:+/*/*/*
          add:x:@.result
             .
                .
                   path:x:@.dp/#/*/path
                   verb:x:@.dp/#/*/verb
-                  auth
       lambda2hyper:x:@.result/*
       return:x:-
 
