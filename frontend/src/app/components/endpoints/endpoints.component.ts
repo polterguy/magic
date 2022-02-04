@@ -177,6 +177,9 @@ export class EndpointsComponent implements OnInit {
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
 
       // Assigning model to result of invocation.
+      endpoints.forEach(element =>{
+        element['expanded'] = false;
+      })
       this.endpoints = endpoints;
 
       // Checking if caller supplied a lambda to execute afterwards.

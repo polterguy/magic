@@ -74,7 +74,7 @@
                 *matCellDef="let el"
                 colspan="3">
                 <div class="w-100 details-row"
-                   [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
+                   [@detailExpand]="el.expanded ? 'expanded' : 'collapsed'">
       
                 <!-- <div
                   class="details-sheet"
@@ -92,9 +92,9 @@
       
             <tr
               mat-row
-              [ngClass]="(expandedElement === el ? 'selected ' : '') + (el.error ? ' error' : '')"
+              [ngClass]="(el.expanded ? 'selected ' : '') + (el.error ? ' error' : '')"
               class="expandable-row"
-              (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
+              (click)="toggleDetails(el);el.expanded = !el.expanded"
               *matRowDef="let el; columns: displayedColumns;"></tr>
       
             <!-- <tr
