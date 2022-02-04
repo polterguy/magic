@@ -11,6 +11,7 @@
    url:string
    name:string
 .description:Installs the specified Bazar module into the local server
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

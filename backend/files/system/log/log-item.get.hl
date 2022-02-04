@@ -3,6 +3,7 @@
 .arguments
    id:string
 .description:Returns the specified log item
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

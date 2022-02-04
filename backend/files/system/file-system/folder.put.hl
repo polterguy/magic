@@ -3,6 +3,7 @@
 .arguments
    folder:string
 .description:Creates the specified folder on the server
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

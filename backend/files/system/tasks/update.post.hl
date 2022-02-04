@@ -5,6 +5,7 @@
    description:string
    hyperlambda:string
 .description:Updates an existing task according to the specified arguments.
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

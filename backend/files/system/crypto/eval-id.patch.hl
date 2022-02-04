@@ -1,10 +1,9 @@
 
 // Evaluates a cryptographically signed HTTP REST invocation, and persists the invocation into your database.
-.description:Evaluates a cryptographically signed HTTP invocation, and persists the invocation into your database with the [.request-id] as its unique reference
-
-// Body here is the raw request stream.
 .arguments
    body:*
+.description:Evaluates a cryptographically signed HTTP invocation, and persists the invocation into your database with the [.request-id] as its unique reference
+.type:internal
 
 // Making sure we communicate what type of content we can accept.
 .accept:application/octet-stream

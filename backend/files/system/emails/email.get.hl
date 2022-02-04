@@ -1,6 +1,7 @@
 
 // Returns the root user's email address.
 .description:"Returns the root user's email address"
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
