@@ -51,8 +51,6 @@ for-each:x:../*/io.file.load-recursively/*
 
                      // Adding assumptions for endpoint to returned value.
                      unwrap:x:./*/add/[1,2]/*/*/*
-                     io.file.load:x:@.dp/#/*/name
-                     hyper2lambda:x:-
                      add:x:./*/add/[1,2]/*/*
                         get-nodes:x:@hyper2lambda/*/description
                      add:x:../*/return-nodes
