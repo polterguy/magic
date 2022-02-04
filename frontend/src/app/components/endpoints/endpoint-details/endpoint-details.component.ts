@@ -69,7 +69,7 @@ class InvocationResult {
 class Assumption {
 
   // Name of assumption (filename)
-  name: string;
+  file: string;
 
   // Description of assumption.
   description: string
@@ -287,9 +287,9 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param path Full path of assumption
    */
-  public getAssumptionName(path: string) {
-    const name = path.substr(path.lastIndexOf('/') + 1);
-    return name.substr(0, name.length - 3);
+  public getAssumptionName(path: string) {console.log(path);
+    const name = path.substring(path.lastIndexOf('/') + 1);
+    return name.substring(0, name.length - 3);
   }
 
   /**
@@ -300,7 +300,7 @@ export class EndpointDetailsComponent implements OnInit {
   public runAssumption(assumption: Assumption) {
 
     // Invoking backend and running assumption.
-    this.endpointService.executeTest(assumption.name).subscribe((res: Response) => {
+    this.endpointService.executeTest(assumption.file).subscribe((res: Response) => {
       if (res.result === 'success') {
         assumption.success = true;
       } else {
@@ -755,23 +755,20 @@ export class EndpointDetailsComponent implements OnInit {
     if (this.authService.access.endpoints.assumptions) {
 
     // Retrieving assumptions for endpoint.
-    this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: string[]) => {
+    this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
         if (assumptions && assumptions.length) {
-          const all = assumptions.map(x => this.endpointService.getDescription(x));
-          forkJoin(all).subscribe((description: Response[]) => {
-
-            // Creating model for assumptions.
+          
             const arr: Assumption[] = [];
-            for (let idxNo = 0; idxNo < assumptions.length; idxNo++) {
-              arr.push({
-                name: assumptions[idxNo],
-                description: description[idxNo].result,
-                success: null,
+              assumptions.forEach((element: any) => {
+                arr.push({
+                  file: element.file,
+                  description: element.description,
+                  success: null
+                });
               });
-            }
             this.assumptions = arr;
-
-          }, (error: any) => this.feedbackService.showError(error));
+            console.log(arr);
+          
         }
       }, (error: any) => this.feedbackService.showError(error));
     }
