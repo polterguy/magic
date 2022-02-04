@@ -1,14 +1,15 @@
 
 // Returns a JWT token wrapping the user associated with the public key used to verify the cryptographic signature used to sign the payload.
-.description:Returns a JWT token wrapping the user associated with the public key used to verify the cryptographic signature used to sign the payload
 .arguments
    challenge:string
+.description:Returns a JWT token wrapping the user associated with the public key used to verify the cryptographic signature used to sign the payload
+.type:public
 
 // Retrieving public key used to sign challenge payload.
 crypto.get-key:x:@.arguments/*/challenge
 
 // Logging
-log.info:Cryptography challenge for authenticating
+log.info:Cryptography challenge for authenticating submitted
    key:x:@crypto.get-key
 
 // Opening up database connection.

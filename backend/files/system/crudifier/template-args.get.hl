@@ -1,8 +1,9 @@
 
 // Returns custom arguments for the specified template.
-.description:Returns custom arguments for the specified template
 .arguments
    name:string
+.description:Returns custom arguments for the specified template
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

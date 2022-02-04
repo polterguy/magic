@@ -491,13 +491,11 @@ export class AuthService {
    * @param username User's email address
    * @param password Password user selected
    * @param frontendUrl Frontend's URL to use as root URL for confirming email address
-   * @param backendUrl Backend's URL to associate the user with
    */
   public register(
     username: string,
     password: string,
-    frontendUrl: string,
-    backendUrl: string) {
+    frontendUrl: string) {
 
     // Invokes backend and returns observable to caller.
     return this.httpService.post<Response>(
@@ -505,7 +503,6 @@ export class AuthService {
         username,
         password,
         frontendUrl,
-        backendUrl,
       });
   }
 
@@ -531,15 +528,13 @@ export class AuthService {
    * 
    * @param username Username of user to generate the email for
    * @param frontendUrl URL of frontend to use to build reset-password email from
-   * @param backendUrl URL of backend to use to build reset-password email from
    */
-  public sendResetPasswordEmail(username: string, frontendUrl: string, backendUrl: string) {
+  public sendResetPasswordEmail(username: string, frontendUrl: string) {
 
     // Invoking backend returning observable to caller.
     return this.httpService.post<Response>('/magic/system/auth/send-reset-password-link', {
       username,
       frontendUrl,
-      backendUrl,
     });
   }
 
@@ -594,7 +589,7 @@ export class AuthService {
         create_user_role: this.canInvoke('magic/modules/magic/users_roles', 'post'),
         delete_user_role: this.canInvoke('magic/modules/magic/users_roles', 'delete'),
         update_user_role: this.canInvoke('magic/modules/magic/users_roles', 'put'),
-        impersonate: this.canInvoke('magic/system/auth/generate-token', 'get'),
+        impersonate: this.canInvoke('magic/system/auth/impersonate', 'get'),
         jail: this.canInvoke('magic/system/auth/imprison', 'put'),
       },
       log: {
@@ -602,12 +597,12 @@ export class AuthService {
         write: this.canInvoke('magic/system/log/log', 'post'),
       },
       tasks: {
-        create: this.canInvoke('magic/system/tasks/create-task', 'post'),
-        read: this.canInvoke('magic/system/tasks/count-tasks', 'get') && this.canInvoke('magic/system/tasks/get-task', 'get') && this.canInvoke('magic/system/tasks/list-tasks', 'get'),
-        update: this.canInvoke('magic/system/tasks/update-task', 'post'),
-        delete: this.canInvoke('magic/system/tasks/delete-task', 'delete') && this.canInvoke('magic/system/tasks/delete-due', 'delete'),
-        addDue: this.canInvoke('magic/system/tasks/add-due', 'post'),
-        deleteDue: this.canInvoke('magic/system/tasks/delete-due', 'delete'),
+        create: this.canInvoke('magic/system/tasks/create', 'post'),
+        read: this.canInvoke('magic/system/tasks/count', 'get') && this.canInvoke('magic/system/tasks/get', 'get') && this.canInvoke('magic/system/tasks/list', 'get'),
+        update: this.canInvoke('magic/system/tasks/update', 'post'),
+        delete: this.canInvoke('magic/system/tasks/delete', 'delete') && this.canInvoke('magic/system/tasks/due/delete', 'delete'),
+        addDue: this.canInvoke('magic/system/tasks/due/add', 'post'),
+        deleteDue: this.canInvoke('magic/system/tasks/due/delete', 'delete'),
       },
       terminal: {
         execute: this.canInvoke('magic/system/terminal/command', 'socket') && this.canInvoke('magic/system/terminal/start', 'socket') && this.canInvoke('magic/system/terminal/stop', 'socket'),
@@ -616,19 +611,19 @@ export class AuthService {
         execute: this.canInvoke('magic/system/evaluator/evaluate', 'post'),
       },
       diagnostics: {
-        read_assumptions: this.canInvoke('magic/system/diagnostics/assumption-test-description', 'get'),
+        read_assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
         execute_test: this.canInvoke('magic/system/diagnostics/execute-test', 'get'),
-        list_cache: this.canInvoke('magic/system/cache/list-cache', 'get') && this.canInvoke('magic/system/cache/list-cache-count', 'get'),
-        delete_cache: this.canInvoke('magic/system/cache/delete-cache-item', 'delete') && this.canInvoke('magic/system/cache/empty-cache', 'delete'),
+        list_cache: this.canInvoke('magic/system/cache/list', 'get') && this.canInvoke('magic/system/cache/count', 'get'),
+        delete_cache: this.canInvoke('magic/system/cache/delete', 'delete') && this.canInvoke('magic/system/cache/empty', 'delete'),
       },
       sockets: {
         read: this.canInvoke('magic/system/sockets/socket-users-count', 'get') && this.canInvoke('magic/system/sockets/socket-users', 'get'),
         send: this.canInvoke('magic/system/sockets/send-socket-message', 'post'),
       },
       config: {
-        load: this.canInvoke('magic/system/config/load-config', 'get'),
-        save: this.canInvoke('magic/system/config/save-config', 'post'),
-        delete_cache_item: this.canInvoke('magic/system/cache/delete-cache-item', 'delete'),
+        load: this.canInvoke('magic/system/config/load', 'get'),
+        save: this.canInvoke('magic/system/config/save', 'post'),
+        delete_cache_item: this.canInvoke('magic/system/cache/delete', 'delete'),
       },
       crypto: {
         crypto_keys: this.canInvoke('magic/modules/magic/crypto_keys', 'get'),

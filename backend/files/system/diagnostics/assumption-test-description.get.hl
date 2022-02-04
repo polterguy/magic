@@ -1,8 +1,9 @@
 
 // Returns the description for the specified assumption test.
-.description:Returns the description for the specified assumption test
 .arguments
    test_file:string
+.description:Returns the description for the specified assumption test
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

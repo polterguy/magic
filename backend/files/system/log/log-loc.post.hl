@@ -5,6 +5,9 @@
    type:string
    name:string
 .description:Logs lines of code (LOC) generated
+.type:internal
+
+// Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/loc
 validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/name

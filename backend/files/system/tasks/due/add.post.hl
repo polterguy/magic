@@ -5,6 +5,7 @@
    due:date
    repeats:string
 .description:Schedules the task with the specified id for execution
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
