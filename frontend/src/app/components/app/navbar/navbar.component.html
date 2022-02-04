@@ -10,6 +10,13 @@
         {{getUserStatus()}}
       </h5>
     </ng-container>
+    <div class="toggle-btn">
+      <button
+        mat-icon-button
+        (click)="toggleNavbar()">
+        <mat-icon>menu{{sideNavStatus ? '_open' : ''}}</mat-icon>
+      </button>
+    </div>
   </div>
   <mat-accordion displayMode="flat" [multi]="!sideNavStatus">
     <!-- dashboard -->
@@ -349,6 +356,18 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
+    <!-- login -->
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle>
+      <mat-expansion-panel-header 
+      #panelL (click)="panelL._toggle();authService.authenticated ? logout() : login()" 
+      [matTooltipDisabled]="sideNavStatus" 
+      [matTooltip]="authService.authenticated ? 'Logout' : 'Login'">
+          <mat-panel-title>
+              <mat-icon>{{authService.authenticated ? 'lock' : 'lock_open'}}</mat-icon>
+              <span class="title">{{authService.authenticated ? 'Logout' : 'Login'}}</span>
+          </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
     <!-- register -->
     <mat-expansion-panel class="mat-elevation-z0" 
       *ngIf="!authService.authenticated" hideToggle>
@@ -366,45 +385,25 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
-    
-    <!-- <mat-expansion-panel class="mat-elevation-z0" 
-      *ngIf="sideNavStatus" hideToggle>
-      <mat-expansion-panel-header 
-        #panelH (click)="panelH._toggle();themeChanged(theme === 'light' ? 'dark' : 'light')">
-          <mat-panel-title>
-            <div class="d-flex align-items-center justify-content-between">
-              <div>{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
-              <div class="switch-theme">
-                <span class="light-icon">
-                  <mat-icon>light_mode</mat-icon>
-                </span>
-                <span class="dark-icon">
-                  <mat-icon>brightness_4</mat-icon>
-                </span>
-              </div>
-            </div>
-          </mat-panel-title>
-      </mat-expansion-panel-header>
-    </mat-expansion-panel> -->
   </mat-accordion>
-<!-- theme -->
-<mat-divider *ngIf="sideNavStatus" class="mt-4"></mat-divider>
-<button mat-button class="ml-2 mr-1"
-*ngIf="sideNavStatus"
-(click)="themeChanged(theme === 'light' ? 'dark' : 'light')" 
-[color]="theme === 'dark' ? 'accent' : ''">
-  <div class="d-flex align-items-center justify-content-between">
-    <div class="theme-title">{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
-    <div class="switch-theme {{theme}}">
-      <span class="light-icon">
-        <mat-icon>light_mode</mat-icon>
-      </span>
-      <span class="dark-icon">
-        <mat-icon>brightness_4</mat-icon>
-      </span>
+  <!-- theme -->
+  <mat-divider *ngIf="sideNavStatus" class="mt-4"></mat-divider>
+  <button mat-button class="ml-2 mr-1"
+  *ngIf="sideNavStatus"
+  (click)="themeChanged(theme === 'light' ? 'dark' : 'light')" 
+  [color]="theme === 'dark' ? 'accent' : ''">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="theme-title">{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
+      <div class="switch-theme {{theme}}">
+        <span class="light-icon">
+          <mat-icon>light_mode</mat-icon>
+        </span>
+        <span class="dark-icon">
+          <mat-icon>brightness_4</mat-icon>
+        </span>
+      </div>
     </div>
-  </div>
-</button>
+  </button>
   <div class="footer d-flex flex-column justify-content-center align-items-center w-100 pt-3">
     <div class="d-flex flex-column align-items-center">
       <ng-container *ngIf="shouldUpdateCore">
@@ -426,202 +425,7 @@
       </ng-container>
     </div>
     <p class="mt-2 mb-0 mat-caption text-center" *ngIf="sideNavStatus">
-      Magic is Copyright(c) of Aista, Ltd. Contact us at <a href="mailto:th@aista.com">th@aista.com</a>
+      &copy; Aista Ltd. {{currentYear}} - {{nextYear}}
     </p>
   </div>
 </div>
-<!-- <a
-  mat-button
-  routerLink="/"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>home</mat-icon>
-  <span>Home</span>
-</a>
-
-<a
-  *ngIf="authService.access.sql.execute_access"
-  mat-button
-  routerLink="/sql"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>language</mat-icon>
-  <span>SQL</span>
-</a>
-
-<a
-  *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend"
-  mat-button
-  routerLink="/crudifier"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>build</mat-icon>
-  <span>CRUD</span>
-</a>
-
-<a
-  *ngIf="authService.access.endpoints.view"
-  mat-button
-  routerLink="/endpoints"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>http</mat-icon>
-  <span>Endpoints</span>
-</a>
-
-<a
-  *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
-  mat-button
-  routerLink="/ide"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>extension</mat-icon>
-  <span>Hyper IDE</span>
-</a>
-
-<a
-  *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles"
-  mat-button
-  routerLink="/auth"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>people</mat-icon>
-  <span>Auth</span>
-</a>
-
-<a
-  *ngIf="authService.access.log.read"
-  mat-button
-  routerLink="/diagnostics"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>local_hospital</mat-icon>
-  <span>Health</span>
-</a>
-
-<a
-  *ngIf="authService.access.tasks.read"
-  mat-button
-  routerLink="/tasks"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>calendar_today</mat-icon>
-  <span>Tasks</span>
-</a>
-
-<a
-  *ngIf="authService.access.terminal.execute"
-  mat-button
-  routerLink="/terminal"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>input</mat-icon>
-  <span>Terminal</span>
-</a>
-
-<a
-  *ngIf="authService.access.eval.execute"
-  mat-button
-  routerLink="/evaluator"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>offline_bolt</mat-icon>
-  <span>Eval</span>
-</a>
-
-<a
-  *ngIf="authService.access.crypto.import_public_key"
-  mat-button
-  routerLink="/crypto"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>security</mat-icon>
-  <span>Crypto</span>
-</a>
-
-<a
-  *ngIf="authService.access.files.list_files && authService.access.files.list_folders"
-  mat-button
-  routerLink="/file-system"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>file_copy</mat-icon>
-  <span>Files</span>
-</a>
-
-<a
-  *ngIf="authService.access.sockets.read"
-  mat-button
-  routerLink="/sockets"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>compare_arrows</mat-icon>
-  <span>Sockets</span>
-</a>
-
-<a
-  *ngIf="authService.access.config.load"
-  mat-button
-  routerLink="/config"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>settings</mat-icon>
-  <span>Config</span>
-</a>
-
-<a
-  *ngIf="!authService.authenticated"
-  mat-button
-  routerLink="/register"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>face</mat-icon>
-  <span>Register</span>
-</a>
-
-<a
-  *ngIf="authService.authenticated"
-  mat-button
-  routerLink="/profile"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>account_circle</mat-icon>
-  <span>Profile</span>
-</a>
-
-<a
-  *ngIf="authService.access.bazar.get_manifests"
-  mat-button
-  routerLink="/bazar"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>public</mat-icon>
-  <span>Bazar</span>
-</a>
-
-<a
-  mat-button
-  routerLink="/about"
-  routerLinkActive="active-link"
-  (click)="closeNavbar()"
-  [routerLinkActiveOptions]="{exact:true}">
-  <mat-icon matSuffix>copyright</mat-icon>
-  <span>About</span>
-</a> -->

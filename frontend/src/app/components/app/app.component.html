@@ -21,6 +21,7 @@
       [class.sideClosed]="!sidenavOpened && notSmallScreen"
       [class.full-width-sidebar]="sidenavOpened"
       [class.small-width-sidebar]="notSmallScreen && !sidenavOpened"
+      *ngIf="sidenavOpened !== undefined"
       id="sidebar-main">
       <app-navbar [sideNavStatus]="sidenavOpened"></app-navbar>
     </mat-sidenav>
@@ -29,7 +30,7 @@
     [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
     [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
 
-    <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar>
+    <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
 
       <!-- <div class="img-wrapper"></div> -->
 
