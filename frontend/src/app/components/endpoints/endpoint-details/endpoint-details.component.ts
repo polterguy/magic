@@ -767,7 +767,6 @@ export class EndpointDetailsComponent implements OnInit {
                 });
               });
             this.assumptions = arr;
-            console.log(arr);
           
         }
       }, (error: any) => this.feedbackService.showError(error));
