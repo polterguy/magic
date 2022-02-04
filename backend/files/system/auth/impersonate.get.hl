@@ -2,8 +2,8 @@
 // Generates a JWT token for the specified user
 .arguments
    username:string
-   reset-password:bool
-.description:Generates a JWT token for the specified user
+.description:Generates a JWT token for the specified user allowing you to impersonate that user in Magic
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -13,13 +13,12 @@ validators.mandatory:x:@.arguments/*/username
 
 /*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
- * making sure we return that token to caller.
+ * making sure we return the token to the caller.
  */
 unwrap:x:+/*
 signal:magic.auth.authenticate
    username:x:@.arguments/*/username
    check-password:bool:false
-   reset-password:x:@.arguments/*/reset-password
 
 // Returns the authentication JWT ticket created above to caller.
 return-nodes:x:@signal/*

@@ -1,8 +1,9 @@
 
 // Returns count of users currently connected to the web server over a web socket connection.
-.description:Returns count of users currently connected to the web server over a web socket connection
 .arguments
    filter:string
+.description:Returns count of users currently connected to the web server over a web socket connection
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

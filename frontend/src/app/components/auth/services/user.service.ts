@@ -171,7 +171,7 @@ export class UserService {
    */
   public generateLoginLink(username: string) {
     return this.httpService.get<AuthenticateResponse>(
-      '/magic/system/auth/generate-token?username=' +
+      '/magic/system/auth/impersonate?username=' +
       encodeURIComponent(username));
   }
 
@@ -182,8 +182,7 @@ export class UserService {
    */
   public generateResetPasswordLink(username: string) {
     return this.httpService.get<AuthenticateResponse>(
-      '/magic/system/auth/generate-token?username=' +
-      encodeURIComponent(username) +
-      '&reset-password=true');
+      '/magic/system/auth/reset-password?username=' +
+      encodeURIComponent(username));
   }
 }

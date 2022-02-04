@@ -1,6 +1,7 @@
 
 // Will verify JWT token and return success if token is valid.
 .description:Will verify JWT token and return success if token is valid
+.type:public
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify

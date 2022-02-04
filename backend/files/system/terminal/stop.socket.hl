@@ -6,6 +6,7 @@
  */
 .arguments
    channel:string
+.type:internal
 
 // Verifying caller has access to execute file.
 auth.ticket.verify:root

@@ -1,12 +1,13 @@
 
 // Creates a new RSA key pair, with the specified parameters
-.description:Generates a new server cryptography key pair using the specified arguments, creating a backup of any previously created key pair
 .arguments
    strength:int
    seed:string
    subject:string
    email:string
    domain:string
+.description:Generates a new server cryptography key pair using the specified arguments, creating a backup of any previously created key pair
+.type:internal
 
 // Verifying user can access endpoint.
 auth.ticket.verify:root

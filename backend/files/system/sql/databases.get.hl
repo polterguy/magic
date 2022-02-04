@@ -4,6 +4,7 @@
    databaseType:string
    connectionString:string
 .description:Returns all databases in your installation, according to the arguments specified
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

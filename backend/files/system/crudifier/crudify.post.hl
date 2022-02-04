@@ -23,6 +23,7 @@
    args:*
    conditions:*
 .description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
+.type:internal
 
 // Sanity checks invocation.
 validators.mandatory:x:@.arguments/*/moduleName

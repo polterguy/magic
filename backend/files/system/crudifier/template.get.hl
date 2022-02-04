@@ -1,8 +1,9 @@
 
 // Returns Markdown description for specified [name] template.
-.description:Returns Markdown description for the specified template
 .arguments
    name:string
+.description:Returns Markdown description for the specified template
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
