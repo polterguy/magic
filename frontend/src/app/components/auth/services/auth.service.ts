@@ -613,8 +613,8 @@ export class AuthService {
       diagnostics: {
         read_assumptions: this.canInvoke('magic/system/diagnostics/assumption-test-description', 'get'),
         execute_test: this.canInvoke('magic/system/diagnostics/execute-test', 'get'),
-        list_cache: this.canInvoke('magic/system/cache/list-cache', 'get') && this.canInvoke('magic/system/cache/list-cache-count', 'get'),
-        delete_cache: this.canInvoke('magic/system/cache/delete-cache-item', 'delete') && this.canInvoke('magic/system/cache/empty-cache', 'delete'),
+        list_cache: this.canInvoke('magic/system/cache/list', 'get') && this.canInvoke('magic/system/cache/count', 'get'),
+        delete_cache: this.canInvoke('magic/system/cache/delete', 'delete') && this.canInvoke('magic/system/cache/empty', 'delete'),
       },
       sockets: {
         read: this.canInvoke('magic/system/sockets/socket-users-count', 'get') && this.canInvoke('magic/system/sockets/socket-users', 'get'),
@@ -623,7 +623,7 @@ export class AuthService {
       config: {
         load: this.canInvoke('magic/system/config/load', 'get'),
         save: this.canInvoke('magic/system/config/save', 'post'),
-        delete_cache_item: this.canInvoke('magic/system/cache/delete-cache-item', 'delete'),
+        delete_cache_item: this.canInvoke('magic/system/cache/delete', 'delete'),
       },
       crypto: {
         crypto_keys: this.canInvoke('magic/modules/magic/crypto_keys', 'get'),
