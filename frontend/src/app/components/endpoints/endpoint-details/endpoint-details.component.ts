@@ -287,7 +287,7 @@ export class EndpointDetailsComponent implements OnInit {
    * 
    * @param path Full path of assumption
    */
-  public getAssumptionName(path: string) {console.log(path);
+  public getAssumptionName(path: string) {
     const name = path.substring(path.lastIndexOf('/') + 1);
     return name.substring(0, name.length - 3);
   }
