@@ -3,7 +3,7 @@
 .arguments
    offset:long
    limit:long
-   query:string
+   filter:string
 .description:List next tasks that have been created in the system, using the optional arguments supplied.
 .type:internal
 
@@ -14,7 +14,7 @@ auth.ticket.verify:root
 add:x:../*/tasks.list
    get-nodes:x:@.arguments/*/offset
    get-nodes:x:@.arguments/*/limit
-tasks.list:x:@.arguments/*/query
+tasks.list:x:@.arguments/*/filter
 
 // Returning the results of the evaluation to caller.
 return-nodes:x:@tasks.list/*

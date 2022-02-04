@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/system/tasks/create-task
+url:/magic/system/tasks/create
 payload:@"{
   ""description"": ""This should fail"",
   ""hyperlambda"": "".foo""
