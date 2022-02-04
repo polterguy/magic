@@ -611,7 +611,7 @@ export class AuthService {
         execute: this.canInvoke('magic/system/evaluator/evaluate', 'post'),
       },
       diagnostics: {
-        read_assumptions: this.canInvoke('magic/system/diagnostics/assumption-test-description', 'get'),
+        read_assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
         execute_test: this.canInvoke('magic/system/diagnostics/execute-test', 'get'),
         list_cache: this.canInvoke('magic/system/cache/list', 'get') && this.canInvoke('magic/system/cache/count', 'get'),
         delete_cache: this.canInvoke('magic/system/cache/delete', 'delete') && this.canInvoke('magic/system/cache/empty', 'delete'),
