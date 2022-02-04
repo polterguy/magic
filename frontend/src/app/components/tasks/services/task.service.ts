@@ -43,12 +43,12 @@ export class TaskService {
     // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter) {
-      query += '&query=' + encodeURIComponent(filter);
+      query += '&filter=' + encodeURIComponent(filter);
     }
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Task[]>(
-      '/magic/system/tasks/list-tasks?offset=' +
+      '/magic/system/tasks/list?offset=' +
       offset +
       '&limit=' +
       limit + 
@@ -64,7 +64,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Task>(
-      '/magic/system/tasks/get-task?name=' +
+      '/magic/system/tasks/get?name=' +
       encodeURIComponent(name));
   }
 
@@ -78,12 +78,12 @@ export class TaskService {
     // Dynamically building our query according to arguments specificed.
     let query = '';
     if (filter) {
-      query += '?query=' + encodeURIComponent(filter);
+      query += '?filter=' + encodeURIComponent(filter);
     }
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/system/tasks/count-tasks' +
+      '/magic/system/tasks/count' +
       query);
   }
 
@@ -98,7 +98,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/system/tasks/create-task', {
+      '/magic/system/tasks/create', {
         id,
         hyperlambda,
         description,
@@ -116,7 +116,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
-      '/magic/system/tasks/update-task', {
+      '/magic/system/tasks/update', {
         id,
         hyperlambda,
         description,
@@ -132,7 +132,7 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/system/tasks/delete-task?id=' +
+      '/magic/system/tasks/delete?id=' +
       encodeURIComponent(id));
   }
 
