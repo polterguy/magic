@@ -4,5 +4,6 @@
  * backend is up running.
  */
 .description:Allows you to ping server to verify you are connected to your backend
+.type:internal
 return-nodes
    result:success

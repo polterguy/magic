@@ -1,2 +1,2 @@
 
-alter table log_entries add column meta text null after content;
+alter table log_entries add meta text null after content;

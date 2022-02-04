@@ -6,6 +6,7 @@
 .arguments
    hyperlambda:string
 .description:Evaluates the given Hyperlambda and returns the results of the evaluation as Hyperlambda
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

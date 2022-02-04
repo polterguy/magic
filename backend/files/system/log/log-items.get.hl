@@ -4,6 +4,7 @@
    from:string
    max:long
 .description:Returns log items according to the optional arguments
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

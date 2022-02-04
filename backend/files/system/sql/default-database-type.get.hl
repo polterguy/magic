@@ -1,6 +1,7 @@
 
 // Returns the default database type to use for crudification.
 .description:Returns the default database type the system is using and your options for alternative database types
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

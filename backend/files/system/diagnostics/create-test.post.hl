@@ -1,6 +1,5 @@
 
 // Creates a new assumption and persists it to the specified [filename].
-.description:Creates a new assumption and saves it to the specified filename
 .arguments
    filename:string
    verb:string
@@ -10,6 +9,8 @@
    payload:string
    response:string
    produces:string
+.description:Creates a new assumption and saves it to the specified filename
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

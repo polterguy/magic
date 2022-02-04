@@ -1,14 +1,15 @@
 
-// Counts number of tasks in system given specified optional query.
+// Counts number of tasks in system given specified optional filter.
 .arguments
-   query:string
+   filter:string
 .description:Counts number of tasks in system given specified optional query.
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
 // Retrieves all scheduled tasks in the system.
-tasks.count:x:@.arguments/*/query
+tasks.count:x:@.arguments/*/filter
 
 // Returning the results of the evaluation to caller.
 unwrap:x:+/*

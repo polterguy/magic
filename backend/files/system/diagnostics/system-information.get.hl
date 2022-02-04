@@ -1,6 +1,7 @@
 
 // Returns system information to caller.
 .description:Returns system information to caller
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -92,4 +93,4 @@ cache.try-get:system-information
 
 // Returning result of cache invocation to caller.
 hyper2lambda:x:@cache.try-get
-return-nodes:x:@hyper2lambda
+return-nodes:x:@hyper2lambda/*

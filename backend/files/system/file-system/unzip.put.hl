@@ -3,6 +3,7 @@
 .arguments
    file:string
 .description:Unzips the specified file in its current folder
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
