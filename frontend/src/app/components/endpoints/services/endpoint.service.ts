@@ -310,17 +310,4 @@ export class EndpointService {
       '&test_file=' +
       encodeURIComponent(filename));
   }
-
-  /**
-   * Retrieves the description for the specified test.
-   * 
-   * @param filename Full path of test to retriev description for
-   */
-  public getDescription(filename: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Response>(
-      '/magic/system/diagnostics/assumption-test-description?test_file=' +
-      encodeURIComponent(filename));
-  }
 }
