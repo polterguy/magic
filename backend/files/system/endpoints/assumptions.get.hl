@@ -1,9 +1,10 @@
 
 // Returns all assumptions in system for specified endpoint.
-.description:Returns all assumptions in the system for the specified endpoint/verb combination
 .arguments
    endpoint:string
    verb:string
+.description:Returns all assumptions in the system for the specified endpoint/verb combination
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -47,10 +48,17 @@ for-each:x:../*/io.file.load-recursively/*
                         get-value:x:@hyper2lambda/*/verb
                         get-value:x:@.arguments/*/verb
                   .lambda
+
+                     // Adding assumptions for endpoint to returned value.
+                     unwrap:x:./*/add/[1,2]/*/*/*
+                     io.file.load:x:@.dp/#/*/name
+                     hyper2lambda:x:-
+                     add:x:./*/add/[1,2]/*/*
+                        get-nodes:x:@hyper2lambda/*/description
                      add:x:../*/return-nodes
-                        get-nodes:x:@.dp/#/*/name
+                        .
+                           .
+                              file:x:@.dp/#/*/name
 
 // Returns result to caller.
-set-name:x:../*/return-nodes/*
-   .:.
 return-nodes

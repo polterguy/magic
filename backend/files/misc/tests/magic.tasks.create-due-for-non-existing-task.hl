@@ -1,7 +1,7 @@
 
 // Automatically generated assumption test.
 verb:post
-url:/magic/system/tasks/add-due
+url:/magic/system/tasks/due/add
 payload:@"{
   ""id"": ""non-existing-task"",
   ""due"": ""2021-01-12T09:02:40.094Z"",

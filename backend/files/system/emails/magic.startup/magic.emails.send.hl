@@ -48,7 +48,7 @@ slots.create:magic.emails.send
       .lambda
 
          // Template file doesn't exists, logging that fact, and returning early.
-         log.error:"Tried to send an email but couldn't since the specified template file doesn't exist"
+         log.error:Email template not found while trying to send template email
             template:x:@.arguments/*/template-file
          return-value:bool:false
 
@@ -70,7 +70,7 @@ slots.create:magic.emails.send
     * 
     * In case of failures, this allows us to later "replay" the send email invocation if necessary.
     */
-   log.info:Attempting to send email
+   log.info:Attempting to send template email
       email:x:@.arguments/*/email
       name:x:@.arguments/*/name
       subject:x:@.arguments/*/subject
@@ -91,6 +91,8 @@ slots.create:magic.emails.send
                   content:x:@.body
          add:x:@.entity/*
             get-nodes:x:@.arguments/*/attachments/*
+
+         // Moving the body of the email to inside of multipart/mixed part.
          remove-nodes:x:../*/mail.smtp.send/*/message/*/entity
          add:x:../*/mail.smtp.send/*/message
             get-nodes:x:@.entity/*
@@ -115,7 +117,7 @@ slots.create:magic.emails.send
             content:x:@.body
 
    // Logging the fact that email was successfully sent.
-   log.info:Email successfully sent
+   log.info:Template email successfully sent
       email:x:@.arguments/*/email
       template:x:@.arguments/*/template-file
 

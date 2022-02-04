@@ -1,8 +1,9 @@
 
 // Returns the username the specified key has been associated with.
-.description:Returns the username the specified key has been associated with
 .arguments
    keyId:long
+.description:Returns the username the specified key has been associated with
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

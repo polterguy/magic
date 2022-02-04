@@ -3,6 +3,7 @@
 .arguments
    databaseType:string
 .description:Returns all saved SQL files in the system for specified databaseType.
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

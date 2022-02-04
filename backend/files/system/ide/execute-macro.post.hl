@@ -1,9 +1,10 @@
 
 // Executes the specified [macro] file passing in the specified [args].
-.description:Executes the specified [macro] file passing in the specified [args]
 .arguments
    macro:string
    args:*
+.description:Executes the specified [macro] file passing in the specified [args]
+.type:internal
 
 // Making sure user is authorised to access endpoint.
 auth.ticket.verify:root

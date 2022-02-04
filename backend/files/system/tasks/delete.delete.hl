@@ -3,6 +3,7 @@
 .arguments
    id:string
 .description:Deletes the task with the specified [id].
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

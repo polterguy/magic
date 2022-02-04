@@ -1,6 +1,7 @@
 
 // Returns the public RSA key for the server.
 .description:"Returns the server's public RSA key and meta data for the key as Hyperlambda"
+.type:public
 
 /*
  * Loads the file containing the public key, if existing,

@@ -6,6 +6,7 @@
  * public key.
  */
 .description:Returns a cryptographic authentication challenge to the caller, which if the caller can cryptographically sign, allows him to retrieve a JWT token wrapping the user associated with the public key used to verify the cryptographic signature
+.type:public
 
 // Creating a cryptographically secured bunch of gibberish.
 crypto.random

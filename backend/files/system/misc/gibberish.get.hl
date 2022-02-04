@@ -4,6 +4,7 @@
    min:long
    max:long
 .description:Returns some Cryptographically Secure randomly generated text to caller according to specified arguments
+.type:public
 
 // Generating gibberish text.
 add:x:./*/crypto.random

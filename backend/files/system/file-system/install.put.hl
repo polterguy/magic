@@ -6,6 +6,7 @@
    name:string
    token:string
 .description:Installs the specified module by executing its Hyperlambda startup scripts
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

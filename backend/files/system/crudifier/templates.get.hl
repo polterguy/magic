@@ -1,6 +1,7 @@
 
 // Returns all templates for generating "stuff" from endpoints.
 .description:Returns all scaffolding templates registered in the system
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
