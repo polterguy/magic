@@ -1,96 +1,124 @@
-<mat-card class="input">
-  <div class="wrapper">
+<div class="row">
+  <div class="col-12">
+    <mat-card>
+      <mat-card-content>
+        <div class="d-flex align-items-center">
+          <mat-card-title class="mt-0 mb-1">System's caches</mat-card-title>
+          <div class="sm-icons">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+              <mat-icon>help_outline</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <div class="p-3">
+                <p class="mat-body-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat laudantium officia odit? Dolorem cumque, et quidem minima placeat, nisi facere laborum vitae voluptatibus dolorum, fuga quod earum officia obcaecati eius.</p>
+              </div>
+            </mat-menu>
+          </div>
+        </div>
+        <mat-card-subtitle>Connect to the database of your choice and view all tables</mat-card-subtitle>
 
-    <div class="button-strip">
-
-      <mat-form-field class="fill-width" appearance="outline">
-
-        <mat-label>Filter</mat-label>
-        <input
-          matInput
-          type="text"
-          autocomplete="off"
-          [formControl]="filterFormControl">
-        <mat-icon
-          matSuffix
-          *ngIf="filterFormControl.value.trim() !== ''"
-          class="button"
-          role="button"
-          (click)="clearFilter()">clear</mat-icon>
-
-      </mat-form-field>
-
-      <button
-        *ngIf="cacheItems.length > 0"
-        [disabled]="!authService.access.diagnostics.delete_cache"
-        mat-raised-button
-        color="primary"
-        matTooltip="Completely empties your cache"
-        class="clear-button"
-        (click)="deleteAll()">
-        Purge
-      </button>
-
-    </div>
-
-    <table
-      mat-table
-      [dataSource]="cacheItems"
-      class="cache-items clickable"
-      multiTemplateDataRows>
-
-      <ng-container matColumnDef="key">
-        <td
-          mat-cell
-          *matCellDef="let el">{{el.key}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell class="mini-col button-col" *matCellDef="let el">
+        <div class="d-flex align-items-center">
+    
+          <mat-form-field class="w-100 inline-input" appearance="outline">
+    
+            <mat-label>Filter</mat-label>
+            <input
+              matInput
+              type="text"
+              autocomplete="off"
+              [formControl]="filterFormControl">
+            <mat-icon
+              matSuffix
+              *ngIf="filterFormControl.value.trim() !== ''"
+              class="button"
+              role="button"
+              (click)="clearFilter()">clear</mat-icon>
+    
+          </mat-form-field>
+          <div class="p-1"></div>
           <button
-            (click)="delete($event, el.key);"
+            *ngIf="cacheItems.length > 0"
             [disabled]="!authService.access.diagnostics.delete_cache"
-            matTooltip="Deletes specified cache item"
-            mat-button>
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="show-details">
-        <td class="details" colspan="2" mat-cell *matCellDef="let el">
-          <pre>{{el.value}}</pre>
-          <button
             mat-icon-button
-            (click)="copyContent(el.value)">
-            <mat-icon>edit</mat-icon>
+            color="primary"
+            matTooltip="Completely empties your cache"
+            (click)="deleteAll()">
+            <mat-icon>refresh</mat-icon>
           </button>
-        </td>
-      </ng-container>
+    
+        </div>
+    
+        <table
+          mat-table
+          [dataSource]="cacheItems"
+          class="w-100 expandable-table mt-3"
+          multiTemplateDataRows>
+    
+          <ng-container matColumnDef="key">
+            <td
+              mat-cell
+              *matCellDef="let el">{{el.key}}</td>
+          </ng-container>
+    
+          <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell class="mini-col button-col text-right" *matCellDef="let el">
+              <button
+                (click)="delete($event, el.key);"
+                [disabled]="!authService.access.diagnostics.delete_cache"
+                matTooltip="Deletes specified cache item"
+                mat-button>
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="showDetails">
+            <td colspan="2" mat-cell *matCellDef="let el">
+              <div class="w-100 details-row"
+                [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
+                <div class="w-100 pt-3 d-flex justify-content-between">
+                  <div>
+                    <pre>{{el.value}}</pre>
+                  </div>
+                  <div class="ml-3">
+                    <button
+                      mat-icon-button
+                      (click)="copyContent(el.value)">
+                      <mat-icon>content_copy</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+    
+          <tr
+            mat-row
+            [ngClass]="(expandedElement === el ? 'selected ' : '') + 'cache-item-row'"
+            class="expandable-row"
+            (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
+            *matRowDef="let el; columns: ['key', 'delete'];"></tr>
+    
+          <!-- <tr
+            mat-row
+            [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
+            *matRowDef="let el; columns: ['show-details'];"></tr> -->
 
-      <tr
-        mat-row
-        [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + 'cache-item-row'"
-        (click)="toggleDetails(el)"
-        *matRowDef="let el; columns: ['key', 'delete'];"></tr>
-
-      <tr
-        mat-row
-        [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-        *matRowDef="let el; columns: ['show-details'];"></tr>
-
-    </table>
-
-    <mat-paginator
-      #paginator
-      [class]="count > paginator.pageSize ? '' : 'invisible'"
-      [length]="count"
-      pageSize="5"
-      showFirstLastButtons="true"
-      (page)="paged()"
-      [pageSizeOptions]="[5, 10, 25, 50, 100]">
-    </mat-paginator>
-
+          <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
+    
+        </table>
+    
+        <mat-paginator
+          #paginator
+          [class]="count > paginator.pageSize ? '' : 'invisible'"
+          [length]="count"
+          pageSize="5"
+          showFirstLastButtons="true"
+          (page)="paged()"
+          [pageSizeOptions]="[5, 10, 25, 50, 100]">
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
   </div>
-</mat-card>
+</div>

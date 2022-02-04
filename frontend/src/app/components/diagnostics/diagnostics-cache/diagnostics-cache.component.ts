@@ -16,6 +16,7 @@ import { CacheItem } from './models/cache-item.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CacheService } from 'src/app/components/diagnostics/diagnostics-cache/services/cache.service';
 import { AuthService } from '../../auth/services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.
@@ -23,7 +24,14 @@ import { AuthService } from '../../auth/services/auth.service';
 @Component({
   selector: 'app-diagnostics-cache',
   templateUrl: './diagnostics-cache.component.html',
-  styleUrls: ['./diagnostics-cache.component.scss']
+  styleUrls: ['./diagnostics-cache.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class DiagnosticsCache implements OnInit {
 
@@ -36,6 +44,7 @@ export class DiagnosticsCache implements OnInit {
    * List of cache items as returned from backend.
    */
   public cacheItems: any[] = [];
+  public expandedElement: any;
 
   /**
    * Number of users matching filter in the backend.
