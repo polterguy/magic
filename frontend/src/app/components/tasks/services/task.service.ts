@@ -156,7 +156,7 @@ export class TaskService {
       payload.repeats = repeats;
     }
     return this.httpService.post<Response>(
-      '/magic/system/tasks/add-due', payload);
+      '/magic/system/tasks/due/add', payload);
   }
 
   /**
@@ -168,6 +168,6 @@ export class TaskService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.delete<Response>(
-      '/magic/system/tasks/delete-due?id=' + id);
+      '/magic/system/tasks/due/delete?id=' + id);
   }
 }

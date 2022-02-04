@@ -600,9 +600,9 @@ export class AuthService {
         create: this.canInvoke('magic/system/tasks/create', 'post'),
         read: this.canInvoke('magic/system/tasks/count', 'get') && this.canInvoke('magic/system/tasks/get', 'get') && this.canInvoke('magic/system/tasks/list', 'get'),
         update: this.canInvoke('magic/system/tasks/update', 'post'),
-        delete: this.canInvoke('magic/system/tasks/delete', 'delete') && this.canInvoke('magic/system/tasks/delete-due', 'delete'),
-        addDue: this.canInvoke('magic/system/tasks/add-due', 'post'),
-        deleteDue: this.canInvoke('magic/system/tasks/delete-due', 'delete'),
+        delete: this.canInvoke('magic/system/tasks/delete', 'delete') && this.canInvoke('magic/system/tasks/due/delete', 'delete'),
+        addDue: this.canInvoke('magic/system/tasks/due/add', 'post'),
+        deleteDue: this.canInvoke('magic/system/tasks/due/delete', 'delete'),
       },
       terminal: {
         execute: this.canInvoke('magic/system/terminal/command', 'socket') && this.canInvoke('magic/system/terminal/start', 'socket') && this.canInvoke('magic/system/terminal/stop', 'socket'),
