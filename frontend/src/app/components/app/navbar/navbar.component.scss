@@ -5,8 +5,14 @@
 .top-box-sidebar{
   padding: 15px;
   border-bottom: 1px solid transparentize($color: $magic_dark_alternative, $amount: 0.95);
+  position: relative;
   .nm-top{
     margin-top: -8px;
+  }
+  .toggle-btn{
+    position: absolute;
+    right: -10px;
+    top: -5px;
   }
 }
 .footer{
@@ -47,6 +53,14 @@
     .dark-icon{opacity: 0;}
     .light-icon{opacity: 1;}
     @include general_transition(0.5s);
+  }
+}
+.auth-btn{
+  mat-icon{
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 20px;
   }
 }
 ::ng-deep{

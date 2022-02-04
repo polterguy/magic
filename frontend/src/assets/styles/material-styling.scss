@@ -29,6 +29,8 @@ Material body and general styling
   overflow: auto;
   display: flex;
   flex-direction: column;
+  padding-top: $side_space;
+  padding-bottom: $side_space;
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
 

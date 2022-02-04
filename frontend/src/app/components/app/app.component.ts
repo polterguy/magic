@@ -20,6 +20,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/components/auth/services/auth.service';
 import { LoaderService } from 'src/app/components/app/services/loader.service';
 import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**
  * Main wire frame application component.
@@ -54,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * True if navigation menu is expanded.
    */
-  public sidenavOpened: boolean = undefined;
+  public sidenavOpened: boolean;
 
   /**
    * If there exists a newer version of Magic Core as published by the Bazar,
@@ -77,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * 
    * Used to change theme dynamically, and invert colors between 'light' and 'dark' themes.
    */
-  public theme: string;
+  public theme: string = 'light';
 
   /**
    * Creates an instance of your component.
@@ -90,6 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param messageService Needed to subscribe to messages informing us when user logs in and out
    * @param diagnosticsService Needed to retrieve backend version
    * @param feedbackService Needed to provide feedback to user
+   * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     private router: Router,
@@ -100,7 +102,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private bazarService: BazarService,
     private configService: ConfigService,
     private feedbackService: FeedbackService,
-    private diagnosticsService: DiagnosticsService) { }
+    private diagnosticsService: DiagnosticsService,
+    private overlayContainer: OverlayContainer) { }
 
   /**
    * OnInit implementation.
@@ -152,11 +155,13 @@ export class AppComponent implements OnInit, OnDestroy {
         // Some component wants to toggle the navbar
         case Messages.TOGGLE_NAVBAR:
           this.sidenavOpened = !this.sidenavOpened;
+          localStorage.setItem('sidebar', this.sidenavOpened ? 'open' : 'close');
           break;
 
         // Some component wants to close the navbar
         case Messages.CLOSE_NAVBAR:
           this.sidenavOpened = false;
+          localStorage.setItem('sidebar', 'close');
           break;
       }
     });
@@ -167,6 +172,28 @@ export class AppComponent implements OnInit, OnDestroy {
     }, error => {
       this.showError(error);
     });
+
+    // wait until sidebar status is defined based on the value stored in localstorage 
+    (async () => {
+      while (this.sidenavOpened === undefined)
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+      this.sidenavOpened = !localStorage.getItem('sidebar') ? true : (localStorage.getItem('sidebar') === 'open' ? true : false);
+
+      // wait until theme color is defined based on the value stored in localstorage 
+      if (!localStorage.getItem('theme')) {
+        this.theme = 'light';
+      } else {
+        this.theme = localStorage.getItem('theme');
+      }
+      this.overlayContainer.getContainerElement().classList.add(this.theme);
+
+      this.messageService.sendMessage({
+        name: Messages.THEME_CHANGED,
+        content: this.theme,
+      });
+    })();
+    
   }
 
   /**
@@ -183,6 +210,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public closeNavbar() {
     this.sidenavOpened = false;
+    
   }
 
   /*
