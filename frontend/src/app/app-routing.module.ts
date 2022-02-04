@@ -12,7 +12,6 @@ import { IdeComponent } from './components/ide/ide.component';
 import { LogComponent } from './components/diagnostics/diagnostics-log/diagnostics-log.component';
 import { SqlComponent } from './components/sql/sql.component';
 import { AuthComponent } from './components/auth/auth.component';
-import { HomeComponent } from './components/home/home.component';
 import { TasksComponent } from './components/tasks/tasks.component';
 import { BazarComponent } from './components/bazar/bazar.component';
 import { FilesComponent } from './components/files/files.component';
@@ -30,6 +29,8 @@ import { RegisterComponent } from './components/auth/register/register.component
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
 import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
+import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
+import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
 
 /**
  * Routes for application.
@@ -40,10 +41,12 @@ const routes: Routes = [
 
   // Avoids re-initializing component as user opens and closes view details / URL link
   { path: 'ide', component: IdeComponent },
+  { path: 'log', component: LogComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'tasks', component: TasksComponent },
   { path: 'bazar', component: BazarComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'cache', component: DiagnosticsCache },
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'profile', component: ProfileComponent },
@@ -56,6 +59,7 @@ const routes: Routes = [
   { path: 'crudifier', component: CrudifierComponent },
   { path: 'diagnostics', component: DiagnosticsComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },
+  { path: 'assumptions', component: DiagnosticsTestsComponent },
   { path: 'change-password', component: ChangePasswordComponent },
 ];
 
