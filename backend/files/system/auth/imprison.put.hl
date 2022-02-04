@@ -4,6 +4,7 @@
    username:string
    releaseDate:date
 .description:Imprisons user preventing him from accessing Magic until some specific release date
+.type:internal
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username

@@ -12,6 +12,7 @@
    overwrite:bool
    isList:bool
 .description:Creates a custom SQL HTTP endpoint according to the specified arguments
+.type:internal
 
 // Sanity checks invocation.
 validators.mandatory:x:@.arguments/*/databaseType

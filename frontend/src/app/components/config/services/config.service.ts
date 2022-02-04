@@ -44,7 +44,7 @@ export class ConfigService {
   public status() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Status>('/magic/system/config/setup-status');
+    return this.httpService.get<Status>('/magic/system/config/status');
   }
 
   /**
@@ -62,7 +62,7 @@ export class ConfigService {
   public loadConfig() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any>('/magic/system/config/load-config');
+    return this.httpService.get<any>('/magic/system/config/load');
   }
 
   /**
@@ -71,26 +71,24 @@ export class ConfigService {
   public saveConfig(config: any) {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.post<Response>('/magic/system/config/save-config', config);
+    return this.httpService.post<Response>('/magic/system/config/save', config);
   }
 
   /**
    * Will setup your system according to the specified arguments.
    * 
-   * @param databaseType Default database type to use for your magic database
    * @param password Root user's password to use
    * @param settings Configuration for your system
    */
-  public setup(databaseType: string, password: string, settings: any) {
+  public setup(password: string, settings: any) {
 
     // Invoking backend and returning observable to caller.
     return new Observable<AuthenticateResponse>((observer) => {
 
       // Invoking backend to setup system.
       this.httpService.post<AuthenticateResponse>('/magic/system/config/setup', {
-        databaseType,
         password,
-        settings: JSON.stringify(settings, null, 2),
+        settings,
       }).subscribe((res: AuthenticateResponse) => {
 
         /*

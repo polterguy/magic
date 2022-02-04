@@ -1,8 +1,9 @@
 
 // Returns the fingerprint for the specified key.
-.description:Returns the fingerprint for the specified key
 .arguments
    key:string
+.description:Returns the fingerprint for the specified key
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

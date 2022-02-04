@@ -1,8 +1,9 @@
 
 // Returns macro definition to caller.
-.description:Returns macro definition to caller
 .arguments
    macro:string
+.description:Returns macro definition to caller
+.type:internal
 
 // Making sure user is authorised to access endpoint.
 auth.ticket.verify:root

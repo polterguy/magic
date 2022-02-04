@@ -3,6 +3,7 @@
 .arguments
    folder:string
 .description:Downloads a folder from the server by packaging it into a zip file
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

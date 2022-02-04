@@ -1,6 +1,7 @@
 
 // Returns the public RSA key for the server.
 .description:"Returns the server's public cryptography key in raw format"
+.type:public
 
 /*
  * Loads the file containing the public key, if existing,

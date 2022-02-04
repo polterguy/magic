@@ -11,6 +11,7 @@
    content:string
    size:int
 .description:Generates a QR code using the specified arguments and returns as a PNG image
+.type:public
 
 // Validating input arguments.
 validators.mandatory:x:@.arguments/*/content

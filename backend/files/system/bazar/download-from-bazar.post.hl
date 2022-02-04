@@ -11,6 +11,7 @@
    url:string
    name:string
 .description:Installs the specified Bazar module into the local server
+.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -49,7 +50,7 @@ if
                get-value:x:@io.file.execute/*/result
                .:success
          .lambda
-            throw:"Couldn't uninstall previously installed version"
+            throw:Could not uninstall previously installed version
                public:bool:true
                status:int:500
 
