@@ -51,14 +51,14 @@
   mat-sidenav-content.content-with-full-sidebar{
     margin-left: calc(#{$sidebar_full_width} + #{$side_space})!important;
     @include general_transition(0.2s);
-    .CodeMirror{
+    table .CodeMirror{
       max-width: calc(100vw - (#{$sidebar_full_width} + (#{$side_space} * 3) + 80px));
     }
   }
   mat-sidenav-content.content-with-small-sidebar{
     margin-left: calc(#{$sidebar_small_width} + #{$side_space})!important;
     @include general_transition(0.2s);
-    .CodeMirror{
+    table .CodeMirror{
       max-width: calc(100vw  - (#{$sidebar_small_width} + (#{$side_space} * 3) + 80px));
     }
   }
