@@ -30,7 +30,7 @@
     </mat-expansion-panel>
     <!-- analytics -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || !sideNavStatus" 
+      [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
       *ngIf="authService.access.endpoints.view || authService.access.sockets.read">
       <mat-expansion-panel-header 
@@ -47,10 +47,11 @@
           [style.display]="authService.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Log" 
-          routerLink="/log/" 
+          routerLink="/log"
           matTooltipPosition="after" 
           routerLinkActive="active-link"
-          #log="routerLinkActive">
+          #log="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:false}">
           <ng-container *ngIf="authService.access.log.read">
             <mat-icon>bar_chart</mat-icon>
             <span class="title">Log</span>
@@ -58,14 +59,14 @@
         </mat-list-option>
         <!-- assumptions //TODO -->
         <mat-list-option 
-        [style.display]="authService.access.log.read ? '' : 'none'"
-        [matTooltipDisabled]="sideNavStatus" 
-        matTooltip="Assumptions" 
-        routerLink="/assumptions" 
-        matTooltipPosition="after" 
-        routerLinkActive="active-link"
-        #assumptions="routerLinkActive"
-        [routerLinkActiveOptions]="{exact:true}">
+          [style.display]="authService.access.log.read ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Assumptions" 
+          routerLink="/assumptions" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #assumptions="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.log.read">
             <mat-icon>fact_check</mat-icon>
             <span class="title">Assumptions</span>
