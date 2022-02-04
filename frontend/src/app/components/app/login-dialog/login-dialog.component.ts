@@ -164,7 +164,8 @@ export class LoginDialogComponent implements OnInit {
 
     // Invoking backend to request a reset password link to be sent as an email.
     this.authService.sendResetPasswordEmail(
-      this.username).subscribe((res: Response) => {
+      this.loginForm.value.username,
+      location.origin).subscribe((res: Response) => {
 
         // Verifying request was a success.
         if (res.result === 'success') {
