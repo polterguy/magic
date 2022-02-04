@@ -59,7 +59,7 @@
         (click)="runAssumption(i)"
         class="assumption"
         selectable="false">
-        {{getAssumptionName(i.name)}}
+        {{getAssumptionName(i.file)}}
         <mat-icon *ngIf="i.success === false" class="ml-1">warning</mat-icon>
         <mat-icon *ngIf="i.success === true" class="ml-1">check</mat-icon>
         <mat-icon *ngIf="i.success === null" class="ml-1">help_outline</mat-icon>

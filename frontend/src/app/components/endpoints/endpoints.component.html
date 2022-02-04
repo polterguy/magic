@@ -80,7 +80,7 @@
                   class="details-sheet"
                   *ngIf="shouldDisplayDetails(el)"> -->
       
-                  <div class="w-100 py-3">
+                  <div class="w-100 py-3" *ngIf="shouldDisplayDetails(el)">
                     <app-endpoint-details [endpoint]="el"></app-endpoint-details>
                   </div>
       
