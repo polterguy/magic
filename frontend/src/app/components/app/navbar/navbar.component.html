@@ -119,17 +119,17 @@
         </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
-    <!-- settings -->
+    <!-- tools -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || bazar?.isActive || terminal?.isActive || !sideNavStatus" 
+      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || terminal?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="(authService.access.files.list_files && authService.access.files.list_folders) || authService.access.eval.execute || authService.access.sql.execute_access || (authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend) || authService.access.tasks.read || authService.access.bazar.get_manifests || authService.access.terminal.execute">
+      *ngIf="(authService.access.files.list_files && authService.access.files.list_folders) || authService.access.eval.execute || authService.access.sql.execute_access || (authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend) || authService.access.tasks.read || authService.access.terminal.execute">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
       [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || bazar?.isActive || terminal?.isActive}">
         <mat-panel-title>
           <mat-icon>build_circle</mat-icon>
-          <span class="title">Settings</span>
+          <span class="title">Tools</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
@@ -223,28 +223,13 @@
             <span class="title">Tasks</span>
           </ng-container>
         </mat-list-option>
-        <!-- bazar -->
-        <mat-list-option 
-          [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Bazaar" 
-          routerLink="/bazar" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #bazar="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.bazar.get_manifests">
-            <mat-icon>storefront</mat-icon>
-            <span class="title">Bazaar</span>
-          </ng-container>
-        </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
     <!-- management -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || password?.isActive || !sideNavStatus" 
+      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || password?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
-      *ngIf="(authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.config.load">
+      *ngIf="(authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.bazar.get_manifests || authService.access.config.load">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
       [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || password?.isActive}">
@@ -297,6 +282,21 @@
           <ng-container *ngIf="authService.access.crypto.import_public_key">
             <mat-icon>security</mat-icon>
             <span class="title">Cryptography</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- bazar -->
+        <mat-list-option 
+          [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Bazaar" 
+          routerLink="/bazar" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #bazar="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.bazar.get_manifests">
+            <mat-icon>storefront</mat-icon>
+            <span class="title">Bazaar</span>
           </ng-container>
         </mat-list-option>
         <!-- password -->
