@@ -41,7 +41,7 @@
           <table           
             mat-table
             [dataSource]="filteredItems()"
-            class="clickable w-100"
+            class="expandable-table w-100 mt-2"
             multiTemplateDataRows>
       
             <ng-container matColumnDef="verb">
@@ -67,18 +67,22 @@
                 </td>
             </ng-container>
       
-            <ng-container matColumnDef="show-details">
+            <ng-container matColumnDef="showDetails">
       
               <td
                 mat-cell
                 *matCellDef="let el"
                 colspan="3">
+                <div class="w-100 details-row"
+                   [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
       
-                <div
+                <!-- <div
                   class="details-sheet"
-                  *ngIf="shouldDisplayDetails(el)">
+                  *ngIf="shouldDisplayDetails(el)"> -->
       
-                  <app-endpoint-details [endpoint]="el"></app-endpoint-details>
+                  <div class="w-100 py-3">
+                    <app-endpoint-details [endpoint]="el"></app-endpoint-details>
+                  </div>
       
                 </div>
       
@@ -88,14 +92,17 @@
       
             <tr
               mat-row
-              [ngClass]="(shouldDisplayDetails(el) ? 'selected ' : '') + (el.error ? ' error' : '')"
-              (click)="toggleDetails(el)"
+              [ngClass]="(expandedElement === el ? 'selected ' : '') + (el.error ? ' error' : '')"
+              class="expandable-row"
+              (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
               *matRowDef="let el; columns: displayedColumns;"></tr>
       
-            <tr
+            <!-- <tr
               mat-row
               [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-              *matRowDef="let el; columns: ['show-details'];"></tr>
+              *matRowDef="let el; columns: ['show-details'];"></tr> -->
+            
+            <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
       
           </table>
       </ng-container>

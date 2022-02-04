@@ -36,17 +36,30 @@ $theme: mat.define-light-theme((
  )
 ));
 
-@include mat.all-component-themes($theme);
+.light{
+  @include mat.all-component-themes($theme);
+}
 /*=-=-=-=-=-=
 defining dark theme palette
 =-=-=-=-=-=*/
 @import '~@angular/material/theming';
 
-$dark-primary: mat-palette($mat-indigo, 'contrastStrongLightColors');
+$dark-primary: mat.define-palette(mat.$indigo-palette, 500);
 $dark-accent:  mat-palette($mat-light-blue, A200, A100, A400);
 $dark-warn:    mat-palette($mat-deep-orange);
 $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+$angular-dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $dark-primary,
+      accent: $dark-accent,
+      warn: $dark-warn,
+    ),
+  )
+);
 .dark{
-    @include angular-material-theme($dark-theme);
+    @include mat.all-component-themes($dark-theme);
+    // @include mat.all-component-colors($angular-dark-theme);
 }
 

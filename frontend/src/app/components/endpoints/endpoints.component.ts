@@ -12,6 +12,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Endpoint } from 'src/app/models/endpoint.model';
 import { EndpointService } from './services/endpoint.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Endpoints component allowing user to see and invoke his endpoints.
@@ -19,9 +20,18 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 @Component({
   selector: 'app-endpoints',
   templateUrl: './endpoints.component.html',
-  styleUrls: ['./endpoints.component.scss']
+  styleUrls: ['./endpoints.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class EndpointsComponent implements OnInit {
+
+  public expandedElement;
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: string[] = [];

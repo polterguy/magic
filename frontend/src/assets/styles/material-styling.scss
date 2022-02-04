@@ -72,6 +72,12 @@ table.mat-table{
     }
 }
 /*=-=-=-=-=-=
+Material dialog
+=-=-=-=-=-=*/
+.mat-dialog-content{
+  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
+}
+/*=-=-=-=-=-=
 Material card
 =-=-=-=-=-=*/
 .card-replacement{
@@ -93,6 +99,16 @@ Material tabs & stepper
 }
 .mat-stepper-horizontal .mat-horizontal-content-container{padding: 0;}
 /*=-=-=-=-=-=
+Material menu
+=-=-=-=-=-=*/
+.shortkeys{
+  .mat-list-item-content{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+/*=-=-=-=-=-=
 Material list
 =-=-=-=-=-=*/
 .detail-list{
@@ -109,7 +125,18 @@ Material list
         }
       }
     }
+}
+#custom-list{
+  &.mat-list-base[dense] .mat-list-item, 
+  &.mat-list-base[dense] .mat-list-option{height: 35px;}
+  .mat-list-item-content{padding: 0;}
+}
+.flex-list{
+  .mat-list-item-content{
+    width: 100%;
+    justify-content: space-between;
   }
+}
 /*=-=-=-=-=-=
 Material snackbar for short messages
 =-=-=-=-=-=*/

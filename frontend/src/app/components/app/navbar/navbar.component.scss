@@ -10,8 +10,6 @@
   }
 }
 .footer{
-  background-color: $magic_primary;
-  color: $magic_default;
   padding: 1em;
   position: absolute;
   bottom: 0;
@@ -126,6 +124,8 @@
 colour setting -- text & background
 =-=-=-=-=-=*/
 ::ng-deep {
+  .light .footer{background-color: $magic_default_secondary;}
+  .dark .footer{background-color: $magic_dark_alternative;}
   .light #sidebar{
     .mat-expansion-panel-header-title,
     .mat-list-option,
@@ -212,7 +212,7 @@ colour setting -- text & background
     .mat-expansion-panel-header{
       &.active-link,
       &:hover{
-        background: $magic_default_alternative;
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.04);
         .mat-expansion-panel-header-title,
         .mat-list-text,
         .mat-list-base .mat-list-item,
