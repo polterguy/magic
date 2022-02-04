@@ -121,6 +121,23 @@ export class LogComponent implements OnInit {
   }
 
   /**
+   * Returns specified object as an array to caller.
+   * 
+   * @param meta Meta object to return array for
+   */
+  public toArray(meta: object) {
+    const result = [];
+    var names = Object.getOwnPropertyNames(meta);
+    for (const idx of names) {
+      result.push({
+        key: idx,
+        value: meta[idx],
+      });
+    }
+    return result;
+  }
+
+  /**
    * Puts the specified content into the user's clipboard
    * 
    * @param content Content to put on to clipboard
