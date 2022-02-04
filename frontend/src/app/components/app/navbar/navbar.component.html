@@ -35,7 +35,7 @@
       *ngIf="authService.access.endpoints.view || authService.access.sockets.read">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
-      [ngClass]="{'active-link':assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive}">
+      [ngClass]="{'active-link':assumptions?.isActive || cache?.isActive || log?.isActive || endpoints?.isActive || sockets?.isActive}">
         <mat-panel-title>
           <mat-icon>equalizer</mat-icon>
           <span class="title">Analytics</span>
