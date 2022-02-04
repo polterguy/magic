@@ -22,21 +22,12 @@
   animation-duration: .5s;
 }
 .progress-holder{position: fixed;top: 0;left: 0;right: 0;z-index: 9;}
-/*=-=-=-=-=-=
-copyright
-=-=-=-=-=-=*/
-.footer{padding-right: $side_space;padding-left: $side_space;padding-bottom: $side_space;}
 
-.light .footer{
-  background-color: $magic_site_bg;
-}
-.dark .footer{
-  background-color: $magic_dark_alternative;
-}
 ::ng-deep{
   /*=-=-=-=-=-=
   sidebar settings
   =-=-=-=-=-=*/
+ 
   .dark .mat-drawer{
     background-color: $magic_dark_secondary_light!important;
   }

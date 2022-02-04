@@ -2,50 +2,47 @@
   <div class="col-12">
     <mat-card *ngIf="input">
       <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
-          <div class="d-flex align-items-center">
-            <mat-card-title class="my-0">SQL</mat-card-title>
-            <div class="sm-icons">
-              <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
-                <mat-icon>help_outline</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <div class="p-3">
-                  <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat laudantium officia odit? Dolorem cumque, et quidem minima placeat, nisi facere laborum vitae voluptatibus dolorum, fuga quod earum officia obcaecati eius.</p>
-                </div>
-              </mat-menu>
-            </div>
-          </div>
-          <div>
-            <button mat-stroked-button [matMenuTriggerFor]="list" class="mat-caption" matTooltip="List of shortkeys">
-              Shortkeys
+        <div class="d-flex align-items-center">
+          <mat-card-title class="my-0">SQL</mat-card-title>
+          <div class="sm-icons">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+              <mat-icon>help_outline</mat-icon>
             </button>
-            <mat-menu #list="matMenu">
+            <mat-menu #menu="matMenu">
               <div class="p-3">
-                <p class="d-flex flex-nowrap align-items-center justify-content-between">
-                  <span>
-                    <span class="d-block">Fullscreen</span>
-                    <span class="d-block">Exit fullscreen</span>
-                  </span>
-                  <span class="code my-0 ml-5">Alt + M</span>
-                </p>
-                <mat-divider class="mb-2"></mat-divider>
-                <p class="d-flex flex-nowrap align-items-center justify-content-between">
-                  Load
-                  <span class="code my-0 ml-5">Alt + L</span>
-                </p>
-                <mat-divider class="mb-2"></mat-divider>
-                <p class="d-flex flex-nowrap align-items-center justify-content-between">
-                  Save
-                  <span class="code my-0 ml-5">Alt + S</span>
-                </p>
-                <mat-divider class="mb-2"></mat-divider>
-                <p class="d-flex flex-nowrap align-items-center justify-content-between mb-0">
-                  Execute
-                  <span class="code my-0 ml-5">F5</span>
-                </p>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat laudantium officia odit? Dolorem cumque, et quidem minima placeat, nisi facere laborum vitae voluptatibus dolorum, fuga quod earum officia obcaecati eius.</p>
               </div>
             </mat-menu>
           </div>
+        </div>
+        <div>
+          <button mat-stroked-button [matMenuTriggerFor]="list" class="mat-caption" matTooltip="List of shortkeys">
+            Shortkeys
+          </button>
+          <mat-menu #list="matMenu" class="shortkeys">
+            <mat-list role="list" dense>
+              <mat-list-item role="listitem">
+                <span>
+                  <span class="d-block">Fullscreen</span>
+                  <span class="d-block">Exit fullscreen</span>
+                </span>
+                <span class="code my-0 ml-5">Alt + M</span>
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                Load
+                <span class="code my-0 ml-5">Alt + L</span>
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                Save
+                <span class="code my-0 ml-5">Alt + S</span>
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                Execute
+                <span class="code my-0 ml-5">F5</span>
+              </mat-list-item>
+            </mat-list>
+          </mat-menu>
+        </div>
       </div>
       <mat-card-subtitle>Connect to the database of your choice and view all tables</mat-card-subtitle>
       <mat-card-content>

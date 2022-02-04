@@ -72,8 +72,36 @@
         <mat-card class="h-100">
           <mat-card-content>
             <div class="content-section d-flex flex-column w-100">
-              <div class="d-flex align-items-center">
-                <p class="active-path">{{activeFolder}}</p>
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <p class="active-path my-0">{{activeFolder}}</p>
+                <div>
+                  <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
+                    Shortkeys
+                  </button>
+                  <mat-menu #list="matMenu" class="shortkeys">
+                    <mat-list role="list" dense>
+                      <mat-list-item role="listitem">
+                        <span>
+                          <span class="d-block">Fullscreen</span>
+                          <span class="d-block">Exit fullscreen</span>
+                        </span>
+                        <span class="code my-0 ml-5">Alt + M</span>
+                      </mat-list-item>
+                      <mat-list-item role="listitem">
+                        Load
+                        <span class="code my-0 ml-5">Alt + L</span>
+                      </mat-list-item>
+                      <mat-list-item role="listitem">
+                        Save
+                        <span class="code my-0 ml-5">Alt + S</span>
+                      </mat-list-item>
+                      <mat-list-item role="listitem">
+                        Execute
+                        <span class="code my-0 ml-5">F5</span>
+                      </mat-list-item>
+                    </mat-list>
+                  </mat-menu>
+                </div>
               </div>
           
               <div class="d-flex flex-lg-nowrap flex-wrap mb-lg-1 mb-2">
@@ -123,37 +151,7 @@
                     </button>
                 </div>
               </div>
-              <div class="d-md-flex d-none justify-content-end mb-2">
-                <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
-                  Shortkeys
-                </button>
-                <mat-menu #list="matMenu">
-                  <div class="p-3">
-                    <p class="d-flex flex-nowrap align-items-center justify-content-between">
-                      <span>
-                        <span class="d-block">Fullscreen</span>
-                        <span class="d-block">Exit fullscreen</span>
-                      </span>
-                      <span class="code my-0 ml-5">Alt + M</span>
-                    </p>
-                    <mat-divider class="mb-2"></mat-divider>
-                    <p class="d-flex flex-nowrap align-items-center justify-content-between">
-                      Load
-                      <span class="code my-0 ml-5">Alt + L</span>
-                    </p>
-                    <mat-divider class="mb-2"></mat-divider>
-                    <p class="d-flex flex-nowrap align-items-center justify-content-between">
-                      Save
-                      <span class="code my-0 ml-5">Alt + S</span>
-                    </p>
-                    <mat-divider class="mb-2"></mat-divider>
-                    <p class="d-flex flex-nowrap align-items-center justify-content-between mb-0">
-                      Execute
-                      <span class="code my-0 ml-5">F5</span>
-                    </p>
-                  </div>
-                </mat-menu>
-              </div>
+              
           
               <img
                 *ngIf="openFiles.length === 0"
