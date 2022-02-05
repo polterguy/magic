@@ -82,7 +82,7 @@ import { ConfigComponent } from './components/management/config/config.component
 import { CryptoComponent } from './components/management/crypto/crypto.component';
 import { UsersComponent } from './components/management/auth/users/users.component';
 import { RolesComponent } from './components/management/auth/roles/roles.component';
-import { SocketsComponent } from './components/sockets/sockets.component';
+import { SocketsComponent } from './components/analytics/sockets/sockets.component';
 import { ProfileComponent } from './components/management/profile/profile.component';
 import { InjectDirective } from './components/tools/crudifier/inject.directive';
 import { NavbarComponent } from './components/app/navbar/navbar.component';

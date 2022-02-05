@@ -19,7 +19,7 @@ import { AboutComponent } from './components/about/about.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
 import { ProfileComponent } from './components/management/profile/profile.component';
-import { SocketsComponent } from './components/sockets/sockets.component';
+import { SocketsComponent } from './components/analytics/sockets/sockets.component';
 import { TerminalComponent } from './components/tools/terminal/terminal.component';
 import { CrudifierComponent } from './components/tools/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/analytics/endpoints/endpoints.component';
