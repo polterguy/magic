@@ -29,7 +29,7 @@ import { ConfirmEmailComponent } from './components/management/auth/confirm-emai
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
 import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
 import { DiagnosticsCache } from './components/analytics/cache/cache.component';
-import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
+import { SocketsComponent } from './components/analytics/sockets/sockets.component';
 
 /**
  * Routes for application.
@@ -49,7 +49,7 @@ const routes: Routes = [
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'sockets', component: DiagnosticsSocketsComponent },
+  { path: 'sockets', component: SocketsComponent },
   { path: 'terminal', component: TerminalComponent },
   { path: 'file-system', component: FilesComponent },
   { path: 'register', component: RegisterComponent },
