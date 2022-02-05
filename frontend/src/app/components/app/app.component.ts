@@ -19,7 +19,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/components/management/auth/services/auth.service';
 import { LoaderService } from 'src/app/components/app/services/loader.service';
-import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
+import { DiagnosticsService } from '../../services/diagnostics.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**
