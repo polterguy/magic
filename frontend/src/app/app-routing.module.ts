@@ -26,7 +26,6 @@ import { EndpointsComponent } from './components/analytics/endpoints/endpoints.c
 import { EvaluatorComponent } from './components/tools/evaluator/evaluator.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/management/auth/register/register.component';
-import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
 import { DiagnosticsTestsComponent } from './components/analytics/diagnostics-assumptions/diagnostics-assumptions.component';
@@ -57,7 +56,6 @@ const routes: Routes = [
   { path: 'endpoints', component: EndpointsComponent },
   { path: 'evaluator', component: EvaluatorComponent },
   { path: 'crudifier', component: CrudifierComponent },
-  { path: 'diagnostics', component: DiagnosticsComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'assumptions', component: DiagnosticsTestsComponent },
   { path: 'change-password', component: ChangePasswordComponent },
