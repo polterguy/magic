@@ -47,6 +47,11 @@ export class FileObject {
    * All existing files in system.
    */
    files: string[];
+
+   /**
+    * Type of the dialog
+    */
+   type: string;
 }
 
 /**
@@ -95,7 +100,7 @@ export class NewFileFolderDialogComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
-
+    this.data.isFolder = this.data.type === 'folder';
     // Invoking backend to retrieve templates.
     this.fileService.listFiles('/misc/ide/templates/').subscribe((result: string[]) => {
 

@@ -33,12 +33,14 @@ $max_height_mobile: calc(100vh - 220px);
   mat-card {
     margin-bottom: 0;
   }
-
-  .files-section {
-    max-height: $max_height;
-    height: calc(100% - 2rem);
-    overflow: auto;
+  .codemirror-container{
+    height: 72vh;
+    overflow-y: auto;
     @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),8px);
+  }
+  .files-section {
+    max-height: calc(100vh - 85px);
+    overflow-x: auto;
     @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),2px);
     .mat-tree-node {
       height: 36px;
@@ -131,17 +133,5 @@ $max_height_mobile: calc(100vh - 220px);
   width: 30px;
   color: rgb(128, 128, 128);
 }
-
-::ng-deep .content-section .CodeMirror {
-  height: calc(100vh - 350px);
-  @media (min-width: 805px) and (max-width: 1024px){
-    height: calc(100vh - 400px);
-  }
-  @media (min-width: 576px) and (max-width: 805px){
-    height: calc(100vh - 450px);
-  }
-  @media (max-width: 575px) {
-    height: 300px;
-  }
-}
+::ng-deep .active-codemirror-editor .CodeMirror{height: 100% !important;}
 

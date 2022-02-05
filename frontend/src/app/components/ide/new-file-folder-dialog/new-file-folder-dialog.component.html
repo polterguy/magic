@@ -1,21 +1,22 @@
 
-<h1 mat-dialog-title>New {{data.isFolder ? 'folder' : 'file'}}</h1>
-
+<h1 mat-dialog-title>New {{data?.type}}</h1>
+<form>
 <div mat-dialog-content>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field class="w-100" appearance="outline">
     <mat-label class="dark">Folder</mat-label>
-    <mat-select [(ngModel)]="data.path" class="dark">
+    <mat-select [(ngModel)]="data.path" class="dark" name="path">
       <mat-option
         *ngFor="let idx of data.folders"
         [value]="idx">{{idx}}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="templates.length > 0 && !data.isFolder" class="fill-width" appearance="outline">
+  <mat-form-field *ngIf="templates.length > 0 && data.type === 'file'" class="w-100" appearance="outline">
     <mat-label class="dark">Template</mat-label>
     <mat-select
       [(ngModel)]="activeTemplate"
+      name="activeTemplate"
       (selectionChange)="templateChanged()"
       class="dark">
       <mat-option
@@ -24,7 +25,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field class="fill-width" appearance="outline">
+  <mat-form-field class="w-100" appearance="outline">
 
     <mat-label class="dark">Name</mat-label>
     <input
@@ -32,7 +33,9 @@
       type="text"
       matInput
       autocomplete="off"
-      [(ngModel)]="data.name">
+      [(ngModel)]="data.name"
+      name="name">
+    <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
   </mat-form-field>
 
 </div>
@@ -40,19 +43,22 @@
 <div mat-dialog-actions>
 
   <mat-checkbox
-    *ngIf="!data.isFolder"
+    *ngIf="data?.type === 'file'"
     [(ngModel)]="filterTemplates"
+    name="filterTemplates"
     matTooltip="Apply 'intelligent' filtering of templates"
     class="margin-right">Filter</mat-checkbox>
 
-  <mat-checkbox
+  <!-- <mat-checkbox
     [(ngModel)]="data.isFolder"
-    class="margin-right">Folder</mat-checkbox>
+    class="margin-right">Folder</mat-checkbox> -->
   
   <button
     mat-raised-button
     color="primary"
+    type="submit"
     [disabled]="!pathValid()"
     [mat-dialog-close]="data">Create</button>
 
 </div>
+</form>

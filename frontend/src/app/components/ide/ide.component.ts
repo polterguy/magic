@@ -291,7 +291,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Invoked when user wants to create a new file or folder.
    */
-  public createNewFileObject() {
+  public createNewFileObject(type: string) {
 
     // Retrieving all existing folders in system to allow user to select folder to create object within.
     const folders = this.getFolders();
@@ -308,6 +308,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         path: this.activeFolder,
         folders: folders,
         files: files,
+        type: type
       },
     });
 
