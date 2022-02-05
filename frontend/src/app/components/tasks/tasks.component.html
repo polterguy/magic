@@ -5,7 +5,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div class="d-flex flex-column">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-1">
               <mat-card-title class="my-0">Tasks</mat-card-title>
               <div class="sm-icons">
                 <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
@@ -27,22 +27,16 @@
             </div>
             <mat-card-subtitle>Administrate and schedule your tasks.</mat-card-subtitle>
           </div>
-          <button
-            mat-icon-button
-            [disabled]="!authService.access.tasks.create"
-            (click)="create()">
-            <mat-icon>add_box</mat-icon>
-          </button>
         </div>
-      
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Filter</mat-label>
-          <input
+        <div class="d-flex align-items-center w-100 mb-2">
+          <mat-form-field class="w-100 inline-input" appearance="outline">
+            <mat-label>Filter</mat-label>
+            <input
             matInput
             type="text"
             autocomplete="off"
             [formControl]="filterFormControl">
-          <mat-icon
+            <mat-icon
             matSuffix
             *ngIf="filterFormControl.value.trim() !== ''"
             class="button"
@@ -50,11 +44,19 @@
             (click)="clearFilter()">clear
           </mat-icon>
         </mat-form-field>
+        <button
+          mat-icon-button
+          [disabled]="!authService.access.tasks.create"
+          (click)="create()">
+          <mat-icon>add_box</mat-icon>
+        </button>
+
+        </div>
       
         <table
           mat-table
           [dataSource]="tasks"
-          class="tasks clickable"
+          class="w-100 expandable-table"
           multiTemplateDataRows>
       
           <ng-container matColumnDef="id">
@@ -62,7 +64,7 @@
           </ng-container>
       
           <ng-container matColumnDef="delete">
-            <td mat-cell class="mini-col button-col" *matCellDef="let el">
+            <td mat-cell class="text-right" *matCellDef="let el">
               <button
                 mat-icon-button
                 matTooltip="Delete task"
@@ -73,15 +75,16 @@
             </td>
           </ng-container>
       
-          <ng-container matColumnDef="show-details">
+          <ng-container matColumnDef="showDetails">
       
             <td
               mat-cell
               colspan="2"
               *matCellDef="let el">
-      
+              <div class="w-100 details-row"
+              [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
               <div
-                class="task-details"
+                class="w-100 py-3"
                 *ngIf="el.model">
       
                 <mat-form-field class="w-100" appearance="outline">
@@ -95,7 +98,7 @@
               
                 <app-codemirror-hyperlambda [(model)]="el.model"></app-codemirror-hyperlambda>
       
-                <div class="button-strip">
+                <div class="d-flex justify-content-end w-100">
                   <button
                     mat-icon-button
                     [disabled]="!authService.access.tasks.addDue"
@@ -103,7 +106,7 @@
                     (click)="schedule(el.task)">
                     <mat-icon>schedule</mat-icon>
                   </button>
-      
+                  <div class="p-1"></div>
                   <button
                     mat-icon-button
                     matTooltip="Update task"
@@ -112,7 +115,7 @@
                     <mat-icon>save</mat-icon>
                   </button>
                 </div>
-      
+                <div class="p-1" *ngIf="el.task.schedules"></div>
                 <div *ngIf="el.task.schedules">
                   <mat-chip-list>
                     <mat-chip
@@ -127,20 +130,24 @@
                   </mat-chip-list>
                 </div>
               </div>
+              </div>
             </td>
       
           </ng-container>
       
           <tr
             mat-row
-            [ngClass]="(el.model ? 'selected ' : '') + 'tasks-row'"
-            (click)="toggleDetails(el)"
+            [ngClass]="(expandedElement === el ? 'selected ' : '') + 'tasks-row'"
+            class="expandable-row"
+            (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
             *matRowDef="let el; columns: displayedColumns;"></tr>
       
-          <tr
+          <!-- <tr
             mat-row
             [ngClass]="el.model ? 'details' : 'invisible'"
-            *matRowDef="let el; columns: ['show-details'];"></tr>
+            *matRowDef="let el; columns: ['show-details'];"></tr> -->
+
+          <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
       
         </table>
       

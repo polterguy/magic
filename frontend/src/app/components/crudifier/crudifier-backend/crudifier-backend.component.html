@@ -1,4 +1,4 @@
-<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
+<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between my-1">
   <div class="d-flex align-items-center">
     <h3 class="my-0">Crudify backend</h3>
     <div class="sm-icons">
@@ -19,7 +19,7 @@
   </div>
 </div>
 <mat-card-subtitle>Generate HTTP CRUD endpoints.</mat-card-subtitle>
-<div class="d-flex">
+<div class="d-flex flex-sm-nowrap flex-wrap mt-4 w-100">
   <mat-form-field class="w-100" appearance="outline">
 
     <mat-label>Database</mat-label>
@@ -46,7 +46,7 @@
     </mat-select>
   
   </mat-form-field>
-  <div class="p-1"></div>
+  <div class="p-1" *ngIf="connectionString && databases && databases.databases.length > 0"></div>
   
   <mat-form-field *ngIf="connectionString && databases && databases.databases.length > 0" class="w-100" appearance="outline">
   
@@ -61,7 +61,7 @@
     </mat-select>
   
   </mat-form-field>
-  <div class="p-1"></div>
+  <div class="p-1" *ngIf="database && database.tables && database.tables.length > 0"></div>
   
   <mat-form-field *ngIf="database && database.tables && database.tables.length > 0" class="w-100" appearance="outline">
   

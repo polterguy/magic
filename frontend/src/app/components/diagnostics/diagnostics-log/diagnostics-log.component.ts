@@ -6,11 +6,11 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
 import { LogItem } from 'src/app/components/diagnostics/diagnostics-log/models/log-item.model';
 import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Log component for reading backend's log.
@@ -18,7 +18,14 @@ import { LogService } from 'src/app/components/diagnostics/diagnostics-log/servi
 @Component({
   selector: 'app-diagnostics-log',
   templateUrl: './diagnostics-log.component.html',
-  styleUrls: ['./diagnostics-log.component.scss']
+  styleUrls: ['./diagnostics-log.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class LogComponent implements OnInit {
 
@@ -34,7 +41,7 @@ export class LogComponent implements OnInit {
    * Currently viewed log items.
    */
   public items: LogItem[] = [];
-
+  public expandedElement: LogItem | null;
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
@@ -57,7 +64,6 @@ export class LogComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
-
     // Retrieving initial items.
     this.getItems();
 
@@ -154,5 +160,21 @@ export class LogComponent implements OnInit {
    */
   public feedMore() {
     this.getItems();
+  }
+
+  /**
+   * 
+   * @param e - scrolling event
+   */
+  onTableScroll(e: any) {
+    const clientHeight = e.target.clientHeight // viewport
+    const tableScrollHeight = e.target.scrollHeight // length of all table
+    const scrollLocation = e.target.scrollTop; // how far user scrolled
+
+    // If the user has scrolled within 500px of the bottom, add more data
+    const limit = tableScrollHeight - scrollLocation === clientHeight;   
+    if (limit && (this.items.length < this.count)) {
+      this.getItems();
+    }
   }
 }
