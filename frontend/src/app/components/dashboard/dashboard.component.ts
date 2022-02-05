@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../management/auth/services/auth.service';
 import { DashboardService } from './services/dashboard.service';
 
 import { LogTypes, SystemReport, Timeshifts } from './models/dashboard.model';

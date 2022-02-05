@@ -12,12 +12,12 @@ import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
-import { AuthService } from 'src/app/components/auth/services/auth.service';
+import { AuthService } from 'src/app/components/management/auth/services/auth.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { DiagnosticsService } from '../../diagnostics/services/diagnostics.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../config/services/config.service';
-import { BazarService } from '../../bazar/services/bazar.service';
+import { ConfigService } from '../../management/config/services/config.service';
+import { BazarService } from '../../management/bazar/services/bazar.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**

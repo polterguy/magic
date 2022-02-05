@@ -10,7 +10,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from '../../../services/feedback.service';
 import { FileService } from 'src/app/components/files/services/file.service';
-import { EvaluatorService } from 'src/app/components/evaluator/services/evaluator.service';
+import { EvaluatorService } from 'src/app/components/tools/evaluator/services/evaluator.service';
 
 // CodeMirror options according to file extensions.
 import fileTypes from './file-types.json';
