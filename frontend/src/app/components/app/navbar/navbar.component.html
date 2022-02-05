@@ -234,12 +234,12 @@
     </mat-expansion-panel>
     <!-- management -->
     <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || password?.isActive || !sideNavStatus" 
+      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
       *ngIf="(authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.bazar.get_manifests || authService.access.config.load">
       <mat-expansion-panel-header 
       *ngIf="sideNavStatus"
-      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || password?.isActive}">
+      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || profile?.isActive}">
         <mat-panel-title>
           <mat-icon>manage_accounts</mat-icon>
           <span class="title">Management</span>
@@ -306,19 +306,19 @@
             <span class="title">Bazaar</span>
           </ng-container>
         </mat-list-option>
-        <!-- password -->
+        <!-- profile -->
         <mat-list-option 
           [style.display]="authService.authenticated ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Change password" 
+          matTooltip="Edit your profile" 
           routerLink="/profile" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
-          #password="routerLinkActive"
+          #profile="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.authenticated">
             <mat-icon>compare_arrows</mat-icon>
-            <span class="title">Password</span>
+            <span class="title">Profile</span>
           </ng-container>
         </mat-list-option>
       </mat-selection-list>
