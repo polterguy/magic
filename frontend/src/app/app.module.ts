@@ -113,7 +113,7 @@ import { CrudifyDatabaseComponent } from './components/management/config/setup/c
 import { CrudBackendComponent } from './components/tools/crudifier/crud-backend/crud-backend.component';
 import { CrudFrontendComponent } from './components/tools/crudifier/crud-frontend/crud-frontend.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
-import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
+import { SocketsComponent } from './components/analytics/sockets/sockets.component';
 import { CrudifierTableComponent } from './components/tools/crudifier/crud-backend/crud-table/crud-table.component';
 import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
 import { CrudSqlExtraComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-extra.component';
@@ -234,7 +234,7 @@ import { PieChartComponent } from './components/dashboard/component/pie-chart/pi
     ToolbarHelpDialogComponent,
     IdeComponent,
     TerminalComponent,
-    DiagnosticsSocketsComponent,
+    SocketsComponent,
     BazarComponent,
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,

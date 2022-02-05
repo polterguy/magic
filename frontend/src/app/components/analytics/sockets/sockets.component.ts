@@ -27,9 +27,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
  * Sockets diagnostic component, allowing to see current connections grouped by users.
  */
 @Component({
-  selector: 'app-diagnostics-sockets',
-  templateUrl: './diagnostics-sockets.component.html',
-  styleUrls: ['./diagnostics-sockets.component.scss'],
+  selector: 'app-sockets',
+  templateUrl: './sockets.component.html',
+  styleUrls: ['./sockets.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -38,7 +38,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     ])
   ]
 })
-export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
+export class SocketsComponent implements OnInit, OnDestroy {
 
   /**
    * Users connected to a socket according to filtering condition,
@@ -61,12 +61,6 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * What users are currently being edited and viewed.
    */
   public selectedUsers: string[] = [];
-
-  /**
-   * Whether or not we should allow for creating subscriptions,
-   * or this is purely a "diagnostic view".
-   */
-  @Input() public createSubscriptions: boolean;
 
   /**
    * Paginator for paging table.
@@ -271,11 +265,6 @@ export class DiagnosticsSocketsComponent implements OnInit, OnDestroy {
    * @param connection Which connection to transmit message to
    */
    public sendMessageToConnection(connection: string) {
-
-    // Ensuring component was initialised in a state that allows for publishing messages.
-    if (!this.createSubscriptions || !this.authService.access.sockets.send) {
-      return;
-    }
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(PublishComponent, {

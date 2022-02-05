@@ -48,7 +48,6 @@
             <div class="d-flex">
               <button
                 mat-raised-button
-                *ngIf="createSubscriptions === true"
                 color="primary"
                 class="button"
                 (click)="subscribe()">
@@ -57,7 +56,6 @@
               <div class="p-1"></div>
               <button
                 mat-raised-button
-                *ngIf="createSubscriptions === true"
                 [disabled]="!authService.access.sockets.send"
                 color="primary"
                 class="button"
