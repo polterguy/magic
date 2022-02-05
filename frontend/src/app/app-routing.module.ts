@@ -9,7 +9,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
 import { IdeComponent } from './components/tools/ide/ide.component';
-import { LogComponent } from './components/analytics/diagnostics-log/diagnostics-log.component';
+import { LogComponent } from './components/analytics/log/diagnostics-log.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
 import { AuthComponent } from './components/management/auth/auth.component';
 import { TasksComponent } from './components/tools/tasks/tasks.component';
@@ -19,7 +19,6 @@ import { AboutComponent } from './components/about/about.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
 import { ProfileComponent } from './components/management/profile/profile.component';
-import { SocketsComponent } from './components/analytics/sockets/sockets.component';
 import { TerminalComponent } from './components/tools/terminal/terminal.component';
 import { CrudifierComponent } from './components/tools/crudifier/crudifier.component';
 import { EndpointsComponent } from './components/analytics/endpoints/endpoints.component';
@@ -28,8 +27,9 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/management/auth/register/register.component';
 import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
-import { DiagnosticsTestsComponent } from './components/analytics/diagnostics-assumptions/diagnostics-assumptions.component';
-import { DiagnosticsCache } from './components/analytics/diagnostics-cache/diagnostics-cache.component';
+import { DiagnosticsTestsComponent } from './components/analytics/assumptions/diagnostics-assumptions.component';
+import { DiagnosticsCache } from './components/analytics/cache/diagnostics-cache.component';
+import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
 
 /**
  * Routes for application.
@@ -49,7 +49,7 @@ const routes: Routes = [
   { path: 'config', component: ConfigComponent },
   { path: 'crypto', component: CryptoComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'sockets', component: SocketsComponent },
+  { path: 'sockets', component: DiagnosticsSocketsComponent },
   { path: 'terminal', component: TerminalComponent },
   { path: 'file-system', component: FilesComponent },
   { path: 'register', component: RegisterComponent },

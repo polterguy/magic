@@ -69,7 +69,7 @@ import { LoaderInterceptor } from './components/app/services/loader.interceptor'
 
 // Application specific normal components.
 import { IdeComponent } from './components/tools/ide/ide.component';
-import { LogComponent } from './components/analytics/diagnostics-log/diagnostics-log.component';
+import { LogComponent } from './components/analytics/log/diagnostics-log.component';
 import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
 import { AuthComponent } from './components/management/auth/auth.component';
@@ -82,7 +82,6 @@ import { ConfigComponent } from './components/management/config/config.component
 import { CryptoComponent } from './components/management/crypto/crypto.component';
 import { UsersComponent } from './components/management/auth/users/users.component';
 import { RolesComponent } from './components/management/auth/roles/roles.component';
-import { SocketsComponent } from './components/analytics/sockets/sockets.component';
 import { ProfileComponent } from './components/management/profile/profile.component';
 import { InjectDirective } from './components/tools/crudifier/inject.directive';
 import { NavbarComponent } from './components/app/navbar/navbar.component';
@@ -102,21 +101,21 @@ import { ConfigEditorComponent } from './components/management/config/config-edi
 import { CrudifierSqlComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql.component';
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
-import { DiagnosticsCache } from './components/analytics/diagnostics-cache/diagnostics-cache.component';
-import { PublishComponent } from './components/analytics/diagnostics-sockets/publish/publish.component';
+import { DiagnosticsCache } from './components/analytics/cache/diagnostics-cache.component';
+import { PublishComponent } from './components/analytics/sockets/publish/publish.component';
 import { GenerateCrudAppComponent } from './components/tools/ide/generate-crud-app/generate-crud-app.component';
 import { CreateKeypairComponent } from './components/management/config/setup/create-keypair/create-keypair.component';
 import { ServerPublicKeyComponent } from './components/management/crypto/server-public-key/server-public-key.component';
 import { EndpointDetailsComponent } from './components/analytics/endpoints/endpoint-details/endpoint-details.component';
-import { SubscribeComponent } from './components/analytics/diagnostics-sockets/subscribe/subscribe.component';
+import { SubscribeComponent } from './components/analytics/sockets/subscribe/subscribe.component';
 import { CryptoInvocationsComponent } from './components/management/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/management/config/setup/crudify-database/crudify-database.component';
 import { CrudifierBackendComponent } from './components/tools/crudifier/crudifier-backend/crudifier-backend.component';
 import { CrudifierFrontendComponent } from './components/tools/crudifier/crudifier-frontend/crudifier-frontend.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
-import { DiagnosticsSocketsComponent } from './components/analytics/diagnostics-sockets/diagnostics-sockets.component';
+import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
 import { CrudifierTableComponent } from './components/tools/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
-import { DiagnosticsTestsComponent } from './components/analytics/diagnostics-assumptions/diagnostics-assumptions.component';
+import { DiagnosticsTestsComponent } from './components/analytics/assumptions/diagnostics-assumptions.component';
 import { CrudifierSqlExtraComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
 import { CrudifierSetDefaultsComponent } from './components/tools/crudifier/crudifier-backend/crudifier-set-defaults/crudifier-set-defaults.component';
 import { CrudifierFrontendExtraComponent } from './components/tools/crudifier/crudifier-frontend/crudifier-frontend-extra/crudifier-frontend-extra.component';
@@ -236,7 +235,6 @@ import { PieChartComponent } from './components/dashboard/component/pie-chart/pi
     IdeComponent,
     TerminalComponent,
     DiagnosticsSocketsComponent,
-    SocketsComponent,
     BazarComponent,
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,

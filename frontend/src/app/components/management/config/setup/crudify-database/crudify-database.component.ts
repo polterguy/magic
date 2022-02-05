@@ -11,14 +11,14 @@ import { Component, OnInit } from '@angular/core';
 import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from 'src/app/components/analytics/diagnostics-log/services/log.service';
+import { LogService } from 'src/app/components/analytics/log/services/log.service';
 import { SqlService } from 'src/app/components/tools/sql/services/sql.service';
 import { Crudify } from 'src/app/components/tools/crudifier/models/crudify.model';
 import { AuthService } from 'src/app/components/management/auth/services/auth.service';
 import { DefaultDatabaseType } from '../../models/default-database-type.model';
 import { LocResult } from 'src/app/components/tools/crudifier/models/loc-result.model';
 import { CrudifyService } from 'src/app/components/tools/crudifier/services/crudify.service';
-import { CacheService } from 'src/app/components/analytics/diagnostics-cache/services/cache.service';
+import { CacheService } from 'src/app/components/analytics/cache/services/cache.service';
 
 // CodeMirror options.
 import json from '../../../../codemirror/options/json.json'

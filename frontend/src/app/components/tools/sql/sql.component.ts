@@ -19,7 +19,7 @@ import { Databases } from 'src/app/components/tools/sql/models/databases.model';
 import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
 import { DefaultDatabaseType } from '../../management/config/models/default-database-type.model';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
-import { CacheService } from '../../analytics/diagnostics-cache/services/cache.service';
+import { CacheService } from '../../analytics/cache/services/cache.service';
 
 // CodeMirror options.
 import sql from '../../codemirror/options/sql.json'
