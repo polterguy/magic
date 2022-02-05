@@ -39,7 +39,8 @@ hr{
 .warning {
   color: $magic_warning!important;
 }
-
+.error-bg{background-color: $magic_error!important;}
+.error-text{color: $magic_error!important;}
 .fill-width {
   width: 100%;
 }
