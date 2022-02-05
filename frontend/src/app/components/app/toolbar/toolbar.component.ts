@@ -14,7 +14,7 @@ import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AuthService } from 'src/app/components/auth/services/auth.service';
+import { AuthService } from 'src/app/components/management/auth/services/auth.service';
 import { ToolbarHelpDialogComponent } from './toolbar-help-dialog/toolbar-help-dialog.component';
 import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
 

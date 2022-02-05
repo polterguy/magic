@@ -16,7 +16,7 @@ import { FileService } from 'src/app/components/files/services/file.service';
 import { DownloadFileDialogComponent } from './download-file-dialog/download-file-dialog.component';
 import { FileObject, NewFileObjectDialogComponent } from './new-file-object-dialog/new-file-object-dialog.component';
 import { RenameFileObject, RenameFileObjectDialogComponent } from './rename-file-object-dialog/rename-file-object-dialog.component';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../management/auth/services/auth.service';
 
 /**
  * Files component to allow user to browse his dynamic files folder,

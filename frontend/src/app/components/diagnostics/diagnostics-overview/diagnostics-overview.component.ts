@@ -10,11 +10,11 @@ import { Component, OnInit } from '@angular/core';
 import { Count } from 'src/app/models/count.model';
 import { Endpoint } from 'src/app/models/endpoint.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
-import { UserService } from 'src/app/components/auth/services/user.service';
-import { RoleService } from 'src/app/components/auth/services/role.service';
-import { AuthService } from 'src/app/components/auth/services/auth.service';
-import { TaskService } from 'src/app/components/tasks/services/task.service';
+import { LogService } from 'src/app/components/analytics/diagnostics-log/services/log.service';
+import { UserService } from 'src/app/components/management/auth/services/user.service';
+import { RoleService } from 'src/app/components/management/auth/services/role.service';
+import { AuthService } from 'src/app/components/management/auth/services/auth.service';
+import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
 import { DiagnosticsService } from 'src/app/components/diagnostics/services/diagnostics.service';
 
 /**

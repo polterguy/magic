@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { Component } from '@angular/core';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../management/auth/services/auth.service';
 
 /**
  * Diagnostics component to display meta information related to the system's health, such

@@ -8,29 +8,29 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
-import { IdeComponent } from './components/ide/ide.component';
-import { LogComponent } from './components/diagnostics/diagnostics-log/diagnostics-log.component';
-import { SqlComponent } from './components/sql/sql.component';
-import { AuthComponent } from './components/auth/auth.component';
-import { TasksComponent } from './components/tasks/tasks.component';
-import { BazarComponent } from './components/bazar/bazar.component';
+import { IdeComponent } from './components/tools/ide/ide.component';
+import { LogComponent } from './components/analytics/diagnostics-log/diagnostics-log.component';
+import { SqlComponent } from './components/tools/sql/sql.component';
+import { AuthComponent } from './components/management/auth/auth.component';
+import { TasksComponent } from './components/tools/tasks/tasks.component';
+import { BazarComponent } from './components/management/bazar/bazar.component';
 import { FilesComponent } from './components/files/files.component';
 import { AboutComponent } from './components/about/about.component';
-import { ConfigComponent } from './components/config/config.component';
-import { CryptoComponent } from './components/crypto/crypto.component';
-import { ProfileComponent } from './components/profile/profile.component';
+import { ConfigComponent } from './components/management/config/config.component';
+import { CryptoComponent } from './components/management/crypto/crypto.component';
+import { ProfileComponent } from './components/management/profile/profile.component';
 import { SocketsComponent } from './components/sockets/sockets.component';
-import { TerminalComponent } from './components/terminal/terminal.component';
-import { CrudifierComponent } from './components/crudifier/crudifier.component';
-import { EndpointsComponent } from './components/endpoints/endpoints.component';
-import { EvaluatorComponent } from './components/evaluator/evaluator.component';
+import { TerminalComponent } from './components/tools/terminal/terminal.component';
+import { CrudifierComponent } from './components/tools/crudifier/crudifier.component';
+import { EndpointsComponent } from './components/analytics/endpoints/endpoints.component';
+import { EvaluatorComponent } from './components/tools/evaluator/evaluator.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { RegisterComponent } from './components/auth/register/register.component';
+import { RegisterComponent } from './components/management/auth/register/register.component';
 import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
-import { ConfirmEmailComponent } from './components/auth/confirm-email/confirm-email.component';
-import { ChangePasswordComponent } from './components/auth/change-password/change-password.component';
-import { DiagnosticsTestsComponent } from './components/diagnostics/diagnostics-assumptions/diagnostics-assumptions.component';
-import { DiagnosticsCache } from './components/diagnostics/diagnostics-cache/diagnostics-cache.component';
+import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
+import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
+import { DiagnosticsTestsComponent } from './components/analytics/diagnostics-assumptions/diagnostics-assumptions.component';
+import { DiagnosticsCache } from './components/analytics/diagnostics-cache/diagnostics-cache.component';
 
 /**
  * Routes for application.
