@@ -23,6 +23,7 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 // CodeMirror options.
 import hyperlambda from '../codemirror/options/hyperlambda.json';
 import { AuthService } from '../auth/services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /*
  * Helper class to encapsulate a task and its details,
@@ -44,7 +45,14 @@ class TaskEx {
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
-  styleUrls: ['./tasks.component.scss']
+  styleUrls: ['./tasks.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class TasksComponent implements OnInit {
 
@@ -52,7 +60,7 @@ export class TasksComponent implements OnInit {
    * Tasks that are currently being viewed.
    */
   public tasks: TaskEx[] = null;
-
+  public expandedElement: any;
   /**
    * Visible columns in data table.
    */
