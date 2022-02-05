@@ -115,7 +115,7 @@ import { CrudifierFrontendComponent } from './components/tools/crudifier/crudifi
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
 import { CrudifierTableComponent } from './components/tools/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
-import { DiagnosticsTestsComponent } from './components/analytics/assumptions/diagnostics-assumptions.component';
+import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
 import { CrudifierSqlExtraComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
 import { CrudifierSetDefaultsComponent } from './components/tools/crudifier/crudifier-backend/crudifier-set-defaults/crudifier-set-defaults.component';
 import { CrudifierFrontendExtraComponent } from './components/tools/crudifier/crudifier-frontend/crudifier-frontend-extra/crudifier-frontend-extra.component';

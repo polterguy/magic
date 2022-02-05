@@ -27,7 +27,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/management/auth/register/register.component';
 import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
-import { DiagnosticsTestsComponent } from './components/analytics/assumptions/diagnostics-assumptions.component';
+import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
 import { DiagnosticsCache } from './components/analytics/cache/diagnostics-cache.component';
 import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
 
