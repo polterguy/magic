@@ -18,7 +18,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { ConfigService } from '../management/config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
+import { DiagnosticsService } from '../../services/diagnostics.service';
 import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
