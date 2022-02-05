@@ -1,8 +1,8 @@
 
-<div class="row">
+<div class="row h-100">
   <div class="col-12">
-    <mat-card [class]="isConnected ? 'terminal' : 'terminal closed'">
-      <mat-card-content>
+    <mat-card [class]="isConnected ? 'terminal' : 'terminal closed'" class="h-100 overflow-hidden">
+      <mat-card-content class="h-100 d-flex flex-column w-100">
         <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
           <div class="d-flex align-items-center">
             <mat-card-title class="my-0">Terminal</mat-card-title>
@@ -49,7 +49,7 @@
           </div>
         </div>
         <mat-card-subtitle>Lorem ipsum dolor sit amet consectetur adipisicing elit.</mat-card-subtitle>
-        <div #terminal></div>
+        <div #terminal class="h-100"></div>
       </mat-card-content>
     </mat-card>
   </div>

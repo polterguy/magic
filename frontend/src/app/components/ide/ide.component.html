@@ -70,8 +70,9 @@
       [ngClass]="{'col-xl-9 col-md-8 col-sm-7 col-12 pl-sm-2 mt-sm-0 mt-3': expandSide}"
       [class.w-100]="!expandSide">
         <mat-card class="h-100">
-          <mat-card-content>
-            <div class="content-section d-flex flex-column w-100">
+          <mat-card-content class="h-100">
+            <div class="content-section d-flex flex-column w-100 h-100">
+              <!-- title and short keys -->
               <div class="d-flex align-items-center justify-content-between mb-2">
                 <p class="active-path my-0">{{activeFolder}}</p>
                   <div class="d-flex align-items-center">
@@ -117,8 +118,8 @@
                     </mat-menu>
                   </div>
               </div>
-          
-              <div class="d-flex flex-lg-nowrap flex-wrap mb-lg-1 mb-2">
+              <!-- form and action buttons -->
+              <div class="d-flex pb-2 align-items-center">
                 <mat-form-field appearance="outline" class="w-100 inline-input mb-lg-0 mb-1">
                   <mat-label>Open files ...</mat-label>
                   <mat-select
@@ -130,39 +131,53 @@
                   </mat-select>
                 </mat-form-field>
                 <div class="p-xl-1"></div>
-          
-                <div class="d-flex flex-nowrap">
+                <div>
+                  <button mat-icon-button [matMenuTriggerFor]="actions" matTooltip="Action buttons">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions="matMenu">
                     <button
                       [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      mat-icon-button
-                      [matTooltip]="'Delete folder \'' + activeFolder + '\' ALT+X'"
+                      mat-menu-item
+                      [matTooltip]="'Delete folder \'' + activeFolder + '\' [ALT+X]'"
                       (click)="deleteActiveFolder()">
                       <mat-icon>delete</mat-icon>
+                      Delete
                     </button>
-
                     <button
-                      mat-icon-button
-                      matTooltip="Execute a macro ALT+O"
+                      mat-menu-item
+                      matTooltip="Execute a macro [ALT+O]"
                       (click)="selectMacro()">
                       <mat-icon>model_training</mat-icon>
+                      Execute
                     </button>
-
                     <button
-                      mat-icon-button
+                      mat-menu-item
                       [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
                       matTooltip="Generate CRUD apps"
                       (click)="generateCrudApp()">
                       <mat-icon>compare_arrows</mat-icon>
+                      Generate CRUD
                     </button>
-                    <div class="p-1"></div>
                     <button
-                      mat-mini-fab
+                      mat-menu-item
                       [disabled]="!authService.access.files.create_folder"
                       color="primary"
-                      matTooltip="Create or add new file or folder to active folder ALT+A"
-                      (click)="createNewFileObject()">
-                      <mat-icon>add</mat-icon>
+                      matTooltip="Create or add new folder to the active folder [ALT+A]"
+                      (click)="createNewFileObject('folder')">
+                      <mat-icon>create_new_folder</mat-icon>
+                      New folder
                     </button>
+                    <button
+                      mat-menu-item
+                      [disabled]="!authService.access.files.create_folder"
+                      color="primary"
+                      matTooltip="Add new file to the active folder [ALT+A]"
+                      (click)="createNewFileObject('file')">
+                      <mat-icon>note_add</mat-icon>
+                      New file
+                    </button>
+                  </mat-menu>
                 </div>
               </div>
               
@@ -174,18 +189,18 @@
                 matTooltip="Hyper IDE, when you're in a hurry!"
                 alt="Hyper IDE, when you're in a hurry">
           
-              <div class="h-100">
+              <!-- <div class="h-100"> -->
           
                 <div *ngFor="let file of openFiles" class="d-flex flex-column w-100 h-100">
           
-                  <div [class]="file.path === activeFile ? 'active-codemirror-editor' : 'invisible'" class="h-100">
+                  <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'invisible'" class="h-100">
           
-                    <ngx-codemirror
+                    <ngx-codemirror class="codemirror-container"
                       [(ngModel)]="file.content"
                       [options]="file.options">
                     </ngx-codemirror>
           
-                    <div class="d-flex justify-content-around align-items-center flex-wrap my-2">
+                    <div class="d-flex justify-content-around align-items-center flex-wrap mt-2">
           
                       <button
                         mat-button
@@ -244,7 +259,7 @@
           
                 </div>
           
-              </div>
+              <!-- </div> -->
             </div>
           </mat-card-content>
         </mat-card>
