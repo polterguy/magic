@@ -21,6 +21,7 @@ import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperl
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
 import { AuthService } from '../../auth/services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /*
  * Test model encapsulating a single test, and possibly its result.
@@ -43,7 +44,14 @@ class TestModel {
 @Component({
   selector: 'app-diagnostics-assumptions',
   templateUrl: './diagnostics-assumptions.component.html',
-  styleUrls: ['./diagnostics-assumptions.component.scss']
+  styleUrls: ['./diagnostics-assumptions.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class DiagnosticsTestsComponent implements OnInit {
 
@@ -55,6 +63,7 @@ export class DiagnosticsTestsComponent implements OnInit {
    */
   public tests: TestModel[] = [];
 
+  public expandedElement: any;
   /**
    * What tests are currently being edited and viewed.
    */
