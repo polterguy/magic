@@ -73,21 +73,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.term.loadAddon(fitAddon);
     this.term.open(this.terminal.nativeElement);
     fitAddon.fit();
-    // (async () => {
-    //   while (!document.querySelector('.xterm'))
-    //     await new Promise(resolve => setTimeout(resolve, 100));
-    //   // (document.querySelector('.xterm') as HTMLElement).style.height = "100%";
-    //   // (document.querySelector('.xterm') as HTMLElement).style.width = "100%";
-    //   // (document.querySelector('.xterm-screen') as HTMLElement).style.width = "97%";
-    //   // (document.querySelector('.xterm-text-layer') as HTMLElement).style.width = "100%";
-    //   // (document.querySelector('.xterm-selection-layer') as HTMLElement).style.width = "100%";
-    //   // (document.querySelector('.xterm-link-layer') as HTMLElement).style.width = "100%";
-    //   // (document.querySelector('.xterm-cursor-layer') as HTMLElement).style.width = "100%";
-    //   // (document.querySelector('.xterm-text-layer') as HTMLElement).style.right = "0";
-    //   // (document.querySelector('.xterm-selection-layer') as HTMLElement).style.right = "0";
-    //   // (document.querySelector('.xterm-link-layer') as HTMLElement).style.right = "0";
-    //   // (document.querySelector('.xterm-cursor-layer') as HTMLElement).style.right = "0";
-    // })();
 
     // Accepting input.
     this.term.write('$ ');
