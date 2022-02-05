@@ -1,6 +1,6 @@
 <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
   <div class="d-flex align-items-center">
-    <h3 class="my-0">Crudify ...</h3>
+    <h3 class="my-0">SQL endpoints</h3>
     <div class="sm-icons">
       <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
         <mat-icon>help_outline</mat-icon>
@@ -8,14 +8,15 @@
       <mat-menu #menu="matMenu">
         <div class="p-3">
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem autem consequatur explicabo architecto sequi asperiores odit minima incidunt error facilis, animi eaque a pariatur magnam doloribus libero ad. Voluptatum, harum!
+            Here you can provide Magic with SQL and automatically wrap your SQL into HTTP endpoint(s), having Magic
+            automatically take care of wiring of everything for you.
           </p>
         </div>
       </mat-menu>
     </div>
   </div>
 </div>
-<mat-card-subtitle>Lorem ipsum dolor sit amet consectetur adipisicing elit.</mat-card-subtitle>
+<mat-card-subtitle>Create SQL based HTTP endpoints.</mat-card-subtitle>
 <div class="d-flex flex-sm-nowrap flex-wrap" *ngIf="input">
 
   <mat-form-field class="w-100" appearance="outline">
