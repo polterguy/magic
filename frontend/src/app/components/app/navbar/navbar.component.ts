@@ -31,7 +31,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 export class NavbarComponent implements OnInit {
 
   public currentYear: number;
-  public nextYear: number;
+
   /**
    * get navbar state as an input from app component
    */
@@ -86,7 +86,6 @@ export class NavbarComponent implements OnInit {
     this.retrieveBackendVersion();
 
     this.currentYear = new Date().getFullYear();
-    this.nextYear = this.currentYear + 1;
 
     // setting theme value, if user has set previously, otherwise is set to light 
     this.theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
