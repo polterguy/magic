@@ -1,4 +1,21 @@
-
+<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
+  <div class="d-flex align-items-center">
+    <h3 class="my-0">System's endpoints</h3>
+    <div class="sm-icons">
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <div class="p-3">
+          <p>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem autem consequatur explicabo architecto sequi asperiores odit minima incidunt error facilis, animi eaque a pariatur magnam doloribus libero ad. Voluptatum, harum!
+          </p>
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+</div>
+<mat-card-subtitle>Lorem ipsum dolor sit amet consectetur adipisicing elit.</mat-card-subtitle>
 <ngx-codemirror
   *ngIf="crudifyContent"
   [(ngModel)]="crudifyContent"
