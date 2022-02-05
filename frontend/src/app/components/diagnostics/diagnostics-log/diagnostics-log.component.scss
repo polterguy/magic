@@ -1,12 +1,15 @@
 
 .count {
-  position: absolute;
-  top: 1rem;
-  right: .5rem;
   color: #aaa;
   font-size: .8rem;
   font-style: italic;
 }
+.pre-formatted {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.fixed-min-width{min-width: 100px;}
+.infinite-scrolling-table-wrapper{max-height: 83vh;overflow-y: auto;}
 
 .more-btn {
   display: block;

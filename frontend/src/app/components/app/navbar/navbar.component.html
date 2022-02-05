@@ -387,13 +387,14 @@
     </mat-expansion-panel>
   </mat-accordion>
   <!-- theme -->
-  <mat-divider *ngIf="sideNavStatus" class="mt-4"></mat-divider>
+  <mat-divider class="mt-4"></mat-divider>
   <button mat-button class="ml-2 mr-1"
-  *ngIf="sideNavStatus"
   (click)="themeChanged(theme === 'light' ? 'dark' : 'light')" 
-  [color]="theme === 'dark' ? 'accent' : ''">
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="theme-title">{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
+  [color]="theme === 'dark' ? 'accent' : ''"
+  [class.theme-btn]="!sideNavStatus">
+    <div class="d-flex align-items-center justify-content-between" [class.flex-column]="!sideNavStatus">
+      <div class="theme-title" [class.d-none]="!sideNavStatus">{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
+      <div class="theme-title" [class.d-none]="sideNavStatus">{{(theme === 'light' ? 'Dark' : 'Light') + ' theme'}}</div>
       <div class="switch-theme {{theme}}">
         <span class="light-icon">
           <mat-icon>light_mode</mat-icon>

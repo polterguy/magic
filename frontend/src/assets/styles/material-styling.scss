@@ -58,10 +58,12 @@ table.mat-table{
     tr.expanded-row{
         height: 0;
         background-color: transparentize($color: $magic_default_alternative, $amount: 0.9);
-    }
-    .expandable-row {
+      }
+      .expandable-row {
         cursor: pointer;
-        &.selected{
+        @include general_transition(0.3s);
+        &.selected,
+        &:hover{
             background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
         }
         td {
@@ -110,6 +112,7 @@ Material menu
     justify-content: space-between;
   }
 }
+.dark .mat-menu-content{color: white;}
 /*=-=-=-=-=-=
 Material list
 =-=-=-=-=-=*/
