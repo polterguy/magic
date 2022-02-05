@@ -11,10 +11,10 @@ import { MatDialogRef } from '@angular/material/dialog';
  * Modal dialog allowing the user to create a new argument for an SQL type of endpoint.
  */
 @Component({
-  selector: 'app-crudifier-sql-add-argument-dialog',
-  templateUrl: './crudifier-sql-add-argument-dialog.component.html',
+  selector: 'app-crud-sql-add-argument-dialog',
+  templateUrl: './crud-sql-add-argument-dialog.component.html',
 })
-export class CrudifierSqlAddArgumentDialogComponent {
+export class CrudSqlAddArgumentDialogComponent {
 
   /**
    * Types of argument user can add.
@@ -46,7 +46,7 @@ export class CrudifierSqlAddArgumentDialogComponent {
    * 
    * @param dialogRef Needed to be able to close modal dialog
    */
-  constructor(private dialogRef: MatDialogRef<CrudifierSqlAddArgumentDialogComponent>) { }
+  constructor(private dialogRef: MatDialogRef<CrudSqlAddArgumentDialogComponent>) { }
 
   /**
    * Returns true if argument name is valid.

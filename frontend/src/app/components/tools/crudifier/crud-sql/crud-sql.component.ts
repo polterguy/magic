@@ -15,7 +15,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
 import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
-import { CrudifierSqlExtraComponent } from './crudifier-sql-extra/crudifier-sql-extra.component';
+import { CrudSqlExtraComponent } from './crud-sql-extra/crud-sql-extra.component';
 
 // CodeMirror options.
 import sqlOptions from '../../../codemirror/options/sql.json'
@@ -24,11 +24,11 @@ import sqlOptions from '../../../codemirror/options/sql.json'
  * Component allowing user to generate an SQL based endpoint.
  */
 @Component({
-  selector: 'app-crudifier-sql',
-  templateUrl: './crudifier-sql.component.html',
-  styleUrls: ['./crudifier-sql.component.scss']
+  selector: 'app-crud-sql',
+  templateUrl: './crud-sql.component.html',
+  styleUrls: ['./crud-sql.component.scss']
 })
-export class CrudifierSqlComponent implements OnInit {
+export class CrudSqlComponent implements OnInit {
 
   // Database declaration as returned from server
   private databaseDeclaration: Databases = null;
@@ -181,7 +181,7 @@ export class CrudifierSqlComponent implements OnInit {
     });
 
     // Creating our component.
-    const componentFactory = this.resolver.resolveComponentFactory(CrudifierSqlExtraComponent);
+    const componentFactory = this.resolver.resolveComponentFactory(CrudSqlExtraComponent);
 
     /*
      * Signaling listener, passing in component as data, which will dynamically inject our
