@@ -15,7 +15,7 @@ import { LocResult } from '../models/loc-result.model';
 import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
 import { SqlService } from '../../sql/services/sql.service';
-import { LogService } from '../../../analytics/diagnostics-log/services/log.service';
+import { LogService } from '../../../analytics/log/services/log.service';
 import { Databases } from '../../sql/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
 import { AuthService } from '../../../management/auth/services/auth.service';
@@ -25,7 +25,7 @@ import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
 import { TransformModelService } from '../services/transform-model.service';
 import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
 import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
-import { CacheService } from '../../../analytics/diagnostics-cache/services/cache.service';
+import { CacheService } from '../../../analytics/cache/services/cache.service';
 import { CrudifierSetDefaultsComponent } from './crudifier-set-defaults/crudifier-set-defaults.component';
 
 /**

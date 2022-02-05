@@ -14,7 +14,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Count } from 'src/app/models/count.model';
 import { CacheItem } from './models/cache-item.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { CacheService } from 'src/app/components/analytics/diagnostics-cache/services/cache.service';
+import { CacheService } from 'src/app/components/analytics/cache/services/cache.service';
 import { AuthService } from '../../management/auth/services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 

@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
-import { LogItem } from 'src/app/components/analytics/diagnostics-log/models/log-item.model';
-import { LogService } from 'src/app/components/analytics/diagnostics-log/services/log.service';
+import { LogItem } from 'src/app/components/analytics/log/models/log-item.model';
+import { LogService } from 'src/app/components/analytics/log/services/log.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
