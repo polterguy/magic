@@ -64,6 +64,9 @@
   }
 }
 ::ng-deep{
+  .theme-btn{
+    .mat-button-ripple.mat-ripple, .mat-button-focus-overlay{display: none;}
+  }
   /*=-=-=-=-=-=
   for the collapsed sidebar
   =-=-=-=-=-=*/
