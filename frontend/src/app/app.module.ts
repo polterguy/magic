@@ -98,10 +98,10 @@ import { PublicKeysComponent } from './components/management/crypto/public-keys/
 import { SetupAuthComponent } from './components/management/config/setup/setup-auth/setup-auth.component';
 import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
 import { ConfigEditorComponent } from './components/management/config/config-editor/config-editor.component';
-import { CrudifierSqlComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql.component';
+import { CrudSqlComponent } from './components/tools/crudifier/crud-sql/crud-sql.component';
 import { ChangePasswordComponent } from './components/management/auth/change-password/change-password.component';
 import { CodemirrorSqlComponent } from './components/codemirror/codemirror-sql/codemirror-sql.component';
-import { DiagnosticsCache } from './components/analytics/cache/diagnostics-cache.component';
+import { DiagnosticsCache } from './components/analytics/cache/cache.component';
 import { PublishComponent } from './components/analytics/sockets/publish/publish.component';
 import { GenerateCrudAppComponent } from './components/tools/ide/generate-crud-app/generate-crud-app.component';
 import { CreateKeypairComponent } from './components/management/config/setup/create-keypair/create-keypair.component';
@@ -110,15 +110,15 @@ import { EndpointDetailsComponent } from './components/analytics/endpoints/endpo
 import { SubscribeComponent } from './components/analytics/sockets/subscribe/subscribe.component';
 import { CryptoInvocationsComponent } from './components/management/crypto/crypto-invocations/crypto-invocations.component';
 import { CrudifyDatabaseComponent } from './components/management/config/setup/crudify-database/crudify-database.component';
-import { CrudifierBackendComponent } from './components/tools/crudifier/crudifier-backend/crudifier-backend.component';
-import { CrudifierFrontendComponent } from './components/tools/crudifier/crudifier-frontend/crudifier-frontend.component';
+import { CrudBackendComponent } from './components/tools/crudifier/crud-backend/crud-backend.component';
+import { CrudFrontendComponent } from './components/tools/crudifier/crud-frontend/crud-frontend.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsSocketsComponent } from './components/analytics/sockets/diagnostics-sockets.component';
-import { CrudifierTableComponent } from './components/tools/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
+import { CrudifierTableComponent } from './components/tools/crudifier/crud-backend/crud-table/crud-table.component';
 import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
-import { CrudifierSqlExtraComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
-import { CrudifierSetDefaultsComponent } from './components/tools/crudifier/crudifier-backend/crudifier-set-defaults/crudifier-set-defaults.component';
-import { CrudifierFrontendExtraComponent } from './components/tools/crudifier/crudifier-frontend/crudifier-frontend-extra/crudifier-frontend-extra.component';
+import { CrudSqlExtraComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-extra.component';
+import { CrudifierSetDefaultsComponent } from './components/tools/crudifier/crud-backend/set-defaults/crudifier-set-defaults.component';
+import { CrudFrontendExtraComponent } from './components/tools/crudifier/crud-frontend/crud-frontend-extra/crud-frontend-extra.component';
 
 // Application specific modal dialog components.
 import { ConfirmDialogComponent } from './components/confirm/confirm-dialog.component';
@@ -152,7 +152,7 @@ import { ImportPublicKeyDialogComponent } from './components/management/crypto/p
 import { AddQueryParameterDialogComponent } from './components/analytics/endpoints/endpoint-details/add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { ConfirmEmailAddressDialogComponent } from './components/management/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
-import { CrudifierSqlAddArgumentDialogComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
+import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { ExecuteTerminalCommandComponent } from './components/tools/ide/execute-terminal-command/execute-terminal-command.component';
 import { PieChartComponent } from './components/dashboard/component/pie-chart/pie-chart.component';
 
@@ -218,18 +218,18 @@ import { PieChartComponent } from './components/dashboard/component/pie-chart/pi
     AddQueryParameterDialogComponent,
     CreateAssumptionTestDialogComponent,
     DiagnosticsTestsComponent,
-    CrudifierSqlExtraComponent,
-    CrudifierFrontendExtraComponent,
+    CrudSqlExtraComponent,
+    CrudFrontendExtraComponent,
     ChangePasswordComponent,
     ConfirmEmailComponent,
     JailUserDialogComponent,
     RenameFileDialogComponent,
     RegisterComponent,
     CrudifierTableComponent,
-    CrudifierBackendComponent,
-    CrudifierFrontendComponent,
-    CrudifierSqlComponent,
-    CrudifierSqlAddArgumentDialogComponent,
+    CrudBackendComponent,
+    CrudFrontendComponent,
+    CrudSqlComponent,
+    CrudSqlAddArgumentDialogComponent,
     PublishComponent,
     ToolbarHelpDialogComponent,
     IdeComponent,

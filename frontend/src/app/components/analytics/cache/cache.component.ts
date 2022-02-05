@@ -22,9 +22,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
  * Cache component for allowing user to inspect, remove, and purge cache items.
  */
 @Component({
-  selector: 'app-diagnostics-cache',
-  templateUrl: './diagnostics-cache.component.html',
-  styleUrls: ['./diagnostics-cache.component.scss'],
+  selector: 'app-cache',
+  templateUrl: './cache.component.html',
+  styleUrls: ['./cache.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),

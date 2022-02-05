@@ -8,19 +8,19 @@
     
           <mat-tab label="CRUD" [disabled]="!authService.access.crud.generate_crud">
             <ng-template matTabContent>
-              <app-crudifier-backend></app-crudifier-backend>
+              <app-crud-backend></app-crud-backend>
             </ng-template>
           </mat-tab>
       
           <mat-tab label="SQL" [disabled]="!authService.access.crud.generate_sql">
             <ng-template matTabContent>
-              <app-crudifier-sql></app-crudifier-sql>
+              <app-crud-sql></app-crud-sql>
             </ng-template>
           </mat-tab>
       
           <mat-tab label="Frontend" [disabled]="!authService.access.crud.generate_frontend">
             <ng-template matTabContent>
-              <app-crudifier-frontend></app-crudifier-frontend>
+              <app-crud-frontend></app-crud-frontend>
             </ng-template>
           </mat-tab>
       

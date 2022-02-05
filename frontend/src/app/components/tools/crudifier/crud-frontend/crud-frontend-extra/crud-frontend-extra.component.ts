@@ -29,11 +29,11 @@ class EndpointEx extends Endpoint {
  * meta information about backend.
  */
 @Component({
-  selector: 'app-crudifier-frontend-extra',
-  templateUrl: './crudifier-frontend-extra.component.html',
-  styleUrls: ['./crudifier-frontend-extra.component.scss']
+  selector: 'app-crud-frontend-extra',
+  templateUrl: './crud-frontend-extra.component.html',
+  styleUrls: ['./crud-frontend-extra.component.scss']
 })
-export class CrudifierFrontendExtraComponent implements OnInit, OnDestroy {
+export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
 
   // Used to subscribe to messages sent by other components.
   private subscription: Subscription;

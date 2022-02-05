@@ -28,9 +28,9 @@ import hyperlambda from '../../../../codemirror/options/hyperlambda.json';
  * for crudifying a single table.
  */
 @Component({
-  selector: 'app-crudifier-table',
-  templateUrl: './crudifier-table.component.html',
-  styleUrls: ['./crudifier-table.component.scss']
+  selector: 'app-crud-table',
+  templateUrl: './crud-table.component.html',
+  styleUrls: ['./crud-table.component.scss']
 })
 export class CrudifierTableComponent implements OnInit {
 

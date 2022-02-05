@@ -13,17 +13,17 @@ import { MessageService } from 'src/app/services/message.service';
 import { Argument } from '../../../../analytics/endpoints/models/argument.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { Model } from '../../../../codemirror/codemirror-sql/codemirror-sql.component';
-import { CrudifierSqlAddArgumentDialogComponent } from './crudifier-sql-add-argument-dialog/crudifier-sql-add-argument-dialog.component';
+import { CrudSqlAddArgumentDialogComponent } from './crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 
 /**
  * Component allowing user to generate an SQL based endpoint.
  */
 @Component({
-  selector: 'app-crudifier-sql-extra',
-  templateUrl: './crudifier-sql-extra.component.html',
-  styleUrls: ['./crudifier-sql-extra.component.scss']
+  selector: 'app-crud-sql-extra',
+  templateUrl: './crud-sql-extra.component.html',
+  styleUrls: ['./crud-sql-extra.component.scss']
 })
-export class CrudifierSqlExtraComponent implements OnInit {
+export class CrudSqlExtraComponent implements OnInit {
 
   /**
    * Verbs user can select from.
@@ -154,7 +154,7 @@ export class CrudifierSqlExtraComponent implements OnInit {
   public addArgument() {
 
     // Creating modal dialogue that asks user what name and type he wants to use for his argument.
-    const dialogRef = this.dialog.open(CrudifierSqlAddArgumentDialogComponent, {
+    const dialogRef = this.dialog.open(CrudSqlAddArgumentDialogComponent, {
       width: '350px',
     });
 

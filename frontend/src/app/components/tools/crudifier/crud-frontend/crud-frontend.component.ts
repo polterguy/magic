@@ -10,7 +10,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
 import { ConfigService } from '../../../management/config/services/config.service';
 import { NameEmailModel } from '../../../management/config/models/name-email.model';
-import { CrudifierFrontendExtraComponent } from './crudifier-frontend-extra/crudifier-frontend-extra.component';
+import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
 import { CrudifyService } from '../services/crudify.service';
 
 /**
@@ -18,11 +18,11 @@ import { CrudifyService } from '../services/crudify.service';
  * meta information about backend.
  */
 @Component({
-  selector: 'app-crudifier-frontend',
-  templateUrl: './crudifier-frontend.component.html',
-  styleUrls: ['./crudifier-frontend.component.scss']
+  selector: 'app-crud-frontend',
+  templateUrl: './crud-frontend.component.html',
+  styleUrls: ['./crud-frontend.component.scss']
 })
-export class CrudifierFrontendComponent implements OnInit {
+export class CrudFrontendComponent implements OnInit {
 
   /**
    * If true, will deploy app locally in "/etc/" folder instead of downloading as a ZIP file.
@@ -115,7 +115,7 @@ export class CrudifierFrontendComponent implements OnInit {
     });
 
     // Creating our component.
-    const componentFactory = this.resolver.resolveComponentFactory(CrudifierFrontendExtraComponent);
+    const componentFactory = this.resolver.resolveComponentFactory(CrudFrontendExtraComponent);
 
     // Signaling listener, passing in component as data.
     this.messageService.sendMessage({

@@ -24,20 +24,20 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
 import { TransformModelService } from '../services/transform-model.service';
 import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
-import { CrudifierTableComponent } from './crudifier-table/crudifier-table.component';
+import { CrudifierTableComponent } from './crud-table/crud-table.component';
 import { CacheService } from '../../../analytics/cache/services/cache.service';
-import { CrudifierSetDefaultsComponent } from './crudifier-set-defaults/crudifier-set-defaults.component';
+import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
 
 /**
  * Crudifier component for crudifying database
  * tables and generate a backend.
  */
 @Component({
-  selector: 'app-crudifier-backend',
-  templateUrl: './crudifier-backend.component.html',
-  styleUrls: ['./crudifier-backend.component.scss']
+  selector: 'app-crud-backend',
+  templateUrl: './crud-backend.component.html',
+  styleUrls: ['./crud-backend.component.scss']
 })
-export class CrudifierBackendComponent implements OnInit {
+export class CrudBackendComponent implements OnInit {
 
   /**
    * Options user has for selecting database types.
