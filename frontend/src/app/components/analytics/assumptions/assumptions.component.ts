@@ -42,9 +42,9 @@ class TestModel {
  * Assumption/integration test runner for verifying integrity of system.
  */
 @Component({
-  selector: 'app-diagnostics-assumptions',
-  templateUrl: './diagnostics-assumptions.component.html',
-  styleUrls: ['./diagnostics-assumptions.component.scss'],
+  selector: 'app-assumptions',
+  templateUrl: './assumptions.component.html',
+  styleUrls: ['./assumptions.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
