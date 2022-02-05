@@ -116,7 +116,6 @@ import { CrudifierBackendComponent } from './components/tools/crudifier/crudifie
 import { CrudifierFrontendComponent } from './components/tools/crudifier/crudifier-frontend/crudifier-frontend.component';
 import { HyperlambdaComponent } from './components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 import { DiagnosticsSocketsComponent } from './components/analytics/diagnostics-sockets/diagnostics-sockets.component';
-import { DiagnosticsOverviewComponent } from './components/diagnostics/diagnostics-overview/diagnostics-overview.component';
 import { CrudifierTableComponent } from './components/tools/crudifier/crudifier-backend/crudifier-table/crudifier-table.component';
 import { DiagnosticsTestsComponent } from './components/analytics/diagnostics-assumptions/diagnostics-assumptions.component';
 import { CrudifierSqlExtraComponent } from './components/tools/crudifier/crudifier-sql/crudifier-sql-extra/crudifier-sql-extra.component';
@@ -215,7 +214,6 @@ import { PieChartComponent } from './components/dashboard/component/pie-chart/pi
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
     ConfigEditorComponent,
-    DiagnosticsOverviewComponent,
     DiagnosticsComponent,
     DiagnosticsCache,
     InjectDirective,
