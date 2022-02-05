@@ -94,7 +94,6 @@ import { EndpointsComponent } from './components/analytics/endpoints/endpoints.c
 import { EvaluatorComponent } from './components/tools/evaluator/evaluator.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/management/auth/register/register.component';
-import { DiagnosticsComponent } from './components/diagnostics/diagnostics.component';
 import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/management/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/management/config/setup/setup-auth/setup-auth.component';
@@ -214,7 +213,6 @@ import { PieChartComponent } from './components/dashboard/component/pie-chart/pi
     CreateKeypairDialogComponent,
     CryptoInvocationsComponent,
     ConfigEditorComponent,
-    DiagnosticsComponent,
     DiagnosticsCache,
     InjectDirective,
     EndpointDetailsComponent,
