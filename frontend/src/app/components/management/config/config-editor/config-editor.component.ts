@@ -59,6 +59,11 @@ export class ConfigEditorComponent implements OnInit {
     // Associating ALT+M with fullscreen toggling of the editor instance.
     this.cmOptions.json.extraKeys['Alt-M'] = (cm: any) => {
       cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+
+      // to hide/show sidenav
+      let sidenav = document.querySelector('.mat-sidenav');
+      sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+      sidenav.classList.add('d-none');
     };
   }
 

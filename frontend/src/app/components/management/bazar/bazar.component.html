@@ -31,7 +31,7 @@
     <mat-icon>email</mat-icon>
   </button>
 
-  <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
+  <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
     <div class="d-flex align-items-center">
       <mat-card-title class="my-0">Bazaar</mat-card-title>
       <div class="sm-icons">
@@ -53,7 +53,7 @@
       </div>
     </div>
   </div>
-  <mat-card-subtitle>Download and purchase micro services.</mat-card-subtitle>
+  <mat-card-subtitle class="mb-4">Download and purchase micro services.</mat-card-subtitle>
 
   <mat-form-field [class]="hideFilterControl ? 'invisible' : 'fill-width'" appearance="outline">
 
@@ -75,14 +75,15 @@
   <div *ngIf="manifests">
 
     <button
-      *ngFor="let idx of apps"
+      *ngFor="let idx of apps;let i = index"
+      [class.mr-3]="i !== apps.length - 1"
       [class]="appIsInstalled(idx) ? 'app installed' : 'app'"
       (click)="viewApp(idx)"
       [matTooltip]="appIsInstalled(idx) ? 'You already own this app' : (idx.price === 0 ? 'Download this app for free' : 'Purchase this module from Server Gardens for €' + idx.price)"
       mat-raised-button>
       <span class="title">{{idx.name}}</span>
       <span class="price">{{appIsInstalled(idx) ? 'Owned' : (idx.price === 0 ? 'Free' : '€' + idx.price)}}</span>
-      <mat-icon matSuffix color="primary">get_app</mat-icon>
+      <mat-icon matSuffix color="accent">get_app</mat-icon>
     </button>
 
     <div class="clearfix"></div>
@@ -113,7 +114,7 @@
     mat-raised-button>
     <span class="title">{{idx.name}}</span>
     <span class="price">{{idx.has_update ? 'Update app' : ''}}</span>
-    <mat-icon matSuffix color="primary">{{idx.has_update ? 'get_app' : 'extension'}}</mat-icon>
+    <mat-icon matSuffix color="accent">{{idx.has_update ? 'get_app' : 'extension'}}</mat-icon>
   </button>
 
   <div class="clearfix"></div>

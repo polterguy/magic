@@ -11,7 +11,7 @@
   }
   .toggle-btn{
     position: absolute;
-    right: -10px;
+    right: -5px;
     top: -5px;
   }
 }
@@ -83,6 +83,7 @@
   general styling
   =-=-=-=-=-=*/
   #sidebar {
+    user-select: none;
     padding-bottom: 155px;
     overflow-y: auto;
     @include general_transition(0.5s);

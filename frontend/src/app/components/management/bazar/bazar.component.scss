@@ -4,7 +4,7 @@ mat-card {
     position: absolute;
     top: .5rem;
     right: .5rem;
-    color: rgb(128, 128, 128);
+    // color: rgb(128, 128, 128);
   }
   h2 {
     margin-top: -1rem;
@@ -19,9 +19,7 @@ mat-card {
     width: 130px;
     height: 130px;
     float: left;
-    margin-right: 40px;
-    margin-bottom: 40px;
-    background-color: rgba(0,128,0,.05);
+    // background-color: rgba(0,128,0,.05);
     position: relative;
     transform: rotate(0deg);
     transition: box-shadow, transform;
@@ -31,7 +29,7 @@ mat-card {
       top: .125rem;
       right: .25rem;
       margin-top: -.5rem;
-      color:rgb(150,150,150);
+      // color:rgb(150,150,150);
       font-size: .8rem;
     }
     .price {
@@ -39,7 +37,7 @@ mat-card {
       bottom: 0;
       right: .25rem;
       margin-bottom: -.5rem;
-      color:rgb(170,170,170);
+      // color:rgb(170,170,170);
       font-size: .7rem;
     }
   }

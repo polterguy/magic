@@ -41,6 +41,7 @@ $max_height_mobile: calc(100vh - 220px);
   .files-section {
     max-height: calc(100vh - 85px);
     overflow-x: auto;
+    @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),8px);
     @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),2px);
     .mat-tree-node {
       height: 36px;

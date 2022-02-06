@@ -1,7 +1,7 @@
 
-<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
+<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
   <div class="d-flex align-items-center">
-    <h3 class="my-0">Users</h3>
+    <mat-card-title class="my-0">Users</mat-card-title>
     <div class="sm-icons">
       <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
         <mat-icon>help_outline</mat-icon>
@@ -67,7 +67,7 @@
         <div class="d-flex justify-content-between align-items-center w-100 py-3">
 
           <div>
-            <strong class="d-block">Created</strong>
+            <span class="d-block text-muted">Created</span>
             <span class="d-block">{{el.created | since}}</span>
           </div>
 

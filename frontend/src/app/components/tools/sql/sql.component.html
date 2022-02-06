@@ -249,9 +249,9 @@
 
         <thead>
           <tr>
-            <th *ngFor="let idxColumn of idxResult.columns">
+            <td *ngFor="let idxColumn of idxResult.columns" class="pl-3 py-3 text-muted">
               {{idxColumn}}
-            </th>
+            </td>
           </tr>
         </thead>
 
@@ -268,7 +268,7 @@
 
             <td
               *ngIf="idxRow.details === true && idxRow.display === true"
-              class="view-details"
+              class="view-details py-3"
               [attr.colspan]="idxResult.columns.length">
 
               <div class="details-sheet">
@@ -278,8 +278,10 @@
                   (click)="copyToClipBoard(idxDetails.value)"
                   class="details-item">
 
-                  <strong>{{idxDetails.key}}</strong>&nbsp;&nbsp;
-                  <span>{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
+                  <div class="d-flex py-1">
+                    <span class="min-width-80">{{idxDetails.key}}</span>&nbsp;&nbsp;
+                    <span class="ml-5">{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
+                  </div>
 
                 </div>
 
