@@ -1,0 +1,17 @@
+
+<app-setup
+*ngIf="status && (!status.magic_crudified || !status.server_keypair || !status.config_done)"
+  [(status)]="status">
+</app-setup>
+
+<div class="row">
+  <div class="col-12">
+    <mat-card *ngIf="status && status.magic_crudified && status.server_keypair && status.config_done">
+
+      <mat-card-content>
+        <app-config-editor></app-config-editor>
+      </mat-card-content>
+    
+    </mat-card>    
+  </div>
+</div>

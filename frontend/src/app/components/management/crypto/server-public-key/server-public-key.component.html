@@ -1,0 +1,43 @@
+
+<div class="create-button">
+  <button
+    mat-icon-button
+    [disabled]="!authService.access.crypto.generate_server_key"
+    matTooltip="Generate server key pair"
+    (click)="create()">
+    <mat-icon>add_box</mat-icon>
+  </button>
+</div>
+
+<div *ngIf="publicKeyFull">
+  <mat-list class="detail-list mb-3">
+    <mat-list-item>
+      <div mat-line>Fingerprint</div>
+      <div mat-line>{{publicKeyFull.fingerprint}} </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>Fingerprint format</div>
+      <div mat-line>{{publicKeyFull.fingerprintFormat}} </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>Key format</div>
+      <div mat-line>{{publicKeyFull.keyFormat}} </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>Key type</div>
+      <div mat-line>{{publicKeyFull.keyType}} </div>
+    </mat-list-item>
+  </mat-list>
+  
+  
+  <mat-form-field class="fill-width top-space" appearance="outline">
+
+    <mat-label>Public key</mat-label>
+    <textarea
+      matInput
+      disabled="true"
+      rows="7">{{publicKeyFull.publicKey}}</textarea>
+
+  </mat-form-field>
+  
+</div>

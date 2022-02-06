@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="magic.library" Version="10.0.21" />
+    <PackageReference Include="magic.library" Version="11.0.0" />
   </ItemGroup>
 
 </Project>

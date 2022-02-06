@@ -48,10 +48,15 @@ for-each:x:../*/io.file.load-recursively/*
                         get-value:x:@hyper2lambda/*/verb
                         get-value:x:@.arguments/*/verb
                   .lambda
+
+                     // Adding assumptions for endpoint to returned value.
+                     unwrap:x:./*/add/[1,2]/*/*/*
+                     add:x:./*/add/[1,2]/*/*
+                        get-nodes:x:@hyper2lambda/*/description
                      add:x:../*/return-nodes
-                        get-nodes:x:@.dp/#/*/name
+                        .
+                           .
+                              file:x:@.dp/#/*/name
 
 // Returns result to caller.
-set-name:x:../*/return-nodes/*
-   .:.
 return-nodes

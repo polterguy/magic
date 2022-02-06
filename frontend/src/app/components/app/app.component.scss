@@ -1,4 +1,8 @@
 
+@import '../../../assets/styles/sizes.scss';
+@import '../../../assets/styles/colour.scss';
+@import '../../../assets/styles/mixin.scss';
+
 @keyframes fade-in {
   0% {
     opacity: 0;
@@ -17,303 +21,46 @@
   animation-fill-mode: forwards;
   animation-duration: .5s;
 }
+.progress-holder{position: fixed;top: 0;left: 0;right: 0;z-index: 9;}
 
-mat-sidenav-container {
-  position: absolute;
-  top: 64px; // Making room for toolbar at the top of page.
-  bottom: 0;
-  left: 0;
-  right: 0;
-  color: rgb(245,245,245);
-  background-color: rgb(55,55,55);
-  @media screen and (max-width: 600px) {
-    top: 56px; // Toolbar's height shrinks at 600px
+::ng-deep{
+  /*=-=-=-=-=-=
+  sidebar settings
+  =-=-=-=-=-=*/
+ 
+  .dark .mat-drawer{
+    background-color: $magic_dark_secondary_light!important;
   }
-
-  // Side navigation wrappper containing the navbar with buttons linking to components.
-  mat-sidenav {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 300px; // Width of navbar when opened
-    padding: 1rem;
-    background: rgb(55, 55, 55);
-    color: rgb(245,245,245);
-    @media screen and (max-width: 600px) {
-      width: 100vw; // Width of navbar when opened on devices with small resolution
+  // .mat-drawer-inner-container{
+  //   @include scrollbar(transparent,transparent,3px);
+  //   &:hover{
+  //     @include scrollbar(transparent,transparentize($color: $magic_default_alternative, $amount: 0.75),3px)
+  //   }
+  // }
+  /*=-=-=-=-=-=
+  sidebar and content width and margin relatively
+  =-=-=-=-=-=*/
+  mat-sidenav.full-width-sidebar{
+    width: $sidebar_full_width;
+    @include general_transition(0.2s);
+  }
+  mat-sidenav.small-width-sidebar{
+    width: $sidebar_small_width;
+    @include general_transition(0.2s);
+  }
+  mat-sidenav-content.content-with-full-sidebar{
+    margin-left: calc(#{$sidebar_full_width} + #{$side_space})!important;
+    @include general_transition(0.2s);
+    table .CodeMirror:not(.CodeMirror-fullscreen){
+      max-width: calc(100vw - (#{$sidebar_full_width} + (#{$side_space} * 3) + 80px));
+    }
+  }
+  mat-sidenav-content.content-with-small-sidebar{
+    margin-left: calc(#{$sidebar_small_width} + #{$side_space})!important;
+    @include general_transition(0.2s);
+    table .CodeMirror:not(.CodeMirror-fullscreen){
+      max-width: calc(100vw  - (#{$sidebar_small_width} + (#{$side_space} * 3) + 80px));
     }
   }
 
-  // Content wrapper containing the router-outlet and currently loaded component.
-  mat-sidenav-content {
-
-    padding: 2rem; // Default padding, only shows if width of viewport is less than 600px.
-    margin-left: 0 !important;
-    box-sizing: border-box;
-    position: relative;
-    overflow-x: hidden;
-    background-color: rgb(55, 55, 55);
-
-    // Makes sure currently loaded component is obscured when navbar is expanded.
-    .obscurer {
-      position: fixed;
-      top: 64px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0,0,0,.5);
-      z-index: 1000;
-    }
-
-    // Shown if user don't have access to currently loaded component.
-    .no-access {
-      width: 80%;
-      padding: 3rem;
-      margin-top: 3rem;
-      margin-left: auto;
-      margin-right: auto;
-      h2, p {
-        text-align: center;
-      }
-    }
-
-    // Adding more padding to side nav content when width is more than 600px.
-    @media screen and (min-width: 600px) {
-      padding: 3rem;
-    }
-
-    // Adding more padding to side nav content when width is more than 800px.
-    @media screen and (min-width: 800px) {
-      padding: 3rem 5rem;
-    }
-  }
-}
-
-::ng-deep mat-card.mat-card {
-  color: rgb(245, 245, 245);
-  background-color: rgb(45,45,45);
-  padding: 3rem;
-  margin-bottom: 2rem;
-  box-shadow: 3px 3px 2px rgba(0,0,0,.5) !important;
-}
-
-::ng-deep table {
-  tbody {
-    tr {
-      transition: background-color .1s ease-in;
-      background-color: rgba(0,0,0,0);
-      td, td.mat-cell {
-        color: rgb(245,245,245);
-      }
-    }
-    tr:hover {
-      background-color: rgba(0,0,0,.1);
-      transition: background-color .1s ease-in;
-    }
-    tr.selected {
-      background-color: rgba(255,255,255,.1);
-    }
-    tr.details {
-      background-color: rgba(255,255,255,.05);
-    }
-  }
-}
-
-::ng-deep mat-label.dark {
-  color: rgb(55,55,55);
-}
-
-::ng-deep .dark mat-tree {
-  background: rgb(45,45,45);
-  button {
-    color: rgb(245,245,245);
-  }
-}
-
-mat-tab-group .mat-tab-label .mat-tab-label-content {
-  color: #fff;
-}
-
-::ng-deep mat-paginator.mat-paginator {
-  background-color: transparent;
-  color: rgb(245,245,245);
-}
-
-::ng-deep mat-label {
-  color: rgb(245,245,245);
-}
-
-::ng-deep mat-select {
-  .mat-select-value-text {
-    color: rgb(245,245,245);
-  }
-}
-
-::ng-deep mat-select.dark {
-  .mat-select-value-text {
-    color: rgb(55,55,55);
-  }
-}
-
-::ng-deep mat-chip {
-  background-color: #ccc !important;
-}
-
-
-::ng-deep mat-toolbar {
-  background: rgb(45, 45, 45) !important;
-  color: rgb(245,245,245) !important;
-  .user {
-    color: #999 !important;
-  }
-  .user.warning {
-    color: #c88 !important;
-  }
-}
-
-::ng-deep .mat-tab-label {
-  color: whitesmoke;
-}
-
-::ng-deep input.mat-input-element {
-  color: whitesmoke;
-}
-
-::ng-deep textarea.mat-input-element:disabled {
-  color: whitesmoke;
-}
-
-::ng-deep ngx-mat-timepicker {
-  mat-icon {
-    color: #555;
-  }
-  tr {
-    background-color: transparent !important;
-  }
-}
-
-::ng-deep mat-dialog-container {
-  ::ng-deep input.mat-input-element {
-    color: #555;
-  }
-  ::ng-deep textarea.mat-input-element:disabled {
-    color: #555;
-  }
-}
-
-::ng-deep .form-field {
-  margin-right: 1rem;
-  width: 10rem;
-  max-width: 100%;
-}
-
-::ng-deep .form-field-double {
-  width: 20rem;
-}
-
-::ng-deep mat-horizontal-stepper.mat-stepper-horizontal,
-::ng-deep mat-horizontal-stepper.mat-stepper-vertical {
-  background-color: rgb(45,45,45);
-  mat-step-header {
-    .mat-step-text-label {
-      color: rgb(245, 245, 245);
-    }
-  }
-}
-
-/*
- * Light theme overrides.
- */
-::ng-deep .light {
-  ::ng-deep mat-horizontal-stepper.mat-stepper-horizontal,
-  ::ng-deep mat-horizontal-stepper.mat-stepper-vertical {
-    background-color: rgb(245,245,245);
-    mat-step-header {
-      .mat-step-text-label {
-        color: rgb(45, 45, 45);
-      }
-    }
-  }
-  input.mat-input-element {
-    color:#555;
-  }
-  textarea.mat-input-element:disabled {
-    color: #555;
-  }
-  mat-toolbar {
-    background-color: rgb(245, 245, 245) !important;
-    color: rgb(45,45,45) !important;
-  }
-  mat-label.dark {
-    color: rgb(250,250,250);
-  }
-  mat-tab-group .mat-tab-label .mat-tab-label-content {
-    color: #000;
-  }
-  mat-tab-group .mat-tab-label.mat-tab-disabled .mat-tab-label-content {
-    color: #999;
-  }
-  mat-paginator.mat-paginator {
-    background-color: transparent;
-    color: rgb(45,45,45);
-  }
-  mat-label {
-    color: rgb(45,45,45);
-  }
-  mat-select {
-    .mat-select-value-text {
-      color: rgb(45,45,45);
-    }
-  }
-  mat-select.dark {
-    .mat-select-value-text {
-      color: rgb(255,255,255);
-    }
-  }
-  table {
-    tbody {
-      tr {
-        background-color: rgba(245,245,245,0);
-        td {
-          color: rgb(55,55,55);
-        }
-      }
-      tr:hover {
-        background-color: rgba(25,25,25,.1);
-      }
-      tr.selected {
-        background-color: rgba(0,0,0,.1);
-      }
-      tr.details {
-        background-color: rgba(75,75,75,.05);
-      }
-    }
-  }
-  mat-card.mat-card {
-    background-color: rgb(255, 255, 255);
-    color: rgb(45,45,45);
-  }
-  mat-sidenav-container {
-    background-color: rgb(55,55,55);
-    color: rgb(55,55,55);
-    mat-sidenav {
-      color: rgb(180, 180, 180);
-      background-color: rgb(225,225,225);
-    }
-  }
-  mat-sidenav-content {
-    .img-wrapper {
-      opacity: .7 !important;
-    }
-  }
-}
-
-::ng-deep.error-snack-bar {
-  background-color: rgb(120,0,0) !important;
-}
-
-.light {
-  mat-sidenav-content {
-    background-color: lightblue;
-  }
 }

@@ -6,80 +6,84 @@
     matTooltip="Clicking the login button will transmit your password in clear text">warning</mat-icon>
 </h1>
 
-<div mat-dialog-content>
+<form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+  <div mat-dialog-content>
+      
+    <mat-form-field class="fill-width" appearance="outline">
 
-  <mat-form-field class="fill-width" appearance="outline">
+      <mat-label class="dark">Backend</mat-label>
+      <input type="text"
+        matInput
+        [formControl]="backends"
+        (change)="backendValueChanged()"
+        [matAutocomplete]="auto">
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        (optionSelected)="backendSelected()">
+        <mat-option
+          *ngFor="let el of filteredBackends | async"
+          [value]="el">
+          {{el}}
+        </mat-option>
+      </mat-autocomplete>
 
-    <mat-label class="dark">Backend</mat-label>
-    <input type="text"
-      matInput
-      [formControl]="backends"
-      (change)="backendValueChanged()"
-      [matAutocomplete]="auto">
-    <mat-autocomplete
-      #auto="matAutocomplete"
-      (optionSelected)="backendSelected()">
-      <mat-option
-        *ngFor="let el of filteredBackends | async"
-        [value]="el">
-        {{el}}
-      </mat-option>
-    </mat-autocomplete>
+    </mat-form-field>
 
-  </mat-form-field>
+    <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
 
-  <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
+      <mat-label class="dark">Username</mat-label>
+      <input
+        matInput
+        type="text"
+        name="username"
+        formControlName="username"
+        autocomplete="off">
 
-    <mat-label class="dark">Username</mat-label>
-    <input
-      matInput
-      [(ngModel)]="username"
-      autocomplete="off">
+    </mat-form-field>
 
-  </mat-form-field>
+    <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
+ 
+      <mat-label class="dark">Password</mat-label>
+      <input
+        matInput
+        formControlName="password"
+        [type]="hide ? 'password' : 'text'"
+        autocomplete="off">
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
 
-  <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
+    </mat-form-field>
 
-    <mat-label class="dark">Password</mat-label>
-    <input
-      matInput
-      [(ngModel)]="password"
-      [type]="hide ? 'password' : 'text'"
-      autocomplete="off">
+  </div>
+
+  <div *ngIf="backendHasBeenSelected" mat-dialog-actions class="button-strip">
+
+    <mat-checkbox
+      *ngIf="autoLogin === true"
+      [(ngModel)]="advanced" [ngModelOptions]="{standalone: true}">Advanced</mat-checkbox>
+
+    <mat-checkbox
+      *ngIf="autoLogin !== true && loginForm.value.password !== 'root'"
+      [disabled]="loginForm.value.username === '' || loginForm.value.password === '' || backends.value === ''"
+      [(ngModel)]="savePassword" [ngModelOptions]="{standalone: true}">Save</mat-checkbox>
+
     <button
-      mat-icon-button
-      matSuffix
-      (click)="hide = !hide"
-      [attr.aria-pressed]="hide">
-      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-    </button>
+      mat-raised-button
+      color="primary" type="submit"
+      [disabled]="!autoLogin && loginForm.invalid">Login</button>
 
-  </mat-form-field>
+    <button
+      *ngIf="autoLogin !== true"
+      mat-raised-button
+      [disabled]="autoLogin || loginForm.value.username === '' || loginForm.value.password !== '' || backends.value === ''"
+      matTooltip="Send me a reset password link"
+      type="button"
+      (click)="resetPassword()">Forgot?</button>
 
-</div>
-
-<div *ngIf="backendHasBeenSelected" mat-dialog-actions class="button-strip">
-
-  <mat-checkbox
-    *ngIf="autoLogin === true"
-    [(ngModel)]="advanced">Advanced</mat-checkbox>
-
-  <mat-checkbox
-    *ngIf="autoLogin !== true && password !== 'root'"
-    [disabled]="username === '' || password === '' || backends.value === ''"
-    [(ngModel)]="savePassword">Save</mat-checkbox>
-
-  <button
-    mat-raised-button
-    color="primary"
-    [disabled]="!autoLogin && (username === '' || password === '' || backends.value === '')"
-    (click)="login()">Login</button>
-
-  <button
-    *ngIf="autoLogin !== true"
-    mat-raised-button
-    [disabled]="autoLogin || username === '' || password !== '' || backends.value === ''"
-    matTooltip="Send me a reset password link"
-    (click)="resetPassword()">Forgot?</button>
-
-</div>
+  </div>
+</form>

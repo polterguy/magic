@@ -1,0 +1,122 @@
+
+<mat-card class="waiting-for-paypal" *ngIf="hubConnection">
+  <mat-progress-spinner
+    diameter="50"
+    mode="indeterminate"
+    [strokeWidth]="4"
+    class="progress"></mat-progress-spinner>
+  <h1>
+    Waiting for PayPal to notify our systems
+  </h1>
+  <p>
+    <strong>
+      Do not close this window before installation process is done!
+      This might take some few minutes.
+    </strong>
+    <span *ngIf="timeout">
+      If something goes wrong you can contact <a href="mailto:thomas@servergardens.com">thomas@servergardens.com</a>
+      and we will help you with installing the module.
+    </span>
+  </p>
+</mat-card>
+
+<mat-card [class]="hubConnection ? 'invisible' : ''">
+
+  <button
+    *ngIf="!subscribing"
+    mat-icon-button
+    class="subscribe"
+    matTooltip="Subscribe to our newsletter"
+    (click)="subscribe()">
+    <mat-icon>email</mat-icon>
+  </button>
+
+  <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between mb-1">
+    <div class="d-flex align-items-center">
+      <mat-card-title class="my-0">Bazaar</mat-card-title>
+      <div class="sm-icons">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+          <mat-icon>help_outline</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <div class="p-3">
+            <p>
+              This is Magic's integrate AppStore from where you can purchase, and/or download free backend modules, 
+              providing some micro service functionality, allowing you to extend your server's functionality without
+              any coding required from you.
+            </p>
+            <div class="d-flex justify-content-end">
+              <a target="_blank" href="https://docs.aista.com/documentation/magic/components/bazar/" mat-stroked-button>Learn more</a>
+            </div>
+          </div>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+  <mat-card-subtitle class="mb-4">Download and purchase micro services.</mat-card-subtitle>
+
+  <mat-form-field [class]="hideFilterControl ? 'invisible' : 'fill-width'" appearance="outline">
+
+    <mat-label>Filter ...</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="off"
+      [formControl]="filterFormControl">
+    <mat-icon
+      matSuffix
+      *ngIf="filterFormControl.value.trim() !== ''"
+      class="button"
+      role="button"
+      (click)="clearFilter()">clear</mat-icon>
+
+  </mat-form-field>
+
+  <div *ngIf="manifests">
+
+    <button
+      *ngFor="let idx of apps;let i = index"
+      [class.mr-3]="i !== apps.length - 1"
+      [class]="appIsInstalled(idx) ? 'app installed' : 'app'"
+      (click)="viewApp(idx)"
+      [matTooltip]="appIsInstalled(idx) ? 'You already own this app' : (idx.price === 0 ? 'Download this app for free' : 'Purchase this module from Server Gardens for €' + idx.price)"
+      mat-raised-button>
+      <span class="title">{{idx.name}}</span>
+      <span class="price">{{appIsInstalled(idx) ? 'Owned' : (idx.price === 0 ? 'Free' : '€' + idx.price)}}</span>
+      <mat-icon matSuffix color="accent">get_app</mat-icon>
+    </button>
+
+    <div class="clearfix"></div>
+
+  </div>
+
+  <mat-paginator
+    #paginator
+    [class]="count > paginator.pageSize ? '' : 'invisible'"
+    [length]="count"
+    pageSize="5"
+    [hidePageSize]="true"
+    (page)="paged($event)"
+    [pageSizeOptions]="[5]">
+  </mat-paginator>
+
+</mat-card>
+
+<mat-card *ngIf="!hubConnection && manifests && manifests.length > 0">
+
+  <h2>Installed apps</h2>
+
+  <button
+    *ngFor="let idx of manifests"
+    [class]="idx.has_update && idx.has_update === true ? 'app has-update' : 'app'"
+    [matTooltip]="idx.has_update ? 'Update' : 'You seem to have the latest version'"
+    (click)="viewInstalledAppDetails(idx)"
+    mat-raised-button>
+    <span class="title">{{idx.name}}</span>
+    <span class="price">{{idx.has_update ? 'Update app' : ''}}</span>
+    <mat-icon matSuffix color="accent">{{idx.has_update ? 'get_app' : 'extension'}}</mat-icon>
+  </button>
+
+  <div class="clearfix"></div>
+
+</mat-card>

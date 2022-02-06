@@ -12,13 +12,13 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { Messages } from 'src/app/models/messages.model';
-import { AuthService } from '../auth/services/auth.service';
-import { BazarService } from '../bazar/services/bazar.service';
+import { AuthService } from '../management/auth/services/auth.service';
+import { BazarService } from '../management/bazar/services/bazar.service';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
-import { ConfigService } from '../config/services/config.service';
+import { ConfigService } from '../management/config/services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { DiagnosticsService } from '../diagnostics/services/diagnostics.service';
+import { DiagnosticsService } from '../../services/diagnostics.service';
 import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 

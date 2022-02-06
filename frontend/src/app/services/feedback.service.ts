@@ -51,7 +51,8 @@ export abstract class FeedbackService {
    */
   public showInfoShort(content: string) {
     this.snackBar.open(content, null, {
-      duration: 1000,
+      duration: 2000,
+      panelClass: 'center-aligned'
     });
   }
 

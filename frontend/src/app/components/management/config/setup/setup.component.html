@@ -1,0 +1,77 @@
+
+<div class="row">
+  <div class="col-12">
+    <mat-card>
+      <mat-card-content>
+        <mat-horizontal-stepper
+          #stepper
+          *ngIf="status"
+          [selectedIndex]="getStepperSelectedIndex()">
+
+          <mat-step>
+            <ng-template matStepLabel>Database</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 0">
+              <app-setup-auth></app-setup-auth>
+            </ng-container>
+          </mat-step>
+
+          <mat-step>
+            <ng-template matStepLabel>Endpoints</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 1">
+              <app-crudify-database></app-crudify-database>
+            </ng-container>
+          </mat-step>
+
+          <mat-step>
+            <ng-template matStepLabel>Cryptography</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 2">
+              <app-create-keypair></app-create-keypair>
+            </ng-container>
+          </mat-step>
+
+          <mat-step>
+            <ng-template matStepLabel>Assumptions</ng-template>
+            <ng-container *ngIf="stepper.selectedIndex === 3">
+              <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
+                <div class="d-flex align-items-center">
+                  <h3 class="my-0">Assumptions</h3>
+                  <div class="sm-icons">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+                      <mat-icon>help_outline</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <div class="p-3">
+                        <p>
+                          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem autem consequatur explicabo architecto sequi asperiores odit minima incidunt error facilis, animi eaque a pariatur magnam doloribus libero ad. Voluptatum, harum!
+                        </p>
+                        <div class="d-flex justify-content-end">
+                          <a target="_blank" href="https://docs.aista.com/tutorials/crypto-lambda-http/" mat-stroked-button>Learn more</a>
+                        </div>
+                      </div>
+                    </mat-menu>
+                  </div>
+                </div>
+              </div>
+              <mat-card-subtitle>Lorem ipsum dolor sit amet consectetur adipisicing elit.</mat-card-subtitle>
+              <app-diagnostics-assumptions></app-diagnostics-assumptions>
+
+              <div class="toolbar-strip">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  [disabled]="seed === '' || subject === '' || email === ''"
+                  (click)="close()"
+                  class="done">
+                  Close
+                </button>
+
+              </div>
+
+            </ng-container>
+          </mat-step>
+
+        </mat-horizontal-stepper>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
