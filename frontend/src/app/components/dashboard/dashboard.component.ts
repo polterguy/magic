@@ -21,7 +21,8 @@ export class DashboardComponent implements OnInit {
 
   chartType: boolean[] = [];
 
-  public systemReport: SystemReport[];
+  public systemReport: any;
+  // public systemReport: SystemReport[];
   public systemReportDisplayable: any;
 
   public logTypesChart: LogTypes[];
@@ -129,17 +130,17 @@ export class DashboardComponent implements OnInit {
       //     this.access_deniedLabel.push(element.count);
       //   });
       // })
-      this.access_deniedLabel = report['timeshifts'].access_denied.map(x => {return moment(x.when).format("D. MMM")});
-      this.access_deniedData = report['timeshifts'].access_denied.map(x => {return x.count});
+      this.access_deniedLabel = report['timeshifts'].access_denied.items.map(x => {return moment(x.when).format("D. MMM")});
+      this.access_deniedData = report['timeshifts'].access_denied.items.map(x => {return x.count});
 
-      this.backend_endpoints_generatedLabel = report['timeshifts'].backend_endpoints_generated.map(x => {return moment(x.when).format("D. MMM")});
-      this.backend_endpoints_generatedData = report['timeshifts'].backend_endpoints_generated.map(x => {return x.count});
+      this.backend_endpoints_generatedLabel = report['timeshifts'].backend_endpoints_generated.items.map(x => {return moment(x.when).format("D. MMM")});
+      this.backend_endpoints_generatedData = report['timeshifts'].backend_endpoints_generated.items.map(x => {return x.count});
 
-      this.loginsLabel = report['timeshifts'].logins.map(x => {return moment(x.when).format("D. MMM")});
-      this.loginsData = report['timeshifts'].logins.map(x => {return x.count});
+      this.loginsLabel = report['timeshifts'].logins.items.map(x => {return moment(x.when).format("D. MMM")});
+      this.loginsData = report['timeshifts'].logins.items.map(x => {return x.count});
 
-      this.unhandled_exceptionsLabel = report['timeshifts'].unhandled_exceptions.map(x => {return moment(x.when).format("D. MMM")});
-      this.unhandled_exceptionsData = report['timeshifts'].unhandled_exceptions.map(x => {return x.count});
+      this.unhandled_exceptionsLabel = report['timeshifts'].unhandled_exceptions.items.map(x => {return moment(x.when).format("D. MMM")});
+      this.unhandled_exceptionsData = report['timeshifts'].unhandled_exceptions.items.map(x => {return x.count});
     })
   }
 

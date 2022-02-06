@@ -4,8 +4,8 @@
             <mat-card class="fit-height-card">
                 <div class="d-flex justify-content-between w-100">
                     <div>
-                        <h2 class="mat-headline mb-0">Logins # <small class="text-muted">last 14 days</small></h2>
-                        <mat-card-subtitle>View the number of logins to your system during the past two weeks.</mat-card-subtitle>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.logins?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.logins?.description}}</mat-card-subtitle>
                     </div>
                     <div>
                         <button mat-icon-button (click)="chartType[1] = !chartType[1]">
@@ -85,8 +85,8 @@
             <mat-card class="fit-height-card">
                 <div class="d-flex justify-content-between w-100">
                     <div>
-                        <h2 class="mat-headline mb-0">Unhandled Exceptions # <small class="text-muted">last 14 days</small></h2>
-                        <mat-card-subtitle>View the number of logins to your system during the past two weeks.</mat-card-subtitle>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.unhandled_exceptions?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.unhandled_exceptions?.description}}</mat-card-subtitle>
                     </div>
                     <div>
                         <button mat-icon-button (click)="chartType[2] = !chartType[2]">
@@ -110,8 +110,8 @@
             <mat-card class="fit-height-card">
                 <div class="d-flex justify-content-between w-100">
                     <div>
-                        <h2 class="mat-headline mb-0">backend_endpoints_generated # <small class="text-muted">last 14 days</small></h2>
-                        <mat-card-subtitle>View the number of logins to your system during the past two weeks.</mat-card-subtitle>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.backend_endpoints_generated?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.backend_endpoints_generated?.description}}</mat-card-subtitle>
                     </div>
                     <div>
                         <button mat-icon-button (click)="chartType[3] = !chartType[3]">
@@ -135,8 +135,8 @@
             <mat-card class="fit-height-card">
                 <div class="d-flex justify-content-between w-100">
                     <div>
-                        <h2 class="mat-headline mb-0">Access Denied <small class="text-muted">last 14 days</small></h2>
-                        <mat-card-subtitle>View the number of logins to your system during the past two weeks.</mat-card-subtitle>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.access_denied?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.access_denied?.description}}</mat-card-subtitle>
                     </div>
                     <div>
                         <button mat-icon-button (click)="chartType[4] = !chartType[4]">
