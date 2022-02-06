@@ -107,7 +107,7 @@ export class LogComponent implements OnInit {
     if (idx !== -1) {
 
       // Hiding item.
-      this.displayDetails.splice(idx, 1);
+      // this.displayDetails.splice(idx, 1);
     } else {
 
       // Displaying item.
