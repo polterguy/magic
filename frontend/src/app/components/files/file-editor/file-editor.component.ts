@@ -75,7 +75,7 @@ export class FileEditorComponent implements OnInit {
       this.options.extraKeys['Alt-M'] = (cm: any) => {
 
         /*
-         * Notice, we need to signal other components that we're
+        * Notice, we need to signal other components that we're
         * entering/leaving fullscreen mode, to make sure other components
         * can handle this somehow.
         */
@@ -85,6 +85,11 @@ export class FileEditorComponent implements OnInit {
           name: 'codemirror.fullscreen-toggled',
           content: newValue,
         });
+
+        // to hide/show sidenav
+        let sidenav = document.querySelector('.mat-sidenav');
+        sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+        sidenav.classList.add('d-none');
       };
 
       // Checking if this is a Hyperlambda file, at which point we load vocabulary before we load file.

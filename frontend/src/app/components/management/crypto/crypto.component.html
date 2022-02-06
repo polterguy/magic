@@ -1,6 +1,6 @@
 
 <div class="d-flex align-items-center mb-1">
-  <h2 class="my-0">Cryptography</h2>
+  <mat-card-title class="my-0">Cryptography</mat-card-title>
   <div class="sm-icons">
     <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
       <mat-icon>help_outline</mat-icon>
@@ -23,7 +23,7 @@
 <div class="row mb-3">
   <div class="col-12">
     <mat-accordion class="card-replacement left-align-arrow" displayMode="flat">
-      <mat-expansion-panel expanded>
+      <mat-expansion-panel [expanded]="!isRoot()">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <h2 class="mb-0">Server key</h2>

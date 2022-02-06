@@ -1,6 +1,8 @@
 @import '../../../assets/styles/colour.scss';
 @import '../../../assets/styles/mixin.scss';
 
+// iframe{width: 400px;max-width: 100%;min-height: 300px;display: block;margin-left: auto;}
+iframe{width: 400px;max-width: 100%;height: 300px;}
 .links{
     font-size: 14px;
     mat-icon{
