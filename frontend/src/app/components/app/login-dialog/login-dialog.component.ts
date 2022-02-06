@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -18,8 +18,8 @@ import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { AuthService } from 'src/app/components/auth/services/auth.service';
-import { ConfigService } from 'src/app/components/config/services/config.service';
+import { AuthService } from 'src/app/components/management/auth/services/auth.service';
+import { ConfigService } from 'src/app/components/management/config/services/config.service';
 
 /**
  * Login dialog allowing user to login to a backend of his choice.
@@ -34,8 +34,6 @@ export class LoginDialogComponent implements OnInit {
   public hide = true;
   public backends: FormControl = null;
   public filteredBackends: Observable<string[]>;
-  public username: string = '';
-  public password: string = '';
   public savePassword: boolean = false;
   public backendHasBeenSelected: boolean = false;
   public autoLogin: boolean = false;
@@ -59,7 +57,17 @@ export class LoginDialogComponent implements OnInit {
     private feedbackService: FeedbackService,
     protected messageService: MessageService,
     public authService: AuthService,
-    public backendService: BackendService) { }
+    public backendService: BackendService,
+    private formBuilder: FormBuilder) { }
+
+  /**
+   * reactive form declaration
+   */
+  loginForm = this.formBuilder.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]],
+    backends: ['', [Validators.required]]
+  });
 
   /**
    * OnInit implementation.
@@ -85,9 +93,11 @@ export class LoginDialogComponent implements OnInit {
   public backendSelected() {
     const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
-      this.username = el[0].username || '';
-      this.password = el[0].password || '';
-      this.savePassword = !!el[0].password && this.password !== 'root';
+      this.loginForm.patchValue({
+        username: el[0].username || '',
+        password: el[0].password || ''
+      });
+      this.savePassword = !!el[0].password && this.loginForm.value.password !== 'root';
     }
 
     // Making sure we invoke method responsible for checking if auto-auth is turned on for current backend or not.
@@ -116,13 +126,18 @@ export class LoginDialogComponent implements OnInit {
 
           // Allowing user to logging in without username/password combination.
           this.autoLogin = true;
-          this.username = '';
+          this.loginForm.patchValue({
+            username: ''
+          });
 
         } else {
 
           // Preventing user from logging in without a username/password combination.
           this.autoLogin = false;
         }
+        this.loginForm.patchValue({
+          backends: this.backends.value
+        });
       }, (error: any) => {
 
         // Oops.
@@ -149,7 +164,7 @@ export class LoginDialogComponent implements OnInit {
 
     // Invoking backend to request a reset password link to be sent as an email.
     this.authService.sendResetPasswordEmail(
-      this.username,
+      this.loginForm.value.username,
       location.origin).subscribe((res: Response) => {
 
         // Verifying request was a success.
@@ -184,14 +199,14 @@ export class LoginDialogComponent implements OnInit {
     }
     this.backendService.current = {
       url: url,
-      username: this.autoLogin === false || this.advanced ? this.username : null,
-      password: this.savePassword ? this.password : null,
+      username: this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
+      password: this.savePassword ? this.loginForm.value.password : null,
     };
 
     // Authenticating user.
     this.authService.login(
-      this.autoLogin === false || this.advanced ? this.username : null,
-      this.autoLogin === false || this.advanced ? this.password : null,
+      this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
+      this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
       this.savePassword).subscribe(() => {
 
         /*

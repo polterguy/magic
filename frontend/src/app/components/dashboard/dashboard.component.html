@@ -1,0 +1,175 @@
+<ng-container *ngIf="authService.authenticated">
+    <div class="row">
+        <div class="col-xl-8 col-md-6 col-12 pr-md-2 pb-md-3 pb-4" *ngIf="systemReport && loginsData">
+            <mat-card class="fit-height-card">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.logins?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.logins?.description}}</mat-card-subtitle>
+                    </div>
+                    <div>
+                        <button mat-icon-button (click)="chartType[1] = !chartType[1]">
+                            <mat-icon>{{chartType[1] ? 'show' : 'bar'}}_chart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-card-content>
+                    <canvas baseChart
+                    [data]="loginsData" 
+                    [labels]="loginsLabel"
+                    [options]="barChartOptions"
+                    [chartType]="!chartType[1] ? 'line' : 'bar'"
+                    [colors]="colors">
+                    </canvas>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="col-xl-4 col-md-6 col-12 pl-md-2 pb-md-3 pb-4">
+            <mat-card>
+                <mat-card-content>
+                    <mat-list role="list" id="custom-list">
+                        <mat-list-item role="listitem">
+                            <h2 class="mat-headline">System details</h2>
+                        </mat-list-item>
+                    </mat-list>
+                    <mat-list role="list" dense id="custom-list">
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Default database</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.default_db}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Dynamic slots</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.dynamic_slots}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Endpoints</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.endpoints}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Log items</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.log_items}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Persisted tasks</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.persisted_tasks}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">Slots</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.slots}}</p>
+                            </div>
+                        </mat-list-item>
+                        <mat-list-item role="listitem">
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <p class="mt-0 mb-0">System's version</p>
+                                <p class="mt-0 mb-0">{{systemReportDisplayable?.version}}</p>
+                            </div>
+                        </mat-list-item>
+                    </mat-list>
+                      
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <!-- unhandled_exceptions -->
+        <div class="col-md-6 col-12 pr-md-2 pb-md-3 pb-4" *ngIf="systemReport && unhandled_exceptionsData">
+            <mat-card class="fit-height-card">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.unhandled_exceptions?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.unhandled_exceptions?.description}}</mat-card-subtitle>
+                    </div>
+                    <div>
+                        <button mat-icon-button (click)="chartType[2] = !chartType[2]">
+                            <mat-icon>{{chartType[2] ? 'show' : 'bar'}}_chart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-card-content>
+                    <canvas baseChart
+                    [data]="unhandled_exceptionsData" 
+                    [labels]="unhandled_exceptionsLabel"
+                    [options]="barChartOptions"
+                    [chartType]="!chartType[2] ? 'line' : 'bar'"
+                    [colors]="colors">
+                    </canvas>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <!-- backend_endpoints_generated -->
+        <div class="col-md-6 col-12 pl-md-2 pb-md-3 pb-4" *ngIf="systemReport && backend_endpoints_generatedData">
+            <mat-card class="fit-height-card">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.backend_endpoints_generated?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.backend_endpoints_generated?.description}}</mat-card-subtitle>
+                    </div>
+                    <div>
+                        <button mat-icon-button (click)="chartType[3] = !chartType[3]">
+                            <mat-icon>{{chartType[3] ? 'show' : 'bar'}}_chart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-card-content>
+                    <canvas baseChart
+                    [data]="backend_endpoints_generatedData" 
+                    [labels]="backend_endpoints_generatedLabel"
+                    [options]="barChartOptions"
+                    [chartType]="!chartType[3] ? 'line' : 'bar'"
+                    [colors]="colors">
+                    </canvas>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <!-- access_denied -->
+        <div class="col-md-6 col-12 pr-md-2 pb-md-3 pb-4" *ngIf="systemReport && access_deniedData">
+            <mat-card class="fit-height-card">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.access_denied?.name}} <small class="text-muted">last 14 days</small></h2>
+                        <mat-card-subtitle>{{systemReport.timeshifts.access_denied?.description}}</mat-card-subtitle>
+                    </div>
+                    <div>
+                        <button mat-icon-button (click)="chartType[4] = !chartType[4]">
+                            <mat-icon>{{chartType[4] ? 'show' : 'bar'}}_chart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-card-content>
+                    <canvas baseChart
+                    [data]="access_deniedData" 
+                    [labels]="access_deniedLabel"
+                    [options]="barChartOptions"
+                    [chartType]="!chartType[4] ? 'line' : 'bar'"
+                    [colors]="colors">
+                    </canvas>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</ng-container>
+<!-- if not authenticated -->
+<ng-container *ngIf="!authService.authenticated">
+    <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 w-100 welcome-section">
+        <h1 class="mat-title">Welcome to Aista Magic Cloud</h1>
+        <p class="mat-subheading-2 mb-0">If you already have a username you can login below.</p>
+        <p class="mat-subheading-2 mb-4">Don't have an account on this server yet? Register below!</p>
+        <div class="d-flex">
+            <button mat-flat-button class="mr-1" color="primary" (click)="login()">Login</button>
+            <button mat-flat-button class="mr-1" color="accent" routerLink="/register">Register</button>
+        </div>
+        <div class="mt-4">
+            <p class="mb-0">Not sure where to start?</p>
+            <h3>Check out the <a href="https://docs.aista.com/" target="_blank">documentation</a> to get started.</h3>
+        </div>
+    </div>
+</ng-container>

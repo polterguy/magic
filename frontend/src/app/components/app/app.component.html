@@ -1,34 +1,51 @@
 
-<mat-spinner
+<div class="progress-holder">
+  <mat-progress-bar mode="indeterminate" *ngIf="loaderService.isLoading | async"></mat-progress-bar>
+</div>
+
+<!-- <mat-spinner
   *ngIf="loaderService.isLoading | async"
   class="obscurer"
   mode="indeterminate"
   diameter="50">
-</mat-spinner>
+</mat-spinner> -->
 
 <div [class]="theme">
 
-  <app-toolbar></app-toolbar>
+  <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
 
-  <mat-sidenav-container>
+  <mat-sidenav-container (backdropClick)="closeNavbar()" id="main-wrapper">
 
-    <mat-sidenav mode="side" [(opened)]="sidenavOpened">
-      <app-navbar></app-navbar>
+    <mat-sidenav [mode]="notSmallScreen ? 'side' : 'over'" class="mat-elevation-z2"
+      [opened]="sidenavOpened || notSmallScreen"
+      [class.sideClosed]="!sidenavOpened && notSmallScreen"
+      [class.full-width-sidebar]="sidenavOpened"
+      [class.small-width-sidebar]="notSmallScreen && !sidenavOpened"
+      *ngIf="sidenavOpened !== undefined"
+      id="sidebar-main">
+      <app-navbar [sideNavStatus]="sidenavOpened"></app-navbar>
     </mat-sidenav>
 
-    <mat-sidenav-content>
+    <mat-sidenav-content
+    [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
+    [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
 
-      <div class="img-wrapper"></div>
+    <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
 
-      <div
+      <!-- <div class="img-wrapper"></div> -->
+
+      <!-- <div
         *ngIf="sidenavOpened"
         class="obscurer"
-        (click)="closeNavbar()"></div>
+        (click)="closeNavbar()"></div> -->
 
-      <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
+      <div class="container-fluid h-100">
+        <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
+      </div>
 
+      
     </mat-sidenav-content>
-
+    
   </mat-sidenav-container>
 
 </div>

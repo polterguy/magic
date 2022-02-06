@@ -1,0 +1,75 @@
+
+.w-100{
+    width: 100%;
+}
+.h-100{
+    height: 100%;
+}
+.text-capitalized{
+    text-transform: capitalize;
+}
+.text-uppercase{
+  text-transform: uppercase;
+}
+.float-right{
+  float: right;
+}
+.text-center{
+    text-align: center;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+  text-align: right!important;
+}
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.text-nowrap{
+  white-space: nowrap;
+}
+.text-muted{
+    opacity: 0.7;
+}
+.img-fluid{
+    max-width: 100%;
+    height: auto;
+}
+.fit-height-card{
+    height: 100%;
+    display: flex!important;
+    flex-direction: column;
+    mat-card-content{
+        height: -webkit-fill-available;
+    }
+}
+.position-relative{
+  position: relative;
+}
+.copy-to-clipboard{
+  cursor: pointer;
+  &:active{
+    background-color: $magic_default_alternative;
+  }
+}
+.code {
+  margin-bottom: 1rem;
+  margin-top: .5rem;
+  white-space: pre;
+  display: block;
+  background-color: transparentize($color: $magic_default_alternative, $amount: 0.95);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: .8rem;
+  line-height: .9rem;
+}
+.no-overflow {
+  text-overflow: unset!important;
+  white-space: normal!important;
+  word-break: break-all;
+  background-color: transparentize($color: $magic_default_alternative, $amount: 0.95);
+  font-size: .8rem;
+  line-height: .9rem;
+}

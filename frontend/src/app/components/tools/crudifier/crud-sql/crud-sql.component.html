@@ -1,0 +1,70 @@
+<div class="d-flex flex-sm-nowrap flex-wrap justify-content-between my-1">
+  <div class="d-flex align-items-center">
+    <h3 class="my-0">SQL endpoints</h3>
+    <div class="sm-icons">
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <div class="p-3">
+          <p>
+            Here you can provide Magic with SQL and automatically wrap your SQL into HTTP endpoint(s), having Magic
+            automatically take care of wiring of everything for you.
+          </p>
+          <div class="d-flex justify-content-end">
+            <a target="_blank" href="https://docs.aista.com/documentation/magic/components/crudifier/sql/" mat-stroked-button>Learn more</a>
+          </div>
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+</div>
+<mat-card-subtitle>Create SQL based HTTP endpoints.</mat-card-subtitle>
+<div class="d-flex flex-sm-nowrap flex-wrap mt-4 w-100" *ngIf="input">
+
+  <mat-form-field class="w-100" appearance="outline">
+
+    <mat-label>Database</mat-label>
+    <mat-select
+      [(ngModel)]="input.databaseType"
+      (selectionChange)="databaseTypeChanged()">
+      <mat-option
+        *ngFor="let idx of databaseTypes"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <div class="p-1"></div>
+
+  <mat-form-field class="w-100" appearance="outline">
+
+    <mat-label>Connection</mat-label>
+    <mat-select
+      [(ngModel)]="input.connectionString"
+      (selectionChange)="connectionStringChanged()">
+      <mat-option
+        *ngFor="let idx of connectionStrings"
+        [value]="idx">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+  <div class="p-1"></div>
+  
+  <mat-form-field class="w-100" appearance="outline">
+
+    <mat-label>Database</mat-label>
+    <mat-select
+      [(ngModel)]="input.database"
+      [disabled]="!databases || databases.length === 0"
+      (selectionChange)="databaseChanged()">
+      <mat-option
+        *ngFor="let idx of databases"
+        [value]="idx"
+        [class]="getDatabaseCssClass(idx)">{{idx}}</mat-option>
+    </mat-select>
+
+  </mat-form-field>
+
+</div>

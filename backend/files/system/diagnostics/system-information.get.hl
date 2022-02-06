@@ -32,28 +32,40 @@ cache.try-get:system-information
       if:x:@log.capabilities/*/can-timeshift
 
          // Adding root nodes for timeshifts.
-         add:x:@.lambda/*/return-nodes
+         add:x:@.lambda/*/lambda2hyper
             .
                timeshifts
                   logins
+                     name:Logins per day
+                     description:How many times users were able to successfully authenticate on a daily basis
+                     items
                   backend_endpoints_generated
+                     name:Generated CRUD endpoints
+                     description:How many CRUD endpoints that was generated on a daily basis
+                     items
                   unhandled_exceptions
+                     name:Unhandled exceptions
+                     description:How many daily unhandled exceptions Magic has generated
+                     items
                   access_denied
+                     name:Access denied requests
+                     description:How many times invocations have resulted in an access denied response
+                     items
 
          // Retrieving count of log items grouped by day for root logins.
-         add:x:@.lambda/*/return-nodes/*/timeshifts/*/logins
+         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/logins/*/items
             log.timeshift:User successfully authenticated
 
          // Retrieving count of log items grouped by day for backend endpoints generated.
-         add:x:@.lambda/*/return-nodes/*/timeshifts/*/backend_endpoints_generated
+         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/backend_endpoints_generated/*/items
             log.timeshift:Generating CRUD backend
 
          // Retrieving count of unhandled exceptions.
-         add:x:@.lambda/*/return-nodes/*/timeshifts/*/unhandled_exceptions
+         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/unhandled_exceptions/*/items
             log.timeshift:Unhandled exception occurred
 
          // Retrieving access denied invocations.
-         add:x:@.lambda/*/return-nodes/*/timeshifts/*/access_denied
+         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items
             log.timeshift:Access denied
 
       // Retrieving endpoints.

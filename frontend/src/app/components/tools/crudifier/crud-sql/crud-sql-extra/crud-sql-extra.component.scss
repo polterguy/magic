@@ -1,0 +1,73 @@
+
+// .arguments-declaration {
+//   button {
+//     float: left;
+//   }
+// }
+// .arguments-declaration:after {
+//   display: table;
+//   content: '';
+//   clear: both;
+// }
+
+// mat-checkbox {
+//   margin-right: 1rem;
+// }
+
+// .verbs {
+//   padding-left: 0;
+//   position: absolute;
+//   top: 1rem;
+//   right: 1rem;
+//   li {
+//     list-style-type: none;
+//     float: left;
+//     margin-right: 1rem;
+//     width: 4rem;
+//   }
+// }
+
+// strong {
+//   display: block;
+//   margin-bottom: 1rem;
+// }
+
+// table.table-items {
+//   margin-top: 2rem;
+//   tr {
+//     td {
+//       .details-sheet {
+//         ul.verbs {
+//           position: relative;
+//           top: unset;
+//           right: unset;
+//         }
+//       }
+//     }
+//   }
+// }
+
+// h3 {
+//   margin-top: 1.5rem;
+// }
+
+// .splitter {
+//   display: flex;
+//   .section-1 {
+//     flex-direction: column;
+//     flex: .60;
+//   }
+//   .section-2 {
+//     flex-direction: column;
+//     flex: .40;
+//   }
+// }
+
+// @media screen and (max-width: 1200px) {
+//   .splitter {
+//     display: block;
+//     .section-1, .section-2 {
+//       flex: none;
+//     }
+//   }
+// }

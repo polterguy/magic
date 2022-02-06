@@ -1,12 +1,297 @@
+@import '../../../../assets/styles/colour.scss';
+@import '../../../../assets/styles/mixin.scss';
+@import '../../../../assets/styles/sizes.scss';
 
-a {
-  width: 100%;
-  text-align: left;
-  margin-bottom: .5rem;
-  span {
-    margin-left: .5rem;
+.top-box-sidebar{
+  padding: 15px;
+  border-bottom: 1px solid transparentize($color: $magic_dark_alternative, $amount: 0.95);
+  position: relative;
+  .nm-top{
+    margin-top: -8px;
+  }
+  .toggle-btn{
+    position: absolute;
+    right: -5px;
+    top: -5px;
   }
 }
-a.active-link {
-  background-color: #555;
+.footer{
+  padding: 1em;
+  position: absolute;
+  bottom: 0;
+}
+.theme-title{font-weight: 400;}
+.switch-theme{
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+  border-radius: 50px;
+  height: 11px;
+  width: 33px;
+  margin-top: 4px;
+  position: relative;
+  @include general_transition(0.5s);
+  .light-icon,
+  .dark-icon{
+    font-size: 25px;
+    position: absolute;
+    top: -12px;
+    @include general_transition(0.5s);
+  }
+  .light-icon{left: -5px;}
+  .dark-icon{right: -5px;}
+  .mat-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+  }
+  &.light{
+    .light-icon{opacity: 0;}
+    .dark-icon{opacity: 1;}
+    @include general_transition(0.5s);
+  }
+  &.dark{
+    .dark-icon{opacity: 0;}
+    .light-icon{opacity: 1;}
+    @include general_transition(0.5s);
+  }
+}
+.auth-btn{
+  mat-icon{
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 20px;
+  }
+}
+::ng-deep{
+  .theme-btn{
+    .mat-button-ripple.mat-ripple, .mat-button-focus-overlay{display: none;}
+  }
+  /*=-=-=-=-=-=
+  for the collapsed sidebar
+  =-=-=-=-=-=*/
+  .sideClosed #sidebar{
+    /*=-=-=-=-=-=
+    links outside of the main accordion
+    =-=-=-=-=-=*/
+    .standalone-link.mat-list-option{
+      padding-left: 1rem;
+      .mat-list-text{padding-right: 0;}
+    }
+  }
+  /*=-=-=-=-=-=
+  general styling
+  =-=-=-=-=-=*/
+  #sidebar {
+    user-select: none;
+    padding-bottom: 155px;
+    overflow-y: auto;
+    @include general_transition(0.5s);
+    @include scrollbar(transparent,transparent,5px);
+    &:hover{
+      @include scrollbar(transparent,transparentize($color: $magic_default_alternative, $amount: 0.3),5px)
+    }
+    .mat-expansion-panel{
+      border-radius: 0;
+    }
+
+    .mat-expansion-panel-header,
+    .mat-list-option{
+      height: 40px;
+      font-size: 14px;
+      line-height: 21px;
+      padding: 0 1rem;
+      @include general_transition(0.3s);
+      .mat-icon{
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+        margin-right: 15px;
+      }
+      
+      /*=-=-=-=-=-=
+      inside mat-list-option
+      =-=-=-=-=-=*/
+      .mat-list-text {
+        flex-direction: row;
+        font-size: 13px;
+      }
+      .mat-list-item-content{
+        padding: 0;
+      }
+    }
+    
+    .mat-list-option:not(.standalone-link){
+      &::after{@include general_transition(0.5s);}
+        &.active-link::after,
+        &:hover::after{
+            content: '.';
+            position: absolute;
+            height: 100%;
+            right: 0;
+            bottom: 10px;
+            font-size: 60px;
+            left: 90%;
+            margin-left: -10px;
+        }
+    }    
+  }
+  
+}
+/*=-=-=-=-=-=
+colour setting -- text & background
+=-=-=-=-=-=*/
+::ng-deep {
+  .light .footer{background-color: $magic_default_secondary;}
+  .dark .footer{background-color: $magic_dark_alternative;}
+  .light #sidebar{
+    .mat-expansion-panel-header-title,
+    .mat-list-option,
+    .mat-list-base .mat-list-item,
+    .mat-expansion-indicator::after,
+    .top-box-sidebar,
+    .top-box-sidebar p{color: $magic_dark_secondary;}
+  
+    .mat-expansion-panel,
+    .mat-expansion-panel-header,
+    .mat-list-option{background-color: transparent;}
+  
+    mat-expansion-panel.mat-expansion-panel.mat-expanded{
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.04);
+      .mat-expansion-panel-content{
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.04);
+      }
+    }
+    .mat-expansion-panel-header{
+      @include general_transition(0.3s);
+      &.active-link,
+      &:hover {
+        background-color: $magic_default_alternative;
+        .mat-expansion-panel-header-title,
+        .mat-expansion-indicator::after{
+          color: $magic_dark;
+          font-weight: 500;
+        }
+      }
+    }
+    .mat-list-option:not(.standalone-link){
+      &::after{@include general_transition(0.5s);}
+        &.active-link::after,
+        &:hover::after{
+            color: $magic_dark;
+        }
+    }
+  }
+  .dark #sidebar{
+    .mat-expansion-panel-header-title,
+    .mat-list-option,
+    .mat-list-base .mat-list-item,
+    .mat-expansion-indicator::after,
+    .top-box-sidebar,
+    .top-box-sidebar p.mat-caption{color: $magic_default_secondary;}
+
+    .mat-expansion-panel,
+    .mat-expansion-panel-header,
+    .mat-list-option{background-color: transparent;}
+
+    mat-expansion-panel.mat-expansion-panel.mat-expanded{
+      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.15);
+      .mat-expansion-panel-content{
+        box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.15);
+      }
+    }
+    .mat-expansion-panel-header{
+      @include general_transition(0.3s);
+      &.active-link,
+      &:hover {
+        background-color: $magic_dark_alternative;
+        .mat-expansion-panel-header-title,
+        .mat-expansion-indicator::after{
+          color: $magic_accent;
+        }
+      }
+    }
+    .mat-list-option:not(.standalone-link){
+      &::after{@include general_transition(0.5s);}
+        &.active-link::after,
+        &:hover::after{
+            color: $magic_accent;
+        }
+    }
+  }
+
+  .sideClosed #sidebar{
+    .mat-expanded .mat-expansion-panel-content,
+    mat-expansion-panel.mat-expansion-panel.mat-expanded .mat-expansion-panel-content,
+    mat-expansion-panel.mat-expansion-panel.mat-expanded{
+      box-shadow: none;
+    }
+    .mat-list-option,
+    .mat-expansion-panel-header{
+      &.active-link,
+      &:hover{
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.04);
+        .mat-expansion-panel-header-title,
+        .mat-list-text,
+        .mat-list-base .mat-list-item,
+        .mat-expansion-indicator::after{color: $magic_accent;}
+      }
+    }
+  }
+}
+
+/*=-=-=-=-=-=
+  for the collapsed sidebar
+    -- to hide texts & to remove padding on the collapsible elements
+  =-=-=-=-=-=*/
+::ng-deep{
+  .sideClosed #sidebar{
+    // padding-bottom: 80px;
+
+    .top-box-sidebar{
+      padding-bottom: 0;
+      .nm-top{
+        margin-top: 0;
+      }
+    }
+
+    .mat-expansion-panel-header-title,
+    .mat-list-text{display: flex;flex-direction: column;align-items: center;}
+    .title,
+    .mat-expansion-panel-header{font-size: 95%;}
+
+    .mat-expansion-panel-body{padding: 0;}
+    .mat-expansion-panel-header{
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      .mat-icon{
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .mat-expansion-panel-header-title{padding-right: 0;margin-right: 0;}
+    }
+    .mat-list-option{
+      padding-left: 8px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;      
+      .mat-icon{
+        margin-right: auto;
+        margin-left: auto;
+      }
+    }
+    
+    
+    /*=-=-=-=-=-=
+    to fix positioning of the ripple
+    =-=-=-=-=-=*/
+    .mat-expansion-panel-header .mat-list-item-content, 
+    .mat-list-option .mat-list-item-content{
+      width: 100%;
+    }
+  }
 }

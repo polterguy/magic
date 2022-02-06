@@ -7,14 +7,20 @@
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
+import { Response } from 'src/app/models/response.model';
 import { Messages } from 'src/app/models/messages.model';
+import { BazarService } from '../management/bazar/services/bazar.service';
+import { ConfigService } from '../management/config/services/config.service';
 import { MessageService } from 'src/app/services/message.service';
-import { AuthService } from 'src/app/components/auth/services/auth.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { AuthService } from 'src/app/components/management/auth/services/auth.service';
 import { LoaderService } from 'src/app/components/app/services/loader.service';
+import { DiagnosticsService } from '../../services/diagnostics.service';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**
  * Main wire frame application component.
@@ -26,20 +32,53 @@ import { LoaderService } from 'src/app/components/app/services/loader.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+  /**
+   * To get the width of the screen 
+   * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
+   * smallScreenSize {number} :: to set a fixed size as an agreement
+   * notSmallScreen {boolean} :: to check whether the screen width is small or large
+   */
+  public getScreenWidth: number;
+  public smallScreenSize: number = 768;
+  public notSmallScreen: boolean = undefined;
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize() {
+    this.getScreenWidth = window.innerWidth;
+    this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
+    this.sidenavOpened = this.notSmallScreen;
+  }
+
   // Needed to subscribe to messages published by other componentsd.
   private subscriber: Subscription;
 
   /**
    * True if navigation menu is expanded.
    */
-  public sidenavOpened = false;
+  public sidenavOpened: boolean;
+
+  /**
+   * If there exists a newer version of Magic Core as published by the Bazar,
+   * this value will be true.
+   */
+   public shouldUpdateCore: boolean = false;
+   
+  /**
+   * Backend version as returned from server if authenticated.
+   */
+   public version: string = null;
+
+   /**
+    * Latest version of Magic as published by the Bazar.
+    */
+   public bazarVersion: string = null;
 
   /**
    * CSS class wrapping entire application.
    * 
    * Used to change theme dynamically, and invert colors between 'light' and 'dark' themes.
    */
-  public theme: string;
+  public theme: string = 'light';
 
   /**
    * Creates an instance of your component.
@@ -49,25 +88,43 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
    * @param authService Authentication and authorisation service, used to authenticate user, etc
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
+   * @param messageService Needed to subscribe to messages informing us when user logs in and out
+   * @param diagnosticsService Needed to retrieve backend version
+   * @param feedbackService Needed to provide feedback to user
+   * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
     private messageService: MessageService,
     public authService: AuthService,
-    public loaderService: LoaderService) { }
+    public loaderService: LoaderService,
+    private bazarService: BazarService,
+    private configService: ConfigService,
+    private feedbackService: FeedbackService,
+    private diagnosticsService: DiagnosticsService,
+    private overlayContainer: OverlayContainer) { }
 
   /**
    * OnInit implementation.
    */
   public ngOnInit() {
 
+    /**
+     * to check the screen width rule for initial setting
+     */
+    this.onWindowResize();
+
+    // Attempting to retrieve backend version.
+    this.retrieveBackendVersion();
     /*
      * Subscribing to relevant messages published by other components
      * when wire frame needs to react to events occurring other places in our app.
      */
     this.subscriber = this.messageService.subscriber().subscribe((msg: Message) => {
-
+      if (msg.name === Messages.USER_LOGGED_IN || msg.name === Messages.USER_LOGGED_OUT) {
+        this.retrieveBackendVersion();
+      }
       switch(msg.name) {
 
         // User was logged out.
@@ -98,11 +155,13 @@ export class AppComponent implements OnInit, OnDestroy {
         // Some component wants to toggle the navbar
         case Messages.TOGGLE_NAVBAR:
           this.sidenavOpened = !this.sidenavOpened;
+          localStorage.setItem('sidebar', this.sidenavOpened ? 'open' : 'close');
           break;
 
         // Some component wants to close the navbar
         case Messages.CLOSE_NAVBAR:
           this.sidenavOpened = false;
+          localStorage.setItem('sidebar', 'close');
           break;
       }
     });
@@ -113,6 +172,28 @@ export class AppComponent implements OnInit, OnDestroy {
     }, error => {
       this.showError(error);
     });
+
+    // wait until sidebar status is defined based on the value stored in localstorage 
+    (async () => {
+      while (this.sidenavOpened === undefined)
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+      this.sidenavOpened = !localStorage.getItem('sidebar') ? true : (localStorage.getItem('sidebar') === 'open' ? true : false);
+
+      // wait until theme color is defined based on the value stored in localstorage 
+      if (!localStorage.getItem('theme')) {
+        this.theme = 'light';
+      } else {
+        this.theme = localStorage.getItem('theme');
+      }
+      this.overlayContainer.getContainerElement().classList.add(this.theme);
+
+      this.messageService.sendMessage({
+        name: Messages.THEME_CHANGED,
+        content: this.theme,
+      });
+    })();
+    
   }
 
   /**
@@ -129,6 +210,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public closeNavbar() {
     this.sidenavOpened = false;
+    
   }
 
   /*
@@ -151,5 +233,57 @@ export class AppComponent implements OnInit, OnDestroy {
     this.snackBar.open(info, null, {
       duration,
     });
+  }
+  
+  /*
+   * Retrieves backend version.
+   */
+  private retrieveBackendVersion() {
+
+    // Retrieving backend version if we're authenticated.
+    if (this.authService.isRoot) {
+
+      // Invoking backend to retrieve version.
+      this.diagnosticsService.version().subscribe((version: any) => {
+
+        // Assigning model.
+        this.version = version.version;
+
+        // Invoking Bazar to check if we have the latest current version of Magic installed.
+        this.bazarService.version().subscribe((result: Response) => {
+
+          // Assigning model.
+          this.bazarVersion = result.result;
+
+          // Checking if Bazar version differs from current version.
+          if (this.bazarVersion !== this.version) {
+
+            // Invoking backend to check if Bazar version of Magic is higher than current version of Magic.
+            this.configService.versionCompare(this.bazarVersion, this.version).subscribe((result: Response) => {
+
+              /*
+               * Checking return value of invocation, and if it was +1, the Bazar
+               * claims there exists a newer version of the core.
+               */
+              if (+result.result === 1) {
+
+                // Newer version exists according to Bazar.
+                this.feedbackService.showInfo('There has been published an updated version of Magic. You should probably update your current version.');
+                this.shouldUpdateCore = true;
+              }
+            });
+          }
+
+        }, (error: any) => this.feedbackService.showError(error));
+
+      }, (error: any) => {
+        this.authService.logout(false, false);
+      });
+
+    } else {
+
+      // Unknown backend version since we're obviously not connected to any backend.
+      this.version = '';
+    }
   }
 }

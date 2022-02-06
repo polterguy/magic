@@ -13,7 +13,7 @@ import {
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
-import { EvaluatorService } from 'src/app/components/evaluator/services/evaluator.service';
+import { EvaluatorService } from 'src/app/components/tools/evaluator/services/evaluator.service';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.
@@ -114,6 +114,10 @@ export class HyperlambdaComponent implements AfterViewInit {
         if (this.model.options.extraKeys) {
           this.model.options.extraKeys['Alt-M'] = (cm: any) => {
             cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+            // to hide/show sidenav
+            let sidenav = document.querySelector('.mat-sidenav');
+            sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+            sidenav.classList.add('d-none');
           };
         }
       }, 1);

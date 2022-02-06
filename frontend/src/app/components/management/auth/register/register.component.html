@@ -1,0 +1,74 @@
+<div class="row justify-content-center align-items-center h-100">
+  <div class="col-xl-5 col-lg-6 col-md-7 col-sm-8 col-12">
+    <mat-card>
+      <mat-card-content>
+        <div *ngIf="status === 'ok-to-register'">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h2 class="mb-0">Register</h2>
+              <p class="mb-0 mat-caption">Create a user account here</p>
+            </div>
+            <mat-icon 
+              color="warn"
+              matTooltip="Clicking the submit button will transmit your password in clear text">warning
+            </mat-icon>
+          </div>
+          
+          <form [formGroup]="registrationForm" (ngSubmit)="register()" novalidate>
+            <mat-form-field class="fill-width" appearance="outline">
+              <mat-label>Email address</mat-label>
+              <input matInput type="text" name="email" autocomplete="off" formControlName="email">
+            </mat-form-field>
+            <mat-form-field class="fill-width" appearance="outline">
+
+              <mat-label>Password</mat-label>
+              <input matInput name="password" [type]="hide ? 'password' : 'text'" autocomplete="new-password"
+                formControlName="password">
+              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-pressed]="hide" tabindex="-1">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+
+            </mat-form-field>
+            <mat-form-field class="fill-width" appearance="outline">
+
+              <mat-label>Repeat password</mat-label>
+              <input matInput [type]="hide ? 'password' : 'text'" autocomplete="new-password"
+                [(ngModel)]="repeatPassword" [ngModelOptions]="{standalone: true}">
+
+            </mat-form-field>
+            <div class="button-strip">
+              <button mat-raised-button color="primary" type="submit">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="status === 'already-logged-in'" class="text-center sign-icon success">
+          <mat-icon>check_circle</mat-icon>
+          <h3 class="mb-0">You are already registered and logged into system.</h3>
+        </div>
+
+        <div *ngIf="status === 'already-registered'" class="text-center sign-icon warn">
+          <mat-icon>warning</mat-icon>
+          <h3 class="mb-0">This email address has already been registered in the system. Why not try to login?</h3>
+        </div>
+
+        <div *ngIf="status === 'confirm-email-address-email-sent'" class="text-center sign-icon warn">
+          <mat-icon>mark_email_read</mat-icon>
+          <h3 class="mb-0">Please check your email inbox to verify your email address.</h3>
+        </div>
+
+        <div *ngIf="status === 'email-sent-to-moderator'" class="text-center sign-icon warn">
+          <mat-icon>lock_clock</mat-icon>
+          <h3 class="mb-0">Please wait for a moderator to accept you as a user in the system.</h3>
+        </div>
+
+        <div *ngIf="status === 'success'" class="text-center sign-icon success">
+          <mat-icon>check_circle</mat-icon>
+          <h3 class="mb-0">You have been successfully registered in the system.</h3>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
