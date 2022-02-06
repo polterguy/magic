@@ -22,6 +22,7 @@ import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/code
 
 // CodeMirror options.
 import hyperlambda from '../../../../codemirror/options/hyperlambda.json';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -30,7 +31,14 @@ import hyperlambda from '../../../../codemirror/options/hyperlambda.json';
 @Component({
   selector: 'app-crud-table',
   templateUrl: './crud-table.component.html',
-  styleUrls: ['./crud-table.component.scss']
+  styleUrls: ['./crud-table.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('0.75s cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ]
 })
 export class CrudifierTableComponent implements OnInit {
 
@@ -57,6 +65,8 @@ export class CrudifierTableComponent implements OnInit {
    * Whether or not advanced options should be shown or not.
    */
   public advanced = false;
+
+  public expandedElement: any;
 
   /**
    * Authorisation requirements for SignalR messages published during invocation of endpoint.
