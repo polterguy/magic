@@ -107,8 +107,9 @@
               *matCellDef="let el">
               <div class="w-100 details-row"
               [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">   
-                <div
-                  class="py-3 min-height w-100"
+                <div class="min-height w-100">
+                  <div
+                  class="py-3  w-100"
                   *ngIf="shouldDisplayDetails(el) && el.content">
       
                   <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
@@ -136,6 +137,7 @@
       
                   </div>
       
+                </div>
                 </div>
               </div>
             </td>
