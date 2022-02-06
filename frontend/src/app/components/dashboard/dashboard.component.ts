@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../management/auth/services/auth.service';
 import { DashboardService } from './services/dashboard.service';
 
@@ -7,7 +7,6 @@ import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-
 
 import moment from 'moment';
 import { ChartOptions } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
 
 // Importing global chart colors.
 import colors from './bar_chart_colors.json';
@@ -20,14 +19,14 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class DashboardComponent implements OnInit {
 
-  chartType: string = 'line';
+  chartType: boolean[] = [];
 
   public systemReport: SystemReport[];
   public systemReportDisplayable: any;
 
   public logTypesChart: LogTypes[];
 
-  public timeshiftChart: Timeshifts[];
+  public timeshiftChart: Timeshifts[] = [];
   public timeshiftChartLabel: string[] = [];
   public timeshiftChartData: string[] = [];
 
@@ -96,6 +95,19 @@ export class DashboardComponent implements OnInit {
   /**
    * Retrieving the system's report
    */
+
+  /** TODO::::::: needs modification */
+   access_deniedLabel: string[] = [];
+   access_deniedData: string[] = [];
+
+   backend_endpoints_generatedLabel: string[] = [];
+   backend_endpoints_generatedData: string[] = [];
+   
+   loginsLabel: string[] = [];
+   loginsData: string[] = [];
+
+   unhandled_exceptionsLabel: string[] = [];
+   unhandled_exceptionsData: string[] = [];
   private getSystemReport() {
     this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {
       this.systemReport = report;
@@ -108,13 +120,26 @@ export class DashboardComponent implements OnInit {
       /**
        * preparing data with variable key
        */
-      Object.keys(report['timeshifts']).forEach((item: any) => {
-        this.timeshiftChart = report['timeshifts'][item];
+      Object.keys(report['timeshifts']).forEach((item: any,index) => {
+        this.timeshiftChart.push(report['timeshifts'][item]);
       })
-      this.timeshiftChart.forEach((item: any) => {
-        this.timeshiftChartLabel.push(moment(item.when).format("D. MMM"));
-        this.timeshiftChartData.push(item.count);
-      })
+      // this.timeshiftChart.forEach((item: any, index) => {
+      //   item.forEach(element => {
+      //     this.access_deniedLabel.push(moment(element.when).format("D. MMM"));
+      //     this.access_deniedLabel.push(element.count);
+      //   });
+      // })
+      this.access_deniedLabel = report['timeshifts'].access_denied.map(x => {return moment(x.when).format("D. MMM")});
+      this.access_deniedData = report['timeshifts'].access_denied.map(x => {return x.count});
+
+      this.backend_endpoints_generatedLabel = report['timeshifts'].backend_endpoints_generated.map(x => {return moment(x.when).format("D. MMM")});
+      this.backend_endpoints_generatedData = report['timeshifts'].backend_endpoints_generated.map(x => {return x.count});
+
+      this.loginsLabel = report['timeshifts'].logins.map(x => {return moment(x.when).format("D. MMM")});
+      this.loginsData = report['timeshifts'].logins.map(x => {return x.count});
+
+      this.unhandled_exceptionsLabel = report['timeshifts'].unhandled_exceptions.map(x => {return moment(x.when).format("D. MMM")});
+      this.unhandled_exceptionsData = report['timeshifts'].unhandled_exceptions.map(x => {return x.count});
     })
   }
 

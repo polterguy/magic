@@ -73,7 +73,7 @@
   <div class="my-3"><mat-divider></mat-divider></div>
   <h4 class="mb-2">Arguments</h4>
   <ng-container *ngIf="getArguments(endpoint.input, true).length > 0">
-    <mat-chip-list>
+    <mat-chip-list class="mb-2">
       <mat-chip
         *ngFor="let i of getArguments(endpoint.input, true)"
         [matTooltip]="getChipTooltip(i)"

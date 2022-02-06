@@ -20,4 +20,4 @@
         }
     }
 }
-::ng-deep .dark a p{color: $magic_default_secondary;}
+::ng-deep .dark a p, .links mat-icon{color: $magic_default_secondary;}
