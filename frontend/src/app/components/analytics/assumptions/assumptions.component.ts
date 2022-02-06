@@ -161,7 +161,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     if (idx !== -1) {
 
       // Hiding item.
-      this.selectedTests.splice(idx, 1);
+      // this.selectedTests.splice(idx, 1);
 
     } else {
 
