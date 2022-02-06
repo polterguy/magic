@@ -35,6 +35,22 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
+    <!-- crypto if user not logged in -->
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="!authService.authenticated">
+      <mat-expansion-panel-header 
+      #panelC (click)="panelC._toggle()" 
+      [matTooltipDisabled]="sideNavStatus" 
+      matTooltip="Cryptography" 
+      routerLink="/crypto" 
+      matTooltipPosition="after" 
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{exact:true}">
+          <mat-panel-title>
+              <mat-icon>security</mat-icon>
+              <span class="title">Cryptography</span>
+          </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
     <!-- analytics -->
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !sideNavStatus" 

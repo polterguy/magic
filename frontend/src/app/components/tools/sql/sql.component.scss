@@ -1,5 +1,13 @@
+@import '../../../../assets/styles/colour.scss';
+@import '../../../../assets/styles/mixin.scss';
 .min-h-400{min-height: 400px;}
 .min-width-80{min-width: 80px;}
+::ng-deep .data-row{
+    @include general_transition(0.3s);
+    &:hover{
+        background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
+    }
+}
 // mat-card {
 //   padding-bottom: .5rem;
 // }
