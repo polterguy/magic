@@ -1,4 +1,5 @@
-
+@import '../../../../assets/styles/colour.scss';
+@import '../../../../assets/styles/mixin.scss';
 .count {
   color: #aaa;
   font-size: .8rem;
@@ -9,7 +10,11 @@
   word-break: break-all;
 }
 .fixed-min-width{min-width: 100px;}
-.infinite-scrolling-table-wrapper{max-height: 83vh;overflow-y: auto;}
+.infinite-scrolling-table-wrapper{
+  max-height: 83vh;
+  overflow-y: auto;
+  @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
+}
 
 .more-btn {
   display: block;
