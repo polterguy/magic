@@ -5,24 +5,17 @@
 
 // Angular and system imports.
 import { Observable, of, throwError } from 'rxjs';
-import { Inject, Injectable, LOCALE_ID } from '@angular/core';
-import { formatNumber } from '@angular/common';
-
-// Utility component imports.
-import { saveAs } from "file-saver";
+import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Count } from 'src/app/models/count.model';
-import { Template } from '../models/template.model';
+import { Count } from '../../../../models/count.model';
 import { Endpoint } from '../models/endpoint.model';
-import { Message } from 'src/app/models/message.model';
-import { Response } from 'src/app/models/response.model';
+import { Message } from '../../../../models/message.model';
+import { Response } from '../../../../models/response.model';
 import { SocketUser } from '../models/socket-user.model';
 import { HttpService } from '../../../../services/http.service';
 import { FileService } from '../../../files/services/file.service';
-import { BackendService } from 'src/app/services/backend.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { LocResult } from '../../../tools/crudifier/models/loc-result.model';
+import { BackendService } from '../../../../services/backend.service';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,
@@ -150,8 +143,8 @@ export class EndpointService {
       return new Observable<string[]>(observer => {
 
         // Getting statically declared system tests.
-        return this.fileService.listFiles('/misc/tests/').subscribe(res1 => {
-
+        return this.fileService.listFiles('/').subscribe(res1 => {
+console.log(res1);
           // Getting dynamically declared tests
           return this.fileService.listFiles('/etc/tests/').subscribe(res2 => {
 

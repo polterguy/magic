@@ -83,7 +83,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     // Attempting to retrieve backend version.
-    this.retrieveBackendVersion();
+    // this.retrieveBackendVersion();
 
     this.currentYear = new Date().getFullYear();
 
