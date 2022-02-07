@@ -121,26 +121,28 @@ export class DashboardComponent implements OnInit {
       /**
        * preparing data with variable key
        */
-      Object.keys(report['timeshifts']).forEach((item: any,index) => {
-        this.timeshiftChart.push(report['timeshifts'][item]);
-      })
-      // this.timeshiftChart.forEach((item: any, index) => {
-      //   item.forEach(element => {
-      //     this.access_deniedLabel.push(moment(element.when).format("D. MMM"));
-      //     this.access_deniedLabel.push(element.count);
-      //   });
-      // })
-      this.access_deniedLabel = report['timeshifts'].access_denied.items.map(x => {return moment(x.when).format("D. MMM")});
-      this.access_deniedData = report['timeshifts'].access_denied.items.map(x => {return x.count});
+      if (report["timeshifts"]) {
+        Object.keys(report['timeshifts']).forEach((item: any,index) => {
+          this.timeshiftChart.push(report['timeshifts'][item]);
+        })
+        // this.timeshiftChart.forEach((item: any, index) => {
+        //   item.forEach(element => {
+        //     this.access_deniedLabel.push(moment(element.when).format("D. MMM"));
+        //     this.access_deniedLabel.push(element.count);
+        //   });
+        // })
+        this.access_deniedLabel = report['timeshifts'].access_denied.items.map(x => {return moment(x.when).format("D. MMM")});
+        this.access_deniedData = report['timeshifts'].access_denied.items.map(x => {return x.count});
 
-      this.backend_endpoints_generatedLabel = report['timeshifts'].backend_endpoints_generated.items.map(x => {return moment(x.when).format("D. MMM")});
-      this.backend_endpoints_generatedData = report['timeshifts'].backend_endpoints_generated.items.map(x => {return x.count});
+        this.backend_endpoints_generatedLabel = report['timeshifts'].backend_endpoints_generated.items.map(x => {return moment(x.when).format("D. MMM")});
+        this.backend_endpoints_generatedData = report['timeshifts'].backend_endpoints_generated.items.map(x => {return x.count});
 
-      this.loginsLabel = report['timeshifts'].logins.items.map(x => {return moment(x.when).format("D. MMM")});
-      this.loginsData = report['timeshifts'].logins.items.map(x => {return x.count});
+        this.loginsLabel = report['timeshifts'].logins.items.map(x => {return moment(x.when).format("D. MMM")});
+        this.loginsData = report['timeshifts'].logins.items.map(x => {return x.count});
 
-      this.unhandled_exceptionsLabel = report['timeshifts'].unhandled_exceptions.items.map(x => {return moment(x.when).format("D. MMM")});
-      this.unhandled_exceptionsData = report['timeshifts'].unhandled_exceptions.items.map(x => {return x.count});
+        this.unhandled_exceptionsLabel = report['timeshifts'].unhandled_exceptions.items.map(x => {return moment(x.when).format("D. MMM")});
+        this.unhandled_exceptionsData = report['timeshifts'].unhandled_exceptions.items.map(x => {return x.count});
+      }
     })
   }
 
