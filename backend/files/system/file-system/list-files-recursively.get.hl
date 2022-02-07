@@ -10,7 +10,7 @@ auth.ticket.verify:root
 
 // Listing all file in specified folder.
 io.file.list-recursively:x:@.arguments/*/folder
-   hidden-files:bool:true
+   display-hidden:bool:true
 
 // Returning results of above invocation to caller.
 return-nodes:x:@io.file.list-recursively/*
