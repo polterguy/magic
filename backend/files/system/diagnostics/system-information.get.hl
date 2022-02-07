@@ -74,6 +74,11 @@ cache.try-get:system-information
       set-value:x:-
          get-count:x:@endpoints.list/*
 
+      // Retrieving last 10 log items.
+      add:x:@.lambda/*/lambda2hyper/*/last_log_items
+         log.query
+            max:10
+
       // Retrieving slots.
       vocabulary
       .no-slots
@@ -101,6 +106,7 @@ cache.try-get:system-information
          slots:x:@.no-slots
          dynamic_slots:x:@.no-dynamic-slots
          default_db:x:@.default-db
+         last_log_items
       return:x:@lambda2hyper
 
 // Returning result of cache invocation to caller.
