@@ -9,7 +9,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Application specific imports.
 import { IdeComponent } from './components/tools/ide/ide.component';
-import { LogComponent } from './components/analytics/log/diagnostics-log.component';
+import { LogComponent } from './components/analytics/log/log.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
 import { AuthComponent } from './components/management/auth/auth.component';
 import { TasksComponent } from './components/tools/tasks/tasks.component';
