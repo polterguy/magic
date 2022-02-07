@@ -172,7 +172,7 @@ export class LogComponent implements OnInit {
     const scrollLocation = e.target.scrollTop; // how far user scrolled
 
     // If the user has scrolled within 500px of the bottom, add more data
-    const limit = tableScrollHeight - scrollLocation === clientHeight;   
+    const limit = tableScrollHeight - scrollLocation <= clientHeight;   
     if (limit && (this.items.length < this.count)) {
       this.getItems();
     }
