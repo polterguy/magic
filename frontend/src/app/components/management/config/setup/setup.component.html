@@ -32,41 +32,7 @@
           <mat-step>
             <ng-template matStepLabel>Assumptions</ng-template>
             <ng-container *ngIf="stepper.selectedIndex === 3">
-              <div class="d-flex flex-sm-nowrap flex-wrap justify-content-between">
-                <div class="d-flex align-items-center">
-                  <h3 class="my-0">Assumptions</h3>
-                  <div class="sm-icons">
-                    <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
-                      <mat-icon>help_outline</mat-icon>
-                    </button>
-                    <mat-menu #menu="matMenu">
-                      <div class="p-3">
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem autem consequatur explicabo architecto sequi asperiores odit minima incidunt error facilis, animi eaque a pariatur magnam doloribus libero ad. Voluptatum, harum!
-                        </p>
-                        <div class="d-flex justify-content-end">
-                          <a target="_blank" href="https://docs.aista.com/tutorials/crypto-lambda-http/" mat-stroked-button>Learn more</a>
-                        </div>
-                      </div>
-                    </mat-menu>
-                  </div>
-                </div>
-              </div>
-              <mat-card-subtitle>Lorem ipsum dolor sit amet consectetur adipisicing elit.</mat-card-subtitle>
-              <app-diagnostics-assumptions></app-diagnostics-assumptions>
-
-              <div class="toolbar-strip">
-                <button
-                  mat-raised-button
-                  color="primary"
-                  [disabled]="seed === '' || subject === '' || email === ''"
-                  (click)="close()"
-                  class="done">
-                  Close
-                </button>
-
-              </div>
-
+              <app-assumptions></app-assumptions>
             </ng-container>
           </mat-step>
 
