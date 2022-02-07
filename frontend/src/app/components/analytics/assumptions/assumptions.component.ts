@@ -10,10 +10,10 @@ import { Component, OnInit } from '@angular/core';
 import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
-import { Response } from 'src/app/models/response.model';
+import { Response } from '../../../models/response.model';
 import { FileService } from '../../files/services/file.service';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from '../../../services/message.service';
+import { FeedbackService } from '../../../services/feedback.service';
 import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { EndpointService } from '../endpoints/services/endpoint.service';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
