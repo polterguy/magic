@@ -594,7 +594,7 @@ export class AuthService {
         jail: this.canInvoke('magic/system/auth/imprison', 'put'),
       },
       log: {
-        read: this.canInvoke('magic/system/log/count-items', 'get') && this.canInvoke('magic/system/log/log-item', 'get') && this.canInvoke('magic/system/log/log-items', 'get'),
+        read: this.canInvoke('magic/system/log/count', 'get') && this.canInvoke('magic/system/log/get', 'get') && this.canInvoke('magic/system/log/list', 'get'),
         write: this.canInvoke('magic/system/log/log', 'post'),
       },
       tasks: {

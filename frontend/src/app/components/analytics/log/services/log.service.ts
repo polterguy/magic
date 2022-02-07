@@ -38,7 +38,7 @@ export class LogService {
     max: number) {
 
     // Dynamically building our query according to arguments specificed.
-    let url = '/magic/system/log/log-items?max=' + max;
+    let url = '/magic/system/log/list?max=' + max;
     if (from) {
       url += '&from=' + encodeURIComponent(from);
     }
@@ -56,7 +56,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<LogItem>(
-      '/magic/system/log/log-item?id=' + id);
+      '/magic/system/log/get?id=' + id);
   }
 
   /**
@@ -74,7 +74,7 @@ export class LogService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Count>(
-      '/magic/system/log/count-items' +
+      '/magic/system/log/count' +
       query);
   }
 
