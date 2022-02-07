@@ -567,6 +567,7 @@ export class AuthService {
         rename: this.canInvoke('magic/system/file-system/rename', 'post'),
         unzip: this.canInvoke('magic/system/file-system/unzip', 'put'),
         install: this.canInvoke('magic/system/file-system/install', 'put'),
+        create_file: this.canInvoke('magic/system/file-system/file', 'put'),
         create_folder: this.canInvoke('magic/system/file-system/folder', 'put'),
         delete_folder: this.canInvoke('magic/system/file-system/folder', 'delete'),
         delete_file: this.canInvoke('magic/system/file-system/file', 'delete'),

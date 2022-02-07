@@ -238,7 +238,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         const entities = idx.split('/').filter(x => x !== '');
         let parent = this.root;
         let level = 1;
-        for (const idxPeek of entities.slice(0, entities.length - 1)) {
+        for (const idxPeek of entities.slice(0, -1)) {
           parent = parent.children.filter(x => x.name === idxPeek)[0];
           level += 1;
         }
