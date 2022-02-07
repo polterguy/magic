@@ -1,7 +1,7 @@
 {
   "readOnly": true,
   "lineNumbers": true,
-  "theme": "mbo",
+  "theme": "aista-readonly",
   "mode": "application/ld+json",
   "styleActiveLine": true
 }
