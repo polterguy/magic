@@ -45,7 +45,7 @@ export class EndpointService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Endpoint[]>(
-      '/magic/system/endpoints/endpoints');
+      '/magic/system/endpoints/list');
   }
 
   /**
