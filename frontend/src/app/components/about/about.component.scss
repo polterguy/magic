@@ -22,4 +22,6 @@ iframe{width: 400px;max-width: 100%;height: 300px;}
         }
     }
 }
-::ng-deep .dark a p, .dark .links mat-icon{color: $magic_default_secondary;}
+::ng-deep {
+    .dark a p, .dark .links mat-icon{color: $magic_default_secondary;}
+}
