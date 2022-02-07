@@ -69,7 +69,7 @@ import { LoaderInterceptor } from './components/app/services/loader.interceptor'
 
 // Application specific normal components.
 import { IdeComponent } from './components/tools/ide/ide.component';
-import { LogComponent } from './components/analytics/log/diagnostics-log.component';
+import { LogComponent } from './components/analytics/log/log.component';
 import { AppComponent } from './components/app/app.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
 import { AuthComponent } from './components/management/auth/auth.component';

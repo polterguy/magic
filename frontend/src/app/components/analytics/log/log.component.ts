@@ -16,9 +16,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
  * Log component for reading backend's log.
  */
 @Component({
-  selector: 'app-diagnostics-log',
-  templateUrl: './diagnostics-log.component.html',
-  styleUrls: ['./diagnostics-log.component.scss'],
+  selector: 'app-log',
+  templateUrl: './log.component.html',
+  styleUrls: ['./log.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
