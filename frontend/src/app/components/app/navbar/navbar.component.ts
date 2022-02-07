@@ -83,7 +83,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     // Attempting to retrieve backend version.
-    // this.retrieveBackendVersion();
+    this.retrieveBackendVersion();
 
     this.currentYear = new Date().getFullYear();
 
@@ -155,8 +155,11 @@ export class NavbarComponent implements OnInit {
    * Allows user to login by showing a modal dialog.
    */
   public login() {
-    this.dialog.open(LoginDialogComponent, {
+    const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '550px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.authService.authenticated ? this.retrieveBackendVersion() : '';
     });
   }
 

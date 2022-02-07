@@ -3,7 +3,7 @@ import { AuthService } from '../management/auth/services/auth.service';
 import { DashboardService } from './services/dashboard.service';
 
 import { LogTypes, SystemReport, Timeshifts } from './models/dashboard.model';
-import { LoginDialogComponent } from 'src/app/components/app/login-dialog/login-dialog.component';
+import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
 
 import moment from 'moment';
 import { ChartOptions } from 'chart.js';
