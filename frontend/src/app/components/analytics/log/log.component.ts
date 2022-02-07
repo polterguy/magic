@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
 import { LogItem } from 'src/app/components/analytics/log/models/log-item.model';
@@ -45,6 +46,7 @@ export class LogComponent implements OnInit {
    */
   public items: LogItem[] = [];
   public expandedElement: LogItem | null;
+
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
@@ -56,7 +58,6 @@ export class LogComponent implements OnInit {
    * @param feedbackService Needed to display feedback to user
    * @param logService Log HTTP service to use for retrieving log items
    * @param clipboard Needed to be able to access the clipboard
-   * @param route Activated route service to subscribe to router changed events
    */
   constructor(
     private feedbackService: FeedbackService,
@@ -67,6 +68,7 @@ export class LogComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
+
     // Retrieving initial items.
     this.getItems();
 
