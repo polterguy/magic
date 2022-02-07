@@ -143,8 +143,8 @@ export class EndpointService {
       return new Observable<string[]>(observer => {
 
         // Getting statically declared system tests.
-        return this.fileService.listFiles('/').subscribe(res1 => {
-console.log(res1);
+        return this.fileService.listFiles('/misc/tests/').subscribe(res1 => {
+
           // Getting dynamically declared tests
           return this.fileService.listFiles('/etc/tests/').subscribe(res2 => {
 
