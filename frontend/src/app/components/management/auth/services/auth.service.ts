@@ -558,7 +558,7 @@ export class AuthService {
       },
       endpoints: {
         view: this.canInvoke('magic/system/endpoints/endpoints', 'get'),
-        assumptions: this.canInvoke('magic/system/endpoints/assumptions', 'get'),
+        assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
         create_test: this.canInvoke('magic/system/diagnostics/create-test', 'post'),
       },
       files: {

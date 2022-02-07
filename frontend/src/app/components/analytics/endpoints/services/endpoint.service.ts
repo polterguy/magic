@@ -132,7 +132,7 @@ export class EndpointService {
 
       // Filtering tests, to return only tests matching endpoint specified.
       return this.httpService.get<string[]>(
-        '/magic/system/endpoints/assumptions?endpoint=' +
+        '/magic/system/diagnostics/assumptions?endpoint=' +
         encodeURIComponent(endpointPath) +
         '&verb=' +
         encodeURIComponent(verb))
