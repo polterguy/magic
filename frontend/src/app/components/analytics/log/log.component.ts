@@ -161,18 +161,13 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Invoked when user needs more data.
-   */
-  public feedMore() {
-    this.getItems();
-  }
-
-  /**
    * Invoked when element wrapping table is scrolled.
    * 
    * @param e - scrolling event
    */
   public onTableScroll(e: any) {
+
+    // Ensuring we don't invoke getItems twice before previous request has returned.
     if (this.retrievingItems) {
       return;
     }
