@@ -9,6 +9,10 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/endpoint
+validators.mandatory:x:@.arguments/*/verb
+
 // Listing all files in assumption test folder(s).
 io.file.load-recursively:/misc/tests/
 io.file.load-recursively:/etc/tests/
