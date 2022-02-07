@@ -374,7 +374,7 @@
     </mat-expansion-panel>
     <!-- login -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
-      <mat-expansion-panel-header 
+      <mat-expansion-panel-header
       #panelL (click)="panelL._toggle();authService.authenticated ? logout() : login()" 
       [matTooltipDisabled]="sideNavStatus" 
       [matTooltip]="authService.authenticated ? 'Logout' : 'Login'">
