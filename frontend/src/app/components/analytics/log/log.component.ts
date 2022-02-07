@@ -32,6 +32,9 @@ export class LogComponent implements OnInit {
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: string[] = [];
 
+  // "Mutex" to ensure we never invoke getItems twice before last request has returned.
+  private retrievingItems = false;
+
   /**
    * Columns to display in table.
    */
@@ -86,13 +89,15 @@ export class LogComponent implements OnInit {
     if (this.items.length > 0) {
       from = this.items[this.items.length - 1].id;
     }
-    this.logService.list(
-      from,
-      20).subscribe(logitems => {
+    this.logService.list(from, 20).subscribe(logitems => {
 
       this.items = this.items.concat(logitems || []);
+      this.retrievingItems = false;
 
-    }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) => {
+      this.retrievingItems = false;
+      this.feedbackService.showError(error);
+    });
   }
 
   /**
@@ -163,10 +168,14 @@ export class LogComponent implements OnInit {
   }
 
   /**
+   * Invoked when element wrapping table is scrolled.
    * 
    * @param e - scrolling event
    */
-  onTableScroll(e: any) {
+  public onTableScroll(e: any) {
+    if (this.retrievingItems) {
+      return;
+    }
     const clientHeight = e.target.clientHeight // viewport
     const tableScrollHeight = e.target.scrollHeight // length of all table
     const scrollLocation = e.target.scrollTop; // how far user scrolled
@@ -174,6 +183,7 @@ export class LogComponent implements OnInit {
     // If the user has scrolled within 500px of the bottom, add more data
     const limit = tableScrollHeight - scrollLocation <= clientHeight;   
     if (limit && (this.items.length < this.count)) {
+      this.retrievingItems = true;
       this.getItems();
     }
   }
