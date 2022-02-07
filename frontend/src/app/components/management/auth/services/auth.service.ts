@@ -557,7 +557,7 @@ export class AuthService {
         generate_frontend: this.canInvoke('magic/system/crudifier/generate-frontend', 'post'),
       },
       endpoints: {
-        view: this.canInvoke('magic/system/endpoints/endpoints', 'get'),
+        view: this.canInvoke('magic/system/endpoints/list', 'get'),
         assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
         create_test: this.canInvoke('magic/system/diagnostics/create-test', 'post'),
       },
