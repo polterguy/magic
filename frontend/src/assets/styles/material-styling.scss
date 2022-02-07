@@ -66,6 +66,9 @@ table.mat-table{
         &:hover{
             background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
         }
+        &.error:hover{
+          box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.301);
+        }
         td {
             border-bottom-width: 0;
         }
