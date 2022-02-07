@@ -5,7 +5,7 @@
       "mode": "text/x-mysql",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -17,7 +17,7 @@
       "mode": "markdown",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -29,7 +29,7 @@
       "mode": "text/x-yaml",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -41,7 +41,7 @@
       "mode": "application/xml",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -53,7 +53,7 @@
       "mode": "text/css",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -65,7 +65,7 @@
       "mode": "text/x-scss",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -77,7 +77,7 @@
       "mode": "text/x-less",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -89,7 +89,7 @@
       "mode": "text/x-sass",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -101,7 +101,7 @@
       "mode": "text/javascript",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -113,7 +113,7 @@
       "mode": "application/ld+json",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -129,7 +129,7 @@
       "indentUnit": 4,
       "indentAuto": true,
       "matchBrackets": true,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {
@@ -148,7 +148,7 @@
       "indentUnit": 4,
       "indentAuto": true,
       "matchBrackets": true,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {
@@ -163,7 +163,7 @@
       "mode": "application/x-sh",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "extraKeys": {}
@@ -175,7 +175,7 @@
       "mode": "hyperlambda",
       "lineNumbers": true,
       "readOnly": false,
-      "theme": "mbo",
+      "theme": "aista",
       "autofocus": true,
       "styleActiveLine": true,
       "tabSize": 3,
