@@ -45,7 +45,7 @@ export class EndpointService {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Endpoint[]>(
-      '/magic/system/endpoints/endpoints');
+      '/magic/system/endpoints/list');
   }
 
   /**
@@ -132,35 +132,15 @@ export class EndpointService {
 
       // Filtering tests, to return only tests matching endpoint specified.
       return this.httpService.get<string[]>(
-        '/magic/system/endpoints/assumptions?endpoint=' +
+        '/magic/system/diagnostics/assumptions?endpoint=' +
         encodeURIComponent(endpointPath) +
         '&verb=' +
         encodeURIComponent(verb))
 
     } else {
 
-      // Simple version, retrieving all files in assumption test folder.
-      return new Observable<string[]>(observer => {
-
-        // Getting statically declared system tests.
-        return this.fileService.listFiles('/misc/tests/').subscribe(res1 => {
-
-          // Getting dynamically declared tests
-          return this.fileService.listFiles('/etc/tests/').subscribe(res2 => {
-
-            // Invoking next amongst observables
-            observer.next(res1.concat(res2));
-            observer.complete();
-
-          }, error => {
-            observer.error(error);
-            observer.complete();
-          });
-        }, error => {
-          observer.error(error);
-          observer.complete();
-        });
-      });
+      // Filtering tests, to return only tests matching endpoint specified.
+      return this.httpService.get<string[]>('/magic/system/diagnostics/all-assumptions');
     }
   }
 

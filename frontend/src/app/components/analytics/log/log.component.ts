@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
 import { LogItem } from 'src/app/components/analytics/log/models/log-item.model';
@@ -32,6 +33,9 @@ export class LogComponent implements OnInit {
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: string[] = [];
 
+  // "Mutex" to ensure we never invoke getItems twice before last request has returned.
+  private retrievingItems = false;
+
   /**
    * Columns to display in table.
    */
@@ -42,6 +46,7 @@ export class LogComponent implements OnInit {
    */
   public items: LogItem[] = [];
   public expandedElement: LogItem | null;
+
   /**
    * Number of log items in the backend matching the currently applied filter.
    */
@@ -53,7 +58,6 @@ export class LogComponent implements OnInit {
    * @param feedbackService Needed to display feedback to user
    * @param logService Log HTTP service to use for retrieving log items
    * @param clipboard Needed to be able to access the clipboard
-   * @param route Activated route service to subscribe to router changed events
    */
   constructor(
     private feedbackService: FeedbackService,
@@ -64,6 +68,7 @@ export class LogComponent implements OnInit {
    * OnInit implementation.
    */
   public ngOnInit() {
+
     // Retrieving initial items.
     this.getItems();
 
@@ -86,13 +91,15 @@ export class LogComponent implements OnInit {
     if (this.items.length > 0) {
       from = this.items[this.items.length - 1].id;
     }
-    this.logService.list(
-      from,
-      20).subscribe(logitems => {
+    this.logService.list(from, 20).subscribe(logitems => {
 
       this.items = this.items.concat(logitems || []);
+      this.retrievingItems = false;
 
-    }, (error: any) => this.feedbackService.showError(error));
+    }, (error: any) => {
+      this.retrievingItems = false;
+      this.feedbackService.showError(error);
+    });
   }
 
   /**
@@ -156,24 +163,24 @@ export class LogComponent implements OnInit {
   }
 
   /**
-   * Invoked when user needs more data.
-   */
-  public feedMore() {
-    this.getItems();
-  }
-
-  /**
+   * Invoked when element wrapping table is scrolled.
    * 
    * @param e - scrolling event
    */
-  onTableScroll(e: any) {
+  public onTableScroll(e: any) {
+
+    // Ensuring we don't invoke getItems twice before previous request has returned.
+    if (this.retrievingItems) {
+      return;
+    }
     const clientHeight = e.target.clientHeight // viewport
     const tableScrollHeight = e.target.scrollHeight // length of all table
     const scrollLocation = e.target.scrollTop; // how far user scrolled
 
     // If the user has scrolled within 500px of the bottom, add more data
-    const limit = tableScrollHeight - scrollLocation === clientHeight;   
+    const limit = tableScrollHeight - scrollLocation <= clientHeight;   
     if (limit && (this.items.length < this.count)) {
+      this.retrievingItems = true;
       this.getItems();
     }
   }
