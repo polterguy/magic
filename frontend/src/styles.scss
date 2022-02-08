@@ -1,8 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
 
-@import '~codemirror/theme/mbo';
-@import '~codemirror/theme/zenburn';
 @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
 @import './assets/styles/sizes.scss';
@@ -11,6 +9,7 @@
 @import './assets/styles/mixin.scss';
 @import './assets/styles/material-styling.scss';
 @import './assets/styles/default-classes.scss';
+@import './assets/styles/codemirror.scss';
 
 
 html, body { height: 100%; }
@@ -186,8 +185,7 @@ table.clickable {
 }
 
 .CodeMirror {
-  border-radius: 10px;
-  border: solid 1px transparentize($color: $magic_dark, $amount: 0.5);
+  border-radius: 5px;
   height: 400px;
   resize: vertical;
 }
@@ -230,3 +228,5 @@ li.CodeMirror-hint-active {
 .cm-error {
   background-color: $magic_error;
 }
+
+

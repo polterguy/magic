@@ -557,8 +557,8 @@ export class AuthService {
         generate_frontend: this.canInvoke('magic/system/crudifier/generate-frontend', 'post'),
       },
       endpoints: {
-        view: this.canInvoke('magic/system/endpoints/endpoints', 'get'),
-        assumptions: this.canInvoke('magic/system/endpoints/assumptions', 'get'),
+        view: this.canInvoke('magic/system/endpoints/list', 'get'),
+        assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
         create_test: this.canInvoke('magic/system/diagnostics/create-test', 'post'),
       },
       files: {
@@ -594,7 +594,7 @@ export class AuthService {
         jail: this.canInvoke('magic/system/auth/imprison', 'put'),
       },
       log: {
-        read: this.canInvoke('magic/system/log/count-items', 'get') && this.canInvoke('magic/system/log/log-item', 'get') && this.canInvoke('magic/system/log/log-items', 'get'),
+        read: this.canInvoke('magic/system/log/count', 'get') && this.canInvoke('magic/system/log/get', 'get') && this.canInvoke('magic/system/log/list', 'get'),
         write: this.canInvoke('magic/system/log/log', 'post'),
       },
       tasks: {
