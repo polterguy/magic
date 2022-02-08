@@ -67,12 +67,9 @@ else
 .filename
 strings.split:x:@.arguments/*/file/*/name
    .:.
-guid.new
 set-value:x:@.filename
    strings.concat
-      .:
-      convert:x:@guid.new
-         type:string
+      guid.new
       .:.
       get-value:x:@strings.split/0/-
 
