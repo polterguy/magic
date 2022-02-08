@@ -1280,6 +1280,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');
         this.fileInput = null;
+        this.getFilesFromServer(this.activeFolder);
         
       });
     }
