@@ -18,13 +18,14 @@ $max_height_mobile: calc(100vh - 220px);
     cursor: pointer;
   }
 }
+::ng-deep .dark .position-absolute button{box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.445);}
 .collapsed{
-  width: 16px;
-  max-width: 16px;
+  width: 0;
+  max-width: 0;
   position: relative;
   @include general_transition(0.5s);
   mat-card{display: none;}
-  .position-absolute{right: -7px}
+  .position-absolute{right: -13px}
 }
 .folders-wrapper{@include general_transition(0.5s);}
 .wrapper {

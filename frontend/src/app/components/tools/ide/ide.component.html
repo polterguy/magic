@@ -139,7 +139,7 @@
                       [value]="idx.path">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
                   </mat-select>
                 </mat-form-field>
-                
+                <!-- action buttons -->
                 <div>
                   <button mat-icon-button [matMenuTriggerFor]="actions" matTooltip="Action buttons">
                     <mat-icon>more_vert</mat-icon>
@@ -206,18 +206,27 @@
                       multiple
                       class="d-none"
                       (change)="upload($event.target.files)">
-                    <!-- download -->
+                    <!-- download file -->
                     <button
                       mat-menu-item
-                      [disabled]="!activeFile"
-                      matTooltip="Download file from external URL"
-                      (click)="downloadFileToServer()">
+                      [disabled]="!activeFile || !activeFolder"
+                      matTooltip="Download the active file"
+                      (click)="downloadFileToServer('file')">
+                      <mat-icon>cloud_download</mat-icon>
+                      Download file
+                    </button>
+                    <!-- download folder -->
+                    <button
+                      mat-menu-item
+                      [disabled]="!activeFile || !activeFolder"
+                      matTooltip="Download the entire folder"
+                      (click)="downloadFileToServer('folder')">
                       <mat-icon>cloud_download</mat-icon>
                       Download .zip
                     </button>
                   </mat-menu>
                 </div>
-                
+                <!-- shortkeys -->
                 <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys" class="d-lg-block d-none shortkey-btn">
                   Shortkeys
                 </button>

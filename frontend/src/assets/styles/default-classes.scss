@@ -60,10 +60,16 @@
   margin-top: .5rem;
   white-space: pre;
   display: block;
-  background-color: transparentize($color: $magic_default_alternative, $amount: 0.95);
   font-family: 'Courier New', Courier, monospace;
   font-size: .8rem;
   line-height: .9rem;
+  border-radius: 4px;
+}
+.dark .code{
+  background-color: transparentize($color: $magic_default_alternative, $amount: 0.95);
+}
+.light .code{
+  background-color: transparentize($color: $magic_dark_alternative, $amount: 0.97);
 }
 .no-overflow {
   text-overflow: unset!important;

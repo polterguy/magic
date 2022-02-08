@@ -138,7 +138,6 @@ import { SelectMacroDialogComponent } from './components/tools/ide/select-macro-
 import { ExecuteMacroDialogComponent } from './components/tools/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { AddToRoleDialogComponent } from './components/management/auth/users/add-to-role-dialog/add-to-role-dialog.component';
 import { DownloadFileDialogComponent } from './components/files/download-file-dialog/download-file-dialog.component';
-import { FileDownloadDialogComponent } from './components/tools/ide/file-download-dialog/file-download-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tools/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/tools/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/tools/evaluator/save-snippet-dialog/save-snippet-dialog.component';
@@ -239,7 +238,6 @@ import { ExecuteTerminalCommandComponent } from './components/tools/ide/execute-
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,
     DownloadFileDialogComponent,
-    FileDownloadDialogComponent,
     AboutComponent,
     ViewAppDialogComponent,
     ConfirmEmailAddressDialogComponent,

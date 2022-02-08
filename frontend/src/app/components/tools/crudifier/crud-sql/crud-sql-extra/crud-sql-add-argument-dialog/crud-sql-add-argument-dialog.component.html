@@ -12,7 +12,7 @@
         name="name"
         autocomplete="off"
         pattern="^[A-Za-z0-9_]+$">
-        <mat-hint *ngIf="!argumentValid() && name !== ''">Please avoid special characters</mat-hint>
+        <mat-hint *ngIf="!argumentValid() && name !== ''" class="warning">Please avoid blank space and special characters</mat-hint>
 
     </mat-form-field>
 
