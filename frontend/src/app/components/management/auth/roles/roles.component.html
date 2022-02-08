@@ -74,12 +74,53 @@
       [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
         <div class="d-flex flex-column w-100 py-3">
 
-          <span class="text-muted">Name</span>
-          <span>{{el.name}}</span>
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <div>
+              <span class="text-muted">Name</span>
+              <span>{{el.name}}</span>
+            </div>
+            <div>
+              <button mat-icon-button [matMenuTriggerFor]="actions" aria-label="Open action menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #actions="matMenu">
+                <button
+                  mat-menu-item
+                  [disabled]="!authService.access.auth.create_user_role || el.name === 'reset-password' || getAffectedUsers(el) === 0"
+                  [matTooltip]="'Add role to ' + getAffectedUsers(el) + ' selected user(s)'"
+                  (click)="addRole(el)">
+                  <mat-icon>add_box</mat-icon>
+                  Add role 
+                </button>
+
+                <div class="p-1"></div>
+
+                <button
+                  mat-menu-item
+                  matTooltip="Edit role"
+                  [disabled]="!authService.access.auth.update_role"
+                  (click)="editRole(el)">
+                  <mat-icon>edit</mat-icon>
+                  Edit role
+                </button>
+
+                <div class="p-1"></div>
+
+                <button
+                  mat-menu-item
+                  matTooltip="Delete role"
+                  [disabled]="!authService.access.auth.delete_role || el.name === 'root' || el.name === 'reset-password'"
+                  (click)="deleteRole(el)">
+                  <mat-icon>delete</mat-icon>
+                  Delete role
+                </button>
+              </mat-menu>              
+            </div>
+          </div>
           <span class="mt-2 text-muted">Description</span>
           <span>{{el.description}}</span>
 
-          <div class="d-flex align-items-center justify-content-end">
+          <!-- <div class="d-flex align-items-center justify-content-end">
 
             <button
               mat-icon-button
@@ -109,7 +150,7 @@
               <mat-icon>delete</mat-icon>
             </button>
 
-          </div>
+          </div> -->
 
         </div>
       </div>

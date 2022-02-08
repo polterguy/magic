@@ -79,7 +79,7 @@
           </ng-container>
     
           <ng-container matColumnDef="showDetails">
-            <td colspan="2" mat-cell *matCellDef="let el">
+            <td colspan="2" mat-cell *matCellDef="let el" class="pr-1 pl-3">
               <div class="w-100 details-row"
                 [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
                 <div class="w-100 pt-3 d-flex justify-content-between">

@@ -83,51 +83,51 @@
               *matCellDef="let el">
               <div class="w-100 details-row"
               [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
-              <div
-                class="w-100 py-3"
-                *ngIf="el.model">
-      
-                <mat-form-field class="w-100" appearance="outline">
-                  <mat-label>Description</mat-label>
-                  <input
-                    matInput
-                    [disabled]="!authService.access.tasks.update"
-                    [(ngModel)]="el.task.description"
-                    autocomplete="off">
-                </mat-form-field>
-              
-                <app-codemirror-hyperlambda [(model)]="el.model"></app-codemirror-hyperlambda>
-      
-                <div class="d-flex justify-content-end w-100">
-                  <button
-                    mat-icon-button
-                    [disabled]="!authService.access.tasks.addDue"
-                    matTooltip="Schedule task"
-                    (click)="schedule(el.task)">
-                    <mat-icon>schedule</mat-icon>
-                  </button>
-                  <div class="p-1"></div>
-                  <button
-                    mat-icon-button
-                    matTooltip="Update task"
-                    [disabled]="!authService.access.tasks.update"
-                    (click)="update(el)">
-                    <mat-icon>save</mat-icon>
-                  </button>
-                </div>
-                <div class="p-1" *ngIf="el.task.schedules"></div>
-                <div *ngIf="el.task.schedules">
-                  <mat-chip-list>
-                    <mat-chip
-                      *ngFor="let idxSchedule of el.task.schedules"
-                      selectable="false"
-                      [disabled]="!authService.access.tasks.deleteDue"
-                      [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
-                      (removed)="deleteSchedule(el.task, idxSchedule)">
-                      {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
-                      <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                  </mat-chip-list>
+              <div class="min-height-400 w-100">
+                <div class="w-100 py-3" *ngIf="el.model">
+        
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <input
+                      matInput
+                      [disabled]="!authService.access.tasks.update"
+                      [(ngModel)]="el.task.description"
+                      autocomplete="off">
+                  </mat-form-field>
+                
+                  <app-codemirror-hyperlambda [(model)]="el.model"></app-codemirror-hyperlambda>
+        
+                  <div class="d-flex justify-content-end w-100">
+                    <button
+                      mat-icon-button
+                      [disabled]="!authService.access.tasks.addDue"
+                      matTooltip="Schedule task"
+                      (click)="schedule(el.task)">
+                      <mat-icon>schedule</mat-icon>
+                    </button>
+                    <div class="p-1"></div>
+                    <button
+                      mat-icon-button
+                      matTooltip="Update task"
+                      [disabled]="!authService.access.tasks.update"
+                      (click)="update(el)">
+                      <mat-icon>save</mat-icon>
+                    </button>
+                  </div>
+                  <div class="p-1" *ngIf="el.task.schedules"></div>
+                  <div *ngIf="el.task.schedules">
+                    <mat-chip-list>
+                      <mat-chip
+                        *ngFor="let idxSchedule of el.task.schedules"
+                        selectable="false"
+                        [disabled]="!authService.access.tasks.deleteDue"
+                        [matTooltip]="'Next due date: ' + idxSchedule.due.toLocaleString()"
+                        (removed)="deleteSchedule(el.task, idxSchedule)">
+                        {{idxSchedule.repeats ? idxSchedule.repeats : (idxSchedule.due | from)}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                      </mat-chip>
+                    </mat-chip-list>
+                  </div>
                 </div>
               </div>
               </div>

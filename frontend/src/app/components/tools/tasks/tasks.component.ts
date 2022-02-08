@@ -179,7 +179,7 @@ export class TasksComponent implements OnInit {
     if (el.model) {
 
       // Hiding item.
-      el.model = null;
+      // el.model = null;
 
     } else {
 
@@ -199,10 +199,13 @@ export class TasksComponent implements OnInit {
         }
 
         // By adding these fields to instance, task will be edited in UI.
-        el.model = {
-          hyperlambda: task.hyperlambda,
-          options: hyperlambda
-        }
+        // setting timeout to prevent blinking when expanding the row
+        setTimeout(() => {
+          el.model = {
+            hyperlambda: task.hyperlambda,
+            options: hyperlambda
+          }
+        }, 100);
       });
     }
   }
