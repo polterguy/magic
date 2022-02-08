@@ -155,7 +155,7 @@
                     </button>
                     <button
                       mat-menu-item
-                      matTooltip="Execute a macro [ALT+O]"
+                      matTooltip="Execute a macro"
                       (click)="selectMacro()">
                       <mat-icon>model_training</mat-icon>
                       Execute
@@ -172,7 +172,7 @@
                       mat-menu-item
                       [disabled]="!authService.access.files.create_folder"
                       color="primary"
-                      matTooltip="Create or add a new folder to the active folder"
+                      matTooltip="Create a new folder"
                       (click)="createNewFileObject('folder')">
                       <mat-icon>create_new_folder</mat-icon>
                       New folder
@@ -181,7 +181,7 @@
                       mat-menu-item
                       [disabled]="!authService.access.files.create_file"
                       color="primary"
-                      matTooltip="Add a new file to the active folder"
+                      matTooltip="Create a new file"
                       (click)="createNewFileObject('file')">
                       <mat-icon>note_add</mat-icon>
                       New file
