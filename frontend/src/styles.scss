@@ -168,6 +168,9 @@ table.clickable {
     }
   }
 }
+td:last-child.icon-col {
+  text-align: right;
+}
 
 /*
  * Generic close button style.
