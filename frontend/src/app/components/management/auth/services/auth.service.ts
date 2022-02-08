@@ -618,8 +618,8 @@ export class AuthService {
         delete_cache: this.canInvoke('magic/system/cache/delete', 'delete') && this.canInvoke('magic/system/cache/empty', 'delete'),
       },
       sockets: {
-        read: this.canInvoke('magic/system/sockets/socket-users-count', 'get') && this.canInvoke('magic/system/sockets/socket-users', 'get'),
-        send: this.canInvoke('magic/system/sockets/send-socket-message', 'post'),
+        read: this.canInvoke('magic/system/sockets/count-users', 'get') && this.canInvoke('magic/system/sockets/list-users', 'get'),
+        send: this.canInvoke('magic/system/sockets/publish', 'post'),
       },
       config: {
         load: this.canInvoke('magic/system/config/load', 'get'),
