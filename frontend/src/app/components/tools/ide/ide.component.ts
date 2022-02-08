@@ -1288,23 +1288,12 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Invoked when user wants to download a file directly to server.
    */
-   public downloadFileToServer() {
+  public downloadFileToServer() {
 
-    // Showing a modal dialog allowing user to provide us with a download URL.
-    const dialogRef = this.dialog.open(FileDownloadDialogComponent, {
-      width: '550px',
-      data: this.activeFolder,
-    });
-
-    // Subscribing to closed event such that we can refresh current folder if user clicked the download button.
-    dialogRef.afterClosed().subscribe((result: any) => {
-
-      // Checking if user actually downloaded anything.
-      if (result) {
-
-        // Success, re-retrieving folder's content.
-        // this.getFilesFromServer();
-      }
-    });
+    // making sure a file is selected
+    if (this.activeFile) {
+      // Downloading file.
+      this.fileService.downloadFile(this.activeFile);
+    }
   }
 }

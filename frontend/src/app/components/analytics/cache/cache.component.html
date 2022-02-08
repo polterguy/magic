@@ -45,7 +45,6 @@
             *ngIf="cacheItems.length > 0"
             [disabled]="!authService.access.diagnostics.delete_cache"
             mat-icon-button
-            color="primary"
             matTooltip="Completely empties your cache"
             (click)="deleteAll()">
             <mat-icon>refresh</mat-icon>

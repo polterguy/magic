@@ -46,7 +46,9 @@ export class NewTaskDialogComponent {
    * Invoked when user clicks the create button to create a new role.
    */
   public create() {
-
+    if (!this.argumentValid()) {
+      return;
+    }
     // Invoking backend to create a new task.
     this.taskService.create(this.name, 'log.info:Task is being executed').subscribe(() => {
 
@@ -54,5 +56,12 @@ export class NewTaskDialogComponent {
       this.dialogRef.close(this.name);
 
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  /**
+   * Returns true if argument name is valid.
+   */
+   public argumentValid() {
+    return /^[A-Za-z0-9_.-]+$/i.test(this.name);
   }
 }

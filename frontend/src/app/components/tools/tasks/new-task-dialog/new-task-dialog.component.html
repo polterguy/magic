@@ -9,7 +9,9 @@
         [(ngModel)]="name"
         name="name"
         [disabled]="data"
-        autocomplete="off">
+        autocomplete="off"
+        pattern="^[A-Za-z0-9_.-]+$">
+      <mat-hint *ngIf="!argumentValid() && name !== ''" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
     </mat-form-field>
   </div>
 
