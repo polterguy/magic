@@ -91,7 +91,7 @@ export class LogComponent implements OnInit {
     if (this.items.length > 0) {
       from = this.items[this.items.length - 1].id;
     }
-    this.logService.list(from, 20).subscribe(logitems => {
+    this.logService.list(from, this.items.length > 0 ? 20 : 50).subscribe(logitems => {
 
       this.items = this.items.concat(logitems || []);
       this.retrievingItems = false;
@@ -177,8 +177,8 @@ export class LogComponent implements OnInit {
     const tableScrollHeight = e.target.scrollHeight // length of all table
     const scrollLocation = e.target.scrollTop; // how far user scrolled
 
-    // If the user has scrolled within 500px of the bottom, add more data
-    const limit = tableScrollHeight - scrollLocation <= clientHeight;   
+    // If the user has scrolled within 50px of the bottom, add more data
+    const limit = clientHeight + scrollLocation > tableScrollHeight - 50;
     if (limit && (this.items.length < this.count)) {
       this.retrievingItems = true;
       this.getItems();
