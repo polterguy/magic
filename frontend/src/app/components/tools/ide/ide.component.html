@@ -152,7 +152,7 @@
                       [matTooltip]="'Delete folder \'' + activeFolder + '\' [ALT+X]'"
                       (click)="deleteActiveFolder()">
                       <mat-icon>delete</mat-icon>
-                      Delete
+                      Delete folder
                     </button>
                     <!-- execute -->
                     <button
@@ -193,10 +193,11 @@
                     </button>
                     <!-- upload -->
                     <button
-                      mat-icon-button
+                      mat-menu-item
                       (click)="file.click()"
                       matTooltip="Upload file from your local computer">
                       <mat-icon>cloud_upload</mat-icon>
+                      Upload file
                     </button>
                     <input
                       type="file"
@@ -207,11 +208,12 @@
                       (change)="upload($event.target.files)">
                     <!-- download -->
                     <button
-                      mat-icon-button
+                      mat-menu-item
                       [disabled]="!authService.access.bazar.download_from_url"
                       matTooltip="Download file from external URL"
                       (click)="downloadFileToServer()">
                       <mat-icon>cloud_download</mat-icon>
+                      Download .zip
                     </button>
                   </mat-menu>
                 </div>

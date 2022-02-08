@@ -9,6 +9,7 @@
       <input
         matInput
         [(ngModel)]="username"
+        name="username"
         [disabled]="data"
         autocomplete="username">
 
@@ -20,6 +21,7 @@
       <input
         matInput
         [(ngModel)]="password"
+        name="password"
         [type]="hide ? 'password' : 'text'"
         autocomplete="new-password">
       <button

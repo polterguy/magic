@@ -1269,7 +1269,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Uploads one or more files to the currently active folder.
    */
-   public upload(files: FileList) {
+   public upload(files: FileList, path: string = this.activeFile, node: TreeNode = this.root) {
 
     // Iterating through each file and uploading one file at the time.
     for (let idx = 0; idx < files.length; idx++) {
@@ -1281,15 +1281,6 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.feedbackService.showInfo('File was successfully uploaded');
         this.fileInput = null;
         
-
-        // Databinding tree control again.
-        this.dataBindTree();
-
-        // Making sure we re-check component for changes to avoid CDR errors.
-        this.cdRef.detectChanges();
-
-        // We'll need to re-retrieve endpoints now, to allow for executing file.
-        this.getEndpoints();
       });
     }
   }
@@ -1302,7 +1293,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     // Showing a modal dialog allowing user to provide us with a download URL.
     const dialogRef = this.dialog.open(FileDownloadDialogComponent, {
       width: '550px',
-      data: this.currentFolder,
+      data: this.activeFolder,
     });
 
     // Subscribing to closed event such that we can refresh current folder if user clicked the download button.
@@ -1312,7 +1303,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       if (result) {
 
         // Success, re-retrieving folder's content.
-        this.getFilesFromServer();
+        // this.getFilesFromServer();
       }
     });
   }

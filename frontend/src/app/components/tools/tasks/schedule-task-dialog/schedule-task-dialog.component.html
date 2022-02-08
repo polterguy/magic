@@ -1,7 +1,7 @@
 
 <h1 mat-dialog-title>Schedule task</h1>
 
-<form (ngSubmit)="create()">
+<form>
 
   <div mat-dialog-content>
 
@@ -11,7 +11,9 @@
         matInput
         [ngxMatDatetimePicker]="picker"
         autocomplete="off"
-        [(ngModel)]="date">
+        [(ngModel)]="date"
+        name="date"
+        (click)="picker.open()">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
     </mat-form-field>
@@ -21,13 +23,14 @@
       <input
         matInput
         autocomplete="off"
-        [(ngModel)]="repeats">
+        [(ngModel)]="repeats"
+        name="repeats">
     </mat-form-field>
 
   </div>
 
   <div mat-dialog-actions class="mat-dialog-actions">
-    <mat-checkbox [(ngModel)]="isRepeating">Repeating</mat-checkbox>
+    <mat-checkbox [(ngModel)]="isRepeating" name="isRepeating">Repeating</mat-checkbox>
     <button
       mat-raised-button
       color="primary"
