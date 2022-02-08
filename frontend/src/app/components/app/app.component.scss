@@ -22,7 +22,18 @@
   animation-duration: .5s;
 }
 .progress-holder{position: fixed;top: 0;left: 0;right: 0;z-index: 9;}
-
+.toggle-btn{
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  ::ng-deep .mat-flat-button{
+    min-width: 24px;
+    height: 24px;
+    line-height: 24px;
+    padding: 0;
+  }
+}
 ::ng-deep{
   /*=-=-=-=-=-=
   sidebar settings

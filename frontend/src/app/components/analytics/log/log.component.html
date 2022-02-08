@@ -36,7 +36,9 @@
       <ng-container matColumnDef="content">
         <td
           mat-cell
-          *matCellDef="let el">{{el.content}}</td>
+          *matCellDef="let el">
+          <p class="m-0 text-truncate">{{el.content}}</p>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="type">

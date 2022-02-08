@@ -178,7 +178,7 @@ export class AppComponent implements OnInit, OnDestroy {
       while (this.sidenavOpened === undefined)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      this.sidenavOpened = !localStorage.getItem('sidebar') ? true : (localStorage.getItem('sidebar') === 'open' ? true : false);
+      this.sidenavOpened = !localStorage.getItem('sidebar') && this.notSmallScreen ? true : (localStorage.getItem('sidebar') === 'open' && this.notSmallScreen ? true : false);
 
       // wait until theme color is defined based on the value stored in localstorage 
       if (!localStorage.getItem('theme')) {
@@ -211,6 +211,17 @@ export class AppComponent implements OnInit, OnDestroy {
   public closeNavbar() {
     this.sidenavOpened = false;
     
+  }
+
+  /**
+   * Toggles the navbar.
+   */
+   public toggleNavbar() {
+
+    // Publishing message to inform other components that navbar was toggled.
+    this.messageService.sendMessage({
+      name: Messages.TOGGLE_NAVBAR
+    });
   }
 
   /*

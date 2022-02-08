@@ -1,0 +1,33 @@
+
+<h1 mat-dialog-title>Download file</h1>
+
+<form>
+  <div mat-dialog-content>
+
+    <mat-form-field class="fill-width" appearance="outline">
+      <mat-label class="dark">URL</mat-label>
+      <input
+        type="text"
+        matInput
+        autocomplete="off"
+        [(ngModel)]="url"
+        name="url">
+    </mat-form-field>
+
+  </div>
+
+  <div mat-dialog-actions>
+
+    <button
+      [disabled]="!url"
+      mat-raised-button
+      (click)="download()"
+      type="submit"
+      color="primary">Download</button>
+
+    <button
+      mat-raised-button
+      (click)="close()">Close</button>
+
+  </div>
+</form>

@@ -29,7 +29,13 @@
     <mat-sidenav-content
     [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
     [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
-
+    <div class="toggle-btn" *ngIf="!notSmallScreen">
+      <button
+        mat-flat-button
+        (click)="toggleNavbar()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
     <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
 
       <!-- <div class="img-wrapper"></div> -->

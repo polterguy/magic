@@ -59,10 +59,10 @@
 </div>
 
 <div class="row" *ngIf="!isRoot() && showImport">
-  <div class="col-12">
+  <div class="col-12 mb-general">
     <mat-card>
       <mat-card-content>
-        <mat-form-field class="fill-width top-space" appearance="outline">
+        <mat-form-field class="w-100" appearance="outline">
           <mat-label>Public key</mat-label>
           <textarea
             matInput
@@ -70,8 +70,8 @@
             rows="7"></textarea>     
         </mat-form-field>
       
-        <div class="divider">     
-          <mat-form-field appearance="outline">      
+        <div class="d-flex flex-sm-nowrap flex-wrap">     
+          <mat-form-field appearance="outline" class="w-100">      
             <mat-label>Full name</mat-label>
             <input
               matInput
@@ -79,8 +79,9 @@
               [(ngModel)]="importSubject"
               autocomplete="off">
           </mat-form-field>
+          <div class="p-1"></div>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-100">
             <mat-label>Email</mat-label>
             <input
               matInput
@@ -88,8 +89,9 @@
               [(ngModel)]="importEmail"
               autocomplete="off">
           </mat-form-field>
+          <div class="p-1"></div>
 
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-100">
             <mat-label>Domain</mat-label>
             <input
               matInput
@@ -99,7 +101,7 @@
           </mat-form-field>
         </div>
       
-        <div class="button-strip">
+        <div class="d-flex justify-content-end w-100">
           <button
             mat-raised-button
             [disabled]="importKey === '' || importSubject === '' || importEmail === '' || importDomain === ''"

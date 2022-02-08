@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
@@ -14,18 +14,19 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
-import { Message } from 'src/app/models/message.model';
-import { Response } from 'src/app/models/response.model';
+import { Message } from '../../../models/message.model';
+import { Response } from '../../../models/response.model';
 import { AuthService } from '../../management/auth/services/auth.service';
 import { FileService } from '../../files/services/file.service';
 import { Endpoint } from '../../analytics/endpoints/models/endpoint.model';
-import { MessageService } from 'src/app/services/message.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
+import { MessageService } from '../../../services/message.service';
+import { FeedbackService } from '../../../services/feedback.service';
 import { EndpointService } from '../../analytics/endpoints/services/endpoint.service';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { MacroDefinition } from '../../files/services/models/macro-definition.model';
 import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
+import { FileDownloadDialogComponent } from "./file-download-dialog/file-download-dialog.component";
 import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macro-dialog.component';
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
@@ -111,6 +112,16 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Needed to be kept around such that we can explicitly close it after having CRUDified some database/table.
    */
   private generateCrudDialog: MatDialogRef<GenerateCrudAppComponent> = null;
+
+  /**
+   * Model for file uploader.
+   */
+   public fileInput: string[];
+
+   /**
+   * Current folder we're viewing contens of.
+   */
+  public currentFolder = '/';
 
   /**
    * Creates an instance of your component.
@@ -1253,5 +1264,56 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // File is not a Hyperlambda endpoint file.
     return null;
+  }
+
+  /**
+   * Uploads one or more files to the currently active folder.
+   */
+   public upload(files: FileList) {
+
+    // Iterating through each file and uploading one file at the time.
+    for (let idx = 0; idx < files.length; idx++) {
+
+      // Invoking service method responsible for actually uploading file.
+      this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe(() => {
+
+        // Showing some feedback to user, and re-databinding folder's content.
+        this.feedbackService.showInfo('File was successfully uploaded');
+        this.fileInput = null;
+        
+
+        // Databinding tree control again.
+        this.dataBindTree();
+
+        // Making sure we re-check component for changes to avoid CDR errors.
+        this.cdRef.detectChanges();
+
+        // We'll need to re-retrieve endpoints now, to allow for executing file.
+        this.getEndpoints();
+      });
+    }
+  }
+
+  /**
+   * Invoked when user wants to download a file directly to server.
+   */
+   public downloadFileToServer() {
+
+    // Showing a modal dialog allowing user to provide us with a download URL.
+    const dialogRef = this.dialog.open(FileDownloadDialogComponent, {
+      width: '550px',
+      data: this.currentFolder,
+    });
+
+    // Subscribing to closed event such that we can refresh current folder if user clicked the download button.
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // Checking if user actually downloaded anything.
+      if (result) {
+
+        // Success, re-retrieving folder's content.
+        this.getFilesFromServer();
+      }
+    });
   }
 }
