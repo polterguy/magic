@@ -130,7 +130,7 @@ Material list
       font-size: 95%;
       .mat-line{
         text-overflow: unset!important;
-        white-space: normal!important;
+        white-space: normal;
         :not(:last-child) {
           color: $magic_dark_alternative;
           padding-bottom: 5px;
