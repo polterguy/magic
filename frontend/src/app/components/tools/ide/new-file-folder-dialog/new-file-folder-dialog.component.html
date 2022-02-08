@@ -34,7 +34,8 @@
       matInput
       autocomplete="off"
       [(ngModel)]="data.name"
-      name="name">
+      name="name"
+      cdkFocusInitial>
     <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
   </mat-form-field>
 

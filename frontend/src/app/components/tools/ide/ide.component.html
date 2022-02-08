@@ -1,7 +1,7 @@
 
 <div class="row wrapper h-100">
 
-  <div class="col-12">
+  <div class="col-12 mb-general">
     <div class="h-100"
     [ngClass]="{'row': expandSide, 'd-flex flex-nowrap': !expandSide}">
       <div [ngClass]="{'col-xl-3 col-md-4 col-sm-5 col-12 pr-sm-2 folders-wrapper': expandSide, 'collapsed': !expandSide}">
@@ -73,7 +73,7 @@
           <mat-card-content class="h-100">
             <div class="content-section d-flex flex-column w-100 h-100">
               <!-- title and short keys -->
-              <div class="d-flex align-items-center justify-content-between mb-2">
+              <!-- <div class="d-flex align-items-center justify-content-between mb-2">
                 <p class="active-path my-0">{{activeFolder}}</p>
                   <div class="d-flex align-items-center">
                     <div class="sm-icons">
@@ -126,10 +126,10 @@
                       </mat-list>
                     </mat-menu>
                   </div>
-              </div>
+              </div> -->
               <!-- form and action buttons -->
               <div class="d-flex pb-2 align-items-center">
-                <mat-form-field appearance="outline" class="w-100 inline-input mb-lg-0 mb-1">
+                <mat-form-field appearance="outline" class="w-100 inline-input">
                   <mat-label>Open files ...</mat-label>
                   <mat-select
                     [(ngModel)]="activeFile"
@@ -139,7 +139,7 @@
                       [value]="idx.path">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
                   </mat-select>
                 </mat-form-field>
-                <div class="p-xl-1"></div>
+                
                 <div>
                   <button mat-icon-button [matMenuTriggerFor]="actions" matTooltip="Action buttons">
                     <mat-icon>more_vert</mat-icon>
@@ -209,7 +209,7 @@
                     <!-- download -->
                     <button
                       mat-menu-item
-                      [disabled]="!authService.access.bazar.download_from_url"
+                      [disabled]="!activeFile"
                       matTooltip="Download file from external URL"
                       (click)="downloadFileToServer()">
                       <mat-icon>cloud_download</mat-icon>
@@ -217,6 +217,40 @@
                     </button>
                   </mat-menu>
                 </div>
+                
+                <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys" class="d-lg-block d-none shortkey-btn">
+                  Shortkeys
+                </button>
+                <mat-menu #list="matMenu" class="shortkeys">
+                  <mat-list role="list" dense>
+                    <mat-list-item role="listitem">
+                      <span>
+                        <span class="d-block">Toggle fullscreen</span>
+                      </span>
+                      <span class="code my-0 ml-5">Alt + M</span>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                      Save
+                      <span class="code my-0 ml-5">Alt + S</span>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                      Delete active file
+                      <span class="code my-0 ml-5">Alt + D</span>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                      Close active file
+                      <span class="code my-0 ml-5">Alt + C</span>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                      Rename active file
+                      <span class="code my-0 ml-5">Alt + R</span>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                      Show autocomplete
+                      <span class="code my-0 ml-5">CTRL + SPACE</span>
+                    </mat-list-item>
+                  </mat-list>
+                </mat-menu>
               </div>
               
           
