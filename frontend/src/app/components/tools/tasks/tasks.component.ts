@@ -205,7 +205,7 @@ export class TasksComponent implements OnInit {
             hyperlambda: task.hyperlambda,
             options: hyperlambda
           }
-        }, 100);
+        }, 200);
       });
     }
   }

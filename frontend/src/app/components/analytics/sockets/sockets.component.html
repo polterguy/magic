@@ -138,15 +138,16 @@
             </mat-chip>
           </mat-chip-list>
 
-          <div *ngFor="let idx of messages" class="message">
-            <button
-              mat-icon-button
-              class="close"
-              matTooltip="Remove message"
-              (click)="deleteMessage(idx)">
-              <mat-icon>delete</mat-icon>
-            </button>
-            <strong>{{idx.name}}</strong>
+          <div *ngFor="let idx of messages" class="message code p-3">
+            <div class="d-flex justify-content-between align-items-center w-100 mb-1">
+              <strong>{{idx.name}}</strong>
+              <button
+                mat-icon-button
+                matTooltip="Remove message"
+                (click)="deleteMessage(idx)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
             <pre>{{idx.content | json}}</pre>
           </div>
 

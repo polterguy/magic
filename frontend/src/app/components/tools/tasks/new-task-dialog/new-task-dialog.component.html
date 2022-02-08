@@ -20,7 +20,7 @@
       mat-raised-button
       color="primary"
       type="submit"
-      [disabled]="name === ''"
+      [disabled]="name === '' || !argumentValid()"
       (click)="create()">
       Create
     </button>

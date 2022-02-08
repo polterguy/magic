@@ -26,7 +26,6 @@ import { EvaluatorService } from '../evaluator/services/evaluator.service';
 import { MacroDefinition } from '../../files/services/models/macro-definition.model';
 import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
 import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
-import { FileDownloadDialogComponent } from "./file-download-dialog/file-download-dialog.component";
 import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macro-dialog.component';
 import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
 import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
@@ -1288,13 +1287,28 @@ export class IdeComponent implements OnInit, OnDestroy {
 
   /**
    * Invoked when user wants to download a file directly to server.
+   * @param type - folder or file
    */
-  public downloadFileToServer() {
+  public downloadFileToServer(type: string) {
 
+    // if folder is selected
+    if (this.activeFolder && type === 'folder') {
+      // Downloading folder.
+      this.fileService.downloadFolder(this.activeFolder);
+    } else
     // making sure a file is selected
-    if (this.activeFile) {
+    if (this.activeFile && type === 'file') {
       // Downloading file.
       this.fileService.downloadFile(this.activeFile);
     }
+  }
+
+  /**
+   * Returns true if given path is a folder
+   * 
+   * @param path What path to check
+   */
+   public isFolder(path: string) {
+    return path.endsWith('/');
   }
 }

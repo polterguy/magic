@@ -29,8 +29,8 @@
     
     </mat-card>
   </div>
-  <div class="col-12">
-    <mat-card [class]="hasComponent ? 'mt-3 mb-general' : 'invisible'">
+  <div class="col-12" [class.mb-general]="hasComponent">
+    <mat-card [class]="hasComponent ? 'mt-3' : 'invisible'">
     
       <mat-card-content>
         <ng-template appInject></ng-template>
