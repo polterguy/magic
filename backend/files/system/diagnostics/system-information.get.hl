@@ -96,12 +96,16 @@ cache.try-get:system-information
       set-value:x:-
          config.get:"magic:databases:default"
 
+      // Counting cache items.
+      cache.count
+
       // Returning result to caller.
       unwrap:x:+/*
       lambda2hyper
          version:x:@version
          persisted_tasks:x:@tasks.count
          log_items:x:@log.count
+         cache_items:x:@cache.count
          endpoints:x:@.no-endpoints
          slots:x:@.no-slots
          dynamic_slots:x:@.no-dynamic-slots
