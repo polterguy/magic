@@ -72,6 +72,9 @@ table.mat-table{
         }
         td {
             border-bottom-width: 0;
+            .text-truncate{
+              max-width: calc(100vw / 3.5);
+            }
         }
     }
     .details-row {

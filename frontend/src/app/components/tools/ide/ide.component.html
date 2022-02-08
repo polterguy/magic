@@ -145,6 +145,7 @@
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #actions="matMenu">
+                    <!-- delete -->
                     <button
                       [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
                       mat-menu-item
@@ -153,6 +154,7 @@
                       <mat-icon>delete</mat-icon>
                       Delete
                     </button>
+                    <!-- execute -->
                     <button
                       mat-menu-item
                       matTooltip="Execute a macro [ALT+O]"
@@ -160,6 +162,7 @@
                       <mat-icon>model_training</mat-icon>
                       Execute
                     </button>
+                    <!-- generate crud -->
                     <button
                       mat-menu-item
                       [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
@@ -168,6 +171,7 @@
                       <mat-icon>compare_arrows</mat-icon>
                       Generate CRUD
                     </button>
+                    <!-- new folder -->
                     <button
                       mat-menu-item
                       [disabled]="!authService.access.files.create_folder"
@@ -177,6 +181,7 @@
                       <mat-icon>create_new_folder</mat-icon>
                       New folder
                     </button>
+                    <!-- new file -->
                     <button
                       mat-menu-item
                       [disabled]="!authService.access.files.create_file"
@@ -185,6 +190,28 @@
                       (click)="createNewFileObject('file')">
                       <mat-icon>note_add</mat-icon>
                       New file
+                    </button>
+                    <!-- upload -->
+                    <button
+                      mat-icon-button
+                      (click)="file.click()"
+                      matTooltip="Upload file from your local computer">
+                      <mat-icon>cloud_upload</mat-icon>
+                    </button>
+                    <input
+                      type="file"
+                      [(ngModel)]="fileInput"
+                      #file
+                      multiple
+                      class="d-none"
+                      (change)="upload($event.target.files)">
+                    <!-- download -->
+                    <button
+                      mat-icon-button
+                      [disabled]="!authService.access.bazar.download_from_url"
+                      matTooltip="Download file from external URL"
+                      (click)="downloadFileToServer()">
+                      <mat-icon>cloud_download</mat-icon>
                     </button>
                   </mat-menu>
                 </div>
