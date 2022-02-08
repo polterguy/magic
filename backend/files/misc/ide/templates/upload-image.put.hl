@@ -7,7 +7,9 @@
  * and [old_file] is given.
  * 
  * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
- * will correctly decorate your file with the correct properties.
+ * will correctly decorate your file with the correct properties. The endpoint also assumes the
+ * image is transferred in [content] as base64 encoded data. If you want to uplodad images as
+ * binary data using 'multipart/form-data' you can instead use the "Upload file" macro.
  */
 .description:Upload image file endpoint, allowing you to upload a file to the backend. Notice, [old_file] if declared and existing will be deleted.
 .type:image-upload
@@ -71,12 +73,9 @@ else
 
 // Creating a unique filename for image.
 .filename
-guid.new
 set-value:x:@.filename
    strings.concat
-      .:
-      convert:x:@guid.new
-         type:string
+      guid.new
       .:.
       get-value:x:@.arguments/*/type
 
