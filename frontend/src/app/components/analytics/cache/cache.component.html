@@ -104,14 +104,9 @@
             class="expandable-row"
             (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
             *matRowDef="let el; columns: ['key', 'delete'];"></tr>
-    
-          <!-- <tr
-            mat-row
-            [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-            *matRowDef="let el; columns: ['show-details'];"></tr> -->
 
           <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
-    
+
         </table>
     
         <mat-paginator
@@ -123,6 +118,7 @@
           (page)="paged()"
           [pageSizeOptions]="[5, 10, 25, 50, 100]">
         </mat-paginator>
+
       </mat-card-content>
     </mat-card>
   </div>

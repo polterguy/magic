@@ -72,61 +72,6 @@
         <mat-card class="h-100">
           <mat-card-content class="h-100">
             <div class="content-section d-flex flex-column w-100 h-100">
-              <!-- title and short keys -->
-              <!-- <div class="d-flex align-items-center justify-content-between mb-2">
-                <p class="active-path my-0">{{activeFolder}}</p>
-                  <div class="d-flex align-items-center">
-                    <div class="sm-icons">
-                      <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
-                        <mat-icon>help_outline</mat-icon>
-                      </button>
-                      <mat-menu #menu="matMenu">
-                        <div class="p-3">
-                          <p>
-                            From here you can create and modify existing programs and files, allowing you to create Hyperlambda
-                            code, and/or other types of code files, resulting in changing your server's behaviour.
-                          </p>
-                          <div class="d-flex justify-content-end">
-                            <a target="_blank" href="https://docs.aista.com/documentation/magic/components/hyper-ide/" mat-stroked-button>Learn more</a>
-                          </div>
-                        </div>
-                      </mat-menu>
-                    </div>
-                    <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
-                      Shortkeys
-                    </button>
-                    <mat-menu #list="matMenu" class="shortkeys">
-                      <mat-list role="list" dense>
-                        <mat-list-item role="listitem">
-                          <span>
-                            <span class="d-block">Toggle fullscreen</span>
-                          </span>
-                          <span class="code my-0 ml-5">Alt + M</span>
-                        </mat-list-item>
-                        <mat-list-item role="listitem">
-                          Save
-                          <span class="code my-0 ml-5">Alt + S</span>
-                        </mat-list-item>
-                        <mat-list-item role="listitem">
-                          Delete active file
-                          <span class="code my-0 ml-5">Alt + D</span>
-                        </mat-list-item>
-                        <mat-list-item role="listitem">
-                          Close active file
-                          <span class="code my-0 ml-5">Alt + C</span>
-                        </mat-list-item>
-                        <mat-list-item role="listitem">
-                          Rename active file
-                          <span class="code my-0 ml-5">Alt + R</span>
-                        </mat-list-item>
-                        <mat-list-item role="listitem">
-                          Show autocomplete
-                          <span class="code my-0 ml-5">CTRL + SPACE</span>
-                        </mat-list-item>
-                      </mat-list>
-                    </mat-menu>
-                  </div>
-              </div> -->
               <!-- form and action buttons -->
               <div class="d-flex pb-2 align-items-center">
                 <mat-form-field appearance="outline" class="w-100 inline-input">
@@ -284,11 +229,9 @@
                 *ngIf="openFiles.length === 0"
                 src="assets/light-bulb.png"
                 class="light-bulb"
-                matTooltip="Hyper IDE, when you're in a hurry!"
-                alt="Hyper IDE, when you're in a hurry">
-          
-              <!-- <div class="h-100"> -->
-          
+                matTooltip="Hyper IDE, because your time is valuable!"
+                alt="Hyper IDE, because your time is valuable!">
+
                 <div *ngFor="let file of openFiles" class="d-flex flex-column w-100 h-100">
           
                   <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'invisible'" class="h-100">
@@ -356,15 +299,12 @@
                   </div>
           
                 </div>
-          
-              <!-- </div> -->
+
             </div>
           </mat-card-content>
         </mat-card>
       </div>
     </div>
-    
-  
   </div>
 
 </div>

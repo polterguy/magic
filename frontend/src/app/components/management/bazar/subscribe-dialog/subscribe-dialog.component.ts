@@ -19,8 +19,7 @@ import { ConfigService } from '../../config/services/config.service';
  */
 @Component({
   selector: 'app-subscribe-dialog',
-  templateUrl: './subscribe-dialog.component.html',
-  styleUrls: ['./subscribe-dialog.component.scss']
+  templateUrl: './subscribe-dialog.component.html'
 })
 export class SubscribeDialogComponent implements OnInit {
 
@@ -108,7 +107,7 @@ export class SubscribeDialogComponent implements OnInit {
   /**
    * Invoked when user clicks the Cancel button.
    */
-   public cancel() {
+  public cancel() {
 
     // Simply closing dialog without doing anything.
     this.dialogRef.close();

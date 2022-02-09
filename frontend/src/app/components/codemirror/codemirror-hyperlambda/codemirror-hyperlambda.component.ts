@@ -120,7 +120,7 @@ export class HyperlambdaComponent implements AfterViewInit {
             sidenav.classList.add('d-none');
           };
         }
-      }, 1);
+      }, 100);
     }, 1);
   }
 }

@@ -107,16 +107,16 @@ export class TableEx {
    * If type is 'roles' the cqrsAuthorisationValues should be a comma separated
    * list of which roles messages are published to.
    */
-   cqrsAuthorisation?: string;
+  cqrsAuthorisation?: string;
 
    /**
     * Only relevant if above field is 'roles', at which point this should be
     * the comma separated list of which roles messages are published to.
     */
-   cqrsAuthorisationValues?: string;
+  cqrsAuthorisationValues?: string;
 
    /**
     * Foreign keys in table.
     */
-   foreign_keys: ForeignKey[];
+  foreign_keys: ForeignKey[];
  }

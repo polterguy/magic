@@ -20,8 +20,7 @@ import { ConfigService } from 'src/app/components/management/config/services/con
  */
 @Component({
   selector: 'app-setup-auth',
-  templateUrl: './setup-auth.component.html',
-  styleUrls: ['./setup-auth.component.scss']
+  templateUrl: './setup-auth.component.html'
 })
 export class SetupAuthComponent implements OnInit {
 

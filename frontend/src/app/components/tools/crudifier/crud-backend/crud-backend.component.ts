@@ -34,8 +34,7 @@ import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defa
  */
 @Component({
   selector: 'app-crud-backend',
-  templateUrl: './crud-backend.component.html',
-  styleUrls: ['./crud-backend.component.scss']
+  templateUrl: './crud-backend.component.html'
 })
 export class CrudBackendComponent implements OnInit {
 
@@ -206,7 +205,7 @@ export class CrudBackendComponent implements OnInit {
    * 
    * @param db Database name
    */
-   public getDatabaseCssClass(db: string) {
+  public getDatabaseCssClass(db: string) {
     switch (this.databaseType) {
       case 'mysql':
         switch (db) {
@@ -274,7 +273,7 @@ export class CrudBackendComponent implements OnInit {
    * Empties server side cache and reloads your database declarations,
    * 'refreshing' your available databases.
    */
-   public refresh() {
+  public refresh() {
 
     // Asking user to confirm action, since it reloads page.
     // A bit 'dirty' but simplifies code significantly.

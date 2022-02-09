@@ -23,8 +23,7 @@ export class FileObjectName {
  */
 @Component({
   selector: 'app-rename-file-dialog',
-  templateUrl: './rename-file-dialog.component.html',
-  styleUrls: ['./rename-file-dialog.component.scss']
+  templateUrl: './rename-file-dialog.component.html'
 })
 export class RenameFileDialogComponent {
 

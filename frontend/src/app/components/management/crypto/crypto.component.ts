@@ -20,8 +20,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  */
 @Component({
   selector: 'app-crypto',
-  templateUrl: './crypto.component.html',
-  styleUrls: ['./crypto.component.scss']
+  templateUrl: './crypto.component.html'
 })
 export class CryptoComponent {
 
@@ -75,7 +74,7 @@ export class CryptoComponent {
   /**
    * Implementtation of OnInit.
    */
-   public ngOnInit() {
+  public ngOnInit() {
 
     // Making sure we subscribe to relevant messages.
     this.subscription = this.messageService.subscriber().subscribe((msg: Message) => {
@@ -101,7 +100,7 @@ export class CryptoComponent {
   /**
    * Implementation of OnDestroy.
    */
-   public ngOnDestroy() {
+  public ngOnDestroy() {
 
     // House cleaning.
     this.subscription.unsubscribe();

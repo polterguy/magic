@@ -61,38 +61,7 @@
               </div>
             </td>
           </ng-container>
-      
-          <!-- <ng-container matColumnDef="rename">
-            <td class="mini-col button-col" mat-cell *matCellDef="let el">
-              <button
-                mat-icon-button
-                (click)="rename($event, el)">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-      
-          <ng-container matColumnDef="download">
-            <td class="mini-col button-col" mat-cell *matCellDef="let el">
-              <button
-                mat-icon-button
-                (click)="download($event, el)">
-                <mat-icon>cloud_download</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-      
-          <ng-container matColumnDef="delete">
-            <td class="mini-col button-col" mat-cell *matCellDef="let el">
-              <button
-                [disabled]="!canDeleteItem(el)"
-                mat-icon-button
-                (click)="delete($event, el)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </ng-container> -->
-      
+
           <ng-container matColumnDef="edit-file">
             <td
               mat-cell
@@ -173,58 +142,9 @@
           
           <tr mat-footer-row *matFooterRowDef="['actionFooter']"></tr>
         </table>
-      
-        <!-- <div *ngIf="codeMirrorIsFullscreen === false">
-      
-          <button
-            *ngIf="isModuleFolder()"
-            mat-icon-button
-            matTooltip="(Re)-install module"
-            class="install-button"
-            (click)="installModule()">
-            <mat-icon>touch_app</mat-icon>
-          </button>
-      
-          <button
-            mat-icon-button
-            class="file-button">
-            <mat-icon>cloud_upload</mat-icon>
-          </button>
-      
-          <input
-            type="file"
-            [(ngModel)]="fileInput"
-            multiple
-            matTooltip="Upload file from your local computer"
-            class="invisible-file-element"
-            (change)="upload($event.target.files)">
-      
-          <button
-            mat-icon-button
-            [disabled]="!authService.access.bazar.download_from_url"
-            matTooltip="Download file from external URL"
-            (click)="downloadFileToServer()">
-            <mat-icon>cloud_download</mat-icon>
-          </button>
-      
-          <button
-            mat-icon-button
-            matTooltip="Create a new file"
-            (click)="newFile()">
-            <mat-icon>create</mat-icon>
-          </button>
-      
-          <button
-            mat-icon-button
-            matTooltip="Create a new folder"
-            (click)="newFolder()">
-            <mat-icon>add</mat-icon>
-          </button>
-        
-        </div> -->
+
       </mat-card-content>
-      
-      
+
     </mat-card>
   </div>
 </div>

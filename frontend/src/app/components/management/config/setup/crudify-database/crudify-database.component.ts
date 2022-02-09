@@ -32,8 +32,7 @@ import data from './data/data.json';
  */
 @Component({
   selector: 'app-crudify-database',
-  templateUrl: './crudify-database.component.html',
-  styleUrls: ['./crudify-database.component.scss']
+  templateUrl: './crudify-database.component.html'
 })
 export class CrudifyDatabaseComponent implements OnInit {
 
@@ -127,7 +126,6 @@ export class CrudifyDatabaseComponent implements OnInit {
           });
 
         }, (error: any) => this.feedbackService.showError(error));
-    
 
       }, (error: any) => this.feedbackService.showError(error));
 

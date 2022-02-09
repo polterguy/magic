@@ -29,8 +29,6 @@ $max_height_mobile: calc(100vh - 220px);
 }
 .folders-wrapper{@include general_transition(0.5s);}
 .wrapper {
-  // max-height: $max_height;
-  // height: calc(100vh - 5rem);
   overflow-x: hidden;
   mat-card {
     margin-bottom: 0;
@@ -89,8 +87,6 @@ $max_height_mobile: calc(100vh - 220px);
   }
 
   .content-section {
-    // height: calc(100% - 5rem);
-    // max-height: $max_height;
     position: relative;
 
     .active-path{

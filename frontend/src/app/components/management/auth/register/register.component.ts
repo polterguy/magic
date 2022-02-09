@@ -35,16 +35,6 @@ export class RegisterComponent implements OnInit {
   public hide = true;
 
   /**
-   * Email address of user.
-   */
-  // public email: string;
-
-  /**
-   * Password of user.
-   */
-  // public password: string;
-
-  /**
    * Password of user repeated.
    */
   public repeatPassword: string;

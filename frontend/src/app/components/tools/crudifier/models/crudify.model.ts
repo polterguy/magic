@@ -101,12 +101,12 @@ export class Crudify {
    * Whether or not the crudify process should create verbose endpoint, allowing
    * for as many possible query arguments as possible, or only the bare minimum.
    */
-   verbose: boolean;
+  verbose: boolean;
 
   /**
    * Whether or not the crudify process should implement left joins for all foreign keys.
    */
-   join: boolean;
+  join: boolean;
 
   /**
    * Arguments for endpoint. Basically primary keys and input arguments.

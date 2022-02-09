@@ -342,7 +342,7 @@ export class RolesComponent implements OnInit {
    /*
     * Adds the specified role to all selected users.
     */
-   private addRoleToSelectedUsers(role: Role) {
+  private addRoleToSelectedUsers(role: Role) {
 
     /*
      * Creating multiple HTTP requests towards the backend to add role

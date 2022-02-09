@@ -89,7 +89,6 @@
                         *ngFor="let con of el.connections"
                         [disabled]="!authService.access.sockets.send"
                         selectable="false"
-                        [class]="createSubscriptions ? '' : 'non-selectable'"
                         (click)="sendMessageToConnection(con)">
                         {{con}}
                       </mat-chip>
@@ -107,10 +106,6 @@
                 (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
                 mat-row *matRowDef="let el; columns: ['name'];"></tr>
 
-              <!-- <tr
-                mat-row
-                [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-                *matRowDef="let el; columns: ['show-details'];"></tr> -->
               <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
 
             </table>

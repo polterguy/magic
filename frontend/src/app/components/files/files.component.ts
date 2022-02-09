@@ -38,9 +38,6 @@ export class FilesComponent implements OnInit, OnDestroy {
     'icon',
     'path',
     'action'
-    // 'rename',
-    // 'download',
-    // 'delete',
   ];
 
   /**

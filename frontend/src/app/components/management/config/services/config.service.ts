@@ -14,7 +14,6 @@ import { NameEmailModel } from '../models/name-email.model';
 import { HttpService } from '../../../../services/http.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { BackendService } from '../../../../services/backend.service';
-import { DefaultDatabaseType } from '../models/default-database-type.model';
 import { AuthenticateResponse } from '../../auth/models/authenticate-response.model';
 
 /**

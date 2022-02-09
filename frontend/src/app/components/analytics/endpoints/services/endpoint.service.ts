@@ -30,12 +30,10 @@ export class EndpointService {
    * Creates an instance of your service.
    * 
    * @param httpService HTTP service to use for backend invocations
-   * @param fileService Needed to create, query and load assumption/integration tests
    * @param backendService Needed to extract root URL
    */
   constructor(
     private httpService: HttpService,
-    private fileService: FileService,
     private backendService: BackendService) { }
 
   /**

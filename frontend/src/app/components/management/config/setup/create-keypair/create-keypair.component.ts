@@ -20,8 +20,7 @@ import { CryptoService } from 'src/app/components/management/crypto/services/cry
  */
 @Component({
   selector: 'app-create-keypair',
-  templateUrl: './create-keypair.component.html',
-  styleUrls: ['./create-keypair.component.scss']
+  templateUrl: './create-keypair.component.html'
 })
 export class CreateKeypairComponent implements OnInit {
 

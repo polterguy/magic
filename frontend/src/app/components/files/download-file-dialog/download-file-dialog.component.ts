@@ -16,8 +16,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
  */
 @Component({
   selector: 'app-download-file-dialog',
-  templateUrl: './download-file-dialog.component.html',
-  styleUrls: ['./download-file-dialog.component.scss']
+  templateUrl: './download-file-dialog.component.html'
 })
 export class DownloadFileDialogComponent {
 

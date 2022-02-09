@@ -225,7 +225,7 @@ export class BazarService {
    * 
    * @param app App's manifest
    */
-   public update(app: AppManifest) {
+  public update(app: AppManifest) {
 
     // Sanity checking invocation.
     if (!app.token || app.token === '') {

@@ -61,17 +61,17 @@ export class AppComponent implements OnInit, OnDestroy {
    * If there exists a newer version of Magic Core as published by the Bazar,
    * this value will be true.
    */
-   public shouldUpdateCore: boolean = false;
+  public shouldUpdateCore: boolean = false;
    
   /**
    * Backend version as returned from server if authenticated.
    */
-   public version: string = null;
+  public version: string = null;
 
    /**
     * Latest version of Magic as published by the Bazar.
     */
-   public bazarVersion: string = null;
+  public bazarVersion: string = null;
 
   /**
    * CSS class wrapping entire application.
@@ -216,7 +216,7 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Toggles the navbar.
    */
-   public toggleNavbar() {
+  public toggleNavbar() {
 
     // Publishing message to inform other components that navbar was toggled.
     this.messageService.sendMessage({
