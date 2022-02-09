@@ -4,7 +4,7 @@
    file:*
    folder:string
 .description:Saves the specified file in the specified folder
-.type:file-upload
+.type:internal
 .accept:multipart/form-data
 
 // Ensures user is authorized to access endpoint.
