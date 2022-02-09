@@ -86,33 +86,8 @@
                 </mat-card-content>
             </mat-card>
         </div>
-        <!-- unhandled_exceptions -->
-        <div class="col-md-6 col-12 pr-md-2 pb-md-3 pb-4" *ngIf="systemReport?.timeshifts && unhandled_exceptionsData">
-            <mat-card class="fit-height-card">
-                <div class="d-flex justify-content-between w-100">
-                    <div>
-                        <h2 class="mat-headline mb-0">{{systemReport.timeshifts.unhandled_exceptions?.name}} <small class="text-muted">last 14 days</small></h2>
-                        <mat-card-subtitle>{{systemReport.timeshifts.unhandled_exceptions?.description}}</mat-card-subtitle>
-                    </div>
-                    <div>
-                        <button mat-icon-button (click)="chartType[2] = !chartType[2]">
-                            <mat-icon>{{chartType[2] ? 'show' : 'bar'}}_chart</mat-icon>
-                        </button>
-                    </div>
-                </div>
-                <mat-card-content>
-                    <canvas baseChart
-                    [data]="unhandled_exceptionsData" 
-                    [labels]="unhandled_exceptionsLabel"
-                    [options]="barChartOptions"
-                    [chartType]="!chartType[2] ? 'line' : 'bar'"
-                    [colors]="colors">
-                    </canvas>
-                </mat-card-content>
-            </mat-card>
-        </div>
         <!-- backend_endpoints_generated -->
-        <div class="col-md-6 col-12 pl-md-2 pb-md-3 pb-4" *ngIf="systemReport?.timeshifts && backend_endpoints_generatedData">
+        <div class="col-md-6 col-12 pr-md-2 pb-md-3 pb-4" *ngIf="systemReport?.timeshifts && backend_endpoints_generatedData">
             <mat-card class="fit-height-card">
                 <div class="d-flex justify-content-between w-100">
                     <div>
@@ -137,7 +112,7 @@
             </mat-card>
         </div>
         <!-- access_denied -->
-        <div class="col-md-6 col-12 pr-md-2 pb-md-3 pb-4" *ngIf="systemReport?.timeshifts && access_deniedData">
+        <div class="col-md-6 col-12 pl-md-2 pb-md-3 pb-4" *ngIf="systemReport?.timeshifts && access_deniedData">
             <mat-card class="fit-height-card">
                 <div class="d-flex justify-content-between w-100">
                     <div>

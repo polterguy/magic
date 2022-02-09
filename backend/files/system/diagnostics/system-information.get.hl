@@ -43,10 +43,6 @@ cache.try-get:system-information
                      name:Generated CRUD endpoints
                      description:How many CRUD endpoints that was generated on a daily basis
                      items
-                  unhandled_exceptions
-                     name:Unhandled exceptions
-                     description:How many daily unhandled exceptions Magic has generated
-                     items
                   access_denied
                      name:Access denied requests
                      description:How many times invocations have resulted in an access denied response
@@ -59,10 +55,6 @@ cache.try-get:system-information
          // Retrieving count of log items grouped by day for backend endpoints generated.
          add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/backend_endpoints_generated/*/items
             log.timeshift:Generating CRUD backend
-
-         // Retrieving count of unhandled exceptions.
-         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/unhandled_exceptions/*/items
-            log.timeshift:Unhandled exception occurred
 
          // Retrieving access denied invocations.
          add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items

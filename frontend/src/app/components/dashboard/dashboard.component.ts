@@ -1,3 +1,8 @@
+
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../management/auth/services/auth.service';
 import { DashboardService } from './services/dashboard.service';
@@ -12,6 +17,10 @@ import { ChartOptions } from 'chart.js';
 import colors from './bar_chart_colors.json';
 import { MatDialog } from '@angular/material/dialog';
 
+/**
+ * Dashboard component displaying general information about Magic,
+ * and possibly some statistics.
+ */
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -107,8 +116,6 @@ export class DashboardComponent implements OnInit {
    loginsLabel: string[] = [];
    loginsData: string[] = [];
 
-   unhandled_exceptionsLabel: string[] = [];
-   unhandled_exceptionsData: string[] = [];
   private getSystemReport() {
     this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {
       this.systemReport = report;
@@ -125,12 +132,6 @@ export class DashboardComponent implements OnInit {
         Object.keys(report['timeshifts']).forEach((item: any,index) => {
           this.timeshiftChart.push(report['timeshifts'][item]);
         })
-        // this.timeshiftChart.forEach((item: any, index) => {
-        //   item.forEach(element => {
-        //     this.access_deniedLabel.push(moment(element.when).format("D. MMM"));
-        //     this.access_deniedLabel.push(element.count);
-        //   });
-        // })
         this.access_deniedLabel = report['timeshifts'].access_denied.items.map(x => {return moment(x.when).format("D. MMM")});
         this.access_deniedData = report['timeshifts'].access_denied.items.map(x => {return x.count});
 
@@ -139,9 +140,6 @@ export class DashboardComponent implements OnInit {
 
         this.loginsLabel = report['timeshifts'].logins.items.map(x => {return moment(x.when).format("D. MMM")});
         this.loginsData = report['timeshifts'].logins.items.map(x => {return x.count});
-
-        this.unhandled_exceptionsLabel = report['timeshifts'].unhandled_exceptions.items.map(x => {return moment(x.when).format("D. MMM")});
-        this.unhandled_exceptionsData = report['timeshifts'].unhandled_exceptions.items.map(x => {return x.count});
       }
     })
   }
