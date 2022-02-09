@@ -411,9 +411,9 @@ export class SqlComponent implements OnInit {
 
       // to scroll to the result section
       // wait for the result to get printed inside element
-      setTimeout(() => {
-        resultCard.scrollIntoView({behavior: 'smooth'});
-      }, 300);
+      // setTimeout(() => {
+      //   resultCard.scrollIntoView({behavior: 'smooth'});
+      // }, 300);
 
     }, (error: any) => {
 
