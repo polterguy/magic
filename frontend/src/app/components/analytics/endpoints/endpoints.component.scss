@@ -1,38 +1,4 @@
 
-// .filter-wrapper {
-//   display: table;
-//   margin-top: 2rem;
-//   mat-form-field {
-//     width: 100%;
-//     display: table-cell;
-//   }
-//   button {
-//     width: 50px;
-//     display: table-cell;
-//   }
-// }
-
-// .show-system {
-//   position: absolute;
-//   top: 2rem;
-//   right: 2rem;
-// }
-
-// .endpoint-items {
-//   table-layout: fixed;
-//   tr {
-//     td.mini-col {
-//       width: 30px;
-//     }
-//     td.auth-col {
-//       text-align: right;
-//     }
-//   }
-//   .error {
-//     background-color:rgba(255,0,0,.1);
-//   }
-// }
-// .error-icon {
-//   position: absolute;
-//   right: 4.5rem;
-// }
+tr.internal td {
+  color: #a0a0a0;
+}
