@@ -51,6 +51,203 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
+    <!-- tools -->
+    <mat-expansion-panel class="mat-elevation-z0"
+      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || !sideNavStatus" 
+      [hideToggle]="!sideNavStatus"
+      *ngIf="(authService.access.files.list_files && authService.access.files.list_folders) || authService.access.eval.execute || authService.access.sql.execute_access || (authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend) || authService.access.tasks.read">
+      <mat-expansion-panel-header 
+        *ngIf="sideNavStatus"
+        [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive}">
+        <mat-panel-title>
+          <mat-icon>build_circle</mat-icon>
+          <span class="title">Tools</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
+        <!-- crudifier -->
+        <mat-list-option 
+          [style.display]="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Crudifier" 
+          routerLink="/crudifier" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #crudifier="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend">
+            <mat-icon>touch_app</mat-icon>
+            <span class="title">Crudifier</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- hyper ide -->
+        <mat-list-option 
+          [style.display]="authService.access.files.list_files && authService.access.files.list_folders ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Hyper IDE" 
+          routerLink="/ide" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #hyperide="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.files.list_files && authService.access.files.list_folders">
+            <mat-icon>extension</mat-icon>
+            <span class="title">Hyper IDE</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- sql -->
+        <mat-list-option 
+          [style.display]="authService.access.sql.execute_access ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="SQL" 
+          routerLink="/sql" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #sql="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.sql.execute_access">
+            <mat-icon>language</mat-icon>
+            <span class="title">SQL</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- evaluator -->
+        <mat-list-option 
+          [style.display]="authService.access.eval.execute ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Evaluator" 
+          routerLink="/evaluator" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #evaluator="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.eval.execute">
+            <mat-icon>offline_bolt</mat-icon>
+            <span class="title">Evaluator</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- tasks -->
+        <mat-list-option 
+          [style.display]="authService.access.tasks.read ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Tasks" 
+          routerLink="/tasks" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #tasks="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.tasks.read">
+            <mat-icon>calendar_today</mat-icon>
+            <span class="title">Tasks</span>
+          </ng-container>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-expansion-panel>
+    <!-- management -->
+    <mat-expansion-panel class="mat-elevation-z0"
+      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || terminal?.isActive || profile?.isActive || !sideNavStatus" 
+      [hideToggle]="!sideNavStatus"
+      *ngIf="(authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.bazar.get_manifests || authService.access.config.load || authService.access.terminal.execute">
+      <mat-expansion-panel-header 
+      *ngIf="sideNavStatus"
+      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || terminal?.isActive}">
+        <mat-panel-title>
+          <mat-icon>manage_accounts</mat-icon>
+          <span class="title">Management</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
+        <!-- users -->
+        <mat-list-option 
+        [style.display]="authService.access.auth.view_users && authService.access.auth.view_roles ? '' : 'none'"
+        [matTooltipDisabled]="sideNavStatus" 
+        matTooltip="Users & roles" 
+        routerLink="/auth" 
+        matTooltipPosition="after" 
+        routerLinkActive="active-link"
+        #auth="routerLinkActive"
+        [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles">
+            <mat-icon>supervisor_account</mat-icon>
+            <span class="title">Users &amp; roles</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- config -->
+        <mat-list-option 
+          [style.display]="authService.access.config.load ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Config" 
+          routerLink="/config" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #config="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.config.load">
+            <mat-icon>settings</mat-icon>
+            <span class="title">Config</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- terminal -->
+        <mat-list-option 
+          [style.display]="authService.access.terminal.execute ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Terminal" 
+          routerLink="/terminal" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #terminal="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.terminal.execute">
+            <mat-icon>input</mat-icon>
+            <span class="title">Terminal</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- Cryptography -->
+        <mat-list-option 
+          [style.display]="authService.access.crypto.import_public_key ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Cryptography" 
+          routerLink="/crypto" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #crypto="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.crypto.import_public_key">
+            <mat-icon>security</mat-icon>
+            <span class="title">Cryptography</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- bazar -->
+        <mat-list-option 
+          [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Bazar" 
+          routerLink="/bazar" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #bazar="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.bazar.get_manifests">
+            <mat-icon>storefront</mat-icon>
+            <span class="title">Bazaar</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- profile -->
+        <mat-list-option 
+          [style.display]="authService.authenticated ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Edit your profile" 
+          routerLink="/profile" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #profile="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.authenticated">
+            <mat-icon>person</mat-icon>
+            <span class="title">Profile</span>
+          </ng-container>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-expansion-panel>
     <!-- analytics -->
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !sideNavStatus" 
@@ -142,204 +339,6 @@
         </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
-    <!-- tools -->
-    <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || terminal?.isActive || !sideNavStatus" 
-      [hideToggle]="!sideNavStatus"
-      *ngIf="(authService.access.files.list_files && authService.access.files.list_folders) || authService.access.eval.execute || authService.access.sql.execute_access || (authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend) || authService.access.tasks.read || authService.access.terminal.execute">
-      <mat-expansion-panel-header 
-      *ngIf="sideNavStatus"
-      [ngClass]="{'active-link':hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || terminal?.isActive}">
-        <mat-panel-title>
-          <mat-icon>build_circle</mat-icon>
-          <span class="title">Tools</span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
-        <!-- hyper ide -->
-        <mat-list-option 
-        [style.display]="authService.access.files.list_files && authService.access.files.list_folders ? '' : 'none'"
-        [matTooltipDisabled]="sideNavStatus" 
-        matTooltip="Hyper IDE" 
-        routerLink="/ide" 
-        matTooltipPosition="after" 
-        routerLinkActive="active-link"
-        #hyperide="routerLinkActive"
-        [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.files.list_files && authService.access.files.list_folders">
-            <mat-icon>extension</mat-icon>
-            <span class="title">Hyper IDE</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- evaluator -->
-        <mat-list-option 
-          [style.display]="authService.access.eval.execute ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Evaluator" 
-          routerLink="/evaluator" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #evaluator="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.eval.execute">
-            <mat-icon>offline_bolt</mat-icon>
-            <span class="title">Evaluator</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- sql -->
-        <mat-list-option 
-          [style.display]="authService.access.sql.execute_access ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="SQL" 
-          routerLink="/sql" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #sql="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.sql.execute_access">
-            <mat-icon>language</mat-icon>
-            <span class="title">SQL</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- crudifier -->
-        <mat-list-option 
-          [style.display]="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Crudifier" 
-          routerLink="/crudifier" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #crudifier="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend">
-            <mat-icon>touch_app</mat-icon>
-            <span class="title">Crudifier</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- terminal -->
-        <mat-list-option 
-          [style.display]="authService.access.terminal.execute ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Terminal" 
-          routerLink="/terminal" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #terminal="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.terminal.execute">
-            <mat-icon>input</mat-icon>
-            <span class="title">Terminal</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- tasks -->
-        <mat-list-option 
-          [style.display]="authService.access.tasks.read ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Tasks" 
-          routerLink="/tasks" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #tasks="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.tasks.read">
-            <mat-icon>calendar_today</mat-icon>
-            <span class="title">Tasks</span>
-          </ng-container>
-        </mat-list-option>
-      </mat-selection-list>
-    </mat-expansion-panel>
-    <!-- management -->
-    <mat-expansion-panel class="mat-elevation-z0"
-      [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive || !sideNavStatus" 
-      [hideToggle]="!sideNavStatus"
-      *ngIf="(authService.access.auth.view_users && authService.access.auth.view_roles) || authService.access.bazar.get_manifests || authService.access.config.load">
-      <mat-expansion-panel-header 
-      *ngIf="sideNavStatus"
-      [ngClass]="{'active-link':auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || profile?.isActive}">
-        <mat-panel-title>
-          <mat-icon>manage_accounts</mat-icon>
-          <span class="title">Management</span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
-        <!-- users -->
-        <mat-list-option 
-        [style.display]="authService.access.auth.view_users && authService.access.auth.view_roles ? '' : 'none'"
-        [matTooltipDisabled]="sideNavStatus" 
-        matTooltip="Users & roles" 
-        routerLink="/auth" 
-        matTooltipPosition="after" 
-        routerLinkActive="active-link"
-        #auth="routerLinkActive"
-        [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles">
-            <mat-icon>supervisor_account</mat-icon>
-            <span class="title">Users &amp; roles</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- config -->
-        <mat-list-option 
-          [style.display]="authService.access.config.load ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Config" 
-          routerLink="/config" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #config="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.config.load">
-            <mat-icon>settings</mat-icon>
-            <span class="title">Config</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- Cryptography -->
-        <mat-list-option 
-          [style.display]="authService.access.crypto.import_public_key ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Cryptography" 
-          routerLink="/crypto" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #crypto="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.crypto.import_public_key">
-            <mat-icon>security</mat-icon>
-            <span class="title">Cryptography</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- bazar -->
-        <mat-list-option 
-          [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Bazar" 
-          routerLink="/bazar" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #bazar="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.bazar.get_manifests">
-            <mat-icon>storefront</mat-icon>
-            <span class="title">Bazaar</span>
-          </ng-container>
-        </mat-list-option>
-        <!-- profile -->
-        <mat-list-option 
-          [style.display]="authService.authenticated ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Edit your profile" 
-          routerLink="/profile" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #profile="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.authenticated">
-            <mat-icon>person</mat-icon>
-            <span class="title">Profile</span>
-          </ng-container>
-        </mat-list-option>
-      </mat-selection-list>
-    </mat-expansion-panel>
-    <!-- get started -->
     <!-- about -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header 
