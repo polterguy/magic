@@ -116,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.onWindowResize();
 
     // Attempting to retrieve backend version.
-    this.retrieveBackendVersion();
+    // this.retrieveBackendVersion();
     /*
      * Subscribing to relevant messages published by other components
      * when wire frame needs to react to events occurring other places in our app.
