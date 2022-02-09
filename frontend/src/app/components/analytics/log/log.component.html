@@ -30,7 +30,6 @@
             mat-table
             [dataSource]="items"
             class="w-100 expandable-table"
-            
             multiTemplateDataRows>
 
           <ng-container matColumnDef="content">
@@ -113,11 +112,6 @@
               class="expandable-row" [class.error-bg]="el.type === 'error'"
               (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
               *matRowDef="let el; columns: displayedColumns;"></tr>
-
-            <!-- <tr
-              mat-row
-              [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-              *matRowDef="let el; columns: ['show-details'];"></tr> -->
 
             <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
 

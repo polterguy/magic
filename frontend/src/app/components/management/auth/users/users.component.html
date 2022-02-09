@@ -60,9 +60,6 @@
     <td mat-cell *matCellDef="let el" colspan="1">
       <div class="w-100 details-row"
       [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">
-      <!-- <div
-        class="details-sheet"
-        *ngIf="shouldDisplayDetails(el)"> -->
 
         <div class="d-flex justify-content-between align-items-center w-100 py-3">
 
@@ -163,73 +160,6 @@
             </mat-menu>
           </div>
         </div>
-        <!-- <div class="button-strip">
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || !authService.access.auth.create_user_role"
-            matTooltip="Add to role"
-            (click)="addToRole(el)">
-            <mat-icon>add_box</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            matTooltip="Copy username to clipboard"
-            (click)="copyUsername(el)">
-            <mat-icon>bookmark</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || !authService.access.auth.update_user"
-            matTooltip="Change password"
-            (click)="editUser(el)">
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || !authService.access.auth.impersonate"
-            matTooltip="Impersonate user"
-            (click)="generateLoginLink(el)">
-            <mat-icon>account_circle</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || !authService.access.auth.impersonate"
-            matTooltip="Create reset password link"
-            (click)="generateResetPasswordLink(el)">
-            <mat-icon>perm_identity</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || el.locked || !authService.access.auth.jail"
-            (click)="jailUser(el)"
-            matTooltip="Imprison user">
-            <mat-icon>gavel</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || !authService.access.auth.jail"
-            (click)="lockedChanged(el)"
-            [matTooltip]="el.locked ? 'Release lock' : 'Lock user'">
-            <mat-icon *ngIf="el.locked">lock</mat-icon>
-            <mat-icon *ngIf="!el.locked">lock_open</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [disabled]="el.username === 'root' || !authService.access.auth.delete_user"
-            matTooltip="Delete user"
-            (click)="delete(el)">
-            <mat-icon>delete</mat-icon>
-          </button>
-
-        </div> -->
 
       </div>
 
@@ -243,10 +173,6 @@
     (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
     *matRowDef="let el; columns: displayedColumns;"></tr>
 
-  <!-- <tr
-    mat-row
-    [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-    *matRowDef="let el; columns: ['show-details'];"></tr> -->
   <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
 
 </table>

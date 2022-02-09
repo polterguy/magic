@@ -141,11 +141,6 @@
             class="expandable-row"
             (click)="toggleDetails(el);expandedElement = expandedElement === el ? null : el"
             *matRowDef="let el; columns: displayedColumns;"></tr>
-      
-          <!-- <tr
-            mat-row
-            [ngClass]="el.model ? 'details' : 'invisible'"
-            *matRowDef="let el; columns: ['show-details'];"></tr> -->
 
           <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
       

@@ -25,8 +25,7 @@ import sqlOptions from '../../../codemirror/options/sql.json'
  */
 @Component({
   selector: 'app-crud-sql',
-  templateUrl: './crud-sql.component.html',
-  styleUrls: ['./crud-sql.component.scss']
+  templateUrl: './crud-sql.component.html'
 })
 export class CrudSqlComponent implements OnInit {
 

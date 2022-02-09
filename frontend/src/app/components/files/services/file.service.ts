@@ -116,7 +116,7 @@ export class FileService {
    * @param filename Filename to save file as
    * @param content Content of file
    */
-   public saveFile(filename: string, content: string) {
+  public saveFile(filename: string, content: string) {
 
     // Passing in file as form data.
     const folder = filename.substr(0, filename.lastIndexOf('/') + 1);
@@ -137,7 +137,7 @@ export class FileService {
    * @param oldName File or folder to rename.
    * @param newName New name for file or folder.
    */
-   public rename(oldName: string, newName: string) {
+  public rename(oldName: string, newName: string) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>(
@@ -165,7 +165,7 @@ export class FileService {
    * 
    * @param path File to download
    */
-   public downloadFile(path: string) {
+  public downloadFile(path: string) {
 
     // Invoking backend to download file and opening up save-as dialog.
     this.httpService.download(
@@ -186,7 +186,7 @@ export class FileService {
    * @param path Folder to upload file to
    * @param file File you want to upload
    */
-   public uploadFile(path: string, file: any) {
+  public uploadFile(path: string, file: any) {
 
     // Invoking backend with a form data object containing file.
     const formData: FormData = new FormData();
@@ -243,7 +243,7 @@ export class FileService {
    * @param folder Folder on server where user wants to save the file
    * @param url URL to file user wants to download to his local server
    */
-   public downloadFileToBackend(folder: string, url: string) {
+  public downloadFileToBackend(folder: string, url: string) {
 
     // Invoking backend to download file to server.
     return this.httpService.post<Response>('/magic/system/bazar/download-from-url', {
@@ -318,7 +318,7 @@ export class FileService {
    * @param file Full path of macro to retrieve meta information about
    * @param args Arguments to macro execution
    */
-   public executeMacro(file: string, args: any) {
+  public executeMacro(file: string, args: any) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>('/magic/system/ide/execute-macro', {

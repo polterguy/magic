@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

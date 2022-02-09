@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { forkJoin, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
@@ -1004,7 +1004,6 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Cloning options object.
     options[0] = this.clone(options[0]);
-    
 
     // Checking if file should be opened in read-only mode.
     if (path.startsWith('/system/') || path.startsWith('/misc/')) {

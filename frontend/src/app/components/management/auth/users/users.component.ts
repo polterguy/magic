@@ -326,7 +326,7 @@ export class UsersComponent implements OnInit {
    * 
    * @param user User to edit
    */
-   public addToRole(user: User) {
+  public addToRole(user: User) {
 
     // Showing modal dialog.
     this.dialog.open(AddToRoleDialogComponent, {

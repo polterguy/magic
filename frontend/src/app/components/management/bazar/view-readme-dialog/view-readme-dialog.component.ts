@@ -12,8 +12,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
  */
 @Component({
   selector: 'app-view-readme-dialog',
-  templateUrl: './view-readme-dialog.component.html',
-  styleUrls: ['./view-readme-dialog.component.scss']
+  templateUrl: './view-readme-dialog.component.html'
 })
 export class ViewReadmeDialogComponent {
 

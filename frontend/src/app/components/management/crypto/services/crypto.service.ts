@@ -152,7 +152,7 @@ export class CryptoService {
    * @param keyId Key caller wants to associate with user.
    * @param username Username caller wants to associate with key.
    */
-   public associateWithUser(keyId: number, username: string) {
+  public associateWithUser(keyId: number, username: string) {
     return this.httpService.put<Response>('/magic/system/crypto/associate-user', {
       keyId,
       username
@@ -164,7 +164,7 @@ export class CryptoService {
    * 
    * @param keyId Key caller wants to retrieve association for.
    */
-   public getUserAssociation(keyId: number) {
+  public getUserAssociation(keyId: number) {
     return this.httpService.get<Response>('/magic/system/crypto/user-association?keyId=' + keyId);
   }
 
@@ -173,7 +173,7 @@ export class CryptoService {
    * 
    * @param keyId Key caller wants to associate with user.
    */
-   public deleteUserAssociation(keyId: number) {
+  public deleteUserAssociation(keyId: number) {
     return this.httpService.put<Response>('/magic/system/crypto/deassociate-user', {
       keyId,
     });
@@ -188,7 +188,7 @@ export class CryptoService {
    * @param email Email address of key's owner
    * @param domain URL to associate the key with, typically the backend's root URL
    */
-   public generateKeyPair(
+  public generateKeyPair(
     strength: number,
     seed: string,
     subject: string,

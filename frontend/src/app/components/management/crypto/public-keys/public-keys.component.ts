@@ -17,7 +17,6 @@ import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-// import { LogService } from 'src/app/components/diagnostics/diagnostics-log/services/log.service';
 import { PublicKey } from 'src/app/components/management/crypto/models/public-key.model';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 import { Model } from '../../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -60,7 +59,6 @@ class PublicKeyEx {
 @Component({
   selector: 'app-public-keys',
   templateUrl: './public-keys.component.html',
-  styleUrls: ['./public-keys.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -162,7 +160,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
   /**
    * Implementation of OnDestroy.
    */
-   public ngOnDestroy() {
+  public ngOnDestroy() {
 
     // simply unsubscribing to subscription.
     this.subscription.unsubscribe();
@@ -301,7 +299,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
       const fingerprintUpdated = key.key.fingerprint !== response.result;
 
       // Updating key's fingerprint, storing the old fingerprint for reference purposes such that we can log it.
-      const oldFingerprint = key.key.fingerprint;
       key.key.fingerprint = response.result;
 
       // Checking if fingerprint was updated, at which point we warn user that historic invocations will be impossible to verify.
@@ -321,13 +318,6 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
               }
               oldKey += idx;
             }
-            // this.logService.createLogEntry(
-            //   'info',
-            //   `.type:crypto.key_changed\r\n   new_fingerprint:${response.result}\r\n   old_fingerprint:${oldFingerprint}\r\n   old_key:@"${oldKey}"`).subscribe(() => {
-
-            //   // Invoking method responsible for saving the key.
-            //   this.saveKeyImplementation(key, 'The old key was backed up in your log.');
-            // }, (error: any) => this.feedbackService.showError(error));
           });
       } else {
 
@@ -367,7 +357,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
    * @param key Key to show receipts for
    */
   public showReceipts(key: PublicKey) {
-console.log(key.id);
+
     // Raising message needed to switch tabs.
     this.messageService.sendMessage({
       name: 'crypto.receipts.show',

@@ -19,8 +19,7 @@ import { CrudifyService } from '../services/crudify.service';
  */
 @Component({
   selector: 'app-crud-frontend',
-  templateUrl: './crud-frontend.component.html',
-  styleUrls: ['./crud-frontend.component.scss']
+  templateUrl: './crud-frontend.component.html'
 })
 export class CrudFrontendComponent implements OnInit {
 
@@ -106,7 +105,7 @@ export class CrudFrontendComponent implements OnInit {
   /**
    * Invoked when user selects a template.
    */
-   public templateChanged() {
+  public templateChanged() {
 
     // Creating our dynamically injected extra component.
     // Making sure parent clears it dynamic container in case it's already got another container.

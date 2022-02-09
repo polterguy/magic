@@ -30,8 +30,7 @@ class EndpointEx extends Endpoint {
  */
 @Component({
   selector: 'app-crud-frontend-extra',
-  templateUrl: './crud-frontend-extra.component.html',
-  styleUrls: ['./crud-frontend-extra.component.scss']
+  templateUrl: './crud-frontend-extra.component.html'
 })
 export class CrudFrontendExtraComponent implements OnInit, OnDestroy {
 

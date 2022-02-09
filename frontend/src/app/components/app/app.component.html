@@ -3,16 +3,7 @@
   <mat-progress-bar mode="indeterminate" *ngIf="loaderService.isLoading | async"></mat-progress-bar>
 </div>
 
-<!-- <mat-spinner
-  *ngIf="loaderService.isLoading | async"
-  class="obscurer"
-  mode="indeterminate"
-  diameter="50">
-</mat-spinner> -->
-
 <div [class]="theme">
-
-  <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
 
   <mat-sidenav-container (backdropClick)="closeNavbar()" id="main-wrapper">
 
@@ -27,31 +18,21 @@
     </mat-sidenav>
 
     <mat-sidenav-content
-    [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
-    [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
-    <div class="toggle-btn" *ngIf="!notSmallScreen">
-      <button
-        mat-flat-button
-        (click)="toggleNavbar()">
-        <mat-icon>menu</mat-icon>
-      </button>
-    </div>
-    <!-- <app-toolbar [sideNavStatus]="sidenavOpened"></app-toolbar> -->
-
-      <!-- <div class="img-wrapper"></div> -->
-
-      <!-- <div
-        *ngIf="sidenavOpened"
-        class="obscurer"
-        (click)="closeNavbar()"></div> -->
+      [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
+      [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
+      <div class="toggle-btn" *ngIf="!notSmallScreen">
+        <button
+          mat-flat-button
+          (click)="toggleNavbar()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
 
       <div class="container-fluid h-100">
         <router-outlet *ngIf="authService.has_endpoints"></router-outlet>
       </div>
 
-      
     </mat-sidenav-content>
-    
   </mat-sidenav-container>
 
 </div>

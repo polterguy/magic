@@ -1,7 +1,14 @@
+
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
 import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
 import { SystemReport } from '../models/dashboard.model';
 
+/**
+ * Dashboard service to retrieve dashboard data from backend.
+ */
 @Injectable({
   providedIn: 'root'
 })

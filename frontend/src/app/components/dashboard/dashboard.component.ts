@@ -29,13 +29,9 @@ import { MatDialog } from '@angular/material/dialog';
 export class DashboardComponent implements OnInit {
 
   chartType: boolean[] = [];
-
   public systemReport: any;
-  // public systemReport: SystemReport[];
   public systemReportDisplayable: any;
-
   public logTypesChart: LogTypes[];
-
   public timeshiftChart: Timeshifts[] = [];
   public timeshiftChartLabel: string[] = [];
   public timeshiftChartData: string[] = [];
@@ -47,7 +43,6 @@ export class DashboardComponent implements OnInit {
    public borderColor: string = "red";
 
    public theme = localStorage.getItem("theme");
-
 
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -107,14 +102,14 @@ export class DashboardComponent implements OnInit {
    */
 
   /** TODO::::::: needs modification */
-   access_deniedLabel: string[] = [];
-   access_deniedData: string[] = [];
+  access_deniedLabel: string[] = [];
+  access_deniedData: string[] = [];
 
-   backend_endpoints_generatedLabel: string[] = [];
-   backend_endpoints_generatedData: string[] = [];
-   
-   loginsLabel: string[] = [];
-   loginsData: string[] = [];
+  backend_endpoints_generatedLabel: string[] = [];
+  backend_endpoints_generatedData: string[] = [];
+
+  loginsLabel: string[] = [];
+  loginsData: string[] = [];
 
   private getSystemReport() {
     this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {

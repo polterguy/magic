@@ -11,9 +11,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // Application specific imports.
+import { Task } from './models/task.model';
+import { Schedule } from './models/schedule.model';
 import { Count } from 'src/app/models/count.model';
 import { FeedbackService } from '../../../services/feedback.service';
-import { Schedule, Task } from 'src/app/components/tools/tasks/models/task.model';
 import { TaskService } from 'src/app/components/tools/tasks/services/task.service';
 import { NewTaskDialogComponent } from './new-task-dialog/new-task-dialog.component';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -176,12 +177,7 @@ export class TasksComponent implements OnInit {
   public toggleDetails(el: TaskEx) {
 
     // Checking if we're already displaying details for current item.
-    if (el.model) {
-
-      // Hiding item.
-      // el.model = null;
-
-    } else {
+    if (!el.model) {
 
       // Retrieving task from backend.
       this.taskService.get(el.task.id).subscribe((task: Task) => {

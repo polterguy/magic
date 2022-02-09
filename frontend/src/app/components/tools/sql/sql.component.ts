@@ -284,7 +284,7 @@ export class SqlComponent implements OnInit {
           default:
             return '';
         }
-      }
+    }
   }
 
   /**
@@ -376,9 +376,8 @@ export class SqlComponent implements OnInit {
 
   /**
    * Executes the current SQL towards your backend.
-   * @param resultCard - html element wrapping the result section
    */
-  public execute(resultCard: HTMLElement) {
+  public execute() {
 
     // Retrieving selected text from CodeMirror instance.
     const selectedText = this.input.editor.getSelection();
@@ -408,12 +407,6 @@ export class SqlComponent implements OnInit {
 
       // Making sure we remove all previously viewed detail records.
       this.result = this.buildResult(result || []);
-
-      // to scroll to the result section
-      // wait for the result to get printed inside element
-      // setTimeout(() => {
-      //   resultCard.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start' });
-      // }, 300);
 
     }, (error: any) => {
 

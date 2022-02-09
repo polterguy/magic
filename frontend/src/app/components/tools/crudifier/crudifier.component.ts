@@ -24,8 +24,7 @@ import { MessageService } from 'src/app/services/message.service';
  */
 @Component({
   selector: 'app-crudifier',
-  templateUrl: './crudifier.component.html',
-  styleUrls: ['./crudifier.component.scss']
+  templateUrl: './crudifier.component.html'
 })
 export class CrudifierComponent implements OnInit, OnDestroy {
 

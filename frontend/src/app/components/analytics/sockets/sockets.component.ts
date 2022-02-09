@@ -39,7 +39,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ]
 })
 export class SocketsComponent implements OnInit, OnDestroy {
-  createSubscriptions;
+
   /**
    * Users connected to a socket according to filtering condition,
    * as returned from our backend.
@@ -146,7 +146,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param user User to toggle details for
    */
-   public toggleDetails(user: SocketUser) {
+  public toggleDetails(user: SocketUser) {
 
     // Checking if we're already displaying details for current item.
     const idx = this.selectedUsers.indexOf(user.username);
@@ -167,7 +167,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param user User to check if we should display details for
    */
-   public shouldDisplayDetails(user: SocketUser) {
+  public shouldDisplayDetails(user: SocketUser) {
 
     // Returns true if we're currently displaying this particular item.
     return this.selectedUsers.filter(x => x === user.username).length > 0;
@@ -178,7 +178,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param e Page event argument
    */
-   public paged(e: PageEvent) {
+  public paged(e: PageEvent) {
 
     // Changing pager's size according to arguments, and retrieving items from backend again.
     this.paginator.pageSize = e.pageSize;
@@ -264,7 +264,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param connection Which connection to transmit message to
    */
-   public sendMessageToConnection(connection: string) {
+  public sendMessageToConnection(connection: string) {
 
     // Creating modal dialogue that asks user what message and payload to transmit to server.
     const dialogRef = this.dialog.open(PublishComponent, {

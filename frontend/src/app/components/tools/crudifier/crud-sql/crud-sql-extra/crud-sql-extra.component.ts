@@ -20,8 +20,7 @@ import { CrudSqlAddArgumentDialogComponent } from './crud-sql-add-argument-dialo
  */
 @Component({
   selector: 'app-crud-sql-extra',
-  templateUrl: './crud-sql-extra.component.html',
-  styleUrls: ['./crud-sql-extra.component.scss']
+  templateUrl: './crud-sql-extra.component.html'
 })
 export class CrudSqlExtraComponent implements OnInit {
 

@@ -51,12 +51,7 @@
 }
 mat-toolbar {
   height: 64px;
-  
-  // @media (min-width: 768px){
-  //   &.sidebar-open{padding-left: calc(#{$sidebar_full_width} + 14px + #{$side_space});}
-  //   &.sidebar-closed{padding-left: calc(#{$sidebar_small_width} + 14px + #{$side_space});}
-  // }
- 
+
   .user {
     font-size: .9rem;
     margin-top: 5px;

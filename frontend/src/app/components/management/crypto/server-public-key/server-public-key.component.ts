@@ -20,8 +20,7 @@ import { CreateKeypairDialogComponent } from './create-keypair-dialog/create-key
  */
 @Component({
   selector: 'app-server-public-key',
-  templateUrl: './server-public-key.component.html',
-  styleUrls: ['./server-public-key.component.scss']
+  templateUrl: './server-public-key.component.html'
 })
 export class ServerPublicKeyComponent implements OnInit {
 
@@ -113,7 +112,7 @@ export class ServerPublicKeyComponent implements OnInit {
   /**
    * Returns true if user is root.
    */
-   public isRoot() {
+  public isRoot() {
 
     // Returning true if user belongs to the root role
     return this.authService.authenticated && this.authService.roles().filter(x => x === 'root');

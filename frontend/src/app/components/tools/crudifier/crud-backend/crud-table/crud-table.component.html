@@ -122,11 +122,6 @@
       (click)="el.expanded = !el.expanded"
       *matRowDef="let el; columns: displayedColumns;"></tr>
 
-    <!-- <tr
-      mat-row
-      [ngClass]="el.expanded ? 'details' : 'invisible'"
-      *matRowDef="let el; columns: ['show-details'];"></tr> -->
-    
     <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
   </table>
 

@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { forkJoin, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -104,14 +104,14 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * CodeMirror options object, taken from common settings.
    */
-   public cmOptionsHyperlambda = {
+  public cmOptionsHyperlambda = {
     json: hyperlambda,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-   public cmOptionsMarkdown = {
+  public cmOptionsMarkdown = {
     json: markdown,
   };
 
@@ -125,14 +125,14 @@ export class EndpointDetailsComponent implements OnInit {
   /**
    * CodeMirror options object, taken from common settings.
    */
-   public cmHlOptionsReadonly = {
+  public cmHlOptionsReadonly = {
     hl: hyperlambda_readonly,
   };
 
   /**
    * CodeMirror options object, taken from common settings.
    */
-   public markdownOptionsReadonly = {
+  public markdownOptionsReadonly = {
     md: markdown_readonly,
   };
 
