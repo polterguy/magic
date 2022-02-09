@@ -216,21 +216,6 @@
             <span class="title">Cryptography</span>
           </ng-container>
         </mat-list-option>
-        <!-- bazar -->
-        <mat-list-option 
-          [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
-          [matTooltipDisabled]="sideNavStatus" 
-          matTooltip="Bazar" 
-          routerLink="/bazar" 
-          matTooltipPosition="after" 
-          routerLinkActive="active-link"
-          #bazar="routerLinkActive"
-          [routerLinkActiveOptions]="{exact:true}">
-          <ng-container *ngIf="authService.access.bazar.get_manifests">
-            <mat-icon>storefront</mat-icon>
-            <span class="title">Bazaar</span>
-          </ng-container>
-        </mat-list-option>
         <!-- profile -->
         <mat-list-option 
           [style.display]="authService.authenticated ? '' : 'none'"
@@ -244,6 +229,21 @@
           <ng-container *ngIf="authService.authenticated">
             <mat-icon>person</mat-icon>
             <span class="title">Profile</span>
+          </ng-container>
+        </mat-list-option>
+        <!-- bazar -->
+        <mat-list-option 
+          [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Bazar" 
+          routerLink="/bazar" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #bazar="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
+          <ng-container *ngIf="authService.access.bazar.get_manifests">
+            <mat-icon>storefront</mat-icon>
+            <span class="title">Bazaar</span>
           </ng-container>
         </mat-list-option>
       </mat-selection-list>
