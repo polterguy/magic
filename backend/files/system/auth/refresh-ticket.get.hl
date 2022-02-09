@@ -1,6 +1,6 @@
 
 // Will refresh the currently authenticated user's token, and return a new JWT token with a new expiration date.
-.description:"Will refresh the currently authenticated user's token, and return a new JWT token with a new expiration date"
+.description:"Will refresh the currently authenticated user's token, and return a new JWT token with a new expiration date further into the future."
 .type:public
 
 // Ensures user is authorized to access endpoint.

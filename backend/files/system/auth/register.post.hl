@@ -6,7 +6,7 @@
    frontendUrl:string
    template:string
    subject:string
-.description:Registers a new user in the system
+.description:Registers a new user in the system. Notice, to fully take advantage of this endpoint you would want to configure your SMTP settings.
 .type:public
 
 // Sanity checking invocation.
