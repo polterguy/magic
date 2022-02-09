@@ -1,7 +1,7 @@
 
 // Returns system information to caller.
 .description:Returns system information to caller
-.type:internal
+.type:public
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
