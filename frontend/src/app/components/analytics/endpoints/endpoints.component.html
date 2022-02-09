@@ -96,11 +96,7 @@
                 colspan="3">
                 <div class="w-100 details-row"
                    [@detailExpand]="el.expanded ? 'expanded' : 'collapsed'">
-      
-                <!-- <div
-                  class="details-sheet"
-                  *ngIf="shouldDisplayDetails(el)"> -->
-      
+
                   <div class="w-100 py-3" *ngIf="shouldDisplayDetails(el)">
                     <app-endpoint-details [endpoint]="el"></app-endpoint-details>
                   </div>
@@ -113,16 +109,11 @@
       
             <tr
               mat-row
-              [ngClass]="(el.expanded ? 'selected ' : '') + (el.error ? ' error' : '')"
+              [ngClass]="(el.expanded ? 'selected ' + el.type : el.type) + (el.error ? ' error' : '')"
               class="expandable-row"
               (click)="toggleDetails(el);el.expanded = !el.expanded"
               *matRowDef="let el; columns: displayedColumns;"></tr>
-      
-            <!-- <tr
-              mat-row
-              [ngClass]="shouldDisplayDetails(el) ? 'details' : 'invisible'"
-              *matRowDef="let el; columns: ['show-details'];"></tr> -->
-            
+
             <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
       
           </table>
