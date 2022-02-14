@@ -7,7 +7,7 @@
           <div class="d-flex align-items-center">
             <mat-card-title class="my-0">Terminal</mat-card-title>
             <div class="sm-icons">
-              <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+              <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
                 <mat-icon>help_outline</mat-icon>
               </button>
               <mat-menu #menu="matMenu">
@@ -23,7 +23,10 @@
               </mat-menu>
             </div>
           </div>
-          <div>
+          <div class="d-md-block d-none">
+            <button mat-stroked-button [matMenuTriggerFor]="list" class="mat-caption" matTooltip="List of shortkeys">
+              Shortkeys
+            </button>
             <mat-menu #list="matMenu" class="shortkeys">
               <mat-list role="list" dense>
                 <mat-list-item role="listitem">

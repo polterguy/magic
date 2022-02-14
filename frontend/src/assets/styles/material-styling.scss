@@ -140,7 +140,7 @@ Material list
 }
 #custom-list{
   &.mat-list-base[dense] .mat-list-item, 
-  &.mat-list-base[dense] .mat-list-option{height: 35px;}
+  &.mat-list-base[dense] .mat-list-option{height: unset;}
   .mat-list-item-content{padding: 0;}
 }
 .flex-list{
@@ -158,6 +158,10 @@ Material snackbar for short messages
     }
 }
 /*=-=-=-=-=-=
+Material chip
+=-=-=-=-=-=*/
+.mat-standard-chip{word-break: break-all; height: unset!important;}
+/*=-=-=-=-=-=
 Material icons and button
 =-=-=-=-=-=*/
 .sm-icons{
@@ -172,7 +176,17 @@ Material icons and button
       line-height: 20px;
     }
   }
+  mat-icon{
+    height: 20px;
+    width: 20px;
+    font-size: 20px;
+    line-height: 20px;
+  }
 }
+// in SQL page 
+// ---- fix for smaller screens
+#executeButton.mat-raised-button{min-width: 80px;}
+#largeBtn.mat-raised-button{min-width: 140px;}
 /*=-=-=-=-=-=
 Material form
 =-=-=-=-=-=*/
@@ -180,3 +194,5 @@ Material form
     .mat-form-field-wrapper{margin: 0!important;padding-bottom: 0;}
 }
 .light .dark .mat-select-value{color: inherit;}
+.mat-form-field:not(.standlone-input) .mat-form-field-infix{width: unset!important;min-width: 100px!important;}
+.warning .mat-option-text{color: inherit;}

@@ -14,15 +14,18 @@
 </div>
 
 <div mat-dialog-content class="file-content">
-
-  <ul class="file-list">
+  <mat-selection-list [multiple]="false">
+    <mat-list-option *ngFor="let idx of getFiles()" [value]="idx" (click)="select(idx)">
+      {{getFilename(idx)}}
+    </mat-list-option>
+  </mat-selection-list>
+  <!-- <ul class="file-list">
     <li *ngFor="let idx of getFiles()">
       <button
         mat-button
         (click)="select(idx)">
-        {{getFilename(idx)}}
       </button>
     </li>
-  </ul>
+  </ul> -->
 
 </div>

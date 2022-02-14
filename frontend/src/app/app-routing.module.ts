@@ -59,6 +59,7 @@ const routes: Routes = [
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'assumptions', component: DiagnosticsTestsComponent },
   { path: 'change-password', component: ChangePasswordComponent },
+  {path: '**', redirectTo: ''}
 ];
 
 /**

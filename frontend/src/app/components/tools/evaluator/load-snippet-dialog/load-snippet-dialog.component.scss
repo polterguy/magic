@@ -5,17 +5,10 @@
 }
 
 .file-content {
-  min-height: 400px;
-  max-height: 400px;
-  .file-list {
-    margin-top: 0;
-    padding-left: 0;
-    li {
-      list-style-type: none;
-      button {
-        text-align: left;
-        width: 100%;
-      }
-    }
+  ::ng-deep .mat-list-base .mat-list-item .mat-list-item-content-reverse, .mat-list-base .mat-list-option .mat-list-item-content-reverse{
+    word-break: break-all;
+    height: unset;
+    min-height: 40px;
+    font-size: 14px;
   }
 }
