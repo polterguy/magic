@@ -38,6 +38,11 @@ export class NavbarComponent implements OnInit {
   @Input() sideNavStatus: boolean;
 
   /**
+   * get the screen size
+   */
+  @Input() notSmallScreen: boolean;
+
+  /**
    * value for the theme, default is set to light
    */
    public theme: string;
