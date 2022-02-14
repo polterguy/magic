@@ -67,4 +67,8 @@
       max-width: calc(100vw  - (#{$sidebar_small_width} + (#{$side_space} * 3) + 80px));
     }
   }
+  // fix for codemirror only in smaller screens
+  .is-small-screen table .CodeMirror:not(.CodeMirror-fullscreen){
+    max-width: calc(100vw  - ((#{$side_space} * 3) + 80px));
+  }
 }

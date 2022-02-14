@@ -19,7 +19,8 @@
 
     <mat-sidenav-content
       [class.content-with-full-sidebar]="notSmallScreen && sidenavOpened"
-      [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section">
+      [class.content-with-small-sidebar]="notSmallScreen && !sidenavOpened" id="main-section"
+      [class.is-small-screen]="!notSmallScreen">
       <ng-container *ngIf="!notSmallScreen">
         <app-toolbar></app-toolbar>
       </ng-container>
