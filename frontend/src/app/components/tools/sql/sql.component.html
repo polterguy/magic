@@ -5,7 +5,7 @@
         <div class="d-flex align-items-center">
           <mat-card-title class="my-0">SQL</mat-card-title>
           <div class="sm-icons">
-            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
               <mat-icon>help_outline</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
@@ -21,7 +21,7 @@
             </mat-menu>
           </div>
         </div>
-        <div>
+        <div class="d-md-block d-none">
           <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
             Shortkeys
           </button>
@@ -54,7 +54,7 @@
         <app-codemirror-sql [(model)]="input"></app-codemirror-sql>
         <div class="row mt-3" *ngIf="input">
           <div class="col-12">
-            <div class="d-flex w-100">
+            <div class="d-flex flex-sm-row flex-column w-100">
               <mat-form-field class="w-100" appearance="outline">
         
                 <mat-label>Database type</mat-label>
@@ -67,7 +67,7 @@
                 </mat-select>
         
               </mat-form-field>
-              <div class="p-1"></div>
+              <div class="p-sm-1"></div>
               <mat-form-field class="w-100" appearance="outline">
         
                 <mat-label>Connection</mat-label>
@@ -80,7 +80,7 @@
                 </mat-select>
         
               </mat-form-field>
-              <div class="p-1"></div>
+              <div class="p-sm-1"></div>
               <mat-form-field class="w-100" appearance="outline">
         
                 <mat-label>Database</mat-label>
@@ -99,52 +99,59 @@
           </div>
           <div class="col-12">
             <div class="d-flex flex-wrap justify-content-end align-items-center">
-              <mat-checkbox
-              class="safe-mode"
-              [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+              <div class="d-flex">
+                <mat-checkbox
+                class="safe-mode"
+                [(ngModel)]="safeMode">Safe mode</mat-checkbox>
+
+                <div class="p-1"></div>
+
+                <mat-checkbox
+                  *ngIf="input.databaseType === 'mssql'"
+                  matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
+                  [(ngModel)]="isBatch">Batch</mat-checkbox>
+              </div>
               <div class="p-1"></div>
-    
-              <mat-checkbox
-                *ngIf="input.databaseType === 'mssql'"
-                matTooltip="Executes SQL as a batch operation, respecting 'go' keywords"
-                [(ngModel)]="isBatch">Batch</mat-checkbox>
-              <div class="p-1"></div>
+              <div class="d-flex">
+                <button
+                  mat-icon-button
+                  [disabled]="!authService.access.config.delete_cache_item"
+                  matTooltip="Empties your server side database declaration cache items and reloads page"
+                  (click)="refresh()">
+                  <mat-icon>refresh</mat-icon>
+                </button>
+                <div class="p-1"></div>
+        
+                <button
+                  id="loadButton"
+                  [disabled]="!authService.access.sql.list_files"
+                  mat-raised-button
+                  (click)="load()"
+                  class="w-100">
+                  Load
+                </button>
+                <div class="p-1"></div>
       
-              <button
-                mat-icon-button
-                [disabled]="!authService.access.config.delete_cache_item"
-                matTooltip="Empties your server side database declaration cache items and reloads page"
-                (click)="refresh()">
-                <mat-icon>refresh</mat-icon>
-              </button>
-              <div class="p-1"></div>
-      
-              <button
-                id="loadButton"
-                [disabled]="!authService.access.sql.list_files"
-                mat-raised-button
-                (click)="load()">
-                Load
-              </button>
-              <div class="p-1"></div>
-    
-              <button
-                id="saveButton"
-                [disabled]="!input.sql || !authService.access.sql.save_file"
-                mat-raised-button
-                (click)="save()">
-                Save
-              </button>
-              <div class="p-1"></div>
-              
-              <button
-                id="executeButton"
-                [disabled]="!input || input.sql === '' || !input.database"
-                mat-raised-button
-                color="primary"
-                (click)="execute()">
-                Execute
-              </button>
+                <button
+                  id="saveButton"
+                  [disabled]="!input.sql || !authService.access.sql.save_file"
+                  mat-raised-button
+                  (click)="save()"
+                  class="w-100">
+                  Save
+                </button>
+                <div class="p-1"></div>
+                
+                <button
+                  id="executeButton"
+                  [disabled]="!input || input.sql === '' || !input.database"
+                  mat-raised-button
+                  color="primary"
+                  (click)="execute()"
+                  class="w-100">
+                  Execute
+                </button>
+              </div>
             </div>
           </div>
         </div>

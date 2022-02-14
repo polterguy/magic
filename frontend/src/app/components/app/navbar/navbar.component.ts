@@ -144,14 +144,6 @@ export class NavbarComponent implements OnInit {
   }
 
   /**
-   * to open documentation in a new tab
-   */
-  public navigateToDocumentation() {
-    window.open(
-      "https://docs.aista.com/", "_blank");
-  }
-
-  /**
    * Allows user to login by showing a modal dialog.
    */
   public login() {

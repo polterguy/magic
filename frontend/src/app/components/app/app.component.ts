@@ -210,7 +210,6 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public closeNavbar() {
     this.sidenavOpened = false;
-    
   }
 
   /**

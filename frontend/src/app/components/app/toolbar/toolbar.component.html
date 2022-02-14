@@ -1,5 +1,15 @@
+<mat-toolbar class="d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center">
+    <button mat-button class="p-0" aria-label="Open menu icon" (click)="toggleNavbar()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <p class="mat-caption my-0">Aista Magic Cloud</p>
+  </div>
+  <div class="p-1"></div>
+  <p class="mat-caption my-0">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</p>
+</mat-toolbar>
 
-<mat-toolbar [class]="sideNavStatus ? 'sidebar-open' : 'sidebar-closed'">
+<!-- <mat-toolbar [class]="sideNavStatus ? 'sidebar-open' : 'sidebar-closed'">
   <div class="d-flex justify-content-between w-100">
     <button
       mat-icon-button
@@ -42,4 +52,4 @@
       </button>
     </div>
   </div>
-</mat-toolbar>
+</mat-toolbar> -->

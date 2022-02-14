@@ -1,7 +1,7 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
 @import '../../../../assets/styles/sizes.scss';
-
+a{color: inherit;}
 .top-box-sidebar{
   padding: 15px;
   border-bottom: 1px solid transparentize($color: $magic_dark_alternative, $amount: 0.95);
@@ -86,6 +86,7 @@
     user-select: none;
     padding-bottom: 155px;
     overflow-y: auto;
+    overflow-x: hidden;
     @include general_transition(0.5s);
     @include scrollbar(transparent,transparent,5px);
     &:hover{

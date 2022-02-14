@@ -7,7 +7,7 @@
             <div class="d-flex align-items-center mb-1">
               <mat-card-title class="m-0">Database</mat-card-title>
               <div class="sm-icons">
-                <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?">
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
                   <mat-icon>help_outline</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -27,7 +27,7 @@
               <mat-icon>storage</mat-icon>
               <p class="my-0 ml-1">Database</p>
             </div>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" class="standlone-input">
 
                 <mat-label>Database type</mat-label>
                 <mat-select
@@ -40,56 +40,51 @@
 
             </mat-form-field>
 
-              <ng-container *ngIf="selectedDatabaseType">
-                <mat-form-field class="w-100" appearance="outline">
-                  <mat-label>Connection string</mat-label>
+            <ng-container *ngIf="selectedDatabaseType">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Connection string</mat-label>
+                <input
+                  matInput
+                  [(ngModel)]="config.magic.databases[selectedDatabaseType].generic"
+                  name="databaseGeneric">
+              </mat-form-field>
+              <div class="d-flex align-items-center mb-3">
+                <mat-icon>password</mat-icon>
+                <p class="my-0 ml-1">Root password</p>
+              </div>
+              <div class="d-flex">
+                <mat-form-field appearance="outline">
+                  <mat-label>Password</mat-label>
                   <input
                     matInput
-                    [(ngModel)]="config.magic.databases[selectedDatabaseType].generic"
-                    name="databaseGeneric">
+                    type="password"
+                    autocomplete="new-password"
+                    [(ngModel)]="password"
+                    name="password">
                 </mat-form-field>
-
-                <div class="d-flex align-items-center mb-3">
-                  <mat-icon>password</mat-icon>
-                  <p class="my-0 ml-1">Root password</p>
-                </div>
-
-                <div class="d-flex">
-                  <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
-                    <input
-                      matInput
-                      type="password"
-                      autocomplete="new-password"
-                      [(ngModel)]="password"
-                      name="password">
-                  </mat-form-field>
-                  <div class="p-1"></div>
-                  <mat-form-field appearance="outline">
-              
-                    <mat-label>Repeat</mat-label>
-                    <input
-                      matInput
-                      name="password"
-                      type="password"
-                      autocomplete="new-password"
-                      [(ngModel)]="passwordRepeat"
-                      [ngModelOptions]="{standalone: true}">
-              
-                  </mat-form-field>
-                </div>
-
-                <mat-form-field class="w-100"  appearance="outline">
-
-                  <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
+                <div class="p-1"></div>
+                <mat-form-field appearance="outline">
+            
+                  <mat-label>Repeat</mat-label>
                   <input
                     matInput
-                    type="text"
-                    [(ngModel)]="config.magic.auth.secret"
-                    name="authSecret">
-
+                    name="password"
+                    type="password"
+                    autocomplete="new-password"
+                    [(ngModel)]="passwordRepeat"
+                    [ngModelOptions]="{standalone: true}">
+            
                 </mat-form-field>
-              </ng-container>
+              </div>
+              <mat-form-field class="w-100"  appearance="outline">
+                <mat-label>Auth secret {{config.magic.auth.secret.length}} characters</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  [(ngModel)]="config.magic.auth.secret"
+                  name="authSecret">
+              </mat-form-field>
+            </ng-container>
           </div>
 
           <div *ngIf="showAdvanced">
