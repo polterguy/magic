@@ -23,7 +23,7 @@ $magic_error: rgba(255, 0, 0, 0.2);
 to change the default colour paletter -- 
     in fact only the "accent" colour is changed from pink to light blue
 =-=-=-=-=-=*/
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @include mat.core();
 
 $theme-primary: mat.define-palette(mat.$indigo-palette, 500);
@@ -42,7 +42,7 @@ $theme: mat.define-light-theme((
 /*=-=-=-=-=-=
 defining dark theme palette
 =-=-=-=-=-=*/
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 
 $dark-primary: mat.define-palette(mat.$indigo-palette, 500);
 $dark-accent:  mat-palette($mat-light-blue, A200, A100, A400);
