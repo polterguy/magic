@@ -32,6 +32,9 @@
               "src/styles.scss"
             ],
             "scripts": [],
+            "allowedCommonJsDependencies": [
+              "codemirror"
+            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
