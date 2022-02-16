@@ -7,7 +7,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 // Utility 3rd party imports.
-import * as marked from "marked";
+import { marked } from "marked";
 
 /**
  * Markdown pipe, transforming Markdown to HTML.
