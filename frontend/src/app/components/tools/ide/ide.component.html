@@ -233,71 +233,72 @@
                 matTooltip="Hyper IDE, because your time is valuable!"
                 alt="Hyper IDE, because your time is valuable!">
 
-                <div *ngFor="let file of openFiles" class="d-flex flex-column w-100 h-100">
-          
-                  <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'invisible'" class="h-100">
-          
-                    <ngx-codemirror class="codemirror-container"
-                      [(ngModel)]="file.content"
-                      [options]="file.options">
-                    </ngx-codemirror>
-          
-                    <div class="d-flex justify-content-around align-items-center flex-wrap mt-2">
-          
-                      <button
-                        mat-button
-                        class="save-file-btn"
-                        [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                        matTooltip="Save file ALT+S"
-                        (click)="saveFile(file)">
-                        Save
-                      </button>
-          
-                      <button
-                        [disabled]="!file.path.endsWith('.hl')"
-                        [matTooltip]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
-                        mat-button
-                        (click)="executeFile(file)">
-                        {{getEndpoint(file) === null ? 'Execute' : 'Invoke ...'}}
-                      </button>
-          
-                      <button
-                        [disabled]="!file.path.endsWith('.md')"
-                        matTooltip="Preview file"
-                        mat-button
-                        (click)="previewFile(file)">
-                        Preview
-                      </button>
-          
-                      <button
-                        mat-button
-                        [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                        class="rename-file-btn"
-                        matTooltip="Rename file ALT+R"
-                        (click)="renameFile(file)">
-                        Rename
-                      </button>
-          
-                      <button
-                        mat-button
-                        class="delete-file-btn"
-                        [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                        matTooltip="Delete file ALT+D"
-                        (click)="deleteFile(file)">
-                        Delete
-                      </button>
-          
-                      <button
-                        mat-button
-                        class="close-file-btn"
-                        matTooltip="Close file ALT+C"
-                        (click)="closeFile(file)">
-                        Close
-                      </button>
-          
-                    </div>
-          
-                  </div>
+                <div *ngFor="let file of openFiles" class="w-100">
+          <!-- <div class="d-flex flex-column w-100 h-100"> -->
+            <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'd-none'" class="h-100 w-100">
+    
+              <ngx-codemirror class="codemirror-container"
+                [(ngModel)]="file.content"
+                [options]="file.options">
+              </ngx-codemirror>
+    
+              <div class="d-flex justify-content-around align-items-center flex-wrap mt-2">
+    
+                <button
+                  mat-button
+                  class="save-file-btn"
+                  [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                  matTooltip="Save file ALT+S"
+                  (click)="saveFile(file)">
+                  Save
+                </button>
+    
+                <button
+                  [disabled]="!file.path.endsWith('.hl')"
+                  [matTooltip]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
+                  mat-button
+                  (click)="executeFile(file)">
+                  {{getEndpoint(file) === null ? 'Execute' : 'Invoke ...'}}
+                </button>
+    
+                <button
+                  [disabled]="!file.path.endsWith('.md')"
+                  matTooltip="Preview file"
+                  mat-button
+                  (click)="previewFile(file)">
+                  Preview
+                </button>
+    
+                <button
+                  mat-button
+                  [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                  class="rename-file-btn"
+                  matTooltip="Rename file ALT+R"
+                  (click)="renameFile(file)">
+                  Rename
+                </button>
+    
+                <button
+                  mat-button
+                  class="delete-file-btn"
+                  [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                  matTooltip="Delete file ALT+D"
+                  (click)="deleteFile(file)">
+                  Delete
+                </button>
+    
+                <button
+                  mat-button
+                  class="close-file-btn"
+                  matTooltip="Close file ALT+C"
+                  (click)="closeFile(file)">
+                  Close
+                </button>
+    
+              </div>
+    
+            </div>
+          <!-- </div> -->
           
                 </div>
 

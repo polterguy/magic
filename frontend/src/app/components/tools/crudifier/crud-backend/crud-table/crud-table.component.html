@@ -83,9 +83,9 @@
               </div>
             </div>
 
-            <div *ngIf="foreignKeys[el.name] && foreignKeys[el.name].length > 0" class="foreign-key">
+            <div *ngIf="foreignKeys[el.name] && foreignKeys[el.name].length > 0" class="foreign-key d-flex w-100 mt-3 align-items-center">
               <mat-form-field
-                class="form-field-wide"
+                class="w-100 inline-input"
                 appearance="outline"
                 matTooltip="Link this field to a value field in its referenced table">
 

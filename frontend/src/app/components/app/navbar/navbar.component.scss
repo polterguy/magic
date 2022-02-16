@@ -64,6 +64,7 @@ a{color: inherit;}
   }
 }
 ::ng-deep{
+  .mat-list-text{height: 100%;width: 100%;}
   .theme-btn{
     .mat-button-ripple.mat-ripple, .mat-button-focus-overlay{display: none;}
   }
