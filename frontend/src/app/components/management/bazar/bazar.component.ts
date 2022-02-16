@@ -43,6 +43,11 @@ import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/vie
 })
 export class BazarComponent implements OnInit, OnDestroy {
 
+  /**
+   * UI only
+   * to filter apps based on their status
+   */
+  public installed: boolean = false;
   /*
    * Timer for displaying 'get help' message.
    */
