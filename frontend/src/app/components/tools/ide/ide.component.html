@@ -16,7 +16,7 @@
                 class="pr-3">
         
                 <button
-                  class="w-100 px-1 d-flex justify-content-start ml-3"
+                  class="w-100 px-1 d-flex justify-content-start ml-4"
                   mat-button
                   (click)="openFile(file.node)">
         
@@ -42,15 +42,8 @@
                   <mat-icon class="mat-icon-rtl-mirror">
                     {{treeControl.isExpanded(folder) ? 'expand_more' : 'chevron_right'}}
                   </mat-icon>
-                <!-- </button>
-        
-                <button
-                  class="px-1 w-100 d-flex justify-content-start"
-                  mat-button
-                  (click)="selectFolder(folder)"> -->
-        
-                  <mat-icon class="mat-icon-rtl-mirror mr-2">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>{{folder.name}}
-        
+                  <mat-icon class="mat-icon-rtl-mirror mr-2">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
+                  {{folder.name}}
                 </button>
         
               </mat-tree-node>
