@@ -91,6 +91,16 @@
     </div>
     <!-- installed apps -->
     <div class="row no-gutters mt-3" *ngIf="manifests && installed">
+      <!-- if no installed app was found -->
+      <div class="col-12" *ngIf="manifests.length === 0">
+        <mat-card>
+          <mat-card-content>
+            <h4 class="mb-2">You don't have any installed service yet.</h4>
+            <p class="text-muted">Browse the recommended services to find what suits your application the best.</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      
       <div class="col-xl-3 col-md-4 col-sm-6 py-1" 
         *ngFor="let idx of manifests;let i = index"
         [ngClass]="{'pr-xl-3':((i + 1) / 4) !== 0,'pr-md-3':((i + 1) / 3) !== 0,'pr-sm-3':((i + 1) / 2) !== 0 }">
