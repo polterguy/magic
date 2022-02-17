@@ -7,7 +7,7 @@
 import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
 // Application specific imports.
@@ -34,6 +34,7 @@ import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dial
 
 // File types extensions.
 import fileTypes from '../../files/file-editor/file-types.json';
+import { MatSidenav } from '@angular/material/sidenav';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -41,12 +42,31 @@ import fileTypes from '../../files/file-editor/file-types.json';
 @Component({
   selector: 'app-ide',
   templateUrl: './ide.component.html',
-  styleUrls: ['./ide.component.scss']
+  styleUrls: ['./ide.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IdeComponent implements OnInit, OnDestroy {
 
   // toggle folder section
   public expandSide: boolean = true;
+  @ViewChild('drawer') public drawer: MatSidenav;
+
+  /**
+   * To get the width of the screen 
+   * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
+   * smallScreenSize {number} :: to set a fixed size as an agreement
+   * notSmallScreen {boolean} :: to check whether the screen width is small or large
+   */
+   public getScreenWidth: number;
+   public smallScreenSize: number = 550;
+   public notSmallScreen: boolean = undefined;
+ 
+   @HostListener('window:resize', ['$event'])
+   onWindowResize() {
+     this.getScreenWidth = window.innerWidth;
+     this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
+   }
+
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
 
@@ -81,6 +101,9 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Actual data source for tree control.
    */
   public dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+  // to start resizing the mat-drawer section
+  // preventing from miscalculation of the width, as mentioned inside material docs
+  public startResizing: boolean = false;
 
   /**
    * Currently edited files.
@@ -149,6 +172,9 @@ export class IdeComponent implements OnInit, OnDestroy {
    * OnInit implementation.
    */
   public ngOnInit() {
+
+    // Retrieving screen size to decide which mode the folders' drawer should be
+    this.onWindowResize();
 
     // Retrieving files and folder from server.
     this.getFilesFromServer('/', () => {
@@ -293,6 +319,11 @@ export class IdeComponent implements OnInit, OnDestroy {
           onAfter();
         }
 
+        // to start resizing the mat-drawer section
+        // preventing from miscalculation of the width, as mentioned inside material docs
+        // and looking for changes to update value in the html file
+        this.startResizing = true;
+        this.cdRef.detectChanges();
       }, (error: any) => this.feedbackService.showError(error));
 
     }, (error: any) => this.feedbackService.showError(error));
@@ -501,12 +532,14 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param folder Tree node wrapping folder to open
    */
-   public selectFolder(folder: any) {
-     this.activeFolder = folder.node.path;
-     if (!this.treeControl.isExpanded(folder)) {
+  public selectFolder(folder: any) {
+    this.activeFolder = folder.node.path;
+    if (this.treeControl.isExpanded(folder) === true) {
       this.treeControl.expand(folder);
-     }
-   }
+    } else {
+      this.treeControl.collapse(folder);
+    }
+  }
 
    /**
     * Invoked when the currently selected file is changed.
@@ -964,7 +997,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Re-databinding tree control.
     this.dataSource.data = this.root.children;
-
+    
     // Expanding all items that was previously expanded.
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x).node.path === (<any>idx).node.path).length > 0) {
@@ -1016,10 +1049,12 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Alt+M maximises editor.
       options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+        this.cdRef.detectChanges();
         // to hide/show sidenav
         let sidenav = document.querySelector('.mat-sidenav');
         sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
         sidenav.classList.add('d-none');
+        this.drawer.close();
         // Toggling maximise mode.
         cm.setOption('fullScreen', !cm.getOption('fullScreen'));
       };
