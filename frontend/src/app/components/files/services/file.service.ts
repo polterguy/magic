@@ -339,7 +339,7 @@ export class FileService {
     const formData: FormData = new FormData();
     formData.append('file', file);
     return this.httpService.put<any>(
-      '/magic/system/file-system/install-module=',
+      '/magic/system/file-system/install-module',
       formData
     );
   }
