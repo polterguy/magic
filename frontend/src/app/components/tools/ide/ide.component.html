@@ -71,9 +71,14 @@
               <!-- action buttons -->
               <div>
                 <button mat-icon-button [matMenuTriggerFor]="actions" matTooltip="Action buttons">
-                  <mat-icon>more_vert</mat-icon>
+                  <!-- <mat-icon>more_vert</mat-icon> -->
+                  <mat-icon>ads_click</mat-icon>
                 </button>
                 <mat-menu #actions="matMenu">
+                  <button mat-menu-item [matMenuTriggerFor]="submenu1">General actions</button>
+                  <button mat-menu-item [matMenuTriggerFor]="submenu2" [disabled]="!openFiles.length" [matMenuTriggerData]="{data: currentFileData}">Actions on the file</button>
+                </mat-menu>
+                <mat-menu #submenu1="matMenu">
                   <!-- delete -->
                   <button
                     [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
@@ -154,6 +159,62 @@
                     Download folder
                   </button>
                 </mat-menu>
+                <mat-menu #submenu2="matMenu">
+                  <ng-template matMenuContent let-data="data">
+                    <!-- save -->
+                    <button mat-menu-item
+                      [disabled]="activeFileIsClean() || data?.folder?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      matTooltip="Save file [ALT+S]" (click)="saveFile(data)">
+                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                        <span>
+                          Save
+                        </span>
+                        <span class="code ml-5 my-0 px-2 py-1">ALT + S</span>
+                      </div>
+                    </button>
+                    <!-- invoke/execute -->
+                    <button mat-menu-item [disabled]="!data.path.endsWith('.hl')"
+                      [matTooltip]="getEndpoint(data) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
+                      (click)="executeFile(data)">
+                      {{getEndpoint(data) === null ? 'Execute' : 'Invoke ...'}}
+                    </button>
+                    <!-- preview -->
+                    <button mat-menu-item [disabled]="!data.path.endsWith('.md')" matTooltip="Preview file" (click)="previewFile(data)">
+                      Preview
+                    </button>
+                    <!-- rename -->
+                    <button mat-menu-item
+                      [disabled]="!authService.access.files.rename || data?.path?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      matTooltip="Rename file [ALT+R]" (click)="renameFile(data)">
+                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                        <span>
+                          Rename
+                        </span>
+                        <span class="code ml-5 my-0 px-2 py-1">ALT + R</span>
+                      </div>
+                    </button>
+                    <!-- delete -->
+                    <button mat-menu-item
+                      [disabled]="!authService.access.files.delete_file || data?.folder?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      matTooltip="Delete file [ALT+D]" (click)="deleteFile(data)">
+                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                        <span>
+                          Delete
+                        </span>
+                        <span class="code ml-5 my-0 px-2 py-1">ALT + D</span>
+                      </div>
+                    </button>
+                    <!-- close -->
+                    <button mat-menu-item matTooltip="Close file [ALT+C]" (click)="closeFile(data)">
+                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                        <span>
+                          Close
+                        </span>
+                        <span class="code ml-5 my-0 px-2 py-1">ALT + C</span>
+                      </div>
+                    </button>
+                  </ng-template>
+                </mat-menu>
               </div>
               <!-- help -->
               <div class="sm-icons mr-1">
@@ -221,61 +282,43 @@
               [class]="file.path === activeFile ? 'h-100': ''">
               <!-- <div class="d-flex flex-column w-100 h-100"> -->
                 <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'd-none'" class="h-100 w-100">
-        
-                  <div class="d-flex justify-content-around align-items-center flex-wrap mb-2">
-        
-                    <button
-                      mat-button
+                  <!-- these buttons only pass their actions to the buttons inside menu and won't be displayed -->
+                  <!-- <div class="d-none">
+                    <input #saveBtn
                       class="save-file-btn"
                       [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      matTooltip="Save file ALT+S"
-                      (click)="saveFile(file)">
-                      Save
-                    </button>
-        
-                    <button
+                      type="button"
+                      name="Save file ALT+S"
+                      (click)="saveFile(file)" />
+                    <input #invokeBtn
                       [disabled]="!file.path.endsWith('.hl')"
-                      [matTooltip]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
-                      mat-button
-                      (click)="executeFile(file)">
-                      {{getEndpoint(file) === null ? 'Execute' : 'Invoke ...'}}
-                    </button>
-        
-                    <button
+                      [name]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
+                      type="button"
+                      (click)="executeFile(file)"
+                      [value]="getEndpoint(file) === null ? 'Execute' : 'Invoke ...'" />
+                    <input #previewBtn
                       [disabled]="!file.path.endsWith('.md')"
-                      matTooltip="Preview file"
-                      mat-button
-                      (click)="previewFile(file)">
-                      Preview
-                    </button>
-        
-                    <button
-                      mat-button
+                      name="Preview file"
+                      type="button"
+                      (click)="previewFile(file)" />
+                    <input #renameBtn
                       [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
                       class="rename-file-btn"
-                      matTooltip="Rename file ALT+R"
-                      (click)="renameFile(file)">
-                      Rename
-                    </button>
-        
-                    <button
-                      mat-button
+                      name="Rename file ALT+R"
+                      type="button"
+                      (click)="renameFile(file)" />
+                    <input #deleteBtn
                       class="delete-file-btn"
                       [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      matTooltip="Delete file ALT+D"
-                      (click)="deleteFile(file)">
-                      Delete
-                    </button>
-        
-                    <button
-                      mat-button
+                      name="Delete file ALT+D"
+                      type="button"
+                      (click)="deleteFile(file)" />
+                    <input #closeBtn
                       class="close-file-btn"
-                      matTooltip="Close file ALT+C"
-                      (click)="closeFile(file)">
-                      Close
-                    </button>
-        
-                  </div>
+                      name="Close file ALT+C"
+                      type="button"
+                      (click)="closeFile(file)" />
+                  </div> -->
                   <ngx-codemirror class="codemirror-container h-100"
                     [(ngModel)]="file.content"
                     [options]="file.options">
