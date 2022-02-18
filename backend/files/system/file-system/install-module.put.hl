@@ -1,0 +1,80 @@
+
+// Uploads and installs the specified ZIP file module.
+.arguments
+   file:*
+.description:Uploads and installs the specified ZIP file module
+.type:internal
+.accept:multipart/form-data
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+strings.split:x:@.arguments/*/file/*/name
+   .:.
+if
+   not
+      eq
+         get-value:x:@strings.split/0/-
+         .:zip
+   .lambda
+
+      // Oops, not a ZIP file ...
+      throw:You can only install ZIP files
+         public:true
+         status:415
+if
+   not
+      eq
+         get-count:x:@strings.split/*
+         .:int:2
+   .lambda
+
+      // Oops, not a valid module name.
+      throw:That is not a valid module name
+         public:true
+         status:400
+
+// Saves the ZIP file to the modules folder.
+.full-path
+set-value:x:@.full-path
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/file/*/name
+io.stream.save-file:x:@.full-path
+   get-value:x:@.arguments/*/file/*/stream
+
+// Figuring out folder name to use.
+.folder
+set-value:x:@.folder
+   strings.concat
+      .:/modules/
+      get-value:x:@strings.split/0
+      .:/
+
+// Deleting previously existing folder with same name.
+if
+   io.folder.exists:x:@.full-path
+   .lambda
+      io.folder.delete:x:@.full-path
+
+// Creating folder.
+io.folder.create:x:@.folder
+
+// Unzipping file.
+io.file.unzip:x:@.full-path
+   folder:x:@.folder
+
+// Deleting ZIP file.
+io.file.delete:x:@.full-path
+
+// Installing module.
+unwrap:x:+/*
+signal:magic.modules.install-module
+   module:x:@strings.split/0
+
+return-nodes
+   result:Success
