@@ -67,6 +67,9 @@ export class IdeComponent implements OnInit, OnDestroy {
      this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
    }
 
+  // only to pass the current file's data into the menu for action buttons
+  public currentFileData: any;
+  
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
 
@@ -480,7 +483,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public isExpandable(_: number, node: FlatNode) {
     return node.expandable;
   }
-
+      
   /**
    * Invoked when user wants to open a file.
    * 
@@ -490,7 +493,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Checking if file is already opened.
     if (this.openFiles.filter(x => x.path === file.path).length > 0) {
-
+      this.currentFileData=file;
       // Yup, file already opened.
       this.activeFile = file.path;
 
@@ -501,7 +504,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
-
+        this.currentFileData=file;
         // Pushing specified file into files currently being edited object.
         this.openFiles.push({
           name: file.name,
