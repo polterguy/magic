@@ -1,7 +1,6 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
 $max_height: calc(100vh - 130px);
-$max_height_mobile: calc(100vh - 220px);
 .ide{
   .tree-button{
     mat-icon{transform: rotate(45deg);}
@@ -19,5 +18,14 @@ $max_height_mobile: calc(100vh - 220px);
 }
 .shortkey-btn{min-width: 94px;}
 
-::ng-deep .active-codemirror-editor .CodeMirror:not(.CodeMirror-fullscreen){height: 100% !important;max-height: $max_height;}
+::ng-deep{
+  .active-codemirror-editor .CodeMirror:not(.CodeMirror-fullscreen){height: 100% !important;max-height: $max_height;}
+  .submenu-before{
+    .mat-menu-submenu-icon{
+      left: 16px;
+      right: unset; 
+      transform: translateY(-50%) rotate(180deg);
+    }
+  }
+}
 

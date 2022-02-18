@@ -75,8 +75,16 @@
                   <mat-icon>ads_click</mat-icon>
                 </button>
                 <mat-menu #actions="matMenu">
-                  <button mat-menu-item [matMenuTriggerFor]="submenu1">General actions</button>
-                  <button mat-menu-item [matMenuTriggerFor]="submenu2" [disabled]="!openFiles.length" [matMenuTriggerData]="{data: currentFileData}">Actions on the file</button>
+                  <button mat-menu-item [matMenuTriggerFor]="submenu1" class="submenu-before">
+                    <div class="pl-4 w-100 h-100">
+                      General actions
+                    </div>
+                  </button>
+                  <button mat-menu-item [matMenuTriggerFor]="submenu2" class="submenu-before" [disabled]="!openFiles.length" [matMenuTriggerData]="{data: currentFileData}">
+                    <div class="pl-4 w-100 h-100">
+                      Actions on the file
+                    </div>
+                  </button>
                 </mat-menu>
                 <mat-menu #submenu1="matMenu">
                   <!-- delete -->
@@ -269,7 +277,6 @@
                 </mat-list>
               </mat-menu>
             </div>
-            
         
             <img
               *ngIf="openFiles.length === 0"
@@ -280,56 +287,13 @@
 
               <div *ngFor="let file of openFiles" class="w-100 d-flex flex-column justify-content-start"
               [class]="file.path === activeFile ? 'h-100': ''">
-              <!-- <div class="d-flex flex-column w-100 h-100"> -->
                 <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'd-none'" class="h-100 w-100">
-                  <!-- these buttons only pass their actions to the buttons inside menu and won't be displayed -->
-                  <!-- <div class="d-none">
-                    <input #saveBtn
-                      class="save-file-btn"
-                      [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      type="button"
-                      name="Save file ALT+S"
-                      (click)="saveFile(file)" />
-                    <input #invokeBtn
-                      [disabled]="!file.path.endsWith('.hl')"
-                      [name]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
-                      type="button"
-                      (click)="executeFile(file)"
-                      [value]="getEndpoint(file) === null ? 'Execute' : 'Invoke ...'" />
-                    <input #previewBtn
-                      [disabled]="!file.path.endsWith('.md')"
-                      name="Preview file"
-                      type="button"
-                      (click)="previewFile(file)" />
-                    <input #renameBtn
-                      [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      class="rename-file-btn"
-                      name="Rename file ALT+R"
-                      type="button"
-                      (click)="renameFile(file)" />
-                    <input #deleteBtn
-                      class="delete-file-btn"
-                      [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      name="Delete file ALT+D"
-                      type="button"
-                      (click)="deleteFile(file)" />
-                    <input #closeBtn
-                      class="close-file-btn"
-                      name="Close file ALT+C"
-                      type="button"
-                      (click)="closeFile(file)" />
-                  </div> -->
                   <ngx-codemirror class="codemirror-container h-100"
                     [(ngModel)]="file.content"
                     [options]="file.options">
                   </ngx-codemirror>
-        
-        
                 </div>
-              <!-- </div> -->
-        
               </div>
-
           </div>
         </mat-drawer-container>
         
