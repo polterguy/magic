@@ -57,19 +57,19 @@ export class IdeComponent implements OnInit, OnDestroy {
    * smallScreenSize {number} :: to set a fixed size as an agreement
    * notSmallScreen {boolean} :: to check whether the screen width is small or large
    */
-   public getScreenWidth: number;
-   public smallScreenSize: number = 550;
-   public notSmallScreen: boolean = undefined;
- 
-   @HostListener('window:resize', ['$event'])
-   onWindowResize() {
-     this.getScreenWidth = window.innerWidth;
-     this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
-   }
+  public getScreenWidth: number;
+  public smallScreenSize: number = 550;
+  public notSmallScreen: boolean = undefined;
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize() {
+    this.getScreenWidth = window.innerWidth;
+    this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
+  }
 
   // only to pass the current file's data into the menu for action buttons
   public currentFileData: any;
-  
+
   // Known file extensions we've got editors for.
   private extensions = fileTypes;
 
@@ -141,11 +141,11 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Model for file uploader.
    */
-   public fileInput: string[];
+  public fileInput: string[];
 
-   /**
-   * Current folder we're viewing contens of.
-   */
+  /**
+  * Current folder we're viewing contens of.
+  */
   public currentFolder = '/';
 
   /**
@@ -163,7 +163,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public constructor(
     private dialog: MatDialog,
-    private cdRef:ChangeDetectorRef,
+    private cdRef: ChangeDetectorRef,
     public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
@@ -203,7 +203,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           case '/system/':
             this.getEndpoints();
             break;
-          }
+        }
 
         // Closing dialog if it is open.
         if (this.generateCrudDialog) {
@@ -236,7 +236,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Implementation of AfterViewInit
    */
-   public ngAfterViewInit() {
+  public ngAfterViewInit() {
 
     // Retrieving server's vocabulary.
     if (!window['_vocabulary']) {
@@ -265,7 +265,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Invoked when files needs to be fetched from the server.
    */
-   public getFilesFromServer(folder: string = '/', onAfter: () => void = null) {
+  public getFilesFromServer(folder: string = '/', onAfter: () => void = null) {
 
     // Common function object for adding folders and files to root graph object.
     const functor = (objects: string[], isFolder: boolean) => {
@@ -301,7 +301,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Retrieving all files from backend.
       this.fileService.listFilesRecursively(folder).subscribe((files: string[]) => {
-        
+
         // Adding files to root graph object.
         functor(files || [], false);
 
@@ -483,7 +483,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public isExpandable(_: number, node: FlatNode) {
     return node.expandable;
   }
-      
+
   /**
    * Invoked when user wants to open a file.
    * 
@@ -493,7 +493,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Checking if file is already opened.
     if (this.openFiles.filter(x => x.path === file.path).length > 0) {
-      this.currentFileData=file;
+      this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
       // Yup, file already opened.
       this.activeFile = file.path;
 
@@ -504,7 +504,13 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
-        this.currentFileData=file;
+        this.currentFileData = {
+          name: file.name,
+          path: file.path,
+          folder: file.path.substring(0, file.path.lastIndexOf('/') + 1),
+          content: content,
+          options: this.getCodeMirrorOptions(file.path),
+        };
         // Pushing specified file into files currently being edited object.
         this.openFiles.push({
           name: file.name,
@@ -527,7 +533,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     }
 
     // Changing active folder.
-    this.activeFolder = file.path.substr(0, file.path.lastIndexOf('/') + 1);
+    this.activeFolder = file.path.substring(0, file.path.lastIndexOf('/') + 1);
   }
 
   /**
@@ -544,24 +550,27 @@ export class IdeComponent implements OnInit, OnDestroy {
     }
   }
 
-   /**
-    * Invoked when the currently selected file is changed.
-    */
-   public selectedFileChanged() {
+  /**
+   * Invoked when the currently selected file is changed.
+   */
+  public selectedFileChanged() {
 
     // Assigning model.
-    this.activeFolder = this.activeFile.substr(0, this.activeFile.lastIndexOf('/') + 1);
+    this.activeFolder = this.activeFile.substring(0, this.activeFile.lastIndexOf('/') + 1);
+
+    // specifying the the current open file is changed
+    this.currentFileData = this.openFiles.find(x => x.path === this.activeFile);
 
     // Making sure we give focus to newly activated editor.
     this.setFocusToActiveEditor();
-   }
+  }
 
   /**
    * Invoked when a file should be saved.
    * 
    * @param file File to save
    */
-   public saveFile(file: FileNode) {
+  public saveFile(file: FileNode) {
 
     // Saving file by invoking backend.
     this.fileService.saveFile(file.path, file.content).subscribe(() => {
@@ -589,7 +598,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File node wrapping file to execute
    */
-   public executeFile(file: FileNode) {
+  public executeFile(file: FileNode) {
 
     // Figuring out if file is an endpoint file or not.
     const endpoint = this.getEndpoint(file);
@@ -597,7 +606,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Opening up dialog to allow user to invoke endpoint.
       this.dialog.open(ExecuteEndpointDialogComponent, {
-        data:  endpoint,
+        data: endpoint,
         minWidth: '80%',
       });
     } else {
@@ -617,7 +626,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to preview
    */
-   public previewFile(file: FileNode) {
+  public previewFile(file: FileNode) {
 
     // Opening up a modal dialog to preview file.
     this.dialog.open(PreviewFileDialogComponent, {
@@ -630,7 +639,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to rename
    */
-   public renameFile(file: FileNode) {
+  public renameFile(file: FileNode) {
 
     // Opening up a modal dialog to preview file.
     const dialog = this.dialog.open(RenameFileDialogComponent, {
@@ -648,7 +657,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.fileService.rename(file.path, data.name).subscribe(() => {
 
           // Updating treeview model.
-          const treeNode = this.findTreeNodeFolder(this.root, file.path);          
+          const treeNode = this.findTreeNodeFolder(this.root, file.path);
           treeNode.name = data.name;
           treeNode.path = file.path.substr(0, file.path.lastIndexOf('/') + 1) + data.name;
 
@@ -678,7 +687,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to delete
    */
-   public deleteFile(file: FileNode) {
+  public deleteFile(file: FileNode) {
 
     // Asking user to confirm action.
     this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
@@ -688,7 +697,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
         // Removing node from collection.
         if (this.removeNode(file.path)) {
-      
+
           // This will databind the tree control again, making sure we keep expanded nodes as such.
           this.dataBindTree();
 
@@ -877,7 +886,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
               // Asking user if he wants to refresh his folders.
               this.feedbackService.confirm(
-                'Refresh folders?', 
+                'Refresh folders?',
                 'Macro execution changed your file system, do you want to refresh your files and folders?',
                 () => {
 
@@ -886,7 +895,7 @@ export class IdeComponent implements OnInit, OnDestroy {
                   this.getFilesFromServer('/', () => {
                     this.getEndpoints();
                   });
-              });
+                });
             } else if (exeResult.result.startsWith('folders-changed|')) {
 
               // Macro returned specific folder that we'll need to update, and hence we can update only that folder.
@@ -897,7 +906,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           }, (error: any) => this.feedbackService.showError(error));
 
         } else if (result) {
-          
+
           // Assuming user wants to select another macro.
           this.selectMacro();
 
@@ -945,7 +954,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /*
    * Invoked when we need to find the specified tree node.
    */
-  private findTreeNodeFolder(node: TreeNode, path: string) : TreeNode {
+  private findTreeNodeFolder(node: TreeNode, path: string): TreeNode {
 
     // Checking if this is the guy we're looking for.
     if (node.path === path) {
@@ -1000,7 +1009,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Re-databinding tree control.
     this.dataSource.data = this.root.children;
-    
+
     // Expanding all items that was previously expanded.
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x).node.path === (<any>idx).node.path).length > 0) {
@@ -1015,11 +1024,11 @@ export class IdeComponent implements OnInit, OnDestroy {
   private clone(obj: any) {
     var cloneObj: any = {};
     for (var attribut in obj) {
-        if (typeof obj[attribut] === "object") {
-            cloneObj[attribut] = this.clone(obj[attribut]);
-        } else {
-            cloneObj[attribut] = obj[attribut];
-        }
+      if (typeof obj[attribut] === "object") {
+        cloneObj[attribut] = this.clone(obj[attribut]);
+      } else {
+        cloneObj[attribut] = obj[attribut];
+      }
     }
     return cloneObj;
   }
@@ -1056,7 +1065,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         // to hide/show sidenav
         let sidenav = document.querySelector('.mat-sidenav');
         sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-        sidenav.classList.add('d-none');
+          sidenav.classList.add('d-none');
         this.drawer.close();
         // Toggling maximise mode.
         cm.setOption('fullScreen', !cm.getOption('fullScreen'));
@@ -1157,8 +1166,14 @@ export class IdeComponent implements OnInit, OnDestroy {
   private closeFileImpl(file: FileNode) {
 
     // Removing file from edited files.
-    let idx = this.openFiles.indexOf(file);
+    let idx: number;
+    this.openFiles.forEach(element => {
+      if (element.path === file.path) {
+        idx = this.openFiles.indexOf(element);
+      }
+    });
     this.openFiles.splice(idx, 1);
+
     if (this.openFiles.length === 0) {
       this.activeFile = null;
     } else {
@@ -1259,7 +1274,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.cdRef.detectChanges();
 
       });
-    }: null);
+    } : null);
   }
 
   /*
@@ -1305,7 +1320,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Uploads one or more files to the currently active folder.
    */
-   public upload(files: FileList, path: string = this.activeFile, node: TreeNode = this.root) {
+  public upload(files: FileList, path: string = this.activeFile, node: TreeNode = this.root) {
 
     // Iterating through each file and uploading one file at the time.
     for (let idx = 0; idx < files.length; idx++) {
@@ -1317,7 +1332,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.feedbackService.showInfo('File was successfully uploaded');
         this.fileInput = null;
         this.updateFolder(this.activeFolder);
-        
+
       });
     }
   }
@@ -1333,11 +1348,11 @@ export class IdeComponent implements OnInit, OnDestroy {
       // Downloading folder.
       this.fileService.downloadFolder(this.activeFolder);
     } else
-    // making sure a file is selected
-    if (this.activeFile && type === 'file') {
-      // Downloading file.
-      this.fileService.downloadFile(this.activeFile);
-    }
+      // making sure a file is selected
+      if (this.activeFile && type === 'file') {
+        // Downloading file.
+        this.fileService.downloadFile(this.activeFile);
+      }
   }
 
   /**
@@ -1345,7 +1360,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param path What path to check
    */
-   public isFolder(path: string) {
+  public isFolder(path: string) {
     return path.endsWith('/');
   }
 }
