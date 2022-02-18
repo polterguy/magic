@@ -19,6 +19,7 @@ import { ConfigService } from '../../config/services/config.service';
 import { NameEmailModel } from '../../config/models/name-email.model';
 import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { AuthService } from '../../auth/services/auth.service';
+import { LoaderService } from 'src/app/components/app/services/loader.service';
 
 /**
  * View details of Bazar app modal dialog component.
@@ -71,6 +72,7 @@ export class ViewAppDialogComponent implements OnInit {
     private configService: ConfigService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
+    private loaderService: LoaderService,
     @Inject(MAT_DIALOG_DATA) public data: BazarApp) { }
 
   /**
@@ -146,7 +148,7 @@ export class ViewAppDialogComponent implements OnInit {
             model.email,
             model.subscribe,
             model.code === -1 ? null : model.code).subscribe((status: PurchaseStatus) => {
-
+              this.loaderService.show();
               /*
                * Checking if status is 'PENDING' at which point we'll have to redirect to PayPal
                * to finish transaction.

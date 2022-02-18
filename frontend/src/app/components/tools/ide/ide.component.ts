@@ -58,7 +58,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * notSmallScreen {boolean} :: to check whether the screen width is small or large
    */
   public getScreenWidth: number;
-  public smallScreenSize: number = 550;
+  public smallScreenSize: number = 768;
   public notSmallScreen: boolean = undefined;
 
   @HostListener('window:resize', ['$event'])

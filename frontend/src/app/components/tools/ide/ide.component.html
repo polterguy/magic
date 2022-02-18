@@ -6,7 +6,7 @@
       <mat-card-content class="h-100">
         <mat-drawer-container autosize="true">
           <mat-drawer #drawer [mode]="notSmallScreen ? 'side' : 'over'" [opened]="startResizing && notSmallScreen ? true : false">
-            <div class="d-sm-none d-block mb-5">
+            <div class="d-md-none d-block mb-5">
               <div class="mobile-close-drawer">
                 <button type="button" mat-flat-button (click)="drawer.toggle()" class="d-flex justify-content-start w-100">
                   <mat-icon>close</mat-icon>
@@ -201,7 +201,7 @@
                         <span>
                           Save
                         </span>
-                        <span class="code ml-5 my-0 px-2 py-1">ALT + S</span>
+                        <span class="code ml-4 my-0 px-2 py-1">ALT + S</span>
                       </div>
                     </button>
                     <!-- invoke/execute -->
@@ -222,7 +222,7 @@
                         <span>
                           Rename
                         </span>
-                        <span class="code ml-5 my-0 px-2 py-1">ALT + R</span>
+                        <span class="code ml-4 my-0 px-2 py-1">ALT + R</span>
                       </div>
                     </button>
                     <!-- delete -->
@@ -233,7 +233,7 @@
                         <span>
                           Delete
                         </span>
-                        <span class="code ml-5 my-0 px-2 py-1">ALT + D</span>
+                        <span class="code ml-4 my-0 px-2 py-1">ALT + D</span>
                       </div>
                     </button>
                     <!-- close -->
@@ -242,7 +242,7 @@
                         <span>
                           Close
                         </span>
-                        <span class="code ml-5 my-0 px-2 py-1">ALT + C</span>
+                        <span class="code ml-4 my-0 px-2 py-1">ALT + C</span>
                       </div>
                     </button>
                   </ng-template>
