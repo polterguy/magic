@@ -1,8 +1,8 @@
 
-// Loads the specified file and returns to caller as text.
+// Loads the specified file and returns to caller 'application/octet-stream'.
 .arguments
    file:string
-.description:Loads the specified file and returns to caller as text
+.description:"Loads the specified file and returns to caller 'application/octet-stream'"
 .type:internal
 
 // Ensures user is authorized to access endpoint.
