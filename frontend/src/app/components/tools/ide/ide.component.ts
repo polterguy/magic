@@ -142,6 +142,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Model for file uploader.
    */
   public fileInput: string[];
+  public zipFileInput;
 
   /**
   * Current folder we're viewing contens of.
@@ -1362,5 +1363,16 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public isFolder(path: string) {
     return path.endsWith('/');
+  }
+
+  public uploadZipFile(file){
+    this.fileService.uploadZipFile(file).subscribe(() => {
+
+      // Showing some feedback to user, and re-databinding folder's content.
+      this.feedbackService.showInfo('File was successfully uploaded');
+      this.zipFileInput = null;
+      this.updateFolder('/modules/');
+
+    });
   }
 }
