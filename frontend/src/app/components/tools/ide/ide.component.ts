@@ -1322,7 +1322,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Uploads one or more files to the currently active folder.
    */
   public upload(files: FileList, path: string = this.activeFile, node: TreeNode = this.root) {
-
+    
     // Iterating through each file and uploading one file at the time.
     for (let idx = 0; idx < files.length; idx++) {
 
@@ -1365,14 +1365,18 @@ export class IdeComponent implements OnInit, OnDestroy {
     return path.endsWith('/');
   }
 
-  public uploadZipFile(file){
-    this.fileService.uploadZipFile(file).subscribe(() => {
-
-      // Showing some feedback to user, and re-databinding folder's content.
-      this.feedbackService.showInfo('File was successfully uploaded');
-      this.zipFileInput = null;
-      this.updateFolder('/modules/');
-
-    });
+  public uploadZipFile(file: FileList){
+    if (file[0].name.split('.')[1] === 'zip'){
+      this.fileService.uploadZipFile(file.item(0)).subscribe(() => {
+        
+        // Showing some feedback to user, and re-databinding folder's content.
+        this.feedbackService.showInfo('File was successfully uploaded');
+        this.zipFileInput = null;
+        this.updateFolder('/modules/');
+        
+      });
+    } else {
+      this.feedbackService.showInfo('Only .zip is acceptable');
+    }
   }
 }

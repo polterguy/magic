@@ -117,7 +117,7 @@
                     [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
                     matTooltip="Generate CRUD apps"
                     (click)="generateCrudApp()">
-                    <mat-icon>touch_app</mat-icon>
+                    <mat-icon class="material-icons-outlined">touch_app</mat-icon>
                     Crudifier
                   </button>
                   <!-- new folder -->
@@ -127,7 +127,7 @@
                     color="primary"
                     matTooltip="Create a new folder"
                     (click)="createNewFileObject('folder')">
-                    <mat-icon>create_new_folder</mat-icon>
+                    <mat-icon class="material-icons-outlined">create_new_folder</mat-icon>
                     New folder
                   </button>
                   <!-- new file -->
@@ -137,7 +137,7 @@
                     color="primary"
                     matTooltip="Create a new file"
                     (click)="createNewFileObject('file')">
-                    <mat-icon>note_add</mat-icon>
+                    <mat-icon class="material-icons-outlined">note_add</mat-icon>
                     New file
                   </button>
                   <!-- upload -->
@@ -145,7 +145,7 @@
                     mat-menu-item
                     (click)="file.click()"
                     matTooltip="Upload file from your local computer">
-                    <mat-icon>cloud_upload</mat-icon>
+                    <mat-icon class="material-icons-outlined">file_upload</mat-icon>
                     Upload file
                   </button>
                   <input
@@ -161,7 +161,7 @@
                     [disabled]="!activeFile || !activeFolder"
                     matTooltip="Download the active file"
                     (click)="downloadFileToServer('file')">
-                    <mat-icon>cloud_download</mat-icon>
+                    <mat-icon class="material-icons-outlined">file_download</mat-icon>
                     Download file
                   </button>
                   <!-- download folder -->
@@ -170,7 +170,7 @@
                     [disabled]="!activeFolder"
                     matTooltip="Download the entire folder"
                     (click)="downloadFileToServer('folder')">
-                    <mat-icon>cloud_download</mat-icon>
+                    <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                     Download folder
                   </button>
 
@@ -178,9 +178,9 @@
                   <button
                     mat-menu-item
                     (click)="zipfile.click()"
-                    matTooltip="Upload file from your local computer">
-                    <mat-icon>cloud_upload</mat-icon>
-                    Upload zip
+                    matTooltip="Upload zip file from your local computer">
+                    <mat-icon class="material-icons-outlined">drive_folder_upload</mat-icon>
+                    Upload zip file
                   </button>
                   <input
                     type="file"
@@ -188,7 +188,7 @@
                     #zipfile
                     multiple
                     class="d-none"
-                    accept=".zip"
+                    accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
                     (change)="uploadZipFile($event.target.files)">
                 </mat-menu>
                 <mat-menu #submenu2="matMenu">
