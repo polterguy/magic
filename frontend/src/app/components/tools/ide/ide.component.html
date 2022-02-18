@@ -6,6 +6,14 @@
       <mat-card-content class="h-100">
         <mat-drawer-container autosize="true">
           <mat-drawer #drawer [mode]="notSmallScreen ? 'side' : 'over'" [opened]="startResizing && notSmallScreen ? true : false">
+            <div class="d-sm-none d-block mb-5">
+              <div class="mobile-close-drawer">
+                <button type="button" mat-flat-button (click)="drawer.toggle()" class="d-flex justify-content-start w-100">
+                  <mat-icon>close</mat-icon>
+                  Close
+                </button>
+              </div>
+            </div>
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
         
               <mat-tree-node
@@ -71,7 +79,6 @@
               <!-- action buttons -->
               <div>
                 <button mat-icon-button [matMenuTriggerFor]="actions" matTooltip="Action buttons">
-                  <!-- <mat-icon>more_vert</mat-icon> -->
                   <mat-icon>ads_click</mat-icon>
                 </button>
                 <mat-menu #actions="matMenu">
