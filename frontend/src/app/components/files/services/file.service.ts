@@ -326,4 +326,21 @@ export class FileService {
       args
     });
   }
+
+  /**
+   * Uploads a zip file to your backend.
+   * 
+   * @param path Folder to upload file to
+   * @param file File you want to upload
+   */
+   public uploadZipFile(file: any) {
+
+    // Invoking backend with a form data object containing file.
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.httpService.put<any>(
+      '/magic/system/file-system/install-module=',
+      formData
+    );
+  }
 }

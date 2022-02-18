@@ -173,6 +173,23 @@
                     <mat-icon>cloud_download</mat-icon>
                     Download folder
                   </button>
+
+                  <!-- upload zip -->
+                  <button
+                    mat-menu-item
+                    (click)="zipfile.click()"
+                    matTooltip="Upload file from your local computer">
+                    <mat-icon>cloud_upload</mat-icon>
+                    Upload zip
+                  </button>
+                  <input
+                    type="file"
+                    [(ngModel)]="zipFileInput"
+                    #zipfile
+                    multiple
+                    class="d-none"
+                    accept=".zip"
+                    (change)="uploadZipFile($event.target.files)">
                 </mat-menu>
                 <mat-menu #submenu2="matMenu">
                   <ng-template matMenuContent let-data="data">
