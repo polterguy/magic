@@ -31,6 +31,7 @@ import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.compon
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
+import { LoaderService } from '../../app/services/loader.service';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -116,6 +117,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * @param activatedRoute Needed to retrieve activated router
    * @param messageService Needed to subscribe to messages published when app should be immediately installed
    * @param feedbackService Needed to display feedback to user
+   * @param loaderService Needed to show loading when socket is connected
    */
   constructor(
     private router: Router,
@@ -126,7 +128,23 @@ export class BazarComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private loaderService: LoaderService) { 
+      
+      // checking params inside constructor, so it would be triggered whenever user enters the page
+      // Notice onInit function would be triggered only once
+      this.activatedRoute.queryParams.subscribe((pars: Params) => {
+        // Checking if we've got "token" param.
+        const token = pars['token'];
+        if (token) {
+          // show loading
+          this.loaderService.show();
+          this.dialog.open(ViewReadmeDialogComponent, {
+            data: `<h1>Waiting ...</h1> <p class="mb-4">Please do not leave this page until the file is downloaded.<p>`,
+          }).disableClose = true;
+        }
+      })
+    }
 
   /**
    * Implementation of OnInit.
@@ -160,7 +178,7 @@ export class BazarComponent implements OnInit, OnDestroy {
         // Checking if we've got "token" param.
         const token = pars['token'];
         if (token) {
-
+          
           // Checking if product is already ready to be downloaded, and if not, subscribing to our SignalR message.
           this.waitForCallback(token);
 
@@ -209,6 +227,9 @@ export class BazarComponent implements OnInit, OnDestroy {
 
       // Stopping SignalR socket connection.
       this.hubConnection.stop();
+
+      // hiding loader
+      this.loaderService.hide();
     }
 
     // Destroying timer if it was created.
@@ -355,7 +376,8 @@ export class BazarComponent implements OnInit, OnDestroy {
    * that the payment has been accepted.
    */
   private waitForCallback(token: string) {
-
+    // show loading
+    this.loaderService.show();
     // Retrieving currently installing app from local storage.
     const app = <BazarApp>JSON.parse(localStorage.getItem('currently-installed-app'));
     localStorage.removeItem('currently-installed-app');
@@ -372,7 +394,7 @@ export class BazarComponent implements OnInit, OnDestroy {
      * once app is ready to be downloaded.
      */
     this.hubConnection.on('bazar.package.avilable.' + token, (args: string) => {
-
+      
       // Purchase accepted by PayPal, hence starting download and installation process.
       this.install(app, token);
     });
@@ -435,6 +457,10 @@ export class BazarComponent implements OnInit, OnDestroy {
               // Socket connection is open, turing it off.
               this.hubConnection.stop();
               this.hubConnection = null;
+
+              // hide loading
+              this.loaderService.hide();
+              this.dialog.closeAll();
             }
 
             // Redirecting to main Bazar URL now that app has been installed on the local server.
