@@ -16,7 +16,6 @@ import { HttpService } from 'src/app/services/http.service';
 import { FileService } from '../../../files/services/file.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { environment } from '../../../../../environments/environment';
-import { LoaderService } from 'src/app/components/app/services/loader.service';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -35,8 +34,7 @@ export class BazarService {
   constructor(
     private httpClient: HttpClient,
     private httpService: HttpService,
-    private fileService: FileService,
-    private loaderService: LoaderService) { }
+    private fileService: FileService) { }
 
   /**
    * Retrieves the latest Magic core version as published by the Bazar.
@@ -96,7 +94,7 @@ export class BazarService {
    * @param module_name Name of module
    */
   public getApp(module_name: string) {
-    this.loaderService.hide();
+
     // Dynamically building our query.
     const query = '?folder_name.eq=' + encodeURIComponent(module_name);
 
@@ -184,7 +182,7 @@ export class BazarService {
     if (promo_code && promo_code !== '') {
       payload.promo_code = promo_code;
     }
-    this.loaderService.show();
+
     // We now have the user's email address, hence invoking Bazar to start purchasing workflow.
     return this.httpClient.post<PurchaseStatus>(
       environment.bazarUrl +
