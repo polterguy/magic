@@ -191,59 +191,51 @@
                     accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
                     (change)="uploadZipFile($event.target.files)">
                 </mat-menu>
-                <mat-menu #submenu2="matMenu">
+                <mat-menu #submenu2="matMenu" class="submenu2">
                   <ng-template matMenuContent let-data="data">
                     <!-- save -->
                     <button mat-menu-item
                       [disabled]="activeFileIsClean() || data?.folder?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                      matTooltip="Save file [ALT+S]" (click)="saveFile(data)">
-                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
-                        <span>
-                          Save
-                        </span>
-                        <span class="code ml-4 my-0 px-2 py-1">ALT + S</span>
-                      </div>
+                      matTooltip="Save file [ALT+S]" 
+                      (click)="saveFile(data)">
+                        <mat-icon>save</mat-icon>
+                        Save
                     </button>
                     <!-- invoke/execute -->
                     <button mat-menu-item [disabled]="!data.path.endsWith('.hl')"
                       [matTooltip]="getEndpoint(data) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
                       (click)="executeFile(data)">
+                      <mat-icon>play_arrow</mat-icon>
                       {{getEndpoint(data) === null ? 'Execute' : 'Invoke ...'}}
                     </button>
                     <!-- preview -->
-                    <button mat-menu-item [disabled]="!data.path.endsWith('.md')" matTooltip="Preview file" (click)="previewFile(data)">
+                    <button mat-menu-item 
+                      [disabled]="!data.path.endsWith('.md')" 
+                      matTooltip="Preview file" 
+                      (click)="previewFile(data)">
+                      <mat-icon class="material-icons-outlined">
+                        preview
+                      </mat-icon>
                       Preview
                     </button>
                     <!-- rename -->
                     <button mat-menu-item
                       [disabled]="!authService.access.files.rename || data?.path?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
                       matTooltip="Rename file [ALT+R]" (click)="renameFile(data)">
-                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
-                        <span>
-                          Rename
-                        </span>
-                        <span class="code ml-4 my-0 px-2 py-1">ALT + R</span>
-                      </div>
+                        <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
+                        Rename
                     </button>
                     <!-- delete -->
                     <button mat-menu-item
                       [disabled]="!authService.access.files.delete_file || data?.folder?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
                       matTooltip="Delete file [ALT+D]" (click)="deleteFile(data)">
-                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
-                        <span>
+                          <mat-icon>delete</mat-icon>
                           Delete
-                        </span>
-                        <span class="code ml-4 my-0 px-2 py-1">ALT + D</span>
-                      </div>
                     </button>
                     <!-- close -->
                     <button mat-menu-item matTooltip="Close file [ALT+C]" (click)="closeFile(data)">
-                      <div class="d-flex justify-content-between align-items-center w-100 h-100">
-                        <span>
-                          Close
-                        </span>
-                        <span class="code ml-4 my-0 px-2 py-1">ALT + C</span>
-                      </div>
+                        <mat-icon>close</mat-icon>
+                        Close
                     </button>
                   </ng-template>
                 </mat-menu>
