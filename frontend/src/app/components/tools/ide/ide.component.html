@@ -84,33 +84,22 @@
                 <mat-menu #actions="matMenu">
                   <button mat-menu-item [matMenuTriggerFor]="submenu1" class="submenu-before">
                     <div class="pl-4 w-100 h-100">
-                      General actions
+                      General
                     </div>
                   </button>
-                  <button mat-menu-item [matMenuTriggerFor]="submenu2" class="submenu-before" [disabled]="!openFiles.length" [matMenuTriggerData]="{data: currentFileData}">
+                  <button mat-menu-item [matMenuTriggerFor]="submenu2" class="submenu-before">
                     <div class="pl-4 w-100 h-100">
-                      Actions on the file
+                      Active folder
+                    </div>
+                  </button>
+                  <button mat-menu-item [matMenuTriggerFor]="submenu3" class="submenu-before" [disabled]="!openFiles.length" [matMenuTriggerData]="{data: currentFileData}">
+                    <div class="pl-4 w-100 h-100">
+                      Active file
                     </div>
                   </button>
                 </mat-menu>
-                <mat-menu #submenu1="matMenu">
-                  <!-- delete -->
-                  <button
-                    [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
-                    mat-menu-item
-                    [matTooltip]="'Delete folder \'' + activeFolder + '\''"
-                    (click)="deleteActiveFolder()">
-                    <mat-icon>delete</mat-icon>
-                    Delete folder
-                  </button>
-                  <!-- execute -->
-                  <button
-                    mat-menu-item
-                    matTooltip="Execute a macro"
-                    (click)="selectMacro()">
-                    <mat-icon>model_training</mat-icon>
-                    Execute
-                  </button>
+
+                <mat-menu #submenu1="matMenu" class="submenu">
                   <!-- generate crud -->
                   <button
                     mat-menu-item
@@ -120,67 +109,13 @@
                     <mat-icon class="material-icons-outlined">touch_app</mat-icon>
                     Crudifier
                   </button>
-                  <!-- new folder -->
-                  <button
-                    mat-menu-item
-                    [disabled]="!authService.access.files.create_folder"
-                    color="primary"
-                    matTooltip="Create a new folder"
-                    (click)="createNewFileObject('folder')">
-                    <mat-icon class="material-icons-outlined">create_new_folder</mat-icon>
-                    New folder
-                  </button>
-                  <!-- new file -->
-                  <button
-                    mat-menu-item
-                    [disabled]="!authService.access.files.create_file"
-                    color="primary"
-                    matTooltip="Create a new file"
-                    (click)="createNewFileObject('file')">
-                    <mat-icon class="material-icons-outlined">note_add</mat-icon>
-                    New file
-                  </button>
-                  <!-- upload -->
-                  <button
-                    mat-menu-item
-                    (click)="file.click()"
-                    matTooltip="Upload file from your local computer">
-                    <mat-icon class="material-icons-outlined">file_upload</mat-icon>
-                    Upload file
-                  </button>
-                  <input
-                    type="file"
-                    [(ngModel)]="fileInput"
-                    #file
-                    multiple
-                    class="d-none"
-                    (change)="upload($event.target.files)">
-                  <!-- download file -->
-                  <button
-                    mat-menu-item
-                    [disabled]="!activeFile || !activeFolder"
-                    matTooltip="Download the active file"
-                    (click)="downloadFileToServer('file')">
-                    <mat-icon class="material-icons-outlined">file_download</mat-icon>
-                    Download file
-                  </button>
-                  <!-- download folder -->
-                  <button
-                    mat-menu-item
-                    [disabled]="!activeFolder"
-                    matTooltip="Download the entire folder"
-                    (click)="downloadFileToServer('folder')">
-                    <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
-                    Download folder
-                  </button>
-
                   <!-- upload zip -->
                   <button
                     mat-menu-item
                     (click)="zipfile.click()"
-                    matTooltip="Upload zip file from your local computer">
+                    matTooltip="Install a module zip file from your local computer">
                     <mat-icon class="material-icons-outlined">drive_folder_upload</mat-icon>
-                    Upload zip file
+                    Install module
                   </button>
                   <input
                     type="file"
@@ -191,7 +126,71 @@
                     accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
                     (change)="uploadZipFile($event.target.files)">
                 </mat-menu>
-                <mat-menu #submenu2="matMenu" class="submenu2">
+
+                <mat-menu #submenu2="matMenu" class="submenu">
+                  <!-- delete -->
+                  <button
+                    [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                    mat-menu-item
+                    [matTooltip]="'Delete folder \'' + activeFolder + '\''"
+                    (click)="deleteActiveFolder()">
+                    <mat-icon>delete</mat-icon>
+                    Delete
+                  </button>
+                  <!-- execute -->
+                  <button
+                    mat-menu-item
+                    [matTooltip]="'Execute a macro in \'' + activeFolder + '\''"
+                    (click)="selectMacro()">
+                    <mat-icon>model_training</mat-icon>
+                    Execute
+                  </button>
+                  <!-- new folder -->
+                  <button
+                    mat-menu-item
+                    [disabled]="!authService.access.files.create_folder"
+                    color="primary"
+                    [matTooltip]="'Create a new folder in \'' + activeFolder + '\''"
+                    (click)="createNewFileObject('folder')">
+                    <mat-icon class="material-icons-outlined">create_new_folder</mat-icon>
+                    New folder
+                  </button>
+                  <!-- new file -->
+                  <button
+                    mat-menu-item
+                    [disabled]="!authService.access.files.create_file"
+                    color="primary"
+                    [matTooltip]="'Create a new file in \'' + activeFolder + '\''"
+                    (click)="createNewFileObject('file')">
+                    <mat-icon class="material-icons-outlined">note_add</mat-icon>
+                    New file
+                  </button>
+                  <!-- upload -->
+                  <button
+                    mat-menu-item
+                    (click)="file.click()"
+                    [matTooltip]="'Upload a file to \'' + activeFolder + '\''">
+                    <mat-icon class="material-icons-outlined">file_upload</mat-icon>
+                    Upload file
+                  </button>
+                  <input
+                    type="file"
+                    [(ngModel)]="fileInput"
+                    #file
+                    multiple
+                    class="d-none"
+                    (change)="upload($event.target.files)">
+                  <!-- download folder -->
+                  <button
+                    mat-menu-item
+                    [disabled]="!activeFolder"
+                    [matTooltip]="'Download \'' + activeFolder + '\' as a zip file'"
+                    (click)="downloadFileToServer('folder')">
+                    <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
+                    Download folder
+                  </button>
+                </mat-menu>
+                <mat-menu #submenu3="matMenu" class="submenu">
                   <ng-template matMenuContent let-data="data">
                     <!-- save -->
                     <button mat-menu-item
@@ -236,6 +235,15 @@
                     <button mat-menu-item matTooltip="Close file [ALT+C]" (click)="closeFile(data)">
                         <mat-icon>close</mat-icon>
                         Close
+                    </button>
+                    <!-- download file -->
+                    <button
+                      mat-menu-item
+                      [disabled]="!activeFile || !activeFolder"
+                      matTooltip="Download the active file"
+                      (click)="downloadFileToServer('file')">
+                      <mat-icon class="material-icons-outlined">file_download</mat-icon>
+                      Download file
                     </button>
                   </ng-template>
                 </mat-menu>

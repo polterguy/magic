@@ -27,8 +27,8 @@ $max_height: calc(100vh - 130px);
       transform: translateY(-50%) rotate(180deg);
     }
   }
-  .submenu2{
-    .mat-menu-content{min-width: 177px;}
+  .submenu{
+    .mat-menu-content{min-width: 200px;}
   }
 }
 .mobile-close-drawer{position: absolute;left: 0;top: 0;z-index: 1;right: 10px;}
