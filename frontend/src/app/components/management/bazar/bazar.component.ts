@@ -140,7 +140,7 @@ export class BazarComponent implements OnInit, OnDestroy {
           // show loading
           this.loaderService.show();
           this.dialog.open(ViewReadmeDialogComponent, {
-            data: `<h1>Waiting ...</h1> <p class="mb-4">Please do not leave this page until the file is downloaded.<p>`,
+            data: `<h1>Please wait ...</h1> <p class="mb-4">Please do not leave this page until your module has been installed and downloaded.<p>`,
           }).disableClose = true;
         }
       })
