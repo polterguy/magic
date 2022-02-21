@@ -41,7 +41,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Other external components.
-import { NgxPayPalModule } from 'ngx-paypal';
 import { ChartsModule } from 'ng2-charts';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import {
@@ -154,6 +153,7 @@ import { ConfirmEmailAddressDialogComponent } from './components/management/baza
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { ExecuteTerminalCommandComponent } from './components/tools/ide/execute-terminal-command/execute-terminal-command.component';
+import { AccessGuard } from './access.guard';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -282,7 +282,6 @@ import { ExecuteTerminalCommandComponent } from './components/tools/ide/execute-
     MatExpansionModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    NgxPayPalModule,
     ChartsModule,
     CodemirrorModule,
     MatDatepickerModule,
@@ -303,6 +302,7 @@ import { ExecuteTerminalCommandComponent } from './components/tools/ide/execute-
       useClass: LoaderInterceptor,
       multi: true
     },
+    AccessGuard
   ],
   bootstrap: [AppComponent],
 })

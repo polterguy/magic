@@ -1165,7 +1165,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Actual method responsible for closing file.
    */
   private closeFileImpl(file: FileNode) {
-
+    this.cdRef.markForCheck();
     // Removing file from edited files.
     let idx: number;
     this.openFiles.forEach(element => {
@@ -1187,6 +1187,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Making sure we give focus to newly activated editor.
     this.setFocusToActiveEditor();
+    this.cdRef.detectChanges();
   }
 
   /*
