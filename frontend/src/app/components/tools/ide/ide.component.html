@@ -194,14 +194,14 @@
                   <ng-template matMenuContent let-data="data">
                     <!-- save -->
                     <button mat-menu-item
-                      [disabled]="activeFileIsClean() || data?.folder?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      [disabled]="activeFileIsClean() || data?.folder?.startsWith('/system/') || activeFolder?.startsWith('/misc/')"
                       matTooltip="Save file [ALT+S]" 
                       (click)="saveFile(data)">
                         <mat-icon>save</mat-icon>
                         Save
                     </button>
                     <!-- invoke/execute -->
-                    <button mat-menu-item [disabled]="!data.path.endsWith('.hl')"
+                    <button mat-menu-item [disabled]="!data?.path?.endsWith('.hl')"
                       [matTooltip]="getEndpoint(data) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
                       (click)="executeFile(data)">
                       <mat-icon>play_arrow</mat-icon>
@@ -209,7 +209,7 @@
                     </button>
                     <!-- preview -->
                     <button mat-menu-item 
-                      [disabled]="!data.path.endsWith('.md')" 
+                      [disabled]="!data?.path?.endsWith('.md')" 
                       matTooltip="Preview file" 
                       (click)="previewFile(data)">
                       <mat-icon class="material-icons-outlined">
@@ -219,14 +219,14 @@
                     </button>
                     <!-- rename -->
                     <button mat-menu-item
-                      [disabled]="!authService.access.files.rename || data?.path?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      [disabled]="!authService?.access?.files?.rename || data?.path?.startsWith('/system/') || activeFolder?.startsWith('/misc/')"
                       matTooltip="Rename file [ALT+R]" (click)="renameFile(data)">
                         <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
                         Rename
                     </button>
                     <!-- delete -->
                     <button mat-menu-item
-                      [disabled]="!authService.access.files.delete_file || data?.folder?.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      [disabled]="!authService?.access?.files?.delete_file || data?.folder?.startsWith('/system/') || activeFolder?.startsWith('/misc/')"
                       matTooltip="Delete file [ALT+D]" (click)="deleteFile(data)">
                           <mat-icon>delete</mat-icon>
                           Delete
@@ -316,6 +316,42 @@
                     [(ngModel)]="file.content"
                     [options]="file.options">
                   </ngx-codemirror>
+
+
+
+                  <div class="d-none">
+                    <button mat-button class="save-file-btn"
+                      [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      matTooltip="Save file ALT+S" (click)="saveFile(file)">
+                      Save
+                    </button>
+                  
+                    <button [disabled]="!file.path.endsWith('.hl')"
+                      [matTooltip]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
+                      mat-button (click)="executeFile(file)">
+                      {{getEndpoint(file) === null ? 'Execute' : 'Invoke ...'}}
+                    </button>
+                  
+                    <button [disabled]="!file.path.endsWith('.md')" matTooltip="Preview file" mat-button (click)="previewFile(file)">
+                      Preview
+                    </button>
+                  
+                    <button mat-button
+                      [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      class="rename-file-btn" matTooltip="Rename file ALT+R" (click)="renameFile(file)">
+                      Rename
+                    </button>
+                  
+                    <button mat-button class="delete-file-btn"
+                      [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      matTooltip="Delete file ALT+D" (click)="deleteFile(file)">
+                      Delete
+                    </button>
+                  
+                    <button mat-button class="close-file-btn" matTooltip="Close file ALT+C" (click)="closeFile(file)">
+                      Close
+                    </button>
+                  </div>
                 </div>
               </div>
           </div>
