@@ -104,11 +104,31 @@ export class AppComponent implements OnInit, OnDestroy {
     private feedbackService: FeedbackService,
     private diagnosticsService: DiagnosticsService,
     private overlayContainer: OverlayContainer) { }
-
   /**
    * OnInit implementation.
    */
   public ngOnInit() {
+    // check authentication state
+    (async () => {
+      while (!this.authService.authenticated)
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        /**
+         * if the user IS authenticated
+         * ** then check if db configuration is defined or not
+         * *** if is not defined then get the status and passto other components
+         */
+      if (this.authService.authenticated) {
+        let definedStatus: boolean;
+        this.configService.configStatus.subscribe(status => { definedStatus = status });
+        if (definedStatus === undefined) {
+
+          this.configService.status().subscribe(config => {
+            this.configService.changeStatus(config.config_done);
+          });
+        }
+      }
+    })();
 
     /**
      * to check the screen width rule for initial setting

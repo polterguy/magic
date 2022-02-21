@@ -1,4 +1,4 @@
-<div class="d-flex flex-column w-100 h-100" id="sidebar">
+<div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!dbIsConfigured">
   <div class="top-box-sidebar d-flex flex-column justify-content-center align-items-center text-center">
     <div class="d-flex flex-column w-100 justify-content-center align-items-center">
       <img src="../../../../assets/logo-no-text.svg" alt="" [width]="sideNavStatus ? 80 : 35">
@@ -29,7 +29,7 @@
       routerLinkActive="active-link"
       [routerLinkActiveOptions]="{exact:true}">
           <mat-panel-title>
-              <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/">
+              <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="!authService.authenticated || dbIsConfigured ? '/' : null">
                 <mat-icon>{{authService.access.files.list_files && authService.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
                 <span class="title">{{authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
               </a>
@@ -77,7 +77,7 @@
           #crudifier="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/crudifier">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/crudifier' : null">
               <mat-icon>touch_app</mat-icon>
               <span class="title">Crudifier</span>
             </a>
@@ -93,7 +93,7 @@
           #hyperide="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.files.list_files && authService.access.files.list_folders">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/ide">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/ide' : null">
               <mat-icon>extension</mat-icon>
               <span class="title">Hyper IDE</span>
             </a>
@@ -109,7 +109,7 @@
           #sql="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.sql.execute_access">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/sql">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/sql' : null">
               <mat-icon>language</mat-icon>
               <span class="title">SQL</span>
             </a>
@@ -125,7 +125,7 @@
           #evaluator="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.eval.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/evaluator">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/evaluator' : null">
               <mat-icon>offline_bolt</mat-icon>
               <span class="title">Evaluator</span>
             </a>
@@ -141,7 +141,7 @@
           #tasks="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.tasks.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/tasks">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/tasks' : null">
               <mat-icon>calendar_today</mat-icon>
               <span class="title">Tasks</span>
             </a>
@@ -173,7 +173,7 @@
         #auth="routerLinkActive"
         [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/auth">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/auth' : null">
               <mat-icon>supervisor_account</mat-icon>
               <span class="title">Users &amp; roles</span>
             </a>
@@ -205,7 +205,7 @@
           #terminal="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.terminal.execute">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/terminal">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/terminal' : null">
               <mat-icon>input</mat-icon>
               <span class="title">Terminal</span>
             </a>
@@ -221,7 +221,7 @@
           #crypto="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.crypto.import_public_key">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/crypto">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/crypto' : null">
               <mat-icon>security</mat-icon>
               <span class="title">Cryptography</span>
             </a>
@@ -232,13 +232,12 @@
           [style.display]="authService.authenticated ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
           matTooltip="Edit your profile" 
-          routerLink="/profile" 
           matTooltipPosition="after" 
           routerLinkActive="active-link"
           #profile="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.authenticated">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/profile">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/profile' : null">
               <mat-icon>person</mat-icon>
               <span class="title">Profile</span>
             </a>
@@ -254,7 +253,7 @@
           #bazar="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.bazar.get_manifests">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/bazar">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/bazar' : null">
               <mat-icon>storefront</mat-icon>
               <span class="title">Bazaar</span>
             </a>
@@ -286,7 +285,7 @@
           #log="routerLinkActive"
           [routerLinkActiveOptions]="{exact:false}">
           <ng-container *ngIf="authService.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/log">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/log' : null">
               <mat-icon>bar_chart</mat-icon>
               <span class="title">Log</span>
             </a>
@@ -302,7 +301,7 @@
           #assumptions="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/assumptions">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/assumptions' : null">
               <mat-icon>fact_check</mat-icon>
               <span class="title">Assumptions</span>
             </a>
@@ -318,7 +317,7 @@
           #cache="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.log.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/cache">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/cache' : null">
               <mat-icon>cached</mat-icon>
               <span class="title">Cache</span>
             </a>
@@ -334,7 +333,7 @@
           #endpoints="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.endpoints.view">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/endpoints">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/endpoints' : null">
               <mat-icon>http</mat-icon>
               <span class="title">Endpoints</span>
             </a>
@@ -350,7 +349,7 @@
           #sockets="routerLinkActive"
           [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.sockets.read">
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/sockets">
+            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="dbIsConfigured ? '/sockets' : null">
               <mat-icon>compare_arrows</mat-icon>
               <span class="title">Sockets</span>
             </a>

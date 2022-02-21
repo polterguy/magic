@@ -30,36 +30,127 @@ import { ChangePasswordComponent } from './components/management/auth/change-pas
 import { DiagnosticsTestsComponent } from './components/analytics/assumptions/assumptions.component';
 import { DiagnosticsCache } from './components/analytics/cache/cache.component';
 import { SocketsComponent } from './components/analytics/sockets/sockets.component';
+import { AccessGuard } from './access.guard';
 
 /**
  * Routes for application.
  */
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'sql', component: SqlComponent },
+  {
+    path: '',
+    component: DashboardComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'sql',
+    component: SqlComponent,
+    canActivate: [AccessGuard]
+  },
 
   // Avoids re-initializing component as user opens and closes view details / URL link
-  { path: 'ide', component: IdeComponent },
-  { path: 'log', component: LogComponent },
-  { path: 'auth', component: AuthComponent },
-  { path: 'tasks', component: TasksComponent },
-  { path: 'bazar', component: BazarComponent },
-  { path: 'about', component: AboutComponent },
-  { path: 'cache', component: DiagnosticsCache },
-  { path: 'config', component: ConfigComponent },
-  { path: 'crypto', component: CryptoComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'sockets', component: SocketsComponent },
-  { path: 'terminal', component: TerminalComponent },
-  { path: 'file-system', component: FilesComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'endpoints', component: EndpointsComponent },
-  { path: 'evaluator', component: EvaluatorComponent },
-  { path: 'crudifier', component: CrudifierComponent },
-  { path: 'confirm-email', component: ConfirmEmailComponent },
-  { path: 'assumptions', component: DiagnosticsTestsComponent },
-  { path: 'change-password', component: ChangePasswordComponent },
-  {path: '**', redirectTo: ''}
+  {
+    path: 'ide',
+    component: IdeComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'log',
+    component: LogComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'auth',
+    component: AuthComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'tasks',
+    component: TasksComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'bazar',
+    component: BazarComponent,
+    canActivate: [AccessGuard]
+  },
+  
+  {
+    path: 'cache',
+    component: DiagnosticsCache,
+    canActivate: [AccessGuard]
+  },
+  
+  {
+    path: 'crypto',
+    component: CryptoComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'sockets',
+    component: SocketsComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'terminal',
+    component: TerminalComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'file-system',
+    component: FilesComponent,
+    canActivate: [AccessGuard]
+  },
+  
+  {
+    path: 'endpoints',
+    component: EndpointsComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'evaluator',
+    component: EvaluatorComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'crudifier',
+    component: CrudifierComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'assumptions',
+    component: DiagnosticsTestsComponent,
+    canActivate: [AccessGuard]
+  },
+  {
+    path: 'config',
+    component: ConfigComponent
+  },
+  {
+    path: 'about',
+    component: AboutComponent
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
+  },
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent
+  },
+  {
+    path: 'confirm-email',
+    component: ConfirmEmailComponent
+  },
+
+  {
+    path:
+      '**', redirectTo: ''
+  }
 ];
 
 /**

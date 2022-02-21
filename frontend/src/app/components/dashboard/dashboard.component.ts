@@ -6,6 +6,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../management/auth/services/auth.service';
 import { DashboardService } from './services/dashboard.service';
+import { ConfigService } from '../management/config/services/config.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 
 import { LogTypes, SystemReport, Timeshifts } from './models/dashboard.model';
 import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
@@ -66,6 +68,21 @@ export class DashboardComponent implements OnInit {
     maintainAspectRatio: false
   };
 
+  // dashboard charts
+  chartPreference: string[] = [];
+  // default is set for all charts to be displayed
+  chartsList: any = [];
+
+  /**
+   * for preparing chart data + name and description dynamically
+   */
+  chartData: any = [];
+  
+  /**
+   * to keep at least one chart not removable
+   */
+  notChangableChart: string;
+
   /**
    * 
    * @param authService defining the user's login status
@@ -75,11 +92,38 @@ export class DashboardComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private dashboardService: DashboardService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private configService: ConfigService,
+    private feedbackService: FeedbackService
   ) { }
 
   ngOnInit(): void {
-    this.getAuthenticationStatus();
+    // to check if user has access to the application or not
+    this.getAuthenticationStatus(); 
+  }
+
+  /**
+   * getting user's preferences for the displayed charts inside dashboard
+   * and storing them inside localstorage
+   */
+  getChartPreferences(){
+    if (localStorage.getItem('chartPreference')) {
+      this.chartPreference = JSON.parse(localStorage.getItem('chartPreference'));
+    } else {
+      this.chartsList.forEach((element, index) => {
+        this.chartPreference.push(element.value);
+        localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference))
+      });
+    }
+  }
+
+  /**
+   * set dashboard charts preferences and store in localStorage
+   * show success message, so the user understands what he's done!
+   */
+  setPreference(){
+    localStorage.setItem('chartPreference', JSON.stringify(this.chartPreference));
+    this.feedbackService.showInfo('Preferences updated successfuly.');
   }
 
   /**
@@ -87,12 +131,21 @@ export class DashboardComponent implements OnInit {
    * if user is logged in then retrieve the system's reports
    */
   private getAuthenticationStatus() {
+    let isConfigured: boolean;
     (async () => {
       while (!this.authService.authenticated)
         await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (this.authService.authenticated) {
+        /**
+         * if user is logged in, then check if db is configured
+         */
+        this.configService.configStatus.subscribe(status => {
+          isConfigured = status;
+        });
+      if (this.authService.authenticated && isConfigured) {
+        // if db is configured and also user is logged in, then call system report
         this.getSystemReport();
+        
       }
     })();
   }
@@ -100,16 +153,6 @@ export class DashboardComponent implements OnInit {
   /**
    * Retrieving the system's report
    */
-
-  /** TODO::::::: needs modification */
-  access_deniedLabel: string[] = [];
-  access_deniedData: string[] = [];
-
-  backend_endpoints_generatedLabel: string[] = [];
-  backend_endpoints_generatedData: string[] = [];
-
-  loginsLabel: string[] = [];
-  loginsData: string[] = [];
 
   private getSystemReport() {
     this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {
@@ -124,18 +167,23 @@ export class DashboardComponent implements OnInit {
        * preparing data with variable key
        */
       if (report["timeshifts"]) {
-        Object.keys(report['timeshifts']).forEach((item: any,index) => {
-          this.timeshiftChart.push(report['timeshifts'][item]);
+        Object.keys(report['timeshifts']).forEach((el: any) => {
+          // preparing chart list for setting user preferences
+          this.chartsList.push({name: report['timeshifts'][el].name, value: el, status: true});
+          this.chartPreference.forEach(item => {
+            if (item === el) {
+              this.chartData[item].push({when: report['timeshifts'][el].items.when, count: report['timeshifts'][el].items.count})
+            }
+          });
+          this.chartData[el] = { label: report['timeshifts'][el].items.map(x => {return moment(x.when).format("D. MMM")}), data: report['timeshifts'][el].items.map(x => {return x.count}), name: report['timeshifts'][el].name, description: report['timeshifts'][el].description};
+
+          // to prevent removing ALL charts, we keep the first index disabled... so it can't be removed
+          this.notChangableChart = this.chartsList[0].value;
         })
-        this.access_deniedLabel = report['timeshifts'].access_denied.items.map(x => {return moment(x.when).format("D. MMM")});
-        this.access_deniedData = report['timeshifts'].access_denied.items.map(x => {return x.count});
-
-        this.backend_endpoints_generatedLabel = report['timeshifts'].backend_endpoints_generated.items.map(x => {return moment(x.when).format("D. MMM")});
-        this.backend_endpoints_generatedData = report['timeshifts'].backend_endpoints_generated.items.map(x => {return x.count});
-
-        this.loginsLabel = report['timeshifts'].logins.items.map(x => {return moment(x.when).format("D. MMM")});
-        this.loginsData = report['timeshifts'].logins.items.map(x => {return x.count});
       }
+      // get the user's preferences for charts
+      this.getChartPreferences();
+      
     })
   }
 

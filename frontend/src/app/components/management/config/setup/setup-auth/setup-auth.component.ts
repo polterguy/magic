@@ -132,6 +132,8 @@ export class SetupAuthComponent implements OnInit {
         name: Messages.SETUP_STATE_CHANGED
       });
 
+      this.configService.changeStatus(true);
+
     }, (error: any) => this.feedbackService.showError(error));
   }
 

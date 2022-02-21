@@ -30,6 +30,8 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 })
 export class NavbarComponent implements OnInit {
 
+  public dbIsConfigured: boolean = undefined;
+
   public currentYear: number;
 
   /**
@@ -87,6 +89,13 @@ export class NavbarComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    // check the database configuration
+    // if database is not configured yet, then links are all disabled
+    this.configService.configStatus.subscribe(status => {
+      this.dbIsConfigured = status;
+    })
+    
     // Attempting to retrieve backend version.
     this.retrieveBackendVersion();
 

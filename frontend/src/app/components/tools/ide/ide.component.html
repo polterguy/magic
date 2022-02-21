@@ -318,7 +318,8 @@
                   </ngx-codemirror>
 
 
-
+                  <!-- temporary solution ::: TODO 
+                    ** better to write a function for each shortkey instead -->
                   <div class="d-none">
                     <button mat-button class="save-file-btn"
                       [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"

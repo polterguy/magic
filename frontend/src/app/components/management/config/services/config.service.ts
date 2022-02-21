@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
@@ -24,6 +24,12 @@ import { AuthenticateResponse } from '../../auth/models/authenticate-response.mo
   providedIn: 'root'
 })
 export class ConfigService {
+
+  /**
+   * to detect configuration status
+   */
+  private isConfigured = new BehaviorSubject<boolean>(undefined);
+  configStatus = this.isConfigured.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -145,5 +151,13 @@ export class ConfigService {
       encodeURIComponent(version_1) + 
       '&version_2=' +
       encodeURIComponent(version_2));
+  }
+
+  /**
+   * pass config status to all components and let them detect changes in config status if needed
+   * @param status boolean
+   */
+  public changeStatus(status: boolean){
+    this.isConfigured.next(status);
   }
 }

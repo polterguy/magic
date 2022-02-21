@@ -46,6 +46,9 @@ export class ConfigComponent implements OnInit {
       // Assigning returned value to status.
       this.status = res;
 
+      // assigning status of db configuration and passing to the components
+      this.configService.changeStatus(this.status.config_done);
+      
     }, (error: any) => {
       this.feedbackService.showError(error);
     });
