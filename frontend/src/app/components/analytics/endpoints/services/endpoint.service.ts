@@ -14,7 +14,6 @@ import { Message } from '../../../../models/message.model';
 import { Response } from '../../../../models/response.model';
 import { SocketUser } from '../models/socket-user.model';
 import { HttpService } from '../../../../services/http.service';
-import { FileService } from '../../../files/services/file.service';
 import { BackendService } from '../../../../services/backend.service';
 
 /**
