@@ -26,7 +26,6 @@ export class AccessGuard implements CanActivate {
         await new Promise(resolve => setTimeout(resolve, 100));
         this.configService.configStatus.subscribe(status => {
           this.hasAccess = status;
-          console.log(this.hasAccess)
           if (!this.hasAccess) { this.router.navigate(['config']) };
         });
 
