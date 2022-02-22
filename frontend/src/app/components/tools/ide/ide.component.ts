@@ -1051,12 +1051,6 @@ export class IdeComponent implements OnInit, OnDestroy {
     // Cloning options object.
     options[0] = this.clone(options[0]);
 
-    // Checking if file should be opened in read-only mode.
-    if (path.startsWith('/system/') || path.startsWith('/misc/')) {
-      options[0].options.readOnly = true;
-      options[0].options.theme = 'aista';
-    }
-
     // Turning on keyboard shortcuts.
     if (options[0].options.extraKeys) {
 

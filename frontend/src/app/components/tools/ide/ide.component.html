@@ -322,7 +322,7 @@
                     ** better to write a function for each shortkey instead -->
                   <div class="d-none">
                     <button mat-button class="save-file-btn"
-                      [disabled]="activeFileIsClean() || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      [disabled]="activeFileIsClean()"
                       matTooltip="Save file ALT+S" (click)="saveFile(file)">
                       Save
                     </button>
@@ -338,13 +338,13 @@
                     </button>
                   
                     <button mat-button
-                      [disabled]="!authService.access.files.rename || file.path.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      [disabled]="!authService.access.files.rename"
                       class="rename-file-btn" matTooltip="Rename file ALT+R" (click)="renameFile(file)">
                       Rename
                     </button>
                   
                     <button mat-button class="delete-file-btn"
-                      [disabled]="!authService.access.files.delete_file || file.folder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                      [disabled]="!authService.access.files.delete_file"
                       matTooltip="Delete file ALT+D" (click)="deleteFile(file)">
                       Delete
                     </button>
