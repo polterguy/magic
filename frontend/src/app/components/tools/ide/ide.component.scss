@@ -12,9 +12,14 @@ $max_height: calc(100vh - 130px);
 ::ng-deep .ide{
   .mat-drawer-inner-container{@include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),8px);}
   .mat-drawer-container,.mat-drawer{background-color: inherit!important;}
+  .mat-drawer{overflow: hidden;}
 }
 ::ng-deep .dark .ide{
-  .mat-drawer{background-color: $magic_dark_ng_theme!important;}
+  .mat-drawer,
+  .system-files-toggle{background-color: $magic_dark_ng_theme!important;}
+}
+::ng-deep .light .ide{
+  .system-files-toggle{background-color: $magic_default!important;}
 }
 .shortkey-btn{min-width: 94px;}
 
@@ -32,3 +37,4 @@ $max_height: calc(100vh - 130px);
   }
 }
 .mobile-close-drawer{position: absolute;left: 0;top: 0;z-index: 1;right: 10px;}
+.system-files-toggle{position: absolute;left: 0;bottom: 0;z-index: 1;right: 10px;}

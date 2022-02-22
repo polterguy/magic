@@ -14,7 +14,7 @@
                 </button>
               </div>
             </div>
-            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="pb-5">
         
               <mat-tree-node
                 *matTreeNodeDef="let file"
@@ -57,6 +57,12 @@
               </mat-tree-node>
         
             </mat-tree>
+
+            <!-- <div class="d-block w-100 mt-5"> -->
+              <div class="system-files-toggle pt-3">
+                <mat-slide-toggle [(ngModel)]="systemFiles" (change)="toggleSystemFiles()">System files</mat-slide-toggle>
+              </div>
+            <!-- </div> -->
           </mat-drawer>
         
           <div class="content-section d-flex flex-column w-100 h-100">

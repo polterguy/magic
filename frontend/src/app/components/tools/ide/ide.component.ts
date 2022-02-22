@@ -149,6 +149,14 @@ export class IdeComponent implements OnInit, OnDestroy {
   */
   public currentFolder = '/';
 
+
+  /**
+   * boolean:: system files sliding value
+   * if true, all files will be displayed
+   * defaut value is false
+   */
+  public systemFiles: boolean = false;
+
   /**
    * Creates an instance of your component.
    * 
@@ -1373,5 +1381,9 @@ export class IdeComponent implements OnInit, OnDestroy {
     } else {
       this.feedbackService.showInfo('Only .zip is acceptable');
     }
+  }
+
+  public toggleSystemFiles(){
+    console.log(this.systemFiles, 'toggling system files works!')
   }
 }
