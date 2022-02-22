@@ -141,19 +141,17 @@ export class DashboardComponent implements OnInit {
          */
         this.configService.configStatus.subscribe(status => {
           isConfigured = status;
+          if (this.authService.authenticated && isConfigured) {
+            // if db is configured and also user is logged in, then call system report
+            this.getSystemReport();
+          }
         });
-      if (this.authService.authenticated && isConfigured) {
-        // if db is configured and also user is logged in, then call system report
-        this.getSystemReport();
-        
-      }
     })();
   }
 
   /**
    * Retrieving the system's report
    */
-
   private getSystemReport() {
     this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {
       this.systemReport = report;
