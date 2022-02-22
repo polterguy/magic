@@ -40,17 +40,6 @@ export class ConfigComponent implements OnInit {
    */
   public ngOnInit() {
 
-    // Checking status of backend.
-    this.configService.status().subscribe((res: Status) => {
-
-      // Assigning returned value to status.
-      this.status = res;
-
-      // assigning status of db configuration and passing to the components
-      this.configService.changeStatus(this.status.config_done);
-      
-    }, (error: any) => {
-      this.feedbackService.showError(error);
-    });
+    this.status = this.configService.setupStatus;
   }
 }
