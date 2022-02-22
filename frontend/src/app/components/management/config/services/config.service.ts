@@ -29,6 +29,7 @@ export class ConfigService {
    * to detect configuration status
    */
   private isConfigured = new BehaviorSubject<boolean>(undefined);
+  private _currentStatus: Status= null;
   configStatus = this.isConfigured.asObservable();
 
   /**
@@ -49,7 +50,23 @@ export class ConfigService {
   public status() {
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<Status>('/magic/system/config/status');
+    return new Observable<Status>(observer => {
+      this.httpService.get<Status>('/magic/system/config/status').subscribe((res: Status) => {
+        this._currentStatus = res;
+        observer.next(res);
+        observer.complete();
+      }, (error: any) => {
+        observer.error(error);
+        observer.complete();
+      });
+    });
+  }
+
+  /**
+   * Current setup status of system
+   */
+  public get setupStatus() {
+    return this._currentStatus;
   }
 
   /**
