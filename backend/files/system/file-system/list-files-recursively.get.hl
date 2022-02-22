@@ -2,6 +2,7 @@
 // List all files in the specified [folder] argument.
 .arguments
    folder:string
+   sys:bool
 .description:List all files in the specified folder recursively matching the (optional) filter argument
 .type:internal
 
@@ -11,6 +12,7 @@ auth.ticket.verify:root
 // Listing all file in specified folder.
 io.file.list-recursively:x:@.arguments/*/folder
    display-hidden:bool:true
+   display-system:x:@.arguments/*/sys
 
 // Returning results of above invocation to caller.
 return-nodes:x:@io.file.list-recursively/*

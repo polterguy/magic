@@ -50,22 +50,6 @@ export class FileService {
   }
 
   /**
-   * Returns a list of all files existing within the specified folder recursively.
-   * 
-   * @param folder Folder from where to retrieve list of files from
-   */
-   public listFilesRecursively(folder: string) {
-
-    // Dynamically building our query.
-    let query = '?folder=' + encodeURIComponent(folder);
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<string[]>(
-      '/magic/system/file-system/list-files-recursively' +
-      query);
-  }
-
-  /**
    * Returns a list of all folders existing within the specified folder.
    * 
    * @param folder Folder from where to retrieve list of folders from
@@ -82,13 +66,30 @@ export class FileService {
    * Returns a list of all folders existing within the specified folder recursively.
    * 
    * @param folder Folder from where to retrieve list of folders from
+   * @param sysFiles If true will return system files
    */
-   public listFoldersRecursively(folder: string) {
+   public listFoldersRecursively(folder: string, sysFiles: boolean) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<string[]>(
       '/magic/system/file-system/list-folders-recursively?folder=' +
-      encodeURIComponent(folder));
+      encodeURIComponent(folder) +
+      '&sys=' + sysFiles);
+  }
+
+  /**
+   * Returns a list of all files existing within the specified folder recursively.
+   * 
+   * @param folder Folder from where to retrieve list of files from
+   * @param sysFiles If true will return system files
+   */
+   public listFilesRecursively(folder: string, sysFiles: boolean) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<string[]>(
+      '/magic/system/file-system/list-files-recursively?folder=' +
+      encodeURIComponent(folder) +
+      '&sys=' + sysFiles);
   }
 
   /**
