@@ -3,6 +3,9 @@
 }
 .max-h-500{min-height: 500px;}
 
-.min-h-400{min-height: 400px;}
+.min-h-300{min-height: 300px;}
 
-.min-w-30{min-width: 30%;}
+.min-w-30{
+    min-width: 30%;
+    @media(max-width: 576px){width: 100%;}
+}

@@ -4,12 +4,12 @@
             <!-- title and preferences -->
             <div class="row pt-1">
                 <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="d-sm-flex justify-content-between align-items-center w-100">
                         <div>
                             <mat-card-title class="mt-0 mb-1">Dashboard</mat-card-title>
                             <mat-card-subtitle class="mb-0">Choose what to be displayed on your dashboard</mat-card-subtitle>
                         </div>
-                        <mat-form-field appearance="outline" class="inline-input min-w-30">
+                        <mat-form-field appearance="outline" class="inline-input min-w-30 mt-sm-0 mt-3">
                             <mat-label>Reports</mat-label>
                             <mat-select [(ngModel)]="chartPreference" (ngModelChange)="setPreference()" multiple>
                               <mat-option *ngFor="let item of chartsList;let i = index" [(value)]="item.value" [disabled]="item.value===notChangableChart">{{item.name}}</mat-option>
@@ -20,7 +20,7 @@
             </div>
             <!-- general system info -->
             <div class="row my-3">
-                <div class="col-md-3 col-sm-6 col-12 pr-sm-2">
+                <div class="col-md-3 col-sm-6 col-12 pr-sm-2 mb-md-0 mb-3">
                     <mat-card>
                         <mat-card-content>
                             <p class="my-0">Default database</p>
@@ -28,7 +28,7 @@
                         </mat-card-content>
                     </mat-card>
                 </div>
-                <div class="col-md-3 col-sm-6 col-12 px-md-2 pl-sm-2">
+                <div class="col-md-3 col-sm-6 col-12 px-md-2 pl-sm-2 mb-md-0 mb-3">
                     <mat-card>
                         <mat-card-content>
                             <p class="my-0">System's version</p>
@@ -36,7 +36,7 @@
                         </mat-card-content>
                     </mat-card>
                 </div>
-                <div class="col-md-3 col-sm-6 col-12 px-md-2 pr-sm-2">
+                <div class="col-md-3 col-sm-6 col-12 px-md-2 pr-sm-2 mb-sm-0 mb-3">
                     <mat-card>
                         <mat-card-content>
                             <p class="my-0">No. of endpoints</p>
@@ -56,7 +56,7 @@
             <!-- first chart (not removable) && the rest of system info -->
             <div class="row">
                 <div class="col-xl-8 col-md-7 col-12 pr-md-2 d-flex flex-column">
-                    <div class="w-100 h-100 d-flex flex-column"
+                    <div class="w-100 h-100 flex-column d-{{chartItem.key === notChangableChart ? 'flex' : 'none'}}"
                     *ngFor="let chartItem of chartData | keyvalue; let index = index; let last = last; let even = even">
                         <ng-container *ngIf="chartItem.key === notChangableChart">
                             <div class="d-flex justify-content-between w-100">
@@ -71,7 +71,7 @@
                                 </div>
                             </div>
                             <mat-card class="h-100">
-                                <mat-card-content class="min-h-400">
+                                <mat-card-content class="min-h-300 h-100">
                                     <canvas baseChart
                                     [data]="chartItem.value?.data" 
                                     [labels]="chartItem.value?.label"
@@ -122,8 +122,9 @@
                     </div>
                 </div>
             </div>
+            <!-- the rest of the charts -->
             <div class="row no-gutters">
-                <div class="d-{{chartPreference.includes(chartItem.key) && chartItem.key !== notChangableChart ? 'flex' : 'none'}} flex-column col-md-{{((chartPreference.length - 1) !== 1 && !last) || (chartPreference.length - 1) / 2 === 1 ? '6' : '12'}} col-12 px-2 mt-3"
+                <div class="d-{{chartPreference.includes(chartItem.key) && chartItem.key !== notChangableChart ? 'flex' : 'none'}} flex-column col-md-{{((chartPreference.length - 1) !== 1 && !last) || (chartPreference.length - 1) / 2 === 1 ? '6' : '12'}} col-12 px-md-2 mt-3"
                 *ngFor="let chartItem of chartData | keyvalue; let index = index; let last = last; let even = even">
                     <ng-container *ngIf="chartPreference.includes(chartItem.key) && chartItem.key !== notChangableChart">
                         <div class="d-flex justify-content-between w-100">
@@ -138,7 +139,7 @@
                             </div>
                         </div>
                         <mat-card class="h-100">
-                            <mat-card-content class="min-h-400">
+                            <mat-card-content class="min-h-300">
                                 <canvas baseChart
                                 [data]="chartItem.value?.data" 
                                 [labels]="chartItem.value?.label"
