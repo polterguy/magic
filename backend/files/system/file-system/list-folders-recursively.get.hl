@@ -2,6 +2,7 @@
 // List all folders in the specified [folder] argument recursively.
 .arguments
    folder:string
+   sys:bool
 .description:List all folders in the specified folder
 .type:internal
 
@@ -11,6 +12,7 @@ auth.ticket.verify:root
 // Listing all folders in specified folder.
 io.folder.list-recursively:x:@.arguments/*/folder
    display-hidden:bool:true
+   display-system:x:@.arguments/*/sys
 
 // Returning results of above invocation to caller.
 return-nodes:x:@io.folder.list-recursively/*

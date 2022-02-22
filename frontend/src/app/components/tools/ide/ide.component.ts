@@ -303,13 +303,14 @@ export class IdeComponent implements OnInit, OnDestroy {
     };
 
     // Retrieving files from backend.
-    this.fileService.listFoldersRecursively(folder).subscribe((folders: string[]) => {
+    const sysFiles = this.systemFiles;
+    this.fileService.listFoldersRecursively(folder, sysFiles).subscribe((folders: string[]) => {
 
       // Adding folder to root graph object.
       functor(folders || [], true);
 
       // Retrieving all files from backend.
-      this.fileService.listFilesRecursively(folder).subscribe((files: string[]) => {
+      this.fileService.listFilesRecursively(folder, sysFiles).subscribe((files: string[]) => {
 
         // Adding files to root graph object.
         functor(files || [], false);
@@ -1384,6 +1385,6 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   public toggleSystemFiles(){
-    console.log(this.systemFiles, 'toggling system files works!')
+    this.updateFolder('/');
   }
 }
