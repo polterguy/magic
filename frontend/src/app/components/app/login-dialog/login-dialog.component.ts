@@ -209,35 +209,16 @@ export class LoginDialogComponent implements OnInit {
       this.autoLogin === false || this.advanced ? this.loginForm.value.password : null,
       this.savePassword).subscribe(() => {
 
-        /*
-         * Success!
-         * Checking if user is root, and system has not been setup quite yet,
-         * and if so, we redirect user to config component.
-         */
-        if (this.authService.roles().indexOf('root') !== -1 && this.router.url !== '/config') {
-
-          // Checking status to see if we've setup system.
-          this.configService.status().subscribe((status: Status) => {
-
-            // Checking status of setup process.
-            if (!status.magic_crudified || !status.server_keypair || !status.config_done) {
-
-              // There are still configuration steps left.
-              this.router.navigate(['/config']);
-            }
-
-          }, (error: any) => {
-
-            // Oops ...
-            this.feedbackService.showError(error);
-          });
-        }
-
         // Publishing user logged in message, and closing dialog.
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_IN,
         });
         this.dialogRef.close();
+        if (this.configService.setupStatus?.config_done === false ||
+          this.configService.setupStatus?.magic_crudified === false ||
+          this.configService.setupStatus?.server_keypair === false) {
+          this.router.navigate(['/config']);
+        }
 
       }, (error: any) => {
 
