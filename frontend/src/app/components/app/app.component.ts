@@ -116,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
         /**
          * if the user IS authenticated
          * ** then check if db configuration is defined or not
-         * *** if is not defined then get the status and passto other components
+         * *** if is not defined then get the status and pass to other components
          */
       if (this.authService.authenticated) {
         let definedStatus: boolean;
@@ -124,7 +124,12 @@ export class AppComponent implements OnInit, OnDestroy {
         if (definedStatus === undefined) {
 
           this.configService.status().subscribe(config => {
-            this.configService.changeStatus(config.config_done);
+            this.configService.changeStatus(config.config_done && config.magic_crudified && config.server_keypair);
+
+            // If there are remaining setup steps we redirect to config component.
+            if (!config.config_done || !config.magic_crudified || !config.server_keypair) {
+              this.router.navigate(['/config']);
+            }
           });
         }
       }
