@@ -31,24 +31,24 @@
                 <div class="col-md-3 col-sm-6 col-12 px-md-2 pl-sm-2 mb-md-0 mb-3">
                     <mat-card>
                         <mat-card-content>
-                            <p class="my-0">System's version</p>
-                            <h3 class="my-0 text-accent">{{systemReportDisplayable?.version}}</h3>
+                            <p class="my-0">Log items</p>
+                            <h3 class="my-0 text-accent">{{systemReportDisplayable?.log_items}}</h3>
                         </mat-card-content>
                     </mat-card>
                 </div>
                 <div class="col-md-3 col-sm-6 col-12 px-md-2 pr-sm-2 mb-sm-0 mb-3">
                     <mat-card>
                         <mat-card-content>
-                            <p class="my-0">No. of endpoints</p>
-                            <h3 class="my-0 text-accent">{{systemReportDisplayable?.endpoints}}</h3>
+                            <p class="my-0">Cache items</p>
+                            <h3 class="my-0 text-accent">{{systemReportDisplayable?.cache_items}}</h3>
                         </mat-card-content>
                     </mat-card>
                 </div>
                 <div class="col-md-3 col-sm-6 col-12 pl-sm-2">
                     <mat-card>
                         <mat-card-content>
-                            <p class="my-0">Cache items</p>
-                            <h3 class="my-0 text-accent">{{systemReportDisplayable?.cache_items}}</h3>
+                            <p class="my-0">Version</p>
+                            <h3 class="my-0 text-accent">{{systemReportDisplayable?.version}}</h3>
                         </mat-card-content>
                     </mat-card>
                 </div>
@@ -90,6 +90,14 @@
                         <div class="col-12 my-2">
                             <mat-card class="h-100 d-flex flex-column justify-content-center">
                                 <mat-card-content>
+                                    <p class="my-0">Slots</p>
+                                    <h3 class="my-0 text-accent">{{systemReportDisplayable?.slots}}</h3>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                        <div class="col-12 my-2">
+                            <mat-card class="h-100 d-flex flex-column justify-content-center">
+                                <mat-card-content>
                                     <p class="my-0">Dynamic slots</p>
                                     <h3 class="my-0 text-accent">{{systemReportDisplayable?.dynamic_slots}}</h3>
                                 </mat-card-content>
@@ -98,24 +106,16 @@
                         <div class="col-12 my-2">
                             <mat-card class="h-100 d-flex flex-column justify-content-center">
                                 <mat-card-content>
-                                    <p class="my-0">Log items</p>
-                                    <h3 class="my-0 text-accent">{{systemReportDisplayable?.log_items}}</h3>
-                                </mat-card-content>
-                            </mat-card>
-                        </div>
-                        <div class="col-12 my-2">
-                            <mat-card class="h-100 d-flex flex-column justify-content-center">
-                                <mat-card-content>
-                                    <p class="my-0">Persisted tasks</p>
-                                    <h3 class="my-0 text-accent">{{systemReportDisplayable?.persisted_tasks}}</h3>
+                                    <p class="my-0">No. of endpoints</p>
+                                    <h3 class="my-0 text-accent">{{systemReportDisplayable?.endpoints}}</h3>
                                 </mat-card-content>
                             </mat-card>
                         </div>
                         <div class="col-12 mt-2">
                             <mat-card class="h-100 d-flex flex-column justify-content-center">
                                 <mat-card-content>
-                                    <p class="my-0">Slots</p>
-                                    <h3 class="my-0 text-accent">{{systemReportDisplayable?.slots}}</h3>
+                                    <p class="my-0">Persisted tasks</p>
+                                    <h3 class="my-0 text-accent">{{systemReportDisplayable?.persisted_tasks}}</h3>
                                 </mat-card-content>
                             </mat-card>
                         </div>
