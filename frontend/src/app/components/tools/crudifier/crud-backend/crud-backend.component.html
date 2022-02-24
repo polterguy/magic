@@ -126,6 +126,7 @@
             <mat-menu #actionMenu="matMenu">
               <button
                 [disabled]="!authService.access.config.delete_cache_item"
+                (click)="refresh()"
                 mat-menu-item>
                 Empty server cache
               </button>
@@ -133,6 +134,7 @@
             
               <button
                 [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
+                (click)="setDefaults()"
                 mat-menu-item>
                 Set default values
               </button>
@@ -141,6 +143,7 @@
               <button
                 [disabled]="!database || (database && database.name === 'magic' || (database.tables || []).length === 0)"
                 color="primary"
+                (click)="crudifyAll()"
                 mat-menu-item>
                 Crudify all tables
               </button>
