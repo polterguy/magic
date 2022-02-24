@@ -74,12 +74,16 @@
             <mat-select
               [(ngModel)]="table"
               (selectionChange)="tableChanged()">
+              <mat-select-trigger
+                [class.warning]="table ? hasWarnings(table) : false">
+                {{table?.name}}
+              </mat-select-trigger>
               <mat-option
                 *ngFor="let idx of database.tables"
                 [matTooltip]="hasWarnings(idx) ? 'Table has warnings, please inspect it carefully' : ''"
                 [value]="idx">
                 <div class="d-flex align-items-center justify-content-between w-100" 
-                [class.warning]="hasWarnings(idx)">
+                  [class.warning]="hasWarnings(idx)">
                   {{idx.name}}
                   <div *ngIf="hasWarnings(idx)" class="sm-icons">
                     <mat-icon fontSet="material-icons-outlined" class="m-0 text-muted warning">report_problem</mat-icon>
