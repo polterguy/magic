@@ -7,6 +7,7 @@ services:
 
   db:
     image: mysql
+    container_name: magic_mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ThisIsNotAGoodPassword
@@ -15,6 +16,7 @@ services:
 
   backend:
     image: servergardens/magic-backend:latest
+    container_name: magic_backend
     depends_on:
       - db
     restart: always
@@ -27,6 +29,7 @@ services:
 
   frontend:
     image: servergardens/magic-frontend:latest
+    container_name: magic_frontend
     depends_on:
       - backend
     restart: always
