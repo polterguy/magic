@@ -10,8 +10,8 @@
         name="name"
         [disabled]="data"
         autocomplete="off"
-        pattern="^[A-Za-z0-9_.-]+$">
-      <mat-hint *ngIf="!argumentValid() && name !== ''" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
+        pattern="/^[_a-z][a-z0-9_.-]*$/">
+      <mat-hint *ngIf="!argumentValid() && name !== ''" class="warning">Name is required and cannot contain blank space, uppercase or special characters.</mat-hint>
     </mat-form-field>
   </div>
 

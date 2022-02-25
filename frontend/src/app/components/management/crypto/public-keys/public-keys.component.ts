@@ -335,7 +335,7 @@ export class PublicKeysComponent implements OnInit, OnDestroy {
 
     // Showing modal dialog.
     const dialogRef = this.dialog.open(ImportPublicKeyDialogComponent, {
-      width: '50%',
+      width: '500px',
     });
 
     // Subscribing to closed event to provide user with some feedback, if a key is imported.

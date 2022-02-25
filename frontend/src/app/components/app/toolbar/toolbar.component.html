@@ -1,6 +1,6 @@
-<mat-toolbar class="d-flex align-items-center justify-content-between">
+<mat-toolbar class="d-flex align-items-center justify-content-between pl-1">
   <div class="d-flex align-items-center">
-    <button mat-button class="p-0" aria-label="Open menu icon" (click)="toggleNavbar()">
+    <button mat-button class="pl-0 pr-1 py-0" aria-label="Open menu icon" (click)="toggleNavbar()">
       <mat-icon>menu</mat-icon>
       Aista Magic Cloud
     </button>
@@ -9,48 +9,3 @@
   <div class="p-1"></div>
   <p class="mat-caption my-0">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</p>
 </mat-toolbar>
-
-<!-- <mat-toolbar [class]="sideNavStatus ? 'sidebar-open' : 'sidebar-closed'">
-  <div class="d-flex justify-content-between w-100">
-    <button
-      mat-icon-button
-      (click)="toggleNavbar()">
-      <mat-icon>menu{{sideNavStatus ? '_open' : ''}}</mat-icon>
-    </button>
-
-    <div class="d-flex align-items-center">
-      <span [class]="backendService.secure ? 'user' : 'user warning'" *ngIf="!sideNavStatus">
-        {{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}
-      </span>
-
-      <button mat-icon-button aria-label="Switch theme" 
-      *ngIf="theme && !sideNavStatus"
-      class="switch-theme {{theme}}" [color]="theme === 'dark' ? 'accent' : ''"
-      [matTooltip]="'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'"
-      [matTooltipPosition]="sideNavStatus ? 'below' : 'after'"
-      (click)="themeChanged(theme === 'light' ? 'dark' : 'light')">
-        <span class="light-icon">
-          <mat-icon>light_mode</mat-icon>
-        </span>
-        <span class="dark-icon">
-          <mat-icon>brightness_4</mat-icon>
-        </span>
-      </button>
-    
-      <button
-        mat-icon-button
-        matTooltip="Help"
-        class="d-sm-inline d-none"
-        (click)="help()">
-        <mat-icon>contact_support</mat-icon>
-      </button>
-      
-      <button
-        mat-icon-button
-        [matTooltip]="authService.authenticated ? 'Logout' : 'Login'"
-        (click)="authService.authenticated ? logout() : login()">
-        <mat-icon>{{authService.authenticated ? 'lock' : 'lock_open'}}</mat-icon>
-      </button>
-    </div>
-  </div>
-</mat-toolbar> -->

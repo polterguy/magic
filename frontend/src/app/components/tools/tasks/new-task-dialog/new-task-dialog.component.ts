@@ -62,6 +62,6 @@ export class NewTaskDialogComponent {
    * Returns true if argument name is valid.
    */
    public argumentValid() {
-    return /^[A-Za-z0-9_.-]+$/i.test(this.name);
+    return /^[_a-z][a-z0-9_.-]*$/.test(this.name);
   }
 }

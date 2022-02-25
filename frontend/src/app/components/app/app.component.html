@@ -24,13 +24,6 @@
       <ng-container *ngIf="!notSmallScreen">
         <app-toolbar></app-toolbar>
       </ng-container>
-      <!-- <div class="toggle-btn" *ngIf="!notSmallScreen">
-        <button
-          mat-flat-button
-          (click)="toggleNavbar()">
-          <mat-icon>menu</mat-icon>
-        </button>
-      </div> -->
 
       <div class="container-fluid h-100">
         <router-outlet *ngIf="authService.has_endpoints"></router-outlet>

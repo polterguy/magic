@@ -13,6 +13,7 @@
         autocomplete="off"
         [(ngModel)]="date"
         name="date"
+        [min]="currentDate"
         (click)="picker.open()">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
