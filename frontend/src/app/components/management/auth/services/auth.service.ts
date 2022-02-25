@@ -219,11 +219,17 @@ export class AuthService {
 
           // Persisting backend data.
           this.backendService.current = {
-            url: this.backendService.current.url,
+            url: this.backendService.current.url.replace(/\s/g, '').replace(/(\/)+$/,''),
             username,
             password: storePassword ? password : null,
             token: auth.ticket,
           };
+
+          // In case backend URL changed, we need to retrieve endpoints again.
+          this.getEndpoints().subscribe((endpoints: Endpoint[]) => {
+
+            // Assigning endpoints.
+            this._endpoints = endpoints || [];
 
           // Creating access right object.
           this.createAccessRights();
@@ -234,7 +240,10 @@ export class AuthService {
           // Invoking next link in chain of observables.
           observer.next(auth);
           observer.complete();
-
+        }, (error: any) => {
+          observer.error(error);
+          observer.complete();
+        });
       }, (error: any) => {
         observer.error(error);
         observer.complete();

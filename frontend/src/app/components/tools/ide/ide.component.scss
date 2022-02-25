@@ -19,6 +19,7 @@ $max_height: calc(100vh - 130px);
   .system-files-toggle{background-color: $magic_dark_ng_theme!important;}
 }
 ::ng-deep .light .ide{
+  .mat-drawer,
   .system-files-toggle{background-color: $magic_default!important;}
 }
 .shortkey-btn{min-width: 94px;}

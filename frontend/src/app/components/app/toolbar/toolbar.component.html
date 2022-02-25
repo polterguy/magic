@@ -2,8 +2,9 @@
   <div class="d-flex align-items-center">
     <button mat-button class="p-0" aria-label="Open menu icon" (click)="toggleNavbar()">
       <mat-icon>menu</mat-icon>
+      Aista Magic Cloud
     </button>
-    <p class="mat-caption my-0">Aista Magic Cloud</p>
+    <!-- <p class="mat-caption my-0">Aista Magic Cloud</p> -->
   </div>
   <div class="p-1"></div>
   <p class="mat-caption my-0">{{getUserStatus() + ( authService.authenticated ? ' [' + getUserRoles() + ']' : '')}}</p>
