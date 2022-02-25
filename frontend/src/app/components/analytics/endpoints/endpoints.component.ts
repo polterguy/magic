@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { FormControl } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
@@ -30,6 +30,23 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ]
 })
 export class EndpointsComponent implements OnInit {
+
+  /**
+   * To get the width of the screen 
+   * getScreenWidth {number} :: define how the sidenav and the content should behave based on the screen size
+   * smallScreenSize {number} :: to set a fixed size as an agreement
+   * notSmallScreen {boolean} :: to check whether the screen width is small or large
+   */
+   public getScreenWidth: number;
+   public smallScreenSize: number = 768;
+   public notSmallScreen: boolean = undefined;
+ 
+   @HostListener('window:resize', ['$event'])
+   onWindowResize() {
+     this.getScreenWidth = window.innerWidth;
+     this.notSmallScreen = (this.getScreenWidth > this.smallScreenSize || this.getScreenWidth === this.smallScreenSize) ? true : false;
+   }
+ 
 
   public expandedElement;
 
@@ -73,6 +90,9 @@ export class EndpointsComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
+
+    // Retrieving screen size to show/hide auth column
+    this.onWindowResize();
 
     // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');

@@ -214,12 +214,17 @@ export class LoginDialogComponent implements OnInit {
           name: Messages.USER_LOGGED_IN,
         });
         this.dialogRef.close();
+        // if server is not configured yet, redirect to config page after a successful login
         if (this.configService.setupStatus?.config_done === false ||
           this.configService.setupStatus?.magic_crudified === false ||
           this.configService.setupStatus?.server_keypair === false) {
           this.router.navigate(['/config']);
         }
-
+        // if successful login while user is in register page, redirect to dashboard
+        // ** this page disappears after login
+        if (window.location.pathname === '/register'){
+          this.router.navigate(['/']);
+        }
       }, (error: any) => {
 
         // Oops, something went wrong.

@@ -72,8 +72,11 @@ table.mat-table{
         }
         td {
             border-bottom-width: 0;
-            .text-truncate{
+            .text-truncate:not(.large-col){
               max-width: calc(100vw / 3.5);
+            }
+            .text-truncate.large-col{
+              max-width: 70vw;
             }
         }
     }

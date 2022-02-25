@@ -23,6 +23,12 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 export class ScheduleTaskDialogComponent {
 
   /**
+   * current date
+   * to be used for specifying minimum starting date
+   */
+  public currentDate: Date = null;
+
+  /**
    * Date user selects, if he selects an explicit due date.
    */
   public date: Date = null;
@@ -48,7 +54,9 @@ export class ScheduleTaskDialogComponent {
     private dialogRef: MatDialogRef<ScheduleTaskDialogComponent>,
     private feedbackService: FeedbackService,
     private taskService: TaskService,
-    @Inject(MAT_DIALOG_DATA) public data: Task) { }
+    @Inject(MAT_DIALOG_DATA) public data: Task) { 
+      this.currentDate = new Date();
+    }
 
   /**
    * Invoked when user clicks the create button to create a new role.

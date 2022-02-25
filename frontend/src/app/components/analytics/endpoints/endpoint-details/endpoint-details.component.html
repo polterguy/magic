@@ -7,7 +7,7 @@
   <mat-list-item role="listitem" class="flex-list">
     <div class="d-flex w-100">
       <span class="list-label">Relative URL</span>
-      <span>{{endpoint.path}}</span>
+      <span class="word-break">{{endpoint.path}}</span>
     </div>
 
     <button
@@ -43,7 +43,7 @@
   </mat-list-item>
   <mat-list-item role="listitem" *ngIf="url">
     <span class="list-label">Invocation URL</span>
-    <span>{{url}}</span>
+    <span class="word-break">{{url}}</span>
   </mat-list-item>
 </mat-list>
 <!-- assumptions -->

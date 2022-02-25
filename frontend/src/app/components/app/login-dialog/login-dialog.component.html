@@ -12,12 +12,13 @@
     <mat-form-field class="fill-width" appearance="outline">
 
       <mat-label class="dark">Backend</mat-label>
-      <input type="text"
+      <input
         matInput
         [formControl]="backends"
         (change)="backendValueChanged()"
         [matAutocomplete]="auto"
-        type="url">
+        type="url"
+        placeholder="http://">
       <mat-autocomplete
         #auto="matAutocomplete"
         (optionSelected)="backendSelected()">
@@ -27,7 +28,7 @@
           {{el}}
         </mat-option>
       </mat-autocomplete>
-
+      <mat-hint>e.g. https://api-yourdomain.com</mat-hint>
     </mat-form-field>
 
     <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">

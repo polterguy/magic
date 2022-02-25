@@ -237,17 +237,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sidenavOpened = false;
   }
 
-  /**
-   * Toggles the navbar.
-   */
-  public toggleNavbar() {
-
-    // Publishing message to inform other components that navbar was toggled.
-    this.messageService.sendMessage({
-      name: Messages.TOGGLE_NAVBAR
-    });
-  }
-
   /*
    * Private helper methods.
    */
