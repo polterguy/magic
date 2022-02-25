@@ -23,7 +23,10 @@
                 <div class="col-md-3 col-sm-6 col-12 pr-sm-2 mb-md-0 mb-3">
                     <mat-card>
                         <mat-card-content>
-                            <p class="my-0">Default database</p>
+                            <p class="my-0">
+                                <span class="d-lg-block d-md-none d-block">Default database</span>
+                                <span class="d-lg-none d-md-block d-none">Database</span>
+                            </p>
                             <h3 class="my-0 text-accent">{{systemReportDisplayable?.default_db}}</h3>
                         </mat-card-content>
                     </mat-card>
@@ -84,7 +87,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div class="col-xl-4 col-md-5 col-12 pl-md-2 d-flex flex-column">
+                <div class="col-xl-4 col-md-5 col-12 pl-md-2 mt-md-0 mt-3 d-flex flex-column">
                     <h3 class="mat-headline mb-1">System details</h3>
                     <div class="row h-100 align-content-stretch">
                         <div class="col-12 my-2">

@@ -16,7 +16,8 @@
         matInput
         [formControl]="backends"
         (change)="backendValueChanged()"
-        [matAutocomplete]="auto">
+        [matAutocomplete]="auto"
+        type="url">
       <mat-autocomplete
         #auto="matAutocomplete"
         (optionSelected)="backendSelected()">
