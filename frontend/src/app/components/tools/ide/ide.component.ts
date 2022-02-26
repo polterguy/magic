@@ -712,7 +712,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.dataBindTree();
 
           // Closing file.
-          this.closeFile(this.openFiles.filter(x => x.path === file.path)[0], true);
+          this.closeFile(true);
         }
 
         // Providing feedback to user.
@@ -728,7 +728,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * @param file File to close
    * @param force If true user will not be warned about unsaved changes
    */
-  public closeFile(file: FileNode, noDirtyWarnings: boolean = false) {
+  public closeFile(noDirtyWarnings: boolean = false) {
 
     // Checking if content is dirty.
     const shouldWarn = () => {
@@ -742,7 +742,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     if (!shouldWarn()) {
 
       // File has not been edited and we can close editor immediately.
-      this.closeFileImpl(file);
+      this.closeFileImpl();
 
     } else {
 
@@ -750,7 +750,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
 
         // User confirmed he wants to close file, even though the editor is dirty (has changes).
-        this.closeFileImpl(file);
+        this.closeFileImpl();
       });
     }
   }
@@ -1167,7 +1167,8 @@ export class IdeComponent implements OnInit, OnDestroy {
   /*
    * Actual method responsible for closing file.
    */
-  private closeFileImpl(file: FileNode) {
+  private closeFileImpl() {
+    const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     this.cdRef.markForCheck();
     // Removing file from edited files.
     let idx: number;
