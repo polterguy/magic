@@ -324,43 +324,6 @@
                     [(ngModel)]="file.content"
                     [options]="file.options">
                   </ngx-codemirror>
-
-
-                  <!-- temporary solution ::: TODO 
-                    ** better to write a function for each shortkey instead -->
-                  <div class="d-none">
-                    <button mat-button class="save-file-btn"
-                      [disabled]="activeFileIsClean()"
-                      matTooltip="Save file ALT+S" (click)="saveFile(file)">
-                      Save
-                    </button>
-                  
-                    <button [disabled]="!file.path.endsWith('.hl')"
-                      [matTooltip]="getEndpoint(file) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
-                      mat-button (click)="executeFile(file)">
-                      {{getEndpoint(file) === null ? 'Execute' : 'Invoke ...'}}
-                    </button>
-                  
-                    <button [disabled]="!file.path.endsWith('.md')" matTooltip="Preview file" mat-button (click)="previewFile(file)">
-                      Preview
-                    </button>
-                  
-                    <button mat-button
-                      [disabled]="!authService.access.files.rename"
-                      class="rename-file-btn" matTooltip="Rename file ALT+R" (click)="renameFile(file)">
-                      Rename
-                    </button>
-                  
-                    <button mat-button class="delete-file-btn"
-                      [disabled]="!authService.access.files.delete_file"
-                      matTooltip="Delete file ALT+D" (click)="deleteFile(file)">
-                      Delete
-                    </button>
-                  
-                    <button mat-button class="close-file-btn" matTooltip="Close file ALT+C" (click)="closeFile()">
-                      Close
-                    </button>
-                  </div>
                 </div>
               </div>
           </div>

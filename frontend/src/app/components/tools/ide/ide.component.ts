@@ -1081,10 +1081,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Retrieving active CodeMirror editor to check if its document is dirty or not.
         var activeWrapper = document.querySelector('.active-codemirror-editor');
         if (activeWrapper) {
-          var btn = (<any>activeWrapper.querySelector('.save-file-btn'));
-          if (btn) {
-            btn.click();
-          }
+          this.saveFile(this.currentFileData);
         }
       };
 
@@ -1094,10 +1091,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Retrieving active CodeMirror editor to check if its document is dirty or not.
         var activeWrapper = document.querySelector('.active-codemirror-editor');
         if (activeWrapper) {
-          var btn = (<any>activeWrapper.querySelector('.delete-file-btn'));
-          if (btn) {
-            btn.click();
-          }
+          this.deleteFile(this.currentFileData);
         }
       };
 
@@ -1107,10 +1101,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Retrieving active CodeMirror editor to check if its document is dirty or not.
         var activeWrapper = document.querySelector('.active-codemirror-editor');
         if (activeWrapper) {
-          var btn = (<any>activeWrapper.querySelector('.close-file-btn'));
-          if (btn) {
-            btn.click();
-          }
+          this.closeFile(this.currentFileData)
         }
       };
 
@@ -1120,10 +1111,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Retrieving active CodeMirror editor to check if its document is dirty or not.
         var activeWrapper = document.querySelector('.active-codemirror-editor');
         if (activeWrapper) {
-          var btn = (<any>activeWrapper.querySelector('.rename-file-btn'));
-          if (btn) {
-            btn.click();
-          }
+          this.renameFile(this.currentFileData);
         }
       };
 
