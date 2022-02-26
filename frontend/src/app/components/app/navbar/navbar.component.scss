@@ -296,3 +296,6 @@ colour setting -- text & background
     }
   }
 }
+::ng-deep .mat-sidenav.full-width-sidebar {
+  transition: none;
+}
