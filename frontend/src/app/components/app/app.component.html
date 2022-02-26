@@ -14,7 +14,7 @@
       [class.small-width-sidebar]="notSmallScreen && !sidenavOpened"
       *ngIf="sidenavOpened !== undefined"
       id="sidebar-main">
-      <app-navbar [sideNavStatus]="sidenavOpened" [notSmallScreen]="notSmallScreen"></app-navbar>
+      <app-navbar [sideNavStatus]="sidenavOpened || !notSmallScreen" [notSmallScreen]="notSmallScreen"></app-navbar>
     </mat-sidenav>
 
     <mat-sidenav-content
