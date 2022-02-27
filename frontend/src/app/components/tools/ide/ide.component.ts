@@ -201,7 +201,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       if (msg.name === 'magic.folders.update') {
 
         // Some other component informed us that we need to update our folders.
-        this.updateFolder(msg.content);
+        this.updateFileObject(msg.content);
 
         /*
          * If folder that was updated was a folder that could in theory contain endpoints,
@@ -222,7 +222,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       } else if (msg.name === 'magic.crudifier.frontend-generated-locally') {
 
         // Some other component informed us that we need to update our folders.
-        this.updateFolder('/etc/');
+        this.updateFileObject('/etc/');
 
         // Closing dialog if it is open.
         if (this.generateCrudDialog) {
@@ -451,6 +451,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
           // Making sure file becomes active.
           this.activeFile = path;
+          this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
 
           // Making sure we sort nodes at level before we databind tree control again.
           sorter();
@@ -459,7 +460,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.dataBindTree();
 
           // Marking document as clean.
-          this.saveFile(fileNode);
+          this.saveActiveFile();
 
           // Making sure we re-check component for changes to avoid CDR errors.
           this.cdRef.detectChanges();
@@ -503,9 +504,10 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Checking if file is already opened.
     if (this.openFiles.filter(x => x.path === file.path).length > 0) {
-      this.currentFileData = this.openFiles.filter(x => x.path === file.path)[0];
+
       // Yup, file already opened.
       this.activeFile = file.path;
+      this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
 
       // Setting focus to active editor.
       this.setFocusToActiveEditor();
@@ -521,6 +523,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           content: content,
           options: this.getCodeMirrorOptions(file.path),
         };
+
         // Pushing specified file into files currently being edited object.
         this.openFiles.push({
           name: file.name,
@@ -530,6 +533,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           options: this.getCodeMirrorOptions(file.path),
         });
         this.activeFile = file.path;
+        this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
         setTimeout(() => {
           var activeWrapper = document.querySelector('.active-codemirror-editor');
           var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
@@ -580,9 +584,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to save
    */
-  public saveFile(file: FileNode) {
+  public saveActiveFile() {
+
+    // Ensuring we actually have open files.
+    if (this.openFiles.length === 0) {
+      return;
+    }
 
     // Saving file by invoking backend.
+    const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     this.fileService.saveFile(file.path, file.content).subscribe(() => {
 
       // Marking document as clean.
@@ -608,9 +618,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File node wrapping file to execute
    */
-  public executeFile(file: FileNode) {
+  public executeActiveFile() {
+
+    // Ensuring we actually have open files.
+    if (this.openFiles.length === 0) {
+      return;
+    }
 
     // Figuring out if file is an endpoint file or not.
+    const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     const endpoint = this.getEndpoint(file);
     if (endpoint) {
 
@@ -636,9 +652,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to preview
    */
-  public previewFile(file: FileNode) {
+  public previewActiveFile() {
+
+    // Ensuring we actually have open files.
+    if (this.openFiles.length === 0) {
+      return;
+    }
 
     // Opening up a modal dialog to preview file.
+    const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     this.dialog.open(PreviewFileDialogComponent, {
       data: file.content,
     });
@@ -649,9 +671,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to rename
    */
-  public renameFile(file: FileNode) {
+  public renameActiveFile() {
+
+    // Ensuring we actually have open files.
+    if (this.openFiles.length === 0) {
+      return;
+    }
 
     // Opening up a modal dialog to preview file.
+    const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     const dialog = this.dialog.open(RenameFileDialogComponent, {
       width: '550px',
       data: {
@@ -677,6 +705,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
           // Updating active file.
           this.activeFile = file.path;
+          this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
 
           // Databinding tree again.
           this.dataBindTree();
@@ -697,9 +726,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param file File to delete
    */
-  public deleteFile(file: FileNode) {
+  public deleteActiveFile() {
+
+    // Ensuring we actually have open files.
+    if (this.openFiles.length === 0) {
+      return;
+    }
 
     // Asking user to confirm action.
+    const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
 
       // Deleting file by invoking backend.
@@ -712,7 +747,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.dataBindTree();
 
           // Closing file.
-          this.closeFile(true);
+          this.closeActiveFile(true);
         }
 
         // Providing feedback to user.
@@ -728,7 +763,12 @@ export class IdeComponent implements OnInit, OnDestroy {
    * @param file File to close
    * @param force If true user will not be warned about unsaved changes
    */
-  public closeFile(noDirtyWarnings: boolean = false) {
+  public closeActiveFile(noDirtyWarnings: boolean = false) {
+
+    // Ensuring we actually have open files.
+    if (this.openFiles.length === 0) {
+      return;
+    }
 
     // Checking if content is dirty.
     const shouldWarn = () => {
@@ -779,8 +819,10 @@ export class IdeComponent implements OnInit, OnDestroy {
           // Verifying there are any open files left.
           if (this.openFiles.length > 0) {
             this.activeFile = this.openFiles[0].path;
+            this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
           } else {
             this.activeFile = null;
+            this.currentFileData = null;
           }
         }
 
@@ -910,7 +952,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
               // Macro returned specific folder that we'll need to update, and hence we can update only that folder.
               var fileObject = exeResult.result.split('|')[1];
-              this.updateFolder(fileObject);
+              this.updateFileObject(fileObject);
             }
 
           }, (error: any) => this.feedbackService.showError(error));
@@ -1077,42 +1119,22 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Alt+S saves the active file.
       options[0].options.extraKeys['Alt-S'] = (cm: any) => {
-
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var activeWrapper = document.querySelector('.active-codemirror-editor');
-        if (activeWrapper) {
-          this.saveFile(this.currentFileData);
-        }
+        this.saveActiveFile();
       };
 
       // Alt+D deletes the active file.
       options[0].options.extraKeys['Alt-D'] = (cm: any) => {
-
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var activeWrapper = document.querySelector('.active-codemirror-editor');
-        if (activeWrapper) {
-          this.deleteFile(this.currentFileData);
-        }
+        this.deleteActiveFile();
       };
 
       // Alt+C closes the active file.
       options[0].options.extraKeys['Alt-C'] = (cm: any) => {
-
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var activeWrapper = document.querySelector('.active-codemirror-editor');
-        if (activeWrapper) {
-          this.closeFile(this.currentFileData)
-        }
+        this.closeActiveFile()
       };
 
       // Alt+R renames the active file.
       options[0].options.extraKeys['Alt-R'] = (cm: any) => {
-
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var activeWrapper = document.querySelector('.active-codemirror-editor');
-        if (activeWrapper) {
-          this.renameFile(this.currentFileData);
-        }
+        this.renameActiveFile();
       };
 
       // Alt+O opens up the select macro window.
@@ -1156,9 +1178,10 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Actual method responsible for closing file.
    */
   private closeFileImpl() {
+
+    // Removing file from edited files.
     const file = this.openFiles.filter(x => x.path === this.activeFile)[0];
     this.cdRef.markForCheck();
-    // Removing file from edited files.
     let idx: number;
     this.openFiles.forEach(element => {
       if (element.path === file.path) {
@@ -1169,12 +1192,14 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     if (this.openFiles.length === 0) {
       this.activeFile = null;
+      this.currentFileData = null;
     } else {
       if (idx === 0) {
         this.activeFile = this.openFiles[0].path;
       } else {
         this.activeFile = this.openFiles[idx - 1].path;
       }
+      this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
     }
 
     // Making sure we give focus to newly activated editor.
@@ -1219,9 +1244,9 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /*
-   * Updates the specified folder (only) and re-renders TreeView.
+   * Updates the specified folder or file object only and re-renders TreeView.
    */
-  private updateFolder(fileObject: string) {
+  private updateFileObject(fileObject: string) {
 
     // Figuring out folder to refresh, since fileObject might be a file or a folder.
     var folder = fileObject;
@@ -1229,7 +1254,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     if (!fileObject.endsWith('/')) {
 
       // File object is a file.
-      folder = folder.substr(0, folder.lastIndexOf('/') + 1);
+      folder = folder.substring(0, folder.lastIndexOf('/') + 1);
       isFile = true;
     }
 
@@ -1258,6 +1283,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           options: this.getCodeMirrorOptions(fileObject),
         });
         this.activeFile = fileObject;
+        this.currentFileData = this.openFiles.filter(x => x.path === this.activeFile)[0];
         setTimeout(() => {
           var activeWrapper = document.querySelector('.active-codemirror-editor');
           var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
@@ -1314,7 +1340,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Uploads one or more files to the currently active folder.
    */
-  public upload(files: FileList, path: string = this.activeFile, node: TreeNode = this.root) {
+  public uploadFiles(files: FileList) {
     
     // Iterating through each file and uploading one file at the time.
     for (let idx = 0; idx < files.length; idx++) {
@@ -1325,28 +1351,35 @@ export class IdeComponent implements OnInit, OnDestroy {
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');
         this.fileInput = null;
-        this.updateFolder(this.activeFolder);
-
+        this.updateFileObject(this.activeFolder);
       });
     }
   }
 
   /**
-   * Invoked when user wants to download a file directly to server.
-   * @param type - folder or file
+   * Download the active folder to the client.
    */
-  public downloadFileToServer(type: string) {
+  public downloadActiveFolder() {
 
-    // if folder is selected
-    if (this.activeFolder && type === 'folder') {
+    // Ensuring we have an active folder.
+    if (this.activeFolder) {
+
       // Downloading folder.
       this.fileService.downloadFolder(this.activeFolder);
-    } else
-      // making sure a file is selected
-      if (this.activeFile && type === 'file') {
-        // Downloading file.
-        this.fileService.downloadFile(this.activeFile);
-      }
+    }
+  }
+
+  /**
+   * Downloads the active file to the client
+   */
+  public downloadActiveFile() {
+
+    // Making sure a file is selected
+    if (this.activeFile) {
+
+      // Downloading file.
+      this.fileService.downloadFile(this.activeFile);
+    }
   }
 
   /**
@@ -1358,22 +1391,31 @@ export class IdeComponent implements OnInit, OnDestroy {
     return path.endsWith('/');
   }
 
-  public uploadZipFile(file: FileList){
-    if (file[0].name.split('.')[1] === 'zip'){
+  /**
+   * Uploads and installs a zip file on the server.
+   * 
+   * @param file Zip file to upload and install
+   */
+  public installModule(file: FileList) {
+
+    // Sanity checking that file is a zip file.
+    if (file[0].name.split('.')[1] === 'zip') {
       this.fileService.uploadZipFile(file.item(0)).subscribe(() => {
         
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');
         this.zipFileInput = null;
-        this.updateFolder('/modules/');
-        
+        this.updateFileObject('/modules/');
       });
     } else {
-      this.feedbackService.showInfo('Only .zip is acceptable');
+      this.feedbackService.showInfo('Only zip files without . are accepted');
     }
   }
 
-  public toggleSystemFiles(){
-    this.updateFolder('/');
+  /**
+   * Invoked when user wants to toggle displaying of system files.
+   */
+  public toggleSystemFiles() {
+    this.updateFileObject('/');
   }
 }
