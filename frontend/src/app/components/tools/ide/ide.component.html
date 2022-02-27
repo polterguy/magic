@@ -5,35 +5,49 @@
     <mat-card class="h-100">
       <mat-card-content class="h-100">
         <mat-drawer-container autosize="true">
-          <mat-drawer #drawer [mode]="notSmallScreen ? 'side' : 'over'" [opened]="startResizing && notSmallScreen ? true : false">
+
+          <!-- Drawer for tree view of files and folders on server -->
+          <mat-drawer
+            #drawer
+            [mode]="notSmallScreen ? 'side' : 'over'"
+            [opened]="startResizing && notSmallScreen ? true : false">
+
+            <!-- Close treeview drawer button, only visible on small screens -->
             <div class="d-md-none d-block mb-5">
               <div class="mobile-close-drawer">
-                <button type="button" mat-flat-button (click)="drawer.toggle()" class="d-flex justify-content-start w-100">
+                <button
+                  type="button"
+                  mat-flat-button
+                  (click)="drawer.toggle()"
+                  class="d-flex justify-content-start w-100">
                   <mat-icon>close</mat-icon>
                   Close
                 </button>
               </div>
             </div>
-            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="pb-5">
-        
+
+            <!-- Treeview for files and folders on server -->
+            <mat-tree
+              [dataSource]="dataSource"
+              [treeControl]="treeControl"
+              class="pb-5">
+
+              <!-- Tree nodes for files -->
               <mat-tree-node
                 *matTreeNodeDef="let file"
                 [class]="activeFile === file.node.path ? 'selected-node' : 'node'"
                 matTreeNodePadding
                 matTreeNodePaddingIndent="10"
                 class="pr-3">
-        
                 <button
                   class="w-100 px-1 d-flex justify-content-start ml-4"
                   mat-button
                   (click)="openFile(file.node)">
-        
                   <mat-icon class="mat-icon-rtl-mirror mr-2">insert_drive_file</mat-icon>{{file.name}}
-        
                 </button>
-        
               </mat-tree-node>
-        
+
+              <!-- Tree nodes for folders -->
               <mat-tree-node
                 *matTreeNodeDef="let folder; when: isExpandable"
                 [class]="activeFolder === folder.node.path ? 'selected-node' : 'node'"
@@ -41,7 +55,6 @@
                 matTreeNodePaddingIndent="10"
                 class="pr-3"
                 [ngClass]="{'node': !treeControl.isExpanded(folder),'selected-node':treeControl.isExpanded(folder)}">
-        
                 <button
                   mat-button
                   class="px-1 w-100 d-flex justify-content-start"
@@ -53,27 +66,32 @@
                   <mat-icon class="mat-icon-rtl-mirror mr-2">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
                   {{folder.name}}
                 </button>
-        
               </mat-tree-node>
         
             </mat-tree>
 
-            <!-- <div class="d-block w-100 mt-5"> -->
-              <div class="system-files-toggle pt-3">
-                <mat-slide-toggle
-                  [(ngModel)]="systemFiles"
-                  (change)="toggleSystemFiles()">System files</mat-slide-toggle>
-              </div>
-            <!-- </div> -->
+            <div class="system-files-toggle pt-3">
+              <mat-slide-toggle
+                [(ngModel)]="systemFiles"
+                (change)="toggleSystemFiles()">System files</mat-slide-toggle>
+            </div>
           </mat-drawer>
         
           <div class="content-section d-flex flex-column w-100 h-100">
-            <!-- form and action buttons -->
+
+            <!-- Form and action buttons -->
             <div class="d-flex pb-2 align-items-center mt-1">
-              <button type="button" mat-icon-button (click)="drawer.toggle()"
-              [matTooltip]="drawer.opened ? 'Collpase Folders' : 'Expand Folders'">
+
+              <!-- Toggle treeview button -->
+              <button
+                type="button"
+                mat-icon-button
+                (click)="drawer.toggle()"
+                [matTooltip]="drawer.opened ? 'Collpase Folders' : 'Expand Folders'">
                 <mat-icon class="material-icons-outlined">{{drawer.opened ? 'drive_file_move_rtl' : 'drive_file_move'}}</mat-icon>
               </button>
+
+              <!-- Select file dropdown -->
               <mat-form-field appearance="outline" class="w-100 inline-input">
                 <mat-label>{{openFiles.length > 0 ? 'Open files ...' : 'No open files yet'}}</mat-label>
                 <mat-select
@@ -84,31 +102,58 @@
                     [value]="idx.path">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
                 </mat-select>
               </mat-form-field>
-              <!-- action buttons -->
+
+              <!-- Action buttons -->
               <div>
-                <button mat-icon-button [matMenuTriggerFor]="actions" matTooltip="Action buttons">
+
+                <!-- Trigger action menu button -->
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="actions"
+                  matTooltip="Actions">
                   <mat-icon>ads_click</mat-icon>
                 </button>
+
+                <!-- Sub menu for types of actions -->
                 <mat-menu #actions="matMenu">
-                  <button mat-menu-item [matMenuTriggerFor]="submenu1" class="submenu-before">
+
+                  <button
+                    mat-menu-item
+                    [matMenuTriggerFor]="submenu1"
+                    class="submenu-before">
                     <div class="pl-4 w-100 h-100">
                       General
                     </div>
                   </button>
-                  <button mat-menu-item [matMenuTriggerFor]="submenu2" class="submenu-before">
+
+                  <button
+                    mat-menu-item
+                    [matMenuTriggerFor]="submenu2"
+                    class="submenu-before">
                     <div class="pl-4 w-100 h-100">
                       Active folder
                     </div>
                   </button>
-                  <button mat-menu-item [matMenuTriggerFor]="submenu3" class="submenu-before" [disabled]="!openFiles.length" [matMenuTriggerData]="{data: currentFileData}">
+
+                  <button
+                    mat-menu-item
+                    [matMenuTriggerFor]="submenu3"
+                    class="submenu-before"
+                    [disabled]="!openFiles.length"
+                    [matMenuTriggerData]="{data: currentFileData}">
                     <div class="pl-4 w-100 h-100">
                       Active file
                     </div>
                   </button>
+
                 </mat-menu>
 
-                <mat-menu #submenu1="matMenu" class="submenu">
-                  <!-- generate crud -->
+                <!-- General menu -->
+                <mat-menu
+                  #submenu1="matMenu"
+                  class="submenu">
+
+                  <!-- Generate CRUD -->
                   <button
                     mat-menu-item
                     [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
@@ -117,7 +162,8 @@
                     <mat-icon class="material-icons-outlined">touch_app</mat-icon>
                     Crudifier
                   </button>
-                  <!-- upload zip -->
+
+                  <!-- Install module -->
                   <button
                     mat-menu-item
                     (click)="zipfile.click()"
@@ -129,23 +175,25 @@
                     type="file"
                     [(ngModel)]="zipFileInput"
                     #zipfile
-                    multiple
                     class="d-none"
                     accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
-                    (change)="uploadZipFile($event.target.files)">
+                    (change)="installModule($event.target.files)">
                 </mat-menu>
 
+                <!-- Active folder menu -->
                 <mat-menu #submenu2="matMenu" class="submenu">
-                  <!-- delete -->
+
+                  <!-- Delete folder -->
                   <button
-                    [disabled]="!authService.access.files.delete_folder || activeFolder === '/' || activeFolder === '/misc/' || activeFolder === '/modules/' || activeFolder === '/temp/' || activeFolder.startsWith('/system/') || activeFolder.startsWith('/misc/')"
+                    [disabled]="!authService.access.files.delete_folder || activeFolder === '/'"
                     mat-menu-item
                     [matTooltip]="'Delete folder \'' + activeFolder + '\''"
                     (click)="deleteActiveFolder()">
                     <mat-icon>delete</mat-icon>
                     Delete
                   </button>
-                  <!-- execute -->
+
+                  <!-- Execute macro -->
                   <button
                     mat-menu-item
                     [matTooltip]="'Execute a macro in \'' + activeFolder + '\''"
@@ -153,7 +201,8 @@
                     <mat-icon>model_training</mat-icon>
                     Execute
                   </button>
-                  <!-- new folder -->
+
+                  <!-- New folder -->
                   <button
                     mat-menu-item
                     [disabled]="!authService.access.files.create_folder"
@@ -163,7 +212,8 @@
                     <mat-icon class="material-icons-outlined">create_new_folder</mat-icon>
                     New folder
                   </button>
-                  <!-- new file -->
+
+                  <!-- New file -->
                   <button
                     mat-menu-item
                     [disabled]="!authService.access.files.create_file"
@@ -173,7 +223,8 @@
                     <mat-icon class="material-icons-outlined">note_add</mat-icon>
                     New file
                   </button>
-                  <!-- upload -->
+
+                  <!-- Upload file -->
                   <button
                     mat-menu-item
                     (click)="file.click()"
@@ -187,80 +238,107 @@
                     #file
                     multiple
                     class="d-none"
-                    (change)="upload($event.target.files)">
-                  <!-- download folder -->
+                    (change)="uploadFiles($event.target.files)">
+
+                  <!-- Download folder -->
                   <button
                     mat-menu-item
                     [disabled]="!activeFolder"
                     [matTooltip]="'Download \'' + activeFolder + '\' as a zip file'"
-                    (click)="downloadFileToServer('folder')">
+                    (click)="downloadActiveFolder()">
                     <mat-icon class="material-icons-outlined">cloud_download</mat-icon>
                     Download folder
                   </button>
+
                 </mat-menu>
+
+                <!-- Active file menu -->
                 <mat-menu #submenu3="matMenu" class="submenu">
                   <ng-template matMenuContent let-data="data">
-                    <!-- save -->
-                    <button mat-menu-item
-                      [disabled]="activeFileIsClean() || data?.folder?.startsWith('/system/') || activeFolder?.startsWith('/misc/')"
+
+                    <!-- Save file -->
+                    <button
+                      mat-menu-item
+                      [disabled]="activeFileIsClean()"
                       matTooltip="Save file [ALT+S]" 
-                      (click)="saveFile(data)">
+                      (click)="saveActiveFile()">
                         <mat-icon>save</mat-icon>
                         Save
                     </button>
-                    <!-- invoke/execute -->
-                    <button mat-menu-item [disabled]="!data?.path?.endsWith('.hl')"
+
+                    <!-- Invoke/execute file -->
+                    <button
+                      mat-menu-item
+                      [disabled]="!data?.path?.endsWith('.hl')"
                       [matTooltip]="getEndpoint(data) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
-                      (click)="executeFile(data)">
+                      (click)="executeActiveFile()">
                       <mat-icon>play_arrow</mat-icon>
                       {{getEndpoint(data) === null ? 'Execute' : 'Invoke ...'}}
                     </button>
-                    <!-- preview -->
+
+                    <!-- Preview file -->
                     <button mat-menu-item 
                       [disabled]="!data?.path?.endsWith('.md')" 
                       matTooltip="Preview file" 
-                      (click)="previewFile(data)">
+                      (click)="previewActiveFile()">
                       <mat-icon class="material-icons-outlined">
                         preview
                       </mat-icon>
                       Preview
                     </button>
-                    <!-- rename -->
+
+                    <!-- Rename file -->
                     <button mat-menu-item
-                      [disabled]="!authService?.access?.files?.rename || data?.path?.startsWith('/system/') || activeFolder?.startsWith('/misc/')"
-                      matTooltip="Rename file [ALT+R]" (click)="renameFile(data)">
-                        <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
-                        Rename
+                      [disabled]="!authService?.access?.files?.rename"
+                      matTooltip="Rename file [ALT+R]"
+                      (click)="renameActiveFile()">
+                      <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
+                      Rename
                     </button>
-                    <!-- delete -->
+
+                    <!-- Delete file -->
                     <button mat-menu-item
-                      [disabled]="!authService?.access?.files?.delete_file || data?.folder?.startsWith('/system/') || activeFolder?.startsWith('/misc/')"
-                      matTooltip="Delete file [ALT+D]" (click)="deleteFile(data)">
-                          <mat-icon>delete</mat-icon>
-                          Delete
+                      [disabled]="!authService?.access?.files?.delete_file"
+                      matTooltip="Delete file [ALT+D]"
+                      (click)="deleteActiveFile()">
+                      <mat-icon>delete</mat-icon>
+                      Delete
                     </button>
-                    <!-- close -->
-                    <button mat-menu-item matTooltip="Close file [ALT+C]" (click)="closeFile()">
-                        <mat-icon>close</mat-icon>
-                        Close
-                    </button>
-                    <!-- download file -->
+
+                    <!-- Close file -->
                     <button
                       mat-menu-item
-                      [disabled]="!activeFile || !activeFolder"
+                      matTooltip="Close file [ALT+C]"
+                      (click)="closeActiveFile()">
+                      <mat-icon>close</mat-icon>
+                      Close
+                    </button>
+
+                    <!-- Download file -->
+                    <button
+                      mat-menu-item
+                      [disabled]="!activeFile"
                       matTooltip="Download the active file"
-                      (click)="downloadFileToServer('file')">
+                      (click)="downloadActiveFile()">
                       <mat-icon class="material-icons-outlined">file_download</mat-icon>
                       Download file
                     </button>
+
                   </ng-template>
                 </mat-menu>
               </div>
-              <!-- help -->
+
+              <!-- Help button -->
               <div class="sm-icons mr-1">
-                <button mat-icon-button [matMenuTriggerFor]="menu" class="mat-caption" matTooltip="Need help?" type="button">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="menu"
+                  class="mat-caption"
+                  matTooltip="Need help?"
+                  type="button">
                   <mat-icon>help_outline</mat-icon>
                 </button>
+
                 <mat-menu #menu="matMenu">
                   <div class="p-3">
                     <p>
@@ -274,38 +352,50 @@
                   </div>
                 </mat-menu>
               </div>
-              <!-- shortkeys -->
-              <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys" class="d-lg-block d-none shortkey-btn">
+
+              <!-- Shortkeys button -->
+              <button
+                mat-stroked-button
+                [matMenuTriggerFor]="list"
+                matTooltip="List of shortkeys"
+                class="d-lg-block d-none shortkey-btn">
                 Shortkeys
               </button>
+
+              <!-- Shortkeys menu -->
               <mat-menu #list="matMenu" class="shortkeys">
                 <mat-list role="list" dense>
+
                   <mat-list-item role="listitem">
-                    <span>
-                      <span class="d-block">Toggle fullscreen</span>
-                    </span>
+                    Toggle fullscreen
                     <span class="code my-0 ml-5">Alt + M</span>
                   </mat-list-item>
+
                   <mat-list-item role="listitem">
                     Save
                     <span class="code my-0 ml-5">Alt + S</span>
                   </mat-list-item>
+
                   <mat-list-item role="listitem">
                     Delete active file
                     <span class="code my-0 ml-5">Alt + D</span>
                   </mat-list-item>
+
                   <mat-list-item role="listitem">
                     Close active file
                     <span class="code my-0 ml-5">Alt + C</span>
                   </mat-list-item>
+
                   <mat-list-item role="listitem">
                     Rename active file
                     <span class="code my-0 ml-5">Alt + R</span>
                   </mat-list-item>
+
                   <mat-list-item role="listitem">
                     Show autocomplete
                     <span class="code my-0 ml-5">CTRL + SPACE</span>
                   </mat-list-item>
+
                 </mat-list>
               </mat-menu>
             </div>
