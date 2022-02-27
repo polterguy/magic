@@ -281,77 +281,6 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Invoked when files needs to be fetched from the server.
-   */
-  public getFilesFromServer(folder: string = '/', onAfter: () => void = null) {
-
-    // Common function object for adding folders and files to root graph object.
-    const functor = (objects: string[], isFolder: boolean) => {
-
-      // Adding folder to root graph object.
-      for (const idx of objects) {
-
-        // Finding parent node of currently iterated folder.
-        const entities = idx.split('/').filter(x => x !== '');
-        let parent = this.root;
-        let level = 1;
-        for (const idxPeek of entities.slice(0, -1)) {
-          parent = parent.children.filter(x => x.name === idxPeek)[0];
-          level += 1;
-        }
-
-        // Adding folder to graph object, now under correct parent.
-        parent.children.push({
-          name: entities[entities.length - 1],
-          path: idx,
-          isFolder: isFolder,
-          level: level,
-          children: [],
-        });
-      }
-    };
-
-    // Retrieving files from backend.
-    this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe((folders: string[]) => {
-
-      // Adding folder to root graph object.
-      functor(folders || [], true);
-
-      // Retrieving all files from backend.
-      this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe((files: string[]) => {
-
-        // Adding files to root graph object.
-        functor(files || [], false);
-
-        // Databinding tree control initially.
-        if (folder === '/') {
-
-          // Initial databinding of tree.
-          this.dataSource.data = this.root.children;
-
-        } else {
-
-          // Re-databinding tree, hence data binding such that we keep expanded folders as such.
-          this.dataBindTree();
-        }
-
-        // Checking if caller supplied an onAfter callback, and if so, invoking it.
-        if (onAfter) {
-          onAfter();
-        }
-
-        // To start resizing the mat-drawer section
-        // preventing from miscalculation of the width, as mentioned inside material docs
-        // and looking for changes to update value in the html file
-        this.startResizing = true;
-        this.cdRef.detectChanges();
-
-      }, (error: any) => this.feedbackService.showError(error));
-
-    }, (error: any) => this.feedbackService.showError(error));
-  }
-
-  /**
    * Invoked when user wants to create a new file or folder.
    */
   public createNewFileObject(type: string) {
@@ -612,7 +541,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public executeActiveFile() {
 
     // Ensuring we actually have open files.
-    if (this.openFiles.length === 0) {
+    if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
       return;
     }
 
@@ -869,7 +798,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Uploads one or more files to the currently active folder.
    */
-   public uploadFiles(files: FileList) {
+  public uploadFiles(files: FileList) {
     
     // Iterating through each file and uploading one file at the time.
     for (let idx = 0; idx < files.length; idx++) {
@@ -981,6 +910,77 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // File is not a Hyperlambda endpoint file.
     return null;
+  }
+
+  /**
+   * Invoked when files needs to be fetched from the server.
+   */
+  private getFilesFromServer(folder: string = '/', onAfter: () => void = null) {
+
+    // Common function object for adding folders and files to root graph object.
+    const functor = (objects: string[], isFolder: boolean) => {
+
+      // Adding folder to root graph object.
+      for (const idx of objects) {
+
+        // Finding parent node of currently iterated folder.
+        const entities = idx.split('/').filter(x => x !== '');
+        let parent = this.root;
+        let level = 1;
+        for (const idxPeek of entities.slice(0, -1)) {
+          parent = parent.children.filter(x => x.name === idxPeek)[0];
+          level += 1;
+        }
+
+        // Adding folder to graph object, now under correct parent.
+        parent.children.push({
+          name: entities[entities.length - 1],
+          path: idx,
+          isFolder: isFolder,
+          level: level,
+          children: [],
+        });
+      }
+    };
+
+    // Retrieving files from backend.
+    this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe((folders: string[]) => {
+
+      // Adding folder to root graph object.
+      functor(folders || [], true);
+
+      // Retrieving all files from backend.
+      this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe((files: string[]) => {
+
+        // Adding files to root graph object.
+        functor(files || [], false);
+
+        // Databinding tree control initially.
+        if (folder === '/') {
+
+          // Initial databinding of tree.
+          this.dataSource.data = this.root.children;
+
+        } else {
+
+          // Re-databinding tree, hence data binding such that we keep expanded folders as such.
+          this.dataBindTree();
+        }
+
+        // Checking if caller supplied an onAfter callback, and if so, invoking it.
+        if (onAfter) {
+          onAfter();
+        }
+
+        // To start resizing the mat-drawer section
+        // preventing from miscalculation of the width, as mentioned inside material docs
+        // and looking for changes to update value in the html file
+        this.startResizing = true;
+        this.cdRef.detectChanges();
+
+      }, (error: any) => this.feedbackService.showError(error));
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /*
@@ -1258,6 +1258,11 @@ export class IdeComponent implements OnInit, OnDestroy {
       // Alt+X deletes currently selected folder.
       options[0].options.extraKeys['Alt-X'] = (cm: any) => {
         this.deleteActiveFolder();
+      };
+
+      // F5 executes active file.
+      options[0].options.extraKeys['F5'] = (cm: any) => {
+        this.executeActiveFile();
       };
     }
     return options[0].options;
