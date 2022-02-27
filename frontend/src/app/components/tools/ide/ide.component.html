@@ -262,8 +262,8 @@
                       [disabled]="activeFileIsClean()"
                       matTooltip="Save file [ALT+S]" 
                       (click)="saveActiveFile()">
-                        <mat-icon>save</mat-icon>
-                        Save
+                      <mat-icon>save</mat-icon>
+                      Save
                     </button>
 
                     <!-- Invoke/execute file -->
@@ -399,7 +399,8 @@
                 </mat-list>
               </mat-menu>
             </div>
-        
+
+            <!-- Lightbulb shown when there are no open files -->
             <img
               *ngIf="openFiles.length === 0"
               src="assets/light-bulb.png"
@@ -407,15 +408,22 @@
               matTooltip="Hyper IDE, because your time is valuable!"
               alt="Hyper IDE, because your time is valuable!">
 
-              <div *ngFor="let file of openFiles" class="w-100 d-flex flex-column justify-content-start"
-              [class]="file.path === activeFile ? 'h-100': ''">
-                <div [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'd-none'" class="h-100 w-100">
-                  <ngx-codemirror class="codemirror-container h-100"
+              <!-- CodeMirror editors wrapping currently open files -->
+              <div
+                *ngFor="let file of openFiles"
+                class="w-100 d-flex flex-column justify-content-start"
+                [class]="file.path === activeFile ? 'h-100': ''">
+                <div
+                  [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'd-none'"
+                  class="h-100 w-100">
+                  <ngx-codemirror
+                    class="codemirror-container h-100"
                     [(ngModel)]="file.content"
                     [options]="file.options">
                   </ngx-codemirror>
                 </div>
               </div>
+
           </div>
         </mat-drawer-container>
         
