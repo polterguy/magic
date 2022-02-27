@@ -183,34 +183,13 @@
                 <!-- Active folder menu -->
                 <mat-menu #submenu2="matMenu" class="submenu">
 
-                  <!-- Delete folder -->
-                  <button
-                    [disabled]="!authService.access.files.delete_folder || activeFolder === '/'"
-                    mat-menu-item
-                    [matTooltip]="'Delete folder \'' + activeFolder + '\''"
-                    (click)="deleteActiveFolder()">
-                    <mat-icon>delete</mat-icon>
-                    Delete
-                  </button>
-
                   <!-- Execute macro -->
                   <button
                     mat-menu-item
-                    [matTooltip]="'Execute a macro in \'' + activeFolder + '\''"
+                    [matTooltip]="'Execute a macro in \'' + activeFolder + '\' [ALT+O]'"
                     (click)="selectMacro()">
                     <mat-icon>model_training</mat-icon>
                     Execute
-                  </button>
-
-                  <!-- New folder -->
-                  <button
-                    mat-menu-item
-                    [disabled]="!authService.access.files.create_folder"
-                    color="primary"
-                    [matTooltip]="'Create a new folder in \'' + activeFolder + '\''"
-                    (click)="createNewFileObject('folder')">
-                    <mat-icon class="material-icons-outlined">create_new_folder</mat-icon>
-                    New folder
                   </button>
 
                   <!-- New file -->
@@ -218,10 +197,21 @@
                     mat-menu-item
                     [disabled]="!authService.access.files.create_file"
                     color="primary"
-                    [matTooltip]="'Create a new file in \'' + activeFolder + '\''"
+                    [matTooltip]="'Create a new file in \'' + activeFolder + '\' [ALT+A]'"
                     (click)="createNewFileObject('file')">
                     <mat-icon class="material-icons-outlined">note_add</mat-icon>
                     New file
+                  </button>
+
+                  <!-- New folder -->
+                  <button
+                    mat-menu-item
+                    [disabled]="!authService.access.files.create_folder"
+                    color="primary"
+                    [matTooltip]="'Create a new folder in \'' + activeFolder + '\' [ALT+B]'"
+                    (click)="createNewFileObject('folder')">
+                    <mat-icon class="material-icons-outlined">create_new_folder</mat-icon>
+                    New folder
                   </button>
 
                   <!-- Upload file -->
@@ -250,6 +240,16 @@
                     Download folder
                   </button>
 
+                  <!-- Delete folder -->
+                  <button
+                    [disabled]="!authService.access.files.delete_folder || activeFolder === '/'"
+                    mat-menu-item
+                    [matTooltip]="'Delete folder \'' + activeFolder + '\' [ALT+X]'"
+                    (click)="deleteActiveFolder()">
+                    <mat-icon>delete</mat-icon>
+                    Delete
+                  </button>
+
                 </mat-menu>
 
                 <!-- Active file menu -->
@@ -270,7 +270,7 @@
                     <button
                       mat-menu-item
                       [disabled]="!data?.path?.endsWith('.hl')"
-                      [matTooltip]="getEndpoint(data) === null ? 'Execute Hyperlambda file immediately' : 'Invoke endpoint through a modal dialog'"
+                      [matTooltip]="getEndpoint(data) === null ? 'Execute Hyperlambda file immediately [F5]' : 'Invoke endpoint through a modal dialog [F5]'"
                       (click)="executeActiveFile()">
                       <mat-icon>play_arrow</mat-icon>
                       {{getEndpoint(data) === null ? 'Execute' : 'Invoke ...'}}
