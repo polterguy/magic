@@ -317,7 +317,7 @@
                     <!-- Download file -->
                     <button
                       mat-menu-item
-                      [disabled]="!activeFile"
+                      [disabled]="!currentFileData"
                       matTooltip="Download the active file"
                       (click)="downloadActiveFile()">
                       <mat-icon class="material-icons-outlined">file_download</mat-icon>
