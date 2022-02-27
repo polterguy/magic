@@ -56,6 +56,7 @@ import './codemirror/hyperlambda.js';
 import 'codemirror/addon/hint/sql-hint.js';
 
 // Application specific imports.
+import { AccessGuard } from './access.guard';
 import { DatePipe } from './pipes/date.pipe';
 import { MarkedPipe } from './pipes/marked.pipe';
 import { DynamicPipe } from './pipes/dynamic.pipe';
@@ -152,8 +153,6 @@ import { AddQueryParameterDialogComponent } from './components/analytics/endpoin
 import { ConfirmEmailAddressDialogComponent } from './components/management/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
 import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
-import { ExecuteTerminalCommandComponent } from './components/tools/ide/execute-terminal-command/execute-terminal-command.component';
-import { AccessGuard } from './access.guard';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -247,7 +246,6 @@ import { AccessGuard } from './access.guard';
     ProfileComponent,
     CrudifierSetDefaultsComponent,
     GenerateCrudAppComponent,
-    ExecuteTerminalCommandComponent,
     DashboardComponent
   ],
   imports: [
