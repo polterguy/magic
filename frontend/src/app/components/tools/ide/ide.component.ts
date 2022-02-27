@@ -147,18 +147,17 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Model for file uploader.
    */
   public fileInput: string[];
-  public zipFileInput;
+  public zipFileInput: any;
 
   /**
   * Current folder we're viewing contens of.
   */
   public currentFolder = '/';
 
-
   /**
    * boolean:: system files sliding value
    * if true, all files will be displayed
-   * defaut value is false
+   * default value is false.
    */
   public systemFiles: boolean = false;
 
@@ -170,9 +169,8 @@ export class IdeComponent implements OnInit, OnDestroy {
    * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
-   * @param messageService Service used to publish messages to other components in the system
    * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
-   * @param messageService Needed to subscribe to relevant messages transmitted from other components
+   * @param messageService Service used to publish messages to other components in the system
    * @param endpointService Needed to retrieve endpoints from backend
    */
   public constructor(
@@ -190,13 +188,16 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public ngOnInit() {
 
-    // Retrieving screen size to decide which mode the folders' drawer should be
+    // Retrieving screen size to decide which mode the folders' drawer should be.
     this.onWindowResize();
 
     // Retrieving files and folder from server.
     this.getFilesFromServer('/', () => {
 
-      // Retrieving endpoints from server.
+      /*
+       * Retrieving endpoints from server.
+       * This is necessary to determine if Hyperlambda files should be executed or invoked.
+       */
       this.getEndpoints();
     });
 
@@ -205,12 +206,12 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       if (msg.name === 'magic.folders.update') {
 
-        // Some other component informed us that we need to update our folders.
+        // Some other component informed us that we need to update some specific folder.
         this.updateFileObject(msg.content);
 
         /*
          * If folder that was updated was a folder that could in theory contain endpoints,
-         * we re-retrieve endpoints from server.
+         * we retrieve endpoints from server again.
          */
         switch (msg.content) {
           case '/modules/':
@@ -248,7 +249,10 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Implementation of AfterViewInit
+   * Implementation of AfterViewInit.
+   * 
+   * This is needed to ensure we retrieve Hyperlambda vocabulary from backend to
+   * have autocomplete data for Hyperlambda language.
    */
   public ngAfterViewInit() {
 
@@ -308,14 +312,13 @@ export class IdeComponent implements OnInit, OnDestroy {
     };
 
     // Retrieving files from backend.
-    const sysFiles = this.systemFiles;
-    this.fileService.listFoldersRecursively(folder, sysFiles).subscribe((folders: string[]) => {
+    this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe((folders: string[]) => {
 
       // Adding folder to root graph object.
       functor(folders || [], true);
 
       // Retrieving all files from backend.
-      this.fileService.listFilesRecursively(folder, sysFiles).subscribe((files: string[]) => {
+      this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe((files: string[]) => {
 
         // Adding files to root graph object.
         functor(files || [], false);
@@ -328,7 +331,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
         } else {
 
-          // Re-databinding tree, hence databinding such that we keep expanded folders as such.
+          // Re-databinding tree, hence data binding such that we keep expanded folders as such.
           this.dataBindTree();
         }
 
@@ -337,7 +340,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           onAfter();
         }
 
-        // to start resizing the mat-drawer section
+        // To start resizing the mat-drawer section
         // preventing from miscalculation of the width, as mentioned inside material docs
         // and looking for changes to update value in the html file
         this.startResizing = true;
@@ -781,6 +784,11 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public deleteActiveFolder() {
 
+    // Sanity checking to avoid deleting root folder.
+    if (this.activeFolder === '/') {
+      return;
+    }
+
     // Asking user to confirm action.
     this.feedbackService.confirm('Confirm action', `Are you sure you want to delete the '${this.activeFolder}' folder?`, () => {
 
@@ -858,9 +866,122 @@ export class IdeComponent implements OnInit, OnDestroy {
     })
   }
 
-  /*
-   * Private helper methods.
+  /**
+   * Uploads one or more files to the currently active folder.
    */
+   public uploadFiles(files: FileList) {
+    
+    // Iterating through each file and uploading one file at the time.
+    for (let idx = 0; idx < files.length; idx++) {
+
+      // Invoking service method responsible for actually uploading file.
+      this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe(() => {
+
+        // Showing some feedback to user, and re-databinding folder's content.
+        this.feedbackService.showInfo('File was successfully uploaded');
+        this.fileInput = null;
+        this.updateFileObject(this.activeFolder);
+      });
+    }
+  }
+
+  /**
+   * Download the active folder to the client.
+   */
+  public downloadActiveFolder() {
+
+    // Ensuring we have an active folder.
+    if (this.activeFolder) {
+
+      // Downloading folder.
+      this.fileService.downloadFolder(this.activeFolder);
+    }
+  }
+
+  /**
+   * Downloads the active file to the client
+   */
+  public downloadActiveFile() {
+
+    // Making sure a file is selected
+    if (this.currentFileData) {
+
+      // Downloading file.
+      this.fileService.downloadFile(this.currentFileData.path);
+    }
+  }
+
+  /**
+   * Uploads and installs a zip file on the server.
+   * 
+   * @param file Zip file to upload and install
+   */
+  public installModule(file: FileList) {
+
+    // Sanity checking that file is a zip file.
+    if (file[0].name.split('.')[1] === 'zip') {
+      this.fileService.uploadZipFile(file.item(0)).subscribe(() => {
+        
+        // Showing some feedback to user, and re-databinding folder's content.
+        this.feedbackService.showInfo('File was successfully uploaded');
+        this.zipFileInput = null;
+        this.updateFileObject('/modules/');
+      });
+    } else {
+      this.feedbackService.showInfo('Only zip files without . are accepted');
+    }
+  }
+
+  /**
+   * Invoked when user wants to toggle displaying of system files.
+   */
+  public toggleSystemFiles() {
+    this.updateFileObject('/');
+  }
+
+  /*
+   * Private and protected helper methods.
+   */
+
+  /*
+   * Returns an endpoint matching the specified file node, or null if file cannot
+   * be matched to an endpoint.
+   */
+  protected getEndpoint(file: FileNode) {
+
+    // Notice, only files inside of "/modules/" and "/system/" can be endpoint files.
+    if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
+
+      // Splitting filename of file to check if it's semantically correct according to how an endpoint file should be.
+      const lastSplits = file.name.split('.');
+      if (lastSplits.length >= 3 && lastSplits[lastSplits.length - 1] === 'hl') {
+
+        // Hyperlambda file, with 3 or more entities, possibly an endpoint file.
+        switch (lastSplits[lastSplits.length - 2]) {
+          case 'get':
+          case 'put':
+          case 'post':
+          case 'patch':
+          case 'delete':
+
+            /* 
+             * File is probably a Hyperlambda endpoint, however to be sure we
+             * verify we can find file in our list of endpoints.
+             */
+            const url = 'magic' + file.folder + lastSplits[0];
+            let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
+            if (endpoints.length > 0) {
+
+              // File is a Hyperlambda endpoint, hence returning endpoint to caller.
+              return endpoints[0];
+            }
+        }
+      }
+    }
+
+    // File is not a Hyperlambda endpoint file.
+    return null;
+  }
 
   /*
    * Executes the specified macro.
@@ -1087,12 +1208,14 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Alt+M maximises editor.
       options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+
+        // Hiding treeview drawer
         this.cdRef.detectChanges();
-        // to hide/show sidenav
         let sidenav = document.querySelector('.mat-sidenav');
         sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-          sidenav.classList.add('d-none');
+        sidenav.classList.add('d-none');
         this.drawer.close();
+
         // Toggling maximise mode.
         cm.setOption('fullScreen', !cm.getOption('fullScreen'));
       };
@@ -1119,36 +1242,22 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Alt+O opens up the select macro window.
       options[0].options.extraKeys['Alt-O'] = (cm: any) => {
-
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var btn = <any>document.querySelector('.new-macro-object-btn');
-        if (btn) {
-          btn.click();
-        }
+        this.selectMacro();
       };
 
-      // Alt+N opens up create new file object dialog.
+      // Alt+A opens up create new file object dialog.
       options[0].options.extraKeys['Alt-A'] = (cm: any) => {
+        this.createNewFileObject('file');
+      };
 
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var btn = <any>document.querySelector('.new-file-object-btn');
-        if (btn) {
-          if (btn) {
-            btn.click();
-          }
-        }
+      // Alt+B opens up create new folder object dialog.
+      options[0].options.extraKeys['Alt-B'] = (cm: any) => {
+        this.createNewFileObject('folder');
       };
 
       // Alt+X deletes currently selected folder.
       options[0].options.extraKeys['Alt-X'] = (cm: any) => {
-
-        // Retrieving active CodeMirror editor to check if its document is dirty or not.
-        var btn = <any>document.querySelector('.delete-folder-btn');
-        if (btn) {
-          if (btn) {
-            btn.click();
-          }
-        }
+        this.deleteActiveFolder();
       };
     }
     return options[0].options;
@@ -1271,127 +1380,5 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       });
     } : null);
-  }
-
-  /*
-   * Returns an endpoint matching the specified file node, or null if file cannot
-   * be matched to an endpoint.
-   */
-  protected getEndpoint(file: FileNode) {
-
-    // Notice, only files inside of "/modules/" and "/system/" can be endpoint files.
-    if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
-
-      // Splitting filename of file to check if it's semantically correct according to how an endpoint file should be.
-      const lastSplits = file.name.split('.');
-      if (lastSplits.length >= 3 && lastSplits[lastSplits.length - 1] === 'hl') {
-
-        // Hyperlambda file, with 3 or more entities, possibly an endpoint file.
-        switch (lastSplits[lastSplits.length - 2]) {
-          case 'get':
-          case 'put':
-          case 'post':
-          case 'patch':
-          case 'delete':
-
-            /* 
-             * File is probably a Hyperlambda endpoint, however to be sure we
-             * verify we can find file in our list of endpoints.
-             */
-            const url = 'magic' + file.folder + lastSplits[0];
-            let endpoints = this.endpoints.filter(x => x.path === url && x.verb === lastSplits[lastSplits.length - 2]);
-            if (endpoints.length > 0) {
-
-              // File is a Hyperlambda endpoint, hence returning endpoint to caller.
-              return endpoints[0];
-            }
-        }
-      }
-    }
-
-    // File is not a Hyperlambda endpoint file.
-    return null;
-  }
-
-  /**
-   * Uploads one or more files to the currently active folder.
-   */
-  public uploadFiles(files: FileList) {
-    
-    // Iterating through each file and uploading one file at the time.
-    for (let idx = 0; idx < files.length; idx++) {
-
-      // Invoking service method responsible for actually uploading file.
-      this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe(() => {
-
-        // Showing some feedback to user, and re-databinding folder's content.
-        this.feedbackService.showInfo('File was successfully uploaded');
-        this.fileInput = null;
-        this.updateFileObject(this.activeFolder);
-      });
-    }
-  }
-
-  /**
-   * Download the active folder to the client.
-   */
-  public downloadActiveFolder() {
-
-    // Ensuring we have an active folder.
-    if (this.activeFolder) {
-
-      // Downloading folder.
-      this.fileService.downloadFolder(this.activeFolder);
-    }
-  }
-
-  /**
-   * Downloads the active file to the client
-   */
-  public downloadActiveFile() {
-
-    // Making sure a file is selected
-    if (this.currentFileData) {
-
-      // Downloading file.
-      this.fileService.downloadFile(this.currentFileData.path);
-    }
-  }
-
-  /**
-   * Returns true if given path is a folder
-   * 
-   * @param path What path to check
-   */
-  public isFolder(path: string) {
-    return path.endsWith('/');
-  }
-
-  /**
-   * Uploads and installs a zip file on the server.
-   * 
-   * @param file Zip file to upload and install
-   */
-  public installModule(file: FileList) {
-
-    // Sanity checking that file is a zip file.
-    if (file[0].name.split('.')[1] === 'zip') {
-      this.fileService.uploadZipFile(file.item(0)).subscribe(() => {
-        
-        // Showing some feedback to user, and re-databinding folder's content.
-        this.feedbackService.showInfo('File was successfully uploaded');
-        this.zipFileInput = null;
-        this.updateFileObject('/modules/');
-      });
-    } else {
-      this.feedbackService.showInfo('Only zip files without . are accepted');
-    }
-  }
-
-  /**
-   * Invoked when user wants to toggle displaying of system files.
-   */
-  public toggleSystemFiles() {
-    this.updateFileObject('/');
   }
 }
