@@ -35,7 +35,7 @@
               <!-- Tree nodes for files -->
               <mat-tree-node
                 *matTreeNodeDef="let file"
-                [class]="activeFile === file.node.path ? 'selected-node' : 'node'"
+                [class]="currentFileData?.path === file.node.path ? 'selected-node' : 'node'"
                 matTreeNodePadding
                 matTreeNodePaddingIndent="10"
                 class="pr-3">
@@ -95,11 +95,11 @@
               <mat-form-field appearance="outline" class="w-100 inline-input">
                 <mat-label>{{openFiles.length > 0 ? 'Open files ...' : 'No open files yet'}}</mat-label>
                 <mat-select
-                  [(ngModel)]="activeFile"
+                  [(ngModel)]="currentFileData"
                   (selectionChange)="selectedFileChanged()">
                   <mat-option
                     *ngFor="let idx of openFiles"
-                    [value]="idx.path">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
+                    [value]="idx">{{idx.folder}}<strong>{{idx.name}}</strong></mat-option>
                 </mat-select>
               </mat-form-field>
 
@@ -412,9 +412,9 @@
               <div
                 *ngFor="let file of openFiles"
                 class="w-100 d-flex flex-column justify-content-start"
-                [class]="file.path === activeFile ? 'h-100': ''">
+                [class]="file.path === currentFileData.path ? 'h-100': ''">
                 <div
-                  [class]="file.path === activeFile ? 'active-codemirror-editor d-flex flex-column' : 'd-none'"
+                  [class]="file.path === currentFileData.path ? 'active-codemirror-editor d-flex flex-column' : 'd-none'"
                   class="h-100 w-100">
                   <ngx-codemirror
                     class="codemirror-container h-100"
