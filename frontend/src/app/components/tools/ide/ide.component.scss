@@ -38,4 +38,4 @@ $max_height: calc(100vh - 130px);
   }
 }
 .mobile-close-drawer{position: absolute;left: 0;top: 0;z-index: 1;right: 10px;}
-.system-files-toggle{position: absolute;left: 0;bottom: 0;z-index: 1;right: 10px;}
+.system-files-toggle{position: absolute;left: 0;bottom: -1px;z-index: 1;right: 10px;}
