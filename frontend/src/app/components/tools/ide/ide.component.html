@@ -279,7 +279,7 @@
                     <!-- Preview file -->
                     <button mat-menu-item 
                       [disabled]="!data?.path?.endsWith('.md')" 
-                      matTooltip="Preview file" 
+                      matTooltip="Preview file [ALT+P]" 
                       (click)="previewActiveFile()">
                       <mat-icon class="material-icons-outlined">
                         preview
@@ -377,6 +377,16 @@
                   </mat-list-item>
 
                   <mat-list-item role="listitem">
+                    Execute active file
+                    <span class="code my-0 ml-5">F5</span>
+                  </mat-list-item>
+
+                  <mat-list-item role="listitem">
+                    Preview active file
+                    <span class="code my-0 ml-5">ALT+P</span>
+                  </mat-list-item>
+
+                  <mat-list-item role="listitem">
                     Close active file
                     <span class="code my-0 ml-5">Alt + C</span>
                   </mat-list-item>
@@ -409,11 +419,6 @@
                   <mat-list-item role="listitem">
                     Create new folder
                     <span class="code my-0 ml-5">Alt + B</span>
-                  </mat-list-item>
-
-                  <mat-list-item role="listitem">
-                    Execute active file
-                    <span class="code my-0 ml-5">F5</span>
                   </mat-list-item>
 
                   <mat-list-item role="listitem">

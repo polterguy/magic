@@ -288,7 +288,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     // Retrieving all existing folders in system to allow user to select folder to create object within.
     const folders = this.getFolders();
 
-    // Retieving all existing files to prevent user from creating a new file that already exists.
+    // Retrieving all existing files to prevent user from creating a new file that already exists.
     const files = this.getFiles();
 
     // Creating modal dialog responsible for asking user for name and type of object.
@@ -334,7 +334,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           });
         };
 
-        // Firguing out path of file or folder.
+        // Figuring out path of file or folder.
         let path = result.path + result.name;
 
         // Checking if we're creating a folder or a file.
@@ -349,7 +349,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             // Showing user some feedback.
             this.feedbackService.showInfoShort('Folder successfully created');
 
-            // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
+            // Adding tree node for folder into tree node hierarchy.
             node.children.push({
               name: result.name,
               path: path,
@@ -361,7 +361,7 @@ export class IdeComponent implements OnInit, OnDestroy {
             // Making sure we sort nodes at level before we databind tree control again.
             sorter();
 
-            // Databinding tree control again.
+            // Databinding tree control again, ensuring we keep expanded folders expanded.
             this.dataBindTree();
 
           }, (error: any) => this.feedbackService.showError(error));
@@ -369,16 +369,15 @@ export class IdeComponent implements OnInit, OnDestroy {
         } else {
 
           // Pushing file on to currently edited files list.
-          const fileNode: FileNode = {
+          this.openFiles.push({
             name: result.name,
             path: path,
             folder: path.substring(0, path.lastIndexOf('/') + 1),
             options: this.getCodeMirrorOptions(path),
             content: result.template || '// File content here ...'
-          };
-          this.openFiles.push(fileNode);
+          });
 
-          // Adding tree node for folder into tree node hierarchy to make sure tree control is updated.
+          // Adding tree node for file into treeview hierarchy.
           node.children.push({
             name: result.name,
             path: path,
@@ -387,13 +386,13 @@ export class IdeComponent implements OnInit, OnDestroy {
             children: [],
           });
 
-          // Making sure file becomes active.
+          // Making sure newly created file becomes active.
           this.currentFileData = this.openFiles.filter(x => x.path === path)[0];
 
           // Making sure we sort nodes at level before we databind tree control again.
           sorter();
 
-          // Databinding tree control again.
+          // Databinding tree control again such that expanded nodes are still expanded.
           this.dataBindTree();
 
           // Marking document as clean.
@@ -402,7 +401,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           // Making sure we re-check component for changes to avoid CDR errors.
           this.cdRef.detectChanges();
 
-          // We'll need to re-retrieve endpoints now, to allow for executing file.
+          // We'll need to retrieve endpoints again, to allow for executing file.
           this.getEndpoints();
         }
       }
@@ -508,7 +507,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public saveActiveFile() {
 
     // Ensuring we actually have open files.
-    if (this.openFiles.length === 0) {
+    if (!this.currentFileData) {
       return;
     }
 
@@ -573,6 +572,11 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public previewActiveFile() {
 
+    // Making sure file can be previewed.
+    if (!this.currentFileData.path.endsWith('.md')) {
+      return;
+    }
+
     // Ensuring we actually have open files.
     if (this.openFiles.length === 0) {
       return;
@@ -591,8 +595,8 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public renameActiveFile() {
 
-    // Ensuring we actually have open files.
-    if (this.openFiles.length === 0) {
+    // Ensuring we actually have an active file.
+    if (!this.currentFileData) {
       return;
     }
 
@@ -643,7 +647,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public deleteActiveFile() {
 
     // Ensuring we actually have open files.
-    if (this.openFiles.length === 0) {
+    if (!this.currentFileData) {
       return;
     }
 
@@ -679,7 +683,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public closeActiveFile(noDirtyWarnings: boolean = false) {
 
     // Ensuring we actually have open files.
-    if (this.openFiles.length === 0) {
+    if (!this.currentFileData) {
       return;
     }
 
@@ -1258,6 +1262,11 @@ export class IdeComponent implements OnInit, OnDestroy {
       // Alt+X deletes currently selected folder.
       options[0].options.extraKeys['Alt-X'] = (cm: any) => {
         this.deleteActiveFolder();
+      };
+
+      // Alt+P shows apreview of active file.
+      options[0].options.extraKeys['Alt-P'] = (cm: any) => {
+        this.previewActiveFile();
       };
 
       // F5 executes active file.
