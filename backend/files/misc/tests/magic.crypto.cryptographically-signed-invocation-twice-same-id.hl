@@ -13,7 +13,8 @@ description:Assumes that invoking a cryptographically signed endpoint (localhost
          strings.starts-with:x:@request.host
             .:localhost
       .lambda
-         return:success
+         return
+            result:success
 
    // Common URL for all invocations.
    .url
