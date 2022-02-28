@@ -6,6 +6,16 @@
 description:Assumes that invoking a cryptographically signed endpoint (localhost) works as expected
 .lambda
 
+   // Notice, we only execute this test on localhost.
+   request.host
+   if
+      not
+         strings.starts-with:x:@request.host
+            .:localhost
+      .lambda
+         return
+            result:success
+
    // Common URL for all invocations.
    .url
    set-value:x:@.url
