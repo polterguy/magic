@@ -1,6 +1,6 @@
 
 <h1 mat-dialog-title>Rename file</h1>
-
+<form>
 <div mat-dialog-content>
 
   <mat-form-field class="fill-width" appearance="outline">
@@ -10,7 +10,8 @@
       type="text"
       matInput
       autocomplete="off"
-      [(ngModel)]="data.name">
+      [(ngModel)]="data.name"
+      name="name">
   </mat-form-field>
 
 </div>
@@ -21,6 +22,7 @@
     mat-raised-button
     [disabled]="data.name === originalName"
     color="primary"
+    type="submit"
     (click)="ok()">Rename</button>
 
   <button
@@ -28,3 +30,4 @@
     (click)="cancel()">Close</button>
 
 </div>
+</form>

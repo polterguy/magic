@@ -6,7 +6,7 @@
     </div>
     <ng-container *ngIf="sideNavStatus">
       <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">Welcome {{getUserRoles()}}</h4>
-      <h5 class="mb-0 mt-0 text-capitalized text-muted">
+      <h5 class="mb-0 mt-0 text-muted">
         {{getUserStatus()}}
       </h5>
     </ng-container>
