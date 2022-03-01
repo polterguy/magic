@@ -9,7 +9,6 @@ import { Component, OnInit } from '@angular/core';
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
 import { ConfigService } from 'src/app/components/management/config/services/config.service';
-import { FeedbackService } from '../../../services/feedback.service';
 
 /**
  * Setup component allowing you to setup and modify your system's configuration.
@@ -31,7 +30,6 @@ export class ConfigComponent implements OnInit {
    * @param setupService Setup HTTP service to use for retrieving and saving configuration settings for your backend
    */
   constructor(
-    private feedbackService: FeedbackService,
     private configService: ConfigService) {
   }
 
