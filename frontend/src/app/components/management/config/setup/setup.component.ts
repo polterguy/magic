@@ -5,7 +5,6 @@
 
 // Angular and system imports.
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
@@ -56,7 +55,6 @@ export class SetupComponent implements OnInit, OnDestroy {
   constructor(
     private feedbackService: FeedbackService,
     private configService: ConfigService,
-    private router: Router,
     protected messageService: MessageService) {
   }
 
