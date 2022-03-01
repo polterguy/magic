@@ -77,7 +77,6 @@ import { HomeComponent } from './components/home/home.component';
 import { AboutComponent } from './components/about/about.component';
 import { BazarComponent } from './components/management/bazar/bazar.component';
 import { TasksComponent } from './components/tools/tasks/tasks.component';
-import { FilesComponent } from './components/files/files.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
 import { UsersComponent } from './components/management/auth/users/users.component';
@@ -173,7 +172,6 @@ import { GeneralActionsComponent } from './components/tools/ide/action-buttons/g
     CrudifierComponent,
     EndpointsComponent,
     TasksComponent,
-    FilesComponent,
     EvaluatorComponent,
     AuthComponent,
     LogComponent,
