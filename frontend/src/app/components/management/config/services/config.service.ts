@@ -26,11 +26,11 @@ import { AuthenticateResponse } from '../../auth/models/authenticate-response.mo
 export class ConfigService {
 
   /**
-   * to detect configuration status
+   * To detect configuration status
    */
   private isConfigured = new BehaviorSubject<boolean>(undefined);
-  private _currentStatus: Status= null;
-  configStatus = this.isConfigured.asObservable();
+  private _currentStatus: Status = null;
+  public configStatus = this.isConfigured.asObservable();
 
   /**
    * Creates an instance of your service.
@@ -55,6 +55,7 @@ export class ConfigService {
         this._currentStatus = res;
         observer.next(res);
         observer.complete();
+        this.isConfigured.next(res.config_done && res.magic_crudified && res.server_keypair);
       }, (error: any) => {
         observer.error(error);
         observer.complete();

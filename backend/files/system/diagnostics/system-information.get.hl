@@ -6,131 +6,138 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Making sure we aggressively cache the HTTP response object on the client side.
-response.headers.set
-   Cache-Control:public, max-age=300
-
-// Retrieving data from cache, and/or creating our cache entry.
-cache.try-get:system-information
-   expiration:300
+// Verifying system has been setup.
+config.get:"magic:auth:secret"
+if
+   neq:x:@config.get
+      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
    .lambda
 
-      // Retrieving version of Magic we're currently running.
-      version
+      // Making sure we aggressively cache the HTTP response object on the client side.
+      response.headers.set
+         Cache-Control:public, max-age=300
 
-      // Retrieving number of persisted tasks.
-      tasks.count
-
-      // Counting total number of log items.
-      log.count
-
-      /*
-       * Retrieving capabilities of log implementation, and verifying implementation
-       * supports timeshifts before we invoke timeshifts.
-       */
-      log.capabilities
-      if:x:@log.capabilities/*/can-timeshift
-
-         // Adding root nodes for timeshifts.
-         add:x:@.lambda/*/lambda2hyper
-            .
-               timeshifts
-                  logins
-                     name:Logins per day
-                     description:How many times users were able to successfully authenticate on a daily basis
-                     items
-                  backend_endpoints_generated
-                     name:Generated CRUD endpoints
-                     description:How many CRUD endpoints that was generated on a daily basis
-                     items
-                  access_denied
-                     name:Access denied requests
-                     description:How many times invocations have resulted in an access denied response
-                     items
-
-         // Retrieving count of log items grouped by day for root logins.
-         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/logins/*/items
-            log.timeshift:User successfully authenticated
-
-         // Retrieving count of log items grouped by day for backend endpoints generated.
-         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/backend_endpoints_generated/*/items
-            log.timeshift:Generating CRUD backend
-
-         // Retrieving access denied invocations.
-         add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items
-            log.timeshift:Access denied
-
-      // Retrieving endpoints.
-      endpoints.list
-      .no-endpoints
-      set-value:x:-
-         get-count:x:@endpoints.list/*
-
-      // Retrieving last 10 log items.
-      add:x:@.lambda/*/lambda2hyper/*/last_log_items
-         log.query
-            max:10
-
-      // Retrieving slots.
-      vocabulary
-      .no-slots
-      set-value:x:-
-         get-count:x:@vocabulary/*
-
-      // Retrieving dynamic slots.
-      slots.vocabulary
-      .no-dynamic-slots
-      set-value:x:-
-         get-count:x:@slots.vocabulary/*
-
-      // Retrieving default database adapter.
-      .default-db
-      set-value:x:-
-         config.get:"magic:databases:default"
-
-      // Counting cache items.
-      cache.count
-
-      // Verifying sockets are turned on.
-      .has-sockets:bool:true
-      .has-terminal:bool:true
-      if
-         eq
-            config.get:"magic:sockets:url"
-            .
+      // Retrieving data from cache, and/or creating our cache entry.
+      cache.try-get:system-information
+         expiration:300
          .lambda
-            set-value:x:@.has-sockets
-               .:bool:false
-            set-value:x:@.has-terminal
-               .:bool:false
 
-      // Verifying scheduler is turned on.
-      .has-scheduler:bool:true
-      if
-         eq
-            config.get:"magic:tasks:scheduler"
-            .
-         .lambda
-            set-value:x:@.has-scheduler
-               .:bool:false
+            // Retrieving version of Magic we're currently running.
+            version
 
-      // Returning result to caller.
-      unwrap:x:+/*
-      lambda2hyper
-         version:x:@version
-         persisted_tasks:x:@tasks.count
-         has_sockets:x:@.has-sockets
-         has_terminal:x:@.has-terminal
-         has_scheduler:x:@.has-scheduler
-         log_items:x:@log.count
-         cache_items:x:@cache.count
-         endpoints:x:@.no-endpoints
-         slots:x:@.no-slots
-         dynamic_slots:x:@.no-dynamic-slots
-         default_db:x:@.default-db
-         last_log_items
-      return:x:@lambda2hyper
+            // Retrieving number of persisted tasks.
+            tasks.count
 
-// Returning result of cache invocation to caller.
-hyper2lambda:x:@cache.try-get
-return-nodes:x:@hyper2lambda/*
+            // Counting total number of log items.
+            log.count
+
+            /*
+             * Retrieving capabilities of log implementation, and verifying implementation
+             * supports timeshifts before we invoke timeshifts.
+             */
+            log.capabilities
+            if:x:@log.capabilities/*/can-timeshift
+
+               // Adding root nodes for timeshifts.
+               add:x:@.lambda/*/lambda2hyper
+                  .
+                     timeshifts
+                        logins
+                           name:Logins per day
+                           description:How many times users were able to successfully authenticate on a daily basis
+                           items
+                        backend_endpoints_generated
+                           name:Generated CRUD endpoints
+                           description:How many CRUD endpoints that was generated on a daily basis
+                           items
+                        access_denied
+                           name:Access denied requests
+                           description:How many times invocations have resulted in an access denied response
+                           items
+
+               // Retrieving count of log items grouped by day for root logins.
+               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/logins/*/items
+                  log.timeshift:User successfully authenticated
+
+               // Retrieving count of log items grouped by day for backend endpoints generated.
+               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/backend_endpoints_generated/*/items
+                  log.timeshift:Generating CRUD backend
+
+               // Retrieving access denied invocations.
+               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items
+                  log.timeshift:Access denied
+
+            // Retrieving endpoints.
+            endpoints.list
+            .no-endpoints
+            set-value:x:-
+               get-count:x:@endpoints.list/*
+
+            // Retrieving last 10 log items.
+            add:x:@.lambda/*/lambda2hyper/*/last_log_items
+               log.query
+                  max:10
+
+            // Retrieving slots.
+            vocabulary
+            .no-slots
+            set-value:x:-
+               get-count:x:@vocabulary/*
+
+            // Retrieving dynamic slots.
+            slots.vocabulary
+            .no-dynamic-slots
+            set-value:x:-
+               get-count:x:@slots.vocabulary/*
+
+            // Retrieving default database adapter.
+            .default-db
+            set-value:x:-
+               config.get:"magic:databases:default"
+
+            // Counting cache items.
+            cache.count
+
+            // Verifying sockets are turned on.
+            .has-sockets:bool:true
+            .has-terminal:bool:true
+            if
+               eq
+                  config.get:"magic:sockets:url"
+                  .
+               .lambda
+                  set-value:x:@.has-sockets
+                     .:bool:false
+                  set-value:x:@.has-terminal
+                     .:bool:false
+
+            // Verifying scheduler is turned on.
+            .has-scheduler:bool:true
+            if
+               eq
+                  config.get:"magic:tasks:scheduler"
+                  .
+               .lambda
+                  set-value:x:@.has-scheduler
+                     .:bool:false
+
+            // Returning result to caller.
+            unwrap:x:+/*
+            lambda2hyper
+               version:x:@version
+               persisted_tasks:x:@tasks.count
+               has_sockets:x:@.has-sockets
+               has_terminal:x:@.has-terminal
+               has_scheduler:x:@.has-scheduler
+               log_items:x:@log.count
+               cache_items:x:@cache.count
+               endpoints:x:@.no-endpoints
+               slots:x:@.no-slots
+               dynamic_slots:x:@.no-dynamic-slots
+               default_db:x:@.default-db
+               last_log_items
+            return:x:@lambda2hyper
+
+      // Returning result of cache invocation to caller.
+      hyper2lambda:x:@cache.try-get
+      return-nodes:x:@hyper2lambda/*
