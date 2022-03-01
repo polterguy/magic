@@ -114,7 +114,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
 
     // Making sure we retrieve system report if user is already authenticated.
-    if (this.authService.authenticated && this.authService.isRoot) {
+    if (this.authService.authenticated && this.authService.isRoot && !this.systemReport) {
       this.getSystemReport();
     }
   }
@@ -160,6 +160,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Retrieving system report from backend.
     this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {
 
+      // Ensuring backend actuallyreturned something.
+      if (!report) {
+        return;
+      }
+
       // Binding model
       this.systemReport = report;
 
@@ -183,7 +188,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       // get the user's preferences for charts
       this.getChartPreferences();
-    })
+
+    }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
