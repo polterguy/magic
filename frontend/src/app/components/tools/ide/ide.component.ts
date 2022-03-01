@@ -7,14 +7,13 @@
 import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { 
+import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   HostListener,
-  NgZone,
   OnDestroy,
   OnInit,
   ViewChild
@@ -25,25 +24,19 @@ import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
 import { Message } from '../../../models/message.model';
-import { Response } from '../../../models/response.model';
 import { FileService } from '../../files/services/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from '../../management/auth/services/auth.service';
 import { Endpoint } from '../../analytics/endpoints/models/endpoint.model';
 import { EvaluatorService } from '../evaluator/services/evaluator.service';
-import { MacroDefinition } from '../../files/services/models/macro-definition.model';
 import { EndpointService } from '../../analytics/endpoints/services/endpoint.service';
 import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
-import { PreviewFileDialogComponent } from './preview-file-dialog/preview-file-dialog.component';
-import { ExecuteMacroDialogComponent } from './execute-macro-dialog/execute-macro-dialog.component';
-import { Macro, SelectMacroDialogComponent } from './select-macro-dialog/select-macro-dialog.component';
-import { ExecuteEndpointDialogComponent } from './execute-endpoint-dialog/execute-endpoint-dialog.component';
-import { FileObjectName, RenameFileDialogComponent } from './rename-file-dialog/rename-file-dialog.component';
-import { FileObject, NewFileFolderDialogComponent } from './new-file-folder-dialog/new-file-folder-dialog.component';
 
 // File types extensions.
 import fileTypes from '../../files/file-editor/file-types.json';
+import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
+import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -55,6 +48,10 @@ import fileTypes from '../../files/file-editor/file-types.json';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IdeComponent implements OnInit, OnDestroy {
+
+  @ViewChild(FileActionsComponent) fileActionsComponent: FileActionsComponent;
+  @ViewChild(FolderActionsComponent) folderActionsComponent: FolderActionsComponent;
+
 
   // Tree view drawer.
   @ViewChild('drawer') public drawer: MatSidenav;
@@ -79,7 +76,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   private extensions = fileTypes;
 
   // Root tree node pointing to root folder.
-  private root: TreeNode = {
+  public root: TreeNode = {
     name: '/',
     path: '/',
     isFolder: true,
@@ -145,12 +142,6 @@ export class IdeComponent implements OnInit, OnDestroy {
   private generateCrudDialog: MatDialogRef<GenerateCrudAppComponent> = null;
 
   /**
-   * Model for file uploader.
-   */
-  public fileInput: string[];
-  public zipFileInput: any;
-
-  /**
   * Current folder we're viewing contens of.
   */
   public currentFolder = '/';
@@ -165,7 +156,6 @@ export class IdeComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
-   * @param dialog Needed to create modal dialogs
    * @param cdRef Needed to mark component as having changes
    * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
@@ -173,18 +163,15 @@ export class IdeComponent implements OnInit, OnDestroy {
    * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
    * @param messageService Service used to publish messages to other components in the system
    * @param endpointService Needed to retrieve endpoints from backend
-   * @param ngZone Needed to make sure dialogs popup inside the ngZone
    */
   public constructor(
-    private dialog: MatDialog,
     private cdRef: ChangeDetectorRef,
     public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService,
     private messageService: MessageService,
-    private endpointService: EndpointService, 
-    readonly ngZone: NgZone) { }
+    private endpointService: EndpointService) { }
 
   /**
    * OnInit implementation.
@@ -283,152 +270,6 @@ export class IdeComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Invoked when user wants to create a new file or folder.
-   */
-  public createNewFileObject(type: string) {
-
-    // Retrieving all existing folders in system to allow user to select folder to create object within.
-    const folders = this.getFolders();
-
-    // Retrieving all existing files to prevent user from creating a new file that already exists.
-    const files = this.getFiles();
-
-    // Creating modal dialog responsible for asking user for name and type of object.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      const dialogRef = this.dialog.open(NewFileFolderDialogComponent, {
-        width: '550px',
-        data: {
-          isFolder: false,
-          name: '',
-          path: this.activeFolder,
-          folders: folders,
-          files: files,
-          type: type
-        },
-      });
-
-      // Subscribing to closed event and creating a new folder if we're given a folder name.
-      dialogRef.afterClosed().subscribe((result: FileObject) => {
-
-        // Verifying user clicked rename button
-        if (result) {
-
-          // Finding tree node for where file/folder is to be created, such that we can inject object into tree structure.
-          const node = this.findTreeNodeFolder(this.root, result.path);
-
-          // Common sorter object used for both files and folders branch.
-          const sorter = () => {
-
-            // Sorting children such that folder comes before files, and everything else is sorted case insensitively.
-            node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
-              if (lhs.isFolder && !rhs.isFolder) {
-                return -1;
-              } else if (!lhs.isFolder && rhs.isFolder) {
-                return 1;
-              }
-              const lhsLowers = lhs.path.toLowerCase();
-              const rhsLowers = rhs.path.toLowerCase();
-              if (lhsLowers < rhsLowers) {
-                return -1;
-              } else if (lhsLowers > rhsLowers) {
-                return 1;
-              }
-              return 0;
-            });
-          };
-
-          // Figuring out path of file or folder.
-          let path = result.path + result.name;
-
-          // Checking if we're creating a folder or a file.
-          if (result.isFolder) {
-
-            // Making sure we append end slash.
-            path += '/';
-
-            // We're supposed to create a folder.
-            this.fileService.createFolder(path).subscribe(() => {
-
-              // Showing user some feedback.
-              this.feedbackService.showInfoShort('Folder successfully created');
-
-              // Adding tree node for folder into tree node hierarchy.
-              node.children.push({
-                name: result.name,
-                path: path,
-                isFolder: true,
-                level: result.path.split('/').filter(x => x !== '').length + 1,
-                children: [],
-              });
-
-              // Making sure we sort nodes at level before we databind tree control again.
-              sorter();
-
-              // Databinding tree control again, ensuring we keep expanded folders expanded.
-              this.dataBindTree();
-
-            }, (error: any) => this.feedbackService.showError(error));
-
-          } else {
-
-            // Pushing file on to currently edited files list.
-            this.openFiles.push({
-              name: result.name,
-              path: path,
-              folder: path.substring(0, path.lastIndexOf('/') + 1),
-              options: this.getCodeMirrorOptions(path),
-              content: result.template || '// File content here ...'
-            });
-
-            // Adding tree node for file into treeview hierarchy.
-            node.children.push({
-              name: result.name,
-              path: path,
-              isFolder: false,
-              level: result.path.split('/').filter(x => x !== '').length + 1,
-              children: [],
-            });
-
-            // Making sure newly created file becomes active.
-            this.currentFileData = this.openFiles.filter(x => x.path === path)[0];
-
-            // Making sure we sort nodes at level before we databind tree control again.
-            sorter();
-
-            // Databinding tree control again such that expanded nodes are still expanded.
-            this.dataBindTree();
-
-            // Marking document as clean.
-            this.saveActiveFile();
-
-            // Making sure we re-check component for changes to avoid CDR errors.
-            this.cdRef.detectChanges();
-
-            // We'll need to retrieve endpoints again, to allow for executing file.
-            this.getEndpoints();
-          }
-        }
-      });
-    })
-  }
-
-  /**
-   * Returns true if active file is dirty.
-   */
-  public activeFileIsClean() {
-
-    // Retrieving active CodeMirror editor to check if its document is dirty or not.
-    var activeWrapper = document.querySelector('.active-codemirror-editor');
-    if (activeWrapper) {
-      var editor = (<any>activeWrapper.querySelector('.CodeMirror'))?.CodeMirror;
-      if (editor) {
-        return editor.isClean();
-      }
-    }
-    return true;
-  }
 
   /**
    * Returns true if specified node has children.
@@ -506,393 +347,93 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Invoked when a file should be saved.
-   * 
-   * @param file File to save
-   */
-  public saveActiveFile() {
-
-    // Ensuring we actually have open files.
-    if (!this.currentFileData) {
-      return;
-    }
-
-    // Saving file by invoking backend.
-    this.fileService.saveFile(this.currentFileData.path, this.currentFileData.content).subscribe(() => {
-
-      // Marking document as clean.
-      var activeWrapper = document.querySelector('.active-codemirror-editor');
-      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-      editor.doc.markClean();
-
-      // Providing feedback to user.
-      this.feedbackService.showInfoShort('File successfully saved');
-
-      // We'll need to re-retrieve endpoints now, to allow for executing file correctly.
-      this.getEndpoints();
-
-    }, (error: any) => this.feedbackService.showError(error));
-  }
-
-  /**
-   * Invoked when a Hyperlambda file should be executed.
-   * 
-   * How the file is executed depends upon if the file is an endpoint file or not.
-   * If the file is an endpoint file, a modal dialog will be displayed, allowing
-   * the user to parametrise invocation as an HTTP request first.
-   * 
-   * @param file File node wrapping file to execute
-   */
-  public executeActiveFile() {
-
-    // Ensuring we actually have open files.
-    if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
-      return;
-    }
-
-    // Figuring out if file is an endpoint file or not.
-    const endpoint = this.getEndpoint(this.currentFileData);
-    if (endpoint) {
-
-      // Opening up dialog to allow user to invoke endpoint.
-      // using ngZone to prevent the dialog from opening outside of the ngZone!
-      this.ngZone.run(() => {
-        this.dialog.open(ExecuteEndpointDialogComponent, {
-          data: endpoint,
-          minWidth: '80%',
-        });
-      })
-    } else {
-
-      // Executing file directly as a Hyperlambda file.
-      this.evaluatorService.execute(this.currentFileData.content).subscribe(() => {
-
-        // Providing feedback to user.
-        this.feedbackService.showInfoShort('File successfully executed');
-
-      }, (error: any) => this.feedbackService.showError(error));
-    }
-  }
-
-  /**
-   * Invoked when a file should be previewed.
-   * 
-   * @param file File to preview
-   */
-  public previewActiveFile() {
-
-    // Making sure file can be previewed.
-    if (!this.currentFileData.path.endsWith('.md')) {
-      return;
-    }
-
-    // Ensuring we actually have open files.
-    if (this.openFiles.length === 0) {
-      return;
-    }
-
-    // Opening up a modal dialog to preview file.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      this.dialog.open(PreviewFileDialogComponent, {
-        data: this.currentFileData.content,
-      });
-    })
-  }
-
-  /**
+   * to be called from a child component
    * Invoked when a file should be renamed.
    * 
-   * @param file File to rename
+   * @param name - the given name to be string
    */
-  public renameActiveFile() {
+  public renameActiveFile(name: string) {
 
     // Ensuring we actually have an active file.
     if (!this.currentFileData) {
       return;
     }
 
-    // Opening up a modal dialog to preview file.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      const dialog = this.dialog.open(RenameFileDialogComponent, {
-        width: '550px',
-        data: {
-          name: this.currentFileData.name,
-        },
-      });
-      dialog.afterClosed().subscribe((data: FileObjectName) => {
+    // Updating treeview model.
+    const treeNode = this.findTreeNodeFolder(this.root, this.currentFileData.path);
+    treeNode.name = name;
+    treeNode.path = this.currentFileData.path.substring(0, this.currentFileData.path.lastIndexOf('/') + 1) + name;
 
-        // Checking if user wants to rename file.
-        if (data) {
+    // Updating model.
+    this.currentFileData.name = treeNode.name;
+    this.currentFileData.path = treeNode.path;
 
-          // Invoking backend to rename object.
-          this.fileService.rename(this.currentFileData.path, data.name).subscribe(() => {
+    // Databinding tree again.
+    this.dataBindTree();
+    this.cdRef.detectChanges();
 
-            // Updating treeview model.
-            const treeNode = this.findTreeNodeFolder(this.root, this.currentFileData.path);
-            treeNode.name = data.name;
-            treeNode.path = this.currentFileData.path.substring(0, this.currentFileData.path.lastIndexOf('/') + 1) + data.name;
+    // Showing user some feedback.
+    this.feedbackService.showInfoShort('File successfully renamed');
 
-            // Updating model.
-            this.currentFileData.name = treeNode.name;
-            this.currentFileData.path = treeNode.path;
-
-            // Databinding tree again.
-            this.dataBindTree();
-            this.cdRef.detectChanges();
-
-            // Showing user some feedback.
-            this.feedbackService.showInfoShort('File successfully renamed');
-
-            // We'll need to re-retrieve endpoints now, to allow for executing file correctly.
-            this.getEndpoints();
-
-          }, (error: any) => this.feedbackService.showError(error));
-        }
-      });
-    })
+    // We'll need to re-retrieve endpoints now, to allow for executing file correctly.
+    this.getEndpoints();
   }
 
   /**
-   * Invoked when a file should be deleted.
+   * Invoked from a child component when a file should be deleted.
    * 
-   * @param file File to delete
+   * @param path path of the current file to be string
    */
-  public deleteActiveFile() {
+  public deleteActiveFile(path: string) {
 
     // Ensuring we actually have open files.
     if (!this.currentFileData) {
       return;
     }
 
-    // Asking user to confirm action.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
+    // Removing node from collection.
+    if (this.removeNode(path)) {
 
-        // Deleting file by invoking backend.
-        this.fileService.deleteFile(this.currentFileData.path).subscribe(() => {
+      // This will databind the tree control again, making sure we keep expanded nodes as such.
+      this.dataBindTree();
 
-          // Removing node from collection.
-          if (this.removeNode(this.currentFileData.path)) {
+      // Closing file.
+      this.fileActionsComponent.closeActiveFile(true);
+    }
 
-            // This will databind the tree control again, making sure we keep expanded nodes as such.
-            this.dataBindTree();
+    // Providing feedback to user.
+    this.feedbackService.showInfoShort('File successfully deleted');
 
-            // Closing file.
-            this.closeActiveFile(true);
-          }
-
-          // Providing feedback to user.
-          this.feedbackService.showInfoShort('File successfully deleted');
-
-        }, (error: any) => this.feedbackService.showError(error));
-      });
-    })
   }
 
   /**
-   * Invoked when a file should be closed.
-   * 
-   * @param file File to close
-   * @param force If true user will not be warned about unsaved changes
+   * A callback from child component after deleting a folder
    */
-  public closeActiveFile(noDirtyWarnings: boolean = false) {
+  public updateAfterDeleteFolder() {
+    // Showing feedback to user and updating treeview.
+    this.removeNode(this.activeFolder);
+    this.feedbackService.showInfoShort('Folder successfully deleted');
 
-    // Ensuring we actually have open files.
-    if (!this.currentFileData) {
-      return;
-    }
+    // Making sure we remove all files existing within the folder that are currentl edited.
+    this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
 
-    // Checking if content is dirty.
-    const shouldWarn = () => {
-      if (noDirtyWarnings) {
-        return false;
+    // Verifying that active file is not one of the files actually removed in above logic.
+    if (this.openFiles.filter(x => x.path === this.currentFileData.path).length === 0) {
+
+      // Verifying there are any open files left.
+      if (this.openFiles.length > 0) {
+        this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[0].path)[0];
+      } else {
+        this.currentFileData = null;
       }
-      var activeWrapper = document.querySelector('.active-codemirror-editor');
-      var editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-      return !editor.doc.isClean();
-    };
-    if (!shouldWarn()) {
-
-      // File has not been edited and we can close editor immediately.
-      this.closeFileImpl();
-
-    } else {
-
-      // File has been edited, and we need to inform user allowing him to save it.
-      // using ngZone to prevent the dialog from opening outside of the ngZone!
-      this.ngZone.run(() => {
-        this.feedbackService.confirm('File not saved', 'File has unsaved changes, are you sure you want to close the file?', () => {
-
-          // User confirmed he wants to close file, even though the editor is dirty (has changes).
-          this.closeFileImpl();
-        });
-      })
-    }
-  }
-
-  /**
-   * Deletes the currently active folder.
-   */
-  public deleteActiveFolder() {
-
-    // Sanity checking to avoid deleting root folder.
-    if (this.activeFolder === '/') {
-      return;
     }
 
-    // Asking user to confirm action.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      this.feedbackService.confirm('Confirm action', `Are you sure you want to delete the '${this.activeFolder}' folder?`, () => {
+    // Databinding tree again.
+    this.dataBindTree();
 
-        // Invoking backend to actually delete folder.
-        this.fileService.deleteFolder(this.activeFolder).subscribe(() => {
-
-          // Showing feedback to user and updating treeview.
-          this.removeNode(this.activeFolder);
-          this.feedbackService.showInfoShort('Folder successfully deleted');
-
-          // Making sure we remove all files existing within the folder that are currentl edited.
-          this.openFiles = this.openFiles.filter(x => !x.path.startsWith(this.activeFolder));
-
-          // Verifying that active file is not one of the files actually removed in above logic.
-          if (this.openFiles.filter(x => x.path === this.currentFileData.path).length === 0) {
-
-            // Verifying there are any open files left.
-            if (this.openFiles.length > 0) {
-              this.currentFileData = this.openFiles.filter(x => x.path === this.openFiles[0].path)[0];
-            } else {
-              this.currentFileData = null;
-            }
-          }
-
-          // Databinding tree again.
-          this.dataBindTree();
-
-          // Resetting active folder to root folder.
-          this.activeFolder = '/';
-          this.cdRef.detectChanges();
-
-        }, (error: any) => this.feedbackService.showError(error));
-      });
-    })
-  }
-
-  /**
-   * Invoked when user wants to execute a macro.
-   */
-  public selectMacro() {
-
-    // Opening modal dialog allowing user to select macro.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      const dialogRef = this.dialog.open(SelectMacroDialogComponent, {
-        width: '550px',
-        data: {
-          name: '',
-        },
-      });
-
-      // Subscribing to closed event and creating a new folder if we're given a folder name.
-      dialogRef.afterClosed().subscribe((result: Macro) => {
-
-        // Verifying user selected a macro.
-        if (result) {
-
-          // User selected a macro, executing it.
-          this.executeMacro(result.name);
-        }
-      });
-    })
-  }
-
-  /**
-   * Invoked when user wants to generate a CRUD app.
-   */
-  public generateCrudApp() {
-
-    // Opening modal dialog allowing user to generate a CRUD app.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      this.generateCrudDialog = this.dialog.open(GenerateCrudAppComponent, {
-        width: '80%',
-        disableClose: true
-      });
-    })
-
-    // Making sure we can still close the dialog when the obscurer is clicked.
-    this.generateCrudDialog.backdropClick().subscribe(() => {
-      this.generateCrudDialog.close();
-    })
-  }
-
-  /**
-   * Uploads one or more files to the currently active folder.
-   */
-  public uploadFiles(files: FileList) {
-    
-    // Iterating through each file and uploading one file at the time.
-    for (let idx = 0; idx < files.length; idx++) {
-
-      // Invoking service method responsible for actually uploading file.
-      this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe(() => {
-
-        // Showing some feedback to user, and re-databinding folder's content.
-        this.feedbackService.showInfo('File was successfully uploaded');
-        this.fileInput = null;
-        this.updateFileObject(this.activeFolder);
-      });
-    }
-  }
-
-  /**
-   * Download the active folder to the client.
-   */
-  public downloadActiveFolder() {
-
-    // Ensuring we have an active folder.
-    if (this.activeFolder) {
-
-      // Downloading folder.
-      this.fileService.downloadFolder(this.activeFolder);
-    }
-  }
-
-  /**
-   * Downloads the active file to the client
-   */
-  public downloadActiveFile() {
-
-    // Making sure a file is selected
-    if (this.currentFileData) {
-
-      // Downloading file.
-      this.fileService.downloadFile(this.currentFileData.path);
-    }
-  }
-
-  /**
-   * Uploads and installs a zip file on the server.
-   * 
-   * @param file Zip file to upload and install
-   */
-  public installModule(file: FileList) {
-
-    // Sanity checking that file is a zip file.
-    if (file[0].name.split('.')[1] === 'zip') {
-      this.fileService.uploadZipFile(file.item(0)).subscribe(() => {
-        
-        // Showing some feedback to user, and re-databinding folder's content.
-        this.feedbackService.showInfo('File was successfully uploaded');
-        this.zipFileInput = null;
-        this.updateFileObject('/modules/');
-      });
-    } else {
-      this.feedbackService.showInfo('Only zip files without . are accepted');
-    }
+    // Resetting active folder to root folder.
+    this.activeFolder = '/';
+    this.cdRef.detectChanges();
   }
 
   /**
@@ -910,10 +451,10 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Returns an endpoint matching the specified file node, or null if file cannot
    * be matched to an endpoint.
    */
-  protected getEndpoint(file: FileNode) {
+  public getEndpoint(file: FileNode) {
 
     // Notice, only files inside of "/modules/" and "/system/" can be endpoint files.
-    if (file.path.startsWith('/modules/') || file.path.startsWith('/system/')) {
+    if (file?.path?.startsWith('/modules/') || file?.path?.startsWith('/system/')) {
 
       // Splitting filename of file to check if it's semantically correct according to how an endpoint file should be.
       const lastSplits = file.name.split('.');
@@ -1018,97 +559,9 @@ export class IdeComponent implements OnInit, OnDestroy {
   }
 
   /*
-   * Executes the specified macro.
-   */
-  private executeMacro(file: string) {
-
-    // Retrieving macro's arguments and description.
-    this.fileService.getMacroDefinition(file).subscribe((result: MacroDefinition) => {
-
-      /*
-       * Filling out default values for anything we can intelligently figure
-       * out according to selected folder.
-       */
-      const splits = this.activeFolder.split('/');
-      if (splits.length === 4 && splits[1] === 'modules') {
-        const moduleArgs = result.arguments.filter(x => x.name === 'module' || x.name === 'database');
-        if (moduleArgs.length > 0) {
-          for (const idx of moduleArgs) {
-            idx.value = splits[2];
-          }
-        }
-      }
-
-      // Checking if we've got an [auth] argument, and defaulting its value to 'root'.
-      const authArgs = result.arguments.filter(x => x.name === 'auth');
-      if (authArgs.length > 0) {
-        for (const idx of authArgs) {
-          idx.value = 'root';
-        }
-      }
-
-      // Opening modal dialog allowing user to select macro.
-      // using ngZone to prevent the dialog from opening outside of the ngZone!
-      this.ngZone.run(() => {
-        const dialogRef = this.dialog.open(ExecuteMacroDialogComponent, {
-          data: result,
-        });
-
-        // Subscribing to closed event and creating a new folder if we're given a folder name.
-        dialogRef.afterClosed().subscribe((result: MacroDefinition) => {
-
-          // Verifying user decorated the macro.
-          if (result && result.name) {
-
-            // User decorated macro, executing macro now by invoking backend.
-            const payload = {};
-            for (const idx of result.arguments.filter(x => x.value)) {
-              payload[idx.name] = idx.value;
-            }
-            this.fileService.executeMacro(file, payload).subscribe((exeResult: Response) => {
-
-              // Giving user some feedback.
-              this.feedbackService.showInfoShort('Macro successfully executed');
-
-              // Checking if macro changed folder or file structure in backend.
-              if (exeResult.result === 'folders-changed') {
-
-                // Asking user if he wants to refresh his folders.
-                this.feedbackService.confirm(
-                  'Refresh folders?',
-                  'Macro execution changed your file system, do you want to refresh your files and folders?',
-                  () => {
-
-                    // Refreshing files and folder.
-                    this.root.children = [];
-                    this.getFilesFromServer('/', () => {
-                      this.getEndpoints();
-                    });
-                  });
-              } else if (exeResult.result.startsWith('folders-changed|')) {
-
-                // Macro returned specific folder that we'll need to update, and hence we can update only that folder.
-                var fileObject = exeResult.result.split('|')[1];
-                this.updateFileObject(fileObject);
-              }
-
-            }, (error: any) => this.feedbackService.showError(error));
-
-          } else if (result) {
-
-            // Assuming user wants to select another macro.
-            this.selectMacro();
-
-          } // Else, do nothing ...
-        });
-      })
-    }, (error: any) => this.feedbackService.showError(error));
-  }
-
-  /*
    * Returns all folders in system to caller.
    */
-  private getFolders(current: TreeNode = this.root) {
+  public getFolders(current: TreeNode = this.root) {
 
     // Finding all folders in currently iterated level.
     const result: string[] = [];
@@ -1127,7 +580,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /*
    * Returns all folders in system to caller.
    */
-  private getFiles(current: TreeNode = this.root) {
+  public getFiles(current: TreeNode = this.root) {
 
     // Finding all files in currently iterated level.
     let result: string[] = [];
@@ -1222,6 +675,106 @@ export class IdeComponent implements OnInit, OnDestroy {
     return cloneObj;
   }
 
+  /**
+   * it's a callback function from child component
+   * @param event an array coming from the child component when new file/folder is created
+   * event = { dialogResult: any, objectPath: string }
+   */
+  manageAfterCreateNewFileObject(event: any) {
+    // Finding tree node for where file/folder is to be created, such that we can inject object into tree structure.
+    const node = this.findTreeNodeFolder(this.root, event.dialogResult.path);
+
+    // Common sorter object used for both files and folders branch.
+    const sorter = () => {
+
+      // Sorting children such that folder comes before files, and everything else is sorted case insensitively.
+      node.children.sort((lhs: TreeNode, rhs: TreeNode) => {
+        if (lhs.isFolder && !rhs.isFolder) {
+          return -1;
+        } else if (!lhs.isFolder && rhs.isFolder) {
+          return 1;
+        }
+        const lhsLowers = lhs.path.toLowerCase();
+        const rhsLowers = rhs.path.toLowerCase();
+        if (lhsLowers < rhsLowers) {
+          return -1;
+        } else if (lhsLowers > rhsLowers) {
+          return 1;
+        }
+        return 0;
+      });
+    };
+    if (event.dialogResult.isFolder) {
+      // Adding tree node for folder into tree node hierarchy.
+      node.children.push({
+        name: event.dialogResult.name,
+        path: event.objectPath,
+        isFolder: true,
+        level: event.dialogResult.path.split('/').filter(x => x !== '').length + 1,
+        children: [],
+      });
+
+      // Making sure we sort nodes at level before we databind tree control again.
+      sorter();
+
+      // Databinding tree control again, ensuring we keep expanded folders expanded.
+      this.dataBindTree();
+    } else {
+
+      // Pushing file on to currently edited files list.
+      this.openFiles.push({
+        name: event.dialogResult.name,
+        path: event.objectPath,
+        folder: event.objectPath.substring(0, event.objectPath.lastIndexOf('/') + 1),
+        options: this.getCodeMirrorOptions(event.objectPath),
+        content: event.dialogResult.template || '// File content here ...'
+      });
+
+      // Adding tree node for file into treeview hierarchy.
+      node.children.push({
+        name: event.dialogResult.name,
+        path: event.objectPath,
+        isFolder: false,
+        level: event.dialogResult.path.split('/').filter(x => x !== '').length + 1,
+        children: [],
+      });
+
+      // Making sure newly created file becomes active.
+      this.currentFileData = this.openFiles.filter(x => x.path === event.objectPath)[0];
+
+      // Making sure we sort nodes at level before we databind tree control again.
+      sorter();
+
+      // Databinding tree control again such that expanded nodes are still expanded.
+      this.dataBindTree();
+
+      // Marking document as clean.
+      this.fileActionsComponent.saveActiveFile();
+
+      // Making sure we re-check component for changes to avoid CDR errors.
+      this.cdRef.detectChanges();
+
+      // We'll need to retrieve endpoints again, to allow for executing file.
+      this.getEndpoints();
+    }
+  }
+
+  /**
+   * A callback function from child component after macro executed
+   * @param fileObject string to be defined by child component if execution result startsWith 'folders-changed|'
+   */
+  public updateAfterMacro(fileObject: string) {
+    if (fileObject === null) {
+      // Refreshing files and folder.
+      this.root.children = [];
+      this.getFilesFromServer('/', () => {
+        this.getEndpoints();
+      });
+    } else {
+      this.updateFileObject(fileObject);
+    }
+  }
+
   /*
    * Returns options for CodeMirror editor.
    */
@@ -1249,7 +802,7 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.cdRef.detectChanges();
         let sidenav = document.querySelector('.mat-sidenav');
         sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-        sidenav.classList.add('d-none');
+          sidenav.classList.add('d-none');
         this.drawer.close();
 
         // Toggling maximise mode.
@@ -1258,52 +811,52 @@ export class IdeComponent implements OnInit, OnDestroy {
 
       // Alt+S saves the active file.
       options[0].options.extraKeys['Alt-S'] = (cm: any) => {
-        this.saveActiveFile();
+        this.fileActionsComponent.saveActiveFile();
       };
 
       // Alt+D deletes the active file.
       options[0].options.extraKeys['Alt-D'] = (cm: any) => {
-        this.deleteActiveFile();
+        this.fileActionsComponent.deleteActiveFile();
       };
 
       // Alt+C closes the active file.
       options[0].options.extraKeys['Alt-C'] = (cm: any) => {
-        this.closeActiveFile()
+        this.fileActionsComponent.closeActiveFile()
       };
 
       // Alt+R renames the active file.
       options[0].options.extraKeys['Alt-R'] = (cm: any) => {
-        this.renameActiveFile();
+        this.fileActionsComponent.renameActiveFile();
       };
 
       // Alt+O opens up the select macro window.
       options[0].options.extraKeys['Alt-O'] = (cm: any) => {
-        this.selectMacro();
+        this.folderActionsComponent.selectMacro();
       };
 
       // Alt+A opens up create new file object dialog.
       options[0].options.extraKeys['Alt-A'] = (cm: any) => {
-        this.createNewFileObject('file');
+        this.folderActionsComponent.createNewFileObject('file');
       };
 
       // Alt+B opens up create new folder object dialog.
       options[0].options.extraKeys['Alt-B'] = (cm: any) => {
-        this.createNewFileObject('folder');
+        this.folderActionsComponent.createNewFileObject('folder');
       };
 
       // Alt+X deletes currently selected folder.
       options[0].options.extraKeys['Alt-X'] = (cm: any) => {
-        this.deleteActiveFolder();
+        this.folderActionsComponent.deleteActiveFolder();
       };
 
       // Alt+P shows apreview of active file.
       options[0].options.extraKeys['Alt-P'] = (cm: any) => {
-        this.previewActiveFile();
+        this.fileActionsComponent.previewActiveFile();
       };
 
       // F5 executes active file.
       options[0].options.extraKeys['F5'] = (cm: any) => {
-        this.executeActiveFile();
+        this.fileActionsComponent.executeActiveFile();
       };
     }
     return options[0].options;
@@ -1312,7 +865,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /*
    * Actual method responsible for closing file.
    */
-  private closeFileImpl() {
+  public closeFileImpl() {
 
     // Removing file from edited files.
     this.cdRef.markForCheck();
@@ -1359,7 +912,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /*
    * Invokes backend to retrieve meta data about endpoints.
    */
-  private getEndpoints(onAfter: () => void = null) {
+  public getEndpoints(onAfter: () => void = null) {
 
     // Invoking backend to retrieve endpoints.
     this.endpointService.endpoints().subscribe((endpoints: Endpoint[]) => {
@@ -1378,7 +931,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   /*
    * Updates the specified folder or file object only and re-renders TreeView.
    */
-  private updateFileObject(fileObject: string) {
+  public updateFileObject(fileObject: string) {
 
     // Figuring out folder to refresh, since fileObject might be a file or a folder.
     var folder = fileObject;

@@ -1,0 +1,27 @@
+
+<!-- Generate CRUD -->
+<button
+    mat-menu-item
+    [disabled]="!authService.access.crud.generate_crud && !authService.access.crud.generate_frontend && !authService.access.crud.generate_sql"
+    matTooltip="Generate CRUD apps"
+    (click)="generateCrudApp()">
+    <mat-icon class="material-icons-outlined">touch_app</mat-icon>
+    Crudifier
+</button>
+
+
+<!-- Install module -->
+<button
+    mat-menu-item
+    (click)="zipfile.click()"
+    matTooltip="Install a module zip file from your local computer">
+    <mat-icon class="material-icons-outlined">drive_folder_upload</mat-icon>
+    Install module
+</button>
+<input
+    type="file"
+    [(ngModel)]="zipFileInput"
+    #zipfile
+    class="d-none"
+    accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
+    (change)="installModule($event.target.files)">
