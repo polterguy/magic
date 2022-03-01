@@ -33,13 +33,6 @@ export class SetupComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   /**
-   * missing variables used in the html file
-   */
-  public subject: string = '';
-  public seed: string = '';
-  public email: string = '';
-
-  /**
    * Provided by parent component during creation of component.
    * Contains the status of setup process.
    */
@@ -48,7 +41,7 @@ export class SetupComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of your component.
    * 
-   * @param router Needed to be able to navigate user to home component after setup is complete
+   * @param feedbackService Needed to be able provide feedback to user during process
    * @param configService Needed to be able to retrieve configuration settings and setup process status from backend
    * @param messageService Service used to publish messages to other components in the system
    */
@@ -84,7 +77,12 @@ export class SetupComponent implements OnInit, OnDestroy {
             // More steps to go.
             this.stepper.selectedIndex = selectedIndex;
           }
-        });
+
+          // Checking if configuration is done.
+          if (status.config_done && status.magic_crudified && status.server_keypair) {
+            this.configService.changeStatus(true);
+          }
+      });
       }
     });
   }
