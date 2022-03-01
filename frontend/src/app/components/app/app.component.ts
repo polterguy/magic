@@ -104,11 +104,13 @@ export class AppComponent implements OnInit, OnDestroy {
     private feedbackService: FeedbackService,
     private diagnosticsService: DiagnosticsService,
     private overlayContainer: OverlayContainer) { }
+
   /**
    * OnInit implementation.
    */
   public ngOnInit() {
-    // check authentication state
+
+    // Check authentication state
     (async () => {
       while (!this.authService.authenticated)
         await new Promise(resolve => setTimeout(resolve, 100));

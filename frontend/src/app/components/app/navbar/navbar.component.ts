@@ -30,7 +30,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 })
 export class NavbarComponent implements OnInit {
 
-  public dbIsConfigured: boolean = undefined;
+  public backendIsConfigured: boolean = undefined;
 
   public currentYear: number;
 
@@ -74,6 +74,8 @@ export class NavbarComponent implements OnInit {
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param diagnosticsService Needed to retrieve backend version
    * @param feedbackService Needed to provide feedback to user
+   * @param configService Needed to check configuration status ofbackend
+   * @param bazarService Needed to check if core has update
    * @param overlayContainer Needed to add/remove theme's class name from this component.
    */
   constructor(
@@ -87,13 +89,12 @@ export class NavbarComponent implements OnInit {
     private bazarService: BazarService,
     private overlayContainer: OverlayContainer) { }
 
-
   ngOnInit(): void {
 
-    // check the database configuration
-    // if database is not configured yet, then links are all disabled
+    // Check if backend is configured.
+    // If backend is not configured yet, then all links are disabled
     this.configService.configStatus.subscribe(status => {
-      this.dbIsConfigured = status;
+      this.backendIsConfigured = status;
     })
     
     // Attempting to retrieve backend version.
