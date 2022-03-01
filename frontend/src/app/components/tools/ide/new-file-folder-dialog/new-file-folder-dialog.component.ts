@@ -9,8 +9,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 
 // Application specific imports.
+import { FileService } from 'src/app/services/file.service';
 import { Template } from '../../../../models/template.model';
-import { FileService } from '../../../files/services/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**

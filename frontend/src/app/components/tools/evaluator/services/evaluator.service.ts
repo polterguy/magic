@@ -8,9 +8,9 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 
 // Application specific imports.
-import { HttpService } from '../../../../services/http.service';
-import { FileService } from '../../../files/services/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { Response } from '../../../../models/response.model';
+import { HttpService } from '../../../../services/http.service';
 
 /**
  * Hyperlambda evaluator service allowing you to evaluate Hyperlambda in

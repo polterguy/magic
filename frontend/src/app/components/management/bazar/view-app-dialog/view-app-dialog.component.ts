@@ -10,16 +10,16 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 // Application specific imports.
 import { BazarApp } from '../models/bazar-app.model';
 import { BazarService } from '../services/bazar.service';
+import { FileService } from 'src/app/services/file.service';
 import { Response } from '../../../../models/response.model';
-import { FileService } from '../../../files/services/file.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../config/services/config.service';
 import { NameEmailModel } from '../../config/models/name-email.model';
-import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
-import { AuthService } from '../../auth/services/auth.service';
 import { LoaderService } from 'src/app/components/app/services/loader.service';
+import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';
 
 /**
  * View details of Bazar app modal dialog component.

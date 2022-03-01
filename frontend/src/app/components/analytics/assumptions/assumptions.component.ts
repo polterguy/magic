@@ -11,17 +11,17 @@ import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
-import { FileService } from '../../files/services/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { LoaderInterceptor } from '../../app/services/loader.interceptor';
 import { EndpointService } from '../endpoints/services/endpoint.service';
+import { LoaderInterceptor } from '../../app/services/loader.interceptor';
+import { AuthService } from '../../management/auth/services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
-import { AuthService } from '../../management/auth/services/auth.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /*
  * Test model encapsulating a single test, and possibly its result.

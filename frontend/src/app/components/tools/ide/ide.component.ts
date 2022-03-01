@@ -24,7 +24,7 @@ import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
 import { Message } from '../../../models/message.model';
-import { FileService } from '../../files/services/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from '../../management/auth/services/auth.service';
@@ -34,7 +34,7 @@ import { EndpointService } from '../../analytics/endpoints/services/endpoint.ser
 import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
 
 // File types extensions.
-import fileTypes from '../../files/file-editor/file-types.json';
+import fileTypes from 'src/app/codemirror/file-types.json';
 import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
 import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
 

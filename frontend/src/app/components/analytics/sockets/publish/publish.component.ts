@@ -11,7 +11,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Message } from 'src/app/models/message.model';
 
 // CodeMirror options according to file extensions needed to show JSON CodeMirror editor.
-import fileTypes from '../../../files/file-editor/file-types.json';
+import fileTypes from 'src/app/codemirror/file-types.json';
 
 /**
  * Message wrapper for what message to publish.

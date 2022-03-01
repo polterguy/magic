@@ -92,7 +92,6 @@ import { EndpointsComponent } from './components/analytics/endpoints/endpoints.c
 import { EvaluatorComponent } from './components/tools/evaluator/evaluator.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/management/auth/register/register.component';
-import { FileEditorComponent } from './components/files/file-editor/file-editor.component';
 import { PublicKeysComponent } from './components/management/crypto/public-keys/public-keys.component';
 import { SetupAuthComponent } from './components/management/config/setup/setup-auth/setup-auth.component';
 import { ConfirmEmailComponent } from './components/management/auth/confirm-email/confirm-email.component';
@@ -136,15 +135,12 @@ import { PreviewFileDialogComponent } from './components/tools/ide/preview-file-
 import { SelectMacroDialogComponent } from './components/tools/ide/select-macro-dialog/select-macro-dialog.component';
 import { ExecuteMacroDialogComponent } from './components/tools/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { AddToRoleDialogComponent } from './components/management/auth/users/add-to-role-dialog/add-to-role-dialog.component';
-import { DownloadFileDialogComponent } from './components/files/download-file-dialog/download-file-dialog.component';
 import { ScheduleTaskDialogComponent } from './components/tools/tasks/schedule-task-dialog/schedule-task-dialog.component';
 import { LoadSnippetDialogComponent } from './components/tools/evaluator/load-snippet-dialog/load-snippet-dialog.component';
 import { SaveSnippetDialogComponent } from './components/tools/evaluator/save-snippet-dialog/save-snippet-dialog.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
 import { NewFileFolderDialogComponent } from './components/tools/ide/new-file-folder-dialog/new-file-folder-dialog.component';
-import { NewFileObjectDialogComponent } from './components/files/new-file-object-dialog/new-file-object-dialog.component';
 import { ExecuteEndpointDialogComponent } from './components/tools/ide/execute-endpoint-dialog/execute-endpoint-dialog.component';
-import { RenameFileObjectDialogComponent } from './components/files/rename-file-object-dialog/rename-file-object-dialog.component';
 import { ViewInstalledAppDialogComponent } from './components/management/bazar/view-installed-app-dialog/view-installed-app-dialog.component';
 import { CreateKeypairDialogComponent } from './components/management/crypto/server-public-key/create-keypair-dialog/create-keypair-dialog.component';
 import { ImportPublicKeyDialogComponent } from './components/management/crypto/public-keys/import-public-key-dialog/import-public-key-dialog.component';
@@ -199,12 +195,9 @@ import { GeneralActionsComponent } from './components/tools/ide/action-buttons/g
     NewTaskDialogComponent,
     SubscribeComponent,
     AddToRoleDialogComponent,
-    FileEditorComponent,
     NewFileFolderDialogComponent,
     PreviewFileDialogComponent,
-    NewFileObjectDialogComponent,
     ExecuteEndpointDialogComponent,
-    RenameFileObjectDialogComponent,
     ServerPublicKeyComponent,
     PublicKeysComponent,
     ImportPublicKeyDialogComponent,
@@ -237,7 +230,6 @@ import { GeneralActionsComponent } from './components/tools/ide/action-buttons/g
     BazarComponent,
     SelectMacroDialogComponent,
     ExecuteMacroDialogComponent,
-    DownloadFileDialogComponent,
     AboutComponent,
     ViewAppDialogComponent,
     ConfirmEmailAddressDialogComponent,
