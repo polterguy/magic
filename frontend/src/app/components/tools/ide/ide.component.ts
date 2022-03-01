@@ -14,6 +14,7 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
+  NgZone,
   OnDestroy,
   OnInit,
   ViewChild
@@ -171,7 +172,8 @@ export class IdeComponent implements OnInit, OnDestroy {
     private feedbackService: FeedbackService,
     private evaluatorService: EvaluatorService,
     private messageService: MessageService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private ngZone: NgZone) { }
 
   /**
    * OnInit implementation.
@@ -791,74 +793,75 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // Cloning options object.
     options[0] = this.clone(options[0]);
+    this.ngZone.run(() => {
+      // Turning on keyboard shortcuts.
+      if (options[0].options.extraKeys) {
 
-    // Turning on keyboard shortcuts.
-    if (options[0].options.extraKeys) {
+        // Alt+M maximises editor.
+        options[0].options.extraKeys['Alt-M'] = (cm: any) => {
 
-      // Alt+M maximises editor.
-      options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+          // Hiding treeview drawer
+          this.cdRef.detectChanges();
+          let sidenav = document.querySelector('.mat-sidenav');
+          sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+            sidenav.classList.add('d-none');
+          this.drawer.close();
 
-        // Hiding treeview drawer
-        this.cdRef.detectChanges();
-        let sidenav = document.querySelector('.mat-sidenav');
-        sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-          sidenav.classList.add('d-none');
-        this.drawer.close();
+          // Toggling maximise mode.
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        };
 
-        // Toggling maximise mode.
-        cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-      };
+        // Alt+S saves the active file.
+        options[0].options.extraKeys['Alt-S'] = (cm: any) => {
+          this.fileActionsComponent.saveActiveFile();
+        };
 
-      // Alt+S saves the active file.
-      options[0].options.extraKeys['Alt-S'] = (cm: any) => {
-        this.fileActionsComponent.saveActiveFile();
-      };
+        // Alt+D deletes the active file.
+        options[0].options.extraKeys['Alt-D'] = (cm: any) => {
+          this.fileActionsComponent.deleteActiveFile();
+        };
 
-      // Alt+D deletes the active file.
-      options[0].options.extraKeys['Alt-D'] = (cm: any) => {
-        this.fileActionsComponent.deleteActiveFile();
-      };
+        // Alt+C closes the active file.
+        options[0].options.extraKeys['Alt-C'] = (cm: any) => {
+          this.fileActionsComponent.closeActiveFile()
+        };
 
-      // Alt+C closes the active file.
-      options[0].options.extraKeys['Alt-C'] = (cm: any) => {
-        this.fileActionsComponent.closeActiveFile()
-      };
+        // Alt+R renames the active file.
+        options[0].options.extraKeys['Alt-R'] = (cm: any) => {
+          this.fileActionsComponent.renameActiveFile();
+        };
 
-      // Alt+R renames the active file.
-      options[0].options.extraKeys['Alt-R'] = (cm: any) => {
-        this.fileActionsComponent.renameActiveFile();
-      };
+        // Alt+O opens up the select macro window.
+        options[0].options.extraKeys['Alt-O'] = (cm: any) => {
+          this.folderActionsComponent.selectMacro();
+        };
 
-      // Alt+O opens up the select macro window.
-      options[0].options.extraKeys['Alt-O'] = (cm: any) => {
-        this.folderActionsComponent.selectMacro();
-      };
+        // Alt+A opens up create new file object dialog.
+        options[0].options.extraKeys['Alt-A'] = (cm: any) => {
+          this.folderActionsComponent.createNewFileObject('file');
+        };
 
-      // Alt+A opens up create new file object dialog.
-      options[0].options.extraKeys['Alt-A'] = (cm: any) => {
-        this.folderActionsComponent.createNewFileObject('file');
-      };
+        // Alt+B opens up create new folder object dialog.
+        options[0].options.extraKeys['Alt-B'] = (cm: any) => {
+          this.folderActionsComponent.createNewFileObject('folder');
+        };
 
-      // Alt+B opens up create new folder object dialog.
-      options[0].options.extraKeys['Alt-B'] = (cm: any) => {
-        this.folderActionsComponent.createNewFileObject('folder');
-      };
+        // Alt+X deletes currently selected folder.
+        options[0].options.extraKeys['Alt-X'] = (cm: any) => {
+          this.folderActionsComponent.deleteActiveFolder();
+        };
 
-      // Alt+X deletes currently selected folder.
-      options[0].options.extraKeys['Alt-X'] = (cm: any) => {
-        this.folderActionsComponent.deleteActiveFolder();
-      };
+        // Alt+P shows apreview of active file.
+        options[0].options.extraKeys['Alt-P'] = (cm: any) => {
+          this.fileActionsComponent.previewActiveFile();
+        };
 
-      // Alt+P shows apreview of active file.
-      options[0].options.extraKeys['Alt-P'] = (cm: any) => {
-        this.fileActionsComponent.previewActiveFile();
-      };
-
-      // F5 executes active file.
-      options[0].options.extraKeys['F5'] = (cm: any) => {
-        this.fileActionsComponent.executeActiveFile();
-      };
-    }
+        // F5 executes active file.
+        options[0].options.extraKeys['F5'] = (cm: any) => {
+          this.fileActionsComponent.executeActiveFile();
+        };
+      }
+    })
     return options[0].options;
   }
 
