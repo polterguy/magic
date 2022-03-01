@@ -15,18 +15,18 @@ import { LocResult } from '../models/loc-result.model';
 import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
 import { SqlService } from '../../sql/services/sql.service';
-import { LogService } from '../../../analytics/log/services/log.service';
 import { Databases } from '../../sql/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
-import { AuthService } from '../../../management/auth/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
+import { LogService } from '../../../analytics/log/services/log.service';
 import { TransformModelService } from '../services/transform-model.service';
-import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
 import { CrudifierTableComponent } from './crud-table/crud-table.component';
+import { AuthService } from '../../../management/auth/services/auth.service';
+import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
 import { CacheService } from '../../../analytics/cache/services/cache.service';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
+import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
 
 /**
  * Crudifier component for crudifying database
@@ -175,7 +175,7 @@ export class CrudBackendComponent implements OnInit {
 
         // Assigning result from invocation to model.
         this.databases = databases;
-    });
+    }, (error: any) => this.feedbackService.showError(error));
 
     // Making sure parent clears it dynamic container.
     this.messageService.sendMessage({
