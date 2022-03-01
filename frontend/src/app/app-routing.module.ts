@@ -14,7 +14,6 @@ import { SqlComponent } from './components/tools/sql/sql.component';
 import { AuthComponent } from './components/management/auth/auth.component';
 import { TasksComponent } from './components/tools/tasks/tasks.component';
 import { BazarComponent } from './components/management/bazar/bazar.component';
-import { FilesComponent } from './components/files/files.component';
 import { AboutComponent } from './components/about/about.component';
 import { ConfigComponent } from './components/management/config/config.component';
 import { CryptoComponent } from './components/management/crypto/crypto.component';
@@ -99,13 +98,7 @@ const routes: Routes = [
     path: 'terminal',
     component: TerminalComponent,
     canActivate: [AccessGuard]
-  },
-  {
-    path: 'file-system',
-    component: FilesComponent,
-    canActivate: [AccessGuard]
-  },
-  
+  },  
   {
     path: 'endpoints',
     component: EndpointsComponent,
@@ -146,7 +139,6 @@ const routes: Routes = [
     path: 'confirm-email',
     component: ConfirmEmailComponent
   },
-
   {
     path:
       '**', redirectTo: ''
