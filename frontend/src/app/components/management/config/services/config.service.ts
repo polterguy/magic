@@ -29,7 +29,7 @@ export class ConfigService {
    * to detect configuration status
    */
   private isConfigured = new BehaviorSubject<boolean>(undefined);
-  private _currentStatus: Status= null;
+  private _currentStatus: Status = null;
   configStatus = this.isConfigured.asObservable();
 
   /**
