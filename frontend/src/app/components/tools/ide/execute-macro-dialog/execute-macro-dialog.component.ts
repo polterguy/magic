@@ -8,7 +8,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { MacroDefinition } from '../../../files/services/models/macro-definition.model';
+import { MacroDefinition } from '../models/macro-definition.model';
 
 /**
  * Modal dialog allowing you to parametrise and execute a macro.

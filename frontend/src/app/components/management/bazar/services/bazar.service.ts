@@ -13,7 +13,7 @@ import { BazarApp } from '../models/bazar-app.model';
 import { AppManifest } from '../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/services/http.service';
-import { FileService } from '../../../files/services/file.service';
+import { FileService } from 'src/app/services/file.service';
 import { PurchaseStatus } from '../models/purchase-status.model';
 import { environment } from '../../../../../environments/environment';
 

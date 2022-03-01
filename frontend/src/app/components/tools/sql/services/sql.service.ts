@@ -9,8 +9,8 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { Databases } from '../models/databases.model';
+import { FileService } from 'src/app/services/file.service';
 import { HttpService } from '../../../../services/http.service';
-import { FileService } from '../../../files/services/file.service';
 import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
 
 /**
