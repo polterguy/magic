@@ -30,7 +30,7 @@ export class ConfigService {
    */
   private isConfigured = new BehaviorSubject<boolean>(undefined);
   private _currentStatus: Status = null;
-  configStatus = this.isConfigured.asObservable();
+  public configStatus = this.isConfigured.asObservable();
 
   /**
    * Creates an instance of your service.
