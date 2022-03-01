@@ -151,7 +151,8 @@ export class CrudBackendComponent implements OnInit {
         connectionStrings.push(idx);
       }
       this.connectionStrings = connectionStrings;
-    });
+
+    }, (error: any) => this.feedbackService.showError(error));
 
     // Making sure parent clears it dynamic container.
     this.messageService.sendMessage({
@@ -175,6 +176,7 @@ export class CrudBackendComponent implements OnInit {
 
         // Assigning result from invocation to model.
         this.databases = databases;
+
     }, (error: any) => this.feedbackService.showError(error));
 
     // Making sure parent clears it dynamic container.
