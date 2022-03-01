@@ -1,6 +1,7 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
-$max_height: calc(100vh - 130px);
+// $max_height: calc(100vh - 130px);
+$max_height: calc(100vh - 155px);
 .ide{
   .tree-button{
     mat-icon{transform: rotate(45deg);}
@@ -39,3 +40,11 @@ $max_height: calc(100vh - 130px);
 }
 .mobile-close-drawer{position: absolute;left: 0;top: 0;z-index: 1;right: 10px;}
 .system-files-toggle{position: absolute;left: 0;bottom: -1px;z-index: 1;right: 10px;}
+.select-icon-mini{
+  mat-icon{
+    line-height: 18px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px
+  }
+}
