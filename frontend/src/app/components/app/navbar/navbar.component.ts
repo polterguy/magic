@@ -92,10 +92,10 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
 
     // Check if backend is configured.
-    // If backend is not configured yet, then all links are disabled
+    // If backend is not configured yet, then all links are disabled.
     this.configService.configStatus.subscribe(status => {
       this.backendIsConfigured = status;
-    })
+    });
     
     // Attempting to retrieve backend version.
     this.retrieveBackendVersion();
