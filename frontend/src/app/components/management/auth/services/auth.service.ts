@@ -4,14 +4,14 @@
  */
 
 // Angular and system imports.
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
-import { Backend } from '../../../../models/backend.model';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
+import { Backend } from '../../../../models/backend.model';
 import { Endpoint } from '../../../../models/endpoint.model';
 import { HttpService } from '../../../../services/http.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -118,7 +118,13 @@ export class AuthService {
   };
 
   /**
-   * Returns access rights ffor user.
+   * To allow consumers to subscribe to authentication status changes.
+   */
+  private _authenticated = new BehaviorSubject<boolean>(undefined);
+  public authenticatedChanged = this._authenticated.asObservable();
+
+  /**
+   * Returns access rights for user.
    */
   public get access() { return this._access; }
 
@@ -231,22 +237,26 @@ export class AuthService {
             // Assigning endpoints.
             this._endpoints = endpoints || [];
 
-          // Creating access right object.
-          this.createAccessRights();
+            // Creating access right object.
+            this.createAccessRights();
 
-          // Making sure we refresh JWT token just before it expires.
-          this.createRefreshJWTTimer(this.backendService.current);
+            // Making sure we refresh JWT token just before it expires.
+            this.createRefreshJWTTimer(this.backendService.current);
 
-          // Invoking next link in chain of observables.
-          observer.next(auth);
-          observer.complete();
+            // Invoking next link in chain of observables.
+            observer.next(auth);
+            observer.complete();
+
+            // Ensuring subscribers to authentication status is notified.
+            this._authenticated.next(true);
+
+          }, (error: any) => {
+            observer.error(error);
+            observer.complete();
+          });
         }, (error: any) => {
           observer.error(error);
           observer.complete();
-        });
-      }, (error: any) => {
-        observer.error(error);
-        observer.complete();
       });
     });
   }
@@ -273,6 +283,9 @@ export class AuthService {
         content: showInfo,
       });
       this.createAccessRights();
+
+      // Ensuring subscribers to authentication status is notified.
+      this._authenticated.next(false);
     }
   }
 
