@@ -7,7 +7,7 @@
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { HttpTransportType, HubConnection, HubConnectionBuilder} from '@aspnet/signalr';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 // Application specific imports.
 import { Response } from '../../../models/response.model';
@@ -42,6 +42,13 @@ export class TerminalComponent implements OnInit, OnDestroy {
   // False if no output has been sent to server.
   private sentCommand = false;
 
+  /*
+   * To make sure we try as hard aspossible to resize terminal once window resizes.
+   */
+  private fitAddon: FitAddon;
+  @HostListener('window:resize', ['$event'])
+  private onWindowResize() { this.fitAddon.fit(); }
+
   /**
    * If true, we are connected to backend process.
    */
@@ -69,10 +76,10 @@ export class TerminalComponent implements OnInit, OnDestroy {
     
     // Creating our XTerm component.
     this.term = new Terminal();
-    const fitAddon = new FitAddon();
-    this.term.loadAddon(fitAddon);
+    this.fitAddon = new FitAddon();
+    this.term.loadAddon(this.fitAddon);
     this.term.open(this.terminal.nativeElement);
-    fitAddon.fit();
+    this.fitAddon.fit();
 
     // Accepting input.
     this.term.write('$ ');
