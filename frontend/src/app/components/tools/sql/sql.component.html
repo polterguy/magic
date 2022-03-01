@@ -21,30 +21,37 @@
             </mat-menu>
           </div>
         </div>
+
+        <!-- Shortkeys information button and menu -->
         <div class="d-md-block d-none">
+
           <button mat-stroked-button [matMenuTriggerFor]="list" matTooltip="List of shortkeys">
             Shortkeys
           </button>
+
           <mat-menu #list="matMenu" class="shortkeys">
             <mat-list role="list" dense>
+
               <mat-list-item role="listitem">
-                <span>
-                  <span class="d-block">Toggle fullscreen</span>
-                </span>
+                Toggle fullscreen
                 <span class="code my-0 ml-5">Alt + M</span>
               </mat-list-item>
+
               <mat-list-item role="listitem">
                 Load snippet
                 <span class="code my-0 ml-5">Alt + L</span>
               </mat-list-item>
+
               <mat-list-item role="listitem">
                 Save snippet
                 <span class="code my-0 ml-5">Alt + S</span>
               </mat-list-item>
+
               <mat-list-item role="listitem">
                 Execute
                 <span class="code my-0 ml-5">F5</span>
               </mat-list-item>
+
             </mat-list>
           </mat-menu>
         </div>
@@ -160,10 +167,14 @@
   </div>
 
 
-  <div class="col-12 mb-general" #resultCard
+  <div
+    class="col-12 mb-general"
+    #resultCard
     [class.mt-3]="result && result.length > 0"
     [class.mb-5]="result && result.length > 0">
-    <mat-card class="result-card" *ngFor="let idxResult of result">
+    <mat-card
+      class="result-card"
+      *ngFor="let idxResult of result">
       <table
         *ngIf="idxResult.rows.length > 0"
         class="w-100 result clickable">
