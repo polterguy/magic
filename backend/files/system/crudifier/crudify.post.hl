@@ -144,7 +144,7 @@ semaphore:crudifier
                get-value:x:@.arguments/*/log
                .:
       .lambda
-         unwrap:x:+/*/*/0
+         unwrap:x:+/*/*/log.info
          insert-after:x:@apply/*/.type
             .
                auth.ticket.get
