@@ -15,15 +15,6 @@ $max_height: calc(100vh - 155px);
   .mat-drawer-container,.mat-drawer{background-color: inherit!important;}
   .mat-drawer{
     overflow: hidden;
-    // &::before {
-    //   content: ' ';
-    //   position: absolute;
-    //   left: -6px;
-    //   top: 0;
-    //   bottom: 20px;
-    //   width: 10px;
-    //   background: rgba(47, 47, 47, 0.1);
-    // }
   }
   .custom-margin{
     bottom: -16px;
@@ -74,7 +65,6 @@ $max_height: calc(100vh - 155px);
   padding-bottom: 14px;
   padding-top: 14px;
   padding-left: 10px;
-  // border-bottom-left-radius: 5px;
 }
 .select-icon-mini{
   mat-icon{
