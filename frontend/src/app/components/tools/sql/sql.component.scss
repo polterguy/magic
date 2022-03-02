@@ -8,3 +8,6 @@
         background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
     }
 }
+@media (max-width: 425px) {
+    .custom-mb{margin-bottom: 1rem;}
+}
