@@ -15,7 +15,6 @@ $max_height: calc(100vh - 155px);
   .mat-drawer-container,.mat-drawer{background-color: inherit!important;}
   .mat-drawer{
     overflow: hidden;
-    border-radius: 5px;
     // &::before {
     //   content: ' ';
     //   position: absolute;
@@ -23,21 +22,25 @@ $max_height: calc(100vh - 155px);
     //   top: 0;
     //   bottom: 20px;
     //   width: 10px;
-    //   background: #2f2f2f1f;
+    //   background: rgba(47, 47, 47, 0.1);
     // }
+  }
+  .custom-margin{
+    bottom: -16px;
+    margin-left: -16px;
   }
 }
 ::ng-deep .dark .ide{
-  .mat-drawer{background-color: transparentize($color: $magic_dark, $amount: 0.97)!important;}
-  .system-files-toggle{background-color: $magic_dark_ng_theme;}
+  .mat-drawer{background-color: $magic_dark_ng_theme!important;}
+  .system-files-toggle{background-color: $magic_dark_ng_theme;box-shadow: inset 0 0 50px rgb(0 0 0 / 20%);}
 }
 ::ng-deep .light .ide{
-  .mat-drawer{background-color: transparentize($color: $magic_default_alternative, $amount: 0.9)!important;}
-  .system-files-toggle{background-color: $magic_default;}
+  .mat-drawer{background-color: $magic_default!important;}
+  .system-files-toggle{background-color: $magic_default;box-shadow: inset 0 0 50px rgb(0 0 0 / 5%);}
 }
 ::ng-deep{
   .mat-drawer{
-    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
   }
   // preview modal
   .mat-dialog-content p, .mat-dialog-content pre, .mat-dialog-content code, .mat-dialog-content ul li {
@@ -71,8 +74,7 @@ $max_height: calc(100vh - 155px);
   padding-bottom: 14px;
   padding-top: 14px;
   padding-left: 10px;
-  border-bottom-left-radius: 5px;
-  box-shadow: inset 0 0 50px rgb(0 0 0 / 20%);
+  // border-bottom-left-radius: 5px;
 }
 .select-icon-mini{
   mat-icon{

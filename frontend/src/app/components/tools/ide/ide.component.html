@@ -4,7 +4,7 @@
   <div class="col-12 mb-general">
     <mat-card class="h-100">
       <mat-card-content class="h-100">
-        <mat-drawer-container autosize="true">
+        <mat-drawer-container autosize="true" [class.custom-margin]="drawer.opened && notSmallScreen">
 
           <!-- Drawer for tree view of files and folders on server -->
           <mat-drawer
