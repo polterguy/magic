@@ -2,9 +2,9 @@
 <div class="row wrapper h-100 ide">
 
   <div class="col-12 mb-general">
-    <mat-card class="h-100">
+    <mat-card class="h-100 p-0">
       <mat-card-content class="h-100">
-        <mat-drawer-container autosize="true" [class.custom-margin]="drawer.opened && notSmallScreen">
+        <mat-drawer-container autosize="true">
 
           <!-- Drawer for tree view of files and folders on server -->
           <mat-drawer
@@ -81,7 +81,7 @@
             </div>
           </mat-drawer>
         
-          <div class="content-section d-flex flex-column w-100 h-100">
+          <div class="content-section d-flex flex-column w-100 h-100 p-3">
 
             <!-- Form and action buttons -->
             <div class="d-flex pb-2 align-items-center mt-1">
@@ -115,7 +115,7 @@
                   mat-icon-button
                   [matMenuTriggerFor]="actions"
                   matTooltip="Actions">
-                  <mat-icon>ads_click</mat-icon>
+                  <mat-icon>more_vert</mat-icon>
                 </button>
 
                 <!-- Sub menu for types of actions -->
@@ -185,7 +185,7 @@
               </div>
 
               <!-- Help button -->
-              <div class="sm-icons mr-1">
+              <div class="sm-icons mr-2">
                 <button
                   mat-icon-button
                   [matMenuTriggerFor]="menu"
