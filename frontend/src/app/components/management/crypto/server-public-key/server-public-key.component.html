@@ -29,15 +29,19 @@
     </mat-list-item>
   </mat-list>
   
-  
-  <mat-form-field class="fill-width top-space" appearance="outline">
-
-    <mat-label>Public key</mat-label>
-    <textarea
-      matInput
-      disabled="true"
-      rows="7">{{publicKeyFull.publicKey}}</textarea>
-
-  </mat-form-field>
+  <div class="d-flex justify-content-between align-items-center my-2">
+    <h4 class="my-0">Public key</h4>
+    <button
+      mat-icon-button
+      matTooltip="Copy public key"
+      (click)="copyPublicKey()">
+      <mat-icon>content_copy</mat-icon>
+    </button>
+  </div>
+  <div class="w-100">
+    <div class="code copy-to-clipboard word-break pre-wrap pb-2 px-3" (click)="copyPublicKey()">
+      {{publicKeyFull.publicKey}}
+    </div>
+  </div>
   
 </div>

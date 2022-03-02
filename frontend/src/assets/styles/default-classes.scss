@@ -59,12 +59,17 @@
 .code {
   margin-bottom: 1rem;
   margin-top: .5rem;
-  white-space: pre !important;
   display: block;
   font-family: 'Courier New', Courier, monospace;
   font-size: .8rem;
   line-height: .9rem;
   border-radius: 4px;
+  &:not(.pre-wrap){
+    white-space: pre !important;
+  }
+  &.pre-wrap{
+    white-space: pre-wrap;
+  }
 }
 .dark .code{
   background-color: transparentize($color: $magic_default_alternative, $amount: 0.95);

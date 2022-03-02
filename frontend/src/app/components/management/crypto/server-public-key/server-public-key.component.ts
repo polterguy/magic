@@ -6,6 +6,7 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 // Application specific imports.
 import { AuthService } from '../../auth/services/auth.service';
@@ -37,13 +38,15 @@ export class ServerPublicKeyComponent implements OnInit {
    * @param cryptoService Service needed to retrieve server's public key
    * @param messageService Needed to publish message to subscribers as we create new server key pair
    * @param feedbackService Displays errors and such to user
+   * @param clipboard Needed to copy URL of endpoint
    */
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private clipboard: Clipboard) { }
 
   /**
    * Implementation of OnInit.
@@ -116,5 +119,17 @@ export class ServerPublicKeyComponent implements OnInit {
 
     // Returning true if user belongs to the root role
     return this.authService.authenticated && this.authService.roles().filter(x => x === 'root');
+  }
+
+  /**
+   * Invoked when user wants to copy the full URL of the endpoint.
+   */
+   public copyPublicKey() {
+
+    // Copies the currently edited endpoint's URL prepended by backend root URL.
+    this.clipboard.copy(this.publicKeyFull.publicKey);
+
+    // Informing user that URL can be found on clipboard.
+    this.feedbackService.showInfoShort('Public key was copied to your clipboard');
   }
 }
