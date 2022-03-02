@@ -176,56 +176,58 @@
         <mat-card
           class="result-card" [class.mb-3]="!last"
           *ngFor="let idxResult of result; let last = last">
-          <table
-            *ngIf="idxResult.rows.length > 0"
-            class="w-100 result clickable">
-    
-            <thead>
-              <tr>
-                <td *ngFor="let idxColumn of idxResult.columns" class="pl-3 py-3 text-muted">
-                  {{idxColumn}}
-                </td>
-              </tr>
-            </thead>
-    
-            <tbody>
-              <tr
-                *ngFor="let idxRow of idxResult.rows"
-                [class]="getRowCssClass(idxRow)"
-                (click)="toggleDetails(idxRow, idxResult)">
-    
-                <td
-                  *ngFor="let idxCell of (idxRow.details === true ? [] : (idxRow.data | dynamic: 5))">
-                  {{idxCell.value}}
-                </td>
-    
-                <td
-                  *ngIf="idxRow.details === true && idxRow.display === true"
-                  class="view-details py-3"
-                  [attr.colspan]="idxResult.columns.length">
-    
-                  <div class="details-sheet">
-    
-                    <div
-                      *ngFor="let idxDetails of idxRow.data | dynamic"
-                      (click)="copyToClipBoard(idxDetails.value)"
-                      class="details-item">
-    
-                      <div class="d-flex py-1">
-                        <span class="min-width-80">{{idxDetails.key}}</span>&nbsp;&nbsp;
-                        <span class="ml-5">{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
+          <div class="table-responsive">
+            <table
+              *ngIf="idxResult.rows.length > 0"
+              class="w-100 result clickable">
+      
+              <thead>
+                <tr>
+                  <td *ngFor="let idxColumn of idxResult.columns" class="pl-3 py-3 text-muted">
+                    {{idxColumn}}
+                  </td>
+                </tr>
+              </thead>
+      
+              <tbody>
+                <tr
+                  *ngFor="let idxRow of idxResult.rows"
+                  [class]="getRowCssClass(idxRow)"
+                  (click)="toggleDetails(idxRow, idxResult)">
+      
+                  <td
+                    *ngFor="let idxCell of (idxRow.details === true ? [] : (idxRow.data | dynamic: 5))">
+                    {{idxCell.value}}
+                  </td>
+      
+                  <td
+                    *ngIf="idxRow.details === true && idxRow.display === true"
+                    class="view-details py-3"
+                    [attr.colspan]="idxResult.columns.length">
+      
+                    <div class="details-sheet">
+      
+                      <div
+                        *ngFor="let idxDetails of idxRow.data | dynamic"
+                        (click)="copyToClipBoard(idxDetails.value)"
+                        class="details-item">
+      
+                        <div class="d-flex py-1">
+                          <span class="min-width-80">{{idxDetails.key}}</span>&nbsp;&nbsp;
+                          <span class="ml-5">{{idxDetails.value === null ? '[null]' : idxDetails.value}}</span>
+                        </div>
+      
                       </div>
-    
+      
                     </div>
-    
-                  </div>
-    
-                </td>
-    
-              </tr>
-            </tbody>
-    
-          </table>
+      
+                  </td>
+      
+                </tr>
+              </tbody>
+      
+            </table>
+          </div>
     
           <div class="button-strip">
     
