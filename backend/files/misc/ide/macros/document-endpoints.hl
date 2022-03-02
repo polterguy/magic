@@ -1,6 +1,6 @@
 
 // Macro for Hyper IDE that creates documentation for a module's endpoints.
-.name:Creates a download file endpoint
+.name:Documents all endpoints in module
 .description:"Macro for Hyper IDE that creates Markdown documentation for a module's endpoints, and stores the documentation in an ENDPOINTS.md file at root of the module's folder."
 .arguments
    .
