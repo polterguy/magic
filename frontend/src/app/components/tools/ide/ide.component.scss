@@ -32,6 +32,7 @@ $max_height: calc(100vh - 155px);
 ::ng-deep{
   .mat-drawer{
     border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
   }
   // preview modal
   .mat-dialog-content p, .mat-dialog-content pre, .mat-dialog-content code, .mat-dialog-content ul li {
@@ -64,7 +65,7 @@ $max_height: calc(100vh - 155px);
   right: 0px;
   padding-bottom: 14px;
   padding-top: 14px;
-  padding-left: 10px;
+  padding-left: 14px;
 }
 .select-icon-mini{
   mat-icon{
