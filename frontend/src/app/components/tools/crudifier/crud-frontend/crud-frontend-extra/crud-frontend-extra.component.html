@@ -61,40 +61,42 @@
 
     <h3>Endpoints</h3>
 
-    <table
-      *ngIf="endpoints"
-      mat-table
-      [dataSource]="endpoints"
-      class="endpoints-items clickable">
+    <div class="table-responsive">
+      <table
+        *ngIf="endpoints"
+        mat-table
+        [dataSource]="endpoints"
+        class="endpoints-items clickable">
 
-      <ng-container matColumnDef="path">
-        <td
-          mat-cell
-          *matCellDef="let el">{{el.path}}</td>
-      </ng-container>
+        <ng-container matColumnDef="path">
+          <td
+            mat-cell
+            *matCellDef="let el">{{el.path}}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="verb">
-        <td
-          mat-cell
-          class="mini-col"
-          *matCellDef="let el">{{el.verb}}</td>
-      </ng-container>
+        <ng-container matColumnDef="verb">
+          <td
+            mat-cell
+            class="mini-col"
+            *matCellDef="let el">{{el.verb}}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="selected">
-        <td
-          mat-cell
-          class="mini-col"
-          *matCellDef="let el">
-          <mat-checkbox [(ngModel)]="el.selected"></mat-checkbox>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="selected">
+          <td
+            mat-cell
+            class="mini-col"
+            *matCellDef="let el">
+            <mat-checkbox [(ngModel)]="el.selected"></mat-checkbox>
+          </td>
+        </ng-container>
 
-      <tr
-        mat-row
-        (click)="el.selected = !el.selected"
-        *matRowDef="let el; columns: displayedColumns;"></tr>
+        <tr
+          mat-row
+          (click)="el.selected = !el.selected"
+          *matRowDef="let el; columns: displayedColumns;"></tr>
 
-    </table>
+      </table>
+    </div>
 
   </div>
 
