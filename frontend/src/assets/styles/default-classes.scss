@@ -82,3 +82,9 @@
 }
 .word-break{word-break: break-all;}
 .mb-general{margin-bottom: calc(#{$side_space} * 2);}
+.table-responsive{
+  max-width: 100%;
+  width: 100%;
+  overflow-x: auto;
+  @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),5px);
+}
