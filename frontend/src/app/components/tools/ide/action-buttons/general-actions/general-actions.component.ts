@@ -74,7 +74,7 @@ export class GeneralActionsComponent implements OnInit {
 
     // Sanity checking that file is a zip file.
     if (file[0].name.split('.')[1] === 'zip') {
-      this.fileService.uploadZipFile(file.item(0)).subscribe(() => {
+      this.fileService.installModule(file.item(0)).subscribe(() => {
         
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');

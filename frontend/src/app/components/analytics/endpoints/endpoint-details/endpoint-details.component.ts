@@ -303,7 +303,7 @@ export class EndpointDetailsComponent implements OnInit {
   public runAssumption(assumption: Assumption) {
 
     // Invoking backend and running assumption.
-    this.assumptionService.executeTest(assumption.file).subscribe((res: Response) => {
+    this.assumptionService.executeAssumption(assumption.file).subscribe((res: Response) => {
       if (res.result === 'success') {
         assumption.success = true;
       } else {
@@ -758,7 +758,7 @@ export class EndpointDetailsComponent implements OnInit {
     if (this.authService.access.endpoints.assumptions) {
 
     // Retrieving assumptions for endpoint.
-    this.assumptionService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
+    this.assumptionService.listAssumptions('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
         if (assumptions && assumptions.length) {
           
             const arr: Assumption[] = [];

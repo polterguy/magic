@@ -27,8 +27,7 @@ export class SocketService {
    * 
    * @param httpService HTTP service to use for backend invocations
    */
-  constructor(
-    private httpService: HttpService) { }
+  constructor(private httpService: HttpService) { }
 
   /**
    * Returns a list of all users currently connected to a socket.
@@ -76,7 +75,7 @@ export class SocketService {
    * @param roles What roles to publish message to
    * @param groups What groups to publish message to
    */
-  public sendSocketMessage(msg: Message, client: string, roles: string, groups: string) {
+  public publishMessage(msg: Message, client: string, roles: string, groups: string) {
 
     // Creating our invocation.
     client = client === null || client === '' ? null : client;

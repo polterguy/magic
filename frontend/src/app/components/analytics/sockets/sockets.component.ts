@@ -290,7 +290,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
-        this.socketService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
+        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
 
           // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');
@@ -327,7 +327,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
-        this.socketService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
+        this.socketService.publishMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
 
           // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');

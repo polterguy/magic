@@ -92,7 +92,7 @@ export class ViewAppDialogComponent implements OnInit {
     }, (error: any) => this.feedbackService.showError(error));
 
     // Verifying that the application can be installed in the current version of Magic.
-    this.fileService.canInstall(this.data.min_magic_version).subscribe((result: Response) => {
+    this.bazarService.canInstall(this.data.min_magic_version).subscribe((result: Response) => {
 
       // Assigning model accordingly.
       if (result.result === 'SUCCESS') {

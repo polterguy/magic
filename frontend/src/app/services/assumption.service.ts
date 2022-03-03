@@ -36,7 +36,7 @@ export class AssumptionService {
    * @param endpointPath If specified only returns tests belonging to endpoint specified
    * @param verb If specified only returns tests for specified path
    */
-  public tests(endpointPath: string = null, verb: string = null) {
+  public listAssumptions(endpointPath: string = null, verb: string = null) {
 
     // Checking if we have a filter condition.
     if (endpointPath) {
@@ -116,7 +116,7 @@ export class AssumptionService {
    * 
    * @param filename Full path of test to execute
    */
-  public executeTest(filename: string) {
+  public executeAssumption(filename: string) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(

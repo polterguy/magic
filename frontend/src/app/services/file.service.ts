@@ -53,7 +53,7 @@ export class FileService {
    * Returns a list of all files existing within the specified folder recursively.
    * 
    * @param folder Folder from where to retrieve list of files from
-   * @param sysFiles If true will list system files too
+   * @param sysFiles If true will return system files
    */
   public listFilesRecursively(folder: string, sysFiles: boolean) {
 
@@ -84,6 +84,7 @@ export class FileService {
    * Returns a list of all folders existing within the specified folder recursively.
    * 
    * @param folder Folder from where to retrieve list of folders from
+   * @param sysFiles If true will return system folders
    */
   public listFoldersRecursively(folder: string, sysFiles: boolean) {
 
@@ -202,45 +203,6 @@ export class FileService {
   }
 
   /**
-   * Unzips an existing file on the server in its current folder.
-   * 
-   * @param file Path of file to unzip
-   */
-  public unzipFile(file: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.put<Response>('/magic/system/file-system/unzip', {
-      file
-    });
-  }
-
-  /**
-   * Returns whether or not the application can be successfully installed or not.
-   * 
-   * @param required_magic_version Minimum Magic version required by app to function correctly
-   */
-  public canInstall(required_magic_version: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<Response>(
-      '/magic/system/bazar/can-install?required_magic_version=' +
-      encodeURIComponent(required_magic_version));
-  }
-
-  /**
-   * (Re) installs a module
-   * 
-   * @param folder Path of folder to re-install
-   */
-  public install(folder: string) {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.put<Response>('/magic/system/file-system/install', {
-      folder
-    });
-  }
-
-  /**
    * Downloads a file from backend.
    * 
    * @param path File to download
@@ -254,8 +216,8 @@ export class FileService {
 
         // Retrieving the filename, as provided by the server.
         const disp = res.headers.get('Content-Disposition');
-        let filename = disp.substr(disp.indexOf('=') + 1);
-        filename = filename.substr(1, filename.lastIndexOf('"') - 1);
+        let filename = disp.substring(disp.indexOf('=') + 1);
+        filename = filename.substring(1, filename.lastIndexOf('"'));
         const file = new Blob([res.body], { type: 'application/zip' });
         saveAs(file, filename);
       });
@@ -321,7 +283,7 @@ export class FileService {
    * @param path Folder to upload file to
    * @param file File you want to upload
    */
-  public uploadZipFile(file: any) {
+  public installModule(file: File) {
 
     // Invoking backend with a form data object containing file.
     const formData: FormData = new FormData();
