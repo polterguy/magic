@@ -50,7 +50,7 @@ export class LoadSqlDialogComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving snippets from backend.
-    this.sqlService.snippets(this.data).subscribe((files: string[]) => {
+    this.sqlService.listSnippets(this.data).subscribe((files: string[]) => {
       this.files = files.filter(x => x.endsWith('.sql'));
     }, (error: any) => this.feedbackService.showError(error));
   }

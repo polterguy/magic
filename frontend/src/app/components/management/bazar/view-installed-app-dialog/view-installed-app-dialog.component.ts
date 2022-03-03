@@ -77,13 +77,13 @@ export class ViewInstalledAppDialogComponent implements OnInit {
   public update() {
 
     // Invoking backend to update app.
-    this.bazarService.update(this.data).subscribe((result: Response) => {
+    this.bazarService.updateBazarItem(this.data).subscribe((result: Response) => {
 
       // Verifying update invocation was a success.
       if (result.result === 'success') {
 
         // Success, now we need to initialise app, byt executing its 'magic.startup' folder's Hyperlamdba files.
-        this.bazarService.install(
+        this.bazarService.installBazarItem(
           this.data.module_name,
           this.data.new_version,
           this.data.name,
@@ -99,7 +99,7 @@ export class ViewInstalledAppDialogComponent implements OnInit {
             this.dialogRef.close(this.data);
 
             // Downloading module to local computer.
-            this.bazarService.downloadLocally(this.data.module_name);
+            this.bazarService.downloadBazarItemLocally(this.data.module_name);
           }
         }, (error: any) => this.feedbackService.showError(error));
       }

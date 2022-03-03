@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
-import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';

@@ -12,11 +12,11 @@ import { bufferCount, concatMap, debounceTime, distinctUntilChanged } from 'rxjs
 // Application specific imports.
 import { Response } from '../../../models/response.model';
 import { FileService } from 'src/app/services/file.service';
+import { AuthService } from '../../../services/auth.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { EndpointService } from '../../../services/endpoint.service';
-import { LoaderInterceptor } from '../../../services/loader.interceptor';
-import { AuthService } from '../../../services/auth.service';
+import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 

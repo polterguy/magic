@@ -60,7 +60,7 @@ export class SaveSqlDialogComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving SQL snippets from backend.
-    this.sqlService.snippets(this.data.databaseType).subscribe((files: string[]) => {
+    this.sqlService.listSnippets(this.data.databaseType).subscribe((files: string[]) => {
 
       // Excluding all files that are not SQL files.
       this.files = files.filter(x => x.endsWith('.sql'));

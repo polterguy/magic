@@ -8,20 +8,21 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
 import { Message } from 'src/app/models/message.model';
+import { AuthService } from '../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
+import { SocketUser } from '../endpoints/models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
-import { SocketUser } from '../endpoints/models/socket-user.model';
 import { EndpointService } from '../../../services/endpoint.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
-import { AuthService } from '../../../services/auth.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { SocketService } from 'src/app/services/socket.service';
 
 /**
  * Sockets diagnostic component, allowing to see current connections grouped by users.
@@ -85,6 +86,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * 
    * @param dialog Needed to create modal dialogues
    * @param authService Needed to verify user has access to component
+   * @param socketService Needed retrieve socket information and publish socket messages
    * @param backendService Needed to retrieve backend URL to connect to web sockets in backend
    * @param feedbackService Needed to provide feedback to user
    * @param endpointService Used to retrieve list of all connected users from backend
@@ -92,6 +94,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
+    private socketService: SocketService,
     private backendService: BackendService,
     private feedbackService: FeedbackService,
     private endpointService: EndpointService) { }
@@ -287,7 +290,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
-        this.endpointService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
+        this.socketService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
 
           // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');
@@ -324,7 +327,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
       if (data) {
 
         // Invoking backend to transmit message to client.
-        this.endpointService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
+        this.socketService.sendSocketMessage(data.message, data.client, data.roles, data.groups).subscribe(() => {
 
           // Providing feedback to user.
           this.feedbackService.showInfoShort('Message was successfully sent');
@@ -390,7 +393,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
   private getConnections() {
 
     // Invoking backend to retrieve connected users according to filtering and pagination condition(s).
-    this.endpointService.socketUsers(
+    this.socketService.socketUsers(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe((users: SocketUser[]) => {
@@ -402,7 +405,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
       this.users = users ?? [];
 
       // Retrieving number of socket connections matching filter condition.
-      this.endpointService.socketUserCount(this.filterFormControl.value).subscribe((count: Count) => {
+      this.socketService.socketUserCount(this.filterFormControl.value).subscribe((count: Count) => {
 
         // Assigning model.
         this.count = count.count;

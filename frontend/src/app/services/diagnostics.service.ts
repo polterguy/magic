@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 
 // Application specific imports.
 import { HttpService } from './http.service';
+import { SystemReport } from '../models/dashboard.model';
 
 /**
  * Health service, allowing you to inspect backend for health issues, some basic statistics, etc.
@@ -34,22 +35,15 @@ export class DiagnosticsService {
   }
 
   /**
-   * Returns statistics from your backend about the number of
-   * log items that exists grouped by day. Only returns statistics
-   * about the 2 last weeks.
+   * Returns a report of the health from your backend.
    * 
-   * @param filter Query filter for items to include in statistics
    */
-   public statisticsDays(filter?: string) {
+  public getSystemReport() {
 
     // Dynamically building our query according to arguments specificed.
-    let query = '';
-    if (filter && filter.length > 0) {
-      query = '?filter=' + encodeURIComponent(filter);
-    }
+    let url = '/magic/system/diagnostics/system-information';
 
     // Invoking backend and returning observable to caller.
-    return this.httpService.get<any[]>(
-      '/magic/system/diagnostics/log-statistics-days' + query);
+    return this.httpService.get<SystemReport[]>(url);
   }
 }

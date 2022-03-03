@@ -11,10 +11,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { DashboardService } from './services/dashboard.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from '../../services/auth.service';
-import { LogTypes, SystemReport, Timeshifts } from './models/dashboard.model';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { DiagnosticsService } from 'src/app/services/diagnostics.service';
+import { LogTypes, SystemReport, Timeshifts } from '../../models/dashboard.model';
 import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
 
 // Importing global chart colors.
@@ -90,13 +90,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /**
    * 
    * @param authService defining the user's login status
-   * @param dashboardService retrieving the activities on the system 
+   * @param diagnosticsService retrieving the activities on the system 
    * @param dialog Dialog reference necessary to show login dialog if user tries to login
    * @param feedbackService Needed to provide feedback to user
    */
   constructor(
     public authService: AuthService,
-    private dashboardService: DashboardService,
+    private diagnosticsService: DiagnosticsService,
     private dialog: MatDialog,
     private feedbackService: FeedbackService
   ) { }
@@ -158,7 +158,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private getSystemReport() {
 
     // Retrieving system report from backend.
-    this.dashboardService.getSystemReport().subscribe((report: SystemReport[]) => {
+    this.diagnosticsService.getSystemReport().subscribe((report: SystemReport[]) => {
 
       // Ensuring backend actuallyreturned something.
       if (!report) {

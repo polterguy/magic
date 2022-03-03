@@ -4,89 +4,20 @@
  */
 
 // Angular and system imports.
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
+import { HttpService } from './http.service';
+import { Backend } from '../models/backend.model';
+import { BackendService } from './backend.service';
+import { Endpoint } from '../models/endpoint.model';
+import { AccessModel } from '../models/access.model';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
-import { Backend } from '../models/backend.model';
-import { Endpoint } from '../models/endpoint.model';
-import { HttpService } from './http.service';
 import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from './backend.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
-
-/**
- * Wrapper class declaring user's access to different modules.
- */
-export class AccessModel {
-  sql: any = {
-    execute_access: false,
-    list_files: false,
-    save_file: false,
-  }
-  crud: any = {
-    generate_crud: false,
-    generate_sql: false,
-    generate_frontend: false,
-  }
-  endpoints: any = {
-    view: false,
-  }
-  files: any = {
-    list_files: false,
-    list_folders: false,
-    rename: false,
-    unzip: false,
-    install: false,
-    create_folder: false,
-    delete_folder: false,
-    delete_file: false,
-    download_folder: false,
-  }
-  bazar: any = {
-    download_from_bazar: false,
-    download_from_url: false,
-    get_manifests: false,
-  }
-  auth: any = {
-    view_users: false,
-    view_roles: false,
-  }
-  log: any = {
-    read: false,
-  }
-  tasks: any = {
-    create: false,
-    read: false,
-    update: false,
-    delete: false,
-  }
-  terminal: any = {
-    execute: false,
-  }
-  eval: any = {
-    read_files: false,
-    write_files: false,
-    execute: false,
-  }
-  diagnostics: any = {
-    statistics: false,
-  }
-  sockets: any = {
-    read: false,
-    send: false,
-  }
-  config: any = {
-    load: false,
-    save: false,
-  }
-  crypto: any = {
-    import_public_key: false,
-  }
-}
 
 /**
  * Authentication and authorization HTTP service.
@@ -117,10 +48,12 @@ export class AuthService {
     crypto: {},
   };
 
+  // To allow consumers to subscribe to authentication events.
+  private _authenticated = new BehaviorSubject<boolean>(undefined);
+
   /**
    * To allow consumers to subscribe to authentication status changes.
    */
-  private _authenticated = new BehaviorSubject<boolean>(undefined);
   public authenticatedChanged = this._authenticated.asObservable();
 
   /**
@@ -173,7 +106,7 @@ export class AuthService {
   /**
    * Returns true if user is authenticated as root.
    */
-   public get isRoot() {
+  public get isRoot() {
     return this.backendService.connected &&
       !!this.backendService.current.token &&
       this.roles().filter(x => x === 'root').length > 0;
@@ -184,7 +117,7 @@ export class AuthService {
    * 
    * @param url URL of backend to check
    */
-   public autoAuth(url: string) {
+  public autoAuth(url: string) {
     return this.httpClient.get<Response>(url + '/magic/system/auth/auto-auth');
    }
 
@@ -387,7 +320,7 @@ export class AuthService {
    * @param url URL to check
    * @param verb HTTP verb to check
    */
-   public canInvoke(url: string, verb: string) {
+  public canInvoke(url: string, verb: string) {
 
     // Retrieving roles, and all endpoints matching path for specific component.
     const userRoles = this.roles();
