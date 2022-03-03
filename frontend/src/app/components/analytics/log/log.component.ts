@@ -8,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 // Application specific imports.
-import { FeedbackService } from '../../../services/feedback.service';
 import { LogItem } from 'src/app/models/log-item.model';
-import { LogService } from 'src/app/services/log.service';
+import { LogService } from 'src/app/services/analytics/log.service';
+import { FeedbackService } from '../../../services/feedback.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**

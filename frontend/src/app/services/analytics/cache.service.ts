@@ -7,10 +7,10 @@
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { Count } from '../models/count.model';
-import { Response } from '../models/response.model';
-import { CacheItem } from '../models/cache-item.model';
+import { HttpService } from '../http.service';
+import { Count } from '../../models/count.model';
+import { Response } from '../../models/response.model';
+import { CacheItem } from '../../models/cache-item.model';
 
 /**
  * Cache service allowing the user to modify his or her cache, viewing items, removing
@@ -92,7 +92,7 @@ export class CacheService {
    * 
    * @param filter Optional query filter deciding which items to include when deleting items
    */
-  public deleteAll(filter: string = null) {
+  public clear(filter: string = null) {
 
     // Dynamically building our query parameters.
     let query = '';

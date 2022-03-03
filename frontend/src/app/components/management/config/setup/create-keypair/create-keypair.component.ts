@@ -12,7 +12,7 @@ import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/services/management/config.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 
 /**

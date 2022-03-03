@@ -9,13 +9,13 @@ import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { BazarApp } from '../models/bazar-app.model';
-import { AppManifest } from '../models/app-manifest';
+import { BazarApp } from '../../models/bazar-app.model';
+import { AppManifest } from '../../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/services/http.service';
-import { FileService } from 'src/app/services/file.service';
-import { environment } from '../../environments/environment';
-import { PurchaseStatus } from '../models/purchase-status.model';
+import { FileService } from 'src/app/services/tools/file.service';
+import { environment } from '../../../environments/environment';
+import { PurchaseStatus } from '../../models/purchase-status.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -61,7 +61,7 @@ export class BazarService {
   /**
    * Lists all apps available in the external Bazar.
    */
-  public listApps(filter: string, offset: number, limit: number) {
+  public listBazarItems(filter: string, offset: number, limit: number) {
 
     // Dynamically creating our query parameter(s).
     let query = '?limit=' + limit;
@@ -95,7 +95,7 @@ export class BazarService {
    * 
    * @param module_name Name of module
    */
-  public getApp(module_name: string) {
+  public getBazarItem(module_name: string) {
 
     // Dynamically building our query.
     const query = '?folder_name.eq=' + encodeURIComponent(module_name);
@@ -110,7 +110,7 @@ export class BazarService {
   /**
    * Lists all apps available in the external Bazar.
    */
-  public countApps(filter: string) {
+  public countBazarItems(filter: string) {
 
     // Dynamically creating our query parameter(s).
     let query = '';
@@ -258,7 +258,7 @@ export class BazarService {
 
       // Zipping and downloading local app module.
       this.fileService.downloadFolder('/modules/' + module_name + '/');
-    }, 1000)
+    }, 1000);
   }
 
   /**

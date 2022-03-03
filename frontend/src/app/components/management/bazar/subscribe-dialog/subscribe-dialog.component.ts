@@ -9,10 +9,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NameEmailModel } from '../../../../models/name-email.model';
 
 // Application specific imports.
-import { BazarService } from '../../../../services/bazar.service';
+import { BazarService } from '../../../../services/management/bazar.service';
 import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../../services/config.service';
+import { ConfigService } from '../../../../services/management/config.service';
 
 /**
  * Component allowing user to subscribe to Server Garden's newsletter.

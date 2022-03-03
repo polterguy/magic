@@ -18,8 +18,8 @@ import { Response } from 'src/app/models/response.model';
 import { AuthService } from '../../../../services/auth.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { EndpointService } from '../../../../services/endpoint.service';
-import { AssumptionService } from 'src/app/services/assumption.service';
+import { EndpointService } from '../../../../services/analytics/endpoint.service';
+import { AssumptionService } from 'src/app/services/analytics/assumption.service';
 import { AddQueryParameterDialogComponent } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 

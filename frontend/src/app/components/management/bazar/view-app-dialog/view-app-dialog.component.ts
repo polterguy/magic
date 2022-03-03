@@ -9,14 +9,14 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 // Application specific imports.
 import { BazarApp } from '../../../../models/bazar-app.model';
-import { BazarService } from '../../../../services/bazar.service';
-import { FileService } from 'src/app/services/file.service';
+import { BazarService } from '../../../../services/management/bazar.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { Response } from '../../../../models/response.model';
 import { AuthService } from '../../../../services/auth.service';
 import { PurchaseStatus } from '../../../../models/purchase-status.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../../services/config.service';
+import { ConfigService } from '../../../../services/management/config.service';
 import { NameEmailModel } from '../../../../models/name-email.model';
 import { LoaderService } from 'src/app/services/loader.service';
 import { ConfirmEmailAddressDialogComponent, EmailPromoCodeModel } from './confirm-email-address-dialog/confirm-email-address-dialog.component';

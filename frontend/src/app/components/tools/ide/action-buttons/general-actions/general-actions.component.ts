@@ -2,7 +2,7 @@ import { Component, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { GenerateCrudAppComponent } from '../../generate-crud-app/generate-crud-app.component';
 
 @Component({

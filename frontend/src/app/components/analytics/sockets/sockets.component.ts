@@ -20,9 +20,9 @@ import { BackendService } from 'src/app/services/backend.service';
 import { SocketUser } from '../endpoints/models/socket-user.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
-import { EndpointService } from '../../../services/endpoint.service';
+import { SocketService } from 'src/app/services/analytics/socket.service';
+import { EndpointService } from '../../../services/analytics/endpoint.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
-import { SocketService } from 'src/app/services/socket.service';
 
 /**
  * Sockets diagnostic component, allowing to see current connections grouped by users.

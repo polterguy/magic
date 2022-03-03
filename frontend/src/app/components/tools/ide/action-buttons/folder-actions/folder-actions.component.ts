@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
 import { MacroDefinition } from 'src/app/models/macro-definition.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { Response } from '../../../../../models/response.model';
 import { ExecuteMacroDialogComponent } from '../../execute-macro-dialog/execute-macro-dialog.component';
 import { NewFileFolderDialogComponent, FileObject } from '../../new-file-folder-dialog/new-file-folder-dialog.component';

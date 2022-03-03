@@ -8,13 +8,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
-import { HttpService } from './http.service';
-import { AuthService } from './auth.service';
-import { Status } from '../models/status.model';
-import { BackendService } from './backend.service';
-import { Response } from '../models/response.model';
-import { NameEmailModel } from '../models/name-email.model';
-import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { HttpService } from '../http.service';
+import { AuthService } from '../auth.service';
+import { Status } from '../../models/status.model';
+import { BackendService } from '../backend.service';
+import { Response } from '../../models/response.model';
+import { NameEmailModel } from '../../models/name-email.model';
+import { AuthenticateResponse } from '../../components/management/auth/models/authenticate-response.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -176,7 +176,8 @@ export class ConfigService {
   }
 
   /**
-   * pass config status to all components and let them detect changes in config status if needed
+   * Pass config status to all components and let them detect changes in config status if needed.
+   * 
    * @param status boolean
    */
   public changeStatus(status: boolean){

@@ -12,7 +12,7 @@ import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/services/management/config.service';
 
 /**
  * Setup configuration component for allowing user to configure his Magic

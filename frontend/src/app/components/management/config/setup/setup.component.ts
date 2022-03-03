@@ -14,7 +14,7 @@ import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from '../../../../services/feedback.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/services/management/config.service';
 
 /**
  * Component responsible for allowing user to setup system.
