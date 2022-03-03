@@ -11,13 +11,11 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { Count } from '../models/count.model';
 import { Message } from '../models/message.model';
-import { BackendService } from './backend.service';
 import { Response } from '../models/response.model';
 import { SocketUser } from '../components/analytics/endpoints/models/socket-user.model';
 
 /**
- * Endpoint service, allowing you to retrieve meta data about your endpoints,
- * and invoke them generically.
+ * Socket service, allowing you to retrieve data about sockets and publish socket messages.
  */
 @Injectable({
   providedIn: 'root'

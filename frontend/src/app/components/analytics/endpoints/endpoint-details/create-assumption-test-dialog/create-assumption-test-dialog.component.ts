@@ -7,8 +7,8 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { EndpointService } from '../../../../../services/endpoint.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 
 /**
  * Result of dialog if user chooses to create a test.
@@ -60,12 +60,12 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param endpointService Needed to be able to save and query existing tests
    * @param feedbackService Needed to show user feedback
+   * @param assumptionService Needed to be able tolist and execute assumptions
    */
   constructor(
-    private endpointService: EndpointService,
-    private feedbackService: FeedbackService) { }
+    private feedbackService: FeedbackService,
+    private assumptionService: AssumptionService) { }
 
   /**
    * Implementation of OnInit.
@@ -73,7 +73,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving snippets from backend.
-    this.endpointService.tests().subscribe((files: string[]) => {
+    this.assumptionService.tests().subscribe((files: string[]) => {
 
       // Excluding all files that are not Hyperlambda files.
       this.files = files.filter(x => x.endsWith('.hl'));

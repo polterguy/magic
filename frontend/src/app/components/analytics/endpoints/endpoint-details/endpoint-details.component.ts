@@ -16,9 +16,10 @@ import { Endpoint } from '../models/endpoint.model';
 import { Argument } from '../models/argument.model';
 import { Response } from 'src/app/models/response.model';
 import { AuthService } from '../../../../services/auth.service';
-import { EndpointService } from '../../../../services/endpoint.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { EndpointService } from '../../../../services/endpoint.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 import { AddQueryParameterDialogComponent } from './add-query-parameter-dialog/add-query-parameter-dialog.component';
 import { CreateAssumptionTestDialogComponent, TestModel } from './create-assumption-test-dialog/create-assumption-test-dialog.component';
 
@@ -170,6 +171,7 @@ export class EndpointDetailsComponent implements OnInit {
    * @param backendService Needed to retrieve base root URL for backend
    * @param feedbackService Needed to display feedback to user
    * @param endpointService Needed to be able to invoke endpoint
+   * @param assumptionService Needed to be able to retrieve and execute assumptions
    */
   constructor(
     private dialog: MatDialog,
@@ -178,7 +180,8 @@ export class EndpointDetailsComponent implements OnInit {
     public authService: AuthService,
     private backendService: BackendService,
     private feedbackService: FeedbackService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private assumptionService: AssumptionService) { }
 
   /**
    * Implementation of OnInit.
@@ -300,7 +303,7 @@ export class EndpointDetailsComponent implements OnInit {
   public runAssumption(assumption: Assumption) {
 
     // Invoking backend and running assumption.
-    this.endpointService.executeTest(assumption.file).subscribe((res: Response) => {
+    this.assumptionService.executeTest(assumption.file).subscribe((res: Response) => {
       if (res.result === 'success') {
         assumption.success = true;
       } else {
@@ -695,7 +698,7 @@ export class EndpointDetailsComponent implements OnInit {
       if (res) {
 
         // User gave us a filename, hence saving file to backend snippet collection.
-        this.endpointService.createAssumption(
+        this.assumptionService.createAssumption(
           res.filename,
           this.endpoint.verb,
           this.url,
@@ -755,7 +758,7 @@ export class EndpointDetailsComponent implements OnInit {
     if (this.authService.access.endpoints.assumptions) {
 
     // Retrieving assumptions for endpoint.
-    this.endpointService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
+    this.assumptionService.tests('/' + this.endpoint.path, this.endpoint.verb).subscribe((assumptions: any) => {
         if (assumptions && assumptions.length) {
           
             const arr: Assumption[] = [];
