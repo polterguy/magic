@@ -15,7 +15,7 @@ import { FileService } from 'src/app/services/file.service';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { EndpointService } from '../../../services/endpoint.service';
+import { AssumptionService } from 'src/app/services/assumption.service';
 import { LoaderInterceptor } from '../../../interceptors/loader.interceptor';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
@@ -81,16 +81,16 @@ export class DiagnosticsTestsComponent implements OnInit {
    * @param fileService Needed to load test files from backend
    * @param messageService Needed to publish message when all assumptions succeeds
    * @param feedbackService Needed to provide feedback to user
-   * @param endpointService Used to retrieve list of all tests from backend
    * @param loaderInterceptor Used to manually increment invocation count to avoid flickering as we execute all tests
+   * @param assumptionService Needed to be able to create and execute assumptions
    */
   constructor(
     public authService: AuthService,
     private fileService: FileService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
-    private endpointService: EndpointService,
-    private loaderInterceptor: LoaderInterceptor) { }
+    private loaderInterceptor: LoaderInterceptor,
+    private assumptionService: AssumptionService) { }
 
   /**
    * Implementation of OnInit.
@@ -107,7 +107,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     });
 
     // Retrieving all tests form backend.
-    this.endpointService.tests().subscribe((tests: string[]) => {
+    this.assumptionService.tests().subscribe((tests: string[]) => {
 
       // Assigning result to model.
       this.tests = tests.filter(x => x.endsWith('.hl')).map(x => {
@@ -197,7 +197,7 @@ export class DiagnosticsTestsComponent implements OnInit {
   public executeTest(test: TestModel) {
 
     // Invoking backend to execute the test.
-    this.endpointService.executeTest(test.filename).subscribe((res: Response) => {
+    this.assumptionService.executeTest(test.filename).subscribe((res: Response) => {
 
       // Assigning result of test execution to model.
       test.success = res.result === 'success';
@@ -281,7 +281,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     this.loaderInterceptor.increment();
 
     // Invoking backend once for every test in suite.
-    from(this.getFilteredTests().map(x => this.endpointService.executeTest(x.filename)))
+    from(this.getFilteredTests().map(x => this.assumptionService.executeTest(x.filename)))
       .pipe(
         bufferCount(parallellNo),
         concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
