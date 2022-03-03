@@ -41,7 +41,7 @@ export class SqlService {
    * @param safeMode If true will only return the first 1.000 records
    * @param batch If true will execute SQL as a batch operation, respecting 'go' keywords. Only relevant for MS SQL.
    */
-  public execute(
+  public executeSql(
     databaseType: string,
     database: string,
     sql: string,

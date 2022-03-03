@@ -73,7 +73,7 @@ export class CreateAssumptionTestDialogComponent implements OnInit {
   public ngOnInit() {
 
     // Retrieving snippets from backend.
-    this.assumptionService.tests().subscribe((files: string[]) => {
+    this.assumptionService.listAssumptions().subscribe((files: string[]) => {
 
       // Excluding all files that are not Hyperlambda files.
       this.files = files.filter(x => x.endsWith('.hl'));

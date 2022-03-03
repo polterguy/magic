@@ -509,7 +509,6 @@ export class AuthService {
         list_files: this.canInvoke('magic/system/file-system/list-files', 'get') && this.canInvoke('magic/system/file-system/list-files-recursively', 'get'),
         list_folders: this.canInvoke('magic/system/file-system/list-folders', 'get') && this.canInvoke('magic/system/file-system/list-folders-recursively', 'get'),
         rename: this.canInvoke('magic/system/file-system/rename', 'post'),
-        unzip: this.canInvoke('magic/system/file-system/unzip', 'put'),
         install: this.canInvoke('magic/system/file-system/install', 'put'),
         create_file: this.canInvoke('magic/system/file-system/file', 'put'),
         create_folder: this.canInvoke('magic/system/file-system/folder', 'put'),

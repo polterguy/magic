@@ -383,7 +383,7 @@ export class SqlComponent implements OnInit {
     const selectedText = this.input.editor.getSelection();
 
     // Invoking backend.
-    this.sqlService.execute(
+    this.sqlService.executeSql(
       this.input.databaseType,
       '[' + this.input.connectionString + '|' + this.input.database + ']',
       selectedText == '' ? this.input.sql : selectedText,

@@ -262,6 +262,19 @@ export class BazarService {
   }
 
   /**
+   * Returns whether or not the application can be successfully installed or not.
+   * 
+   * @param required_magic_version Minimum Magic version required by app to function correctly
+   */
+  public canInstall(required_magic_version: string) {
+
+    // Invoking backend and returning observable to caller.
+    return this.httpService.get<Response>(
+      '/magic/system/bazar/can-install?required_magic_version=' +
+      encodeURIComponent(required_magic_version));
+  }
+
+  /**
    * Installs an app on your current backend by running initialisation process,
    * executing startup files, etc.
    * 
