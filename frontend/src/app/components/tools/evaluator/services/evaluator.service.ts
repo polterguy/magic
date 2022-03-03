@@ -8,7 +8,7 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { Response } from '../../../../models/response.model';
 import { HttpService } from '../../../../services/http.service';
 

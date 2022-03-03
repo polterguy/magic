@@ -8,8 +8,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
+import { SqlService } from 'src/app/services/tools/sql.service';
 import { FeedbackService } from '../../../../services/feedback.service';
-import { SqlService } from 'src/app/services/sql.service';
 
 /**
  * Load snippet dialog for loading saved snippets from the backend.

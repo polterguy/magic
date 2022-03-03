@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../../../services/feedback.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService } from 'src/app/services/management/config.service';
 
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'

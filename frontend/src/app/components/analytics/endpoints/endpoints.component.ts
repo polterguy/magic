@@ -10,8 +10,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { Endpoint } from 'src/app/models/endpoint.model';
-import { EndpointService } from '../../../services/endpoint.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { EndpointService } from '../../../services/analytics/endpoint.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**

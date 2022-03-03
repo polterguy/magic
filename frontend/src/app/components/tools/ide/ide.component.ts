@@ -25,19 +25,19 @@ import { FlatNode } from './models/flat-node.model';
 import { FileNode } from './models/file-node.model';
 import { TreeNode } from './models/tree-node.model';
 import { Message } from '../../../models/message.model';
-import { FileService } from 'src/app/services/file.service';
+import { AuthService } from '../../../services/auth.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { AuthService } from '../../../services/auth.service';
+import { VocabularyService } from '../../../services/tools/vocabulary.service';
 import { Endpoint } from '../../analytics/endpoints/models/endpoint.model';
-import { EndpointService } from '../../../services/endpoint.service';
+import { EndpointService } from 'src/app/services/analytics/endpoint.service';
 import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
+import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
+import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
 
 // File types extensions.
 import fileTypes from 'src/app/codemirror/file-types.json';
-import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
-import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
-import { VocabularyService } from '../../../services/vocabulary.service';
 
 /**
  * IDE component for creating Hyperlambda apps.

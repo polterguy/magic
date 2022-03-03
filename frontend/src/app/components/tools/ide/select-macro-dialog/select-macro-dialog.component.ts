@@ -8,7 +8,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services/tools/file.service';
 
 /**
  * Encapsulating a single macro.

@@ -16,8 +16,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { DiagnosticsService } from '../../../services/diagnostics.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../../services/config.service';
-import { BazarService } from '../../../services/bazar.service';
+import { ConfigService } from '../../../services/management/config.service';
+import { BazarService } from '../../../services/management/bazar.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 
 /**

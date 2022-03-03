@@ -19,11 +19,11 @@ import { Count } from 'src/app/models/count.model';
 import { BazarApp } from '../../../models/bazar-app.model';
 import { AppManifest } from '../../../models/app-manifest';
 import { Message } from 'src/app/models/message.model';
-import { BazarService } from '../../../services/bazar.service';
+import { BazarService } from '../../../services/management/bazar.service';
 import { Response } from '../../../models/response.model';
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { AuthService } from '../../../services/auth.service';
-import { ConfigService } from '../../../services/config.service';
+import { ConfigService } from '../../../services/management/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { LoaderService } from '../../../services/loader.service';
 import { NameEmailModel } from '../../../models/name-email.model';
@@ -345,7 +345,7 @@ export class BazarComponent implements OnInit, OnDestroy {
   private getItems(first: boolean = false) {
 
     // Invoking service to retrieve available apps matching criteria.
-    this.bazarService.listApps(
+    this.bazarService.listBazarItems(
       this.filterFormControl.value,
       this.paginator.pageIndex * this.paginator.pageSize,
       this.paginator.pageSize).subscribe((apps: BazarApp[]) => {
@@ -354,7 +354,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       this.apps = apps;
 
       // Retrieving number of items.
-      this.bazarService.countApps(this.filterFormControl.value).subscribe((count: Count) => {
+      this.bazarService.countBazarItems(this.filterFormControl.value).subscribe((count: Count) => {
 
         // Assigning model.
         this.count = count.count;
@@ -527,7 +527,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       for (const idx of this.manifests) {
 
         // Retrieving app from Bazar server.
-        this.bazarService.getApp(idx.module_name).subscribe((result: BazarApp[]) => {
+        this.bazarService.getBazarItem(idx.module_name).subscribe((result: BazarApp[]) => {
 
           // Making sure app is still available in Bazar, and if not, simply ignoring it.
           if (result && result.length > 0) {

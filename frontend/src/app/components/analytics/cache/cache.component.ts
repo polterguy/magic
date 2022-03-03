@@ -15,8 +15,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Count } from 'src/app/models/count.model';
 import { CacheItem } from '../../../models/cache-item.model';
 import { AuthService } from '../../../services/auth.service';
-import { CacheService } from 'src/app/services/cache.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { CacheService } from 'src/app/services/analytics/cache.service';
 
 /**
  * Cache component for allowing user to inspect, remove, and purge cache items.
@@ -212,7 +212,7 @@ export class DiagnosticsCacheComponent implements OnInit {
       () => {
 
         // Invoking backend to delete all items.
-        this.cacheService.deleteAll(this.filterFormControl.value).subscribe(() => {
+        this.cacheService.clear(this.filterFormControl.value).subscribe(() => {
 
           // Showing some information to user, and re-databinding table.
           this.feedbackService.showInfoShort('Cache successfully purged');

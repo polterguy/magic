@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Outp
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/file.service';
+import { FileService } from 'src/app/services/tools/file.service';
 import { EvaluatorService } from '../../../evaluator/services/evaluator.service';
 import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-file-dialog.component';

@@ -7,7 +7,7 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from './services/auth.service';
-import { ConfigService } from './services/config.service';
+import { ConfigService } from './services/management/config.service';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 
 /**

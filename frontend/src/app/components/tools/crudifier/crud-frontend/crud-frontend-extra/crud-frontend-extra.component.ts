@@ -7,10 +7,10 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
+import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { Endpoint } from '../../../../analytics/endpoints/models/endpoint.model';
-import { EndpointService } from '../../../../../services/endpoint.service';
-import { CrudifyService } from '../../services/crudify.service';
+import { EndpointService } from '../../../../../services/analytics/endpoint.service';
 
 /**
  * Endpoint model class, for allowing user to select which endpoints

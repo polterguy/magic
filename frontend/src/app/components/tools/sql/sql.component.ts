@@ -7,23 +7,23 @@
 import { Component, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
-import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 
 // Utility imports.
 import { saveAs } from 'file-saver';
 
 // Application specific imports.
+import { Databases } from 'src/app/models/databases.model';
+import { AuthService } from '../../../services/auth.service';
+import { SqlService } from 'src/app/services/tools/sql.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { SqlService } from 'src/app/services/sql.service';
+import { CacheService } from '../../../services/analytics/cache.service';
 import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
 import { DefaultDatabaseType } from '../../../models/default-database-type.model';
+import { SaveSqlDialogComponent } from './save-sql-dialog/save-sql-dialog.component';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
-import { CacheService } from '../../../services/cache.service';
 
 // CodeMirror options.
 import sql from '../../codemirror/options/sql.json'
-import { AuthService } from '../../../services/auth.service';
-import { Databases } from 'src/app/models/databases.model';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.
