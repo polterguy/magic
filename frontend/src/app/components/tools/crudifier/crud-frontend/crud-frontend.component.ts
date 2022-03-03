@@ -8,8 +8,8 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 import { Messages } from 'src/app/models/messages.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { MessageService } from 'src/app/services/message.service';
-import { ConfigService } from '../../../management/config/services/config.service';
-import { NameEmailModel } from '../../../management/config/models/name-email.model';
+import { ConfigService } from '../../../../services/config.service';
+import { NameEmailModel } from '../../../../models/name-email.model';
 import { CrudFrontendExtraComponent } from './crud-frontend-extra/crud-frontend-extra.component';
 import { CrudifyService } from '../services/crudify.service';
 

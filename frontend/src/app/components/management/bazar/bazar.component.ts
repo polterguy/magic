@@ -16,17 +16,17 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { BazarApp } from './models/bazar-app.model';
-import { AppManifest } from './models/app-manifest';
+import { BazarApp } from '../../../models/bazar-app.model';
+import { AppManifest } from '../../../models/app-manifest';
 import { Message } from 'src/app/models/message.model';
-import { BazarService } from './services/bazar.service';
+import { BazarService } from '../../../services/bazar.service';
 import { Response } from '../../../models/response.model';
 import { FileService } from 'src/app/services/file.service';
-import { AuthService } from '../auth/services/auth.service';
-import { ConfigService } from '../config/services/config.service';
+import { AuthService } from '../../../services/auth.service';
+import { ConfigService } from '../../../services/config.service';
 import { MessageService } from 'src/app/services/message.service';
-import { LoaderService } from '../../app/services/loader.service';
-import { NameEmailModel } from '../config/models/name-email.model';
+import { LoaderService } from '../../../services/loader.service';
+import { NameEmailModel } from '../../../models/name-email.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.component';
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';

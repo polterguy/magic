@@ -8,10 +8,10 @@ import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
+import { HttpService } from './http.service';
 import { Databases } from '../models/databases.model';
 import { FileService } from 'src/app/services/file.service';
-import { HttpService } from '../../../../services/http.service';
-import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
+import { DefaultDatabaseType } from '../models/default-database-type.model';
 
 /**
  * SQL service allowing you to execute SQL and retrieve meta information about

@@ -3,15 +3,22 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
+// Application specific imports.
+import { Table } from "./table.model";
+
 /**
- * Database model returned by backend when you query backend
- * for all databases in a specified database type.
+ * Database class containing meta information about
+ * a single database in a single database server instance.
  */
 export class Database {
 
   /**
-   * Database name.
+   * Name of database.
    */
-  db: string;
+  name: string;
+
+  /**
+   * List of all tables in database.
+   */
+  tables: Table[];
 }
-  

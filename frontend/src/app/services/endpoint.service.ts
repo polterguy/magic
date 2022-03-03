@@ -4,17 +4,17 @@
  */
 
 // Angular and system imports.
-import { Observable, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 // Application specific imports.
-import { Count } from '../../../../models/count.model';
-import { Endpoint } from '../models/endpoint.model';
-import { Message } from '../../../../models/message.model';
-import { Response } from '../../../../models/response.model';
-import { SocketUser } from '../models/socket-user.model';
-import { HttpService } from '../../../../services/http.service';
-import { BackendService } from '../../../../services/backend.service';
+import { Count } from '../models/count.model';
+import { Endpoint } from '../components/analytics/endpoints/models/endpoint.model';
+import { Message } from '../models/message.model';
+import { Response } from '../models/response.model';
+import { SocketUser } from '../components/analytics/endpoints/models/socket-user.model';
+import { HttpService } from './http.service';
+import { BackendService } from './backend.service';
 
 /**
  * Endpoint service, allowing you to retrieve meta data about your endpoints,

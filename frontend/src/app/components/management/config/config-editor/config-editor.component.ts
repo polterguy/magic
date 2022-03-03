@@ -8,11 +8,11 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { FeedbackService } from '../../../../services/feedback.service';
-import { ConfigService } from 'src/app/components/management/config/services/config.service';
+import { ConfigService } from 'src/app/services/config.service';
 
 // CodeMirror options.
 import json from '../../../codemirror/options/json.json'
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 
 /**
  * Component that allows user to edit his configuration file as raw JSON.

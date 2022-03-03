@@ -25,7 +25,7 @@ import { AuthFilter } from 'src/app/components/management/auth/models/auth-filte
 import { NewUserDialogComponent } from './new-user-dialog/new-user-dialog.component';
 import { JailUserDialogComponent } from './jail-user-dialog/jail-user-dialog.component';
 import { AddToRoleDialogComponent } from './add-to-role-dialog/add-to-role-dialog.component';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**

@@ -7,7 +7,7 @@
 import { Component } from '@angular/core';
 
 // Application specific imports.
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { FormBuilder, Validators } from '@angular/forms';
 

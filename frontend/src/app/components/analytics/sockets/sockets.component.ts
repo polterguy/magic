@@ -18,9 +18,9 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { SocketUser } from '../endpoints/models/socket-user.model';
-import { EndpointService } from '../endpoints/services/endpoint.service';
+import { EndpointService } from '../../../services/endpoint.service';
 import { MessageWrapper, PublishComponent } from './publish/publish.component';
-import { AuthService } from '../../management/auth/services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**

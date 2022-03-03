@@ -7,7 +7,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { EndpointService } from '../../services/endpoint.service';
+import { EndpointService } from '../../../../../services/endpoint.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**

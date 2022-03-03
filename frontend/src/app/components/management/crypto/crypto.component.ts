@@ -11,7 +11,7 @@ import { Component, ViewChild } from '@angular/core';
 // Application specific imports.
 import { Message } from 'src/app/models/message.model';
 import { CryptoService } from './services/crypto.service';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 

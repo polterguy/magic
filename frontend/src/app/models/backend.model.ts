@@ -4,7 +4,8 @@
  */
 
 /**
- * Encapsulates a backend instance.
+ * Encapsulates a backend instance, in addition to its username, password, and if existing also
+ * a currently active JWT token.
  */
 export class Backend {
 

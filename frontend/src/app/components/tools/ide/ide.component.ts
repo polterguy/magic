@@ -28,16 +28,16 @@ import { Message } from '../../../models/message.model';
 import { FileService } from 'src/app/services/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { AuthService } from '../../management/auth/services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { Endpoint } from '../../analytics/endpoints/models/endpoint.model';
-import { EvaluatorService } from '../evaluator/services/evaluator.service';
-import { EndpointService } from '../../analytics/endpoints/services/endpoint.service';
+import { EndpointService } from '../../../services/endpoint.service';
 import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
 
 // File types extensions.
 import fileTypes from 'src/app/codemirror/file-types.json';
 import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
 import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
+import { VocabularyService } from '../../../services/vocabulary.service';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -161,7 +161,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
-   * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
+   * @param vocabularyService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
    * @param messageService Service used to publish messages to other components in the system
    * @param endpointService Needed to retrieve endpoints from backend
    */
@@ -170,7 +170,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,
-    private evaluatorService: EvaluatorService,
+    private vocabularyService: VocabularyService,
     private messageService: MessageService,
     private endpointService: EndpointService,
     private ngZone: NgZone) { }
@@ -252,7 +252,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     if (!window['_vocabulary']) {
 
       // Loading vocabulary from server before initializing editor.
-      this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
+      this.vocabularyService.vocabulary().subscribe((vocabulary: string[]) => {
 
         // Publishing vocabulary such that autocomplete component can reach it.
         window['_vocabulary'] = vocabulary;

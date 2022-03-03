@@ -8,11 +8,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { AppManifest } from '../models/app-manifest';
-import { BazarService } from '../services/bazar.service';
+import { AppManifest } from '../../../../models/app-manifest';
+import { BazarService } from '../../../../services/bazar.service';
 import { Response } from 'src/app/models/response.model';
 import { FileService } from 'src/app/services/file.service';
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 @Component({

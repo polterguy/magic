@@ -12,10 +12,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Application specific imports.
 import { Count } from 'src/app/models/count.model';
-import { CacheItem } from './models/cache-item.model';
+import { CacheItem } from '../../../models/cache-item.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { CacheService } from 'src/app/components/analytics/cache/services/cache.service';
-import { AuthService } from '../../management/auth/services/auth.service';
+import { CacheService } from 'src/app/services/cache.service';
+import { AuthService } from '../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**

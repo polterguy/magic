@@ -21,7 +21,7 @@ import { RoleService } from 'src/app/components/management/auth/services/role.se
 import { UserService } from 'src/app/components/management/auth/services/user.service';
 import { AuthFilter } from 'src/app/components/management/auth/models/auth-filter.model';
 import { NewRoleDialogComponent } from './new-role-dialog/new-role-dialog.component';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /**

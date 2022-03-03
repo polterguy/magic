@@ -7,7 +7,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 import { Response } from 'src/app/models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';

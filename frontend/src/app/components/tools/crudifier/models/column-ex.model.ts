@@ -3,7 +3,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-import { ForeignKey } from "../../sql/models/foreign-key.model";
+import { ForeignKey } from "src/app/models/foreign-key.model";
 
 /**
  * Column class containing meta information about

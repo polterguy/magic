@@ -8,14 +8,14 @@ import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
-import { Database } from '../../sql/models/database.model';
-import { SqlService } from '../../sql/services/sql.service';
-import { Databases } from '../../sql/models/databases.model';
+import { Database } from 'src/app/models/database.model';
+import { Databases } from 'src/app/models/databases.model';
+import { SqlService } from '../../../../services/sql.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
-import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
 import { CrudSqlExtraComponent } from './crud-sql-extra/crud-sql-extra.component';
+import { Model } from '../../../codemirror/codemirror-sql/codemirror-sql.component';
+import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 
 // CodeMirror options.
 import sqlOptions from '../../../codemirror/options/sql.json'

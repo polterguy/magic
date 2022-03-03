@@ -14,19 +14,19 @@ import { TableEx } from '../models/table-ex.model';
 import { LocResult } from '../models/loc-result.model';
 import { Messages } from 'src/app/models/messages.model';
 import { DatabaseEx } from '../models/database-ex.model';
-import { SqlService } from '../../sql/services/sql.service';
-import { Databases } from '../../sql/models/databases.model';
+import { Databases } from 'src/app/models/databases.model';
 import { CrudifyService } from '../services/crudify.service';
+import { SqlService } from '../../../../services/sql.service';
+import { LogService } from '../../../../services/log.service';
+import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
+import { CacheService } from '../../../../services/cache.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { LogService } from '../../../analytics/log/services/log.service';
 import { TransformModelService } from '../services/transform-model.service';
 import { CrudifierTableComponent } from './crud-table/crud-table.component';
-import { AuthService } from '../../../management/auth/services/auth.service';
-import { LoaderInterceptor } from '../../../app/services/loader.interceptor';
-import { CacheService } from '../../../analytics/cache/services/cache.service';
+import { LoaderInterceptor } from '../../../../services/loader.interceptor';
+import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
-import { DefaultDatabaseType } from '../../../management/config/models/default-database-type.model';
 
 /**
  * Crudifier component for crudifying database

@@ -6,13 +6,13 @@
 // Angular and system imports.
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { NameEmailModel } from '../../config/models/name-email.model';
+import { NameEmailModel } from '../../../../models/name-email.model';
 
 // Application specific imports.
-import { BazarService } from '../services/bazar.service';
+import { BazarService } from '../../../../services/bazar.service';
 import { Response } from 'src/app/models/response.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { ConfigService } from '../../config/services/config.service';
+import { ConfigService } from '../../../../services/config.service';
 
 /**
  * Component allowing user to subscribe to Server Garden's newsletter.

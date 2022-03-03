@@ -10,14 +10,14 @@ import { TableEx } from '../../models/table-ex.model';
 import { ColumnEx } from '../../models/column-ex.model';
 import { LocResult } from '../../models/loc-result.model';
 import { DatabaseEx } from '../../models/database-ex.model';
-import { LogService } from '../../../../analytics/log/services/log.service';
+import { LogService } from '../../../../../services/log.service';
 import { CrudifyService } from '../../services/crudify.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AuthService } from 'src/app/components/management/auth/services/auth.service';
-import { LoaderInterceptor } from '../../../../app/services/loader.interceptor';
+import { AuthService } from 'src/app/services/auth.service';
+import { LoaderInterceptor } from '../../../../../services/loader.interceptor';
 import { TransformModelService } from '../../services/transform-model.service';
-import { CacheService } from 'src/app/components/analytics/cache/services/cache.service';
+import { CacheService } from 'src/app/services/cache.service';
 import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 
 // CodeMirror options.
