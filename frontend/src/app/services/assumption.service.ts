@@ -36,14 +36,14 @@ export class AssumptionService {
    * @param endpointPath If specified only returns tests belonging to endpoint specified
    * @param verb If specified only returns tests for specified path
    */
-  public listAssumptions(endpointPath: string = null, verb: string = null) {
+  public list(endpointPath: string = null, verb: string = null) {
 
     // Checking if we have a filter condition.
     if (endpointPath) {
 
       // Filtering tests, to return only tests matching endpoint specified.
       return this.httpService.get<string[]>(
-        '/magic/system/diagnostics/assumptions?endpoint=' +
+        '/magic/system/assumptions/query?endpoint=' +
         encodeURIComponent(endpointPath) +
         '&verb=' +
         encodeURIComponent(verb))
@@ -51,7 +51,7 @@ export class AssumptionService {
     } else {
 
       // Filtering tests, to return only tests matching endpoint specified.
-      return this.httpService.get<string[]>('/magic/system/diagnostics/all-assumptions');
+      return this.httpService.get<string[]>('/magic/system/assumptions/list');
     }
   }
 
@@ -66,7 +66,7 @@ export class AssumptionService {
    * @param payload Payload for HTTP invocation towards URL
    * @param response Response assumption assumes invocation towards URL will return
    */
-  public createAssumption(
+  public create(
     filename: string,
     verb: string,
     url: string,
@@ -108,7 +108,7 @@ export class AssumptionService {
     if (produces) {
       input.produces = produces;
     }
-    return this.httpService.post('/magic/system/diagnostics/create-test', input);
+    return this.httpService.post('/magic/system/assumptions/create', input);
   }
 
   /**
@@ -116,11 +116,11 @@ export class AssumptionService {
    * 
    * @param filename Full path of test to execute
    */
-  public executeAssumption(filename: string) {
+  public execute(filename: string) {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<Response>(
-      '/magic/system/diagnostics/execute-test?root_url=' +
+      '/magic/system/assumptions/execute?root_url=' +
       encodeURIComponent(this.backendService.current.url) +
       '&test_file=' +
       encodeURIComponent(filename));

@@ -502,8 +502,8 @@ export class AuthService {
       },
       endpoints: {
         view: this.canInvoke('magic/system/endpoints/list', 'get'),
-        assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
-        create_test: this.canInvoke('magic/system/diagnostics/create-test', 'post'),
+        assumptions: this.canInvoke('magic/system/assumptions/list', 'get'),
+        create_test: this.canInvoke('magic/system/assumptions/create', 'post'),
       },
       files: {
         list_files: this.canInvoke('magic/system/file-system/list-files', 'get') && this.canInvoke('magic/system/file-system/list-files-recursively', 'get'),
@@ -555,8 +555,8 @@ export class AuthService {
         execute: this.canInvoke('magic/system/evaluator/evaluate', 'post'),
       },
       diagnostics: {
-        read_assumptions: this.canInvoke('magic/system/diagnostics/assumptions', 'get'),
-        execute_test: this.canInvoke('magic/system/diagnostics/execute-test', 'get'),
+        read_assumptions: this.canInvoke('magic/system/assumptions/list', 'get'),
+        execute_test: this.canInvoke('magic/system/assumptions/execute', 'get'),
         list_cache: this.canInvoke('magic/system/cache/list', 'get') && this.canInvoke('magic/system/cache/count', 'get'),
         delete_cache: this.canInvoke('magic/system/cache/delete', 'delete') && this.canInvoke('magic/system/cache/empty', 'delete'),
       },

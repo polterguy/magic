@@ -107,7 +107,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     });
 
     // Retrieving all tests form backend.
-    this.assumptionService.listAssumptions().subscribe((tests: string[]) => {
+    this.assumptionService.list().subscribe((tests: string[]) => {
 
       // Assigning result to model.
       this.tests = tests.filter(x => x.endsWith('.hl')).map(x => {
@@ -197,7 +197,7 @@ export class DiagnosticsTestsComponent implements OnInit {
   public executeTest(test: TestModel) {
 
     // Invoking backend to execute the test.
-    this.assumptionService.executeAssumption(test.filename).subscribe((res: Response) => {
+    this.assumptionService.execute(test.filename).subscribe((res: Response) => {
 
       // Assigning result of test execution to model.
       test.success = res.result === 'success';
@@ -281,7 +281,7 @@ export class DiagnosticsTestsComponent implements OnInit {
     this.loaderInterceptor.increment();
 
     // Invoking backend once for every test in suite.
-    from(this.getFilteredTests().map(x => this.assumptionService.executeAssumption(x.filename)))
+    from(this.getFilteredTests().map(x => this.assumptionService.execute(x.filename)))
       .pipe(
         bufferCount(parallellNo),
         concatMap(buffer => forkJoin(buffer))).subscribe((results: Response[]) => {
