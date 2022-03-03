@@ -64,8 +64,8 @@ import { DateFromPipe } from './pipes/date-from.pipe';
 import { DateSincePipe } from './pipes/date-since.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthInterceptor } from './services/auth.interceptor';
-import { LoaderService } from './components/app/services/loader.service';
-import { LoaderInterceptor } from './components/app/services/loader.interceptor';
+import { LoaderService } from './services/loader.service';
+import { LoaderInterceptor } from './services/loader.interceptor';
 
 // Application specific normal components.
 import { IdeComponent } from './components/tools/ide/ide.component';

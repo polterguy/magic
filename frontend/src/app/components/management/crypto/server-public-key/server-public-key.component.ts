@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 // Application specific imports.
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';

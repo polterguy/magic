@@ -14,9 +14,9 @@ import { Response } from '../../../models/response.model';
 import { FileService } from 'src/app/services/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { EndpointService } from '../endpoints/services/endpoint.service';
-import { LoaderInterceptor } from '../../app/services/loader.interceptor';
-import { AuthService } from '../../management/auth/services/auth.service';
+import { EndpointService } from '../../../services/endpoint.service';
+import { LoaderInterceptor } from '../../../services/loader.interceptor';
+import { AuthService } from '../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Model } from '../../codemirror/codemirror-hyperlambda/codemirror-hyperlambda.component';
 

@@ -13,7 +13,7 @@ import {
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
-import { EvaluatorService } from 'src/app/components/tools/evaluator/services/evaluator.service';
+import { VocabularyService } from '../../../services/vocabulary.service';
 
 /**
  * Model class for CodeMirror instance's Hyperlambda.
@@ -61,10 +61,10 @@ export class HyperlambdaComponent implements AfterViewInit {
   /**
    * Creates an instance of your component.
    * 
-   * @param evaluatorService Evaluator service used to retrieve auto complete keywords (vocabulary)
+   * @param vocabularyService Evaluator service used to retrieve auto complete keywords (vocabulary)
    */
   constructor(
-    private evaluatorService: EvaluatorService,
+    private vocabularyService: VocabularyService,
     private feedbackService: FeedbackService) {
   }
 
@@ -82,7 +82,7 @@ export class HyperlambdaComponent implements AfterViewInit {
     } else {
 
       // Loading vocabulary from server before initializing editor.
-      this.evaluatorService.vocabulary().subscribe((vocabulary: string[]) => {
+      this.vocabularyService.vocabulary().subscribe((vocabulary: string[]) => {
 
         // Publishing vocabulary such that autocomplete component can reach it.
         window['_vocabulary'] = vocabulary;

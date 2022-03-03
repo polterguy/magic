@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from 'src/app/components/management/auth/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { MacroDefinition } from 'src/app/models/macro-definition.model';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { FileService } from 'src/app/services/file.service';

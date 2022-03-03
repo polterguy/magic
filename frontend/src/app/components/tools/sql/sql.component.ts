@@ -14,16 +14,16 @@ import { saveAs } from 'file-saver';
 
 // Application specific imports.
 import { FeedbackService } from '../../../services/feedback.service';
-import { SqlService } from 'src/app/components/tools/sql/services/sql.service';
-import { Databases } from 'src/app/components/tools/sql/models/databases.model';
+import { SqlService } from 'src/app/services/sql.service';
 import { Model } from '../../codemirror/codemirror-sql/codemirror-sql.component';
-import { DefaultDatabaseType } from '../../management/config/models/default-database-type.model';
+import { DefaultDatabaseType } from '../../../models/default-database-type.model';
 import { LoadSqlDialogComponent } from './load-sql-dialog/load-sql-dialog.component';
-import { CacheService } from '../../analytics/cache/services/cache.service';
+import { CacheService } from '../../../services/cache.service';
 
 // CodeMirror options.
 import sql from '../../codemirror/options/sql.json'
-import { AuthService } from '../../management/auth/services/auth.service';
+import { AuthService } from '../../../services/auth.service';
+import { Databases } from 'src/app/models/databases.model';
 
 /**
  * SQL component allowing user to execute arbitrary SQL statements towards his database.

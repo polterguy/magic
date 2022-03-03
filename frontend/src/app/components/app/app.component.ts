@@ -13,12 +13,12 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Message } from 'src/app/models/message.model';
 import { Response } from 'src/app/models/response.model';
 import { Messages } from 'src/app/models/messages.model';
-import { BazarService } from '../management/bazar/services/bazar.service';
-import { ConfigService } from '../management/config/services/config.service';
+import { BazarService } from '../../services/bazar.service';
+import { ConfigService } from '../../services/config.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AuthService } from 'src/app/components/management/auth/services/auth.service';
-import { LoaderService } from 'src/app/components/app/services/loader.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { LoaderService } from 'src/app/services/loader.service';
 import { DiagnosticsService } from '../../services/diagnostics.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 

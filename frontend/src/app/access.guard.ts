@@ -1,9 +1,18 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AuthService } from './components/management/auth/services/auth.service';
-import { ConfigService } from './components/management/config/services/config.service';
 
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
+
+// Angular and system imports.
+import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { AuthService } from './services/auth.service';
+import { ConfigService } from './services/config.service';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+
+/**
+ * Access guard verifying router link can be activated.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -34,5 +43,4 @@ export class AccessGuard implements CanActivate {
 
     return true;
   }
-
 }

@@ -12,7 +12,7 @@ import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, View
 // Application specific imports.
 import { Response } from '../../../models/response.model';
 import { BackendService } from 'src/app/services/backend.service';
-import { ConfigService } from '../../management/config/services/config.service';
+import { ConfigService } from '../../../services/config.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 
 /**

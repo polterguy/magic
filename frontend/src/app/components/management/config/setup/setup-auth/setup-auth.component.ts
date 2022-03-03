@@ -11,8 +11,8 @@ import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AuthService } from 'src/app/components/management/auth/services/auth.service';
-import { ConfigService } from 'src/app/components/management/config/services/config.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { ConfigService } from 'src/app/services/config.service';
 
 /**
  * Setup configuration component for allowing user to configure his Magic

@@ -4,8 +4,8 @@
  */
 
 // Angular and system imports.
+import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
 
 // Application specific imports.
 import { FileService } from 'src/app/services/file.service';
@@ -20,9 +20,6 @@ import { HttpService } from '../../../../services/http.service';
   providedIn: 'root'
 })
 export class EvaluatorService {
-
-  // Used to 'cache' the server's vocabulary.
-  private _vocabulary: string[] = [];
 
   /**
    * Creates an instance of your service.
@@ -44,31 +41,6 @@ export class EvaluatorService {
     // Invoking backend and returning observable to caller.
     return this.httpService.post<Response>('/magic/system/evaluator/evaluate', {
       hyperlambda
-    });
-  }
-
-  /**
-   * Returns server's Hyperlambda vocabulary to caller.
-   */
-  public vocabulary() {
-
-    // Checking if we've already got the server's vocabulary.
-    if (this._vocabulary.length > 0) {
-      of(this._vocabulary); // Returning 'cache' result.
-    }
-
-    // Creating a new observable such that we can store the vocabulary in a field.
-    return new Observable<string[]>((observer) => {
-
-      // Invoking backend.
-      this.httpService.get<string[]>('/magic/system/evaluator/vocabulary').subscribe((vocabulary: string[]) => {
-        this._vocabulary = vocabulary;
-        observer.next(vocabulary);
-        observer.complete();
-      }, (error: any) => {
-        observer.error(error);
-        observer.complete();
-      });
     });
   }
 

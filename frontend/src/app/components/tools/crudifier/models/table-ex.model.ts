@@ -6,7 +6,7 @@
 // Application specific imports.
 import { Verb } from "./verb.model";
 import { ColumnEx } from "./column-ex.model";
-import { ForeignKey } from "../../sql/models/foreign-key.model";
+import { ForeignKey } from "src/app/models/foreign-key.model";
 
 /**
  * Table class containing meta information about

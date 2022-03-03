@@ -23,7 +23,7 @@ import { ScheduleTaskDialogComponent } from './schedule-task-dialog/schedule-tas
 
 // CodeMirror options.
 import hyperlambda from '../../codemirror/options/hyperlambda.json';
-import { AuthService } from '../../management/auth/services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 /*

@@ -13,7 +13,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 // Application specific imports.
 import { DashboardService } from './services/dashboard.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { AuthService } from '../management/auth/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { LogTypes, SystemReport, Timeshifts } from './models/dashboard.model';
 import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component';
 

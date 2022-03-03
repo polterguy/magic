@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import { InjectDirective } from './inject.directive';
 import { Message } from 'src/app/models/message.model';
 import { Messages } from 'src/app/models/messages.model';
-import { AuthService } from '../../management/auth/services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 
 /**

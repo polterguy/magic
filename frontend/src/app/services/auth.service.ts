@@ -11,12 +11,12 @@ import { HttpClient } from '@angular/common/http';
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
-import { Backend } from '../../../../models/backend.model';
-import { Endpoint } from '../../../../models/endpoint.model';
-import { HttpService } from '../../../../services/http.service';
+import { Backend } from '../models/backend.model';
+import { Endpoint } from '../models/endpoint.model';
+import { HttpService } from './http.service';
 import { MessageService } from 'src/app/services/message.service';
-import { BackendService } from '../../../../services/backend.service';
-import { AuthenticateResponse } from '../models/authenticate-response.model';
+import { BackendService } from './backend.service';
+import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
  * Wrapper class declaring user's access to different modules.
