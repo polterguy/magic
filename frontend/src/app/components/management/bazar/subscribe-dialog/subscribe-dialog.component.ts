@@ -72,7 +72,7 @@ export class SubscribeDialogComponent implements OnInit {
   public ok() {
 
     // Invoking Bazar service to subscribe to our newsletter.
-    this.bazarService.subscribe(
+    this.bazarService.subscribeToNewsletter(
       this.model.name,
       this.model.email).subscribe((result: Response) => {
 

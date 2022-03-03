@@ -142,7 +142,7 @@ export class ViewAppDialogComponent implements OnInit {
           /*
            * Starting purchase flow.
            */
-          this.bazarService.purchase(
+          this.bazarService.purchaseBazarItem(
             this.data,
             model.name,
             model.email,

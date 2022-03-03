@@ -3,7 +3,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-// Angular imports.
+// Angular and system imports.
 import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {
@@ -13,8 +13,8 @@ import {
 } from '@angular/common/http';
 
 // Application specific imports.
-import { BackendService } from './backend.service';
-import { MessageService } from './message.service';
+import { BackendService } from '../services/backend.service';
+import { MessageService } from '../services/message.service';
 import { Messages } from '../models/messages.model';
 
 /**
@@ -25,6 +25,12 @@ import { Messages } from '../models/messages.model';
 })
 export class AuthInterceptor implements HttpInterceptor {
 
+  /**
+   * Creates an instance of your service.
+   * 
+   * @param backendService Needed to retrieve which backend we're actually using
+   * @param messageService Needed to publish messages about authentication events
+   */
   constructor(
     private backendService: BackendService,
     private messageService: MessageService) { }

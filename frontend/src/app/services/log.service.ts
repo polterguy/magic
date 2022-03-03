@@ -33,9 +33,7 @@ export class LogService {
    * @param from What item to use as offset for retrieving items
    * @param max Maximum number of items to return
    */
-  public list(
-    from: string,
-    max: number) {
+  public list(from: string, max: number) {
 
     // Dynamically building our query according to arguments specificed.
     let url = '/magic/system/log/list?max=' + max;

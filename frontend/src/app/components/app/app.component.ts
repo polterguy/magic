@@ -289,7 +289,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.version = version.version;
 
         // Invoking Bazar to check if we have the latest current version of Magic installed.
-        this.bazarService.version().subscribe((result: Response) => {
+        this.bazarService.latestVersion().subscribe((result: Response) => {
 
           // Assigning model.
           this.bazarVersion = result.result;

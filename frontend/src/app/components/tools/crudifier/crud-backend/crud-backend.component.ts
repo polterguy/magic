@@ -24,7 +24,7 @@ import { CacheService } from '../../../../services/cache.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { TransformModelService } from '../services/transform-model.service';
 import { CrudifierTableComponent } from './crud-table/crud-table.component';
-import { LoaderInterceptor } from '../../../../services/loader.interceptor';
+import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
 

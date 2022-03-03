@@ -61,7 +61,7 @@ export class SqlService {
   /**
    * Returns the type of database that is the default database used by backend.
    */
-   public defaultDatabaseType() {
+  public defaultDatabaseType() {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<DefaultDatabaseType>('/magic/system/sql/default-database-type');
@@ -98,7 +98,7 @@ export class SqlService {
    * 
    * @param databaseType Database type to retrieve snippets for
    */
-  public snippets(databaseType: string) {
+  public listSnippets(databaseType: string) {
     return this.fileService.listFiles(`/etc/${databaseType}/templates/`);
   }
 

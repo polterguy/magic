@@ -14,8 +14,8 @@ import { AppManifest } from '../models/app-manifest';
 import { Response } from 'src/app/models/response.model';
 import { HttpService } from 'src/app/services/http.service';
 import { FileService } from 'src/app/services/file.service';
-import { PurchaseStatus } from '../models/purchase-status.model';
 import { environment } from '../../environments/environment';
+import { PurchaseStatus } from '../models/purchase-status.model';
 
 /**
  * Setup service, allows you to setup, read, and manipulate your configuration
@@ -30,6 +30,8 @@ export class BazarService {
    * Creates an instance of your service.
    * 
    * @param httpClient HTTP client needed to retrieve Bazar manifest from Server Gardens
+   * @param httpService Needed to retrieve data from backend
+   * @param fileService Needed to be able to download bazar items
    */
   constructor(
     private httpClient: HttpClient,
@@ -39,7 +41,7 @@ export class BazarService {
   /**
    * Retrieves the latest Magic core version as published by the Bazar.
    */
-  public version() {
+  public latestVersion() {
 
     // Invoking Bazar service to retrieve its current version
     return this.httpClient.get<Response>(
@@ -143,7 +145,7 @@ export class BazarService {
    * @param name Full name of user
    * @param email Email address belonging to user
    */
-  public subscribe(name: string, email: string) {
+  public subscribeToNewsletter(name: string, email: string) {
 
     return this.httpClient.get<Response>(
       environment.bazarUrl +
@@ -162,7 +164,7 @@ export class BazarService {
    * @param subscribe True if user wants to subscribe to our newsletter
    * @param code Optional promo code user supplied before he clicked purchase
    */
-  public purchase(
+  public purchaseBazarItem(
     app: BazarApp,
     name: string,
     email: string,
@@ -198,7 +200,7 @@ export class BazarService {
    * 
    * @param token Download token to check
    */
-  public appReady(token: string) {
+  public canDownloadBazarItem(token: string) {
     return this.httpClient.get<Response>(
       environment.bazarUrl +
       '/magic/modules/bazar/can-download?token=' +
@@ -206,15 +208,16 @@ export class BazarService {
   }
 
   /**
-   * Download the specified Bazar app into the current backend.
+   * Download the specified Bazar item from the Bazar and directly into the current backend.
    * 
    * @param app Bazar app user wants to install
    * @param token Download token needed to download ZIP file from Bazar
    */
-  public download(app: BazarApp, token: string) {
+  public downloadBazarItem(app: BazarApp, token: string) {
 
     // Invoking backend to actually download app.
-    return this.httpService.post<Response>('/magic/system/bazar/download-from-bazar', {
+    return this.httpService.post<Response>(
+      '/magic/system/bazar/download-from-bazar', {
       url: environment.bazarUrl + '/magic/modules/bazar/download?token=' + token,
       name: app.folder_name
     });
@@ -225,7 +228,7 @@ export class BazarService {
    * 
    * @param app App's manifest
    */
-  public update(app: AppManifest) {
+  public updateBazarItem(app: AppManifest) {
 
     // Sanity checking invocation.
     if (!app.token || app.token === '') {
@@ -244,7 +247,7 @@ export class BazarService {
    * 
    * @param module_name Name of module to download
    */
-  public downloadLocally(module_name: string) {
+  public downloadBazarItemLocally(module_name: string) {
 
     /*
      * Notice, for some reasons I don't entirely understand, we'll need to wait a
@@ -267,7 +270,7 @@ export class BazarService {
    * @param name Friendly display name of app
    * @param token Installation token, required to be able to automatically update the app later
    */
-  public install(folder: string, app_version: string, name: string, token: string) {
+  public installBazarItem(folder: string, app_version: string, name: string, token: string) {
 
     // Invoking backend to actually install app.
     return this.httpService.put<Response>('/magic/system/file-system/install', {

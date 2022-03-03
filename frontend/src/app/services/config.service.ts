@@ -4,16 +4,16 @@
  */
 
 // Angular and system imports.
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 // Application specific imports.
-import { Status } from '../models/status.model';
-import { Response } from '../models/response.model';
-import { NameEmailModel } from '../models/name-email.model';
 import { HttpService } from './http.service';
 import { AuthService } from './auth.service';
+import { Status } from '../models/status.model';
 import { BackendService } from './backend.service';
+import { Response } from '../models/response.model';
+import { NameEmailModel } from '../models/name-email.model';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
@@ -25,11 +25,15 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 })
 export class ConfigService {
 
+  // Needed to be able to publish configuration changes to components and subscribers of such events.
+  private isConfigured = new BehaviorSubject<boolean>(undefined);
+
+  // Current configuration status of current backend.
+  private _currentStatus: Status = null;
+
   /**
    * To detect configuration status
    */
-  private isConfigured = new BehaviorSubject<boolean>(undefined);
-  private _currentStatus: Status = null;
   public configStatus = this.isConfigured.asObservable();
 
   /**
@@ -73,7 +77,7 @@ export class ConfigService {
   /**
    * Returns the root user's email address
    */
-   public rootUserEmailAddress() {
+  public rootUserEmailAddress() {
 
     // Invoking backend and returning observable to caller.
     return this.httpService.get<NameEmailModel>('/magic/system/emails/email');
@@ -103,7 +107,7 @@ export class ConfigService {
    * @param password Root user's password to use
    * @param settings Configuration for your system
    */
-  public setup(password: string, settings: any) {
+  public setupSystem(password: string, settings: any) {
 
     // Invoking backend and returning observable to caller.
     return new Observable<AuthenticateResponse>((observer) => {
@@ -115,9 +119,9 @@ export class ConfigService {
       }).subscribe((res: AuthenticateResponse) => {
 
         /*
-        * Notice, when setup is done, the backend will return a new JWT token
-        * which we'll have to use for consecutive invocations towards the backend.
-        */
+         * Notice, when setup is done, the backend will return a new JWT token
+         * which we'll have to use for consecutive invocations towards the backend.
+         */
         this.backendService.current = {
           url: this.backendService.current.url,
           username: 'root',

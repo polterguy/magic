@@ -407,7 +407,7 @@ export class BazarComponent implements OnInit, OnDestroy {
        * we're able to connect to SignalR socket, we'll need to actualyl check if product is already ready
        * for download here.
        */
-      this.bazarService.appReady(token).subscribe((response: Response) => {
+      this.bazarService.canDownloadBazarItem(token).subscribe((response: Response) => {
 
         // Checking result from Bazar server.
         if (response.result === 'APPROVED') {
@@ -429,13 +429,13 @@ export class BazarComponent implements OnInit, OnDestroy {
   private install(app: BazarApp, token: string) {
 
     // Downloading app from Bazar.
-    this.bazarService.download(app, token).subscribe((download: Response) => {
+    this.bazarService.downloadBazarItem(app, token).subscribe((download: Response) => {
 
       // Verifying process was successful.
       if (download.result === 'success') {
 
         // Now invoking install which actually initialises the app, and executes its startup files.
-        this.bazarService.install(
+        this.bazarService.installBazarItem(
           app.folder_name,
           app.version,
           app.name,
@@ -491,7 +491,7 @@ export class BazarComponent implements OnInit, OnDestroy {
               }
 
               // Downloading module to local computer.
-              this.bazarService.downloadLocally(app.folder_name);
+              this.bazarService.downloadBazarItemLocally(app.folder_name);
 
             }, (error: any) => this.feedbackService.showError(error));
 
