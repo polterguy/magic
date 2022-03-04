@@ -7,7 +7,7 @@ Magic is a No-Code/Low-Code application generator that allows you to create CRUD
 In addition it is a complete Open Source cloud system, allowing you to create your own virtualised
 cloud on top of your own server, and/or other cloud systems. Below is a screenshot of its dashboard.
 
-![Dashboard screenshot](https://servergardens.com/wp-content/uploads/2021/08/low-code-screenshot.png)
+![Dashboard screenshot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
 
 The way Magic works is by reading meta data from your database, for then to automatically generate a
 complete web API for you, and then afterwards create a complete Angular frontend on top of that.
