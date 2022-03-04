@@ -199,7 +199,10 @@ export class FolderActionsComponent {
           // Invoking backend to rename object.
           this.fileService.rename(this.activeFolder, data.name).subscribe(() => {
             this.feedbackService.showInfo('Folder successfully renamed');
-            this.afterRenamingFolder.emit(data.name);
+            this.afterRenamingFolder.emit({
+              newName: data.name,
+              oldName: this.activeFolder
+            });
           }, (error: any) => this.feedbackService.showError(error));
         }
       });

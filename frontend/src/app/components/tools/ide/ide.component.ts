@@ -782,11 +782,21 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param fileObject Folder to rename
    */
-  public afterRenamingFolder(fileObject: string) {
-    var toUpdate = fileObject.substring(0, fileObject.length - 1);
-    toUpdate= toUpdate.substring(0, toUpdate.lastIndexOf('/') + 1);
+  public afterRenamingFolder(fileObject: any) {
+
+    // Ensuring we update parent folder of folder that was just renamed.
+    var toUpdate = fileObject.newName.substring(0, fileObject.newName.length - 1);
+    toUpdate = toUpdate.substring(0, toUpdate.lastIndexOf('/') + 1);
     this.updateFileObject(toUpdate);
-    this.activeFolder = fileObject;
+    this.activeFolder = fileObject.newName;
+
+    // Updating folder path of all active files that are inside folder that was just renamed.
+    for (const idx of this.openFiles) {
+      if (idx.folder.startsWith(fileObject.oldName)) {
+        idx.folder = fileObject.newName + idx.folder.substring(fileObject.oldName.length);
+        idx.path = fileObject.newName + idx.path.substring(fileObject.oldName.length);
+      }
+    }
   }
 
   /*
@@ -850,6 +860,13 @@ export class IdeComponent implements OnInit, OnDestroy {
       options[0].options.extraKeys['Alt-R'] = (cm: any) => {
         this.ngZone.run(() => {
           this.fileActionsComponent.renameActiveFile();
+        });
+      };
+
+      // Alt+O renames the active folder.
+      options[0].options.extraKeys['Alt-L'] = (cm: any) => {
+        this.ngZone.run(() => {
+          this.folderActionsComponent.renameActiveFolder();
         });
       };
 
