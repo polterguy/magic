@@ -974,6 +974,7 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.endpoints = endpoints;
 
       // Checking if caller supplied a function to invoke after we're done.
+      this.cdRef.detectChanges();
       if (onAfter) {
         onAfter();
       }
@@ -1031,6 +1032,10 @@ export class IdeComponent implements OnInit, OnDestroy {
         this.cdRef.detectChanges();
 
       });
-    } : null);
+    } : () => {
+
+      // In case updated file object was a folder containing endpoints we'll need to retrieve endpoints again.
+      this.getEndpoints();
+    });
   }
 }
