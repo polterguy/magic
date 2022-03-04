@@ -60,7 +60,7 @@
 <button
     mat-menu-item
     [disabled]="!authService?.access?.files?.rename || activeFolder === '/'"
-    [matTooltip]="'Rename folder \'' + activeFolder + '\' [ALT+F]'"
+    [matTooltip]="'Rename folder \'' + activeFolder + '\' [ALT+L]'"
     (click)="renameActiveFolder()">
     <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
     Rename
