@@ -48,7 +48,7 @@ export class EndpointsComponent implements OnInit {
    }
  
 
-  public expandedElement;
+  public expandedElement: any;
 
   // List of log item IDs that we're currently viewing details for.
   private displayDetails: string[] = [];

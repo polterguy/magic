@@ -89,15 +89,13 @@ export class SocketsComponent implements OnInit, OnDestroy {
    * @param socketService Needed retrieve socket information and publish socket messages
    * @param backendService Needed to retrieve backend URL to connect to web sockets in backend
    * @param feedbackService Needed to provide feedback to user
-   * @param endpointService Used to retrieve list of all connected users from backend
    */
   constructor(
     private dialog: MatDialog,
     public authService: AuthService,
     private socketService: SocketService,
     private backendService: BackendService,
-    private feedbackService: FeedbackService,
-    private endpointService: EndpointService) { }
+    private feedbackService: FeedbackService) { }
 
   /**
    * Implementation of OnInit.
@@ -335,7 +333,6 @@ export class SocketsComponent implements OnInit, OnDestroy {
         }, (error: any) => this.feedbackService.showError(error));
       }
     });
-
   }
 
   /**

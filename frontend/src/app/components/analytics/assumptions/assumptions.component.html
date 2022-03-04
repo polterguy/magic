@@ -81,11 +81,12 @@
               mat-cell
               colspan="2"
               *matCellDef="let el">
-              <div class="w-100 details-row"
-              [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">   
+              <div
+                class="w-100 details-row"
+                [@detailExpand]="el == expandedElement ? 'expanded' : 'collapsed'">   
                 <div class="min-height w-100">
                   <div
-                  class="py-3  w-100"
+                  class="py-3 w-100"
                   *ngIf="shouldDisplayDetails(el) && el.content">
       
                   <app-codemirror-hyperlambda [(model)]="el.content"></app-codemirror-hyperlambda>
@@ -104,16 +105,14 @@
                       Delete
                     </button>
                     <div class="p-1"></div>
-                    <button
-                      mat-raised-button
-                      color="primary"
-                      (click)="executeTest(el)">
-                      Run
-                    </button>
-      
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        (click)="executeTest(el)">
+                        Run
+                      </button>
+                    </div>
                   </div>
-      
-                </div>
                 </div>
               </div>
             </td>
