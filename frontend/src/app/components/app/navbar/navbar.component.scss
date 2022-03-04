@@ -19,6 +19,11 @@ a{color: inherit;}
   padding: 1em;
   position: absolute;
   bottom: 0;
+  border-top: solid 1px rgba(0,0,0,.12);
+  height: 53px;
+}
+::ng-deep .dark .footer {
+  border-top: solid 1px rgba(255,255,255,.12);
 }
 .theme-title{font-weight: 400;}
 .switch-theme{

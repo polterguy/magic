@@ -18,42 +18,46 @@
       </button>
     </div>
   </div>
+
   <mat-accordion displayMode="flat" [multi]="!sideNavStatus">
-    <!-- dashboard -->
+
+    <!-- Dashboard -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header 
-      #panelD (click)="panelD._toggle()" 
-      [matTooltipDisabled]="sideNavStatus" 
-      [matTooltip]="authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'" 
-      matTooltipPosition="after" 
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact:true}">
-          <mat-panel-title>
-              <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="!authService.authenticated || backendIsConfigured ? '/' : null">
-                <mat-icon>{{authService.access.files.list_files && authService.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
-                <span class="title">{{authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
-              </a>
-          </mat-panel-title>
+        #panelD (click)="panelD._toggle()" 
+        [matTooltipDisabled]="sideNavStatus" 
+        [matTooltip]="authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'" 
+        matTooltipPosition="after" 
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="!authService.authenticated || backendIsConfigured ? '/' : null">
+            <mat-icon>{{authService.access.files.list_files && authService.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
+            <span class="title">{{authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
+          </a>
+        </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
-    <!-- crypto if user not logged in -->
+
+    <!-- Crypto if user not logged in -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="!authService.authenticated">
       <mat-expansion-panel-header 
-      #panelC (click)="panelC._toggle()" 
-      [matTooltipDisabled]="sideNavStatus" 
-      matTooltip="Cryptography" 
-      matTooltipPosition="after" 
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact:true}">
-          <mat-panel-title>
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/crypto">
-              <mat-icon>security</mat-icon>
-              <span class="title">Cryptography</span>
-            </a>
-          </mat-panel-title>
+        #panelC (click)="panelC._toggle()" 
+        [matTooltipDisabled]="sideNavStatus" 
+        matTooltip="Cryptography" 
+        matTooltipPosition="after" 
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/crypto">
+            <mat-icon>security</mat-icon>
+            <span class="title">Cryptography</span>
+          </a>
+        </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
-    <!-- tools -->
+
+    <!-- Tools -->
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="hyperide?.isActive || evaluator?.isActive || sql?.isActive || crudifier?.isActive || tasks?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
@@ -66,8 +70,10 @@
           <span class="title">Tools</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
+
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
-        <!-- crudifier -->
+
+        <!-- Crudifier -->
         <mat-list-option 
           [style.display]="authService.access.crud.generate_crud || authService.access.crud.generate_sql || authService.access.crud.generate_frontend ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -83,7 +89,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- hyper ide -->
+
+        <!-- Hyper IDE -->
         <mat-list-option 
           [style.display]="authService.access.files.list_files && authService.access.files.list_folders ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -99,7 +106,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- sql -->
+
+        <!-- SQL -->
         <mat-list-option 
           [style.display]="authService.access.sql.execute_access ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -115,7 +123,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- evaluator -->
+
+        <!-- Evaluator -->
         <mat-list-option 
           [style.display]="authService.access.eval.execute ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -131,7 +140,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- tasks -->
+
+        <!-- Tasks -->
         <mat-list-option 
           [style.display]="authService.access.tasks.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -149,7 +159,8 @@
         </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
-    <!-- management -->
+
+    <!-- Management -->
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="auth?.isActive || config?.isActive || crypto?.isActive || bazar?.isActive || terminal?.isActive || profile?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
@@ -163,15 +174,16 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
-        <!-- users -->
+
+        <!-- Users -->
         <mat-list-option 
-        [style.display]="authService.access.auth.view_users && authService.access.auth.view_roles ? '' : 'none'"
-        [matTooltipDisabled]="sideNavStatus" 
-        matTooltip="Users & roles" 
-        matTooltipPosition="after" 
-        routerLinkActive="active-link"
-        #auth="routerLinkActive"
-        [routerLinkActiveOptions]="{exact:true}">
+          [style.display]="authService.access.auth.view_users && authService.access.auth.view_roles ? '' : 'none'"
+          [matTooltipDisabled]="sideNavStatus" 
+          matTooltip="Users & roles" 
+          matTooltipPosition="after" 
+          routerLinkActive="active-link"
+          #auth="routerLinkActive"
+          [routerLinkActiveOptions]="{exact:true}">
           <ng-container *ngIf="authService.access.auth.view_users && authService.access.auth.view_roles">
             <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="backendIsConfigured ? '/auth' : null">
               <mat-icon>supervisor_account</mat-icon>
@@ -179,7 +191,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- config -->
+
+        <!-- Config -->
         <mat-list-option 
           [style.display]="authService.access.config.load ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -195,7 +208,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- terminal -->
+
+        <!-- Terminal -->
         <mat-list-option 
           [style.display]="authService.access.terminal.execute ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -211,6 +225,7 @@
             </a>
           </ng-container>
         </mat-list-option>
+
         <!-- Cryptography -->
         <mat-list-option 
           [style.display]="authService.access.crypto.import_public_key ? '' : 'none'"
@@ -227,7 +242,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- profile -->
+
+        <!-- Profile -->
         <mat-list-option 
           [style.display]="authService.authenticated ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -243,7 +259,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- bazar -->
+
+        <!-- Bazaar -->
         <mat-list-option 
           [style.display]="authService.access.bazar.get_manifests ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -261,7 +278,8 @@
         </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
-    <!-- analytics -->
+
+    <!-- Analytics -->
     <mat-expansion-panel class="mat-elevation-z0"
       [expanded]="assumptions?.isActive || cache?.isActive || endpoints?.isActive || sockets?.isActive || log?.isActive || !sideNavStatus" 
       [hideToggle]="!sideNavStatus"
@@ -275,7 +293,8 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-selection-list [multiple]="false" [ngClass]="{'pt-0 pb-0': !sideNavStatus}">
-        <!-- log -->
+
+        <!-- Log -->
         <mat-list-option 
           [style.display]="authService.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -291,7 +310,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- assumptions //TODO -->
+
+        <!-- Assumptions //TODO -->
         <mat-list-option 
           [style.display]="authService.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -307,7 +327,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- cache //TODO -->
+
+        <!-- Cache //TODO -->
         <mat-list-option 
           [style.display]="authService.access.log.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -323,7 +344,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- endpoints -->
+
+        <!-- Endpoints -->
         <mat-list-option 
           [style.display]="authService.access.endpoints.view ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -339,7 +361,8 @@
             </a>
           </ng-container>
         </mat-list-option>
-        <!-- sockets -->
+
+        <!-- Sockets -->
         <mat-list-option 
           [style.display]="authService.access.sockets.read ? '' : 'none'"
           [matTooltipDisabled]="sideNavStatus" 
@@ -357,7 +380,8 @@
         </mat-list-option>
       </mat-selection-list>
     </mat-expansion-panel>
-    <!-- about -->
+
+    <!-- About -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header 
       #panelH (click)="panelH._toggle()" 
@@ -374,60 +398,64 @@
           </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
-    <!-- document -->
+
+    <!-- Documentation -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header 
-      #panelH (click)="panelH._toggle()" 
-      [matTooltipDisabled]="sideNavStatus" 
-      matTooltip="Documentation" 
-      matTooltipPosition="after" 
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact:true}">
-          <mat-panel-title>
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" href="https://docs.aista.com/" target="_blank">
-              <mat-icon>book</mat-icon>
-              <span class="title">Documentation</span>
-            </a>
-          </mat-panel-title>
+        #panelH (click)="panelH._toggle()" 
+        [matTooltipDisabled]="sideNavStatus" 
+        matTooltip="Documentation" 
+        matTooltipPosition="after" 
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" href="https://docs.aista.com/" target="_blank">
+            <mat-icon>book</mat-icon>
+            <span class="title">Documentation</span>
+          </a>
+        </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
-    <!-- login -->
+
+    <!-- Login -->
     <mat-expansion-panel class="mat-elevation-z0" hideToggle>
       <mat-expansion-panel-header
-      #panelL (click)="panelL._toggle();authService.authenticated ? logout() : login()" 
-      [matTooltipDisabled]="sideNavStatus" 
-      [matTooltip]="authService.authenticated ? 'Logout' : 'Login'">
-          <mat-panel-title>
-              <mat-icon>{{authService.authenticated ? 'lock' : 'lock_open'}}</mat-icon>
-              <span class="title">{{authService.authenticated ? 'Logout' : 'Login'}}</span>
-          </mat-panel-title>
+        #panelL (click)="panelL._toggle();authService.authenticated ? logout() : login()" 
+        [matTooltipDisabled]="sideNavStatus" 
+        [matTooltip]="authService.authenticated ? 'Logout' : 'Login'">
+        <mat-panel-title>
+            <mat-icon>{{authService.authenticated ? 'lock' : 'lock_open'}}</mat-icon>
+            <span class="title">{{authService.authenticated ? 'Logout' : 'Login'}}</span>
+        </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
-    <!-- register -->
+
+    <!-- Register -->
     <mat-expansion-panel class="mat-elevation-z0" 
       *ngIf="!authService.authenticated" hideToggle>
       <mat-expansion-panel-header 
-      #panelH (click)="panelH._toggle()" 
-      [matTooltipDisabled]="sideNavStatus" 
-      matTooltip="Create an account" 
-      matTooltipPosition="after" 
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{exact:true}">
-          <mat-panel-title>
-            <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/register">
-              <mat-icon>how_to_reg</mat-icon>
-              <span class="title">Register</span>
-            </a>
-          </mat-panel-title>
+        #panelH (click)="panelH._toggle()" 
+        [matTooltipDisabled]="sideNavStatus" 
+        matTooltip="Create an account" 
+        matTooltipPosition="after" 
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{exact:true}">
+        <mat-panel-title>
+          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" routerLink="/register">
+            <mat-icon>how_to_reg</mat-icon>
+            <span class="title">Register</span>
+          </a>
+        </mat-panel-title>
       </mat-expansion-panel-header>
     </mat-expansion-panel>
   </mat-accordion>
-  <!-- theme -->
+
+  <!-- Theme -->
   <mat-divider class="mt-4"></mat-divider>
   <button mat-button class="ml-2 mr-1"
-  (click)="themeChanged(theme === 'light' ? 'dark' : 'light')" 
-  [color]="theme === 'dark' ? 'accent' : ''"
-  [class.theme-btn]="!sideNavStatus">
+    (click)="themeChanged(theme === 'light' ? 'dark' : 'light')" 
+    [color]="theme === 'dark' ? 'accent' : ''"
+    [class.theme-btn]="!sideNavStatus">
     <div class="d-flex align-items-center justify-content-between" [class.flex-column]="!sideNavStatus">
       <div class="theme-title" [class.d-none]="!sideNavStatus">{{'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' theme'}}</div>
       <div class="theme-title" [class.d-none]="sideNavStatus">{{(theme === 'light' ? 'Dark' : 'Light') + ' theme'}}</div>
@@ -441,6 +469,7 @@
       </div>
     </div>
   </button>
+
   <div class="footer d-flex flex-column justify-content-center align-items-center w-100 pt-3">
     <div class="d-flex flex-column align-items-center">
       <ng-container *ngIf="shouldUpdateCore">
@@ -454,11 +483,6 @@
           color="warn">
           {{sideNavStatus ? 'Update to ' + bazarVersion : 'Update'}}
         </a>
-      </ng-container>
-      <ng-container>
-        <span
-        [matTooltip]="shouldUpdateCore ? 'You should probably update your local Magic installation' : 'You seem to have the latest version installed'"
-        [matTooltipPosition]="sideNavStatus ? 'above' : 'after'" >{{version}}</span>
       </ng-container>
     </div>
     <p class="my-0 mat-caption text-center" *ngIf="sideNavStatus">
