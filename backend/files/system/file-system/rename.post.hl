@@ -20,18 +20,9 @@ if
    .lambda
 
       // File object is a folder, renaming it.
-      strings.split:x:@.arguments/*/oldName
-         .:/
-      remove-nodes:x:-/0/-
-      strings.join:x:@strings.split/*
-         .:/
       io.folder.move:x:@.arguments/*/oldName
-         strings.concat
-            .:/
-            get-value:x:@strings.join
-            .:/
-            get-value:x:@.arguments/*/newName
-            .:/
+         get-value:x:@.arguments/*/newName
+
 else
 
    // File object is a file, renaming it.

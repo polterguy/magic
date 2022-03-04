@@ -1,5 +1,5 @@
 
-<h1 mat-dialog-title>Rename file</h1>
+<h1 mat-dialog-title>Rename folder</h1>
 <form>
   <div mat-dialog-content>
 
@@ -10,7 +10,7 @@
         type="text"
         matInput
         autocomplete="off"
-        [(ngModel)]="data.name"
+        [(ngModel)]="newName"
         name="name">
     </mat-form-field>
 
@@ -20,7 +20,7 @@
 
     <button
       mat-raised-button
-      [disabled]="data.name === originalName"
+      [disabled]="newName === originalName"
       color="primary"
       type="submit"
       (click)="ok()">Rename</button>

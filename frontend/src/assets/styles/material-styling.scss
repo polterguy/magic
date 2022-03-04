@@ -20,7 +20,6 @@ Material body and general styling
 .mat-drawer-content{
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
-
 #main-wrapper.mat-sidenav-container{
   min-height: 100vh;
 }
@@ -34,7 +33,6 @@ Material body and general styling
   margin-bottom: $side_space;
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
-
 #sidebar-main.mat-drawer{
   @media (min-width: 768px){
     position: fixed;
@@ -50,13 +48,13 @@ Material body and general styling
 /*=-=-=-=-=-=
 Material tables
 =-=-=-=-=-=*/
-table.mat-table{
+table.mat-table {
   border-radius: 4px;
   overflow: hidden;
 }
-.expandable-table{
-    tr:last-child td.mat-cell {border: none;}
-    tr.expanded-row{
+.expandable-table {
+    tr:last-child td.mat-cell { border: none; }
+    tr.expanded-row {
         height: 0;
         background-color: transparentize($color: $magic_default_alternative, $amount: 0.9);
       }
@@ -64,18 +62,18 @@ table.mat-table{
         cursor: pointer;
         @include general_transition(0.3s);
         &.selected,
-        &:hover{
+        &:hover {
             background-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
         }
-        &.error:hover{
+        &.error:hover {
           box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.301);
         }
         td {
             border-bottom-width: 0;
-            .text-truncate:not(.large-col){
+            .text-truncate:not(.large-col) {
               max-width: calc(100vw / 3.5);
             }
-            .text-truncate.large-col{
+            .text-truncate.large-col {
               max-width: 70vw;
             }
         }
@@ -88,50 +86,50 @@ table.mat-table{
 /*=-=-=-=-=-=
 Material dialog
 =-=-=-=-=-=*/
-.mat-dialog-content{
+.mat-dialog-content {
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),3px);
 }
 /*=-=-=-=-=-=
 Material card
 =-=-=-=-=-=*/
-.card-replacement{
-  &.left-align-arrow{
+.card-replacement {
+  &.left-align-arrow {
     .mat-expansion-panel-header .mat-content{flex: unset;}
   }
-  .mat-expansion-panel-body{padding: 0px 16px 16px;}
-  .mat-expansion-panel-header{padding: 0px 16px;}
-  .mat-expanded .mat-expansion-panel-header{padding-top: 8px;}
-  .mat-expansion-panel-header.mat-expanded{height: unset;}
+  .mat-expansion-panel-body { padding: 0px 16px 16px; }
+  .mat-expansion-panel-header { padding: 0px 16px; }
+  .mat-expanded .mat-expansion-panel-header { padding-top: 8px; }
+  .mat-expansion-panel-header.mat-expanded { height: unset; }
 }
-.mat-card-title{line-height: 30px;}
+.mat-card-title { line-height: 30px; }
 /*=-=-=-=-=-=
 Material tabs & stepper
 =-=-=-=-=-=*/
 .mat-tab-header,
-.mat-step-header{
+.mat-step-header {
   margin-bottom: 12px;
 }
-.mat-stepper-horizontal .mat-horizontal-content-container{padding: 0;}
+.mat-stepper-horizontal .mat-horizontal-content-container { padding: 0; }
 /*=-=-=-=-=-=
 Material menu
 =-=-=-=-=-=*/
-.shortkeys{
-  .mat-list-item-content{
+.shortkeys {
+  .mat-list-item-content {
     width: 100%;
     display: flex;
     justify-content: space-between;
   }
 }
-.dark .mat-menu-content{color: white;}
+.dark .mat-menu-content { color: white; }
 /*=-=-=-=-=-=
 Material list
 =-=-=-=-=-=*/
-.detail-list{
-    .mat-list-item.mat-2-line{
+.detail-list {
+    .mat-list-item.mat-2-line {
       height: unset!important;
       margin-bottom: 22px;
       font-size: 95%;
-      .mat-line{
+      .mat-line {
         text-overflow: unset!important;
         white-space: normal;
         :not(:last-child) {
@@ -141,13 +139,13 @@ Material list
       }
     }
 }
-#custom-list{
+#custom-list {
   &.mat-list-base[dense] .mat-list-item, 
-  &.mat-list-base[dense] .mat-list-option{height: unset;}
-  .mat-list-item-content{padding: 0;}
+  &.mat-list-base[dense] .mat-list-option { height: unset; }
+  .mat-list-item-content { padding: 0; }
 }
-.flex-list{
-  .mat-list-item-content{
+.flex-list {
+  .mat-list-item-content {
     width: 100%;
     justify-content: space-between;
   }
@@ -155,31 +153,31 @@ Material list
 /*=-=-=-=-=-=
 Material snackbar for short messages
 =-=-=-=-=-=*/
-.center-aligned{
-    .mat-simple-snackbar{
+.center-aligned {
+    .mat-simple-snackbar {
         justify-content: center;
     }
 }
 /*=-=-=-=-=-=
 Material chip
 =-=-=-=-=-=*/
-.mat-standard-chip{word-break: break-all; height: unset!important;}
+.mat-standard-chip { word-break: break-all; height: unset!important; }
 /*=-=-=-=-=-=
 Material icons and button
 =-=-=-=-=-=*/
-.sm-icons{
-  .mat-icon-button{
+.sm-icons {
+  .mat-icon-button {
     width: 30px;
     height: 30px;
     line-height: 30px;
-    mat-icon{
+    mat-icon {
       height: 20px;
       width: 20px;
       font-size: 20px;
       line-height: 20px;
     }
   }
-  mat-icon{
+  mat-icon {
     height: 20px;
     width: 20px;
     font-size: 20px;
@@ -188,15 +186,15 @@ Material icons and button
 }
 // in SQL page 
 // ---- fix for smaller screens
-#executeButton.mat-raised-button{min-width: 80px;}
-#largeBtn.mat-raised-button{min-width: 140px;}
+#executeButton.mat-raised-button { min-width: 80px; }
+#largeBtn.mat-raised-button { min-width: 140px; }
 /*=-=-=-=-=-=
 Material form
 =-=-=-=-=-=*/
-.inline-input{
-    .mat-form-field-wrapper{margin: 0!important;padding-bottom: 0;}
+.inline-input {
+    .mat-form-field-wrapper { margin: 0!important;padding-bottom: 0; }
 }
-.light .dark .mat-select-value{color: inherit;}
-.main-body .mat-form-field:not(.standlone-input) .mat-form-field-infix{width: unset!important;min-width: 100px!important;}
-.warning .mat-option-text{color: inherit;}
-.dark .mat-form-field.mat-focused.mat-primary .mat-select-arrow{color: inherit;}
+.light .dark .mat-select-value { color: inherit; }
+.main-body .mat-form-field:not(.standlone-input) .mat-form-field-infix { width: unset!important;min-width: 100px!important; }
+.warning .mat-option-text { color: inherit; }
+.dark .mat-form-field.mat-focused.mat-primary .mat-select-arrow{ color: inherit; }

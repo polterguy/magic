@@ -777,6 +777,18 @@ export class IdeComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * A callback function from child component to rename active folder.
+   * 
+   * @param fileObject Folder to rename
+   */
+  public afterRenamingFolder(fileObject: string) {
+    var toUpdate = fileObject.substring(0, fileObject.length - 1);
+    toUpdate= toUpdate.substring(0, toUpdate.lastIndexOf('/') + 1);
+    this.updateFileObject(toUpdate);
+    this.activeFolder = fileObject;
+  }
+
   /*
    * Returns options for CodeMirror editor.
    */

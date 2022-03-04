@@ -21,7 +21,8 @@ import { CreateKeypairDialogComponent } from './create-keypair-dialog/create-key
  */
 @Component({
   selector: 'app-server-public-key',
-  templateUrl: './server-public-key.component.html'
+  templateUrl: './server-public-key.component.html',
+  styleUrls: ['./server-public-key.component.scss']
 })
 export class ServerPublicKeyComponent implements OnInit {
 

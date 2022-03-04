@@ -1,20 +1,27 @@
-import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
+
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
+
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
-import { MacroDefinition } from 'src/app/models/macro-definition.model';
-import { FeedbackService } from 'src/app/services/feedback.service';
-import { FileService } from 'src/app/services/tools/file.service';
 import { Response } from '../../../../../models/response.model';
+import { FileService } from 'src/app/services/tools/file.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
+import { MacroDefinition } from 'src/app/models/macro-definition.model';
+import { Component, EventEmitter, Input, NgZone, Output } from '@angular/core';
+import { FileObjectName } from '../../rename-file-dialog/rename-file-dialog.component';
+import { RenameFolderDialogComponent } from '../../rename-folder-dialog/rename-folder-dialog.component';
 import { ExecuteMacroDialogComponent } from '../../execute-macro-dialog/execute-macro-dialog.component';
-import { NewFileFolderDialogComponent, FileObject } from '../../new-file-folder-dialog/new-file-folder-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../../select-macro-dialog/select-macro-dialog.component';
+import { NewFileFolderDialogComponent, FileObject } from '../../new-file-folder-dialog/new-file-folder-dialog.component';
 
 @Component({
   selector: 'app-folder-actions',
   templateUrl: './folder-actions.component.html',
   styleUrls: ['./folder-actions.component.scss']
 })
-export class FolderActionsComponent implements OnInit {
+export class FolderActionsComponent {
 
   @Input() activeFolder: string;
   @Input() getFolders: any;
@@ -23,6 +30,7 @@ export class FolderActionsComponent implements OnInit {
   @Output() updateFiles: EventEmitter<any> = new EventEmitter();
   @Output() updateAfterDelete: EventEmitter<any> = new EventEmitter();
   @Output() updateAfterMacro: EventEmitter<any> = new EventEmitter();
+  @Output() afterRenamingFolder: EventEmitter<any> = new EventEmitter();
 
   /**
    * Model for file uploader.
@@ -37,7 +45,6 @@ export class FolderActionsComponent implements OnInit {
    * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
-   * @param evaluatorService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
    * @param ngZone Needed to make sure dialogs popup inside the ngZone
    */
   constructor(
@@ -47,9 +54,6 @@ export class FolderActionsComponent implements OnInit {
     private feedbackService: FeedbackService,
     readonly ngZone: NgZone
   ) { }
-
-  ngOnInit(): void {
-  }
 
   /**
    * Invoked when user wants to create a new file or folder.
@@ -165,6 +169,39 @@ export class FolderActionsComponent implements OnInit {
           this.updateAfterDelete.emit();
 
         }, (error: any) => this.feedbackService.showError(error));
+      });
+    })
+  }
+
+  /**
+   * Renames the currently active folder.
+   * @callback afterRenamingFolder to update view in parent component
+   */
+  public renameActiveFolder() {
+
+    // Ensuring we actually have an active file.
+    if (this.activeFolder === '/') {
+      return;
+    }
+    // Opening up a modal dialog to preview file.
+    // using ngZone to prevent the dialog from opening outside of the ngZone!
+    this.ngZone.run(() => {
+      const dialog = this.dialog.open(RenameFolderDialogComponent, {
+        width: '550px',
+        data: {
+          name: this.activeFolder,
+          
+        },
+      });
+      dialog.afterClosed().subscribe((data: FileObjectName) => {
+        // Checking if user wants to rename file.
+        if (data) {
+          // Invoking backend to rename object.
+          this.fileService.rename(this.activeFolder, data.name).subscribe(() => {
+            this.feedbackService.showInfo('Folder successfully renamed');
+            this.afterRenamingFolder.emit(data.name);
+          }, (error: any) => this.feedbackService.showError(error));
+        }
       });
     })
   }

@@ -135,6 +135,7 @@ import { NewRoleDialogComponent } from './components/management/auth/roles/new-r
 import { PreviewFileDialogComponent } from './components/tools/ide/preview-file-dialog/preview-file-dialog.component';
 import { SelectMacroDialogComponent } from './components/tools/ide/select-macro-dialog/select-macro-dialog.component';
 import { ToolbarHelpDialogComponent } from './components/app/toolbar/toolbar-help-dialog/toolbar-help-dialog.component';
+import { RenameFolderDialogComponent } from './components/tools/ide/rename-folder-dialog/rename-folder-dialog.component';
 import { ExecuteMacroDialogComponent } from './components/tools/ide/execute-macro-dialog/execute-macro-dialog.component';
 import { JailUserDialogComponent } from './components/management/auth/users/jail-user-dialog/jail-user-dialog.component';
 import { ViewReadmeDialogComponent } from './components/management/bazar/view-readme-dialog/view-readme-dialog.component';
@@ -216,6 +217,7 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
     ConfirmEmailComponent,
     JailUserDialogComponent,
     RenameFileDialogComponent,
+    RenameFolderDialogComponent,
     RegisterComponent,
     CrudifierTableComponent,
     CrudBackendComponent,

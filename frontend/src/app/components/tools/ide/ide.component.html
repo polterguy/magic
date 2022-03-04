@@ -1,5 +1,5 @@
 
-<div class="row wrapper h-100 ide">
+<div class="row h-100 ide">
 
   <div class="col-12 mb-general">
     <mat-card class="h-100 p-0">
@@ -166,7 +166,8 @@
                   (manageAfterCreateNewFileObject)="manageAfterCreateNewFileObject($event)"
                   (updateFiles)="updateFileObject($event)"
                   (updateAfterDelete)="updateAfterDeleteFolder()"
-                  (updateAfterMacro)="updateAfterMacro($event)"></app-folder-actions>
+                  (updateAfterMacro)="updateAfterMacro($event)"
+                  (afterRenamingFolder)="afterRenamingFolder($event)"></app-folder-actions>
                 </mat-menu>
                 
                 <!-- Active file menu -->
