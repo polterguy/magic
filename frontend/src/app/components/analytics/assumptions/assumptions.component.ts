@@ -64,6 +64,7 @@ export class DiagnosticsTestsComponent implements OnInit {
   public tests: TestModel[] = [];
 
   public expandedElement: any;
+
   /**
    * What tests are currently being edited and viewed.
    */

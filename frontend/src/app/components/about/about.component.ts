@@ -7,7 +7,7 @@
 import { Component } from '@angular/core';
 
 /**
- * Component showing details and information about system.
+ * Component showing about information of system.
  */
 @Component({
   selector: 'app-about',
