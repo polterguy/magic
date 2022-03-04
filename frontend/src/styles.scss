@@ -1,7 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
 
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
 
-@import '~codemirror/lib/codemirror';
+ @import '~codemirror/lib/codemirror';
 @import "~codemirror/addon/display/fullscreen";
 @import './assets/styles/sizes.scss';
 @import './assets/styles/grid.scss';
@@ -11,26 +13,15 @@
 @import './assets/styles/default-classes.scss';
 @import './assets/styles/codemirror.scss';
 
-
 html, body { height: 100%; }
 body { margin: 0;min-height: 100vh;overflow: hidden;}
 /*=-=-=-=-=-=
 General settings 
 =-=-=-=-=-=*/
-// .light,
-// .dark{
-//   height: 100%;
-// }
-hr{
+hr {
   border-style: solid;
   border-width: 0.5px;
   border-color: transparentize($color: $magic_default_alternative, $amount: 0.7);
-}
-.create-button{
-  position: absolute;
-  right: 10px;
-  top: 8px;
-  z-index: 1;
 }
 /*
  * Misc classes.
@@ -38,12 +29,11 @@ hr{
 .warning {
   color: $magic_warning!important;
 }
-.error-bg{background-color: $magic_error!important;}
-.error-text{color: $magic_error!important;}
+.error-bg { background-color: $magic_error!important; }
+.error-text { color: $magic_error!important; }
 .fill-width {
   width: 100%;
 }
-
 .button-strip {
   text-align: right;
   margin-top: .5rem;
@@ -56,36 +46,27 @@ hr{
   color: rgb(198, 198, 198);
   font-style: italic;
 }
-
-
-
-.CodeMirror-vscrollbar{
+.CodeMirror-vscrollbar {
   @include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
 }
-.CodeMirror-hscrollbar{
+.CodeMirror-hscrollbar {
   @include scrollbar_horizontal($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),6px);
 }
-
 .invisible {
   display: none !important;
 }
-
 .word-break {
   word-break: break-word;
 }
-
 .button {
   cursor: pointer;
 }
-
 button.wider-button {
   width: 150px;
 }
-
 .mat-dialog-actions {
   float: right;
 }
-
 a {
   color: $magic_accent;
   text-decoration: none;
@@ -96,14 +77,11 @@ a {
  */
 table.clickable {
   width: 100%;
-  // background-color: transparent;
+  border-collapse: collapse;
   thead {
     tr {
       th {
-        // color: transparentize($color: $magic_dark, $amount: 0.9);
-        // font-weight: bold;
         white-space: nowrap;
-        // padding-right: 1rem;
       }
     }
   }
@@ -111,7 +89,6 @@ table.clickable {
     tr {
       td {
         vertical-align: middle;
-        // padding: 1rem 1rem 1rem;
         padding: 0.5rem 1rem 0.5rem;
         cursor: pointer;
         user-select: none;
@@ -166,27 +143,22 @@ td:last-child.icon-col {
 }
 
 /*
- * Generic close button style.
+ * Generic mat-dialog overrides.
  */
-.close {
-  position: absolute !important;
-  top: .5rem;
-  right: .5rem;
-}
-
 .mat-dialog-title, .mat-dialog-content {
   input {
     color: $magic_dark;
   }
 }
 
+/*
+ * CodeMirror overrides.
+ */
 .CodeMirror {
   border-radius: 5px;
   height: 400px;
   resize: vertical;
 }
-
-// CodeMirror classes, specifically for autocomplete or hints plugin.
 .CodeMirror-hints {
   position: absolute;
   z-index: 10000;
@@ -206,7 +178,6 @@ td:last-child.icon-col {
   max-height: 20em;
   overflow-y: auto;
 }
-
 .CodeMirror-hint {
   margin: 0;
   padding: 0 4px;
@@ -214,15 +185,10 @@ td:last-child.icon-col {
   white-space: pre;
   cursor: pointer;
 }
-
 li.CodeMirror-hint-active {
   background: $magic_primary;
-  // background: #08f;
   color: white;
 }
-
 .cm-error {
   background-color: $magic_error;
 }
-
-

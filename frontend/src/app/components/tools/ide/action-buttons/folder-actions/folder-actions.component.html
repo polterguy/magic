@@ -56,6 +56,16 @@
     Download folder
 </button>
 
+<!-- Rename folder -->
+<button
+    mat-menu-item
+    [disabled]="!authService?.access?.files?.rename || activeFolder === '/'"
+    [matTooltip]="'Rename folder \'' + activeFolder + '\' [ALT+F]'"
+    (click)="renameActiveFolder()">
+    <mat-icon class="material-icons-outlined"> drive_file_rename_outline </mat-icon>
+    Rename
+</button>
+
 <!-- Delete folder -->
 <button
     [disabled]="!authService.access.files.delete_folder || activeFolder === '/'"

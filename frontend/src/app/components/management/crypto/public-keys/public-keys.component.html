@@ -170,112 +170,6 @@
         </div>
       </td>
     </ng-container>
-    <!-- <ng-container matColumnDef="show-details">
-
-      <td
-        mat-cell
-        *matCellDef="let el"
-        colspan="4">
-
-        <div *ngIf="shouldDisplayDetails(el.key)">
-
-          <div class="crypto-form-fields">
-
-            <mat-form-field class="crypto-form-field" appearance="outline">
-
-              <mat-label>Full name</mat-label>
-              <input
-                matInput
-                [disabled]="!authService.access.crypto.save_public_key"
-                type="text"
-                [(ngModel)]="el.key.subject"
-                autocomplete="off">
-
-            </mat-form-field>
-
-            <mat-form-field class="crypto-form-field" appearance="outline">
-
-              <mat-label>Email</mat-label>
-              <input
-                matInput
-                [disabled]="!authService.access.crypto.save_public_key"
-                type="text"
-                [(ngModel)]="el.key.email"
-                autocomplete="off">
-
-            </mat-form-field>
-
-            <mat-form-field class="crypto-form-field" appearance="outline">
-
-              <mat-label>Domain</mat-label>
-              <input
-                matInput
-                [disabled]="!authService.access.crypto.save_public_key"
-                type="text"
-                [(ngModel)]="el.key.domain"
-                autocomplete="off">
-
-            </mat-form-field>
-
-            <mat-form-field class="crypto-form-field" appearance="outline">
-
-              <mat-label>Username</mat-label>
-              <input
-                matInput
-                [disabled]="!authService.access.crypto.save_public_key"
-                type="text"
-                [(ngModel)]="el.key.username"
-                autocomplete="off">
-
-            </mat-form-field>
-        
-          </div>
-
-          <mat-form-field class="fill-width" appearance="outline">
-
-            <mat-label>Key content</mat-label>
-            <textarea
-              matInput
-              [disabled]="!authService.access.crypto.save_public_key"
-              class="crypto-key"
-              [(ngModel)]="el.key.content"
-              rows="7"></textarea>
-
-          </mat-form-field>
-
-          <div class="fingerprint" (click)="copyContentToClipboard(el.key.fingerprint)">{{el.key.fingerprint}}</div>
-
-          <app-codemirror-hyperlambda [(model)]="el.options"></app-codemirror-hyperlambda>
-
-          <div class="button-strip">
-
-            <mat-checkbox
-              class="crypto-enabled"
-              [disabled]="!authService.access.crypto.save_public_key"
-              matTooltip="Enables or disables public key"
-              (change)="enabledChanged(el.key)"
-              [(ngModel)]="el.key.enabled">Enabled</mat-checkbox>
-
-            <button
-              mat-raised-button
-              [disabled]="!authService.access.crypto.crypto_invocations"
-              matTooltip="Retrieve all receipts for invocations done with key"
-              (click)="showReceipts(el.key)">Receipts</button>
-
-            <button
-              mat-raised-button
-              matTooltip="Saves changes to key"
-              [disabled]="!authService.access.crypto.save_public_key"
-              color="primary"
-              (click)="save(el)">Save</button>
-
-          </div>
-
-        </div>
-
-      </td>
-
-    </ng-container> -->
 
     <tr
       mat-row
@@ -283,11 +177,6 @@
       class="expandable-row"
       (click)="toggleDetails(el.key);expandedElement = expandedElement === el ? null : el"
       *matRowDef="let el; columns: displayedColumns;"></tr>
-
-    <!-- <tr
-      mat-row
-      [ngClass]="shouldDisplayDetails(el.key) ? 'details' : 'invisible'"
-      *matRowDef="let el; columns: ['show-details'];"></tr> -->
 
     <tr mat-row *matRowDef="let el; columns: ['showDetails']" class="expanded-row"></tr>
 
