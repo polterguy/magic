@@ -4,9 +4,9 @@
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
 Magic is a No-Code/Low-Code application generator that allows you to create CRUD apps 100% automatically.
-In addition it is a complete Open Source cloud system, allowing you to create your own virtualized
-cloud on top of your own server, and/or other cloud systems. Below is a screenshot of Hyper IDE, a fully
-functioning web based IDE, being one of 16 components that comes out of the box with the package.
+In addition it is a complete Open Source cloud system and IDE, allowing you to create your own virtualized
+cloud on top of your own server, and/or other cloud systems, editing your code from your phone if required.
+Below is a screenshot of Hyper IDE.
 
 ![Dashboard screenshot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
 
