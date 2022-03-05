@@ -35,7 +35,7 @@ super scalable, and 100% perfectly secure.
 ## Documentation
 
 * [Getting started](https://docs.aista.com/tutorials/getting-started/)
-* [Full documentation for the system](https://docs.aista.com/documentation/)
+* [Tutorials](https://docs.aista.com/tutorials/)
 
 ## License
 
