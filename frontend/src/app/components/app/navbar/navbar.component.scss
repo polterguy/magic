@@ -19,11 +19,10 @@ a{color: inherit;}
   padding: 1em;
   position: absolute;
   bottom: 0;
-  border-top: solid 1px rgba(0,0,0,.12);
-  height: 53px;
+  border-top: solid 1px $magic_dark_ng_border;
 }
 ::ng-deep .dark .footer {
-  border-top: solid 1px rgba(255,255,255,.12);
+  border-top: solid 1px $magic_default_ng_border;
 }
 .theme-title{font-weight: 400;}
 .switch-theme{
@@ -145,6 +144,22 @@ a{color: inherit;}
   }
   
 }
+.copy-btn{
+  position: absolute;
+  right: 0;
+  top: -11px;
+  z-index: 1;
+}
+.small-icon{
+  mat-icon{
+    font-size: 15px;
+    line-height: 15px;
+    width: 15px;
+    height: 15px;
+    margin-right: 0;
+  }
+}
+
 /*=-=-=-=-=-=
 colour setting -- text & background
 =-=-=-=-=-=*/

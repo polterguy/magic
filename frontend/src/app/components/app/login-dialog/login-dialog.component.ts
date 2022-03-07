@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
 import { Status } from 'src/app/models/status.model';
@@ -49,6 +49,7 @@ export class LoginDialogComponent implements OnInit {
    * @param dialogRef Reference to self, to allow for closing dialog as user has successfully logged in
    * @param authService Dependency injected authentication and authorisation service
    * @param backendService Service to keep track of currently selected backend
+   * @param backendUrl Optional: Selected url passed when opening the dialog
    */
   constructor(
     private router: Router,
@@ -58,7 +59,8 @@ export class LoginDialogComponent implements OnInit {
     protected messageService: MessageService,
     public authService: AuthService,
     public backendService: BackendService,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public backendUrl) { }
 
   /**
    * reactive form declaration
@@ -76,7 +78,7 @@ export class LoginDialogComponent implements OnInit {
 
     // Creating filter backends form control.
     this.backends = new FormControl();
-    this.backends.setValue('');
+    this.backendUrl ? (this.backends.setValue(this.backendUrl), this.backendSelected()) : this.backends.setValue('');
 
     // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges

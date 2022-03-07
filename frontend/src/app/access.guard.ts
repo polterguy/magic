@@ -18,9 +18,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTr
 })
 export class AccessGuard implements CanActivate {
   hasAccess;
-  constructor(private router: Router, private configService: ConfigService, private authService: AuthService) {
-
-  }
+  constructor(private router: Router, private configService: ConfigService, private authService: AuthService) { }
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
@@ -40,7 +38,12 @@ export class AccessGuard implements CanActivate {
 
       }
     })();
-
+    /**
+     * in case endpoints api throws error, then redirect to homepage 
+     */
+    if (!this.authService.has_endpoints) {
+      this.router.navigate([''])
+    }
     return true;
   }
 }

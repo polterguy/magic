@@ -37,8 +37,7 @@ import { ChangePasswordComponent } from './components/management/auth/change-pas
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent,
-    canActivate: [AccessGuard]
+    component: DashboardComponent
   },
   {
     path: 'sql',
