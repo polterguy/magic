@@ -49,6 +49,9 @@
 .position-relative{
   position: relative;
 }
+.pointer{
+  cursor: pointer;
+}
 .copy-to-clipboard{
   cursor: pointer;
   &:active{

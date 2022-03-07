@@ -11,7 +11,7 @@ $max_height: calc(100vh - 155px);
   .light-bulb{max-height: 50vh;display: block;margin: auto;max-width: 100%;}
 }
 ::ng-deep .ide{
-  .mat-drawer-inner-container{@include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),8px);}
+  .mat-drawer-inner-container{@include scrollbar($magic_default_secondary,transparentize($color: $magic_dark_alternative, $amount: 0.65),5px);}
   .mat-drawer-container,.mat-drawer{background-color: inherit!important;}
   .mat-drawer{
     overflow: hidden;
@@ -66,10 +66,10 @@ $max_height: calc(100vh - 155px);
   padding-bottom: 14px;
   padding-top: 14px;
   padding-left: 14px;
-  border-top: solid 1px rgba(0,0,0,.12);
+  border-top: solid 1px $magic_dark_ng_border;
 }
 ::ng-deep .dark .system-files-toggle {
-  border-top: solid 1px rgba(255,255,255,.12);
+  border-top: solid 1px $magic_default_ng_border;
 }
 .select-icon-mini{
   mat-icon{

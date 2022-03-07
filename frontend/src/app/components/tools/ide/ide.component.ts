@@ -118,6 +118,11 @@ export class IdeComponent implements OnInit, OnDestroy {
   public openFiles: FileNode[] = [];
 
   /**
+   * Currently open folder
+   */
+  public openFolder: any;
+
+  /**
    * Currently selected file.
    */
   public currentFileData: FileNode;
@@ -338,6 +343,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     } else {
       this.treeControl.collapse(folder);
     }
+    this.openFolder = folder;
   }
 
   /**
@@ -797,6 +803,10 @@ export class IdeComponent implements OnInit, OnDestroy {
         idx.path = fileObject.newName + idx.path.substring(fileObject.oldName.length);
       }
     }
+
+    // to keep folder open after renaming
+    this.openFolder.node.path = this.activeFolder;
+    this.selectFolder(this.openFolder)
   }
 
   /*

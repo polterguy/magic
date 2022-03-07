@@ -4,7 +4,8 @@
  */
 
 // Angular and system imports.
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 // Application specific imports.
 import { MatDialog } from '@angular/material/dialog';
@@ -26,13 +27,19 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent implements OnInit {
 
   public backendIsConfigured: boolean = undefined;
 
   public currentYear: number;
+
+  /**
+   * storing list of backends from localstorage
+   */
+  public listOfBackends: any = [];
 
   /**
    * get navbar state as an input from app component
@@ -77,6 +84,8 @@ export class NavbarComponent implements OnInit {
    * @param configService Needed to check configuration status ofbackend
    * @param bazarService Needed to check if core has update
    * @param overlayContainer Needed to add/remove theme's class name from this component.
+   * @param clipboard Needed to copy URL of endpoint
+   * @param cdRef Needed to mark component as having changes
    */
   constructor(
     public authService: AuthService,
@@ -87,7 +96,10 @@ export class NavbarComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private bazarService: BazarService,
-    private overlayContainer: OverlayContainer) { }
+    private overlayContainer: OverlayContainer,
+    private clipboard: Clipboard,
+    private cdRef: ChangeDetectorRef) { }
+
 
   ngOnInit(): void {
 
@@ -105,6 +117,10 @@ export class NavbarComponent implements OnInit {
     // setting theme value, if user has set previously, otherwise is set to light 
     this.theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
     this.overlayContainer.getContainerElement().classList.add(this.theme);
+
+    // retrieving list of stored backend urls in localstorage IF there are any
+    localStorage.getItem('magic.backends') ? this.getBackends() : '';
+
   }
 
   /**
@@ -131,7 +147,7 @@ export class NavbarComponent implements OnInit {
     // Removing schema and port from URL.
     let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
     if (url.indexOf(':') !== -1) {
-      url = url.substr(0, url.indexOf(':'));
+      url = url.substring(0, url.indexOf(':'));
     }
 
     // Checking if user is authenticated.
@@ -161,9 +177,10 @@ export class NavbarComponent implements OnInit {
   /**
    * Allows user to login by showing a modal dialog.
    */
-  public login() {
+  public login(backendUrl?: string) {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '550px',
+      data: backendUrl
     });
     dialogRef.afterClosed().subscribe(result => {
       this.authService.authenticated ? this.retrieveBackendVersion() : '';
@@ -250,5 +267,34 @@ export class NavbarComponent implements OnInit {
 
     // setting new class based on the theme for dialogs
     this.overlayContainer.getContainerElement().classList.add(value);
+  }
+
+  /**
+   * Invoked when user wants to copy the full URL of the endpoint.
+   */
+   public copyBackendUrl(url?: string) {
+    if (!url){
+      // Copies the currently edited endpoint's URL prepended by backend root URL.
+      this.clipboard.copy(this.backendService.current.url);
+    } else {
+      this.clipboard.copy(url);
+    }
+
+    // Informing user that URL can be found on clipboard.
+    this.feedbackService.showInfoShort('Backend URL was copied to your clipboard');
+  }
+
+  /**
+   * retrieving list of stored backend urls in localstorage
+   */
+  getBackends() {
+    this.cdRef.markForCheck();
+    const list = JSON.parse(localStorage.getItem('magic.backends'));
+    list.forEach((element: any) => {
+      if (element.url !== ''){
+        this.listOfBackends.push({url: element.url, current: element.token ? true : false})
+      }
+    });
+    this.cdRef.detectChanges();
   }
 }

@@ -6,14 +6,44 @@
     </div>
     <ng-container *ngIf="sideNavStatus">
       <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">Welcome {{getUserRoles()}}</h4>
-      <h5 class="mb-0 mt-0 text-muted">
-        {{getUserStatus()}}
-      </h5>
+      <div class="position-relative w-100">
+        <h5 class="mb-0 mt-0 text-muted d-flex align-items-center justify-content-center">
+          {{getUserStatus()}} 
+          <ng-container *ngIf="listOfBackends.length > 1">
+            <mat-icon [matMenuTriggerFor]="backends" 
+            class="small-icon pointer" matTooltip="View list of your backends">arrow_drop_down</mat-icon>
+          </ng-container>
+        </h5>
+        <div class="copy-btn" *ngIf="authService.authenticated">
+          <button mat-icon-button (click)="copyBackendUrl()" class="small-icon"
+          tabindex="-1" 
+          matTooltip="Copy current url">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </div>
+      </div>
+      <mat-menu #backends="matMenu" yPosition="below">
+        <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend"  [matMenuTriggerData]="{url: url}">
+          <span [class.text-accent]="url.current">{{url.url}}</span>
+        </div>
+      </mat-menu>
+      <mat-menu #selectedBackend="matMenu" xPosition="after">
+        <ng-template matMenuContent let-url="url">
+          <button mat-menu-item (click)="copyBackendUrl(url?.url)">
+            <mat-icon>content_copy</mat-icon>
+            Copy url
+          </button>
+          <button mat-menu-item [disabled]="url?.current" (click)="login(url.url)">
+            <mat-icon>change_circle</mat-icon>
+            {{url?.current ? 'Currently in use' : 'Switch to this backend'}}
+          </button>
+        </ng-template>
+      </mat-menu>
     </ng-container>
     <div class="toggle-btn">
       <button
         mat-icon-button
-        (click)="toggleNavbar()">
+        (click)="toggleNavbar()" tabindex="-1">
         <mat-icon>menu{{sideNavStatus ? '_open' : ''}}</mat-icon>
       </button>
     </div>
