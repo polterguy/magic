@@ -17,7 +17,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTr
   providedIn: 'root'
 })
 export class AccessGuard implements CanActivate {
-  hasAccess;
+  hasAccess: boolean = undefined;
   constructor(private router: Router, private configService: ConfigService, private authService: AuthService) { }
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -29,21 +29,16 @@ export class AccessGuard implements CanActivate {
       while (!this.authService.authenticated)
         await new Promise(resolve => setTimeout(resolve, 100));
       if (this.authService.authenticated) {
-        while (this.hasAccess === undefined)
-        await new Promise(resolve => setTimeout(resolve, 100));
+        
         this.configService.configStatus.subscribe(status => {
-          this.hasAccess = status;
-          if (!this.hasAccess) { this.router.navigate(['config']) };
+          if (status !== undefined) {
+            this.hasAccess = status;
+            if (!this.hasAccess) { this.router.navigateByUrl('/config'); return false; };
+          }
         });
-
       }
     })();
-    /**
-     * in case endpoints api throws error, then redirect to homepage 
-     */
-    if (!this.authService.has_endpoints) {
-      this.router.navigate([''])
-    }
+
     return true;
   }
 }

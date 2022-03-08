@@ -30,7 +30,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnChanges {
 
   public backendIsConfigured: boolean = undefined;
 
@@ -100,7 +100,9 @@ export class NavbarComponent implements OnInit {
     private clipboard: Clipboard,
     private cdRef: ChangeDetectorRef) { }
 
-
+ngOnChanges(changes: SimpleChanges): void {
+  
+}
   ngOnInit(): void {
 
     // Check if backend is configured.
@@ -120,7 +122,18 @@ export class NavbarComponent implements OnInit {
 
     // retrieving list of stored backend urls in localstorage IF there are any
     localStorage.getItem('magic.backends') ? this.getBackends() : '';
+    
+    // wait for access list to be ready
+    // then detect changes to update view
+    (async () => {
+      while (Object.keys(this.authService.access.auth).length === 0)
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+      if (Object.keys(this.authService.access.auth).length !== 0) {
+        this.cdRef.detectChanges();
+      }
 
+    })();
   }
 
   /**
@@ -288,13 +301,13 @@ export class NavbarComponent implements OnInit {
    * retrieving list of stored backend urls in localstorage
    */
   getBackends() {
-    this.cdRef.markForCheck();
+    // this.cdRef.markForCheck();
     const list = JSON.parse(localStorage.getItem('magic.backends'));
     list.forEach((element: any) => {
       if (element.url !== ''){
         this.listOfBackends.push({url: element.url, current: element.token ? true : false})
       }
     });
-    this.cdRef.detectChanges();
+    // this.cdRef.detectChanges();
   }
 }
