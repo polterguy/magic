@@ -52,7 +52,7 @@
                 *matTreeNodeDef="let folder; when: isExpandable"
                 [class]="activeFolder === folder.node.path ? 'selected-node' : 'node'"
                 matTreeNodePadding
-                matTreeNodePaddingIndent="10"
+                matTreeNodePaddingIndent="10" [isExpanded]="activeFolder === folder.node.path"
                 class="pr-3">
                 <div class="d-flex w-100 h-100 flex-nowrap align-items-center">
                   <button
@@ -65,7 +65,7 @@
                   <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
                 </button>
                 <button mat-button (click)="selectFolder(folder);treeControl.expand(folder)" class="px-1 d-flex justify-content-start">
-                  {{folder.name}}
+                  {{folder.name}} 
                 </button>
                 </div>
               </mat-tree-node>

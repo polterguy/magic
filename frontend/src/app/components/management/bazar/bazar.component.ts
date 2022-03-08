@@ -140,7 +140,7 @@ export class BazarComponent implements OnInit, OnDestroy {
           // show loading
           this.loaderService.show();
           this.dialog.open(ViewReadmeDialogComponent, {
-            data: `<h1>Please wait ...</h1> <p class="mb-4">Please do not leave this page until your module has been installed and downloaded.<p>`,
+            data: `<h1 class="d-flex align-items-baseline">Please wait <div class="dot-flashing ml-4"></div></h1> <p class="mb-4">Please do not leave this page until your module has been installed and downloaded.<p>`,
           }).disableClose = true;
         }
       })
@@ -150,7 +150,7 @@ export class BazarComponent implements OnInit, OnDestroy {
    * Implementation of OnInit.
    */
   public ngOnInit() {
-
+    
     // Creating our filter form control, with debounce logic.
     this.filterFormControl = new FormControl('');
     this.filterFormControl.setValue('');

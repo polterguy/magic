@@ -338,18 +338,9 @@ export class IdeComponent implements OnInit, OnDestroy {
    */
   public selectFolder(folder: any, keepOpen?: boolean) {
     this.activeFolder = folder.node.path;
-    if (keepOpen) {
-      this.treeControl.expand(folder);
-    } else {
-      if (this.treeControl.isExpanded(folder) === true) {
-        this.treeControl.expand(folder);
-      } else {
-        this.treeControl.collapse(folder);
-      }
-    }
     this.openFolder = folder;
   }
-
+ 
   /**
    * Invoked when the currently selected file is changed.
    */
@@ -660,10 +651,10 @@ export class IdeComponent implements OnInit, OnDestroy {
         expanded.push(idx);
       }
     }
-
+    
     // Re-databinding tree control.
     this.dataSource.data = this.root.children;
-
+    
     // Expanding all items that was previously expanded.
     for (const idx of this.treeControl.dataNodes) {
       if (expanded.filter(x => (<any>x).node.path === (<any>idx).node.path).length > 0) {
@@ -810,7 +801,10 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // to keep folder open after renaming
     this.openFolder.node.path = this.activeFolder;
-    this.selectFolder(this.openFolder, true)
+    const entities = fileObject.newName.split('/').filter(x => x !== '');
+    this.openFolder.node.name = entities[entities.length - 1];
+    this.openFolder.name = entities[entities.length - 1];
+    this.selectFolder(this.openFolder, true)    
   }
 
   /*
