@@ -18,6 +18,7 @@ import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { Router } from '@angular/router';
 
 /**
  * Authentication and authorization HTTP service.
@@ -78,7 +79,8 @@ export class AuthService {
     private httpClient: HttpClient,
     private httpService: HttpService,
     private messageService: MessageService,
-    private backendService: BackendService) {
+    private backendService: BackendService,
+    private router: Router) {
 
       // Checking if user has a token towards his current backend, and if the token is expired.
       if (this.backendService.connected &&
@@ -247,6 +249,7 @@ export class AuthService {
       }, error => {
         observer.error(error);
         observer.complete();
+        this.router.navigate(['']);
       });
     });
   }

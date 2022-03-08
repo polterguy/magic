@@ -336,12 +336,16 @@ export class IdeComponent implements OnInit, OnDestroy {
    * 
    * @param folder Tree node wrapping folder to open
    */
-  public selectFolder(folder: any) {
+  public selectFolder(folder: any, keepOpen?: boolean) {
     this.activeFolder = folder.node.path;
-    if (this.treeControl.isExpanded(folder) === true) {
+    if (keepOpen) {
       this.treeControl.expand(folder);
     } else {
-      this.treeControl.collapse(folder);
+      if (this.treeControl.isExpanded(folder) === true) {
+        this.treeControl.expand(folder);
+      } else {
+        this.treeControl.collapse(folder);
+      }
     }
     this.openFolder = folder;
   }
@@ -806,7 +810,7 @@ export class IdeComponent implements OnInit, OnDestroy {
 
     // to keep folder open after renaming
     this.openFolder.node.path = this.activeFolder;
-    this.selectFolder(this.openFolder)
+    this.selectFolder(this.openFolder, true)
   }
 
   /*
