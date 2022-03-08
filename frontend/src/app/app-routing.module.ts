@@ -42,81 +42,96 @@ const routes: Routes = [
   {
     path: 'sql',
     component: SqlComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: "sql" }
   },
 
   // Avoids re-initializing component as user opens and closes view details / URL link
   {
     path: 'ide',
     component: IdeComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page:'ide'}
   },
   {
     path: 'log',
     component: LogComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'log' }
   },
   {
     path: 'auth',
     component: AuthComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'auth' }
   },
   {
     path: 'tasks',
     component: TasksComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'tasks' }
   },
   {
     path: 'bazar',
     component: BazarComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'bazar' }
   },
   
   {
     path: 'cache',
     component: DiagnosticsCacheComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'cache' }
   },
   
   {
     path: 'crypto',
     component: CryptoComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'crypto' }
   },
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'profile' }
   },
   {
     path: 'sockets',
     component: SocketsComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'sockets' }
   },
   {
     path: 'terminal',
     component: TerminalComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'terminal' }
   },  
   {
     path: 'endpoints',
     component: EndpointsComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'endpoints' }
   },
   {
     path: 'evaluator',
     component: EvaluatorComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'evaluator' }
   },
   {
     path: 'crudifier',
     component: CrudifierComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page:'crudifier'}
   },
   {
     path: 'assumptions',
     component: DiagnosticsTestsComponent,
-    canActivate: [AccessGuard]
+    canActivate: [AccessGuard],
+    data: { page: 'assumptions' }
   },
   {
     path: 'config',

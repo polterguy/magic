@@ -21,6 +21,7 @@ import { ConfigService } from '../../../services/management/config.service';
 import { BazarService } from '../../../services/management/bazar.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 
+
 /**
  * Component wrapping navbar.
  */
@@ -128,12 +129,18 @@ ngOnChanges(changes: SimpleChanges): void {
     (async () => {
       while (Object.keys(this.authService.access.auth).length === 0)
         await new Promise(resolve => setTimeout(resolve, 100));
-        
+
       if (Object.keys(this.authService.access.auth).length !== 0) {
         this.cdRef.detectChanges();
       }
 
     })();
+
+    this.authService.authenticatedChanged.subscribe(status => {
+      if (status) {
+        this.getBackends();
+      }
+    })
   }
 
   /**
@@ -286,11 +293,13 @@ ngOnChanges(changes: SimpleChanges): void {
    * Invoked when user wants to copy the full URL of the endpoint.
    */
    public copyBackendUrl(url?: string) {
+     const currentURL: string = window.location.protocol + '//' + window.location.host;
+     const param: string = currentURL + '?backend='
     if (!url){
       // Copies the currently edited endpoint's URL prepended by backend root URL.
-      this.clipboard.copy(this.backendService.current.url);
+      this.clipboard.copy(param + this.backendService.current.url);
     } else {
-      this.clipboard.copy(url);
+      this.clipboard.copy(param + url);
     }
 
     // Informing user that URL can be found on clipboard.
@@ -301,13 +310,12 @@ ngOnChanges(changes: SimpleChanges): void {
    * retrieving list of stored backend urls in localstorage
    */
   getBackends() {
-    // this.cdRef.markForCheck();
+    this.listOfBackends = [];
     const list = JSON.parse(localStorage.getItem('magic.backends'));
     list.forEach((element: any) => {
       if (element.url !== ''){
         this.listOfBackends.push({url: element.url, current: element.token ? true : false})
       }
     });
-    // this.cdRef.detectChanges();
   }
 }
