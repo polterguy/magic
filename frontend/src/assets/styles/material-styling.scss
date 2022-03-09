@@ -110,6 +110,7 @@ Material tabs & stepper
   margin-bottom: 12px;
 }
 .mat-stepper-horizontal .mat-horizontal-content-container { padding: 0; }
+.dark .mat-step-header .mat-step-icon:not(.mat-step-icon-selected){ background-color: transparentize($color: $magic_dark, $amount: 0.8);}
 /*=-=-=-=-=-=
 Material menu
 =-=-=-=-=-=*/
