@@ -297,9 +297,9 @@ ngOnChanges(changes: SimpleChanges): void {
      const param: string = currentURL + '?backend='
     if (!url){
       // Copies the currently edited endpoint's URL prepended by backend root URL.
-      this.clipboard.copy(param + this.backendService.current.url);
+      this.clipboard.copy(param + encodeURIComponent(this.backendService.current.url));
     } else {
-      this.clipboard.copy(param + url);
+      this.clipboard.copy(param + encodeURIComponent(url));
     }
 
     // Informing user that URL can be found on clipboard.

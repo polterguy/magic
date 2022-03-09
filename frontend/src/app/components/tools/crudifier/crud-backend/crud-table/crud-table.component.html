@@ -306,6 +306,7 @@
     <div class="p-1"></div>
     <button
       [disabled]="isMagicDatabase() || (!isGetIncluded() && !isDeleteIncluded() && !isPutIncluded() && !isPostIncluded()) || !validModuleComponentName()"
+      class="textwrap py-2"
       mat-raised-button
       color="primary"
       (click)="crudifyTable()">

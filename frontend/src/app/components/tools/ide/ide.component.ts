@@ -302,7 +302,17 @@ export class IdeComponent implements OnInit, OnDestroy {
       this.setFocusToActiveEditor();
 
     } else {
-
+      
+      if (this.getCodeMirrorOptions(file.path) === null){
+        this.ngZone.run(() => {
+          this.feedbackService.confirm('Confirm action', `This file cannot be opened. Do you want to dowload it instead?`, () => {
+    
+            // Invoking backend to actually delete folder.
+            this.fileActionsComponent.downloadActiveFile()
+          })
+        })
+        return;
+      }
       // Retrieving file's content from backend.
       this.fileService.loadFile(file.path).subscribe((content: string) => {
 
@@ -649,6 +659,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     for (const idx of this.treeControl.dataNodes) {
       if (this.treeControl.isExpanded(idx)) {
         expanded.push(idx);
+        expanded.push(this.openFolder);
       }
     }
     
@@ -818,109 +829,112 @@ export class IdeComponent implements OnInit, OnDestroy {
     if (options.length === 0) {
 
       // Oops, no editor for file type, defaulting to Markdown bugger.
-      options = this.extensions.filter(x => x.options.mode === 'markdown');
+      // options = this.extensions.filter(x => x.options.mode === 'markdown');
+       
+      return null;
+    } else {
+
+      // Cloning options object.
+      options[0] = this.clone(options[0]);
+
+      // Turning on keyboard shortcuts.
+      if (options[0].options.extraKeys) {
+
+        // Alt+M maximises editor.
+        options[0].options.extraKeys['Alt-M'] = (cm: any) => {
+
+          // Hiding treeview drawer
+          this.ngZone.run(() => {
+            this.cdRef.detectChanges();
+            let sidenav = document.querySelector('.mat-sidenav');
+            sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
+              sidenav.classList.add('d-none');
+            this.drawer.close();
+          });
+
+          // Toggling maximise mode.
+          cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+        };
+
+        // Alt+S saves the active file.
+        options[0].options.extraKeys['Alt-S'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.saveActiveFile();
+          });
+        };
+
+        // Alt+D deletes the active file.
+        options[0].options.extraKeys['Alt-D'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.deleteActiveFile();
+          });
+        };
+
+        // Alt+C closes the active file.
+        options[0].options.extraKeys['Alt-C'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.closeActiveFile()
+          });
+        };
+
+        // Alt+R renames the active file.
+        options[0].options.extraKeys['Alt-R'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.renameActiveFile();
+          });
+        };
+
+        // Alt+O renames the active folder.
+        options[0].options.extraKeys['Alt-L'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.folderActionsComponent.renameActiveFolder();
+          });
+        };
+
+        // Alt+O opens up the select macro window.
+        options[0].options.extraKeys['Alt-O'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.folderActionsComponent.selectMacro();
+          });
+        };
+
+        // Alt+A opens up create new file object dialog.
+        options[0].options.extraKeys['Alt-A'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.folderActionsComponent.createNewFileObject('file');
+          });
+        };
+
+        // Alt+B opens up create new folder object dialog.
+        options[0].options.extraKeys['Alt-B'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.folderActionsComponent.createNewFileObject('folder');
+          });
+        };
+
+        // Alt+X deletes currently selected folder.
+        options[0].options.extraKeys['Alt-X'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.folderActionsComponent.deleteActiveFolder();
+          });
+        };
+
+        // Alt+P shows apreview of active file.
+        options[0].options.extraKeys['Alt-P'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.previewActiveFile();
+          });
+        };
+
+        // F5 executes active file.
+        options[0].options.extraKeys['F5'] = (cm: any) => {
+          this.ngZone.run(() => {
+            this.fileActionsComponent.executeActiveFile();
+          });
+        };
+      }
+      return options[0].options;
     }
-
-    // Cloning options object.
-    options[0] = this.clone(options[0]);
-
-    // Turning on keyboard shortcuts.
-    if (options[0].options.extraKeys) {
-
-      // Alt+M maximises editor.
-      options[0].options.extraKeys['Alt-M'] = (cm: any) => {
-
-        // Hiding treeview drawer
-        this.ngZone.run(() => {
-          this.cdRef.detectChanges();
-          let sidenav = document.querySelector('.mat-sidenav');
-              sidenav.classList.contains('d-none') ? sidenav.classList.remove('d-none') :
-          sidenav.classList.add('d-none');
-          this.drawer.close();
-        });
-
-        // Toggling maximise mode.
-        cm.setOption('fullScreen', !cm.getOption('fullScreen'));
-      };
-
-      // Alt+S saves the active file.
-      options[0].options.extraKeys['Alt-S'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.fileActionsComponent.saveActiveFile();
-        });
-      };
-
-      // Alt+D deletes the active file.
-      options[0].options.extraKeys['Alt-D'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.fileActionsComponent.deleteActiveFile();
-        });
-      };
-
-      // Alt+C closes the active file.
-      options[0].options.extraKeys['Alt-C'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.fileActionsComponent.closeActiveFile()
-        });
-      };
-
-      // Alt+R renames the active file.
-      options[0].options.extraKeys['Alt-R'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.fileActionsComponent.renameActiveFile();
-        });
-      };
-
-      // Alt+O renames the active folder.
-      options[0].options.extraKeys['Alt-L'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.folderActionsComponent.renameActiveFolder();
-        });
-      };
-
-      // Alt+O opens up the select macro window.
-      options[0].options.extraKeys['Alt-O'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.folderActionsComponent.selectMacro();
-        });
-      };
-
-      // Alt+A opens up create new file object dialog.
-      options[0].options.extraKeys['Alt-A'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.folderActionsComponent.createNewFileObject('file');
-        });
-      };
-
-      // Alt+B opens up create new folder object dialog.
-      options[0].options.extraKeys['Alt-B'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.folderActionsComponent.createNewFileObject('folder');
-        });
-      };
-
-      // Alt+X deletes currently selected folder.
-      options[0].options.extraKeys['Alt-X'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.folderActionsComponent.deleteActiveFolder();
-        });
-      };
-
-      // Alt+P shows apreview of active file.
-      options[0].options.extraKeys['Alt-P'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.fileActionsComponent.previewActiveFile();
-        });
-      };
-
-      // F5 executes active file.
-      options[0].options.extraKeys['F5'] = (cm: any) => {
-        this.ngZone.run(() => {
-          this.fileActionsComponent.executeActiveFile();
-        });
-      };
-    }
-    return options[0].options;
   }
 
   /*
