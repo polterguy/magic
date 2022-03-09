@@ -28,6 +28,7 @@ import { BazarService } from '../../../services/management/bazar.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common'; 
+import { Backend } from 'src/app/models/backend.model';
 
 /**
  * Component wrapping navbar.
@@ -164,9 +165,9 @@ export class NavbarComponent implements OnInit {
   /**
    * Retrieving URL parameter
    */
-  getParams(){
+  getParams() {
     /*
-     * Checking if we have an authentication token.
+     * Checking if we have query parameters.
      */
     this.activated.queryParams.subscribe((params: Params) => {
 
@@ -179,25 +180,27 @@ export class NavbarComponent implements OnInit {
 
       // If url has parameters, we're identifying them
       if (backend) {
-        // updating backend's current url
-        this.backendService.current.url = backend;
 
-        // check if the url exists in localstorage
+        // Check if the url exists in localstorage
         // so the availability of token can be detected
-        if (JSON.parse(localStorage.getItem('magic.backends'))){
-          const currentBakcend = JSON.parse(localStorage.getItem('magic.backends'));
-          currentBakcend.forEach((element: any) => {
-            if (element.url === backend){
-              this.backendService.current = {
-                url: element.url.replace(/\s/g, '').replace(/(\/)+$/,''),
-                username: element.username,
-                password: element.storePassword ? element.password : null,
-                token: element.token,
-              };
+        let cur: Backend = {
+          url: backend.replace(/\s/g, '').replace(/(\/)+$/,''),
+        };
+        if (JSON.parse(localStorage.getItem('magic.backends'))) {
+          const currentBackend = JSON.parse(localStorage.getItem('magic.backends'));
+          currentBackend.forEach((element: any) => {
+            if (element.url === cur.url) {
+              cur.username = element.username;
+              cur.password = element.password;
+              cur.token = element.token;
             }
           });
         }
-        // based on token availability authentication status will be set
+
+        // Updating backend
+        this.backendService.current = cur;
+
+        // Based on token availability authentication status will be set
         if (!this.backendService.current.token) {
           this.authService.updateAuthStatus(false);
         } else {
