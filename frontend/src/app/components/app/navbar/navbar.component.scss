@@ -174,7 +174,7 @@ colour setting -- text & background
     .mat-expansion-indicator::after,
     .top-box-sidebar,
     .top-box-sidebar p, a{color: $magic_dark_secondary;}
-  
+    
     .mat-expansion-panel,
     .mat-expansion-panel-header,
     .mat-list-option{background-color: transparent;}
@@ -257,6 +257,7 @@ colour setting -- text & background
         .mat-expansion-panel-header-title,
         .mat-list-text,
         .mat-list-base .mat-list-item,
+        a,
         .mat-expansion-indicator::after{color: $magic_accent;}
       }
     }
