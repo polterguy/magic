@@ -21,6 +21,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { DiagnosticsService } from '../../services/diagnostics.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Main wire frame application component.
@@ -87,6 +88,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param snackBar Snack bar used to display feedback to user, such as error or information
    * @param messageService Message service to allow for cross component communication using pub/sub pattern
    * @param authService Authentication and authorisation service, used to authenticate user, etc
+   * @param backendService Needed toverify we'reactuallyconnected to some backend before retrieving endpoints
    * @param loaderService Loader service used to display Ajax spinner during invocations to the backend
    * @param messageService Needed to subscribe to messages informing us when user logs in and out
    * @param diagnosticsService Needed to retrieve backend version
@@ -98,6 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private messageService: MessageService,
     public authService: AuthService,
+    private backendService:BackendService,
     public loaderService: LoaderService,
     private bazarService: BazarService,
     private configService: ConfigService,
@@ -206,12 +209,14 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Retrieving all endpoints from backend
-    this.authService.getEndpoints().subscribe(res => {
-      ; // Do nothing ...
-    }, error => {
-      this.showError(error);
-    });
+    // Retrieving all endpoints from backend if we have a backend.
+    if (this.backendService.connected) {
+      this.authService.getEndpoints().subscribe(res => {
+        ; // Do nothing ...
+      }, error => {
+        this.showError(error);
+      });
+    }
 
     // wait until sidebar status is defined based on the value stored in localstorage 
     (async () => {
