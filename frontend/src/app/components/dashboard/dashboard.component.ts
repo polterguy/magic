@@ -112,6 +112,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.authSubscriber = this.authService.authenticatedChanged.subscribe((authenticated: boolean) => {
       if (authenticated && this.authService.isRoot && !this.systemReport) {
         this.getSystemReport();
+      } else {
+        this.checkForRootUser();
       }
     });
 
@@ -199,6 +201,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       // get the user's preferences for charts
       this.getChartPreferences();
+      this.checkForRootUser();
 
     }, (error: any) => this.feedbackService.showError(error));
   }
