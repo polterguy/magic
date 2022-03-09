@@ -70,7 +70,6 @@ import { InjectDirective } from './components/tools/crudifier/inject.directive';
 
 // Application specific normal components.
 import { AppComponent } from './components/app/app.component';
-import { HomeComponent } from './components/home/home.component';
 import { IdeComponent } from './components/tools/ide/ide.component';
 import { SqlComponent } from './components/tools/sql/sql.component';
 import { AboutComponent } from './components/about/about.component';
@@ -160,7 +159,6 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
   declarations: [
     AppComponent,
     SqlComponent,
-    HomeComponent,
     LoginDialogComponent,
     LoadSqlDialogComponent,
     SaveSqlDialogComponent,
