@@ -7,7 +7,6 @@
 import { Subscription } from 'rxjs';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MatDialogRef } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import {
   ChangeDetectionStrategy,
@@ -29,10 +28,9 @@ import { AuthService } from '../../../services/auth.service';
 import { FileService } from 'src/app/services/tools/file.service';
 import { MessageService } from '../../../services/message.service';
 import { FeedbackService } from '../../../services/feedback.service';
-import { VocabularyService } from '../../../services/tools/vocabulary.service';
 import { Endpoint } from '../../analytics/endpoints/models/endpoint.model';
 import { EndpointService } from 'src/app/services/analytics/endpoint.service';
-import { GenerateCrudAppComponent } from './generate-crud-app/generate-crud-app.component';
+import { VocabularyService } from '../../../services/tools/vocabulary.service';
 import { FileActionsComponent } from './action-buttons/file-actions/file-actions.component';
 import { FolderActionsComponent } from './action-buttons/folder-actions/folder-actions.component';
 
@@ -143,11 +141,6 @@ export class IdeComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   /**
-   * Needed to be kept around such that we can explicitly close it after having CRUDified some database/table.
-   */
-  private generateCrudDialog: MatDialogRef<GenerateCrudAppComponent> = null;
-
-  /**
   * Current folder we're viewing contens of.
   */
   public currentFolder = '/';
@@ -217,30 +210,13 @@ export class IdeComponent implements OnInit, OnDestroy {
             break;
         }
 
-        // Closing dialog if it is open.
-        if (this.generateCrudDialog) {
-          this.generateCrudDialog.close();
-        }
-
       } else if (msg.name === 'magic.crudifier.frontend-generated-locally') {
 
         // Some other component informed us that we need to update our folders.
         this.updateFileObject('/etc/');
 
-        // Closing dialog if it is open.
-        if (this.generateCrudDialog) {
-          this.generateCrudDialog.close();
-        }
-
         // Providing some feedback to user.
         this.feedbackService.showInfo('Frontend was generated and saved to your \'/etc/frontends/\' folder')
-
-      } else if (msg.name === 'magic.crudifier.frontend-generated') {
-
-        // Closing dialog if it is open.
-        if (this.generateCrudDialog) {
-          this.generateCrudDialog.close();
-        }
       }
     });
   }

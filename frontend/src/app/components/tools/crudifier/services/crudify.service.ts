@@ -186,13 +186,6 @@ export class CrudifyService {
             let filename = disp.split(';')[1].trim().split('=')[1].replace(/"/g, '');
             const file = new Blob([res.body]);
 
-            // Providing feedback to user about LOC count operation resulted in.
-            this.getLastLocCount().subscribe((loc: LocResult) => {
-
-              // Providing feedback to user.
-              this.feedbackService.showInfo(`${formatNumber(loc.loc, this.locale, '1.0')} number of lines of code generated`);
-            });
-
             // Saving file.
             saveAs(file, filename);
           }
@@ -208,13 +201,4 @@ export class CrudifyService {
   /*
    * Private helper methods.
    */
-
-  /*
-   * Returns the number of lines of code that was generated the last time the generator ran.
-   */
-  private getLastLocCount() {
-
-    // Invoking backend and returning observable to caller.
-    return this.httpService.get<LocResult>('/magic/system/crudifier/last-loc-count');
-  }
 }
