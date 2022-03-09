@@ -41,6 +41,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public timeshiftChartLabel: string[] = [];
   public timeshiftChartData: string[] = [];
 
+  isRoot: boolean = undefined;
+
   /**
    * Common bar chart colors.
    */
@@ -117,6 +119,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.authService.authenticated && this.authService.isRoot && !this.systemReport) {
       this.getSystemReport();
     }
+
+    this.checkForRootUser();
   }
 
   /**
@@ -127,6 +131,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Ensuring we unsubscribe from authenticated subscription.
     this.authSubscriber?.unsubscribe();
   }
+
+  /**
+   * checking against the user's roles to make sure if root is among them or not
+   */
+   checkForRootUser() {
+    this.isRoot = this.authService.roles().indexOf('root') > -1;
+   }
 
   /**
    * getting user's preferences for the displayed charts inside dashboard
