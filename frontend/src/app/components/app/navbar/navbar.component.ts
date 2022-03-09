@@ -26,7 +26,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from '../../../services/management/config.service';
 import { BazarService } from '../../../services/management/bazar.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
-
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 /**
  * Component wrapping navbar.
@@ -42,6 +42,8 @@ export class NavbarComponent implements OnInit {
   public backendIsConfigured: boolean = undefined;
 
   public currentYear: number;
+
+  currentBackend: string;
 
   /**
    * storing list of backends from localstorage
@@ -82,6 +84,8 @@ export class NavbarComponent implements OnInit {
   /**
    * Creates an instance of your component.
    * 
+   * @param activated Needed to retrieve query parameters
+   * @param router Needed to redirect user after having verified his authentication token
    * @param authService Authentication and authorisation HTTP service
    * @param messageService Message service to send messages to other components using pub/sub
    * @param backendService Service to keep track of currently selected backend
@@ -95,6 +99,8 @@ export class NavbarComponent implements OnInit {
    * @param cdRef Needed to mark component as having changes
    */
   constructor(
+    private activated: ActivatedRoute,
+    private router: Router,
     public authService: AuthService,
     private messageService: MessageService,
     public backendService: BackendService,
@@ -111,6 +117,11 @@ export class NavbarComponent implements OnInit {
    * Implementation of OnInit.
    */
   public ngOnInit() {
+    // get query parameters from url, if any
+    this.getParams();
+
+    // initializing current url
+    this.currentBackend = this.backendService.current.url;
 
     // Check if backend is configured.
     // If backend is not configured yet, then all links are disabled.
@@ -145,8 +156,150 @@ export class NavbarComponent implements OnInit {
     this.authService.authenticatedChanged.subscribe(status => {
       if (status) {
         this.getBackends();
-      }
+      } 
       this.cdRef.detectChanges();
+    });
+    
+  }
+
+  /**
+   * Retrieving URL parameter
+   */
+  getParams(){
+    /*
+     * Checking if we have an authentication token.
+     */
+    this.activated.queryParams.subscribe((params: Params) => {
+
+      /*
+       * Checking if user accessed system with a link containing query params.
+       */
+      
+      const backend = params['backend'];
+      const token = params['token'];
+
+      // If url has parameters, we're identifying them
+      if (backend) {
+        // updating backend's current url
+        this.backendService.current.url = backend;
+
+        // updating current backend ** for marking current one in .html
+        this.currentBackend = backend;
+
+        // check if the url exists in localstorage
+        // so the availability of token can be detected
+        if (JSON.parse(localStorage.getItem('magic.backends'))){
+          const currentBakcend = JSON.parse(localStorage.getItem('magic.backends'));
+          currentBakcend.forEach((element: any) => {
+            if (element.url === backend){
+              this.backendService.current = {
+                url: element.url.replace(/\s/g, '').replace(/(\/)+$/,''),
+                username: element.username,
+                password: element.storePassword ? element.password : null,
+                token: element.token,
+              };
+            }
+          });
+        }
+        // based on token availability authentication status will be set
+        if (!this.backendService.current.token) {
+          this.authService.updateAuthStatus(false);
+        } else {
+          this.authService.updateAuthStatus(true);
+        }
+      } else {
+
+        // again based on data inside localstorage, the authentication status will be set
+
+        if (JSON.parse(localStorage.getItem('magic.backends'))){
+          const currentBakcend = JSON.parse(localStorage.getItem('magic.backends'));
+          currentBakcend.forEach((element: any) => {
+            if (element.token){
+              this.backendService.current = {
+                url: element.url.replace(/\s/g, '').replace(/(\/)+$/,''),
+                username: element.username,
+                password: element.storePassword ? element.password : null,
+                token: element.token,
+              };
+            }
+            
+            this.authService.updateAuthStatus(true);
+          });
+        }
+      }
+      
+      /*
+       * Checking if user accessed system with an authentication link.
+       */
+      if (token && token.includes('.')) {
+
+        /*
+         * 'token' query parameter seems to be a JWT token.
+         *
+         * Authentication request, authenticating using specified link,
+         * and redirecting user to hide URL.
+         */
+        const url = params['url'];
+        const username = params['username'];
+
+        // Updating current backend.
+        this.backendService.current = {
+          url,
+          username,
+          token,
+        };
+
+        // Verifying token is valid by invoking backend trying to refresh token.
+        this.authService.verifyToken().subscribe(() => {
+
+          // Signalling success to user.
+          this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
+
+          // Checking if token is a 'reset-password' type of token.
+          if (this.authService.roles().filter(x => x === 'reset-password').length > 0) {
+
+            // Redirecting user to change-password route.
+            this.router.navigate(['/change-password']);
+
+          } else {
+
+            // Redirecting user to avoid displaying JWT token in plain sight.
+            this.router.navigate(['/']);
+
+            // Making sure we refresh access rights.
+            this.authService.createAccessRights();
+          }
+
+        }, (error: any) => {
+
+          // Oops, failure to verify token.
+          this.feedbackService.showError(error);
+        });
+
+      } else if (token) {
+
+        /*
+         * 'token' seems to be a "verify email address" type of token.
+         *
+         * Need to set the current backend first.
+         */
+        this.backendService.current = {
+          url: params['url'],
+          username: params['username'],
+        };
+
+        // Registration confirmation of email address.
+        this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {
+
+          // Checking for success.
+          if (result.result === 'success') {
+
+            // Success.
+            this.feedbackService.showInfo('You successfully confirmed your email address');
+            this.router.navigate(['/']);
+          }
+        });
+      }
     });
   }
 
@@ -326,8 +479,21 @@ export class NavbarComponent implements OnInit {
     const list = JSON.parse(localStorage.getItem('magic.backends'));
     list.forEach((element: any) => {
       if (element.url !== ''){
-        this.listOfBackends.push({url: element.url, current: element.token ? true : false})
+        this.listOfBackends.push(element)
       }
     });
+    
+  }
+
+  /**
+   * switching backend
+   */
+  switchBackend(backend: any) {
+    const currentURL: string = window.location.protocol + '//' + window.location.host;
+    const param: string = currentURL + '?backend=';
+    // if (backend.token)
+    // Persisting backend data.
+    
+    window.open(param + encodeURIComponent(backend.url), "_blank");
   }
 }

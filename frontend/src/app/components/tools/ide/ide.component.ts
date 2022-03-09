@@ -284,7 +284,7 @@ export class IdeComponent implements OnInit, OnDestroy {
           this.feedbackService.confirm('Confirm action', `This file cannot be opened. Do you want to dowload it instead?`, () => {
     
             // Invoking backend to actually delete folder.
-            this.fileActionsComponent.downloadActiveFile()
+            this.fileActionsComponent.downloadActiveFile(file.path)
           })
         })
         return;
