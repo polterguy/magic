@@ -196,9 +196,6 @@ export class LoginDialogComponent implements OnInit {
      * a current backend.
      */
     let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/,'');
-    // while(url.charAt(url.length - 1) === '/') {
-    //   url = url.substring(0, url.length - 1);
-    // }
     this.backendService.current = {
       url: url,
       username: this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,

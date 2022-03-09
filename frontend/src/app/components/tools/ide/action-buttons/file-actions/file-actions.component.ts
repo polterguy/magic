@@ -1,13 +1,31 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
+
+/*
+ * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
+ */
+
+// Angular and system imports.
 import { MatDialog } from '@angular/material/dialog';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  NgZone,
+  OnInit,
+  Output
+} from '@angular/core';
+
+// Application specific imports.
 import { AuthService } from 'src/app/services/auth.service';
-import { FeedbackService } from 'src/app/services/feedback.service';
 import { FileService } from 'src/app/services/tools/file.service';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { EvaluatorService } from '../../../evaluator/services/evaluator.service';
-import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { PreviewFileDialogComponent } from '../../preview-file-dialog/preview-file-dialog.component';
+import { ExecuteEndpointDialogComponent } from '../../execute-endpoint-dialog/execute-endpoint-dialog.component';
 import { FileObjectName, RenameFileDialogComponent } from '../../rename-file-dialog/rename-file-dialog.component';
 
+/**
+ * File actions component for executing actions for selected file in Hyper IDE.
+ */
 @Component({
   selector: 'app-file-actions',
   templateUrl: './file-actions.component.html',
@@ -28,7 +46,6 @@ export class FileActionsComponent implements OnInit {
    * Creates an instance of your component.
    * 
    * @param dialog Needed to create modal dialogs
-   * @param cdRef Needed to mark component as having changes
    * @param authService Needed to verify access to components
    * @param fileService Needed to load and save files.
    * @param feedbackService Needed to display feedback to user
@@ -37,7 +54,6 @@ export class FileActionsComponent implements OnInit {
    */
   constructor(
     private dialog: MatDialog,
-    private cdRef: ChangeDetectorRef,
     public authService: AuthService,
     private fileService: FileService,
     private feedbackService: FeedbackService,

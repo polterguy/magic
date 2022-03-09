@@ -3,19 +3,31 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
+// Angular and system imports.
+import {
+  Component,
+  EventEmitter,
+  Input,
+  NgZone,
+  Output
+} from '@angular/core';
+
+// Application specific imports.
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from 'src/app/services/auth.service';
 import { Response } from '../../../../../models/response.model';
 import { FileService } from 'src/app/services/tools/file.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { MacroDefinition } from 'src/app/models/macro-definition.model';
-import { Component, EventEmitter, Input, NgZone, Output } from '@angular/core';
 import { FileObjectName } from '../../rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../../rename-folder-dialog/rename-folder-dialog.component';
 import { ExecuteMacroDialogComponent } from '../../execute-macro-dialog/execute-macro-dialog.component';
 import { SelectMacroDialogComponent, Macro } from '../../select-macro-dialog/select-macro-dialog.component';
 import { NewFileFolderDialogComponent, FileObject } from '../../new-file-folder-dialog/new-file-folder-dialog.component';
 
+/**
+ * Folder actions component for allowing user to execute actions for selected folders in Hyper IDE.
+ */
 @Component({
   selector: 'app-folder-actions',
   templateUrl: './folder-actions.component.html',
