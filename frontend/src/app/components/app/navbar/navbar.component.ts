@@ -4,7 +4,13 @@
  */
 
 // Angular and system imports.
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 // Application specific imports.
@@ -31,7 +37,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit, OnChanges {
+export class NavbarComponent implements OnInit {
 
   public backendIsConfigured: boolean = undefined;
 
@@ -55,23 +61,23 @@ export class NavbarComponent implements OnInit, OnChanges {
   /**
    * value for the theme, default is set to light
    */
-   public theme: string;
+  public theme: string;
 
   /**
    * If there exists a newer version of Magic Core as published by the Bazar,
    * this value will be true.
    */
-   public shouldUpdateCore: boolean = false;
+  public shouldUpdateCore: boolean = false;
    
   /**
    * Backend version as returned from server if authenticated.
    */
-   public version: string = null;
+  public version: string = null;
 
    /**
     * Latest version of Magic as published by the Bazar.
     */
-   public bazarVersion: string = null;
+  public bazarVersion: string = null;
 
   /**
    * Creates an instance of your component.
@@ -101,10 +107,10 @@ export class NavbarComponent implements OnInit, OnChanges {
     private clipboard: Clipboard,
     private cdRef: ChangeDetectorRef) { }
 
-ngOnChanges(changes: SimpleChanges): void {
-  
-}
-  ngOnInit(): void {
+  /**
+   * Implementation of OnInit.
+   */
+  public ngOnInit() {
 
     // Check if backend is configured.
     // If backend is not configured yet, then all links are disabled.
@@ -140,7 +146,8 @@ ngOnChanges(changes: SimpleChanges): void {
       if (status) {
         this.getBackends();
       }
-    })
+      this.cdRef.detectChanges();
+    });
   }
 
   /**
@@ -202,7 +209,7 @@ ngOnChanges(changes: SimpleChanges): void {
       width: '550px',
       data: backendUrl
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
       this.authService.authenticated ? this.retrieveBackendVersion() : '';
       if (!this.notSmallScreen) {
         this.closeNavbar();
