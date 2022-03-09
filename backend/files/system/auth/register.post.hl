@@ -126,10 +126,9 @@ if
       set-value:x:@.token
          crypto.hash:x:@strings.concat
 
-      // Dynamically building our reset password URL.
+      // Dynamically building our confirm email URL.
       strings.concat
-         request.scheme
-         .:"://"
+         .:"https://"
          request.host
       .url
       set-value:x:@.url
