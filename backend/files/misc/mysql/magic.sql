@@ -8,15 +8,6 @@ use magic;
 
 
 /*
- * Creating our versioning table, to keep track of database version.
- */
-create table magic_version (
-  db_version varchar(30) not null
-);
-insert into magic_version(db_version) values ('010.000.001');
-
-
-/*
  * Creates the authentication database in MySQL.
  */
 

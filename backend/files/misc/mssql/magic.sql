@@ -11,24 +11,6 @@ use magic;
 
 
 /*
- * Creating our versioning table, to keep track of database version.
- */
-create table magic_version (
-  db_version nvarchar(30) not null
-);
-
-go
-
-
-/*
- * Inserting version into database version table.
- */
-insert into magic_version(db_version) values ('010.000.001');
-
-go
-
-
-/*
  * Creates the authentication database in Microsoft SQL Server.
  */
 
