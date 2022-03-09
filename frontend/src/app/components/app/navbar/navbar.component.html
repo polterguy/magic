@@ -1,11 +1,15 @@
 <div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!backendIsConfigured">
   <div class="top-box-sidebar d-flex flex-column justify-content-center align-items-center text-center">
+
     <div class="d-flex flex-column w-100 justify-content-center align-items-center">
       <img src="../../../../assets/logo-no-text.svg" alt="" [width]="sideNavStatus ? 80 : 35">
       <p class="nm-top text-uppercase">{{sideNavStatus ? 'Aista Magic Cloud' : 'MAGIC'}}</p>
     </div>
+
     <ng-container *ngIf="sideNavStatus">
+
       <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">Welcome {{getUserRoles()}}</h4>
+
       <div class="position-relative w-100">
         <h5 class="mb-0 mt-0 text-muted d-flex align-items-center justify-content-center">
           <div class="text-truncate max-width">{{getUserStatus()}} </div>
@@ -22,11 +26,13 @@
           </button>
         </div>
       </div>
+
       <mat-menu #backends="matMenu" yPosition="below">
-        <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend"  [matMenuTriggerData]="{url: url}">
+        <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{url: url}">
           <span [class.text-accent]="url.url === currentBackend">{{url.url}}</span>
         </div>
       </mat-menu>
+
       <mat-menu #selectedBackend="matMenu" xPosition="after">
         <ng-template matMenuContent let-url="url">
           <button mat-menu-item (click)="copyBackendUrl(url?.url)">
@@ -39,7 +45,9 @@
           </button>
         </ng-template>
       </mat-menu>
+
     </ng-container>
+
     <div class="toggle-btn">
       <button
         mat-icon-button
@@ -61,7 +69,12 @@
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{exact:true}">
         <mat-panel-title>
-          <a class="w-100 h-100 d-flex align-items-center" [class.flex-column]="!sideNavStatus" [class.justify-content-center]="!sideNavStatus" (click)="notSmallScreen ? '' : closeNavbar()" [routerLink]="!authService.authenticated || backendIsConfigured ? '/' : null">
+          <a
+            class="w-100 h-100 d-flex align-items-center"
+            [class.flex-column]="!sideNavStatus"
+            [class.justify-content-center]="!sideNavStatus"
+            (click)="notSmallScreen ? '' : closeNavbar()"
+            [routerLink]="!authService.authenticated || (backendIsConfigured || !authService.isRoot) ? '/' : null">
             <mat-icon>{{authService.access.files.list_files && authService.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
             <span class="title">{{authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
           </a>
@@ -70,7 +83,10 @@
     </mat-expansion-panel>
 
     <!-- Crypto if user not logged in or non-root user -->
-    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="!authService.authenticated || !authService.isRoot">
+    <mat-expansion-panel
+      class="mat-elevation-z0"
+      hideToggle
+      *ngIf="(!authService.authenticated || !authService.isRoot) && backendService.connected">
       <mat-expansion-panel-header 
         #panelC (click)="panelC._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 
@@ -462,7 +478,7 @@
 
     <!-- Register -->
     <mat-expansion-panel class="mat-elevation-z0" 
-      *ngIf="!authService.authenticated" hideToggle>
+      *ngIf="!authService.authenticated && backendService.connected" hideToggle>
       <mat-expansion-panel-header 
         #panelH (click)="panelH._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 
@@ -500,6 +516,7 @@
     </div>
   </button>
 
+  <!-- Footer -->
   <div class="footer d-flex flex-column justify-content-center align-items-center w-100 pt-3">
     <div class="d-flex flex-column align-items-center">
       <ng-container *ngIf="shouldUpdateCore">
@@ -519,4 +536,5 @@
       &copy; Aista Ltd. 2020 - {{currentYear}}
     </p>
   </div>
+
 </div>
