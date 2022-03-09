@@ -112,7 +112,7 @@ export class CryptoComponent {
   public isRoot() {
 
     // Returning true if user belongs to the root role
-    return this.authService.authenticated && this.authService.roles().filter(x => x === 'root');
+    return this.authService.authenticated && this.authService.isRoot;
   }
 
   /**
