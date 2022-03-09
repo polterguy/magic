@@ -47,8 +47,8 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler) {
 
     // Verifying we have a JWT token for current backend.
-    const token = this.backendService.current.token;
-    if (req.url.startsWith(this.backendService.current.url) && token) {
+    const token = this.backendService.current?.token;
+    if (token && req.url.startsWith(this.backendService.current.url)) {
 
       /*
        * Verifying token is not expired.
