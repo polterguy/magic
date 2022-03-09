@@ -220,10 +220,10 @@ export class NavbarComponent implements OnInit {
                 password: element.storePassword ? element.password : null,
                 token: element.token,
               };
+              // initializing current url
+              this.currentBackend = this.backendService.current.url;
+              this.authService.updateAuthStatus(true);
             }
-            // initializing current url
-            this.currentBackend = this.backendService.current.url;
-            this.authService.updateAuthStatus(true);
           });
         }
       }
