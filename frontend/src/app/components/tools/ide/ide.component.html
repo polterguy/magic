@@ -64,7 +64,10 @@
                     </mat-icon>
                     <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(folder) ? 'folder_open' : 'folder'}}</mat-icon>
                   </button>
-                  <button mat-button (click)="selectFolder(folder);treeControl.expand(folder)" class="px-1 d-flex justify-content-start">
+                  <button
+                    mat-button
+                    (click)="selectFolder(folder);treeControl.expand(folder)"
+                    class="px-1 d-flex justify-content-start folder-button">
                     {{folder.name}} 
                   </button>
                 </div>
