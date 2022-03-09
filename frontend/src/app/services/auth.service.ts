@@ -582,4 +582,8 @@ export class AuthService {
       }
     };
   }
+
+  updateAuthStatus(newStatus: boolean) {
+    this._authenticated.next(newStatus);
+  }
 }

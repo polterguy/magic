@@ -288,13 +288,18 @@ export class FileActionsComponent implements OnInit {
   /**
    * Downloads the active file to the client
    */
-   public downloadActiveFile() {
+   public downloadActiveFile(path?: string) {
 
     // Making sure a file is selected
     if (this.currentFileData) {
 
       // Downloading file.
       this.fileService.downloadFile(this.currentFileData.path);
+    } 
+    if (path) {
+
+      // Downloading file.
+      this.fileService.downloadFile(path);
     }
   }
 }

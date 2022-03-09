@@ -24,7 +24,7 @@
       </div>
       <mat-menu #backends="matMenu" yPosition="below">
         <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend"  [matMenuTriggerData]="{url: url}">
-          <span [class.text-accent]="url.current">{{url.url}}</span>
+          <span [class.text-accent]="url.url === currentBackend">{{url.url}}</span>
         </div>
       </mat-menu>
       <mat-menu #selectedBackend="matMenu" xPosition="after">
@@ -33,9 +33,9 @@
             <mat-icon>content_copy</mat-icon>
             Copy url
           </button>
-          <button mat-menu-item [disabled]="url?.current" (click)="login(url.url)">
+          <button mat-menu-item [disabled]="url?.url === currentBackend" (click)="switchBackend(url)">
             <mat-icon>change_circle</mat-icon>
-            {{url?.current ? 'Currently in use' : 'Switch to this backend'}}
+            {{url?.url === currentBackend ? 'Currently in use' : 'Switch to this backend'}}
           </button>
         </ng-template>
       </mat-menu>
