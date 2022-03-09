@@ -12,15 +12,17 @@
         autocomplete="off"
         [(ngModel)]="data.name"
         name="name">
+        <mat-hint *ngIf="!pathValid()" class="warning">Name is required and cannot contain blank space or special characters.</mat-hint>
+        <mat-hint *ngIf="data.name === originalName" class="warning">New name cannot be the same as the current name.</mat-hint>
     </mat-form-field>
 
   </div>
-
+  
   <div mat-dialog-actions>
 
     <button
       mat-raised-button
-      [disabled]="data.name === originalName"
+      [disabled]="data.name === originalName || !pathValid()"
       color="primary"
       type="submit"
       (click)="ok()">Rename</button>

@@ -72,4 +72,24 @@ export class RenameFolderDialogComponent {
     // Closing dialog.
     this.dialogRef.close();
   }
+
+  /**
+   * 
+   * @returns validating the inserted name
+   */
+   public pathValid(){
+
+    // Verifying user has typed a name at all.
+    if (!this.newName || this.newName.length === 0) {
+      return false;
+    }
+
+    // Verifying path doesn't contain invalid characters.
+    for (const idx of this.newName) {
+      if ('abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-.'.indexOf(idx.toLowerCase()) === -1) {
+        return false;
+      }
+    }
+    return true
+  }
 }
