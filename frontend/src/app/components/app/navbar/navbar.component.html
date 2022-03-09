@@ -8,7 +8,7 @@
       <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">Welcome {{getUserRoles()}}</h4>
       <div class="position-relative w-100">
         <h5 class="mb-0 mt-0 text-muted d-flex align-items-center justify-content-center">
-          {{getUserStatus()}} 
+          <div class="text-truncate max-width">{{getUserStatus()}} </div>
           <ng-container *ngIf="listOfBackends.length > 1">
             <mat-icon [matMenuTriggerFor]="backends" 
             class="small-icon pointer" matTooltip="View list of your backends">arrow_drop_down</mat-icon>

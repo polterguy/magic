@@ -1,7 +1,8 @@
 @import '../../../../assets/styles/colour.scss';
 @import '../../../../assets/styles/mixin.scss';
 @import '../../../../assets/styles/sizes.scss';
-a{color: inherit;}
+// a{color: inherit;}
+.text-truncate.max-width{max-width: 130px;}
 .top-box-sidebar{
   padding: 15px;
   border-bottom: 1px solid transparentize($color: $magic_dark_alternative, $amount: 0.95);
@@ -172,7 +173,7 @@ colour setting -- text & background
     .mat-list-base .mat-list-item,
     .mat-expansion-indicator::after,
     .top-box-sidebar,
-    .top-box-sidebar p{color: $magic_dark_secondary;}
+    .top-box-sidebar p, a{color: $magic_dark_secondary;}
   
     .mat-expansion-panel,
     .mat-expansion-panel-header,
@@ -210,7 +211,7 @@ colour setting -- text & background
     .mat-list-base .mat-list-item,
     .mat-expansion-indicator::after,
     .top-box-sidebar,
-    .top-box-sidebar p.mat-caption{color: $magic_default_secondary;}
+    .top-box-sidebar p.mat-caption, a{color: $magic_default_secondary;}
 
     .mat-expansion-panel,
     .mat-expansion-panel-header,

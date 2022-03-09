@@ -27,6 +27,7 @@ import { ConfigService } from '../../../services/management/config.service';
 import { BazarService } from '../../../services/management/bazar.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Location } from '@angular/common'; 
 
 /**
  * Component wrapping navbar.
@@ -111,7 +112,8 @@ export class NavbarComponent implements OnInit {
     private bazarService: BazarService,
     private overlayContainer: OverlayContainer,
     private clipboard: Clipboard,
-    private cdRef: ChangeDetectorRef) { }
+    private cdRef: ChangeDetectorRef,
+    private location: Location) { }
 
   /**
    * Implementation of OnInit.
@@ -119,9 +121,6 @@ export class NavbarComponent implements OnInit {
   public ngOnInit() {
     // get query parameters from url, if any
     this.getParams();
-
-    // initializing current url
-    this.currentBackend = this.backendService.current.url;
 
     // Check if backend is configured.
     // If backend is not configured yet, then all links are disabled.
@@ -183,9 +182,6 @@ export class NavbarComponent implements OnInit {
         // updating backend's current url
         this.backendService.current.url = backend;
 
-        // updating current backend ** for marking current one in .html
-        this.currentBackend = backend;
-
         // check if the url exists in localstorage
         // so the availability of token can be detected
         if (JSON.parse(localStorage.getItem('magic.backends'))){
@@ -207,8 +203,11 @@ export class NavbarComponent implements OnInit {
         } else {
           this.authService.updateAuthStatus(true);
         }
+        this.location.replaceState('');
+        // initializing current url
+        this.currentBackend = this.backendService.current.url;
       } else {
-
+        
         // again based on data inside localstorage, the authentication status will be set
 
         if (JSON.parse(localStorage.getItem('magic.backends'))){
@@ -222,12 +221,13 @@ export class NavbarComponent implements OnInit {
                 token: element.token,
               };
             }
-            
+            // initializing current url
+            this.currentBackend = this.backendService.current.url;
             this.authService.updateAuthStatus(true);
           });
         }
       }
-      
+
       /*
        * Checking if user accessed system with an authentication link.
        */
@@ -491,9 +491,7 @@ export class NavbarComponent implements OnInit {
   switchBackend(backend: any) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
-    // if (backend.token)
-    // Persisting backend data.
     
-    window.open(param + encodeURIComponent(backend.url), "_blank");
+    window.location.replace(param + encodeURIComponent(backend.url));
   }
 }
