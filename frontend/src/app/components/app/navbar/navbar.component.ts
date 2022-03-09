@@ -204,6 +204,9 @@ ngOnChanges(changes: SimpleChanges): void {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.authService.authenticated ? this.retrieveBackendVersion() : '';
+      if (!this.notSmallScreen) {
+        this.closeNavbar();
+      }
     });
   }
 
@@ -212,7 +215,9 @@ ngOnChanges(changes: SimpleChanges): void {
    */
   public logout() {
     this.authService.logout(false);
-    this.closeNavbar();
+    if (!this.notSmallScreen) {
+      this.closeNavbar();
+    }
   }
 
   /*
