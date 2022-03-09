@@ -32,7 +32,7 @@ export class BackendService {
     // Reading persisted backends from local storage, or defaulting to whatever is in our environment.ts file.
     let backends: Backend[];
     const storage = localStorage.getItem('magic.backends');
-    backends = storage === null ? environment.defaultBackends : <Backend[]>JSON.parse(storage);
+    backends = storage === null ? (window.location.href.indexOf('://localhost') == -1 ? [] : environment.defaultBackends) : <Backend[]>JSON.parse(storage);
     this._backends = backends;
 
     // Checking we actually have any backends stored.
@@ -75,10 +75,10 @@ export class BackendService {
     if (existing.length > 0) {
 
       // Updating existing backend's fields.
-      existing[0].url = value.url;
       existing[0].username = value.username;
       existing[0].password = value.password;
       existing[0].token = value.token;
+      value = existing[0];
 
     } else {
 
