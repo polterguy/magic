@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * checking against the user's roles to make sure if root is among them or not
    */
    checkForRootUser() {
-    this.isRoot = this.authService.roles().indexOf('root') > -1;
+    this.isRoot = this.authService.isRoot;
    }
 
   /**

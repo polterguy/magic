@@ -69,8 +69,8 @@
       </mat-expansion-panel-header>
     </mat-expansion-panel>
 
-    <!-- Crypto if user not logged in -->
-    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="!authService.authenticated">
+    <!-- Crypto if user not logged in or non-root user -->
+    <mat-expansion-panel class="mat-elevation-z0" hideToggle *ngIf="!authService.authenticated || !authService.access.crypto.import_public_key">
       <mat-expansion-panel-header 
         #panelC (click)="panelC._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 

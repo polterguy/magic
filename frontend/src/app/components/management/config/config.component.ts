@@ -38,6 +38,14 @@ export class ConfigComponent implements OnInit {
    */
   public ngOnInit() {
 
-    this.status = this.configService.setupStatus;
+    // wait until configService.setupStatus is ready
+    (async () => {
+      while (!this.configService.setupStatus)
+        await new Promise(resolve => setTimeout(resolve, 100));
+      
+      if (this.configService.setupStatus !== null) {
+        this.status = this.configService.setupStatus;
+      }
+    })();
   }
 }
