@@ -476,6 +476,7 @@ export class NavbarComponent implements OnInit {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
     if (backend.token) {
+      this.backendService.current = backend;
       window.location.replace(param + encodeURIComponent(backend.url))
     } else {
       this.login(backend.url);
