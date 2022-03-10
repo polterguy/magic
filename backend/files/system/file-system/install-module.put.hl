@@ -71,10 +71,44 @@ io.file.unzip:x:@.full-path
 // Deleting ZIP file.
 io.file.delete:x:@.full-path
 
+// Defaulting module name to name of zip file.
+.module-name
+set-value:x:@.module-name
+   get-value:x:@strings.split/0
+
+// Figuring out manifest name and checking if it exists.
+.manifest
+set-value:x:@.manifest
+   strings.concat
+      get-value:x:@.folder
+      .:manifest.hl
+if
+   io.file.exists:x:@.manifest
+   .lambda
+
+      // Checking manifest file to see if we need to rename module.
+      io.file.load:x:@.manifest
+      hyper2lambda:x:-
+      if
+         neq
+            get-value:x:@.module-name
+            get-value:x:@hyper2lambda/*/module_name
+         .lambda
+
+            // We'll need to rename folder for module according to manifest.
+            strings.concat
+               .:/modules/
+               get-value:x:@hyper2lambda/*/module_name
+               .:/
+            io.folder.move:x:@.folder
+               get-value:x:@strings.concat
+            set-value:x:@.module-name
+               get-value:x:@hyper2lambda/*/module_name
+
 // Installing module.
 unwrap:x:+/*
 signal:magic.modules.install-module
-   module:x:@strings.split/0
+   module:x:@.module-name
 
 return-nodes
    result:Success
