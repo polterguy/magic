@@ -8,20 +8,24 @@
 
     <ng-container *ngIf="sideNavStatus">
 
-      <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">Welcome {{getUserRoles()}}</h4>
+      <h4 class="mb-0 text-capitalized" *ngIf="authService.authenticated">
+        Welcome {{backendService?.current?.username}}
+      </h4>
 
       <div class="position-relative w-100">
-        <h5 class="mb-0 mt-0 text-muted d-flex align-items-center justify-content-center">
-          <div class="text-truncate max-width">{{getUserStatus()}} </div>
-          <ng-container *ngIf="listOfBackends.length > 1">
-            <mat-icon [matMenuTriggerFor]="backends" 
-            class="small-icon pointer" matTooltip="View list of your backends">arrow_drop_down</mat-icon>
-          </ng-container>
+        <h5 class="my-0 text-muted d-flex align-items-center justify-content-center">
+          <div class="text-truncate max-width">
+            {{backendService?.current?.username !== '' ? '' : 'anonymous'}} 
+          </div>
+        </h5>
+        <h5 class="my-0 text-muted d-flex align-items-center justify-content-center pointer" 
+        [matMenuTriggerFor]="backends" 
+        matTooltip="View list of your backends">
+          <div class="text-truncate max-width">{{getUserUrl()}} </div>
+          <mat-icon class="small-icon">arrow_drop_down</mat-icon>
         </h5>
         <div class="copy-btn" *ngIf="authService.authenticated">
-          <button mat-icon-button (click)="copyBackendUrl()" class="small-icon"
-          tabindex="-1" 
-          matTooltip="Copy current url">
+          <button mat-icon-button (click)="copyBackendUrl()" class="small-icon" tabindex="-1" matTooltip="Copy current url">
             <mat-icon>content_copy</mat-icon>
           </button>
         </div>
@@ -31,6 +35,9 @@
         <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{url: url}">
           <span [class.text-accent]="url.url === currentBackend">{{url.url}}</span>
         </div>
+        <button mat-menu-item (click)="login()">
+          <mat-icon>add</mat-icon>
+        </button>
       </mat-menu>
 
       <mat-menu #selectedBackend="matMenu" xPosition="after">

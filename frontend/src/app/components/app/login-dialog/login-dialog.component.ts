@@ -12,7 +12,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Application specific imports.
-import { Status } from 'src/app/models/status.model';
 import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
@@ -60,7 +59,7 @@ export class LoginDialogComponent implements OnInit {
     public authService: AuthService,
     public backendService: BackendService,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public backendUrl) { }
+    @Inject(MAT_DIALOG_DATA) public requestedBackend: string) { }
 
   /**
    * reactive form declaration
@@ -78,7 +77,8 @@ export class LoginDialogComponent implements OnInit {
 
     // Creating filter backends form control.
     this.backends = new FormControl();
-    this.backendUrl ? (this.backends.setValue(this.backendUrl), this.backendSelected()) : this.backends.setValue('');
+    this.backends.setValue('');
+
 
     // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges
@@ -86,13 +86,17 @@ export class LoginDialogComponent implements OnInit {
         startWith(''),
         map(value => this.filter(value))
       );
+
+    // checking if user want to switch backend to a specific url
+    // if so, then fill the textbox with the requested url
+    this.requestedBackend !== '' ? this.backends.setValue(this.requestedBackend) : '';
   }
 
   /**
    * Invoked when a backend has been chosen from the
    * persisted backends.
    */
-  public backendSelected() {
+  public backendSelected() {console.log('first')
     const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
       this.loginForm.patchValue({
@@ -115,7 +119,7 @@ export class LoginDialogComponent implements OnInit {
     if (this.backends.value && this.backends.value !== '') {
 
       // Invoking backend to check if it has turned on auto-auth or not.
-      this.authService.autoAuth(this.backends.value.replace(/\s/g, '').replace(/(\/)+$/,'')).subscribe((result: Response) => {
+      this.authService.autoAuth(this.backends.value.replace(/\s/g, '').replace(/(\/)+$/, '')).subscribe((result: Response) => {
 
         // This will display username and password dialogs, unless backend supports automatic logins.
         this.backendHasBeenSelected = true;
@@ -181,7 +185,7 @@ export class LoginDialogComponent implements OnInit {
           this.feedbackService.showInfo(res.result);
         }
 
-    }, (error: any) => this.feedbackService.showError(error));
+      }, (error: any) => this.feedbackService.showError(error));
   }
 
   /**
@@ -195,7 +199,7 @@ export class LoginDialogComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/,'');
+    let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/, '');
     this.backendService.current = {
       url: url,
       username: this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
@@ -221,7 +225,7 @@ export class LoginDialogComponent implements OnInit {
         }
         // if successful login while user is in register page, redirect to dashboard
         // ** this page disappears after login
-        if (window.location.pathname === '/register'){
+        if (window.location.pathname === '/register') {
           this.router.navigate(['/']);
         }
       }, (error: any) => {
