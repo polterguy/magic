@@ -36,7 +36,7 @@
         <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{url: url}">
           <span [class.text-accent]="url.url === currentBackend">{{url.url}}</span>
         </div>
-        <button mat-menu-item (click)="login('htpp')">
+        <button mat-menu-item (click)="login('http')">
           <mat-icon>add</mat-icon> Add new backend
         </button>
       </mat-menu>
