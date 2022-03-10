@@ -93,6 +93,12 @@ export class BackendService {
      * that will be used.
      */
     this._backends.sort((lhs: Backend, rhs: Backend) => {
+      if (lhs.url === value.url) {
+        return -1;
+      }
+      if (rhs.url === value.url) {
+        return 1;
+      }
       if (lhs.token) {
         return -1;
       }
