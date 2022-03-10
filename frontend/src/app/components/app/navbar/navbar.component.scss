@@ -2,7 +2,9 @@
 @import '../../../../assets/styles/mixin.scss';
 @import '../../../../assets/styles/sizes.scss';
 // a{color: inherit;}
-.text-truncate.max-width{max-width: 130px;}
+.text-truncate.max-width{max-width: 135px;}
+.min-h-88{min-height: 88px;}
+.min-h-88{min-height: 88px;}
 .top-box-sidebar{
   padding: 15px;
   border-bottom: 1px solid transparentize($color: $magic_dark_alternative, $amount: 0.95);
@@ -147,8 +149,8 @@
 }
 .copy-btn{
   position: absolute;
-  right: 0;
-  top: -11px;
+  right: -10px;
+  top: -10px;
   z-index: 1;
 }
 .small-icon{

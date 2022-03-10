@@ -2,13 +2,17 @@
 <h1 mat-dialog-title>
   Login
   <mat-icon
-    *ngIf="backendHasBeenSelected && backendService.connected && backends.value.startsWith('http://') && (autoLogin !== true || advanced === true)"
+    *ngIf="(backendHasBeenSelected && backendService.connected && backends.value.startsWith('http://') && (autoLogin !== true || advanced === true)) || (requestedBackend && requestedBackend.startsWith('http://'))"
     matTooltip="Clicking the login button will transmit your password in clear text">warning</mat-icon>
 </h1>
 
-<form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+<form [formGroup]="loginForm" novalidate>
   <div mat-dialog-content>
-      {{backends.value !== ''}}
+    <ng-container *ngIf="requestedBackend && requestedBackend !== ''">
+      <mat-checkbox [(ngModel)]="connectWithoutLogin" [ngModelOptions]="{standalone: true}" [checked]="true" class="mb-4 mt-2">
+        Switch to {{requestedBackend}} without login
+      </mat-checkbox>
+    </ng-container>
     <mat-form-field class="fill-width" appearance="outline">
 
       <mat-label class="dark">Backend</mat-label>
@@ -19,52 +23,60 @@
         [matAutocomplete]="auto"
         type="url"
         placeholder="http://">
+      <button mat-icon-button matSuffix [disabled]="backendHasBeenSelected || !backends.value"
+        matTooltip="Connect to backend" type="button" (click)="backendValueChanged()">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
       <mat-autocomplete
         #auto="matAutocomplete"
         (optionSelected)="backendSelected()">
-        <mat-option
-          *ngFor="let el of filteredBackends | async"
-          [value]="el">
-          {{el}}
-        </mat-option>
+        <ng-container *ngIf="!requestedBackend || requestedBackend === '' || (requestedBackend && requestedBackend !== backends.value)">
+
+          <mat-option
+            *ngFor="let el of filteredBackends | async"
+            [value]="el">
+            {{el}}
+          </mat-option>
+        </ng-container>
       </mat-autocomplete>
       <mat-hint>e.g. https://api-yourdomain.com</mat-hint>
     </mat-form-field>
-
-    <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
-
-      <mat-label class="dark">Username</mat-label>
-      <input
-        matInput
-        type="text"
-        name="username"
-        formControlName="username"
-        autocomplete="off">
-
-    </mat-form-field>
-
-    <mat-form-field *ngIf="backendHasBeenSelected && (!autoLogin || advanced)" class="fill-width" appearance="outline">
- 
-      <mat-label class="dark">Password</mat-label>
-      <input
-        matInput
-        formControlName="password"
-        [type]="hide ? 'password' : 'text'"
-        autocomplete="off">
-      <button
-        mat-icon-button
-        matSuffix
-        (click)="hide = !hide"
-        [attr.aria-pressed]="hide"
-        type="button">
-        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </button>
-
-    </mat-form-field>
+    <ng-container *ngIf="!connectWithoutLogin && (backendHasBeenSelected && (!autoLogin || advanced))">
+      <mat-form-field class="fill-width" appearance="outline">
+  
+        <mat-label class="dark">Username</mat-label>
+        <input
+          matInput
+          type="text"
+          name="username"
+          formControlName="username"
+          autocomplete="off">
+  
+      </mat-form-field>
+  
+      <mat-form-field class="fill-width" appearance="outline">
+   
+        <mat-label class="dark">Password</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="hide ? 'password' : 'text'"
+          autocomplete="off">
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-pressed]="hide"
+          type="button">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+  
+      </mat-form-field>
+    </ng-container>
 
   </div>
 
-  <div *ngIf="backendHasBeenSelected" mat-dialog-actions class="button-strip">
+  <div *ngIf="!connectWithoutLogin && backendHasBeenSelected" mat-dialog-actions class="button-strip">
 
     <mat-checkbox
       *ngIf="autoLogin === true"
@@ -78,6 +90,7 @@
     <button
       mat-raised-button
       color="primary" type="submit"
+      (click)="login()"
       [disabled]="!autoLogin && loginForm.invalid">Login</button>
 
     <button

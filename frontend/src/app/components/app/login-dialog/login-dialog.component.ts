@@ -39,6 +39,12 @@ export class LoginDialogComponent implements OnInit {
   public advanced: boolean = false;
 
   /**
+   * to display a checkbox for letting user connect to backend without login
+   * if there is any backend requested, then it will be displayed
+   */
+  public connectWithoutLogin: boolean = false;
+
+  /**
    * Creates an instance of your login dialog.
    * 
    * @param router Router service to redirect and check current route
@@ -77,9 +83,13 @@ export class LoginDialogComponent implements OnInit {
 
     // Creating filter backends form control.
     this.backends = new FormControl();
-    this.backends.setValue('');
+    // this.backends.setValue('');
 
-
+    // checking if user want to switch backend to a specific url
+    // if so, then fill the textbox with the requested url
+    // if not, the initial value will be empty
+    this.backends.setValue(this.requestedBackend ? this.requestedBackend : '');
+    this.requestedBackend && this.requestedBackend !== '' ? this.connectWithoutLogin = true : '';
     // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges
       .pipe(
@@ -87,16 +97,13 @@ export class LoginDialogComponent implements OnInit {
         map(value => this.filter(value))
       );
 
-    // checking if user want to switch backend to a specific url
-    // if so, then fill the textbox with the requested url
-    this.requestedBackend !== '' ? this.backends.setValue(this.requestedBackend) : '';
   }
 
   /**
    * Invoked when a backend has been chosen from the
    * persisted backends.
    */
-  public backendSelected() {console.log('first')
+  public backendSelected() {
     const el = this.backendService.backends.filter(x => x.url === this.backends.value);
     if (el.length > 0) {
       this.loginForm.patchValue({
@@ -144,6 +151,8 @@ export class LoginDialogComponent implements OnInit {
         this.loginForm.patchValue({
           backends: this.backends.value
         });
+        
+        this.connectWithoutLogin === true ? this.connectToBackendWithoutLogin() : '';
       }, (error: any) => {
 
         // Oops.
@@ -151,6 +160,25 @@ export class LoginDialogComponent implements OnInit {
         this.backendHasBeenSelected = false;
       });
     }
+  }
+
+  connectToBackendWithoutLogin() {
+    /*
+     * Storing currently selected backend.
+     * Notice, this has to be done before we authenticate, since
+     * the auth service depends upon user already having selected
+     * a current backend.
+     */
+    let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/,'');
+    this.backendService.current = {
+      url: url,
+      username: this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
+      password: this.savePassword ? this.loginForm.value.password : null,
+    };
+    this.dialogRef.close();
+    const currentURL: string = window.location.protocol + '//' + window.location.host;
+    const param: string = currentURL + '?backend=';
+    window.location.replace(param + encodeURIComponent(this.requestedBackend));
   }
 
   /**
