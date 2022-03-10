@@ -156,7 +156,8 @@ export class NavbarComponent implements OnInit {
     this.authService.authenticatedChanged.subscribe(status => {
       if (status) {
         this.getBackends();
-      } 
+      }
+      this.currentBackend = this.backendService.current.url;
       this.cdRef.detectChanges();
     });
     
@@ -207,28 +208,6 @@ export class NavbarComponent implements OnInit {
           this.authService.updateAuthStatus(true);
         }
         this.location.replaceState('');
-        // initializing current url
-        this.currentBackend = this.backendService.current.url;
-      } else {
-        
-        // again based on data inside localstorage, the authentication status will be set
-
-        if (JSON.parse(localStorage.getItem('magic.backends'))){
-          const currentBakcend = JSON.parse(localStorage.getItem('magic.backends'));
-          currentBakcend.forEach((element: any) => {
-            if (element.token){
-              this.backendService.current = {
-                url: element.url.replace(/\s/g, '').replace(/(\/)+$/,''),
-                username: element.username,
-                password: element.storePassword ? element.password : null,
-                token: element.token,
-              };
-              // initializing current url
-              this.currentBackend = this.backendService.current.url;
-              this.authService.updateAuthStatus(true);
-            }
-          });
-        }
       }
 
       /*
@@ -304,6 +283,9 @@ export class NavbarComponent implements OnInit {
         });
       }
     });
+
+    // Initializing current backend
+    this.currentBackend = this.backendService.current.url;
   }
 
   /**
@@ -489,12 +471,18 @@ export class NavbarComponent implements OnInit {
   }
 
   /**
-   * switching backend
+   * Switching backend
    */
-  switchBackend(backend: any) {
+  switchBackend(backend: Backend) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
-    
+    this.backendService.current = {
+      url: backend.url,
+      username: backend.username,
+      password: backend.password,
+      token: backend.token,
+    };
+    this.currentBackend = backend.url;
     window.location.replace(param + encodeURIComponent(backend.url));
   }
 }
