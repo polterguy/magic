@@ -83,13 +83,13 @@ export class LoginDialogComponent implements OnInit {
 
     // Creating filter backends form control.
     this.backends = new FormControl();
-    // this.backends.setValue('');
 
     // checking if user want to switch backend to a specific url
     // if so, then fill the textbox with the requested url
     // if not, the initial value will be empty
     this.backends.setValue(this.requestedBackend ? this.requestedBackend : '');
     this.requestedBackend && this.requestedBackend !== '' ? this.connectWithoutLogin = true : '';
+
     // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges
       .pipe(
@@ -178,7 +178,7 @@ export class LoginDialogComponent implements OnInit {
     this.dialogRef.close();
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
-    window.location.replace(param + encodeURIComponent(this.requestedBackend));
+    window.location.replace(param + encodeURIComponent(this.backends.value));
   }
 
   /**
