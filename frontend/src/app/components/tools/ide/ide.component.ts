@@ -394,7 +394,7 @@ export class IdeComponent implements OnInit, OnDestroy {
   public deleteActiveFile(path: string) {
 
     // Ensuring we actually have open files.
-    if (!this.currentFileData) {
+    if (!this.currentFileData && !path) {
       return;
     }
 
