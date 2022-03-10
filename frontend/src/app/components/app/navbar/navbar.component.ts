@@ -157,7 +157,9 @@ export class NavbarComponent implements OnInit {
       if (status) {
         this.getBackends();
       }
-      this.currentBackend = this.backendService.current.url;
+      if (this.backendService.connected) {
+        this.currentBackend = this.backendService.current.url;
+      }
       this.cdRef.detectChanges();
     });
     
@@ -285,7 +287,9 @@ export class NavbarComponent implements OnInit {
     });
 
     // Initializing current backend
-    this.currentBackend = this.backendService.current.url;
+    if (this.backendService.connected) {
+      this.currentBackend = this.backendService.current.url;
+    }
   }
 
   /**
