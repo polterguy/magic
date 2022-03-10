@@ -10,7 +10,7 @@
   <div mat-dialog-content>
     <ng-container *ngIf="requestedBackend && requestedBackend !== ''">
       <mat-checkbox [(ngModel)]="connectWithoutLogin" [ngModelOptions]="{standalone: true}" [checked]="true" class="mb-4 mt-2">
-        Switch to {{requestedBackend}} without login
+        Switch backend without login 
       </mat-checkbox>
     </ng-container>
     <mat-form-field class="fill-width" appearance="outline">
