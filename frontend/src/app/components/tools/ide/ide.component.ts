@@ -1002,24 +1002,24 @@ export class IdeComponent implements OnInit, OnDestroy {
    * Updates the specified folder or file object only and re-renders TreeView.
    */
   public updateFileObject(fileObject: string) {
-
     // Figuring out folder to refresh, since fileObject might be a file or a folder.
     var folder = fileObject;
     var isFile = false;
     if (!fileObject.endsWith('/')) {
-
+      
       // File object is a file.
       folder = folder.substring(0, folder.lastIndexOf('/') + 1);
       isFile = true;
     }
-
+    
+    
     // Finding specified folder in data source.
     let parent = this.root;
+    
     const entities = folder.split('/').filter(x => x !== '');
     for (const idxPeek of entities.slice(0, entities.length)) {
       parent = parent.children.filter(x => x.name === idxPeek)[0];
     }
-
     // Clearing folder's children collection.
     parent.children = [];
 
