@@ -302,7 +302,7 @@ export class NavbarComponent implements OnInit {
   /**
    * Returns the user's status to caller.
    */
-   public getUserStatus() {
+   public getUserUrl() {
 
     // Verifying user is connected to a backend.
     if (!this.backendService.connected) {
@@ -315,12 +315,13 @@ export class NavbarComponent implements OnInit {
       url = url.substring(0, url.indexOf(':'));
     }
 
+    return url;
     // Checking if user is authenticated.
-    if (this.authService.authenticated) {
-      return this.backendService.current.username + ' / ' + url;
-    } else if (this.backendService.connected) {
-      return 'anonymous / ' + url;
-    }
+    // if (this.authService.authenticated) {
+    //   return this.backendService.current.username + ' / ' + url;
+    // } else if (this.backendService.connected) {
+    //   return 'anonymous / ' + url;
+    // }
   }
 
   /**
@@ -345,7 +346,7 @@ export class NavbarComponent implements OnInit {
   public login(backendUrl?: string) {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '550px',
-      data: backendUrl
+      data: backendUrl ? backendUrl : ''
     });
     dialogRef.afterClosed().subscribe(() => {
       this.authService.authenticated ? this.retrieveBackendVersion() : '';
@@ -474,15 +475,16 @@ export class NavbarComponent implements OnInit {
    * Switching backend
    */
   switchBackend(backend: Backend) {
-    const currentURL: string = window.location.protocol + '//' + window.location.host;
-    const param: string = currentURL + '?backend=';
-    this.backendService.current = {
-      url: backend.url,
-      username: backend.username,
-      password: backend.password,
-      token: backend.token,
-    };
-    this.currentBackend = backend.url;
-    window.location.replace(param + encodeURIComponent(backend.url));
+    // const currentURL: string = window.location.protocol + '//' + window.location.host;
+    // const param: string = currentURL + '?backend=';
+    // window.location.replace(param + encodeURIComponent(backend.url));
+    // this.backendService.current = {
+    //   url: backend.url,
+    //   username: backend.username,
+    //   password: backend.password,
+    //   token: backend.token,
+    // };
+    // this.currentBackend = backend.url;
+    this.login(backend.url);
   }
 }

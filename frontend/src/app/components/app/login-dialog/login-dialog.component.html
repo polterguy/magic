@@ -8,14 +8,14 @@
 
 <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
   <div mat-dialog-content>
-      
+      {{backends.value !== ''}}
     <mat-form-field class="fill-width" appearance="outline">
 
       <mat-label class="dark">Backend</mat-label>
       <input
         matInput
         [formControl]="backends"
-        (change)="backendValueChanged()"
+        (keydown.enter)="backendValueChanged()"
         [matAutocomplete]="auto"
         type="url"
         placeholder="http://">

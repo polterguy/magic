@@ -36,6 +36,8 @@ import { FolderActionsComponent } from './action-buttons/folder-actions/folder-a
 
 // File types extensions.
 import fileTypes from 'src/app/codemirror/file-types.json';
+import { MatDialog } from '@angular/material/dialog';
+import { IncompatibleFileDialogComponent } from './incompatible-file-dialog/incompatible-file-dialog.component';
 
 /**
  * IDE component for creating Hyperlambda apps.
@@ -162,6 +164,7 @@ export class IdeComponent implements OnInit, OnDestroy {
    * @param vocabularyService Needed to retrieve vocabulary from backend, in addition to executing Hyperlambda files
    * @param messageService Service used to publish messages to other components in the system
    * @param endpointService Needed to retrieve endpoints from backend
+   * @param dialog Needed to create modal dialogs
    */
   public constructor(
     private cdRef: ChangeDetectorRef,
@@ -171,7 +174,8 @@ export class IdeComponent implements OnInit, OnDestroy {
     private vocabularyService: VocabularyService,
     private messageService: MessageService,
     private endpointService: EndpointService,
-    private ngZone: NgZone) { }
+    private ngZone: NgZone,
+    private dialog: MatDialog) { }
 
   /**
    * OnInit implementation.
@@ -280,12 +284,26 @@ export class IdeComponent implements OnInit, OnDestroy {
     } else {
       
       if (this.getCodeMirrorOptions(file.path) === null){
+        
+        // Opening up a modal dialog to choosing what to do with the file.
+        // using ngZone to prevent the dialog from opening outside of the ngZone!
         this.ngZone.run(() => {
-          this.feedbackService.confirm('Confirm action', `This file cannot be opened. Do you want to dowload it instead?`, () => {
-    
-            // Invoking backend to actually delete folder.
-            this.fileActionsComponent.downloadActiveFile(file.path)
-          })
+          const dialog = this.dialog.open(IncompatibleFileDialogComponent, {
+            width: '550px',
+            data: {
+              name: file.name,
+            },
+          });
+          dialog.afterClosed().subscribe((data: { deleteFile: false, download: false }) => {
+            // Download the file
+            if (data && data.download) {
+              // Invoking backend to actually download the file.
+              this.fileActionsComponent.downloadActiveFile(file.path)
+            } else if (data && data.deleteFile) {
+              // Invoking backend to actually delete the file.
+              this.fileActionsComponent.deleteActiveFile(file.path)
+            }
+          });
         })
         return;
       }

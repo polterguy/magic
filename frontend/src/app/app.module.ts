@@ -151,6 +151,7 @@ import { AddQueryParameterDialogComponent } from './components/analytics/endpoin
 import { ConfirmEmailAddressDialogComponent } from './components/management/bazar/view-app-dialog/confirm-email-address-dialog/confirm-email-address-dialog.component';
 import { CrudSqlAddArgumentDialogComponent } from './components/tools/crudifier/crud-sql/crud-sql-extra/crud-sql-add-argument-dialog/crud-sql-add-argument-dialog.component';
 import { CreateAssumptionTestDialogComponent } from './components/analytics/endpoints/endpoint-details/create-assumption-test-dialog/create-assumption-test-dialog.component';
+import { IncompatibleFileDialogComponent } from './components/tools/ide/incompatible-file-dialog/incompatible-file-dialog.component';
 
 /**
  * The main module for your Magic Dashboard application.
@@ -242,7 +243,8 @@ import { CreateAssumptionTestDialogComponent } from './components/analytics/endp
     DashboardComponent,
     FileActionsComponent,
     FolderActionsComponent,
-    GeneralActionsComponent
+    GeneralActionsComponent,
+    IncompatibleFileDialogComponent
   ],
   imports: [
     FormsModule,
