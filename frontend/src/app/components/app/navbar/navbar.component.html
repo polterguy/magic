@@ -1,7 +1,7 @@
 <div class="d-flex flex-column w-100 h-100" id="sidebar" [class.disableLinks]="!backendIsConfigured">
   <div class="top-box-sidebar d-flex flex-column justify-content-center align-items-center text-center">
 
-    <div class="d-flex flex-column w-100 justify-content-center align-items-center">
+    <div class="d-flex flex-column w-100 justify-content-center align-items-center min-h-88">
       <img src="../../../../assets/logo-no-text.svg" alt="" [width]="sideNavStatus ? 80 : 35">
       <p class="nm-top text-uppercase">{{sideNavStatus ? 'Aista Magic Cloud' : 'MAGIC'}}</p>
     </div>
@@ -21,7 +21,8 @@
         <h5 class="my-0 text-muted d-flex align-items-center justify-content-center pointer" 
         [matMenuTriggerFor]="backends" 
         matTooltip="View list of your backends">
-          <div class="text-truncate max-width">{{getUserUrl()}} </div>
+          <div class="text-truncate max-width" 
+          [class.text-warning]="backendService.current.url.startsWith('http://')">{{getUserUrl()}} </div>
           <mat-icon class="small-icon">arrow_drop_down</mat-icon>
         </h5>
         <div class="copy-btn" *ngIf="authService.authenticated">
@@ -35,8 +36,8 @@
         <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{url: url}">
           <span [class.text-accent]="url.url === currentBackend">{{url.url}}</span>
         </div>
-        <button mat-menu-item (click)="login()">
-          <mat-icon>add</mat-icon>
+        <button mat-menu-item (click)="login('htpp')">
+          <mat-icon>add</mat-icon> Add new backend
         </button>
       </mat-menu>
 
