@@ -131,9 +131,12 @@ export class FolderActionsComponent {
    * @callback updateFiles to actually update the files by calling updateFileObject in parent component
    */
    public uploadFiles(files: FileList) {
-    
-    // Iterating through each file and uploading one file at the time.
-    for (let idx = 0; idx < files.length; idx++) {
+
+    // to identify the last file is uploaded
+     let finished: boolean = false;
+     // Iterating through each file and uploading one file at the time.
+     for (let idx = 0; idx < files.length; idx++) {
+
 
       // Invoking service method responsible for actually uploading file.
       this.fileService.uploadFile(this.activeFolder, files.item(idx)).subscribe(() => {
@@ -141,9 +144,20 @@ export class FolderActionsComponent {
         // Showing some feedback to user, and re-databinding folder's content.
         this.feedbackService.showInfo('File was successfully uploaded');
         this.fileInput = null;
-        this.updateFiles.emit(this.activeFolder);
+        
+        // check if itteration is finished:: the last index will change it to true
+        idx === (files.length - 1) ? finished = true : finished = false;
       });
-    }
+    };
+
+    // wait for itteration to get finished and then invoke the parent function
+    (async () => {
+      while (!finished)
+      await new Promise(resolve => setTimeout(resolve, 100));
+      if (finished) {
+        this.updateFiles.emit(this.activeFolder);
+      }
+    })();
   }
 
   /**
