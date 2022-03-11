@@ -14,10 +14,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and push Docker images
       run: > 
-        docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-        cd ./frontend
-        docker build --tag magic-frontend:latest-ci
-        docker push servergardens/magic-frontend:latest-ci
-        cd ../backend
-        docker build --tag magic-backend:latest-ci
-        docker push servergardens/magic-backend:latest-ci
+        docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}";
+        cd ./frontend;
+        docker build --tag magic-frontend:latest-ci;
+        docker push servergardens/magic-frontend:latest-ci;
+        cd ../backend;
+        docker build --tag magic-backend:latest-ci;
+        docker push servergardens/magic-backend:latest-ci;
