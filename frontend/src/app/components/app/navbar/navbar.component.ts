@@ -312,7 +312,7 @@ export class NavbarComponent implements OnInit {
     if (!this.backendService.connected) {
       return 'not connected';
     }
-
+    
     // Removing schema and port from URL.
     let url = this.backendService.current.url.replace('http://', '').replace('https://', '');
     // if (url.indexOf(':') !== -1) {

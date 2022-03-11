@@ -48,7 +48,7 @@ export class RegisterComponent implements OnInit {
    */
   constructor(
     private authService: AuthService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService,
     private formBuilder: FormBuilder) { }
 

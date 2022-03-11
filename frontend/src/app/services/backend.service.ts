@@ -37,13 +37,7 @@ export class BackendService {
 
     // Checking we actually have any backends stored.
     if (this._backends.length > 0) {
-
-      /*
-       * Defaulting selected backend to whatever has a JWT token value,
-       * since this was the previously selected backend user had selected.
-       */
-      const tmp = this._backends.filter(x => x.token !== null);
-      this._current = tmp.length > 0 ? tmp[0] : this._backends[0];
+      this._current = this._backends[0];
     }
   }
 
