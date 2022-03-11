@@ -8,16 +8,16 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build-frontend:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build the frontend Docker image
+    - name: Build and push Docker images
       run: > 
         docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         cd ./frontend
-        docker build . --file ./Dockerfile --tag magic-frontend:latest-ci
+        docker build --tag magic-frontend:latest-ci
         docker push servergardens/magic-frontend:latest-ci
         cd ../backend
-        docker build . --file ./Dockerfile --tag magic-backend:latest-ci
+        docker build --tag magic-backend:latest-ci
         docker push servergardens/magic-backend:latest-ci
