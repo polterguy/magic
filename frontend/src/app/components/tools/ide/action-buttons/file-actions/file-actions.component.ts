@@ -231,17 +231,24 @@ export class FileActionsComponent implements OnInit {
       return;
     }
     
-    // Asking user to confirm action.
-    // using ngZone to prevent the dialog from opening outside of the ngZone!
-    this.ngZone.run(() => {
-      this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
-        // Deleting file by invoking backend.
-        this.fileService.deleteFile(path? path : this.currentFileData.path).subscribe(() => {
-          // calling parent function to decide what to do with the tree
-          this.deleteActiveFileFromParent.emit(path? path : this.currentFileData.path);
-        }, (error: any) => this.feedbackService.showError(error));
-      });
-    })
+    if (!path) {
+      // Asking user to confirm action.
+      // using ngZone to prevent the dialog from opening outside of the ngZone!
+      this.ngZone.run(() => {
+        this.feedbackService.confirm('Confirm action', 'Are you sure you want to delete currently active file?', () => {
+          // Deleting file by invoking backend.
+          this.fileService.deleteFile(this.currentFileData.path).subscribe(() => {
+            // calling parent function to decide what to do with the tree
+            this.deleteActiveFileFromParent.emit(this.currentFileData.path);
+          }, (error: any) => this.feedbackService.showError(error));
+        });
+      })
+    } else if (path) {
+      this.fileService.deleteFile(path).subscribe(() => {
+        // calling parent function to decide what to do with the tree
+        this.deleteActiveFileFromParent.emit(path);
+      }, (error: any) => this.feedbackService.showError(error));
+    }
   }
 
   /**
