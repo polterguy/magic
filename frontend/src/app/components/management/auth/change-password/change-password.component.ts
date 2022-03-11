@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 // Application specific imports.
 import { AuthService } from '../../../../services/auth.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Change password component allowing users to change their current password.
@@ -21,10 +21,15 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class ChangePasswordComponent {
 
+
+  /**
+   * for toggling password
+   */
+  public hide: boolean = true;
   /**
    * New password user wants to use.
    */
-  // public password = '';
+  public password = '';
 
   /**
    * Repeated value of new password user wants to use.
@@ -40,30 +45,19 @@ export class ChangePasswordComponent {
   constructor(
     private authService: AuthService,
     private feedbackService: FeedbackService,
-    private formBuilder: FormBuilder) { }
+    public backendService: BackendService) { }
 
-  /**
-    * reactive form declaration
-    */
-  savePasswordForm = this.formBuilder.group({
-    password: ['', [Validators.required]]
-  });
-
+  
   /**
    * Invoked when user wants to save his or her password.
    */
   public savePassword() {
 
     // Sanity checking password.
-    if (this.savePasswordForm.value.password.length === 0 || this.savePasswordForm.value.password !== this.repeatPassword) {
-
-      // Oops!
-      this.feedbackService.showInfo('You must supply a new password and repeat it correctly');
-
-    } else {
+    if (this.password.length !== 0 || this.password === this.repeatPassword) {
 
       // Invoking backend to perform actual password update.
-      this.authService.changePassword(this.savePasswordForm.value.password).subscribe(() => {
+      this.authService.changePassword(this.password).subscribe(() => {
 
         // Providing user with some feedback, and forcing user to login again.
         this.feedbackService.showInfoShort('Your password was successfully updated, please login again');

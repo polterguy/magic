@@ -9,7 +9,7 @@
               <p class="mb-0 mat-caption">Create a user account here</p>
             </div>
             <mat-icon 
-              color="warn"
+              color="warn" *ngIf="backendService.current?.url.startsWith('http://')"
               matTooltip="Clicking the submit button will transmit your password in clear text">warning
             </mat-icon>
           </div>
@@ -24,7 +24,7 @@
               <mat-label>Password</mat-label>
               <input matInput name="password" [type]="hide ? 'password' : 'text'" autocomplete="new-password"
                 formControlName="password">
-              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-pressed]="hide" tabindex="-1">
+              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-pressed]="hide" tabindex="-1" type="button">
                 <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
               </button>
 
@@ -64,7 +64,7 @@
           <h3 class="mb-0">Please wait for a moderator to accept you as a user in the system.</h3>
         </div>
 
-        <div *ngIf="status === 'success'" class="text-center sign-icon success">
+        <div *ngIf="status === 'success'" class="text-center sign-icon success p-4">
           <mat-icon>check_circle</mat-icon>
           <h3 class="mb-0">You have been successfully registered in the system.</h3>
         </div>

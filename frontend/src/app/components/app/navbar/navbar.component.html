@@ -26,10 +26,10 @@
       </div>
 
       <mat-menu #backends="matMenu" yPosition="below">
-        <div mat-menu-item *ngFor="let url of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{url: url}">
-          <mat-icon>{{url.token ? 'lock' : 'lock_open'}}</mat-icon>
-          <span [class.text-warning]="url.url.startsWith('http://')">
-            {{url.url.substring(url.url.indexOf('://') + 3)}}
+        <div mat-menu-item *ngFor="let backend of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{backend: backend}" [matTooltip]="backend.url.startsWith('http://') ? 'Your connection to this backend is not sercure' : ''">
+          <mat-icon>{{backend.token ? 'lock' : 'lock_open'}}</mat-icon>
+          <span [class.text-warning]="backend.url.startsWith('http://')">
+            {{backend.url.substring(backend.url.indexOf('://') + 3)}}
           </span>
         </div>
         <button mat-menu-item (click)="login(false)">
@@ -38,16 +38,16 @@
       </mat-menu>
 
       <mat-menu #selectedBackend="matMenu" xPosition="after">
-        <ng-template matMenuContent let-url="url">
-          <button mat-menu-item (click)="copyBackendUrl(url?.url)">
+        <ng-template matMenuContent let-backend="backend">
+          <button mat-menu-item (click)="copyBackendUrl(backend?.url)">
             <mat-icon>content_copy</mat-icon>
             Copy url
           </button>
-          <button mat-menu-item [disabled]="url?.url === currentBackend" (click)="switchBackend(url)">
+          <button mat-menu-item [disabled]="backend?.url === currentBackend" (click)="switchBackend(backend)">
             <mat-icon>change_circle</mat-icon>
-            {{url?.url === currentBackend ? 'Currently in use' : 'Switch to this backend'}}
+            {{backend?.url === currentBackend ? 'Currently in use' : 'Switch to this backend'}}
           </button>
-          <button mat-menu-item (click)="deleteBackend(url)">
+          <button mat-menu-item (click)="deleteBackend(backend)">
             <mat-icon>delete</mat-icon>
             Remove backend
           </button>
