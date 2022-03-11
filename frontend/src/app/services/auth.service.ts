@@ -209,9 +209,6 @@ export class AuthService {
         username: this.backendService.current.username,
         password: destroyPassword ? null : this.backendService.current.password
       };
-      if (destroyPassword) {
-        this.backendService.current.password = null;
-      }
       this.backendService.persistBackends();
       this.messageService.sendMessage({
         name: Messages.USER_LOGGED_OUT,

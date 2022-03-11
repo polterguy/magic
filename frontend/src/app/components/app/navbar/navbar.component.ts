@@ -341,13 +341,17 @@ export class NavbarComponent implements OnInit {
   /**
    * Allows user to login by showing a modal dialog.
    */
-  public login(backendUrl?: string) {
+  public login(allowAuthentication: boolean) {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '550px',
-      data: backendUrl ? backendUrl : ''
+      data: {
+        allowAuthentication
+      }
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.authService.authenticated ? this.retrieveBackendVersion() : '';
+    dialogRef.afterClosed().subscribe((res: any) => {
+      if (res) {
+        this.retrieveBackendVersion();
+      }
       if (!this.notSmallScreen) {
         this.closeNavbar();
       }
@@ -362,6 +366,7 @@ export class NavbarComponent implements OnInit {
     if (!this.notSmallScreen) {
       this.closeNavbar();
     }
+    this.getBackends();
   }
 
   /*
@@ -444,12 +449,7 @@ export class NavbarComponent implements OnInit {
    public copyBackendUrl(url?: string) {
      const currentURL: string = window.location.protocol + '//' + window.location.host;
      const param: string = currentURL + '?backend='
-    if (!url){
-      // Copies the currently edited endpoint's URL prepended by backend root URL.
-      this.clipboard.copy(param + encodeURIComponent(this.backendService.current.url));
-    } else {
-      this.clipboard.copy(param + encodeURIComponent(url));
-    }
+    this.clipboard.copy(param + encodeURIComponent(url));
 
     // Informing user that URL can be found on clipboard.
     this.feedbackService.showInfoShort('Backend URL was copied to your clipboard');
@@ -474,11 +474,21 @@ export class NavbarComponent implements OnInit {
    */
   switchBackend(backend: Backend) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
-    const param: string = currentURL + '?backend=';
-    if (backend.token) {
-      window.location.replace(param + encodeURIComponent(backend.url))
+    this.backendService.current = backend;
+    window.location.replace(currentURL);
+  }
+
+  /**
+   * Removes specified backend from local storage
+   * 
+   * @param backend Backend to remove
+   */
+  deleteBackend(backend: Backend) {
+    if (this.backendService.remove(backend)) {
+      const currentURL: string = window.location.protocol + '//' + window.location.host;
+      window.location.replace(currentURL);
     } else {
-      this.login(backend.url);
+      this.getBackends();
     }
   }
 }

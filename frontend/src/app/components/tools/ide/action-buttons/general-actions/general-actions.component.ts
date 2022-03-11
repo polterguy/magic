@@ -126,7 +126,7 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
     // Making sure we can still close the dialog when the obscurer is clicked.
     this.generateCrudDialog.backdropClick().subscribe(() => {
       this.generateCrudDialog.close();
-    })
+    });
   }
 
   /**
@@ -144,7 +144,7 @@ export class GeneralActionsComponent implements OnInit, OnDestroy {
         this.feedbackService.showInfo('File was successfully uploaded');
         this.zipFileInput = null;
         this.updateFiles.emit('/modules/');
-      });
+      }, (error: any) => this.feedbackService.showError(error));
     } else {
       this.feedbackService.showInfo('Only zip files without . are accepted');
     }
