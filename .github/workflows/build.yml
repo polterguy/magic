@@ -1,0 +1,27 @@
+
+# This workflow builds the Dockerfiles for backend and frontend, publish these to Docker HUB,
+# for then to trigger deployment on DEV server.
+name: "Continous integration"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Building frontend 
+      uses: ryanjfrizzell/action-bpd@master
+      with:
+        docker_registry_url: 'registry.hub.docker.com'
+        docker_registry_owner: 'servergardens'
+        docker_repository: 'magic-frontend'
+        docker_image: 'magic-frontend:latest-beta'
+        docker_username: ${{ secrets.docker_username }}
+        docker_password: ${{ secrets.docker_password }}
+        dockerfile: 'frontend/Dockerfile'
