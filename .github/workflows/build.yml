@@ -21,7 +21,7 @@ jobs:
         docker_registry_url: 'registry.hub.docker.com'
         docker_registry_owner: 'servergardens'
         docker_repository: 'magic-frontend'
-        docker_image: 'magic-frontend:latest-beta'
+        docker_image: 'latest-beta'
         docker_username: ${{ secrets.docker_username }}
         docker_password: ${{ secrets.docker_password }}
         dockerfile: 'frontend/Dockerfile'
