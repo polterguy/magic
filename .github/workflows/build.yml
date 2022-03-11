@@ -5,8 +5,6 @@ name: Docker Image CI
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,3 +20,17 @@ jobs:
         cd ./backend
         docker build -t servergardens/magic-backend:latest-ci -f ./Dockerfile .
         docker push servergardens/magic-backend:latest-ci
+
+    - name: Executing docker-compose.yml on VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DO_HOST }}
+        username: ${{ secrets.DO_USERNAME }}
+        password: ${{ secrets.DO_PASSWORD }}
+        port: ${{ secrets.DO_PORT }}
+        script: |
+          cd magic.deploy
+          docker-compose down
+          docker pull servergardens/magic-frontend:latest-ci
+          docker pull servergardens/magic-backend:latest-ci
+          docker-compose up -d
