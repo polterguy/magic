@@ -123,6 +123,6 @@ export class CreateKeypairComponent implements OnInit {
           subscribing: true,
         }));
 
-      }, (error: any) => this.feedbackService.showError(error));
+      }, (error: any) => console.log('err'));
   }
 }
