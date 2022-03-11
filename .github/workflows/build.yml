@@ -21,7 +21,7 @@ jobs:
         docker build -t servergardens/magic-backend:latest-ci -f ./Dockerfile .
         docker push servergardens/magic-backend:latest-ci
 
-    - name: Executing docker-compose.yml on VPS
+    - name: Updating Docker images on VPS
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DO_HOST }}
