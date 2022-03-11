@@ -15,13 +15,13 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Building frontend 
+    - name: Build frontend
       uses: ryanjfrizzell/action-bpd@master
       with:
-        docker_registry_url: 'registry.hub.docker.com'
-        docker_registry_owner: 'servergardens'
-        docker_repository: 'magic-frontend'
-        docker_image: 'latest-beta'
+        docker_registry_url: 'docker.pkg.github.com'
+        docker_registry_owner: 'polterguy'
+        docker_repository: 'magic'
+        docker_image: 'magic-frontend'
         docker_username: ${{ secrets.docker_username }}
         docker_password: ${{ secrets.docker_password }}
         dockerfile: 'frontend/Dockerfile'
