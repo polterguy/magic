@@ -15,7 +15,10 @@ jobs:
     - name: Build and push Docker images
       run: |
         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker build --tag magic-frontend:latest-ci - < frontend/Dockerfile
+        cd ./frontend
+        docker build -t magic-frontend:latest-ci -f ./Dockerfile .
         docker push servergardens/magic-frontend:latest-ci
-        docker build --tag magic-backend:latest-ci - < backend/Dockerfile
+        cd ..
+        cd ./backend
+        docker build -t magic-backend:latest-ci -f ./Dockerfile .
         docker push servergardens/magic-backend:latest-ci
