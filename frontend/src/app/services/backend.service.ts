@@ -62,6 +62,25 @@ export class BackendService {
   }
 
   /**
+   * Removes specified backend from local storage and if it is the current 
+   * backend changes the backend to the next available backend.
+   * 
+   * @param backend Backend to remove
+   */
+  public remove(backend: Backend) {
+    const cur = this.current;
+    this._backends = this._backends.filter(x => x.url !== backend.url);
+
+    /*
+     * Persisting all backends to local storage object,
+     * and updating the currently selected backend.
+     */
+    this.persistBackends();
+    this._current = this._backends.length > 0 ? this._backends[0] : null;
+    return cur.url === backend.url;
+  }
+
+  /**
    * Sets the currently selected backend.
    */
   public set current(value: Backend) {
