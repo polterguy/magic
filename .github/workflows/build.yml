@@ -1,28 +1,16 @@
 
-# This workflow builds the Dockerfiles for backend and frontend, publish these to Docker HUB,
-# for then to trigger deployment on DEV server.
-name: "Continous integration"
+# Builds and deploys Docker image
 
+name: Docker Image CI
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-        registry: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        path: .
-        dockerfile: './frontend/Dockerfile'
-        repository: 'magic-frontend'
-        tags: 'latest-ci'
-        push: true
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file frontend/Dockerfile --tag magic-frontend:latest-ci
