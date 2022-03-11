@@ -14,6 +14,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ConfigService } from 'src/app/services/management/config.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
+import { BazarService } from 'src/app/services/management/bazar.service';
 
 /**
  * Component allowing user to setup a cryptography key pair.
@@ -23,6 +24,8 @@ import { CryptoService } from 'src/app/components/management/crypto/services/cry
   templateUrl: './create-keypair.component.html'
 })
 export class CreateKeypairComponent implements OnInit {
+
+  public doSubscribe: boolean = true;
 
   /**
    * Identity for the key.
@@ -63,7 +66,8 @@ export class CreateKeypairComponent implements OnInit {
     private feedbackService: FeedbackService,
     private configService: ConfigService,
     private cryptoService: CryptoService,
-    protected messageService: MessageService) {
+    protected messageService: MessageService,
+    private bazarService: BazarService) {
   }
 
   /**
@@ -104,6 +108,21 @@ export class CreateKeypairComponent implements OnInit {
         name: Messages.SETUP_STATE_CHANGED,
         content: 'crypto'
       });
+      this.doSubscribe === true ? this.subscribeToNewsletter() : '';
     }, (error: any) => this.feedbackService.showError(error));
+  }
+
+  public subscribeToNewsletter(){
+    // Invoking Bazar service to subscribe to our newsletter.
+    this.bazarService.subscribeToNewsletter(
+      this.subject,
+      this.email).subscribe((result: Response) => {
+
+        // Storing the fact that user has subscribed to newsletter in local storage.
+        localStorage.setItem('subscribes-to-newsletter', JSON.stringify({
+          subscribing: true,
+        }));
+
+      }, (error: any) => this.feedbackService.showError(error));
   }
 }
