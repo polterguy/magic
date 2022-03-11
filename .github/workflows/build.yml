@@ -8,9 +8,19 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build:
+  build-frontend:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
+    - name: Build the frontend Docker image
       run: docker build . --file frontend/Dockerfile --tag magic-frontend:latest-ci
+    - name: Pushing
+      run: docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"; docker push servergardens/magic-frontend:latest-ci
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the backend Docker image
+      run: docker build . --file backend/Dockerfile --tag magic-backend:latest-ci
+    - name: Pushing
+      run: docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"; docker push servergardens/magic-backend:latest-ci
