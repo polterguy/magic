@@ -20,6 +20,10 @@ import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/management/config.service';
 
+class DialogData {
+  allowAuthentication?: boolean;
+}
+
 /**
  * Login dialog allowing user to login to a backend of his choice.
  */
@@ -33,16 +37,10 @@ export class LoginDialogComponent implements OnInit {
   public hide = true;
   public backends: FormControl = null;
   public filteredBackends: Observable<string[]>;
-  public savePassword: boolean = false;
+  public savePassword: boolean = true;
   public backendHasBeenSelected: boolean = false;
   public autoLogin: boolean = false;
   public advanced: boolean = false;
-
-  /**
-   * to display a checkbox for letting user connect to backend without login
-   * if there is any backend requested, then it will be displayed
-   */
-  public connectWithoutLogin: boolean = false;
 
   /**
    * Creates an instance of your login dialog.
@@ -65,7 +63,7 @@ export class LoginDialogComponent implements OnInit {
     public authService: AuthService,
     public backendService: BackendService,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public requestedBackend: string) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) { this.data = this.data || { allowAuthentication: true }; }
 
   /**
    * reactive form declaration
@@ -84,19 +82,18 @@ export class LoginDialogComponent implements OnInit {
     // Creating filter backends form control.
     this.backends = new FormControl();
 
-    // checking if user want to switch backend to a specific url
-    // if so, then fill the textbox with the requested url
-    // if not, the initial value will be empty
-    this.backends.setValue(this.requestedBackend ? this.requestedBackend : '');
-    this.requestedBackend && this.requestedBackend !== '' ? this.connectWithoutLogin = true : '';
+    if (this.data.allowAuthentication && this.backendService.current && this.backendService.connected) {
+      this.backends.setValue(this.backendService.current.url);
+      this.backendHasBeenSelected = true;
+      this.backendSelected();
+    }
 
     // Making sure we subscribe to value changes on backend text box, such that we can filter the backends accordingly.
     this.filteredBackends = this.backends.valueChanges
       .pipe(
         startWith(''),
-        map(value => this.filter(value))
+        map(() => this.filter(this.backends.value))
       );
-
   }
 
   /**
@@ -152,11 +149,11 @@ export class LoginDialogComponent implements OnInit {
           backends: this.backends.value
         });
         
-        this.connectWithoutLogin === true ? this.connectToBackendWithoutLogin() : '';
+        this.data.allowAuthentication === true ? '' : this.connectToBackendWithoutLogin();
       }, (error: any) => {
 
         // Oops.
-        this.feedbackService.showError(error);
+        this.feedbackService.showError('Could not find that backend');
         this.backendHasBeenSelected = false;
       });
     }
@@ -244,7 +241,7 @@ export class LoginDialogComponent implements OnInit {
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_IN,
         });
-        this.dialogRef.close();
+        this.dialogRef.close({});
         // if server is not configured yet, redirect to config page after a successful login
         if (this.configService.setupStatus?.config_done === false ||
           this.configService.setupStatus?.magic_crudified === false ||
