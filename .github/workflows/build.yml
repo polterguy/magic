@@ -1,0 +1,36 @@
+
+# Builds and deploys Docker image
+
+name: Docker Image CI
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and push Docker images
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        cd ./frontend
+        docker build -t servergardens/magic-frontend:latest-ci -f ./Dockerfile .
+        docker push servergardens/magic-frontend:latest-ci
+        cd ..
+        cd ./backend
+        docker build -t servergardens/magic-backend:latest-ci -f ./Dockerfile .
+        docker push servergardens/magic-backend:latest-ci
+
+    - name: Executing docker-compose.yml on VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DO_HOST }}
+        username: ${{ secrets.DO_USERNAME }}
+        password: ${{ secrets.DO_PASSWORD }}
+        port: ${{ secrets.DO_PORT }}
+        script: |
+          cd magic.deploy
+          docker-compose down
+          docker pull servergardens/magic-frontend:latest-ci
+          docker pull servergardens/magic-backend:latest-ci
+          docker-compose up -d
