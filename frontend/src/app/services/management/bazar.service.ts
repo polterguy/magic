@@ -147,11 +147,12 @@ export class BazarService {
    */
   public subscribeToNewsletter(name: string, email: string) {
 
-    return this.httpClient.get<Response>(
+    return this.httpClient.post<Response>(
       environment.bazarUrl +
-      '/magic/modules/bazar/subscribe?name=' +
-      encodeURIComponent(name) +
-      '&email=' + encodeURIComponent(email));
+      '/magic/modules/bazar/subscribe', {
+        name,
+        email
+      });
   }
 
   /**
