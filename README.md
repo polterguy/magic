@@ -1,5 +1,5 @@
 
-# Magic; THE Open Source Low-Code platform and IDE
+# Aista Magic Cloud, Low-Code CRUD automation
 
 ![Build status](https://github.com/polterguy/magic/actions/workflows/codeql-analysis.yml/badge.svg)
 
