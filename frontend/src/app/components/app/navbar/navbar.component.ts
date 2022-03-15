@@ -474,7 +474,7 @@ export class NavbarComponent implements OnInit {
    */
   switchBackend(backend: Backend) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
-    this.backendService.current = backend;
+    this.backendService.setActiveBackend(backend.url);
     window.location.replace(currentURL);
   }
 

@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports.
+import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -18,7 +19,6 @@ import { Messages } from 'src/app/models/messages.model';
 import { Response } from 'src/app/models/response.model';
 import { MessageService } from 'src/app/services/message.service';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
-import { Router } from '@angular/router';
 
 /**
  * Authentication and authorization HTTP service.
@@ -74,29 +74,14 @@ export class AuthService {
    * @param httpService Dependency injected HTTP service to handle HTTP requests
    * @param messageService Needed to transmit message when user logs out
    * @param backendService Dependency injected backend service to handle currently selected backends
+   * @param router Needed to redirect to root URL if user for some reasons is no longer authenticated
    */
   constructor(
     private httpClient: HttpClient,
     private httpService: HttpService,
     private messageService: MessageService,
     private backendService: BackendService,
-    private router: Router) {
-
-      // Checking if user has a token towards his current backend, and if the token is expired.
-      if (this.backendService.connected &&
-        this.backendService.current.token &&
-        this.backendService.isTokenExpired(this.backendService.current.token)) {
-
-        // Removing JWT token.
-        this.backendService.current.token = null;
-        this.backendService.persistBackends();
-
-      } else if (this.backendService.connected && this.backendService.current.token) {
-
-        // Token is not expired, hence we need to create a refresh token timer.
-        this.createRefreshJWTTimer(this.backendService.current);
-      }
-    }
+    private router: Router) { }
 
   /**
    * Returns true if user is authenticated towards backend.
@@ -124,7 +109,7 @@ export class AuthService {
    }
 
   /**
-   * Authenticates user towards specified backend.
+   * Authenticates user towards current backend.
    * 
    * @param username Username
    * @param password Password
@@ -174,9 +159,6 @@ export class AuthService {
 
             // Creating access right object.
             this.createAccessRights();
-
-            // Making sure we refresh JWT token just before it expires.
-            this.createRefreshJWTTimer(this.backendService.current);
 
             // Invoking next link in chain of observables.
             observer.next(auth);
@@ -353,58 +335,6 @@ export class AuthService {
      * to be invoked.
      */
     return true;
-  }
-
-  /**
-   * Creates a refresh timer for a single backend's JWT token.
-   * 
-   * @param backend Which backend to create a refresh timer for.
-   */
-  public createRefreshJWTTimer(backend: Backend) {
-
-    // Finding number of seconds until token expires.
-    const exp = (JSON.parse(atob(backend.token.split('.')[1]))).exp;
-    const now = Math.floor(new Date().getTime() / 1000);
-    const delta = (exp - now) - 60; // One minute before expiration.
-
-    // Creating a timer that kicks in 1 minute before token expires.
-    setTimeout(() => {
-
-      // Invoking the refresh token method for backend.
-      this.refreshJWTToken(backend);
-
-    }, Math.max(delta * 1000, 100));
-  }
-
-  /*
-   * Will refresh the JWT token for the specified backend.
-   * 
-   * @param backend Which backend to create a refresh timer for.
-   */
-  public refreshJWTToken(backend: Backend) {
-
-    // Verifying user has not explicitly logged out before timer kicked in.
-    if (backend.token) {
-
-      // Invoking refresh JWT token endpoint.
-      this.httpService.get<AuthenticateResponse>(
-        '/magic/system/auth/refresh-ticket').subscribe(res => {
-
-        // Saving JWT token, and presisting all backends.
-        backend.token = res.ticket;
-        this.backendService.persistBackends();
-
-        // Creating our next refresh JWT token timer.
-        this.createRefreshJWTTimer(backend);
-
-      }, () => {
-
-        // Token could not be refreshed, destroying the existing token, and persisting all backends.
-        console.error('JWT token could not be refreshed');
-        backend.token = null;
-        this.backendService.persistBackends();
-      });
-    }
   }
 
   /**
