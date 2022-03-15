@@ -183,13 +183,6 @@ export class BackendService {
   }
 
   /**
-   * Returns true if we are securely connected to a backend.
-   */
-  public get secure() {
-    return this.connected && this._current.url.startsWith('https://');
-  }
-
-  /**
    * Returns all backends the system has persisted.
    */
   public get backends() {
@@ -219,19 +212,6 @@ export class BackendService {
       toPersist.push(idxPersist);
     }
     localStorage.setItem('magic.backends', JSON.stringify(toPersist));
-  }
-
-  /**
-   * Returns true if specified JWT token is expired.
-   * 
-   * @param token Token to check
-   */
-  public isTokenExpired(token: string) {
-
-    // Parsing expiration time from JWT token.
-    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
-    const now = Math.floor(new Date().getTime() / 1000);
-    return now >= exp;
   }
 
   /*

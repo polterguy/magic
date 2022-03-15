@@ -62,7 +62,7 @@ export class AuthInterceptor implements HttpInterceptor {
        * if for instance the refresh JWT token timer does not fire,
        * due to a develop machine having been hibernated, etc.
        */
-      if (this.backendService.isTokenExpired(backend.token)) {
+      if (this.isTokenExpired(backend.token)) {
 
         /*
          * Token was expired, nulling it, persisting backends,
@@ -92,5 +92,16 @@ export class AuthInterceptor implements HttpInterceptor {
        */
       return next.handle(req);
     }
+  }
+
+  /*
+   * Returns true if specified JWT token is expired.
+   */
+   private isTokenExpired(token: string) {
+
+    // Parsing expiration time from JWT token.
+    const exp = (JSON.parse(atob(token.split('.')[1]))).exp;
+    const now = Math.floor(new Date().getTime() / 1000);
+    return now >= exp;
   }
 }
