@@ -13,9 +13,10 @@ import {
 } from '@angular/common/http';
 
 // Application specific imports.
+import { Backend } from '../models/backend.model';
+import { Messages } from '../models/messages.model';
 import { BackendService } from '../services/backend.service';
 import { MessageService } from '../services/message.service';
-import { Messages } from '../models/messages.model';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
@@ -46,9 +47,14 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler) {
 
-    // Verifying we have a JWT token for current backend.
-    const token = this.backendService.current?.token;
-    if (token && req.url.startsWith(this.backendService.current.url)) {
+    // Figuring out JWT token to use for invocation, if any.
+    let backend: Backend = null
+    for (const idx of this.backendService.backends) {
+      if (req.url.startsWith(idx.url)) {
+        backend = idx;
+      }
+    }
+    if (backend && backend.token) {
 
       /*
        * Verifying token is not expired.
@@ -56,13 +62,13 @@ export class AuthInterceptor implements HttpInterceptor {
        * if for instance the refresh JWT token timer does not fire,
        * due to a develop machine having been hibernated, etc.
        */
-      if (this.backendService.isTokenExpired(token)) {
+      if (this.backendService.isTokenExpired(backend.token)) {
 
         /*
          * Token was expired, nulling it, persisting backends,
          * and publishing logout message to other parts of the system.
          */
-        this.backendService.current.token = null;
+        backend.token = null;
         this.backendService.persistBackends();
         this.messageService.sendMessage({
           name: Messages.USER_LOGGED_OUT,
@@ -74,7 +80,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
       // Cloning HTTP request, adding Authorisation header, and invoking next in chain.
       const authReq = req.clone({
-        headers: req.headers.set('Authorization', 'Bearer ' + token)
+        headers: req.headers.set('Authorization', 'Bearer ' + backend.token)
       });
       return next.handle(authReq);
 

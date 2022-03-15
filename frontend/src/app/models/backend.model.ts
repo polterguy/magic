@@ -28,5 +28,10 @@ export class Backend {
    * JWT token as returned from backend during authentication.
    */
   token?: string;
+
+  /**
+   * Refresh JWT timer for backend.
+   */
+  refreshTimer?: any;
 }
   

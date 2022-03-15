@@ -129,9 +129,6 @@ export class ConfigService {
           token: res.ticket,
         };
 
-        // Making sure we refresh JWT token before it expires.
-        this.authService.createRefreshJWTTimer(this.backendService.current);
-
         // Finishing observable.
         observer.next(res);
         observer.complete();
