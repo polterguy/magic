@@ -16,8 +16,7 @@
         </h5>
         <h5
           class="my-0 text-muted d-flex align-items-center justify-content-center pointer" 
-          [matMenuTriggerFor]="backends" 
-          matTooltip="View list of your backends">
+          [matMenuTriggerFor]="backends">
           <div
             class="text-truncate max-width" 
             [class.text-warning]="backendService.current?.url.startsWith('http://')">{{getUserUrl()}} </div>
@@ -26,7 +25,7 @@
       </div>
 
       <mat-menu #backends="matMenu" yPosition="below">
-        <div mat-menu-item *ngFor="let backend of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{backend: backend}" [matTooltip]="backend.url.startsWith('http://') ? 'Your connection to this backend is not sercure' : ''">
+        <div mat-menu-item *ngFor="let backend of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{backend: backend}">
           <mat-icon>{{backend.token ? 'lock' : 'lock_open'}}</mat-icon>
           <span [class.text-warning]="backend.url.startsWith('http://')">
             {{backend.url.substring(backend.url.indexOf('://') + 3)}}
