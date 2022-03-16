@@ -188,28 +188,20 @@ export class BackendService {
     }
 
     // Ensuring we've got a token, and if not we don't create the timer.
-    if (!backend.token || !backend.token.token) {
+    if (!backend.token) {
       return;
     }
 
-    // Parsing token to see if it's got "exp" declaration.
-    const entities: string[] = backend.token.token.split('.');
-    const payloadStr: string = atob(entities[1]);
-    const payload: any = JSON.parse(payloadStr);
+    if (backend.token.exp) {
 
-    // Verifying token has "exp" declaration.
-    if (payload.exp) {
-      const exp: number = payload.exp;
-      const now = Math.floor(new Date().getTime() / 1000);
-      const secondsToExpire = (exp - now);
-
-      if (secondsToExpire < 0) {
+      // Token has "exp" declaration, implying it'll expire at some point.
+      if (backend.token.expired) {
 
         // Token has already expired, hence deleting token and persisting backends.
         backend.token = null;
         this.persistBackends();
 
-      } else if (secondsToExpire < 60) {
+      } else if (backend.token.expires_in < 60) {
 
         // Less than 60 minutes to expiration, hence refreshing immediately.
         this.refreshJWTToken(backend);
@@ -219,7 +211,7 @@ export class BackendService {
         // Creating a timer that kicks in 60 seconds before token expires where we refresh JWT token.
         setTimeout(() => {
           this.refreshJWTToken(backend);
-        }, (secondsToExpire - 60) * 1000);
+        }, (backend.token.expires_in - 60) * 1000);
       }
     }
   }
