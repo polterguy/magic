@@ -11,6 +11,7 @@ import { Backend } from '../models/backend.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { Token } from '../models/token.model';
 
 /**
  * Keeps track of your backend URLs and currently selected backends.
@@ -110,7 +111,7 @@ export class BackendService {
       // Updating existing backend's fields.
       existing[0].username = value.username;
       existing[0].password = value.password;
-      existing[0].token_raw = value.token_raw;
+      existing[0].token = value.token;
       value = existing[0];
 
     } else {
@@ -198,8 +199,8 @@ export class BackendService {
       if (idx.password) {
         idxPersist.password = idx.password;
       }
-      if (idx.token_raw) {
-        idxPersist.token = idx.token_raw;
+      if (idx.token) {
+        idxPersist.token = idx.token.token;
       }
       toPersist.push(idxPersist);
     }
@@ -222,12 +223,12 @@ export class BackendService {
     }
 
     // Ensuring we've got a token, and if not we don't create the timer.
-    if (!backend.token_raw) {
+    if (!backend.token) {
       return;
     }
 
     // Parsing token to see if it's got "exp" declaration.
-    const entities: string[] = backend.token_raw.split('.');
+    const entities: string[] = backend.token.token.split('.');
     const payloadStr: string = atob(entities[1]);
     const payload: any = JSON.parse(payloadStr);
 
@@ -240,7 +241,7 @@ export class BackendService {
       if (secondsToExpire < 0) {
 
         // Token has already expired, hence deleting token and persisting backends.
-        backend.token_raw = null;
+        backend.token = null;
         this.persistBackends();
 
       } else if (secondsToExpire < 60) {
@@ -270,7 +271,7 @@ export class BackendService {
     }
 
     // Ensuring user didn't logout after timer was created.
-    if (!backend.token_raw) {
+    if (!backend.token) {
       return;
     }
 
@@ -286,7 +287,7 @@ export class BackendService {
         });
 
         // Assigning new token to backend and persisting now with new token.
-        backend.token_raw = response.ticket;
+        backend.token = new Token(response.ticket);
         this.persistBackends();
 
         // Making sure we're able to refresh again once it's time.

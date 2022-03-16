@@ -218,7 +218,7 @@ export class SocketsComponent implements OnInit, OnDestroy {
           // Creating our connection.
           let builder = new HubConnectionBuilder();
           this.hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
-              accessTokenFactory: () => this.backendService.current.token_raw,
+              accessTokenFactory: () => this.backendService.current.token.token,
               skipNegotiation: true,
               transport: HttpTransportType.WebSockets,
           }).build();

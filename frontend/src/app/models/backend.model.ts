@@ -17,7 +17,7 @@ export class Backend {
     this.url = url;
     this.username = username;
     this.password = password;
-    this.token_raw = token;
+    this._token = token ? new Token(token) : null;
   }
 
   /**
@@ -36,28 +36,17 @@ export class Backend {
   password?: string;
 
   /**
-   * JWT token as returned from backend during authentication.
-   */
-  get token_raw() : string {
-    return this._token?.token ?? null;
-  }
-
-  /**
-   * Updates the JWT token for backend.
-   */
-  set token_raw(value: string) {
-    if (value === null) {
-      this._token = null;
-    } else {
-      this._token = new Token(value);
-    }
-  }
-
-  /**
    * Returns token for backend.
    */
   get token() : Token {
     return this._token;
+  }
+
+  /**
+   * Sets the token for the backend.
+   */
+  set token(value: Token) {
+    this._token = value;
   }
 
   /**

@@ -208,7 +208,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       // Creating our hub connection now that we know the channel name.
       let builder = new HubConnectionBuilder();
       this.hubConnection = builder.withUrl(this.backendService.current.url + '/sockets', {
-          accessTokenFactory: () => this.backendService.current.token_raw,
+          accessTokenFactory: () => this.backendService.current.token.token,
           skipNegotiation: true,
           transport: HttpTransportType.WebSockets,
         }).build();

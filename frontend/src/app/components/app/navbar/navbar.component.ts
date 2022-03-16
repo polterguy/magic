@@ -186,14 +186,14 @@ export class NavbarComponent implements OnInit {
 
         // Check if the url exists in localstorage
         // so the availability of token can be detected
-        let cur: Backend = new Backend(backend.replace(/\s/g, '').replace(/(\/)+$/,''), null, null,null);
+        let cur: Backend = new Backend(backend.replace(/\s/g, '').replace(/(\/)+$/,''), null, null, null);
         if (JSON.parse(localStorage.getItem('magic.backends'))) {
           const currentBackend = JSON.parse(localStorage.getItem('magic.backends'));
           currentBackend.forEach((element: any) => {
             if (element.url === cur.url) {
               cur.username = element.username;
               cur.password = element.password;
-              cur.token_raw = element.token;
+              cur.token = element.token;
             }
           });
         }
@@ -202,7 +202,7 @@ export class NavbarComponent implements OnInit {
         this.backendService.current = cur;
 
         // Based on token availability authentication status will be set
-        if (!this.backendService.current.token_raw) {
+        if (!this.backendService.current.token) {
           this.authService.updateAuthStatus(false);
         } else {
           this.authService.updateAuthStatus(true);

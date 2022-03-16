@@ -87,7 +87,7 @@ export class AuthService {
    * Returns true if user is authenticated towards backend.
    */
   public get authenticated() {
-    return this.backendService.connected && !!this.backendService.current.token_raw;
+    return this.backendService.connected && !!this.backendService.current.token;
   }
 
   /**
@@ -95,7 +95,7 @@ export class AuthService {
    */
   public get isRoot() {
     return this.backendService.connected &&
-      !!this.backendService.current.token_raw &&
+      !!this.backendService.current.token &&
       this.roles().filter(x => x === 'root').length > 0;
   }
 
@@ -236,7 +236,7 @@ export class AuthService {
     }
 
     // Parsing role field from JWT token, and splitting at ','.
-    const payload = atob(this.backendService.current.token_raw.split('.')[1]);
+    const payload = atob(this.backendService.current.token.token.split('.')[1]);
     const roles = JSON.parse(payload).role;
     if (Array.isArray(roles)) {
       return <string[]>roles;
