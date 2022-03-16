@@ -62,25 +62,11 @@ export class BackendService {
    * Sets the currently selected backend.
    */
   setActive(value: Backend) {
-
-    // Inserting specified backend as first instance and removing any backend with the same URL.
-    let endpoints: Endpoint[] = null;
-    this.backendsListService.backends = [value].concat(this.backendsListService.backends.filter(x => {
-      const isSame = x.url === value.url;
-      if (isSame) { if (x.refreshTimer) { clearTimeout(x.refreshTimer); } endpoints = x.endpoints; }
-      return !isSame;
-    }));
-
-    // Persisting all backends to local storage object.
-    this.persistBackends();
-    this.ensureRefreshJWTTokenTimer(this.current);
-
-    // Reusing endpoints if possible.
-    if (endpoints) {
-      value.applyEndpoints(endpoints || []);
-    } else {
+    if (this.backendsListService.setActive(value)) {
       this.getEndpoints();
     }
+    this.persistBackends();
+    this.ensureRefreshJWTTokenTimer(this.current);
   }
 
   /**

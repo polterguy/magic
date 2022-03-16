@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 // Application specific imports.
 import { Backend } from '../models/backend.model';
 import { environment } from 'src/environments/environment';
+import { Endpoint } from '../models/endpoint.model';
 
 /**
  * Service containing list of all backends in the system.
@@ -46,6 +47,25 @@ export class BackendsListService {
    */
   get backends() {
     return this._backends;
+  }
+
+  /**
+   * Sets the specified backend to the currently active backend, inserting backend if necessary.
+   * Returns true if endpoints needs to be fetched for specified backend.
+   * 
+   * @param value Backend to set as active
+   */
+  setActive(value: Backend) {
+    let endpoints: Endpoint[] = null;
+    this._backends = [value].concat(this._backends.filter(x => {
+      const isSame = x.url === value.url;
+      if (isSame) { if (x.refreshTimer) { clearTimeout(x.refreshTimer); } endpoints = x.endpoints; }
+      return !isSame;
+    }));
+    if (endpoints) {
+      value.applyEndpoints(endpoints || []);
+    }
+    return endpoints === null;
   }
 
   /**
