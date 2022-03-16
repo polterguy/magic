@@ -11,7 +11,10 @@ import { Token } from "./token.model";
  */
 export class Backend {
 
-  private _token?: Token = null;
+  private _token?: Token;
+  private _url: string;
+  private _username: string;
+  private _password: string;
 
   /**
    * Creates an instance of your type.
@@ -22,26 +25,46 @@ export class Backend {
    * @param token Existing JWT token used to access backend
    */
   constructor(url: string, username: string = null, password:string = null, token:string = null) {
-    this.url = url;
-    this.username = username;
-    this.password = password;
+    this._url = url;
+    this._username = username;
+    this._password = password;
     this._token = token ? new Token(token) : null;
   }
 
   /**
-   * Backend's URL.
+   * Returns root URL for backend.
    */
-  url: string;
+  get url() : string {
+    return this._url;
+  }
 
   /**
-   * Username used to authenticate user towards backend.
+   * Returns username used to authenticate towards backend.
    */
-  username?: string;
+  get username() : string {
+    return this._username;
+  }
 
   /**
-   * Password used to authenticate user towards backend.
+   * Changes username used to authenticate towards backend.
    */
-  password?: string;
+  set username(value: string) {
+    this._username = value;
+  }
+
+  /**
+   * Returns password used to authenticate towards backend.
+   */
+  get password() : string {
+    return this._password;
+  }
+
+  /**
+   * Changes password used to authenticate towards backend.
+   */
+   set password(value: string) {
+    this._password = value;
+  }
 
   /**
    * Returns token for backend.
