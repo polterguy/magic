@@ -135,8 +135,8 @@ export class AuthService {
         '/magic/system/auth/authenticate' + query, {
 
           /*
-           * Notice, if we're doing Windows automatica authentication,
-           * there will be given a username/password to this method, at which point
+           * Notice, if we're doing Windows automatic authentication,
+           * we will not be given a username/password combination to this method, at which point
            * we'll have to make sure Angular passes in Windows credentials to endpoint.
            */
           withCredentials: query === '' ? true : false,
@@ -144,7 +144,7 @@ export class AuthService {
         }).subscribe((auth: AuthenticateResponse) => {
 
           // Persisting backend data.
-          this.backendService.current = new Backend(this.backendService.current.url.replace(/\s/g, '').replace(/(\/)+$/,''), username, storePassword ? password : null, auth.ticket);
+          this.backendService.current = new Backend(this.backendService.current.url, username, storePassword ? password : null, auth.ticket);
 
           // In case backend URL changed, we need to retrieve endpoints again.
           this.getEndpoints().subscribe((endpoints: Endpoint[]) => {
