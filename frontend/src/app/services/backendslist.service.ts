@@ -5,10 +5,10 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
+import { environment } from 'src/environments/environment';
 
 /**
  * Service containing list of all backends in the system.
