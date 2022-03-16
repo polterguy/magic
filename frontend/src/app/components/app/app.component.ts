@@ -210,7 +210,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     // Retrieving all endpoints from backend if we have a backend.
-    if (this.backendService.connected) {
+    if (this.backendService.current) {
       this.authService.getEndpoints().subscribe(res => {
         ; // Do nothing ...
       }, error => {

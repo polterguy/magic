@@ -93,7 +93,7 @@
     <mat-expansion-panel
       class="mat-elevation-z0"
       hideToggle
-      *ngIf="(!authService.authenticated || !backendService.current?.token?.in_role('root')) && backendService.connected">
+      *ngIf="(!authService.authenticated || !backendService.current?.token?.in_role('root'))">
       <mat-expansion-panel-header 
         #panelC (click)="panelC._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 
@@ -485,7 +485,7 @@
 
     <!-- Register -->
     <mat-expansion-panel class="mat-elevation-z0" 
-      *ngIf="!authService.authenticated && backendService.connected" hideToggle>
+      *ngIf="!authService.authenticated && backendService.current" hideToggle>
       <mat-expansion-panel-header 
         #panelH (click)="panelH._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 

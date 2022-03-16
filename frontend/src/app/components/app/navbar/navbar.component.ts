@@ -176,7 +176,7 @@ export class NavbarComponent implements OnInit {
           cur.password = old[0].password;
           cur.token = old[0].token;
         }
-        this.backendService.current = cur;
+        this.backendService.setActive(cur);
 
         // Based on token availability authentication status will be set
         if (!this.backendService.current.token) {
@@ -202,7 +202,7 @@ export class NavbarComponent implements OnInit {
         const username = params['username'];
 
         // Updating current backend.
-        this.backendService.current = new Backend(url, username, null, token);
+        this.backendService.setActive(new Backend(url, username, null, token));
 
         // Verifying token is valid by invoking backend trying to refresh token.
         this.authService.verifyToken().subscribe(() => {
@@ -238,7 +238,7 @@ export class NavbarComponent implements OnInit {
          *
          * Need to set the current backend first.
          */
-        this.backendService.current = new Backend(params['url'], params['username']);
+        this.backendService.setActive(new Backend(params['url'], params['username']));
 
         // Registration confirmation of email address.
         this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {
@@ -272,7 +272,7 @@ export class NavbarComponent implements OnInit {
    public getUserUrl() {
 
     // Verifying user is connected to a backend.
-    if (!this.backendService.connected) {
+    if (!this.backendService.current) {
       return 'not connected';
     }
     
@@ -415,7 +415,7 @@ export class NavbarComponent implements OnInit {
    */
   switchBackend(backend: Backend) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
-    this.backendService.current = backend;
+    this.backendService.setActive(backend);
     window.location.replace(currentURL);
   }
 
