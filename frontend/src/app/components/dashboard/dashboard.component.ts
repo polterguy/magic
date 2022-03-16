@@ -19,6 +19,7 @@ import { LoginDialogComponent } from '../app/login-dialog/login-dialog.component
 
 // Importing global chart colors.
 import colors from './bar_chart_colors.json';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Dashboard component displaying general information about Magic,
@@ -40,8 +41,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public timeshiftChart: Timeshifts[] = [];
   public timeshiftChartLabel: string[] = [];
   public timeshiftChartData: string[] = [];
-
-  isRoot: boolean = undefined;
 
   /**
    * Common bar chart colors.
@@ -98,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   constructor(
     public authService: AuthService,
+    public backendService: BackendService,
     private diagnosticsService: DiagnosticsService,
     private dialog: MatDialog,
     private feedbackService: FeedbackService
@@ -110,19 +110,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // Making sure we retrieve system reports when user is authenticated.
     this.authSubscriber = this.authService.authenticatedChanged.subscribe((authenticated: boolean) => {
-      if (authenticated && this.authService.isRoot && !this.systemReport) {
+      if (authenticated && this.backendService.current?.token?.in_role('root') && !this.systemReport) {
         this.getSystemReport();
-      } else {
-        this.checkForRootUser();
       }
     });
 
     // Making sure we retrieve system report if user is already authenticated.
-    if (this.authService.authenticated && this.authService.isRoot && !this.systemReport) {
+    if (this.authService.authenticated && this.backendService.current?.token?.in_role('root') && !this.systemReport) {
       this.getSystemReport();
     }
-
-    this.checkForRootUser();
   }
 
   /**
@@ -133,13 +129,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Ensuring we unsubscribe from authenticated subscription.
     this.authSubscriber?.unsubscribe();
   }
-
-  /**
-   * checking against the user's roles to make sure if root is among them or not
-   */
-   checkForRootUser() {
-    this.isRoot = this.authService.isRoot;
-   }
 
   /**
    * getting user's preferences for the displayed charts inside dashboard
@@ -201,7 +190,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       // get the user's preferences for charts
       this.getChartPreferences();
-      this.checkForRootUser();
 
     }, (error: any) => this.feedbackService.showError(error));
   }

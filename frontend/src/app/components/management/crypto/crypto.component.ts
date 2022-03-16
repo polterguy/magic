@@ -14,6 +14,7 @@ import { CryptoService } from './services/crypto.service';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Crypto component allowing you to administrate your server's cryptography keys.
@@ -69,6 +70,7 @@ export class CryptoComponent {
     public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
+    private backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -112,7 +114,7 @@ export class CryptoComponent {
   public isRoot() {
 
     // Returning true if user belongs to the root role
-    return this.authService.authenticated && this.authService.isRoot;
+    return this.authService.authenticated && this.backendService.current?.token?.in_role('root');
   }
 
   /**

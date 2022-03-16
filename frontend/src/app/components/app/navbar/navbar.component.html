@@ -81,7 +81,7 @@
             [class.flex-column]="!sideNavStatus"
             [class.justify-content-center]="!sideNavStatus"
             (click)="notSmallScreen ? '' : closeNavbar()"
-            [routerLink]="!authService.authenticated || (backendIsConfigured || !authService.isRoot) ? '/' : null">
+            [routerLink]="!authService.authenticated || (backendIsConfigured || !backendService.current?.token?.in_role('root')) ? '/' : null">
             <mat-icon>{{authService.access.files.list_files && authService.access.files.list_folders ? 'dashboard' : 'home'}}</mat-icon>
             <span class="title">{{authService.access.files.list_files && authService.access.files.list_folders ? 'Dashboard' : 'Home'}}</span>
           </a>
@@ -93,7 +93,7 @@
     <mat-expansion-panel
       class="mat-elevation-z0"
       hideToggle
-      *ngIf="(!authService.authenticated || !authService.isRoot) && backendService.connected">
+      *ngIf="(!authService.authenticated || !backendService.current?.token?.in_role('root')) && backendService.connected">
       <mat-expansion-panel-header 
         #panelC (click)="panelC._toggle()" 
         [matTooltipDisabled]="sideNavStatus" 

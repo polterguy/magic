@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
        * status of backend, and if not configured completely, redirect to '/config' and
        * ensure navigation items are disabled.
        */
-      if (authenticated && this.authService.isRoot) {
+      if (authenticated && this.backendService.current?.token?.in_role('root')) {
 
         // Checking configuration status of backend.
         this.configService.status().subscribe(config => {
@@ -138,7 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     // If user is already authenticated as root we immediately check status.
-    if (this.authService.authenticated && this.authService.isRoot) {
+    if (this.authService.authenticated && this.backendService.current?.token?.in_role('root')) {
 
       // Checking configuration status of backend.
       this.configService.status().subscribe(config => {
@@ -285,7 +285,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private retrieveBackendVersion() {
 
     // Retrieving backend version if we're authenticated.
-    if (this.authService.isRoot) {
+    if (this.backendService.current?.token?.in_role('root')) {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {
