@@ -32,6 +32,7 @@ import { ViewAppDialogComponent } from './view-app-dialog/view-app-dialog.compon
 import { SubscribeDialogComponent } from './subscribe-dialog/subscribe-dialog.component';
 import { ViewReadmeDialogComponent } from './view-readme-dialog/view-readme-dialog.component';
 import { ViewInstalledAppDialogComponent } from './view-installed-app-dialog/view-installed-app-dialog.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Bazar component allowing you to obtain additional Micro Service backend
@@ -126,6 +127,7 @@ export class BazarComponent implements OnInit, OnDestroy {
     private fileService: FileService,
     private bazarService: BazarService,
     private configService: ConfigService,
+    private backendService: BackendService,
     private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
@@ -163,7 +165,7 @@ export class BazarComponent implements OnInit, OnDestroy {
       });
 
     // Sanity checking that user is root.
-    if (this.authService.isRoot) {
+    if (this.backendService.current?.token?.in_role('root')) {
 
       // Retrieving Bazar items from main Bazar.
       this.getItems(true);

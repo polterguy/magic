@@ -1,5 +1,5 @@
 <!-- if user is authenticated and has role of "root" -->
-<ng-container *ngIf="authService.authenticated && isRoot">
+<ng-container *ngIf="authService.authenticated && backendService.current?.token?.in_role('root')">
     <div class="row">
         <div class="col-12 mb-general">
             <!-- title and preferences -->
@@ -161,7 +161,7 @@
 </ng-container>
 
 <!-- if user is authenticated but doesn't have "root" role -->
-<ng-container *ngIf="authService.authenticated && !isRoot">
+<ng-container *ngIf="authService.authenticated && !backendService.current?.token?.in_role('root')">
     <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 w-100 welcome-section">
         <h1 class="mat-title">Welcome to Aista Magic Cloud</h1>
         <p class="mat-subheading-2 mb-4">Navigate through pages to see how you can interact with the system.</p>

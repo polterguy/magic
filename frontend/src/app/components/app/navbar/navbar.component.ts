@@ -330,7 +330,7 @@ export class NavbarComponent implements OnInit {
   private retrieveBackendVersion() {
 
     // Retrieving backend version if we're authenticated.
-    if (this.authService.isRoot) {
+    if (this.backendService.current?.token?.in_role('root')) {
 
       // Invoking backend to retrieve version.
       this.diagnosticsService.version().subscribe((version: any) => {

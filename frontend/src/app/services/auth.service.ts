@@ -95,14 +95,6 @@ export class AuthService {
   }
 
   /**
-   * Returns true if user is authenticated as root.
-   */
-  get isRoot() : boolean {
-    return this.backendService.connected &&
-      this.backendService.current.token?.in_role('root') || false;
-  }
-
-  /**
    * Invokes specified backend to check if auto-auth has been turned on.
    * 
    * @param url URL of backend to check
