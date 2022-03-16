@@ -25,7 +25,7 @@
       </div>
 
       <mat-menu #backends="matMenu" yPosition="below">
-        <div mat-menu-item *ngFor="let backend of listOfBackends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{backend: backend}">
+        <div mat-menu-item *ngFor="let backend of backendService.backends" [matMenuTriggerFor]="selectedBackend" [matMenuTriggerData]="{backend: backend}">
           <mat-icon>{{backend.token ? 'lock' : 'lock_open'}}</mat-icon>
           <span [class.text-warning]="backend.url.startsWith('http://')">
             {{backend.url.substring(backend.url.indexOf('://') + 3)}}
@@ -42,9 +42,9 @@
             <mat-icon>content_copy</mat-icon>
             Copy url
           </button>
-          <button mat-menu-item [disabled]="backend?.url === currentBackend" (click)="switchBackend(backend)">
+          <button mat-menu-item [disabled]="backend?.url === backendService.current?.url" (click)="switchBackend(backend)">
             <mat-icon>change_circle</mat-icon>
-            {{backend?.url === currentBackend ? 'Currently in use' : 'Switch to this backend'}}
+            {{backend?.url === backendService.current?.url ? 'Currently in use' : 'Switch to this backend'}}
           </button>
           <button mat-menu-item (click)="deleteBackend(backend)">
             <mat-icon>delete</mat-icon>
