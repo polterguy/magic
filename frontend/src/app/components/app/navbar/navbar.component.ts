@@ -211,7 +211,7 @@ export class NavbarComponent implements OnInit {
           this.feedbackService.showInfo(`You were successfully authenticated as '${username}'`);
 
           // Checking if token is a 'reset-password' type of token.
-          if (this.authService.roles().filter(x => x === 'reset-password').length > 0) {
+          if (this.backendService.current.token.in_role('reset-password')) {
 
             // Redirecting user to change-password route.
             this.router.navigate(['/change-password']);
@@ -283,13 +283,6 @@ export class NavbarComponent implements OnInit {
     // }
 
     return url;
-  }
-
-  /**
-   * Returns all roles user belongs to.
-   */
-  public getUserRoles() {
-    return this.authService.roles().join(', ');
   }
 
   /**
