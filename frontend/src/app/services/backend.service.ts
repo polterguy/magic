@@ -11,8 +11,8 @@ import { HttpClient } from '@angular/common/http';
 import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
-import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 import { BackendsListService } from './backendslist.service';
+import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
  * Keeps track of your backends and your currently selected backend.
