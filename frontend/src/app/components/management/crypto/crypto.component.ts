@@ -70,7 +70,7 @@ export class CryptoComponent {
     public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
-    private backendService: BackendService,
+    public backendService: BackendService,
     private feedbackService: FeedbackService) { }
 
   /**
@@ -106,15 +106,6 @@ export class CryptoComponent {
 
     // House cleaning.
     this.subscription.unsubscribe();
-  }
-
-  /**
-   * Returns true if user is root.
-   */
-  public isRoot() {
-
-    // Returning true if user belongs to the root role
-    return this.authService.authenticated && this.backendService.current?.token?.in_role('root');
   }
 
   /**

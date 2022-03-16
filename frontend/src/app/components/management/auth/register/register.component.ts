@@ -66,7 +66,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
 
     // Checking status of user.
-    if (this.authService.authenticated) {
+    if (this.backendService.current?.token) {
       this.status = 'already-logged-in';
     } else {
       this.status = 'ok-to-register';

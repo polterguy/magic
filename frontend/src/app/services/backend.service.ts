@@ -10,8 +10,10 @@ import { HttpClient } from '@angular/common/http';
 // Application specific imports.
 import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
+import { Endpoint } from '../models/endpoint.model';
 import { environment } from 'src/environments/environment';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
+import { BackendsListService } from './backendslist.service';
 
 /**
  * Keeps track of your backends and your currently selected backend.
@@ -24,28 +26,27 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 })
 export class BackendService {
 
-  // Backends we are currently connected to.
-  private _backends: Backend[] = [];
-
   /**
    * Creates an instance of your service.
    * 
    * @httpClient Needed to refresh JWT token for backends
+   * @backendsListService List of all backends in system
    */
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private backendsListService: BackendsListService) {
 
     // Reading persisted backends from local storage, or defaulting to whatever is in our "environment.ts" file if we're on localhost.
     const storage = localStorage.getItem('magic.backends');
     const backends = storage === null ? (window.location.href.indexOf('://localhost') === -1 ? [] : environment.defaultBackends) : <any[]>JSON.parse(storage);
-    this._backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));
+    this.backendsListService.backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));
 
     // Checking we actually have any backends stored.
-    if (this._backends.length > 0) {
-
-      // Making sure we create a "refresh JWT token" timer for all backends fetched from localStorage.
-      for (const idx of this._backends) {
+    if (this.backendsListService.backends.length > 0) {
+      for (const idx of this.backendsListService.backends) {
         this.ensureRefreshJWTTokenTimer(idx);
       }
+      this.getEndpoints();
     }
   }
 
@@ -53,14 +54,14 @@ export class BackendService {
    * Returns the currently used backend.
    */
   get current() {
-    return this._backends.length === 0 ? null : this._backends[0];
+    return this.backendsListService.backends.length === 0 ? null : this.backendsListService.backends[0];
   }
 
   /**
    * Returns all backends.
    */
   get backends() {
-    return this._backends;
+    return this.backendsListService.backends;
   }
 
   /**
@@ -69,15 +70,23 @@ export class BackendService {
   setActive(value: Backend) {
 
     // Inserting specified backend as first instance and removing any backend with the same URL.
-    this._backends = [value].concat(this._backends.filter(x => {
+    let endpoints: Endpoint[] = null;
+    this.backendsListService.backends = [value].concat(this.backendsListService.backends.filter(x => {
       const isSame = x.url === value.url;
-      if (isSame && x.refreshTimer) { clearTimeout(x.refreshTimer); }
+      if (isSame) { if (x.refreshTimer) { clearTimeout(x.refreshTimer); } endpoints = x.endpoints; }
       return !isSame;
     }));
 
     // Persisting all backends to local storage object.
     this.persistBackends();
     this.ensureRefreshJWTTokenTimer(this.current);
+
+    // In case backend URL changed, we need to retrieve endpoints again.
+    if (endpoints) {
+      value.applyEndpoints(endpoints || []);
+    } else {
+      this.getEndpoints();
+    }
   }
 
   /**
@@ -96,7 +105,7 @@ export class BackendService {
 
     // We need to track current backend such that we can return to caller whether or not refreshing UI is required.
     const cur = this.current;
-    this._backends = this._backends.filter(x => x.url !== backend.url);
+    this.backendsListService.backends = this.backendsListService.backends.filter(x => x.url !== backend.url);
 
     /*
      * Persisting all backends to local storage object,
@@ -104,6 +113,13 @@ export class BackendService {
      */
     this.persistBackends();
     return cur.url === backend.url;
+  }
+
+  /**
+   * Fetches endpoints for current backend again.
+   */
+  refetchEndpoints() {
+    this.getEndpoints();    
   }
 
   /*
@@ -117,7 +133,7 @@ export class BackendService {
 
     // Making sure we only persist non-null fields and that we do NOT persist "refreshTimer" field.
     const toPersist: any[] = [];
-    for (const idx of this._backends) {
+    for (const idx of this.backendsListService.backends) {
       var idxPersist: any = {
         url: idx.url,
       };
@@ -127,7 +143,7 @@ export class BackendService {
       if (idx.password) {
         idxPersist.password = idx.password;
       }
-      if (idx.token) {
+      if (idx.token && !idx.token.expired) {
         idxPersist.token = idx.token.token;
       }
       toPersist.push(idxPersist);
@@ -210,5 +226,14 @@ export class BackendService {
         this.ensureRefreshJWTTokenTimer(backend);
         
       }, (error: any) => console.error(error));
+  }
+
+  /*
+   * Retrieves endpoints for currently selected backend.
+   */
+  private getEndpoints() {
+    this.httpClient.get<Endpoint[]>(this.current.url + '/magic/system/auth/endpoints').subscribe(res => {
+      this.current.applyEndpoints(res || []);
+    }, error => console.error(error));
   }
 }

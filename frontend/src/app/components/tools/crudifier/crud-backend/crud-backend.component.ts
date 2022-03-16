@@ -27,6 +27,7 @@ import { CrudifierTableComponent } from './crud-table/crud-table.component';
 import { LoaderInterceptor } from 'src/app/interceptors/loader.interceptor';
 import { DefaultDatabaseType } from '../../../../models/default-database-type.model';
 import { CrudifierSetDefaultsComponent } from './set-defaults/crudifier-set-defaults.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Crudifier component for crudifying database
@@ -99,6 +100,7 @@ export class CrudBackendComponent implements OnInit {
     private sqlService: SqlService,
     public authService: AuthService,
     private cacheService: CacheService,
+    private backendService: BackendService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
@@ -543,12 +545,7 @@ export class CrudBackendComponent implements OnInit {
     this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
 
       // Reretriving endpoints.
-      this.authService.getEndpoints().subscribe(() => {
-
-        // Simply logging to console.
-        console.log('Endpoint auth requirements flushed and re-retrieved');
-
-      }, (error: any) => this.feedbackService.showError(error));
+      this.backendService.refetchEndpoints();
 
     }, (error: any) => this.feedbackService.showError(error));
   }
