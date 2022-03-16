@@ -25,7 +25,7 @@ export class Backend {
    * @param token Existing JWT token used to access backend
    */
   constructor(url: string, username: string = null, password:string = null, token:string = null) {
-    this._url = url;
+    this._url = url.replace(/\s/g, '').replace(/(\/)+$/,'');
     this._username = username;
     this._password = password;
     this._token = token ? new Token(token) : null;
