@@ -167,8 +167,7 @@ export class LoginDialogComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/,'');
-    this.backendService.current = new Backend(url, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null);
+    this.backendService.current = new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null);
     this.dialogRef.close();
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
@@ -219,8 +218,7 @@ export class LoginDialogComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/, '');
-    this.backendService.current = new Backend(url, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null);
+    this.backendService.current = new Backend(this.backends.value, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null);
 
     // Authenticating user.
     this.authService.login(
