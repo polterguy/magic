@@ -24,7 +24,6 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 export class BackendService {
 
   private _backends: Backend[] = [];
-  private _current: Backend = null;
 
   /**
    * Creates an instance of your service.
@@ -49,9 +48,6 @@ export class BackendService {
     // Checking we actually have any backends stored.
     if (this._backends.length > 0) {
 
-      // We always use the first backend as our "current" backend.
-      this._current = this._backends[0];
-
       // Making sure we create a "refresh JWT token" timer for all backends fetched from localStorage.
       for (const idx of this._backends) {
         this.ensureRefreshJWTTokenTimer(idx);
@@ -63,14 +59,14 @@ export class BackendService {
    * Returns true if user is connected to a backend.
    */
   public get connected() {
-    return !!this._current;
+    return this._backends.length > 0;
   }
 
   /**
    * Returns the currently used backend API URL.
    */
   public get current() {
-    return this._current;
+    return this._backends.length === 0 ? null : this._backends[0];
   }
 
   /**
@@ -96,7 +92,6 @@ export class BackendService {
      * and updating the currently selected backend.
      */
     this.persistBackends();
-    this._current = this._backends.length > 0 ? this._backends[0] : null;
     return cur.url === backend.url;
   }
 
@@ -146,7 +141,6 @@ export class BackendService {
      * and updating the currently selected backend.
      */
     this.persistBackends();
-    this._current = value;
 
     // Ensuring we create a JWT refresh timer for current backend.
     this.ensureRefreshJWTTokenTimer(this.current);
@@ -179,7 +173,6 @@ export class BackendService {
      * and updating the currently selected backend.
      */
     this.persistBackends();
-    this._current = this._backends[0];
   }
 
   /**
