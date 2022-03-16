@@ -45,13 +45,6 @@ export class NavbarComponent implements OnInit {
 
   public currentYear: number;
 
-  currentBackend: string;
-
-  /**
-   * storing list of backends from localstorage
-   */
-  public listOfBackends: any = [];
-
   /**
    * get navbar state as an input from app component
    */
@@ -137,9 +130,6 @@ export class NavbarComponent implements OnInit {
     // setting theme value, if user has set previously, otherwise is set to light 
     this.theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
     this.overlayContainer.getContainerElement().classList.add(this.theme);
-
-    // retrieving list of stored backend urls in localstorage IF there are any
-    localStorage.getItem('magic.backends') ? this.getBackends() : '';
     
     // wait for access list to be ready
     // then detect changes to update view
@@ -154,12 +144,6 @@ export class NavbarComponent implements OnInit {
     })();
 
     this.authService.authenticatedChanged.subscribe(status => {
-      if (status) {
-        this.getBackends();
-      }
-      if (this.backendService.connected) {
-        this.currentBackend = this.backendService.current.url;
-      }
       this.cdRef.detectChanges();
     });
     
@@ -184,21 +168,14 @@ export class NavbarComponent implements OnInit {
       // If url has parameters, we're identifying them
       if (backend) {
 
-        // Check if the url exists in localstorage
-        // so the availability of token can be detected
-        let cur: Backend = new Backend(backend.replace(/\s/g, '').replace(/(\/)+$/,''));
-        if (JSON.parse(localStorage.getItem('magic.backends'))) {
-          const currentBackend = JSON.parse(localStorage.getItem('magic.backends'));
-          currentBackend.forEach((element: any) => {
-            if (element.url === cur.url) {
-              cur.username = element.username;
-              cur.password = element.password;
-              cur.token = element.token;
-            }
-          });
+        // Check if the url already exists in persisted backends.
+        const cur: Backend = new Backend(backend);
+        const old = this.backendService.backends.filter(x => x.url === cur.url);
+        if (old.length > 0) {
+          cur.username = old[0].username;
+          cur.password = old[0].password;
+          cur.token = old[0].token;
         }
-
-        // Updating backend
         this.backendService.current = cur;
 
         // Based on token availability authentication status will be set
@@ -276,11 +253,6 @@ export class NavbarComponent implements OnInit {
         });
       }
     });
-
-    // Initializing current backend
-    if (this.backendService.connected) {
-      this.currentBackend = this.backendService.current.url;
-    }
   }
 
   /**
@@ -357,7 +329,6 @@ export class NavbarComponent implements OnInit {
     if (!this.notSmallScreen) {
       this.closeNavbar();
     }
-    this.getBackends();
   }
 
   /*
@@ -447,25 +418,11 @@ export class NavbarComponent implements OnInit {
   }
 
   /**
-   * retrieving list of stored backend urls in localstorage
-   */
-  getBackends() {
-    this.listOfBackends = [];
-    const list = JSON.parse(localStorage.getItem('magic.backends'));
-    list.forEach((element: any) => {
-      if (element.url !== ''){
-        this.listOfBackends.push(element)
-      }
-    });
-    
-  }
-
-  /**
    * Switching backend
    */
   switchBackend(backend: Backend) {
     const currentURL: string = window.location.protocol + '//' + window.location.host;
-    this.backendService.setActiveBackend(backend.url);
+    this.backendService.current = backend;
     window.location.replace(currentURL);
   }
 
@@ -478,8 +435,6 @@ export class NavbarComponent implements OnInit {
     if (this.backendService.remove(backend)) {
       const currentURL: string = window.location.protocol + '//' + window.location.host;
       window.location.replace(currentURL);
-    } else {
-      this.getBackends();
     }
   }
 }
