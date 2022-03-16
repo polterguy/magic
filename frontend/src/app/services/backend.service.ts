@@ -68,8 +68,12 @@ export class BackendService {
    */
   setActive(value: Backend) {
 
-    // Removing any backend with the same URL.
-    this._backends = [value].concat(this._backends.filter(x => x.url !== value.url));
+    // Inserting specified backend as first instance and removing any backend with the same URL.
+    this._backends = [value].concat(this._backends.filter(x => {
+      const isSame = x.url === value.url;
+      if (isSame && x.refreshTimer) { clearTimeout(x.refreshTimer); }
+      return !isSame;
+    }));
 
     // Persisting all backends to local storage object.
     this.persistBackends();
