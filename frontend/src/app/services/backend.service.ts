@@ -141,36 +141,6 @@ export class BackendService {
   }
 
   /**
-   * Changes active backend.
-   * 
-   * @param url URL of backend to make active.
-   */
-  setActiveBackend(url: string) {
-
-    /*
-     * Making sure we sort backends such that the current backend
-     * becomes the first in our list of backends, which makes sure
-     * that if the user refreshes the browser, this is the backend
-     * that will be used.
-     */
-    this._backends.sort((lhs: Backend, rhs: Backend) => {
-      if (lhs.url === url) {
-        return -1;
-      }
-      if (rhs.url === url) {
-        return 1;
-      }
-      return 0;
-    });
-
-    /*
-     * Persisting all backends to local storage object,
-     * and updating the currently selected backend.
-     */
-    this.persistBackends();
-  }
-
-  /**
    * Returns all backends.
    */
   get backends() {
@@ -218,7 +188,7 @@ export class BackendService {
     }
 
     // Ensuring we've got a token, and if not we don't create the timer.
-    if (!backend.token) {
+    if (!backend.token || !backend.token.token) {
       return;
     }
 
