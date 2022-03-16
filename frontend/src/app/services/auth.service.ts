@@ -22,6 +22,8 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 
 /**
  * Authentication and authorization HTTP service.
+ * 
+ * This service will allow you to authenticate towards the active backend.
  */
 @Injectable({
   providedIn: 'root'
@@ -53,21 +55,6 @@ export class AuthService {
   private _authenticated = new BehaviorSubject<boolean>(undefined);
 
   /**
-   * To allow consumers to subscribe to authentication status changes.
-   */
-  public authenticatedChanged = this._authenticated.asObservable();
-
-  /**
-   * Returns access rights for user.
-   */
-  public get access() { return this._access; }
-
-  /**
-   * Returns true if endpoints have been initialised.
-   */
-  public get has_endpoints() { return this._endpoints && this._endpoints.length > 0; }
-
-  /**
    * Creates an instance of your service.
    * 
    * @param httpClient Dependency injected HTTP client to handle (raw) HTTP requests, without backend dependencies
@@ -84,19 +71,35 @@ export class AuthService {
     private router: Router) { }
 
   /**
+   * To allow consumers to subscribe to authentication status changes.
+   */
+  authenticatedChanged = this._authenticated.asObservable();
+
+  /**
+   * Returns access rights for user.
+   */
+  get access() { return this._access; }
+
+  /**
+   * Returns true if endpoints have been initialised.
+   */
+  get has_endpoints() { return this._endpoints && this._endpoints.length > 0; }
+
+  /**
    * Returns true if user is authenticated towards backend.
    */
-  public get authenticated() {
-    return this.backendService.connected && !!this.backendService.current.token;
+  get authenticated() : boolean {
+    return this.backendService.connected &&
+      this.backendService.current.token && 
+      !this.backendService.current.token.expired;
   }
 
   /**
    * Returns true if user is authenticated as root.
    */
-  public get isRoot() {
+  get isRoot() : boolean {
     return this.backendService.connected &&
-      !!this.backendService.current.token &&
-      this.roles().filter(x => x === 'root').length > 0;
+      this.backendService.current.token?.in_role('root') || false;
   }
 
   /**
@@ -104,7 +107,7 @@ export class AuthService {
    * 
    * @param url URL of backend to check
    */
-  public autoAuth(url: string) {
+  autoAuth(url: string) {
     return this.httpClient.get<Response>(url + '/magic/system/auth/auto-auth');
    }
 
@@ -115,10 +118,7 @@ export class AuthService {
    * @param password Password
    * @param storePassword Whether or not passsword should be persisted into local storage
    */
-  public login(
-    username: string,
-    password: string,
-    storePassword: boolean) {
+  login(username: string, password: string, storePassword: boolean) {
 
     // Returning new observer, chaining authentication and retrieval of endpoints.
     return new Observable<AuthenticateResponse>(observer => {
@@ -179,7 +179,7 @@ export class AuthService {
    * @param destroyPassword Whether or not password should be removed before persisting backend
    * @param showInfo Whether or not user should be shown information telling him he was successfully logged out or not
    */
-  public logout(destroyPassword: boolean, showInfo: boolean = true) {
+  logout(destroyPassword: boolean, showInfo: boolean = true) {
     if (this.authenticated) {
       this.backendService.current = new Backend(this.backendService.current.url, this.backendService.current.username, destroyPassword ? null : this.backendService.current.password);
       this.messageService.sendMessage({
@@ -196,7 +196,7 @@ export class AuthService {
   /**
    * Retrieves endpoints for currently selected backend.
    */
-  public getEndpoints() {
+  getEndpoints() {
 
     // Returning new observer, chaining retrieval of endpoints and storing them locally.
     return new Observable<Endpoint[]>(observer => {
@@ -227,20 +227,8 @@ export class AuthService {
    * Returns a list of all roles currently authenticated
    * user belongs to, if any.
    */
-  public roles() {
-
-    // Verifying user is authenticated, and returning empty array if not.
-    if (!this.authenticated) {
-      return <string[]>[];
-    }
-
-    // Parsing role field from JWT token, and splitting at ','.
-    const payload = atob(this.backendService.current.token.token.split('.')[1]);
-    const roles = JSON.parse(payload).role;
-    if (Array.isArray(roles)) {
-      return <string[]>roles;
-    }
-    return <string[]>[roles];
+  roles() {
+    return this.backendService.current?.token?.roles || [];
   }
 
   /**
@@ -249,7 +237,7 @@ export class AuthService {
    * 
    * @param component Name of component to check if user has access to
    */
-  public hasAccess(component: string) {
+  hasAccess(component: string) {
 
     // Retrieving roles, and all endpoints matching path for specific component.
     const userRoles = this.roles();
@@ -292,7 +280,7 @@ export class AuthService {
    * @param url URL to check
    * @param verb HTTP verb to check
    */
-  public canInvoke(url: string, verb: string) {
+  canInvoke(url: string, verb: string) {
 
     // Retrieving roles, and all endpoints matching path for specific component.
     const userRoles = this.roles();
@@ -332,7 +320,7 @@ export class AuthService {
    * 
    * @param password New password for user
    */
-  public changePassword(password: string) {
+  changePassword(password: string) {
 
     // Invoking backend returning observable to caller.
     return this.httpService.put<Response>('/magic/system/auth/change-password', {
@@ -343,7 +331,7 @@ export class AuthService {
   /**
    * Verifies validity of token by invoking backend.
    */
-  public verifyToken() {
+  verifyToken() {
 
     // Invokes backend and returns observable to caller.
     return this.httpService.get<Response>('/magic/system/auth/verify-ticket');
@@ -356,10 +344,7 @@ export class AuthService {
    * @param password Password user selected
    * @param frontendUrl Frontend's URL to use as root URL for confirming email address
    */
-  public register(
-    username: string,
-    password: string,
-    frontendUrl: string) {
+  register(username: string, password: string, frontendUrl: string) {
 
     // Invokes backend and returns observable to caller.
     return this.httpService.post<Response>(
@@ -377,7 +362,7 @@ export class AuthService {
    * @param username Username of user which is email address user supplied during registration
    * @param token Security token system generated for user to avoid user's registering other users' email addresses
    */
-  public verifyEmail(username: string, token: string) {
+  verifyEmail(username: string, token: string) {
 
     // Invokes backend and returns observable to caller.
     return this.httpService.post<Response>(
@@ -393,7 +378,7 @@ export class AuthService {
    * @param username Username of user to generate the email for
    * @param frontendUrl URL of frontend to use to build reset-password email from
    */
-  public sendResetPasswordEmail(username: string, frontendUrl: string) {
+  sendResetPasswordEmail(username: string, frontendUrl: string) {
 
     // Invoking backend returning observable to caller.
     return this.httpService.post<Response>('/magic/system/auth/send-reset-password-link', {
@@ -405,7 +390,7 @@ export class AuthService {
   /**
    * Creates access right object used to determine if user has access to specific parts of the app or not.
    */
-  public createAccessRights() {
+  createAccessRights() {
     this._access = {
       sql: {
         execute_access:
