@@ -19,6 +19,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/management/config.service';
+import { Backend } from 'src/app/models/backend.model';
 
 class DialogData {
   allowAuthentication?: boolean;
@@ -167,11 +168,7 @@ export class LoginDialogComponent implements OnInit {
      * a current backend.
      */
     let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/,'');
-    this.backendService.current = {
-      url: url,
-      username: this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
-      password: this.savePassword ? this.loginForm.value.password : null,
-    };
+    this.backendService.current = new Backend(url, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null, null);
     this.dialogRef.close();
     const currentURL: string = window.location.protocol + '//' + window.location.host;
     const param: string = currentURL + '?backend=';
@@ -189,9 +186,7 @@ export class LoginDialogComponent implements OnInit {
     /*
      * Storing currently selected backend.
      */
-    this.backendService.current = {
-      url: this.backends.value,
-    };
+    this.backendService.current = new Backend(this.backends.value, null, null, null);
 
     // Invoking backend to request a reset password link to be sent as an email.
     this.authService.sendResetPasswordEmail(
@@ -225,11 +220,7 @@ export class LoginDialogComponent implements OnInit {
      * a current backend.
      */
     let url = this.backends.value.replace(/\s/g, '').replace(/(\/)+$/, '');
-    this.backendService.current = {
-      url: url,
-      username: this.autoLogin === false || this.advanced ? this.loginForm.value.username : null,
-      password: this.savePassword ? this.loginForm.value.password : null,
-    };
+    this.backendService.current = new Backend(url, this.autoLogin === false || this.advanced ? this.loginForm.value.username : null, this.savePassword ? this.loginForm.value.password : null, null);
 
     // Authenticating user.
     this.authService.login(

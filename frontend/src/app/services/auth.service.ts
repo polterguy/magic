@@ -87,7 +87,7 @@ export class AuthService {
    * Returns true if user is authenticated towards backend.
    */
   public get authenticated() {
-    return this.backendService.connected && !!this.backendService.current.token;
+    return this.backendService.connected && !!this.backendService.current.token_raw;
   }
 
   /**
@@ -95,7 +95,7 @@ export class AuthService {
    */
   public get isRoot() {
     return this.backendService.connected &&
-      !!this.backendService.current.token &&
+      !!this.backendService.current.token_raw &&
       this.roles().filter(x => x === 'root').length > 0;
   }
 
@@ -144,12 +144,7 @@ export class AuthService {
         }).subscribe((auth: AuthenticateResponse) => {
 
           // Persisting backend data.
-          this.backendService.current = {
-            url: this.backendService.current.url.replace(/\s/g, '').replace(/(\/)+$/,''),
-            username,
-            password: storePassword ? password : null,
-            token: auth.ticket,
-          };
+          this.backendService.current = new Backend(this.backendService.current.url.replace(/\s/g, '').replace(/(\/)+$/,''), username, storePassword ? password : null,auth.ticket);
 
           // In case backend URL changed, we need to retrieve endpoints again.
           this.getEndpoints().subscribe((endpoints: Endpoint[]) => {
@@ -186,11 +181,7 @@ export class AuthService {
    */
   public logout(destroyPassword: boolean, showInfo: boolean = true) {
     if (this.authenticated) {
-      this.backendService.current = {
-        url: this.backendService.current.url,
-        username: this.backendService.current.username,
-        password: destroyPassword ? null : this.backendService.current.password
-      };
+      this.backendService.current = new Backend(this.backendService.current.url, this.backendService.current.username, destroyPassword ? null : this.backendService.current.password, null);
       this.backendService.persistBackends();
       this.messageService.sendMessage({
         name: Messages.USER_LOGGED_OUT,
@@ -245,7 +236,7 @@ export class AuthService {
     }
 
     // Parsing role field from JWT token, and splitting at ','.
-    const payload = atob(this.backendService.current.token.split('.')[1]);
+    const payload = atob(this.backendService.current.token_raw.split('.')[1]);
     const roles = JSON.parse(payload).role;
     if (Array.isArray(roles)) {
       return <string[]>roles;

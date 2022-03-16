@@ -186,16 +186,14 @@ export class NavbarComponent implements OnInit {
 
         // Check if the url exists in localstorage
         // so the availability of token can be detected
-        let cur: Backend = {
-          url: backend.replace(/\s/g, '').replace(/(\/)+$/,''),
-        };
+        let cur: Backend = new Backend(backend.replace(/\s/g, '').replace(/(\/)+$/,''), null, null,null);
         if (JSON.parse(localStorage.getItem('magic.backends'))) {
           const currentBackend = JSON.parse(localStorage.getItem('magic.backends'));
           currentBackend.forEach((element: any) => {
             if (element.url === cur.url) {
               cur.username = element.username;
               cur.password = element.password;
-              cur.token = element.token;
+              cur.token_raw = element.token;
             }
           });
         }
@@ -204,7 +202,7 @@ export class NavbarComponent implements OnInit {
         this.backendService.current = cur;
 
         // Based on token availability authentication status will be set
-        if (!this.backendService.current.token) {
+        if (!this.backendService.current.token_raw) {
           this.authService.updateAuthStatus(false);
         } else {
           this.authService.updateAuthStatus(true);
@@ -227,11 +225,7 @@ export class NavbarComponent implements OnInit {
         const username = params['username'];
 
         // Updating current backend.
-        this.backendService.current = {
-          url,
-          username,
-          token,
-        };
+        this.backendService.current = new Backend(url, username, null, token);
 
         // Verifying token is valid by invoking backend trying to refresh token.
         this.authService.verifyToken().subscribe(() => {
@@ -267,10 +261,7 @@ export class NavbarComponent implements OnInit {
          *
          * Need to set the current backend first.
          */
-        this.backendService.current = {
-          url: params['url'],
-          username: params['username'],
-        };
+        this.backendService.current = new Backend(params['url'], params['username'], null, null);
 
         // Registration confirmation of email address.
         this.authService.verifyEmail(params['username'], token).subscribe((result: Response) => {

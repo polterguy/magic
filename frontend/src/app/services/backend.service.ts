@@ -33,7 +33,6 @@ export class BackendService {
   constructor(private httpClient: HttpClient) {
 
     // Reading persisted backends from local storage, or defaulting to whatever is in our environment.ts file.
-    let backends: Backend[];
     const storage = localStorage.getItem('magic.backends');
 
     /*
@@ -42,8 +41,8 @@ export class BackendService {
      * This simplifies usage of Magic on the local development machine, but guessing the backend is
      * really impossible if we'rein production in a non-localhost environment.
      */
-    backends = storage === null ? (window.location.href.indexOf('://localhost') === -1 ? [] : environment.defaultBackends) : <Backend[]>JSON.parse(storage);
-    this._backends = backends;
+    const backends = storage === null ? (window.location.href.indexOf('://localhost') === -1 ? [] : environment.defaultBackends) : <any[]>JSON.parse(storage);
+    this._backends = backends.map(x => new Backend(x.url, x.username ?? null, x.password ?? null, x.token ?? null));
 
     // Checking we actually have any backends stored.
     if (this._backends.length > 0) {
@@ -111,7 +110,7 @@ export class BackendService {
       // Updating existing backend's fields.
       existing[0].username = value.username;
       existing[0].password = value.password;
-      existing[0].token = value.token;
+      existing[0].token_raw = value.token_raw;
       value = existing[0];
 
     } else {
@@ -190,7 +189,7 @@ export class BackendService {
     // Making sure we only persist non-null fields and that we do NOT persist "refreshTimer" field.
     const toPersist: any[] = [];
     for (const idx of this._backends) {
-      var idxPersist: Backend = {
+      var idxPersist: any = {
         url: idx.url,
       };
       if (idx.username) {
@@ -199,8 +198,8 @@ export class BackendService {
       if (idx.password) {
         idxPersist.password = idx.password;
       }
-      if (idx.token) {
-        idxPersist.token = idx.token;
+      if (idx.token_raw) {
+        idxPersist.token = idx.token_raw;
       }
       toPersist.push(idxPersist);
     }
@@ -223,12 +222,12 @@ export class BackendService {
     }
 
     // Ensuring we've got a token, and if not we don't create the timer.
-    if (!backend.token) {
+    if (!backend.token_raw) {
       return;
     }
 
     // Parsing token to see if it's got "exp" declaration.
-    const entities: string[] = backend.token.split('.');
+    const entities: string[] = backend.token_raw.split('.');
     const payloadStr: string = atob(entities[1]);
     const payload: any = JSON.parse(payloadStr);
 
@@ -241,7 +240,7 @@ export class BackendService {
       if (secondsToExpire < 0) {
 
         // Token has already expired, hence deleting token and persisting backends.
-        backend.token = null;
+        backend.token_raw = null;
         this.persistBackends();
 
       } else if (secondsToExpire < 60) {
@@ -271,7 +270,7 @@ export class BackendService {
     }
 
     // Ensuring user didn't logout after timer was created.
-    if (!backend.token) {
+    if (!backend.token_raw) {
       return;
     }
 
@@ -287,7 +286,7 @@ export class BackendService {
         });
 
         // Assigning new token to backend and persisting now with new token.
-        backend.token = response.ticket;
+        backend.token_raw = response.ticket;
         this.persistBackends();
 
         // Making sure we're able to refresh again once it's time.
