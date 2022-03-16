@@ -15,6 +15,7 @@ import { FeedbackService } from 'src/app/services/feedback.service';
 import { CryptoService } from 'src/app/components/management/crypto/services/crypto.service';
 import { PublicKeyFull } from 'src/app/components/management/crypto/models/public-key-full.model';
 import { CreateKeypairDialogComponent } from './create-keypair-dialog/create-keypair-dialog.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Component that shows server's public key.
@@ -46,6 +47,7 @@ export class ServerPublicKeyComponent implements OnInit {
     public authService: AuthService,
     private cryptoService: CryptoService,
     private messageService: MessageService,
+    private backendService: BackendService,
     private feedbackService: FeedbackService,
     private clipboard: Clipboard) { }
 
@@ -119,7 +121,7 @@ export class ServerPublicKeyComponent implements OnInit {
   public isRoot() {
 
     // Returning true if user belongs to the root role
-    return this.authService.authenticated && this.authService.roles().filter(x => x === 'root');
+    return this.backendService.current?.token?.in_role('root') || false;
   }
 
   /**

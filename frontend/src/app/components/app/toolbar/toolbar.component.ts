@@ -140,7 +140,7 @@ export class ToolbarComponent implements OnInit {
    * Returns all roles user belongs to.
    */
   public getUserRoles() {
-    return this.authService.roles().join(', ');
+    return this.backendService.current?.token?.roles.join(', ') || '';
   }
 
   /**

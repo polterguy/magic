@@ -224,14 +224,6 @@ export class AuthService {
   }
 
   /**
-   * Returns a list of all roles currently authenticated
-   * user belongs to, if any.
-   */
-  roles() {
-    return this.backendService.current?.token?.roles || [];
-  }
-
-  /**
    * Returns true if user has general access to the specified component.
    * In order to have access to a component, user has to have access to all component URLs.
    * 
@@ -240,7 +232,7 @@ export class AuthService {
   hasAccess(component: string) {
 
     // Retrieving roles, and all endpoints matching path for specific component.
-    const userRoles = this.roles();
+    const userRoles = this.backendService.current?.token?.roles || [];
     const componentEndpoints = this._endpoints.filter(x => x.path.indexOf(component) >= 0);
     if (componentEndpoints.length === 0) {
       return false; // No URL matching component's URL.
@@ -283,7 +275,7 @@ export class AuthService {
   canInvoke(url: string, verb: string) {
 
     // Retrieving roles, and all endpoints matching path for specific component.
-    const userRoles = this.roles();
+    const userRoles = this.backendService.current?.token?.roles || [];
     const componentEndpoints = this._endpoints.filter(x => x.path === url && x.verb === verb);
     if (componentEndpoints.length === 0) {
       return false; // No URL matching component's URL.
