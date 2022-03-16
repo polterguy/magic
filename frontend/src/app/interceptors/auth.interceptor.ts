@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Injector } from '@angular/core';
 import {
   HttpInterceptor,
   HttpHandler,
@@ -26,9 +26,9 @@ export class AuthInterceptor implements HttpInterceptor {
   /**
    * Creates an instance of your service.
    * 
-   * @param backendService Needed to retrieve which backend we're actually using
+   * @param injector Needed to resolve BackendService while avoiding circular DI dependencies
    */
-  constructor(private backendService: BackendService) { }
+  constructor(@Inject(Injector) private readonly injector: Injector) { }
 
   /**
    * Intercepts all HTTP requests to associate an Authorization
@@ -39,9 +39,12 @@ export class AuthInterceptor implements HttpInterceptor {
    */
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
+    // Retrieving backend service.
+    const backendService = this.injector.get(BackendService);
+
     // Figuring out JWT token to use for invocation, if any.
     let backend: Backend = null;
-    for (const idx of this.backendService.backends) {
+    for (const idx of backendService.backends) {
       if (req.url.startsWith(idx.url)) {
         backend = idx;
       }
