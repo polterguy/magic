@@ -116,7 +116,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
 
     // Making sure we retrieve system report if user is already authenticated.
-    if (this.authService.authenticated && this.backendService.current?.token?.in_role('root') && !this.systemReport) {
+    if (this.backendService.current?.token?.in_role('root') && !this.systemReport) {
       this.getSystemReport();
     }
   }

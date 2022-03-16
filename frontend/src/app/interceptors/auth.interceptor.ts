@@ -4,7 +4,7 @@
  */
 
 // Angular and system imports.
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   HttpInterceptor,
   HttpHandler,
@@ -13,7 +13,7 @@ import {
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
-import { BackendService } from '../services/backend.service';
+import { BackendsListService } from '../services/backendslist.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
@@ -26,9 +26,9 @@ export class AuthInterceptor implements HttpInterceptor {
   /**
    * Creates an instance of your service.
    * 
-   * @param injector Needed to resolve BackendService while avoiding circular DI dependencies
+   * @param backendsListService Needed to figure out which JWT token to associate with request, if any
    */
-  constructor(@Inject(Injector) private readonly injector: Injector) { }
+  constructor(private backendsListService: BackendsListService) { }
 
   /**
    * Intercepts all HTTP requests to associate an Authorization
@@ -39,12 +39,9 @@ export class AuthInterceptor implements HttpInterceptor {
    */
   intercept(req: HttpRequest<any>, next: HttpHandler) {
 
-    // Retrieving backend service.
-    const backendService = this.injector.get(BackendService);
-
     // Figuring out JWT token to use for invocation, if any.
     let backend: Backend = null;
-    for (const idx of backendService.backends) {
+    for (const idx of this.backendsListService.backends) {
       if (req.url.startsWith(idx.url)) {
         backend = idx;
       }

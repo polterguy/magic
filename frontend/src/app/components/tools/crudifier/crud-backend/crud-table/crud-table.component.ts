@@ -23,6 +23,7 @@ import { Model } from 'src/app/components/codemirror/codemirror-hyperlambda/code
 // CodeMirror options.
 import hyperlambda from '../../../../codemirror/options/hyperlambda.json';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Crudifier component for supplying settings and configuration
@@ -114,6 +115,7 @@ export class CrudifierTableComponent implements OnInit {
     private logService: LogService,
     public authService: AuthService,
     private cacheService: CacheService,
+    private backendService: BackendService,
     private crudifyService: CrudifyService,
     private messageService: MessageService,
     private feedbackService: FeedbackService,
@@ -305,14 +307,7 @@ export class CrudifierTableComponent implements OnInit {
 
     // Deleting auth cache and retrieving it again.
     this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
-
-      // Reretriving endpoints.
-      this.authService.getEndpoints().subscribe(() => {
-
-        // Simply logging to console.
-        console.log('Endpoint auth requirements flushed and re-retrieved');
-
-      }, (error: any) => this.feedbackService.showError(error));
+      this.backendService.refetchEndpoints();
 
     }, (error: any) => this.feedbackService.showError(error));
   }

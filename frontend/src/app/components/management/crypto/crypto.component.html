@@ -23,7 +23,7 @@
 <div class="row mb-3">
   <div class="col-12">
     <mat-accordion class="card-replacement left-align-arrow" displayMode="flat">
-      <mat-expansion-panel [expanded]="!isRoot()">
+      <mat-expansion-panel [expanded]="!backendService.current?.token?.in_role('root')">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <h2 class="mb-0">Server key</h2>
@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<div class="row" *ngIf="!isRoot() && showImport">
+<div class="row" *ngIf="!backendService.current?.token?.in_role('root') && showImport">
   <div class="col-12 mb-general">
     <mat-card>
       <mat-card-content>

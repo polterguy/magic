@@ -138,7 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     // If user is already authenticated as root we immediately check status.
-    if (this.authService.authenticated && this.backendService.current?.token?.in_role('root')) {
+    if (this.backendService.current?.token?.in_role('root')) {
 
       // Checking configuration status of backend.
       this.configService.status().subscribe(config => {
@@ -208,15 +208,6 @@ export class AppComponent implements OnInit, OnDestroy {
           break;
       }
     });
-
-    // Retrieving all endpoints from backend if we have a backend.
-    if (this.backendService.current) {
-      this.authService.getEndpoints().subscribe(res => {
-        ; // Do nothing ...
-      }, error => {
-        this.showError(error);
-      });
-    }
 
     // wait until sidebar status is defined based on the value stored in localstorage 
     (async () => {

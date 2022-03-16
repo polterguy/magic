@@ -9,9 +9,9 @@ import { Component, OnInit } from '@angular/core';
 
 // Application specific imports.
 import { Messages } from 'src/app/models/messages.model';
-import { AuthService } from 'src/app/services/auth.service';
 import { SqlService } from 'src/app/services/tools/sql.service';
 import { MessageService } from 'src/app/services/message.service';
+import { BackendService } from 'src/app/services/backend.service';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { LogService } from 'src/app/services/analytics/log.service';
 import { CacheService } from 'src/app/services/analytics/cache.service';
@@ -68,7 +68,7 @@ export class CrudifyDatabaseComponent implements OnInit {
   public constructor(
     private logService: LogService,
     private sqlService: SqlService,
-    private authService: AuthService,
+    private backendService: BackendService,
     private cacheService: CacheService,
     private crudifyService: CrudifyService,
     private feedbackService: FeedbackService,
@@ -115,15 +115,7 @@ export class CrudifyDatabaseComponent implements OnInit {
 
         // Success.
         this.cacheService.delete('magic.auth.endpoints').subscribe(() => {
-
-          // Providing feedback over the console.
-          console.log('Server side cache cleared');
-
-          this.authService.getEndpoints().subscribe(() => {
-
-            // Providing feedback to the console.
-            console.log('Endpoints fetched again from backend');
-          });
+          this.backendService.refetchEndpoints();
 
         }, (error: any) => this.feedbackService.showError(error));
 
