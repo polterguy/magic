@@ -45,12 +45,12 @@ import { Buffer } from "Buffer";
     const payload = JSON.parse(payloadJson);
     this._username = payload.name;
     this._roles = [];
-    if (Array.isArray(payload.roles)) {
+    if (Array.isArray(payload.role)) {
       for (const idx of <string[]>payload.role) {
         this._roles.push(idx);
       }
     } else {
-      this._roles = <string[]>[payload.roles];
+      this._roles.push(payload.role);
     }
     if (payload.exp) {
       this._exp = payload.exp;
@@ -84,7 +84,7 @@ import { Buffer } from "Buffer";
   /**
    * Returns number of seconds from now that token will expire.
    */
-  get expires() {
+  get expires_in() {
     const now = Math.floor(new Date().getTime() / 1000);
     return this.exp - now;
   }
@@ -93,6 +93,16 @@ import { Buffer } from "Buffer";
    * Returns true if token is expired.
    */
   get expired() {
-    return this._exp !== null && this.expires <= 0;
+    return this._exp !== null && this.expires_in <= 0;
+  }
+
+  /**
+   * Returns true if user belongs to specified role.
+   * 
+   * @param value Role to check for
+   * @returns True if user belongs to specified role
+   */
+  in_role(value: string) {
+    return this.roles.includes(value);
   }
 }
