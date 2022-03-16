@@ -5,13 +5,13 @@
 
 // Angular and system imports.
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 // Application specific imports.
+import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
-import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
-import { Token } from '../models/token.model';
 
 /**
  * Keeps track of your backend URLs and currently selected backends.

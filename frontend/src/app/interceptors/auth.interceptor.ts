@@ -4,7 +4,6 @@
  */
 
 // Angular and system imports.
-import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {
   HttpInterceptor,
@@ -14,9 +13,7 @@ import {
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
-import { Messages } from '../models/messages.model';
 import { BackendService } from '../services/backend.service';
-import { MessageService } from '../services/message.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
@@ -30,11 +27,8 @@ export class AuthInterceptor implements HttpInterceptor {
    * Creates an instance of your service.
    * 
    * @param backendService Needed to retrieve which backend we're actually using
-   * @param messageService Needed to publish messages about authentication events
    */
-  constructor(
-    private backendService: BackendService,
-    private messageService: MessageService) { }
+  constructor(private backendService: BackendService) { }
 
   /**
    * Intercepts all HTTP requests to associate an Authorization
@@ -43,9 +37,7 @@ export class AuthInterceptor implements HttpInterceptor {
    * @param req HTTP request
    * @param next Next handler
    */
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler) {
+  intercept(req: HttpRequest<any>, next: HttpHandler) {
 
     // Figuring out JWT token to use for invocation, if any.
     let backend: Backend = null;
@@ -54,29 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
         backend = idx;
       }
     }
-    if (backend && backend.token) {
-
-      /*
-       * Verifying token is not expired.
-       * Notice, token might expire before we refresh token,
-       * if for instance the refresh JWT token timer does not fire,
-       * due to a develop machine having been hibernated, etc.
-       */
-      if (backend.token.expired) {
-
-        /*
-         * Token was expired, nulling it, persisting backends,
-         * and publishing logout message to other parts of the system.
-         */
-        backend.token = null;
-        this.backendService.persistBackends();
-        this.messageService.sendMessage({
-          name: Messages.USER_LOGGED_OUT,
-        });
-
-        // Making sure current invocation resolves to an error.
-        return throwError('JWT token expired');
-      }
+    if (backend?.token?.expired === false) {
 
       // Cloning HTTP request, adding Authorisation header, and invoking next in chain.
       const authReq = req.clone({
