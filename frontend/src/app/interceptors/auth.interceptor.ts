@@ -13,7 +13,7 @@ import {
 
 // Application specific imports.
 import { Backend } from '../models/backend.model';
-import { BackendsListService } from '../services/backendslist.service';
+import { BackendsStorageService } from '../services/backendsstorage.service';
 
 /**
  * HTTP client Authorization interceptor, to attach JWT token to all HTTP requests.
@@ -28,7 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
    * 
    * @param backendsListService Needed to figure out which JWT token to associate with request, if any
    */
-  constructor(private backendsListService: BackendsListService) { }
+  constructor(private backendsListService: BackendsStorageService) { }
 
   /**
    * Intercepts all HTTP requests to associate an Authorization
