@@ -24,6 +24,7 @@ import { AuthenticateResponse } from '../components/management/auth/models/authe
 })
 export class BackendService {
 
+  // Backends we are currently connected to.
   private _backends: Backend[] = [];
 
   /**
@@ -33,17 +34,10 @@ export class BackendService {
    */
   constructor(private httpClient: HttpClient) {
 
-    // Reading persisted backends from local storage, or defaulting to whatever is in our environment.ts file.
+    // Reading persisted backends from local storage, or defaulting to whatever is in our "environment.ts" file if we're on localhost.
     const storage = localStorage.getItem('magic.backends');
-
-    /*
-     * Notice, we only use the default environment.ts based default backend(s) if we're on localhost.
-     *
-     * This simplifies usage of Magic on the local development machine, but guessing the backend is
-     * really impossible if we'rein production in a non-localhost environment.
-     */
     const backends = storage === null ? (window.location.href.indexOf('://localhost') === -1 ? [] : environment.defaultBackends) : <any[]>JSON.parse(storage);
-    this._backends = backends.map(x => new Backend(x.url, x.username ?? null, x.password ?? null, x.token ?? null));
+    this._backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));
 
     // Checking we actually have any backends stored.
     if (this._backends.length > 0) {
