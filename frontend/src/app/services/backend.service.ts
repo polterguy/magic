@@ -14,9 +14,9 @@ import { environment } from 'src/environments/environment';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 
 /**
- * Keeps track of your backend URLs and currently selected backends.
+ * Keeps track of your backends and your currently selected backend.
  * 
- * This service will store your backends in the local storage object,
+ * This service will store your backends in the localStorage object,
  * to allow for easily selecting a backend you have previously connected to.
  */
 @Injectable({
@@ -52,14 +52,14 @@ export class BackendService {
   /**
    * Returns true if user is connected to a backend.
    */
-  public get connected() {
+  get connected() {
     return this._backends.length > 0;
   }
 
   /**
-   * Returns the currently used backend API URL.
+   * Returns the currently used backend.
    */
-  public get current() {
+  get current() {
     return this._backends.length === 0 ? null : this._backends[0];
   }
 
@@ -69,7 +69,7 @@ export class BackendService {
    * 
    * @param backend Backend to remove
    */
-  public remove(backend: Backend) {
+  remove(backend: Backend) {
 
     // Ensuring we destroy refresh token timer if existing.
     if (backend.refreshTimer) {
@@ -92,7 +92,7 @@ export class BackendService {
   /**
    * Sets the currently selected backend.
    */
-  public set current(value: Backend) {
+  set current(value: Backend) {
 
     /*
      * Checking to see if the backend exists from before,
@@ -141,10 +141,11 @@ export class BackendService {
   }
 
   /**
+   * Changes active backend.
    * 
    * @param url URL of backend to make active.
    */
-  public setActiveBackend(url: string) {
+  setActiveBackend(url: string) {
 
     /*
      * Making sure we sort backends such that the current backend
@@ -170,16 +171,20 @@ export class BackendService {
   }
 
   /**
-   * Returns all backends the system has persisted.
+   * Returns all backends.
    */
-  public get backends() {
+  get backends() {
     return this._backends;
   }
 
-  /**
+  /*
+   * Private helper methods.
+   */
+
+  /*
    * Persists all backends into local storage.
    */
-  public persistBackends() {
+  private persistBackends() {
 
     // Making sure we only persist non-null fields and that we do NOT persist "refreshTimer" field.
     const toPersist: any[] = [];
@@ -202,13 +207,9 @@ export class BackendService {
   }
 
   /*
-   * Private helper methods.
-   */
-
-  /*
    * Creates a refresh timer for a single backend's JWT token.
    */
-   private ensureRefreshJWTTokenTimer(backend: Backend) {
+  private ensureRefreshJWTTokenTimer(backend: Backend) {
 
     // Checking if we've already got a timer function, and if so deleting it.
     if (backend.refreshTimer) {

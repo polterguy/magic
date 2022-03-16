@@ -182,7 +182,6 @@ export class AuthService {
   public logout(destroyPassword: boolean, showInfo: boolean = true) {
     if (this.authenticated) {
       this.backendService.current = new Backend(this.backendService.current.url, this.backendService.current.username, destroyPassword ? null : this.backendService.current.password);
-      this.backendService.persistBackends();
       this.messageService.sendMessage({
         name: Messages.USER_LOGGED_OUT,
         content: showInfo,
