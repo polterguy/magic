@@ -11,7 +11,6 @@ import { HttpClient } from '@angular/common/http';
 import { Token } from '../models/token.model';
 import { Backend } from '../models/backend.model';
 import { Endpoint } from '../models/endpoint.model';
-import { environment } from 'src/environments/environment';
 import { AuthenticateResponse } from '../components/management/auth/models/authenticate-response.model';
 import { BackendsListService } from './backendslist.service';
 
@@ -35,11 +34,6 @@ export class BackendService {
   constructor(
     private httpClient: HttpClient,
     private backendsListService: BackendsListService) {
-
-    // Reading persisted backends from local storage, or defaulting to whatever is in our "environment.ts" file if we're on localhost.
-    const storage = localStorage.getItem('magic.backends');
-    const backends = storage === null ? (window.location.href.indexOf('://localhost') === -1 ? [] : environment.defaultBackends) : <any[]>JSON.parse(storage);
-    this.backendsListService.backends = backends.map(x => new Backend(x.url, x.username, x.password, x.token));
 
     // Checking we actually have any backends stored.
     if (this.backendsListService.backends.length > 0) {
@@ -81,7 +75,7 @@ export class BackendService {
     this.persistBackends();
     this.ensureRefreshJWTTokenTimer(this.current);
 
-    // In case backend URL changed, we need to retrieve endpoints again.
+    // Reusing endpoints if possible.
     if (endpoints) {
       value.applyEndpoints(endpoints || []);
     } else {
